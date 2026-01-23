@@ -1,0 +1,101 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Roboto+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        /* Electric Blue Theme (HSB 210, 85, 60 base) */
+        --background: 222 47% 11%;
+        /* #0F172A */
+        --foreground: 210 40% 98%;
+        /* #F8FAFC */
+
+        --card: 217 33% 17%;
+        /* #1E293B */
+        --card-foreground: 210 40% 98%;
+
+        --popover: 222 47% 11%;
+        --popover-foreground: 210 40% 98%;
+
+        --primary: 217 91% 60%;
+        /* #3A86FF */
+        --primary-foreground: 222 47% 11%;
+
+        --secondary: 215 25% 27%;
+        /* #334155 */
+        --secondary-foreground: 210 40% 98%;
+
+        --muted: 217 33% 17%;
+        --muted-foreground: 215 20.2% 65.1%;
+
+        --accent: 217 91% 60%;
+        --accent-foreground: 222 47% 11%;
+
+        --destructive: 0 84% 60%;
+        /* #EF4444 */
+        --destructive-foreground: 210 40% 98%;
+
+        --border: 217 33% 17%;
+        --input: 217 33% 17%;
+        --ring: 217 91% 60%;
+        --radius: 0.5rem;
+
+        /* Semantic Signal Colors */
+        --signal-analog: 271 70% 59%;
+        /* #9D4EDD */
+        --signal-digital: 174 63% 47%;
+        /* #2EC4B6 */
+        --signal-clock: 35 100% 56%;
+        /* #FF9F1C */
+        --signal-success: 101 100% 35%;
+        /* #38B000 */
+        --signal-error: 356 81% 56%;
+        /* #E63946 */
+        --signal-gold: 42 91% 52%;
+        /* #FFBE0B */
+    }
+}
+
+@layer base {
+    * {
+        @apply border-border;
+    }
+
+    body {
+        @apply bg-background text-foreground font-sans;
+    }
+}
+
+/* Custom Utilities for Glows */
+.shadow-glow-primary {
+    box-shadow: 0 0 20px hsla(217, 91%, 60%, 0.5);
+}
+
+.shadow-glow-analog {
+    box-shadow: 0 0 20px hsla(271, 70%, 59%, 0.5);
+}
+
+.shadow-glow-digital {
+    box-shadow: 0 0 20px hsla(174, 63%, 47%, 0.5);
+}
+
+/* Animation Keyframes */
+@keyframes pulse-glow {
+
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.8;
+        transform: scale(1.05);
+    }
+}
+
+.animate-pulse-slow {
+    animation: pulse-glow 3s infinite ease-in-out;
+}
