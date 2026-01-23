@@ -1,82 +1,49 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-    --color-bg-primary: #ffffff;
+    /* Cyber-Industrial Base Colors */
+    --color-bg-void: #0F172A;
+    --color-bg-panel: #1E293B;
+    --color-border: #334155;
+
+    --color-terminal-green: #00DC82;
+    --color-signal-blue: #3B82F6;
+
+    --color-text-main: #F8FAFC;
+    --color-text-dim: #94A3B8;
+
+    /* Semantic Mappings for legacy/shared components */
+    --color-bg-primary: var(--color-bg-void);
 }
 
 body {
     margin: 0;
     padding: 0;
     font-family: 'Inter', sans-serif;
-    color: #4b4b4b;
+    background-color: var(--color-bg-void);
+    color: var(--color-text-main);
     -webkit-font-smoothing: antialiased;
 }
 
-/* Duolingo Button Styles */
-.btn-primary {
-    background-color: #ff9600;
-    color: white;
-    box-shadow: 0 4px 0 0 #cc7700;
-    transition: all 0.2s;
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
 }
 
-.btn-primary:active {
-    box-shadow: none;
-    transform: translateY(4px);
+::-webkit-scrollbar-track {
+    background: var(--color-bg-void);
 }
 
-.btn-secondary {
-    background-color: white;
-    border: 2px solid #e5e5e5;
-    color: #afafaf;
-    box-shadow: 0 4px 0 0 #e5e5e5;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 4px;
 }
 
-.btn-secondary:hover {
-    background-color: rgba(229, 229, 229, 0.2);
-}
-
-.btn-secondary:active {
-    box-shadow: none;
-    transform: translateY(4px);
-}
-
-.btn-danger {
-    background-color: #ff4b4b;
-    color: white;
-    box-shadow: 0 4px 0 0 #d93636;
-    transition: all 0.2s;
-}
-
-.btn-danger:active {
-    box-shadow: none;
-    transform: translateY(4px);
-}
-
-.btn-green {
-    background-color: #58cc02;
-    color: white;
-    box-shadow: 0 4px 0 0 #58a700;
-    transition: all 0.2s;
-}
-
-.btn-green:active {
-    box-shadow: none;
-    transform: translateY(4px);
-}
-
-/* Card Styles */
-.card-3d {
-    border: 2px solid #e5e5e5;
-    border-radius: 1.5rem;
-    background-color: white;
-    box-shadow: 0 4px 0 0 #e5e5e5;
+::-webkit-scrollbar-thumb:hover {
+    background: var(--color-signal-blue);
 }

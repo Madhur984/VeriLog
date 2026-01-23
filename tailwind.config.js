@@ -2,50 +2,56 @@
 export default {
     content: [
         "./index.html",
-        "./src/**/*.{js,ts,jsx,tsx}",
+        "./src/**/*.{js,ts,jsx,tsx}"
     ],
     theme: {
         extend: {
             colors: {
-                green: {
-                    500: "#58cc02", // Official Duolingo Green
-                    600: "#58a700", // Darker Green (Shadow)
+                // Cyber-Industrial Palette
+                void: {
+                    DEFAULT: '#0F172A', // Deep Void (Background)
+                    light: '#1E293B',   // Panel Grey (Surface)
                 },
-                blue: {
-                    400: "#1cb0f6", // Official Duolingo Blue
-                    500: "#1899d6", // Darker Blue (Shadow)
-                    100: "#ddf4ff", // Light Blue bg
+                panel: {
+                    DEFAULT: '#1E293B',
+                    border: '#334155',  // Bezel Grey (Border)
                 },
-                orange: {
-                    500: "#ff9600", // Brand Orange (VeriQuest)
-                    600: "#cc7700", // Darker Orange (Shadow)
+                terminal: {
+                    green: '#00DC82',   // Nvidia Green (Primary CTA)
+                    dim: 'rgba(0, 220, 130, 0.1)',
                 },
-                rose: {
-                    500: "#ff4b4b", // Error/Hearts
-                    600: "#d93636",
+                signal: {
+                    blue: '#3B82F6',    // Signal Blue (Selection/Clock)
+                    cyan: '#06b6d4',    // Cyan for wires
+                    magenta: '#d946ef', // Magenta for input/output keywords
+                    orange: '#f97316',  // Orange for numbers
                 },
-                yellow: {
-                    400: "#ffc800", // Stars/Gold
-                    500: "#e5b400",
+                xp: {
+                    gold: '#EAB308',    // XP Gold
                 },
-                neutral: {
-                    200: "#e5e5e5",
-                    300: "#d7d7d7",
-                    500: "#afafaf",
-                    700: "#4b4b4b",
+                status: {
+                    error: '#EF4444',   // Bug Red
+                    success: '#00DC82', // Same as terminal green
                 },
             },
             fontFamily: {
-                heading: ['Outfit', 'sans-serif'], // Keep Outfit for headings
-                body: ['Inter', 'sans-serif'],     // Keep Inter for body
+                sans: ['Inter', 'sans-serif'],
+                mono: ['JetBrains Mono', 'monospace'],
             },
             boxShadow: {
-                '3d': '0 4px 0 0', // The classic Duolingo 3D button effect
+                'neon-green': '0 0 10px rgba(0, 220, 130, 0.5)',
+                'neon-blue': '0 0 10px rgba(59, 130, 246, 0.5)',
+                'bezel': 'inset 0 1px 0 0 rgba(255, 255, 255, 0.1)',
             },
-            borderRadius: {
-                'xl': '1rem',
-                '2xl': '1.5rem',
+            animation: {
+                'scanline': 'scanline 2s linear infinite',
             },
+            keyframes: {
+                scanline: {
+                    '0%': { transform: 'translateY(-100%)' },
+                    '100%': { transform: 'translateY(100%)' },
+                }
+            }
         },
     },
     plugins: [],

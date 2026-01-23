@@ -2,6 +2,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { MainLayout } from './layouts/MainLayout';
 import { LearnPage } from './pages/LearnPage';
+import { TrainingCockpitPage } from './pages/TrainingCockpitPage';
 import { LessonPage } from './pages/LessonPage';
 import { QuestsPage } from './pages/QuestsPage';
 import { ShopPage } from './pages/ShopPage';
@@ -17,6 +18,7 @@ export default function App() {
                 {/* Protected App Routes */}
                 <Route element={<MainLayout />}>
                     <Route path="/learn" element={<LearnPage />} />
+                    <Route path="/training" element={<TrainingCockpitPage />} />
                     <Route path="/leaderboard" element={<div className="p-8 text-center text-neutral-400">Leaderboard Coming Soon</div>} />
                     <Route path="/quests" element={<QuestsPage />} />
                     <Route path="/shop" element={<ShopPage />} />
