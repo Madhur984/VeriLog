@@ -147,7 +147,7 @@ export const GatekeeperGame = () => {
                                 isOpen ? "bg-signal-gold text-black shadow-glow-primary hover:scale-105" : "bg-secondary text-slate-500 cursor-not-allowed"
                             )}
                         >
-                            ENTER CASTLE
+                            ACCESS AUTH CONTROL
                         </button>
                     </div>
 

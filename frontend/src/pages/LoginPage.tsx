@@ -73,7 +73,8 @@ export const LoginPage: React.FC = () => {
 
     // Level 1: Logic Gates
     useEffect(() => {
-        setIsEmailValid(email.includes('@') && email.length > 5);
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        setIsEmailValid(emailRegex.test(email));
         setIsPasswordValid(password.length >= 6);
         setIsFullNameValid(fullName.length >= 3);
     }, [email, password, fullName]);
@@ -101,11 +102,31 @@ export const LoginPage: React.FC = () => {
                     }, 1000);
                 }
             } catch (err: any) {
-                setError(err.response?.data?.error || 'Authentication Failed');
+                console.error("Auth Error details:", err);
+                const responseData = err.response?.data;
+                const axiosMessage = err.message;
+
+                let errorMessage = 'Authentication Failed. Check logs.';
+
+                if (typeof responseData === 'object' && responseData?.error) {
+                    errorMessage = responseData.error;
+                } else if (typeof responseData === 'string' && responseData.includes('<!DOCTYPE html>')) {
+                    errorMessage = 'System Engine Error (HTML Response). Check backend.';
+                } else if (axiosMessage === 'Network Error') {
+                    errorMessage = 'Engine Connection Offline. Check backend status.';
+                } else if (axiosMessage) {
+                    errorMessage = `Protocol Error: ${axiosMessage}`;
+                }
+
+                setError(errorMessage);
                 setIsSwitchOn(false);
             } finally {
                 setIsLoading(false);
             }
+        } else {
+            if (!isEmailValid) setError("Invalid Email Logic (missing @ or .domain)");
+            else if (!isPasswordValid) setError("Password Protocol: Minimum 6 characters required");
+            else if (isSignUp && !isFullNameValid) setError("Identify Requirement: Name must be 3+ chars");
         }
     };
 

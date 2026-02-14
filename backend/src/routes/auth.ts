@@ -6,12 +6,15 @@ const router = Router();
 // Sign Up
 router.post('/signup', async (req: Request, res: Response) => {
     const { email, password, full_name } = req.body;
+    console.log(`[AUTH] SIGNUP REQUEST: ${email}`);
 
     if (!email || !password) {
+        console.warn('[AUTH] Signup missing fields');
         return res.status(400).json({ error: 'Email and password are required' });
     }
 
     try {
+        console.log('[AUTH] Calling Supabase signUp...');
         const { data, error } = await supabase.auth.signUp({
             email,
             password,
@@ -22,16 +25,23 @@ router.post('/signup', async (req: Request, res: Response) => {
             },
         });
 
-        if (error) throw error;
+        if (error) {
+            console.error('[AUTH] Supabase error during signup:', error.message);
+            return res.status(400).json({ error: error.message });
+        }
+
+        console.log('[AUTH] User created successfully:', data.user?.id);
         res.status(201).json({ message: 'User created successfully', user: data.user });
     } catch (error: any) {
-        res.status(400).json({ error: error.message });
+        console.error('[AUTH] Catch-all error in signup:', error);
+        res.status(500).json({ error: error.message || 'Internal Server Error' });
     }
 });
 
 // Sign In
 router.post('/signin', async (req: Request, res: Response) => {
     const { email, password } = req.body;
+    console.log(`[AUTH] SIGNIN REQUEST: ${email}`);
 
     if (!email || !password) {
         return res.status(400).json({ error: 'Email and password are required' });
@@ -43,10 +53,16 @@ router.post('/signin', async (req: Request, res: Response) => {
             password,
         });
 
-        if (error) throw error;
+        if (error) {
+            console.error('[AUTH] Supabase error during signin:', error.message);
+            return res.status(400).json({ error: error.message });
+        }
+
+        console.log('[AUTH] Login successful for:', data.user?.id);
         res.status(200).json({ message: 'Login successful', session: data.session, user: data.user });
     } catch (error: any) {
-        res.status(400).json({ error: error.message });
+        console.error('[AUTH] Catch-all error in signin:', error);
+        res.status(500).json({ error: error.message || 'Internal Server Error' });
     }
 });
 

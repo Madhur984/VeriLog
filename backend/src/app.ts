@@ -21,6 +21,24 @@ import authRoutes from './routes/auth';
 app.use('/api/activities', activityRoutes);
 app.use('/api/auth', authRoutes);
 
-app.listen(PORT, () => {
+// Global Error Handler
+app.use((err: any, req: Request, res: Response, next: any) => {
+    console.error('--- Global Error ---');
+    console.error(err);
+    res.status(err.status || 500).json({
+        error: err.message || 'Engine Internal Error',
+        type: 'SYSTEM_FAULT'
+    });
+});
+
+// Keep process alive
+setInterval(() => {
+    if (process.env.NODE_ENV === 'development') {
+        // console.log('Heartbeat: Engine Persistence Active');
+    }
+}, 60000);
+
+app.listen(Number(PORT), '0.0.0.0', () => {
     console.log(`⚡️ [Server]: VeriQuest Engine running at http://localhost:${PORT}`);
+    console.log(`📡 [Network]: Listening on 0.0.0.0 (All Interfaces)`);
 });
