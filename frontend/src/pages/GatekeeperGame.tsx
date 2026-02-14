@@ -20,7 +20,9 @@ export const GatekeeperGame = () => {
     const checkSuccess = () => {
         if (isOpen) {
             setShowSuccess(true);
-            setTimeout(() => setShowSuccess(false), 3000);
+            setTimeout(() => {
+                navigate('/login');
+            }, 2000);
         }
     };
 

@@ -1,0 +1,291 @@
+.login-container {
+    height: 100vh;
+    width: 100vw;
+    background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    color: #f8fafc;
+    font-family: 'Roboto Mono', monospace;
+}
+
+.hardware-mesh {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image:
+        linear-gradient(rgba(0, 229, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 229, 255, 0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    z-index: 1;
+}
+
+.login-card {
+    width: 420px;
+    background: rgba(30, 41, 59, 0.7);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 229, 255, 0.2);
+    border-radius: 12px;
+    padding: 32px;
+    position: relative;
+    z-index: 2;
+    transition: all 0.5s ease;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.login-card.power-on {
+    border-color: rgba(0, 229, 255, 0.6);
+    box-shadow: 0 0 40px rgba(0, 229, 255, 0.15);
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 40px;
+}
+
+.header-icon {
+    width: 32px;
+    height: 32px;
+    color: #475569;
+    transition: color 0.3s ease;
+}
+
+.header-icon.active {
+    color: #00E5FF;
+    filter: drop-shadow(0 0 5px #00E5FF);
+}
+
+.card-header h1 {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+.card-header .dim {
+    color: #64748b;
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.level-content {
+    min-height: 200px;
+}
+
+/* Oscilloscope Styles */
+.oscilloscope-wrapper {
+    background: #020617;
+    border: 2px solid #334155;
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 24px;
+    position: relative;
+}
+
+.oscilloscope {
+    width: 100%;
+    height: 100px;
+}
+
+.freq-display {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    text-align: right;
+}
+
+.freq-display .label {
+    display: block;
+    font-size: 10px;
+    color: #64748b;
+}
+
+.freq-display .value {
+    font-size: 18px;
+    color: #00E5FF;
+    text-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+}
+
+.control-panel .instruction {
+    font-size: 12px;
+    color: #94a3b8;
+    margin-bottom: 12px;
+    text-align: center;
+}
+
+.freq-slider {
+    width: 100%;
+    height: 4px;
+    background: #334155;
+    border-radius: 2px;
+    appearance: none;
+    outline: none;
+}
+
+.freq-slider::-webkit-slider-thumb {
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    background: #00E5FF;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(0, 229, 255, 0.8);
+}
+
+/* Input Group Styles */
+.input-group {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 24px;
+}
+
+.input-wrapper {
+    flex: 1;
+    position: relative;
+}
+
+.input-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px;
+    height: 18px;
+    color: #64748b;
+}
+
+.hardware-input {
+    width: 100%;
+    background: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 6px;
+    padding: 12px 12px 12px 40px;
+    color: #00E5FF;
+    font-size: 14px;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.hardware-input:focus {
+    border-color: #00E5FF;
+    box-shadow: 0 0 10px rgba(0, 229, 255, 0.2);
+}
+
+.logic-gate {
+    width: 60px;
+    height: 40px;
+    opacity: 0.3;
+    transition: all 0.3s ease;
+}
+
+.logic-gate.active {
+    opacity: 1;
+    filter: drop-shadow(0 0 5px #00E5FF);
+}
+
+/* Master Switch Styles */
+.master-action {
+    margin-top: 40px;
+    text-align: center;
+    padding: 20px;
+    background: rgba(15, 23, 42, 0.5);
+    border-radius: 8px;
+    border: 1px dashed rgba(100, 116, 139, 0.3);
+}
+
+.switch-label {
+    font-size: 12px;
+    color: #475569;
+    margin-bottom: 15px;
+    letter-spacing: 1px;
+}
+
+.switch-label.glow {
+    color: #38B000;
+    text-shadow: 0 0 8px rgba(56, 176, 0, 0.6);
+}
+
+.switch-wrapper {
+    display: flex;
+    justify-content: center;
+}
+
+.switch-wrapper svg {
+    width: 80px;
+    height: 100px;
+}
+
+.switch-wrapper .disabled {
+    pointer-events: none;
+    filter: grayscale(1) opacity(0.5);
+}
+
+/* Footer Styles */
+.card-footer {
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(100, 116, 139, 0.2);
+    display: flex;
+    justify-content: space-between;
+}
+
+.status-bit {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 10px;
+    color: #64748b;
+}
+
+.status-bit LucideZap.active {
+    color: #FFBE0B;
+}
+
+.led {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #334155;
+    transition: all 0.3s ease;
+}
+
+.led.on {
+    background: #38B000;
+    box-shadow: 0 0 8px #38B000;
+}
+
+.error-message {
+    font-size: 11px;
+    color: #E63946;
+    background: rgba(230, 57, 70, 0.1);
+    border: 1px solid rgba(230, 57, 70, 0.3);
+    padding: 8px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.mode-toggle {
+    background: none;
+    border: none;
+    color: #64748b;
+    font-size: 11px;
+    text-decoration: underline;
+    cursor: pointer;
+    margin-top: 15px;
+    transition: color 0.2s ease;
+}
+
+.mode-toggle:hover {
+    color: #00E5FF;
+}
+
+.login-card.signup-mode {
+    width: 460px;
+}

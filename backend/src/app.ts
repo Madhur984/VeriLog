@@ -16,8 +16,10 @@ app.get('/health', (req: Request, res: Response) => {
 });
 
 import activityRoutes from './routes/activities';
+import authRoutes from './routes/auth';
 
 app.use('/api/activities', activityRoutes);
+app.use('/api/auth', authRoutes);
 
 app.listen(PORT, () => {
     console.log(`⚡️ [Server]: VeriQuest Engine running at http://localhost:${PORT}`);
