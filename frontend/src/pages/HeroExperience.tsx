@@ -4,9 +4,13 @@ import { motion } from 'framer-motion';
 import { SignalOrb } from '../components/ui/SignalOrb';
 import { VoltBot } from '../components/ui/VoltBot';
 import { LayoutDashboard, ArrowRight } from 'lucide-react';
+import { useUserStore } from '../stores/userStore';
+import { GreetingSequence } from '../components/ui/GreetingSequence';
+import { AnimatePresence } from 'framer-motion';
 
 export const HeroExperience = () => {
     const navigate = useNavigate();
+    const { hasSeenGreeting, firstName } = useUserStore();
     const [orbInteracted, setOrbInteracted] = useState(false);
 
     return (
@@ -95,6 +99,11 @@ export const HeroExperience = () => {
                 <div>System Status: <span className="text-signal-success">ONLINE</span></div>
                 <div>Cadets Active: <span className="text-primary">8,402</span></div>
             </div>
+
+            {/* Interactive Greeting Overlay */}
+            <AnimatePresence>
+                {firstName && !hasSeenGreeting && <GreetingSequence />}
+            </AnimatePresence>
         </div>
     );
 };

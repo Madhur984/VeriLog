@@ -7,8 +7,8 @@
 ---
 
 **Project:** VeriLog
-**Generated:** 2026-02-14 20:18:50
-**Category:** Cybersecurity Platform
+**Generated:** 2026-02-17 21:12:05
+**Category:** Educational App
 
 ---
 
@@ -18,19 +18,25 @@
 
 | Role | Hex | CSS Variable |
 |------|-----|--------------|
-| Primary | `#DC2626` | `--color-primary` |
-| Secondary | `#F87171` | `--color-secondary` |
-| CTA/Accent | `#16A34A` | `--color-cta` |
-| Background | `#FEF2F2` | `--color-background` |
-| Text | `#1F2937` | `--color-text` |
+| Primary | `#4F46E5` | `--color-primary` |
+| Secondary | `#818CF8` | `--color-secondary` |
+| CTA/Accent | `#F97316` | `--color-cta` |
+| Background | `#EEF2FF` | `--color-background` |
+| Text | `#1E1B4B` | `--color-text` |
 
-**Color Notes:** Energetic (Orange #FF6B35 Electric Blue) + Dark bg
+**Color Notes:** Playful colors + clear hierarchy
 
 ### Typography
 
-- **Heading Font:** Inter
-- **Body Font:** Inter
-- **Mood:** Technical + Clear typography
+- **Heading Font:** Orbitron
+- **Body Font:** Exo 2
+- **Mood:** crypto, web3, futuristic, tech, blockchain, digital
+- **Google Fonts:** [Orbitron + Exo 2](https://fonts.google.com/share?selection.family=Exo+2:wght@300;400;500;600;700|Orbitron:wght@400;500;600;700)
+
+**CSS Import:**
+```css
+@import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700&display=swap');
+```
 
 ### Spacing Variables
 
@@ -62,7 +68,7 @@
 ```css
 /* Primary Button */
 .btn-primary {
-  background: #16A34A;
+  background: #F97316;
   color: white;
   padding: 12px 24px;
   border-radius: 8px;
@@ -79,8 +85,8 @@
 /* Secondary Button */
 .btn-secondary {
   background: transparent;
-  color: #DC2626;
-  border: 2px solid #DC2626;
+  color: #4F46E5;
+  border: 2px solid #4F46E5;
   padding: 12px 24px;
   border-radius: 8px;
   font-weight: 600;
@@ -93,7 +99,7 @@
 
 ```css
 .card {
-  background: #FEF2F2;
+  background: #EEF2FF;
   border-radius: 12px;
   padding: 24px;
   box-shadow: var(--shadow-md);
@@ -119,9 +125,9 @@
 }
 
 .input:focus {
-  border-color: #DC2626;
+  border-color: #4F46E5;
   outline: none;
-  box-shadow: 0 0 0 3px #DC262620;
+  box-shadow: 0 0 0 3px #4F46E520;
 }
 ```
 
@@ -147,27 +153,28 @@
 
 ## Style Guidelines
 
-**Style:** Cyberpunk UI
+**Style:** Claymorphism
 
-**Keywords:** Neon, dark mode, terminal, HUD, sci-fi, glitch, dystopian, futuristic, matrix, tech noir
+**Keywords:** Soft 3D, chunky, playful, toy-like, bubbly, thick borders (3-4px), double shadows, rounded (16-24px)
 
-**Best For:** Gaming platforms, tech products, crypto apps, sci-fi applications, developer tools, entertainment
+**Best For:** Educational apps, children's apps, SaaS platforms, creative tools, fun-focused, onboarding, casual games
 
-**Key Effects:** Neon glow (text-shadow), glitch animations (skew/offset), scanlines (::before overlay), terminal fonts
+**Key Effects:** Inner+outer shadows (subtle, no hard lines), soft press (200ms ease-out), fluffy elements, smooth transitions
 
 ### Page Pattern
 
-**Pattern Name:** Trust & Authority + Real-Time
+**Pattern Name:** Immersive/Interactive Experience
 
-- **CTA Placement:** Above fold
-- **Section Order:** Hero > Features > CTA
+- **Conversion Strategy:** 40% higher engagement. Performance trade-off. Provide skip option. Mobile fallback essential.
+- **CTA Placement:** After interaction complete + Skip option for impatient users
+- **Section Order:** 1. Full-screen interactive element, 2. Guided product tour, 3. Key benefits revealed, 4. CTA after completion
 
 ---
 
 ## Anti-Patterns (Do NOT Use)
 
-- ❌ Light mode
-- ❌ Poor data viz
+- ❌ Dark modes
+- ❌ Complex jargon
 
 ### Additional Forbidden Patterns
 

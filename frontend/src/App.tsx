@@ -7,6 +7,7 @@ import { GatekeeperGame } from './pages/GatekeeperGame';
 import { LoginPage } from './pages/LoginPage';
 import { LearnPage } from './pages/LearnPage';
 import { LessonPage } from './pages/LessonPage';
+import { AssessmentPage } from './pages/AssessmentPage';
 
 export default function App() {
     return (
@@ -23,6 +24,7 @@ export default function App() {
                 <Route path="/learn" element={<LearnPage />} />
                 <Route path="/lesson/:id" element={<LessonPage />} />
                 <Route path="/training" element={<TrainingCockpitPage />} />
+                <Route path="/assessment" element={<AssessmentPage />} />
                 <Route path="/hero" element={<HeroExperience />} />
                 <Route path="/playground" element={<SignalPlayground />} />
                 <Route path="/gatekeeper" element={<GatekeeperGame />} />

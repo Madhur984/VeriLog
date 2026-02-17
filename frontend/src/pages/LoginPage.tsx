@@ -4,10 +4,13 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { AndGate, Switch } from '../components/Gates/CircuitComponents';
 import { ShieldCheck, Zap, Cpu, Fingerprint, User } from 'lucide-react';
+import { useUserStore } from '../stores/userStore';
 import './LoginPage.css';
 
 export const LoginPage: React.FC = () => {
     const navigate = useNavigate();
+    const setFirstName = useUserStore((state) => state.setFirstName);
+    const setHasSeenGreeting = useUserStore((state) => state.setHasSeenGreeting);
     const [level, setLevel] = useState(0);
     const [frequency, setFrequency] = useState(20);
     const [isSynced, setIsSynced] = useState(false);
@@ -94,6 +97,13 @@ export const LoginPage: React.FC = () => {
 
                 if (response.data.session?.access_token || response.data.message) {
                     setIsSwitchOn(true);
+
+                    // Save user info
+                    const user = response.data.user || response.data.session?.user;
+                    const name = user?.user_metadata?.full_name || fullName || 'Explorer';
+                    setFirstName(name.split(' ')[0]);
+                    setHasSeenGreeting(false);
+
                     if (response.data.session?.access_token) {
                         localStorage.setItem('supabase_token', response.data.session.access_token);
                     }
