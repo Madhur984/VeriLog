@@ -1,7 +1,7 @@
 # Assessment Page Overrides
 
 > **PROJECT:** VeriLog
-> **Generated:** 2026-02-17 22:52:23
+> **Generated:** 2026-02-17 23:07:15
 > **Page Type:** General
 
 > ⚠️ **IMPORTANT:** Rules in this file **override** the Master file (`design-system/MASTER.md`).
@@ -15,7 +15,7 @@
 
 - **Max Width:** 1200px (standard)
 - **Layout:** Full-width sections, centered content
-- **Sections:** 1. Full-screen interactive element, 2. Guided product tour, 3. Key benefits revealed, 4. CTA after completion
+- **Sections:** 1. Intro (Vertical), 2. The Journey (Horizontal Track), 3. Detail Reveal, 4. Vertical Footer
 
 ### Spacing Overrides
 
@@ -27,13 +27,11 @@
 
 ### Color Overrides
 
-- **Strategy:** Immersive experience colors. Dark background for focus. Highlight interactive elements.
+- **Strategy:** Continuous palette transition. Chapter colors. Progress bar #000000.
 
 ### Component Overrides
 
-- Avoid: No hover feedback on clickable elements
-- Avoid: Inputs that look like plain text
-- Avoid: Confuse disabled with normal state
+- No overrides — use Master component specs
 
 ---
 
@@ -45,8 +43,5 @@
 
 ## Recommendations
 
-- Effects: No motion blur, distinct page turns, grain/noise texture, sharp transitions (no fade)
-- Interaction: Change cursor and add subtle visual change
-- Forms: Use distinct input styling
-- Interaction: Reduce opacity and change cursor
-- CTA Placement: After interaction complete + Skip option for impatient users
+- Effects: Neon glow (text-shadow), glitch animations (skew/offset), scanlines (::before overlay), terminal fonts
+- CTA Placement: Floating Sticky CTA or End of Horizontal Track

@@ -7,8 +7,8 @@
 ---
 
 **Project:** VeriLog
-**Generated:** 2026-02-17 22:52:23
-**Category:** Digital Products/Downloads
+**Generated:** 2026-02-17 23:07:15
+**Category:** Space Tech / Aerospace
 
 ---
 
@@ -18,24 +18,24 @@
 
 | Role | Hex | CSS Variable |
 |------|-----|--------------|
-| Primary | `#3B82F6` | `--color-primary` |
-| Secondary | `#60A5FA` | `--color-secondary` |
-| CTA/Accent | `#F97316` | `--color-cta` |
-| Background | `#F8FAFC` | `--color-background` |
-| Text | `#1E293B` | `--color-text` |
+| Primary | `#F59E0B` | `--color-primary` |
+| Secondary | `#FBBF24` | `--color-secondary` |
+| CTA/Accent | `#8B5CF6` | `--color-cta` |
+| Background | `#0F172A` | `--color-background` |
+| Text | `#F8FAFC` | `--color-text` |
 
-**Color Notes:** Product category colors + Brand + Success green
+**Color Notes:** Dark tech colors + trust + vibrant accents
 
 ### Typography
 
-- **Heading Font:** Baloo 2
-- **Body Font:** Comic Neue
-- **Mood:** kids, education, playful, friendly, colorful, learning
-- **Google Fonts:** [Baloo 2 + Comic Neue](https://fonts.google.com/share?selection.family=Baloo+2:wght@400;500;600;700|Comic+Neue:wght@300;400;700)
+- **Heading Font:** Syncopate
+- **Body Font:** Space Mono
+- **Mood:** kinetic, motion, futuristic, speed, wide, tech
+- **Google Fonts:** [Syncopate + Space Mono](https://fonts.google.com/share?selection.family=Space+Mono:wght@400;700|Syncopate:wght@400;700)
 
 **CSS Import:**
 ```css
-@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700&family=Comic+Neue:wght@300;400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syncopate:wght@400;700&display=swap');
 ```
 
 ### Spacing Variables
@@ -68,7 +68,7 @@
 ```css
 /* Primary Button */
 .btn-primary {
-  background: #F97316;
+  background: #8B5CF6;
   color: white;
   padding: 12px 24px;
   border-radius: 8px;
@@ -85,8 +85,8 @@
 /* Secondary Button */
 .btn-secondary {
   background: transparent;
-  color: #3B82F6;
-  border: 2px solid #3B82F6;
+  color: #F59E0B;
+  border: 2px solid #F59E0B;
   padding: 12px 24px;
   border-radius: 8px;
   font-weight: 600;
@@ -99,7 +99,7 @@
 
 ```css
 .card {
-  background: #F8FAFC;
+  background: #0F172A;
   border-radius: 12px;
   padding: 24px;
   box-shadow: var(--shadow-md);
@@ -125,9 +125,9 @@
 }
 
 .input:focus {
-  border-color: #3B82F6;
+  border-color: #F59E0B;
   outline: none;
-  box-shadow: 0 0 0 3px #3B82F620;
+  box-shadow: 0 0 0 3px #F59E0B20;
 }
 ```
 
@@ -163,18 +163,19 @@
 
 ### Page Pattern
 
-**Pattern Name:** Immersive/Interactive Experience
+**Pattern Name:** Horizontal Scroll Journey
 
-- **Conversion Strategy:** 40% higher engagement. Performance trade-off. Provide skip option. Mobile fallback essential.
-- **CTA Placement:** After interaction complete + Skip option for impatient users
-- **Section Order:** 1. Full-screen interactive element, 2. Guided product tour, 3. Key benefits revealed, 4. CTA after completion
+- **Conversion Strategy:** Immersive product discovery. High engagement. Keep navigation visible.
+28,Bento Grid Showcase,bento
+- **CTA Placement:** Floating Sticky CTA or End of Horizontal Track
+- **Section Order:** 1. Intro (Vertical), 2. The Journey (Horizontal Track), 3. Detail Reveal, 4. Vertical Footer
 
 ---
 
 ## Anti-Patterns (Do NOT Use)
 
-- ❌ No preview
-- ❌ Slow delivery
+- ❌ Flat design without depth
+- ❌ Text-heavy pages
 
 ### Additional Forbidden Patterns
 
