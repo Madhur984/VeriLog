@@ -1,0 +1,45 @@
+{
+    "mcpServers": {
+        "openai": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@modelcontextprotocol/server-openai"
+            ],
+            "env": {
+                "OPENAI_API_KEY": "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"
+            }
+        },
+        "google-search": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@modelcontextprotocol/server-google-search"
+            ],
+            "env": {
+                "GOOGLE_SEARCH_ENGINE_ID": "YOUR_GOOGLE_SEARCH_ENGINE_ID",
+                "GOOGLE_API_KEY": "YOUR_GOOGLE_API_KEY"
+            }
+        },
+        "vercel": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@modelcontextprotocol/server-vercel"
+            ],
+            "env": {
+                "VERCEL_TOKEN": "YOUR_VERCEL_TOKEN_HERE"
+            }
+        },
+        "cloudflare": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@modelcontextprotocol/server-cloudflare"
+            ],
+            "env": {
+                "CLOUDFLARE_API_TOKEN": "YOUR_CLOUDFLARE_API_TOKEN_HERE"
+            }
+        }
+    }
+}
