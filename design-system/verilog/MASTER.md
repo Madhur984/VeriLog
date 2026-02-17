@@ -7,8 +7,8 @@
 ---
 
 **Project:** VeriLog
-**Generated:** 2026-02-17 21:12:05
-**Category:** Educational App
+**Generated:** 2026-02-17 22:52:23
+**Category:** Digital Products/Downloads
 
 ---
 
@@ -18,24 +18,24 @@
 
 | Role | Hex | CSS Variable |
 |------|-----|--------------|
-| Primary | `#4F46E5` | `--color-primary` |
-| Secondary | `#818CF8` | `--color-secondary` |
+| Primary | `#3B82F6` | `--color-primary` |
+| Secondary | `#60A5FA` | `--color-secondary` |
 | CTA/Accent | `#F97316` | `--color-cta` |
-| Background | `#EEF2FF` | `--color-background` |
-| Text | `#1E1B4B` | `--color-text` |
+| Background | `#F8FAFC` | `--color-background` |
+| Text | `#1E293B` | `--color-text` |
 
-**Color Notes:** Playful colors + clear hierarchy
+**Color Notes:** Product category colors + Brand + Success green
 
 ### Typography
 
-- **Heading Font:** Orbitron
-- **Body Font:** Exo 2
-- **Mood:** crypto, web3, futuristic, tech, blockchain, digital
-- **Google Fonts:** [Orbitron + Exo 2](https://fonts.google.com/share?selection.family=Exo+2:wght@300;400;500;600;700|Orbitron:wght@400;500;600;700)
+- **Heading Font:** Baloo 2
+- **Body Font:** Comic Neue
+- **Mood:** kids, education, playful, friendly, colorful, learning
+- **Google Fonts:** [Baloo 2 + Comic Neue](https://fonts.google.com/share?selection.family=Baloo+2:wght@400;500;600;700|Comic+Neue:wght@300;400;700)
 
 **CSS Import:**
 ```css
-@import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700&family=Comic+Neue:wght@300;400;700&display=swap');
 ```
 
 ### Spacing Variables
@@ -85,8 +85,8 @@
 /* Secondary Button */
 .btn-secondary {
   background: transparent;
-  color: #4F46E5;
-  border: 2px solid #4F46E5;
+  color: #3B82F6;
+  border: 2px solid #3B82F6;
   padding: 12px 24px;
   border-radius: 8px;
   font-weight: 600;
@@ -99,7 +99,7 @@
 
 ```css
 .card {
-  background: #EEF2FF;
+  background: #F8FAFC;
   border-radius: 12px;
   padding: 24px;
   box-shadow: var(--shadow-md);
@@ -125,9 +125,9 @@
 }
 
 .input:focus {
-  border-color: #4F46E5;
+  border-color: #3B82F6;
   outline: none;
-  box-shadow: 0 0 0 3px #4F46E520;
+  box-shadow: 0 0 0 3px #3B82F620;
 }
 ```
 
@@ -153,13 +153,13 @@
 
 ## Style Guidelines
 
-**Style:** Claymorphism
+**Style:** Vibrant & Block-based
 
-**Keywords:** Soft 3D, chunky, playful, toy-like, bubbly, thick borders (3-4px), double shadows, rounded (16-24px)
+**Keywords:** Bold, energetic, playful, block layout, geometric shapes, high color contrast, duotone, modern, energetic
 
-**Best For:** Educational apps, children's apps, SaaS platforms, creative tools, fun-focused, onboarding, casual games
+**Best For:** Startups, creative agencies, gaming, social media, youth-focused, entertainment, consumer
 
-**Key Effects:** Inner+outer shadows (subtle, no hard lines), soft press (200ms ease-out), fluffy elements, smooth transitions
+**Key Effects:** Large sections (48px+ gaps), animated patterns, bold hover (color shift), scroll-snap, large type (32px+), 200-300ms
 
 ### Page Pattern
 
@@ -173,8 +173,8 @@
 
 ## Anti-Patterns (Do NOT Use)
 
-- ❌ Dark modes
-- ❌ Complex jargon
+- ❌ No preview
+- ❌ Slow delivery
 
 ### Additional Forbidden Patterns
 
