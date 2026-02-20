@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Bot } from '../components/Bot/BotCharacter';
+import { VoltBot } from '../components/ui/VoltBot';
 import { DraggableItem } from '../components/ComponentTray/DraggableItem';
 import { Button } from '../components/ui/button';
 import { ArrowRight } from 'lucide-react';
@@ -96,7 +96,7 @@ export const Activity2 = ({ onNext }: ActivityProps) => {
                 <DraggableItem type="or" label="OR Chip" disabled={gate === 'or'} icon={<div className="scale-125 pt-2"><DipIC3D label="OR" /></div>} />
             </div>
 
-            <Bot message={signalOut ? "Both ON! Great work." : botMessage} state={signalOut ? 'success' : 'idle'} />
+            <VoltBot message={signalOut ? "Both ON! Great work." : botMessage} state={signalOut ? 'happy' : 'idle'} className="fixed bottom-8 left-8" />
         </div>
     );
 };

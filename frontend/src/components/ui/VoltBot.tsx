@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '../../lib/utils';
 
 interface VoltBotProps {
-    state?: 'idle' | 'speaking' | 'celebrating' | 'thinking';
+    state?: 'idle' | 'speaking' | 'happy' | 'sad' | 'thinking';
     message?: string;
     className?: string;
     onClick?: () => void;
@@ -15,10 +15,16 @@ export const VoltBot: React.FC<VoltBotProps> = ({ state = 'idle', message, class
     const botVariants = {
         idle: { y: [0, -4, 0], transition: { duration: 2, repeat: Infinity, ease: "easeInOut" } },
         speaking: { scale: [1, 1.05, 1], transition: { duration: 0.3, repeat: Infinity } },
-        celebrating: {
+        happy: {
             rotate: [0, -10, 10, -10, 10, 0],
-            y: -10,
-            transition: { duration: 0.5, y: { duration: 0.3, yoyo: Infinity } }
+            y: [-4, -15, -4],
+            transition: { duration: 0.5, y: { duration: 0.3, repeat: Infinity, repeatType: "mirror" } }
+        },
+        sad: {
+            y: 0,
+            rotate: [0, -5, 5, 0],
+            filter: "grayscale(0.5) contrast(0.8)",
+            transition: { duration: 0.5 }
         },
         thinking: { rotate: 360, transition: { duration: 2, repeat: Infinity, ease: "linear" } }
     };
@@ -48,7 +54,8 @@ export const VoltBot: React.FC<VoltBotProps> = ({ state = 'idle', message, class
                 className={cn(
                     "w-16 h-16 rounded-full flex items-center justify-center cursor-pointer shadow-lg border-2 border-white/20",
                     "bg-gradient-to-br from-slate-700 to-slate-900",
-                    state === 'celebrating' && "shadow-[0_0_30px_#FFBE0B]",
+                    state === 'happy' && "shadow-[0_0_30px_#FFBE0B] border-signal-gold",
+                    state === 'sad' && "shadow-[0_0_15px_#ef4444] border-rose-500",
                     state === 'speaking' && "shadow-[0_0_30px_#3A86FF]"
                 )}
             >
@@ -57,11 +64,19 @@ export const VoltBot: React.FC<VoltBotProps> = ({ state = 'idle', message, class
                     {/* Eyes */}
                     <div className="flex space-x-2">
                         <motion.div
-                            className={cn("w-2 h-3 rounded-full", state === 'celebrating' ? "bg-signal-gold" : "bg-signal-digital")}
+                            className={cn(
+                                "w-2 h-3 rounded-full",
+                                (state === 'happy' || state === 'celebrating' as any) ? "bg-signal-gold" :
+                                    state === 'sad' ? "bg-rose-500" : "bg-signal-digital"
+                            )}
                             animate={state === 'speaking' ? { height: [12, 4, 12] } : {}}
                         />
                         <motion.div
-                            className={cn("w-2 h-3 rounded-full", state === 'celebrating' ? "bg-signal-gold" : "bg-signal-digital")}
+                            className={cn(
+                                "w-2 h-3 rounded-full",
+                                (state === 'happy' || state === 'celebrating' as any) ? "bg-signal-gold" :
+                                    state === 'sad' ? "bg-rose-500" : "bg-signal-digital"
+                            )}
                             animate={state === 'speaking' ? { height: [12, 4, 12] } : {}}
                         />
                     </div>

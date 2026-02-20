@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Bot } from '../components/Bot/BotCharacter';
+import { VoltBot } from '../components/ui/VoltBot';
 import { DraggableItem } from '../components/ComponentTray/DraggableItem';
 import { Button } from '../components/ui/button';
 import { ArrowRight } from 'lucide-react';
@@ -103,7 +103,7 @@ export const Activity1 = ({ onNext }: ActivityProps) => {
                 />
             </div>
 
-            <Bot message={success ? "Electricity flows!" : "Drag the missing pieces!"} state={success ? 'success' : 'idle'} />
+            <VoltBot message={success ? "Electricity flows!" : "Drag the missing pieces!"} state={success ? 'happy' : 'idle'} className="fixed bottom-8 left-8" />
         </div>
     );
 };

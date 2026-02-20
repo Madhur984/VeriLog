@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Bot } from '../components/Bot/BotCharacter';
+import { VoltBot } from '../components/ui/VoltBot';
 import { DraggableItem } from '../components/ComponentTray/DraggableItem';
 import { Button } from '../components/ui/button';
 import { ArrowRight } from 'lucide-react';
@@ -106,7 +106,7 @@ export const Activity4 = ({ onNext }: ActivityProps) => {
                 <DraggableItem type="and" label="AND Gate" disabled={false} icon={<svg width="50" height="40" viewBox="0 0 80 60"><path d="M 10 5 L 40 5 C 65 5 65 55 40 55 L 10 55 Z" fill="#b0bec5" stroke="#1a1f3a" strokeWidth="2" /></svg>} />
             </div>
 
-            <Bot message={success ? "Circuit Master!" : botMessage} state={success ? 'success' : 'idle'} />
+            <VoltBot message={success ? "Circuit Master!" : botMessage} state={success ? 'happy' : 'idle'} className="fixed bottom-8 left-8" />
         </div>
     );
 };

@@ -112,7 +112,7 @@ export const SignalPlayground = () => {
                 {/* Center: Bot */}
                 <div className="flex flex-col items-center justify-center space-y-4">
                     <VoltBot
-                        state={isAnalogSynced && digitalState ? "celebrating" : "speaking"}
+                        state={isAnalogSynced && digitalState ? "happy" : "speaking"}
                         message={botMessage}
                     />
 

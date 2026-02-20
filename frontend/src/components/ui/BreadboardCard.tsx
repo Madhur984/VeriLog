@@ -5,17 +5,21 @@ interface BreadboardCardProps {
     children: React.ReactNode;
     className?: string;
     title?: string;
-    variant?: 'light' | 'dark';
+    variant?: 'light' | 'dark' | 'minimal-round';
 }
 
 export const BreadboardCard: React.FC<BreadboardCardProps> = ({ children, className, title, variant = 'light' }) => {
-    const isDark = variant === 'dark';
+    const isDark = variant === 'dark' || variant === 'minimal-round';
+    const isMinimal = variant === 'minimal-round';
+
     return (
         <div className={cn(
-            "relative rounded-[32px] border-4 border-slate-900 transition-colors duration-500 overflow-hidden",
-            isDark
-                ? "bg-[#0B0F1A] shadow-[0_10px_40px_rgba(0,0,0,0.4),12px_12px_0px_rgba(2,6,23,1)]"
-                : "bg-[#F8F9FA] shadow-[0_10px_40px_rgba(0,0,0,0.06),12px_12px_0px_rgba(15,23,42,1)]",
+            "relative transition-all duration-500 overflow-hidden",
+            isMinimal
+                ? "rounded-[48px] bg-slate-950/40 border border-white/10 backdrop-blur-3xl shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
+                : "rounded-[32px] border-4 border-slate-900",
+            isDark && !isMinimal && "bg-[#0B0F1A] shadow-[0_10px_40px_rgba(0,0,0,0.4),12px_12px_0px_rgba(2,6,23,1)]",
+            !isDark && "bg-[#F8F9FA] shadow-[0_10px_40px_rgba(0,0,0,0.06),12px_12px_0px_rgba(15,23,42,1)]",
             className
         )}>
             {/* Breadboard Dot Grid Background */}

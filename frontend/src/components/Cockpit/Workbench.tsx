@@ -3,7 +3,7 @@ import { Canvas } from '@react-three/fiber';
 import { OrbitControls, ContactShadows } from '@react-three/drei';
 import { Breadboard3D } from '../Three/Breadboard3D';
 import { Chip3D } from '../Three/Chip3D';
-import { DroneMascot3D } from '../Mascot/DroneMascot3D';
+import { VoltBot } from '../ui/VoltBot';
 
 interface PlacedChip {
     id: string;
@@ -42,8 +42,8 @@ export const Workbench = () => {
                         ))}
                     </Breadboard3D>
 
-                    {/* Drone floating in workspace */}
-                    <DroneMascot3D position={[4, 2, -4]} />
+                    {/* Bot Overlay */}
+                    <VoltBot state="idle" message="Initializing workbench..." className="fixed bottom-8 right-8 scale-90" />
 
                     <ContactShadows position={[0, 0, 0]} opacity={0.4} scale={20} blur={2} far={4} />
                     <OrbitControls makeDefault minPolarAngle={0} maxPolarAngle={Math.PI / 2.2} />

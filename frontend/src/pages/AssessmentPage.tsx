@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { X, CheckCircle2, ChevronRight } from 'lucide-react';
 import { cn } from '../lib/utils';
-import { ResistorBot } from '../components/ui/ResistorBot';
+import { VoltBot } from '../components/ui/VoltBot';
 import { LogicGateSVG } from '../components/ui/LogicGateSVG';
 import { BreadboardCard } from '../components/ui/BreadboardCard';
 
@@ -138,7 +138,7 @@ export const AssessmentPage: React.FC = () => {
                             exit={{ opacity: 0, scale: 0.98, y: -10 }}
                             transition={{ duration: 0.4, ease: "easeOut" }}
                         >
-                            <BreadboardCard variant="dark" title="Logic Analysis Junction // 0xAF">
+                            <BreadboardCard variant="minimal-round" title="Logic Analysis Junction // 0xAF">
                                 <div className="space-y-10">
                                     <div className="space-y-4">
                                         <h2 className="text-4xl font-heading font-black text-white leading-[1.1] tracking-tight">
@@ -171,11 +171,11 @@ export const AssessmentPage: React.FC = () => {
                                                 disabled={isAnswered}
                                                 onClick={() => setSelectedOption(option)}
                                                 className={cn(
-                                                    "relative p-6 rounded-2xl border-2 transition-all text-left group overflow-hidden",
+                                                    "relative p-6 rounded-[28px] border-2 transition-all text-left group overflow-hidden",
                                                     selectedOption === option
-                                                        ? "bg-cyan-500/10 border-cyan-500/50 text-white shadow-[0_0_20px_rgba(34,211,238,0.1)]"
+                                                        ? "bg-primary/10 border-primary/50 text-white shadow-[0_0_20px_rgba(58,134,255,0.1)]"
                                                         : "bg-slate-900/40 border-slate-800 text-slate-400 hover:border-slate-700 hover:bg-slate-900/60",
-                                                    isAnswered && option === question.correctAnswer && "border-emerald-500/50 bg-emerald-500/10 !text-emerald-400",
+                                                    isAnswered && option === question.correctAnswer && "border-signal-digital/50 bg-signal-digital/10 !text-signal-digital",
                                                     isAnswered && selectedOption === option && selectedOption !== question.correctAnswer && "border-rose-500/50 bg-rose-500/10 !text-rose-400"
                                                 )}
                                             >
@@ -201,7 +201,7 @@ export const AssessmentPage: React.FC = () => {
             </main>
 
             {/* Assistant Overlay (Corner Fixed) */}
-            <ResistorBot state={botState} message={botMessage} className="scale-90" />
+            <VoltBot state={botState} message={botMessage} className="fixed bottom-8 right-8 scale-90" />
 
             {/* Lab Control Bar */}
             <footer className={cn(
