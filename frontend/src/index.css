@@ -98,6 +98,46 @@
     }
 }
 
+@keyframes dash-scroll {
+    to {
+        stroke-dashoffset: -20;
+    }
+}
+
+@keyframes line-flow {
+    0% {
+        stroke-dashoffset: 40;
+        opacity: 0.3;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        stroke-dashoffset: 0;
+        opacity: 0.3;
+    }
+}
+
 .animate-pulse-slow {
     animation: pulse-glow 3s infinite ease-in-out;
+}
+
+.animate-line-flow {
+    stroke-dasharray: 20 20;
+    animation: line-flow 3s linear infinite;
+}
+
+/* Blueprint Grid Utilities */
+.bg-grid-blueprint {
+    background-size: 40px 40px;
+    background-image:
+        linear-gradient(to right, hsla(217, 91%, 60%, 0.05) 1px, transparent 1px),
+        linear-gradient(to bottom, hsla(217, 91%, 60%, 0.05) 1px, transparent 1px);
+}
+
+.bg-dot-blueprint {
+    background-size: 20px 20px;
+    background-image: radial-gradient(circle, hsla(217, 91%, 60%, 0.1) 1px, transparent 1px);
 }

@@ -156,7 +156,7 @@ export const GatekeeperGame = () => {
                 {/* Right: Bot Assistant */}
                 <div className="lg:col-span-3 flex flex-col justify-center">
                     <VoltBot
-                        state={showSuccess ? 'celebrating' : 'speaking'}
+                        state={showSuccess ? 'happy' : 'speaking'}
                         message={
                             showSuccess
                                 ? "Spectacular! You've mastered the logic!"

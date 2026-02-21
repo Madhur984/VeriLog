@@ -5,9 +5,8 @@ import { HeroExperience } from './pages/HeroExperience';
 import { SignalPlayground } from './pages/SignalPlayground';
 import { GatekeeperGame } from './pages/GatekeeperGame';
 import { LoginPage } from './pages/LoginPage';
-import { LearnPage } from './pages/LearnPage';
-import { LessonPage } from './pages/LessonPage';
 import { AssessmentPage } from './pages/AssessmentPage';
+import { WorkstationHome } from './pages/WorkstationHome';
 
 export default function App() {
     return (
@@ -20,9 +19,8 @@ export default function App() {
                 <Route path="/login" element={<LoginPage />} />
 
                 {/* Authenticated Routes */}
-                <Route path="/home" element={<HeroExperience />} />
-                <Route path="/learn" element={<LearnPage />} />
-                <Route path="/lesson/:id" element={<LessonPage />} />
+                <Route path="/portal" element={<WorkstationHome />} />
+                <Route path="/home" element={<WorkstationHome />} />
                 <Route path="/training" element={<TrainingCockpitPage />} />
                 <Route path="/assessment" element={<AssessmentPage />} />
                 <Route path="/hero" element={<HeroExperience />} />

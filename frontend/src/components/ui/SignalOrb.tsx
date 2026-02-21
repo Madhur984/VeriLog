@@ -14,7 +14,7 @@ interface SignalOrbProps {
 export const SignalOrb: React.FC<SignalOrbProps> = ({
     type = 'digital',
     frequency = 1,
-    amplitude = 1,
+    amplitude: _amplitude = 1,
     onPulse,
     onDragEnd,
     className

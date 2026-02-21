@@ -336,6 +336,8 @@ export const AssessmentPage: React.FC = () => {
         }
     }, [selectedOption, isAnswered, question.gateType, successStep]);
 
+    const navItems = [1, 2]; // Define navItems for the progress indicators
+
     return (
         <div className="h-screen bg-background flex flex-col font-sans overflow-hidden relative selection:bg-indigo-500/10 text-foreground">
             {/* Soft Ambient Background Elements */}
@@ -517,7 +519,7 @@ export const AssessmentPage: React.FC = () => {
                         className="fixed inset-0 z-[100] flex items-center justify-center bg-background pointer-events-auto"
                         onClick={() => {
                             if (successStep === 1) setSuccessStep(2);
-                            else navigate('/home');
+                            else navigate('/portal');
                         }}
                     >
                         <LogicStormBackground />
@@ -586,7 +588,10 @@ export const AssessmentPage: React.FC = () => {
                                         transition={{ delay: 1 }}
                                         className="pt-12"
                                     >
-                                        <button className="group relative px-12 py-6 bg-primary text-background font-heading font-black text-2xl rounded-xl overflow-hidden shadow-glow-primary hover:scale-105 transition-all">
+                                        <button
+                                            onClick={() => navigate('/portal')}
+                                            className="group relative px-12 py-6 bg-primary text-background font-heading font-black text-2xl rounded-xl overflow-hidden shadow-glow-primary hover:scale-105 transition-all"
+                                        >
                                             <span className="relative z-10 flex items-center">
                                                 ENTER REAL WORLD <ArrowRight className="ml-4 w-10 h-10 group-hover:translate-x-2 transition-transform" />
                                             </span>
@@ -599,12 +604,12 @@ export const AssessmentPage: React.FC = () => {
 
                         {/* Progress Indicators */}
                         <div className="absolute bottom-16 left-0 right-0 flex justify-center space-x-4">
-                            {[1, 2].map((i) => (
+                            {navItems.map((item) => (
                                 <div
-                                    key={i}
+                                    key={item}
                                     className={cn(
                                         "h-1.5 w-24 rounded-full transition-all duration-700 shadow-glow-primary",
-                                        successStep >= i ? "bg-primary" : "bg-slate-800"
+                                        successStep >= item ? "bg-primary" : "bg-slate-800"
                                     )}
                                 />
                             ))}
