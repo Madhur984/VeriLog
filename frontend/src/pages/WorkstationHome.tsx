@@ -33,7 +33,7 @@ const CORE_Y = 150;
 const BT = 360;   // branch top-of-area Y
 
 const MODULES: Module[] = [
-    { id: 'C1', title: 'Number Systems', subtitle: 'Binary, Octal, Hex, BCD', progress: 100, status: 'completed', hours: 2.5, lessons: 8, cx: 80, cy: CORE_Y },
+    { id: 'C1', title: 'A Signal Must Return', subtitle: 'The Rule of the Closed Loop', progress: 0, status: 'in-progress', hours: 0.1, lessons: 1, cx: 80, cy: CORE_Y },
     { id: 'C2', title: 'Logic Gates', subtitle: 'AND, OR, NOT, NAND, XOR', progress: 80, status: 'in-progress', hours: 3, lessons: 10, cx: 240, cy: CORE_Y },
     { id: 'C3', title: 'Boolean Algebra', subtitle: 'De Morgan, Simplification', progress: 40, status: 'in-progress', hours: 3.5, lessons: 9, cx: 400, cy: CORE_Y },
     { id: 'C4', title: 'Combinational', subtitle: 'MUX, Decoders, Adders', progress: 0, status: 'locked', hours: 4, lessons: 12, cx: 560, cy: CORE_Y },
@@ -141,7 +141,7 @@ const ModuleBubble: React.FC<{ mod: Module; isHovered: boolean; onHover: (id: st
 const CARD_W = 220;
 const CARD_H = 150;
 
-const HoverCard: React.FC<{ mod: Module }> = ({ mod }) => {
+const HoverCard: React.FC<{ mod: Module; onStart: (mod: Module) => void }> = ({ mod, onStart }) => {
     const rawX = mod.cx - CARD_W / 2;
     const rawY = mod.cy - CARD_H - BUBBLE_R - 12;
     const x = Math.max(10, Math.min(rawX, CW - CARD_W - 10));
@@ -169,7 +169,9 @@ const HoverCard: React.FC<{ mod: Module }> = ({ mod }) => {
                                 <div className="h-full rounded-full" style={{ width: `${mod.progress}%`, background: accent }} />
                             </div>
                         </div>
-                        <button className="flex items-center gap-1 px-3 py-1.5 rounded-xl text-[11px] font-semibold text-white cursor-pointer"
+                        <button
+                            onClick={() => onStart(mod)}
+                            className="flex items-center gap-1 px-3 py-1.5 rounded-xl text-[11px] font-semibold text-white cursor-pointer"
                             style={{ background: `${accent}22`, border: `1px solid ${accent}55` }}>
                             <Play className="w-3 h-3 fill-current" />{label}
                         </button>
@@ -193,6 +195,13 @@ export const WorkstationHome: React.FC = () => {
     const [scheme, toggleScheme] = useColorScheme();
 
     const isDark = scheme === 'dark';
+
+    const MODULE_ROUTES: Record<string, string> = { C1: '/module/1' };
+
+    const handleModuleStart = (mod: Module) => {
+        const route = MODULE_ROUTES[mod.id];
+        if (route) navigate(route);
+    };
 
     /* ── Auto-launch tour for every new user ── */
     useEffect(() => {
@@ -448,7 +457,7 @@ export const WorkstationHome: React.FC = () => {
                                             <>
                                                 <ModuleBubble key="hovered" mod={mod} isHovered onHover={setHoveredId} />
                                                 <AnimatePresence>
-                                                    <HoverCard key="card" mod={mod} />
+                                                    <HoverCard key="card" mod={mod} onStart={handleModuleStart} />
                                                 </AnimatePresence>
                                             </>
                                         );

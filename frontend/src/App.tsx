@@ -7,6 +7,7 @@ import { GatekeeperGame } from './pages/GatekeeperGame';
 import { LoginPage } from './pages/LoginPage';
 import { AssessmentPage } from './pages/AssessmentPage';
 import { WorkstationHome } from './pages/WorkstationHome';
+import { ModuleOne } from './pages/ModuleOne';
 
 export default function App() {
     return (
@@ -24,6 +25,7 @@ export default function App() {
                 <Route path="/training" element={<TrainingCockpitPage />} />
                 <Route path="/assessment" element={<AssessmentPage />} />
                 <Route path="/hero" element={<HeroExperience />} />
+                <Route path="/module/1" element={<ModuleOne />} />
 
                 {/* Catch all */}
                 <Route path="*" element={<Navigate to="/" replace />} />
