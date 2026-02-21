@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { X, ChevronRight, Terminal, Sparkles, Zap, ArrowRight } from 'lucide-react';
+import { X, ChevronRight, Terminal, Sparkles, Zap, ArrowRight, Trophy } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { VoltBot } from '../components/ui/VoltBot';
 import { LogicGateSVG } from '../components/ui/LogicGateSVG';
+import { LogicStormBackground } from '../components/ui/LogicStormBackground';
 
 interface Question {
     id: number;
@@ -507,113 +508,107 @@ export const AssessmentPage: React.FC = () => {
                             </AnimatePresence>
                         </main>
                     </motion.div>
-                ) : successStep === 1 ? (
+                ) : (
                     <motion.div
-                        key="success1"
-                        initial={{ opacity: 0, y: 100 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.8, filter: 'blur(20px)' }}
-                        className="flex-1 flex flex-col items-center justify-center px-12 text-center relative pointer-events-auto z-50 overflow-hidden"
+                        key="success-sequence"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[100] flex items-center justify-center bg-background pointer-events-auto"
+                        onClick={() => {
+                            if (successStep === 1) setSuccessStep(2);
+                            else navigate('/home');
+                        }}
                     >
-                        {/* Particles/Sparkles */}
-                        <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                            {[...Array(20)].map((_, i) => (
+                        <LogicStormBackground />
+
+                        <AnimatePresence mode="wait">
+                            {successStep === 1 ? (
                                 <motion.div
+                                    key="motivational-1"
+                                    initial={{ opacity: 0, scale: 0.9, filter: 'blur(10px)' }}
+                                    animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+                                    exit={{ opacity: 0, scale: 1.1, filter: 'blur(10px)' }}
+                                    transition={{ duration: 0.5, ease: "easeOut" }}
+                                    className="relative z-10 text-center space-y-8 px-8 max-w-5xl"
+                                >
+                                    <div className="flex justify-center mb-12">
+                                        <motion.div
+                                            animate={{
+                                                scale: [1, 1.1, 1],
+                                                rotate: [0, 5, -5, 0]
+                                            }}
+                                            transition={{ repeat: Infinity, duration: 4 }}
+                                            className="bg-primary/20 p-8 rounded-[48px] border border-primary/30 shadow-[0_0_50px_rgba(58,134,255,0.2)]"
+                                        >
+                                            <Trophy className="w-20 h-20 text-primary" />
+                                        </motion.div>
+                                    </div>
+
+                                    <h1 className="font-heading font-black text-6xl md:text-8xl text-white tracking-tighter uppercase drop-shadow-[0_0_30px_rgba(255,255,255,0.3)]">
+                                        great job <span className="text-primary">Scientist!</span>
+                                    </h1>
+
+                                    <p className="font-mono text-slate-300 text-2xl md:text-3xl max-w-3xl mx-auto leading-relaxed">
+                                        you have overcome the fear of starting.
+                                    </p>
+
+                                    <div className="pt-16">
+                                        <span className="text-primary/60 font-mono text-sm animate-pulse tracking-[0.3em] uppercase">
+                                            [ CLICK ANYWHERE TO CONTINUE ]
+                                        </span>
+                                    </div>
+                                </motion.div>
+                            ) : (
+                                <motion.div
+                                    key="motivational-2"
+                                    initial={{ opacity: 0, x: 200, filter: 'blur(10px)' }}
+                                    animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
+                                    exit={{ opacity: 0, x: -200, filter: 'blur(10px)' }}
+                                    transition={{ duration: 0.5, ease: "easeOut" }}
+                                    className="relative z-10 text-center space-y-10 px-8 max-w-6xl"
+                                >
+                                    <div className="flex justify-center mb-6">
+                                        <VoltBot state="happy" className="scale-[2.5]" />
+                                    </div>
+
+                                    <h1 className="font-heading font-black text-5xl md:text-7xl text-white tracking-tighter uppercase">
+                                        Protocol <span className="text-signal-success">Ascension</span>
+                                    </h1>
+
+                                    <p className="font-mono text-slate-400 text-xl md:text-2xl max-w-4xl mx-auto leading-relaxed">
+                                        now as you have decided and overcame a challenge let's go further to real world
+                                    </p>
+
+                                    <motion.div
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        transition={{ delay: 1 }}
+                                        className="pt-12"
+                                    >
+                                        <button className="group relative px-16 py-8 bg-primary text-background font-heading font-black text-3xl rounded-[2.5rem] overflow-hidden shadow-glow-primary hover:scale-105 transition-all">
+                                            <span className="relative z-10 flex items-center">
+                                                ENTER REAL WORLD <ArrowRight className="ml-4 w-10 h-10 group-hover:translate-x-2 transition-transform" />
+                                            </span>
+                                            <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+                                        </button>
+                                    </motion.div>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+
+                        {/* Progress Indicators */}
+                        <div className="absolute bottom-16 left-0 right-0 flex justify-center space-x-4">
+                            {[1, 2].map((i) => (
+                                <div
                                     key={i}
-                                    initial={{
-                                        x: Math.random() * window.innerWidth,
-                                        y: window.innerHeight + 100,
-                                        scale: Math.random() * 0.5 + 0.5
-                                    }}
-                                    animate={{
-                                        y: -200,
-                                        transition: {
-                                            duration: Math.random() * 3 + 2,
-                                            repeat: Infinity,
-                                            delay: Math.random() * 2
-                                        }
-                                    }}
-                                    className="absolute w-1 h-1 bg-indigo-500/30 rounded-full blur-[1px]"
+                                    className={cn(
+                                        "h-1.5 w-24 rounded-full transition-all duration-700 shadow-glow-primary",
+                                        successStep >= i ? "bg-primary" : "bg-slate-800"
+                                    )}
                                 />
                             ))}
                         </div>
-
-                        <motion.div
-                            initial={{ scale: 0.5, rotate: -10 }}
-                            animate={{ scale: 1, rotate: 0 }}
-                            transition={{ type: 'spring', damping: 12 }}
-                            className="bg-indigo-500/20 p-8 rounded-[48px] border border-indigo-500/30 mb-12 shadow-[0_0_50px_rgba(99,102,241,0.2)]"
-                        >
-                            <Sparkles className="w-24 h-24 text-indigo-400" />
-                        </motion.div>
-
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.3 }}
-                            className="space-y-6 max-w-3xl"
-                        >
-                            <h2 className="text-7xl font-heading font-black text-white leading-none tracking-tightest uppercase">
-                                Great job <span className="text-indigo-400">Scientist!</span>
-                            </h2>
-                            <p className="text-3xl text-slate-400 font-medium leading-relaxed">
-                                You have overcome the fear of starting. The circuit is now complete.
-                            </p>
-                        </motion.div>
-
-                        <motion.button
-                            initial={{ opacity: 0, y: 40 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.8 }}
-                            onClick={() => setSuccessStep(2)}
-                            className="mt-16 group flex items-center px-12 py-6 bg-white text-black font-heading font-black text-2xl rounded-full hover:bg-indigo-500 hover:text-white transition-all transform hover:scale-105 active:scale-95 shadow-[0_20px_40px_rgba(255,255,255,0.1)]"
-                        >
-                            <span>Initiate Next Phase</span>
-                            <Zap className="ml-3 w-6 h-6 fill-current group-hover:animate-pulse" />
-                        </motion.button>
-                    </motion.div>
-                ) : (
-                    <motion.div
-                        key="success2"
-                        initial={{ opacity: 0, x: 200 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        className="flex-1 flex flex-col items-center justify-center px-12 text-center relative z-50 overflow-hidden"
-                    >
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            className="bg-purple-500/20 p-10 rounded-full border border-purple-500/30 mb-8"
-                        >
-                            <VoltBot state="happy" className="scale-150" />
-                        </motion.div>
-
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.3 }}
-                            className="space-y-8 max-w-4xl"
-                        >
-                            <h2 className="text-6xl font-heading font-black text-white leading-tight uppercase tracking-tightest">
-                                Protocol <span className="text-purple-400">Ascension</span>
-                            </h2>
-                            <p className="text-3xl text-slate-400 font-medium leading-relaxed max-w-2xl mx-auto">
-                                Now as you have decided and overcame a challenge, let's go further to the real world.
-                            </p>
-                        </motion.div>
-
-                        <motion.button
-                            initial={{ opacity: 0, scale: 0.8 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ delay: 1 }}
-                            onClick={() => navigate('/home')}
-                            className="mt-16 group relative flex items-center px-16 py-8 bg-indigo-600 text-white font-heading font-black text-3xl rounded-[2.5rem] hover:bg-indigo-500 transition-all shadow-[0_0_60px_rgba(99,102,241,0.4)]"
-                        >
-                            <span className="relative z-10 flex items-center">
-                                ENTER REAL WORLD
-                                <ArrowRight className="ml-4 w-8 h-8 group-hover:translate-x-2 transition-transform" />
-                            </span>
-                            <div className="absolute inset-0 bg-gradient-to-r from-blue-600/0 via-white/10 to-blue-600/0 opacity-0 group-hover:opacity-100 transition-opacity animate-shimmer" />
-                        </motion.button>
                     </motion.div>
                 )}
             </AnimatePresence>
