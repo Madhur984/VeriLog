@@ -3,26 +3,32 @@ import { motion, useAnimation } from 'framer-motion';
 import { cn } from '../../lib/utils';
 
 interface SignalOrbProps {
-    type?: 'analog' | 'digital';
+    type?: 'analog' | 'digital' | 'clock';
+    frequency?: number;
+    amplitude?: number;
     onPulse?: () => void;
     onDragEnd?: (info: any) => void;
     className?: string;
 }
 
-export const SignalOrb: React.FC<SignalOrbProps> = ({ type = 'digital', onPulse, onDragEnd, className }) => {
+export const SignalOrb: React.FC<SignalOrbProps> = ({
+    type = 'digital',
+    frequency = 1,
+    amplitude = 1,
+    onPulse,
+    onDragEnd,
+    className
+}) => {
     const [_isDragging, setIsDragging] = useState(false);
-
-    // Animation Controls
     const controls = useAnimation();
 
     const handleTap = () => {
-        // Haptic feedback visual
         controls.start({
             scale: [1, 1.2, 1],
             boxShadow: [
-                "0 0 0px 0px rgba(58, 134, 255, 0)",
-                "0 0 20px 10px rgba(58, 134, 255, 0.5)",
-                "0 0 0px 0px rgba(58, 134, 255, 0)"
+                "0 0 0px 0px rgba(99, 102, 241, 0)",
+                "0 0 30px 10px rgba(99, 102, 241, 0.4)",
+                "0 0 0px 0px rgba(99, 102, 241, 0)"
             ],
             transition: { duration: 0.4 }
         });
@@ -45,31 +51,58 @@ export const SignalOrb: React.FC<SignalOrbProps> = ({ type = 'digital', onPulse,
             animate={controls}
             className={cn(
                 "relative flex items-center justify-center rounded-full cursor-pointer touch-none",
-                "w-24 h-24 backdrop-blur-sm",
-                "shadow-[0_4px_24px_rgba(58,134,255,0.4)] inset-shadow-[0_2px_12px_rgba(255,255,255,0.5)]",
-                // Type specific styling
-                type === 'analog' && "bg-gradient-to-br from-white to-signal-analog shadow-glow-analog",
-                type === 'digital' && "bg-gradient-to-br from-white to-primary shadow-glow-primary",
+                "w-32 h-32 bg-white/5 border border-white/10 backdrop-blur-xl shadow-2xl shadow-black/40",
                 className
             )}
         >
-            {/* Inner Core */}
+            {/* Inner Core Glow */}
             <div className={cn(
-                "w-12 h-12 rounded-full opacity-80",
-                type === 'analog' ? "bg-signal-analog blur-md animate-pulse-slow" : "bg-primary blur-sm"
+                "w-16 h-16 rounded-full opacity-40 blur-xl transition-colors duration-500",
+                type === 'analog' ? "bg-indigo-400 animate-pulse-slow" :
+                    type === 'clock' ? "bg-emerald-400" : "bg-blue-500"
             )} />
 
-            {/* Mode Indicator Icon (Optional) */}
-            {type === 'digital' && (
-                <div className="absolute inset-0 flex items-center justify-center opacity-30 text-white font-mono text-xs pointer-events-none">
-                    [1]
-                </div>
-            )}
-            {type === 'analog' && (
-                <svg className="absolute w-12 h-6 opacity-30 pointer-events-none" viewBox="0 0 100 50">
-                    <path d="M0,25 C25,50 75,0 100,25" fill="none" stroke="white" strokeWidth="4" />
-                </svg>
-            )}
+            {/* Signal Visualization */}
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                {type === 'digital' && (
+                    <div className="text-white/40 font-heading font-black text-xl tracking-tighter">
+                        1010
+                    </div>
+                )}
+                {type === 'analog' && (
+                    <motion.svg
+                        className="w-16 h-8 text-indigo-400/60"
+                        viewBox="0 0 100 50"
+                        animate={{ x: [0, -20, 0] }}
+                        transition={{ duration: 2 / frequency, repeat: Infinity, ease: "linear" }}
+                    >
+                        <path
+                            d="M-20,25 C0,50 20,0 40,25 T80,25 T120,25"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="6"
+                            strokeLinecap="round"
+                        />
+                    </motion.svg>
+                )}
+                {type === 'clock' && (
+                    <motion.svg
+                        className="w-16 h-8 text-emerald-400/60"
+                        viewBox="0 0 100 50"
+                        animate={{ x: [0, -25, 0] }}
+                        transition={{ duration: 1 / frequency, repeat: Infinity, ease: "linear" }}
+                    >
+                        <path
+                            d="M-25,40 L-25,10 L0,10 L0,40 L25,40 L25,10 L50,10 L50,40 L75,40 L75,10 L100,10 L100,40 L125,40"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="6"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                        />
+                    </motion.svg>
+                )}
+            </div>
         </motion.div>
     );
 };

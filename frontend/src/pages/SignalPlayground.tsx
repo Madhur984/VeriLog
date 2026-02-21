@@ -1,10 +1,8 @@
 import { useState, useEffect } from 'react';
-import { motion, useAnimation } from 'framer-motion';
+import { motion, AnimatePresence, useAnimation } from 'framer-motion';
 import { SignalOrb } from '../components/ui/SignalOrb';
 import { VoltBot } from '../components/ui/VoltBot';
-import { Wire } from '../components/ui/Wire';
-import { CyberPCB3D } from '../components/ui/CyberPCB3D';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { ChevronLeft, Zap, CheckCircle2, Info } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '../lib/utils';
 
@@ -12,150 +10,235 @@ export const SignalPlayground = () => {
     const navigate = useNavigate();
 
     // Analog State
-    const [analogLevel, setAnalogLevel] = useState(0); // 0 to 100
-    const [analogTarget] = useState(70); // The "sweet spot"
+    const [analogLevel, setAnalogLevel] = useState(0);
+    const [analogTarget] = useState(70);
     const isAnalogSynced = Math.abs(analogLevel - analogTarget) < 10;
 
     // Digital State
     const [digitalState, setDigitalState] = useState(false);
 
+    // Sync Logic
+    const isSystemSynced = isAnalogSynced && digitalState;
+
     // Bot State
-    const [botMessage, setBotMessage] = useState("Let's calibrate the signals! Start with Ms. Analog.");
+    const [botMessage, setBotMessage] = useState("Let's calibrate the signals! Start by dragging Ms. Analog's orb.");
+    const [botState, setBotState] = useState<'idle' | 'speaking' | 'happy' | 'thinking'>('speaking');
 
     const controls = useAnimation();
 
     useEffect(() => {
-        if (isAnalogSynced && digitalState) {
-            setBotMessage("SYSTEM SYNCED! All Green!");
+        if (isSystemSynced) {
+            setBotMessage("SYSTEM SYNCED! All propulsion systems are green. Protocol optimized!");
+            setBotState('happy');
             controls.start({
-                scale: [1, 1.1, 1],
+                scale: [1, 1.05, 1],
                 transition: { repeat: Infinity, duration: 2 }
             });
         } else if (isAnalogSynced) {
-            setBotMessage("Analog calibrated! Now toggle Mr. Digital.");
+            setBotMessage("Analog calibrated! Now toggle Mr. Digital's phase to 1.");
+            setBotState('speaking');
         } else if (digitalState) {
-            setBotMessage("Digital is ON! Now fix the Analog wave.");
+            setBotMessage("Digital is active! Now align the Analog wave to the target marker.");
+            setBotState('thinking');
+        } else {
+            setBotState('idle');
         }
-    }, [isAnalogSynced, digitalState, controls]);
+    }, [isAnalogSynced, digitalState, controls, isSystemSynced]);
 
     const handleAnalogDrag = (_event: any, info: any) => {
-        // width and percent removed - simplified logic used below
-        // This is a simplified "drag simulation" logic for the MVP
-        // In reality we'd measure container bounds. 
-        // For now, let's just use a slider input for precision if drag is tricky, or simulate "drag increases level"
-
-        // Simpler: Just map drag x delta to state
         setAnalogLevel(prev => Math.min(100, Math.max(0, prev + (info.delta.x * 0.5))));
     };
 
     return (
-        <div className="min-h-screen bg-transparent text-foreground flex flex-col p-6 relative overflow-hidden">
-            <CyberPCB3D className="fixed inset-0" intensity={0.5} />
+        <div className="min-h-screen bg-background text-foreground font-sans overflow-hidden relative selection:bg-indigo-500/10">
+            {/* Soft Ambient Background Elements */}
+            <div className="absolute inset-0 pointer-events-none">
+                <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-indigo-500/5 blur-[120px] rounded-full -translate-y-1/2 translate-x-1/2 opacity-50" />
+                <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-blue-500/5 blur-[120px] rounded-full translate-y-1/2 -translate-x-1/2 opacity-50" />
+            </div>
 
-            {/* Header */}
-            <header className="flex items-center justify-between mb-8 z-10">
-                <button onClick={() => navigate('/')} className="flex items-center text-muted-foreground hover:text-white transition-colors bg-black/40 px-4 py-2 rounded-full backdrop-blur-md">
-                    <ArrowLeft className="mr-2" /> Back to Base
-                </button>
-                <div className="text-xl font-heading font-bold text-primary bg-black/40 px-6 py-2 rounded-full backdrop-blur-md">
-                    Module 1: Signals Alive
+            {/* Header - Glassmorphism */}
+            <header className="relative z-30 border-b border-white/5 bg-white/5 backdrop-blur-xl px-12 py-5 flex items-center justify-between">
+                <div className="flex items-center space-x-6">
+                    <button
+                        onClick={() => navigate('/home')}
+                        className="p-3 bg-white/5 border border-white/10 rounded-2xl text-indigo-400 hover:text-indigo-300 transition-all hover:bg-white/10 active:scale-95"
+                    >
+                        <ChevronLeft className="w-5 h-5" />
+                    </button>
+                    <div>
+                        <h1 className="text-3xl font-heading font-black text-white tracking-tight">Signal Playground</h1>
+                        <p className="text-sm font-medium text-slate-400 font-sans tracking-wide uppercase tracking-[0.2em] text-[10px]">Module 1: Signals Alive</p>
+                    </div>
+                </div>
+                <div className="flex items-center space-x-6">
+                    <motion.div
+                        animate={isSystemSynced ? { scale: [1, 1.05, 1], transition: { repeat: Infinity } } : {}}
+                        className={cn(
+                            "px-6 py-2.5 rounded-2xl bg-white/5 border border-white/10 flex items-center space-x-3 transition-colors",
+                            isSystemSynced ? "border-emerald-500/30 bg-emerald-500/5" : ""
+                        )}
+                    >
+                        <div className={cn(
+                            "w-2 h-2 rounded-full animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]",
+                            isSystemSynced ? "bg-emerald-500" : "bg-slate-600"
+                        )} />
+                        <span className={cn(
+                            "text-sm font-heading font-bold uppercase tracking-widest text-[10px]",
+                            isSystemSynced ? "text-emerald-400" : "text-slate-500"
+                        )}>
+                            {isSystemSynced ? "Engine Active" : "Waiting for Sync"}
+                        </span>
+                    </motion.div>
                 </div>
             </header>
 
-            {/* Main Stage */}
-            <div className="flex-1 flex flex-col md:flex-row gap-8 max-w-6xl mx-auto w-full z-10">
+            <main className="relative z-20 p-12 flex flex-col items-center justify-center min-h-[calc(100vh-100px)]">
+                <div className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-3 gap-12 items-stretch">
 
-                {/* Left: Analog Control (Gamified) */}
-                <div className={cn(
-                    "flex-1 flex flex-col items-center space-y-6 p-8 rounded-3xl border shadow-xl relative overflow-hidden transition-all duration-500",
-                    isAnalogSynced ? "bg-signal-analog/20 border-signal-analog shadow-glow-analog" : "bg-card/80 border-secondary backdrop-blur-xl"
-                )}>
-                    <h2 className="text-2xl font-bold text-signal-analog">Ms. Analog</h2>
-                    <p className="text-center text-muted-foreground text-sm">Target Frequency: {analogTarget}%</p>
+                    {/* Left: Ms. Analog */}
+                    <div className={cn(
+                        "group relative p-10 rounded-[3rem] border transition-all duration-700 backdrop-blur-xl flex flex-col items-center shadow-2xl space-y-8",
+                        isAnalogSynced
+                            ? "bg-indigo-500/10 border-indigo-500/30 shadow-indigo-500/20"
+                            : "bg-white/5 border-white/10 shadow-black/40 hover:bg-white/[0.07]"
+                    )}>
+                        <div className="w-full flex justify-between items-center">
+                            <h2 className="text-2xl font-heading font-black text-white tracking-tight">Ms. Analog</h2>
+                            {isAnalogSynced && <CheckCircle2 className="text-indigo-400 w-6 h-6" />}
+                        </div>
 
-                    <div className="relative h-40 w-full flex items-center justify-center bg-black/20 rounded-xl overflow-hidden">
-                        {/* Wave Visualization */}
-                        <svg className="absolute inset-0 w-full h-full opacity-50" preserveAspectRatio="none">
-                            <path
-                                d={`M0,50 Q25,${50 - analogLevel} 50,50 T100,50`}
-                                fill="none"
-                                stroke={isAnalogSynced ? "#9D4EDD" : "#334155"}
-                                strokeWidth="4"
-                                vectorEffect="non-scaling-stroke"
+                        <div className="w-full space-y-2">
+                            <div className="flex justify-between text-[10px] font-heading font-bold text-slate-500 uppercase tracking-widest">
+                                <span>Frequency Calibration</span>
+                                <span className="text-indigo-400">{Math.round(analogLevel)}%</span>
+                            </div>
+                            <div className="h-44 w-full bg-black/40 rounded-[2rem] border border-white/5 relative overflow-hidden flex items-center justify-center">
+                                {/* Wave Viz */}
+                                <svg className="absolute inset-0 w-full h-full opacity-30" preserveAspectRatio="none">
+                                    <motion.path
+                                        animate={{
+                                            d: `M0,88 Q112.5,${88 - (analogLevel * 1.5)} 225,88 T450,88`,
+                                            stroke: isAnalogSynced ? "#818cf8" : "#475569"
+                                        }}
+                                        fill="none"
+                                        strokeWidth="6"
+                                        vectorEffect="non-scaling-stroke"
+                                    />
+                                </svg>
+
+                                <motion.div
+                                    drag="x"
+                                    dragConstraints={{ left: -120, right: 120 }}
+                                    onDrag={handleAnalogDrag}
+                                    whileHover={{ scale: 1.1 }}
+                                    whileTap={{ scale: 0.95 }}
+                                    className="z-10 cursor-grab active:cursor-grabbing"
+                                >
+                                    <SignalOrb type="analog" className={isAnalogSynced ? "shadow-[0_0_30px_rgba(129,140,248,0.5)]" : "opacity-80"} />
+                                </motion.div>
+
+                                {/* Target Line */}
+                                <div
+                                    className="absolute inset-y-0 w-1 bg-white/20 blur-[1px] transition-all"
+                                    style={{ left: `${analogTarget}%` }}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="w-full space-y-4">
+                            <div className="h-4 bg-black/40 rounded-full border border-white/5 p-1">
+                                <motion.div
+                                    className="h-full bg-indigo-500 rounded-full"
+                                    animate={{ width: `${analogLevel}%` }}
+                                />
+                            </div>
+                            <p className="text-xs text-slate-400 font-medium leading-relaxed">
+                                <Info className="inline-block w-3 h-3 mr-1 -mt-0.5 opacity-50" />
+                                Align the orb with the synchronization marker to calibrate the wave frequency.
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Center: VoltBot & Progress */}
+                    <div className="flex flex-col items-center justify-center space-y-12 py-12">
+                        <div className="flex-1 flex items-center justify-center">
+                            <VoltBot
+                                state={botState}
+                                message={botMessage}
+                                className="scale-125"
                             />
-                        </svg>
+                        </div>
 
-                        <Wire active={isAnalogSynced} color="bg-signal-analog" className="w-full absolute top-1/2 -translate-y-1/2" />
-
-                        <motion.div
-                            drag="x"
-                            dragConstraints={{ left: -100, right: 100 }}
-                            onDrag={handleAnalogDrag}
-                            className="z-10 cursor-grab active:cursor-grabbing"
-                            whileHover={{ scale: 1.1 }}
-                        >
-                            <SignalOrb type="analog" className={isAnalogSynced ? "shadow-glow-analog" : ""} />
-                        </motion.div>
+                        <AnimatePresence>
+                            {isSystemSynced && (
+                                <motion.button
+                                    initial={{ opacity: 0, y: 20, scale: 0.9 }}
+                                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                                    onClick={() => navigate('/gatekeeper')}
+                                    className="group h-24 px-12 bg-indigo-600 hover:bg-indigo-500 text-white rounded-[2.5rem] font-heading font-black text-xl shadow-2xl shadow-indigo-500/40 transition-all flex items-center space-x-6 active:scale-95"
+                                >
+                                    <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center group-hover:bg-white/30 transition-colors">
+                                        <Zap className="w-5 h-5 fill-current" />
+                                    </div>
+                                    <span className="uppercase tracking-tight">Access Gatekeeper</span>
+                                </motion.button>
+                            )}
+                        </AnimatePresence>
                     </div>
 
-                    <div className="w-full bg-secondary h-4 rounded-full overflow-hidden relative">
-                        <div
-                            className="h-full bg-signal-analog transition-all duration-100 ease-out"
-                            style={{ width: `${analogLevel}%` }}
-                        />
-                        {/* Target Marker */}
-                        <div className="absolute top-0 h-full w-2 bg-white/50" style={{ left: `${analogTarget}%` }} />
+                    {/* Right: Mr. Digital */}
+                    <div className={cn(
+                        "group relative p-10 rounded-[3rem] border transition-all duration-700 backdrop-blur-xl flex flex-col items-center shadow-2xl space-y-8",
+                        digitalState
+                            ? "bg-blue-500/10 border-blue-500/30 shadow-blue-500/20"
+                            : "bg-white/5 border-white/10 shadow-black/40 hover:bg-white/[0.07]"
+                    )}>
+                        <div className="w-full flex justify-between items-center">
+                            <h2 className="text-2xl font-heading font-black text-white tracking-tight">Mr. Digital</h2>
+                            {digitalState && <CheckCircle2 className="text-blue-400 w-6 h-6" />}
+                        </div>
+
+                        <div className="w-full space-y-2">
+                            <div className="flex justify-between text-[10px] font-heading font-bold text-slate-500 uppercase tracking-widest">
+                                <span>Logic Phase</span>
+                                <span className="text-blue-400">{digitalState ? "1 (High)" : "0 (Low)"}</span>
+                            </div>
+                            <div className="h-44 w-full bg-black/40 rounded-[2rem] border border-white/5 relative overflow-hidden flex items-center justify-center">
+                                <div className="absolute inset-0 flex items-center justify-around px-8 opacity-10">
+                                    <div className="h-1 w-full bg-blue-400 rounded-full" />
+                                </div>
+
+                                <motion.div
+                                    onClick={() => setDigitalState(!digitalState)}
+                                    whileHover={{ scale: 1.1 }}
+                                    whileTap={{ scale: 0.95 }}
+                                    className="z-10 cursor-pointer"
+                                >
+                                    <SignalOrb type="digital" className={digitalState ? "shadow-[0_0_30px_rgba(96,165,250,0.5)]" : "opacity-40 grayscale"} />
+                                </motion.div>
+                            </div>
+                        </div>
+
+                        <div className="w-full grid grid-cols-2 gap-4">
+                            <div className={cn(
+                                "p-6 rounded-2xl border transition-all text-center",
+                                !digitalState ? "bg-blue-500/20 border-blue-400/50 text-blue-400" : "bg-white/5 border-white/5 text-slate-600"
+                            )}>
+                                <div className="text-2xl font-heading font-black">0</div>
+                                <div className="text-[10px] uppercase font-bold tracking-widest opacity-50">Low</div>
+                            </div>
+                            <div className={cn(
+                                "p-6 rounded-2xl border transition-all text-center",
+                                digitalState ? "bg-blue-500/20 border-blue-400/50 text-blue-400" : "bg-white/5 border-white/5 text-slate-600"
+                            )}>
+                                <div className="text-2xl font-heading font-black">1</div>
+                                <div className="text-[10px] uppercase font-bold tracking-widest opacity-50">High</div>
+                            </div>
+                        </div>
                     </div>
-                    <p className="font-mono text-xs">CURRENT: {Math.round(analogLevel)}%</p>
                 </div>
-
-                {/* Center: Bot */}
-                <div className="flex flex-col items-center justify-center space-y-4">
-                    <VoltBot
-                        state={isAnalogSynced && digitalState ? "happy" : "speaking"}
-                        message={botMessage}
-                    />
-
-                    {(isAnalogSynced && digitalState) && (
-                        <motion.button
-                            initial={{ scale: 0 }}
-                            animate={{ scale: 1 }}
-                            onClick={() => navigate('/gatekeeper')}
-                            className="mt-4 px-8 py-3 bg-gradient-to-r from-signal-success to-emerald-600 text-white font-bold rounded-full shadow-glow-primary flex items-center hover:scale-105 transition-transform"
-                        >
-                            Next Module <ArrowRight className="ml-2 w-4 h-4" />
-                        </motion.button>
-                    )}
-                </div>
-
-                {/* Right: Digital Control */}
-                <div className={cn(
-                    "flex-1 flex flex-col items-center space-y-6 p-8 rounded-3xl border shadow-xl relative overflow-hidden transition-all duration-500",
-                    digitalState ? "bg-signal-digital/20 border-signal-digital shadow-glow-digital" : "bg-card/80 border-secondary backdrop-blur-xl"
-                )}>
-                    <h2 className="text-2xl font-bold text-signal-digital">Mr. Digital</h2>
-                    <p className="text-center text-muted-foreground text-sm">Status: {digitalState ? "ONLINE" : "OFFLINE"}</p>
-
-                    <div className="relative h-40 w-full flex items-center justify-center bg-black/20 rounded-xl">
-                        <Wire active={digitalState} color="bg-signal-digital" className="w-full absolute" />
-
-                        <motion.div
-                            onClick={() => setDigitalState(!digitalState)}
-                            whileTap={{ scale: 0.9 }}
-                            className="cursor-pointer z-10"
-                        >
-                            <SignalOrb type="digital" className={digitalState ? "opacity-100" : "opacity-40 grayscale"} />
-                        </motion.div>
-                    </div>
-
-                    <div className="flex space-x-2">
-                        <div className={cn("w-12 h-12 rounded-lg flex items-center justify-center font-bold border-2", !digitalState ? "border-signal-error bg-signal-error/20 text-signal-error" : "border-transparent opacity-30")}>0</div>
-                        <div className={cn("w-12 h-12 rounded-lg flex items-center justify-center font-bold border-2", digitalState ? "border-signal-digital bg-signal-digital/20 text-signal-digital" : "border-transparent opacity-30")}>1</div>
-                    </div>
-                </div>
-
-            </div>
+            </main>
         </div>
     );
 };
-

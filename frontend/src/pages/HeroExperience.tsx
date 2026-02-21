@@ -32,23 +32,41 @@ export const HeroExperience = () => {
             {/* Content Overlay */}
             <div className="relative z-10 flex flex-col items-center justify-center h-full px-4 text-center">
 
-                {/* Header / Logo Area */}
-                <motion.div
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.5 }}
-                    className="absolute top-8 left-8 flex items-center space-x-2"
-                >
-                    <LayoutDashboard className="w-8 h-8 text-primary" />
-                    <span className="font-heading font-bold text-2xl tracking-tighter">VeriQuest</span>
-                </motion.div>
+                {/* Header / Navigation */}
+                <header className="absolute top-0 left-0 right-0 z-50 p-8 flex items-center justify-between">
+                    <motion.div
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.5 }}
+                        className="flex items-center space-x-2"
+                    >
+                        <LayoutDashboard className="w-8 h-8 text-primary shadow-glow-primary rounded-lg" />
+                        <span className="font-heading font-black text-2xl tracking-tighter uppercase">VeriQuest <span className="text-primary/50 text-sm ml-2 font-mono tracking-widest">v2.0</span></span>
+                    </motion.div>
+
+                    <motion.nav
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.7 }}
+                        className="hidden md:flex items-center space-x-8"
+                    >
+                        <button onClick={() => navigate('/learn')} className="font-mono text-sm text-slate-400 hover:text-white transition-colors">LEARN</button>
+                        <button onClick={() => navigate('/assessment')} className="font-mono text-sm text-slate-400 hover:text-white transition-colors">ASSESSMENT</button>
+                        <button
+                            onClick={() => navigate('/login')}
+                            className="px-6 py-2 bg-white/5 border border-white/10 rounded-xl font-mono text-sm text-white hover:bg-white/10 transition-all"
+                        >
+                            SYSTEM_ACCESS
+                        </button>
+                    </motion.nav>
+                </header>
 
                 {/* Main Interaction Area */}
                 <div className="space-y-12 flex flex-col items-center">
 
                     {/* Bot Greeting */}
                     <VoltBot
-                        state={orbInteracted ? 'celebrating' : 'speaking'}
+                        state={orbInteracted ? 'happy' : 'speaking'}
                         message={orbInteracted ? "Spectacular! You found the pulse!" : "See that glowing orb? Give it a drag!"}
                         className="mb-8"
                     />

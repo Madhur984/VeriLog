@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import { VoltBot } from '../components/ui/VoltBot';
 import { DraggableItem } from '../components/ComponentTray/DraggableItem';
 import { Button } from '../components/ui/button';
@@ -28,22 +29,28 @@ export const Activity1 = ({ onNext }: ActivityProps) => {
     };
 
     return (
-        <div className="w-full h-full bg-white flex flex-col relative">
-            <div className="flex-1 relative flex items-center justify-center p-8">
-                <svg width="800" height="500" viewBox="0 0 800 500">
+        <div className="w-full h-full bg-background flex flex-col relative overflow-hidden">
+            {/* Soft Ambient Glows */}
+            <div className="absolute inset-0 pointer-events-none">
+                <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-indigo-500/5 blur-[100px] rounded-full -translate-y-1/2 translate-x-1/2" />
+                <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-blue-500/5 blur-[100px] rounded-full translate-y-1/2 -translate-x-1/2" />
+            </div>
+
+            <div className="flex-1 relative z-10 flex items-center justify-center p-8">
+                <svg width="800" height="500" viewBox="0 0 800 500" className="drop-shadow-2xl">
                     <ElectronicDefs />
 
-                    {/* Wires */}
+                    {/* Wires - Adjusted for dark mode visibility */}
                     <g strokeWidth="6" fill="none" strokeLinecap="round">
-                        <path d="M 150 250 L 250 250" stroke={slots[1] ? "#f97316" : "#e5e5e5"} />
-                        <path d="M 350 250 L 450 250" stroke={slots[1] && slots[2] ? "#f97316" : "#e5e5e5"} />
-                        <path d="M 550 250 L 650 250" stroke={success ? "#f97316" : "#e5e5e5"} />
+                        <path d="M 150 250 L 250 250" stroke={slots[1] ? "#f97316" : "rgba(255,255,255,0.05)"} />
+                        <path d="M 350 250 L 450 250" stroke={slots[1] && slots[2] ? "#f97316" : "rgba(255,255,255,0.05)"} />
+                        <path d="M 550 250 L 650 250" stroke={success ? "#f97316" : "rgba(255,255,255,0.05)"} />
                     </g>
 
                     {/* Battery */}
                     <g transform="translate(70, 200)">
-                        <rect width="80" height="100" rx="8" fill="#ff9600" stroke="#cc7700" strokeWidth="3" filter="url(#drop-shadow-3d)" />
-                        <text x="40" y="60" fill="white" fontSize="32" fontWeight="bold" textAnchor="middle">⚡</text>
+                        <rect width="80" height="100" rx="16" fill="#f97316" className="shadow-lg shadow-orange-500/20" />
+                        <text x="40" y="60" fill="white" fontSize="32" fontWeight="bold" textAnchor="middle" className="font-heading">⚡</text>
                     </g>
 
                     {/* Slot 1: Resistor */}
@@ -51,7 +58,7 @@ export const Activity1 = ({ onNext }: ActivityProps) => {
                         <div
                             onDragOver={e => e.preventDefault()}
                             onDrop={e => handleDrop(e, 1, 'resistor')}
-                            className={`w-full h-full rounded-2xl border-4 flex items-center justify-center transition-all ${slots[1] ? 'border-transparent' : 'border-dashed border-neutral-200 bg-neutral-50'}`}
+                            className={`w-full h-full rounded-3xl border-2 flex items-center justify-center transition-all backdrop-blur-md ${slots[1] ? 'border-transparent' : 'border-dashed border-white/10 bg-white/5 hover:bg-white/10'}`}
                         >
                             {slots[1] && (
                                 <div className="scale-150">
@@ -66,29 +73,38 @@ export const Activity1 = ({ onNext }: ActivityProps) => {
                         <div
                             onDragOver={e => e.preventDefault()}
                             onDrop={e => handleDrop(e, 2, 'wire')}
-                            className={`w-full h-full rounded-2xl border-4 flex items-center justify-center transition-all ${slots[2] ? 'border-transparent' : 'border-dashed border-neutral-200 bg-neutral-50'}`}
+                            className={`w-full h-full rounded-3xl border-2 flex items-center justify-center transition-all backdrop-blur-md ${slots[2] ? 'border-transparent' : 'border-dashed border-white/10 bg-white/5 hover:bg-white/10'}`}
                         >
                             {slots[2] && (
-                                <div className="w-full h-2 bg-gradient-to-r from-orange-400 to-orange-600 rounded-full shadow-[0_0_10px_#f97316]" />
+                                <div className="w-full h-2 bg-gradient-to-r from-orange-400 to-orange-600 rounded-full shadow-[0_0_15px_#f97316]" />
                             )}
                         </div>
                     </foreignObject>
 
                     {/* LED */}
                     <g transform="translate(650, 250)">
-                        <LED3D color="#22c55e" on={success} />
+                        <LED3D color="#10b981" on={success} />
                     </g>
                 </svg>
 
                 {success && (
-                    <div className="absolute top-8 right-8 animate-bounce-in">
-                        <Button onClick={onNext} className="btn-green">Next Level <ArrowRight size={20} className="ml-2" /></Button>
-                    </div>
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="absolute top-8 right-8 z-30"
+                    >
+                        <Button
+                            onClick={onNext}
+                            className="h-16 px-8 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-heading font-black text-xl shadow-lg shadow-emerald-500/20 active:scale-95 transition-all"
+                        >
+                            Next Level <ArrowRight size={24} className="ml-3" />
+                        </Button>
+                    </motion.div>
                 )}
             </div>
 
-            {/* Component Tray */}
-            <div className="h-40 bg-white border-t-2 border-neutral-200 flex items-center justify-center gap-12 z-20 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+            {/* Component Tray - Midnight Minimalist */}
+            <div className="h-44 bg-white/5 border-t border-white/10 flex items-center justify-center gap-12 z-20 backdrop-blur-xl shadow-2xl relative">
                 <DraggableItem
                     type="resistor"
                     label="Resistor"
@@ -99,11 +115,15 @@ export const Activity1 = ({ onNext }: ActivityProps) => {
                     type="wire"
                     label="Wire"
                     disabled={!!slots[2]}
-                    icon={<div className="w-16 h-2 bg-gradient-to-r from-orange-400 to-orange-600 rounded-full" />}
+                    icon={<div className="w-16 h-2 bg-gradient-to-r from-orange-400 to-orange-600 rounded-full shadow-[0_0_10px_rgba(249,115,22,0.3)]" />}
                 />
             </div>
 
-            <VoltBot message={success ? "Electricity flows!" : "Drag the missing pieces!"} state={success ? 'happy' : 'idle'} className="fixed bottom-8 left-8" />
+            <VoltBot
+                message={success ? "Protocol execution successful! Signals are synchronized." : "Drag the components onto the breadboard grid."}
+                state={success ? 'happy' : 'idle'}
+                className="fixed bottom-12 left-12 z-40 scale-110"
+            />
         </div>
     );
 };

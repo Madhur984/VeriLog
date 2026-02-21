@@ -15,6 +15,13 @@ Persistence (Master + Overrides pattern):
 """
 
 import argparse
+import sys
+import io
+
+# Force UTF-8 encoding for stdout
+if sys.stdout.encoding != 'utf-8':
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+
 from core import CSV_CONFIG, AVAILABLE_STACKS, MAX_RESULTS, search, search_stack
 from design_system import generate_design_system, persist_design_system
 

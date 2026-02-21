@@ -53,31 +53,53 @@ export const VoltBot: React.FC<VoltBotProps> = ({ state = 'idle', message, class
                 animate={state}
                 className={cn(
                     "w-16 h-16 rounded-full flex items-center justify-center cursor-pointer shadow-lg border-2 border-white/20",
-                    "bg-gradient-to-br from-slate-700 to-slate-900",
-                    state === 'happy' && "shadow-[0_0_30px_#FFBE0B] border-signal-gold",
-                    state === 'sad' && "shadow-[0_0_15px_#ef4444] border-rose-500",
-                    state === 'speaking' && "shadow-[0_0_30px_#3A86FF]"
+                    "bg-gradient-to-br from-indigo-500 to-indigo-600",
+                    state === 'happy' && "shadow-[0_0_30px_#FFBE0B]",
+                    state === 'sad' && "shadow-[0_0_15px_#ef4444]",
+                    state === 'speaking' && "shadow-[0_0_30px_#818CF8]/40"
                 )}
             >
                 {/* Face Screen */}
-                <div className="w-10 h-8 bg-black rounded-lg flex items-center justify-center overflow-hidden relative">
-                    {/* Eyes */}
-                    <div className="flex space-x-2">
+                <div className="w-10 h-8 bg-indigo-950 rounded-lg flex items-center justify-center overflow-hidden relative">
+                    {/* Expressive Digital Eyes */}
+                    <div className="flex space-x-3">
                         <motion.div
+                            animate={
+                                state === 'happy' ? { scaleY: [1, 0.4, 1], scaleX: [1, 1.2, 1] } :
+                                    state === 'sad' ? { scaleY: 0.3, y: 2 } :
+                                        state === 'thinking' ? { x: [-1, 1, -1], scaleY: [1, 0.6, 1], opacity: [1, 0.6, 1] } :
+                                            state === 'speaking' ? { height: [12, 4, 12] } :
+                                                { scaleY: [1, 0.1, 1] }
+                            }
+                            transition={{
+                                duration: state === 'thinking' ? 1.5 : 3,
+                                repeat: Infinity,
+                                ease: "easeInOut"
+                            }}
                             className={cn(
-                                "w-2 h-3 rounded-full",
-                                (state === 'happy' || state === 'celebrating' as any) ? "bg-signal-gold" :
-                                    state === 'sad' ? "bg-rose-500" : "bg-signal-digital"
+                                "w-2.5 h-4 rounded-full blur-[0.5px] shadow-[0_0_8px_rgba(129,140,248,0.5)] transition-colors duration-500",
+                                state === 'sad' ? "bg-rose-400" :
+                                    (state === 'happy' ? "bg-amber-300" : "bg-indigo-300")
                             )}
-                            animate={state === 'speaking' ? { height: [12, 4, 12] } : {}}
                         />
                         <motion.div
+                            animate={
+                                state === 'happy' ? { scaleY: [1, 0.4, 1], scaleX: [1, 1.2, 1] } :
+                                    state === 'sad' ? { scaleY: 0.3, y: 2 } :
+                                        state === 'thinking' ? { x: [1, -1, 1], scaleY: [1, 0.6, 1], opacity: [1, 0.6, 1] } :
+                                            state === 'speaking' ? { height: [12, 4, 12] } :
+                                                { scaleY: [1, 0.1, 1] }
+                            }
+                            transition={{
+                                duration: state === 'thinking' ? 1.5 : 3,
+                                repeat: Infinity,
+                                ease: "easeInOut"
+                            }}
                             className={cn(
-                                "w-2 h-3 rounded-full",
-                                (state === 'happy' || state === 'celebrating' as any) ? "bg-signal-gold" :
-                                    state === 'sad' ? "bg-rose-500" : "bg-signal-digital"
+                                "w-2.5 h-4 rounded-full blur-[0.5px] shadow-[0_0_8px_rgba(129,140,248,0.5)] transition-colors duration-500",
+                                state === 'sad' ? "bg-rose-400" :
+                                    (state === 'happy' ? "bg-amber-300" : "bg-indigo-300")
                             )}
-                            animate={state === 'speaking' ? { height: [12, 4, 12] } : {}}
                         />
                     </div>
                 </div>

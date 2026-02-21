@@ -26,8 +26,6 @@ export default function App() {
                 <Route path="/training" element={<TrainingCockpitPage />} />
                 <Route path="/assessment" element={<AssessmentPage />} />
                 <Route path="/hero" element={<HeroExperience />} />
-                <Route path="/playground" element={<SignalPlayground />} />
-                <Route path="/gatekeeper" element={<GatekeeperGame />} />
 
                 {/* Catch all */}
                 <Route path="*" element={<Navigate to="/" replace />} />
