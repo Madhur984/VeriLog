@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { X, ChevronRight } from 'lucide-react';
+import { X, ChevronRight, Terminal } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { VoltBot } from '../components/ui/VoltBot';
 import { LogicGateSVG } from '../components/ui/LogicGateSVG';
@@ -14,6 +14,7 @@ interface Question {
     options: string[];
     correctAnswer: string;
     explanation: string;
+    extraInfo?: string[];
 }
 
 const QUESTIONS: Question[] = [
@@ -24,7 +25,13 @@ const QUESTIONS: Question[] = [
         gateType: 'nand',
         options: ['AND', 'OR', 'NAND', 'NOR'],
         correctAnswer: 'NAND',
-        explanation: "AND followed by NOT is NAND. (A ⋅ B)' is the algebraic form."
+        explanation: "AND followed by NOT is NAND. (A ⋅ B)' is the algebraic form.",
+        extraInfo: [
+            "SYS_LOG: NAND gate is universal.",
+            "FACT: 7401 is a quad 2-input NAND gate.",
+            "CALC: Output is LOW only if A=1 AND B=1.",
+            "INFO: Widely used in flash memory (NAND)."
+        ]
     },
     {
         id: 2,
@@ -32,7 +39,14 @@ const QUESTIONS: Question[] = [
         subtext: "How is the decimal number 3 represented in binary signal levels?",
         options: ['10', '11', '01', '00'],
         correctAnswer: '11',
-        explanation: "3 in decimal is 11 in binary. Both bits are HIGH (1)."
+        explanation: "3 in decimal is 11 in binary. Both bits are HIGH (1).",
+        extraInfo: [
+            "SYS_LOG: Converting decimal 3 to binary.",
+            "LSB: Power of 2^0 is 1. (Weight: 1)",
+            "MSB: Power of 2^1 is 2. (Weight: 2)",
+            "FACT: 2+1 = 3. Binary resultant: 11.",
+            "WARNING: Signal saturation detected at level 11."
+        ]
     },
     {
         id: 3,
@@ -41,7 +55,14 @@ const QUESTIONS: Question[] = [
         gateType: 'nand',
         options: ['AND', 'NAND', 'OR', 'XOR'],
         correctAnswer: 'NAND',
-        explanation: "NAND and NOR are universal gates because they can build any other gate."
+        explanation: "NAND and NOR are universal gates because they can build any other gate.",
+        extraInfo: [
+            "ARCH_FILE: All logic is computable via NAND.",
+            "HIST: Apollo Guidance Computer used NOR gates.",
+            "EFFICIENCY: Reducing chip area with universality.",
+            "LOG: NAND(A,A) = NOT(A).",
+            "LOG: NAND(NAND(A,B), NAND(A,B)) = AND(A,B)."
+        ]
     },
     {
         id: 4,
@@ -49,7 +70,14 @@ const QUESTIONS: Question[] = [
         subtext: "What is the result of 8 + 3 in Hexadecimal Notation?",
         options: ['A', 'B', 'C', '11'],
         correctAnswer: 'B',
-        explanation: "8 + 3 = 11. In Hexadecimal, 10=A, 11=B, 12=C..."
+        explanation: "8 + 3 = 11. In Hexadecimal, 10=A, 11=B, 12=C...",
+        extraInfo: [
+            "ADDR_BUS: Hex is base-16 calculation.",
+            "ALU_INPUT: 1000 + 0011 -> 1011 (binary).",
+            "FACT: Memory addresses use base-16 for density.",
+            "SYBIL: 11 in Dec is 'B' in Hex protocol.",
+            "SYS_LOG: Overflow check... Negative. Result valid."
+        ]
     },
     {
         id: 5,
@@ -57,7 +85,14 @@ const QUESTIONS: Question[] = [
         subtext: "What is the binary representation of decimal number 6?",
         options: ['100', '101', '110', '111'],
         correctAnswer: '110',
-        explanation: "6 in binary is 110 (4 + 2 + 0)."
+        explanation: "6 in binary is 110 (4 + 2 + 0).",
+        extraInfo: [
+            "BIN_CORE: Calculating 2^2 + 2^1.",
+            "LOG: 4 + 2 = 6.",
+            "SIGNAL: High-High-Low configuration.",
+            "FACT: Binary 110 is used in parity checks.",
+            "INFO: MSB is left-most bit (4)."
+        ]
     },
     {
         id: 6,
@@ -66,7 +101,14 @@ const QUESTIONS: Question[] = [
         gateType: 'not',
         options: ['0', '1', 'Same as input', 'Undefined'],
         correctAnswer: '1',
-        explanation: "A NOT gate always inverts the signal. 0 becomes 1."
+        explanation: "A NOT gate always inverts the signal. 0 becomes 1.",
+        extraInfo: [
+            "CORE_LOG: Applying NOT(0).",
+            "SIGNAL: Inversion buffer activated.",
+            "HIST: First hex inverters used vacuum tubes.",
+            "LOG: Logic 0 maps to Ground (0V).",
+            "LOG: Logic 1 maps to VCC (5V/3.3V)."
+        ]
     },
     {
         id: 7,
@@ -75,7 +117,14 @@ const QUESTIONS: Question[] = [
         gateType: 'or',
         options: ['AND', 'OR', 'NOT', 'NAND'],
         correctAnswer: 'OR',
-        explanation: "The OR gate outputs HIGH if any or both inputs are HIGH."
+        explanation: "The OR gate outputs HIGH if any or both inputs are HIGH.",
+        extraInfo: [
+            "SYS_LOG: OR gate truth discovery.",
+            "TRUTH_TABLE: 0,1 -> 1 | 1,0 -> 1 | 1,1 -> 1.",
+            "FACT: Paralleled switches represent OR logic.",
+            "INFO: Y = A + B in Boolean notation.",
+            "CALC: Probability of HIGH output: 75%."
+        ]
     },
     {
         id: 8,
@@ -83,7 +132,14 @@ const QUESTIONS: Question[] = [
         subtext: "What is the binary representation of decimal number 9?",
         options: ['1001', '1010', '1100', '1110'],
         correctAnswer: '1001',
-        explanation: "9 in binary is 1001 (8 + 0 + 0 + 1)."
+        explanation: "9 in binary is 1001 (8 + 0 + 0 + 1).",
+        extraInfo: [
+            "LOG: 2^3 + 2^0 = 8 + 1.",
+            "SIGNAL: Pulse-Low-Low-Pulse.",
+            "FACT: Hexadecimal representation is 0x09.",
+            "INFO: 1001 is a palindromic binary number.",
+            "SYS: Validating signal strength... Nominal."
+        ]
     },
     {
         id: 9,
@@ -91,7 +147,14 @@ const QUESTIONS: Question[] = [
         subtext: "Which component limits current in a circuit?",
         options: ['Capacitor', 'Resistor', 'Diode', 'Transistor'],
         correctAnswer: 'Resistor',
-        explanation: "Resistors limit the flow of electrical current to protect components."
+        explanation: "Resistors limit the flow of electrical current to protect components.",
+        extraInfo: [
+            "PHYSICS_LOG: Ohm's Law (V = I * R).",
+            "FACT: Resistor bands indicate resistance value.",
+            "MATERIAL: Carbon film or metal oxide cores.",
+            "SYS: Preventing thermal runaway... Staging.",
+            "INFO: Resistance measured in Ohms (Ω)."
+        ]
     },
     {
         id: 10,
@@ -100,7 +163,14 @@ const QUESTIONS: Question[] = [
         gateType: 'and',
         options: ['0', '1', '2', 'Undefined'],
         correctAnswer: '1',
-        explanation: "An AND gate only outputs HIGH (1) if ALL inputs are HIGH."
+        explanation: "An AND gate only outputs HIGH (1) if ALL inputs are HIGH.",
+        extraInfo: [
+            "LOG: AND gate synchronizer.",
+            "TRUTH: 1 && 1 = 1.",
+            "FACT: Series switches represent AND logic.",
+            "INFO: Multiplication in Boolean algebra.",
+            "CALC: Output is LOW for 3/4 input states."
+        ]
     },
     {
         id: 11,
@@ -108,7 +178,14 @@ const QUESTIONS: Question[] = [
         subtext: "Which device stores energy in an electric field?",
         options: ['Inductor', 'Resistor', 'Capacitor', 'Switch'],
         correctAnswer: 'Capacitor',
-        explanation: "Capacitors store energy in the electric field between two conductive plates."
+        explanation: "Capacitors store energy in the electric field between two conductive plates.",
+        extraInfo: [
+            "LOG: Capacitance = Charge / Voltage.",
+            "FACT: Farad is the unit of capacitance.",
+            "USAGE: Smoothing power supply ripples.",
+            "INFO: Blocking DC while allowing AC.",
+            "SYS: Charge time constant RC = R * C."
+        ]
     },
     {
         id: 12,
@@ -116,7 +193,14 @@ const QUESTIONS: Question[] = [
         subtext: "What is the decimal value of binary 1000?",
         options: ['6', '7', '8', '9'],
         correctAnswer: '8',
-        explanation: "In binary, 1000 represents 2^3, which equals 8."
+        explanation: "In binary, 1000 represents 2^3, which equals 8.",
+        extraInfo: [
+            "DATA_CORE: 4th bit (MSB) weigh: 8.",
+            "INFO: 1000 is a perfect power of 2.",
+            "LOG: Byte slice detected: [1000xxxx].",
+            "FACT: Often used as a base step in cycles.",
+            "SYS_LOG: Read operation successful at addr 0008."
+        ]
     },
     {
         id: 13,
@@ -125,7 +209,14 @@ const QUESTIONS: Question[] = [
         gateType: 'nand',
         options: ['AND', 'OR', 'NAND', 'XOR'],
         correctAnswer: 'NAND',
-        explanation: "NAND is 'NOT AND'. Since AND is 1 for all 1s, NAND is 0 for all 1s."
+        explanation: "NAND is 'NOT AND'. Since AND is 1 for all 1s, NAND is 0 for all 1s.",
+        extraInfo: [
+            "SYS_LOG: NAND exception handling.",
+            "TRUTH_TABLE: (1,1) -> 0.",
+            "FACT: Building blocks of modern SSDs.",
+            "INFO: Negative-AND logic implementation.",
+            "CALC: Boolean Y = !(A & B)."
+        ]
     },
     {
         id: 14,
@@ -133,7 +224,14 @@ const QUESTIONS: Question[] = [
         subtext: "What is the primary function of a diode?",
         options: ['Amplifies signal', 'Stores charge', 'Allows current in one direction', 'Increases voltage'],
         correctAnswer: 'Allows current in one direction',
-        explanation: "A diode acts as a one-way valve, allowing current to flow in only one direction."
+        explanation: "A diode acts as a one-way valve, allowing current to flow in only one direction.",
+        extraInfo: [
+            "PHYSICS_LOG: PN Junction dynamics.",
+            "FACT: Forward bias vs Reverse bias.",
+            "USAGE: Rectification (AC to DC).",
+            "INFO: Breakdown voltage threshold check.",
+            "LOG: Typical drop: 0.7V for Silicon."
+        ]
     },
     {
         id: 15,
@@ -141,7 +239,14 @@ const QUESTIONS: Question[] = [
         subtext: "What is the result of 5 + 5 in hexadecimal?",
         options: ['A', 'B', 'C', 'D'],
         correctAnswer: 'A',
-        explanation: "5 + 5 = 10. In hex, the value 10 is represented by 'A'."
+        explanation: "5 + 5 = 10. In hex, the value 10 is represented by 'A'.",
+        extraInfo: [
+            "ALU_LOG: 0101 + 0101 = 1010.",
+            "HEX: 1010 maps to 'A'.",
+            "FACT: Hex uses letters A-F for 10-15.",
+            "INFO: Base-16 system prevents overflow error.",
+            "SYS: Validating carry out... Zero."
+        ]
     },
     {
         id: 16,
@@ -151,6 +256,13 @@ const QUESTIONS: Question[] = [
         options: ['AND', 'XOR', 'OR', 'NOR'],
         correctAnswer: 'XOR',
         explanation: "The XOR (Exclusive OR) gate outputs 1 if exactly one input is 1.",
+        extraInfo: [
+            "LOG: XOR parity generator.",
+            "TRUTH: (0,1)->1 | (1,0)->1 | (0,0)->0 | (1,1)->0.",
+            "FACT: Foundation of half-adders.",
+            "INFO: Difference detector in circuits.",
+            "CALC: Binary addition without carry."
+        ]
     }
 ];
 
@@ -315,10 +427,10 @@ export const AssessmentPage: React.FC = () => {
                         </div>
 
                         {/* Right: Visualization & Bot Guidance & Controls */}
-                        <div className="flex flex-col space-y-8">
-                            {/* Gate visualization Section */}
-                            <div className="bg-white/5 rounded-[48px] p-8 border border-white/10 shadow-2xl shadow-black/20 backdrop-blur-xl flex flex-col items-center justify-center min-h-[360px]">
-                                {question.gateType && (
+                        <div className="flex flex-col space-y-8 h-full">
+                            {/* Gate visualization / Info Log Section */}
+                            <div className="bg-white/5 rounded-[48px] p-8 border border-white/10 shadow-2xl shadow-black/20 backdrop-blur-xl flex flex-col items-center justify-center min-h-[360px] relative overflow-hidden flex-1 group">
+                                {question.gateType ? (
                                     <motion.div
                                         initial={{ opacity: 0, scale: 0.9 }}
                                         animate={{ opacity: 1, scale: 1 }}
@@ -330,11 +442,38 @@ export const AssessmentPage: React.FC = () => {
                                             className="bg-transparent border-none shadow-none backdrop-blur-none"
                                         />
                                     </motion.div>
+                                ) : (
+                                    <div className="w-full h-full flex flex-col">
+                                        <div className="flex items-center space-x-2 mb-6 text-purple-400/60 border-b border-purple-500/20 pb-4">
+                                            <Terminal className="w-4 h-4" />
+                                            <span className="font-mono text-[10px] uppercase tracking-[0.2em]">System_Lore_Logs v4.0</span>
+                                        </div>
+                                        <div className="flex-1 overflow-y-auto pr-4 scrollbar-thin scrollbar-thumb-purple-500/20 scrollbar-track-transparent">
+                                            <div className="space-y-4">
+                                                {question.extraInfo?.map((info, idx) => (
+                                                    <motion.div
+                                                        key={idx}
+                                                        initial={{ opacity: 0, x: -10 }}
+                                                        animate={{ opacity: 1, x: 0 }}
+                                                        transition={{ delay: idx * 0.1 }}
+                                                        className="flex items-start space-x-4 group/item"
+                                                    >
+                                                        <span className="text-[10px] font-mono text-purple-500/40 mt-1">[{idx.toString().padStart(2, '0')}]</span>
+                                                        <p className="text-sm font-mono text-purple-300/80 leading-relaxed group-hover/item:text-purple-300 transition-colors">
+                                                            {info}
+                                                        </p>
+                                                    </motion.div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                        {/* Ambient glow for the info log */}
+                                        <div className="absolute inset-0 bg-gradient-to-b from-purple-500/0 via-purple-500/0 to-purple-500/5 pointer-events-none" />
+                                    </div>
                                 )}
                             </div>
 
                             {/* Bot & Integrated Controls Section */}
-                            <div className="flex-1 flex flex-col items-center justify-between space-y-8 bg-white/5 rounded-[48px] p-10 border border-white/10 shadow-2xl shadow-black/20 backdrop-blur-xl transition-all">
+                            <div className="flex flex-col items-center justify-between space-y-8 bg-white/5 rounded-[48px] p-10 border border-white/10 shadow-2xl shadow-black/20 backdrop-blur-xl transition-all">
                                 <VoltBot
                                     state={botState}
                                     message={botMessage}
