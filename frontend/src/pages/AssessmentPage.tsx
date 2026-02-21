@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { X, ChevronRight, Terminal } from 'lucide-react';
+import { X, ChevronRight, Terminal, Sparkles, Zap, ArrowRight } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { VoltBot } from '../components/ui/VoltBot';
 import { LogicGateSVG } from '../components/ui/LogicGateSVG';
@@ -274,6 +274,7 @@ export const AssessmentPage: React.FC = () => {
     const [isCorrect, setIsCorrect] = useState(false);
     const [botState, setBotState] = useState<'idle' | 'speaking' | 'happy' | 'sad' | 'thinking'>('speaking');
     const [botMessage, setBotMessage] = useState("Educational module initialized. Ready for logic verification.");
+    const [successStep, setSuccessStep] = useState<0 | 1 | 2>(0);
 
     const question = QUESTIONS[currentStep];
 
@@ -315,12 +316,12 @@ export const AssessmentPage: React.FC = () => {
             setBotState('speaking');
             setBotMessage("Loading next data packet...");
         } else {
-            navigate('/home');
+            setSuccessStep(1);
         }
     };
 
     useEffect(() => {
-        if (!isAnswered) {
+        if (!isAnswered && successStep === 0) {
             if (selectedOption) {
                 setBotState('thinking');
                 setBotMessage("Analyzing selection... silicon gates are shifting!");
@@ -332,7 +333,7 @@ export const AssessmentPage: React.FC = () => {
                 setBotMessage(hint);
             }
         }
-    }, [selectedOption, isAnswered, question.gateType]);
+    }, [selectedOption, isAnswered, question.gateType, successStep]);
 
     return (
         <div className="h-screen bg-background flex flex-col font-sans overflow-hidden relative selection:bg-indigo-500/10 text-foreground">
@@ -342,167 +343,280 @@ export const AssessmentPage: React.FC = () => {
                 <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-500/5 blur-[120px] rounded-full translate-y-1/2 -translate-x-1/2" />
             </div>
 
-            {/* Progress Header - Floating & Minimal */}
-            <header className="relative z-20 max-w-6xl w-full mx-auto pt-8 px-8 flex items-center space-x-8">
-                <button
-                    onClick={() => navigate('/home')}
-                    className="p-3 bg-white/5 border border-white/10 rounded-2xl text-indigo-400 hover:text-indigo-300 transition-all hover:bg-white/10 active:scale-95"
-                >
-                    <X className="w-5 h-5" />
-                </button>
-                <div className="flex-1 h-2 bg-white/5 rounded-full overflow-hidden">
+            <AnimatePresence mode="wait">
+                {successStep === 0 ? (
                     <motion.div
-                        initial={{ width: 0 }}
-                        animate={{ width: `${((currentStep) / QUESTIONS.length) * 100}%` }}
-                        className="h-full bg-indigo-500 transition-all duration-700 shadow-[0_0_15px_rgba(99,102,241,0.5)]"
-                    />
-                </div>
-                <div className="px-5 py-2 rounded-2xl bg-white/5 border border-white/10">
-                    <span className="text-xs font-heading font-bold text-indigo-400 tracking-wide">
-                        Unit {currentStep + 1} of {QUESTIONS.length}
-                    </span>
-                </div>
-            </header>
-
-            {/* Main Interactive Stage - Dark Minimalist */}
-            <main className="relative z-10 flex-1 max-w-6xl w-full mx-auto px-8 py-2 flex flex-col justify-center overflow-hidden">
-                <AnimatePresence mode="wait">
-                    <motion.div
-                        key={currentStep}
-                        initial={{ opacity: 0, scale: 0.99, y: 5 }}
-                        animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 1.01, y: -5 }}
-                        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                        className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"
+                        key="quiz"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0, scale: 1.1, filter: 'blur(20px)' }}
+                        className="flex-1 flex flex-col"
                     >
-                        {/* Left: Content & Interaction */}
-                        <div className="space-y-8">
-                            <div className="space-y-4">
+                        {/* Progress Header */}
+                        <header className="relative z-20 max-w-6xl w-full mx-auto pt-8 px-8 flex items-center space-x-8">
+                            <button
+                                onClick={() => navigate('/home')}
+                                className="p-3 bg-white/5 border border-white/10 rounded-2xl text-indigo-400 hover:text-indigo-300 transition-all hover:bg-white/10 active:scale-95"
+                            >
+                                <X className="w-5 h-5" />
+                            </button>
+                            <div className="flex-1 h-2 bg-white/5 rounded-full overflow-hidden">
                                 <motion.div
-                                    initial={{ opacity: 0, x: -10 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    className="flex items-center space-x-3"
+                                    initial={{ width: 0 }}
+                                    animate={{ width: `${((currentStep) / QUESTIONS.length) * 100}%` }}
+                                    className="h-full bg-indigo-500 transition-all duration-700 shadow-[0_0_15px_rgba(99,102,241,0.5)]"
+                                />
+                            </div>
+                            <div className="px-5 py-2 rounded-2xl bg-white/5 border border-white/10">
+                                <span className="text-xs font-heading font-bold text-indigo-400 tracking-wide">
+                                    Unit {currentStep + 1} of {QUESTIONS.length}
+                                </span>
+                            </div>
+                        </header>
+
+                        <main className="relative z-10 flex-1 max-w-6xl w-full mx-auto px-8 py-2 flex flex-col justify-center overflow-hidden">
+                            <AnimatePresence mode="wait">
+                                <motion.div
+                                    key={currentStep}
+                                    initial={{ opacity: 0, scale: 0.99, y: 5 }}
+                                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                                    exit={{ opacity: 0, scale: 1.01, y: -5 }}
+                                    transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                                    className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"
                                 >
-                                    <div className="w-1.5 h-3.5 bg-indigo-500 rounded-full shadow-[0_0_10px_rgba(99,102,241,0.5)]" />
-                                    <span className="text-xs font-heading font-bold text-indigo-400/80 tracking-widest uppercase">Logic Verification Phase</span>
-                                </motion.div>
-                                <h1 className="text-5xl font-heading font-bold text-white leading-tight tracking-tight">
-                                    {question.text}
-                                </h1>
-                                <p className="text-xl text-slate-400 font-medium max-w-lg leading-relaxed">
-                                    {question.subtext}
-                                </p>
-                            </div>
-
-                            {/* Option Grid - Dark buttons */}
-                            <div className="grid grid-cols-1 gap-3 max-w-md">
-                                {question.options.map((option) => (
-                                    <button
-                                        key={option}
-                                        disabled={isAnswered}
-                                        onClick={() => setSelectedOption(option)}
-                                        className={cn(
-                                            "relative p-6 rounded-[24px] border transition-all text-left group overflow-hidden bg-white/5 backdrop-blur-sm",
-                                            selectedOption === option
-                                                ? "border-indigo-500 ring-4 ring-indigo-500/20 bg-indigo-500/10"
-                                                : "border-white/5 text-slate-400 hover:border-white/10 hover:bg-white/10",
-                                            isAnswered && option === question.correctAnswer && "border-emerald-500/50 bg-emerald-500/10 !text-emerald-400",
-                                            isAnswered && selectedOption === option && selectedOption !== question.correctAnswer && "border-rose-500/50 bg-rose-500/10 !text-rose-400"
-                                        )}
-                                    >
-                                        <div className="flex items-center relative z-10">
-                                            <span className={cn(
-                                                "w-10 h-10 rounded-xl flex items-center justify-center mr-5 font-heading font-bold text-sm border transition-all",
-                                                selectedOption === option ? "bg-indigo-500 border-indigo-400 text-white" : "bg-white/5 border-white/10 text-indigo-400"
-                                            )}>
-                                                {option.charAt(0)}
-                                            </span>
-                                            <span className="font-heading font-bold text-xl tracking-tight">
-                                                {option}
-                                            </span>
+                                    {/* Left Content */}
+                                    <div className="space-y-8">
+                                        <div className="space-y-4">
+                                            <motion.div
+                                                initial={{ opacity: 0, x: -10 }}
+                                                animate={{ opacity: 1, x: 0 }}
+                                                className="flex items-center space-x-3"
+                                            >
+                                                <div className="w-1.5 h-3.5 bg-indigo-500 rounded-full shadow-[0_0_10px_rgba(99,102,241,0.5)]" />
+                                                <span className="text-xs font-heading font-bold text-indigo-400/80 tracking-widest uppercase">Logic Verification Phase</span>
+                                            </motion.div>
+                                            <h1 className="text-5xl font-heading font-bold text-white leading-tight tracking-tight">
+                                                {question.text}
+                                            </h1>
+                                            <p className="text-xl text-slate-400 font-medium max-w-lg leading-relaxed">
+                                                {question.subtext}
+                                            </p>
                                         </div>
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
 
-                        {/* Right: Visualization & Bot Guidance & Controls */}
-                        <div className="flex flex-col space-y-8 h-full">
-                            {/* Gate visualization / Info Log Section */}
-                            <div className="bg-white/5 rounded-[48px] p-8 border border-white/10 shadow-2xl shadow-black/20 backdrop-blur-xl flex flex-col items-center justify-center min-h-[360px] relative overflow-hidden flex-1 group">
-                                {question.gateType ? (
-                                    <motion.div
-                                        initial={{ opacity: 0, scale: 0.9 }}
-                                        animate={{ opacity: 1, scale: 1 }}
-                                        className="w-full max-w-[400px]"
-                                    >
-                                        <LogicGateSVG
-                                            type={question.gateType}
-                                            interactionState={isAnswered ? (isCorrect ? 'success' : 'error') : (selectedOption ? 'active' : 'idle')}
-                                            className="bg-transparent border-none shadow-none backdrop-blur-none"
-                                        />
-                                    </motion.div>
-                                ) : (
-                                    <div className="w-full h-full flex flex-col">
-                                        <div className="flex items-center space-x-2 mb-6 text-purple-400/60 border-b border-purple-500/20 pb-4">
-                                            <Terminal className="w-4 h-4" />
-                                            <span className="font-mono text-[10px] uppercase tracking-[0.2em]">System_Lore_Logs v4.0</span>
+                                        <div className="grid grid-cols-1 gap-3 max-w-md">
+                                            {question.options.map((option) => (
+                                                <button
+                                                    key={option}
+                                                    disabled={isAnswered}
+                                                    onClick={() => setSelectedOption(option)}
+                                                    className={cn(
+                                                        "relative p-6 rounded-[24px] border transition-all text-left group overflow-hidden bg-white/5 backdrop-blur-sm",
+                                                        selectedOption === option
+                                                            ? "border-indigo-500 ring-4 ring-indigo-500/20 bg-indigo-500/10"
+                                                            : "border-white/5 text-slate-400 hover:border-white/10 hover:bg-white/10",
+                                                        isAnswered && option === question.correctAnswer && "border-emerald-500/50 bg-emerald-500/10 !text-emerald-400",
+                                                        isAnswered && selectedOption === option && selectedOption !== question.correctAnswer && "border-rose-500/50 bg-rose-500/10 !text-rose-400"
+                                                    )}
+                                                >
+                                                    <div className="flex items-center relative z-10">
+                                                        <span className={cn(
+                                                            "w-10 h-10 rounded-xl flex items-center justify-center mr-5 font-heading font-bold text-sm border transition-all",
+                                                            selectedOption === option ? "bg-indigo-500 border-indigo-400 text-white" : "bg-white/5 border-white/10 text-indigo-400"
+                                                        )}>
+                                                            {option.charAt(0)}
+                                                        </span>
+                                                        <span className="font-heading font-bold text-xl tracking-tight">
+                                                            {option}
+                                                        </span>
+                                                    </div>
+                                                </button>
+                                            ))}
                                         </div>
-                                        <div className="flex-1 overflow-y-auto pr-4 scrollbar-thin scrollbar-thumb-purple-500/20 scrollbar-track-transparent">
-                                            <div className="space-y-4">
-                                                {question.extraInfo?.map((info, idx) => (
-                                                    <motion.div
-                                                        key={idx}
-                                                        initial={{ opacity: 0, x: -10 }}
-                                                        animate={{ opacity: 1, x: 0 }}
-                                                        transition={{ delay: idx * 0.1 }}
-                                                        className="flex items-start space-x-4 group/item"
-                                                    >
-                                                        <span className="text-[10px] font-mono text-purple-500/40 mt-1">[{idx.toString().padStart(2, '0')}]</span>
-                                                        <p className="text-sm font-mono text-purple-300/80 leading-relaxed group-hover/item:text-purple-300 transition-colors">
-                                                            {info}
-                                                        </p>
-                                                    </motion.div>
-                                                ))}
+                                    </div>
+
+                                    {/* Right Content */}
+                                    <div className="flex flex-col space-y-8 h-full">
+                                        <div className="bg-white/5 rounded-[48px] p-8 border border-white/10 shadow-2xl shadow-black/20 backdrop-blur-xl flex flex-col items-center justify-center min-h-[360px] relative overflow-hidden flex-1 group">
+                                            {question.gateType ? (
+                                                <motion.div
+                                                    initial={{ opacity: 0, scale: 0.9 }}
+                                                    animate={{ opacity: 1, scale: 1 }}
+                                                    className="w-full max-w-[400px]"
+                                                >
+                                                    <LogicGateSVG
+                                                        type={question.gateType}
+                                                        interactionState={isAnswered ? (isCorrect ? 'success' : 'error') : (selectedOption ? 'active' : 'idle')}
+                                                        className="bg-transparent border-none shadow-none backdrop-blur-none"
+                                                    />
+                                                </motion.div>
+                                            ) : (
+                                                <div className="w-full h-full flex flex-col">
+                                                    <div className="flex items-center space-x-2 mb-6 text-purple-400/60 border-b border-purple-500/20 pb-4">
+                                                        <Terminal className="w-4 h-4" />
+                                                        <span className="font-mono text-[10px] uppercase tracking-[0.2em]">System_Lore_Logs v4.0</span>
+                                                    </div>
+                                                    <div className="flex-1 overflow-y-auto pr-4 scrollbar-thin scrollbar-thumb-purple-500/20 scrollbar-track-transparent">
+                                                        <div className="space-y-4">
+                                                            {question.extraInfo?.map((info, idx) => (
+                                                                <motion.div
+                                                                    key={idx}
+                                                                    initial={{ opacity: 0, x: -10 }}
+                                                                    animate={{ opacity: 1, x: 0 }}
+                                                                    transition={{ delay: idx * 0.1 }}
+                                                                    className="flex items-start space-x-4 group/item"
+                                                                >
+                                                                    <span className="text-[10px] font-mono text-purple-500/40 mt-1">[{idx.toString().padStart(2, '0')}]</span>
+                                                                    <p className="text-sm font-mono text-purple-300/80 leading-relaxed group-hover/item:text-purple-300 transition-colors">
+                                                                        {info}
+                                                                    </p>
+                                                                </motion.div>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                    <div className="absolute inset-0 bg-gradient-to-b from-purple-500/0 via-purple-500/0 to-purple-500/5 pointer-events-none" />
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        <div className="flex flex-col items-center justify-between space-y-8 bg-white/5 rounded-[48px] p-10 border border-white/10 shadow-2xl shadow-black/20 backdrop-blur-xl transition-all">
+                                            <VoltBot
+                                                state={botState}
+                                                message={botMessage}
+                                                className="scale-110 !static"
+                                            />
+                                            <div className="w-full max-w-sm pt-8 border-t border-white/5">
+                                                <button
+                                                    onClick={isAnswered ? handleContinue : handleCheck}
+                                                    disabled={!selectedOption}
+                                                    className={cn(
+                                                        "group relative w-full h-20 rounded-[2rem] font-heading font-black text-2xl flex items-center justify-center overflow-hidden transition-all active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed shadow-xl",
+                                                        !isAnswered
+                                                            ? "bg-indigo-600 text-white hover:bg-indigo-500 shadow-indigo-500/20"
+                                                            : (isCorrect ? "bg-emerald-600 text-white hover:bg-emerald-500 shadow-emerald-500/20" : "bg-rose-600 text-white hover:bg-rose-500 shadow-rose-500/20")
+                                                    )}
+                                                >
+                                                    <span className="relative z-10 flex items-center tracking-tight">
+                                                        {isAnswered ? "Continue Path" : "Verify Logic"}
+                                                        <ChevronRight className="ml-3 w-7 h-7 group-hover:translate-x-1.5 transition-transform" />
+                                                    </span>
+                                                </button>
                                             </div>
                                         </div>
-                                        {/* Ambient glow for the info log */}
-                                        <div className="absolute inset-0 bg-gradient-to-b from-purple-500/0 via-purple-500/0 to-purple-500/5 pointer-events-none" />
                                     </div>
-                                )}
-                            </div>
-
-                            {/* Bot & Integrated Controls Section */}
-                            <div className="flex flex-col items-center justify-between space-y-8 bg-white/5 rounded-[48px] p-10 border border-white/10 shadow-2xl shadow-black/20 backdrop-blur-xl transition-all">
-                                <VoltBot
-                                    state={botState}
-                                    message={botMessage}
-                                    className="scale-110 !static"
-                                />
-
-                                {/* Integrated Action Button */}
-                                <div className="w-full max-w-sm pt-8 border-t border-white/5">
-                                    <button
-                                        onClick={isAnswered ? handleContinue : handleCheck}
-                                        disabled={!selectedOption}
-                                        className={cn(
-                                            "group relative w-full h-20 rounded-[2rem] font-heading font-black text-2xl flex items-center justify-center overflow-hidden transition-all active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed shadow-xl",
-                                            !isAnswered
-                                                ? "bg-indigo-600 text-white hover:bg-indigo-500 shadow-indigo-500/20"
-                                                : (isCorrect ? "bg-emerald-600 text-white hover:bg-emerald-500 shadow-emerald-500/20" : "bg-rose-600 text-white hover:bg-rose-500 shadow-rose-500/20")
-                                        )}
-                                    >
-                                        <span className="relative z-10 flex items-center tracking-tight">
-                                            {isAnswered ? "Continue Path" : "Verify Logic"}
-                                            <ChevronRight className="ml-3 w-7 h-7 group-hover:translate-x-1.5 transition-transform" />
-                                        </span>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+                                </motion.div>
+                            </AnimatePresence>
+                        </main>
                     </motion.div>
-                </AnimatePresence>
-            </main>
+                ) : successStep === 1 ? (
+                    <motion.div
+                        key="success1"
+                        initial={{ opacity: 0, y: 100 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.8, filter: 'blur(20px)' }}
+                        className="flex-1 flex flex-col items-center justify-center px-12 text-center relative pointer-events-auto z-50 overflow-hidden"
+                    >
+                        {/* Particles/Sparkles */}
+                        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                            {[...Array(20)].map((_, i) => (
+                                <motion.div
+                                    key={i}
+                                    initial={{
+                                        x: Math.random() * window.innerWidth,
+                                        y: window.innerHeight + 100,
+                                        scale: Math.random() * 0.5 + 0.5
+                                    }}
+                                    animate={{
+                                        y: -200,
+                                        transition: {
+                                            duration: Math.random() * 3 + 2,
+                                            repeat: Infinity,
+                                            delay: Math.random() * 2
+                                        }
+                                    }}
+                                    className="absolute w-1 h-1 bg-indigo-500/30 rounded-full blur-[1px]"
+                                />
+                            ))}
+                        </div>
+
+                        <motion.div
+                            initial={{ scale: 0.5, rotate: -10 }}
+                            animate={{ scale: 1, rotate: 0 }}
+                            transition={{ type: 'spring', damping: 12 }}
+                            className="bg-indigo-500/20 p-8 rounded-[48px] border border-indigo-500/30 mb-12 shadow-[0_0_50px_rgba(99,102,241,0.2)]"
+                        >
+                            <Sparkles className="w-24 h-24 text-indigo-400" />
+                        </motion.div>
+
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.3 }}
+                            className="space-y-6 max-w-3xl"
+                        >
+                            <h2 className="text-7xl font-heading font-black text-white leading-none tracking-tightest uppercase">
+                                Great job <span className="text-indigo-400">Scientist!</span>
+                            </h2>
+                            <p className="text-3xl text-slate-400 font-medium leading-relaxed">
+                                You have overcome the fear of starting. The circuit is now complete.
+                            </p>
+                        </motion.div>
+
+                        <motion.button
+                            initial={{ opacity: 0, y: 40 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.8 }}
+                            onClick={() => setSuccessStep(2)}
+                            className="mt-16 group flex items-center px-12 py-6 bg-white text-black font-heading font-black text-2xl rounded-full hover:bg-indigo-500 hover:text-white transition-all transform hover:scale-105 active:scale-95 shadow-[0_20px_40px_rgba(255,255,255,0.1)]"
+                        >
+                            <span>Initiate Next Phase</span>
+                            <Zap className="ml-3 w-6 h-6 fill-current group-hover:animate-pulse" />
+                        </motion.button>
+                    </motion.div>
+                ) : (
+                    <motion.div
+                        key="success2"
+                        initial={{ opacity: 0, x: 200 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        className="flex-1 flex flex-col items-center justify-center px-12 text-center relative z-50 overflow-hidden"
+                    >
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            className="bg-purple-500/20 p-10 rounded-full border border-purple-500/30 mb-8"
+                        >
+                            <VoltBot state="happy" className="scale-150" />
+                        </motion.div>
+
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.3 }}
+                            className="space-y-8 max-w-4xl"
+                        >
+                            <h2 className="text-6xl font-heading font-black text-white leading-tight uppercase tracking-tightest">
+                                Protocol <span className="text-purple-400">Ascension</span>
+                            </h2>
+                            <p className="text-3xl text-slate-400 font-medium leading-relaxed max-w-2xl mx-auto">
+                                Now as you have decided and overcame a challenge, let's go further to the real world.
+                            </p>
+                        </motion.div>
+
+                        <motion.button
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ delay: 1 }}
+                            onClick={() => navigate('/home')}
+                            className="mt-16 group relative flex items-center px-16 py-8 bg-indigo-600 text-white font-heading font-black text-3xl rounded-[2.5rem] hover:bg-indigo-500 transition-all shadow-[0_0_60px_rgba(99,102,241,0.4)]"
+                        >
+                            <span className="relative z-10 flex items-center">
+                                ENTER REAL WORLD
+                                <ArrowRight className="ml-4 w-8 h-8 group-hover:translate-x-2 transition-transform" />
+                            </span>
+                            <div className="absolute inset-0 bg-gradient-to-r from-blue-600/0 via-white/10 to-blue-600/0 opacity-0 group-hover:opacity-100 transition-opacity animate-shimmer" />
+                        </motion.button>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 };
