@@ -160,7 +160,7 @@ export const LogicGateSVG: React.FC<LogicGateSVGProps> = ({
 
     return (
         <div className={cn(
-            "relative w-full max-w-[400px] aspect-video flex items-center justify-center rounded-[32px] overflow-hidden group transition-all duration-500",
+            "relative w-full max-w-[400px] aspect-video flex items-center justify-center rounded-xl overflow-hidden group transition-all duration-500",
             className
         )}>
             <motion.svg

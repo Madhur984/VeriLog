@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { X, ChevronRight, Terminal, Sparkles, Zap, ArrowRight, Trophy } from 'lucide-react';
+import { X, ChevronRight, Terminal, ArrowRight, Trophy } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { VoltBot } from '../components/ui/VoltBot';
 import { LogicGateSVG } from '../components/ui/LogicGateSVG';
@@ -411,7 +411,7 @@ export const AssessmentPage: React.FC = () => {
                                                     disabled={isAnswered}
                                                     onClick={() => setSelectedOption(option)}
                                                     className={cn(
-                                                        "relative p-6 rounded-[24px] border transition-all text-left group overflow-hidden bg-white/5 backdrop-blur-sm",
+                                                        "relative p-6 rounded-xl border transition-all text-left group overflow-hidden bg-white/5 backdrop-blur-sm",
                                                         selectedOption === option
                                                             ? "border-indigo-500 ring-4 ring-indigo-500/20 bg-indigo-500/10"
                                                             : "border-white/5 text-slate-400 hover:border-white/10 hover:bg-white/10",
@@ -437,7 +437,7 @@ export const AssessmentPage: React.FC = () => {
 
                                     {/* Right Content */}
                                     <div className="flex flex-col space-y-8 h-full">
-                                        <div className="bg-white/5 rounded-[48px] p-8 border border-white/10 shadow-2xl shadow-black/20 backdrop-blur-xl flex flex-col items-center justify-center min-h-[360px] relative overflow-hidden flex-1 group">
+                                        <div className="bg-white/5 rounded-2xl p-8 border border-white/10 shadow-2xl shadow-black/20 backdrop-blur-xl flex flex-col items-center justify-center min-h-[360px] relative overflow-hidden flex-1 group">
                                             {question.gateType ? (
                                                 <motion.div
                                                     initial={{ opacity: 0, scale: 0.9 }}
@@ -479,7 +479,7 @@ export const AssessmentPage: React.FC = () => {
                                             )}
                                         </div>
 
-                                        <div className="flex flex-col items-center justify-between space-y-8 bg-white/5 rounded-[48px] p-10 border border-white/10 shadow-2xl shadow-black/20 backdrop-blur-xl transition-all">
+                                        <div className="flex flex-col items-center justify-between space-y-8 bg-white/5 rounded-2xl p-10 border border-white/10 shadow-2xl shadow-black/20 backdrop-blur-xl transition-all">
                                             <VoltBot
                                                 state={botState}
                                                 message={botMessage}
@@ -490,7 +490,7 @@ export const AssessmentPage: React.FC = () => {
                                                     onClick={isAnswered ? handleContinue : handleCheck}
                                                     disabled={!selectedOption}
                                                     className={cn(
-                                                        "group relative w-full h-20 rounded-[2rem] font-heading font-black text-2xl flex items-center justify-center overflow-hidden transition-all active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed shadow-xl",
+                                                        "group relative w-full h-16 rounded-xl font-heading font-black text-xl flex items-center justify-center overflow-hidden transition-all active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed shadow-xl",
                                                         !isAnswered
                                                             ? "bg-indigo-600 text-white hover:bg-indigo-500 shadow-indigo-500/20"
                                                             : (isCorrect ? "bg-emerald-600 text-white hover:bg-emerald-500 shadow-emerald-500/20" : "bg-rose-600 text-white hover:bg-rose-500 shadow-rose-500/20")
@@ -539,7 +539,7 @@ export const AssessmentPage: React.FC = () => {
                                                 rotate: [0, 5, -5, 0]
                                             }}
                                             transition={{ repeat: Infinity, duration: 4 }}
-                                            className="bg-primary/20 p-8 rounded-[48px] border border-primary/30 shadow-[0_0_50px_rgba(58,134,255,0.2)]"
+                                            className="bg-primary/20 p-8 rounded-2xl border border-primary/30 shadow-[0_0_50px_rgba(58,134,255,0.2)]"
                                         >
                                             <Trophy className="w-20 h-20 text-primary" />
                                         </motion.div>
@@ -586,7 +586,7 @@ export const AssessmentPage: React.FC = () => {
                                         transition={{ delay: 1 }}
                                         className="pt-12"
                                     >
-                                        <button className="group relative px-16 py-8 bg-primary text-background font-heading font-black text-3xl rounded-[2.5rem] overflow-hidden shadow-glow-primary hover:scale-105 transition-all">
+                                        <button className="group relative px-12 py-6 bg-primary text-background font-heading font-black text-2xl rounded-xl overflow-hidden shadow-glow-primary hover:scale-105 transition-all">
                                             <span className="relative z-10 flex items-center">
                                                 ENTER REAL WORLD <ArrowRight className="ml-4 w-10 h-10 group-hover:translate-x-2 transition-transform" />
                                             </span>

@@ -38,7 +38,7 @@ export const VoltBot: React.FC<VoltBotProps> = ({ state = 'idle', message, class
                         initial={{ opacity: 0, y: 10, scale: 0.8 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.8 }}
-                        className="absolute bottom-full mb-4 left-1/2 -translate-x-1/2 w-64 p-4 bg-white/95 backdrop-blur text-slate-900 rounded-2xl rounded-bl-none shadow-xl border-2 border-primary z-20"
+                        className="absolute bottom-full mb-4 left-1/2 -translate-x-1/2 w-64 p-4 bg-white/95 backdrop-blur text-slate-900 rounded-xl rounded-bl-none shadow-xl border-2 border-primary z-20"
                     >
                         <p className="font-heading font-semibold text-sm leading-relaxed">
                             {message}

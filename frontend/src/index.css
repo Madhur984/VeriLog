@@ -39,7 +39,7 @@
         --border: 215 25% 15%;
         --input: 215 25% 15%;
         --ring: 217 91% 60%;
-        --radius: 1rem;
+        --radius: 0.5rem;
 
         /* Semantic Signal Colors - Adjusted for Dark Mode Contrast */
         --signal-analog: 271 70% 65%;
@@ -58,11 +58,11 @@
 
     body {
         @apply bg-background text-foreground font-sans;
-        font-family: 'Archivo', sans-serif;
+        font-family: 'Inter', sans-serif;
     }
 
     .font-heading {
-        font-family: 'Space Grotesk', sans-serif;
+        font-family: 'Inter', sans-serif;
     }
 
     .font-mono {

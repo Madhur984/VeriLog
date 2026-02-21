@@ -101,7 +101,7 @@ export const HeroExperience = () => {
 
                         <button
                             onClick={() => navigate('/playground')}
-                            className="group relative px-8 py-4 bg-primary text-background font-bold rounded-full overflow-hidden shadow-glow-primary hover:scale-105 transition-transform"
+                            className="group relative px-8 py-4 bg-primary text-background font-bold rounded-xl overflow-hidden shadow-glow-primary hover:scale-105 transition-transform"
                         >
                             <span className="relative z-10 flex items-center">
                                 Start Adventure <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />

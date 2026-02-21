@@ -98,7 +98,7 @@ export const SignalPlayground = () => {
 
                     {/* Left: Ms. Analog */}
                     <div className={cn(
-                        "group relative p-10 rounded-[3rem] border transition-all duration-700 backdrop-blur-xl flex flex-col items-center shadow-2xl space-y-8",
+                        "group relative p-10 rounded-2xl border transition-all duration-700 backdrop-blur-xl flex flex-col items-center shadow-2xl space-y-8",
                         isAnalogSynced
                             ? "bg-indigo-500/10 border-indigo-500/30 shadow-indigo-500/20"
                             : "bg-white/5 border-white/10 shadow-black/40 hover:bg-white/[0.07]"
@@ -113,7 +113,7 @@ export const SignalPlayground = () => {
                                 <span>Frequency Calibration</span>
                                 <span className="text-indigo-400">{Math.round(analogLevel)}%</span>
                             </div>
-                            <div className="h-44 w-full bg-black/40 rounded-[2rem] border border-white/5 relative overflow-hidden flex items-center justify-center">
+                            <div className="h-44 w-full bg-black/40 rounded-xl border border-white/5 relative overflow-hidden flex items-center justify-center">
                                 {/* Wave Viz */}
                                 <svg className="absolute inset-0 w-full h-full opacity-30" preserveAspectRatio="none">
                                     <motion.path
@@ -176,7 +176,7 @@ export const SignalPlayground = () => {
                                     initial={{ opacity: 0, y: 20, scale: 0.9 }}
                                     animate={{ opacity: 1, y: 0, scale: 1 }}
                                     onClick={() => navigate('/gatekeeper')}
-                                    className="group h-24 px-12 bg-indigo-600 hover:bg-indigo-500 text-white rounded-[2.5rem] font-heading font-black text-xl shadow-2xl shadow-indigo-500/40 transition-all flex items-center space-x-6 active:scale-95"
+                                    className="group h-24 px-12 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-heading font-black text-xl shadow-2xl shadow-indigo-500/40 transition-all flex items-center space-x-6 active:scale-95"
                                 >
                                     <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center group-hover:bg-white/30 transition-colors">
                                         <Zap className="w-5 h-5 fill-current" />
@@ -189,7 +189,7 @@ export const SignalPlayground = () => {
 
                     {/* Right: Mr. Digital */}
                     <div className={cn(
-                        "group relative p-10 rounded-[3rem] border transition-all duration-700 backdrop-blur-xl flex flex-col items-center shadow-2xl space-y-8",
+                        "group relative p-10 rounded-2xl border transition-all duration-700 backdrop-blur-xl flex flex-col items-center shadow-2xl space-y-8",
                         digitalState
                             ? "bg-blue-500/10 border-blue-500/30 shadow-blue-500/20"
                             : "bg-white/5 border-white/10 shadow-black/40 hover:bg-white/[0.07]"
@@ -204,7 +204,7 @@ export const SignalPlayground = () => {
                                 <span>Logic Phase</span>
                                 <span className="text-blue-400">{digitalState ? "1 (High)" : "0 (Low)"}</span>
                             </div>
-                            <div className="h-44 w-full bg-black/40 rounded-[2rem] border border-white/5 relative overflow-hidden flex items-center justify-center">
+                            <div className="h-44 w-full bg-black/40 rounded-xl border border-white/5 relative overflow-hidden flex items-center justify-center">
                                 <div className="absolute inset-0 flex items-center justify-around px-8 opacity-10">
                                     <div className="h-1 w-full bg-blue-400 rounded-full" />
                                 </div>
@@ -222,14 +222,14 @@ export const SignalPlayground = () => {
 
                         <div className="w-full grid grid-cols-2 gap-4">
                             <div className={cn(
-                                "p-6 rounded-2xl border transition-all text-center",
+                                "p-6 rounded-xl border transition-all text-center",
                                 !digitalState ? "bg-blue-500/20 border-blue-400/50 text-blue-400" : "bg-white/5 border-white/5 text-slate-600"
                             )}>
                                 <div className="text-2xl font-heading font-black">0</div>
                                 <div className="text-[10px] uppercase font-bold tracking-widest opacity-50">Low</div>
                             </div>
                             <div className={cn(
-                                "p-6 rounded-2xl border transition-all text-center",
+                                "p-6 rounded-xl border transition-all text-center",
                                 digitalState ? "bg-blue-500/20 border-blue-400/50 text-blue-400" : "bg-white/5 border-white/5 text-slate-600"
                             )}>
                                 <div className="text-2xl font-heading font-black">1</div>

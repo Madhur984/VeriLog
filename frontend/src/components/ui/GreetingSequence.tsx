@@ -89,7 +89,7 @@ export const GreetingSequence: React.FC = () => {
                 {steps.map((_, i) => (
                     <div
                         key={i}
-                        className={`h-1 w-12 rounded-full transition-all duration-500 ${i <= step ? 'bg-primary' : 'bg-slate-800'}`}
+                        className={`h-1.5 w-12 rounded-full transition-all duration-500 ${i <= step ? 'bg-primary' : 'bg-slate-800'}`}
                     />
                 ))}
             </div>
