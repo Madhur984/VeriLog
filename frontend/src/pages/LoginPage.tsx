@@ -108,7 +108,7 @@ export const LoginPage: React.FC = () => {
                         localStorage.setItem('supabase_token', response.data.session.access_token);
                     }
                     setTimeout(() => {
-                        navigate('/home');
+                        navigate('/hero');
                     }, 1000);
                 }
             } catch (err: any) {
