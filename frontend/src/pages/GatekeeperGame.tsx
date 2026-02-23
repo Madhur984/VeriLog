@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { VoltBot } from '../components/ui/VoltBot';
+import { VoltMonkey } from '../components/Bot/VoltMonkey';
+import { SpeechBubble } from '../components/Bot/SpeechBubble';
 import { Wire } from '../components/ui/Wire';
 import { CyberPCB3D } from '../components/ui/CyberPCB3D';
 import { ArrowLeft, Lock, Unlock, Shield } from 'lucide-react';
@@ -153,17 +154,19 @@ export const GatekeeperGame = () => {
 
                 </div>
 
-                {/* Right: Bot Assistant */}
-                <div className="lg:col-span-3 flex flex-col justify-center">
-                    <VoltBot
-                        state={showSuccess ? 'happy' : 'speaking'}
-                        message={
+                <div className="lg:col-span-3 flex flex-col justify-center items-center gap-4">
+                    <VoltMonkey state={showSuccess ? 'happy' : 'talking'} size="md" />
+                    <SpeechBubble
+                        body={
                             showSuccess
                                 ? "Spectacular! You've mastered the logic!"
                                 : gateType === 'AND'
                                     ? "For an AND gate, BOTH guards need to be present!"
                                     : "For an OR gate, ANY guard will do!"
                         }
+                        placement="bottom"
+                        accent={showSuccess ? '#22C55E' : '#3B82F6'}
+                        visible
                     />
                 </div>
 

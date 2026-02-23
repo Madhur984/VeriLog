@@ -1,679 +1,552 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import {
-    ArrowLeft, ArrowRight, Zap, Lightbulb,
-    Battery, CheckCircle2, AlertTriangle,
-    Smartphone, Cpu, CarFront, Info,
-    HelpCircle
-} from 'lucide-react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { VoltBot } from '../components/ui/VoltBot';
-import { cn } from '../lib/utils';
+import { ArrowLeft, CheckCircle2, FlaskConical, Moon, Sun } from 'lucide-react';
 import { useColorScheme } from '../hooks/useColorScheme';
-import { useUserStore } from '../stores/userStore';
 
 /* ══════════════════════════════════════════════════════════════════════
-   TYPES & CONSTANTS
+   TABLE OF CONTENTS
  ══════════════════════════════════════════════════════════════════════ */
 
-type Scene = 'intro' | 'lab' | 'quiz' | 'matching' | 'blanks' | 'diagnosis' | 'summary' | 'complete';
-
-interface MatchItem {
-    id: number;
-    text: string;
-    matchId: string;
-}
-
-interface MatchTarget {
-    id: string;
-    text: string;
-}
+const TOC = [
+    { id: 'what-is-signal', label: 'What is a Signal?' },
+    { id: 'types-of-signals', label: 'Types of Signals' },
+    { id: 'signal-parameters', label: 'Signal Parameters' },
+    { id: 'basic-signals', label: 'Basic Signals' },
+    { id: 'signal-in-circuits', label: 'Signal in Circuits' },
+    { id: 'why-signal-must-return', label: 'Why Signal Must Return' },
+    { id: 'quick-revision', label: 'Quick Revision' },
+];
 
 /* ══════════════════════════════════════════════════════════════════════
-   UTILITIES
+   THEME TOKENS
  ══════════════════════════════════════════════════════════════════════ */
 
-const SIGMA = (text: string) => <span className="font-mono text-blue-400">"{text}"</span>;
+const themes = {
+    light: {
+        bg: '#FAFBFC',
+        surface: '#FFFFFF',
+        text: '#0F172A',
+        body: '#1E293B',
+        muted: '#64748B',
+        faint: '#94A3B8',
+        border: '#E2E8F0',
+        accent: '#3B82F6',
+        accentBg: '#EFF6FF',
+        accentText: '#2563EB',
+        tocHover: '#F1F5F9',
+        tocHoverText: '#334155',
+        cardShadow: '0 2px 8px rgba(0,0,0,0.06)',
+        warnBg: '#FEF2F2',
+        warnBorder: '#FECACA',
+        warnText: '#991B1B',
+        coreBg: '#EFF6FF',
+        coreBorder: '#3B82F6',
+        coreTitle: '#1D4ED8',
+        coreBody: '#1E3A5F',
+        coreBoxBg: '#DBEAFE',
+        coreBoxText: '#1E40AF',
+        svgGrid: '#E2E8F0',
+        svgWave: '#3B82F6',
+        svgLabel: '#94A3B8',
+    },
+    dark: {
+        bg: '#0B0F1A',
+        surface: '#141B2D',
+        text: '#E2E8F0',
+        body: '#CBD5E1',
+        muted: '#94A3B8',
+        faint: '#64748B',
+        border: '#1E293B',
+        accent: '#60A5FA',
+        accentBg: 'rgba(59,130,246,0.08)',
+        accentText: '#93C5FD',
+        tocHover: 'rgba(255,255,255,0.04)',
+        tocHoverText: '#CBD5E1',
+        cardShadow: '0 2px 12px rgba(0,0,0,0.3)',
+        warnBg: 'rgba(239,68,68,0.08)',
+        warnBorder: 'rgba(239,68,68,0.2)',
+        warnText: '#FCA5A5',
+        coreBg: 'rgba(59,130,246,0.06)',
+        coreBorder: '#3B82F6',
+        coreTitle: '#93C5FD',
+        coreBody: '#CBD5E1',
+        coreBoxBg: 'rgba(59,130,246,0.12)',
+        coreBoxText: '#93C5FD',
+        svgGrid: '#1E293B',
+        svgWave: '#60A5FA',
+        svgLabel: '#64748B',
+    },
+};
+
+type Theme = typeof themes.light;
 
 /* ══════════════════════════════════════════════════════════════════════
-   COMPONENTS
+   SVG ILLUSTRATIONS
+ ══════════════════════════════════════════════════════════════════════ */
+
+const WaveIllustration: React.FC<{ t: Theme }> = ({ t }) => (
+    <svg viewBox="0 0 400 120" className="w-full max-w-[400px] mx-auto my-6" fill="none">
+        <defs>
+            <linearGradient id="waveGrad" x1="0" y1="0" x2="400" y2="0" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stopColor={t.svgWave} stopOpacity="0.08" />
+                <stop offset="50%" stopColor={t.svgWave} stopOpacity="0.2" />
+                <stop offset="100%" stopColor={t.svgWave} stopOpacity="0.08" />
+            </linearGradient>
+        </defs>
+        <line x1="0" y1="60" x2="400" y2="60" stroke={t.svgGrid} strokeWidth="1" strokeDasharray="4 4" />
+        <path d="M0,60 Q50,10 100,60 Q150,110 200,60 Q250,10 300,60 Q350,110 400,60 L400,120 L0,120Z" fill="url(#waveGrad)" />
+        <path d="M0,60 Q50,10 100,60 Q150,110 200,60 Q250,10 300,60 Q350,110 400,60" stroke={t.svgWave} strokeWidth="2.5" strokeLinecap="round" />
+        <text x="200" y="16" textAnchor="middle" fill={t.svgWave} fontSize="11" fontWeight="600">Signal (changes over time)</text>
+        <text x="10" y="56" fill={t.svgLabel} fontSize="9">0</text>
+        <text x="390" y="56" fill={t.svgLabel} fontSize="9" textAnchor="end">t</text>
+    </svg>
+);
+
+const CircuitLoopDiagram: React.FC<{ t: Theme }> = ({ t }) => (
+    <svg viewBox="0 0 420 200" className="w-full max-w-[420px] mx-auto my-6" fill="none">
+        <rect x="40" y="30" width="340" height="140" rx="20" stroke={t.accent} strokeWidth="2.5" strokeDasharray="8 4" fill="none" />
+        <polygon points="210,30 216,22 204,22" fill={t.accent} />
+        <polygon points="210,170 204,178 216,178" fill={t.accent} />
+        {/* Battery */}
+        <rect x="50" y="70" width="80" height="60" rx="12" fill={t.accentBg} stroke={t.accent} strokeWidth="1.5" />
+        <text x="90" y="96" textAnchor="middle" fill={t.text} fontSize="11" fontWeight="600">Battery</text>
+        <text x="90" y="112" textAnchor="middle" fill={t.muted} fontSize="9">(Source)</text>
+        <text x="170" y="55" textAnchor="middle" fill={t.accent} fontSize="10" fontWeight="500">Current →</text>
+        {/* Bulb */}
+        <rect x="170" y="70" width="80" height="60" rx="12" fill="rgba(245,158,11,0.08)" stroke="#F59E0B" strokeWidth="1.5" />
+        <text x="210" y="96" textAnchor="middle" fill={t.text} fontSize="11" fontWeight="600">Bulb</text>
+        <text x="210" y="112" textAnchor="middle" fill={t.muted} fontSize="9">(Load)</text>
+        {/* Return */}
+        <rect x="290" y="70" width="80" height="60" rx="12" fill="rgba(34,197,94,0.08)" stroke="#22C55E" strokeWidth="1.5" />
+        <text x="330" y="96" textAnchor="middle" fill={t.text} fontSize="11" fontWeight="600">Return</text>
+        <text x="330" y="112" textAnchor="middle" fill={t.muted} fontSize="9">(Wire)</text>
+        <text x="210" y="194" textAnchor="middle" fill="#22C55E" fontSize="10" fontWeight="500">← Return path back to source</text>
+    </svg>
+);
+
+const UnitStepSVG: React.FC<{ t: Theme }> = ({ t }) => (
+    <svg viewBox="0 0 160 80" className="w-full max-w-[160px]" fill="none">
+        <line x1="10" y1="60" x2="80" y2="60" stroke={t.faint} strokeWidth="2" />
+        <line x1="80" y1="60" x2="80" y2="20" stroke={t.accent} strokeWidth="2" />
+        <line x1="80" y1="20" x2="150" y2="20" stroke={t.accent} strokeWidth="2" />
+        <circle cx="80" cy="20" r="3" fill={t.accent} />
+        <text x="80" y="75" textAnchor="middle" fill={t.svgLabel} fontSize="8">t=0</text>
+    </svg>
+);
+
+const UnitImpulseSVG: React.FC<{ t: Theme }> = ({ t }) => (
+    <svg viewBox="0 0 160 80" className="w-full max-w-[160px]" fill="none">
+        <line x1="10" y1="60" x2="150" y2="60" stroke={t.faint} strokeWidth="2" />
+        <line x1="80" y1="60" x2="80" y2="12" stroke="#EF4444" strokeWidth="2.5" />
+        <polygon points="80,8 76,16 84,16" fill="#EF4444" />
+        <text x="80" y="75" textAnchor="middle" fill={t.svgLabel} fontSize="8">t=0</text>
+    </svg>
+);
+
+const RampSVG: React.FC<{ t: Theme }> = ({ t }) => (
+    <svg viewBox="0 0 160 80" className="w-full max-w-[160px]" fill="none">
+        <line x1="10" y1="60" x2="80" y2="60" stroke={t.faint} strokeWidth="2" />
+        <line x1="80" y1="60" x2="150" y2="15" stroke="#F59E0B" strokeWidth="2.5" />
+        <circle cx="80" cy="60" r="3" fill="#F59E0B" />
+        <text x="80" y="75" textAnchor="middle" fill={t.svgLabel} fontSize="8">t=0</text>
+    </svg>
+);
+
+const SinusoidSVG: React.FC<{ t: Theme }> = ({ t }) => (
+    <svg viewBox="0 0 160 80" className="w-full max-w-[160px]" fill="none">
+        <line x1="10" y1="40" x2="150" y2="40" stroke={t.svgGrid} strokeWidth="1" strokeDasharray="3 3" />
+        <path d="M10,40 Q30,10 50,40 Q70,70 90,40 Q110,10 130,40 Q150,70 160,40" stroke="#22C55E" strokeWidth="2.5" fill="none" />
+    </svg>
+);
+
+const ParametersSVG: React.FC<{ t: Theme }> = ({ t }) => (
+    <svg viewBox="0 0 400 160" className="w-full max-w-[400px] mx-auto my-6" fill="none">
+        <line x1="30" y1="80" x2="380" y2="80" stroke={t.svgGrid} strokeWidth="1" strokeDasharray="4 4" />
+        <path d="M30,80 Q80,20 130,80 Q180,140 230,80 Q280,20 330,80 Q355,110 380,80" stroke={t.svgWave} strokeWidth="2.5" fill="none" />
+        <line x1="80" y1="80" x2="80" y2="32" stroke="#EF4444" strokeWidth="1.5" strokeDasharray="3 3" />
+        <text x="60" y="55" fill="#EF4444" fontSize="10" fontWeight="600">Amplitude</text>
+        <line x1="130" y1="145" x2="230" y2="145" stroke="#22C55E" strokeWidth="1.5" />
+        <line x1="130" y1="140" x2="130" y2="150" stroke="#22C55E" strokeWidth="1.5" />
+        <line x1="230" y1="140" x2="230" y2="150" stroke="#22C55E" strokeWidth="1.5" />
+        <text x="180" y="158" textAnchor="middle" fill="#22C55E" fontSize="10" fontWeight="600">Period (1/Frequency)</text>
+        <circle cx="30" cy="80" r="4" fill="#F59E0B" />
+        <text x="30" y="100" textAnchor="middle" fill="#F59E0B" fontSize="10" fontWeight="600">Phase</text>
+    </svg>
+);
+
+/* ══════════════════════════════════════════════════════════════════════
+   SIGNAL TYPE DATA
+ ══════════════════════════════════════════════════════════════════════ */
+
+const signalTypes = [
+    { title: 'Analog Signal', desc: 'Smooth and continuous.', example: 'E.g. Human voice', color: '#3B82F6' },
+    { title: 'Digital Signal', desc: 'Only two values: 0 and 1.', example: 'E.g. Computer data', color: '#8B5CF6' },
+    { title: 'Periodic Signal', desc: 'Repeats after a fixed time.', example: 'E.g. Clock signal', color: '#22C55E' },
+    { title: 'Non-Periodic Signal', desc: 'Does not repeat.', example: 'E.g. Speech waveform', color: '#F59E0B' },
+];
+
+/* ══════════════════════════════════════════════════════════════════════
+   MAIN COMPONENT
  ══════════════════════════════════════════════════════════════════════ */
 
 export const ModuleOne: React.FC = () => {
     const navigate = useNavigate();
-    const { firstName } = useUserStore();
-    const [scheme] = useColorScheme();
+    const [scheme, toggleScheme] = useColorScheme();
     const isDark = scheme === 'dark';
+    const t = isDark ? themes.dark : themes.light;
 
-    const [scene, setScene] = useState<Scene>('intro');
-    const [step, setStep] = useState(0);
+    const [activeSection, setActiveSection] = useState(TOC[0].id);
+    const [completed, setCompleted] = useState(false);
+    const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
 
-    // Theme tokens
-    const t = {
-        bg: isDark ? '#0f172a' : '#f8fafc',
-        card: isDark ? '#1e293b' : '#ffffff',
-        text: isDark ? '#f1f5f9' : '#0f172a',
-        muted: isDark ? '#94a3b8' : '#64748b',
-        border: isDark ? '#334155' : '#e2e8f0',
-        accent: '#3b82f6',
-        success: '#22c55e',
-        error: '#ef4444',
-        warning: '#f59e0b',
-    };
-
-    /* ── SCENE 1: INTRO ── */
-    const introLines = [
-        "Before logic. Before processors.",
-        "There is one rule.",
-        "Energy must return to its source.",
-        "Let’s test your understanding."
-    ];
-
-    /* ── SCENE 2: LAB ── */
-    const [wireConnected, setWireConnected] = useState(false);
-    const [labDone, setLabDone] = useState(false);
-
-    /* ── SCENE 3: QUIZ ── */
-    const questions = [
-        {
-            q: "If voltage exists but no current flows, the circuit is:",
-            options: ["Short circuit", "Open circuit", "High gain", "Amplified"],
-            correct: 1,
-            feedback: "Voltage alone does not guarantee flow."
-        },
-        {
-            q: "If one wire in a working circuit breaks, what happens instantly?",
-            options: ["Voltage increases", "Current stops", "Bulb dims slowly", "Battery drains faster"],
-            correct: 1,
-            feedback: "Current cannot partially flow in a broken loop."
-        },
-        {
-            q: "In a simple bulb circuit, current:",
-            options: ["Starts at bulb", "Is used up by bulb", "Flows in a closed loop", "Stays inside battery"],
-            correct: 2,
-            feedback: "This corrects common misunderstanding."
+    /* ── IntersectionObserver for TOC ── */
+    const observerCallback = useCallback((entries: IntersectionObserverEntry[]) => {
+        for (const entry of entries) {
+            if (entry.isIntersecting) setActiveSection(entry.target.id);
         }
-    ];
+    }, []);
 
-    /* ── SCENE 4: MATCHING ── */
-    const sourceItems: MatchItem[] = [
-        { id: 1, text: "Source", matchId: "C" },
-        { id: 2, text: "Load", matchId: "B" },
-        { id: 3, text: "Open Circuit", matchId: "A" },
-        { id: 4, text: "Closed Circuit", matchId: "D" },
-        { id: 5, text: "Return Path", matchId: "E" },
-    ];
-    const targetItems: MatchTarget[] = [
-        { id: "A", text: "Break in connection" },
-        { id: "B", text: "Converts electrical energy" },
-        { id: "C", text: "Provides potential difference" },
-        { id: "D", text: "Continuous conducting loop" },
-        { id: "E", text: "Completes the electrical cycle" },
-    ];
-    const [matches, setMatches] = useState<Record<number, string>>({});
-    const [matchFeedback, setMatchFeedback] = useState<boolean | null>(null);
+    useEffect(() => {
+        const observer = new IntersectionObserver(observerCallback, {
+            rootMargin: '-80px 0px -60% 0px',
+            threshold: 0.1,
+        });
+        TOC.forEach(({ id }) => {
+            const el = sectionRefs.current[id];
+            if (el) observer.observe(el);
+        });
+        return () => observer.disconnect();
+    }, [observerCallback]);
 
-    /* ── SCENE 5: BLANKS ── */
-    const [blankValue, setBlankValue] = useState("");
-    const [blankFeedback, setBlankFeedback] = useState<boolean | null>(null);
+    const setRef = (id: string) => (el: HTMLElement | null) => { sectionRefs.current[id] = el; };
+    const scrollTo = (id: string) => sectionRefs.current[id]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-    /* ── SCENE 6: DIAGNOSIS ── */
-    const [diagnosisSelection, setDiagnosisSelection] = useState<number | null>(null);
-    const [diagnosisFeedback, setDiagnosisFeedback] = useState<boolean | null>(null);
+    /* ── Styles ── */
+    const heading: React.CSSProperties = { fontSize: 24, fontWeight: 700, color: t.text, marginBottom: 16, marginTop: 0, letterSpacing: '-0.01em' };
+    const bullets: React.CSSProperties = { paddingLeft: 24, marginTop: 10, lineHeight: 2 };
+    const caption: React.CSSProperties = { textAlign: 'center', fontSize: 13, color: t.faint, fontStyle: 'italic', marginTop: -4 };
 
-    /* ── NAVIGATION ── */
-    const nextStep = () => {
-        if (scene === 'intro') {
-            if (step < introLines.length - 1) setStep(s => s + 1);
-            else setScene('lab');
-        } else if (scene === 'lab') {
-            if (labDone) setScene('quiz');
-        } else if (scene === 'quiz') {
-            if (step < questions.length - 1) setStep(s => s + 1);
-            else {
-                setStep(0);
-                setScene('matching');
-            }
-        } else if (scene === 'matching') {
-            setScene('blanks');
-        } else if (scene === 'blanks') {
-            setScene('diagnosis');
-        } else if (scene === 'diagnosis') {
-            setScene('summary');
-        } else if (scene === 'summary') {
-            setScene('complete');
-        }
-    };
+    return (
+        <div className="min-h-screen transition-colors duration-300" style={{ background: t.bg, color: t.body, fontFamily: "'DM Sans', Inter, system-ui, sans-serif" }}>
 
-    const backStep = () => {
-        // Limited back for sanity
-        if (scene === 'quiz' && step > 0) setStep(s => s - 1);
-        else if (scene === 'quiz') setScene('lab');
-        else if (scene === 'matching') setScene('quiz');
-        else if (scene === 'blanks') setScene('matching');
-        else if (scene === 'diagnosis') setScene('blanks');
-        else if (scene === 'summary') setScene('diagnosis');
-    };
+            {/* ══ TOP BAR ══ */}
+            <div style={{ maxWidth: 1120, margin: '0 auto', padding: '16px 32px 0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <button
+                    onClick={() => navigate('/portal')}
+                    className="flex items-center gap-2 text-sm font-medium cursor-pointer transition-colors duration-200"
+                    style={{ color: t.muted, background: 'none', border: 'none' }}
+                    onMouseEnter={e => (e.currentTarget.style.color = t.accent)}
+                    onMouseLeave={e => (e.currentTarget.style.color = t.muted)}
+                >
+                    <ArrowLeft className="w-4 h-4" /> Back to Module Map
+                </button>
 
-    console.log("Back available:", { backStep }); // Avoid unused warning
+                {/* Theme toggle */}
+                <button
+                    onClick={toggleScheme}
+                    className="flex items-center gap-2 cursor-pointer transition-all duration-200"
+                    style={{
+                        padding: '8px 16px',
+                        borderRadius: 10,
+                        border: `1px solid ${t.border}`,
+                        background: t.surface,
+                        color: t.muted,
+                        fontSize: 13,
+                        fontWeight: 500,
+                    }}
+                    onMouseEnter={e => (e.currentTarget.style.borderColor = t.accent)}
+                    onMouseLeave={e => (e.currentTarget.style.borderColor = t.border)}
+                >
+                    {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4" />}
+                    {isDark ? 'Light Mode' : 'Dark Mode'}
+                </button>
+            </div>
 
-    /* ── HELPERS ── */
-    const handleMatch = (itemId: number, targetId: string) => {
-        setMatches(prev => ({ ...prev, [itemId]: targetId }));
-    };
-
-    const checkMatches = () => {
-        const isCorrect = sourceItems.every(item => matches[item.id] === item.matchId);
-        setMatchFeedback(isCorrect);
-        if (isCorrect) setTimeout(nextStep, 1500);
-    };
-
-    const checkBlank = () => {
-        const isCorrect = blankValue.toLowerCase().trim() === 'return';
-        setBlankFeedback(isCorrect);
-        if (isCorrect) setTimeout(nextStep, 1500);
-    };
-
-    const checkDiagnosis = (idx: number) => {
-        setDiagnosisSelection(idx);
-        const isCorrect = idx === 2; // Short circuit
-        setDiagnosisFeedback(isCorrect);
-        if (isCorrect) setTimeout(nextStep, 2000);
-    };
-
-    /* ── SCENE RENDERERS ── */
-
-    const renderHeader = () => (
-        <div className="flex items-center justify-between mb-8">
-            <button onClick={() => navigate('/portal')} className="flex items-center gap-2 px-3 py-1.5 rounded-lg border text-sm transition-all hover:bg-slate-500/10" style={{ borderColor: t.border, color: t.muted }}>
-                <ArrowLeft className="w-4 h-4" /> Exit Module
-            </button>
-            <div className="flex items-center gap-4">
-                <div className="h-2 w-48 rounded-full overflow-hidden" style={{ background: t.border }}>
-                    <motion.div
-                        className="h-full bg-blue-500"
-                        initial={{ width: 0 }}
-                        animate={{ width: `${(Object.keys(SceneIndices).indexOf(scene) / (Object.keys(SceneIndices).length - 1)) * 100}%` }}
-                    />
+            {/* ══ ARTICLE HEADER ══ */}
+            <header style={{ maxWidth: 1120, margin: '0 auto', padding: '36px 32px 0' }}>
+                <div style={{ maxWidth: 780, marginLeft: 248 }}>
+                    <h1 style={{ fontSize: 34, fontWeight: 700, lineHeight: 1.25, color: t.text, margin: 0, letterSpacing: '-0.02em' }}>
+                        What is a Signal? <span style={{ color: t.faint, fontWeight: 500, fontSize: 28 }}>(Signal Must Return)</span>
+                    </h1>
+                    <p style={{ fontSize: 17, color: t.muted, marginTop: 10 }}>
+                        Foundations of Signals and Circuit Continuity
+                    </p>
+                    <div className="flex items-center gap-3 flex-wrap" style={{ marginTop: 14, fontSize: 13, color: t.faint, fontWeight: 500 }}>
+                        <span style={{ background: t.accentBg, color: t.accent, padding: '3px 10px', borderRadius: 6, fontWeight: 600 }}>Beginner Level</span>
+                        <span>•</span>
+                        <span>15 min read</span>
+                        <span>•</span>
+                        <span>Module 1 of 7</span>
+                    </div>
+                    <div style={{ height: 1, background: t.border, marginTop: 28 }} />
                 </div>
-                <span className="text-xs font-mono" style={{ color: t.muted }}>Lvl 1: Closed Loops</span>
+            </header>
+
+            {/* ══ BODY ══ */}
+            <div style={{ maxWidth: 1120, margin: '0 auto', padding: '0 32px 96px', display: 'flex', gap: 48 }}>
+
+                {/* ── Sticky TOC ── */}
+                <nav style={{ width: 200, flexShrink: 0, position: 'sticky', top: 24, alignSelf: 'flex-start', paddingTop: 32 }}>
+                    <p style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: t.faint, marginBottom: 16 }}>
+                        On this page
+                    </p>
+                    <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: 2 }}>
+                        {TOC.map(item => {
+                            const active = activeSection === item.id;
+                            return (
+                                <li key={item.id}>
+                                    <button
+                                        onClick={() => scrollTo(item.id)}
+                                        className="cursor-pointer transition-all duration-200"
+                                        style={{
+                                            display: 'block', width: '100%', textAlign: 'left',
+                                            padding: '7px 12px', borderRadius: 8, border: 'none',
+                                            background: active ? t.accentBg : 'transparent',
+                                            color: active ? t.accentText : t.muted,
+                                            fontWeight: active ? 600 : 400, fontSize: 13, lineHeight: 1.5,
+                                            borderLeft: active ? `3px solid ${t.accent}` : '3px solid transparent',
+                                        }}
+                                        onMouseEnter={e => { if (!active) { e.currentTarget.style.background = t.tocHover; e.currentTarget.style.color = t.tocHoverText; } }}
+                                        onMouseLeave={e => { if (!active) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = t.muted; } }}
+                                    >
+                                        {item.label}
+                                    </button>
+                                </li>
+                            );
+                        })}
+                    </ul>
+                </nav>
+
+                {/* ── Content ── */}
+                <article style={{ flex: 1, maxWidth: 780, paddingTop: 32, fontSize: 17, lineHeight: 1.85, color: t.body }}>
+
+                    {/* § 1 — What is a Signal? */}
+                    <section id="what-is-signal" ref={setRef('what-is-signal')} style={{ marginBottom: 60 }}>
+                        <h2 style={heading}>What is a Signal?</h2>
+                        <p>A signal is just information that changes over time. That's the simplest way to put it.</p>
+                        <p style={{ marginTop: 10 }}>Think of it like this — anything that goes up, down, or changes can be called a signal:</p>
+                        <ul style={bullets}>
+                            <li><strong>Sound</strong> — your voice changes in volume and pitch as you talk</li>
+                            <li><strong>Voltage</strong> — the electricity level in a wire goes up and down</li>
+                            <li><strong>Temperature</strong> — a room gets hotter during the day and cooler at night</li>
+                            <li><strong>Data</strong> — bits in a computer switch rapidly between 0 and 1</li>
+                        </ul>
+                        <p style={{ marginTop: 12 }}>
+                            In electronics, signals carry information from one place to another. When you press a switch, a signal (electricity) tells the light to turn on. When you speak into a phone, your voice becomes an electrical signal that travels through wires or radio waves.
+                        </p>
+                        <p style={{ marginTop: 10 }}>
+                            Without signals, no electronic device would work. Every phone call, every LED glow, every sensor reading — they all depend on signals moving through a circuit.
+                        </p>
+                        <WaveIllustration t={t} />
+                        <p style={caption}>A signal going up and down over time — this is called a waveform</p>
+                    </section>
+
+                    {/* § 2 — Types of Signals */}
+                    <section id="types-of-signals" ref={setRef('types-of-signals')} style={{ marginBottom: 60 }}>
+                        <h2 style={heading}>Types of Signals</h2>
+                        <p>Not all signals are the same. They behave differently depending on what kind of information they carry.</p>
+                        <p style={{ marginTop: 10 }}>Here are the four main types you need to know:</p>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" style={{ marginTop: 20 }}>
+                            {signalTypes.map(s => (
+                                <div key={s.title} className="hover:shadow-md cursor-default transition-shadow duration-200" style={{
+                                    background: t.surface, borderRadius: 12, padding: '20px 22px',
+                                    border: `1px solid ${t.border}`, borderLeft: `4px solid ${s.color}`,
+                                }}>
+                                    <h4 style={{ fontSize: 15, fontWeight: 700, color: t.text, margin: 0 }}>{s.title}</h4>
+                                    <p style={{ fontSize: 14, color: t.muted, margin: '6px 0 0' }}>{s.desc}</p>
+                                    <p style={{ fontSize: 13, color: t.faint, margin: '4px 0 0', fontStyle: 'italic' }}>{s.example}</p>
+                                </div>
+                            ))}
+                        </div>
+                        <p style={{ marginTop: 20 }}>
+                            <strong>Why does this matter?</strong> When you design a circuit, you need to know what kind of signal you're working with. Analog signals need different handling than digital ones. A music player uses analog signals for the speaker, but digital signals for storing the song file.
+                        </p>
+                    </section>
+
+                    {/* § 3 — Signal Parameters */}
+                    <section id="signal-parameters" ref={setRef('signal-parameters')} style={{ marginBottom: 60 }}>
+                        <h2 style={heading}>Signal Parameters</h2>
+                        <p>Every signal — no matter how complex — can be described using just three properties. If you understand these, you can describe any signal in the world:</p>
+                        <ParametersSVG t={t} />
+                        <div style={{ marginTop: 20, display: 'flex', flexDirection: 'column', gap: 14 }}>
+                            <ParamRow color="#EF4444" label="Amplitude" desc="How strong the signal is. Think of it like volume — a loud speaker has high amplitude, a whisper has low amplitude." t={t} />
+                            <ParamRow color="#22C55E" label="Frequency" desc="How fast the signal repeats. A hummingbird's wings beat at high frequency. A grandfather clock's pendulum swings at low frequency." t={t} />
+                            <ParamRow color="#F59E0B" label="Phase" desc="Where the signal starts in its cycle. Two identical waves can be out of sync — one starts a little earlier than the other. That shift is the phase." t={t} />
+                        </div>
+                        <p style={{ marginTop: 20 }}>
+                            Together, these three values fully define a simple wave. In real circuits, engineers measure them using tools like oscilloscopes.
+                        </p>
+                    </section>
+
+                    {/* § 4 — Basic Signals */}
+                    <section id="basic-signals" ref={setRef('basic-signals')} style={{ marginBottom: 60 }}>
+                        <h2 style={heading}>Basic Signals</h2>
+                        <p>These are the building blocks of all signals. Every complex waveform you see on an oscilloscope is just a combination of these four simple shapes:</p>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5" style={{ marginTop: 20 }}>
+                            <BasicSignalCard title="Unit Step" desc="Like flipping a switch ON. Before t=0, nothing happens. After t=0, the signal jumps to full value and stays there forever." svg={<UnitStepSVG t={t} />} t={t} />
+                            <BasicSignalCard title="Unit Impulse" desc="All energy concentrated at a single instant. Imagine clapping your hands once — a sharp burst, then silence. Used to test how systems respond." svg={<UnitImpulseSVG t={t} />} t={t} />
+                            <BasicSignalCard title="Ramp Signal" desc="Increases steadily over time, like a car accelerating smoothly from 0. The slope tells you how fast it's growing." svg={<RampSVG t={t} />} t={t} />
+                            <BasicSignalCard title="Sinusoidal" desc="The smoothest, most natural wave. This is what AC power looks like. It's the foundation of radio, audio, and communication signals." svg={<SinusoidSVG t={t} />} t={t} />
+                        </div>
+                        <p style={{ marginTop: 20 }}>
+                            <strong>Why learn these?</strong> Engineers use these basic signals to test and understand how circuits behave. If you know how a circuit responds to a step signal, you can predict how it will handle real-world inputs.
+                        </p>
+                    </section>
+
+                    {/* § 5 — Signal in Circuits */}
+                    <section id="signal-in-circuits" ref={setRef('signal-in-circuits')} style={{ marginBottom: 60 }}>
+                        <h2 style={heading}>Signal in Electrical Circuits</h2>
+                        <p>
+                            Here's how signals actually work inside a circuit:
+                        </p>
+                        <ul style={bullets}>
+                            <li>The signal (current) <strong>starts</strong> at the power source (battery).</li>
+                            <li>It <strong>travels</strong> through the wire to a component (like a bulb or motor).</li>
+                            <li>It <strong>does work</strong> — the bulb glows, the motor spins.</li>
+                            <li>It <strong>must return</strong> back to the battery through a return wire.</li>
+                        </ul>
+                        <p style={{ marginTop: 12 }}>
+                            This forms a closed loop. If any part of this loop is broken — even one tiny connection — current stops flowing <strong>everywhere</strong> in the circuit. Not just at the break point. Everywhere.
+                        </p>
+                        <CircuitLoopDiagram t={t} />
+                        <p style={caption}>A complete circuit loop: Battery → Bulb → Return wire → Battery</p>
+                        <p style={{ marginTop: 16 }}>
+                            Think of it like a circular running track. Runners (electrons) keep going around. If someone puts a wall across the track, all runners stop — not just the ones near the wall.
+                        </p>
+                        <div style={{
+                            background: t.warnBg, border: `1px solid ${t.warnBorder}`,
+                            borderRadius: 10, padding: '16px 20px', marginTop: 20,
+                            fontSize: 15, color: t.warnText,
+                        }}>
+                            <strong>Key takeaway:</strong> A circuit is only "on" when the loop is complete. One broken connection = entire circuit dead.
+                        </div>
+                    </section>
+
+                    {/* § 6 — Why Signal Must Return (CORE) */}
+                    <section id="why-signal-must-return" ref={setRef('why-signal-must-return')} style={{ marginBottom: 60 }}>
+                        <h2 style={heading}>Why Signal Must Return</h2>
+                        <p>This is the most important concept in this entire module. Everything you build in electronics depends on this one rule.</p>
+
+                        <div style={{
+                            background: t.coreBg, borderLeft: `5px solid ${t.coreBorder}`,
+                            borderRadius: '0 12px 12px 0', padding: '28px 28px', marginTop: 20,
+                            fontSize: 16, lineHeight: 1.9, color: t.coreBody,
+                        }}>
+                            <p style={{ fontWeight: 700, fontSize: 18, color: t.coreTitle, marginBottom: 12 }}>
+                                The Closed Loop Rule
+                            </p>
+                            <p>A signal <strong>always</strong> moves in a complete loop. There are no exceptions.</p>
+                            <ul style={{ ...bullets, marginTop: 10, marginBottom: 0 }}>
+                                <li>Energy leaves the battery (the source).</li>
+                                <li>It flows through the wire to components.</li>
+                                <li>It does useful work — a bulb glows, a speaker plays sound, a motor spins.</li>
+                                <li>After doing work, it <strong>must return</strong> to the battery through a return path.</li>
+                                <li>Then the cycle repeats — over and over, billions of times per second.</li>
+                            </ul>
+                            <div style={{
+                                background: t.coreBoxBg, borderRadius: 8,
+                                padding: '12px 16px', marginTop: 16,
+                                fontWeight: 700, fontSize: 15, color: t.coreBoxText, textAlign: 'center',
+                            }}>
+                                No return path = No current flow = Dead circuit
+                            </div>
+                        </div>
+                        <p style={{ marginTop: 20 }}>
+                            <strong>Real-world example:</strong> Your phone charger has two prongs. One sends current into the phone, the other is the return path. If you cut either wire, charging stops completely.
+                        </p>
+                        <p style={{ marginTop: 10 }}>
+                            This rule is why circuits are drawn as loops, why ground wires exist, and why electricians always check for "continuity" — they're making sure the return path is intact.
+                        </p>
+                    </section>
+
+                    {/* § 7 — Quick Revision */}
+                    <section id="quick-revision" ref={setRef('quick-revision')} style={{ marginBottom: 60 }}>
+                        <h2 style={heading}>Quick Revision</h2>
+                        <p>Before moving on, make sure you can confidently say "yes" to each of these:</p>
+                        <div style={{
+                            background: t.surface, border: `1px solid ${t.border}`,
+                            borderRadius: 12, padding: '24px 28px', marginTop: 16,
+                        }}>
+                            <ul style={{ ...bullets, margin: 0, listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: 10 }}>
+                                <RevisionItem text="A signal is any information that changes over time — sound, voltage, temperature, or data." t={t} />
+                                <RevisionItem text="Analog signals are smooth and continuous. Digital signals use only 0 and 1." t={t} />
+                                <RevisionItem text="Every signal has three properties: amplitude (strength), frequency (speed), and phase (start position)." t={t} />
+                                <RevisionItem text="Basic signals — step, impulse, ramp, and sine — are the building blocks used to test and understand circuits." t={t} />
+                                <RevisionItem text="Current only flows when the circuit forms a complete, unbroken loop." t={t} />
+                                <RevisionItem text="If the return path is missing, the circuit is dead. Signal must always return to the source." t={t} />
+                            </ul>
+                        </div>
+                    </section>
+
+                    {/* ── CTAs ── */}
+                    <div style={{
+                        borderTop: `1px solid ${t.border}`, paddingTop: 32,
+                        display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap',
+                    }}>
+                        <button
+                            onClick={() => setCompleted(true)}
+                            disabled={completed}
+                            className="flex items-center gap-2 cursor-pointer transition-all duration-200"
+                            style={{
+                                padding: '14px 28px', borderRadius: 12,
+                                border: completed ? '2px solid #22C55E' : `2px solid ${t.border}`,
+                                background: completed ? (isDark ? 'rgba(34,197,94,0.1)' : '#F0FDF4') : t.surface,
+                                color: completed ? '#22C55E' : t.text,
+                                fontWeight: 600, fontSize: 15,
+                            }}
+                        >
+                            <CheckCircle2 className="w-5 h-5" style={{ color: completed ? '#22C55E' : t.faint }} />
+                            {completed ? 'Completed' : 'Mark as Complete'}
+                        </button>
+
+                        <button
+                            onClick={() => navigate('/portal')}
+                            className="flex items-center gap-2 cursor-pointer transition-all duration-200 hover:opacity-90"
+                            style={{
+                                padding: '14px 28px', borderRadius: 12, border: 'none',
+                                background: t.accent, color: '#FFFFFF', fontWeight: 600, fontSize: 15,
+                            }}
+                        >
+                            <FlaskConical className="w-5 h-5" />
+                            Go to Workbench
+                        </button>
+                    </div>
+                </article>
             </div>
         </div>
     );
-
-    const SceneIndices: Record<Scene, number> = { intro: 0, lab: 1, quiz: 2, matching: 3, blanks: 4, diagnosis: 5, summary: 6, complete: 7 };
-
-    return (
-        <div className="min-h-screen w-full p-4 md:p-8 flex flex-col font-sans" style={{ background: t.bg, color: t.text }}>
-
-            {scene !== 'intro' && scene !== 'complete' && renderHeader()}
-
-            <main className="flex-1 flex flex-col items-center justify-center max-w-4xl mx-auto w-full">
-                <AnimatePresence mode="wait">
-
-                    {/* SCENE 1: INTRO */}
-                    {scene === 'intro' && (
-                        <motion.div
-                            key="intro"
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 0.95 }}
-                            className="flex flex-col items-center gap-12 text-center"
-                        >
-                            <div className="relative">
-                                <motion.div animate={{ scale: 1.5 }}>
-                                    <VoltBot state="speaking" />
-                                </motion.div>
-                                <motion.div
-                                    className="absolute -bottom-4 left-1/2 -translate-x-1/2 px-3 py-1 bg-blue-600 text-white text-[10px] font-black tracking-widest rounded-full border-2 border-white/20 shadow-xl"
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                >
-                                    SIGMA
-                                </motion.div>
-                            </div>
-                            <div className="space-y-4 max-w-lg">
-                                <motion.h2
-                                    key={step}
-                                    initial={{ opacity: 0, scale: 0.9 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    className="text-3xl md:text-5xl font-bold tracking-tight italic"
-                                >
-                                    {SIGMA(introLines[step])}
-                                </motion.h2>
-                            </div>
-                            <button
-                                onClick={nextStep}
-                                className="group mt-8 px-8 py-3 rounded-full bg-blue-600 text-white font-bold flex items-center gap-3 transition-all hover:bg-blue-700 hover:scale-105"
-                            >
-                                {step === introLines.length - 1 ? "ENTER LABORATORY" : "CONTINUE"}
-                                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                            </button>
-                        </motion.div>
-                    )}
-
-                    {/* SCENE 2: LAB */}
-                    {scene === 'lab' && (
-                        <motion.div
-                            key="lab"
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            className="w-full space-y-8"
-                        >
-                            <div className="text-center space-y-2">
-                                <h1 className="text-3xl font-bold">The Circuit Lab</h1>
-                                <p style={{ color: t.muted }}>Complete the path to energy's return.</p>
-                            </div>
-
-                            <div className="h-[400px] border-2 border-dashed rounded-3xl relative overflow-hidden flex items-center justify-center bg-black/5" style={{ borderColor: t.border }}>
-                                {/* Virtual Circuit Board */}
-                                <div className="relative w-full h-full flex items-center justify-center p-12">
-                                    <div className="grid grid-cols-2 gap-32 items-center">
-                                        <div className="flex flex-col items-center gap-4">
-                                            <div className="p-8 rounded-3xl border-4 relative" style={{ borderColor: t.border, background: t.card }}>
-                                                <Battery className="w-20 h-20 text-slate-400" />
-                                                <div className="absolute top-0 right-0 w-8 h-8 rounded-full bg-red-500/20 border-2 border-red-500/40 flex items-center justify-center text-[10px] font-black text-red-500">+</div>
-                                                <div className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-blue-500/20 border-2 border-blue-500/40 flex items-center justify-center text-[10px] font-black text-blue-500">-</div>
-                                            </div>
-                                            <span className="text-xs font-black tracking-widest opacity-50 uppercase">ENERGY SOURCE</span>
-                                        </div>
-
-                                        <div className="flex flex-col items-center gap-4 relative">
-                                            <motion.div
-                                                className="p-8 rounded-3xl border-4"
-                                                style={{
-                                                    borderColor: wireConnected ? t.success : t.border,
-                                                    background: t.card,
-                                                    boxShadow: wireConnected ? '0 0 50px rgba(34, 197, 94, 0.5)' : 'none'
-                                                }}
-                                                animate={wireConnected ? { scale: [1, 1.05, 1] } : {}}
-                                                transition={{ repeat: Infinity, duration: 1.5 }}
-                                            >
-                                                <Lightbulb className={cn("w-20 h-20 transition-all duration-700", wireConnected ? "text-yellow-400 fill-yellow-400 drop-shadow-[0_0_15px_rgba(251,191,36,0.8)]" : "text-slate-400")} />
-                                            </motion.div>
-                                            <span className="text-xs font-black tracking-widest opacity-50 uppercase">ENERGY LOAD</span>
-
-                                            {/* Glow overlay */}
-                                            {wireConnected && (
-                                                <motion.div
-                                                    className="absolute inset-0 bg-yellow-400/20 blur-[100px] -z-10 rounded-full"
-                                                    initial={{ opacity: 0 }}
-                                                    animate={{ opacity: 1 }}
-                                                />
-                                            )}
-                                        </div>
-                                    </div>
-
-                                    {/* Connection Line */}
-                                    <svg className="absolute inset-0 w-full h-full pointer-events-none">
-                                        {/* Forward Path */}
-                                        <motion.path
-                                            d="M 330,200 L 460,200"
-                                            stroke={wireConnected ? t.success : t.border}
-                                            strokeWidth="6"
-                                            fill="none"
-                                            strokeLinecap="round"
-                                            initial={{ pathLength: 0 }}
-                                            animate={wireConnected ? { pathLength: 1 } : { pathLength: 0.2 }}
-                                        />
-
-                                        {/* Magnetic Drop Box */}
-                                        <g className="pointer-events-auto cursor-pointer" onClick={() => { setWireConnected(true); setLabDone(true); }}>
-                                            <rect
-                                                x="370" y="180" width="60" height="40"
-                                                rx="12" fill={wireConnected ? t.success : t.accent}
-                                                className="shadow-lg transition-colors border-2 border-white/20"
-                                            />
-                                            <motion.rect
-                                                x="375" y="185" width="50" height="30"
-                                                rx="10" stroke="white" strokeWidth="2" fill="none" opacity={0.3}
-                                                animate={{ opacity: [0.1, 0.4, 0.1] }}
-                                                transition={{ repeat: Infinity, duration: 2 }}
-                                            />
-                                            <text x="400" y="205" textAnchor="middle" fill="white" className="text-[8px] font-black uppercase">SNAP</text>
-                                        </g>
-
-                                        {/* Return Path Visualization */}
-                                        {wireConnected && (
-                                            <motion.path
-                                                d="M 460,240 Q 400,300 330,240"
-                                                stroke={t.success}
-                                                strokeWidth="3"
-                                                fill="none"
-                                                strokeDasharray="4 4"
-                                                animate={{ strokeDashoffset: [20, 0] }}
-                                                transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}
-                                            />
-                                        )}
-                                    </svg>
-                                </div>
-                            </div>
-
-                            <div className="bg-blue-500/10 p-6 rounded-3xl border border-blue-500/20 flex gap-6 items-center">
-                                <div className="relative shrink-0">
-                                    <VoltBot state={wireConnected ? "happy" : "thinking"} />
-                                    <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-blue-600 text-white text-[8px] font-black rounded-full shadow-lg border border-white/10">SIGMA</div>
-                                </div>
-                                <div className="space-y-1">
-                                    <p className="font-bold flex items-center gap-2">
-                                        MISSION FEEDBACK <Zap className="w-3 h-3 text-yellow-500" />
-                                    </p>
-                                    <p className="text-sm italic opacity-80">
-                                        {wireConnected
-                                            ? `Good, ${firstName || 'Engineer'}. You created a closed loop. Current now has a complete path. Energy is returning.`
-                                            : "A bulb needs current, and current needs a path back to the battery. Snap the magnetic wire into place."}
-                                    </p>
-                                </div>
-                            </div>
-
-                            {labDone && (
-                                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex justify-center">
-                                    <button onClick={nextStep} className="px-12 py-4 rounded-2xl bg-blue-600 text-white font-bold hover:bg-blue-700 transition-all flex items-center gap-3">
-                                        PROCEED TO QUIZ <ArrowRight />
-                                    </button>
-                                </motion.div>
-                            )}
-                        </motion.div>
-                    )}
-
-                    {/* SCENE 3: QUIZ */}
-                    {scene === 'quiz' && (
-                        <motion.div
-                            key="quiz"
-                            initial={{ opacity: 0, x: 20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            className="w-full max-w-2xl space-y-8"
-                        >
-                            <div className="flex justify-between items-center bg-slate-500/5 p-4 rounded-xl border border-slate-500/10">
-                                <span className="text-xs uppercase font-black opacity-50">Checkpoint {step + 1}/{questions.length}</span>
-                                <div className="flex gap-1">
-                                    {questions.map((_, i) => (
-                                        <div key={i} className={cn("h-1 w-8 rounded-full transition-all", i <= step ? "bg-blue-500" : "bg-slate-500/20")} />
-                                    ))}
-                                </div>
-                            </div>
-
-                            <div className="space-y-6">
-                                <h2 className="text-2xl font-bold leading-tight">{questions[step].q}</h2>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    {questions[step].options.map((opt, idx) => (
-                                        <button
-                                            key={idx}
-                                            onClick={() => {
-                                                if (idx === questions[step].correct) {
-                                                    nextStep();
-                                                }
-                                            }}
-                                            className="p-4 text-left rounded-2xl border-2 transition-all hover:bg-blue-500/5 hover:border-blue-500/50 group active:scale-[0.98]"
-                                            style={{ borderColor: t.border, background: t.card }}
-                                        >
-                                            <span className="flex items-center gap-3 font-medium">
-                                                <div className="w-8 h-8 rounded-lg bg-slate-500/10 flex items-center justify-center group-hover:bg-blue-500/20 transition-colors">
-                                                    {String.fromCharCode(65 + idx)}
-                                                </div>
-                                                {opt}
-                                            </span>
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-
-                            <div className="flex items-center gap-4 bg-slate-500/5 p-6 rounded-3xl border border-slate-500/10">
-                                <div className="relative shrink-0">
-                                    <VoltBot state="thinking" />
-                                    <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-blue-600 text-white text-[8px] font-black rounded-full shadow-lg border border-white/10">SIGMA</div>
-                                </div>
-                                <p className="text-sm opacity-70 italic">"Remember, the loop must be continuous for energy to flow."</p>
-                            </div>
-                        </motion.div>
-                    )}
-
-                    {/* SCENE 4: MATCHING */}
-                    {scene === 'matching' && (
-                        <motion.div
-                            key="matching"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            className="w-full space-y-12"
-                        >
-                            <div className="text-center">
-                                <h1 className="text-3xl font-bold">Structural Thinking</h1>
-                                <p style={{ color: t.muted }}>Match the components to their structural role.</p>
-                            </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
-                                <div className="space-y-4">
-                                    {sourceItems.map(item => (
-                                        <div key={item.id} className="flex items-center gap-4">
-                                            <div
-                                                className="flex-1 p-4 rounded-xl border-2 font-bold transition-all relative"
-                                                style={{
-                                                    borderColor: matches[item.id] ? t.accent : t.border,
-                                                    background: t.card
-                                                }}
-                                            >
-                                                {item.text}
-                                                {matches[item.id] && (
-                                                    <div className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-blue-500 text-white flex items-center justify-center text-[10px] font-mono">
-                                                        {matches[item.id]}
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-
-                                <div className="space-y-4">
-                                    {targetItems.map(target => (
-                                        <div key={target.id} className="flex items-center gap-4">
-                                            <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center font-mono font-black border border-blue-500/20">
-                                                {target.id}
-                                            </div>
-                                            <button
-                                                onClick={() => {
-                                                    // Simple cyclic matching for demo interaction
-                                                    const nextUnmatched = sourceItems.find(s => !matches[s.id]);
-                                                    if (nextUnmatched) handleMatch(nextUnmatched.id, target.id);
-                                                }}
-                                                className="flex-1 p-4 text-left rounded-xl border-2 text-sm transition-all hover:border-blue-500/30"
-                                                style={{ borderColor: t.border, background: t.card }}
-                                            >
-                                                {target.text}
-                                            </button>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-
-                            <div className="flex flex-col items-center gap-4">
-                                <button
-                                    onClick={checkMatches}
-                                    className="px-8 py-3 rounded-xl bg-blue-600 text-white font-bold hover:bg-blue-700 disabled:opacity-50"
-                                    disabled={Object.keys(matches).length < 5}
-                                >
-                                    VERIFY STRUCTURE
-                                </button>
-                                {matchFeedback === false && (
-                                    <p className="text-red-500 text-sm font-bold animate-shake">Incorrect. Look closer at the definitions!</p>
-                                )}
-                                {matchFeedback === true && (
-                                    <p className="text-green-500 text-sm font-bold flex items-center gap-2">
-                                        <CheckCircle2 className="w-5 h-5" /> Spectacular! You are thinking structurally.
-                                    </p>
-                                )}
-                            </div>
-                        </motion.div>
-                    )}
-
-                    {/* SCENE 5: BLANKS */}
-                    {scene === 'blanks' && (
-                        <motion.div key="blanks" className="w-full max-w-xl text-center space-y-12">
-                            <div className="relative mx-auto w-fit">
-                                <motion.div animate={{ scale: 1.2 }}>
-                                    <VoltBot state="thinking" />
-                                </motion.div>
-                                <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-blue-600 text-white text-[8px] font-black rounded-full shadow-lg border border-white/10">SIGMA</div>
-                            </div>
-                            <h2 className="text-3xl font-bold leading-relaxed">
-                                In a working circuit, current must leave the source and <br />
-                                <span className="relative inline-block px-4 py-1 mx-2 border-b-4 border-blue-500">
-                                    <input
-                                        type="text"
-                                        placeholder="......"
-                                        value={blankValue}
-                                        onChange={e => setBlankValue(e.target.value)}
-                                        className="bg-transparent border-none outline-none text-center w-32 font-mono uppercase tracking-widest text-blue-500 placeholder:opacity-30"
-                                    />
-                                </span>
-                                to it.
-                            </h2>
-                            <button
-                                onClick={checkBlank}
-                                className="px-12 py-4 rounded-2xl bg-blue-600 text-white font-bold hover:scale-105 transition-all"
-                            >
-                                CONFIRM CONCEPT
-                            </button>
-                            {blankFeedback === false && <p className="text-red-400 font-bold">Hint: "The loop must close. It must _____."</p>}
-                        </motion.div>
-                    )}
-
-                    {/* SCENE 6: DIAGNOSIS */}
-                    {scene === 'diagnosis' && (
-                        <motion.div key="diagnosis" className="w-full space-y-12">
-                            <div className="text-center">
-                                <h1 className="text-3xl font-bold">Safe Systems Diagnosis</h1>
-                                <p style={{ color: t.muted }}>Pick the diagram that represents a dangerous failure.</p>
-                            </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                                {[
-                                    { label: 'Proper Loop', detail: 'Ideal path', icon: CheckCircle2, color: 'text-green-500' },
-                                    { label: 'Open Loop', detail: 'Break in line', icon: AlertTriangle, color: 'text-amber-500' },
-                                    { label: 'Short Circuit', detail: 'Bypasses load', icon: Zap, color: 'text-red-500' }
-                                ].map((sys, idx) => (
-                                    <button
-                                        key={idx}
-                                        onClick={() => checkDiagnosis(idx)}
-                                        className={cn(
-                                            "p-8 rounded-3xl border-2 transition-all flex flex-col items-center gap-6 group hover:scale-[1.02]",
-                                            diagnosisSelection === idx ? "border-blue-500 bg-blue-500/5 ring-4 ring-blue-500/20" : ""
-                                        )}
-                                        style={{ borderColor: t.border, background: t.card }}
-                                    >
-                                        <div className={cn("w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center p-3 transition-colors", sys.color)}>
-                                            <sys.icon className="w-full h-full" />
-                                        </div>
-                                        <div className="text-center">
-                                            <h3 className="font-black text-lg">{sys.label}</h3>
-                                            <p className="text-xs opacity-50 uppercase tracking-widest mt-1">{sys.detail}</p>
-                                        </div>
-                                    </button>
-                                ))}
-                            </div>
-
-                            {diagnosisFeedback !== null && (
-                                <div className={cn("p-6 rounded-2xl border flex gap-6 items-center transition-all animate-in fade-in slide-in-from-bottom-4", diagnosisFeedback ? "bg-green-500/10 border-green-500/20" : "bg-red-500/10 border-red-500/20")}>
-                                    <div className="relative shrink-0">
-                                        <VoltBot state={diagnosisFeedback ? "happy" : "sad"} />
-                                        <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-blue-600 text-white text-[8px] font-black rounded-full shadow-lg border border-white/10">SIGMA</div>
-                                    </div>
-                                    <div>
-                                        <p className="font-bold">{diagnosisFeedback ? "Correct!" : "Mistake."}</p>
-                                        <p className="text-sm italic">
-                                            {diagnosisFeedback
-                                                ? "A short circuit allows excessive current. Engineering is not just about working systems — it's about safe systems."
-                                                : "This is a failure, but is it the most 'dangerous' one? Re-examine the Short Circuit."}
-                                        </p>
-                                    </div>
-                                </div>
-                            )}
-                        </motion.div>
-                    )}
-
-                    {/* SCENE 7: SUMMARY & TRIVIA */}
-                    {scene === 'summary' && (
-                        <motion.div key="summary" className="w-full space-y-12">
-                            <div className="text-center">
-                                <h1 className="text-4xl font-bold italic tracking-tighter">SIGMA RECAP</h1>
-                                <p style={{ color: t.muted }}>Return path integrity defines reliability.</p>
-                            </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                {[
-                                    { title: 'Smartphone', icon: Smartphone, desc: 'Ground line break = No power even if battery is full.' },
-                                    { title: 'PCB Failure', icon: Cpu, desc: 'Microscopic trace snap = Entire motherboard fails.' },
-                                    { title: 'Electric Vehicle', icon: CarFront, desc: 'Loose return path = Catastrophic pack failure.' }
-                                ].map((item, idx) => (
-                                    <div key={idx} className="p-6 rounded-2xl border border-slate-500/10 bg-slate-500/5 space-y-3">
-                                        <item.icon className="w-6 h-6 text-blue-500" />
-                                        <h3 className="font-bold">{item.title}</h3>
-                                        <p className="text-xs leading-relaxed opacity-60">{item.desc}</p>
-                                    </div>
-                                ))}
-                            </div>
-
-                            <div className="p-8 rounded-3xl bg-blue-600 text-white relative overflow-hidden group">
-                                <Info className="absolute -right-4 -top-4 w-32 h-32 opacity-10 rotate-12" />
-                                <div className="space-y-4 relative z-10">
-                                    <h3 className="text-xs font-black uppercase tracking-widest opacity-70">Project Trivia</h3>
-                                    <p className="text-xl font-medium leading-normal">
-                                        "Did you know? In early space missions, microscopic wiring faults caused system failures worth millions of dollars."
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div className="flex justify-center">
-                                <button onClick={nextStep} className="px-12 py-4 rounded-2xl bg-blue-600 text-white font-bold hover:scale-105 transition-all">
-                                    FINISH JOURNEY
-                                </button>
-                            </div>
-                        </motion.div>
-                    )}
-
-                    {/* FINAL COMPLETION */}
-                    {scene === 'complete' && (
-                        <motion.div
-                            key="complete"
-                            initial={{ opacity: 0, scale: 0.8 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            className="text-center space-y-12"
-                        >
-                            <div className="relative mx-auto w-fit">
-                                <motion.div animate={{ scale: 2 }}>
-                                    <VoltBot state="happy" />
-                                </motion.div>
-                                <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 px-4 py-1 bg-blue-600 text-white text-[12px] font-black rounded-full shadow-lg border-2 border-white/20">SIGMA</div>
-                            </div>
-                            <div className="space-y-4">
-                                <h1 className="text-5xl font-black italic tracking-tight">"MODULE CLEARED"</h1>
-                                <p className="text-lg opacity-60 max-w-md mx-auto">
-                                    You now understand the foundation. Every digital system you will build rests on this rule.
-                                </p>
-                            </div>
-                            <div className="p-6 rounded-2xl bg-blue-500/10 border border-blue-500/20">
-                                <p className="text-blue-500 font-bold tracking-widest uppercase text-xs">Aspirational Goal</p>
-                                <p className="mt-2 text-sm italic">"Next, we introduce control."</p>
-                            </div>
-                            <button
-                                onClick={() => navigate('/portal')}
-                                className="px-12 py-4 rounded-2xl bg-slate-900 text-white font-bold hover:scale-105 transition-all border border-slate-700"
-                            >
-                                BACK TO STATION MAP
-                            </button>
-                        </motion.div>
-                    )}
-
-                </AnimatePresence>
-            </main>
-
-            {/* Hint overlay for impatient learners */}
-            {scene !== 'intro' && scene !== 'complete' && (
-                <div className="fixed bottom-8 left-8">
-                    <button className="w-10 h-10 rounded-full bg-slate-500/10 border border-slate-500/20 flex items-center justify-center text-slate-400 hover:scale-110 transition-all">
-                        <HelpCircle className="w-5 h-5" />
-                    </button>
-                </div>
-            )}
-        </div>
-    );
 };
+
+/* ══════════════════════════════════════════════════════════════════════
+   SUB-COMPONENTS
+ ══════════════════════════════════════════════════════════════════════ */
+
+const ParamRow: React.FC<{ color: string; label: string; desc: string; t: Theme }> = ({ color, label, desc, t }) => (
+    <div className="flex items-start gap-3">
+        <div style={{ width: 10, height: 10, borderRadius: '50%', background: color, marginTop: 7, flexShrink: 0 }} />
+        <div>
+            <span style={{ fontWeight: 700, fontSize: 15, color: t.text }}>{label}</span>
+            <span style={{ fontSize: 15, color: t.muted }}> — {desc}</span>
+        </div>
+    </div>
+);
+
+const BasicSignalCard: React.FC<{ title: string; desc: string; svg: React.ReactNode; t: Theme }> = ({ title, desc, svg, t }) => (
+    <div className="hover:shadow-md transition-shadow duration-200" style={{
+        background: t.surface, border: `1px solid ${t.border}`,
+        borderRadius: 12, padding: 20, display: 'flex', flexDirection: 'column', gap: 12,
+    }}>
+        <div style={{ display: 'flex', justifyContent: 'center', padding: '8px 0' }}>{svg}</div>
+        <div>
+            <h4 style={{ fontSize: 15, fontWeight: 700, color: t.text, margin: 0 }}>{title}</h4>
+            <p style={{ fontSize: 14, color: t.muted, margin: '4px 0 0', lineHeight: 1.5 }}>{desc}</p>
+        </div>
+    </div>
+);
+
+const RevisionItem: React.FC<{ text: string; t: Theme }> = ({ text, t }) => (
+    <li style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+        <CheckCircle2 style={{ width: 18, height: 18, color: '#22C55E', marginTop: 2, flexShrink: 0 }} />
+        <span style={{ fontSize: 15, color: t.body, lineHeight: 1.6 }}>{text}</span>
+    </li>
+);

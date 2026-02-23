@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { SignalOrb } from '../components/ui/SignalOrb';
-import { VoltBot } from '../components/ui/VoltBot';
+import { VoltMonkey } from '../components/Bot/VoltMonkey';
+import { SpeechBubble } from '../components/Bot/SpeechBubble';
 import { LayoutDashboard, ArrowRight } from 'lucide-react';
 import { useUserStore } from '../stores/userStore';
 import { GreetingSequence } from '../components/ui/GreetingSequence';
@@ -64,12 +65,15 @@ export const HeroExperience = () => {
                 {/* Main Interaction Area */}
                 <div className="space-y-12 flex flex-col items-center">
 
-                    {/* Bot Greeting */}
-                    <VoltBot
-                        state={orbInteracted ? 'happy' : 'speaking'}
-                        message={orbInteracted ? "Spectacular! You found the pulse!" : "See that glowing orb? Give it a drag!"}
-                        className="mb-8"
-                    />
+                    <div className="flex items-end gap-3 mb-8">
+                        <VoltMonkey state={orbInteracted ? 'happy' : 'talking'} size="md" />
+                        <SpeechBubble
+                            body={orbInteracted ? "Spectacular! You found the pulse!" : "See that glowing orb? Give it a drag!"}
+                            placement="right"
+                            accent={orbInteracted ? '#22C55E' : '#6366F1'}
+                            visible
+                        />
+                    </div>
 
                     {/* The Artifact */}
                     <motion.div

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Roboto+Mono:wght@400;500&family=Inter:wght@400;500;600&family=Orbitron:wght@400;500;600;700&family=Exo+2:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&family=Archivo:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&family=Inter:wght@400;500;600&family=Orbitron:wght@400;500;600;700&family=Exo+2:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&family=Archivo:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -58,11 +58,11 @@
 
     body {
         @apply bg-background text-foreground font-sans;
-        font-family: 'Inter', sans-serif;
+        font-family: 'DM Sans', 'Inter', sans-serif;
     }
 
     .font-heading {
-        font-family: 'Inter', sans-serif;
+        font-family: 'DM Sans', 'Inter', sans-serif;
     }
 
     .font-mono {
@@ -83,21 +83,60 @@
     box-shadow: 0 0 20px hsla(174, 63%, 47%, 0.5);
 }
 
-/* Animation Keyframes */
-@keyframes pulse-glow {
+/* ═══════════════════════════════════════════════════════════════════
+   PREMIUM HOMEPAGE ANIMATIONS
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Signal pulse flowing along PCB traces */
+@keyframes signal-pulse {
+    0% {
+        stroke-dashoffset: 40;
+        opacity: 0;
+    }
+
+    20% {
+        opacity: 0.8;
+    }
+
+    80% {
+        opacity: 0.8;
+    }
+
+    100% {
+        stroke-dashoffset: 0;
+        opacity: 0;
+    }
+}
+
+/* Breathing glow for active/in-progress modules */
+@keyframes glow-breathe {
 
     0%,
     100% {
-        opacity: 1;
+        opacity: 0.25;
         transform: scale(1);
     }
 
     50% {
-        opacity: 0.8;
-        transform: scale(1.05);
+        opacity: 0.08;
+        transform: scale(1.04);
     }
 }
 
+/* Staggered fade-in for page elements */
+@keyframes fade-in-up {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Dash scroll for connection lines */
 @keyframes dash-scroll {
     to {
         stroke-dashoffset: -20;
@@ -120,13 +159,52 @@
     }
 }
 
+/* Sidebar icon glow on hover */
+@keyframes icon-glow {
+
+    0%,
+    100% {
+        box-shadow: 0 0 0 rgba(59, 130, 246, 0);
+    }
+
+    50% {
+        box-shadow: 0 0 12px rgba(59, 130, 246, 0.3);
+    }
+}
+
+/* Progress ring pulse */
+@keyframes ring-pulse {
+
+    0%,
+    100% {
+        filter: drop-shadow(0 0 2px rgba(59, 130, 246, 0.3));
+    }
+
+    50% {
+        filter: drop-shadow(0 0 6px rgba(59, 130, 246, 0.5));
+    }
+}
+
 .animate-pulse-slow {
-    animation: pulse-glow 3s infinite ease-in-out;
+    animation: glow-breathe 3s infinite ease-in-out;
 }
 
 .animate-line-flow {
     stroke-dasharray: 20 20;
     animation: line-flow 3s linear infinite;
+}
+
+.animate-signal-pulse {
+    stroke-dasharray: 20 20;
+    animation: signal-pulse 2.5s ease-in-out infinite;
+}
+
+.animate-fade-in-up {
+    animation: fade-in-up 0.5s ease-out both;
+}
+
+.animate-ring-pulse {
+    animation: ring-pulse 3s ease-in-out infinite;
 }
 
 /* Blueprint Grid Utilities */
@@ -137,7 +215,38 @@
         linear-gradient(to bottom, hsla(217, 91%, 60%, 0.05) 1px, transparent 1px);
 }
 
+.bg-grid-blueprint-subtle {
+    background-size: 48px 48px;
+    background-image:
+        linear-gradient(to right, rgba(59, 130, 246, 0.02) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(59, 130, 246, 0.02) 1px, transparent 1px);
+}
+
 .bg-dot-blueprint {
     background-size: 20px 20px;
     background-image: radial-gradient(circle, hsla(217, 91%, 60%, 0.1) 1px, transparent 1px);
+}
+
+/* Sidebar nav item hover glow */
+.nav-icon-glow:hover {
+    box-shadow: 0 0 16px rgba(59, 130, 246, 0.15);
+    background: rgba(59, 130, 246, 0.06);
+}
+
+/* Smooth scrollbar for dark theme */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.15);
 }

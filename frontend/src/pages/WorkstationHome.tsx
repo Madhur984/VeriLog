@@ -2,9 +2,10 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import {
-    LayoutDashboard, Target, Settings, Binary, Command,
+    LayoutDashboard, Target, Settings, Command,
     BarChart3, FlaskConical, BookOpen, CheckCircle2,
     Lock, Play, Zap, Moon, Sun, HelpCircle, ChevronRight,
+    Cpu, PanelLeftClose, PanelLeftOpen,
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useUserStore } from '../stores/userStore';
@@ -26,7 +27,7 @@ interface Module {
     progress: number; status: Status;
     hours: number; lessons: number;
     cx: number; cy: number;
-    depth: number;          // 0=foundation, 1-3=branch depth
+    depth: number;
     branch: BranchKey | null;
     isHub?: boolean;
 }
@@ -34,32 +35,28 @@ interface Module {
 type ConnType = 'trunk' | 'hub-branch' | 'branch';
 interface Connection { from: string; to: string; type: ConnType; }
 
-/* ── Layout constants (mathematical rhythm) ── */
-const CW = 960;
-const FOUND_Y = 110;
-const JUNCTION_Y = 200;
-const BRANCH_Y = [296, 392, 488]; // 96px vertical gap
-const BRANCH_COL: Record<BranchKey, number> = { basic: 480, dsd: 640, verilog: 800 };
-const NODE_R = [24, 20, 18, 16]; // radius per depth
-const HUB_R = 30;
-const CH = 580;
+/* ── Layout constants (enlarged, mathematical rhythm) ── */
+const CW = 1280;
+const FOUND_Y = 120;
+const JUNCTION_Y = 280;
+const BRANCH_Y = [380, 500, 620];
+const BRANCH_COL: Record<BranchKey, number> = { basic: 480, dsd: 720, verilog: 960 };
+const NODE_R = [28, 24, 22, 20];
+const HUB_R = 36;
+const CH = 720;
 
 const MODULES: Module[] = [
-    /* Foundation (depth 0) — linear horizontal row */
-    { id: 'C1', title: 'A Signal Must Return', subtitle: 'The Rule of the Closed Loop', progress: 0, status: 'in-progress', hours: 0.1, lessons: 1, cx: 80, cy: FOUND_Y, depth: 0, branch: null },
-    { id: 'C2', title: 'Logic Gates', subtitle: 'AND, OR, NOT, NAND, XOR', progress: 80, status: 'in-progress', hours: 3, lessons: 10, cx: 220, cy: FOUND_Y, depth: 0, branch: null },
-    { id: 'C3', title: 'Boolean Algebra', subtitle: 'De Morgan, Simplification', progress: 40, status: 'in-progress', hours: 3.5, lessons: 9, cx: 360, cy: FOUND_Y, depth: 0, branch: null },
-    { id: 'C4', title: 'Combinational', subtitle: 'MUX, Decoders, Adders', progress: 0, status: 'locked', hours: 4, lessons: 12, cx: 500, cy: FOUND_Y, depth: 0, branch: null },
-    { id: 'C5', title: 'Karnaugh Maps', subtitle: 'K-map Minimization', progress: 0, status: 'locked', hours: 2, lessons: 6, cx: 640, cy: FOUND_Y, depth: 0, branch: null, isHub: true },
-    /* Basic Electronics */
+    { id: 'C1', title: 'Signal Return', subtitle: 'The Rule of the Closed Loop', progress: 0, status: 'in-progress', hours: 0.1, lessons: 1, cx: 120, cy: FOUND_Y, depth: 0, branch: null },
+    { id: 'C2', title: 'Logic Gates', subtitle: 'AND, OR, NOT, NAND, XOR', progress: 80, status: 'in-progress', hours: 3, lessons: 10, cx: 300, cy: FOUND_Y, depth: 0, branch: null },
+    { id: 'C3', title: 'Boolean Algebra', subtitle: 'De Morgan, Simplification', progress: 40, status: 'in-progress', hours: 3.5, lessons: 9, cx: 480, cy: FOUND_Y, depth: 0, branch: null },
+    { id: 'C4', title: 'Combinational', subtitle: 'MUX, Decoders, Adders', progress: 0, status: 'locked', hours: 4, lessons: 12, cx: 660, cy: FOUND_Y, depth: 0, branch: null },
+    { id: 'C5', title: 'K-Maps', subtitle: 'K-map Minimization', progress: 0, status: 'locked', hours: 2, lessons: 6, cx: 840, cy: FOUND_Y, depth: 0, branch: null, isHub: true },
     { id: 'B1', title: 'BJT & MOSFET', subtitle: 'Transistor fundamentals', progress: 0, status: 'locked', hours: 3, lessons: 8, cx: BRANCH_COL.basic, cy: BRANCH_Y[0], depth: 1, branch: 'basic' },
     { id: 'B2', title: 'Amplifiers', subtitle: 'Op-amp & gain stages', progress: 0, status: 'locked', hours: 3, lessons: 9, cx: BRANCH_COL.basic, cy: BRANCH_Y[1], depth: 2, branch: 'basic' },
     { id: 'B3', title: 'Signal Analysis', subtitle: 'Fourier, filters, AC', progress: 0, status: 'locked', hours: 4, lessons: 10, cx: BRANCH_COL.basic, cy: BRANCH_Y[2], depth: 3, branch: 'basic' },
-    /* DSD */
     { id: 'D1', title: 'Flip-Flops', subtitle: 'SR, D, JK, T, edge-trig', progress: 0, status: 'locked', hours: 3.5, lessons: 8, cx: BRANCH_COL.dsd, cy: BRANCH_Y[0], depth: 1, branch: 'dsd' },
     { id: 'D2', title: 'State Machines', subtitle: 'Mealy, Moore, FSM', progress: 0, status: 'locked', hours: 4, lessons: 10, cx: BRANCH_COL.dsd, cy: BRANCH_Y[1], depth: 2, branch: 'dsd' },
     { id: 'D3', title: 'Sequential Sys.', subtitle: 'Counters, Shift Registers', progress: 0, status: 'locked', hours: 4, lessons: 11, cx: BRANCH_COL.dsd, cy: BRANCH_Y[2], depth: 3, branch: 'dsd' },
-    /* Verilog */
     { id: 'V1', title: 'Verilog Basics', subtitle: 'Syntax, modules, wire/reg', progress: 0, status: 'locked', hours: 3, lessons: 8, cx: BRANCH_COL.verilog, cy: BRANCH_Y[0], depth: 1, branch: 'verilog' },
     { id: 'V2', title: 'RTL Design', subtitle: 'Combinational & sequential RTL', progress: 0, status: 'locked', hours: 4, lessons: 10, cx: BRANCH_COL.verilog, cy: BRANCH_Y[1], depth: 2, branch: 'verilog' },
     { id: 'V3', title: 'Testbenches', subtitle: 'Simulation, assertions', progress: 0, status: 'locked', hours: 4, lessons: 9, cx: BRANCH_COL.verilog, cy: BRANCH_Y[2], depth: 3, branch: 'verilog' },
@@ -92,7 +89,7 @@ const BRANCH_META: Record<BranchKey, { label: string; color: string }> = {
 ══════════════════════════════════════════════════════════════════════ */
 
 function getModule(id: string) { return MODULES.find(m => m.id === id)!; }
-function getR(m: Module) { return m.isHub ? HUB_R : (NODE_R[m.depth] ?? 16); }
+function getR(m: Module) { return m.isHub ? HUB_R : (NODE_R[m.depth] ?? 20); }
 
 function statusColor(s: Status) {
     if (s === 'completed') return '#22c55e';
@@ -108,25 +105,60 @@ function accentFor(m: Module) {
    SVG COMPONENTS
 ══════════════════════════════════════════════════════════════════════ */
 
-/* ── Signal pulse (only through unlocked path, 2.5s, subtle) ── */
 const Pulse: React.FC<{ x1: number; y1: number; x2: number; y2: number; color: string }> = ({ x1, y1, x2, y2, color }) => (
-    <motion.circle r={2.5} fill={color} opacity={0.7}
+    <motion.circle r={3} fill={color} opacity={0.7}
         initial={{ cx: x1, cy: y1, opacity: 0 }}
         animate={{ cx: [x1, x2], cy: [y1, y2], opacity: [0, 0.8, 0.8, 0] }}
         transition={{ duration: 2.5, repeat: Infinity, repeatDelay: 3, ease: 'linear' }}
     />
 );
 
+/* ── SVG Gradient Definitions ── */
+const SvgDefs: React.FC = () => (
+    <defs>
+        <radialGradient id="node-fill-default" cx="40%" cy="40%" r="60%">
+            <stop offset="0%" stopColor="#060a12" />
+            <stop offset="100%" stopColor="#0f1724" />
+        </radialGradient>
+        <radialGradient id="node-fill-completed" cx="40%" cy="40%" r="60%">
+            <stop offset="0%" stopColor="#051205" />
+            <stop offset="100%" stopColor="#0a1f0a" />
+        </radialGradient>
+        <radialGradient id="node-fill-locked" cx="40%" cy="40%" r="60%">
+            <stop offset="0%" stopColor="#080a10" />
+            <stop offset="100%" stopColor="#0c0f17" />
+        </radialGradient>
+        <radialGradient id="hub-fill" cx="40%" cy="40%" r="60%">
+            <stop offset="0%" stopColor="#080d18" />
+            <stop offset="100%" stopColor="#121d33" />
+        </radialGradient>
+        <filter id="glow-green" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="3" result="blur" />
+            <feFlood floodColor="#22c55e" floodOpacity="0.3" />
+            <feComposite in2="blur" operator="in" />
+            <feMerge><feMergeNode /><feMergeNode in="SourceGraphic" /></feMerge>
+        </filter>
+        <filter id="glow-blue" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="4" result="blur" />
+            <feFlood floodColor="#3b82f6" floodOpacity="0.25" />
+            <feComposite in2="blur" operator="in" />
+            <feMerge><feMergeNode /><feMergeNode in="SourceGraphic" /></feMerge>
+        </filter>
+    </defs>
+);
+
 /* ── Module bubble ── */
 const ModuleBubble: React.FC<{
     mod: Module; isHovered: boolean; onHover: (id: string | null) => void;
-    opacity: number; isDark: boolean;
-}> = ({ mod, isHovered, onHover, opacity: nodeOpacity, isDark }) => {
+    opacity: number;
+}> = ({ mod, isHovered, onHover, opacity: nodeOpacity }) => {
     const locked = mod.status === 'locked';
     const done = mod.status === 'completed';
     const inProg = mod.status === 'in-progress';
     const accent = accentFor(mod);
     const r = getR(mod);
+
+    const fillId = locked ? 'url(#node-fill-locked)' : done ? 'url(#node-fill-completed)' : mod.isHub ? 'url(#hub-fill)' : 'url(#node-fill-default)';
 
     return (
         <motion.g
@@ -134,55 +166,71 @@ const ModuleBubble: React.FC<{
             onHoverStart={() => !locked && onHover(mod.id)}
             onHoverEnd={() => onHover(null)}
         >
-            {/* Hub outer glow */}
+            {/* Hub outer glow rings */}
             {mod.isHub && !locked && (
                 <>
-                    <circle cx={mod.cx} cy={mod.cy} r={r + 14} fill="none" stroke="#3b82f6" strokeWidth={0.5} opacity={0.12} />
-                    <motion.circle cx={mod.cx} cy={mod.cy} r={r + 8} fill="none" stroke="#3b82f6" strokeWidth={0.8}
-                        animate={{ opacity: [0.2, 0.06, 0.2] }} transition={{ duration: 3, repeat: Infinity }} />
+                    <circle cx={mod.cx} cy={mod.cy} r={r + 18} fill="none" stroke="#3b82f6" strokeWidth={0.4} opacity={0.08} />
+                    <motion.circle cx={mod.cx} cy={mod.cy} r={r + 10} fill="none" stroke="#3b82f6" strokeWidth={0.7}
+                        animate={{ opacity: [0.18, 0.05, 0.18] }} transition={{ duration: 3, repeat: Infinity }} />
                 </>
             )}
-            {/* Completed glow ring */}
-            {done && <circle cx={mod.cx} cy={mod.cy} r={r + 5} fill="none" stroke="#22c55e" strokeWidth={0.8} opacity={0.2} />}
-            {/* In-progress expanding pulse */}
+
+            {/* Completed soft neon outline */}
+            {done && (
+                <circle cx={mod.cx} cy={mod.cy} r={r + 5} fill="none" stroke="#22c55e" strokeWidth={1} opacity={0.25}
+                    filter="url(#glow-green)" />
+            )}
+
+            {/* In-progress breathing pulse */}
             {inProg && (
                 <motion.circle cx={mod.cx} cy={mod.cy} fill="none" stroke="#3b82f6" strokeWidth={0.8}
-                    initial={{ opacity: 0.35, r: r + 3 }} animate={{ opacity: 0, r: r + 14 }}
+                    initial={{ opacity: 0.3, r: r + 4 }} animate={{ opacity: 0, r: r + 18 }}
                     transition={{ duration: 2.5, repeat: Infinity, ease: 'easeOut' }} />
             )}
-            {/* Main circle */}
+
+            {/* Active glow */}
+            {inProg && !isHovered && (
+                <circle cx={mod.cx} cy={mod.cy} r={r + 3} fill="none" stroke="#3b82f6" strokeWidth={0.6} opacity={0.2}
+                    filter="url(#glow-blue)" />
+            )}
+
+            {/* Main circle with gradient fill */}
             <motion.circle cx={mod.cx} cy={mod.cy}
                 r={r}
-                fill={locked ? (isDark ? '#0b0e14' : '#f1f5f9') : done ? '#091409' : (isDark ? '#0d1520' : '#f8fafc')}
-                stroke={locked ? (isDark ? '#1e293b' : '#cbd5e1') : accent}
-                strokeWidth={mod.isHub ? 2 : locked ? 0.5 : isHovered ? 2 : 1}
-                opacity={locked ? 0.5 : 1}
-                animate={{ r: isHovered ? r * 1.1 : r }}
+                fill={fillId}
+                stroke={locked ? '#1a2030' : accent}
+                strokeWidth={mod.isHub ? 2.5 : locked ? 0.7 : isHovered ? 2 : 1.5}
+                opacity={locked ? 0.4 : 1}
+                animate={{ r: isHovered ? r * 1.08 : r }}
                 transition={{ duration: 0.2, ease: 'easeOut' }}
             />
+
             {/* Progress arc */}
             {mod.progress > 0 && mod.progress < 100 && (
-                <circle cx={mod.cx} cy={mod.cy} r={r - 4} fill="none" stroke={accent} strokeWidth={1.5}
-                    strokeDasharray={`${(r - 4) * 2 * Math.PI * mod.progress / 100} 9999`}
-                    strokeLinecap="round" transform={`rotate(-90 ${mod.cx} ${mod.cy})`} opacity={0.55} />
+                <circle cx={mod.cx} cy={mod.cy} r={r - 5} fill="none" stroke={accent} strokeWidth={2}
+                    strokeDasharray={`${(r - 5) * 2 * Math.PI * mod.progress / 100} 9999`}
+                    strokeLinecap="round" transform={`rotate(-90 ${mod.cx} ${mod.cy})`} opacity={0.5} />
             )}
+
             {/* Center icon / text */}
-            {done ? <CheckCircle2 x={mod.cx - r * 0.35} y={mod.cy - r * 0.35} width={r * 0.7} height={r * 0.7} color="#22c55e" />
-                : locked ? <Lock x={mod.cx - r * 0.3} y={mod.cy - r * 0.3} width={r * 0.6} height={r * 0.6} color={isDark ? '#334155' : '#94a3b8'} />
+            {done ? <CheckCircle2 x={mod.cx - r * 0.3} y={mod.cy - r * 0.3} width={r * 0.6} height={r * 0.6} color="#22c55e" />
+                : locked ? <Lock x={mod.cx - r * 0.25} y={mod.cy - r * 0.25} width={r * 0.5} height={r * 0.5} color="#2a3547" />
                     : <text x={mod.cx} y={mod.cy + 1} textAnchor="middle" dominantBaseline="middle"
-                        fill={accent} fontSize={r > 22 ? 10 : 8} fontWeight="700" fontFamily="monospace">{mod.progress}%</text>}
+                        fill={accent} fontSize={r > 26 ? 12 : 10} fontWeight="700" fontFamily="'Roboto Mono',monospace">{mod.progress}%</text>}
+
             {/* Label below */}
             {!isHovered && (
-                <text x={mod.cx} y={mod.cy + r + 14} textAnchor="middle"
-                    fill={locked ? (isDark ? '#2a3547' : '#94a3b8') : (isDark ? '#94a3b8' : '#475569')}
-                    fontSize={r > 22 ? 10 : 9} fontWeight="500" fontFamily="'DM Sans',sans-serif">
+                <text x={mod.cx} y={mod.cy + r + 22} textAnchor="middle"
+                    fill={locked ? '#1e2a3d' : '#cbd5e1'}
+                    fontSize={11} fontWeight="600" fontFamily="'DM Sans',sans-serif">
                     {mod.title}
                 </text>
             )}
+
             {/* Hub sub-label */}
             {mod.isHub && !isHovered && (
-                <text x={mod.cx} y={mod.cy + r + 28} textAnchor="middle"
-                    fill={isDark ? '#475569' : '#94a3b8'} fontSize={7.5} fontFamily="monospace" letterSpacing="0.08em">
+                <text x={mod.cx} y={mod.cy + r + 40} textAnchor="middle"
+                    fill="#475569" fontSize={8.5} fontFamily="'Roboto Mono',monospace" letterSpacing="0.1em">
                     CHOOSE YOUR PATH
                 </text>
             )}
@@ -191,15 +239,15 @@ const ModuleBubble: React.FC<{
 };
 
 /* ── Hover card ── */
-const CARD_W = 210;
-const CARD_H = 145;
+const CARD_W = 230;
+const CARD_H = 155;
 
-const HoverCard: React.FC<{ mod: Module; onStart: (m: Module) => void; isDark: boolean }> = ({ mod, onStart, isDark }) => {
+const HoverCard: React.FC<{ mod: Module; onStart: (m: Module) => void }> = ({ mod, onStart }) => {
     const r = getR(mod);
     const rawX = mod.cx - CARD_W / 2;
-    const rawY = mod.cy - CARD_H - r - 16;
+    const rawY = mod.cy - CARD_H - r - 20;
     const x = Math.max(10, Math.min(rawX, CW - CARD_W - 10));
-    const y = rawY < 10 ? mod.cy + r + 16 : rawY;
+    const y = rawY < 10 ? mod.cy + r + 20 : rawY;
     const accent = accentFor(mod);
     const label = mod.progress === 100 ? 'Review' : mod.progress > 0 ? 'Continue' : 'Start';
 
@@ -211,36 +259,58 @@ const HoverCard: React.FC<{ mod: Module; onStart: (m: Module) => void; isDark: b
             transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
         >
             <foreignObject x={x} y={y} width={CARD_W} height={CARD_H}>
-                <div className={cn(
-                    "rounded-2xl border overflow-hidden flex flex-col justify-between p-4 relative backdrop-blur-xl",
-                    isDark ? "bg-[#0d1118]/95 border-white/10 shadow-[0_8px_40px_rgba(0,0,0,0.6)]"
-                        : "bg-white/95 border-black/8 shadow-[0_8px_30px_rgba(0,0,0,0.12)]"
-                )} style={{ width: CARD_W, height: CARD_H }}>
+                <div className="rounded-2xl border overflow-hidden flex flex-col justify-between p-4 relative backdrop-blur-xl bg-[#0a0e18]/95 border-white/[0.07] shadow-[0_12px_48px_rgba(0,0,0,0.7)]"
+                    style={{ width: CARD_W, height: CARD_H }}>
+                    {/* Top accent line */}
                     <div className="absolute top-0 left-4 right-4 h-[1px]"
-                        style={{ background: `linear-gradient(to right,transparent,${accent}60,transparent)` }} />
+                        style={{ background: `linear-gradient(to right,transparent,${accent}55,transparent)` }} />
                     <div>
-                        <p className="text-[9px] font-mono uppercase tracking-widest mb-1" style={{ color: accent }}>
+                        <p className="text-[9px] font-mono uppercase tracking-widest mb-1.5" style={{ color: accent }}>
                             {mod.id} · {mod.branch ? BRANCH_META[mod.branch].label : 'FOUNDATION'}
                         </p>
-                        <p className={cn("text-[13px] font-semibold leading-snug", isDark ? "text-white" : "text-slate-900")}>{mod.title}</p>
-                        <p className="text-[10px] text-slate-500 mt-0.5 line-clamp-2 leading-snug">{mod.subtitle}</p>
+                        <p className="text-[14px] font-semibold leading-snug text-[#e2e8f0]">{mod.title}</p>
+                        <p className="text-[11px] text-[#64748b] mt-1 line-clamp-2 leading-snug">{mod.subtitle}</p>
                     </div>
                     <div className="flex items-center justify-between">
                         <div>
-                            <p className="text-[10px] text-slate-600 font-mono">{mod.lessons}L · {mod.hours}h</p>
-                            <div className={cn("mt-1 h-[2px] w-16 rounded-full overflow-hidden", isDark ? "bg-white/5" : "bg-black/5")}>
-                                <div className="h-full rounded-full" style={{ width: `${mod.progress}%`, background: accent }} />
+                            <p className="text-[10px] text-[#475569] font-mono">{mod.lessons}L · {mod.hours}h</p>
+                            <div className="mt-1.5 h-[3px] w-20 rounded-full overflow-hidden bg-white/[0.05]">
+                                <div className="h-full rounded-full transition-all duration-500" style={{ width: `${mod.progress}%`, background: accent }} />
                             </div>
                         </div>
                         <button onClick={() => onStart(mod)}
-                            className="flex items-center gap-1 px-3 py-1.5 rounded-xl text-[11px] font-semibold text-white cursor-pointer"
-                            style={{ background: `${accent}22`, border: `1px solid ${accent}55` }}>
+                            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-[11px] font-semibold text-white cursor-pointer transition-all duration-200 hover:scale-[1.04]"
+                            style={{ background: `${accent}20`, border: `1px solid ${accent}40` }}>
                             <Play className="w-3 h-3 fill-current" />{label}
                         </button>
                     </div>
                 </div>
             </foreignObject>
         </motion.g>
+    );
+};
+
+/* ── Progress Ring (header) ── */
+const ProgressRing: React.FC<{ percent: number; size?: number }> = ({ percent, size = 36 }) => {
+    const strokeW = 3;
+    const radius = (size - strokeW) / 2;
+    const circ = 2 * Math.PI * radius;
+    const offset = circ - (circ * percent) / 100;
+
+    return (
+        <div className="relative animate-ring-pulse" style={{ width: size, height: size }}>
+            <svg width={size} height={size} className="rotate-[-90deg]">
+                <circle cx={size / 2} cy={size / 2} r={radius} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth={strokeW} />
+                <motion.circle cx={size / 2} cy={size / 2} r={radius} fill="none" stroke="#3b82f6" strokeWidth={strokeW}
+                    strokeLinecap="round" strokeDasharray={circ}
+                    initial={{ strokeDashoffset: circ }}
+                    animate={{ strokeDashoffset: offset }}
+                    transition={{ duration: 1.5, ease: 'easeOut' }} />
+            </svg>
+            <span className="absolute inset-0 flex items-center justify-center text-[10px] font-bold font-mono text-blue-400">
+                {percent}%
+            </span>
+        </div>
     );
 };
 
@@ -254,6 +324,7 @@ export const WorkstationHome: React.FC = () => {
     const [hoveredId, setHoveredId] = useState<string | null>(null);
     const [cmdOpen, setCmdOpen] = useState(false);
     const [tourOpen, setTourOpen] = useState(false);
+    const [sidebarOpen, setSidebarOpen] = useState(false);
     const [scheme, toggleScheme] = useColorScheme();
     const isDark = scheme === 'dark';
 
@@ -271,20 +342,20 @@ export const WorkstationHome: React.FC = () => {
 
     const getNodeOpacity = useCallback((m: Module): number => {
         if (m.depth === 0) return 1;
-        if (!activeBranch) return 0.65;
-        return m.branch === activeBranch ? 1 : 0.2;
+        if (!activeBranch) return 0.6;
+        return m.branch === activeBranch ? 1 : 0.18;
     }, [activeBranch]);
 
     const getConnOpacity = useCallback((c: Connection): number => {
         if (c.type === 'trunk') return 1;
         const t = getModule(c.to);
-        if (!activeBranch) return 0.55;
-        return t.branch === activeBranch ? 1 : 0.15;
+        if (!activeBranch) return 0.5;
+        return t.branch === activeBranch ? 1 : 0.12;
     }, [activeBranch]);
 
     /* ── Breadcrumb ── */
     const breadcrumb = useMemo(() => {
-        if (!hoveredId) return ['Foundation'];
+        if (!hoveredId) return ['Foundation', 'Specialization', 'Advanced'];
         const m = getModule(hoveredId);
         const crumbs = ['Foundation'];
         if (m.branch) {
@@ -300,6 +371,8 @@ export const WorkstationHome: React.FC = () => {
     const foundMods = MODULES.filter(m => m.depth === 0);
     const foundComplete = foundMods.filter(m => m.status === 'completed').length;
     const foundInProg = foundMods.filter(m => m.status !== 'locked').length;
+    const completedCount = MODULES.filter(m => m.status === 'completed').length;
+    const overallPercent = Math.round((completedCount / MODULES.length) * 100);
 
     /* ── Tour ── */
     useEffect(() => {
@@ -318,31 +391,12 @@ export const WorkstationHome: React.FC = () => {
 
     const navItems = [
         { title: 'Dashboard', icon: LayoutDashboard, path: '/portal', active: true },
+        { title: 'Modules', icon: BookOpen, path: '/portal' },
         { title: 'Challenges', icon: Target, path: '/assessment' },
         { title: 'Workbench', icon: FlaskConical, path: '/playground' },
         { title: 'Progress', icon: BarChart3, path: '/training' },
-        { title: 'Modules', icon: BookOpen, path: '/portal' },
         { title: 'Settings', icon: Settings, path: '/login' },
     ];
-
-    const completedCount = MODULES.filter(m => m.status === 'completed').length;
-
-    /* ── Adaptive tokens ── */
-    const t = {
-        bg: isDark ? '#07080C' : '#f1f5f9',
-        sidebar: isDark ? '#08090D' : '#ffffff',
-        sidebarBdr: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.08)',
-        text: isDark ? '#e2e8f0' : '#0f172a',
-        textMuted: isDark ? '#64748b' : '#64748b',
-        cardBg: isDark ? '#0c0f16' : '#ffffff',
-        cardBdr: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.1)',
-        navActive: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(59,130,246,0.08)',
-        navHover: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)',
-        inputBg: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)',
-        inputBdr: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.1)',
-        line: isDark ? '#1a2332' : '#cbd5e1',
-        lineFaint: isDark ? '#111827' : '#e2e8f0',
-    };
 
     /* ── Render connection lines ── */
     const renderConnection = (conn: Connection, i: number) => {
@@ -355,12 +409,12 @@ export const WorkstationHome: React.FC = () => {
         const opacity = getConnOpacity(conn);
 
         if (conn.type === 'trunk') {
-            const color = active ? statusColor(a.status) : t.line;
+            const color = active ? statusColor(a.status) : '#162032';
             return (
                 <g key={i} opacity={opacity}>
                     <line x1={a.cx + ra} y1={a.cy} x2={b.cx - rb} y2={b.cy}
                         stroke={color} strokeWidth={2.5}
-                        strokeDasharray={active ? 'none' : '6 4'} opacity={active ? 0.7 : 0.2} />
+                        strokeDasharray={active ? 'none' : '6 4'} opacity={active ? 0.65 : 0.18} />
                     {showPulse && <Pulse x1={a.cx + ra} y1={a.cy} x2={b.cx - rb} y2={b.cy} color="#3b82f6" />}
                 </g>
             );
@@ -368,10 +422,9 @@ export const WorkstationHome: React.FC = () => {
 
         if (conn.type === 'hub-branch') {
             const bColor = b.branch ? BRANCH_META[b.branch].color : '#3b82f6';
-            const color = active ? bColor : t.line;
+            const color = active ? bColor : '#162032';
             const hubBot = a.cy + HUB_R;
             const tgtTop = b.cy - rb;
-            // L-shaped PCB trace through junction
             let d: string;
             if (a.cx === b.cx) {
                 d = `M ${a.cx} ${hubBot} L ${b.cx} ${tgtTop}`;
@@ -380,21 +433,20 @@ export const WorkstationHome: React.FC = () => {
             }
             return (
                 <g key={i} opacity={opacity}>
-                    <path d={d} fill="none" stroke={color} strokeWidth={1.5}
-                        strokeDasharray={active ? 'none' : '5 4'} opacity={active ? 0.5 : 0.15} />
+                    <path d={d} fill="none" stroke={color} strokeWidth={1.8}
+                        strokeDasharray={active ? 'none' : '5 4'} opacity={active ? 0.45 : 0.12} />
                     {showPulse && <Pulse x1={a.cx} y1={hubBot} x2={b.cx} y2={tgtTop} color={bColor} />}
                 </g>
             );
         }
 
-        // branch internal — vertical
         const bColor = a.branch ? BRANCH_META[a.branch].color : '#64748b';
-        const color = active ? bColor : t.line;
+        const color = active ? bColor : '#162032';
         return (
             <g key={i} opacity={opacity}>
                 <line x1={a.cx} y1={a.cy + ra} x2={b.cx} y2={b.cy - rb}
-                    stroke={color} strokeWidth={1}
-                    strokeDasharray={active ? 'none' : '4 3'} opacity={active ? 0.4 : 0.12} />
+                    stroke={color} strokeWidth={1.5}
+                    strokeDasharray={active ? 'none' : '4 3'} opacity={active ? 0.35 : 0.1} />
                 {showPulse && <Pulse x1={a.cx} y1={a.cy + ra} x2={b.cx} y2={b.cy - rb} color={bColor} />}
             </g>
         );
@@ -402,136 +454,224 @@ export const WorkstationHome: React.FC = () => {
 
     return (
         <>
-            <div className="h-screen flex overflow-hidden select-none transition-colors duration-300"
-                style={{ background: t.bg, color: t.text, fontFamily: "'DM Sans',Inter,sans-serif" }}>
+            <div className="h-screen flex flex-col overflow-hidden select-none"
+                style={{
+                    background: isDark
+                        ? 'linear-gradient(180deg, #060a12 0%, #030508 100%)'
+                        : 'linear-gradient(180deg, #f1f5f9 0%, #e2e8f0 100%)',
+                    color: isDark ? '#e2e8f0' : '#0f172a',
+                    fontFamily: "'DM Sans', Inter, sans-serif"
+                }}>
 
-                {/* ══ SIDEBAR ══════════════════════════════════════════════ */}
-                <aside id="tour-sidebar" className="w-[220px] shrink-0 flex flex-col transition-colors duration-300"
-                    style={{ background: t.sidebar, borderRight: `1px solid ${t.sidebarBdr}` }}>
+                {/* ══ FIXED TOP HEADER ═══════════════════════════════════════ */}
+                <header id="tour-header" className="h-14 shrink-0 flex items-center justify-between px-6 z-20"
+                    style={{
+                        background: isDark ? 'rgba(6,10,18,0.85)' : 'rgba(241,245,249,0.9)',
+                        borderBottom: `1px solid ${isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.06)'}`,
+                        backdropFilter: 'blur(16px)',
+                    }}>
 
-                    <div className="px-5 h-14 flex items-center gap-3" style={{ borderBottom: `1px solid ${t.sidebarBdr}` }}>
-                        <div className="w-7 h-7 rounded-lg bg-blue-600 flex items-center justify-center shadow-[0_0_16px_rgba(59,130,246,0.35)]">
-                            <Binary className="w-4 h-4 text-white" />
+                    {/* Left: Logo */}
+                    <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center shadow-[0_0_20px_rgba(59,130,246,0.3)]">
+                            <Cpu className="w-4.5 h-4.5 text-white" />
                         </div>
-                        <span className="font-bold text-[15px] tracking-tight" style={{ color: t.text }}>DigiLogic</span>
-                        <span className="ml-auto text-[9px] text-blue-400 font-mono bg-blue-400/10 px-1.5 py-0.5 rounded">beta</span>
+                        <span className="font-bold text-[16px] tracking-tight" style={{ color: isDark ? '#e2e8f0' : '#0f172a' }}>DigiLogic</span>
+                        <span className="text-[9px] text-blue-400 font-mono bg-blue-400/10 px-1.5 py-0.5 rounded">beta</span>
                     </div>
 
-                    <nav className="flex-1 p-3 pt-4 space-y-0.5">
-                        <p className="text-[9px] font-mono uppercase tracking-widest px-3 mb-3" style={{ color: t.textMuted }}>Platform</p>
+                    {/* Center: Progress Ring */}
+                    <div id="tour-progress-ring" className="flex items-center gap-3">
+                        <ProgressRing percent={overallPercent} />
+                        <div>
+                            <p className="text-[11px] font-medium" style={{ color: isDark ? '#94a3b8' : '#64748b' }}>Course Progress</p>
+                            <p className="text-[10px] font-mono" style={{ color: isDark ? '#475569' : '#94a3b8' }}>{completedCount}/{MODULES.length} modules</p>
+                        </div>
+                    </div>
+
+
+                    {/* Right: Actions + Profile */}
+                    <div className="flex items-center gap-2.5">
+                        <button id="tour-header-search" onClick={() => setCmdOpen(true)}
+                            className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[11px] font-mono cursor-pointer transition-all duration-200 hover:bg-white/[0.06]"
+                            style={{ background: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.04)', border: `1px solid ${isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.08)'}`, color: isDark ? '#64748b' : '#94a3b8' }}>
+                            <Command className="w-3.5 h-3.5" /><span>Search</span>
+                            <span className="text-[9px] border rounded px-1 py-0.5" style={{ borderColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.1)' }}>⌘K</span>
+                        </button>
+                        <button onClick={toggleScheme}
+                            className="w-8 h-8 rounded-xl flex items-center justify-center cursor-pointer transition-all duration-200 hover:bg-white/[0.06]"
+                            style={{ background: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.04)', border: `1px solid ${isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.08)'}` }}
+                            title={`Switch to ${isDark ? 'light' : 'dark'} mode`}>
+                            {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-500" />}
+                        </button>
+                        <button onClick={() => setTourOpen(true)}
+                            className="w-8 h-8 rounded-xl flex items-center justify-center cursor-pointer transition-all duration-200 hover:bg-white/[0.06]"
+                            style={{ background: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.04)', border: `1px solid ${isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.08)'}` }}
+                            title="Start onboarding tour">
+                            <HelpCircle className="w-4 h-4" style={{ color: isDark ? '#475569' : '#94a3b8' }} />
+                        </button>
+                        <div className="w-px h-6 mx-1" style={{ background: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.08)' }} />
+                        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 border-2 border-blue-400/20 flex items-center justify-center text-white font-bold text-[13px] cursor-pointer shadow-[0_0_16px_rgba(59,130,246,0.2)] transition-all hover:scale-105">
+                            {(firstName || 'S')[0].toUpperCase()}
+                        </div>
+                    </div>
+                </header>
+
+                {/* ══ BODY: SIDEBAR + MAIN ═══════════════════════════════════ */}
+                <div className="flex-1 flex overflow-hidden">
+
+                    {/* ── Expandable Sidebar ── */}
+                    <motion.aside
+                        id="tour-sidebar"
+                        className="shrink-0 flex flex-col items-center py-5 gap-1 z-10 relative"
+                        animate={{ width: sidebarOpen ? 200 : 72 }}
+                        transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                        style={{
+                            background: isDark ? 'rgba(6,10,18,0.6)' : 'rgba(255,255,255,0.8)',
+                            borderRight: `1px solid ${isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.06)'}`,
+                        }}>
+
+                        {/* Toggle button */}
+                        <button
+                            onClick={() => setSidebarOpen(p => !p)}
+                            className="absolute -right-3 top-6 w-6 h-6 rounded-full flex items-center justify-center cursor-pointer z-20 transition-all duration-200 hover:scale-110"
+                            style={{
+                                background: isDark ? '#141a28' : '#e2e8f0',
+                                border: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.1)'}`,
+                                boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+                            }}
+                            title={sidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}>
+                            {sidebarOpen
+                                ? <PanelLeftClose className="w-3.5 h-3.5" style={{ color: isDark ? '#94a3b8' : '#475569' }} />
+                                : <PanelLeftOpen className="w-3.5 h-3.5" style={{ color: isDark ? '#94a3b8' : '#475569' }} />}
+                        </button>
+
                         {navItems.map(item => (
                             <button key={item.title} onClick={() => navigate(item.path)}
-                                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-all duration-200 cursor-pointer group"
-                                style={{ background: item.active ? t.navActive : 'transparent', color: item.active ? t.text : t.textMuted }}
-                                onMouseEnter={e => { if (!item.active) e.currentTarget.style.background = t.navHover; }}
-                                onMouseLeave={e => { if (!item.active) e.currentTarget.style.background = 'transparent'; }}>
-                                <item.icon className={cn("w-4 h-4 shrink-0", item.active ? "text-blue-400" : "")}
-                                    style={{ color: item.active ? '#60a5fa' : t.textMuted }} />
-                                <span>{item.title}</span>
-                                {item.active && <div className="ml-auto w-1 h-1 rounded-full bg-blue-400" />}
+                                className={cn(
+                                    "rounded-xl flex items-center cursor-pointer transition-all duration-250 relative group",
+                                    sidebarOpen ? "w-[calc(100%-16px)] h-11 gap-3 px-3" : "w-11 h-11 justify-center",
+                                    item.active ? "" : "nav-icon-glow"
+                                )}
+                                style={{
+                                    background: item.active
+                                        ? (isDark ? 'rgba(59,130,246,0.1)' : 'rgba(59,130,246,0.08)')
+                                        : 'transparent',
+                                }}
+                                title={!sidebarOpen ? item.title : undefined}>
+                                {/* Active indicator bar */}
+                                {item.active && (
+                                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-full bg-blue-500" />
+                                )}
+                                <item.icon className="w-[18px] h-[18px] shrink-0 transition-colors duration-200"
+                                    style={{ color: item.active ? '#60a5fa' : (isDark ? '#475569' : '#94a3b8') }} />
+
+                                {/* Label (visible when expanded) */}
+                                <AnimatePresence>
+                                    {sidebarOpen && (
+                                        <motion.span
+                                            initial={{ opacity: 0, x: -4 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            exit={{ opacity: 0, x: -4 }}
+                                            transition={{ duration: 0.15 }}
+                                            className="text-[12px] font-medium whitespace-nowrap overflow-hidden"
+                                            style={{ color: item.active ? '#60a5fa' : (isDark ? '#94a3b8' : '#64748b') }}>
+                                            {item.title}
+                                        </motion.span>
+                                    )}
+                                </AnimatePresence>
+
+                                {/* Tooltip (only when collapsed) */}
+                                {!sidebarOpen && (
+                                    <div className="absolute left-full ml-3 px-2.5 py-1.5 rounded-lg text-[11px] font-medium whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200 z-50"
+                                        style={{
+                                            background: isDark ? '#141a28' : '#0f172a',
+                                            color: '#e2e8f0',
+                                            boxShadow: '0 4px 20px rgba(0,0,0,0.5)',
+                                        }}>
+                                        {item.title}
+                                    </div>
+                                )}
                             </button>
                         ))}
-                    </nav>
 
-                    <div id="tour-progress-card" className="p-3 pb-5">
-                        <div className="rounded-xl p-4 transition-colors" style={{ background: t.cardBg, border: `1px solid ${t.cardBdr}` }}>
-                            <div className="flex justify-between mb-2">
-                                <span className="text-[11px]" style={{ color: t.textMuted }}>Overall Progress</span>
-                                <span className="text-[11px] font-mono font-bold text-blue-400">
-                                    {Math.round((completedCount / MODULES.length) * 100)}%
-                                </span>
-                            </div>
-                            <div className="h-[2px] w-full rounded-full overflow-hidden" style={{ background: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.08)' }}>
-                                <motion.div className="h-full bg-blue-500 rounded-full"
-                                    initial={{ width: 0 }} animate={{ width: `${(completedCount / MODULES.length) * 100}%` }}
-                                    transition={{ duration: 1.5, ease: 'easeOut' }} />
-                            </div>
-                            <p className="text-[10px] mt-2 font-mono" style={{ color: t.textMuted }}>{completedCount}/{MODULES.length} complete</p>
+                        {/* Bottom spacer + help */}
+                        <div className="flex-1" />
+
+                        {/* Progress mini card */}
+                        <div id="tour-progress-card"
+                            className={cn(
+                                "mt-auto mb-2 rounded-xl flex items-center cursor-pointer transition-all duration-200 hover:bg-white/[0.04]",
+                                sidebarOpen ? "w-[calc(100%-16px)] h-11 gap-3 px-3" : "w-11 h-11 justify-center"
+                            )}
+                            style={{ background: isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.03)' }}
+                            title={`${overallPercent}% complete`}>
+                            <Zap className="w-4 h-4 shrink-0 text-amber-500/60" />
+                            <AnimatePresence>
+                                {sidebarOpen && (
+                                    <motion.span
+                                        initial={{ opacity: 0, x: -4 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        exit={{ opacity: 0, x: -4 }}
+                                        transition={{ duration: 0.15 }}
+                                        className="text-[11px] font-mono whitespace-nowrap"
+                                        style={{ color: isDark ? '#475569' : '#94a3b8' }}>
+                                        {overallPercent}% done
+                                    </motion.span>
+                                )}
+                            </AnimatePresence>
                         </div>
-                    </div>
-                </aside>
+                    </motion.aside>
 
-                {/* ══ MAIN ═════════════════════════════════════════════════ */}
-                <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-
-                    {/* Header */}
-                    <header className="h-14 shrink-0 flex items-center justify-between px-8 transition-colors duration-300"
-                        style={{ borderBottom: `1px solid ${t.sidebarBdr}`, background: t.bg }}>
-                        <button id="tour-header-search" onClick={() => setCmdOpen(true)}
-                            className="flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-[12px] font-mono cursor-pointer transition-all"
-                            style={{ background: t.inputBg, border: `1px solid ${t.inputBdr}`, color: t.textMuted }}>
-                            <Command className="w-3.5 h-3.5" /><span>Search modules...</span>
-                            <span className="ml-2 text-[10px] border rounded px-1 py-0.5 font-sans" style={{ borderColor: t.inputBdr }}>⌘K</span>
-                        </button>
-                        <div className="flex items-center gap-3">
-                            <button onClick={toggleScheme}
-                                className="w-8 h-8 rounded-xl flex items-center justify-center cursor-pointer transition-all"
-                                style={{ background: t.inputBg, border: `1px solid ${t.inputBdr}` }}
-                                title={`Switch to ${isDark ? 'light' : 'dark'} mode`}>
-                                {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-500" />}
-                            </button>
-                            <button onClick={() => setTourOpen(true)}
-                                className="w-8 h-8 rounded-xl flex items-center justify-center cursor-pointer transition-all"
-                                style={{ background: t.inputBg, border: `1px solid ${t.inputBdr}` }} title="Start onboarding tour">
-                                <HelpCircle className="w-4 h-4" style={{ color: t.textMuted }} />
-                            </button>
-                            <div className="w-px h-5" style={{ background: t.sidebarBdr }} />
-                            <div className="text-right">
-                                <p className="text-[13px] font-semibold" style={{ color: t.text }}>{firstName || 'Scientist'}</p>
-                                <p className="text-[10px] font-mono" style={{ color: t.textMuted }}>Beta Access</p>
-                            </div>
-                            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-violet-600 border border-white/10 flex items-center justify-center text-white font-bold text-[12px] cursor-pointer">
-                                {(firstName || 'S')[0].toUpperCase()}
-                            </div>
-                        </div>
-                    </header>
-
-                    {/* Content */}
+                    {/* ══ MAIN CONTENT ═══════════════════════════════════════ */}
                     <div className="flex-1 overflow-y-auto overflow-x-hidden relative">
-                        {/* Blueprint grid */}
-                        <div className="fixed inset-0 pointer-events-none" style={{
-                            backgroundImage: [
-                                'linear-gradient(rgba(59,130,246,0.025) 1px,transparent 1px)',
-                                'linear-gradient(90deg,rgba(59,130,246,0.025) 1px,transparent 1px)',
-                            ].join(','),
-                            backgroundSize: '48px 48px',
-                        }} />
 
-                        <div className="relative z-10 px-8 py-8">
+                        {/* Blueprint grid background */}
+                        <div className="fixed inset-0 pointer-events-none bg-grid-blueprint-subtle" />
+
+                        <div className="relative z-10 px-10 py-8">
+
+                            {/* ── Motivational message ── */}
+                            <motion.p
+                                className="text-[12px] font-mono tracking-wide mb-5 animate-fade-in-up"
+                                style={{ color: isDark ? '#334155' : '#94a3b8', animationDelay: '0.1s' }}>
+                                <Zap className="w-3 h-3 inline mr-1.5 -mt-0.5" style={{ color: '#3b82f6' }} />
+                                "Every system begins with a complete loop."
+                            </motion.p>
 
                             {/* ── Page header ── */}
-                            <div className="mb-6">
-                                <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-widest mb-2" style={{ color: t.textMuted }}>
-                                    <Zap className="w-3 h-3" /> Curriculum Map
-                                </div>
-                                <h1 className="text-[26px] font-bold tracking-tight" style={{ color: t.text }}>Learning Modules</h1>
-                                <p className="text-[13px] mt-1" style={{ color: t.textMuted }}>
+                            <motion.div className="mb-6 animate-fade-in-up" style={{ animationDelay: '0.15s' }}>
+                                <h1 className="text-[28px] font-bold tracking-tight" style={{ color: isDark ? '#e2e8f0' : '#0f172a' }}>Learning Modules</h1>
+                                <p className="text-[13px] mt-1.5" style={{ color: isDark ? '#475569' : '#64748b' }}>
                                     Your progression path through digital electronics. Hover nodes to explore.
                                 </p>
-                            </div>
+                            </motion.div>
 
                             {/* ── Breadcrumb ── */}
-                            <div className="flex items-center gap-1.5 mb-6 text-[11px] font-mono" style={{ color: t.textMuted }}>
+                            <div className="flex items-center gap-1.5 mb-5 text-[11px] font-mono" style={{ color: isDark ? '#475569' : '#94a3b8' }}>
                                 {breadcrumb.map((crumb, i) => (
                                     <React.Fragment key={i}>
-                                        {i > 0 && <ChevronRight className="w-3 h-3 opacity-40" />}
-                                        <span className={i === breadcrumb.length - 1 ? 'text-blue-400' : ''}>{crumb}</span>
+                                        {i > 0 && <ChevronRight className="w-3 h-3 opacity-30" />}
+                                        <span className={cn(
+                                            'transition-colors duration-200',
+                                            i === breadcrumb.length - 1 ? 'text-blue-400' : ''
+                                        )}>{crumb}</span>
                                     </React.Fragment>
                                 ))}
                             </div>
 
                             {/* ── Branch legend ── */}
-                            <div className="flex items-center gap-6 mb-6 flex-wrap">
-                                {[['#22c55e', 'Completed'], ['#3b82f6', 'In Progress'], [t.line, 'Locked']].map(([c, l]) => (
+                            <div className="flex items-center gap-5 mb-6 flex-wrap animate-fade-in-up" style={{ animationDelay: '0.25s' }}>
+                                {[['#22c55e', 'Completed'], ['#3b82f6', 'In Progress'], ['#1e293b', 'Locked']].map(([c, l]) => (
                                     <div key={l as string} className="flex items-center gap-1.5">
-                                        <div className="w-6 h-[1.5px] rounded" style={{ background: c as string }} />
-                                        <span className="text-[11px]" style={{ color: t.textMuted }}>{l}</span>
+                                        <div className="w-6 h-[2px] rounded" style={{ background: c as string }} />
+                                        <span className="text-[11px]" style={{ color: isDark ? '#475569' : '#94a3b8' }}>{l}</span>
                                     </div>
                                 ))}
                                 <div className="ml-auto flex items-center gap-4">
                                     {(['basic', 'dsd', 'verilog'] as BranchKey[]).map(k => (
                                         <div key={k} className="flex items-center gap-1.5">
-                                            <div className="w-2 h-2 rounded-full" style={{ background: BRANCH_META[k].color }} />
+                                            <div className="w-2.5 h-2.5 rounded-full" style={{ background: BRANCH_META[k].color }} />
                                             <span className="text-[10px] font-mono" style={{ color: BRANCH_META[k].color }}>{BRANCH_META[k].label}</span>
                                         </div>
                                     ))}
@@ -539,79 +679,80 @@ export const WorkstationHome: React.FC = () => {
                             </div>
 
                             {/* ══ SVG MAP ═════════════════════════════════════════ */}
-                            <div id="tour-map" className="w-full overflow-x-auto">
+                            <div id="tour-map" className="w-full overflow-x-auto animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
                                 <svg width={CW} height={CH} viewBox={`0 0 ${CW} ${CH}`} style={{ overflow: 'visible' }}>
+                                    <SvgDefs />
 
-                                    {/* ── Journey Layer Labels ── */}
-                                    <text x={80} y={55} fill={isDark ? '#334155' : '#94a3b8'} fontSize={9} fontWeight="700"
-                                        fontFamily="monospace" letterSpacing="0.15em">FOUNDATION</text>
-                                    <line x1={80} y1={63} x2={700} y2={63} stroke={isDark ? '#1e293b' : '#cbd5e1'} strokeWidth={0.5} opacity={0.4} />
+                                    {/* Journey Layer Labels */}
+                                    <text x={120} y={68} fill={isDark ? '#1e293b' : '#94a3b8'} fontSize={10} fontWeight="700"
+                                        fontFamily="'Roboto Mono',monospace" letterSpacing="0.15em">FOUNDATION</text>
+                                    <line x1={120} y1={78} x2={900} y2={78} stroke={isDark ? '#111827' : '#cbd5e1'} strokeWidth={0.5} opacity={0.3} />
 
-                                    <text x={440} y={248} fill={isDark ? '#334155' : '#94a3b8'} fontSize={9} fontWeight="700"
-                                        fontFamily="monospace" letterSpacing="0.15em">SPECIALIZATION</text>
-                                    <line x1={440} y1={256} x2={860} y2={256} stroke={isDark ? '#1e293b' : '#cbd5e1'} strokeWidth={0.5} opacity={0.4} />
+                                    <text x={440} y={340} fill={isDark ? '#1e293b' : '#94a3b8'} fontSize={10} fontWeight="700"
+                                        fontFamily="'Roboto Mono',monospace" letterSpacing="0.15em">SPECIALIZATION</text>
+                                    <line x1={440} y1={350} x2={1020} y2={350} stroke={isDark ? '#111827' : '#cbd5e1'} strokeWidth={0.5} opacity={0.3} />
 
-                                    {/* ── Junction bus bar (horizontal) ── */}
+                                    {/* Junction bus bar */}
                                     <line x1={BRANCH_COL.basic} y1={JUNCTION_Y} x2={BRANCH_COL.verilog} y2={JUNCTION_Y}
-                                        stroke={t.lineFaint} strokeWidth={0.5} opacity={0.25} />
+                                        stroke={isDark ? '#111827' : '#e2e8f0'} strokeWidth={0.5} opacity={0.2} />
 
-                                    {/* ── Via points at junctions ── */}
+                                    {/* Via points */}
                                     {[BRANCH_COL.basic, BRANCH_COL.dsd, BRANCH_COL.verilog].map((vx, i) => (
-                                        <circle key={i} cx={vx} cy={JUNCTION_Y} r={3}
+                                        <circle key={i} cx={vx} cy={JUNCTION_Y} r={3.5}
                                             fill={isDark ? '#0d1520' : '#f1f5f9'}
-                                            stroke={isDark ? '#334155' : '#94a3b8'} strokeWidth={1} opacity={0.5} />
+                                            stroke={isDark ? '#1e293b' : '#94a3b8'} strokeWidth={1} opacity={0.45} />
                                     ))}
 
-                                    {/* ── Branch labels ── */}
+                                    {/* Branch labels */}
                                     {(['basic', 'dsd', 'verilog'] as BranchKey[]).map(k => (
-                                        <g key={k} opacity={!activeBranch ? 0.6 : (activeBranch === k ? 0.9 : 0.15)}
+                                        <g key={k} opacity={!activeBranch ? 0.5 : (activeBranch === k ? 0.85 : 0.12)}
                                             style={{ transition: 'opacity 0.3s' }}>
-                                            <text x={BRANCH_COL[k]} y={BRANCH_Y[0] - getR({ depth: 1 } as Module) - 20}
-                                                textAnchor="middle" fill={BRANCH_META[k].color} fontSize={8} fontWeight="700"
-                                                fontFamily="monospace" letterSpacing="0.08em">{BRANCH_META[k].label}</text>
+                                            <text x={BRANCH_COL[k]} y={BRANCH_Y[0] - getR({ depth: 1 } as Module) - 32}
+                                                textAnchor="middle" fill={BRANCH_META[k].color} fontSize={9} fontWeight="700"
+                                                fontFamily="'Roboto Mono',monospace" letterSpacing="0.08em">{BRANCH_META[k].label}</text>
                                         </g>
                                     ))}
 
-                                    {/* ── Connections ── */}
+                                    {/* Connections */}
                                     {CONNECTIONS.map((conn, i) => renderConnection(conn, i))}
 
-                                    {/* ── Bubbles (un-hovered) ── */}
+                                    {/* Bubbles (un-hovered) */}
                                     {MODULES.filter(m => m.id !== hoveredId).map(mod => (
                                         <ModuleBubble key={mod.id} mod={mod} isHovered={false}
-                                            onHover={setHoveredId} opacity={getNodeOpacity(mod)} isDark={isDark} />
+                                            onHover={setHoveredId} opacity={getNodeOpacity(mod)} />
                                     ))}
 
-                                    {/* ── Hovered bubble + card (on top) ── */}
+                                    {/* Hovered bubble + card (on top) */}
                                     {hoveredId && (() => {
                                         const mod = getModule(hoveredId);
                                         return (
                                             <>
                                                 <ModuleBubble key="hovered" mod={mod} isHovered onHover={setHoveredId}
-                                                    opacity={1} isDark={isDark} />
+                                                    opacity={1} />
                                                 <AnimatePresence>
-                                                    <HoverCard key="card" mod={mod} onStart={handleModuleStart} isDark={isDark} />
+                                                    <HoverCard key="card" mod={mod} onStart={handleModuleStart} />
                                                 </AnimatePresence>
                                             </>
                                         );
                                     })()}
 
-                                    {/* ── Tour anchor ── */}
+                                    {/* Tour anchor */}
                                     <foreignObject id="tour-module-node"
-                                        x={MODULES[1].cx - 40} y={MODULES[1].cy - 40}
-                                        width="80" height="80" style={{ pointerEvents: 'none', opacity: 0 }} />
+                                        x={MODULES[1].cx - 50} y={MODULES[1].cy - 50}
+                                        width="100" height="100" style={{ pointerEvents: 'none', opacity: 0 }} />
 
-                                    {/* ── Foundation progress bar (completion momentum) ── */}
+                                    {/* Foundation progress bar (completion momentum) */}
                                     <g>
-                                        <text x={80} y={FOUND_Y + 55} fill={isDark ? '#475569' : '#94a3b8'} fontSize={9}
-                                            fontFamily="monospace">Foundation Progress</text>
-                                        <rect x={80} y={FOUND_Y + 62} width={560} height={2} rx={1}
-                                            fill={isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.06)'} />
-                                        <motion.rect x={80} y={FOUND_Y + 62} height={2} rx={1} fill="#3b82f6"
+                                        <text x={120} y={FOUND_Y + 80} fill={isDark ? '#334155' : '#94a3b8'} fontSize={10}
+                                            fontFamily="'Roboto Mono',monospace">Foundation Progress</text>
+                                        <rect x={120} y={FOUND_Y + 88} width={720} height={3} rx={1.5}
+                                            fill={isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.06)'} />
+                                        <motion.rect x={120} y={FOUND_Y + 88} height={3} rx={1.5} fill="#3b82f6"
                                             initial={{ width: 0 }}
-                                            animate={{ width: foundComplete > 0 ? (foundComplete / foundMods.length) * 560 : (foundInProg / foundMods.length) * 560 * 0.3 }}
+                                            animate={{ width: foundComplete > 0 ? (foundComplete / foundMods.length) * 720 : (foundInProg / foundMods.length) * 720 * 0.3 }}
                                             transition={{ duration: 1.5, ease: 'easeOut' }} />
-                                        <text x={660} y={FOUND_Y + 67} fill={isDark ? '#475569' : '#94a3b8'} fontSize={9}
-                                            fontFamily="monospace" fontWeight="600">
+                                        <text x={860} y={FOUND_Y + 94} fill={isDark ? '#334155' : '#94a3b8'} fontSize={10}
+                                            fontFamily="'Roboto Mono',monospace" fontWeight="600">
                                             {foundComplete}/{foundMods.length}
                                         </text>
                                     </g>
@@ -619,17 +760,20 @@ export const WorkstationHome: React.FC = () => {
                             </div>
 
                             {/* ── Stats row ── */}
-                            <div className="grid grid-cols-4 gap-3 mt-10 max-w-2xl">
+                            <div className="grid grid-cols-4 gap-4 mt-10 max-w-3xl animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
                                 {[
                                     { label: 'Total Modules', value: String(MODULES.length), accent: '#94a3b8' },
                                     { label: 'Completed', value: String(completedCount), accent: '#22c55e' },
                                     { label: 'In Progress', value: String(MODULES.filter(m => m.status === 'in-progress').length), accent: '#3b82f6' },
                                     { label: 'Total Hours', value: `${MODULES.reduce((s, m) => s + m.hours, 0)}h`, accent: '#a78bfa' },
                                 ].map(s => (
-                                    <div key={s.label} className="rounded-xl p-4 transition-colors"
-                                        style={{ background: t.cardBg, border: `1px solid ${t.cardBdr}` }}>
-                                        <p className="text-[22px] font-bold font-mono" style={{ color: s.accent }}>{s.value}</p>
-                                        <p className="text-[10px] mt-0.5" style={{ color: t.textMuted }}>{s.label}</p>
+                                    <div key={s.label} className="rounded-xl p-5 transition-all duration-200 cursor-default hover:scale-[1.02]"
+                                        style={{
+                                            background: isDark ? 'rgba(12,16,24,0.8)' : 'rgba(255,255,255,0.8)',
+                                            border: `1px solid ${isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.06)'}`,
+                                        }}>
+                                        <p className="text-[24px] font-bold font-mono" style={{ color: s.accent }}>{s.value}</p>
+                                        <p className="text-[11px] mt-1" style={{ color: isDark ? '#475569' : '#94a3b8' }}>{s.label}</p>
                                     </div>
                                 ))}
                             </div>

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { VoltBot } from '../components/ui/VoltBot';
+import { VoltMonkey } from '../components/Bot/VoltMonkey';
+import { SpeechBubble } from '../components/Bot/SpeechBubble';
 import { DraggableItem } from '../components/ComponentTray/DraggableItem';
 import { Button } from '../components/ui/button';
 import { ArrowRight } from 'lucide-react';
@@ -121,11 +122,15 @@ export const Activity2 = ({ onNext }: ActivityProps) => {
                 <DraggableItem type="or" label="OR Chip" disabled={gate === 'or'} icon={<div className="scale-125 pt-2"><DipIC3D label="OR" /></div>} />
             </div>
 
-            <VoltBot
-                message={signalOut ? "Binary status: BOTH HIGH! Protocol verified." : botMessage}
-                state={signalOut ? 'happy' : 'idle'}
-                className="fixed bottom-12 left-12 z-40 scale-110"
-            />
+            <div className="fixed bottom-8 left-8 z-40 flex items-end gap-3">
+                <VoltMonkey state={signalOut ? 'happy' : 'idle'} size="md" />
+                <SpeechBubble
+                    body={signalOut ? "Binary status: BOTH HIGH! Protocol verified." : botMessage}
+                    placement="right"
+                    accent={signalOut ? '#22C55E' : '#3B82F6'}
+                    visible
+                />
+            </div>
         </div>
     );
 };

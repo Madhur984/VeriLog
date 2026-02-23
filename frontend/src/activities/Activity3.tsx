@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { VoltBot } from '../components/ui/VoltBot';
+import { VoltMonkey } from '../components/Bot/VoltMonkey';
+import { SpeechBubble } from '../components/Bot/SpeechBubble';
 import { DraggableItem } from '../components/ComponentTray/DraggableItem';
 import { Button } from '../components/ui/button';
 import { ArrowRight } from 'lucide-react';
@@ -117,11 +118,15 @@ export const Activity3 = ({ onNext }: ActivityProps) => {
                 <DraggableItem type="and" label="AND Gate" disabled={gate === 'and'} icon={<svg width="50" height="40" viewBox="0 0 80 60"><path d="M 10 5 L 40 5 C 65 5 65 55 40 55 L 10 55 Z" fill="transparent" stroke="rgba(255,255,255,0.4)" strokeWidth="4" /></svg>} />
             </div>
 
-            <VoltBot
-                message={signalOut ? "Parallel signal synchronization detected!" : botMessage}
-                state={signalOut ? 'happy' : 'idle'}
-                className="fixed bottom-12 left-12 z-40 scale-110"
-            />
+            <div className="fixed bottom-8 left-8 z-40 flex items-end gap-3">
+                <VoltMonkey state={signalOut ? 'happy' : 'idle'} size="md" />
+                <SpeechBubble
+                    body={signalOut ? "Parallel signal synchronization detected!" : botMessage}
+                    placement="right"
+                    accent={signalOut ? '#22C55E' : '#3B82F6'}
+                    visible
+                />
+            </div>
         </div>
     );
 };

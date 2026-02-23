@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence, useAnimation } from 'framer-motion';
 import { SignalOrb } from '../components/ui/SignalOrb';
-import { VoltBot } from '../components/ui/VoltBot';
+import { VoltMonkey, MonkeyState } from '../components/Bot/VoltMonkey';
+import { SpeechBubble } from '../components/Bot/SpeechBubble';
 import { ChevronLeft, Zap, CheckCircle2, Info } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '../lib/utils';
@@ -22,7 +23,7 @@ export const SignalPlayground = () => {
 
     // Bot State
     const [botMessage, setBotMessage] = useState("Let's calibrate the signals! Start by dragging Ms. Analog's orb.");
-    const [botState, setBotState] = useState<'idle' | 'speaking' | 'happy' | 'thinking'>('speaking');
+    const [botState, setBotState] = useState<MonkeyState>('talking');
 
     const controls = useAnimation();
 
@@ -36,7 +37,7 @@ export const SignalPlayground = () => {
             });
         } else if (isAnalogSynced) {
             setBotMessage("Analog calibrated! Now toggle Mr. Digital's phase to 1.");
-            setBotState('speaking');
+            setBotState('talking');
         } else if (digitalState) {
             setBotMessage("Digital is active! Now align the Analog wave to the target marker.");
             setBotState('thinking');
@@ -160,13 +161,15 @@ export const SignalPlayground = () => {
                         </div>
                     </div>
 
-                    {/* Center: VoltBot & Progress */}
+                    {/* Center: VoltMonkey & Progress */}
                     <div className="flex flex-col items-center justify-center space-y-12 py-12">
-                        <div className="flex-1 flex items-center justify-center">
-                            <VoltBot
-                                state={botState}
-                                message={botMessage}
-                                className="scale-125"
+                        <div className="flex-1 flex flex-col items-center justify-center gap-4">
+                            <VoltMonkey state={botState} size="lg" />
+                            <SpeechBubble
+                                body={botMessage}
+                                placement="bottom"
+                                accent={isSystemSynced ? '#22C55E' : '#6366F1'}
+                                visible
                             />
                         </div>
 

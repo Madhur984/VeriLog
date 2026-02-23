@@ -3,7 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { X, ChevronRight, Terminal, ArrowRight, Trophy } from 'lucide-react';
 import { cn } from '../lib/utils';
-import { VoltBot } from '../components/ui/VoltBot';
+import { VoltMonkey, MonkeyState } from '../components/Bot/VoltMonkey';
+import { SpeechBubble } from '../components/Bot/SpeechBubble';
 import { LogicGateSVG } from '../components/ui/LogicGateSVG';
 import { LogicStormBackground } from '../components/ui/LogicStormBackground';
 
@@ -273,7 +274,7 @@ export const AssessmentPage: React.FC = () => {
     const [selectedOption, setSelectedOption] = useState<string | null>(null);
     const [isAnswered, setIsAnswered] = useState(false);
     const [isCorrect, setIsCorrect] = useState(false);
-    const [botState, setBotState] = useState<'idle' | 'speaking' | 'happy' | 'sad' | 'thinking'>('speaking');
+    const [botState, setBotState] = useState<MonkeyState>('talking');
     const [botMessage, setBotMessage] = useState("Educational module initialized. Ready for logic verification.");
     const [successStep, setSuccessStep] = useState<0 | 1 | 2>(0);
 
@@ -304,7 +305,7 @@ export const AssessmentPage: React.FC = () => {
             setBotMessage(msg);
         } else {
             const msg = GUIDANCE_MESSAGES.incorrect[Math.floor(Math.random() * GUIDANCE_MESSAGES.incorrect.length)];
-            setBotState('sad');
+            setBotState('thinking');
             setBotMessage(`${msg} ${question.explanation}`);
         }
     };
@@ -314,7 +315,7 @@ export const AssessmentPage: React.FC = () => {
             setCurrentStep(s => s + 1);
             setSelectedOption(null);
             setIsAnswered(false);
-            setBotState('speaking');
+            setBotState('talking');
             setBotMessage("Loading next data packet...");
         } else {
             setSuccessStep(1);
@@ -482,11 +483,15 @@ export const AssessmentPage: React.FC = () => {
                                         </div>
 
                                         <div className="flex flex-col items-center justify-between space-y-8 bg-white/5 rounded-2xl p-10 border border-white/10 shadow-2xl shadow-black/20 backdrop-blur-xl transition-all">
-                                            <VoltBot
-                                                state={botState}
-                                                message={botMessage}
-                                                className="scale-110 !static"
-                                            />
+                                            <div className="flex flex-col items-center gap-3">
+                                                <VoltMonkey state={botState} size="md" />
+                                                <SpeechBubble
+                                                    body={botMessage}
+                                                    placement="bottom"
+                                                    accent={isCorrect ? '#22C55E' : isAnswered ? '#EF4444' : '#6366F1'}
+                                                    visible
+                                                />
+                                            </div>
                                             <div className="w-full max-w-sm pt-8 border-t border-white/5">
                                                 <button
                                                     onClick={isAnswered ? handleContinue : handleCheck}
@@ -571,7 +576,7 @@ export const AssessmentPage: React.FC = () => {
                                     className="relative z-10 text-center space-y-10 px-8 max-w-6xl"
                                 >
                                     <div className="flex justify-center mb-6">
-                                        <VoltBot state="happy" className="scale-[2.5]" />
+                                        <VoltMonkey state="happy" size="lg" />
                                     </div>
 
                                     <h1 className="font-heading font-black text-5xl md:text-7xl text-white tracking-tighter uppercase">
