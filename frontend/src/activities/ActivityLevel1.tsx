@@ -1,246 +1,184 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CircuitCanvas } from '../components/Activities/CircuitCanvas';
 import { VoltMonkey, MonkeyState } from '../components/Bot/VoltMonkey';
 import { SpeechBubble } from '../components/Bot/SpeechBubble';
-import { ArrowRight, Zap, Lightbulb, Activity, MousePointer2, RotateCcw, CheckCircle2 } from 'lucide-react';
-import { TrayDragProvider, useTrayDrag } from '../hooks/useTrayDrag';
-import type { CompType } from '../components/Activities/CircuitCanvas';
+import { Zap, Lightbulb, Activity, MousePointer2, RotateCcw, CheckCircle2 } from 'lucide-react';
+import { DragEngineProvider, useDragEngineContext } from '../contexts/DragEngineContext';
+import { CompType, DropResult } from '../engine/types';
+import { SnapGrid } from '../engine/SnapGrid';
+import { DropRipple, RejectFlash } from '../components/Activities/DropEffects';
+
+interface ComponentInstance {
+    id: string;
+    type: CompType;
+    x: number;
+    y: number;
+    isOpen?: boolean;
+    connectedNodes: string[];
+}
 
 interface ActivityLevel1Props {
     onComplete: () => void;
 }
 
-// ─────────────────────────────────────────────────────
-//  Sidebar component card (uses Pointer Events)
-// ─────────────────────────────────────────────────────
-interface TrayCardProps {
-    label: string;
-    type: CompType;
-    icon: React.ReactNode;
-}
+const INITIAL_COMPONENTS: ComponentInstance[] = [
+    { id: 'batt-1', type: 'battery', x: 160, y: 280, connectedNodes: [] },
+    { id: 'switch-1', type: 'switch', x: 410, y: 145, isOpen: true, connectedNodes: [] },
+    { id: 'bulb-1', type: 'bulb', x: 660, y: 280, connectedNodes: [] },
+    { id: 'resistor-1', type: 'resistor', x: 410, y: 420, connectedNodes: [] },
+];
 
-const TrayCard: React.FC<TrayCardProps> = ({ label, type, icon }) => {
-    const tray = useTrayDrag();
-    const isBeingDragged = tray.isDragging && tray.dragType === type;
-
-    const handlePointerDown = (e: React.PointerEvent) => {
-        e.preventDefault();
-        // Capture the pointer so move/up events keep flowing even outside the element
-        (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
-        tray.startDrag(type);
-    };
+const TrayCard: React.FC<{ label: string; type: CompType; icon: React.ReactNode }> = ({ label, type, icon }) => {
+    const engine = useDragEngineContext();
+    const isBeingDragged = engine.isDragging && engine.dragType === type;
 
     return (
-        <motion.div
-            onPointerDown={handlePointerDown}
-            animate={{
-                opacity: isBeingDragged ? 0.45 : 1,
-                scale: isBeingDragged ? 0.95 : 1,
+        <div
+            onPointerDown={(e) => {
+                e.preventDefault();
+                engine.startTrayDrag(type, e);
+                (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
             }}
-            transition={{ duration: 0.15 }}
-            className={`group w-full p-4 bg-white/5 border border-white/8 rounded-xl flex items-center gap-4
-                       cursor-grab active:cursor-grabbing
-                       hover:bg-white/10 hover:border-[#00D2FF]/30
-                       hover:shadow-[0_0_16px_rgba(0,210,255,0.12)]
-                       transition-all duration-200 select-none`}
-            style={{ touchAction: 'none' }}
+            className={`
+                group relative flex flex-col items-center justify-center p-4 rounded-2xl 
+                border-2 transition-all duration-300 cursor-grab active:cursor-grabbing
+                ${isBeingDragged
+                    ? 'border-[#00D2FF] bg-[#00D2FF]/10 opacity-50 scale-95'
+                    : 'border-[#1E293B] bg-[#0A0F1E] hover:border-[#334155] hover:bg-[#111827] shadow-lg'}
+            `}
         >
-            <div className="w-10 h-10 rounded-lg bg-[#0D1426] border border-white/5
-                            group-hover:border-[#00D2FF]/40 group-hover:bg-[#00D2FF]/5
-                            flex items-center justify-center text-slate-400
-                            group-hover:text-[#00D2FF] transition-all duration-200">
+            <div className={`
+                p-3 rounded-xl mb-2 transition-colors duration-300
+                ${isBeingDragged ? 'text-[#00D2FF]' : 'text-slate-400 group-hover:text-slate-200'}
+            `}>
                 {icon}
             </div>
-            <div className="flex flex-col">
-                <span className="text-sm font-medium text-slate-300 group-hover:text-white transition-colors">{label}</span>
-                <span className="text-[9px] text-slate-600 font-mono uppercase tracking-wider group-hover:text-[#00D2FF]/60 transition-colors">
-                    {isBeingDragged ? 'dragging...' : 'drag to place'}
-                </span>
-            </div>
-            {/* drag affordance indicator */}
-            <div className="ml-auto opacity-0 group-hover:opacity-100 transition-opacity">
-                <div className="flex flex-col gap-[3px]">
-                    {[0, 1, 2].map(i => (
-                        <div key={i} className="flex gap-[3px]">
-                            <div className="w-[3px] h-[3px] rounded-full bg-slate-500" />
-                            <div className="w-[3px] h-[3px] rounded-full bg-slate-500" />
-                        </div>
-                    ))}
-                </div>
-            </div>
-        </motion.div>
-    );
-};
-
-// ─────────────────────────────────────────────────────
-//  Main Activity (inner, consumes TrayDragProvider)
-// ─────────────────────────────────────────────────────
-const ActivityLevel1Inner: React.FC<ActivityLevel1Props> = ({ onComplete }) => {
-    const [monkeyState, setMonkeyState] = useState<MonkeyState>('idle');
-    const [dialogue, setDialogue] = useState<string>("The circuit is ready. Click the switch to close it and let the current flow.");
-    const [isBubbleVisible, setIsBubbleVisible] = useState(true);
-    const [circuitReady, setCircuitReady] = useState(false);
-    const [isComplete, setIsComplete] = useState(false);
-    const [retryKey, setRetryKey] = useState(0);
-
-    useEffect(() => {
-        const timer = setTimeout(() => setIsBubbleVisible(false), 8000);
-        return () => clearTimeout(timer);
-    }, [dialogue]);
-
-    const triggerDialogue = (text: string, state: MonkeyState = 'talking') => {
-        setDialogue(text);
-        setMonkeyState(state);
-        setIsBubbleVisible(true);
-    };
-
-    const handleCircuitReady = (ready: boolean) => {
-        setCircuitReady(ready);
-        if (ready) {
-            triggerDialogue("Look at that glow! The loop is complete. Hit 'Verify Circuit' when you're ready to submit.", 'happy');
-        } else {
-            triggerDialogue("The switch is open. Click it to close the circuit.", 'talking');
-        }
-    };
-
-    const handleVerify = () => {
-        setIsComplete(true);
-        setMonkeyState('happy');
-    };
-
-    const handleRetry = () => {
-        setIsComplete(false);
-        setCircuitReady(false);
-        setMonkeyState('idle');
-        setRetryKey(k => k + 1);
-        triggerDialogue("Let's try again! Close the switch to complete the loop.", 'idle');
-    };
-
-    return (
-        <div className="flex h-full w-full bg-[#030712] text-white overflow-hidden relative">
-
-            {/* LEFT SIDEBAR */}
-            <div className="w-72 glass-panel m-4 rounded-2xl flex flex-col p-6 z-20 shrink-0">
-                <div className="mb-6">
-                    <h2 className="text-sm font-bold text-slate-400 uppercase tracking-[0.2em] mb-1 font-mono">Components</h2>
-                    <p className="text-[10px] text-slate-600 font-mono uppercase tracking-wider mb-2">Drag onto canvas →</p>
-                    <div className="h-px w-full bg-gradient-to-r from-slate-700 to-transparent" />
-                </div>
-
-                <div className="flex flex-col gap-3 flex-1">
-                    <TrayCard label="Battery" type="battery" icon={<Zap size={18} />} />
-                    <TrayCard label="Resistor" type="resistor" icon={<Activity size={18} />} />
-                    <TrayCard label="Bulb" type="bulb" icon={<Lightbulb size={18} />} />
-                    <TrayCard label="Switch" type="switch" icon={<MousePointer2 size={18} />} />
-                </div>
-
-                {/* Verify Button — only shows when circuit is active */}
-                <div className="mt-auto">
-                    <AnimatePresence>
-                        {circuitReady && !isComplete && (
-                            <motion.button
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: 10 }}
-                                onClick={handleVerify}
-                                className="w-full py-4 bg-[#00D2FF] text-[#030712] font-bold rounded-xl flex items-center justify-center gap-3 hover:scale-[1.02] transition-transform active:scale-95 cursor-pointer shadow-[0_0_20px_rgba(0,210,255,0.4)]"
-                            >
-                                <CheckCircle2 size={18} /> Verify Circuit
-                            </motion.button>
-                        )}
-                    </AnimatePresence>
-                    {!circuitReady && (
-                        <p className="text-[11px] text-slate-500 text-center font-mono uppercase tracking-wider">
-                            Click the switch to close the loop
-                        </p>
-                    )}
-                    <p className="text-[10px] text-slate-600 text-center mt-3 font-mono uppercase tracking-tighter opacity-40">Circuit v1.4.2</p>
-                </div>
-            </div>
-
-            {/* CANVAS */}
-            <div className="flex-1 relative min-w-0">
-                {/* Status Indicator */}
-                <div className="absolute top-6 left-6 z-10 font-mono">
-                    <div className="flex items-center gap-3 bg-black/40 backdrop-blur-md px-4 py-2 rounded-full border border-white/10">
-                        <div className={`w-2 h-2 rounded-full transition-all duration-500 ${circuitReady
-                            ? 'bg-[#00D2FF] animate-pulse shadow-[0_0_8px_#00D2FF]'
-                            : 'bg-slate-600'
-                            }`} />
-                        <span className="text-[10px] text-slate-400 uppercase tracking-widest">
-                            System:{' '}
-                            <span className={circuitReady ? 'text-[#00D2FF]' : 'text-slate-500'}>
-                                {circuitReady ? 'active' : 'switch open'}
-                            </span>
-                        </span>
-                    </div>
-                </div>
-
-                <CircuitCanvas
-                    key={retryKey}
-                    onCircuitReady={handleCircuitReady}
-                    onDialogueTrigger={(text, state) => triggerDialogue(text, (state as MonkeyState) ?? 'talking')}
-                />
-            </div>
-
-            {/* FLOATING BOT */}
-            <div className="absolute bottom-6 right-6 z-30 pointer-events-none origin-bottom-right">
-                <div className="pointer-events-auto">
-                    <AnimatePresence>
-                        {isBubbleVisible && (
-                            <div className="mb-4">
-                                <SpeechBubble body={dialogue} placement="left" visible={isBubbleVisible} />
-                            </div>
-                        )}
-                    </AnimatePresence>
-                    <div className="flex justify-end">
-                        <VoltMonkey state={monkeyState} size="lg" />
-                    </div>
-                </div>
-            </div>
-
-            {/* COMPLETION OVERLAY — only after user clicks Verify */}
-            <AnimatePresence>
-                {isComplete && (
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        className="absolute inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-12 pointer-events-none"
-                    >
-                        <div className="max-w-md glass-panel p-8 rounded-3xl text-center pointer-events-auto neon-glow-blue border-[#00D2FF]/20">
-                            <div className="w-16 h-16 bg-[#00D2FF]/20 rounded-full flex items-center justify-center mx-auto mb-6 text-[#00D2FF]">
-                                <Zap size={32} />
-                            </div>
-                            <h3 className="text-2xl font-bold mb-2">Continuity Verified</h3>
-                            <p className="text-slate-400 text-sm mb-8">
-                                You've successfully completed the first law of electrical engineering: The signal has returned to its source.
-                            </p>
-                            <button
-                                onClick={onComplete}
-                                className="w-full py-4 bg-[#00D2FF] text-[#030712] font-bold rounded-xl flex items-center justify-center gap-3 hover:scale-[1.02] transition-transform active:scale-95 cursor-pointer"
-                            >
-                                PROCEED TO THEORY <ArrowRight size={18} />
-                            </button>
-                            <button
-                                onClick={handleRetry}
-                                className="w-full py-3 mt-3 bg-white/5 border border-white/10 text-slate-300 font-semibold rounded-xl flex items-center justify-center gap-3 hover:bg-white/10 hover:text-white transition-all cursor-pointer text-sm"
-                            >
-                                <RotateCcw size={16} /> Retry Lab
-                            </button>
-                        </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+            <span className={`text-[10px] uppercase tracking-widest font-bold ${isBeingDragged ? 'text-[#00D2FF]' : 'text-slate-500'}`}>
+                {isBeingDragged ? "Dragging..." : label}
+            </span>
         </div>
     );
 };
 
-// ─────────────────────────────────────────────────────
-//  Exported wrapper with TrayDragProvider
-// ─────────────────────────────────────────────────────
-export const ActivityLevel1: React.FC<ActivityLevel1Props> = (props) => (
-    <TrayDragProvider>
-        <ActivityLevel1Inner {...props} />
-    </TrayDragProvider>
-);
+export const ActivityLevel1: React.FC<ActivityLevel1Props> = ({ onComplete }) => {
+    const [components, setComponents] = useState<ComponentInstance[]>(INITIAL_COMPONENTS);
+    const [botText, setBotText] = useState("Drag components from the tray to complete the circuit!");
+    const [botState, setBotState] = useState<MonkeyState>('idle');
+    const [dropEffect, setDropEffect] = useState<{ x: number, y: number, type: 'ripple' | 'reject' } | null>(null);
+
+    const snapNodes = useMemo(() => SnapGrid.generateSnapNodes(components), [components]);
+
+    const handleDrop = useCallback((result: DropResult) => {
+        if (result.accepted) {
+            const newComp: ComponentInstance = {
+                id: `${result.componentType}-${Date.now()}`,
+                type: result.componentType,
+                x: result.position.x,
+                y: result.position.y,
+                isOpen: result.componentType === 'switch',
+                connectedNodes: result.snapNodeId ? [result.snapNodeId] : []
+            };
+            setComponents(prev => [...prev, newComp]);
+            setBotText("Excellent snap! The circuit is growing.");
+            setBotState('happy');
+            setDropEffect({ x: result.position.x, y: result.position.y, type: 'ripple' });
+            setTimeout(() => setDropEffect(null), 1000);
+        } else {
+            setBotText("Whoops! You need to snap it to a metallic connection pad.");
+            setBotState('thinking');
+            setDropEffect({ x: result.position.x, y: result.position.y, type: 'reject' });
+            setTimeout(() => setDropEffect(null), 1000);
+        }
+    }, []);
+
+    // Check for completion logic can be added here
+    const checkCompletion = useCallback(() => {
+        // Dummy completion for now
+        if (components.length >= 6) {
+            setBotText("Wow! You've built a complex circuit!");
+            setBotState('happy');
+            setTimeout(onComplete, 2000);
+        }
+    }, [components.length, onComplete]);
+
+    return (
+        <DragEngineProvider snapNodes={snapNodes} onDrop={handleDrop}>
+            <div className="flex flex-col lg:flex-row gap-8 w-full max-w-7xl mx-auto p-4 lg:p-8 min-h-[800px]">
+                <div className="w-full lg:w-72 flex flex-col gap-6">
+                    <div className="bg-[#0A0F1E] border border-[#1E293B] rounded-3xl p-6 shadow-xl">
+                        <div className="flex items-center gap-3 mb-6">
+                            <Zap className="w-5 h-5 text-[#00D2FF]" />
+                            <h2 className="text-xl font-bold text-white tracking-tight">Component Tray</h2>
+                        </div>
+                        <div className="grid grid-cols-2 lg:grid-cols-1 gap-4">
+                            <TrayCard label="Battery" type="battery" icon={<Zap className="w-6 h-6" />} />
+                            <TrayCard label="Bulb" type="bulb" icon={<Lightbulb className="w-6 h-6" />} />
+                            <TrayCard label="Switch" type="switch" icon={<MousePointer2 className="w-6 h-6" />} />
+                            <TrayCard label="Resistor" type="resistor" icon={<Activity className="w-6 h-6" />} />
+                        </div>
+                    </div>
+
+                    <div className="bg-[#0A0F1E] border border-[#1E293B] rounded-3xl p-6 shadow-xl flex-grow flex flex-col items-center">
+                        <div className="relative mb-4">
+                            <VoltMonkey state={botState} />
+                        </div>
+                        <SpeechBubble body={botText} />
+                    </div>
+                </div>
+
+                <div className="flex-grow flex flex-col gap-6">
+                    <div className="flex items-center justify-between px-2">
+                        <div>
+                            <h1 className="text-3xl font-black text-white tracking-tighter mb-1">CIRCUIT LAB <span className="text-[#00D2FF] text-lg font-mono ml-2">v4.0</span></h1>
+                            <p className="text-slate-400 text-sm font-medium">Mission: Snappy Connections</p>
+                        </div>
+                        <div className="flex gap-3">
+                            <button
+                                onClick={() => setComponents(INITIAL_COMPONENTS)}
+                                className="p-3 bg-[#1E293B] text-slate-300 rounded-xl hover:bg-[#334155] transition-colors"
+                            >
+                                <RotateCcw className="w-5 h-5" />
+                            </button>
+                            <button
+                                onClick={checkCompletion}
+                                className="flex items-center gap-2 px-6 py-3 bg-[#00D2FF] text-[#0A0F1E] rounded-xl font-bold hover:bg-[#00B8E6] transition-all shadow-[0_0_20px_rgba(0,210,255,0.3)]"
+                            >
+                                RUN TEST <Zap className="w-4 h-4 fill-current" />
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="relative">
+                        <CircuitCanvas
+                            components={components}
+                            setComponents={setComponents}
+                        />
+                        {/* Overlay effects in CircuitCanvas SVG space? Or absolute overlay? 
+                            The DropEffects expect to be inside SVG or have absolute positioning relative to SVG.
+                            Let's put them inside an overlay SVG or pass them to CircuitCanvas.
+                        */}
+                        <svg className="absolute inset-0 pointer-events-none w-full h-full pb-[0px]">
+                            <AnimatePresence>
+                                {dropEffect?.type === 'ripple' && <DropRipple x={dropEffect.x} y={dropEffect.y} />}
+                                {dropEffect?.type === 'reject' && <RejectFlash x={dropEffect.x} y={dropEffect.y} />}
+                            </AnimatePresence>
+                        </svg>
+                    </div>
+
+                    <div className="bg-[#0A0F1E]/50 border border-[#1E293B] rounded-2xl p-4 flex flex-wrap gap-6 items-center justify-center">
+                        <div className="flex items-center gap-2 text-xs font-bold text-[#00D2FF] uppercase tracking-widest">
+                            <CheckCircle2 className="w-4 h-4" /> Physics Engine Active
+                        </div>
+                        <div className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-widest">
+                            <div className="w-2 h-2 rounded-full bg-slate-700" /> Magnetic Snap: 24px
+                        </div>
+                        <div className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-widest">
+                            <div className="w-2 h-2 rounded-full bg-slate-700" /> RAF Loop: 60FPS
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </DragEngineProvider>
+    );
+};

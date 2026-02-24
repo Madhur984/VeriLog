@@ -29,3 +29,45 @@ export interface CircuitState {
     components: Component[];
     connections: Connection[];
 }
+
+// ─────────────────────────────────────────────────────
+//  Interaction & Drag Engine Types
+// ─────────────────────────────────────────────────────
+
+export type CompType = 'battery' | 'bulb' | 'resistor' | 'switch';
+
+export interface DragState {
+    isDragging: boolean;
+    source: 'tray' | 'canvas' | null;
+    componentType: CompType | null;
+    componentId: string | null;
+    originX: number;
+    originY: number;
+    offsetX: number;
+    offsetY: number;
+    currentX: number;
+    currentY: number;
+    nearestSnap: SnapNode | null;
+    magneticForce: number; // 0-1
+}
+
+export interface SnapNode {
+    id: string;
+    x: number;
+    y: number;
+    occupied: boolean;
+    occupiedBy?: string;
+}
+
+export interface DropResult {
+    accepted: boolean;
+    position: { x: number; y: number };
+    snapNodeId?: string;
+    componentType: CompType;
+}
+
+export interface MagneticForce {
+    force: number;
+    angle: number;
+    snapNode: SnapNode | null;
+}

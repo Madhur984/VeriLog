@@ -13,6 +13,10 @@ export interface CircuitComponentProps {
     id: string;
     /** Set true when a dragged component is within magnetic range */
     isSnapTarget?: boolean;
+    /** Set true when the component is being dragged */
+    isDragging?: boolean;
+    /** Set true for the "ghost" preview component */
+    isGhost?: boolean;
 }
 
 const Node: React.FC<{ cx: number; cy: number; active?: boolean; isSnapTarget?: boolean }> = ({ cx, cy, active, isSnapTarget }) => (
@@ -64,8 +68,39 @@ const Node: React.FC<{ cx: number; cy: number; active?: boolean; isSnapTarget?: 
     </g>
 );
 
-export const LabBattery: React.FC<CircuitComponentProps> = ({ x, y, active, isSnapTarget }) => (
-    <g transform={`translate(${x}, ${y})`}>
+/**
+ * Shared wrapper for handling drag elevation and ghost effects
+ */
+const ComponentShell: React.FC<{
+    children: React.ReactNode;
+    x: number;
+    y: number;
+    isDragging?: boolean;
+    isGhost?: boolean;
+}> = ({ children, x, y, isDragging, isGhost }) => (
+    <motion.g
+        transform={`translate(${x}, ${y})`}
+        animate={{
+            scale: isDragging ? 1.05 : 1,
+            rotate: isDragging ? 1.5 : 0,
+            opacity: isGhost ? 0.5 : 1
+        }}
+        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+        style={{
+            pointerEvents: isGhost ? 'none' : 'auto',
+            filter: isGhost
+                ? 'drop-shadow(0 0 10px #00D2FF)'
+                : isDragging
+                    ? 'drop-shadow(0 10px 15px rgba(0,0,0,0.5))'
+                    : 'none'
+        }}
+    >
+        {children}
+    </motion.g>
+);
+
+export const LabBattery: React.FC<CircuitComponentProps> = ({ x, y, active, isSnapTarget, isDragging, isGhost }) => (
+    <ComponentShell x={x} y={y} isDragging={isDragging} isGhost={isGhost}>
         {/* Background & Shadow */}
         <rect x={-15} y={-35} width={30} height={70} rx={4} fill="#0D1426" stroke="#1E293B" strokeWidth={1} />
 
@@ -76,21 +111,13 @@ export const LabBattery: React.FC<CircuitComponentProps> = ({ x, y, active, isSn
         <text x={0} y={-10} textAnchor="middle" fill="#94A3B8" fontSize={16} fontWeight="bold" fontFamily="monospace">+</text>
         <text x={0} y={20} textAnchor="middle" fill="#94A3B8" fontSize={16} fontWeight="bold" fontFamily="monospace">-</text>
 
-        <defs>
-            <linearGradient id="battGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#1E293B" />
-                <stop offset="50%" stopColor="#0F172A" />
-                <stop offset="100%" stopColor="#1E293B" />
-            </linearGradient>
-        </defs>
-
         <Node cx={0} cy={-40} active={active} isSnapTarget={isSnapTarget} />
         <Node cx={0} cy={40} active={active} isSnapTarget={isSnapTarget} />
-    </g>
+    </ComponentShell>
 );
 
-export const LabBulb: React.FC<CircuitComponentProps> = ({ x, y, active, isSnapTarget }) => (
-    <g transform={`translate(${x}, ${y})`}>
+export const LabBulb: React.FC<CircuitComponentProps> = ({ x, y, active, isSnapTarget, isDragging, isGhost }) => (
+    <ComponentShell x={x} y={y} isDragging={isDragging} isGhost={isGhost}>
         {/* Bulb Glass */}
         <circle cx={0} cy={0} r={22} fill={active ? "rgba(255, 184, 0, 0.1)" : "#0D1426"} stroke={active ? "#FFB800" : "#334155"} strokeWidth={2} className={active ? "neon-glow-orange" : ""} />
 
@@ -109,11 +136,11 @@ export const LabBulb: React.FC<CircuitComponentProps> = ({ x, y, active, isSnapT
 
         <Node cx={-28} cy={0} active={active} isSnapTarget={isSnapTarget} />
         <Node cx={28} cy={0} active={active} isSnapTarget={isSnapTarget} />
-    </g>
+    </ComponentShell>
 );
 
-export const LabResistor: React.FC<CircuitComponentProps> = ({ x, y, active, isSnapTarget }) => (
-    <g transform={`translate(${x}, ${y})`}>
+export const LabResistor: React.FC<CircuitComponentProps> = ({ x, y, active, isSnapTarget, isDragging, isGhost }) => (
+    <ComponentShell x={x} y={y} isDragging={isDragging} isGhost={isGhost}>
         {/* Capsule / Pill Background */}
         <rect x={-40} y={-15} width={80} height={30} rx={15} fill="#0D1426" stroke="#1E293B" strokeWidth={1} opacity={0.8} />
 
@@ -129,11 +156,11 @@ export const LabResistor: React.FC<CircuitComponentProps> = ({ x, y, active, isS
 
         <Node cx={-45} cy={0} active={active} isSnapTarget={isSnapTarget} />
         <Node cx={45} cy={0} active={active} isSnapTarget={isSnapTarget} />
-    </g>
+    </ComponentShell>
 );
 
-export const LabSwitch: React.FC<CircuitComponentProps & { isOpen: boolean }> = ({ x, y, active, isOpen, isSnapTarget }) => (
-    <g transform={`translate(${x}, ${y})`}>
+export const LabSwitch: React.FC<CircuitComponentProps & { isOpen: boolean }> = ({ x, y, active, isOpen, isSnapTarget, isDragging, isGhost }) => (
+    <ComponentShell x={x} y={y} isDragging={isDragging} isGhost={isGhost}>
         {/* Connection points */}
         <circle cx={-20} cy={0} r={4} fill="#475569" stroke="#334155" strokeWidth={1.5} />
         <circle cx={20} cy={0} r={4} fill="#475569" stroke="#334155" strokeWidth={1.5} />
@@ -152,5 +179,5 @@ export const LabSwitch: React.FC<CircuitComponentProps & { isOpen: boolean }> = 
 
         <Node cx={-30} cy={0} active={active} isSnapTarget={isSnapTarget} />
         <Node cx={30} cy={0} active={active} isSnapTarget={isSnapTarget} />
-    </g>
+    </ComponentShell>
 );
