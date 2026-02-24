@@ -55,7 +55,23 @@ router.post('/signin', async (req: Request, res: Response) => {
 
         if (error) {
             console.error('[AUTH] Supabase error during signin:', error.message);
+            // Friendly message for email confirmation requirement
+            if (error.message.toLowerCase().includes('email not confirmed')) {
+                return res.status(400).json({
+                    error: 'Please confirm your email before signing in. Check your inbox for a verification link.',
+                });
+            }
+            if (error.message.toLowerCase().includes('invalid login credentials')) {
+                return res.status(400).json({ error: 'Invalid email or password. Double-check and try again.' });
+            }
             return res.status(400).json({ error: error.message });
+        }
+
+        // data.session is null when Supabase requires email confirmation
+        if (!data.session) {
+            return res.status(400).json({
+                error: 'Please confirm your email before signing in. Check your inbox.',
+            });
         }
 
         console.log('[AUTH] Login successful for:', data.user?.id);

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, CheckCircle2, FlaskConical, Moon, Sun } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, FlaskConical, Moon, Sun, Zap } from 'lucide-react';
 import { useColorScheme } from '../hooks/useColorScheme';
 
 /* ══════════════════════════════════════════════════════════════════════
@@ -102,27 +102,6 @@ const WaveIllustration: React.FC<{ t: Theme }> = ({ t }) => (
     </svg>
 );
 
-const CircuitLoopDiagram: React.FC<{ t: Theme }> = ({ t }) => (
-    <svg viewBox="0 0 420 200" className="w-full max-w-[420px] mx-auto my-6" fill="none">
-        <rect x="40" y="30" width="340" height="140" rx="20" stroke={t.accent} strokeWidth="2.5" strokeDasharray="8 4" fill="none" />
-        <polygon points="210,30 216,22 204,22" fill={t.accent} />
-        <polygon points="210,170 204,178 216,178" fill={t.accent} />
-        {/* Battery */}
-        <rect x="50" y="70" width="80" height="60" rx="12" fill={t.accentBg} stroke={t.accent} strokeWidth="1.5" />
-        <text x="90" y="96" textAnchor="middle" fill={t.text} fontSize="11" fontWeight="600">Battery</text>
-        <text x="90" y="112" textAnchor="middle" fill={t.muted} fontSize="9">(Source)</text>
-        <text x="170" y="55" textAnchor="middle" fill={t.accent} fontSize="10" fontWeight="500">Current →</text>
-        {/* Bulb */}
-        <rect x="170" y="70" width="80" height="60" rx="12" fill="rgba(245,158,11,0.08)" stroke="#F59E0B" strokeWidth="1.5" />
-        <text x="210" y="96" textAnchor="middle" fill={t.text} fontSize="11" fontWeight="600">Bulb</text>
-        <text x="210" y="112" textAnchor="middle" fill={t.muted} fontSize="9">(Load)</text>
-        {/* Return */}
-        <rect x="290" y="70" width="80" height="60" rx="12" fill="rgba(34,197,94,0.08)" stroke="#22C55E" strokeWidth="1.5" />
-        <text x="330" y="96" textAnchor="middle" fill={t.text} fontSize="11" fontWeight="600">Return</text>
-        <text x="330" y="112" textAnchor="middle" fill={t.muted} fontSize="9">(Wire)</text>
-        <text x="210" y="194" textAnchor="middle" fill="#22C55E" fontSize="10" fontWeight="500">← Return path back to source</text>
-    </svg>
-);
 
 const UnitStepSVG: React.FC<{ t: Theme }> = ({ t }) => (
     <svg viewBox="0 0 160 80" className="w-full max-w-[160px]" fill="none">
@@ -196,7 +175,7 @@ export const ModuleOne: React.FC = () => {
     const t = isDark ? themes.dark : themes.light;
 
     const [activeSection, setActiveSection] = useState(TOC[0].id);
-    const [completed, setCompleted] = useState(false);
+    const [completed, setCompleted] = useState(true);
     const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
 
     /* ── IntersectionObserver for TOC ── */
@@ -281,6 +260,52 @@ export const ModuleOne: React.FC = () => {
                     <div style={{ height: 1, background: t.border, marginTop: 28 }} />
                 </div>
             </header>
+
+            {/* ══ LAB REPORT: Bot Conclusions ══ */}
+            <div style={{ maxWidth: 1120, margin: '0 auto', padding: '24px 32px 0' }}>
+                <div style={{ maxWidth: 780, marginLeft: 248 }}>
+                    <div style={{
+                        background: isDark ? 'rgba(0, 210, 255, 0.05)' : '#EFF6FF',
+                        border: `1px solid ${isDark ? 'rgba(0, 210, 255, 0.15)' : '#BFDBFE'}`,
+                        borderRadius: 16,
+                        padding: '24px 28px',
+                        display: 'flex',
+                        alignItems: 'flex-start',
+                        gap: 16,
+                    }}>
+                        <div style={{
+                            width: 40, height: 40, borderRadius: 12, flexShrink: 0,
+                            background: isDark ? 'rgba(0, 210, 255, 0.15)' : '#DBEAFE',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        }}>
+                            <Zap size={20} style={{ color: isDark ? '#00D2FF' : '#2563EB' }} />
+                        </div>
+                        <div style={{ flex: 1 }}>
+                            <h3 style={{ fontSize: 15, fontWeight: 700, color: isDark ? '#00D2FF' : '#1D4ED8', marginBottom: 6, marginTop: 0 }}>
+                                VoltMonkey's Lab Report
+                            </h3>
+                            <p style={{ fontSize: 14, lineHeight: 1.7, color: t.body, margin: 0 }}>
+                                You verified that a signal must travel in a <strong>complete loop</strong> to flow. When the switch was open, nothing happened — no current, no glow. The moment you closed it, the neon tubes pressurized and every node lit up. This is <strong>Kirchhoff's Current Law</strong> in action: what enters a junction must leave it.
+                            </p>
+                            <button
+                                onClick={() => navigate('/module/1')}
+                                className="cursor-pointer transition-colors duration-200"
+                                style={{
+                                    marginTop: 12,
+                                    background: 'none', border: 'none',
+                                    color: isDark ? '#00D2FF' : '#2563EB',
+                                    fontSize: 13, fontWeight: 600,
+                                    display: 'flex', alignItems: 'center', gap: 6,
+                                    padding: 0,
+                                }}
+                            >
+                                <FlaskConical size={14} /> Back to Circuit Lab
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
 
             {/* ══ BODY ══ */}
             <div style={{ maxWidth: 1120, margin: '0 auto', padding: '0 32px 96px', display: 'flex', gap: 48 }}>
@@ -408,18 +433,6 @@ export const ModuleOne: React.FC = () => {
                         <p style={{ marginTop: 12 }}>
                             This forms a closed loop. If any part of this loop is broken — even one tiny connection — current stops flowing <strong>everywhere</strong> in the circuit. Not just at the break point. Everywhere.
                         </p>
-                        <CircuitLoopDiagram t={t} />
-                        <p style={caption}>A complete circuit loop: Battery → Bulb → Return wire → Battery</p>
-                        <p style={{ marginTop: 16 }}>
-                            Think of it like a circular running track. Runners (electrons) keep going around. If someone puts a wall across the track, all runners stop — not just the ones near the wall.
-                        </p>
-                        <div style={{
-                            background: t.warnBg, border: `1px solid ${t.warnBorder}`,
-                            borderRadius: 10, padding: '16px 20px', marginTop: 20,
-                            fontSize: 15, color: t.warnText,
-                        }}>
-                            <strong>Key takeaway:</strong> A circuit is only "on" when the loop is complete. One broken connection = entire circuit dead.
-                        </div>
                     </section>
 
                     {/* § 6 — Why Signal Must Return (CORE) */}

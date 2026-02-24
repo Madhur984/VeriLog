@@ -250,3 +250,62 @@
 ::-webkit-scrollbar-thumb:hover {
     background: rgba(255, 255, 255, 0.15);
 }
+
+/* ══════════════════════════════════════════════════════════════════════
+   PREMIUM PCB LAB & NEON THEME
+   ══════════════════════════════════════════════════════════════════════ */
+
+:root {
+    --neon-blue: #00D2FF;
+    --neon-blue-glow: rgba(0, 210, 255, 0.5);
+    --neon-orange: #FFB800;
+    --neon-orange-glow: rgba(255, 184, 0, 0.4);
+    --pcb-bg: #030712;
+    --glass-bg: rgba(13, 20, 38, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.1);
+}
+
+.blueprint-grid {
+    background-color: var(--pcb-bg);
+    background-image:
+        radial-gradient(circle at center, transparent 0%, rgba(3, 7, 18, 0.8) 100%),
+        linear-gradient(rgba(0, 128, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 128, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(rgba(0, 128, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 128, 255, 0.02) 1px, transparent 1px);
+    background-size: 100% 100%, 100px 100px, 100px 100px, 20px 20px, 20px 20px;
+    background-position: center, -1px -1px, -1px -1px, -1px -1px, -1px -1px;
+}
+
+.glass-panel {
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+}
+
+.neon-glow-blue {
+    filter: drop-shadow(0 0 8px var(--neon-blue-glow));
+}
+
+.neon-glow-orange {
+    filter: drop-shadow(0 0 12px var(--neon-orange-glow));
+}
+
+@keyframes pcb-pulse {
+    from {
+        stroke-dashoffset: 0;
+    }
+
+    to {
+        stroke-dashoffset: -32;
+    }
+}
+
+.glow-glow {
+    filter: drop-shadow(0 0 8px rgba(96, 165, 250, 0.5));
+}
+
+.error-glow {
+    filter: drop-shadow(0 0 12px rgba(239, 68, 68, 0.6));
+}

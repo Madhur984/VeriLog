@@ -8,6 +8,7 @@ import { LoginPage } from './pages/LoginPage';
 import { AssessmentPage } from './pages/AssessmentPage';
 import { WorkstationHome } from './pages/WorkstationHome';
 import { ModuleOne } from './pages/ModuleOne';
+import { Module1Activity } from './pages/Module1Activity';
 import { MascotGuide } from './components/Bot/MascotGuide';
 
 export default function App() {
@@ -26,7 +27,8 @@ export default function App() {
                 <Route path="/training" element={<TrainingCockpitPage />} />
                 <Route path="/assessment" element={<AssessmentPage />} />
                 <Route path="/hero" element={<HeroExperience />} />
-                <Route path="/module/1" element={<ModuleOne />} />
+                <Route path="/module/1" element={<Module1Activity />} />
+                <Route path="/module/1/theory" element={<ModuleOne />} />
 
                 {/* Catch all */}
                 <Route path="*" element={<Navigate to="/" replace />} />
