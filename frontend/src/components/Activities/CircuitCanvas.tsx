@@ -20,28 +20,69 @@ interface ComponentInstance {
 interface CircuitCanvasProps {
     components: ComponentInstance[];
     setComponents: React.Dispatch<React.SetStateAction<ComponentInstance[]>>;
+    isCircuitClosed?: boolean;
 }
+
+const StaticWire: React.FC<{ d: string; active?: boolean }> = ({ d, active }) => (
+    <g>
+        {/* Base Wire */}
+        <path
+            d={d}
+            fill="none"
+            stroke="#1E293B"
+            strokeWidth={12}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+        />
+        <path
+            d={d}
+            fill="none"
+            stroke="#334155"
+            strokeWidth={4}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+        />
+        {/* Active Flow */}
+        {active && (
+            <>
+                <path
+                    d={d}
+                    fill="none"
+                    stroke="#3B82F6"
+                    strokeWidth={8}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="opacity-60 blur-md"
+                />
+                <path
+                    d={d}
+                    fill="none"
+                    stroke="#60A5FA"
+                    strokeWidth={4}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeDasharray="16 16"
+                    className="animate-[dash_1s_linear_infinite]"
+                />
+            </>
+        )}
+    </g>
+);
 
 export const CircuitCanvas: React.FC<CircuitCanvasProps> = ({
     components,
     setComponents,
+    isCircuitClosed = false
 }) => {
-    // UI Effects State (Keeping local for transient visuals)
-    // Actually, I'll move effects to the parent if I want them to trigger on dropped items
-    // But local is fine for now as long as we have a way to trigger them.
-
-    // SVG Refs for Drag Engine (Bypass Render)
     const svgRef = useRef<SVGSVGElement>(null);
     const ghostRef = useRef<SVGGElement>(null);
 
     const engine = useEngine();
 
-    // Link engine to refs
     useEffect(() => {
         engine.setRefs(svgRef.current, ghostRef.current);
     }, [engine]);
 
-    // Handle SVG Global Pointer Events
     const handlePointerMove = (e: React.PointerEvent) => {
         if (engine.isDragging) {
             engine.updateCursor(e);
@@ -65,7 +106,7 @@ export const CircuitCanvas: React.FC<CircuitCanvasProps> = ({
             id: comp.id,
             x: comp.x,
             y: comp.y,
-            active: true,
+            active: isCircuitClosed, // Pass active state down!
             isDragging: false,
         };
 
@@ -113,6 +154,12 @@ export const CircuitCanvas: React.FC<CircuitCanvasProps> = ({
             <div className="absolute inset-0 opacity-20 pointer-events-none"
                 style={{ backgroundImage: 'radial-gradient(#334155 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
 
+            <style>{`
+                @keyframes dash {
+                    to { stroke-dashoffset: -32; }
+                }
+            `}</style>
+
             <svg
                 ref={svgRef}
                 viewBox="0 0 800 600"
@@ -127,10 +174,22 @@ export const CircuitCanvas: React.FC<CircuitCanvasProps> = ({
                         <stop offset="100%" stopColor="#1E293B" />
                     </linearGradient>
                     <linearGradient id="snapActiveGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#00D2FF" />
-                        <stop offset="100%" stopColor="#0080FF" />
+                        <stop offset="0%" stopColor="#3B82F6" />
+                        <stop offset="100%" stopColor="#2563EB" />
                     </linearGradient>
                 </defs>
+
+                {/* Pre-traced Wires */}
+                {/* Battery is at (200, 300) so nodes are (200, 260) and (200, 340) */}
+
+                {/* Wire 1: Battery to Switch (Switch node left is 370, 150) */}
+                <StaticWire d="M200,260 L200,150 L370,150" active={isCircuitClosed} />
+
+                {/* Wire 2: Switch to Bulb (Switch node right is 430, 150, Bulb node left is 572, 300) */}
+                <StaticWire d="M430,150 L572,150 L572,300" active={isCircuitClosed} />
+
+                {/* Wire 3: Bulb to Battery (Bulb node right is 628, 300, Battery node bottom is 200, 340) */}
+                <StaticWire d="M628,300 L628,450 L200,450 L200,340" active={isCircuitClosed} />
 
                 {/* Snap Nodes Layer */}
                 {snapNodes.map(node => (
@@ -144,7 +203,10 @@ export const CircuitCanvas: React.FC<CircuitCanvasProps> = ({
                     />
                 ))}
 
-                {/* Static Components Layer */}
+                {/* Static Battery */}
+                <LabBattery id="static-battery" x={200} y={300} active={isCircuitClosed} isDragging={false} />
+
+                {/* Draggable Components Layer */}
                 {components.map(renderComponent)}
 
                 {/* Ghost Preview Layer (Direct DOM controlled) */}
@@ -168,7 +230,7 @@ export const CircuitCanvas: React.FC<CircuitCanvasProps> = ({
                         cy={engine.nearestSnap.y}
                         r={engine.magneticForce * 40}
                         fill="none"
-                        stroke="#00D2FF"
+                        stroke="#3B82F6"
                         strokeWidth={0.5}
                         strokeDasharray="2 4"
                         opacity={engine.magneticForce * 0.4}

@@ -33,12 +33,12 @@ export const RightSidebar = () => {
             <div className="border-2 border-neutral-200 rounded-2xl p-4 flex flex-col gap-4">
                 <h3 className="font-heading font-bold text-lg text-neutral-700">Unlock Super VeriQuest</h3>
                 <div className="flex items-center gap-4">
-                    <div className="w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center">
+                    <div className="w-20 h-20 bg-gradient-to-br from-teal-500 to-cyan-600 rounded-xl flex items-center justify-center">
                         <Shield className="text-white" size={40} fill="currentColor" />
                     </div>
                     <p className="text-sm text-neutral-500 font-medium">Unlimited hearts and no ads!</p>
                 </div>
-                <button className="w-full py-3 rounded-xl font-bold uppercase tracking-wide bg-gradient-to-b from-indigo-500 to-purple-600 text-white shadow-[0_4px_0_0_#4c1d95] active:translate-y-[2px] active:shadow-none transition-all">
+                <button className="w-full py-3 rounded-xl font-bold uppercase tracking-wide bg-gradient-to-b from-teal-500 to-cyan-600 text-white shadow-[0_4px_0_0_#0f766e] active:translate-y-[2px] active:shadow-none transition-all">
                     Try Super Free
                 </button>
             </div>

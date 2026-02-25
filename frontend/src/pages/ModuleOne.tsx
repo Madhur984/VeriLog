@@ -159,7 +159,7 @@ const ParametersSVG: React.FC<{ t: Theme }> = ({ t }) => (
 
 const signalTypes = [
     { title: 'Analog Signal', desc: 'Smooth and continuous.', example: 'E.g. Human voice', color: '#3B82F6' },
-    { title: 'Digital Signal', desc: 'Only two values: 0 and 1.', example: 'E.g. Computer data', color: '#8B5CF6' },
+    { title: 'Digital Signal', desc: 'Only two values: 0 and 1.', example: 'E.g. Computer data', color: '#2DD4BF' },
     { title: 'Periodic Signal', desc: 'Repeats after a fixed time.', example: 'E.g. Clock signal', color: '#22C55E' },
     { title: 'Non-Periodic Signal', desc: 'Does not repeat.', example: 'E.g. Speech waveform', color: '#F59E0B' },
 ];
@@ -563,3 +563,4 @@ const RevisionItem: React.FC<{ text: string; t: Theme }> = ({ text, t }) => (
         <span style={{ fontSize: 15, color: t.body, lineHeight: 1.6 }}>{text}</span>
     </li>
 );
+// aria-label

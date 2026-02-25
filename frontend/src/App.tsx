@@ -1,40 +1,35 @@
-
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { TrainingCockpitPage } from './pages/TrainingCockpitPage';
 import { HeroExperience } from './pages/HeroExperience';
+import { WorkstationHome } from './pages/WorkstationHome';
+import { ModuleOneHub } from './pages/ModuleOneHub';
+import { ModuleOne } from './pages/ModuleOne';
+import { LoginPage } from './pages/LoginPage';
+import { CircuitCanvas } from './simulator/CircuitCanvas';
+import { MascotGuide } from './components/Bot/MascotGuide';
 import { SignalPlayground } from './pages/SignalPlayground';
 import { GatekeeperGame } from './pages/GatekeeperGame';
-import { LoginPage } from './pages/LoginPage';
 import { AssessmentPage } from './pages/AssessmentPage';
-import { WorkstationHome } from './pages/WorkstationHome';
-import { ModuleOne } from './pages/ModuleOne';
-import { Module1Activity } from './pages/Module1Activity';
-import { MascotGuide } from './components/Bot/MascotGuide';
 
 export default function App() {
     return (
         <BrowserRouter>
             <Routes>
-                {/* Intro Flow */}
                 <Route path="/" element={<HeroExperience />} />
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/portal" element={<WorkstationHome />} />
+
+                {/* Introductory / Legacy Modules */}
                 <Route path="/playground" element={<SignalPlayground />} />
                 <Route path="/gatekeeper" element={<GatekeeperGame />} />
-                <Route path="/login" element={<LoginPage />} />
-
-                {/* Authenticated Routes */}
-                <Route path="/portal" element={<WorkstationHome />} />
-                <Route path="/home" element={<WorkstationHome />} />
-                <Route path="/training" element={<TrainingCockpitPage />} />
                 <Route path="/assessment" element={<AssessmentPage />} />
-                <Route path="/hero" element={<HeroExperience />} />
-                <Route path="/module/1" element={<Module1Activity />} />
+
+                {/* Module 1 Entry Point */}
+                <Route path="/module/1" element={<ModuleOneHub />} />
+                <Route path="/module/1/lab" element={<CircuitCanvas />} />
                 <Route path="/module/1/theory" element={<ModuleOne />} />
 
-                {/* Catch all */}
-                <Route path="*" element={<Navigate to="/" replace />} />
+                <Route path="*" element={<Navigate to="/portal" replace />} />
             </Routes>
-
-            {/* Global floating mascot guide */}
             <MascotGuide />
         </BrowserRouter>
     );

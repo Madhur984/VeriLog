@@ -81,7 +81,7 @@ const CONNECTIONS: Connection[] = [
 const BRANCH_META: Record<BranchKey, { label: string; color: string }> = {
     basic: { label: 'BASIC ELECTRONICS', color: '#f59e0b' },
     dsd: { label: 'DIGITAL SYSTEM DESIGN', color: '#3b82f6' },
-    verilog: { label: 'VERILOG HDL', color: '#a78bfa' },
+    verilog: { label: 'VERILOG HDL', color: '#2dd4bf' },
 };
 
 /* ══════════════════════════════════════════════════════════════════════
@@ -765,7 +765,7 @@ export const WorkstationHome: React.FC = () => {
                                     { label: 'Total Modules', value: String(MODULES.length), accent: '#94a3b8' },
                                     { label: 'Completed', value: String(completedCount), accent: '#22c55e' },
                                     { label: 'In Progress', value: String(MODULES.filter(m => m.status === 'in-progress').length), accent: '#3b82f6' },
-                                    { label: 'Total Hours', value: `${MODULES.reduce((s, m) => s + m.hours, 0)}h`, accent: '#a78bfa' },
+                                    { label: 'Total Hours', value: `${MODULES.reduce((s, m) => s + m.hours, 0)}h`, accent: '#2dd4bf' },
                                 ].map(s => (
                                     <div key={s.label} className="rounded-xl p-5 transition-all duration-200 cursor-default hover:scale-[1.02]"
                                         style={{
@@ -790,3 +790,4 @@ export const WorkstationHome: React.FC = () => {
         </>
     );
 };
+// aria-label

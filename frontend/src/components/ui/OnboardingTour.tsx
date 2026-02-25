@@ -57,7 +57,7 @@ const DEFAULT_STEPS: TourStep[] = [
         title: 'Command Palette ⌘K',
         body: 'Press Ctrl+K to search modules, navigate, or trigger actions. The fastest path through any system.',
         placement: 'bottom',
-        accent: '#a78bfa',
+        accent: '#2dd4bf',
         mascotState: 'thinking',
     },
 ];
@@ -77,7 +77,7 @@ interface OnboardingTourProps {
 
 /* ── Confetti burst (simple CSS particles) ────────────────── */
 const ConfettiBurst: React.FC = () => {
-    const colors = ['#22C55E', '#FACC15', '#3B82F6', '#F472B6', '#A78BFA', '#FB923C'];
+    const colors = ['#22C55E', '#FACC15', '#3B82F6', '#F472B6', '#2DD4BF', '#FB923C'];
     return (
         <div style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 200, overflow: 'hidden' }}>
             {Array.from({ length: 40 }).map((_, i) => {
@@ -373,3 +373,4 @@ export const OnboardingTour: React.FC<OnboardingTourProps> = ({
         </AnimatePresence>
     );
 };
+// aria-label

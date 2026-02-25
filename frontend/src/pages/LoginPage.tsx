@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { supabase } from '../lib/supabase';
 import { AndGate, Switch } from '../components/Gates/CircuitComponents';
 import { ShieldCheck, Zap, Cpu, Fingerprint, User } from 'lucide-react';
 import { useUserStore } from '../stores/userStore';
@@ -89,47 +89,81 @@ export const LoginPage: React.FC = () => {
             setIsLoading(true);
             setError(null);
             try {
-                const endpoint = isSignUp ? '/api/auth/signup' : '/api/auth/signin';
-                const payload = isSignUp ? { email, password, full_name: fullName } : { email, password };
+                // Wrap Supabase call in a timeout to detect unreachable servers
+                const withTimeout = <T,>(promise: Promise<T>, ms: number): Promise<T> =>
+                    Promise.race([
+                        promise,
+                        new Promise<never>((_, reject) =>
+                            setTimeout(() => reject(new Error('NETWORK_TIMEOUT')), ms)
+                        ),
+                    ]);
 
-                // Assuming backend runs on 3000
-                const response = await axios.post(`http://localhost:3000${endpoint}`, payload);
+                if (isSignUp) {
+                    const { data, error: signUpError } = await withTimeout(
+                        supabase.auth.signUp({
+                            email,
+                            password,
+                            options: { data: { full_name: fullName || '' } },
+                        }),
+                        8000
+                    );
+                    if (signUpError) throw signUpError;
 
-                if (response.data.session?.access_token || response.data.message) {
                     setIsSwitchOn(true);
-
-                    // Save user info
-                    const user = response.data.user || response.data.session?.user;
-                    const name = user?.user_metadata?.full_name || fullName || 'Explorer';
+                    const name = data.user?.user_metadata?.full_name || fullName || 'Explorer';
                     setFirstName(name.split(' ')[0]);
                     setHasSeenGreeting(false);
 
-                    if (response.data.session?.access_token) {
-                        localStorage.setItem('supabase_token', response.data.session.access_token);
+                    if (data.session?.access_token) {
+                        localStorage.setItem('supabase_token', data.session.access_token);
+                        setTimeout(() => navigate('/'), 1000);
+                    } else {
+                        // This handles the weird Supabase offline edge case where data exists but no session
+                        setIsSwitchOn(true);
+                        const name = data.user?.user_metadata?.full_name || 'Explorer';
+                        setFirstName(name.split(' ')[0]);
+                        setHasSeenGreeting(false);
+                        localStorage.setItem('supabase_token', 'offline_session');
+                        setTimeout(() => navigate('/'), 1000);
                     }
-                    setTimeout(() => {
-                        navigate('/hero');
-                    }, 1000);
+                } else {
+                    const { data, error: signInError } = await withTimeout(
+                        supabase.auth.signInWithPassword({ email, password }),
+                        8000
+                    );
+
+                    if (signInError) throw signInError;
+
+                    setIsSwitchOn(true);
+                    const name = data.user?.user_metadata?.full_name || 'Explorer';
+                    setFirstName(name.split(' ')[0]);
+                    setHasSeenGreeting(false);
+                    localStorage.setItem('supabase_token', data.session.access_token);
+                    setTimeout(() => navigate('/'), 1000);
                 }
             } catch (err: any) {
-                console.error("Auth Error details:", err);
-                const responseData = err.response?.data;
-                const axiosMessage = err.message;
+                const isNetworkError =
+                    err.message === 'NETWORK_TIMEOUT' ||
+                    err.message === 'fetch failed' ||
+                    err.message?.includes('Failed to fetch') ||
+                    err.message?.includes('NetworkError') ||
+                    err.cause?.code === 'UND_ERR_CONNECT_TIMEOUT';
 
-                let errorMessage = 'Authentication Failed. Check logs.';
-
-                if (typeof responseData === 'object' && responseData?.error) {
-                    errorMessage = responseData.error;
-                } else if (typeof responseData === 'string' && responseData.includes('<!DOCTYPE html>')) {
-                    errorMessage = 'System Engine Error (HTML Response). Check backend.';
-                } else if (axiosMessage === 'Network Error') {
-                    errorMessage = 'Engine Connection Offline. Check backend status.';
-                } else if (axiosMessage) {
-                    errorMessage = `Protocol Error: ${axiosMessage}`;
+                if (isNetworkError) {
+                    // ── OFFLINE FALLBACK: Supabase unreachable, allow local access ──
+                    console.warn('[AUTH] Supabase unreachable — activating offline mode');
+                    setIsSwitchOn(true);
+                    const name = fullName || email.split('@')[0] || 'Explorer';
+                    setFirstName(name.split(' ')[0]);
+                    setHasSeenGreeting(false);
+                    localStorage.setItem('supabase_token', 'offline_session');
+                    localStorage.setItem('offline_mode', 'true');
+                    setTimeout(() => navigate('/'), 1000);
+                } else {
+                    console.error('Auth Error:', err);
+                    setError(err.message || 'Authentication Failed.');
+                    setIsSwitchOn(false);
                 }
-
-                setError(errorMessage);
-                setIsSwitchOn(false);
             } finally {
                 setIsLoading(false);
             }

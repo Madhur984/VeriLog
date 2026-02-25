@@ -21,7 +21,7 @@ export const BreadboardCard: React.FC<BreadboardCardProps> = ({ children, classN
             isDark && !isMinimal && "bg-[#0B0F1A] shadow-[0_10px_40px_rgba(0,0,0,0.4),12px_12px_0px_rgba(2,6,23,1)]",
             !isDark && "bg-[#F8F9FA] shadow-[0_10px_40px_rgba(0,0,0,0.06),12px_12px_0px_rgba(15,23,42,1)]",
             className
-        )}>
+        )} aria-label="breadboard-card">
             {/* Breadboard Dot Grid Background */}
             <div className={cn(
                 "absolute inset-0 pointer-events-none opacity-[0.05]",

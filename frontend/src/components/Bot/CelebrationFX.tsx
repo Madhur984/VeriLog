@@ -28,7 +28,7 @@ interface Particle {
 
 const COLORS = [
     '#22C55E', '#3BAF5C', '#8CC63F', '#F5C518',
-    '#FF6B35', '#06B6D4', '#A78BFA', '#FFFFFF',
+    '#FF6B35', '#06B6D4', '#2DD4BF', '#FFFFFF',
 ];
 
 const BOLT_PATH = new Path2D('M-3,-6 L1,-6 L-1,0 L5,0 L-3,10 L0,2 L-5,2 Z');

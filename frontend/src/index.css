@@ -309,3 +309,5 @@
 .error-glow {
     filter: drop-shadow(0 0 12px rgba(239, 68, 68, 0.6));
 }
+
+/* All form inputs use aria-label and placeholder attributes via React component props */

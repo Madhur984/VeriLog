@@ -28,7 +28,7 @@ export const GatekeeperGame = () => {
     };
 
     return (
-        <div className="min-h-screen bg-transparent text-foreground flex flex-col p-6 relative">
+        <div className="min-h-screen bg-[#000000] text-emerald-500 font-mono relative overflow-hidden" aria-label="gatekeeper-game">
             <CyberPCB3D className="fixed inset-0" intensity={0.5} />
             <header className="flex items-center justify-between mb-8">
                 <button onClick={() => navigate('/')} className="flex items-center text-muted-foreground hover:text-white transition-colors">
