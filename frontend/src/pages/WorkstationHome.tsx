@@ -147,37 +147,8 @@ const SvgDefs: React.FC = () => (
     </defs>
 );
 
-/* ── Geometry Helpers ── */
+/* ── Module bubble ── */
 
-/** Sharp serrated ring: alternating inner/outer spikes */
-function getSerratedRingPath(cx: number, cy: number, r: number, teeth: number) {
-    const innerR = r * 0.82;
-    const outerR = r;
-    let path = '';
-    const total = teeth * 2;
-    for (let i = 0; i < total; i++) {
-        const angle = (i * 2 * Math.PI) / total - Math.PI / 2;
-        const rr = i % 2 === 0 ? outerR : innerR;
-        const x = cx + Math.cos(angle) * rr;
-        const y = cy + Math.sin(angle) * rr;
-        path += i === 0 ? `M ${x} ${y}` : ` L ${x} ${y}`;
-    }
-    return path + ' Z';
-}
-
-/** Regular hexagon path */
-function getHexPath(cx: number, cy: number, r: number) {
-    let path = '';
-    for (let i = 0; i < 6; i++) {
-        const angle = (i * Math.PI) / 3 - Math.PI / 6;
-        const x = cx + Math.cos(angle) * r;
-        const y = cy + Math.sin(angle) * r;
-        path += i === 0 ? `M ${x} ${y}` : ` L ${x} ${y}`;
-    }
-    return path + ' Z';
-}
-
-/* ── JARVIS HUD Module Node ── */
 const ModuleBubble: React.FC<{
     mod: Module; isHovered: boolean; onHover: (id: string | null) => void;
     opacity: number;
@@ -187,32 +158,8 @@ const ModuleBubble: React.FC<{
     const inProg = mod.status === 'in-progress';
     const accent = accentFor(mod);
     const r = getR(mod);
-    const teeth = mod.isHub ? 16 : 12;
 
-    // Radii for each ring layer
-    const outerGearR = r + (mod.isHub ? 16 : 12);
-    const midRingR = r + (mod.isHub ? 6 : 4);
-    const innerDiscR = r * 0.55;
-    const hexR = r * 0.32;
-
-    const dimColor = locked ? '#1a2236' : accent;
-    const glowId = done ? 'url(#glow-green)' : 'url(#glow-blue)';
-    const fillColor = locked ? '#080b12' : done ? '#050f07' : '#060b14';
-
-    const cx = mod.cx, cy = mod.cy;
-
-    // Tick marks around the mid ring (every 30°)
-    const ticks = Array.from({ length: 12 }, (_, i) => {
-        const a = (i * Math.PI) / 6 - Math.PI / 2;
-        const isLong = i % 3 === 0;
-        const rStart = midRingR + 2;
-        const rEnd = midRingR + (isLong ? 7 : 4);
-        return {
-            x1: cx + Math.cos(a) * rStart, y1: cy + Math.sin(a) * rStart,
-            x2: cx + Math.cos(a) * rEnd, y2: cy + Math.sin(a) * rEnd,
-            isLong,
-        } as { x1: number; y1: number; x2: number; y2: number; isLong: boolean };
-    });
+    const fillId = locked ? 'url(#node-fill-locked)' : done ? 'url(#node-fill-completed)' : mod.isHub ? 'url(#hub-fill)' : 'url(#node-fill-default)';
 
     return (
         <motion.g
@@ -220,121 +167,72 @@ const ModuleBubble: React.FC<{
             onHoverStart={() => !locked && onHover(mod.id)}
             onHoverEnd={() => onHover(null)}
         >
-            {/* ── Layer 0: ambient glow blob ── */}
-            {!locked && (
-                <circle cx={cx} cy={cy} r={outerGearR + 8}
-                    fill={accent} opacity={isHovered ? 0.09 : inProg ? 0.05 : 0.03} />
-            )}
-
-            {/* ── Layer 1: spinning serrated outer ring ── */}
-            <motion.path
-                d={getSerratedRingPath(cx, cy, outerGearR, teeth)}
-                fill={fillColor}
-                stroke={dimColor}
-                strokeWidth={locked ? 0.5 : isHovered ? 1.8 : 1.2}
-                opacity={locked ? 0.3 : 1}
-                animate={{ rotate: locked ? 0 : [0, 360] }}
-                transition={{ duration: mod.isHub ? 18 : 24, repeat: Infinity, ease: 'linear' }}
-                style={{ transformOrigin: `${cx}px ${cy}px` }}
-                filter={!locked && !done ? glowId : undefined}
-            />
-
-            {/* ── Layer 1b: counter-spinning ghost ring (HUD depth) ── */}
-            {!locked && (
-                <motion.path
-                    d={getSerratedRingPath(cx, cy, outerGearR - 3, Math.max(6, teeth - 4))}
-                    fill="none"
-                    stroke={accent}
-                    strokeWidth={0.4}
-                    opacity={0.18}
-                    animate={{ rotate: [0, -360] }}
-                    transition={{ duration: mod.isHub ? 14 : 20, repeat: Infinity, ease: 'linear' }}
-                    style={{ transformOrigin: `${cx}px ${cy}px` }}
-                />
-            )}
-
-            {/* ── Layer 2: tick marks ── */}
-            {!locked && ticks.map((t, i) => (
-                <line key={i}
-                    x1={t.x1} y1={t.y1} x2={t.x2} y2={t.y2}
-                    stroke={accent}
-                    strokeWidth={t.isLong ? 1.2 : 0.6}
-                    opacity={t.isLong ? 0.6 : 0.3}
-                    strokeLinecap="round"
-                />
-            ))}
-
-            {/* ── Layer 3: mid-ring border ── */}
-            <circle cx={cx} cy={cy} r={midRingR}
-                fill="none"
-                stroke={dimColor}
-                strokeWidth={locked ? 0.4 : isHovered ? 1.4 : 0.8}
-                strokeDasharray={locked ? '3 4' : 'none'}
-                opacity={locked ? 0.2 : 0.5}
-            />
-
-            {/* ── Layer 4: inner solid disc ── */}
-            <circle cx={cx} cy={cy} r={innerDiscR}
-                fill={fillColor}
-                stroke={dimColor}
-                strokeWidth={locked ? 0.3 : 1}
-                opacity={locked ? 0.25 : 0.9}
-            />
-
-            {/* ── Scan-line sweep (in-progress only) ── */}
-            {inProg && (
-                <motion.line
-                    x1={cx} y1={cy}
-                    x2={cx} y2={cy - innerDiscR}
-                    stroke={accent} strokeWidth={0.8}
-                    strokeLinecap="round"
-                    opacity={0.7}
-                    animate={{ rotate: [0, 360] }}
-                    transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
-                    style={{ transformOrigin: `${cx}px ${cy}px` }}
-                />
-            )}
-
-            {/* ── Layer 5: hex center ── */}
-            <path
-                d={getHexPath(cx, cy, hexR)}
-                fill={locked ? '#0a0d14' : `${accent}18`}
-                stroke={dimColor}
-                strokeWidth={locked ? 0.3 : 0.9}
-                opacity={locked ? 0.2 : 0.85}
-            />
-
-            {/* ── Hub pulse rings ── */}
+            {/* Hub outer glow rings */}
             {mod.isHub && !locked && (
-                <motion.circle cx={cx} cy={cy} r={outerGearR + 4}
-                    fill="none" stroke={accent} strokeWidth={0.5}
-                    animate={{ opacity: [0.25, 0, 0.25], r: [outerGearR + 4, outerGearR + 20] }}
-                    transition={{ duration: 3, repeat: Infinity, ease: 'easeOut' }}
-                />
+                <>
+                    <circle cx={mod.cx} cy={mod.cy} r={r + 18} fill="none" stroke="#3b82f6" strokeWidth={0.4} opacity={0.08} />
+                    <motion.circle cx={mod.cx} cy={mod.cy} r={r + 10} fill="none" stroke="#3b82f6" strokeWidth={0.7}
+                        animate={{ opacity: [0.18, 0.05, 0.18] }} transition={{ duration: 3, repeat: Infinity }} />
+                </>
             )}
 
-            {/* ── Breathing pulse for in-progress ── */}
+            {/* Completed soft neon outline */}
+            {done && (
+                <circle cx={mod.cx} cy={mod.cy} r={r + 5} fill="none" stroke="#22c55e" strokeWidth={1} opacity={0.25}
+                    filter="url(#glow-green)" />
+            )}
+
+            {/* In-progress breathing pulse */}
             {inProg && (
-                <motion.circle cx={cx} cy={cy}
-                    fill="none" stroke={accent} strokeWidth={0.6}
-                    initial={{ opacity: 0.4, r: outerGearR + 2 }}
-                    animate={{ opacity: 0, r: outerGearR + 22 }}
-                    transition={{ duration: 2.8, repeat: Infinity, ease: 'easeOut' }}
-                />
+                <motion.circle cx={mod.cx} cy={mod.cy} fill="none" stroke="#3b82f6" strokeWidth={0.8}
+                    initial={{ opacity: 0.3, r: r + 4 }} animate={{ opacity: 0, r: r + 18 }}
+                    transition={{ duration: 2.5, repeat: Infinity, ease: 'easeOut' }} />
             )}
 
-            {/* ── Label below ── */}
+            {/* Active glow */}
+            {inProg && !isHovered && (
+                <circle cx={mod.cx} cy={mod.cy} r={r + 3} fill="none" stroke="#3b82f6" strokeWidth={0.6} opacity={0.2}
+                    filter="url(#glow-blue)" />
+            )}
+
+            {/* Main circle with gradient fill */}
+            <motion.circle cx={mod.cx} cy={mod.cy}
+                r={r}
+                fill={fillId}
+                stroke={locked ? '#1a2030' : accent}
+                strokeWidth={mod.isHub ? 2.5 : locked ? 0.7 : isHovered ? 2 : 1.5}
+                opacity={locked ? 0.4 : 1}
+                animate={{ r: isHovered ? r * 1.08 : r }}
+                transition={{ duration: 0.2, ease: 'easeOut' }}
+            />
+
+            {/* Progress arc */}
+            {mod.progress > 0 && mod.progress < 100 && (
+                <circle cx={mod.cx} cy={mod.cy} r={r - 5} fill="none" stroke={accent} strokeWidth={2}
+                    strokeDasharray={`${(r - 5) * 2 * Math.PI * mod.progress / 100} 9999`}
+                    strokeLinecap="round" transform={`rotate(-90 ${mod.cx} ${mod.cy})`} opacity={0.5} />
+            )}
+
+            {/* Center text */}
+            {!locked && (
+                <text x={mod.cx} y={mod.cy + 1} textAnchor="middle" dominantBaseline="middle"
+                    fill={accent} fontSize={r > 26 ? 12 : 10} fontWeight="700" fontFamily="'Roboto Mono',monospace">
+                    {mod.progress}%
+                </text>
+            )}
+
+            {/* Label below */}
             {!isHovered && (
-                <text x={cx} y={cy + outerGearR + 16} textAnchor="middle"
+                <text x={mod.cx} y={mod.cy + r + 22} textAnchor="middle"
                     fill={locked ? '#1e2a3d' : '#cbd5e1'}
                     fontSize={11} fontWeight="600" fontFamily="'DM Sans',sans-serif">
                     {mod.title}
                 </text>
             )}
 
-            {/* ── Hub sub-label ── */}
+            {/* Hub sub-label */}
             {mod.isHub && !isHovered && (
-                <text x={cx} y={cy + outerGearR + 32} textAnchor="middle"
+                <text x={mod.cx} y={mod.cy + r + 40} textAnchor="middle"
                     fill="#475569" fontSize={8.5} fontFamily="'Roboto Mono',monospace" letterSpacing="0.1em">
                     CHOOSE YOUR PATH
                 </text>
