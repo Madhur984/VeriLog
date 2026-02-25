@@ -3,8 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import {
     LayoutDashboard, Target, Settings, Command,
-    BarChart3, FlaskConical, BookOpen, CheckCircle2,
-    Lock, Play, Zap, Moon, Sun, HelpCircle, ChevronRight,
+    BarChart3, FlaskConical, BookOpen, Play, Zap,
+    Moon, Sun, HelpCircle, ChevronRight,
     Cpu, PanelLeftClose, PanelLeftOpen,
 } from 'lucide-react';
 import { cn } from '../lib/utils';
@@ -147,6 +147,48 @@ const SvgDefs: React.FC = () => (
     </defs>
 );
 
+/* ── Geometry Helpers ── */
+function getGearPath(cx: number, cy: number, r: number, teeth: number = 8) {
+    const innerR = r * 0.70;
+    const outerR = r * 1.15;
+    const holeR = r * 0.35; // Center hole radius
+    let path = "";
+
+    // Outer gear profile
+    for (let i = 0; i < teeth; i++) {
+        const angle1 = (i * 2 * Math.PI) / teeth;
+        const angle2 = ((i + 0.35) * 2 * Math.PI) / teeth;
+        const angle3 = ((i + 0.45) * 2 * Math.PI) / teeth;
+        const angle4 = ((i + 0.55) * 2 * Math.PI) / teeth;
+        const angle5 = ((i + 0.65) * 2 * Math.PI) / teeth;
+
+        const p1x = cx + Math.cos(angle1) * innerR; const p1y = cy + Math.sin(angle1) * innerR;
+        const p2x = cx + Math.cos(angle2) * innerR; const p2y = cy + Math.sin(angle2) * innerR;
+        const p3x = cx + Math.cos(angle3) * outerR; const p3y = cy + Math.sin(angle3) * outerR;
+        const p4x = cx + Math.cos(angle4) * outerR; const p4y = cy + Math.sin(angle4) * outerR;
+        const p5x = cx + Math.cos(angle5) * innerR; const p5y = cy + Math.sin(angle5) * innerR;
+
+        if (i === 0) path += `M ${p1x} ${p1y} `;
+
+        path += `A ${innerR} ${innerR} 0 0 1 ${p2x} ${p2y} `;
+        path += `L ${p3x} ${p3y} A ${outerR} ${outerR} 0 0 1 ${p4x} ${p4y} L ${p5x} ${p5y} `;
+
+        const nextAngle = ((i + 1) * 2 * Math.PI) / teeth;
+        const nextPx = cx + Math.cos(nextAngle) * innerR;
+        const nextPy = cy + Math.sin(nextAngle) * innerR;
+        path += `A ${innerR} ${innerR} 0 0 1 ${nextPx} ${nextPy} `;
+    }
+    path += "Z ";
+
+    // Inner hole for the mechanical look (sub-path drawn in reverse to create a hole)
+    path += `M ${cx + holeR} ${cy} `;
+    path += `A ${holeR} ${holeR} 0 1 0 ${cx - holeR} ${cy} `;
+    path += `A ${holeR} ${holeR} 0 1 0 ${cx + holeR} ${cy} `;
+    path += `Z`;
+
+    return path;
+}
+
 /* ── Module bubble ── */
 const ModuleBubble: React.FC<{
     mod: Module; isHovered: boolean; onHover: (id: string | null) => void;
@@ -169,54 +211,44 @@ const ModuleBubble: React.FC<{
             {/* Hub outer glow rings */}
             {mod.isHub && !locked && (
                 <>
-                    <circle cx={mod.cx} cy={mod.cy} r={r + 18} fill="none" stroke="#3b82f6" strokeWidth={0.4} opacity={0.08} />
-                    <motion.circle cx={mod.cx} cy={mod.cy} r={r + 10} fill="none" stroke="#3b82f6" strokeWidth={0.7}
-                        animate={{ opacity: [0.18, 0.05, 0.18] }} transition={{ duration: 3, repeat: Infinity }} />
+                    <path d={getGearPath(mod.cx, mod.cy, r + 18, 12)} fill="none" stroke="#3b82f6" strokeWidth={0.4} opacity={0.08} />
+                    <motion.path d={getGearPath(mod.cx, mod.cy, r + 10, 12)} fill="none" stroke="#3b82f6" strokeWidth={0.7}
+                        animate={{ opacity: [0.18, 0.05, 0.18], rotate: [0, 360] }} transition={{ duration: 10, repeat: Infinity, ease: 'linear' }}
+                        style={{ transformOrigin: `${mod.cx}px ${mod.cy}px` }} />
                 </>
             )}
 
             {/* Completed soft neon outline */}
             {done && (
-                <circle cx={mod.cx} cy={mod.cy} r={r + 5} fill="none" stroke="#22c55e" strokeWidth={1} opacity={0.25}
+                <path d={getGearPath(mod.cx, mod.cy, r + 5, 8)} fill="none" stroke="#22c55e" strokeWidth={1} opacity={0.25}
                     filter="url(#glow-green)" />
             )}
 
             {/* In-progress breathing pulse */}
             {inProg && (
-                <motion.circle cx={mod.cx} cy={mod.cy} fill="none" stroke="#3b82f6" strokeWidth={0.8}
-                    initial={{ opacity: 0.3, r: r + 4 }} animate={{ opacity: 0, r: r + 18 }}
-                    transition={{ duration: 2.5, repeat: Infinity, ease: 'easeOut' }} />
+                <motion.path d={getGearPath(mod.cx, mod.cy, r, 8)} fill="none" stroke="#3b82f6" strokeWidth={0.8}
+                    initial={{ opacity: 0.3, scale: 1.1 }} animate={{ opacity: 0, scale: 1.8 }}
+                    transition={{ duration: 2.5, repeat: Infinity, ease: 'easeOut' }}
+                    style={{ transformOrigin: `${mod.cx}px ${mod.cy}px` }} />
             )}
 
             {/* Active glow */}
             {inProg && !isHovered && (
-                <circle cx={mod.cx} cy={mod.cy} r={r + 3} fill="none" stroke="#3b82f6" strokeWidth={0.6} opacity={0.2}
+                <path d={getGearPath(mod.cx, mod.cy, r + 3, 8)} fill="none" stroke="#3b82f6" strokeWidth={0.6} opacity={0.2}
                     filter="url(#glow-blue)" />
             )}
 
-            {/* Main circle with gradient fill */}
-            <motion.circle cx={mod.cx} cy={mod.cy}
-                r={r}
+            {/* Main gear with gradient fill */}
+            <motion.path
+                d={getGearPath(mod.cx, mod.cy, r, mod.isHub ? 12 : 8)}
                 fill={fillId}
                 stroke={locked ? '#1a2030' : accent}
                 strokeWidth={mod.isHub ? 2.5 : locked ? 0.7 : isHovered ? 2 : 1.5}
                 opacity={locked ? 0.4 : 1}
-                animate={{ r: isHovered ? r * 1.08 : r }}
+                animate={{ scale: isHovered ? 1.08 : 1 }}
                 transition={{ duration: 0.2, ease: 'easeOut' }}
+                style={{ transformOrigin: `${mod.cx}px ${mod.cy}px` }}
             />
-
-            {/* Progress arc */}
-            {mod.progress > 0 && mod.progress < 100 && (
-                <circle cx={mod.cx} cy={mod.cy} r={r - 5} fill="none" stroke={accent} strokeWidth={2}
-                    strokeDasharray={`${(r - 5) * 2 * Math.PI * mod.progress / 100} 9999`}
-                    strokeLinecap="round" transform={`rotate(-90 ${mod.cx} ${mod.cy})`} opacity={0.5} />
-            )}
-
-            {/* Center icon / text */}
-            {done ? <CheckCircle2 x={mod.cx - r * 0.3} y={mod.cy - r * 0.3} width={r * 0.6} height={r * 0.6} color="#22c55e" />
-                : locked ? <Lock x={mod.cx - r * 0.25} y={mod.cy - r * 0.25} width={r * 0.5} height={r * 0.5} color="#2a3547" />
-                    : <text x={mod.cx} y={mod.cy + 1} textAnchor="middle" dominantBaseline="middle"
-                        fill={accent} fontSize={r > 26 ? 12 : 10} fontWeight="700" fontFamily="'Roboto Mono',monospace">{mod.progress}%</text>}
 
             {/* Label below */}
             {!isHovered && (
