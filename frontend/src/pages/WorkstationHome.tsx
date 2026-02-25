@@ -199,6 +199,8 @@ const ModuleBubble: React.FC<{
     const glowId = done ? 'url(#glow-green)' : 'url(#glow-blue)';
     const fillColor = locked ? '#080b12' : done ? '#050f07' : '#060b14';
 
+    const cx = mod.cx, cy = mod.cy;
+
     // Tick marks around the mid ring (every 30°)
     const ticks = Array.from({ length: 12 }, (_, i) => {
         const a = (i * Math.PI) / 6 - Math.PI / 2;
@@ -211,7 +213,6 @@ const ModuleBubble: React.FC<{
             isLong,
         } as { x1: number; y1: number; x2: number; y2: number; isLong: boolean };
     });
-    const cx = mod.cx, cy = mod.cy;
 
     return (
         <motion.g
