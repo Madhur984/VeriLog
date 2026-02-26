@@ -513,6 +513,20 @@ export const ModuleOne: React.FC = () => {
                         </button>
 
                         <button
+                            onClick={() => navigate('/module/1/lab')}
+                            className="flex items-center gap-2 cursor-pointer transition-all duration-200 hover:opacity-90"
+                            style={{
+                                padding: '14px 28px', borderRadius: 12,
+                                background: isDark ? 'rgba(34,197,94,0.15)' : '#F0FDF4',
+                                border: `2px solid #22C55E`,
+                                color: '#22C55E', fontWeight: 600, fontSize: 15,
+                            }}
+                        >
+                            <FlaskConical className="w-5 h-5" />
+                            Test with Activity
+                        </button>
+
+                        <button
                             onClick={() => navigate('/portal')}
                             className="flex items-center gap-2 cursor-pointer transition-all duration-200 hover:opacity-90"
                             style={{

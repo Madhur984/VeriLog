@@ -6,10 +6,8 @@ import { ModuleOne } from './pages/ModuleOne';
 import { LoginPage } from './pages/LoginPage';
 import { CircuitCanvas } from './simulator/CircuitCanvas';
 import { MascotGuide } from './components/Bot/MascotGuide';
-import { SignalPlayground } from './pages/SignalPlayground';
 import { GatekeeperGame } from './pages/GatekeeperGame';
 import { AssessmentPage } from './pages/AssessmentPage';
-import { CircuitLab } from './circuit-lab/CircuitLab';
 
 export default function App() {
     return (
@@ -20,7 +18,6 @@ export default function App() {
                 <Route path="/portal" element={<WorkstationHome />} />
 
                 {/* Introductory / Legacy Modules */}
-                <Route path="/playground" element={<SignalPlayground />} />
                 <Route path="/gatekeeper" element={<GatekeeperGame />} />
                 <Route path="/assessment" element={<AssessmentPage />} />
 
@@ -28,7 +25,6 @@ export default function App() {
                 <Route path="/module/1" element={<ModuleOneHub />} />
                 <Route path="/module/1/lab" element={<CircuitCanvas />} />
                 <Route path="/module/1/theory" element={<ModuleOne />} />
-                <Route path="/circuit-lab" element={<CircuitLab />} />
 
                 <Route path="*" element={<Navigate to="/portal" replace />} />
             </Routes>

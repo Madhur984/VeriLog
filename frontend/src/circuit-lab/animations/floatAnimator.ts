@@ -4,10 +4,8 @@ import type { AnimModule } from './animationController';
 export class FloatAnimator implements AnimModule {
     name = 'FloatAnimator';
     private raf = 0;
-    private _start = 0;
 
     init() {
-        this._start = performance.now();
         this.tick();
     }
 

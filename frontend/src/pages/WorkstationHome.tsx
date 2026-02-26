@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import {
     LayoutDashboard, Target, Settings, Command,
-    BarChart3, FlaskConical, BookOpen, Play, Zap,
+    BarChart3, BookOpen, Play, Zap,
     Moon, Sun, HelpCircle, ChevronRight,
     Cpu, PanelLeftClose, PanelLeftOpen,
 } from 'lucide-react';
@@ -396,7 +396,6 @@ export const WorkstationHome: React.FC = () => {
         { title: 'Dashboard', icon: LayoutDashboard, path: '/portal', active: true },
         { title: 'Modules', icon: BookOpen, path: '/portal' },
         { title: 'Challenges', icon: Target, path: '/assessment' },
-        { title: 'Workbench', icon: FlaskConical, path: '/playground' },
         { title: 'Progress', icon: BarChart3, path: '/training' },
         { title: 'Settings', icon: Settings, path: '/login' },
     ];

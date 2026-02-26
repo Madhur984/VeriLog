@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { SignalOrb } from '../components/ui/SignalOrb';
@@ -11,8 +11,15 @@ import { AnimatePresence } from 'framer-motion';
 
 export const HeroExperience = () => {
     const navigate = useNavigate();
-    const { hasSeenGreeting, firstName } = useUserStore();
+    const { hasSeenGreeting, firstName, isNewUser, setIsNewUser } = useUserStore();
     const [orbInteracted, setOrbInteracted] = useState(false);
+
+    // Returning users (signed in, not new) go straight to /portal
+    useEffect(() => {
+        if (firstName && !isNewUser) {
+            navigate('/portal', { replace: true });
+        }
+    }, [firstName, isNewUser, navigate]);
 
     return (
         <div className="relative w-full h-screen overflow-hidden bg-background font-sans text-foreground">
@@ -95,7 +102,7 @@ export const HeroExperience = () => {
                         className="space-y-4"
                     >
                         <h1 className="font-heading font-extrabold text-5xl md:text-7xl bg-clip-text text-transparent bg-gradient-to-r from-primary via-white to-primary drop-shadow-sm">
-                            Signal Playground
+                            VeriQuest
                         </h1>
                         <p className="font-mono text-slate-400 max-w-md mx-auto">
                             Master the invisible forces of Digital Logic.
@@ -104,7 +111,7 @@ export const HeroExperience = () => {
                         </p>
 
                         <button
-                            onClick={() => navigate('/playground')}
+                            onClick={() => { setIsNewUser(false); navigate('/portal'); }}
                             className="group relative px-8 py-4 bg-primary text-background font-bold rounded-xl overflow-hidden shadow-glow-primary hover:scale-105 transition-transform"
                         >
                             <span className="relative z-10 flex items-center">

@@ -8,16 +8,8 @@ import { useBotBrain } from './botBrain';
 import { CelebrationFX } from './CelebrationFX';
 
 /* ═══════════════════════════════════════════════════════════════════
-   MascotGuide — Brain-powered floating VoltMonkey companion
-   ──────────────────────────────────────────────────────────────────
-   • Bottom-right corner, always visible
-   • Brain-driven: mood/dialogue/animation from useBotBrain()
-   • Auto-collapse: speech bubble closes after 8s unless interacted
-   • Auto-expand: re-opens on major events (level complete, streak)
-   • Dismiss logic: "Later" minimizes, reappears on next major event
-   • Eye cursor tracking on hover
-   • Pulse glow when new dialogue available
-   • CelebrationFX on major events
+   MascotGuide — Floating companion driven by useBotBrain()
+   Updated to use the new BotState API (emotion / animation / line / visible)
    ═══════════════════════════════════════════════════════════════ */
 
 interface MascotGuideProps {
@@ -34,41 +26,43 @@ export const MascotGuide: React.FC<MascotGuideProps> = ({ onStartTour }) => {
 
     const brain = useBotBrain();
 
-    /* ── Auto collapse after 8 seconds ────────────────────────── */
+    // Derived from new API -------------------------------------------------
+    const isNewHint = brain.visible;
+    const dialogue = brain.line?.text ?? "I'm here if you need anything.";
+    const shouldCelebrate = brain.emotion === 'Excited';
+    const isMoodAlert = brain.emotion === 'Focused' || brain.emotion === 'Thinking';
+    const monkeyState = brain.animation;
+
+    const dismissCelebration = brain.dismiss;
+
+    // ── Auto collapse after 8 seconds ─────────────────────────────────────
     const startAutoCollapse = useCallback(() => {
         if (autoCollapseRef.current) clearTimeout(autoCollapseRef.current);
-        autoCollapseRef.current = setTimeout(() => {
-            setExpanded(false);
-        }, 8_000);
+        autoCollapseRef.current = setTimeout(() => setExpanded(false), 8_000);
     }, []);
 
     const cancelAutoCollapse = useCallback(() => {
         if (autoCollapseRef.current) clearTimeout(autoCollapseRef.current);
     }, []);
 
-    /* ── Auto-expand on new hints (major events) ──────────────── */
+    // ── Auto-expand on new lines ───────────────────────────────────────────
     useEffect(() => {
-        if (brain.isNewHint && !dismissed && !chatOpen) {
+        if (isNewHint && !dismissed && !chatOpen) {
             setExpanded(true);
             startAutoCollapse();
         }
-    }, [brain.isNewHint, brain.dialogue, dismissed, chatOpen, startAutoCollapse]);
+    }, [isNewHint, dialogue, dismissed, chatOpen, startAutoCollapse]);
 
-    /* ── Override dismiss on celebration events ────────────────── */
+    // ── Override dismiss on celebration ───────────────────────────────────
     useEffect(() => {
-        if (brain.shouldCelebrate) {
+        if (shouldCelebrate) {
             setDismissed(false);
             setExpanded(true);
             cancelAutoCollapse();
         }
-    }, [brain.shouldCelebrate, cancelAutoCollapse]);
+    }, [shouldCelebrate, cancelAutoCollapse]);
 
-    /* ── Reset dismissed on route change ──────────────────────── */
-    useEffect(() => {
-        setDismissed(false);
-    }, [brain.currentPage]);
-
-    /* ── Eye cursor tracking ──────────────────────────────────── */
+    // ── Eye cursor tracking ───────────────────────────────────────────────
     const handleMouseMove = useCallback((e: React.MouseEvent) => {
         if (!fabRef.current) return;
         const rect = fabRef.current.getBoundingClientRect();
@@ -77,61 +71,51 @@ export const MascotGuide: React.FC<MascotGuideProps> = ({ onStartTour }) => {
         const dx = e.clientX - cx;
         const dy = e.clientY - cy;
         const dist = Math.sqrt(dx * dx + dy * dy);
-        const maxDist = 200;
-        const norm = Math.min(dist, maxDist) / maxDist;
-        setEyeTarget({
-            x: (dx / (dist || 1)) * norm,
-            y: (dy / (dist || 1)) * norm,
-        });
+        const norm = Math.min(dist, 200) / 200;
+        setEyeTarget({ x: (dx / (dist || 1)) * norm, y: (dy / (dist || 1)) * norm });
     }, []);
 
-    const handleMouseLeave = useCallback(() => {
-        setEyeTarget(null);
-    }, []);
+    const handleMouseLeave = useCallback(() => setEyeTarget(null), []);
 
-    /* ── Build speech bubble actions ──────────────────────────── */
+    // ── Speech bubble actions ─────────────────────────────────────────────
     const actions = React.useMemo(() => {
         const list: { label: string; onClick: () => void; primary?: boolean }[] = [];
-
-        if (onStartTour && (brain.currentPage.startsWith('/portal') || brain.currentPage.startsWith('/home'))) {
+        if (onStartTour) {
             list.push({ label: '🗺️ Tour', onClick: onStartTour, primary: true });
         }
-
         list.push({ label: '💬 Ask Me', onClick: () => { setExpanded(false); setChatOpen(true); } });
         list.push({
             label: 'Later',
-            onClick: () => {
-                setExpanded(false);
-                setDismissed(true);
-                cancelAutoCollapse();
-            },
+            onClick: () => { setExpanded(false); setDismissed(true); cancelAutoCollapse(); },
         });
-
         return list;
-    }, [onStartTour, brain.currentPage, cancelAutoCollapse]);
+    }, [onStartTour, cancelAutoCollapse]);
 
-    if (dismissed && !brain.shouldCelebrate) return null;
+    if (dismissed && !shouldCelebrate) return null;
+
+    const auraColor = shouldCelebrate
+        ? 'radial-gradient(circle, rgba(245,197,24,0.35) 0%, rgba(245,197,24,0.08) 50%, transparent 70%)'
+        : isMoodAlert
+            ? 'radial-gradient(circle, rgba(255,107,53,0.35) 0%, rgba(255,107,53,0.08) 50%, transparent 70%)'
+            : 'radial-gradient(circle, rgba(34,197,94,0.35) 0%, rgba(34,197,94,0.08) 50%, transparent 70%)';
+
+    const ringColor = shouldCelebrate ? '#F5C518' : isMoodAlert ? '#FF6B35' : '#22C55E';
 
     return (
         <>
-            {/* ── Celebration Effects ── */}
-            <CelebrationFX
-                active={brain.shouldCelebrate}
-                onComplete={brain.dismissCelebration}
-            />
-
-            {/* ── BotChat Panel ── */}
+            <CelebrationFX active={shouldCelebrate} onComplete={dismissCelebration} />
             <BotChat open={chatOpen} onClose={() => setChatOpen(false)} />
 
             <div
                 style={{
                     position: 'fixed', bottom: 24, right: 24,
-                    zIndex: 90, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 12,
+                    zIndex: 90, display: 'flex', flexDirection: 'column',
+                    alignItems: 'flex-end', gap: 12,
                 }}
                 onMouseMove={handleMouseMove}
                 onMouseLeave={handleMouseLeave}
             >
-                {/* ── Speech Bubble (expanded) ── */}
+                {/* ── Speech Bubble ── */}
                 <AnimatePresence>
                     {expanded && (
                         <motion.div
@@ -143,10 +127,10 @@ export const MascotGuide: React.FC<MascotGuideProps> = ({ onStartTour }) => {
                             onMouseLeave={startAutoCollapse}
                         >
                             <SpeechBubble
-                                title="VoltMonkey"
-                                body={brain.dialogue || "I'm here if you need anything."}
+                                title="Scrap"
+                                body={dialogue}
                                 placement="bottom"
-                                accent={brain.shouldCelebrate ? '#F5C518' : '#22C55E'}
+                                tone={brain.tone}
                                 actions={actions}
                                 visible
                             />
@@ -154,13 +138,12 @@ export const MascotGuide: React.FC<MascotGuideProps> = ({ onStartTour }) => {
                     )}
                 </AnimatePresence>
 
-                {/* ── FAB Row: Chat Toggle + Mascot ── */}
+                {/* ── FAB Row ── */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                     {/* Chat toggle */}
                     <motion.button
                         onClick={() => setChatOpen(o => !o)}
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
+                        whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
                         style={{
                             width: 40, height: 40, borderRadius: '50%',
                             background: chatOpen
@@ -173,65 +156,36 @@ export const MascotGuide: React.FC<MascotGuideProps> = ({ onStartTour }) => {
                             transition: 'all 0.3s',
                         }}
                     >
-                        <MessagesSquare style={{
-                            width: 18, height: 18,
-                            color: chatOpen ? 'white' : 'rgba(148,163,184,0.6)',
-                        }} />
+                        <MessagesSquare style={{ width: 18, height: 18, color: chatOpen ? 'white' : 'rgba(148,163,184,0.6)' }} />
                     </motion.button>
 
-                    {/* Mascot FAB — premium character, no hard circle */}
+                    {/* Mascot FAB */}
                     <motion.div
                         ref={fabRef}
-                        onClick={() => {
-                            setExpanded(prev => !prev);
-                            if (!expanded) startAutoCollapse();
-                        }}
-                        whileHover={{ scale: 1.06 }}
-                        whileTap={{ scale: 0.95 }}
-                        style={{
-                            position: 'relative',
-                            cursor: 'pointer',
-                        }}
+                        onClick={() => { setExpanded(prev => !prev); if (!expanded) startAutoCollapse(); }}
+                        whileHover={{ scale: 1.06 }} whileTap={{ scale: 0.95 }}
+                        style={{ position: 'relative', cursor: 'pointer' }}
                     >
-                        {/* Soft glowing aura behind mascot */}
+                        {/* Aura */}
                         <motion.div
-                            animate={{
-                                opacity: expanded ? [0.35, 0.5, 0.35] : [0.15, 0.25, 0.15],
-                                scale: [1, 1.05, 1],
-                            }}
+                            animate={{ opacity: expanded ? [0.35, 0.5, 0.35] : [0.15, 0.25, 0.15], scale: [1, 1.05, 1] }}
                             transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-                            style={{
-                                position: 'absolute',
-                                inset: -14,
-                                borderRadius: '50%',
-                                background: brain.shouldCelebrate
-                                    ? 'radial-gradient(circle, rgba(245,197,24,0.35) 0%, rgba(245,197,24,0.08) 50%, transparent 70%)'
-                                    : brain.mood === 'alert'
-                                        ? 'radial-gradient(circle, rgba(255,107,53,0.35) 0%, rgba(255,107,53,0.08) 50%, transparent 70%)'
-                                        : 'radial-gradient(circle, rgba(34,197,94,0.35) 0%, rgba(34,197,94,0.08) 50%, transparent 70%)',
-                                pointerEvents: 'none',
-                            }}
+                            style={{ position: 'absolute', inset: -14, borderRadius: '50%', background: auraColor, pointerEvents: 'none' }}
                         />
 
-                        {/* Pulse glow ring — shows when new hint available */}
-                        {!expanded && !chatOpen && brain.isNewHint && (
+                        {/* Pulse ring */}
+                        {!expanded && !chatOpen && isNewHint && (
                             <motion.div
                                 animate={{ scale: [1, 1.5, 1], opacity: [0.6, 0, 0.6] }}
                                 transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
                                 style={{
-                                    position: 'absolute', inset: -8,
-                                    borderRadius: '50%',
-                                    border: brain.shouldCelebrate
-                                        ? '2px solid #F5C518'
-                                        : brain.mood === 'alert'
-                                            ? '2px solid #FF6B35'
-                                            : '2px solid #22C55E',
-                                    pointerEvents: 'none',
+                                    position: 'absolute', inset: -8, borderRadius: '50%',
+                                    border: `2px solid ${ringColor}`, pointerEvents: 'none',
                                 }}
                             />
                         )}
 
-                        {/* Mascot character container — NO hard circle boundary */}
+                        {/* Character */}
                         <div style={{
                             width: 96, height: 96,
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -240,23 +194,17 @@ export const MascotGuide: React.FC<MascotGuideProps> = ({ onStartTour }) => {
                                 : 'drop-shadow(0 4px 12px rgba(0,0,0,0.3))',
                             transition: 'filter 0.3s',
                         }}>
-                            <VoltMonkey
-                                state={brain.monkeyState}
-                                size="sm"
-                                eyeTarget={eyeTarget}
-                            />
+                            <VoltMonkey state={monkeyState} size="sm" eyeTarget={eyeTarget} />
                         </div>
 
                         {/* Notification dot */}
-                        {!expanded && brain.isNewHint && (
+                        {!expanded && isNewHint && (
                             <motion.div
-                                initial={{ scale: 0 }}
-                                animate={{ scale: 1 }}
+                                initial={{ scale: 0 }} animate={{ scale: 1 }}
                                 style={{
                                     position: 'absolute', top: 2, right: 2,
                                     width: 16, height: 16, borderRadius: '50%',
-                                    background: brain.mood === 'alert' ? '#FF6B35' : '#22C55E',
-                                    border: '2px solid #0D1118',
+                                    background: ringColor, border: '2px solid #0D1118',
                                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                                     boxShadow: '0 0 8px rgba(34,197,94,0.4)',
                                 }}

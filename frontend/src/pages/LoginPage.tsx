@@ -11,6 +11,7 @@ export const LoginPage: React.FC = () => {
     const navigate = useNavigate();
     const setFirstName = useUserStore((state) => state.setFirstName);
     const setHasSeenGreeting = useUserStore((state) => state.setHasSeenGreeting);
+    const setIsNewUser = useUserStore((state) => state.setIsNewUser);
     const [level, setLevel] = useState(0);
     const [frequency, setFrequency] = useState(20);
     const [isSynced, setIsSynced] = useState(false);
@@ -116,14 +117,16 @@ export const LoginPage: React.FC = () => {
 
                     if (data.session?.access_token) {
                         localStorage.setItem('supabase_token', data.session.access_token);
+                        setIsNewUser(true);
                         setTimeout(() => navigate('/'), 1000);
                     } else {
-                        // This handles the weird Supabase offline edge case where data exists but no session
+                        // Supabase offline edge case — no session but user object exists
                         setIsSwitchOn(true);
                         const name = data.user?.user_metadata?.full_name || 'Explorer';
                         setFirstName(name.split(' ')[0]);
                         setHasSeenGreeting(false);
                         localStorage.setItem('supabase_token', 'offline_session');
+                        setIsNewUser(true);
                         setTimeout(() => navigate('/'), 1000);
                     }
                 } else {
@@ -139,7 +142,8 @@ export const LoginPage: React.FC = () => {
                     setFirstName(name.split(' ')[0]);
                     setHasSeenGreeting(false);
                     localStorage.setItem('supabase_token', data.session.access_token);
-                    setTimeout(() => navigate('/'), 1000);
+                    setIsNewUser(false);
+                    setTimeout(() => navigate('/portal'), 1000);
                 }
             } catch (err: any) {
                 const isNetworkError =
@@ -158,7 +162,9 @@ export const LoginPage: React.FC = () => {
                     setHasSeenGreeting(false);
                     localStorage.setItem('supabase_token', 'offline_session');
                     localStorage.setItem('offline_mode', 'true');
-                    setTimeout(() => navigate('/'), 1000);
+                    // In offline mode, treat as new user to show onboarding
+                    setIsNewUser(isSignUp);
+                    setTimeout(() => navigate(isSignUp ? '/' : '/portal'), 1000);
                 } else {
                     console.error('Auth Error:', err);
                     setError(err.message || 'Authentication Failed.');

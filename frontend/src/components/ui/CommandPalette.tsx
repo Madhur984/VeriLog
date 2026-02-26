@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-    Search, LayoutDashboard, Target, FlaskConical,
+    Search, LayoutDashboard, Target,
     BarChart3, Settings, Binary, X, ChevronRight,
     BookOpen, Zap
 } from 'lucide-react';
@@ -49,10 +49,7 @@ export const CommandPalette: React.FC<CommandPaletteProps & { navigate: (path: s
             id: 'nav-challenges', label: 'Go to Challenges', description: 'Active assessments', icon: Target,
             group: 'Navigate', shortcut: 'G C', action: () => { navigate('/assessment'); onClose(); }
         },
-        {
-            id: 'nav-workbench', label: 'Open Workbench', description: 'Signal playground', icon: FlaskConical,
-            group: 'Navigate', shortcut: 'G W', action: () => { navigate('/playground'); onClose(); }
-        },
+
         {
             id: 'nav-progress', label: 'View Progress', description: 'Track your learning', icon: BarChart3,
             group: 'Navigate', shortcut: 'G P', action: () => { navigate('/training'); onClose(); }

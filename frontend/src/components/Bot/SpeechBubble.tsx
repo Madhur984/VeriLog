@@ -5,6 +5,8 @@ import { motion, AnimatePresence } from 'framer-motion';
    SpeechBubble — Typewriter-animated tooltip for VoltMonkey
    ═══════════════════════════════════════════════════════════════ */
 
+import type { BubbleTone } from '../Bot/botDialogue';
+
 interface SpeechBubbleProps {
     /** Title shown in bold at top */
     title?: string;
@@ -12,8 +14,12 @@ interface SpeechBubbleProps {
     body: string;
     /** Where the bubble tail points */
     placement?: 'top' | 'bottom' | 'left' | 'right';
-    /** Primary/accent color for the title */
+    /** Emotion-driven tone — controls accent + border color */
+    tone?: BubbleTone;
+    /** Override accent color directly (takes precedence over tone) */
     accent?: string;
+    /** ms per character for typewriter, default 28 */
+    typingSpeed?: number;
     /** Action buttons rendered below body */
     actions?: { label: string; onClick: () => void; primary?: boolean }[];
     /** Is the bubble visible? */
@@ -22,17 +28,26 @@ interface SpeechBubbleProps {
     stepLabel?: string;
 }
 
-const TYPING_SPEED = 18; // ms per character
+const TONE_ACCENT: Record<BubbleTone, string> = {
+    bright: '#F59E0B',
+    warm: '#22C55E',
+    cool: '#38BDF8',
+    ghost: '#475569',
+};
 
 export const SpeechBubble: React.FC<SpeechBubbleProps> = ({
     title,
     body,
     placement = 'right',
-    accent = '#22C55E',
+    tone = 'cool',
+    accent,
+    typingSpeed,
     actions,
     visible = true,
     stepLabel,
 }) => {
+    const resolvedAccent = accent ?? TONE_ACCENT[tone];
+    const TYPING_SPEED = typingSpeed ?? 28;
     const [displayed, setDisplayed] = useState('');
     const [isDone, setIsDone] = useState(false);
     const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -94,7 +109,7 @@ export const SpeechBubble: React.FC<SpeechBubbleProps> = ({
                     <div style={{
                         position: 'absolute', top: 0, left: 16, right: 16, height: 2,
                         borderRadius: '0 0 2px 2px',
-                        background: `linear-gradient(to right, transparent, ${accent}, transparent)`,
+                        background: `linear-gradient(to right, transparent, ${resolvedAccent}, transparent)`,
                     }} />
 
                     {/* step label */}
@@ -103,9 +118,9 @@ export const SpeechBubble: React.FC<SpeechBubbleProps> = ({
                             display: 'inline-flex', alignItems: 'center', gap: 4,
                             fontSize: 10, fontWeight: 700, fontFamily: 'monospace',
                             textTransform: 'uppercase', letterSpacing: '0.08em',
-                            color: accent, marginBottom: 8,
-                            background: `${accent}15`, padding: '2px 8px', borderRadius: 20,
-                            border: `1px solid ${accent}30`,
+                            color: resolvedAccent, marginBottom: 8,
+                            background: `${resolvedAccent}15`, padding: '2px 8px', borderRadius: 20,
+                            border: `1px solid ${resolvedAccent}30`,
                         }}>
                             ⚡ {stepLabel}
                         </div>
@@ -131,7 +146,7 @@ export const SpeechBubble: React.FC<SpeechBubbleProps> = ({
                             <motion.span
                                 animate={{ opacity: [1, 0] }}
                                 transition={{ duration: 0.5, repeat: Infinity }}
-                                style={{ color: accent, fontWeight: 700, marginLeft: 1 }}
+                                style={{ color: resolvedAccent, fontWeight: 700, marginLeft: 1 }}
                             >
                                 |
                             </motion.span>
@@ -156,7 +171,7 @@ export const SpeechBubble: React.FC<SpeechBubbleProps> = ({
                                             borderRadius: 10, padding: '6px 14px', cursor: 'pointer',
                                             transition: 'all 0.15s',
                                             ...(a.primary
-                                                ? { background: accent, color: '#fff' }
+                                                ? { background: resolvedAccent, color: '#fff' }
                                                 : { background: 'rgba(255,255,255,0.06)', color: '#CBD5E1', border: '1px solid rgba(255,255,255,0.08)' }
                                             ),
                                         }}

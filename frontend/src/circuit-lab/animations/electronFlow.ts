@@ -6,14 +6,12 @@ export class ElectronFlow implements AnimModule {
     private svg: SVGSVGElement | null = null;
     private particles: SVGCircleElement[] = [];
     private raf = 0;
-    private _liveWireIds: string[] = [];
     private active = false;
 
     init(svg: SVGSVGElement) { this.svg = svg; }
 
-    onEvent(event: string, data: Record<string, unknown>) {
+    onEvent(event: string, _data: Record<string, unknown>) {
         if (event === 'circuit:closed') {
-            this._liveWireIds = data.liveWireIds as string[];
             this.start();
         } else if (event === 'circuit:opened' || event === 'circuit:short') {
             this.stop();
