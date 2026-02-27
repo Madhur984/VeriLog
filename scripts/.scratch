@@ -12,3 +12,4 @@
 # 12: style: increase contrast on ghost tone bubble text
 # 13: refactor: rename internal bot state vars for clarity
 # 14: refactor: clean up unused imports in simulator
+# 15: refactor: simplify CrossPaw SVG helper in VoltMonkey
