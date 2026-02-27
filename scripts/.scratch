@@ -21,3 +21,4 @@
 # 21: docs: document BotTrigger union type values
 # 22: chore: update tsconfig paths for cleaner aliases
 # 23: chore: annotate framer-motion variant types
+# 24: refactor: pull SpeechBubble default props into constants
