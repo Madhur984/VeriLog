@@ -17,3 +17,4 @@
 # 17: refactor: move TONE_ACCENT map to shared constants
 # 18: refactor: extract wire color constants to theme file
 # 19: refactor: consolidate emotion-to-animation map
+# 20: style: update font-mono classes for consistency
