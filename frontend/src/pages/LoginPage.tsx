@@ -118,7 +118,7 @@ export const LoginPage: React.FC = () => {
                     if (data.session?.access_token) {
                         localStorage.setItem('supabase_token', data.session.access_token);
                         setIsNewUser(true);
-                        setTimeout(() => navigate('/'), 1000);
+                        setTimeout(() => navigate('/hero'), 1000);
                     } else {
                         // Supabase offline edge case — no session but user object exists
                         setIsSwitchOn(true);
@@ -127,7 +127,7 @@ export const LoginPage: React.FC = () => {
                         setHasSeenGreeting(false);
                         localStorage.setItem('supabase_token', 'offline_session');
                         setIsNewUser(true);
-                        setTimeout(() => navigate('/'), 1000);
+                        setTimeout(() => navigate('/hero'), 1000);
                     }
                 } else {
                     const { data, error: signInError } = await withTimeout(
@@ -164,7 +164,7 @@ export const LoginPage: React.FC = () => {
                     localStorage.setItem('offline_mode', 'true');
                     // In offline mode, treat as new user to show onboarding
                     setIsNewUser(isSignUp);
-                    setTimeout(() => navigate(isSignUp ? '/' : '/portal'), 1000);
+                    setTimeout(() => navigate(isSignUp ? '/hero' : '/portal'), 1000);
                 } else {
                     console.error('Auth Error:', err);
                     setError(err.message || 'Authentication Failed.');

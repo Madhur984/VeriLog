@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { GatekeeperLanding } from './pages/GatekeeperLanding';
 import { HeroExperience } from './pages/HeroExperience';
 import { WorkstationHome } from './pages/WorkstationHome';
 import { ModuleOneHub } from './pages/ModuleOneHub';
@@ -13,7 +14,8 @@ export default function App() {
     return (
         <BrowserRouter>
             <Routes>
-                <Route path="/" element={<HeroExperience />} />
+                <Route path="/" element={<GatekeeperLanding />} />
+                <Route path="/hero" element={<HeroExperience />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/portal" element={<WorkstationHome />} />
 
