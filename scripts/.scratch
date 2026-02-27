@@ -16,3 +16,4 @@
 # 16: fix: correct SVG viewBox in GatekeeperLanding video
 # 17: refactor: move TONE_ACCENT map to shared constants
 # 18: refactor: extract wire color constants to theme file
+# 19: refactor: consolidate emotion-to-animation map
