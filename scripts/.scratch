@@ -26,3 +26,4 @@
 # 26: docs: add JSDoc to BotCompanion props interface
 # 27: chore: sync package-lock with latest deps
 # 28: chore: bump framer-motion to patch version
+# 29: fix: guard against null companionRef in CircuitCanvas
