@@ -8,3 +8,4 @@
 # 8: fix: prevent idle timer leak on component unmount
 # 9: chore: prune stale comments in LoginPage.css
 # 10: docs: update README with new /hero route description
+# 11: style: tighten grid gap in WorkstationHome cards
