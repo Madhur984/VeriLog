@@ -25,3 +25,4 @@
 # 25: fix: reset fail counter on route change in botBrain
 # 26: docs: add JSDoc to BotCompanion props interface
 # 27: chore: sync package-lock with latest deps
+# 28: chore: bump framer-motion to patch version
