@@ -20,3 +20,4 @@
 # 20: style: update font-mono classes for consistency
 # 21: docs: document BotTrigger union type values
 # 22: chore: update tsconfig paths for cleaner aliases
+# 23: chore: annotate framer-motion variant types
