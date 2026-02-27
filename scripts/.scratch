@@ -5,3 +5,4 @@
 # 5: chore: add .editorconfig for consistent line endings
 # 6: style: soften aura opacity in MascotGuide
 # 7: style: reduce motion duration on mobile for perf
+# 8: fix: prevent idle timer leak on component unmount
