@@ -1,3 +1,4 @@
 # 1: docs: add inline comments to useBotBrain state machine
 # 2: style: normalize spacing in CircuitCanvas layout
 # 3: fix: resolve edge case in electron flow animation
+# 4: chore: remove console.log from botBrain hook
