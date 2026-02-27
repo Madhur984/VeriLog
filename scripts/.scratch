@@ -3,3 +3,4 @@
 # 3: fix: resolve edge case in electron flow animation
 # 4: chore: remove console.log from botBrain hook
 # 5: chore: add .editorconfig for consistent line endings
+# 6: style: soften aura opacity in MascotGuide
