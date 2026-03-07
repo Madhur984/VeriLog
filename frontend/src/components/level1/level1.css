@@ -532,6 +532,204 @@
     border-color: rgba(0, 212, 255, 0.5) !important;
 }
 
+/* ─── Wire Connection Glow (on successful snap) ────────────────────── */
+
+@keyframes wire-connection-glow {
+    0% {
+        filter: drop-shadow(0 0 0px rgba(0, 212, 255, 0));
+        stroke-width: 1.8;
+    }
+
+    40% {
+        filter: drop-shadow(0 0 8px rgba(0, 212, 255, 0.6));
+        stroke-width: 2.4;
+    }
+
+    100% {
+        filter: drop-shadow(0 0 3px rgba(0, 212, 255, 0.2));
+        stroke-width: 2;
+    }
+}
+
+.vl-wire--connected {
+    animation: wire-connection-glow 600ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    will-change: filter, stroke-width;
+}
+
+/* ─── LED Pulse (smooth glow on circuit close) ──────────────────────── */
+
+@keyframes led-glow-pulse {
+    0% {
+        opacity: 0;
+        filter: drop-shadow(0 0 0px rgba(74, 222, 128, 0));
+    }
+
+    30% {
+        opacity: 0.9;
+        filter: drop-shadow(0 0 12px rgba(74, 222, 128, 0.7));
+    }
+
+    60% {
+        opacity: 1;
+        filter: drop-shadow(0 0 18px rgba(74, 222, 128, 0.9));
+    }
+
+    100% {
+        opacity: 1;
+        filter: drop-shadow(0 0 8px rgba(74, 222, 128, 0.5));
+    }
+}
+
+@keyframes led-breathe {
+
+    0%,
+    100% {
+        filter: drop-shadow(0 0 6px rgba(74, 222, 128, 0.4));
+    }
+
+    50% {
+        filter: drop-shadow(0 0 14px rgba(74, 222, 128, 0.7));
+    }
+}
+
+.vl-led--on {
+    animation: led-glow-pulse 800ms cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+    will-change: opacity, filter;
+}
+
+.vl-led--breathing {
+    animation: led-breathe 2.4s ease-in-out infinite;
+    will-change: filter;
+}
+
+.vl-led--off {
+    opacity: 0.25;
+    filter: none;
+    transition: opacity 400ms ease-out, filter 400ms ease-out;
+}
+
+/* ─── Signal Particle Flow (animated dots along wire paths) ──────────── */
+
+@keyframes signal-dot-pulse {
+
+    0%,
+    100% {
+        r: 2;
+        opacity: 0.6;
+    }
+
+    50% {
+        r: 3;
+        opacity: 1;
+    }
+}
+
+.vl-signal-particle {
+    animation: signal-dot-pulse 1.2s ease-in-out infinite;
+    will-change: r, opacity;
+}
+
+.vl-signal-particle:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.vl-signal-particle:nth-child(2) {
+    animation-delay: 0.3s;
+}
+
+.vl-signal-particle:nth-child(3) {
+    animation-delay: 0.6s;
+}
+
+.vl-signal-particle:nth-child(4) {
+    animation-delay: 0.9s;
+}
+
+/* ─── Component Hover Feedback ──────────────────────────────────────── */
+
+.vl-component-hover {
+    transition: transform 200ms cubic-bezier(0.4, 0, 0.2, 1),
+        filter 200ms ease-out;
+    cursor: pointer;
+}
+
+.vl-component-hover:hover {
+    transform: scale(1.04);
+    filter: drop-shadow(0 0 6px rgba(0, 212, 255, 0.3));
+}
+
+.vl-component-hover:active {
+    transform: scale(0.98);
+}
+
+/* ─── Return Path Highlight ─────────────────────────────────────────── */
+
+@keyframes return-path-trace {
+    0% {
+        stroke-dashoffset: 400;
+        opacity: 0.5;
+    }
+
+    60% {
+        opacity: 1;
+    }
+
+    100% {
+        stroke-dashoffset: 0;
+        opacity: 0.8;
+    }
+}
+
+@keyframes return-path-glow {
+
+    0%,
+    100% {
+        stroke-opacity: 0.6;
+        filter: drop-shadow(0 0 2px rgba(0, 212, 255, 0.2));
+    }
+
+    50% {
+        stroke-opacity: 1;
+        filter: drop-shadow(0 0 6px rgba(0, 212, 255, 0.5));
+    }
+}
+
+.vl-return-path {
+    stroke-dasharray: 400;
+    stroke-dashoffset: 400;
+    animation: return-path-trace 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    will-change: stroke-dashoffset, opacity;
+}
+
+.vl-return-path--active {
+    animation: return-path-glow 2.8s ease-in-out infinite;
+    will-change: stroke-opacity, filter;
+}
+
+/* ─── Circuit Complete Celebration ──────────────────────────────────── */
+
+@keyframes circuit-complete-flash {
+    0% {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    30% {
+        opacity: 1;
+        transform: scale(1.02);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.vl-circuit-complete {
+    animation: circuit-complete-flash 500ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    will-change: opacity, transform;
+}
+
 /* ─── prefers-reduced-motion ─────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
 
@@ -541,13 +739,21 @@
     .vl-spark,
     .vl-knode,
     .vl-wire--live,
+    .vl-wire--connected,
     .vl-xp--flash,
     .vl-VoltMonkey-panel,
     .vl-VoltMonkey-ring,
     .vl-short-circuit,
     .vl-chip--shake,
     .vl-chip--lock,
-    .vl-chip--return {
+    .vl-chip--return,
+    .vl-led--on,
+    .vl-led--breathing,
+    .vl-signal-particle,
+    .vl-return-path,
+    .vl-return-path--active,
+    .vl-circuit-complete,
+    .vl-component-hover {
         animation: none !important;
         transition: none !important;
     }

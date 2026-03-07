@@ -15,7 +15,7 @@ import '../components/level2/level2.css';
 import { VoltMonkeyPanel } from '../components/level1/VoltMonkeyPanel';
 import { XPCounter } from '../components/level1/XPCounter';
 import { ProgressTracker } from '../components/ui/ProgressTracker';
-import { useXPSystem } from '../hooks/useXPSystem';
+import { useEngagementAdapter as useXPSystem } from '../hooks/useEngagementAdapter';
 import { useVoltMonkeyMentorL2 } from '../hooks/useVoltMonkeyMentorL2';
 import { useUserStore } from '../stores/userStore';
 

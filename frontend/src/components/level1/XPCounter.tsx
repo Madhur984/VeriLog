@@ -7,7 +7,7 @@
  */
 
 import { useRef, useEffect, memo } from 'react';
-import type { XPState } from '../../hooks/useXPSystem';
+import type { XPState } from '../../hooks/useEngagementAdapter';
 import './level1.css';
 
 interface XPCounterProps {

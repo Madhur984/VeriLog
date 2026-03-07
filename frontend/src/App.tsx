@@ -22,6 +22,8 @@ import { SkillTree } from './pages/SkillTree';
 import { VerilogPlayground } from './pages/VerilogPlayground';
 import { BossArena } from './pages/BossArena';
 import { EngineeringPortfolio } from './pages/EngineeringPortfolio';
+import { LogicStudio } from './pages/LogicStudio';
+import { DebugMissionPage } from './pages/DebugMissionPage';
 
 import { TransitionProvider } from './hooks/useTransitionController';
 import { TransitionOverlay } from './components/TransitionOverlay';
@@ -44,6 +46,8 @@ export default function App() {
                     {/* Advanced Features & Lab */}
                     <Route path="/ai-lab" element={<AiLab />} />
                     <Route path="/circuit-lab" element={<CircuitLab />} />
+                    <Route path="/logic-studio" element={<LogicStudio />} />
+                    <Route path="/debug-mission/:id" element={<DebugMissionPage />} />
                     <Route path="/playground" element={<SignalPlayground />} />
                     <Route path="/training" element={<TrainingCockpitPage />} />
                     <Route path="/fsm" element={<FSMPlayground />} />

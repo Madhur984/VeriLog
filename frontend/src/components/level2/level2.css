@@ -287,6 +287,246 @@
     animation: waveform-draw 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
+/* ── Oscilloscope Grid — Time & Voltage Axes ───────────────────────── */
+
+.scope-grid {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.scope-grid-line-h,
+.scope-grid-line-v {
+    stroke: rgba(0, 212, 255, 0.06);
+    stroke-width: 0.5;
+}
+
+.scope-grid-line-center {
+    stroke: rgba(0, 212, 255, 0.15);
+    stroke-width: 1;
+    stroke-dasharray: 4 2;
+}
+
+.scope-axis-label {
+    font-family: 'IBM Plex Mono', 'Roboto Mono', monospace;
+    font-size: 8px;
+    fill: rgba(0, 212, 255, 0.45);
+    user-select: none;
+    pointer-events: none;
+}
+
+.scope-axis-label--voltage {
+    text-anchor: end;
+}
+
+.scope-axis-label--time {
+    text-anchor: middle;
+}
+
+/* ── Oscilloscope Toolbar (zoom, pan, time scale) ──────────────────── */
+
+.scope-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px;
+    background: rgba(6, 9, 18, 0.9);
+    border: 1px solid rgba(0, 212, 255, 0.1);
+    border-radius: 3px;
+    font-family: 'IBM Plex Mono', 'Roboto Mono', monospace;
+    font-size: 10px;
+    color: rgba(0, 212, 255, 0.7);
+    user-select: none;
+}
+
+.scope-toolbar-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border: 1px solid rgba(0, 212, 255, 0.15);
+    border-radius: 3px;
+    background: transparent;
+    color: rgba(0, 212, 255, 0.7);
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1;
+    transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
+}
+
+.scope-toolbar-btn:hover {
+    background: rgba(0, 212, 255, 0.08);
+    border-color: rgba(0, 212, 255, 0.3);
+    color: rgba(0, 212, 255, 1);
+}
+
+.scope-toolbar-btn:active {
+    background: rgba(0, 212, 255, 0.15);
+    transform: scale(0.95);
+}
+
+.scope-toolbar-btn--active {
+    background: rgba(0, 212, 255, 0.12);
+    border-color: rgba(0, 212, 255, 0.4);
+    color: #00D4FF;
+}
+
+.scope-toolbar-divider {
+    width: 1px;
+    height: 16px;
+    background: rgba(0, 212, 255, 0.12);
+    margin: 0 4px;
+}
+
+/* ── Time Scale Indicator ──────────────────────────────────────────── */
+
+.scope-time-scale {
+    font-family: 'IBM Plex Mono', 'Roboto Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    color: rgba(0, 212, 255, 0.5);
+    padding: 2px 6px;
+    border: 1px solid rgba(0, 212, 255, 0.08);
+    border-radius: 2px;
+    background: rgba(0, 212, 255, 0.03);
+}
+
+/* ── Scope Pan/Zoom Cursor ─────────────────────────────────────────── */
+
+.scope-canvas-wrapper--panning {
+    cursor: grab;
+}
+
+.scope-canvas-wrapper--panning:active {
+    cursor: grabbing;
+}
+
+.scope-canvas-wrapper--zooming {
+    cursor: zoom-in;
+}
+
+/* ── Crosshair Cursor for Measurement ──────────────────────────────── */
+
+.scope-crosshair {
+    position: absolute;
+    pointer-events: none;
+    z-index: 4;
+}
+
+.scope-crosshair-h,
+.scope-crosshair-v {
+    position: absolute;
+    background: rgba(0, 212, 255, 0.3);
+}
+
+.scope-crosshair-h {
+    left: 0;
+    right: 0;
+    height: 1px;
+}
+
+.scope-crosshair-v {
+    top: 0;
+    bottom: 0;
+    width: 1px;
+}
+
+.scope-crosshair-value {
+    position: absolute;
+    font-family: 'IBM Plex Mono', 'Roboto Mono', monospace;
+    font-size: 9px;
+    color: #00D4FF;
+    background: rgba(6, 9, 18, 0.9);
+    padding: 2px 5px;
+    border-radius: 2px;
+    border: 1px solid rgba(0, 212, 255, 0.2);
+    white-space: nowrap;
+    z-index: 5;
+}
+
+/* ── Enhanced LED Glow States ──────────────────────────────────────── */
+
+@keyframes led-analog-glow {
+
+    0%,
+    100% {
+        box-shadow: 0 0 calc(var(--led-intensity, 0) * 12px) calc(var(--led-intensity, 0) * 4px) var(--led-color, rgba(74, 222, 128, 0.6));
+    }
+
+    50% {
+        box-shadow: 0 0 calc(var(--led-intensity, 0) * 18px) calc(var(--led-intensity, 0) * 6px) var(--led-color, rgba(74, 222, 128, 0.8));
+    }
+}
+
+.led--analog-enhanced {
+    border-radius: 50%;
+    background: var(--led-fill, #10B981);
+    box-shadow: 0 0 calc(var(--led-intensity, 0) * 14px) calc(var(--led-intensity, 0) * 4px) var(--led-color, rgba(74, 222, 128, 0.6));
+    transition: background 80ms linear, box-shadow 80ms linear;
+    will-change: background, box-shadow;
+}
+
+.led--digital-enhanced {
+    border-radius: 50%;
+    transition: background 0ms, box-shadow 0ms;
+    will-change: background, box-shadow;
+}
+
+.led--digital-enhanced.is-on {
+    background: #10B981;
+    box-shadow: 0 0 12px 4px rgba(16, 185, 129, 0.7),
+        0 0 24px 8px rgba(16, 185, 129, 0.3);
+}
+
+.led--digital-enhanced.is-off {
+    background: #1E293B;
+    box-shadow: none;
+}
+
+/* ── Potentiometer Enhanced ────────────────────────────────────────── */
+
+.pot-track {
+    transition: fill 100ms ease;
+}
+
+.pot-track--active {
+    fill: rgba(0, 212, 255, 0.15);
+}
+
+.pot-value-label {
+    font-family: 'IBM Plex Mono', 'Roboto Mono', monospace;
+    font-size: 11px;
+    fill: #00D4FF;
+    text-anchor: middle;
+    font-variant-numeric: tabular-nums;
+}
+
+/* ── Waveform Trace Colors ─────────────────────────────────────────── */
+
+.scope-trace--analog {
+    stroke: #00D4FF;
+    stroke-width: 1.5;
+    fill: none;
+    filter: drop-shadow(0 0 2px rgba(0, 212, 255, 0.4));
+}
+
+.scope-trace--digital {
+    stroke: #10B981;
+    stroke-width: 2;
+    fill: none;
+    stroke-linejoin: miter;
+    filter: drop-shadow(0 0 2px rgba(16, 185, 129, 0.4));
+}
+
+.scope-trace--reference {
+    stroke: rgba(245, 158, 11, 0.5);
+    stroke-width: 1;
+    stroke-dasharray: 4 3;
+    fill: none;
+}
+
 /* ── Reduced Motion ─────────────────────────────────────────────────── */
 
 @media (prefers-reduced-motion: reduce) {
@@ -294,11 +534,16 @@
     .led--flickering,
     .wire--analog-live,
     .binary-char,
-    .waveform-animated {
+    .waveform-animated,
+    .led--analog-enhanced {
         animation: none !important;
     }
 
     .scope-scanline-overlay {
         display: none;
+    }
+
+    .led--analog-enhanced {
+        transition: background 0ms, box-shadow 0ms;
     }
 }

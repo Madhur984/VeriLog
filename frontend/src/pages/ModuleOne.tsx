@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { VoltMonkeyPanel } from '../components/level1/VoltMonkeyPanel';
 import { XPCounter } from '../components/level1/XPCounter';
 import { ProgressTracker } from '../components/ui/ProgressTracker';
-import { useXPSystem } from '../hooks/useXPSystem';
+import { useEngagementAdapter as useXPSystem } from '../hooks/useEngagementAdapter';
 import { useVoltMonkeyMentor } from '../hooks/useVoltMonkeyMentor';
 import { useUserStore } from '../stores/userStore';
 import { BadgeToast } from '../components/level2/BadgeToast';

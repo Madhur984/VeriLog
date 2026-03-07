@@ -1,0 +1,316 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   polish.css — Global visual refinements (Phase 3)
+   
+   PCB trace patterns, wire glow effects, waveform separators,
+   canvas node animations, and studio micro-interactions.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ── PCB Trace Pattern Background ──────────────────────────────────── */
+
+.vl-pcb-bg {
+    position: relative;
+    overflow: hidden;
+}
+
+.vl-pcb-bg::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px),
+        radial-gradient(circle at 25% 25%, rgba(0, 212, 255, 0.02) 1px, transparent 1px),
+        radial-gradient(circle at 75% 75%, rgba(0, 212, 255, 0.02) 1px, transparent 1px);
+    background-size: 40px 40px, 40px 40px, 20px 20px, 20px 20px;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* ── Wire Glow Effects ─────────────────────────────────────────────── */
+
+.vl-wire-active {
+    filter: drop-shadow(0 0 4px rgba(0, 212, 255, 0.6));
+    animation: vl-wire-flow 1.5s linear infinite;
+}
+
+@keyframes vl-wire-flow {
+    0% {
+        stroke-dashoffset: 0;
+    }
+
+    100% {
+        stroke-dashoffset: -24;
+    }
+}
+
+.vl-wire-hover {
+    stroke: rgba(0, 212, 255, 0.6) !important;
+    stroke-width: 3 !important;
+    transition: stroke 100ms ease, stroke-width 100ms ease;
+}
+
+/* ── Waveform Separators ───────────────────────────────────────────── */
+
+.vl-waveform-sep {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg,
+            transparent 0%,
+            rgba(0, 212, 255, 0.15) 20%,
+            rgba(0, 212, 255, 0.15) 80%,
+            transparent 100%);
+    margin: 4px 0;
+}
+
+.vl-waveform-sep--dashed {
+    background: repeating-linear-gradient(90deg,
+            rgba(0, 212, 255, 0.1) 0px,
+            rgba(0, 212, 255, 0.1) 4px,
+            transparent 4px,
+            transparent 8px);
+}
+
+/* ── Canvas Node Animations ────────────────────────────────────────── */
+
+.vl-node-enter {
+    animation: vl-node-pop 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes vl-node-pop {
+    0% {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.vl-node-remove {
+    animation: vl-node-shrink 200ms ease-out forwards;
+}
+
+@keyframes vl-node-shrink {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(0.3);
+        opacity: 0;
+    }
+}
+
+.vl-node-selected {
+    animation: vl-node-highlight 600ms ease-out;
+}
+
+@keyframes vl-node-highlight {
+    0% {
+        filter: brightness(1);
+    }
+
+    50% {
+        filter: brightness(1.4);
+    }
+
+    100% {
+        filter: brightness(1);
+    }
+}
+
+/* ── Wire Connect Animation ────────────────────────────────────────── */
+
+.vl-wire-connect {
+    animation: vl-wire-snap 400ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes vl-wire-snap {
+    0% {
+        stroke-dasharray: 0, 1000;
+        opacity: 0.3;
+    }
+
+    100% {
+        stroke-dasharray: 1000, 0;
+        opacity: 1;
+    }
+}
+
+/* ── Simulation Step Pulse ─────────────────────────────────────────── */
+
+.vl-sim-step {
+    animation: vl-step-ripple 300ms ease-out;
+}
+
+@keyframes vl-step-ripple {
+    0% {
+        box-shadow: 0 0 0 0 rgba(0, 212, 255, 0.3);
+    }
+
+    100% {
+        box-shadow: 0 0 0 8px rgba(0, 212, 255, 0);
+    }
+}
+
+/* ── Port Hover State ──────────────────────────────────────────────── */
+
+.vl-port-glow {
+    filter: drop-shadow(0 0 6px rgba(16, 185, 129, 0.8));
+    transition: filter 150ms ease;
+}
+
+/* ── Gate Symbol Shape Hints ───────────────────────────────────────── */
+
+.vl-gate-and::after,
+.vl-gate-or::after,
+.vl-gate-not::after {
+    position: absolute;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 8px;
+    bottom: 2px;
+    right: 4px;
+    color: rgba(0, 212, 255, 0.3);
+    letter-spacing: 0.06em;
+}
+
+.vl-gate-and::after {
+    content: '∧';
+}
+
+.vl-gate-or::after {
+    content: '∨';
+}
+
+.vl-gate-not::after {
+    content: '¬';
+}
+
+/* ── Signal Level Indicators ───────────────────────────────────────── */
+
+.vl-signal-high {
+    color: #10B981;
+    text-shadow: 0 0 6px rgba(16, 185, 129, 0.4);
+}
+
+.vl-signal-low {
+    color: #EF4444;
+    text-shadow: 0 0 6px rgba(239, 68, 68, 0.3);
+}
+
+.vl-signal-hiz {
+    color: #64748B;
+    font-style: italic;
+}
+
+/* ── Timing Diagram Grid Lines ─────────────────────────────────────── */
+
+.vl-timing-grid {
+    stroke: rgba(0, 212, 255, 0.06);
+    stroke-width: 0.5;
+}
+
+.vl-timing-grid--major {
+    stroke: rgba(0, 212, 255, 0.12);
+    stroke-width: 1;
+}
+
+.vl-timing-cursor {
+    stroke: #F59E0B;
+    stroke-width: 1.5;
+    stroke-dasharray: 4 2;
+    animation: vl-cursor-blink 1.2s ease-in-out infinite;
+}
+
+@keyframes vl-cursor-blink {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* ── Oscilloscope Scan Line ────────────────────────────────────────── */
+
+.vl-scope-scanline {
+    position: absolute;
+    width: 2px;
+    top: 0;
+    bottom: 0;
+    background: linear-gradient(180deg,
+            transparent 0%,
+            rgba(0, 212, 255, 0.6) 50%,
+            transparent 100%);
+    animation: vl-scan 2s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes vl-scan {
+    0% {
+        left: 0;
+    }
+
+    100% {
+        left: 100%;
+    }
+}
+
+/* ── Loading / Processing ──────────────────────────────────────────── */
+
+.vl-processing {
+    position: relative;
+    overflow: hidden;
+}
+
+.vl-processing::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg,
+            transparent,
+            rgba(0, 212, 255, 0.4),
+            transparent);
+    animation: vl-process-sweep 1.5s ease-in-out infinite;
+}
+
+@keyframes vl-process-sweep {
+    0% {
+        left: -100%;
+    }
+
+    100% {
+        left: 100%;
+    }
+}
+
+/* ── Reduced Motion ────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .vl-wire-active,
+    .vl-node-enter,
+    .vl-node-remove,
+    .vl-node-selected,
+    .vl-wire-connect,
+    .vl-sim-step,
+    .vl-timing-cursor,
+    .vl-scope-scanline,
+    .vl-processing::after {
+        animation: none !important;
+    }
+
+    .vl-wire-hover,
+    .vl-port-glow {
+        transition: none !important;
+    }
+}
