@@ -30,3 +30,4 @@
 # 30: chore: adjust Vite dev server port to 5174
 # 31: fix: clamp eyeTarget offset to valid range in VoltMonkey
 # 1: fix: correct SVG viewBox in GatekeeperLanding video
+# 2: style: normalize spacing in CircuitCanvas layout
