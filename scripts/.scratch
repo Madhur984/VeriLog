@@ -38,3 +38,4 @@
 # 7: chore: bump framer-motion to patch version
 # 8: docs: add JSDoc to BotCompanion props interface
 # 9: style: update font-mono classes for consistency
+# 10: docs: document BotTrigger union type values
