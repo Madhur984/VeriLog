@@ -16,6 +16,10 @@ export const useMagneticEngine = (snapNodes: SnapNode[]) => {
     const calculatePhysics = useCallback((drag: DragState): MagneticResult => {
         if (!drag.id || !ghostRef.current) {
             return {
+                nearest: null,
+                force: 0,
+                interpolatedX: drag.currentX,
+                interpolatedY: drag.currentY,
                 x: drag.currentX,
                 y: drag.currentY,
                 snappedNodeIds: [null, null],
@@ -29,7 +33,7 @@ export const useMagneticEngine = (snapNodes: SnapNode[]) => {
         let nearestDist = Infinity;
 
         // Process each anchor for magnetic attraction
-        drag.anchors.forEach((anchor, index) => {
+        drag.anchors?.forEach((anchor: any, index: number) => {
             const worldX = drag.currentX + anchor.offsetX;
             const worldY = drag.currentY + anchor.offsetY;
 
@@ -37,7 +41,7 @@ export const useMagneticEngine = (snapNodes: SnapNode[]) => {
             let nearest: SnapNode | null = null;
 
             for (const node of snapNodes) {
-                if (node.occupiedById && node.occupiedById !== drag.id) continue;
+                if (node.occupiedBy && node.occupiedBy !== drag.id) continue;
 
                 const dx = node.x - worldX;
                 const dy = node.y - worldY;
@@ -85,6 +89,10 @@ export const useMagneticEngine = (snapNodes: SnapNode[]) => {
         );
 
         return {
+            nearest: null,
+            force: 0,
+            interpolatedX: targetX,
+            interpolatedY: targetY,
             x: targetX,
             y: targetY,
             snappedNodeIds: currentSnaps,

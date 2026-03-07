@@ -514,7 +514,7 @@ export const CircuitCanvas: React.FC = () => {
                         <foreignObject x={W / 2 - 160} y={H / 2 - 80} width={320} height={160}>
                             <div style={{
                                 width: '100%', height: '100%',
-                                background: '#0d1520',
+                                background: '#0D0F16',
                                 border: '1px solid #2a3f54',
                                 borderRadius: 8,
                                 display: 'flex', flexDirection: 'column',

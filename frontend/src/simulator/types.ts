@@ -1,16 +1,83 @@
-export type CompType = 'battery' | 'bulb' | 'resistor' | 'switch' | 'wire' | 'and' | 'or';
+export type ComponentType =
+    | 'battery' | 'resistor' | 'switch' | 'led'
+    | 'and-gate' | 'or-gate' | 'and' | 'or' | 'wire' | 'capacitor';
 
-export interface AnchorPoint {
+export interface Pin {
     id: string;
+    componentId: string;
+    type: 'input' | 'output';
+    value: boolean;
+}
+
+export interface Component {
+    id: string;
+    type: ComponentType;
+    x: number;
+    y: number;
+    rotation?: number;
+    inputs: Pin[];
+    outputs: Pin[];
+    state: 'off' | 'on' | 'active';
+}
+
+export interface WireConnection {
+    id: string;
+    fromPinId: string;
+    toPinId: string;
+    active: boolean;
+}
+
+// ─── Aliases consumed by simulator hooks ──────────────────────────────────────
+
+export type CompType = ComponentType;
+
+export interface DragState {
+    id?: string | null;
+    isDragging: boolean;
+    source?: 'tray' | 'canvas' | null;
+    type?: CompType | null;
+    componentType?: CompType | null;
+    componentId?: string | null;
+    originX: number;
+    originY: number;
     offsetX: number;
     offsetY: number;
+    currentX: number;
+    currentY: number;
+    nearestSnap?: SnapNode | null;
+    magneticForce?: number;
+    anchors?: AnchorPoint[] | Array<{ x: number; y: number; offsetX?: number; offsetY?: number }>;
+    isFromTray?: boolean;
 }
 
 export interface SnapNode {
     id: string;
     x: number;
     y: number;
-    occupiedById: string | null;
+    type: 'pin' | 'grid' | 'anchor';
+    componentId?: string;
+    portId?: string;
+    occupied?: boolean;
+    occupiedBy?: string;
+}
+
+export interface MagneticResult {
+    nearest: SnapNode | null;
+    force: number;
+    interpolatedX: number;
+    interpolatedY: number;
+    x?: number;
+    y?: number;
+    snappedNodeIds?: (string | null)[];
+    nearestDistance?: number;
+}
+
+export interface AnchorPoint {
+    id: string;
+    componentId: string;
+    x: number;
+    y: number;
+    type: 'input' | 'output';
 }
 
 export interface ComponentInstance {
@@ -18,62 +85,10 @@ export interface ComponentInstance {
     type: CompType;
     x: number;
     y: number;
+    rotation: number;
     anchors: AnchorPoint[];
-    snapNodeIds: (string | null)[];
+    state: Record<string, unknown>;
     isOpen?: boolean;
+    snapNodeIds: string[];
 }
 
-export interface DragState {
-    id: string | null;
-    type: CompType | null;
-    originX: number;
-    originY: number;
-    offsetX: number;
-    offsetY: number;
-    currentX: number;
-    currentY: number;
-    anchors: AnchorPoint[];
-    isFromTray: boolean;
-    isDragging: boolean;
-}
-
-export interface SnapAnimation {
-    active: boolean;
-    startX: number;
-    startY: number;
-    targetX: number;
-    targetY: number;
-    startTime: number;
-    duration: number;
-    snappedNodeIds: (string | null)[];
-    componentId: string;
-    componentType: CompType;
-    anchors: AnchorPoint[];
-    isFromTray: boolean;
-}
-
-export interface MagneticResult {
-    x: number;
-    y: number;
-    snappedNodeIds: (string | null)[];
-    nearestDistance: number;
-}
-
-export interface Vector2 {
-    x: number;
-    y: number;
-}
-
-export interface CircuitEdge {
-    from: string;
-    to: string;
-    componentId: string;
-}
-
-export interface WireSegment {
-    fromX: number;
-    fromY: number;
-    toX: number;
-    toY: number;
-    isActive: boolean;
-}

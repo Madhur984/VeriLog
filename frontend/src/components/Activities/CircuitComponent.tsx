@@ -48,8 +48,8 @@ const Node: React.FC<{ cx: number; cy: number; active?: boolean; isSnapTarget?: 
         {/* Core node */}
         <circle
             cx={cx} cy={cy} r={8}
-            fill={isSnapTarget ? '#00D2FF' : active ? '#00D2FF' : '#1E293B'}
-            stroke={isSnapTarget ? '#FFFFFF' : active ? '#00D2FF' : '#334155'}
+            fill={isSnapTarget ? '#00D2FF' : active ? '#00D2FF' : '#1A1D24'}
+            stroke={isSnapTarget ? '#FFFFFF' : active ? '#00D2FF' : '#2A2D35'}
             strokeWidth={2}
             style={{ filter: isSnapTarget ? 'drop-shadow(0 0 8px #00D2FF)' : undefined }}
         />
@@ -102,10 +102,10 @@ const ComponentShell: React.FC<{
 export const LabBattery: React.FC<CircuitComponentProps> = ({ x, y, active, isSnapTarget, isDragging, isGhost }) => (
     <ComponentShell x={x} y={y} isDragging={isDragging} isGhost={isGhost}>
         {/* Background & Shadow */}
-        <rect x={-15} y={-35} width={30} height={70} rx={4} fill="#0D1426" stroke="#1E293B" strokeWidth={1} />
+        <rect x={-15} y={-35} width={30} height={70} rx={4} fill="#0D1426" stroke="#1A1D24" strokeWidth={1} />
 
         {/* Vertical Battery Body */}
-        <rect x={-12} y={-30} width={24} height={60} rx={2} fill="url(#battGrad)" stroke="#334155" strokeWidth={1.5} />
+        <rect x={-12} y={-30} width={24} height={60} rx={2} fill="url(#battGrad)" stroke="#2A2D35" strokeWidth={1.5} />
 
         {/* Terminal markings */}
         <text x={0} y={-10} textAnchor="middle" fill="#94A3B8" fontSize={16} fontWeight="bold" fontFamily="monospace">+</text>
@@ -119,7 +119,7 @@ export const LabBattery: React.FC<CircuitComponentProps> = ({ x, y, active, isSn
 export const LabBulb: React.FC<CircuitComponentProps> = ({ x, y, active, isSnapTarget, isDragging, isGhost }) => (
     <ComponentShell x={x} y={y} isDragging={isDragging} isGhost={isGhost}>
         {/* Bulb Glass */}
-        <circle cx={0} cy={0} r={22} fill={active ? "rgba(255, 184, 0, 0.1)" : "#0D1426"} stroke={active ? "#FFB800" : "#334155"} strokeWidth={2} className={active ? "neon-glow-orange" : ""} />
+        <circle cx={0} cy={0} r={22} fill={active ? "rgba(255, 184, 0, 0.1)" : "#0D1426"} stroke={active ? "#FFB800" : "#2A2D35"} strokeWidth={2} className={active ? "neon-glow-orange" : ""} />
 
         {/* Filament */}
         <path
@@ -131,8 +131,8 @@ export const LabBulb: React.FC<CircuitComponentProps> = ({ x, y, active, isSnapT
         />
 
         {/* Base */}
-        <rect x={-10} y={18} width={20} height={8} fill="#334155" rx={1} />
-        <rect x={-8} y={26} width={16} height={6} fill="#1E293B" rx={1} />
+        <rect x={-10} y={18} width={20} height={8} fill="#2A2D35" rx={1} />
+        <rect x={-8} y={26} width={16} height={6} fill="#1A1D24" rx={1} />
 
         <Node cx={-28} cy={0} active={active} isSnapTarget={isSnapTarget} />
         <Node cx={28} cy={0} active={active} isSnapTarget={isSnapTarget} />
@@ -142,7 +142,7 @@ export const LabBulb: React.FC<CircuitComponentProps> = ({ x, y, active, isSnapT
 export const LabResistor: React.FC<CircuitComponentProps> = ({ x, y, active, isSnapTarget, isDragging, isGhost }) => (
     <ComponentShell x={x} y={y} isDragging={isDragging} isGhost={isGhost}>
         {/* Capsule / Pill Background */}
-        <rect x={-40} y={-15} width={80} height={30} rx={15} fill="#0D1426" stroke="#1E293B" strokeWidth={1} opacity={0.8} />
+        <rect x={-40} y={-15} width={80} height={30} rx={15} fill="#0D1426" stroke="#1A1D24" strokeWidth={1} opacity={0.8} />
 
         {/* Zigzag symbol */}
         <polyline
@@ -162,8 +162,8 @@ export const LabResistor: React.FC<CircuitComponentProps> = ({ x, y, active, isS
 export const LabSwitch: React.FC<CircuitComponentProps & { isOpen: boolean }> = ({ x, y, active, isOpen, isSnapTarget, isDragging, isGhost }) => (
     <ComponentShell x={x} y={y} isDragging={isDragging} isGhost={isGhost}>
         {/* Connection points */}
-        <circle cx={-20} cy={0} r={4} fill="#475569" stroke="#334155" strokeWidth={1.5} />
-        <circle cx={20} cy={0} r={4} fill="#475569" stroke="#334155" strokeWidth={1.5} />
+        <circle cx={-20} cy={0} r={4} fill="#475569" stroke="#2A2D35" strokeWidth={1.5} />
+        <circle cx={20} cy={0} r={4} fill="#475569" stroke="#2A2D35" strokeWidth={1.5} />
 
         {/* Moving Lever */}
         <motion.line

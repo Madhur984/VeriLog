@@ -24,7 +24,7 @@ export const WireTrace: React.FC<WireTraceProps> = ({ path, active, isShort }) =
             <path
                 d={d}
                 fill="none"
-                stroke={active ? primaryColor : '#1E293B'}
+                stroke={active ? primaryColor : '#1A1D24'}
                 strokeWidth="10"
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -49,7 +49,7 @@ export const WireTrace: React.FC<WireTraceProps> = ({ path, active, isShort }) =
             <path
                 d={d}
                 fill="none"
-                stroke={active ? primaryColor : '#1E293B'}
+                stroke={active ? primaryColor : '#1A1D24'}
                 strokeWidth="4"
                 strokeLinecap="round"
                 strokeLinejoin="round"

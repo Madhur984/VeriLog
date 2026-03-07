@@ -1,7 +1,7 @@
-import { CompType } from '../../simulator/types';
+import { ComponentType } from '../../simulator/types';
 
 interface DraggableProps {
-    type: CompType;
+    type: ComponentType;
     label: string;
     icon: React.ReactNode;
     disabled?: boolean;

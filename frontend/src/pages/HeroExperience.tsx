@@ -1,9 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { SignalOrb } from '../components/ui/SignalOrb';
-import { VoltMonkey } from '../components/Bot/VoltMonkey';
-import { SpeechBubble } from '../components/Bot/SpeechBubble';
+import { VoltBot } from '../components/ui/VoltBot';
 import { LayoutDashboard, ArrowRight } from 'lucide-react';
 import { useUserStore } from '../stores/userStore';
 import { GreetingSequence } from '../components/ui/GreetingSequence';
@@ -11,15 +10,8 @@ import { AnimatePresence } from 'framer-motion';
 
 export const HeroExperience = () => {
     const navigate = useNavigate();
-    const { hasSeenGreeting, firstName, isNewUser, setIsNewUser } = useUserStore();
+    const { hasSeenGreeting, firstName } = useUserStore();
     const [orbInteracted, setOrbInteracted] = useState(false);
-
-    // Returning users (signed in, not new) go straight to /portal
-    useEffect(() => {
-        if (firstName && !isNewUser) {
-            navigate('/portal', { replace: true });
-        }
-    }, [firstName, isNewUser, navigate]);
 
     return (
         <div className="relative w-full h-screen overflow-hidden bg-background font-sans text-foreground">
@@ -72,15 +64,12 @@ export const HeroExperience = () => {
                 {/* Main Interaction Area */}
                 <div className="space-y-12 flex flex-col items-center">
 
-                    <div className="flex items-end gap-3 mb-8">
-                        <VoltMonkey state={orbInteracted ? 'happy' : 'talking'} size="md" />
-                        <SpeechBubble
-                            body={orbInteracted ? "Spectacular! You found the pulse!" : "See that glowing orb? Give it a drag!"}
-                            placement="right"
-                            accent={orbInteracted ? '#22C55E' : '#6366F1'}
-                            visible
-                        />
-                    </div>
+                    {/* Bot Greeting */}
+                    <VoltBot
+                        state={orbInteracted ? 'happy' : 'speaking'}
+                        message={orbInteracted ? "Spectacular! You found the pulse!" : "See that glowing orb? Give it a drag!"}
+                        className="mb-8"
+                    />
 
                     {/* The Artifact */}
                     <motion.div
@@ -102,7 +91,7 @@ export const HeroExperience = () => {
                         className="space-y-4"
                     >
                         <h1 className="font-heading font-extrabold text-5xl md:text-7xl bg-clip-text text-transparent bg-gradient-to-r from-primary via-white to-primary drop-shadow-sm">
-                            VeriQuest
+                            Signal Playground
                         </h1>
                         <p className="font-mono text-slate-400 max-w-md mx-auto">
                             Master the invisible forces of Digital Logic.
@@ -111,7 +100,7 @@ export const HeroExperience = () => {
                         </p>
 
                         <button
-                            onClick={() => { setIsNewUser(false); navigate('/portal'); }}
+                            onClick={() => navigate('/playground')}
                             className="group relative px-8 py-4 bg-primary text-background font-bold rounded-xl overflow-hidden shadow-glow-primary hover:scale-105 transition-transform"
                         >
                             <span className="relative z-10 flex items-center">

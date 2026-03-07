@@ -73,7 +73,7 @@ const Particles = () => {
 
 export const LogicStormBackground: React.FC = () => {
     return (
-        <div className="absolute inset-0 z-0 pointer-events-none bg-[#0F172A]">
+        <div className="absolute inset-0 z-0 pointer-events-none bg-[#0D0F16]">
             <Canvas
                 camera={{ position: [0, 0, 5], fov: 60 }}
                 gl={{ antialias: true, alpha: true }}
@@ -85,9 +85,9 @@ export const LogicStormBackground: React.FC = () => {
                 <Particles />
 
                 {/* Subtle grid in 3D space */}
-                <gridHelper args={[20, 20, '#1E293B', '#1E293B']} rotation={[Math.PI / 2, 0, 0]} position={[0, 0, -2]} />
+                <gridHelper args={[20, 20, '#1A1D24', '#1A1D24']} rotation={[Math.PI / 2, 0, 0]} position={[0, 0, -2]} />
 
-                <fog attach="fog" args={['#0F172A', 5, 15]} />
+                <fog attach="fog" args={['#0D0F16', 5, 15]} />
             </Canvas>
         </div>
     );

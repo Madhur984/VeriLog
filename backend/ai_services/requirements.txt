@@ -1,0 +1,26 @@
+# Consolidated Requirements for VeriLog AI Lab
+fastapi==0.109.0
+uvicorn==0.27.0
+python-multipart==0.0.6
+pydantic==2.5.3
+
+# Voice (Ai-voice)
+torch
+torchaudio
+librosa
+numpy
+scipy
+scikit-learn
+joblib
+
+# Vision (BharatVision)
+surya-ocr
+ultralytics
+opencv-python-headless
+pillow
+python-dotenv
+streamlit # For legacy dashboard compatibility
+gemma # For LLM orchestration if used locally
+transformers
+sentencepiece
+accelerate

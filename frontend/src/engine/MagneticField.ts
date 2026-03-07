@@ -17,7 +17,7 @@ export function computeForce(
     const dist = Math.sqrt(dx * dx + dy * dy);
 
     if (dist > MAGNETIC_RADIUS) {
-        return { force: 0, angle: 0, snapNode: null };
+        return { force: 0, angle: 0, snapNode, distance: dist };
     }
 
     // Force increases as distance decreases
@@ -26,7 +26,7 @@ export function computeForce(
     const force = t * t * ATTRACTION_STRENGTH;
     const angle = Math.atan2(dy, dx);
 
-    return { force, angle, snapNode };
+    return { force, angle, snapNode, distance: dist };
 }
 
 /**

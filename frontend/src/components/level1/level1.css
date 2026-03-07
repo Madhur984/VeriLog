@@ -1,0 +1,579 @@
+/**
+ * level1.css
+ *
+ * VeriLog Level 1 — Enterprise animation library.
+ * All keyframes: transform + opacity only (GPU-accelerated).
+ * No layout thrashing. prefers-reduced-motion respected globally.
+ */
+
+/* ─── Socket System ──────────────────────────────────────────────────── */
+
+@keyframes socket-breathe {
+
+    0%,
+    100% {
+        opacity: 0.45;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.72;
+        transform: scale(1.03);
+    }
+}
+
+@keyframes socket-magnetic-pulse {
+
+    0%,
+    100% {
+        opacity: 0.8;
+        transform: scale(1.06);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.12);
+    }
+}
+
+@keyframes snap-stabilize {
+    0% {
+        transform: translate3d(0, 0, 0) scale(1.06);
+    }
+
+    40% {
+        transform: translate3d(0, 0, 0) scale(0.97);
+    }
+
+    70% {
+        transform: translate3d(0, 0, 0) scale(1.01);
+    }
+
+    100% {
+        transform: translate3d(0, 0, 0) scale(1);
+    }
+}
+
+/* ─── Spark Particles ────────────────────────────────────────────────── */
+
+@keyframes micro-spark-1 {
+    0% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) scale(1);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate3d(10px, -8px, 0) scale(0);
+    }
+}
+
+@keyframes micro-spark-2 {
+    0% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) scale(1);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate3d(-8px, -10px, 0) scale(0);
+    }
+}
+
+@keyframes micro-spark-3 {
+    0% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) scale(1);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate3d(6px, 12px, 0) scale(0);
+    }
+}
+
+@keyframes micro-spark-4 {
+    0% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) scale(1);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate3d(-12px, 5px, 0) scale(0);
+    }
+}
+
+/* ─── Wire / Electron Flow ───────────────────────────────────────────── */
+
+@keyframes electron-flow {
+    from {
+        stroke-dashoffset: 200;
+    }
+
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+@keyframes wire-pulse {
+
+    0%,
+    100% {
+        stroke-opacity: 0.7;
+    }
+
+    50% {
+        stroke-opacity: 1;
+    }
+}
+
+/* ─── Scan Integrity Trace ──────────────────────────────────────────── */
+
+@keyframes vl-scan-trace-draw {
+    0% {
+        stroke-dashoffset: 1400;
+        opacity: 0.8;
+    }
+
+    70% {
+        opacity: 1;
+    }
+
+    100% {
+        stroke-dashoffset: 0;
+        opacity: 0;
+    }
+}
+
+.vl-scan-trace {
+    stroke-dasharray: 1400;
+    stroke-dashoffset: 1400;
+    animation: vl-scan-trace-draw 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    pointer-events: none;
+}
+
+
+/* ─── Short Circuit — controlled red ramp, no chaotic flash ─────────── */
+
+@keyframes vl-short-pulse {
+    0% {
+        box-shadow: 0 0 0px rgba(239, 68, 68, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 12px rgba(239, 68, 68, 0.4);
+    }
+}
+
+/* ─── Drag-match lock animation (correct snap) ───────────────────────── */
+
+@keyframes vl-lock-stabilize {
+    0% {
+        transform: scale(1.04);
+    }
+
+    60% {
+        transform: scale(0.98);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* ─── Drag-match shake (incorrect match) ────────────────────────────── */
+
+@keyframes vl-shake {
+
+    0%,
+    100% {
+        transform: translate3d(0, 0, 0);
+    }
+
+    20% {
+        transform: translate3d(-4px, 0, 0);
+    }
+
+    40% {
+        transform: translate3d(4px, 0, 0);
+    }
+
+    60% {
+        transform: translate3d(-2px, 0, 0);
+    }
+
+    80% {
+        transform: translate3d(2px, 0, 0);
+    }
+}
+
+/* ─── Chip return to origin (incorrect drop) ─────────────────────────── */
+
+@keyframes vl-chip-return {
+    from {
+        transform: translate3d(var(--chip-dx, 0px), var(--chip-dy, 0px), 0);
+    }
+
+    to {
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+/* ─── Completion invariants — CSS stagger (no framer-motion) ─────────── */
+
+@keyframes vl-invariant-reveal {
+    from {
+        opacity: 0;
+        transform: translate3d(-6px, 0, 0);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+/* ─── SVG checkmark stroke draw ─────────────────────────────────────── */
+
+@keyframes vl-check-draw {
+    from {
+        stroke-dashoffset: 40;
+        opacity: 0;
+    }
+
+    to {
+        stroke-dashoffset: 0;
+        opacity: 1;
+    }
+}
+
+/* ─── Knowledge Panel ────────────────────────────────────────────────── */
+
+@keyframes panel-slide-in {
+    from {
+        transform: translate3d(100%, 0, 0);
+        opacity: 0.5;
+    }
+
+    to {
+        transform: translate3d(0, 0, 0);
+        opacity: 1;
+    }
+}
+
+@keyframes panel-slide-out {
+    from {
+        transform: translate3d(0, 0, 0);
+        opacity: 1;
+    }
+
+    to {
+        transform: translate3d(100%, 0, 0);
+        opacity: 0;
+    }
+}
+
+@keyframes node-badge-pulse {
+
+    0%,
+    100% {
+        box-shadow: 0 0 0 0 rgba(0, 212, 255, 0.35);
+    }
+
+    50% {
+        box-shadow: 0 0 0 4px rgba(0, 212, 255, 0);
+    }
+}
+
+/* ─── VoltMonkey Mentor ───────────────────────────────────────────────────── */
+
+@keyframes VoltMonkey-rise {
+    from {
+        transform: translate3d(0, 14px, 0);
+        opacity: 0;
+    }
+
+    to {
+        transform: translate3d(0, 0, 0);
+        opacity: 1;
+    }
+}
+
+@keyframes VoltMonkey-pulse-ring {
+    0% {
+        transform: scale(1);
+        opacity: 0.5;
+    }
+
+    100% {
+        transform: scale(1.6);
+        opacity: 0;
+    }
+}
+
+/* ─── XP System — monochrome opacity flash only ─────────────────────── */
+
+@keyframes xp-flash {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    25% {
+        opacity: 0.35;
+        transform: scale(0.96);
+    }
+
+    65% {
+        opacity: 0.9;
+        transform: scale(1.05);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes xp-badge-appear {
+    from {
+        transform: translate3d(0, -4px, 0) scale(0.88);
+        opacity: 0;
+    }
+
+    to {
+        transform: translate3d(0, 0, 0) scale(1);
+        opacity: 1;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   COMPONENT CLASSES
+   ═════════════════════════════════════════════════════════════════════ */
+
+/* Sockets */
+.vl-socket {
+    animation: socket-breathe 2.8s ease-in-out infinite;
+    will-change: transform, opacity;
+}
+
+.vl-socket--magnetic {
+    animation: socket-magnetic-pulse 0.7s ease-in-out infinite;
+    will-change: transform, opacity;
+}
+
+.vl-socket--locked {
+    animation: snap-stabilize 280ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    opacity: 1;
+}
+
+/* Sparks */
+.vl-spark {
+    will-change: transform, opacity;
+}
+
+.vl-spark:nth-child(1) {
+    animation: micro-spark-1 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+.vl-spark:nth-child(2) {
+    animation: micro-spark-2 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+    animation-delay: 15ms;
+}
+
+.vl-spark:nth-child(3) {
+    animation: micro-spark-3 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+    animation-delay: 8ms;
+}
+
+.vl-spark:nth-child(4) {
+    animation: micro-spark-4 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+    animation-delay: 25ms;
+}
+
+/* Live wire electron flow */
+.vl-wire--live {
+    stroke-dasharray: 6 8;
+    animation: electron-flow 1.4s linear infinite, wire-pulse 2.2s ease-in-out infinite;
+    will-change: stroke-dashoffset, stroke-opacity;
+}
+
+/* Short circuit indicator */
+.vl-short-circuit {
+    animation: vl-short-pulse 600ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    will-change: box-shadow;
+}
+
+/* Knowledge Node badge */
+.vl-knode {
+    animation: node-badge-pulse 2.8s ease-in-out infinite;
+    cursor: pointer;
+    will-change: box-shadow;
+}
+
+/* Knowledge Panel */
+.vl-kpanel {
+    transform: translate3d(100%, 0, 0);
+    will-change: transform, opacity;
+    pointer-events: none;
+}
+
+.vl-kpanel.is-open {
+    animation: panel-slide-in 240ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    pointer-events: all;
+}
+
+.vl-kpanel.is-closing {
+    animation: panel-slide-out 200ms cubic-bezier(0.4, 0, 0.6, 1) forwards;
+    pointer-events: none;
+}
+
+/* XP counter */
+.vl-xp--flash {
+    animation: xp-flash 700ms ease-out forwards;
+}
+
+/* Drag-match chips */
+.vl-chip--shake {
+    animation: vl-shake 220ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    will-change: transform;
+}
+
+.vl-chip--lock {
+    animation: vl-lock-stabilize 260ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    will-change: transform;
+}
+
+.vl-chip--return {
+    animation: vl-chip-return 300ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    will-change: transform;
+}
+
+/* Completion invariants — pure CSS stagger */
+.vl-invariant {
+    opacity: 0;
+    will-change: transform, opacity;
+    animation: vl-invariant-reveal 350ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.vl-invariant:nth-child(1) {
+    animation-delay: 0.15s;
+}
+
+.vl-invariant:nth-child(2) {
+    animation-delay: 0.28s;
+}
+
+.vl-invariant:nth-child(3) {
+    animation-delay: 0.41s;
+}
+
+.vl-invariant:nth-child(4) {
+    animation-delay: 0.54s;
+}
+
+/* SVG checkmark path */
+.vl-check-path {
+    stroke-dasharray: 40;
+    stroke-dashoffset: 40;
+    opacity: 0;
+    will-change: stroke-dashoffset, opacity;
+}
+
+.vl-check-path.is-visible {
+    animation: vl-check-draw 350ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    animation-delay: 0.3s;
+}
+
+/* VoltMonkey mentor panel */
+.vl-VoltMonkey-panel {
+    animation: VoltMonkey-rise 280ms cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+.vl-VoltMonkey-ring {
+    animation: VoltMonkey-pulse-ring 1.4s ease-out infinite;
+    will-change: transform, opacity;
+}
+
+@keyframes VoltMonkey-breath {
+
+    0%,
+    100% {
+        opacity: 0.3;
+    }
+
+    50% {
+        opacity: 0.8;
+    }
+}
+
+.vl-VoltMonkey-breath {
+    animation: VoltMonkey-breath 3s ease-in-out infinite;
+    will-change: opacity;
+}
+
+/* ─── Match Engine Drag States ────────────────────────────────────────── */
+.vl-matching-container.is-dragging .vl-chip:not(.vl-chip--dragging),
+.vl-matching-container.is-dragging .vl-zone:not(.vl-zone--magnetic) {
+    opacity: 0.35;
+}
+
+.vl-zone--magnetic {
+    transform: scale(1.015);
+    border-color: rgba(0, 212, 255, 0.4) !important;
+    background: rgba(0, 212, 255, 0.08) !important;
+    box-shadow: 0 0 15px rgba(0, 212, 255, 0.1);
+}
+
+.vl-chip--dragging {
+    opacity: 1 !important;
+    box-shadow: 0 12px 28px -6px rgba(0, 0, 0, 0.6), 0 4px 12px -3px rgba(0, 0, 0, 0.3);
+    border-color: rgba(0, 212, 255, 0.5) !important;
+}
+
+/* ─── prefers-reduced-motion ─────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+
+    .vl-socket,
+    .vl-socket--magnetic,
+    .vl-socket--locked,
+    .vl-spark,
+    .vl-knode,
+    .vl-wire--live,
+    .vl-xp--flash,
+    .vl-VoltMonkey-panel,
+    .vl-VoltMonkey-ring,
+    .vl-short-circuit,
+    .vl-chip--shake,
+    .vl-chip--lock,
+    .vl-chip--return {
+        animation: none !important;
+        transition: none !important;
+    }
+
+    .vl-kpanel.is-open {
+        animation: none !important;
+        transform: translate3d(0, 0, 0) !important;
+        opacity: 1 !important;
+        pointer-events: all;
+    }
+
+    .vl-kpanel.is-closing {
+        animation: none !important;
+        transform: translate3d(100%, 0, 0) !important;
+        opacity: 0 !important;
+    }
+
+    .vl-invariant {
+        animation: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+    }
+
+    .vl-check-path.is-visible {
+        animation: none !important;
+        stroke-dashoffset: 0 !important;
+        opacity: 1 !important;
+    }
+}

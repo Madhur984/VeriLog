@@ -13,8 +13,11 @@ interface ComponentInstance {
     type: CompType;
     x: number;
     y: number;
+    rotation?: number;
+    anchors?: unknown[];
+    state?: Record<string, unknown>;
     isOpen?: boolean;
-    connectedNodes: string[];
+    snapNodeIds: string[];
 }
 
 interface ActivityLevel1Props {
@@ -39,7 +42,7 @@ const TrayCard: React.FC<{ label: string; type: CompType; icon: React.ReactNode 
                 border-2 transition-all duration-300 cursor-grab active:cursor-grabbing
                 ${isBeingDragged
                     ? 'border-[#00D2FF] bg-[#00D2FF]/10 opacity-50 scale-95'
-                    : 'border-[#1E293B] bg-[#0A0F1E] hover:border-[#334155] hover:bg-[#111827] shadow-lg'}
+                    : 'border-[#1A1D24] bg-[#0A0B10] hover:border-[#2A2D35] hover:bg-[#111827] shadow-lg'}
             `}
         >
             <div className={`
@@ -65,10 +68,10 @@ export const ActivityLevel1: React.FC<ActivityLevel1Props> = ({ onComplete }) =>
 
     // Fixed puzzle nodes
     const snapNodes = useMemo(() => [
-        { id: 'node-bulb-in', x: 600 - 28, y: 300, occupied: false },
-        { id: 'node-bulb-out', x: 600 + 28, y: 300, occupied: false },
-        { id: 'node-switch-in', x: 400 - 30, y: 150, occupied: false },
-        { id: 'node-switch-out', x: 400 + 30, y: 150, occupied: false }
+        { id: 'node-bulb-in', x: 600 - 28, y: 300, type: 'pin' as const, occupied: false },
+        { id: 'node-bulb-out', x: 600 + 28, y: 300, type: 'pin' as const, occupied: false },
+        { id: 'node-switch-in', x: 400 - 30, y: 150, type: 'pin' as const, occupied: false },
+        { id: 'node-switch-out', x: 400 + 30, y: 150, type: 'pin' as const, occupied: false }
     ], []);
 
     // Check if expected components are in their zones
@@ -126,8 +129,11 @@ export const ActivityLevel1: React.FC<ActivityLevel1Props> = ({ onComplete }) =>
                     type: result.componentType,
                     x: result.componentType === 'bulb' ? 600 : 400,
                     y: result.componentType === 'bulb' ? 300 : 150,
+                    rotation: 0,
+                    anchors: [],
+                    state: {},
                     isOpen: result.componentType === 'switch' ? true : undefined,
-                    connectedNodes: result.snapNodeId ? [result.snapNodeId] : []
+                    snapNodeIds: result.snapNodeId ? [result.snapNodeId] : []
                 };
 
                 // Allow only one of each
@@ -156,11 +162,11 @@ export const ActivityLevel1: React.FC<ActivityLevel1Props> = ({ onComplete }) =>
         <DragEngineProvider snapNodes={snapNodes} onDrop={handleDrop}>
             <div className="flex flex-col lg:flex-row gap-8 w-full max-w-7xl mx-auto p-4 lg:p-8 min-h-[800px]">
                 <div className="w-full lg:w-72 flex flex-col gap-6">
-                    <div className="bg-[#0A0F1E] border border-[#1E293B] rounded-3xl p-6 shadow-xl relative overflow-hidden">
-                        <div className="absolute inset-0 bg-[#3B82F6]/5 backdrop-blur-[2px] pointer-events-none" aria-label="activity-container" />
+                    <div className="bg-[#0A0B10] border border-[#1A1D24] rounded-3xl p-6 shadow-xl relative overflow-hidden">
+                        <div className="absolute inset-0 bg-[#10B981]/5 backdrop-blur-[2px] pointer-events-none" aria-label="activity-container" />
                         <div className="relative z-10">
                             <div className="flex items-center gap-3 mb-6">
-                                <Zap className="w-5 h-5 text-[#3B82F6]" />
+                                <Zap className="w-5 h-5 text-[#10B981]" />
                                 <h2 className="text-xl font-bold text-white tracking-tight">Component Tray</h2>
                             </div>
                             <div className="grid grid-cols-2 lg:grid-cols-1 gap-4">
@@ -170,7 +176,7 @@ export const ActivityLevel1: React.FC<ActivityLevel1Props> = ({ onComplete }) =>
                         </div>
                     </div>
 
-                    <div className="bg-[#0A0F1E]/60 backdrop-blur-md border border-[#1E293B] rounded-3xl p-6 shadow-xl flex-grow flex flex-col items-center">
+                    <div className="bg-[#0A0B10]/60 backdrop-blur-md border border-[#1A1D24] rounded-3xl p-6 shadow-xl flex-grow flex flex-col items-center">
                         <div className="relative mb-4">
                             <VoltMonkey state={botState} />
                         </div>
@@ -181,13 +187,13 @@ export const ActivityLevel1: React.FC<ActivityLevel1Props> = ({ onComplete }) =>
                 <div className="flex-grow flex flex-col gap-6">
                     <div className="flex items-center justify-between px-2">
                         <div>
-                            <h1 className="text-3xl font-black text-white tracking-tighter mb-1">CIRCUIT LAB <span className="text-[#3B82F6] text-lg font-mono ml-2">v4.0</span></h1>
+                            <h1 className="text-3xl font-black text-white tracking-tighter mb-1">CIRCUIT LAB <span className="text-[#10B981] text-lg font-mono ml-2">v4.0</span></h1>
                             <p className="text-slate-400 text-sm font-medium">Mission: Close the Loop</p>
                         </div>
                         <div className="flex gap-3">
                             <button
                                 onClick={() => { setComponents([]); setStep(0); setBotState('idle'); setBotText("Welcome to the Circuit Lab! First, we need a light source. Drag the BULB to the right drop zone."); }}
-                                className="p-3 bg-[#1E293B] text-slate-300 rounded-xl hover:bg-[#334155] transition-colors"
+                                className="p-3 bg-[#1A1D24] text-slate-300 rounded-xl hover:bg-[#2A2D35] transition-colors"
                             >
                                 <RotateCcw className="w-5 h-5" />
                             </button>
@@ -208,8 +214,8 @@ export const ActivityLevel1: React.FC<ActivityLevel1Props> = ({ onComplete }) =>
                         </svg>
                     </div>
 
-                    <div className="bg-[#0A0F1E]/50 border border-[#1E293B] rounded-2xl p-4 flex flex-wrap gap-6 items-center justify-center">
-                        <div className="flex items-center gap-2 text-xs font-bold text-[#3B82F6] uppercase tracking-widest">
+                    <div className="bg-[#0A0B10]/50 border border-[#1A1D24] rounded-2xl p-4 flex flex-wrap gap-6 items-center justify-center">
+                        <div className="flex items-center gap-2 text-xs font-bold text-[#10B981] uppercase tracking-widest">
                             <CheckCircle2 className="w-4 h-4" /> Loop Engine Active
                         </div>
                     </div>

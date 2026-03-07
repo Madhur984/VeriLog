@@ -1,37 +1,34 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-/* ═══════════════════════════════════════════════════════════════════
-   SpeechBubble — Typewriter-animated tooltip for VoltMonkey
-   ═══════════════════════════════════════════════════════════════ */
+export type BubbleTone = 'info' | 'success' | 'warning' | 'error' | 'neutral' | 'bright' | 'warm' | 'cool' | 'ghost';
 
-import type { BubbleTone } from '../Bot/botDialogue';
-
-interface SpeechBubbleProps {
-    /** Title shown in bold at top */
-    title?: string;
-    /** Body text — types out character by character */
-    body: string;
-    /** Where the bubble tail points */
-    placement?: 'top' | 'bottom' | 'left' | 'right';
-    /** Emotion-driven tone — controls accent + border color */
-    tone?: BubbleTone;
-    /** Override accent color directly (takes precedence over tone) */
-    accent?: string;
-    /** ms per character for typewriter, default 28 */
-    typingSpeed?: number;
-    /** Action buttons rendered below body */
-    actions?: { label: string; onClick: () => void; primary?: boolean }[];
-    /** Is the bubble visible? */
-    visible?: boolean;
-    /** Step indicator, e.g. "2 / 5" */
-    stepLabel?: string;
+interface BubbleAction {
+    label: string;
+    onClick: () => void;
+    primary?: boolean;
 }
 
-const TONE_ACCENT: Record<BubbleTone, string> = {
-    bright: '#F59E0B',
-    warm: '#22C55E',
-    cool: '#38BDF8',
+export interface SpeechBubbleProps {
+    title?: string;
+    body: string;
+    placement?: 'left' | 'right' | 'top' | 'bottom';
+    accent?: string;
+    tone?: BubbleTone;
+    visible?: boolean;
+    typingSpeed?: number;
+    actions?: BubbleAction[];
+}
+
+const TONE_COLORS: Record<BubbleTone, string> = {
+    info: '#06B6D4',
+    success: '#10B981',
+    warning: '#F59E0B',
+    error: '#EF4444',
+    neutral: '#64748B',
+    bright: '#FBBF24',
+    warm: '#F97316',
+    cool: '#818CF8',
     ghost: '#475569',
 };
 
@@ -39,50 +36,13 @@ export const SpeechBubble: React.FC<SpeechBubbleProps> = ({
     title,
     body,
     placement = 'right',
-    tone = 'cool',
     accent,
-    typingSpeed,
-    actions,
+    tone = 'info',
     visible = true,
-    stepLabel,
+    actions,
 }) => {
-    const resolvedAccent = accent ?? TONE_ACCENT[tone];
-    const TYPING_SPEED = typingSpeed ?? 28;
-    const [displayed, setDisplayed] = useState('');
-    const [isDone, setIsDone] = useState(false);
-    const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-
-    /* typewriter effect */
-    useEffect(() => {
-        if (!visible) return;
-        setDisplayed('');
-        setIsDone(false);
-        let idx = 0;
-        intervalRef.current = setInterval(() => {
-            idx++;
-            setDisplayed(body.slice(0, idx));
-            if (idx >= body.length) {
-                clearInterval(intervalRef.current!);
-                setIsDone(true);
-            }
-        }, TYPING_SPEED);
-        return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
-    }, [body, visible]);
-
-    /* skip to end on click */
-    const skipTyping = () => {
-        if (intervalRef.current) clearInterval(intervalRef.current);
-        setDisplayed(body);
-        setIsDone(true);
-    };
-
-    /* tail position styles */
-    const tailMap: Record<string, React.CSSProperties> = {
-        right: { left: -8, top: 20, borderWidth: '8px 10px 8px 0', borderColor: 'transparent #141D2D transparent transparent' },
-        left: { right: -8, top: 20, borderWidth: '8px 0 8px 10px', borderColor: 'transparent transparent transparent #141D2D' },
-        top: { bottom: -8, left: 24, borderWidth: '0 8px 10px 8px', borderColor: 'transparent transparent #141D2D transparent' },
-        bottom: { top: -8, left: 24, borderWidth: '10px 8px 0 8px', borderColor: '#141D2D transparent transparent transparent' },
-    };
+    const isHorizontal = placement === 'left' || placement === 'right';
+    const toneColor = accent || TONE_COLORS[tone];
 
     return (
         <AnimatePresence>
@@ -91,105 +51,96 @@ export const SpeechBubble: React.FC<SpeechBubbleProps> = ({
                     initial={{ opacity: 0, scale: 0.85, y: 6 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.85, y: 6 }}
-                    transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-                    onClick={skipTyping}
+                    transition={{ type: 'spring', stiffness: 400, damping: 25 }}
                     style={{
                         position: 'relative',
-                        background: '#141D2D',
-                        border: '1px solid rgba(255,255,255,0.08)',
-                        borderRadius: 16,
-                        padding: '16px 20px',
-                        width: 280,
-                        boxShadow: '0 12px 40px rgba(0,0,0,0.45)',
-                        cursor: isDone ? 'default' : 'pointer',
-                        userSelect: 'none',
+                        maxWidth: isHorizontal ? 280 : 240,
+                        padding: '12px 16px',
+                        background: 'rgba(15, 15, 22, 0.92)',
+                        backdropFilter: 'blur(12px)',
+                        border: `1px solid ${toneColor}30`,
+                        borderRadius: 12,
+                        color: '#e2e8f0',
+                        fontSize: 13,
+                        lineHeight: 1.5,
+                        fontFamily: "'DM Sans', sans-serif",
+                        boxShadow: `0 4px 20px rgba(0,0,0,0.4), 0 0 0 1px ${toneColor}10`,
                     }}
                 >
-                    {/* accent bar */}
-                    <div style={{
-                        position: 'absolute', top: 0, left: 16, right: 16, height: 2,
-                        borderRadius: '0 0 2px 2px',
-                        background: `linear-gradient(to right, transparent, ${resolvedAccent}, transparent)`,
-                    }} />
-
-                    {/* step label */}
-                    {stepLabel && (
-                        <div style={{
-                            display: 'inline-flex', alignItems: 'center', gap: 4,
-                            fontSize: 10, fontWeight: 700, fontFamily: 'monospace',
-                            textTransform: 'uppercase', letterSpacing: '0.08em',
-                            color: resolvedAccent, marginBottom: 8,
-                            background: `${resolvedAccent}15`, padding: '2px 8px', borderRadius: 20,
-                            border: `1px solid ${resolvedAccent}30`,
-                        }}>
-                            ⚡ {stepLabel}
-                        </div>
-                    )}
-
-                    {/* title */}
                     {title && (
                         <div style={{
-                            fontSize: 14, fontWeight: 700, color: '#F1F5F9',
-                            marginBottom: 6, lineHeight: 1.3,
+                            fontWeight: 600,
+                            fontSize: 14,
+                            marginBottom: 4,
+                            color: toneColor,
                         }}>
                             {title}
                         </div>
                     )}
-
-                    {/* body with typewriter + cursor */}
-                    <div style={{
-                        fontSize: 13, color: '#94A3B8', lineHeight: 1.65,
-                        minHeight: 20,
-                    }}>
-                        {displayed}
-                        {!isDone && (
-                            <motion.span
-                                animate={{ opacity: [1, 0] }}
-                                transition={{ duration: 0.5, repeat: Infinity }}
-                                style={{ color: resolvedAccent, fontWeight: 700, marginLeft: 1 }}
-                            >
-                                |
-                            </motion.span>
-                        )}
-                    </div>
-
-                    {/* actions (appear after typing finishes) */}
-                    <AnimatePresence>
-                        {isDone && actions && actions.length > 0 && (
-                            <motion.div
-                                initial={{ opacity: 0, y: 6 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.15 }}
-                                style={{ display: 'flex', gap: 8, marginTop: 14 }}
-                            >
-                                {actions.map((a, i) => (
-                                    <button
-                                        key={i}
-                                        onClick={(e) => { e.stopPropagation(); a.onClick(); }}
-                                        style={{
-                                            fontSize: 12, fontWeight: 600, border: 'none',
-                                            borderRadius: 10, padding: '6px 14px', cursor: 'pointer',
-                                            transition: 'all 0.15s',
-                                            ...(a.primary
-                                                ? { background: resolvedAccent, color: '#fff' }
-                                                : { background: 'rgba(255,255,255,0.06)', color: '#CBD5E1', border: '1px solid rgba(255,255,255,0.08)' }
-                                            ),
-                                        }}
-                                    >
-                                        {a.label}
-                                    </button>
-                                ))}
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
-
-                    {/* tail triangle */}
-                    <div style={{
-                        position: 'absolute',
-                        width: 0, height: 0,
-                        borderStyle: 'solid',
-                        ...tailMap[placement],
-                    }} />
+                    <div>{body}</div>
+                    {actions && actions.length > 0 && (
+                        <div style={{ marginTop: 10, display: 'flex', gap: 8 }}>
+                            {actions.map((a, i) => (
+                                <button
+                                    key={i}
+                                    onClick={a.onClick}
+                                    style={{
+                                        padding: '5px 12px',
+                                        borderRadius: 6,
+                                        fontSize: 12,
+                                        fontWeight: 600,
+                                        border: 'none',
+                                        cursor: 'pointer',
+                                        background: a.primary ? toneColor : 'rgba(255,255,255,0.08)',
+                                        color: a.primary ? '#000' : '#e2e8f0',
+                                        transition: 'all 0.2s',
+                                    }}
+                                >
+                                    {a.label}
+                                </button>
+                            ))}
+                        </div>
+                    )}
+                    {/* Tail */}
+                    <div
+                        style={{
+                            position: 'absolute',
+                            width: 0,
+                            height: 0,
+                            ...(placement === 'right' && {
+                                left: -6,
+                                top: '50%',
+                                transform: 'translateY(-50%)',
+                                borderTop: '6px solid transparent',
+                                borderBottom: '6px solid transparent',
+                                borderRight: '6px solid rgba(15, 15, 22, 0.92)',
+                            }),
+                            ...(placement === 'left' && {
+                                right: -6,
+                                top: '50%',
+                                transform: 'translateY(-50%)',
+                                borderTop: '6px solid transparent',
+                                borderBottom: '6px solid transparent',
+                                borderLeft: '6px solid rgba(15, 15, 22, 0.92)',
+                            }),
+                            ...(placement === 'top' && {
+                                bottom: -6,
+                                left: '50%',
+                                transform: 'translateX(-50%)',
+                                borderLeft: '6px solid transparent',
+                                borderRight: '6px solid transparent',
+                                borderTop: '6px solid rgba(15, 15, 22, 0.92)',
+                            }),
+                            ...(placement === 'bottom' && {
+                                top: -6,
+                                left: '50%',
+                                transform: 'translateX(-50%)',
+                                borderLeft: '6px solid transparent',
+                                borderRight: '6px solid transparent',
+                                borderBottom: '6px solid rgba(15, 15, 22, 0.92)',
+                            }),
+                        }}
+                    />
                 </motion.div>
             )}
         </AnimatePresence>

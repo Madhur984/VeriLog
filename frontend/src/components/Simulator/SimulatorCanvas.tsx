@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { DndContext, DragEndEvent, DragOverlay, useDraggable, useDroppable } from '@dnd-kit/core';
 import { Battery, Switch, LED, AndGate, OrGate } from '../Gates/CircuitComponents';
-
+import { VoltBot } from '../ui/VoltBot';
 
 // Wrapper for draggable items in Tray
 const DraggableItem = ({ type, children }: { type: string, children: React.ReactNode }) => {
@@ -110,7 +110,7 @@ export const SimulatorCanvas = () => {
                     {dragActive ? <div className="w-16 h-12 bg-cyan-400 opacity-50 rounded"></div> : null}
                 </DragOverlay>
 
-
+                <VoltBot state="idle" message="Drag components to the board!" className="fixed bottom-8 right-8" />
             </div>
         </DndContext>
     );

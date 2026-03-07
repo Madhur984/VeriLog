@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { VoltMonkey } from '../components/Bot/VoltMonkey';
-import { SpeechBubble } from '../components/Bot/SpeechBubble';
+import { VoltBot } from '../components/ui/VoltBot';
 import { DraggableItem } from '../components/ComponentTray/DraggableItem';
 import { Button } from '../components/ui/button';
 import { ArrowRight } from 'lucide-react';
@@ -120,15 +119,11 @@ export const Activity1 = ({ onNext }: ActivityProps) => {
                 />
             </div>
 
-            <div className="fixed bottom-8 left-8 z-40 flex items-end gap-3">
-                <VoltMonkey state={success ? 'happy' : 'idle'} size="md" />
-                <SpeechBubble
-                    body={success ? "Protocol execution successful! Signals are synchronized." : "Drag the components onto the breadboard grid."}
-                    placement="right"
-                    accent={success ? '#22C55E' : '#3B82F6'}
-                    visible
-                />
-            </div>
+            <VoltBot
+                message={success ? "Protocol execution successful! Signals are synchronized." : "Drag the components onto the breadboard grid."}
+                state={success ? 'happy' : 'idle'}
+                className="fixed bottom-12 left-12 z-40 scale-110"
+            />
         </div>
     );
 };

@@ -17,9 +17,9 @@ export const ElectronicDefs = () => (
             </linearGradient>
 
             <linearGradient id="body-ic-black" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#1e293b" />
-                <stop offset="20%" stopColor="#334155" />
-                <stop offset="100%" stopColor="#0f172a" />
+                <stop offset="0%" stopColor="#1A1D24" />
+                <stop offset="20%" stopColor="#2A2D35" />
+                <stop offset="100%" stopColor="#0D0F16" />
             </linearGradient>
 
             <filter id="drop-shadow-3d">
@@ -49,7 +49,7 @@ export const Resistor3D = ({ rotation = 0 }: { val?: string, rotation?: number }
 
         {/* Bands (Mock colors for 1k) */}
         <rect x="30" y="5" width="6" height="20" fill="#78350f" /> {/* Brown */}
-        <rect x="45" y="5" width="6" height="20" fill="#0f172a" /> {/* Black */}
+        <rect x="45" y="5" width="6" height="20" fill="#0D0F16" /> {/* Black */}
         <rect x="60" y="5" width="6" height="20" fill="#dc2626" /> {/* Red */}
         <rect x="72" y="5" width="4" height="20" fill="#d4af37" opacity="0.8" /> {/* Gold */}
     </g>
@@ -116,7 +116,7 @@ export const DipIC3D = ({ pins = 14, label = "74LS08" }: { pins?: number, label?
             <rect x="5" y="0" width={width} height={height} rx="2" fill="url(#body-ic-black)" />
 
             {/* Notch */}
-            <circle cx="5" cy={height / 2} r="3" fill="#334155" />
+            <circle cx="5" cy={height / 2} r="3" fill="#2A2D35" />
 
             {/* Label */}
             <text x={width / 2 + 5} y={height / 2 + 4} textAnchor="middle" fill="#cbd5e1" fontSize="10" fontFamily="monospace" letterSpacing="1">
@@ -137,7 +137,7 @@ export const Transistor3D = ({ type = "NPN" }) => (
         <path d="M 35 25 L 35 45" stroke="url(#metal-lead)" strokeWidth="2" />
 
         {/* Half Cylinder shape */}
-        <path d="M 10 25 L 40 25 L 40 5 A 15 10 0 0 0 10 5 Z" fill="#1e293b" />
+        <path d="M 10 25 L 40 25 L 40 5 A 15 10 0 0 0 10 5 Z" fill="#1A1D24" />
         <text x="25" y="20" textAnchor="middle" fill="white" fontSize="6">{type}</text>
     </g>
 );

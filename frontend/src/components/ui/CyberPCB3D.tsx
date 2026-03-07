@@ -100,7 +100,7 @@ export const CyberPCB3D: React.FC<CyberPCB3DProps> = ({ className, intensity: _i
 
                 <GridFloor />
 
-                <fog attach="fog" args={['#0f172a', 5, 25]} />
+                <fog attach="fog" args={['#0D0F16', 5, 25]} />
 
                 {/* Circuit Traces */}
                 {routes.map((route, i) => (

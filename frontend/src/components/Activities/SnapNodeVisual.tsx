@@ -49,8 +49,8 @@ export const SnapNodeVisual: React.FC<SnapNodeVisualProps> = ({
                     strokeWidth: isNearest ? 2 : 1,
                     scale: isNearest ? 1.1 : 1,
                 }}
-                fill={occupied ? "#1E293B" : isNearest ? "url(#snapActiveGrad)" : "url(#snapIdleGrad)"}
-                stroke={isNearest ? "#00D2FF" : "#334155"}
+                fill={occupied ? "#1A1D24" : isNearest ? "url(#snapActiveGrad)" : "url(#snapIdleGrad)"}
+                stroke={isNearest ? "#00D2FF" : "#2A2D35"}
                 className="transition-all duration-200"
                 style={{
                     filter: isNearest ? `drop-shadow(0 0 ${8 * magneticForce}px #00D2FF)` : 'none',

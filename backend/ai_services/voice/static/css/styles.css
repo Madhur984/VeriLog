@@ -1,0 +1,33 @@
+/* Custom Animations */
+@keyframes scan {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(100%); }
+}
+
+#scan-beam {
+    animation: scan 3s linear infinite;
+    background: linear-gradient(to bottom, transparent, rgba(16, 185, 129, 0.2), transparent);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #0A0A0A; 
+}
+::-webkit-scrollbar-thumb {
+    background: #262626; 
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #404040; 
+}
+
+/* Glass Utilities */
+.glass {
+    background: rgba(23, 23, 23, 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}

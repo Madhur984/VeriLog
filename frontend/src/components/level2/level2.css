@@ -1,0 +1,304 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   level2.css — VeriLog Level 2: Continuous vs Discrete
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ── LED States ─────────────────────────────────────────────────────── */
+
+.led--analog {
+    border-radius: 50%;
+    transition: background 0.1s ease, box-shadow 0.1s ease;
+    will-change: background, box-shadow;
+}
+
+.led--digital {
+    border-radius: 50%;
+    transition: background 0.08s step-end, box-shadow 0.08s step-end;
+    will-change: background, box-shadow;
+}
+
+/* ── Analog Noise Flicker ───────────────────────────────────────────── */
+
+@keyframes analog-flicker {
+    0% {
+        opacity: 1.0;
+    }
+
+    15% {
+        opacity: 0.7;
+    }
+
+    30% {
+        opacity: 0.95;
+    }
+
+    50% {
+        opacity: 0.6;
+    }
+
+    70% {
+        opacity: 1.0;
+    }
+
+    85% {
+        opacity: 0.75;
+    }
+
+    100% {
+        opacity: 0.9;
+    }
+}
+
+.led--flickering {
+    animation: analog-flicker 0.12s linear infinite;
+}
+
+/* ── Oscilloscope Canvas ────────────────────────────────────────────── */
+
+.scope-canvas-wrapper {
+    position: relative;
+    border: 1px solid rgba(0, 212, 255, 0.15);
+    border-radius: 4px;
+    overflow: hidden;
+    background: #060912;
+}
+
+.scope-canvas-wrapper::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(0deg,
+            transparent,
+            transparent 39px,
+            rgba(0, 212, 255, 0.04) 39px,
+            rgba(0, 212, 255, 0.04) 40px),
+        repeating-linear-gradient(90deg,
+            transparent,
+            transparent 39px,
+            rgba(0, 212, 255, 0.04) 39px,
+            rgba(0, 212, 255, 0.04) 40px);
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* CRT scanline effect */
+@keyframes scope-scanline {
+    0% {
+        background-position: 0 0;
+    }
+
+    100% {
+        background-position: 0 100%;
+    }
+}
+
+.scope-scanline-overlay {
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(0deg,
+            transparent,
+            transparent 2px,
+            rgba(0, 0, 0, 0.08) 2px,
+            rgba(0, 0, 0, 0.08) 4px);
+    pointer-events: none;
+    z-index: 2;
+}
+
+/* ── Threshold Lines ────────────────────────────────────────────────── */
+
+.threshold-line-high {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: rgba(16, 185, 129, 0.5);
+    border-top: 1px dashed rgba(16, 185, 129, 0.4);
+    z-index: 3;
+}
+
+.threshold-line-low {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: rgba(239, 68, 68, 0.5);
+    border-top: 1px dashed rgba(239, 68, 68, 0.4);
+    z-index: 3;
+}
+
+/* ── Voltage Classification Bands ───────────────────────────────────── */
+
+.vzone--high {
+    background: rgba(16, 185, 129, 0.12);
+}
+
+.vzone--low {
+    background: rgba(239, 68, 68, 0.12);
+}
+
+.vzone--undef {
+    background: rgba(245, 158, 11, 0.12);
+}
+
+.vzone-label {
+    font-family: 'IBM Plex Mono', 'Roboto Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    pointer-events: none;
+}
+
+/* ── Circuit SVG Wire Glow ──────────────────────────────────────────── */
+
+.wire--analog-live {
+    stroke: #00D4FF;
+    filter: drop-shadow(0 0 4px rgba(0, 212, 255, 0.6));
+    animation: analog-wire-pulse 2s ease-in-out infinite alternate;
+}
+
+@keyframes analog-wire-pulse {
+    from {
+        filter: drop-shadow(0 0 2px rgba(0, 212, 255, 0.4));
+    }
+
+    to {
+        filter: drop-shadow(0 0 8px rgba(0, 212, 255, 0.9));
+    }
+}
+
+.wire--digital-live {
+    stroke: #10B981;
+    filter: drop-shadow(0 0 4px rgba(16, 185, 129, 0.7));
+}
+
+.wire--off {
+    stroke: #1E293B;
+    filter: none;
+}
+
+/* ── Potentiometer Wiper ────────────────────────────────────────────── */
+
+.pot-wiper {
+    cursor: ns-resize;
+    transition: r 0.1s ease;
+}
+
+.pot-wiper:hover {
+    r: 7;
+}
+
+/* ── Concept Table Rows ─────────────────────────────────────────────── */
+
+.concept-row {
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease;
+    border-radius: 4px;
+}
+
+.concept-row:hover {
+    background: rgba(0, 212, 255, 0.04);
+    border-color: rgba(0, 212, 255, 0.2);
+}
+
+.concept-row--active {
+    background: rgba(0, 212, 255, 0.06);
+    border-color: rgba(0, 212, 255, 0.3);
+}
+
+/* ── Badge Toast ────────────────────────────────────────────────────── */
+
+.badge-toast {
+    position: fixed;
+    bottom: 88px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9998;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    background: rgba(10, 15, 30, 0.96);
+    border: 1px solid rgba(0, 212, 255, 0.3);
+    border-radius: 4px;
+    box-shadow: 0 0 32px rgba(0, 212, 255, 0.15);
+    pointer-events: none;
+}
+
+/* ── Binary Rain (complete scene) ───────────────────────────────────── */
+
+@keyframes binary-fall {
+    0% {
+        transform: translateY(-10px);
+        opacity: 0;
+    }
+
+    10% {
+        opacity: 1;
+    }
+
+    90% {
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(100px);
+        opacity: 0;
+    }
+}
+
+.binary-char {
+    animation: binary-fall linear infinite;
+    font-family: 'IBM Plex Mono', 'Roboto Mono', monospace;
+    font-size: 13px;
+    color: rgba(0, 212, 255, 0.7);
+    position: absolute;
+    user-select: none;
+    pointer-events: none;
+}
+
+/* ── Signal Morph (intro scene) ─────────────────────────────────────── */
+
+@keyframes signal-morph {
+
+    0%,
+    100% {
+        d: path('M0,40 C20,20 40,60 60,40 C80,20 100,60 120,40');
+    }
+
+    50% {
+        d: path('M0,40 L30,40 L30,10 L60,10 L60,70 L90,70 L90,40 L120,40');
+    }
+}
+
+/* ── Waveform Entry Animation ───────────────────────────────────────── */
+
+@keyframes waveform-draw {
+    from {
+        stroke-dashoffset: 600;
+    }
+
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+.waveform-animated {
+    stroke-dasharray: 600;
+    stroke-dashoffset: 600;
+    animation: waveform-draw 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* ── Reduced Motion ─────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .led--flickering,
+    .wire--analog-live,
+    .binary-char,
+    .waveform-animated {
+        animation: none !important;
+    }
+
+    .scope-scanline-overlay {
+        display: none;
+    }
+}

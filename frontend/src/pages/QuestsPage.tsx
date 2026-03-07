@@ -36,7 +36,7 @@ export const QuestsPage = () => {
 
     return (
         <div className="flex flex-col gap-6 pb-20">
-            <div className="bg-gradient-to-r from-teal-500 to-cyan-600 rounded-2xl p-8 text-white flex justify-between items-center shadow-[0_6px_0_0_#0f766e]">
+            <div className="bg-gradient-to-r from-purple-500 to-indigo-600 rounded-2xl p-8 text-white flex justify-between items-center shadow-[0_6px_0_0_#4c1d95]">
                 <div>
                     <h1 className="text-2xl font-bold font-heading mb-2">Daily Quests</h1>
                     <p className="text-indigo-100">Complete quests to earn gems and XP!</p>
@@ -70,4 +70,3 @@ export const QuestsPage = () => {
         </div>
     );
 };
-// aria-label

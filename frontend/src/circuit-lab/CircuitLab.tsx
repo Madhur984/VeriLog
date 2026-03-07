@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
-import type { CircuitComponent, WireSegment, ComponentType } from './types';
+import type { CircuitComponent, WireSegment, ComponentType, AnchorPoint } from './types';
 import { Canvas } from './Canvas';
 import { useCircuitGraph } from './hooks/useCircuitGraph';
 import { animController } from './animations/animationController';
@@ -9,7 +9,6 @@ import { ElectronFlow } from './animations/electronFlow';
 import { ActivationPulse } from './animations/activationPulse';
 import { ParticleField } from './animations/particleField';
 import { ShortCircuit } from './animations/shortCircuit';
-import type { AnchorPoint } from './types';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Anchor factory helpers
@@ -114,7 +113,10 @@ function TrayItem({ type, label, icon, desc, onAdd }: {
 // ─────────────────────────────────────────────────────────────────────────────
 // Main CircuitLab Page
 // ─────────────────────────────────────────────────────────────────────────────
-export function CircuitLab() {
+export function CircuitLab({ onCircuitComplete, standalone = true }: {
+    onCircuitComplete?: () => void;
+    standalone?: boolean;
+}) {
     const [components, setComponents] = useState<CircuitComponent[]>([]);
     const [wires, setWires] = useState<WireSegment[]>([]);
 
@@ -146,7 +148,10 @@ export function CircuitLab() {
         if (prevClosed.current === isCircuitClosed) return;
         prevClosed.current = isCircuitClosed;
         if (isCircuitClosed) {
-            animController.emit('circuit:closed', { liveWireIds: [...liveWireIds] });
+            animController.emit('circuit:closed', {
+                liveWireIds: [...liveWireIds],
+            });
+            if (onCircuitComplete) onCircuitComplete();
         } else {
             animController.emit('circuit:opened', {});
         }
@@ -163,6 +168,7 @@ export function CircuitLab() {
     }, [isShortCircuit]);
 
     const addComponent = useCallback((type: ComponentType) => {
+        // Stagger new components so they don't stack exactly
         const offset = components.length * 30;
         const defaultPos: Record<ComponentType, { x: number; y: number }> = {
             battery: { x: 200 + offset, y: 280 + offset * 0.3 },
@@ -174,11 +180,16 @@ export function CircuitLab() {
     }, [components.length]);
 
     const updateComponent = useCallback((id: string, update: Partial<CircuitComponent>) => {
-        setComponents((prev) => prev.map((c) => (c.id === id ? { ...c, ...update } : c)));
+        setComponents((prev) =>
+            prev.map((c) => (c.id === id ? { ...c, ...update } : c))
+        );
     }, []);
 
     const toggleSwitch = useCallback((id: string) => {
-        setComponents((prev) => prev.map((c) => (c.id === id ? { ...c, isClosed: !c.isClosed } : c)));
+        setComponents((prev) =>
+            prev.map((c) => (c.id === id ? { ...c, isClosed: !c.isClosed } : c))
+        );
+        // Remove wires connected to this switch when opened (to break circuit)
     }, []);
 
     const connectAnchors = useCallback((anchorId: string, targetAnchorId: string) => {
@@ -197,7 +208,10 @@ export function CircuitLab() {
     const addWire = useCallback((fromAnchorId: string, toAnchorId: string) => {
         const id = `wire-${fromAnchorId}-${toAnchorId}`;
         setWires((prev) => {
-            if (prev.some((w) => w.fromAnchorId === fromAnchorId && w.toAnchorId === toAnchorId)) return prev;
+            // Prevent duplicate wires
+            if (prev.some((w) => w.fromAnchorId === fromAnchorId && w.toAnchorId === toAnchorId)) {
+                return prev;
+            }
             return [...prev, { id, fromAnchorId, toAnchorId, isLive: false }];
         });
     }, []);
@@ -214,11 +228,13 @@ export function CircuitLab() {
         <div
             style={{
                 display: 'flex',
-                height: '100vh',
-                width: '100vw',
-                background: '#070f1a',
+                height: standalone ? '100vh' : '500px',
+                width: standalone ? '100vw' : '100%',
+                background: standalone ? '#070f1a' : 'rgba(0,0,0,0.2)',
                 fontFamily: "'Courier New', monospace",
                 overflow: 'hidden',
+                borderRadius: standalone ? 0 : 24,
+                border: standalone ? 'none' : '2px dashed rgba(30,41,59,1)',
             }}
         >
             {/* ── Left Panel ── */}
@@ -236,16 +252,29 @@ export function CircuitLab() {
                 }}
             >
                 {/* Panel header */}
-                <div style={{ padding: '20px 16px 16px', borderBottom: '1px solid rgba(0,191,255,0.1)' }}>
+                <div
+                    style={{
+                        padding: '20px 16px 16px',
+                        borderBottom: '1px solid rgba(0,191,255,0.1)',
+                    }}
+                >
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
                         <span style={{ color: '#00BFFF', fontSize: 16 }}>◈</span>
-                        <span style={{ color: '#00BFFF', fontSize: 13, fontWeight: 700, letterSpacing: 2 }}>VERILOG</span>
+                        <span style={{ color: '#00BFFF', fontSize: 13, fontWeight: 700, letterSpacing: 2 }}>
+                            VERILOG
+                        </span>
                     </div>
-                    <div style={{ color: '#2a6e8a', fontSize: 9, letterSpacing: 2, marginLeft: 24 }}>CIRCUIT LAB v1.0</div>
+                    <div style={{ color: '#2a6e8a', fontSize: 9, letterSpacing: 2, marginLeft: 24 }}>
+                        CIRCUIT LAB v1.0
+                    </div>
                 </div>
 
-                <div style={{ padding: '14px 16px 8px', color: '#2a6e8a', fontSize: 9, letterSpacing: 2 }}>COMPONENTS</div>
+                {/* Section label */}
+                <div style={{ padding: '14px 16px 8px', color: '#2a6e8a', fontSize: 9, letterSpacing: 2 }}>
+                    COMPONENTS
+                </div>
 
+                {/* Component tray */}
                 <div style={{ padding: '0 12px', flex: 1 }}>
                     {TRAY_ITEMS.map((item) => (
                         <TrayItem key={item.type} {...item} onAdd={addComponent} />
@@ -253,7 +282,15 @@ export function CircuitLab() {
                 </div>
 
                 {/* Stats */}
-                <div style={{ margin: '12px', padding: '12px', background: 'rgba(0,191,255,0.04)', border: '1px solid rgba(0,191,255,0.1)', borderRadius: 6 }}>
+                <div
+                    style={{
+                        margin: '12px',
+                        padding: '12px',
+                        background: 'rgba(0,191,255,0.04)',
+                        border: '1px solid rgba(0,191,255,0.1)',
+                        borderRadius: 6,
+                    }}
+                >
                     <div style={{ color: '#2a6e8a', fontSize: 8, letterSpacing: 2, marginBottom: 8 }}>CIRCUIT STATS</div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
                         <span style={{ color: '#4a8caa', fontSize: 10 }}>Components</span>
@@ -263,9 +300,21 @@ export function CircuitLab() {
                         <span style={{ color: '#4a8caa', fontSize: 10 }}>Wires</span>
                         <span style={{ color: '#00BFFF', fontSize: 10, fontWeight: 700 }}>{wireCount}</span>
                     </div>
+                    {/* Clear button */}
                     <button
                         onClick={clearCanvas}
-                        style={{ width: '100%', padding: '6px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 4, color: '#f87171', fontSize: 9, letterSpacing: 1, cursor: 'pointer', transition: 'all 0.2s' }}
+                        style={{
+                            width: '100%',
+                            padding: '6px',
+                            background: 'rgba(239,68,68,0.1)',
+                            border: '1px solid rgba(239,68,68,0.2)',
+                            borderRadius: 4,
+                            color: '#f87171',
+                            fontSize: 9,
+                            letterSpacing: 1,
+                            cursor: 'pointer',
+                            transition: 'all 0.2s',
+                        }}
                         onMouseEnter={(e) => ((e.currentTarget as HTMLButtonElement).style.background = 'rgba(239,68,68,0.2)')}
                         onMouseLeave={(e) => ((e.currentTarget as HTMLButtonElement).style.background = 'rgba(239,68,68,0.1)')}
                     >
@@ -278,18 +327,45 @@ export function CircuitLab() {
                     style={{
                         margin: '0 12px',
                         padding: '10px 12px',
-                        background: isShortCircuit ? 'rgba(239,68,68,0.1)' : isCircuitClosed ? 'rgba(0,191,255,0.08)' : 'rgba(0,0,0,0.3)',
+                        background: isShortCircuit
+                            ? 'rgba(239,68,68,0.1)'
+                            : isCircuitClosed
+                                ? 'rgba(0,191,255,0.08)'
+                                : 'rgba(0,0,0,0.3)',
                         border: `1px solid ${isShortCircuit ? 'rgba(239,68,68,0.5)' : isCircuitClosed ? 'rgba(0,191,255,0.4)' : 'rgba(255,255,255,0.05)'}`,
                         borderRadius: 6,
                         textAlign: 'center',
-                        boxShadow: isShortCircuit ? '0 0 16px rgba(239,68,68,0.2)' : isCircuitClosed ? '0 0 16px rgba(0,191,255,0.15)' : 'none',
+                        boxShadow: isShortCircuit
+                            ? '0 0 16px rgba(239,68,68,0.2)'
+                            : isCircuitClosed
+                                ? '0 0 16px rgba(0,191,255,0.15)'
+                                : 'none',
                         transition: 'all 0.5s ease',
                     }}
                 >
-                    <div style={{ fontSize: 16, marginBottom: 4, filter: isShortCircuit ? 'drop-shadow(0 0 6px #ef4444)' : isCircuitClosed ? 'drop-shadow(0 0 6px #00BFFF)' : 'none', transition: 'filter 0.5s ease' }}>
+                    <div
+                        style={{
+                            fontSize: 16,
+                            marginBottom: 4,
+                            filter: isShortCircuit
+                                ? 'drop-shadow(0 0 6px #ef4444)'
+                                : isCircuitClosed
+                                    ? 'drop-shadow(0 0 6px #00BFFF)'
+                                    : 'none',
+                            transition: 'filter 0.5s ease',
+                        }}
+                    >
                         {isShortCircuit ? '⚠' : isCircuitClosed ? '⚡' : '○'}
                     </div>
-                    <div style={{ fontSize: 9, letterSpacing: 1.5, color: isShortCircuit ? '#f87171' : isCircuitClosed ? '#00BFFF' : '#334155', fontWeight: 700, transition: 'color 0.5s ease' }}>
+                    <div
+                        style={{
+                            fontSize: 9,
+                            letterSpacing: 1.5,
+                            color: isShortCircuit ? '#f87171' : isCircuitClosed ? '#00BFFF' : '#2A2D35',
+                            fontWeight: 700,
+                            transition: 'color 0.5s ease',
+                        }}
+                    >
                         {isShortCircuit ? 'SHORT CIRCUIT' : isCircuitClosed ? 'LOOP COMPLETE' : 'OPEN CIRCUIT'}
                     </div>
                 </div>
@@ -298,15 +374,32 @@ export function CircuitLab() {
             {/* ── Canvas Area ── */}
             <main style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
                 {/* Top bar */}
-                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 36, background: 'rgba(7,15,26,0.9)', borderBottom: '1px solid rgba(0,191,255,0.08)', display: 'flex', alignItems: 'center', padding: '0 20px', zIndex: 5, backdropFilter: 'blur(8px)' }}>
+                <div
+                    style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        height: 36,
+                        background: 'rgba(7,15,26,0.9)',
+                        borderBottom: '1px solid rgba(0,191,255,0.08)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        padding: '0 20px',
+                        zIndex: 5,
+                        backdropFilter: 'blur(8px)',
+                    }}
+                >
                     <span style={{ color: '#1a4a6a', fontSize: 9, letterSpacing: 3 }}>
-                        CLICK TRAY → ADD COMPONENT → DRAG ANCHOR DOT TO CONNECT → DOUBLE-CLICK SWITCH TO TOGGLE
+                        DRAG COMPONENTS FROM PANEL → DROP ON CANVAS → CONNECT ANCHORS TO BUILD CIRCUIT
                     </span>
-                    <span style={{ marginLeft: 'auto', color: '#00BFFF', fontSize: 9, opacity: 0.5 }}>SNAP RADIUS: 36px</span>
+                    <span style={{ marginLeft: 'auto', color: '#00BFFF', fontSize: 9, opacity: 0.5 }}>
+                        SNAP RADIUS: 30px
+                    </span>
                 </div>
 
                 {/* SVG Canvas */}
-                <div style={{ position: 'absolute', inset: 0, top: 36 }}>
+                <div style={{ position: 'absolute', inset: 36, top: 36 }}>
                     <Canvas
                         components={components}
                         wires={wires}
@@ -320,28 +413,72 @@ export function CircuitLab() {
                     />
                 </div>
 
-                {/* Short-Circuit Overlay (controlled by ShortCircuit AnimModule) */}
+                {/* ── VoltMonkey Short-Circuit Overlay ── */}
+                {/* Controlled directly by ShortCircuit AnimModule via DOM (id lookup) */}
                 <div
-                    id="sigma-short-overlay"
-                    style={{ display: 'none', position: 'absolute', top: 44, left: '50%', transform: 'translateX(-50%)', zIndex: 50, background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.4)', borderRadius: 8, padding: '10px 20px', backdropFilter: 'blur(12px)', alignItems: 'center', gap: 12, pointerEvents: 'none', minWidth: 280 }}
+                    id="VoltMonkey-short-overlay"
+                    style={{
+                        display: 'none',
+                        position: 'absolute',
+                        top: 44,
+                        left: '50%',
+                        transform: 'translateX(-50%)',
+                        zIndex: 50,
+                        background: 'rgba(239,68,68,0.1)',
+                        border: '1px solid rgba(239,68,68,0.4)',
+                        borderRadius: 8,
+                        padding: '10px 20px',
+                        backdropFilter: 'blur(12px)',
+                        alignItems: 'center',
+                        gap: 12,
+                        pointerEvents: 'none',
+                        minWidth: 280,
+                    }}
                     aria-live="assertive"
                     aria-label="Warning: Short circuit detected"
                 >
                     <span style={{ fontSize: 20, color: '#ef4444' }}>⚠</span>
                     <div>
-                        <div style={{ color: '#fca5a5', fontSize: 11, fontWeight: 700, letterSpacing: 2, fontFamily: "'Courier New', monospace" }}>SIGMA WARNING</div>
-                        <div style={{ color: 'rgba(252,165,165,0.7)', fontSize: 10, letterSpacing: 1, marginTop: 2, fontFamily: "'Courier New', monospace" }}>
+                        <div style={{
+                            color: '#fca5a5',
+                            fontSize: 11,
+                            fontWeight: 700,
+                            letterSpacing: 2,
+                            fontFamily: "'Courier New', monospace",
+                        }}>VoltMonkey WARNING</div>
+                        <div style={{
+                            color: 'rgba(252,165,165,0.7)',
+                            fontSize: 10,
+                            letterSpacing: 1,
+                            marginTop: 2,
+                            fontFamily: "'Courier New', monospace",
+                        }}>
                             Direct path detected. No load in loop. Danger.
                         </div>
                     </div>
                 </div>
 
-                {/* Empty state */}
+                {/* Empty state hint */}
                 {components.length === 0 && (
-                    <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none', top: 36 }}>
+                    <div
+                        style={{
+                            position: 'absolute',
+                            inset: 0,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            pointerEvents: 'none',
+                            top: 36,
+                        }}
+                    >
                         <div style={{ color: '#0f2a3f', fontSize: 64, marginBottom: 16, lineHeight: 1 }}>◈</div>
-                        <div style={{ color: '#0f2a3f', fontSize: 13, letterSpacing: 3, marginBottom: 8 }}>CIRCUIT CANVAS READY</div>
-                        <div style={{ color: '#0c2030', fontSize: 10, letterSpacing: 2 }}>ADD COMPONENTS FROM THE LEFT PANEL</div>
+                        <div style={{ color: '#0f2a3f', fontSize: 13, letterSpacing: 3, marginBottom: 8 }}>
+                            CIRCUIT CANVAS READY
+                        </div>
+                        <div style={{ color: '#0c2030', fontSize: 10, letterSpacing: 2 }}>
+                            ADD COMPONENTS FROM THE LEFT PANEL
+                        </div>
                     </div>
                 )}
             </main>

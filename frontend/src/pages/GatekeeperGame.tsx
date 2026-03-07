@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { VoltMonkey } from '../components/Bot/VoltMonkey';
-import { SpeechBubble } from '../components/Bot/SpeechBubble';
+import { VoltBot } from '../components/ui/VoltBot';
 import { Wire } from '../components/ui/Wire';
 import { CyberPCB3D } from '../components/ui/CyberPCB3D';
 import { ArrowLeft, Lock, Unlock, Shield } from 'lucide-react';
@@ -28,7 +27,7 @@ export const GatekeeperGame = () => {
     };
 
     return (
-        <div className="min-h-screen bg-[#000000] text-emerald-500 font-mono relative overflow-hidden" aria-label="gatekeeper-game">
+        <div className="min-h-screen bg-transparent text-foreground flex flex-col p-6 relative">
             <CyberPCB3D className="fixed inset-0" intensity={0.5} />
             <header className="flex items-center justify-between mb-8">
                 <button onClick={() => navigate('/')} className="flex items-center text-muted-foreground hover:text-white transition-colors">
@@ -154,19 +153,17 @@ export const GatekeeperGame = () => {
 
                 </div>
 
-                <div className="lg:col-span-3 flex flex-col justify-center items-center gap-4">
-                    <VoltMonkey state={showSuccess ? 'happy' : 'talking'} size="md" />
-                    <SpeechBubble
-                        body={
+                {/* Right: Bot Assistant */}
+                <div className="lg:col-span-3 flex flex-col justify-center">
+                    <VoltBot
+                        state={showSuccess ? 'happy' : 'speaking'}
+                        message={
                             showSuccess
                                 ? "Spectacular! You've mastered the logic!"
                                 : gateType === 'AND'
                                     ? "For an AND gate, BOTH guards need to be present!"
                                     : "For an OR gate, ANY guard will do!"
                         }
-                        placement="bottom"
-                        accent={showSuccess ? '#22C55E' : '#3B82F6'}
-                        visible
                     />
                 </div>
 

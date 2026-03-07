@@ -12,9 +12,9 @@ interface Chip3DProps {
     onClick?: () => void;
 }
 
-export const Chip3D: React.FC<Chip3DProps> = ({ type, position, label, color = '#1E293B', isSelected, onClick }) => {
+export const Chip3D: React.FC<Chip3DProps> = ({ type, position, label, color = '#1A1D24', isSelected, onClick }) => {
     const mesh = useRef<THREE.Mesh>(null);
-    const glowColor = isSelected ? '#00DC82' : '#3B82F6';
+    const glowColor = isSelected ? '#00DC82' : '#10B981';
 
     useFrame((state) => {
         if (mesh.current && isSelected) {

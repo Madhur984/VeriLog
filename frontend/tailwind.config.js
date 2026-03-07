@@ -58,7 +58,25 @@ export default {
                     success: "hsl(var(--signal-success))",
                     error: "hsl(var(--signal-error))",
                     gold: "hsl(var(--signal-gold))",
-                }
+                },
+                // Vivid accent colors
+                emerald: {
+                    DEFAULT: '#10B981',
+                    50: '#ECFDF5',
+                    400: '#34D399',
+                    500: '#10B981',
+                    600: '#059669',
+                },
+                cyan: {
+                    DEFAULT: '#06B6D4',
+                    400: '#22D3EE',
+                    500: '#06B6D4',
+                },
+                amber: {
+                    DEFAULT: '#F59E0B',
+                    400: '#FBBF24',
+                    500: '#F59E0B',
+                },
             },
             borderRadius: {
                 lg: "var(--radius)",
@@ -66,8 +84,9 @@ export default {
                 sm: "calc(var(--radius) - 4px)",
             },
             fontFamily: {
-                sans: ['Inter', 'sans-serif'],
-                heading: ['Poppins', 'sans-serif'],
+                sans: ['DM Sans', 'Inter', 'sans-serif'],
+                heading: ['Space Grotesk', 'DM Sans', 'sans-serif'],
+                display: ['Space Grotesk', 'sans-serif'],
                 mono: ['Roboto Mono', 'monospace'],
             },
             keyframes: {

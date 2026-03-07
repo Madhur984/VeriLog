@@ -1,9 +1,15 @@
-import { useCallback, useRef, useState, type RefObject } from 'react';
-import type { CircuitComponent, WireSegment } from './types';
+import type React from 'react';
+import type { CircuitComponent, WireSegment, AnchorPoint, Position } from './types';
+import { Battery } from './components/Battery';
+import { Resistor } from './components/Resistor';
+import { Switch } from './components/Switch';
+import { Bulb } from './components/Bulb';
+import { Wire } from './components/Wire';
+import { useDrag } from './hooks/useDrag';
 
-const W = 1200;
-const H = 700;
-const SNAP_RADIUS = 36;
+const SNAP_RADIUS = 30;
+const CANVAS_W = 1400;
+const CANVAS_H = 900;
 
 interface CanvasProps {
     components: CircuitComponent[];
@@ -12,319 +18,319 @@ interface CanvasProps {
     liveWireIds: Set<string>;
     onUpdateComponent: (id: string, update: Partial<CircuitComponent>) => void;
     onToggleSwitch: (id: string) => void;
-    onAddWire: (from: string, to: string) => void;
-    onConnectAnchors: (a: string, b: string) => void;
-    svgRef: RefObject<SVGSVGElement>;
+    onAddWire: (fromAnchorId: string, toAnchorId: string) => void;
+    onConnectAnchors: (anchorId: string, targetAnchorId: string) => void;
+    svgRef: React.RefObject<SVGSVGElement>;
 }
 
-function getAnchorPos(comp: CircuitComponent, anchorId: string): { x: number; y: number } | null {
-    const anchor = comp.anchors.find((a) => a.id === anchorId);
-    if (!anchor) return null;
-    return { x: comp.position.x + anchor.offset.x, y: comp.position.y + anchor.offset.y };
-}
-
-// ── Tiny SVG component renderers ─────────────────────────────────────────────
-
-function BatterySVG({ x, y, glow }: { x: number; y: number; glow: boolean }) {
-    const c = glow ? '#00BFFF' : '#2a6e8a';
-    const gf = glow ? 'url(#glow-filter)' : undefined;
-    return (
-        <g transform={`translate(${x},${y})`} filter={gf}>
-            {/* Body */}
-            <rect x={-12} y={-38} width={24} height={76} rx={4}
-                fill="#0a1929" stroke={c} strokeWidth={glow ? 2 : 1.5} />
-            {/* Lines */}
-            {[-20, -10, 0, 10, 20].map((dy, i) => (
-                <line key={i} x1={-9} y1={dy} x2={9} y2={dy} stroke={c} strokeWidth={1} opacity={0.5} />
-            ))}
-            {/* Terminals */}
-            <line x1={0} y1={-38} x2={0} y2={-52} stroke="#22c55e" strokeWidth={2.5} strokeLinecap="round" />
-            <text x={4} y={-54} fill="#22c55e" fontSize={9} fontFamily="monospace">+</text>
-            <line x1={0} y1={38} x2={0} y2={52} stroke="#ef4444" strokeWidth={2.5} strokeLinecap="round" />
-            <text x={4} y={60} fill="#ef4444" fontSize={9} fontFamily="monospace">−</text>
-            {glow && (
-                <circle cx={0} cy={0} r={50} fill="#00BFFF" opacity={0.04} />
-            )}
-        </g>
-    );
-}
-
-function ResistorSVG({ x, y, glow }: { x: number; y: number; glow: boolean }) {
-    const c = glow ? '#f59e0b' : '#2a6e8a';
-    const gf = glow ? 'url(#glow-filter)' : undefined;
-    return (
-        <g transform={`translate(${x},${y})`} filter={gf}>
-            <line x1={-34} y1={0} x2={-18} y2={0} stroke={c} strokeWidth={2} strokeLinecap="round" />
-            <rect x={-18} y={-10} width={36} height={20} rx={3}
-                fill="#0a1929" stroke={c} strokeWidth={glow ? 2 : 1.5} />
-            <path d="M-12,-5 L-6,5 L0,-5 L6,5 L12,-5" fill="none" stroke={c} strokeWidth={1.2} strokeLinecap="round" />
-            <line x1={18} y1={0} x2={34} y2={0} stroke={c} strokeWidth={2} strokeLinecap="round" />
-        </g>
-    );
-}
-
-function SwitchSVG({ x, y, glow, closed }: { x: number; y: number; glow: boolean; closed: boolean }) {
-    const c = closed ? '#22c55e' : '#2a6e8a';
-    const gf = glow ? 'url(#glow-filter)' : undefined;
-    return (
-        <g transform={`translate(${x},${y})`} filter={gf}>
-            <line x1={-44} y1={0} x2={-20} y2={0} stroke={c} strokeWidth={2} strokeLinecap="round" />
-            <circle cx={-20} cy={0} r={4} fill="#0a1929" stroke={c} strokeWidth={1.5} />
-            {closed
-                ? <line x1={-20} y1={0} x2={20} y2={0} stroke={c} strokeWidth={2.5} strokeLinecap="round" />
-                : <line x1={-20} y1={0} x2={16} y2={-18} stroke={c} strokeWidth={2.5} strokeLinecap="round" />
-            }
-            <circle cx={20} cy={0} r={4} fill="#0a1929" stroke={c} strokeWidth={1.5} />
-            <line x1={20} y1={0} x2={44} y2={0} stroke={c} strokeWidth={2} strokeLinecap="round" />
-            <text x={0} y={20} textAnchor="middle" fill={c} fontSize={8} fontFamily="monospace" opacity={0.7}>
-                {closed ? 'ON' : 'OFF'}
-            </text>
-        </g>
-    );
-}
-
-function BulbSVG({ x, y, glow }: { x: number; y: number; glow: boolean }) {
-    const c = glow ? '#fbbf24' : '#2a6e8a';
-    const gf = glow ? 'url(#bulb-glow-filter)' : undefined;
-    return (
-        <g transform={`translate(${x},${y})`}>
-            {glow && <circle cx={0} cy={-18} r={36} fill="#fbbf24" opacity={0.08} />}
-            <g filter={gf}>
-                <circle cx={0} cy={-22} r={18} fill={glow ? '#0f1f05' : '#0a1929'} stroke={c} strokeWidth={glow ? 2 : 1.5} />
-                {glow && (
-                    <>
-                        <path d="M-6,-28 L-2,-18 L2,-18 L6,-28" fill={c} opacity={0.9} />
-                        <path d="M-4,-30 L0,-20 L4,-30" fill={c} opacity={0.6} />
-                    </>
-                )}
-                <line x1={-8} y1={-4} x2={8} y2={-4} stroke={c} strokeWidth={1} />
-                <line x1={-8} y1={0} x2={8} y2={0} stroke={c} strokeWidth={1} />
-                <rect x={-8} y={-4} width={16} height={32} rx={2}
-                    fill="#0a1929" stroke={c} strokeWidth={glow ? 2 : 1.5} />
-                <line x1={-14} y1={28} x2={14} y2={28} stroke={c} strokeWidth={1.5} />
-            </g>
-            {/* Terminals */}
-            <line x1={-14} y1={28} x2={-14} y2={28} stroke={c} strokeWidth={1.5} />
-        </g>
-    );
-}
-
-// ── Anchor dot ────────────────────────────────────────────────────────────────
-
-function AnchorDot({ id, x, y, connected, onWireStart }: {
-    id: string; x: number; y: number; connected: boolean;
-    onWireStart: (id: string, x: number, y: number) => void;
-}) {
-    return (
-        <circle
-            cx={x} cy={y} r={connected ? 5 : 6}
-            fill={connected ? '#22c55e' : '#00BFFF'}
-            stroke={connected ? '#16a34a' : '#0080aa'}
-            strokeWidth={1.5}
-            opacity={connected ? 1 : 0.7}
-            style={{ cursor: 'crosshair' }}
-            onMouseDown={(e) => {
-                e.stopPropagation();
-                onWireStart(id, x, y);
-            }}
-        />
-    );
-}
-
-// ── Main Canvas ───────────────────────────────────────────────────────────────
-
-export function Canvas({
-    components, wires, isCircuitClosed, liveWireIds,
-    onUpdateComponent, onToggleSwitch, onAddWire, onConnectAnchors, svgRef,
-}: CanvasProps) {
-    const [dragging, setDragging] = useState<{ id: string; ox: number; oy: number } | null>(null);
-    const [wireStart, setWireStart] = useState<{ anchorId: string; x: number; y: number } | null>(null);
-    const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-    const svgBounds = useRef<DOMRect | null>(null);
-
-    const toSVG = (clientX: number, clientY: number) => {
-        if (!svgBounds.current) {
-            svgBounds.current = svgRef.current?.getBoundingClientRect() ?? null;
-        }
-        const b = svgBounds.current;
-        if (!b) return { x: clientX, y: clientY };
-        const scaleX = W / b.width;
-        const scaleY = H / b.height;
-        return { x: (clientX - b.left) * scaleX, y: (clientY - b.top) * scaleY };
+// Helper: get world-space anchor position
+function getWorldAnchor(comp: CircuitComponent, anchor: AnchorPoint) {
+    return {
+        worldX: comp.position.x + anchor.offset.x,
+        worldY: comp.position.y + anchor.offset.y,
     };
+}
 
-    const handleMouseMove = useCallback((e: React.MouseEvent) => {
-        svgBounds.current = svgRef.current?.getBoundingClientRect() ?? null;
-        const pos = toSVG(e.clientX, e.clientY);
-        setMousePos(pos);
+// Individual draggable component wrapper
+function DraggableComponent({
+    component,
+    components,
+    isLive,
+    liveWireIds: _liveWireIds,
+    svgRef,
+    onUpdateComponent,
+    onToggleSwitch,
+    onAddWire,
+    onConnectAnchors,
+}: {
+    component: CircuitComponent;
+    components: CircuitComponent[];
+    isLive: boolean;
+    liveWireIds: Set<string>;
+    svgRef: React.RefObject<SVGSVGElement | null>;
+    onUpdateComponent: (id: string, update: Partial<CircuitComponent>) => void;
+    onToggleSwitch: (id: string) => void;
+    onAddWire: (fromAnchorId: string, toAnchorId: string) => void;
+    onConnectAnchors: (anchorId: string, targetAnchorId: string) => void;
+}) {
+    const isConnected = component.anchors.some((a) => a.connectedTo !== null);
 
-        if (dragging) {
-            onUpdateComponent(dragging.id, {
-                position: { x: pos.x - dragging.ox, y: pos.y - dragging.oy },
-            });
-        }
-    }, [dragging, onUpdateComponent]);
+    const { position, isDragging, dragHandlers, setPosition } = useDrag(
+        component.position,
+        {
+            canvasBounds: svgRef,
+            compId: component.id,
+            components,
+            onDragEnd: (finalPos) => {
+                // Snap logic: find nearest unconnected anchor from other components
+                for (const anchor of component.anchors) {
+                    if (anchor.connectedTo !== null) continue;
 
-    const handleMouseUp = useCallback((e: React.MouseEvent) => {
-        if (dragging) setDragging(null);
+                    const worldX = finalPos.x + anchor.offset.x;
+                    const worldY = finalPos.y + anchor.offset.y;
 
-        if (wireStart) {
-            const pos = toSVG(e.clientX, e.clientY);
-            // Find a nearby anchor to snap to
-            let closest: { anchorId: string; dist: number } | null = null;
-            for (const comp of components) {
-                for (const anchor of comp.anchors) {
-                    const ax = comp.position.x + anchor.offset.x;
-                    const ay = comp.position.y + anchor.offset.y;
-                    const dist = Math.hypot(ax - pos.x, ay - pos.y);
-                    if (dist < SNAP_RADIUS && anchor.id !== wireStart.anchorId) {
-                        if (!closest || dist < closest.dist) closest = { anchorId: anchor.id, dist };
+                    let bestDist = SNAP_RADIUS;
+                    let bestAnchor: AnchorPoint | null = null;
+                    let bestCompId: string | null = null;
+
+                    for (const other of components) {
+                        if (other.id === component.id) continue;
+                        for (const otherAnchor of other.anchors) {
+                            if (otherAnchor.connectedTo !== null) continue;
+                            const ox = other.position.x + otherAnchor.offset.x;
+                            const oy = other.position.y + otherAnchor.offset.y;
+                            const dist = Math.sqrt((worldX - ox) ** 2 + (worldY - oy) ** 2);
+                            if (dist < bestDist) {
+                                bestDist = dist;
+                                bestAnchor = otherAnchor;
+                                bestCompId = other.id;
+                            }
+                        }
+                    }
+
+                    if (bestAnchor && bestCompId) {
+                        const targetComp = components.find((c) => c.id === bestCompId)!;
+                        const targetWorldX = targetComp.position.x + bestAnchor.offset.x;
+                        const targetWorldY = targetComp.position.y + bestAnchor.offset.y;
+                        const snappedPos: Position = {
+                            x: finalPos.x + (targetWorldX - worldX),
+                            y: finalPos.y + (targetWorldY - worldY),
+                        };
+                        setPosition(snappedPos);
+                        onUpdateComponent(component.id, { position: snappedPos });
+                        onConnectAnchors(anchor.id, bestAnchor.id);
+                        onAddWire(anchor.id, bestAnchor.id);
+                        return;
                     }
                 }
-            }
-            if (closest) {
-                onAddWire(wireStart.anchorId, closest.anchorId);
-                onConnectAnchors(wireStart.anchorId, closest.anchorId);
-            }
-            setWireStart(null);
+
+                onUpdateComponent(component.id, { position: finalPos });
+            },
         }
-    }, [dragging, wireStart, components, onAddWire, onConnectAnchors]);
+    );
 
-    const handleComponentMouseDown = (compId: string, e: React.MouseEvent) => {
-        e.stopPropagation();
-        svgBounds.current = svgRef.current?.getBoundingClientRect() ?? null;
-        const pos = toSVG(e.clientX, e.clientY);
-        const comp = components.find((c) => c.id === compId)!;
-        setDragging({ id: compId, ox: pos.x - comp.position.x, oy: pos.y - comp.position.y });
+    const componentWithPos: CircuitComponent = { ...component, position };
+
+    const sharedProps = {
+        component: componentWithPos,
+        isLive,
+        onPointerDown: dragHandlers.onPointerDown,
+        isDragging,
+        // Animation data attributes passed through
+        dataCompId: component.id,
+        dataConnected: isConnected,
+        dataDragging: isDragging,
+        dataType: component.type,
+        dataBaseX: position.x,
+        dataBaseY: position.y,
     };
 
-    const handleWireStart = (anchorId: string, x: number, y: number) => {
-        setWireStart({ anchorId, x, y });
-    };
+    switch (component.type) {
+        case 'battery':
+            return <Battery {...sharedProps} />;
+        case 'resistor':
+            return <Resistor {...sharedProps} />;
+        case 'switch':
+            return (
+                <Switch
+                    {...sharedProps}
+                    onToggle={() => onToggleSwitch(component.id)}
+                />
+            );
+        case 'bulb':
+            return <Bulb {...sharedProps} />;
+        default:
+            return null;
+    }
+}
+
+export function Canvas({
+    components,
+    wires,
+    isCircuitClosed,
+    liveWireIds,
+    onUpdateComponent,
+    onToggleSwitch,
+    onAddWire,
+    onConnectAnchors,
+    svgRef,
+}: CanvasProps) {
+    // Precompute anchor world positions for wire rendering
+    const anchorWorldMap = new Map<string, { worldX: number; worldY: number } & AnchorPoint>();
+    for (const comp of components) {
+        for (const anchor of comp.anchors) {
+            anchorWorldMap.set(anchor.id, {
+                ...anchor,
+                ...getWorldAnchor(comp, anchor),
+            });
+        }
+    }
 
     return (
         <svg
             ref={svgRef}
-            width="100%"
-            height="100%"
-            viewBox={`0 0 ${W} ${H}`}
-            preserveAspectRatio="xMidYMid meet"
-            style={{ display: 'block', userSelect: 'none' }}
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUp}
-            onMouseLeave={() => { setDragging(null); setWireStart(null); }}
+            viewBox={`0 0 ${CANVAS_W} ${CANVAS_H}`}
+            style={{
+                width: '100%',
+                height: '100%',
+                display: 'block',
+                background: '#0B1C2D',
+            }}
         >
             <defs>
-                <filter id="glow-filter" x="-50%" y="-50%" width="200%" height="200%">
-                    <feGaussianBlur stdDeviation="4" result="blur" />
-                    <feFlood floodColor="#00BFFF" floodOpacity="0.4" result="color" />
-                    <feComposite in="color" in2="blur" operator="in" result="glow" />
-                    <feMerge><feMergeNode in="glow" /><feMergeNode in="SourceGraphic" /></feMerge>
-                </filter>
-                <filter id="bulb-glow-filter" x="-80%" y="-80%" width="260%" height="260%">
-                    <feGaussianBlur stdDeviation="8" result="blur" />
-                    <feFlood floodColor="#fbbf24" floodOpacity="0.5" result="color" />
-                    <feComposite in="color" in2="blur" operator="in" result="glow" />
-                    <feMerge><feMergeNode in="glow" /><feMergeNode in="SourceGraphic" /></feMerge>
-                </filter>
-                <filter id="electron-glow" x="-200%" y="-200%" width="500%" height="500%">
-                    <feGaussianBlur stdDeviation="2" result="blur" />
-                    <feFlood floodColor="#00BFFF" floodOpacity="0.8" />
-                    <feComposite in2="blur" operator="in" result="glow" />
-                    <feMerge><feMergeNode in="glow" /><feMergeNode in="SourceGraphic" /></feMerge>
-                </filter>
-                {/* Blueprint grid */}
-                <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-                    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(0,191,255,0.04)" strokeWidth="0.5" />
+                {/* Grid pattern */}
+                <pattern id="grid" width={40} height={40} patternUnits="userSpaceOnUse">
+                    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#0f2a3f" strokeWidth={0.5} />
                 </pattern>
+                <pattern id="gridLarge" width={200} height={200} patternUnits="userSpaceOnUse">
+                    <rect width={200} height={200} fill="url(#grid)" />
+                    <path d="M 200 0 L 0 0 0 200" fill="none" stroke="#0f2f4a" strokeWidth={1} />
+                </pattern>
+
+                {/* Neon glow filter */}
+                <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+                    <feGaussianBlur stdDeviation="3" result="coloredBlur" />
+                    <feMerge>
+                        <feMergeNode in="coloredBlur" />
+                        <feMergeNode in="SourceGraphic" />
+                    </feMerge>
+                </filter>
+
+                {/* Bulb warm glow filter */}
+                <filter id="bulbGlow" x="-100%" y="-100%" width="300%" height="300%">
+                    <feGaussianBlur stdDeviation="6" result="coloredBlur" />
+                    <feMerge>
+                        <feMergeNode in="coloredBlur" />
+                        <feMergeNode in="coloredBlur" />
+                        <feMergeNode in="SourceGraphic" />
+                    </feMerge>
+                </filter>
+
+                {/* Bulb bloom */}
+                <filter id="bulbBloom" x="-100%" y="-100%" width="300%" height="300%">
+                    <feGaussianBlur stdDeviation="18" result="blur" />
+                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                </filter>
+
+                {/* ── NEW: Magnetic assist glow ── */}
+                <filter id="magnetGlow" x="-80%" y="-80%" width="260%" height="260%">
+                    <feGaussianBlur stdDeviation="5" result="blur" />
+                    <feColorMatrix
+                        in="blur"
+                        type="matrix"
+                        values="0 0 0 0 0  0 0.75 0 0 1  0 0 1 0 1  0 0 0 1.2 0"
+                        result="coloredBlur"
+                    />
+                    <feMerge>
+                        <feMergeNode in="coloredBlur" />
+                        <feMergeNode in="SourceGraphic" />
+                    </feMerge>
+                </filter>
+
+                {/* ── NEW: Electron flow wire glow ── */}
+                <filter id="electronGlow" x="-60%" y="-60%" width="220%" height="220%">
+                    <feGaussianBlur stdDeviation="4" result="blur" />
+                    <feColorMatrix
+                        in="blur"
+                        type="matrix"
+                        values="0 0 0 0 0  0 0.75 0 0 1  0 0 1 0 1  0 0 0 1.5 0"
+                        result="coloredBlur"
+                    />
+                    <feMerge>
+                        <feMergeNode in="coloredBlur" />
+                        <feMergeNode in="SourceGraphic" />
+                    </feMerge>
+                </filter>
+
+                {/* Battery gradient */}
+                <linearGradient id="battGrad" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stopColor="#0d2a40" />
+                    <stop offset="30%" stopColor="#1a4a6a" />
+                    <stop offset="50%" stopColor="#1e5578" />
+                    <stop offset="70%" stopColor="#1a4a6a" />
+                    <stop offset="100%" stopColor="#0d2a40" />
+                </linearGradient>
+
+                {/* CSS animations */}
+                <style>{`
+          @keyframes snapPulse {
+            0%, 100% { opacity: 0.3; r: 12; }
+            50% { opacity: 0.8; r: 18; }
+          }
+          .snap-ring { animation: snapPulse 1s ease-in-out infinite; }
+          @keyframes bulbPulse {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
+          }
+          .bulb-live { animation: bulbPulse 1.5s ease-in-out infinite; }
+        `}</style>
             </defs>
 
-            {/* Background grid */}
-            <rect width={W} height={H} fill="url(#grid)" />
+            {/* Blueprint grid */}
+            <rect width={CANVAS_W} height={CANVAS_H} fill="url(#gridLarge)" />
 
-            {/* Wires */}
-            {wires.map((wire) => {
-                const fromComp = components.find((c) => c.anchors.some((a) => a.id === wire.fromAnchorId));
-                const toComp = components.find((c) => c.anchors.some((a) => a.id === wire.toAnchorId));
-                if (!fromComp || !toComp) return null;
-                const from = getAnchorPos(fromComp, wire.fromAnchorId);
-                const to = getAnchorPos(toComp, wire.toAnchorId);
-                if (!from || !to) return null;
-                const live = liveWireIds.has(wire.id);
-                return (
-                    <line key={wire.id}
-                        x1={from.x} y1={from.y} x2={to.x} y2={to.y}
-                        stroke={live ? '#00BFFF' : '#1a4a6a'}
-                        strokeWidth={live ? 2.5 : 1.5}
-                        strokeLinecap="round"
-                        filter={live ? 'url(#glow-filter)' : undefined}
-                        opacity={live ? 1 : 0.5}
-                    />
-                );
-            })}
+            {/* Particle field container — inserted by ParticleField module */}
+            <g id="cl-particles" pointerEvents="none" />
 
-            {/* Wire in progress */}
-            {wireStart && (
-                <line
-                    x1={wireStart.x} y1={wireStart.y}
-                    x2={mousePos.x} y2={mousePos.y}
-                    stroke="#00BFFF" strokeWidth={1.5} strokeDasharray="6 4"
-                    strokeLinecap="round" opacity={0.8}
-                />
+            {/* Corner crosshairs */}
+            {[[60, 60], [CANVAS_W - 60, 60], [60, CANVAS_H - 60], [CANVAS_W - 60, CANVAS_H - 60]].map(
+                ([cx, cy], i) => (
+                    <g key={i} opacity={0.15}>
+                        <line x1={cx - 15} y1={cy} x2={cx + 15} y2={cy} stroke="#00BFFF" strokeWidth={1} />
+                        <line x1={cx} y1={cy - 15} x2={cx} y2={cy + 15} stroke="#00BFFF" strokeWidth={1} />
+                        <circle cx={cx} cy={cy} r={4} fill="none" stroke="#00BFFF" strokeWidth={1} />
+                    </g>
+                )
             )}
 
-            {/* Components */}
-            {components.map((comp) => {
-                const { x, y } = comp.position;
-                const live = isCircuitClosed && comp.anchors.some((a) => {
-                    return wires.some((w) => liveWireIds.has(w.id) &&
-                        (w.fromAnchorId === a.id || w.toAnchorId === a.id));
-                });
+            {/* Canvas title */}
+            <text x={CANVAS_W / 2} y={28} textAnchor="middle" fill="#0e3a57" fontSize={11} fontFamily="'Courier New', monospace" letterSpacing={3}>
+                ◈ CIRCUIT LAB CANVAS ◈
+            </text>
 
+            {/* Wires — tagged with data-wire-id for electron flow animator */}
+            {wires.map((wire) => {
+                const fromAnchor = anchorWorldMap.get(wire.fromAnchorId);
+                const toAnchor = anchorWorldMap.get(wire.toAnchorId);
+                if (!fromAnchor || !toAnchor) return null;
                 return (
-                    <g key={comp.id}
-                        style={{ cursor: dragging?.id === comp.id ? 'grabbing' : 'grab' }}
-                        onMouseDown={(e) => {
-                            if (comp.type === 'switch') {
-                                // double-click or separate click for toggle handled below
-                            }
-                            handleComponentMouseDown(comp.id, e);
-                        }}
-                        onDoubleClick={() => comp.type === 'switch' && onToggleSwitch(comp.id)}
-                    >
-                        {comp.type === 'battery' && <BatterySVG x={x} y={y} glow={live} />}
-                        {comp.type === 'resistor' && <ResistorSVG x={x} y={y} glow={live} />}
-                        {comp.type === 'switch' && <SwitchSVG x={x} y={y} glow={live} closed={!!comp.isClosed} />}
-                        {comp.type === 'bulb' && <BulbSVG x={x} y={y} glow={live} />}
-
-                        {/* Anchor dots */}
-                        {comp.anchors.map((anchor) => {
-                            const ax = x + anchor.offset.x;
-                            const ay = y + anchor.offset.y;
-                            return (
-                                <AnchorDot
-                                    key={anchor.id}
-                                    id={anchor.id}
-                                    x={ax} y={ay}
-                                    connected={!!anchor.connectedTo}
-                                    onWireStart={handleWireStart}
-                                />
-                            );
-                        })}
-
-                        {/* Component label */}
-                        <text x={x} y={y - getR(comp)} textAnchor="middle"
-                            fill="#2a5a7a" fontSize={9} fontFamily="'Courier New', monospace"
-                            letterSpacing={1}>
-                            {comp.type.toUpperCase()}
-                        </text>
+                    <g key={wire.id} data-wire-group={wire.id}>
+                        <Wire
+                            wire={wire}
+                            from={fromAnchor}
+                            to={toAnchor}
+                            isLive={isCircuitClosed && liveWireIds.has(wire.id)}
+                            wireId={wire.id}
+                        />
                     </g>
                 );
             })}
+
+            {/* Components — tagged with data-comp-id, data-type, data-base-x/y etc. */}
+            {components.map((comp) => (
+                <DraggableComponent
+                    key={comp.id}
+                    component={comp}
+                    components={components}
+                    isLive={isCircuitClosed}
+                    liveWireIds={liveWireIds}
+                    svgRef={svgRef}
+                    onUpdateComponent={onUpdateComponent}
+                    onToggleSwitch={onToggleSwitch}
+                    onAddWire={onAddWire}
+                    onConnectAnchors={onConnectAnchors}
+                />
+            ))}
+
+            {/* Live circuit ambient overlay */}
+            {isCircuitClosed && (
+                <rect
+                    width={CANVAS_W}
+                    height={CANVAS_H}
+                    fill="rgba(0,191,255,0.015)"
+                    pointerEvents="none"
+                />
+            )}
         </svg>
     );
-}
-
-function getR(comp: CircuitComponent): number {
-    return comp.type === 'battery' ? 60 : comp.type === 'bulb' ? 50 : 20;
 }

@@ -17,7 +17,7 @@ export const Battery: React.FC<CircuitComponentProps> = ({ className, active }) 
 
 export const Switch: React.FC<CircuitComponentProps & { isOn: boolean }> = ({ className, isOn, onClick }) => (
     <svg viewBox="0 0 60 80" className={`${className} cursor-pointer`} onClick={onClick}>
-        <rect x="10" y="10" width="40" height="60" rx="8" fill="#334155" />
+        <rect x="10" y="10" width="40" height="60" rx="8" fill="#2A2D35" />
         {/* Toggle Lever */}
         <rect
             x="15"
@@ -33,7 +33,7 @@ export const Switch: React.FC<CircuitComponentProps & { isOn: boolean }> = ({ cl
 
 export const LED: React.FC<CircuitComponentProps> = ({ className, active }) => (
     <svg viewBox="0 0 40 40" className={className}>
-        <circle cx="20" cy="20" r="15" fill={active ? "#4ade80" : "#334155"} className="transition-colors duration-300" />
+        <circle cx="20" cy="20" r="15" fill={active ? "#4ade80" : "#2A2D35"} className="transition-colors duration-300" />
         {active && <circle cx="20" cy="20" r="15" fill="#4ade80" filter="url(#glow)" className="animate-pulse" />}
         <defs>
             <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
@@ -49,7 +49,7 @@ export const LED: React.FC<CircuitComponentProps> = ({ className, active }) => (
 
 export const AndGate: React.FC<CircuitComponentProps> = ({ className }) => (
     <svg viewBox="0 0 80 60" className={className}>
-        <path d="M 10 5 V 55 H 40 C 65 55 65 5 40 5 H 10 Z" fill="#1e293b" stroke="#00d9ff" strokeWidth="2" />
+        <path d="M 10 5 V 55 H 40 C 65 55 65 5 40 5 H 10 Z" fill="#1A1D24" stroke="#00d9ff" strokeWidth="2" />
         {/* Pins */}
         <line x1="0" y1="15" x2="10" y2="15" stroke="#94a3b8" strokeWidth="2" />
         <line x1="0" y1="45" x2="10" y2="45" stroke="#94a3b8" strokeWidth="2" />
@@ -59,7 +59,7 @@ export const AndGate: React.FC<CircuitComponentProps> = ({ className }) => (
 
 export const OrGate: React.FC<CircuitComponentProps> = ({ className }) => (
     <svg viewBox="0 0 80 60" className={className}>
-        <path d="M 10 5 C 20 20 20 40 10 55 C 50 65 80 30 80 30 C 80 30 50 -5 10 5 Z" fill="#1e293b" stroke="#00d9ff" strokeWidth="2" />
+        <path d="M 10 5 C 20 20 20 40 10 55 C 50 65 80 30 80 30 C 80 30 50 -5 10 5 Z" fill="#1A1D24" stroke="#00d9ff" strokeWidth="2" />
         {/* Pins */}
         <line x1="0" y1="15" x2="15" y2="15" stroke="#94a3b8" strokeWidth="2" />
         <line x1="0" y1="45" x2="15" y2="45" stroke="#94a3b8" strokeWidth="2" />

@@ -13,6 +13,7 @@
         "@dnd-kit/core": "^6.1.0",
         "@dnd-kit/modifiers": "^7.0.0",
         "@dnd-kit/utilities": "^3.2.2",
+        "@monaco-editor/react": "^4.7.0",
         "@react-three/drei": "^9.108.3",
         "@react-three/fiber": "^8.16.8",
         "@supabase/supabase-js": "^2.97.0",

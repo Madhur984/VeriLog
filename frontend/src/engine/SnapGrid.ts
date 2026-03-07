@@ -78,17 +78,17 @@ export class SnapGrid {
         for (const comp of components) {
             // For each component, generate connection pads
             if (comp.type === 'battery') {
-                nodes.push({ id: `${comp.id}-in`, x: comp.x, y: comp.y - 40, occupied: false });
-                nodes.push({ id: `${comp.id}-out`, x: comp.x, y: comp.y + 40, occupied: false });
+                nodes.push({ id: `${comp.id}-in`, x: comp.x, y: comp.y - 40, type: 'pin', occupied: false });
+                nodes.push({ id: `${comp.id}-out`, x: comp.x, y: comp.y + 40, type: 'pin', occupied: false });
             } else if (comp.type === 'bulb') {
-                nodes.push({ id: `${comp.id}-in`, x: comp.x - 28, y: comp.y, occupied: false });
-                nodes.push({ id: `${comp.id}-out`, x: comp.x + 28, y: comp.y, occupied: false });
+                nodes.push({ id: `${comp.id}-in`, x: comp.x - 28, y: comp.y, type: 'pin', occupied: false });
+                nodes.push({ id: `${comp.id}-out`, x: comp.x + 28, y: comp.y, type: 'pin', occupied: false });
             } else if (comp.type === 'resistor') {
-                nodes.push({ id: `${comp.id}-in`, x: comp.x - 45, y: comp.y, occupied: false });
-                nodes.push({ id: `${comp.id}-out`, x: comp.x + 45, y: comp.y, occupied: false });
+                nodes.push({ id: `${comp.id}-in`, x: comp.x - 45, y: comp.y, type: 'pin', occupied: false });
+                nodes.push({ id: `${comp.id}-out`, x: comp.x + 45, y: comp.y, type: 'pin', occupied: false });
             } else if (comp.type === 'switch') {
-                nodes.push({ id: `${comp.id}-in`, x: comp.x - 30, y: comp.y, occupied: false });
-                nodes.push({ id: `${comp.id}-out`, x: comp.x + 30, y: comp.y, occupied: false });
+                nodes.push({ id: `${comp.id}-in`, x: comp.x - 30, y: comp.y, type: 'pin', occupied: false });
+                nodes.push({ id: `${comp.id}-out`, x: comp.x + 30, y: comp.y, type: 'pin', occupied: false });
             }
         }
         return nodes;

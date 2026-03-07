@@ -289,5 +289,3 @@
 .login-card.signup-mode {
     width: 460px;
 }
-
-/* All form inputs use aria-label and placeholder attributes via React component props */

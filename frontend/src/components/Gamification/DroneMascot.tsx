@@ -48,8 +48,8 @@ export const DroneMascot = ({ status, message }: DroneMascotProps) => {
             // Angry lens flash
             anime({
                 targets: lensRef.current,
-                backgroundColor: ['#3B82F6', '#EF4444', '#EF4444'],
-                boxShadow: ['0 0 10px #3B82F6', '0 0 20px #EF4444', '0 0 10px #EF4444'],
+                backgroundColor: ['#10B981', '#EF4444', '#EF4444'],
+                boxShadow: ['0 0 10px #10B981', '0 0 20px #EF4444', '0 0 10px #EF4444'],
                 duration: 300,
                 easing: 'linear'
             });
@@ -57,8 +57,8 @@ export const DroneMascot = ({ status, message }: DroneMascotProps) => {
             // Reset to neutral blue
             anime({
                 targets: lensRef.current,
-                backgroundColor: '#3B82F6',
-                boxShadow: '0 0 10px #3B82F6',
+                backgroundColor: '#10B981',
+                boxShadow: '0 0 10px #10B981',
                 duration: 500,
             });
         }

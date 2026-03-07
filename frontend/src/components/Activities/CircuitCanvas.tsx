@@ -13,8 +13,11 @@ interface ComponentInstance {
     type: CompType;
     x: number;
     y: number;
+    rotation?: number;
+    anchors?: unknown[];
+    state?: Record<string, unknown>;
     isOpen?: boolean;
-    connectedNodes: string[];
+    snapNodeIds: string[];
 }
 
 interface CircuitCanvasProps {
@@ -29,7 +32,7 @@ const StaticWire: React.FC<{ d: string; active?: boolean }> = ({ d, active }) =>
         <path
             d={d}
             fill="none"
-            stroke="#1E293B"
+            stroke="#1A1D24"
             strokeWidth={12}
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -37,7 +40,7 @@ const StaticWire: React.FC<{ d: string; active?: boolean }> = ({ d, active }) =>
         <path
             d={d}
             fill="none"
-            stroke="#334155"
+            stroke="#2A2D35"
             strokeWidth={4}
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -48,7 +51,7 @@ const StaticWire: React.FC<{ d: string; active?: boolean }> = ({ d, active }) =>
                 <path
                     d={d}
                     fill="none"
-                    stroke="#3B82F6"
+                    stroke="#10B981"
                     strokeWidth={8}
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -149,10 +152,10 @@ export const CircuitCanvas: React.FC<CircuitCanvasProps> = ({
     const snapNodes = engine.snapGrid.getAll();
 
     return (
-        <div className="relative w-full h-[600px] bg-[#0A0F1E] rounded-3xl overflow-hidden border border-[#1E293B] shadow-2xl">
+        <div className="relative w-full h-[600px] bg-[#0A0B10] rounded-3xl overflow-hidden border border-[#1A1D24] shadow-2xl">
             {/* Blueprint Grid */}
             <div className="absolute inset-0 opacity-20 pointer-events-none"
-                style={{ backgroundImage: 'radial-gradient(#334155 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
+                style={{ backgroundImage: 'radial-gradient(#2A2D35 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
 
             <style>{`
                 @keyframes dash {
@@ -170,11 +173,11 @@ export const CircuitCanvas: React.FC<CircuitCanvasProps> = ({
             >
                 <defs>
                     <linearGradient id="snapIdleGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#334155" />
-                        <stop offset="100%" stopColor="#1E293B" />
+                        <stop offset="0%" stopColor="#2A2D35" />
+                        <stop offset="100%" stopColor="#1A1D24" />
                     </linearGradient>
                     <linearGradient id="snapActiveGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#3B82F6" />
+                        <stop offset="0%" stopColor="#10B981" />
                         <stop offset="100%" stopColor="#2563EB" />
                     </linearGradient>
                 </defs>
@@ -197,7 +200,7 @@ export const CircuitCanvas: React.FC<CircuitCanvasProps> = ({
                         key={node.id}
                         x={node.x}
                         y={node.y}
-                        occupied={components.some(c => c.connectedNodes.includes(node.id))}
+                        occupied={components.some(c => c.snapNodeIds.includes(node.id))}
                         isNearest={engine.nearestSnap?.id === node.id}
                         magneticForce={engine.magneticForce}
                     />
@@ -230,7 +233,7 @@ export const CircuitCanvas: React.FC<CircuitCanvasProps> = ({
                         cy={engine.nearestSnap.y}
                         r={engine.magneticForce * 40}
                         fill="none"
-                        stroke="#3B82F6"
+                        stroke="#10B981"
                         strokeWidth={0.5}
                         strokeDasharray="2 4"
                         opacity={engine.magneticForce * 0.4}

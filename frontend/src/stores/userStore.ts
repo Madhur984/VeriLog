@@ -9,7 +9,6 @@ interface UserState {
     streak: number;
     firstName: string | null;
     hasSeenGreeting: boolean;
-    isNewUser: boolean;
 
     // Actions
     addXp: (amount: number) => void;
@@ -19,7 +18,6 @@ interface UserState {
     refillHearts: () => void;
     setFirstName: (name: string | null) => void;
     setHasSeenGreeting: (seen: boolean) => void;
-    setIsNewUser: (value: boolean) => void;
 }
 
 export const useUserStore = create<UserState>()(
@@ -32,7 +30,6 @@ export const useUserStore = create<UserState>()(
             streak: 1,
             firstName: null,
             hasSeenGreeting: false,
-            isNewUser: false,
 
             addXp: (amount) => set((state) => ({ xp: state.xp + amount })),
 
@@ -56,8 +53,6 @@ export const useUserStore = create<UserState>()(
             setFirstName: (name) => set({ firstName: name }),
 
             setHasSeenGreeting: (seen) => set({ hasSeenGreeting: seen }),
-
-            setIsNewUser: (value) => set({ isNewUser: value }),
         }),
         {
             name: 'veriquest-user-storage',

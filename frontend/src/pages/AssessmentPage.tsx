@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { X, ChevronRight, Terminal, ArrowRight } from 'lucide-react';
+import { X, ChevronRight, Terminal, ArrowRight, Trophy } from 'lucide-react';
 import { cn } from '../lib/utils';
-import { VoltMonkey, MonkeyState } from '../components/Bot/VoltMonkey';
-import { SpeechBubble } from '../components/Bot/SpeechBubble';
+import { VoltBot } from '../components/ui/VoltBot';
 import { LogicGateSVG } from '../components/ui/LogicGateSVG';
 import { LogicStormBackground } from '../components/ui/LogicStormBackground';
+import './assessment-cards.css';
 
 interface Question {
     id: number;
@@ -274,9 +274,19 @@ export const AssessmentPage: React.FC = () => {
     const [selectedOption, setSelectedOption] = useState<string | null>(null);
     const [isAnswered, setIsAnswered] = useState(false);
     const [isCorrect, setIsCorrect] = useState(false);
-    const [botState, setBotState] = useState<MonkeyState>('talking');
+    const [botState, setBotState] = useState<'idle' | 'speaking' | 'happy' | 'sad' | 'thinking'>('speaking');
     const [botMessage, setBotMessage] = useState("Educational module initialized. Ready for logic verification.");
     const [successStep, setSuccessStep] = useState<0 | 1 | 2>(0);
+
+    // Structural reinforcement: track correct count WITHOUT useState (avoids re-render)
+    const correctCountRef = useRef(0);
+
+    // Apply CSS structural reinforcement — reduces float amplitude after 3+ correct
+    const applyStructuralReinforcement = useCallback((count: number) => {
+        // Amplitude ramps down from 2px → 0.5px as correctCount increases
+        const amplitude = Math.max(0.5, 2 - (count - 3) * 0.3);
+        document.documentElement.style.setProperty('--card-float-amplitude', `${amplitude.toFixed(1)}px`);
+    }, []);
 
     const question = QUESTIONS[currentStep];
 
@@ -303,9 +313,14 @@ export const AssessmentPage: React.FC = () => {
             const msg = GUIDANCE_MESSAGES.correct[Math.floor(Math.random() * GUIDANCE_MESSAGES.correct.length)];
             setBotState('happy');
             setBotMessage(msg);
+            // Increment correct count ref and apply structural reinforcement
+            correctCountRef.current += 1;
+            if (correctCountRef.current >= 3) {
+                applyStructuralReinforcement(correctCountRef.current);
+            }
         } else {
             const msg = GUIDANCE_MESSAGES.incorrect[Math.floor(Math.random() * GUIDANCE_MESSAGES.incorrect.length)];
-            setBotState('thinking');
+            setBotState('sad');
             setBotMessage(`${msg} ${question.explanation}`);
         }
     };
@@ -315,7 +330,7 @@ export const AssessmentPage: React.FC = () => {
             setCurrentStep(s => s + 1);
             setSelectedOption(null);
             setIsAnswered(false);
-            setBotState('talking');
+            setBotState('speaking');
             setBotMessage("Loading next data packet...");
         } else {
             setSuccessStep(1);
@@ -337,10 +352,12 @@ export const AssessmentPage: React.FC = () => {
         }
     }, [selectedOption, isAnswered, question.gateType, successStep]);
 
+    const navItems = [1, 2]; // Define navItems for the progress indicators
+
     return (
         <div className="h-screen bg-background flex flex-col font-sans overflow-hidden relative selection:bg-indigo-500/10 text-foreground">
             {/* Soft Ambient Background Elements */}
-            <div className="absolute inset-0 pointer-events-none fixed">
+            <div className="absolute inset-0 pointer-events-none">
                 <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-500/5 blur-[120px] rounded-full -translate-y-1/2 translate-x-1/2" />
                 <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-500/5 blur-[120px] rounded-full translate-y-1/2 -translate-x-1/2" />
             </div>
@@ -376,7 +393,7 @@ export const AssessmentPage: React.FC = () => {
                             </div>
                         </header>
 
-                        <main className="relative z-10 flex-1 max-w-6xl w-full mx-auto px-4 md:px-8 py-0 md:py-1 flex flex-col justify-center min-h-0">
+                        <main className="relative z-10 flex-1 max-w-6xl w-full mx-auto px-8 py-2 flex flex-col justify-center overflow-hidden">
                             <AnimatePresence mode="wait">
                                 <motion.div
                                     key={currentStep}
@@ -384,118 +401,121 @@ export const AssessmentPage: React.FC = () => {
                                     animate={{ opacity: 1, scale: 1, y: 0 }}
                                     exit={{ opacity: 0, scale: 1.01, y: -5 }}
                                     transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                                    className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-8 items-center"
+                                    className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"
                                 >
                                     {/* Left Content */}
-                                    <div className="space-y-3">
-                                        <div className="space-y-1.5">
+                                    <div className="space-y-8">
+                                        <div className="space-y-4">
                                             <motion.div
                                                 initial={{ opacity: 0, x: -10 }}
                                                 animate={{ opacity: 1, x: 0 }}
-                                                className="flex items-center space-x-3 mb-1"
+                                                className="flex items-center space-x-3"
                                             >
                                                 <div className="w-1.5 h-3.5 bg-indigo-500 rounded-full shadow-[0_0_10px_rgba(99,102,241,0.5)]" />
-                                                <span className="text-xs md:text-sm font-heading font-bold text-indigo-400/80 tracking-widest uppercase">Logic Verification Phase</span>
+                                                <span className="text-xs font-heading font-bold text-indigo-400/80 tracking-widest uppercase">Logic Verification Phase</span>
                                             </motion.div>
-                                            <h1 className="text-2xl lg:text-3xl xl:text-4xl font-heading font-bold text-white leading-tight tracking-tight">
+                                            <h1 className="text-5xl font-heading font-bold text-white leading-tight tracking-tight">
                                                 {question.text}
                                             </h1>
-                                            <p className="text-sm md:text-base text-slate-400 font-medium max-w-lg leading-relaxed pt-1">
+                                            <p className="text-xl text-slate-400 font-medium max-w-lg leading-relaxed">
                                                 {question.subtext}
                                             </p>
                                         </div>
 
-                                        <div className="grid grid-cols-1 gap-2.5 max-w-md pt-2">
-                                            {question.options.map((option) => (
-                                                <button
-                                                    key={option}
-                                                    disabled={isAnswered}
-                                                    onClick={() => setSelectedOption(option)}
-                                                    className={cn(
-                                                        "relative p-3 md:p-4 rounded-xl border transition-all text-left group overflow-hidden bg-white/5 backdrop-blur-sm",
-                                                        selectedOption === option
-                                                            ? "border-indigo-500 ring-4 ring-indigo-500/20 bg-indigo-500/10"
-                                                            : "border-white/5 text-slate-400 hover:border-white/10 hover:bg-white/10",
-                                                        isAnswered && option === question.correctAnswer && "border-emerald-500/50 bg-emerald-500/10 !text-emerald-400",
-                                                        isAnswered && selectedOption === option && selectedOption !== question.correctAnswer && "border-rose-500/50 bg-rose-500/10 !text-rose-400"
-                                                    )}
-                                                >
-                                                    <div className="flex items-center relative z-10">
-                                                        <span className={cn(
-                                                            "w-8 h-8 md:w-10 md:h-10 rounded-lg flex items-center justify-center mr-3 md:mr-4 font-heading font-bold text-sm border transition-all",
-                                                            selectedOption === option ? "bg-indigo-500 border-indigo-400 text-white" : "bg-white/5 border-white/10 text-indigo-400"
-                                                        )}>
-                                                            {option.charAt(0)}
-                                                        </span>
-                                                        <span className="font-heading font-bold text-lg md:text-xl tracking-tight">
-                                                            {option}
-                                                        </span>
-                                                    </div>
-                                                </button>
-                                            ))}
+                                        <div className="grid grid-cols-1 gap-3 max-w-md">
+                                            {question.options.map((option, optIdx) => {
+                                                const isSelected = selectedOption === option;
+                                                const isAnswerCorrect = isAnswered && option === question.correctAnswer;
+                                                const isAnswerWrong = isAnswered && isSelected && selectedOption !== question.correctAnswer;
+                                                return (
+                                                    <button
+                                                        key={option}
+                                                        disabled={isAnswered}
+                                                        onClick={() => setSelectedOption(option)}
+                                                        style={{ '--card-delay': `${optIdx * 0.15}s` } as React.CSSProperties}
+                                                        className={cn(
+                                                            // Base + CSS float animation from assessment-cards.css
+                                                            "question-option-card relative p-6 rounded-xl border transition-colors text-left group overflow-hidden bg-white/5 backdrop-blur-sm",
+                                                            isSelected
+                                                                ? "border-indigo-500 ring-4 ring-indigo-500/20 bg-indigo-500/10"
+                                                                : "border-white/5 text-slate-400 hover:border-white/10 hover:bg-white/10",
+                                                            isAnswerCorrect && "question-option-card--correct border-emerald-500/50 bg-emerald-500/10 !text-emerald-400",
+                                                            isAnswerWrong && "question-option-card--incorrect border-amber-500/50 bg-amber-500/10 !text-amber-400"
+                                                        )}
+                                                    >
+                                                        <div className="flex items-center relative z-10">
+                                                            <span className={cn(
+                                                                "w-10 h-10 rounded-xl flex items-center justify-center mr-5 font-heading font-bold text-sm border transition-all",
+                                                                isSelected ? "bg-indigo-500 border-indigo-400 text-white" : "bg-white/5 border-white/10 text-indigo-400"
+                                                            )}>
+                                                                {option.charAt(0)}
+                                                            </span>
+                                                            <span className="font-heading font-bold text-xl tracking-tight">
+                                                                {option}
+                                                            </span>
+                                                        </div>
+                                                    </button>
+                                                );
+                                            })}
                                         </div>
                                     </div>
 
                                     {/* Right Content */}
-                                    <div className="flex flex-col space-y-4 h-full">
-                                        <div className="bg-white/5 rounded-2xl p-0 md:p-1 border border-white/10 shadow-2xl shadow-black/20 backdrop-blur-xl flex flex-col items-center justify-center min-h-[150px] md:min-h-[220px] relative overflow-hidden flex-1 group">
+                                    <div className="flex flex-col space-y-8 h-full">
+                                        <div className="bg-white/5 rounded-2xl p-8 border border-white/10 shadow-2xl shadow-black/20 backdrop-blur-xl flex flex-col items-center justify-center min-h-[360px] relative overflow-hidden flex-1 group">
                                             {question.gateType ? (
                                                 <motion.div
                                                     initial={{ opacity: 0, scale: 0.9 }}
                                                     animate={{ opacity: 1, scale: 1 }}
-                                                    className="w-full flex justify-center h-full items-center max-w-[320px] p-2"
+                                                    className="w-full max-w-[400px]"
                                                 >
                                                     <LogicGateSVG
                                                         type={question.gateType}
                                                         interactionState={isAnswered ? (isCorrect ? 'success' : 'error') : (selectedOption ? 'active' : 'idle')}
-                                                        className="bg-transparent border-none shadow-none backdrop-blur-none max-h-full"
+                                                        className="bg-transparent border-none shadow-none backdrop-blur-none"
                                                     />
                                                 </motion.div>
                                             ) : (
-                                                <div className="w-full h-full flex flex-col p-4 md:p-6">
-                                                    <div className="flex items-center space-x-2 mb-3 text-cyan-400/60 border-b border-cyan-500/20 pb-2">
-                                                        <Terminal className="w-5 h-5" />
-                                                        <span className="font-mono text-xs uppercase tracking-[0.2em]">System_Lore_Logs v4.0</span>
+                                                <div className="w-full h-full flex flex-col">
+                                                    <div className="flex items-center space-x-2 mb-6 text-purple-400/60 border-b border-purple-500/20 pb-4">
+                                                        <Terminal className="w-4 h-4" />
+                                                        <span className="font-mono text-[10px] uppercase tracking-[0.2em]">System_Lore_Logs v4.0</span>
                                                     </div>
-                                                    <div className="flex-1 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-cyan-500/20 scrollbar-track-transparent">
-                                                        <div className="space-y-3">
+                                                    <div className="flex-1 overflow-y-auto pr-4 scrollbar-thin scrollbar-thumb-purple-500/20 scrollbar-track-transparent">
+                                                        <div className="space-y-4">
                                                             {question.extraInfo?.map((info, idx) => (
                                                                 <motion.div
                                                                     key={idx}
                                                                     initial={{ opacity: 0, x: -10 }}
                                                                     animate={{ opacity: 1, x: 0 }}
                                                                     transition={{ delay: idx * 0.1 }}
-                                                                    className="flex items-start space-x-3 group/item border-b border-white/5 pb-2 last:border-0"
+                                                                    className="flex items-start space-x-4 group/item"
                                                                 >
-                                                                    <span className="text-xs font-mono text-cyan-500/40 mt-0.5">[{idx.toString().padStart(2, '0')}]</span>
-                                                                    <p className="text-sm font-mono text-cyan-300/80 leading-snug group-hover/item:text-cyan-300 transition-colors">
+                                                                    <span className="text-[10px] font-mono text-purple-500/40 mt-1">[{idx.toString().padStart(2, '0')}]</span>
+                                                                    <p className="text-sm font-mono text-purple-300/80 leading-relaxed group-hover/item:text-purple-300 transition-colors">
                                                                         {info}
                                                                     </p>
                                                                 </motion.div>
                                                             ))}
                                                         </div>
                                                     </div>
-                                                    <div className="absolute inset-0 bg-gradient-to-b from-cyan-500/0 via-cyan-500/0 to-cyan-500/5 pointer-events-none" />
+                                                    <div className="absolute inset-0 bg-gradient-to-b from-purple-500/0 via-purple-500/0 to-purple-500/5 pointer-events-none" />
                                                 </div>
                                             )}
                                         </div>
 
-                                        <div className="flex flex-col items-center justify-between space-y-4 bg-white/5 rounded-2xl p-4 md:p-6 border border-white/10 shadow-2xl shadow-black/20 backdrop-blur-xl transition-all">
-                                            <div className="flex flex-col items-center gap-2">
-                                                <VoltMonkey state={botState} size="sm" />
-                                                <SpeechBubble
-                                                    body={botMessage}
-                                                    placement="bottom"
-                                                    accent={isCorrect ? '#22C55E' : isAnswered ? '#EF4444' : '#6366F1'}
-                                                    visible
-                                                />
-                                            </div>
-                                            <div className="w-full max-w-sm pt-4 border-t border-white/5">
+                                        <div className="flex flex-col items-center justify-between space-y-8 bg-white/5 rounded-2xl p-10 border border-white/10 shadow-2xl shadow-black/20 backdrop-blur-xl transition-all">
+                                            <VoltBot
+                                                state={botState}
+                                                message={botMessage}
+                                                className="scale-110 !static"
+                                            />
+                                            <div className="w-full max-w-sm pt-8 border-t border-white/5">
                                                 <button
                                                     onClick={isAnswered ? handleContinue : handleCheck}
                                                     disabled={!selectedOption}
                                                     className={cn(
-                                                        "group relative w-full h-12 md:h-14 rounded-xl font-heading font-black text-base md:text-lg flex items-center justify-center overflow-hidden transition-all active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed shadow-xl",
+                                                        "group relative w-full h-16 rounded-xl font-heading font-black text-xl flex items-center justify-center overflow-hidden transition-all active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed shadow-xl",
                                                         !isAnswered
                                                             ? "bg-indigo-600 text-white hover:bg-indigo-500 shadow-indigo-500/20"
                                                             : (isCorrect ? "bg-emerald-600 text-white hover:bg-emerald-500 shadow-emerald-500/20" : "bg-rose-600 text-white hover:bg-rose-500 shadow-rose-500/20")
@@ -503,7 +523,7 @@ export const AssessmentPage: React.FC = () => {
                                                 >
                                                     <span className="relative z-10 flex items-center tracking-tight">
                                                         {isAnswered ? "Continue Path" : "Verify Logic"}
-                                                        <ChevronRight className="ml-2 w-6 h-6 group-hover:translate-x-1.5 transition-transform" />
+                                                        <ChevronRight className="ml-3 w-7 h-7 group-hover:translate-x-1.5 transition-transform" />
                                                     </span>
                                                 </button>
                                             </div>
@@ -519,42 +539,104 @@ export const AssessmentPage: React.FC = () => {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-background/95 backdrop-blur-xl p-8"
+                        className="fixed inset-0 z-[100] flex items-center justify-center bg-background pointer-events-auto"
+                        onClick={() => {
+                            if (successStep === 1) setSuccessStep(2);
+                            else navigate('/portal');
+                        }}
                     >
                         <LogicStormBackground />
 
-                        <motion.div
-                            initial={{ scale: 0.9, y: 20 }}
-                            animate={{ scale: 1, y: 0 }}
-                            className="relative z-10 flex flex-col items-center text-center max-w-2xl space-y-8"
-                        >
-                            <div className="mb-4 relative h-32 w-32 md:h-48 md:w-48">
-                                <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full scale-150" />
-                                <VoltMonkey state="happy" size="lg" />
-                            </div>
-
-                            <h2 className="text-4xl md:text-6xl font-heading font-black text-white tracking-tight drop-shadow-glow">
-                                Assessment Complete
-                            </h2>
-
-                            <p className="text-xl md:text-2xl font-mono text-slate-300">
-                                {successStep === 1
-                                    ? "Loop secured. That's real engineering."
-                                    : "Diagnostic complete. Ready for implementation."}
-                            </p>
-
-                            <div className="pt-8">
-                                <button
-                                    onClick={() => navigate('/portal')}
-                                    className="group relative px-8 py-4 bg-primary text-background font-heading font-black text-xl rounded-xl overflow-hidden shadow-glow-primary hover:scale-105 transition-all"
+                        <AnimatePresence mode="wait">
+                            {successStep === 1 ? (
+                                <motion.div
+                                    key="motivational-1"
+                                    initial={{ opacity: 0, scale: 0.9, filter: 'blur(10px)' }}
+                                    animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+                                    exit={{ opacity: 0, scale: 1.1, filter: 'blur(10px)' }}
+                                    transition={{ duration: 0.5, ease: "easeOut" }}
+                                    className="relative z-10 text-center space-y-8 px-8 max-w-5xl"
                                 >
-                                    <span className="relative z-10 flex items-center">
-                                        ENTER PORTAL <ArrowRight className="ml-3 w-6 h-6 group-hover:translate-x-1 transition-transform" />
-                                    </span>
-                                    <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-                                </button>
-                            </div>
-                        </motion.div>
+                                    <div className="flex justify-center mb-12">
+                                        <motion.div
+                                            animate={{
+                                                scale: [1, 1.1, 1],
+                                                rotate: [0, 5, -5, 0]
+                                            }}
+                                            transition={{ repeat: Infinity, duration: 4 }}
+                                            className="bg-primary/20 p-8 rounded-2xl border border-primary/30 shadow-[0_0_50px_rgba(58,134,255,0.2)]"
+                                        >
+                                            <Trophy className="w-20 h-20 text-primary" />
+                                        </motion.div>
+                                    </div>
+
+                                    <h1 className="font-heading font-black text-6xl md:text-8xl text-white tracking-tighter uppercase drop-shadow-[0_0_30px_rgba(255,255,255,0.3)]">
+                                        great job <span className="text-primary">Scientist!</span>
+                                    </h1>
+
+                                    <p className="font-mono text-slate-300 text-2xl md:text-3xl max-w-3xl mx-auto leading-relaxed">
+                                        you have overcome the fear of starting.
+                                    </p>
+
+                                    <div className="pt-16">
+                                        <span className="text-primary/60 font-mono text-sm animate-pulse tracking-[0.3em] uppercase">
+                                            [ CLICK ANYWHERE TO CONTINUE ]
+                                        </span>
+                                    </div>
+                                </motion.div>
+                            ) : (
+                                <motion.div
+                                    key="motivational-2"
+                                    initial={{ opacity: 0, x: 200, filter: 'blur(10px)' }}
+                                    animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
+                                    exit={{ opacity: 0, x: -200, filter: 'blur(10px)' }}
+                                    transition={{ duration: 0.5, ease: "easeOut" }}
+                                    className="relative z-10 text-center space-y-10 px-8 max-w-6xl"
+                                >
+                                    <div className="flex justify-center mb-6">
+                                        <VoltBot state="happy" className="scale-[2.5]" />
+                                    </div>
+
+                                    <h1 className="font-heading font-black text-5xl md:text-7xl text-white tracking-tighter uppercase">
+                                        Protocol <span className="text-signal-success">Ascension</span>
+                                    </h1>
+
+                                    <p className="font-mono text-slate-400 text-xl md:text-2xl max-w-4xl mx-auto leading-relaxed">
+                                        now as you have decided and overcame a challenge let's go further to real world
+                                    </p>
+
+                                    <motion.div
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        transition={{ delay: 1 }}
+                                        className="pt-12"
+                                    >
+                                        <button
+                                            onClick={() => navigate('/portal')}
+                                            className="group relative px-12 py-6 bg-primary text-background font-heading font-black text-2xl rounded-xl overflow-hidden shadow-glow-primary hover:scale-105 transition-all"
+                                        >
+                                            <span className="relative z-10 flex items-center">
+                                                ENTER REAL WORLD <ArrowRight className="ml-4 w-10 h-10 group-hover:translate-x-2 transition-transform" />
+                                            </span>
+                                            <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+                                        </button>
+                                    </motion.div>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+
+                        {/* Progress Indicators */}
+                        <div className="absolute bottom-16 left-0 right-0 flex justify-center space-x-4">
+                            {navItems.map((item) => (
+                                <div
+                                    key={item}
+                                    className={cn(
+                                        "h-1.5 w-24 rounded-full transition-all duration-700 shadow-glow-primary",
+                                        successStep >= item ? "bg-primary" : "bg-slate-800"
+                                    )}
+                                />
+                            ))}
+                        </div>
                     </motion.div>
                 )}
             </AnimatePresence>

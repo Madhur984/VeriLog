@@ -14,7 +14,7 @@ export const Oscilloscope = () => {
                 {/* Grid Background */}
                 <div className="absolute inset-0 opacity-20 pointer-events-none"
                     style={{
-                        backgroundImage: `linear-gradient(#334155 1px, transparent 1px), linear-gradient(90deg, #334155 1px, transparent 1px)`,
+                        backgroundImage: `linear-gradient(#2A2D35 1px, transparent 1px), linear-gradient(90deg, #2A2D35 1px, transparent 1px)`,
                         backgroundSize: '20px 20px'
                     }}
                 />
@@ -52,7 +52,7 @@ export const Oscilloscope = () => {
                             <svg className="w-full h-full" preserveAspectRatio="none">
                                 <path d="M0,40 H80 V10 H120 V40 H200"
                                     fill="none"
-                                    stroke="#3B82F6"
+                                    stroke="#10B981"
                                     strokeWidth="2"
                                     className="drop-shadow-[0_0_5px_rgba(59,130,246,0.5)]"
                                 />

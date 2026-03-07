@@ -1,0 +1,386 @@
+/**
+ * transitions.css
+ *
+ * VeriLog Premium Engineering Transition Layer
+ *
+ * Architecture:
+ *   - 5 GPU-only keyframes (transform + opacity only, zero layout thrashing)
+ *   - 700ms total cascade, phased via animation-delay
+ *   - Zero JS involvement after class toggle
+ *   - prefers-reduced-motion: static matte, text fade only
+ *
+ * Layer stacking:
+ *   L1  #0B0F14 matte — solid, no gradient
+ *   L2  Grid field — CSS background-image + grid-drift keyframe
+ *   L3  Signal line — 1px centered, scaleX from center
+ *   L4  System text — geometricPrecision, 0.2em tracking
+ *   L5  Level markers — L1 active, L2/L3 dimmed (aspirational)
+ */
+
+/* ─── Keyframes ────────────────────────────────────────────────────────────── */
+
+/* Phase B: Overlay slides in from top */
+@keyframes matte-slide {
+    from {
+        transform: scaleY(0);
+    }
+
+    to {
+        transform: scaleY(1);
+    }
+}
+
+/* Phase B exit: Overlay slides out to top */
+@keyframes matte-slide-out {
+    from {
+        transform: scaleY(1);
+    }
+
+    to {
+        transform: scaleY(0);
+    }
+}
+
+/* Phase C: System text rises */
+@keyframes text-fade-in {
+    from {
+        opacity: 0;
+        transform: translate3d(0, -6px, 0);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+/* Phase D: Signal line expands from center */
+@keyframes signal-expand {
+    from {
+        transform: scaleX(0);
+    }
+
+    to {
+        transform: scaleX(1);
+    }
+}
+
+/* Phase D: Single glow pulse on signal line (fires once) */
+@keyframes signal-glow-pulse {
+    0% {
+        box-shadow: 0 0 4px rgba(0, 191, 255, 0.4);
+    }
+
+    50% {
+        box-shadow: 0 0 16px rgba(0, 191, 255, 0.9), 0 0 32px rgba(0, 191, 255, 0.3);
+    }
+
+    100% {
+        box-shadow: 0 0 8px rgba(0, 191, 255, 0.5);
+    }
+}
+
+/* Phase A: Page exits downward */
+@keyframes page-exit {
+    from {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+    }
+
+    to {
+        opacity: 0;
+        transform: translate3d(0, 4px, 0);
+    }
+}
+
+/* Phase E: Page enters from above */
+@keyframes page-enter {
+    from {
+        opacity: 0;
+        transform: translate3d(0, -4px, 0);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+/* L2 background grid drift — barely perceptible */
+@keyframes grid-drift {
+    from {
+        transform: translate3d(0, 0, 0);
+    }
+
+    to {
+        transform: translate3d(-40px, -40px, 0);
+    }
+}
+
+/* ─── Overlay Shell ────────────────────────────────────────────────────────── */
+
+.vl-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+
+    /* L1: Matte background — solid, no gradient, no noise */
+    background: #0B0F14;
+
+    /* Hidden by default — transform-origin top for scaleY */
+    transform: scaleY(0);
+    transform-origin: top center;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+
+    /* GPU layer promotion */
+    will-change: transform;
+}
+
+/* ─── Overlay Active State ─────────────────────────────────────────────────── */
+
+.vl-overlay.is-active {
+    pointer-events: all;
+    animation: matte-slide 200ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.vl-overlay.is-exiting {
+    animation: matte-slide-out 180ms cubic-bezier(0.55, 0, 1, 0.45) forwards;
+    animation-delay: 500ms;
+    /* Wait for page-enter to start */
+}
+
+/* ─── L2: Grid Field ───────────────────────────────────────────────────────── */
+
+.vl-overlay__grid {
+    position: absolute;
+    inset: -10%;
+    width: 120%;
+    height: 120%;
+    background-image:
+        linear-gradient(rgba(0, 191, 255, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 191, 255, 0.025) 1px, transparent 1px);
+    background-size: 48px 48px;
+    animation: grid-drift 28s linear infinite;
+    pointer-events: none;
+    will-change: transform;
+}
+
+/* ─── L4: System Text ──────────────────────────────────────────────────────── */
+
+.vl-overlay__content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 28px;
+}
+
+.vl-overlay__message {
+    opacity: 0;
+    transform: translate3d(0, -6px, 0);
+    will-change: transform, opacity;
+
+    /* Sharp, engineered typography */
+    font-family: 'Roboto Mono', 'Courier New', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #E5E7EB;
+    text-rendering: geometricPrecision;
+    -webkit-font-smoothing: antialiased;
+    text-shadow: 0 0 20px rgba(0, 191, 255, 0.15);
+
+    text-align: center;
+    line-height: 1.6;
+}
+
+.vl-overlay__subtext {
+    display: block;
+    margin-top: 6px;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    color: rgba(229, 231, 235, 0.35);
+    font-weight: 400;
+}
+
+/* Text animates in after matte lands (Phase C: 320ms delay) */
+.vl-overlay.is-active .vl-overlay__message {
+    animation: text-fade-in 180ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    animation-delay: 200ms;
+}
+
+/* ─── L3: Signal Line ──────────────────────────────────────────────────────── */
+
+.vl-overlay__signal-wrap {
+    width: 60vw;
+    max-width: 560px;
+    height: 1px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.vl-overlay__signal-line {
+    width: 100%;
+    height: 1px;
+    background: rgba(0, 191, 255, 0.7);
+    transform: scaleX(0);
+    transform-origin: center;
+    will-change: transform, box-shadow;
+}
+
+/* Signal expands + glows once (Phase D: 330ms delay) */
+.vl-overlay.is-active .vl-overlay__signal-line {
+    animation:
+        signal-expand 200ms cubic-bezier(0.22, 1, 0.36, 1) 330ms forwards,
+        signal-glow-pulse 400ms ease-out 330ms forwards;
+}
+
+/* ─── L5: Level Markers ────────────────────────────────────────────────────── */
+
+.vl-overlay__levels {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-top: 4px;
+}
+
+.vl-level-marker {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Roboto Mono', monospace;
+    font-size: 8px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    text-rendering: geometricPrecision;
+    opacity: 0;
+    transition: none;
+}
+
+.vl-level-marker__dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+}
+
+/* Dimmed future levels — visible but aspirational */
+.vl-level-marker.is-future {
+    color: rgba(229, 231, 235, 0.18);
+}
+
+.vl-level-marker.is-future .vl-level-marker__dot {
+    background: rgba(229, 231, 235, 0.18);
+}
+
+/* Active current level */
+.vl-level-marker.is-active {
+    color: #00BFFF;
+}
+
+.vl-level-marker.is-active .vl-level-marker__dot {
+    background: #00BFFF;
+    box-shadow: 0 0 6px rgba(0, 191, 255, 0.8);
+}
+
+/* Level markers animate in staggered after text */
+.vl-overlay.is-active .vl-level-marker {
+    animation: text-fade-in 180ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.vl-overlay.is-active .vl-level-marker:nth-child(1) {
+    animation-delay: 280ms;
+}
+
+.vl-overlay.is-active .vl-level-marker:nth-child(2) {
+    animation-delay: 310ms;
+}
+
+.vl-overlay.is-active .vl-level-marker:nth-child(3) {
+    animation-delay: 340ms;
+}
+
+/* Separator between level markers */
+.vl-level-separator {
+    width: 16px;
+    height: 1px;
+    background: rgba(229, 231, 235, 0.1);
+}
+
+/* ─── Page Transition Classes ──────────────────────────────────────────────── */
+
+/* Applied to page wrapper on exit */
+.vl-page-exiting {
+    animation: page-exit 120ms ease-in forwards;
+    will-change: transform, opacity;
+    pointer-events: none;
+}
+
+/* Applied to page wrapper on enter */
+.vl-page-entering {
+    animation: page-enter 200ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    animation-delay: 500ms;
+    will-change: transform, opacity;
+    /* Start invisible, animate-in at delay */
+    opacity: 0;
+}
+
+/* ─── Reduced Motion ───────────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+
+    /* Disable all keyframes */
+    .vl-overlay.is-active,
+    .vl-overlay.is-exiting,
+    .vl-overlay.is-active .vl-overlay__signal-line,
+    .vl-overlay__grid,
+    .vl-page-exiting,
+    .vl-page-entering {
+        animation: none !important;
+        transition: none !important;
+    }
+
+    /* Static matte for 250ms — browser handles opacity only */
+    .vl-overlay.is-active {
+        transform: scaleY(1);
+        /* Show immediately */
+    }
+
+    /* Text fades in without motion */
+    .vl-overlay.is-active .vl-overlay__message,
+    .vl-overlay.is-active .vl-level-marker {
+        animation: text-fade-in-static 200ms ease forwards !important;
+    }
+
+    @keyframes text-fade-in-static {
+        from {
+            opacity: 0;
+            transform: none;
+        }
+
+        to {
+            opacity: 1;
+            transform: none;
+        }
+    }
+
+    /* Pages don't move */
+    .vl-page-exiting {
+        opacity: 0;
+    }
+
+    .vl-page-entering {
+        opacity: 1;
+        animation: none !important;
+    }
+}
