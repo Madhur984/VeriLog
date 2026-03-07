@@ -33,3 +33,4 @@
 # 2: style: normalize spacing in CircuitCanvas layout
 # 3: style: tighten grid gap in WorkstationHome cards
 # 4: chore: remove console.log from botBrain hook
+# 5: chore: update tsconfig paths for cleaner aliases
