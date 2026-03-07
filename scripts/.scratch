@@ -43,3 +43,4 @@
 # 12: chore: adjust Vite dev server port to 5174
 # 13: docs: update README with new /hero route description
 # 14: refactor: rename internal bot state vars for clarity
+# 15: chore: sync package-lock with latest deps
