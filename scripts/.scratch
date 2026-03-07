@@ -32,3 +32,4 @@
 # 1: fix: correct SVG viewBox in GatekeeperLanding video
 # 2: style: normalize spacing in CircuitCanvas layout
 # 3: style: tighten grid gap in WorkstationHome cards
+# 4: chore: remove console.log from botBrain hook
