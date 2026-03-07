@@ -37,3 +37,4 @@
 # 6: style: increase contrast on ghost tone bubble text
 # 7: chore: bump framer-motion to patch version
 # 8: docs: add JSDoc to BotCompanion props interface
+# 9: style: update font-mono classes for consistency
