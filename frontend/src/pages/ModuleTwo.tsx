@@ -17,6 +17,7 @@ import { XPCounter } from '../components/level1/XPCounter';
 import { ProgressTracker } from '../components/ui/ProgressTracker';
 import { useXPSystem } from '../hooks/useXPSystem';
 import { useVoltMonkeyMentorL2 } from '../hooks/useVoltMonkeyMentorL2';
+import { useUserStore } from '../stores/userStore';
 
 /* ═══════════════════════════════════════════════════════════════════════
    DESIGN TOKENS
@@ -61,6 +62,7 @@ const BADGES_MAP: Record<string, Badge> = {
 
 export const ModuleTwo: React.FC = () => {
     const navigate = useNavigate();
+    const completeModule = useUserStore(state => state.completeModule);
     const [scene, setScene] = useState<Scene>('intro');
     const [screenFlash, setScreenFlash] = useState(false);
 
@@ -907,7 +909,7 @@ export const ModuleTwo: React.FC = () => {
                             </div>
 
                             <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                                <EnterpriseBtn label="Level 3 Awaits" onClick={() => setScene('complete')} />
+                                <EnterpriseBtn label="Level 3 Awaits" onClick={() => { setScene('complete'); completeModule('C2'); }} />
                             </div>
                         </motion.div>
                     )}

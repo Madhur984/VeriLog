@@ -12,6 +12,7 @@ import {
     ArrowLeft, Share2, Download, Zap, HelpCircle
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useUserStore } from '../stores/userStore';
 
 const T = {
     bg: '#060B18',
@@ -28,19 +29,20 @@ const T = {
 
 export const EngineeringPortfolio: React.FC = () => {
     const navigate = useNavigate();
+    const { firstName, xp, completedModuleIds, streak } = useUserStore();
 
     const stats = [
-        { label: 'Uptime', value: '7 Days', icon: Zap },
-        { label: 'Engineering XP', value: '1,240', icon: Rocket },
-        { label: 'Modules Cleared', value: '2', icon: Shield },
+        { label: 'Uptime', value: `${streak} Days`, icon: Zap },
+        { label: 'Engineering XP', value: xp.toLocaleString(), icon: Rocket },
+        { label: 'Modules Cleared', value: String(completedModuleIds.length), icon: Shield },
         { label: 'Lab Time', value: '4.5h', icon: Clock },
     ];
 
     const badges = [
-        { name: 'Loop Initiate', date: 'Oct 12', cat: 'Lv. 1' },
-        { name: 'Analog Explorer', date: 'Oct 14', cat: 'Lv. 2' },
-        { name: 'Digital Discoverer', date: 'Oct 15', cat: 'Lv. 2' },
-        { name: 'Diagnostic Specialist', date: 'Oct 16', cat: 'Lv. 1' },
+        { name: 'Loop Initiate', date: 'Oct 12', cat: 'Lv. 1', unlocked: completedModuleIds.includes('C1') },
+        { name: 'Analog Explorer', date: 'Oct 14', cat: 'Lv. 2', unlocked: completedModuleIds.includes('C2') },
+        { name: 'Digital Discoverer', date: 'Oct 15', cat: 'Lv. 2', unlocked: completedModuleIds.includes('C3') },
+        { name: 'Diagnostic Specialist', date: 'Oct 16', cat: 'Lv. 1', unlocked: completedModuleIds.length > 5 },
     ];
 
     return (
@@ -83,9 +85,9 @@ export const EngineeringPortfolio: React.FC = () => {
                         border: '4px solid rgba(0,212,255,0.2)',
                         boxShadow: '0 0 40px rgba(0,212,255,0.2)',
                     }}>
-                        S
+                        {(firstName || 'S')[0].toUpperCase()}
                     </div>
-                    <h1 style={{ fontSize: 36, fontWeight: 800, marginBottom: 8, letterSpacing: '-0.02em' }}>Soham's Engineering Portfolio</h1>
+                    <h1 style={{ fontSize: 36, fontWeight: 800, marginBottom: 8, letterSpacing: '-0.02em' }}>{firstName || 'Explorer'}'s Engineering Portfolio</h1>
                     <p style={{ color: T.muted, fontSize: 16, maxWidth: 500, margin: '0 auto', lineHeight: 1.6 }}>
                         Specializing in Digital Systems Design. Verified progress in Circuit Theory & Logic Analysis.
                     </p>

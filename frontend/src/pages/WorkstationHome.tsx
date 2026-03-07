@@ -253,12 +253,23 @@ const HoverCard: React.FC<{ mod: Module; onStart: (m: Module) => void; isDark: b
 
 export const WorkstationHome: React.FC = () => {
     const navigate = useNavigate();
-    const { firstName } = useUserStore();
+    const { firstName, completedModuleIds } = useUserStore();
     const [hoveredId, setHoveredId] = useState<string | null>(null);
     const [cmdOpen, setCmdOpen] = useState(false);
     const [tourOpen, setTourOpen] = useState(false);
     const [scheme, toggleScheme] = useColorScheme();
     const isDark = scheme === 'dark';
+
+    // Derived modules with real status
+    const dynamicModules = useMemo(() => {
+        return MODULES.map(m => {
+            if (completedModuleIds.includes(m.id)) {
+                return { ...m, status: 'completed' as Status, progress: 100 };
+            }
+            // For now, if not completed, we keep static status or implement logic to unlock
+            return m;
+        });
+    }, [completedModuleIds]);
 
     const MODULE_ROUTES: Record<string, string> = {
         C1: '/module/1',
@@ -304,7 +315,7 @@ export const WorkstationHome: React.FC = () => {
     }, [hoveredId]);
 
     /* ── Foundation progress ── */
-    const foundMods = MODULES.filter(m => m.depth === 0);
+    const foundMods = dynamicModules.filter(m => m.depth === 0);
     const foundComplete = foundMods.filter(m => m.status === 'completed').length;
     const foundInProg = foundMods.filter(m => m.status !== 'locked').length;
 
@@ -333,10 +344,10 @@ export const WorkstationHome: React.FC = () => {
         { title: 'Progress', icon: BarChart3, path: '/skill-tree' },
         { title: 'Modules', icon: BookOpen, path: '/portal' },
         { title: 'Portfolio', icon: Shield, path: '/portfolio' },
-        { title: 'Settings', icon: Settings, path: '/login' },
+        { title: 'Settings', icon: Settings, path: '/portfolio' }, // Point settings to portfolio for now as it's the most "profile-like" page
     ];
 
-    const completedCount = MODULES.filter(m => m.status === 'completed').length;
+    const completedCount = dynamicModules.filter(m => m.status === 'completed').length;
 
     /* ── Adaptive tokens ── */
     const t = {

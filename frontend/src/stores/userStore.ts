@@ -9,6 +9,7 @@ interface UserState {
     streak: number;
     firstName: string | null;
     hasSeenGreeting: boolean;
+    completedModuleIds: string[];
 
     // Actions
     addXp: (amount: number) => void;
@@ -18,6 +19,7 @@ interface UserState {
     refillHearts: () => void;
     setFirstName: (name: string | null) => void;
     setHasSeenGreeting: (seen: boolean) => void;
+    completeModule: (moduleId: string) => void;
 }
 
 export const useUserStore = create<UserState>()(
@@ -30,6 +32,7 @@ export const useUserStore = create<UserState>()(
             streak: 1,
             firstName: null,
             hasSeenGreeting: false,
+            completedModuleIds: [],
 
             addXp: (amount) => set((state) => ({ xp: state.xp + amount })),
 
@@ -53,6 +56,12 @@ export const useUserStore = create<UserState>()(
             setFirstName: (name) => set({ firstName: name }),
 
             setHasSeenGreeting: (seen) => set({ hasSeenGreeting: seen }),
+
+            completeModule: (moduleId) => set((state) => ({
+                completedModuleIds: state.completedModuleIds.includes(moduleId)
+                    ? state.completedModuleIds
+                    : [...state.completedModuleIds, moduleId]
+            })),
         }),
         {
             name: 'veriquest-user-storage',

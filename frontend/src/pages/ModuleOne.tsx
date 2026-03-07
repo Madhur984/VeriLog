@@ -12,6 +12,7 @@ import { XPCounter } from '../components/level1/XPCounter';
 import { ProgressTracker } from '../components/ui/ProgressTracker';
 import { useXPSystem } from '../hooks/useXPSystem';
 import { useVoltMonkeyMentor } from '../hooks/useVoltMonkeyMentor';
+import { useUserStore } from '../stores/userStore';
 import { BadgeToast } from '../components/level2/BadgeToast';
 import { CircuitLab } from '../circuit-lab/CircuitLab';
 import '../components/level1/level1.css';
@@ -50,6 +51,7 @@ const BADGES_MAP: Record<string, Badge> = {
 
 export const ModuleOne: React.FC = () => {
     const navigate = useNavigate();
+    const completeModule = useUserStore(state => state.completeModule);
     const [scene, setScene] = useState<Scene>('intro');
     const [step, setStep] = useState(0);
     const [screenFlash, setScreenFlash] = useState(false);
@@ -168,6 +170,7 @@ export const ModuleOne: React.FC = () => {
             setScene('summary'); setVoltMonkeyResponse(null);
         } else if (scene === 'summary') {
             setScene('complete');
+            completeModule('C1');
         } else if (scene === 'complete') {
             setScene('intro');
             setStep(0);
