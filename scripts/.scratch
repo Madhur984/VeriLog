@@ -48,3 +48,4 @@
 # 17: refactor: consolidate emotion-to-animation map
 # 18: style: reduce motion duration on mobile for perf
 # 19: refactor: extract wire color constants to theme file
+# 20: docs: add inline comments to useBotBrain state machine
