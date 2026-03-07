@@ -47,3 +47,4 @@
 # 16: fix: resolve edge case in electron flow animation
 # 17: refactor: consolidate emotion-to-animation map
 # 18: style: reduce motion duration on mobile for perf
+# 19: refactor: extract wire color constants to theme file
