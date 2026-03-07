@@ -41,3 +41,4 @@
 # 10: docs: document BotTrigger union type values
 # 11: refactor: clean up unused imports in simulator
 # 12: chore: adjust Vite dev server port to 5174
+# 13: docs: update README with new /hero route description
