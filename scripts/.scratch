@@ -45,3 +45,4 @@
 # 14: refactor: rename internal bot state vars for clarity
 # 15: chore: sync package-lock with latest deps
 # 16: fix: resolve edge case in electron flow animation
+# 17: refactor: consolidate emotion-to-animation map
