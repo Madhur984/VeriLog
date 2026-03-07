@@ -39,3 +39,4 @@
 # 8: docs: add JSDoc to BotCompanion props interface
 # 9: style: update font-mono classes for consistency
 # 10: docs: document BotTrigger union type values
+# 11: refactor: clean up unused imports in simulator
