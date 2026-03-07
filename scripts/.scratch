@@ -34,3 +34,4 @@
 # 3: style: tighten grid gap in WorkstationHome cards
 # 4: chore: remove console.log from botBrain hook
 # 5: chore: update tsconfig paths for cleaner aliases
+# 6: style: increase contrast on ghost tone bubble text
