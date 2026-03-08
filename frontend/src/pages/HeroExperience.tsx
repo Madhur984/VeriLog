@@ -4,13 +4,13 @@ import { motion } from 'framer-motion';
 import { SignalOrb } from '../components/ui/SignalOrb';
 import { VoltBot } from '../components/ui/VoltBot';
 import { LayoutDashboard, ArrowRight } from 'lucide-react';
-import { useUserStore } from '../stores/userStore';
+import { useGamificationStore } from '../stores/gamificationStore';
 import { GreetingSequence } from '../components/ui/GreetingSequence';
 import { AnimatePresence } from 'framer-motion';
 
 export const HeroExperience = () => {
     const navigate = useNavigate();
-    const { hasSeenGreeting, firstName } = useUserStore();
+    const { hasSeenGreeting, firstName } = useGamificationStore();
     const [orbInteracted, setOrbInteracted] = useState(false);
 
     return (

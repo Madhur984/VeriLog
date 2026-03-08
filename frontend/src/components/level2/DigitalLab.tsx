@@ -112,8 +112,8 @@ export function DigitalLab({
 
                         {/* Wire batt+ → switch */}
                         <line x1="36" y1="68" x2="80" y2="68"
-                            stroke={ledOn ? T.accent : T.border} strokeWidth="1.5"
-                            style={ledOn ? { filter: 'drop-shadow(0 0 3px rgba(0,212,255,0.6))' } : undefined} />
+                            stroke={ledOn ? T.accent : T.border} strokeWidth={ledOn ? "2" : "1.5"}
+                            style={ledOn ? { filter: 'drop-shadow(0 0 6px rgba(0,212,255,0.8))' } : { opacity: 0.4 }} />
 
                         {/* Switch symbol */}
                         <circle cx="90" cy="68" r="3" fill={T.accent} />
@@ -131,10 +131,18 @@ export function DigitalLab({
                             SPST
                         </text>
 
+                        {/* Live Voltage Readout in Circuit */}
+                        <text x="147" y="58" fill={ledOn ? T.accent : T.muted} fontSize="8" fontFamily={T.mono} textAnchor="middle" style={{ opacity: 0.9, fontWeight: 600 }}>
+                            {ledOn ? '5.0V (HIGH)' : '0.0V (LOW)'}
+                        </text>
+                        <text x="147" y="82" fill={T.muted} fontSize="6" fontFamily={T.mono} textAnchor="middle" style={{ opacity: 0.8 }}>
+                            DIGITAL SIGNAL
+                        </text>
+
                         {/* Wire switch → LED */}
                         <line x1="127" y1="68" x2="168" y2="68"
-                            stroke={ledOn ? T.accent : T.border} strokeWidth="1.5"
-                            style={ledOn ? { filter: 'drop-shadow(0 0 3px rgba(0,212,255,0.6))' } : undefined} />
+                            stroke={ledOn ? T.accent : T.border} strokeWidth={ledOn ? "2" : "1.5"}
+                            style={ledOn ? { filter: 'drop-shadow(0 0 6px rgba(0,212,255,0.8))' } : { opacity: 0.4 }} />
 
                         {/* LED */}
                         <circle cx="186" cy="80" r="14" fill="none" stroke="#94A3B8" strokeWidth="1.5" />

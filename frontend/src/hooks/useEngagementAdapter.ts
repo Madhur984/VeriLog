@@ -7,7 +7,7 @@
  */
 
 import { useRef, useCallback, useMemo } from 'react';
-import { useEngagementStore, type XPCategory } from '../stores/engagementStore';
+import { useGamificationStore, type XPCategory } from '../stores/gamificationStore';
 
 // Match the old XPState interface shape
 export interface XPState {
@@ -18,7 +18,7 @@ export interface XPState {
 }
 
 export function useEngagementAdapter() {
-    const store = useEngagementStore();
+    const store = useGamificationStore();
     const counterElRef = useRef<HTMLElement | null>(null);
     const rafRef = useRef<number>(0);
     const answerStartRef = useRef<number>(Date.now());
@@ -26,20 +26,20 @@ export function useEngagementAdapter() {
     // Check streak on mount
     store.checkStreak();
 
-    // Compose XPState from engagementStore
+    // Compose XPState
     const xp: XPState = useMemo(() => ({
-        structural: store.sip.structural,
-        diagnostic: store.sip.diagnostic,
-        application: store.sip.application,
-        total: store.totalXP,
-    }), [store.sip, store.totalXP]);
+        structural: store.xp.structural,
+        diagnostic: store.xp.diagnostic,
+        application: store.xp.application,
+        total: store.xp.total,
+    }), [store.xp]);
 
     // Mark answer start (for hesitation penalty)
     const markAnswerStart = useCallback(() => {
         answerStartRef.current = Date.now();
     }, []);
 
-    // Animate counter (preserved from old useXPSystem)
+    // Animate counter
     const animateCounter = useCallback((from: number, to: number) => {
         cancelAnimationFrame(rafRef.current);
         const el = counterElRef.current;
@@ -59,7 +59,7 @@ export function useEngagementAdapter() {
         rafRef.current = requestAnimationFrame(tick);
     }, []);
 
-    // Award XP — reroutes to engagementStore with hesitation penalty
+    // Award XP
     const awardXP = useCallback((category: XPCategory, overrideAmount?: number) => {
         let amount = overrideAmount ?? { structural: 10, diagnostic: 20, application: 15 }[category];
 
@@ -67,11 +67,11 @@ export function useEngagementAdapter() {
         const elapsedMs = Date.now() - answerStartRef.current;
         if (elapsedMs > 30_000) amount = Math.ceil(amount * 0.5);
 
-        const prevTotal = store.totalXP;
+        const prevTotal = store.xp.total;
         store.awardXP(category, amount);
 
         // Animate counter
-        animateCounter(prevTotal, prevTotal + amount);
+        animateCounter(prevTotal, store.xp.total + amount); // Using current total + awarded
         const el = counterElRef.current;
         if (el) {
             el.classList.remove('vl-xp--flash');
@@ -82,13 +82,22 @@ export function useEngagementAdapter() {
 
     const registerCounterEl = useCallback((el: HTMLElement | null) => {
         counterElRef.current = el;
-        if (el) el.textContent = String(store.totalXP).padStart(3, '0');
-    }, [store.totalXP]);
+        if (el) el.textContent = String(store.xp.total).padStart(3, '0');
+    }, [store.xp.total]);
 
-    /** Signal Integrity Index: 0–100 */
     const signalIntegrityIndex = useCallback((): number => {
         return store.getSIPScore();
     }, [store]);
 
-    return { xp, awardXP, registerCounterEl, markAnswerStart, signalIntegrityIndex };
+    return {
+        xp,
+        awardXP,
+        registerCounterEl,
+        markAnswerStart,
+        signalIntegrityIndex,
+        completeSkill: store.completeSkill,
+        unlockSkill: store.unlockSkill,
+        unlockBadge: store.unlockBadge,
+        hasBadge: store.hasBadge
+    };
 }

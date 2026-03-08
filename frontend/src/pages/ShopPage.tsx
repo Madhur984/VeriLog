@@ -1,10 +1,9 @@
-
-import { useUserStore } from '../stores/userStore';
+import { useGamificationStore } from '../stores/gamificationStore';
 import { Heart, Zap, Shield, ShoppingBag } from 'lucide-react';
 import { cn } from '../components/ui/button';
 
 export const ShopPage = () => {
-    const { hearts, maxHearts, spendGems, refillHearts } = useUserStore();
+    const { hearts, maxHearts, spendGems, refillHearts } = useGamificationStore();
 
     const handleRefillHeart = () => {
         if (hearts >= maxHearts) return alert("Full health already!");

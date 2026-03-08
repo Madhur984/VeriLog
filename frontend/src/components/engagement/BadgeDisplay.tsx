@@ -2,10 +2,10 @@
  * BadgeDisplay.tsx — Grid view of all badges
  */
 
-import { BADGE_CATALOG, useEngagementStore } from '../../stores/engagementStore';
+import { BADGE_CATALOG, useGamificationStore } from '../../stores/gamificationStore';
 
 export function BadgeDisplay() {
-    const { badges } = useEngagementStore();
+    const { badges } = useGamificationStore();
     const unlockedIds = new Set(badges.map((b) => b.id));
 
     return (

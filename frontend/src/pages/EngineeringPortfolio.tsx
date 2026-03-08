@@ -12,7 +12,7 @@ import {
     ArrowLeft, Share2, Download, Zap, HelpCircle
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useUserStore } from '../stores/userStore';
+import { useGamificationStore } from '../stores/gamificationStore';
 
 const T = {
     bg: '#060B18',
@@ -29,20 +29,21 @@ const T = {
 
 export const EngineeringPortfolio: React.FC = () => {
     const navigate = useNavigate();
-    const { firstName, xp, completedModuleIds, streak } = useUserStore();
+    const { firstName, xp, skills, streak } = useGamificationStore();
+    const completedModuleIds = skills.completedIds;
 
     const stats = [
-        { label: 'Uptime', value: `${streak} Days`, icon: Zap },
-        { label: 'Engineering XP', value: xp.toLocaleString(), icon: Rocket },
+        { label: 'Uptime', value: `${streak.current} Days`, icon: Zap },
+        { label: 'Engineering XP', value: xp.total.toLocaleString(), icon: Rocket },
         { label: 'Modules Cleared', value: String(completedModuleIds.length), icon: Shield },
         { label: 'Lab Time', value: '4.5h', icon: Clock },
     ];
 
-    const badges = [
-        { name: 'Loop Initiate', date: 'Oct 12', cat: 'Lv. 1', unlocked: completedModuleIds.includes('C1') },
-        { name: 'Analog Explorer', date: 'Oct 14', cat: 'Lv. 2', unlocked: completedModuleIds.includes('C2') },
-        { name: 'Digital Discoverer', date: 'Oct 15', cat: 'Lv. 2', unlocked: completedModuleIds.includes('C3') },
-        { name: 'Diagnostic Specialist', date: 'Oct 16', cat: 'Lv. 1', unlocked: completedModuleIds.length > 5 },
+    const badgesData = [
+        { name: 'Signals Specialist', date: 'Mar 08', cat: 'Lv. 1', unlocked: completedModuleIds.includes('signals') },
+        { name: 'Analog Explorer', date: 'Mar 08', cat: 'Lv. 2', unlocked: completedModuleIds.includes('analog_digital') },
+        { name: 'Digital Discoverer', date: 'Mar 08', cat: 'Lv. 3', unlocked: completedModuleIds.includes('binary_awakening') },
+        { name: 'Logic Professional', date: 'Mar 08', cat: 'Lv. 4', unlocked: completedModuleIds.includes('logic_gates') },
     ];
 
     return (
@@ -110,7 +111,7 @@ export const EngineeringPortfolio: React.FC = () => {
                         Earned Credentials
                     </h3>
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-                        {badges.map((b, i) => (
+                        {badgesData.map((b, i) => (
                             <motion.div
                                 key={i}
                                 initial={{ opacity: 0, x: -10 }}

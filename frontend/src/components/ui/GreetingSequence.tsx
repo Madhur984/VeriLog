@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useUserStore } from '../../stores/userStore';
+import { useGamificationStore } from '../../stores/gamificationStore';
 import { useNavigate } from 'react-router-dom';
 import { Sparkles, ArrowRight, Zap } from 'lucide-react';
 import { LogicStormBackground } from './LogicStormBackground';
 
 export const GreetingSequence: React.FC = () => {
     const navigate = useNavigate();
-    const { firstName, setHasSeenGreeting } = useUserStore();
+    const { firstName, setHasSeenGreeting } = useGamificationStore();
     const [step, setStep] = useState(0);
 
     const steps = [

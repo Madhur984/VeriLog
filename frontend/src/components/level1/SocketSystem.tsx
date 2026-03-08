@@ -64,12 +64,12 @@ BatterySymbol.displayName = 'BatterySymbol';
 // ── IEC Symbol: Resistive Load (lamp / actuator) ─────────────────────
 const LampSymbol = memo(({ x, y, color, active }: { x: number; y: number; color: string; active: boolean }) => (
     <g transform={`translate(${x},${y})`} aria-label="Resistive load">
-        <circle r="18" stroke={color} strokeWidth="1.8" fill={active ? 'rgba(0, 212, 255, 0.05)' : 'none'} style={{ transition: 'all 0.4s ease-out' }} />
+        <circle r="18" stroke={color} strokeWidth="1.8" fill={active ? 'rgba(16, 185, 129, 0.05)' : 'none'} style={{ transition: 'all 0.4s ease-out' }} />
         <line x1="-12.7" y1="-12.7" x2="12.7" y2="12.7" stroke={color} strokeWidth="1.8" style={{ transition: 'stroke 0.4s' }} />
         <line x1="12.7" y1="-12.7" x2="-12.7" y2="12.7" stroke={color} strokeWidth="1.8" style={{ transition: 'stroke 0.4s' }} />
 
         {/* Active focal glow: smooth ramp up, calm engineered feel */}
-        <circle r="6" fill="#00D4FF" filter="url(#glow-soft)" style={{ opacity: active ? 0.75 : 0, transition: 'opacity 400ms ease-out' }} />
+        <circle r="8" fill="#10B981" className={active ? 'vl-led--on' : 'vl-led--off'} />
 
         {/* Stubs */}
         <line x1="0" y1="-18" x2="0" y2="-24" stroke={color} strokeWidth="1.8" />
@@ -403,11 +403,28 @@ export const SocketSystem = memo(({ onComplete, isDark = true, diagnosticsMode =
 
                     {/* Electron flow overlay (calm) */}
                     {snapped && !shortCircuit && (
-                        <line
-                            x1={SA_X + 14} y1={LOOP_TOP} x2={SB_X - 14} y2={LOOP_TOP}
-                            stroke={colors.accent} strokeWidth="2" strokeDasharray="2 12" strokeLinecap="round"
-                            className="vl-wire-flow" opacity="0.6"
-                        />
+                        <g opacity="0.6">
+                            <line
+                                x1={SA_X + 14} y1={LOOP_TOP} x2={SB_X - 14} y2={LOOP_TOP}
+                                stroke={colors.accent} strokeWidth="2" strokeDasharray="2 12" strokeLinecap="round"
+                                className="vl-wire--live"
+                            />
+                            <path
+                                d={`M ${LOOP_RGT},${LOAD_Y + 24} L ${LOOP_RGT},${LOOP_BOT - RX} Q ${LOOP_RGT},${LOOP_BOT} ${LOOP_RGT - RX},${LOOP_BOT} L ${LOOP_LFT + RX},${LOOP_BOT} Q ${LOOP_LFT},${LOOP_BOT} ${LOOP_LFT},${LOOP_BOT - RX} L ${LOOP_LFT},${SRC_Y + 24}`}
+                                stroke={colors.accent} strokeWidth="2" strokeDasharray="2 12" strokeLinecap="round"
+                                className="vl-wire--live" fill="none"
+                            />
+                            <path
+                                d={`M ${LOOP_LFT},${SRC_Y - 24} L ${LOOP_LFT},${LOOP_TOP + RX} Q ${LOOP_LFT},${LOOP_TOP} ${LOOP_LFT + RX},${LOOP_TOP} L ${SA_X},${LOOP_TOP}`}
+                                stroke={colors.accent} strokeWidth="2" strokeDasharray="2 12" strokeLinecap="round"
+                                className="vl-wire--live" fill="none"
+                            />
+                            <path
+                                d={`M ${SB_X},${LOOP_TOP} L ${LOOP_RGT - RX},${LOOP_TOP} Q ${LOOP_RGT},${LOOP_TOP} ${LOOP_RGT},${LOOP_TOP + RX} L ${LOOP_RGT},${LOAD_Y - 24}`}
+                                stroke={colors.accent} strokeWidth="2" strokeDasharray="2 12" strokeLinecap="round"
+                                className="vl-wire--live" fill="none"
+                            />
+                        </g>
                     )}
 
                     {/* ── Current direction arrows ───────────────────── */}
@@ -499,25 +516,50 @@ export const SocketSystem = memo(({ onComplete, isDark = true, diagnosticsMode =
 
             {/* ── Signal confirmed panel (on snap) ─────────────────────── */}
             {snapped && (
-                <div style={{
-                    width: '100%', maxWidth: 480,
-                    padding: '14px 18px', borderRadius: 3,
-                    border: '1px solid rgba(16,185,129,0.2)',
-                    background: 'rgba(16,185,129,0.04)',
-                    display: 'flex', alignItems: 'flex-start', gap: 12,
-                }}>
-                    <span style={{
-                        width: 4, height: 4, borderRadius: '50%', flexShrink: 0, marginTop: 6,
-                        background: '#10B981', boxShadow: '0 0 6px rgba(16,185,129,0.8)',
-                    }} />
-                    <p style={{
-                        fontFamily: "'IBM Plex Mono', monospace", fontSize: 9,
-                        letterSpacing: '0.18em', color: colors.accent,
-                        textTransform: 'uppercase', marginBottom: 6,
-                    }}>Engineering Check</p>
-                    <p style={{ fontSize: 13, color: '#94A3B8', lineHeight: 1.6 }}>
-                        Continuity validated. Current loop holds from <strong style={{ color: colors.text, fontWeight: 500 }}>+12V Source</strong> through <strong style={{ color: colors.text, fontWeight: 500 }}>R_LOAD</strong> to <strong style={{ color: colors.text, fontWeight: 500 }}>-GND</strong>. Loop invariant satisfied.
-                    </p>
+                <div style={{ width: '100%', maxWidth: 480 }}>
+                    <div style={{
+                        padding: '14px 18px', borderRadius: 3,
+                        border: '1px solid rgba(16,185,129,0.2)',
+                        background: 'rgba(16,185,129,0.04)',
+                        display: 'flex', alignItems: 'flex-start', gap: 12,
+                    }}>
+                        <span style={{
+                            width: 4, height: 4, borderRadius: '50%', flexShrink: 0, marginTop: 6,
+                            background: '#10B981', boxShadow: '0 0 6px rgba(16,185,129,0.8)',
+                        }} />
+                        <div>
+                            <p style={{
+                                fontFamily: "'IBM Plex Mono', monospace", fontSize: 9,
+                                letterSpacing: '0.18em', color: colors.accent,
+                                textTransform: 'uppercase', marginBottom: 6,
+                            }}>Engineering Check</p>
+                            <p style={{ fontSize: 13, color: '#94A3B8', lineHeight: 1.6 }}>
+                                Continuity validated. Current loop holds from <strong style={{ color: colors.text, fontWeight: 500 }}>+12V Source</strong> through <strong style={{ color: colors.text, fontWeight: 500 }}>R_LOAD</strong> to <strong style={{ color: colors.text, fontWeight: 500 }}>-GND</strong>. Loop invariant satisfied.
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* ── Visual Circuit Schematic Overlay ─────────────────────── */}
+                    {!shortCircuit && (
+                        <div style={{
+                            padding: '12px 18px', borderRadius: 3,
+                            border: '1px solid rgba(0,212,255,0.2)',
+                            background: 'rgba(0,212,255,0.03)',
+                            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                            fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, color: colors.accent,
+                            marginTop: 12, opacity: 0, animation: 'vl-invariant-reveal 0.4s ease-out forwards'
+                        }}>
+                            <span style={{ color: colors.text, opacity: 0.8 }}>Battery</span>
+                            <span style={{ opacity: 0.5 }}>→</span>
+                            <span style={{ color: colors.accent }}>Wire (Path)</span>
+                            <span style={{ opacity: 0.5 }}>→</span>
+                            <span style={{ color: '#10B981', fontWeight: 600 }}>LED (Load)</span>
+                            <span style={{ opacity: 0.5 }}>→</span>
+                            <span style={{ color: colors.accent }}>Wire (Return)</span>
+                            <span style={{ opacity: 0.5 }}>→</span>
+                            <span style={{ color: colors.text, opacity: 0.8 }}>Battery</span>
+                        </div>
+                    )}
                 </div>
             )}
         </div>

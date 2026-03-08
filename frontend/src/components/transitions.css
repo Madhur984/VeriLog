@@ -293,6 +293,15 @@
     box-shadow: 0 0 6px rgba(0, 191, 255, 0.8);
 }
 
+/* Completed levels — dimmed green */
+.vl-level-marker.is-complete {
+    color: rgba(16, 185, 129, 0.4);
+}
+
+.vl-level-marker.is-complete .vl-level-marker__dot {
+    background: rgba(16, 185, 129, 0.4);
+}
+
 /* Level markers animate in staggered after text */
 .vl-overlay.is-active .vl-level-marker {
     animation: text-fade-in 180ms cubic-bezier(0.22, 1, 0.36, 1) forwards;

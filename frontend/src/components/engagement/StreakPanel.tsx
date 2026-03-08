@@ -2,12 +2,12 @@
  * StreakPanel.tsx — 7-day streak calendar with multiplier display
  */
 
-import { useEngagementStore } from '../../stores/engagementStore';
+import { useGamificationStore } from '../../stores/gamificationStore';
 
 const DAY_LABELS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 
 export function StreakPanel() {
-    const { streak, getStreakMultiplier } = useEngagementStore();
+    const { streak, getStreakMultiplier } = useGamificationStore();
     const multiplier = getStreakMultiplier();
 
     // Build 7-day visual: last 7 days, marking active ones
