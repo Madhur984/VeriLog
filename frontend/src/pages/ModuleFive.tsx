@@ -1,11 +1,21 @@
+/**
+ * ModuleFive.tsx — Level 5: Karnaugh Map Optimization
+ *
+ * 5-scene module with full Supabase-backed progress persistence.
+ * Scenes: Intro → K-Map Builder → Grouping Lab → Challenges → Optimization
+ */
+
 import React, { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Bot } from 'lucide-react';
+import { ArrowLeft, Bot, Loader2 } from 'lucide-react';
 import { useEngagementAdapter } from '../hooks/useEngagementAdapter';
 import { useVoltMonkeyL5, type SceneId } from '../hooks/useVoltMonkeyL5';
-import { CircuitComplexityDemo } from '../components/level5/CircuitComplexityDemo';
+import { useKMapProgress } from '../hooks/useKMapProgress';
+import { KMapIntro } from '../components/level5/KMapIntro';
 import { KMapEngine } from '../components/level5/KMapEngine';
+import { KMapGroupingLab } from '../components/level5/KMapGroupingLab';
+import { KMapChallenges } from '../components/level5/KMapChallenges';
 import { BooleanSimplification } from '../components/level5/BooleanSimplification';
 import { OptimizationComparison } from '../components/level5/OptimizationComparison';
 
@@ -15,44 +25,108 @@ const T = {
     accent: '#00D4FF', success: '#10B981', warning: '#F59E0B', error: '#EF4444',
     text: '#E5E7EB', muted: '#64748B', border: '#1A1D24',
     mono: "'JetBrains Mono', monospace",
-    body: "'DM Sans', Inter, sans-serif",
 };
 
-// ── Main Component ────────────────────────────────────────────────────────────
+// ── Types ─────────────────────────────────────────────────────────────────────
+type TabId = 'intro' | 'kmap-builder' | 'grouping-lab' | 'challenges' | 'optimization';
 
+const TABS: { id: TabId; sceneId: SceneId; label: string; dbScene: string }[] = [
+    { id: 'intro', sceneId: 'scene-5-1', label: 'Intro', dbScene: 'scene-5-1' },
+    { id: 'kmap-builder', sceneId: 'scene-5-2', label: 'K-Map Builder', dbScene: 'scene-5-2' },
+    { id: 'grouping-lab', sceneId: 'scene-5-3', label: 'Grouping Lab', dbScene: 'scene-5-3' },
+    { id: 'challenges', sceneId: 'scene-5-4', label: 'Challenges', dbScene: 'scene-5-4' },
+    { id: 'optimization', sceneId: 'scene-5-5', label: 'Optimization', dbScene: 'scene-5-5' },
+];
+
+// ── Main Component ────────────────────────────────────────────────────────────
 export const ModuleFive: React.FC = () => {
     const navigate = useNavigate();
     const { awardXP, completeSkill } = useEngagementAdapter();
-    const { mentorState, triggerResponse } = useVoltMonkeyL5();
+    const { mentorState, triggerResponse, triggerContextual } = useVoltMonkeyL5();
+    const {
+        completedScenes,
+        loading,
+        markSceneComplete,
+        saveKMapSession,
+        submitChallenge,
+        unlockSkill,
+    } = useKMapProgress('level-5');
 
-    const [scene, setScene] = useState<SceneId>('scene-5-1');
-    const [completedScenes, setCompletedScenes] = useState<Set<SceneId>>(new Set());
+    const [activeTab, setActiveTab] = useState<TabId>('intro');
     const [savedGroups, setSavedGroups] = useState<string[][]>([]);
     const [savedExpression, setSavedExpression] = useState<string>('');
 
-    const markCompleted = useCallback((s: SceneId, xp: number) => {
-        if (!completedScenes.has(s)) {
-            awardXP('application', xp);
-            setCompletedScenes(prev => new Set([...prev, s]));
-        }
-    }, [completedScenes, awardXP]);
+    // Check if a tab is unlocked based on previous scene completion in DB
+    const isTabUnlocked = useCallback((tabIdx: number): boolean => {
+        if (tabIdx === 0) return true;
+        const prevTab = TABS[tabIdx - 1];
+        return completedScenes.has(prevTab.dbScene);
+    }, [completedScenes]);
 
-    // Scene Navigation
-    const goScene1 = useCallback(() => { setScene('scene-5-1'); triggerResponse('scene-5-1'); }, [triggerResponse]);
-    const goScene2 = useCallback(() => { setScene('scene-5-2'); triggerResponse('scene-5-2'); markCompleted('scene-5-1', 50); }, [triggerResponse, markCompleted]);
-    const goScene3 = useCallback(() => { setScene('scene-5-3'); triggerResponse('scene-5-3'); markCompleted('scene-5-2', 50); }, [triggerResponse, markCompleted]);
-    const goScene4 = useCallback((groups?: string[][], expression?: string) => {
-        if (groups) setSavedGroups(groups);
-        if (expression) setSavedExpression(expression);
-        setScene('scene-5-4');
+    const switchTab = useCallback((tab: (typeof TABS)[number], idx: number) => {
+        if (!isTabUnlocked(idx)) return;
+        setActiveTab(tab.id);
+        triggerResponse(tab.sceneId);
+    }, [isTabUnlocked, triggerResponse]);
+
+    // ── Scene Completion Handlers ─────────────────────────────────────────────
+    const handleIntroComplete = useCallback(async () => {
+        await markSceneComplete('scene-5-1', 40);
+        awardXP('structural', 40);
+        setActiveTab('kmap-builder');
+        triggerResponse('scene-5-2');
+    }, [markSceneComplete, awardXP, triggerResponse]);
+
+    const handleKMapBuilderComplete = useCallback(async () => {
+        await markSceneComplete('scene-5-2', 60);
+        awardXP('structural', 60);
+        setActiveTab('grouping-lab');
+        triggerResponse('scene-5-3');
+    }, [markSceneComplete, awardXP, triggerResponse]);
+
+    const handleGroupingComplete = useCallback(async (groups: string[][], expression: string) => {
+        setSavedGroups(groups);
+        setSavedExpression(expression);
+        await markSceneComplete('scene-5-3', 100);
+        awardXP('diagnostic', 100);
+        setActiveTab('challenges');
         triggerResponse('scene-5-4');
-        markCompleted('scene-5-3', 100);
-    }, [triggerResponse, markCompleted]);
-    const goScene5 = useCallback(() => { setScene('scene-5-5'); triggerResponse('scene-5-5'); markCompleted('scene-5-4', 50); }, [triggerResponse, markCompleted]);
+    }, [markSceneComplete, awardXP, triggerResponse]);
+
+    const handleChallengesComplete = useCallback(async () => {
+        await markSceneComplete('scene-5-4', 200);
+        awardXP('application', 200);
+        setActiveTab('optimization');
+        triggerResponse('scene-5-5');
+    }, [markSceneComplete, awardXP, triggerResponse]);
+
+    const handleOptimizationComplete = useCallback(async () => {
+        await markSceneComplete('scene-5-5', 100);
+        await unlockSkill('kmap_optimization');
+        awardXP('application', 100);
+        completeSkill('kmap_optimization');
+    }, [markSceneComplete, unlockSkill, awardXP, completeSkill]);
+
+    // VoltMonkey contextual triggers
+    const handleInvalidGroup = useCallback(() => {
+        triggerContextual('invalid_group', mentorState.tier);
+    }, [triggerContextual, mentorState.tier]);
+
+    const handleValidGroup = useCallback(() => {
+        triggerContextual('valid_group', mentorState.tier);
+    }, [triggerContextual, mentorState.tier]);
+
+    if (loading) {
+        return (
+            <div style={{ minHeight: '100vh', background: T.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Loader2 size={32} color={T.accent} style={{ animation: 'spin 1s linear infinite' }} />
+            </div>
+        );
+    }
 
     return (
         <div style={{ minHeight: '100vh', background: T.bg, color: T.text, display: 'flex', flexDirection: 'column' }}>
-            {/* ── Top Navigation Bar ───────────────────────────────────────────────── */}
+            {/* ── Top Navigation Bar ─────────────────────────────────────────── */}
             <div style={{ height: 64, borderBottom: `1px solid ${T.border}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px', background: T.card }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
                     <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={() => navigate('/portal')}
@@ -64,67 +138,101 @@ export const ModuleFive: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Top Scene Tabs */}
-                <div style={{ display: 'flex', gap: 32, fontFamily: T.mono, fontSize: 12, letterSpacing: '0.05em' }}>
-                    <Tab onClick={goScene1} active={scene === 'scene-5-1'} label="Complexity Demo" />
-                    <Tab onClick={goScene2} active={scene === 'scene-5-2'} label="K-Map Builder" disabled={!completedScenes.has('scene-5-1') && scene !== 'scene-5-2'} />
-                    <Tab onClick={goScene3} active={scene === 'scene-5-3'} label="Cell Grouping" disabled={!completedScenes.has('scene-5-2') && scene !== 'scene-5-3'} />
-                    <Tab onClick={goScene4} active={scene === 'scene-5-4'} label="Simplification" disabled={!completedScenes.has('scene-5-3') && scene !== 'scene-5-4'} />
-                    <Tab onClick={goScene5} active={scene === 'scene-5-5'} label="Optimization" disabled={!completedScenes.has('scene-5-4') && scene !== 'scene-5-5'} />
+                {/* Tab Navigation */}
+                <div style={{ display: 'flex', gap: 28, fontFamily: T.mono, fontSize: 12, letterSpacing: '0.05em' }}>
+                    {TABS.map((tab, idx) => {
+                        const unlocked = isTabUnlocked(idx);
+                        const isActive = activeTab === tab.id;
+                        const isDone = completedScenes.has(tab.dbScene);
+                        return (
+                            <Tab
+                                key={tab.id}
+                                onClick={() => switchTab(tab, idx)}
+                                active={isActive}
+                                disabled={!unlocked}
+                                label={tab.label}
+                                done={isDone}
+                            />
+                        );
+                    })}
                 </div>
             </div>
 
-            {/* ── Main Layout ──────────────────────────────────────────────────────── */}
+            {/* ── Main Layout ─────────────────────────────────────────────── */}
             <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
-                <div style={{ flex: 1, position: 'relative', overflowY: 'auto', padding: '40px 24px' }}>
+                {/* Content Area */}
+                <div style={{ flex: 1, position: 'relative', overflowY: 'auto', padding: '40px 0' }}>
                     <AnimatePresence mode="wait">
-                        <motion.div key={scene} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }}>
-                            {scene === 'scene-5-1' && <CircuitComplexityDemo onComplete={goScene2} />}
-                            {scene === 'scene-5-2' && (
+                        <motion.div
+                            key={activeTab}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            transition={{ duration: 0.3 }}
+                        >
+                            {activeTab === 'intro' && (
+                                <KMapIntro onComplete={handleIntroComplete} />
+                            )}
+
+                            {activeTab === 'kmap-builder' && (
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: 24, padding: '0 40px' }}>
                                     <div style={{ textAlign: 'center' }}>
                                         <span style={{ fontFamily: T.mono, fontSize: 9, letterSpacing: '0.25em', textTransform: 'uppercase', color: T.accent, display: 'block', marginBottom: 8 }}>
-                                            Scene 5.2 — Karnaugh Mapping
+                                            Scene 5.2 — K-Map Builder
                                         </span>
-                                        <h2 style={{ fontSize: 26, fontWeight: 700, color: T.text, marginBottom: 8 }}>Truth Table Translation</h2>
+                                        <h2 style={{ fontSize: 26, fontWeight: 700, color: T.text, marginBottom: 8 }}>
+                                            Truth Table Translation
+                                        </h2>
                                         <p style={{ color: T.muted, fontSize: 14 }}>
-                                            Drag the $F=1$ results from the Truth Table into their corresponding cells on the K-Map.
+                                            Drag the F=1 results from the Truth Table into their corresponding K-Map cells.
                                         </p>
                                     </div>
-                                    <KMapEngine variables={3} targetMinterms={[1, 3, 5, 7]} onFullyMapped={goScene3} />
+                                    <KMapEngine
+                                        variables={3}
+                                        targetMinterms={[1, 3, 5, 7]}
+                                        onFullyMapped={handleKMapBuilderComplete}
+                                    />
                                 </div>
                             )}
-                            {scene === 'scene-5-3' && (
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: 24, padding: '0 40px' }}>
-                                    <div style={{ textAlign: 'center' }}>
-                                        <span style={{ fontFamily: T.mono, fontSize: 9, letterSpacing: '0.25em', textTransform: 'uppercase', color: T.accent, display: 'block', marginBottom: 8 }}>
-                                            Scene 5.3 — Cell Grouping
-                                        </span>
-                                        <h2 style={{ fontSize: 26, fontWeight: 700, color: T.text, marginBottom: 8 }}>Mathematical Minimization</h2>
-                                        <p style={{ color: T.muted, fontSize: 14 }}>
-                                            Click and drag to form groups of adjacent 1s. <br />
-                                            Groups must be rectangular and sized in powers of 2 (1, 2, 4, 8).
-                                        </p>
-                                    </div>
-                                    <KMapEngine variables={3} targetMinterms={[1, 3, 5, 7]} mode="group" onGroupsVerified={goScene4} />
-                                </div>
+
+                            {activeTab === 'grouping-lab' && (
+                                <KMapGroupingLab
+                                    onComplete={handleGroupingComplete}
+                                    onInvalidGroup={handleInvalidGroup}
+                                    onValidGroup={handleValidGroup}
+                                    saveSession={saveKMapSession}
+                                />
                             )}
-                            {scene === 'scene-5-4' && (
-                                <BooleanSimplification variables={3} groups={savedGroups} expression={savedExpression} onComplete={goScene5} />
+
+                            {activeTab === 'challenges' && (
+                                <KMapChallenges
+                                    onComplete={handleChallengesComplete}
+                                    submitChallenge={submitChallenge}
+                                    completedChallengeIds={new Set()}
+                                />
                             )}
-                            {scene === 'scene-5-5' && (
+
+                            {activeTab === 'optimization' && (
                                 <div style={{ padding: '0 40px' }}>
-                                    <OptimizationComparison onComplete={() => {
-                                        markCompleted('scene-5-5', 200);
-                                        completeSkill('kmap_optimization');
-                                    }} />
+                                    {savedGroups.length > 0 ? (
+                                        <BooleanSimplification
+                                            variables={3}
+                                            groups={savedGroups}
+                                            expression={savedExpression}
+                                            onComplete={() => {
+                                                // Move to final comparison immediately
+                                            }}
+                                        />
+                                    ) : (
+                                        <OptimizationComparison onComplete={handleOptimizationComplete} />
+                                    )}
                                 </div>
                             )}
                         </motion.div>
                     </AnimatePresence>
                 </div>
 
-                {/* ── VoltMonkey Side Panel ────────────────────────────────────────────── */}
+                {/* ── VoltMonkey Side Panel ─────────────────────────────────── */}
                 <div style={{ width: 340, borderLeft: `1px solid ${T.border}`, background: T.card, display: 'flex', flexDirection: 'column' }}>
                     <div style={{ padding: 24, borderBottom: `1px solid ${T.border}`, display: 'flex', alignItems: 'center', gap: 12 }}>
                         <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'rgba(245,158,11,0.1)', display: 'flex', justifyContent: 'center', alignItems: 'center', border: '1px solid rgba(245,158,11,0.2)' }}>
@@ -139,29 +247,22 @@ export const ModuleFive: React.FC = () => {
                     <div style={{ flex: 1, padding: 24, display: 'flex', flexDirection: 'column', gap: 20 }}>
                         <AnimatePresence mode="wait">
                             <motion.div
-                                key={scene + mentorState.observation}
+                                key={activeTab + mentorState.observation}
                                 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
                                 style={{ display: 'flex', flexDirection: 'column', gap: 16 }}
                             >
-                                {/* Observation (Muted) */}
                                 <div>
                                     <div style={{ fontSize: 10, fontFamily: T.mono, color: T.muted, textTransform: 'uppercase', marginBottom: 4 }}>OBSERVATION</div>
                                     <div style={{ fontSize: 13, color: '#94A3B8', lineHeight: 1.5 }}>{mentorState.observation}</div>
                                 </div>
-
-                                {/* Analysis (Primary) */}
                                 <div>
                                     <div style={{ fontSize: 10, fontFamily: T.mono, color: T.muted, textTransform: 'uppercase', marginBottom: 4 }}>ANALYSIS</div>
                                     <div style={{ fontSize: 14, color: T.text, lineHeight: 1.6 }}>{mentorState.analysis}</div>
                                 </div>
-
-                                {/* Suggestion (Amber Outline) */}
                                 <div style={{ background: 'rgba(245,158,11,0.05)', border: `1px solid rgba(245,158,11,0.2)`, borderRadius: 6, padding: 12 }}>
                                     <div style={{ fontSize: 10, fontFamily: T.mono, color: T.warning, textTransform: 'uppercase', marginBottom: 4 }}>SUGGESTION</div>
                                     <div style={{ fontSize: 13, color: '#FDE68A', lineHeight: 1.5 }}>{mentorState.suggestion}</div>
                                 </div>
-
-                                {/* Engineering Insight (Cyan Text) */}
                                 <div>
                                     <div style={{ fontSize: 10, fontFamily: T.mono, color: T.accent, textTransform: 'uppercase', marginBottom: 4 }}>ENGINEERING INSIGHT</div>
                                     <div style={{ fontSize: 13, color: '#7DD3FC', lineHeight: 1.5 }}>{mentorState.insight}</div>
@@ -170,11 +271,26 @@ export const ModuleFive: React.FC = () => {
                         </AnimatePresence>
                     </div>
 
-                    <div style={{ padding: 16, borderTop: `1px solid ${T.border}`, background: 'rgba(0,0,0,0.2)', fontSize: 11, fontFamily: T.mono, color: T.muted, display: 'flex', justifyContent: 'space-between' }}>
-                        <span>PERFORMANCE TIER</span>
-                        <span style={{ color: mentorState.tier === 'sharp' ? T.success : mentorState.tier === 'steady' ? T.accent : T.warning, textTransform: 'uppercase' }}>
-                            {mentorState.tier}
-                        </span>
+                    {/* Progress Footer */}
+                    <div style={{ padding: '12px 24px', borderTop: `1px solid ${T.border}`, display: 'flex', flexDirection: 'column', gap: 8 }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: T.mono, fontSize: 10, color: T.muted }}>
+                            <span>PERFORMANCE TIER</span>
+                            <span style={{ color: mentorState.tier === 'sharp' ? T.success : mentorState.tier === 'steady' ? T.accent : T.warning, textTransform: 'uppercase' }}>
+                                {mentorState.tier}
+                            </span>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: T.mono, fontSize: 10, color: T.muted }}>
+                            <span>SCENES COMPLETE</span>
+                            <span style={{ color: T.success }}>{completedScenes.size}/{TABS.length}</span>
+                        </div>
+                        {/* Small progress bar */}
+                        <div style={{ height: 3, background: T.surface, borderRadius: 2, overflow: 'hidden', marginTop: 4 }}>
+                            <motion.div
+                                animate={{ width: `${(completedScenes.size / TABS.length) * 100}%` }}
+                                transition={{ duration: 0.6, ease: 'easeOut' }}
+                                style={{ height: '100%', background: T.success, borderRadius: 2 }}
+                            />
+                        </div>
                     </div>
                 </div>
             </div>
@@ -182,19 +298,23 @@ export const ModuleFive: React.FC = () => {
     );
 };
 
-const Tab: React.FC<{ label: string; active: boolean; disabled?: boolean; onClick: () => void }> = ({ label, active, disabled, onClick }) => (
+// ── Tab Component ─────────────────────────────────────────────────────────────
+const Tab: React.FC<{
+    label: string; active: boolean; disabled?: boolean; done?: boolean; onClick: () => void;
+}> = ({ label, active, disabled, done, onClick }) => (
     <button
         onClick={onClick}
         disabled={disabled}
         style={{
             background: 'none', border: 'none', padding: '0 0 4px 0', cursor: disabled ? 'default' : 'pointer',
-            color: active ? T.accent : disabled ? '#334155' : T.muted,
+            color: active ? T.accent : disabled ? '#334155' : done ? T.success : T.muted,
             borderBottom: active ? `2px solid ${T.accent}` : '2px solid transparent',
-            transition: 'all 0.2s', opacity: disabled ? 0.5 : 1
+            transition: 'all 0.2s', opacity: disabled ? 0.4 : 1,
+            fontFamily: T.mono, fontSize: 12,
+            display: 'flex', alignItems: 'center', gap: 5,
         }}
     >
+        {done && !active && <span style={{ fontSize: 10 }}>✓</span>}
         {label}
     </button>
 );
-
-

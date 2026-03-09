@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 
 export type PerformanceTier = 'sharp' | 'steady' | 'struggling';
 export type SceneId = 'intro' | 'scene-5-1' | 'scene-5-2' | 'scene-5-3' | 'scene-5-4' | 'scene-5-5';
+export type ContextEvent = 'invalid_group' | 'valid_group' | 'challenge_pass' | 'challenge_fail';
 
 export interface MentorState {
     observation: string;
@@ -20,10 +21,10 @@ const DEFAULT_RESPONSES: Record<SceneId, MentorState> = {
         tier: 'steady'
     },
     'scene-5-1': {
-        observation: "The current circuit uses 11 logic gates.",
-        analysis: "The expression F = A'BC + ABC + AB'C is implemented directly, resulting in deep logic levels.",
-        suggestion: "Click 'Proceed to K-Map' to see how we can simplify this expression.",
-        insight: "Every additional logic level adds propagation delay, reducing the maximum clock frequency of the processor.",
+        observation: "You are watching the truth table cells map to the K-Map grid.",
+        analysis: "Each row in the truth table corresponds to exactly one cell in the K-Map.",
+        suggestion: "Click 'Open K-Map Explorer' when you're ready to experiment.",
+        insight: "Gray code ordering (00, 01, 11, 10) ensures adjacent cells differ by only one bit.",
         tier: 'steady'
     },
     'scene-5-2': {
@@ -41,10 +42,10 @@ const DEFAULT_RESPONSES: Record<SceneId, MentorState> = {
         tier: 'sharp'
     },
     'scene-5-4': {
-        observation: "We are extracting Boolean expressions from your groups.",
-        analysis: "Each group represents a simplified term.",
-        suggestion: "Review how the variables that change across the group are dropped.",
-        insight: "This visual minimization technique corresponds directly to Boolean algebra theorems.",
+        observation: "You are solving logic minimization challenges.",
+        analysis: "Each challenge has an optimal solution — find the fewest, largest groups.",
+        suggestion: "Check if minterms on opposite edges of the map can wrap around to form a group.",
+        insight: "These patterns are what hardware synthesis tools detect automatically during chip design.",
         tier: 'sharp'
     },
     'scene-5-5': {
@@ -56,6 +57,29 @@ const DEFAULT_RESPONSES: Record<SceneId, MentorState> = {
     }
 };
 
+const CONTEXTUAL_RESPONSES: Record<ContextEvent, Record<PerformanceTier, Partial<MentorState>>> = {
+    'invalid_group': {
+        sharp: { observation: 'That group is invalid.', suggestion: 'Check: is the size a power of 2? Are all cells adjacent?' },
+        steady: { observation: 'Invalid grouping detected.', suggestion: 'Groups must be 1, 2, 4, or 8 cells. Try again!' },
+        struggling: { observation: 'That group does not work.', suggestion: 'Start with just 2 adjacent 1s. Powers of 2: 1, 2, 4, 8.' },
+    },
+    'valid_group': {
+        sharp: { observation: 'Nice group!', suggestion: 'Can you find an even larger group that covers more cells?' },
+        steady: { observation: 'Valid group saved.', suggestion: 'Keep going — ensure every 1 is covered by at least one group.' },
+        struggling: { observation: 'Good — that group is correct!', suggestion: 'Now select more 1s and repeat.' },
+    },
+    'challenge_pass': {
+        sharp: { observation: 'Excellent! Optimal solution found.', suggestion: 'Try reducing the number of groups further for a perfect score.' },
+        steady: { observation: 'Challenge passed!', suggestion: 'Move on to the next challenge.' },
+        struggling: { observation: 'You solved it!', suggestion: 'Great job. The next one is slightly harder.' },
+    },
+    'challenge_fail': {
+        sharp: { observation: 'Expression is not equivalent.', suggestion: 'Verify your groups cover all minterms and no non-minterms.' },
+        steady: { observation: 'Wrong answer.', suggestion: 'Check your derived expression against the truth table.' },
+        struggling: { observation: 'Not quite right.', suggestion: 'Which cells have 1s? Start by grouping just those.' },
+    },
+};
+
 export function useVoltMonkeyL5() {
     const [mentorState, setMentorState] = useState<MentorState>(DEFAULT_RESPONSES['intro']);
 
@@ -64,11 +88,17 @@ export function useVoltMonkeyL5() {
         setMentorState({ ...base, ...customData });
     }, []);
 
+    const triggerContextual = useCallback((event: ContextEvent, tier: PerformanceTier = 'steady') => {
+        const patch = CONTEXTUAL_RESPONSES[event][tier];
+        setMentorState(prev => ({ ...prev, ...patch, tier }));
+    }, []);
+
     const reset = useCallback(() => setMentorState(DEFAULT_RESPONSES['intro']), []);
 
     return {
         mentorState,
         triggerResponse,
+        triggerContextual,
         reset
     };
 }

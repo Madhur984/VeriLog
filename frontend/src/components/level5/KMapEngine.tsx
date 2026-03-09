@@ -16,6 +16,8 @@ interface Props {
     mode?: 'map' | 'group';
     onFullyMapped?: () => void;
     onGroupsVerified?: (groups: string[][], expression: string) => void;
+    onValidGroup?: () => void;
+    onInvalidGroup?: () => void;
 }
 
 const COLORS = ['#00D4FF', '#10B981', '#F59E0B', '#A78BFA', '#F472B6', '#FB923C'];
@@ -31,7 +33,7 @@ function getAxisLabels(vars: VarCount) {
 
 const isPowerOf2 = (n: number) => n > 0 && (n & (n - 1)) === 0;
 
-export const KMapEngine: React.FC<Props> = ({ variables, targetMinterms, mode = 'map', onFullyMapped, onGroupsVerified }) => {
+export const KMapEngine: React.FC<Props> = ({ variables, targetMinterms, mode = 'map', onFullyMapped, onGroupsVerified, onValidGroup, onInvalidGroup }) => {
     const { rowVars, colVars, rows, cols } = useMemo(() => getAxisLabels(variables), [variables]);
     const [mapState, setMapState] = useState<Record<string, 0 | 1>>({});
     const [confirmedGroups, setConfirmedGroups] = useState<string[][]>([]);
@@ -104,10 +106,11 @@ export const KMapEngine: React.FC<Props> = ({ variables, targetMinterms, mode = 
     const saveGroup = () => {
         if (draftGroup.length === 0) return;
         if (!validateGroup(draftGroup)) {
-            // Visual feedback could be added here
+            onInvalidGroup?.();
             return;
         }
         setConfirmedGroups(prev => [...prev, draftGroup]);
+        onValidGroup?.();
         setDraftGroup([]);
     };
 
