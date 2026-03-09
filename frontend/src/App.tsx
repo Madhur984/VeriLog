@@ -27,6 +27,10 @@ import { BossArena } from './pages/BossArena';
 import { EngineeringPortfolio } from './pages/EngineeringPortfolio';
 import { LogicStudio } from './pages/LogicStudio';
 import { DebugMissionPage } from './pages/DebugMissionPage';
+import { Workbench } from './pages/Workbench';
+import { CPULabPage } from './pages/CPULabPage';
+import { CommunityPage } from './pages/CommunityPage';
+import { HardwareLeetCodePage } from './pages/HardwareLeetCodePage';
 
 import { TransitionProvider } from './hooks/useTransitionController';
 import { TransitionOverlay } from './components/TransitionOverlay';
@@ -51,6 +55,7 @@ export default function App() {
                     <Route path="/circuit-lab" element={<CircuitLab />} />
                     <Route path="/logic-studio" element={<LogicStudio />} />
                     <Route path="/debug-mission/:id" element={<DebugMissionPage />} />
+                    <Route path="/workbench" element={<Workbench />} />
                     <Route path="/playground" element={<SignalPlayground />} />
                     <Route path="/training" element={<TrainingCockpitPage />} />
                     <Route path="/fsm" element={<FSMPlayground />} />
@@ -58,6 +63,11 @@ export default function App() {
                     <Route path="/verilog" element={<VerilogPlayground />} />
                     <Route path="/boss-arena" element={<BossArena />} />
                     <Route path="/portfolio" element={<EngineeringPortfolio />} />
+
+                    {/* New Hub Features */}
+                    <Route path="/cpu-lab" element={<CPULabPage />} />
+                    <Route path="/community" element={<CommunityPage />} />
+                    <Route path="/hw-leetcode" element={<HardwareLeetCodePage />} />
 
                     {/* Modules & Story Selection */}
                     <Route path="/module/1" element={<ModuleOneHub />} />

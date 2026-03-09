@@ -50,8 +50,8 @@ export const CommandPalette: React.FC<CommandPaletteProps & { navigate: (path: s
             group: 'Navigate', shortcut: 'G C', action: () => { navigate('/assessment'); onClose(); }
         },
         {
-            id: 'nav-workbench', label: 'Open Workbench', description: 'Signal playground', icon: FlaskConical,
-            group: 'Navigate', shortcut: 'G W', action: () => { navigate('/playground'); onClose(); }
+            id: 'nav-workbench', label: 'Open Workbench', description: 'Engineering workbench', icon: FlaskConical,
+            group: 'Navigate', shortcut: 'G W', action: () => { navigate('/workbench'); onClose(); }
         },
         {
             id: 'nav-progress', label: 'View Progress', description: 'Track your learning', icon: BarChart3,

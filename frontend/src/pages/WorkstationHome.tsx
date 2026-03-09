@@ -5,6 +5,7 @@ import {
     LayoutDashboard, Target, Settings, Binary, Command,
     BarChart3, FlaskConical, BookOpen, CheckCircle2,
     Lock, Play, Zap, Moon, Sun, HelpCircle, ChevronRight, Shield,
+    Cpu, Users, Gamepad2,
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useGamificationStore } from '../stores/gamificationStore';
@@ -92,7 +93,7 @@ const BRANCH_META: Record<BranchKey, { label: string; color: string }> = {
    HELPERS
 ══════════════════════════════════════════════════════════════════════ */
 
-function getModule(id: string) { return MODULES.find(m => m.id === id)!; }
+// getModule moved inside WorkstationHome to use dynamicModules
 function getR(m: Module) { return m.isHub ? HUB_R : (NODE_R[m.depth] ?? 16); }
 
 function statusColor(s: Status) {
@@ -265,16 +266,14 @@ export const WorkstationHome: React.FC = () => {
         checkStreak();
     }, [checkStreak]);
 
-    // Derived modules with real status
     const dynamicModules = useMemo(() => {
-        return MODULES.map((m, idx) => {
+        return MODULES.map((m) => {
             const isCompleted = completedModuleIds.includes(m.id);
-            const isUnlocked = idx === 0 || completedModuleIds.includes(MODULES[idx - 1]?.id) || isCompleted;
 
             return {
                 ...m,
-                status: isCompleted ? 'completed' : (isUnlocked ? 'in-progress' : 'locked'),
-                progress: isCompleted ? 100 : (isUnlocked ? 25 : 0) // Simplified progress logic
+                status: isCompleted ? 'completed' : 'in-progress',
+                progress: isCompleted ? 100 : 0
             } as Module;
         });
     }, [completedModuleIds]);
@@ -285,7 +284,19 @@ export const WorkstationHome: React.FC = () => {
         binary_awakening: '/module/3',
         logic_gates: '/module/4',
         kmap_optimization: '/module/5',
+        // Branch modules → associated labs
+        B1: '/circuit-lab',
+        B2: '/circuit-lab',
+        B3: '/circuit-lab',
+        D1: '/fsm',
+        D2: '/fsm',
+        D3: '/fsm',
+        V1: '/verilog',
+        V2: '/verilog',
+        V3: '/verilog',
     };
+
+    const getModule = useCallback((id: string) => dynamicModules.find(m => m.id === id)!, [dynamicModules]);
 
     const handleModuleStart = (mod: Module) => {
         const route = MODULE_ROUTES[mod.id];
@@ -348,14 +359,15 @@ export const WorkstationHome: React.FC = () => {
     const navItems = [
         { title: 'Dashboard', icon: LayoutDashboard, path: '/portal', active: true },
         { title: 'Challenges', icon: Target, path: '/assessment' },
-        { title: 'Boss Arena', icon: Target, path: '/boss-arena' },
-        { title: 'Workbench', icon: FlaskConical, path: '/playground' },
-        { title: 'Verilog Lab', icon: Command, path: '/verilog' },
-        { title: 'FSM Tool', icon: Zap, path: '/fsm' },
+        { title: 'Boss Arena', icon: Gamepad2, path: '/boss-arena' },
+        { title: 'Workbench', icon: FlaskConical, path: '/workbench' },
+        { title: 'CPU Lab', icon: Cpu, path: '/cpu-lab' },
+        { title: 'Community', icon: Users, path: '/community' },
+        { title: 'HW LeetCode', icon: Zap, path: '/hw-leetcode' },
         { title: 'Progress', icon: BarChart3, path: '/skill-tree' },
         { title: 'Modules', icon: BookOpen, path: '/portal' },
         { title: 'Portfolio', icon: Shield, path: '/portfolio' },
-        { title: 'Settings', icon: Settings, path: '/portfolio' }, // Point settings to portfolio for now as it's the most "profile-like" page
+        { title: 'Settings', icon: Settings, path: '/portfolio' },
     ];
 
     const completedCount = dynamicModules.filter(m => m.status === 'completed').length;
@@ -467,27 +479,7 @@ export const WorkstationHome: React.FC = () => {
                         ))}
                     </nav>
 
-                    {/* Sandbox Launcher */}
-                    <div className="px-3 pb-2">
-                        <p className="text-[9px] font-mono uppercase tracking-widest px-3 mb-2" style={{ color: t.textMuted }}>Sandbox Labs</p>
-                        {[
-                            { label: 'Circuit Lab', emoji: '⚡', path: '/circuit-lab' },
-                            { label: 'Binary Lab', emoji: '🔢', path: '/module/3' },
-                            { label: 'Logic Gates', emoji: '🔀', path: '/module/4' },
-                            { label: 'Verilog', emoji: '💻', path: '/verilog' },
-                            { label: 'FSM Tool', emoji: '🔄', path: '/fsm' },
-                            { label: 'Skill Tree', emoji: '🌳', path: '/skill-tree' },
-                        ].map(item => (
-                            <button key={item.label} onClick={() => navigate(item.path)}
-                                className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[12px] font-medium transition-all duration-150 cursor-pointer"
-                                style={{ color: t.textMuted }}
-                                onMouseEnter={e => { e.currentTarget.style.background = t.navHover; }}
-                                onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}>
-                                <span style={{ fontSize: 13 }}>{item.emoji}</span>
-                                <span>{item.label}</span>
-                            </button>
-                        ))}
-                    </div>
+
 
 
                     <div id="tour-progress-card" className="p-3 pb-5">
@@ -640,7 +632,7 @@ export const WorkstationHome: React.FC = () => {
                                     {CONNECTIONS.map((conn, i) => renderConnection(conn, i))}
 
                                     {/* ── Bubbles (un-hovered) ── */}
-                                    {MODULES.filter(m => m.id !== hoveredId).map(mod => (
+                                    {dynamicModules.filter(m => m.id !== hoveredId).map(mod => (
                                         <ModuleBubble key={mod.id} mod={mod} isHovered={false}
                                             onHover={setHoveredId} onStart={handleModuleStart} opacity={getNodeOpacity(mod)} isDark={isDark} />
                                     ))}
@@ -688,7 +680,7 @@ export const WorkstationHome: React.FC = () => {
                                     [
                                         { label: 'Total Modules', value: String(MODULES.length), accent: '#94a3b8' },
                                         { label: 'Completed', value: String(completedCount), accent: '#22c55e' },
-                                        { label: 'In Progress', value: String(MODULES.filter(m => m.status === 'in-progress').length), accent: '#10B981' },
+                                        { label: 'In Progress', value: String(dynamicModules.filter(m => m.status === 'in-progress').length), accent: '#10B981' },
                                         { label: 'Total Hours', value: `${MODULES.reduce((s, m) => s + m.hours, 0)}h`, accent: '#a78bfa' },
                                     ].map(s => (
                                         <div key={s.label} className="rounded-xl p-4 transition-colors"
