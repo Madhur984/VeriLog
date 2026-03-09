@@ -24,8 +24,10 @@ import './transitions.css';
 
 const LEVELS = [
     { id: 1, code: 'L1', label: 'SIGNAL' },
-    { id: 2, code: 'L2', label: 'CONTROL' },
-    { id: 3, code: 'L3', label: 'LOGIC' },
+    { id: 2, code: 'L2', label: 'ANALOG' },
+    { id: 3, code: 'L3', label: 'BINARY' },
+    { id: 4, code: 'L4', label: 'LOGIC' },
+    { id: 5, code: 'L5', label: 'OPTIMIZE' },
 ] as const;
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -63,7 +65,7 @@ export const TransitionOverlay = memo(() => {
                         return (
                             <div key={level.id} style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
                                 <div
-                                    className={`vl-level-marker ${isActive ? 'is-active' : isFuture ? 'is-future' : 'is-future'
+                                    className={`vl-level-marker ${isActive ? 'is-active' : isFuture ? 'is-future' : 'is-complete'
                                         }`}
                                 >
                                     <div className="vl-level-marker__dot" />

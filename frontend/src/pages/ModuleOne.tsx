@@ -3,7 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
     ArrowLeft, ArrowRight, Zap,
     CheckCircle2, AlertTriangle,
-    Smartphone, Cpu, CarFront, Info, Target
+    Smartphone, Cpu, CarFront, Info, Target,
+    Activity, RefreshCw, Battery
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -12,7 +13,7 @@ import { XPCounter } from '../components/level1/XPCounter';
 import { ProgressTracker } from '../components/ui/ProgressTracker';
 import { useEngagementAdapter as useXPSystem } from '../hooks/useEngagementAdapter';
 import { useVoltMonkeyMentor } from '../hooks/useVoltMonkeyMentor';
-import { useUserStore } from '../stores/userStore';
+import { useGamificationStore } from '../stores/gamificationStore';
 import { BadgeToast } from '../components/level2/BadgeToast';
 import { CircuitLab } from '../circuit-lab/CircuitLab';
 import '../components/level1/level1.css';
@@ -37,7 +38,7 @@ const T = {
     sans: "'Inter', system-ui, sans-serif",
 } as const;
 
-type Scene = 'intro' | 'lab' | 'quiz' | 'matching' | 'blanks' | 'diagnosis' | 'summary' | 'complete';
+type Scene = 'intro' | 'theory' | 'lab' | 'quiz' | 'matching' | 'blanks' | 'diagnosis' | 'summary' | 'complete';
 
 interface MatchItem { id: number; text: string; matchId: string; }
 interface MatchTarget { id: string; text: string; }
@@ -51,7 +52,7 @@ const BADGES_MAP: Record<string, Badge> = {
 
 export const ModuleOne: React.FC = () => {
     const navigate = useNavigate();
-    const completeModule = useUserStore(state => state.completeModule);
+    const completeSkill = useGamificationStore(state => state.completeSkill);
     const [scene, setScene] = useState<Scene>('intro');
     const [step, setStep] = useState(0);
     const [screenFlash, setScreenFlash] = useState(false);
@@ -149,7 +150,9 @@ export const ModuleOne: React.FC = () => {
     const nextStep = () => {
         if (scene === 'intro') {
             if (step < introLines.length - 1) setStep(s => s + 1);
-            else { setScene('lab'); showVoltMonkey('lab'); }
+            else { setScene('theory'); setStep(0); }
+        } else if (scene === 'theory') {
+            setScene('lab'); showVoltMonkey('lab');
         } else if (scene === 'lab') {
             if (labDone) { setScene('quiz'); showVoltMonkey('quiz'); }
         } else if (scene === 'quiz') {
@@ -170,7 +173,7 @@ export const ModuleOne: React.FC = () => {
             setScene('summary'); setVoltMonkeyResponse(null);
         } else if (scene === 'summary') {
             setScene('complete');
-            completeModule('C1');
+            completeSkill('signals');
         } else if (scene === 'complete') {
             setScene('intro');
             setStep(0);
@@ -316,6 +319,7 @@ export const ModuleOne: React.FC = () => {
                         <ProgressTracker
                             stages={[
                                 { id: 'intro', label: 'Concept' },
+                                { id: 'theory', label: 'Theory' },
                                 { id: 'lab', label: 'Lab' },
                                 { id: 'quiz', label: 'Challenge' },
                             ]}
@@ -462,6 +466,71 @@ linear - gradient(rgba(0, 212, 255, 0.04) 1px, transparent 1px),
                                             <EnterpriseBtn label="Next" onClick={nextStep} />
                                         )}
                                     </motion.div>
+                                </motion.div>
+                            )}
+
+                            {/* ── SCENE 1.5: THEORY ── */}
+                            {scene === 'theory' && (
+                                <motion.div key="theory" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} style={{ width: '100%', maxWidth: 860 }}>
+                                    <div style={{ textAlign: 'center', marginBottom: 48 }}>
+                                        <span style={{ display: 'block', fontFamily: T.mono, fontSize: 8, letterSpacing: '0.22em', textTransform: 'uppercase', color: `${T.accent}99`, marginBottom: 6 }}>Module 1.1 — Fundamentals</span>
+                                        <h1 style={{ fontSize: 'clamp(24px, 3vw, 30px)', fontWeight: 600, letterSpacing: '-0.01em', color: T.text, marginBottom: 8 }}>The Nature of Signals</h1>
+                                        <p style={{ color: T.muted }}>Before logic gates and processors, you must master the complete path.</p>
+                                    </div>
+
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: 24, marginBottom: 48 }}>
+                                        {/* Block 1 */}
+                                        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 280px', gap: 24, padding: 24, background: T.surface, borderRadius: 12, border: `1px solid ${T.border}` }}>
+                                            <div>
+                                                <h2 style={{ fontSize: 18, color: T.text, fontWeight: 600, marginBottom: 12, display: 'flex', alignItems: 'center', gap: 8 }}><Activity size={18} color={T.accent} /> What is a signal?</h2>
+                                                <p style={{ color: T.muted, lineHeight: 1.6, fontSize: 14 }}>A signal is a physical quantity—like voltage or current—that changes over time to transmit power or information. In digital systems, we interpret these changes as binary states.</p>
+                                            </div>
+                                            <div style={{ background: 'rgba(0,212,255,0.05)', border: '1px solid rgba(0,212,255,0.1)', borderRadius: 8, padding: 16, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                                                <span style={{ fontFamily: T.mono, fontSize: 10, color: T.accent, letterSpacing: '0.1em', marginBottom: 8, textTransform: 'uppercase' }}>Engineering Insight</span>
+                                                <p style={{ fontSize: 12, color: T.text, lineHeight: 1.5 }}>Even in "digital" electronics, signals are fundamentally analog waves governed by physics. There is no perfect 1 or 0 in the real world.</p>
+                                            </div>
+                                        </div>
+
+                                        {/* Block 2 */}
+                                        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 280px', gap: 24, padding: 24, background: T.surface, borderRadius: 12, border: `1px solid ${T.border}` }}>
+                                            <div>
+                                                <h2 style={{ fontSize: 18, color: T.text, fontWeight: 600, marginBottom: 12, display: 'flex', alignItems: 'center', gap: 8 }}><Zap size={18} color={T.warning} /> Signal flow in circuits</h2>
+                                                <p style={{ color: T.muted, lineHeight: 1.6, fontSize: 14 }}>Electricity is driven by a potential difference (voltage) provided by a source. When a complete path is formed, charge carriers flow to balance this difference, continuously transferring energy to the load.</p>
+                                            </div>
+                                            <div style={{ background: 'rgba(245,158,11,0.05)', border: '1px solid rgba(245,158,11,0.1)', borderRadius: 8, padding: 16, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                                                <span style={{ fontFamily: T.mono, fontSize: 10, color: T.warning, letterSpacing: '0.1em', marginBottom: 8, textTransform: 'uppercase' }}>Engineering Insight</span>
+                                                <p style={{ fontSize: 12, color: T.text, lineHeight: 1.5 }}>While electrons physically drift very slowly (millimeters per second), the electromagnetic energy wave propagates near the speed of light.</p>
+                                            </div>
+                                        </div>
+
+                                        {/* Block 3 */}
+                                        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 280px', gap: 24, padding: 24, background: T.surface, borderRadius: 12, border: `1px solid ${T.border}` }}>
+                                            <div>
+                                                <h2 style={{ fontSize: 18, color: T.text, fontWeight: 600, marginBottom: 12, display: 'flex', alignItems: 'center', gap: 8 }}><RefreshCw size={18} color={T.success} /> Closed Loop Rule</h2>
+                                                <p style={{ color: T.muted, lineHeight: 1.6, fontSize: 14 }}>Current always flows in a complete, unbroken loop. If there is a break anywhere in the path—no matter how small—the entire steady-state flow of current stops instantaneously across the entire circuit.</p>
+                                            </div>
+                                            <div style={{ background: 'rgba(16,185,129,0.05)', border: '1px solid rgba(16,185,129,0.1)', borderRadius: 8, padding: 16, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                                                <span style={{ fontFamily: T.mono, fontSize: 10, color: T.success, letterSpacing: '0.1em', marginBottom: 8, textTransform: 'uppercase' }}>Engineering Insight</span>
+                                                <p style={{ fontSize: 12, color: T.text, lineHeight: 1.5 }}>A circuit without a return path acts like an antenna. Without a loop, no reliable, steady transfer of energy or information can occur.</p>
+                                            </div>
+                                        </div>
+
+                                        {/* Block 4 */}
+                                        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 280px', gap: 24, padding: 24, background: T.surface, borderRadius: 12, border: `1px solid ${T.border}` }}>
+                                            <div>
+                                                <h2 style={{ fontSize: 18, color: T.text, fontWeight: 600, marginBottom: 12, display: 'flex', alignItems: 'center', gap: 8 }}><Battery size={18} color={T.accent} /> Why current must return</h2>
+                                                <p style={{ color: T.muted, lineHeight: 1.6, fontSize: 14 }}>Charge cannot accumulate indefinitely at a component. Every electron leaving the negative terminal of a source must eventually be matched by one returning to its positive terminal to maintain equilibrium.</p>
+                                            </div>
+                                            <div style={{ background: 'rgba(0,212,255,0.05)', border: '1px solid rgba(0,212,255,0.1)', borderRadius: 8, padding: 16, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                                                <span style={{ fontFamily: T.mono, fontSize: 10, color: T.accent, letterSpacing: '0.1em', marginBottom: 8, textTransform: 'uppercase' }}>Engineering Insight</span>
+                                                <p style={{ fontSize: 12, color: T.text, lineHeight: 1.5 }}>In high-speed PCB design, poor return paths are the #1 cause of interference, ground bounce, and EMI failures. Always route the return path carefully.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                                        <EnterpriseBtn label="Enter Laboratory" onClick={nextStep} />
+                                    </div>
                                 </motion.div>
                             )}
 

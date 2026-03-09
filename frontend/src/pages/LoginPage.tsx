@@ -4,13 +4,14 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { AndGate, Switch } from '../components/Gates/CircuitComponents';
 import { ShieldCheck, Zap, Cpu, Fingerprint, User } from 'lucide-react';
-import { useUserStore } from '../stores/userStore';
+import { useGamificationStore } from '../stores/gamificationStore';
+import { ElectricParticleField } from '../components/backgrounds/ElectricParticleField';
 import './LoginPage.css';
 
 export const LoginPage: React.FC = () => {
     const navigate = useNavigate();
-    const setFirstName = useUserStore((state) => state.setFirstName);
-    const setHasSeenGreeting = useUserStore((state) => state.setHasSeenGreeting);
+    const setFirstName = useGamificationStore((state) => state.setFirstName);
+    const setHasSeenGreeting = useGamificationStore((state) => state.setHasSeenGreeting);
 
     // Auth State
     const [isSignUp, setIsSignUp] = useState(false);
@@ -91,7 +92,7 @@ export const LoginPage: React.FC = () => {
 
     return (
         <div className="login-container">
-            <div className="hardware-mesh"></div>
+            <ElectricParticleField />
 
             <motion.div
                 className={`login-card power-on ${isSignUp ? 'signup-mode' : ''}`}

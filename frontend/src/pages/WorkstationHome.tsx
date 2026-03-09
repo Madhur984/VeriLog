@@ -7,7 +7,7 @@ import {
     Lock, Play, Zap, Moon, Sun, HelpCircle, ChevronRight, Shield,
 } from 'lucide-react';
 import { cn } from '../lib/utils';
-import { useUserStore } from '../stores/userStore';
+import { useGamificationStore } from '../stores/gamificationStore';
 import { CommandPalette } from '../components/ui/CommandPalette';
 import { OnboardingTour } from '../components/ui/OnboardingTour';
 import { useColorScheme } from '../hooks/useColorScheme';
@@ -47,11 +47,11 @@ const CH = 580;
 
 const MODULES: Module[] = [
     /* Foundation (depth 0) — linear horizontal row */
-    { id: 'C1', title: 'A Signal Must Return', subtitle: 'The Rule of the Closed Loop', progress: 100, status: 'completed', hours: 0.1, lessons: 1, cx: 80, cy: FOUND_Y, depth: 0, branch: null },
-    { id: 'C2', title: 'Continuous vs Discrete', subtitle: 'Analog & Digital Signals', progress: 0, status: 'in-progress', hours: 1.5, lessons: 5, cx: 220, cy: FOUND_Y, depth: 0, branch: null },
-    { id: 'C3', title: 'Logic Gates', subtitle: 'AND, OR, NOT, NAND, XOR', progress: 0, status: 'in-progress', hours: 3, lessons: 10, cx: 360, cy: FOUND_Y, depth: 0, branch: null },
-    { id: 'C4', title: 'Combinational', subtitle: 'MUX, Decoders, Adders', progress: 0, status: 'locked', hours: 4, lessons: 12, cx: 500, cy: FOUND_Y, depth: 0, branch: null },
-    { id: 'C5', title: 'Karnaugh Maps', subtitle: 'K-map Minimization', progress: 0, status: 'locked', hours: 2, lessons: 6, cx: 640, cy: FOUND_Y, depth: 0, branch: null, isHub: true },
+    { id: 'signals', title: 'A Signal Must Return', subtitle: 'The Rule of the Closed Loop', progress: 0, status: 'locked', hours: 0.1, lessons: 1, cx: 80, cy: FOUND_Y, depth: 0, branch: null },
+    { id: 'analog_digital', title: 'Continuous vs Discrete', subtitle: 'Analog & Digital Signals', progress: 0, status: 'locked', hours: 1.5, lessons: 5, cx: 220, cy: FOUND_Y, depth: 0, branch: null },
+    { id: 'binary_awakening', title: 'Binary Awakening', subtitle: 'The Math of Two States', progress: 0, status: 'locked', hours: 3, lessons: 10, cx: 360, cy: FOUND_Y, depth: 0, branch: null },
+    { id: 'logic_gates', title: 'Logic Gates', subtitle: 'AND, OR, NOT, NAND, XOR', progress: 0, status: 'locked', hours: 4, lessons: 12, cx: 500, cy: FOUND_Y, depth: 0, branch: null },
+    { id: 'kmap_optimization', title: 'Karnaugh Maps', subtitle: 'Logic Synthesis & K-Maps', progress: 0, status: 'locked', hours: 2, lessons: 6, cx: 640, cy: FOUND_Y, depth: 0, branch: null, isHub: true },
     /* Basic Electronics */
     { id: 'B1', title: 'BJT & MOSFET', subtitle: 'Transistor fundamentals', progress: 0, status: 'locked', hours: 3, lessons: 8, cx: BRANCH_COL.basic, cy: BRANCH_Y[0], depth: 1, branch: 'basic' },
     { id: 'B2', title: 'Amplifiers', subtitle: 'Op-amp & gain stages', progress: 0, status: 'locked', hours: 3, lessons: 9, cx: BRANCH_COL.basic, cy: BRANCH_Y[1], depth: 2, branch: 'basic' },
@@ -67,13 +67,13 @@ const MODULES: Module[] = [
 ];
 
 const CONNECTIONS: Connection[] = [
-    { from: 'C1', to: 'C2', type: 'trunk' },
-    { from: 'C2', to: 'C3', type: 'trunk' },
-    { from: 'C3', to: 'C4', type: 'trunk' },
-    { from: 'C4', to: 'C5', type: 'trunk' },
-    { from: 'C5', to: 'B1', type: 'hub-branch' },
-    { from: 'C5', to: 'D1', type: 'hub-branch' },
-    { from: 'C5', to: 'V1', type: 'hub-branch' },
+    { from: 'signals', to: 'analog_digital', type: 'trunk' },
+    { from: 'analog_digital', to: 'binary_awakening', type: 'trunk' },
+    { from: 'binary_awakening', to: 'logic_gates', type: 'trunk' },
+    { from: 'logic_gates', to: 'kmap_optimization', type: 'trunk' },
+    { from: 'kmap_optimization', to: 'B1', type: 'hub-branch' },
+    { from: 'kmap_optimization', to: 'D1', type: 'hub-branch' },
+    { from: 'kmap_optimization', to: 'V1', type: 'hub-branch' },
     { from: 'B1', to: 'B2', type: 'branch' },
     { from: 'B2', to: 'B3', type: 'branch' },
     { from: 'D1', to: 'D2', type: 'branch' },
@@ -253,29 +253,40 @@ const HoverCard: React.FC<{ mod: Module; onStart: (m: Module) => void; isDark: b
 
 export const WorkstationHome: React.FC = () => {
     const navigate = useNavigate();
-    const { firstName, completedModuleIds } = useUserStore();
+    const { firstName, skills, streak, checkStreak } = useGamificationStore();
+    const completedModuleIds = skills.completedIds;
     const [hoveredId, setHoveredId] = useState<string | null>(null);
     const [cmdOpen, setCmdOpen] = useState(false);
     const [tourOpen, setTourOpen] = useState(false);
     const [scheme, toggleScheme] = useColorScheme();
     const isDark = scheme === 'dark';
 
+    useEffect(() => {
+        checkStreak();
+    }, [checkStreak]);
+
     // Derived modules with real status
     const dynamicModules = useMemo(() => {
-        return MODULES.map(m => {
-            if (completedModuleIds.includes(m.id)) {
-                return { ...m, status: 'completed' as Status, progress: 100 };
-            }
-            // For now, if not completed, we keep static status or implement logic to unlock
-            return m;
+        return MODULES.map((m, idx) => {
+            const isCompleted = completedModuleIds.includes(m.id);
+            const isUnlocked = idx === 0 || completedModuleIds.includes(MODULES[idx - 1]?.id) || isCompleted;
+
+            return {
+                ...m,
+                status: isCompleted ? 'completed' : (isUnlocked ? 'in-progress' : 'locked'),
+                progress: isCompleted ? 100 : (isUnlocked ? 25 : 0) // Simplified progress logic
+            } as Module;
         });
     }, [completedModuleIds]);
 
     const MODULE_ROUTES: Record<string, string> = {
-        C1: '/module/1',
-        C2: '/module/2',
-        C3: '/circuit-lab'
+        signals: '/module/1',
+        analog_digital: '/module/2',
+        binary_awakening: '/module/3',
+        logic_gates: '/module/4',
+        kmap_optimization: '/module/5',
     };
+
     const handleModuleStart = (mod: Module) => {
         const route = MODULE_ROUTES[mod.id];
         if (route) navigate(route);
@@ -364,6 +375,7 @@ export const WorkstationHome: React.FC = () => {
         inputBdr: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.1)',
         line: isDark ? '#1a2332' : '#cbd5e1',
         lineFaint: isDark ? '#111827' : '#e2e8f0',
+        mono: "'JetBrains Mono', 'IBM Plex Mono', monospace",
     };
 
     /* ── Render connection lines ── */
@@ -455,6 +467,29 @@ export const WorkstationHome: React.FC = () => {
                         ))}
                     </nav>
 
+                    {/* Sandbox Launcher */}
+                    <div className="px-3 pb-2">
+                        <p className="text-[9px] font-mono uppercase tracking-widest px-3 mb-2" style={{ color: t.textMuted }}>Sandbox Labs</p>
+                        {[
+                            { label: 'Circuit Lab', emoji: '⚡', path: '/circuit-lab' },
+                            { label: 'Binary Lab', emoji: '🔢', path: '/module/3' },
+                            { label: 'Logic Gates', emoji: '🔀', path: '/module/4' },
+                            { label: 'Verilog', emoji: '💻', path: '/verilog' },
+                            { label: 'FSM Tool', emoji: '🔄', path: '/fsm' },
+                            { label: 'Skill Tree', emoji: '🌳', path: '/skill-tree' },
+                        ].map(item => (
+                            <button key={item.label} onClick={() => navigate(item.path)}
+                                className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[12px] font-medium transition-all duration-150 cursor-pointer"
+                                style={{ color: t.textMuted }}
+                                onMouseEnter={e => { e.currentTarget.style.background = t.navHover; }}
+                                onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}>
+                                <span style={{ fontSize: 13 }}>{item.emoji}</span>
+                                <span>{item.label}</span>
+                            </button>
+                        ))}
+                    </div>
+
+
                     <div id="tour-progress-card" className="p-3 pb-5">
                         <div className="rounded-xl p-4 transition-colors" style={{ background: t.cardBg, border: `1px solid ${t.cardBdr}` }}>
                             <div className="flex justify-between mb-2">
@@ -471,14 +506,15 @@ export const WorkstationHome: React.FC = () => {
                             <p className="text-[10px] mt-2 font-mono" style={{ color: t.textMuted }}>{completedCount}/{MODULES.length} complete</p>
                         </div>
                     </div>
-                </aside>
+                </aside >
 
                 {/* ══ MAIN ═════════════════════════════════════════════════ */}
-                <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+                < div className="flex-1 flex flex-col min-w-0 overflow-hidden" >
 
                     {/* Header */}
-                    <header className="h-14 shrink-0 flex items-center justify-between px-8 transition-colors duration-300"
-                        style={{ borderBottom: `1px solid ${t.sidebarBdr}`, background: t.bg }}>
+                    < header className="h-14 shrink-0 flex items-center justify-between px-8 transition-colors duration-300"
+                        style={{ borderBottom: `1px solid ${t.sidebarBdr}`, background: t.bg }
+                        }>
                         <button id="tour-header-search" onClick={() => setCmdOpen(true)}
                             className="flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-[12px] font-mono cursor-pointer transition-all"
                             style={{ background: t.inputBg, border: `1px solid ${t.inputBdr}`, color: t.textMuted }}>
@@ -498,7 +534,7 @@ export const WorkstationHome: React.FC = () => {
                                 <HelpCircle className="w-4 h-4" style={{ color: t.textMuted }} />
                             </button>
                             <div className="w-px h-5" style={{ background: t.sidebarBdr }} />
-                            <StreakCounter days={7} />
+                            <StreakCounter days={streak.current} />
                             <div className="w-px h-5" style={{ background: t.sidebarBdr }} />
                             <div className="text-right">
                                 <p className="text-[13px] font-semibold" style={{ color: t.text }}>{firstName || 'VoltMonkey'}</p>
@@ -508,12 +544,12 @@ export const WorkstationHome: React.FC = () => {
                                 {(firstName || 'S')[0].toUpperCase()}
                             </div>
                         </div>
-                    </header>
+                    </header >
 
                     {/* Content */}
-                    <div className="flex-1 overflow-y-auto overflow-x-hidden relative">
+                    < div className="flex-1 overflow-y-auto overflow-x-hidden relative" >
                         {/* Blueprint grid */}
-                        <div className="fixed inset-0 pointer-events-none" style={{
+                        < div className="fixed inset-0 pointer-events-none" style={{
                             backgroundImage: [
                                 'linear-gradient(rgba(59,130,246,0.025) 1px,transparent 1px)',
                                 'linear-gradient(90deg,rgba(59,130,246,0.025) 1px,transparent 1px)',
@@ -521,10 +557,10 @@ export const WorkstationHome: React.FC = () => {
                             backgroundSize: '48px 48px',
                         }} />
 
-                        <div className="relative z-10 px-8 py-8">
+                        < div className="relative z-10 px-8 py-8" >
 
                             {/* ── Page header ── */}
-                            <div className="mb-6">
+                            < div className="mb-6" >
                                 <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-widest mb-2" style={{ color: t.textMuted }}>
                                     <Zap className="w-3 h-3" /> Curriculum Map
                                 </div>
@@ -532,38 +568,42 @@ export const WorkstationHome: React.FC = () => {
                                 <p className="text-[13px] mt-1" style={{ color: t.textMuted }}>
                                     Your progression path through digital electronics. Hover nodes to explore.
                                 </p>
-                            </div>
+                            </div >
 
                             {/* ── Breadcrumb ── */}
-                            <div className="flex items-center gap-1.5 mb-6 text-[11px] font-mono" style={{ color: t.textMuted }}>
-                                {breadcrumb.map((crumb, i) => (
-                                    <React.Fragment key={i}>
-                                        {i > 0 && <ChevronRight className="w-3 h-3 opacity-40" />}
-                                        <span className={i === breadcrumb.length - 1 ? 'text-blue-400' : ''}>{crumb}</span>
-                                    </React.Fragment>
-                                ))}
-                            </div>
+                            < div className="flex items-center gap-1.5 mb-6 text-[11px] font-mono" style={{ color: t.textMuted }}>
+                                {
+                                    breadcrumb.map((crumb, i) => (
+                                        <React.Fragment key={i}>
+                                            {i > 0 && <ChevronRight className="w-3 h-3 opacity-40" />}
+                                            <span className={i === breadcrumb.length - 1 ? 'text-blue-400' : ''}>{crumb}</span>
+                                        </React.Fragment>
+                                    ))
+                                }
+                            </div >
 
                             {/* ── Branch legend ── */}
-                            <div className="flex items-center gap-6 mb-6 flex-wrap">
-                                {[['#22c55e', 'Completed'], ['#10B981', 'In Progress'], [t.line, 'Locked']].map(([c, l]) => (
-                                    <div key={l as string} className="flex items-center gap-1.5">
-                                        <div className="w-6 h-[1.5px] rounded" style={{ background: c as string }} />
-                                        <span className="text-[11px]" style={{ color: t.textMuted }}>{l}</span>
-                                    </div>
-                                ))}
-                                <div className="ml-auto flex items-center gap-4">
+                            < div className="flex items-center gap-6 mb-6 flex-wrap" >
+                                {
+                                    [['#22c55e', 'Completed'], ['#10B981', 'In Progress'], [t.line, 'Locked']].map(([c, l]) => (
+                                        <div key={l as string} className="flex items-center gap-1.5">
+                                            <div className="w-6 h-[1.5px] rounded" style={{ background: c as string }} />
+                                            <span className="text-[11px]" style={{ color: t.textMuted }}>{l}</span>
+                                        </div>
+                                    ))
+                                }
+                                < div className="ml-auto flex items-center gap-4" >
                                     {(['basic', 'dsd', 'verilog'] as BranchKey[]).map(k => (
                                         <div key={k} className="flex items-center gap-1.5">
                                             <div className="w-2 h-2 rounded-full" style={{ background: BRANCH_META[k].color }} />
                                             <span className="text-[10px] font-mono" style={{ color: BRANCH_META[k].color }}>{BRANCH_META[k].label}</span>
                                         </div>
                                     ))}
-                                </div>
-                            </div>
+                                </div >
+                            </div >
 
                             {/* ══ SVG MAP ═════════════════════════════════════════ */}
-                            <div id="tour-map" className="w-full overflow-x-auto">
+                            < div id="tour-map" className="w-full overflow-x-auto" >
                                 <svg width={CW} height={CH} viewBox={`0 0 ${CW} ${CH}`} style={{ overflow: 'visible' }}>
 
                                     {/* ── Journey Layer Labels ── */}
@@ -640,32 +680,57 @@ export const WorkstationHome: React.FC = () => {
                                         </text>
                                     </g>
                                 </svg>
-                            </div>
+                            </div >
 
                             {/* ── Stats row ── */}
-                            <div className="grid grid-cols-4 gap-3 mt-10 max-w-2xl">
-                                {[
-                                    { label: 'Total Modules', value: String(MODULES.length), accent: '#94a3b8' },
-                                    { label: 'Completed', value: String(completedCount), accent: '#22c55e' },
-                                    { label: 'In Progress', value: String(MODULES.filter(m => m.status === 'in-progress').length), accent: '#10B981' },
-                                    { label: 'Total Hours', value: `${MODULES.reduce((s, m) => s + m.hours, 0)}h`, accent: '#a78bfa' },
-                                ].map(s => (
-                                    <div key={s.label} className="rounded-xl p-4 transition-colors"
-                                        style={{ background: t.cardBg, border: `1px solid ${t.cardBdr}` }}>
-                                        <p className="text-[22px] font-bold font-mono" style={{ color: s.accent }}>{s.value}</p>
-                                        <p className="text-[10px] mt-0.5" style={{ color: t.textMuted }}>{s.label}</p>
-                                    </div>
-                                ))}
-                            </div>
+                            < div className="grid grid-cols-4 gap-3 mt-10 max-w-2xl" >
+                                {
+                                    [
+                                        { label: 'Total Modules', value: String(MODULES.length), accent: '#94a3b8' },
+                                        { label: 'Completed', value: String(completedCount), accent: '#22c55e' },
+                                        { label: 'In Progress', value: String(MODULES.filter(m => m.status === 'in-progress').length), accent: '#10B981' },
+                                        { label: 'Total Hours', value: `${MODULES.reduce((s, m) => s + m.hours, 0)}h`, accent: '#a78bfa' },
+                                    ].map(s => (
+                                        <div key={s.label} className="rounded-xl p-4 transition-colors"
+                                            style={{ background: t.cardBg, border: `1px solid ${t.cardBdr}` }}>
+                                            <p className="text-[22px] font-bold font-mono" style={{ color: s.accent }}>{s.value}</p>
+                                            <p className="text-[10px] mt-0.5" style={{ color: t.textMuted }}>{s.label}</p>
+                                        </div>
+                                    ))
+                                }
+                            </div >
 
                             <div className="h-16" />
-                        </div>
+                        </div >
+                    </div >
+                </div >
+
+                {/* ── WORKSTATION TERMINAL (Aesthetic Overdrive) ── */}
+                <div style={{
+                    position: 'absolute', bottom: 24, right: 32, width: 300,
+                    background: 'rgba(7,8,12,0.85)', backdropFilter: 'blur(12px)',
+                    border: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.12)'}`,
+                    borderRadius: 12, padding: 16, pointerEvents: 'none', zIndex: 100,
+                    boxShadow: '0 8px 32px rgba(0,0,0,0.4)'
+                }}>
+                    <div className="flex items-center gap-2 mb-3">
+                        <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                        <span style={{ fontFamily: t.mono, fontSize: 10, color: t.text, letterSpacing: '0.1em' }} className="uppercase">System Status</span>
+                    </div>
+                    <div style={{ fontFamily: t.mono, fontSize: 9, color: t.textMuted, lineHeight: 1.6 }}>
+                        <div className="flex justify-between"><span>Core Frequency</span><span className="text-blue-400">4.2 GHz</span></div>
+                        <div className="flex justify-between"><span>Logic Depth</span><span className="text-blue-400">Layer {completedCount + 1}</span></div>
+                        <div className="flex justify-between"><span>Memory Parity</span><span className="text-green-500">NOMINAL</span></div>
+                        <div className="flex justify-between"><span>VoltMonkey</span><span className="text-orange-400">SYNCED</span></div>
+                    </div>
+                    <div className="mt-3 pt-3 border-t border-white/5" style={{ fontSize: 8, color: t.textMuted, opacity: 0.6 }}>
+                        DIGILOGIC.OS [VER 2025.03] READY.
                     </div>
                 </div>
-            </div>
+            </div >
 
             {/* ── OVERLAYS ── */}
-            <CommandPalette isOpen={cmdOpen} onClose={() => setCmdOpen(false)} navigate={navigate} tourKey={getTourKey(firstName)} />
+            < CommandPalette isOpen={cmdOpen} onClose={() => setCmdOpen(false)} navigate={navigate} tourKey={getTourKey(firstName)} />
             <OnboardingTour isOpen={tourOpen} onClose={() => setTourOpen(false)} storageKey={getTourKey(firstName)} />
         </>
     );

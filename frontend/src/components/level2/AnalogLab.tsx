@@ -97,6 +97,13 @@ export function AnalogLab({
                     <svg viewBox="0 0 280 200" style={{ width: '100%', maxWidth: 280 }}>
                         {/* Battery */}
                         <g>
+                            <defs>
+                                <radialGradient id="led-grad" cx="50%" cy="50%" r="50%">
+                                    <stop offset="0%" stopColor={`rgba(0, 212, 255, ${Math.max(0.1, brightness * 1.5)})`} />
+                                    <stop offset="60%" stopColor={`rgba(0, 212, 255, ${brightness * 0.8})`} />
+                                    <stop offset="100%" stopColor={`rgba(0, 212, 255, ${brightness * 0.1})`} />
+                                </radialGradient>
+                            </defs>
                             <rect x="8" y="80" width="32" height="40" rx="2" fill="none"
                                 stroke={T.accent} strokeWidth="1.5" />
                             <line x1="14" y1="88" x2="14" y2="112" stroke={T.accent} strokeWidth="1.5" />
@@ -107,8 +114,9 @@ export function AnalogLab({
                         </g>
 
                         {/* Wire battery+ to potentiometer */}
-                        <line x1="40" y1="88" x2="90" y2="88" stroke={T.accent} strokeWidth="1.5"
-                            className={brightness > 0.05 ? 'wire--analog-live' : 'wire--off'} />
+                        <line x1="40" y1="88" x2="90" y2="88" stroke={T.accent} strokeWidth="1.5" strokeDasharray="4 8" opacity={0.4 + brightness * 0.6}>
+                            {brightness > 0.05 && <animate attributeName="stroke-dashoffset" from="12" to="0" dur="1.2s" repeatCount="indefinite" />}
+                        </line>
 
                         {/* Potentiometer */}
                         <g>
@@ -124,16 +132,25 @@ export function AnalogLab({
                                 fill={T.accent} />
                         </g>
 
+                        {/* Live Voltage Readout in Circuit */}
+                        <text x="175" y="78" fill={T.accent} fontSize="8" fontFamily={T.mono} textAnchor="middle" style={{ opacity: 0.9 }}>
+                            {voltageV.toFixed(2)}V
+                        </text>
+                        <text x="175" y="114" fill={T.muted} fontSize="6" fontFamily={T.mono} textAnchor="middle" style={{ opacity: 0.8 }}>
+                            ANALOG SIGNAL
+                        </text>
+
                         {/* Wire pot to LED */}
-                        <line x1="150" y1="88" x2="195" y2="88" stroke={T.accent} strokeWidth="1.5"
-                            className={brightness > 0.05 ? 'wire--analog-live' : 'wire--off'} />
+                        <line x1="150" y1="88" x2="195" y2="88" stroke={T.accent} strokeWidth="1.5" strokeDasharray="4 8" opacity={0.4 + brightness * 0.6}>
+                            {brightness > 0.05 && <animate attributeName="stroke-dashoffset" from="12" to="0" dur={`${1 + (1 - brightness)}s`} repeatCount="indefinite" />}
+                        </line>
 
                         {/* LED symbol */}
                         <g>
                             <circle cx="210" cy="100" r="16" fill="none" stroke="#94A3B8" strokeWidth="1.5" />
                             {/* LED bright fill */}
                             <circle cx="210" cy="100" r="12"
-                                fill={ledColor}
+                                fill="url(#led-grad)"
                                 style={{ filter: `drop-shadow(0 0 ${8 * brightness}px rgba(0,212,255,${brightness * 0.9}))` }}
                             />
                             {/* LED symbol triangle */}

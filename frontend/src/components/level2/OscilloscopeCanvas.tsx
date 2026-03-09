@@ -91,10 +91,18 @@ function OscilloscopeCanvasInner({
             ctx.stroke();
             ctx.setLineDash([]);
 
-            // Threshold lines
+            // Threshold lines and logic band zones
             if (showThreshold) {
                 const yLow = H - thresholdLow * H;
                 const yHigh = H - thresholdHigh * H;
+
+                // Zone background highlights
+                ctx.fillStyle = LOW_COLOR.replace('0.7', '0.04');
+                ctx.fillRect(0, yLow, W, H - yLow); // LOW zone background
+                ctx.fillStyle = HIGH_COLOR.replace('0.7', '0.04');
+                ctx.fillRect(0, 0, W, yHigh); // HIGH zone background
+                ctx.fillStyle = 'rgba(245,158,11,0.03)';
+                ctx.fillRect(0, yHigh, W, yLow - yHigh); // UNDEFINED zone background
 
                 ctx.strokeStyle = LOW_COLOR;
                 ctx.lineWidth = 1;

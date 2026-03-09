@@ -6,7 +6,7 @@
  */
 
 import { useEffect, useCallback, useRef, useState } from 'react';
-import { useEngagementStore, type BadgeId, BADGE_CATALOG } from '../stores/engagementStore';
+import { useGamificationStore, type BadgeId, BADGE_CATALOG } from '../stores/gamificationStore';
 
 export interface BadgeNotification {
     id: BadgeId;
@@ -16,7 +16,9 @@ export interface BadgeNotification {
 }
 
 export function useBadgeSystem() {
-    const { streak, badges, totalXP, unlockBadge, hasBadge } = useEngagementStore();
+    const store = useGamificationStore();
+    const { streak, badges, unlockBadge, hasBadge } = store;
+    const totalXP = store.xp.total;
     const [notification, setNotification] = useState<BadgeNotification | null>(null);
     const notifTimerRef = useRef<ReturnType<typeof setTimeout>>();
 

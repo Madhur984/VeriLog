@@ -9,6 +9,7 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 import { MUREEngine } from '../mure/MUREEngine';
 import { NodeType, type NodeId } from '../mure/core/SignalNode';
 import type { PortState } from '../mure/core/Port';
+import { LogicOscilloscopeEngine, type WaveformTrace } from '../engine/LogicOscilloscope';
 
 // ─── Types ──────────────────────────────────────────────────────────────
 
@@ -45,6 +46,11 @@ export function useLogicStudio() {
     const animRef = useRef<number>(0);
 
     const engine = engineRef.current;
+
+    // ─── Oscilloscope ─────────────────────────────────────
+    const scopeRef = useRef(new LogicOscilloscopeEngine(100));
+    const [traces, setTraces] = useState<WaveformTrace[]>([]);
+    const oscilloscope = scopeRef.current;
 
     // ─── Node Management ──────────────────────────────────
 
@@ -110,7 +116,15 @@ export function useLogicStudio() {
         engine.simulateStep(1000); // 1μs step
         setSimTime(engine.currentTimeNs);
         setSnapshot(engine.snapshot());
-    }, [engine]);
+
+        // Feed oscilloscope
+        const currentStates: Record<string, number> = {};
+        probedNodes.forEach(nodeId => {
+            currentStates[nodeId] = engine.getSignal(nodeId, 0) ? 1 : 0;
+        });
+        oscilloscope.tick(currentStates);
+        setTraces(oscilloscope.getTraces());
+    }, [engine, probedNodes, oscilloscope]);
 
     const flush = useCallback(() => {
         engine.flush();
@@ -130,9 +144,11 @@ export function useLogicStudio() {
         engine.reset();
         engine.markAllDirty();
         engine.flush();
+        oscilloscope.reset();
+        setTraces(oscilloscope.getTraces());
         setSimTime(0);
         setSnapshot(engine.snapshot());
-    }, [engine]);
+    }, [engine, oscilloscope]);
 
     // Animation loop
     useEffect(() => {
@@ -145,23 +161,41 @@ export function useLogicStudio() {
             engine.simulateStep(1000);
             setSimTime(engine.currentTimeNs);
             setSnapshot(engine.snapshot());
+
+            // Feed oscilloscope
+            const currentStates: Record<string, number> = {};
+            probedNodes.forEach(nodeId => {
+                currentStates[nodeId] = engine.getSignal(nodeId, 0) ? 1 : 0;
+            });
+            oscilloscope.tick(currentStates);
+            setTraces(oscilloscope.getTraces());
+
             animRef.current = requestAnimationFrame(loop);
         };
 
         animRef.current = requestAnimationFrame(loop);
         return () => cancelAnimationFrame(animRef.current);
-    }, [isRunning, engine]);
+    }, [isRunning, engine, probedNodes, oscilloscope]);
 
     // ─── Probe ────────────────────────────────────────────
 
     const toggleProbe = useCallback((nodeId: NodeId) => {
         setProbedNodes((prev) => {
             const next = new Set(prev);
-            if (next.has(nodeId)) next.delete(nodeId);
-            else next.add(nodeId);
+            if (next.has(nodeId)) {
+                next.delete(nodeId);
+                oscilloscope.removeProbe(nodeId);
+            } else {
+                next.add(nodeId);
+                let label = nodeId;
+                const nodeRef = canvasNodes.find(n => n.id === nodeId);
+                if (nodeRef) label = `${NodeType[nodeRef.type]} (${nodeId.slice(0, 4)})`;
+                oscilloscope.addProbe(nodeId, label);
+            }
+            setTraces(oscilloscope.getTraces());
             return next;
         });
-    }, []);
+    }, [oscilloscope, canvasNodes]);
 
     // ─── Getters ──────────────────────────────────────────
 
@@ -187,6 +221,7 @@ export function useLogicStudio() {
         snapshot,
         wireStart,
         probedNodes,
+        traces,
         xrayEnabled,
 
         // Node actions
@@ -219,5 +254,6 @@ export function useLogicStudio() {
         getSignal,
         getTrace,
         getNodeEdges,
+        getEngine: () => engine,
     };
 }

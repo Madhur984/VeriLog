@@ -13,7 +13,7 @@
 
 import { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, CheckCircle2 } from 'lucide-react';
+import { ChevronDown, CheckCircle2, AlertTriangle } from 'lucide-react';
 import { useAnalogSignal } from '../../hooks/useAnalogSignal';
 import { useDigitalSignal } from '../../hooks/useDigitalSignal';
 import { OscilloscopeCanvas } from './OscilloscopeCanvas';
@@ -288,20 +288,25 @@ export function NoiseExperiment({ onComplete }: NoiseExperimentProps) {
                                         style={{ overflow: 'hidden' }}
                                     >
                                         <div style={{
-                                            padding: '10px 12px 12px 32px',
-                                            borderLeft: `2px solid ${T.accent}`,
-                                            margin: '0 12px 10px',
-                                            borderRadius: 2,
+                                            padding: '12px 16px',
+                                            borderLeft: `2px solid ${T.warning}`,
+                                            background: `${T.warning}08`,
+                                            margin: '0 12px 10px 12px',
+                                            borderRadius: '0 4px 4px 0',
                                         }}>
-                                            <span style={{
-                                                fontFamily: T.mono, fontSize: 8, color: T.accent,
-                                                letterSpacing: '0.12em', textTransform: 'uppercase',
-                                            }}>
-                                                Engineering Insight
-                                            </span>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                                                <AlertTriangle size={12} style={{ color: T.warning }} />
+                                                <span style={{
+                                                    fontFamily: T.mono, fontSize: 9, color: T.warning,
+                                                    letterSpacing: '0.12em', textTransform: 'uppercase',
+                                                    fontWeight: 600,
+                                                }}>
+                                                    Engineering Insight
+                                                </span>
+                                            </div>
                                             <p style={{
-                                                fontFamily: T.sans, fontSize: 14, color: T.muted,
-                                                marginTop: 4, lineHeight: 1.7, fontStyle: 'italic',
+                                                fontFamily: T.sans, fontSize: 13, color: T.text,
+                                                marginTop: 6, lineHeight: 1.6, WebkitFontSmoothing: 'antialiased'
                                             }}>
                                                 {row.insight}
                                             </p>

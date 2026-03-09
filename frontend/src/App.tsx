@@ -4,6 +4,9 @@ import { HeroExperience } from './pages/HeroExperience';
 import { WorkstationHome } from './pages/WorkstationHome';
 import { ModuleOneHub } from './pages/ModuleOneHub';
 import { ModuleTwo } from './pages/ModuleTwo';
+import { ModuleThree } from './pages/ModuleThree';
+import { ModuleFour } from './pages/ModuleFour';
+import { ModuleFive } from './pages/ModuleFive';
 import { LoginPage } from './pages/LoginPage';
 import { CircuitCanvas } from './simulator/CircuitCanvas';
 import { MascotGuide } from './components/Bot/MascotGuide';
@@ -61,6 +64,9 @@ export default function App() {
                     <Route path="/module/1/lab" element={<CircuitCanvas />} />
                     <Route path="/module/1/theory" element={<WhatAreSignals />} />
                     <Route path="/module/2" element={<ModuleTwo />} />
+                    <Route path="/module/3" element={<ModuleThree />} />
+                    <Route path="/module/4" element={<ModuleFour />} />
+                    <Route path="/module/5" element={<ModuleFive />} />
 
                     {/* Legacy / Game Support */}
                     <Route path="/gatekeeper" element={<GatekeeperGame />} />

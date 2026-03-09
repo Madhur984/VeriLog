@@ -1,5 +1,4 @@
-
-import { useUserStore } from '../stores/userStore';
+import { useGamificationStore } from '../stores/gamificationStore';
 import { Heart, Zap, Flame, Shield, LucideIcon } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -11,7 +10,7 @@ const StatItem = ({ icon: Icon, value, color }: { icon: LucideIcon, value: numbe
 );
 
 export const RightSidebar = () => {
-    const { hearts, gems, streak } = useUserStore();
+    const { hearts, gems, streak } = useGamificationStore();
 
     return (
         <div className="hidden lg:flex flex-col gap-8 w-[368px] p-6 sticky top-0 h-screen overflow-y-auto">
@@ -23,7 +22,7 @@ export const RightSidebar = () => {
                     </div>
                 </div>
                 <div className="flex gap-4">
-                    <StatItem icon={Flame} value={streak} color="text-orange-500" />
+                    <StatItem icon={Flame} value={streak.current} color="text-orange-500" />
                     <StatItem icon={Zap} value={gems} color="text-blue-400" />
                     <StatItem icon={Heart} value={hearts} color="text-rose-500" />
                 </div>

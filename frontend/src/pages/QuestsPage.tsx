@@ -1,5 +1,4 @@
-
-import { useUserStore } from '../stores/userStore';
+import { useGamificationStore } from '../stores/gamificationStore';
 import { Zap, CheckCircle } from 'lucide-react';
 
 const QuestCard = ({ title, progress, total, reward, completed }: { title: string, progress: number, total: number, reward: number, completed: boolean }) => {
@@ -32,7 +31,7 @@ const QuestCard = ({ title, progress, total, reward, completed }: { title: strin
 };
 
 export const QuestsPage = () => {
-    const { xp, streak } = useUserStore();
+    const { xp, streak } = useGamificationStore();
 
     return (
         <div className="flex flex-col gap-6 pb-20">
@@ -47,15 +46,15 @@ export const QuestsPage = () => {
             <div className="flex flex-col gap-4">
                 <QuestCard
                     title="Earn 50 XP"
-                    progress={xp}
+                    progress={xp.total}
                     total={50}
                     reward={10}
-                    completed={xp >= 50}
+                    completed={xp.total >= 50}
                 />
                 <QuestCard
                     title="Extend your streak"
-                    progress={streak}
-                    total={streak + 1} // Mock logic: goal is always current + 1
+                    progress={streak.current}
+                    total={streak.current + 1} // Mock logic: goal is always current + 1
                     reward={20}
                     completed={false}
                 />
