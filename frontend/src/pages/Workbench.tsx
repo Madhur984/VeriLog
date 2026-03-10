@@ -1,253 +1,270 @@
 /**
- * Workbench.tsx — Unified Engineering Workbench
+ * pages/Workbench.tsx — Unified Engineering Workbench (v2)
  *
- * Professional IDE-like workspace combining:
- * - Resizable panel layout (Component Palette, Circuit Canvas, Oscilloscope, Console)
- * - Command Palette (Ctrl+K)
- * - Global keyboard shortcuts
- * - Toolbar with simulation controls
- * - Status bar with sim state
+ * Shell layout connecting all 5 panels:
+ *  Left:   ComponentPalette
+ *  Center: CircuitCanvas
+ *  Right:  PropertiesPanel
+ *  Bottom: WaveformViewer
+ *  Log:    ConsolePanel
+ *
+ * Simulation is driven by WorkerBridge (CSE running in a Web Worker).
  */
 
-import { useState, useCallback, useMemo, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { PanelManager } from '../components/workbench/PanelManager';
-import { PanelContainer } from '../components/workbench/PanelContainer';
-import { CommandPalette } from '../components/workbench/CommandPalette';
+import { useWorkbenchStore } from '../stores/useWorkbenchStore';
+import { workerBridge } from '../engine/WorkerBridge';
+import { ComponentPalette } from '../components/workbench/ComponentPalette';
+import { CircuitCanvas } from '../components/workbench/CircuitCanvas';
+import { WaveformViewer } from '../components/workbench/WaveformViewer';
+import { PropertiesPanel } from '../components/workbench/PropertiesPanel';
 import { ConsolePanel, consoleLog } from '../components/workbench/ConsolePanel';
-import { usePanelLayout } from '../hooks/usePanelLayout';
-import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
-import { createCommandRegistry } from '../data/commands';
+import {
+    serializeCircuit,
+    saveToLocalStorage,
+    loadFromLocalStorage,
+    downloadCircuit,
+} from '../engine/CircuitSerializer';
 import '../components/workbench/workbench.css';
 
 type ToolMode = 'select' | 'wire' | 'probe' | 'delete';
 
+// ── Layout constants ─────────────────────────────────────────────────────
+const PALETTE_W = 200;
+const PROPERTIES_W = 240;
+const WAVEFORM_H = 200;
+const CONSOLE_H = 120;
+
 export function Workbench() {
     const navigate = useNavigate();
-    const { visiblePanels, visibleSizes, setSplitSizes, togglePanel, resetLayout, layout } = usePanelLayout();
+    const [tool, setTool] = useState<ToolMode>('select');
+    const [showConsole, setShowConsole] = useState(true);
+    const [showWaveform, setShowWaveform] = useState(true);
 
-    const [paletteOpen, setPaletteOpen] = useState(false);
-    const [currentTool, setCurrentTool] = useState<ToolMode>('select');
-    const [simRunning, setSimRunning] = useState(false);
-    const [simTime, setSimTime] = useState(0);
-    const [showHint, setShowHint] = useState(true);
+    const { nodes, wires, probes, simRunning, simTimeNs, setSimRunning, resetSim, clearCanvas } = useWorkbenchStore();
 
-    // Hide hint after 3s
+    // ── Worker lifecycle ──────────────────────────────────────────────────
+
+    const bridgeReady = useRef(false);
     useEffect(() => {
-        const t = setTimeout(() => setShowHint(false), 3000);
-        return () => clearTimeout(t);
+        if (!bridgeReady.current) {
+            workerBridge.init();
+            bridgeReady.current = true;
+            consoleLog('info', '⚡ DigiLogic Workbench v2 initialized');
+            // Try to restore autosave
+            const saved = loadFromLocalStorage();
+            if (saved) { consoleLog('info', `Restored circuit: ${saved.metadata.name}`); }
+        }
+        return () => { /* keep worker alive across hot reloads */ };
     }, []);
 
-    // Log workbench open
+    // Re-load graph into worker whenever canvas nodes/wires change
     useEffect(() => {
-        consoleLog('info', 'Engineering Workbench initialized');
-    }, []);
+        workerBridge.loadGraph();
+    }, [nodes, wires]);
 
-    // Command actions
-    const addGate = useCallback((type: string) => {
-        consoleLog('info', `Add ${type} gate (place on canvas)`);
-        // Future: integrate with canvas node placement
-    }, []);
-
-    const setTool = useCallback((tool: string) => {
-        setCurrentTool(tool as ToolMode);
-        consoleLog('info', `Tool → ${tool}`);
-    }, []);
+    // ── Sim controls ──────────────────────────────────────────────────────
 
     const simControl = useCallback((cmd: 'play' | 'pause' | 'step' | 'reset') => {
         switch (cmd) {
             case 'play':
                 setSimRunning(true);
+                workerBridge.start();
                 consoleLog('sim', 'Simulation started');
                 break;
             case 'pause':
-                setSimRunning(false);
+                workerBridge.stop();
                 consoleLog('sim', 'Simulation paused');
                 break;
             case 'step':
-                setSimTime(t => t + 1);
-                consoleLog('sim', `Clock step → t=${simTime + 1}ns`);
+                workerBridge.step();
+                consoleLog('sim', `Step → t=${simTimeNs + 100}ns`);
                 break;
             case 'reset':
-                setSimRunning(false);
-                setSimTime(0);
+                workerBridge.reset();
+                resetSim();
                 consoleLog('sim', 'Simulation reset');
                 break;
         }
-    }, [simTime]);
+    }, [setSimRunning, resetSim, simTimeNs]);
 
-    const commands = useMemo(() => createCommandRegistry({
-        addGate,
-        setTool,
-        simControl,
-        togglePanel,
-        navigate,
-    }), [addGate, setTool, simControl, togglePanel, navigate]);
+    // ── Tool keyboard shortcuts ───────────────────────────────────────────
 
-    useKeyboardShortcuts({
-        commands,
-        onCommandPalette: () => setPaletteOpen(true),
-    });
+    useEffect(() => {
+        const onKey = (e: KeyboardEvent) => {
+            if ((e.target as HTMLElement).tagName === 'INPUT') return;
+            switch (e.key.toLowerCase()) {
+                case 'v': setTool('select'); break;
+                case 'w': setTool('wire'); break;
+                case 'p': setTool('probe'); break;
+                case 'd': setTool('delete'); break;
+                case ' ':
+                    e.preventDefault();
+                    simControl(simRunning ? 'pause' : 'play');
+                    break;
+                case 's':
+                    if (e.ctrlKey || e.metaKey) {
+                        e.preventDefault();
+                        handleSave();
+                    }
+                    break;
+            }
+        };
+        window.addEventListener('keydown', onKey);
+        return () => window.removeEventListener('keydown', onKey);
+    }, [simRunning, simControl]);
 
-    // Render panel content by ID
-    const renderPanelContent = useCallback((panelId: string) => {
-        switch (panelId) {
-            case 'palette':
-                return (
-                    <div className="wb-empty-panel">
-                        <div className="wb-empty-panel__icon">📦</div>
-                        <div>Component Palette</div>
-                        <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.08)' }}>
-                            Gates will appear here
-                        </div>
-                    </div>
-                );
-            case 'canvas':
-                return (
-                    <div className="wb-empty-panel">
-                        <div className="wb-empty-panel__icon">⚡</div>
-                        <div>Circuit Canvas</div>
-                        <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.08)' }}>
-                            Press A for AND, O for OR, W for wire
-                        </div>
-                    </div>
-                );
-            case 'oscilloscope':
-                return (
-                    <div className="wb-empty-panel">
-                        <div className="wb-empty-panel__icon">📊</div>
-                        <div>Oscilloscope</div>
-                        <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.08)' }}>
-                            Signal waveforms will render here
-                        </div>
-                    </div>
-                );
-            case 'console':
-                return <ConsolePanel />;
-            default:
-                return <div className="wb-empty-panel">Unknown panel</div>;
-        }
+    // ── Save / Load ───────────────────────────────────────────────────────
+
+    const handleSave = useCallback(() => {
+        const cf = serializeCircuit(nodes, wires, probes);
+        saveToLocalStorage(cf);
+        consoleLog('info', `Circuit saved to localStorage`);
+    }, [nodes, wires, probes]);
+
+    const handleDownload = useCallback(() => {
+        const cf = serializeCircuit(nodes, wires, probes);
+        downloadCircuit(cf);
+        consoleLog('info', `Downloading circuit file`);
+    }, [nodes, wires, probes]);
+
+    // ── Drag start from palette (just logs — canvas handles the drop) ─────
+
+    const handleDragStart = useCallback((typeId: string) => {
+        consoleLog('info', `Dragging ${typeId} to canvas`);
     }, []);
 
+    // ── Layout calculation ────────────────────────────────────────────────
+
+
+
     return (
-        <div className="wb-root">
-            {/* ── Toolbar ─────────────────────────────────────── */}
-            <div className="wb-toolbar">
-                <span className="wb-toolbar__title">⚡ DigiLogic Workbench</span>
-                <div className="wb-toolbar__spacer" />
+        <div className="wb-root" style={{ display: 'flex', flexDirection: 'column', height: '100vh', background: '#07080C' }}>
 
-                {/* Tool Buttons */}
-                <button
-                    className={`wb-toolbar__btn ${currentTool === 'select' ? 'wb-toolbar__btn--active' : ''}`}
-                    onClick={() => setTool('select')}
-                    title="Select (V)"
-                >
-                    🖱 Select
-                </button>
-                <button
-                    className={`wb-toolbar__btn ${currentTool === 'wire' ? 'wb-toolbar__btn--active' : ''}`}
-                    onClick={() => setTool('wire')}
-                    title="Wire (W)"
-                >
-                    🔗 Wire
-                </button>
-                <button
-                    className={`wb-toolbar__btn ${currentTool === 'probe' ? 'wb-toolbar__btn--active' : ''}`}
-                    onClick={() => setTool('probe')}
-                    title="Probe (P)"
-                >
-                    📍 Probe
-                </button>
+            {/* ── Toolbar ────────────────────────────────────────────────────── */}
+            <div className="wb-toolbar" style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '0 12px', height: 44, borderBottom: '1px solid #1A1D24', background: '#0D0F16', flexShrink: 0 }}>
+                <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: '#00D4FF', letterSpacing: '0.15em', textTransform: 'uppercase', marginRight: 12 }}>
+                    ⚡ Workbench
+                </span>
 
-                <div style={{ width: 1, height: 16, background: 'rgba(0, 212, 255, 0.1)', margin: '0 4px' }} />
-
-                {/* Simulation Controls */}
-                <div className="wb-sim-controls">
-                    <button
-                        className={`wb-sim-btn ${simRunning ? 'wb-sim-btn--active' : ''}`}
-                        onClick={() => simControl(simRunning ? 'pause' : 'play')}
-                        title={simRunning ? 'Pause' : 'Play (Space)'}
+                {/* Tool buttons */}
+                {([
+                    { id: 'select', key: 'V', label: '🖱 Select' },
+                    { id: 'wire', key: 'W', label: '〰 Wire' },
+                    { id: 'probe', key: 'P', label: '📍 Probe' },
+                    { id: 'delete', key: 'D', label: '🗑 Delete' },
+                ] as { id: ToolMode; key: string; label: string }[]).map(t => (
+                    <button key={t.id}
+                        onClick={() => setTool(t.id)}
+                        title={`${t.label} (${t.key})`}
+                        style={{
+                            ...toolBtnStyle,
+                            color: tool === t.id ? '#00D4FF' : '#64748B',
+                            borderColor: tool === t.id ? '#00D4FF44' : 'transparent',
+                            background: tool === t.id ? '#00D4FF0A' : 'transparent',
+                        }}
                     >
-                        {simRunning ? '⏸' : '▶'}
+                        {t.label}
                     </button>
-                    <button className="wb-sim-btn" onClick={() => simControl('step')} title="Step (S)">
-                        ⏭
-                    </button>
-                    <button className="wb-sim-btn" onClick={() => simControl('reset')} title="Reset">
-                        ⏹
-                    </button>
-                </div>
+                ))}
 
-                <div style={{ width: 1, height: 16, background: 'rgba(0, 212, 255, 0.1)', margin: '0 4px' }} />
+                <div style={divStyle} />
 
-                {/* Command Palette trigger */}
-                <button
-                    className="wb-toolbar__btn"
-                    onClick={() => setPaletteOpen(true)}
-                    title="Command Palette (Ctrl+K)"
-                >
-                    ⌘ Ctrl+K
+                {/* Sim controls */}
+                <button onClick={() => simControl(simRunning ? 'pause' : 'play')} style={toolBtnStyle} title="Play/Pause (Space)">
+                    {simRunning ? '⏸ Pause' : '▶ Play'}
                 </button>
+                <button onClick={() => simControl('step')} style={toolBtnStyle} title="Step (S)">⏭ Step</button>
+                <button onClick={() => simControl('reset')} style={toolBtnStyle} title="Reset">⏹ Reset</button>
 
-                {/* Layout Reset */}
-                <button className="wb-toolbar__btn" onClick={resetLayout} title="Reset layout">
-                    ↻
-                </button>
-            </div>
+                <div style={divStyle} />
 
-            {/* ── Panel Layout ────────────────────────────────── */}
-            <div className="wb-layout">
-                <PanelManager
-                    panels={visiblePanels}
-                    sizes={visibleSizes}
-                    orientation={layout.orientation}
-                    onSizesChange={setSplitSizes}
-                >
-                    {visiblePanels.map(panel => (
-                        <PanelContainer
-                            key={panel.id}
-                            id={panel.id}
-                            label={panel.label}
-                            icon={panel.icon}
-                            onClose={() => togglePanel(panel.id)}
-                        >
-                            {renderPanelContent(panel.id)}
-                        </PanelContainer>
-                    ))}
-                </PanelManager>
-            </div>
+                {/* Save/Load */}
+                <button onClick={handleSave} style={toolBtnStyle} title="Save (Ctrl+S)">💾 Save</button>
+                <button onClick={handleDownload} style={toolBtnStyle} title="Download JSON">⬇ Export</button>
+                <button onClick={() => clearCanvas()} style={toolBtnStyle} title="Clear canvas">🗑 Clear</button>
 
-            {/* ── Status Bar ──────────────────────────────────── */}
-            <div className="wb-status">
-                <div className="wb-status__item">
-                    <div className={`wb-status__dot ${simRunning ? '' : 'wb-status__dot--warn'}`} />
-                    <span>{simRunning ? 'Running' : 'Idle'}</span>
-                </div>
-                <div className="wb-status__item">
-                    <span>t = {simTime}ns</span>
-                </div>
-                <div className="wb-status__item">
-                    <span>Tool: {currentTool}</span>
-                </div>
                 <div style={{ flex: 1 }} />
-                <div className="wb-status__item">
-                    <span>Panels: {visiblePanels.length}/4</span>
+
+                {/* Panel toggles */}
+                <button onClick={() => setShowWaveform(v => !v)} style={{ ...toolBtnStyle, color: showWaveform ? '#10B981' : '#334155' }}>
+                    📊 Waveform
+                </button>
+                <button onClick={() => setShowConsole(v => !v)} style={{ ...toolBtnStyle, color: showConsole ? '#10B981' : '#334155' }}>
+                    🖥 Console
+                </button>
+                <button onClick={() => navigate(-1)} style={toolBtnStyle}>← Back</button>
+            </div>
+
+            {/* ── Main Area ──────────────────────────────────────────────────── */}
+            <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
+
+                {/* LEFT — Component Palette */}
+                <div style={{ width: PALETTE_W, borderRight: '1px solid #1A1D24', flexShrink: 0, overflowY: 'auto' }}>
+                    <ComponentPalette onDragStart={handleDragStart} />
+                </div>
+
+                {/* CENTER — Canvas + Bottom panels */}
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+                    {/* Circuit Canvas */}
+                    <div style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>
+                        <CircuitCanvas tool={tool} />
+                    </div>
+
+                    {/* Waveform Viewer */}
+                    {showWaveform && (
+                        <div style={{ height: WAVEFORM_H, borderTop: '1px solid #1A1D24', flexShrink: 0 }}>
+                            <WaveformViewer />
+                        </div>
+                    )}
+
+                    {/* Console */}
+                    {showConsole && (
+                        <div style={{ height: CONSOLE_H, borderTop: '1px solid #1A1D24', flexShrink: 0 }}>
+                            <ConsolePanel />
+                        </div>
+                    )}
+                </div>
+
+                {/* RIGHT — Properties Panel */}
+                <div style={{ width: PROPERTIES_W, borderLeft: '1px solid #1A1D24', flexShrink: 0, overflowY: 'auto', background: '#0D0F16' }}>
+                    <PropertiesPanel />
                 </div>
             </div>
 
-            {/* ── Command Palette ──────────────────────────────── */}
-            <CommandPalette
-                commands={commands}
-                isOpen={paletteOpen}
-                onClose={() => setPaletteOpen(false)}
-            />
-
-            {/* ── Initial Hint ──────────────────────────────────── */}
-            {showHint && (
-                <div className="wb-shortcut-hint">
-                    Press Ctrl+K to open Command Palette
-                </div>
-            )}
+            {/* ── Status Bar ────────────────────────────────────────────────── */}
+            <div style={{ height: 24, borderTop: '1px solid #1A1D24', background: '#090B10', display: 'flex', alignItems: 'center', gap: 16, padding: '0 16px', flexShrink: 0 }}>
+                <StatusDot active={simRunning} label={simRunning ? 'Simulating' : 'Idle'} />
+                <StatusItem label={`t = ${simTimeNs}ns`} />
+                <StatusItem label={`${nodes.size} nodes`} />
+                <StatusItem label={`${wires.size} wires`} />
+                <StatusItem label={`Tool: ${tool}`} />
+                <div style={{ flex: 1 }} />
+                <StatusItem label="VeriLog Workbench v2" muted />
+            </div>
         </div>
     );
 }
+
+// ── Micro-components ──────────────────────────────────────────────────────
+
+const toolBtnStyle: React.CSSProperties = {
+    background: 'none', border: '1px solid transparent', borderRadius: 4,
+    color: '#64748B', cursor: 'pointer', padding: '3px 10px',
+    fontSize: 11, fontFamily: "'JetBrains Mono', monospace",
+    transition: 'all 0.15s',
+};
+
+const divStyle: React.CSSProperties = { width: 1, height: 16, background: '#1A1D24', margin: '0 4px' };
+
+const StatusDot: React.FC<{ active: boolean; label: string }> = ({ active, label }) => (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+        <div style={{ width: 6, height: 6, borderRadius: '50%', background: active ? '#10B981' : '#334155', transition: 'background 0.3s' }} />
+        <span style={{ fontSize: 10, color: active ? '#10B981' : '#475569', fontFamily: "'JetBrains Mono', monospace" }}>{label}</span>
+    </div>
+);
+
+const StatusItem: React.FC<{ label: string; muted?: boolean }> = ({ label, muted }) => (
+    <span style={{ fontSize: 10, color: muted ? '#1E293B' : '#475569', fontFamily: "'JetBrains Mono', monospace" }}>{label}</span>
+);
