@@ -1,263 +1,127 @@
 /**
- * components/workbench/PropertiesPanel.tsx — Context-Sensitive Properties Editor
+ * components/workbench/PropertiesPanel.tsx
  *
- * Shows relevant controls depending on what's selected:
- * - Nothing selected → circuit stats
- * - Gate selected → timing params, label editor
- * - Switch/Button selected → toggle + on/off state
- * - Clock selected → frequency slider
- * - LED selected → live brightness indicator
- * - Wire selected → endpoints display
+ * Right panel. Context-sensitive properties editor for the selected node(s).
  */
 
-import React, { useCallback } from 'react';
+import React, { useMemo } from 'react';
 import { useWorkbenchStore } from '../../stores/useWorkbenchStore';
-
-const T = {
-    bg: '#0D0F16', surface: '#111318', border: '#1A1D24',
-    text: '#E5E7EB', muted: '#64748B', accent: '#00D4FF',
-    success: '#10B981', warning: '#F59E0B', error: '#EF4444',
-    mono: "'JetBrains Mono', monospace",
-};
-
-// ── Sub-panels ────────────────────────────────────────────────────────────
-
-const StatRow: React.FC<{ label: string; value: string | number; color?: string }> = ({ label, value, color }) => (
-    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '5px 0', borderBottom: `1px solid ${T.border}` }}>
-        <span style={{ fontSize: 11, color: T.muted, fontFamily: T.mono }}>{label}</span>
-        <span style={{ fontSize: 11, color: color ?? T.text, fontFamily: T.mono, fontWeight: 600 }}>{value}</span>
-    </div>
-);
-
-const SectionHeader: React.FC<{ title: string }> = ({ title }) => (
-    <div style={{ fontSize: 9, letterSpacing: '0.15em', textTransform: 'uppercase', color: T.muted, fontFamily: T.mono, marginBottom: 8, marginTop: 16 }}>
-        {title}
-    </div>
-);
-
-const TextInput: React.FC<{ label: string; value: string; onChange: (v: string) => void }> = ({ label, value, onChange }) => (
-    <div style={{ marginBottom: 10 }}>
-        <label style={{ fontSize: 10, color: T.muted, fontFamily: T.mono, display: 'block', marginBottom: 3 }}>{label}</label>
-        <input
-            type="text" value={value}
-            onChange={e => onChange(e.target.value)}
-            style={{ width: '100%', boxSizing: 'border-box', background: T.surface, border: `1px solid ${T.border}`, borderRadius: 4, padding: '5px 8px', color: T.text, fontSize: 12, fontFamily: T.mono, outline: 'none' }}
-        />
-    </div>
-);
-
-const NumberInput: React.FC<{ label: string; value: number; min?: number; max?: number; step?: number; onChange: (v: number) => void }> = ({ label, value, min, max, step, onChange }) => (
-    <div style={{ marginBottom: 10 }}>
-        <label style={{ fontSize: 10, color: T.muted, fontFamily: T.mono, display: 'block', marginBottom: 3 }}>
-            {label} <span style={{ color: T.accent }}>{value}</span>
-        </label>
-        <input type="range" value={value} min={min} max={max} step={step}
-            onChange={e => onChange(parseFloat(e.target.value))}
-            style={{ width: '100%', accentColor: T.accent }}
-        />
-    </div>
-);
-
-// ── Main Panel ────────────────────────────────────────────────────────────
+import { getComponentDef } from '../../engine/ComponentDef';
 
 export const PropertiesPanel: React.FC = () => {
-    const { nodes, wires, selectedIds, snapshot, simTimeNs, updateNodeParams, updateNodeLabel } = useWorkbenchStore();
+    const selectedIds = useWorkbenchStore(s => s.selectedIds);
+    const nodes = useWorkbenchStore(s => s.nodes);
+    const updateNodeParams = useWorkbenchStore(s => s.updateNodeParams);
+    const updateNodeLabel = useWorkbenchStore(s => s.updateNodeLabel);
 
-    // Resolve selection
-    const selectedNodeIds = Array.from(selectedIds).filter(id => nodes.has(id));
-    const selectedWireIds = Array.from(selectedIds).filter(id => wires.has(id));
+    // If exactly 1 node is selected
+    const selectedNode = useMemo(() => {
+        if (selectedIds.size === 1) {
+            const id = Array.from(selectedIds)[0];
+            return nodes.get(id);
+        }
+        return null;
+    }, [selectedIds, nodes]);
 
-    const singleNode = selectedNodeIds.length === 1 ? nodes.get(selectedNodeIds[0]) : null;
-    const singleWire = selectedWireIds.length === 1 ? wires.get(selectedWireIds[0]) : null;
-
-    const nodePorts = singleNode ? (snapshot.get(singleNode.id) ?? []) : [];
-
-    const handleParamChange = useCallback((key: string, value: unknown) => {
-        if (!singleNode) return;
-        updateNodeParams(singleNode.id, { [key]: value } as object);
-    }, [singleNode, updateNodeParams]);
-
-    const handleLabelChange = useCallback((v: string) => {
-        if (!singleNode) return;
-        updateNodeLabel(singleNode.id, v);
-    }, [singleNode, updateNodeLabel]);
-
-    // ── Nothing selected ──────────────────────────────────────────────────
-
-    if (!singleNode && !singleWire && selectedIds.size === 0) {
-        const nodeCount = nodes.size;
-        const wireCount = wires.size;
-        const liveWires = Array.from(wires.values()).filter(w => w.isLive).length;
-
+    if (!selectedNode) {
         return (
-            <div style={{ padding: '16px 14px', height: '100%', boxSizing: 'border-box', overflowY: 'auto' }}>
-                <SectionHeader title="Circuit Stats" />
-                <StatRow label="Components" value={nodeCount} />
-                <StatRow label="Wires" value={wireCount} />
-                <StatRow label="Live Signals" value={liveWires} color={T.success} />
-                <StatRow label="Simulation t" value={`${simTimeNs}ns`} color={T.accent} />
-
-                <SectionHeader title="How to Use" />
-                <ul style={{ color: T.muted, fontSize: 11, fontFamily: T.mono, lineHeight: 1.8, paddingLeft: 14, margin: 0 }}>
-                    <li>Drag gates from the left panel</li>
-                    <li>Press <span style={{ color: T.accent }}>W</span> for wire mode</li>
-                    <li>Click port → click port to connect</li>
-                    <li>Right-click → Add Probe</li>
-                    <li>Space to play/pause simulation</li>
-                    <li>Del to remove selected</li>
-                </ul>
+            <div style={panelStyle}>
+                <div style={headerStyle}>Properties</div>
+                <div style={{ padding: 16, fontSize: 12, color: '#64748B', textAlign: 'center' }}>
+                    Select a single component to edit its properties.
+                </div>
             </div>
         );
     }
 
-    // ── Wire selected ─────────────────────────────────────────────────────────
+    const def = getComponentDef(selectedNode.type);
+    if (!def) return <div style={panelStyle}>Unknown component type</div>;
 
-    if (singleWire) {
-        const fromNode = nodes.get(singleWire.from.nodeId);
-        const toNode = nodes.get(singleWire.to.nodeId);
-        return (
-            <div style={{ padding: '16px 14px', overflowY: 'auto' }}>
-                <SectionHeader title="Wire" />
-                <StatRow label="Signal" value={singleWire.isLive ? 'HIGH' : 'LOW'} color={singleWire.isLive ? T.success : T.muted} />
-                <StatRow label="From" value={fromNode?.label ?? singleWire.from.nodeId} />
-                <StatRow label="Port" value={`out[${singleWire.from.portIndex}]`} />
-                <StatRow label="To" value={toNode?.label ?? singleWire.to.nodeId} />
-                <StatRow label="Port" value={`in[${singleWire.to.portIndex}]`} />
-            </div>
-        );
-    }
-
-    // ── Multi-select ──────────────────────────────────────────────────────────
-
-    if (selectedIds.size > 1) {
-        return (
-            <div style={{ padding: '16px 14px' }}>
-                <SectionHeader title="Multi-Select" />
-                <StatRow label="Selected" value={selectedIds.size} />
-                <p style={{ fontSize: 11, color: T.muted, fontFamily: T.mono, lineHeight: 1.6 }}>
-                    Del — delete all selected<br />
-                    Shift+Click — add/remove
-                </p>
-            </div>
-        );
-    }
-
-    // ── Single node selected ──────────────────────────────────────────────────
-
-    if (!singleNode) return null;
-
-    const type = singleNode.type;
+    const handleParamChange = (key: string, value: unknown) => {
+        updateNodeParams(selectedNode.id, { [key]: value });
+    };
 
     return (
-        <div style={{ padding: '16px 14px', overflowY: 'auto', height: '100%', boxSizing: 'border-box' }}>
-            {/* Header */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
-                <div style={{ width: 8, height: 8, borderRadius: '50%', background: T.accent }} />
-                <span style={{ fontSize: 13, fontFamily: T.mono, fontWeight: 700, color: T.text }}>{type}</span>
-            </div>
+        <div style={panelStyle}>
+            <div style={headerStyle}>{def.label} Properties</div>
+            <div style={{ padding: '16px' }}>
+                {/* Node Label (Standard property for all nodes) */}
+                <div style={rowStyle}>
+                    <label style={labelStyle}>Label</label>
+                    <input
+                        style={inputStyle}
+                        value={selectedNode.label}
+                        onChange={(e) => updateNodeLabel(selectedNode.id, e.target.value)}
+                    />
+                </div>
 
-            {/* Port States */}
-            <SectionHeader title="Port States" />
-            {nodePorts.map((p, i) => (
-                <StatRow
-                    key={i}
-                    label={`port[${i}]`}
-                    value={p.logic ? `HIGH (${p.voltage.toFixed(2)}V)` : `LOW (${p.voltage.toFixed(2)}V)`}
-                    color={p.logic ? T.success : T.muted}
-                />
-            ))}
+                {/* Dynamic Params based on ComponentDef */}
+                {def.params.map(param => {
+                    const value = selectedNode.params[param.key] ?? def.defaultParams[param.key];
+                    return (
+                        <div key={param.key} style={rowStyle}>
+                            <label style={labelStyle}>{param.label || param.key}</label>
 
-            {/* Label */}
-            <SectionHeader title="Identity" />
-            <TextInput label="Label" value={singleNode.label} onChange={handleLabelChange} />
+                            {(param.type === 'int' || param.type === 'float') && (
+                                <input
+                                    type="number" style={inputStyle}
+                                    value={value as number}
+                                    min={param.min} max={param.max}
+                                    onChange={(e) => handleParamChange(param.key, Number(e.target.value))}
+                                />
+                            )}
 
-            {/* Gate timing */}
-            {['AND', 'OR', 'NOT', 'NAND', 'NOR', 'XOR', 'XNOR', 'BUFFER'].includes(type) && (
-                <>
-                    <SectionHeader title="Timing (CMOS 180nm)" />
-                    <NumberInput label="tpdHL (ns)" value={singleNode.params.tpdHL ?? 1.8} min={0.1} max={20} step={0.1}
-                        onChange={v => handleParamChange('tpdHL', v)} />
-                    <NumberInput label="tpdLH (ns)" value={singleNode.params.tpdLH ?? 2.1} min={0.1} max={20} step={0.1}
-                        onChange={v => handleParamChange('tpdLH', v)} />
-                </>
-            )}
+                            {param.type === 'string' && param.options && (
+                                <select
+                                    style={inputStyle}
+                                    value={value as string}
+                                    onChange={(e) => handleParamChange(param.key, e.target.value)}
+                                >
+                                    {param.options.map(opt => (
+                                        <option key={opt} value={opt}>{opt}</option>
+                                    ))}
+                                </select>
+                            )}
 
-            {/* Switch toggle */}
-            {(type === 'SWITCH_SPST' || type === 'PUSHBUTTON') && (
-                <>
-                    <SectionHeader title="Control" />
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                        <span style={{ fontSize: 12, color: T.text, fontFamily: T.mono }}>
-                            {singleNode.params.isOn ? 'ON (HIGH)' : 'OFF (LOW)'}
-                        </span>
-                        <button
-                            onClick={() => handleParamChange('isOn', !singleNode.params.isOn)}
-                            style={{
-                                padding: '5px 16px', borderRadius: 6, border: `1px solid ${T.border}`, cursor: 'pointer',
-                                background: singleNode.params.isOn ? T.success : T.surface,
-                                color: singleNode.params.isOn ? '#000' : T.text,
-                                fontFamily: T.mono, fontSize: 12, fontWeight: 700,
-                            }}
-                        >
-                            {singleNode.params.isOn ? 'CLOSE' : 'OPEN'}
-                        </button>
-                    </div>
-                </>
-            )}
-
-            {/* Battery voltage */}
-            {type === 'BATTERY' && (
-                <>
-                    <SectionHeader title="Supply Voltage" />
-                    <NumberInput label="Voltage (V)" value={singleNode.params.voltage ?? 5} min={1} max={12} step={0.1}
-                        onChange={v => handleParamChange('voltage', v)} />
-                </>
-            )}
-
-            {/* LED status */}
-            {type === 'LED' && (() => {
-                const brightness = nodePorts[0]?.logic ? 1 : 0;
-                return (
-                    <>
-                        <SectionHeader title="LED State" />
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, padding: '12px 0' }}>
-                            <div style={{
-                                width: 40, height: 40, borderRadius: '50%',
-                                background: `rgba(239,68,68,${Math.max(0.08, brightness)})`,
-                                boxShadow: brightness > 0 ? `0 0 20px #EF444488` : 'none',
-                                border: '2px solid #EF4444',
-                                transition: 'all 0.2s',
-                            }} />
-                            <span style={{ fontSize: 12, color: brightness ? T.error : T.muted, fontFamily: T.mono }}>
-                                {brightness ? '● ON' : '○ OFF'}
-                            </span>
+                            {param.type === 'bool' && (
+                                <input
+                                    type="checkbox"
+                                    checked={value as boolean}
+                                    onChange={(e) => handleParamChange(param.key, e.target.checked)}
+                                />
+                            )}
                         </div>
-                    </>
-                );
-            })()}
-
-            {/* Flip-flop clock edge */}
-            {['D_FF', 'JK_FF', 'T_FF'].includes(type) && (
-                <>
-                    <SectionHeader title="Flip-Flop" />
-                    <div style={{ display: 'flex', gap: 6 }}>
-                        {(['rising', 'falling'] as const).map(edge => (
-                            <button
-                                key={edge}
-                                onClick={() => handleParamChange('clockEdge', edge)}
-                                style={{
-                                    flex: 1, padding: '5px 0', borderRadius: 4, border: `1px solid ${T.border}`,
-                                    background: singleNode.params.clockEdge === edge ? T.accent + '22' : T.surface,
-                                    color: singleNode.params.clockEdge === edge ? T.accent : T.muted,
-                                    fontFamily: T.mono, fontSize: 11, cursor: 'pointer',
-                                }}
-                            >
-                                {edge === 'rising' ? '↑ Rising' : '↓ Falling'}
-                            </button>
-                        ))}
-                    </div>
-                </>
-            )}
+                    );
+                })}
+            </div>
         </div>
     );
+};
+
+// ── Styles ──────────────────────────────────────────────────────────────────
+
+const panelStyle: React.CSSProperties = {
+    width: 250, height: '100%', background: '#0D0F16', color: '#CBD5E1',
+    borderLeft: '1px solid #1E293B', display: 'flex', flexDirection: 'column',
+    fontFamily: "'Inter', sans-serif"
+};
+
+const headerStyle: React.CSSProperties = {
+    padding: '12px 16px', borderBottom: '1px solid #1E293B',
+    fontWeight: 600, fontSize: 13, letterSpacing: '0.05em',
+    textTransform: 'uppercase', color: '#F1F5F9'
+};
+
+const rowStyle: React.CSSProperties = {
+    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+    marginBottom: 12, fontSize: 12
+};
+
+const labelStyle: React.CSSProperties = {
+    color: '#94A3B8'
+};
+
+const inputStyle: React.CSSProperties = {
+    background: '#1E293B', color: '#F8FAFC', border: '1px solid #334155',
+    borderRadius: 4, padding: '4px 8px', fontSize: 12, width: 120, outline: 'none'
 };

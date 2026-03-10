@@ -112,13 +112,13 @@ export const WaveformViewer: React.FC = () => {
             const toY = (logic: boolean) => rowTop + (logic ? HIGH_Y : LOW_Y);
 
             let prevX = toX(samples[0].timeNs);
-            let prevY = toY(samples[0].logic);
+            let prevY = toY(samples[0].value && samples[0].value[0] === 1 ? true : false);
             ctx.moveTo(prevX, prevY);
 
             for (let i = 1; i < samples.length; i++) {
                 const s = samples[i];
                 const x = toX(s.timeNs);
-                const y = toY(s.logic);
+                const y = toY(s.value && s.value[0] === 1 ? true : false);
                 if (y !== prevY) {
                     ctx.lineTo(prevX, y);   // vertical edge
                 }
@@ -136,8 +136,9 @@ export const WaveformViewer: React.FC = () => {
 
             for (let i = 0; i < samples.length; i++) {
                 const x = toX(samples[i].timeNs);
-                if (samples[i].logic && !inHigh) { inHigh = true; highStart = x; }
-                if (!samples[i].logic && inHigh) {
+                const isHighResult = samples[i].value && samples[i].value[0] === 1;
+                if (isHighResult && !inHigh) { inHigh = true; highStart = x; }
+                if (!isHighResult && inHigh) {
                     ctx.rect(highStart, rowTop + HIGH_Y, x - highStart, SIGNAL_H);
                     inHigh = false;
                 }

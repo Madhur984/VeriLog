@@ -5,9 +5,10 @@
  * Supports localStorage and file download. Supabase will be a future addition.
  */
 
-import type { CanvasNodeData, WireData, ProbeEntry } from '../stores/useWorkbenchStore';
+import type { CanvasNodeData, ProbeEntry } from '../stores/useWorkbenchStore';
+import type { WireSegment } from './NetGraph';
 
-export const CIRCUIT_FORMAT_VERSION = '1.0';
+export const CIRCUIT_FORMAT_VERSION = '2.0';
 
 // ── Schema ────────────────────────────────────────────────────────────────
 
@@ -19,18 +20,19 @@ export interface SerializedNode {
     rotation: number;
     label: string;
     params: Record<string, unknown>;
-    inputCount: number;
-    outputCount: number;
 }
 
-export interface SerializedWire {
+export interface SerializedSegment {
     id: string;
-    from: { nodeId: string; portIndex: number };
-    to: { nodeId: string; portIndex: number };
+    x1: number;
+    y1: number;
+    x2: number;
+    y2: number;
 }
 
 export interface SerializedProbe {
     nodeId: string;
+    portId: string;
     label: string;
     color: string;
 }
@@ -45,7 +47,7 @@ export interface CircuitFile {
         updatedAt: string;
     };
     nodes: SerializedNode[];
-    wires: SerializedWire[];
+    segments: SerializedSegment[];
     probes: SerializedProbe[];
     simSettings: {
         tickRateHz: number;
@@ -57,7 +59,7 @@ export interface CircuitFile {
 
 export function serializeCircuit(
     nodes: Map<string, CanvasNodeData>,
-    wires: Map<string, WireData>,
+    segments: Map<string, WireSegment>,
     probes: ProbeEntry[],
     meta: { name?: string; description?: string; author?: string } = {}
 ): CircuitFile {
@@ -78,16 +80,16 @@ export function serializeCircuit(
             rotation: n.rotation,
             label: n.label,
             params: { ...n.params } as Record<string, unknown>,
-            inputCount: n.inputCount,
-            outputCount: n.outputCount,
         })),
-        wires: Array.from(wires.values()).map(w => ({
-            id: w.id,
-            from: { nodeId: w.from.nodeId, portIndex: w.from.portIndex },
-            to: { nodeId: w.to.nodeId, portIndex: w.to.portIndex },
+        segments: Array.from(segments.values()).map(s => ({
+            id: s.id,
+            x1: s.x1,
+            y1: s.y1,
+            x2: s.x2,
+            y2: s.y2,
         })),
-        probes: probes.map(p => ({ nodeId: p.nodeId, label: p.label, color: p.color })),
-        simSettings: { tickRateHz: 1000, gridSize: 24 },
+        probes: probes.map(p => ({ nodeId: p.nodeId, portId: p.portId, label: p.label, color: p.color })),
+        simSettings: { tickRateHz: 1000, gridSize: 10 },
     };
 }
 
@@ -95,7 +97,7 @@ export function serializeCircuit(
 
 export interface DeserializedCircuit {
     nodes: CanvasNodeData[];
-    wires: WireData[];
+    segments: WireSegment[];
     probes: ProbeEntry[];
     simSettings: CircuitFile['simSettings'];
     metadata: CircuitFile['metadata'];
@@ -104,7 +106,8 @@ export interface DeserializedCircuit {
 export function deserializeCircuit(json: string): DeserializedCircuit | null {
     try {
         const file = JSON.parse(json) as CircuitFile;
-        if (!file.version || !file.nodes || !file.wires) {
+        // Basic schema validation
+        if (!file.version || !file.nodes || !file.segments) {
             console.warn('[CircuitSerializer] Invalid file format');
             return null;
         }
@@ -117,24 +120,25 @@ export function deserializeCircuit(json: string): DeserializedCircuit | null {
             rotation: n.rotation,
             label: n.label,
             params: n.params as CanvasNodeData['params'],
-            inputCount: n.inputCount,
-            outputCount: n.outputCount,
         }));
 
-        const wires: WireData[] = file.wires.map(w => ({
-            id: w.id,
-            from: w.from,
-            to: w.to,
-            isLive: false,
+        const segments: WireSegment[] = file.segments.map(s => ({
+            id: s.id,
+            netId: '', // nets are rebuilt by store on loaded
+            x1: s.x1,
+            y1: s.y1,
+            x2: s.x2,
+            y2: s.y2,
         }));
 
         const probes: ProbeEntry[] = (file.probes ?? []).map(p => ({
             nodeId: p.nodeId,
+            portId: p.portId,
             label: p.label,
             color: p.color,
         }));
 
-        return { nodes, wires, probes, simSettings: file.simSettings, metadata: file.metadata };
+        return { nodes, segments, probes, simSettings: file.simSettings, metadata: file.metadata };
     } catch (err) {
         console.error('[CircuitSerializer] Parse error:', err);
         return null;
@@ -143,7 +147,7 @@ export function deserializeCircuit(json: string): DeserializedCircuit | null {
 
 // ── Storage ───────────────────────────────────────────────────────────────
 
-const LS_KEY = 'verilog_circuit_autosave';
+const LS_KEY = 'verilog_circuit_autosave_v2';
 
 export function saveToLocalStorage(circuit: CircuitFile): void {
     try {

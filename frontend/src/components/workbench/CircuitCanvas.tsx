@@ -1,35 +1,32 @@
 /**
- * components/workbench/CircuitCanvas.tsx — Main SVG Workspace
+ * components/workbench/CircuitCanvas.tsx — Main SVG Workspace (Net-Aware)
  *
  * Features:
- *  - Grid lines (24px spacing)
+ *  - Grid lines (10px spacing for Logisim standard)
  *  - Infinite-feeling zoom + pan
- *  - Drop zone for ComponentPalette tiles (HTML5 DnD)
+ *  - Drop zone for ComponentPalette tiles
  *  - Renders CanvasNode + WireLayer
- *  - Wire drawing mode: click output port → click input port
+ *  - Wire drawing: mouseDown + drag + mouseUp for orthogonal segments
  *  - Multi-select rubber-band
- *  - Right-click context menu (delete, duplicate, probe)
+ *  - Right-click context menu
  */
 
 import React, { useRef, useState, useCallback, useEffect } from 'react';
-import { useWorkbenchStore, type PortRef } from '../../stores/useWorkbenchStore';
+import { useWorkbenchStore } from '../../stores/useWorkbenchStore';
 import { CanvasNode } from './CanvasNode';
 import { WireLayer } from './WireLayer';
-import type { ComponentType } from '../../engine/types';
 
 interface Props {
     tool: 'select' | 'wire' | 'probe' | 'delete';
 }
 
-// ── Grid ──────────────────────────────────────────────────────────────────
-
-const GRID = 24;
+const GRID = 10;
 
 function GridLines({ w, h }: { w: number; h: number }) {
     const cols = Math.ceil(w / GRID) + 2;
     const rows = Math.ceil(h / GRID) + 2;
     return (
-        <g opacity={0.06}>
+        <g opacity={0.15}>
             {Array.from({ length: cols }, (_, i) => (
                 <line key={`c${i}`} x1={i * GRID} y1={0} x2={i * GRID} y2={h + GRID} stroke="#94A3B8" strokeWidth={0.5} />
             ))}
@@ -40,46 +37,43 @@ function GridLines({ w, h }: { w: number; h: number }) {
     );
 }
 
-// ── Context Menu ──────────────────────────────────────────────────────────
-
 interface ContextMenuState {
     x: number; y: number;
-    nodeId?: string; wireId?: string;
 }
-
-// ── Main ──────────────────────────────────────────────────────────────────
 
 export const CircuitCanvas: React.FC<Props> = ({ tool }) => {
     const svgRef = useRef<SVGSVGElement>(null);
-    const [viewBox, setViewBox] = useState({ x: 0, y: 0, w: 1200, h: 800 });
+
+    // Zoom/Pan State
+    const zoom = useWorkbenchStore(s => s.zoom);
+    const panX = useWorkbenchStore(s => s.panX);
+    const panY = useWorkbenchStore(s => s.panY);
+    const setZoom = useWorkbenchStore(s => s.setZoom);
+    const setPan = useWorkbenchStore(s => s.setPan);
+
     const [isPanning, setIsPanning] = useState(false);
     const panStart = useRef<{ mx: number; my: number; vx: number; vy: number } | null>(null);
-
     const [ctxMenu, setCtxMenu] = useState<ContextMenuState | null>(null);
-    const [canvasSize, setCanvasSize] = useState({ w: 1200, h: 800 });
 
     const {
-        nodes, wires, snapshot, selectedIds,
-        addNode, removeNode, addWire, startWire, cancelWire, wireInProgress,
-        updateWireInProgress, clearSelection, addProbe, removeWire,
+        nodes, selectedIds,
+        addNode, removeNode, removeSegment,
+        startWire, updateWireInProgress, commitWire, cancelWire, wireInProgress,
+        clearSelection
     } = useWorkbenchStore();
 
     // ── Resize observer ────────────────────────────────────────────────────
-
     useEffect(() => {
         const svg = svgRef.current;
         if (!svg) return;
-        const obs = new ResizeObserver(entries => {
-            const { width, height } = entries[0].contentRect;
-            setCanvasSize({ w: width, h: height });
-            setViewBox(v => ({ ...v, w: width, h: height }));
+        const obs = new ResizeObserver(() => {
+            // No-op for now unless we need the canvas size for other logic
         });
         obs.observe(svg);
         return () => obs.disconnect();
     }, []);
 
     // ── SVG coordinate helper ──────────────────────────────────────────────
-
     const clientToSvg = useCallback((cx: number, cy: number): { x: number; y: number } => {
         const svg = svgRef.current;
         if (!svg) return { x: cx, y: cy };
@@ -91,61 +85,73 @@ export const CircuitCanvas: React.FC<Props> = ({ tool }) => {
         return { x: r.x, y: r.y };
     }, []);
 
-    const snapToGrid = (v: number) => Math.round(v / GRID) * GRID;
+    const snapToGrid = (v: number) => Math.round(v / GRID);
 
     // ── Zoom ───────────────────────────────────────────────────────────────
-
     const handleWheel = useCallback((e: React.WheelEvent) => {
         e.preventDefault();
+
+        // Zoom toward mouse pointer
         const { x: svgX, y: svgY } = clientToSvg(e.clientX, e.clientY);
-        const factor = e.deltaY < 0 ? 0.9 : 1.1;
-        setViewBox(v => {
-            const newW = Math.max(400, Math.min(3000, v.w * factor));
-            const newH = Math.max(300, Math.min(2000, v.h * factor));
-            const dx = (svgX - v.x) * (1 - factor);
-            const dy = (svgY - v.y) * (1 - factor);
-            return { x: v.x - dx, y: v.y - dy, w: newW, h: newH };
-        });
-    }, [clientToSvg]);
 
-    // ── Pan ────────────────────────────────────────────────────────────────
+        const newZoom = Math.max(0.2, Math.min(3, zoom * (e.deltaY < 0 ? 1.1 : 0.9)));
+        const zoomRatio = newZoom / zoom;
 
+        setZoom(newZoom);
+        setPan(
+            svgX - (svgX - panX) * zoomRatio,
+            svgY - (svgY - panY) * zoomRatio
+        );
+    }, [clientToSvg, zoom, panX, panY, setZoom, setPan]);
+
+    // ── Mouse Interaction ──────────────────────────────────────────────────
     const handleMouseDown = useCallback((e: React.MouseEvent) => {
-        if (e.button === 1 || (e.button === 0 && e.altKey)) {
+        if (e.button === 1 || (e.button === 0 && e.altKey) || (e.button === 0 && tool === 'select')) {
+            // Pan
             setIsPanning(true);
-            panStart.current = { mx: e.clientX, my: e.clientY, vx: viewBox.x, vy: viewBox.y };
+            panStart.current = { mx: e.clientX, my: e.clientY, vx: panX, vy: panY };
+            return;
         }
-    }, [viewBox]);
+
+        if (e.button === 0 && tool === 'wire') {
+            const pt = clientToSvg(e.clientX, e.clientY);
+            startWire(snapToGrid(pt.x), snapToGrid(pt.y));
+        }
+    }, [tool, panX, panY, clientToSvg, startWire]);
 
     const handleMouseMove = useCallback((e: React.MouseEvent) => {
         if (isPanning && panStart.current) {
-            const dx = (e.clientX - panStart.current.mx) * (viewBox.w / canvasSize.w);
-            const dy = (e.clientY - panStart.current.my) * (viewBox.h / canvasSize.h);
-            setViewBox(v => ({ ...v, x: panStart.current!.vx - dx, y: panStart.current!.vy - dy }));
+            const dx = (e.clientX - panStart.current.mx) / zoom;
+            const dy = (e.clientY - panStart.current.my) / zoom;
+            setPan(panStart.current.vx + dx, panStart.current.vy + dy);
+            return;
         }
-        if (wireInProgress) {
-            const pos = clientToSvg(e.clientX, e.clientY);
-            updateWireInProgress(pos.x, pos.y);
+
+        if (wireInProgress && tool === 'wire') {
+            const pt = clientToSvg(e.clientX, e.clientY);
+            // Must use store's update action
+            updateWireInProgress(snapToGrid(pt.x), snapToGrid(pt.y));
         }
-    }, [isPanning, viewBox, canvasSize, wireInProgress, clientToSvg, updateWireInProgress]);
+    }, [isPanning, wireInProgress, tool, clientToSvg, zoom, setPan, updateWireInProgress]);
 
     const handleMouseUp = useCallback(() => {
         setIsPanning(false);
         panStart.current = null;
-    }, []);
+
+        if (tool === 'wire' && wireInProgress) {
+            commitWire();
+        }
+    }, [tool, wireInProgress, commitWire]);
 
     // ── Canvas click (deselect / cancel wire) ─────────────────────────────
-
     const handleCanvasClick = useCallback((e: React.MouseEvent) => {
         if (e.target === svgRef.current) {
             clearSelection();
-            if (wireInProgress) cancelWire();
             setCtxMenu(null);
         }
-    }, [clearSelection, wireInProgress, cancelWire]);
+    }, [clearSelection]);
 
     // ── Drag-and-drop from palette ─────────────────────────────────────────
-
     const handleDragOver = useCallback((e: React.DragEvent) => {
         e.preventDefault();
         e.dataTransfer.dropEffect = 'copy';
@@ -153,25 +159,21 @@ export const CircuitCanvas: React.FC<Props> = ({ tool }) => {
 
     const handleDrop = useCallback((e: React.DragEvent) => {
         e.preventDefault();
-        const typeId = e.dataTransfer.getData('application/verilog-gate') as ComponentType;
+        const typeId = e.dataTransfer.getData('application/verilog-gate');
         if (!typeId) return;
-        const { x, y } = clientToSvg(e.clientX, e.clientY);
-        addNode(typeId, snapToGrid(x), snapToGrid(y));
+        const pt = clientToSvg(e.clientX, e.clientY);
+        addNode(typeId, snapToGrid(pt.x), snapToGrid(pt.y));
     }, [clientToSvg, addNode]);
 
-    // ── Wire endpoint click ────────────────────────────────────────────────
-
-    const handleWireStart = useCallback((ref: PortRef) => {
-        if (!wireInProgress) {
-            startWire(ref);
-        } else {
-            // Complete the wire
-            addWire(wireInProgress.from, ref);
+    // ── Wire Start from Port ───────────────────────────────────────────────
+    // Fired from CanvasNode.tsx when clicking a port
+    const handleWireStart = useCallback((portX: number, portY: number) => {
+        if (tool === 'wire') {
+            startWire(portX, portY);
         }
-    }, [wireInProgress, startWire, addWire]);
+    }, [tool, startWire]);
 
-    // ── Right-click context menu ───────────────────────────────────────────
-
+    // ── Context Menu ───────────────────────────────────────────────────────
     const handleContextMenu = useCallback((e: React.MouseEvent) => {
         e.preventDefault();
         setCtxMenu({ x: e.clientX, y: e.clientY });
@@ -180,20 +182,19 @@ export const CircuitCanvas: React.FC<Props> = ({ tool }) => {
     const closeCtxMenu = () => setCtxMenu(null);
 
     // ── Keyboard shortcuts ─────────────────────────────────────────────────
-
     useEffect(() => {
         const onKey = (e: KeyboardEvent) => {
-            if (e.key === 'Escape') { cancelWire(); clearSelection(); }
+            if (e.key === 'Escape') { cancelWire(); clearSelection(); setCtxMenu(null); }
             if (e.key === 'Delete' || e.key === 'Backspace') {
                 selectedIds.forEach(id => {
-                    if (nodes.has(id)) removeNode(id);
-                    if (wires.has(id)) removeWire(id);
+                    if (id.startsWith('comp')) removeNode(id);
+                    if (id.startsWith('seg')) removeSegment(id);
                 });
             }
         };
         window.addEventListener('keydown', onKey);
         return () => window.removeEventListener('keydown', onKey);
-    }, [cancelWire, clearSelection, selectedIds, nodes, wires, removeNode, removeWire]);
+    }, [cancelWire, clearSelection, selectedIds, removeNode, removeSegment]);
 
     // ── Render ────────────────────────────────────────────────────────────
 
@@ -204,7 +205,6 @@ export const CircuitCanvas: React.FC<Props> = ({ tool }) => {
             <svg
                 ref={svgRef}
                 width="100%" height="100%"
-                viewBox={`${viewBox.x} ${viewBox.y} ${viewBox.w} ${viewBox.h}`}
                 style={{ cursor: isPanning ? 'grabbing' : tool === 'wire' ? 'crosshair' : 'default', display: 'block' }}
                 onWheel={handleWheel}
                 onMouseDown={handleMouseDown}
@@ -215,24 +215,25 @@ export const CircuitCanvas: React.FC<Props> = ({ tool }) => {
                 onDragOver={handleDragOver}
                 onDrop={handleDrop}
             >
-                <GridLines w={canvasSize.w + viewBox.x + 200} h={canvasSize.h + viewBox.y + 200} />
+                {/* Transform group for Zoom + Pan */}
+                <g transform={`translate(${panX}, ${panY}) scale(${zoom})`}>
 
-                {/* Wires first (behind gates) */}
-                <WireLayer />
+                    {/* Render a large enough grid grid */}
+                    <GridLines w={4000} h={3000} />
 
-                {/* Nodes */}
-                {nodeArr.map(node => {
-                    const portStates = snapshot.get(node.id) ?? [];
-                    return (
+                    {/* Wires first (behind gates) */}
+                    <WireLayer />
+
+                    {/* Nodes */}
+                    {nodeArr.map(node => (
                         <CanvasNode
                             key={node.id}
-                            node={node}
-                            portStates={portStates}
+                            nodeId={node.id}
                             tool={tool}
                             onWireStart={handleWireStart}
                         />
-                    );
-                })}
+                    ))}
+                </g>
             </svg>
 
             {/* Empty hint */}
@@ -244,7 +245,7 @@ export const CircuitCanvas: React.FC<Props> = ({ tool }) => {
                 }}>
                     <div style={{ fontSize: 48, marginBottom: 12 }}>⚡</div>
                     <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, letterSpacing: '0.2em', textTransform: 'uppercase' }}>
-                        Drag gates from the palette
+                        Drag components from the palette
                     </div>
                 </div>
             )}
@@ -261,8 +262,14 @@ export const CircuitCanvas: React.FC<Props> = ({ tool }) => {
                     }}
                 >
                     {[
-                        { label: '🗑 Delete Selected', action: () => { selectedIds.forEach(id => { if (nodes.has(id)) removeNode(id); if (wires.has(id)) removeWire(id); }); closeCtxMenu(); } },
-                        { label: '📍 Add Probe', action: () => { selectedIds.forEach(id => { if (nodes.has(id)) addProbe(id); }); closeCtxMenu(); } },
+                        {
+                            label: '🗑 Delete Selected', action: () => {
+                                selectedIds.forEach(id => {
+                                    if (id.startsWith('comp')) removeNode(id);
+                                    if (id.startsWith('seg')) removeSegment(id);
+                                }); closeCtxMenu();
+                            }
+                        },
                         { label: '✖ Cancel Wire', action: () => { cancelWire(); closeCtxMenu(); } },
                     ].map(item => (
                         <button key={item.label} onClick={item.action} style={{

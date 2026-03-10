@@ -1,153 +1,33 @@
 /**
- * engine/sim.worker.ts — CSE Simulation Web Worker
+ * engine/sim.worker.ts — Event-driven NetGraph Web Worker
  *
- * Runs the Circuit Simulation Engine (CSE) on a background thread.
- * Keeps the UI at 60fps regardless of circuit complexity.
- *
- * Message protocol (from main thread → worker):
- *   { type: 'LOAD_GRAPH', graph: SerializedWorkerGraph }
- *   { type: 'TICK',       deltaNs: number }
- *   { type: 'RESET' }
- *   { type: 'SET_PARAM',  nodeId: string, key: string, value: unknown }
- *
- * Messages (worker → main thread):
- *   { type: 'SNAPSHOT', snapshot: SerializedSnapshot, timeNs: number }
- *   { type: 'READY' }
- *   { type: 'ERROR', message: string }
+ * Runs the new SimEngine on a background thread.
  */
 
-import { CSE } from './CSE';
-import type { CircuitGraph, ComponentNode, PortState, ComponentParams, ComponentType } from './types';
+import { SimEngine } from './SimEngine';
+import type { WireSegment } from './NetGraph';
+import type { CanvasNodeData } from '../stores/useWorkbenchStore';
+import type { BusValue } from './LogicValue';
 
-// ── Serialized Types (cross-thread safe — no Maps, no Sets) ─────────────────
-
-export interface SerializedPort {
-    id: string;
-    voltage: number;
-    logic: boolean;
-    drive: 'strong' | 'pull' | 'float';
-    connected: boolean;
-}
-
-export interface SerializedNode {
-    id: string;
-    type: string;
-    inputs: string[];
-    outputs: string[];
-    params: ComponentParams;
-    ports: SerializedPort[];
-    internalState: Record<string, unknown>;
-    x: number;
-    y: number;
-}
-
-export interface SerializedEdge {
-    id: string;
-    fromNode: string;
-    fromPort: string;
-    toNode: string;
-    toPort: string;
-}
+// ── Serialized Types cross-thread ──────────────────────────────────────────
 
 export interface SerializedWorkerGraph {
-    nodes: SerializedNode[];
-    edges: SerializedEdge[];
-}
-
-export interface PortSnapshot {
-    nodeId: string;
-    ports: SerializedPort[];
+    nodes: CanvasNodeData[];
+    segments: WireSegment[];
 }
 
 export interface SerializedSnapshot {
-    entries: PortSnapshot[];
+    // Array format across worker boundary: [nodeId, [[portId, BusValue], ...]]
+    portStatesObj: Record<string, Record<string, BusValue>>;
+    netValuesObj: Record<string, BusValue>;
+    netErrorsArr: string[];
     timeNs: number;
 }
 
 // ── Main Worker Logic ────────────────────────────────────────────────────────
 
-const cse = new CSE();
+const engine = new SimEngine();
 let loaded = false;
-
-/**
- * Rebuild a proper CircuitGraph from the serialized message payload.
- * We reconstruct Maps/Sets here on the worker thread.
- */
-function buildGraph(data: SerializedWorkerGraph): CircuitGraph {
-    const nodes = new Map<string, ComponentNode>();
-    const edges = new Map();
-    const adjacency = new Map<string, string[]>();
-    const dirtySet = new Set<string>();
-
-    for (const sn of data.nodes) {
-        const portMap = new Map<string, PortState>();
-        for (const sp of sn.ports) {
-            portMap.set(sp.id, {
-                voltage: sp.voltage,
-                logic: sp.logic,
-                drive: sp.drive,
-                connected: sp.connected,
-            });
-        }
-
-        const node: ComponentNode = {
-            id: sn.id,
-            type: sn.type as ComponentType,
-            inputs: sn.inputs,
-            outputs: sn.outputs,
-            params: sn.params,
-            ports: portMap,
-            internalState: { ...sn.internalState },
-            position: { x: sn.x, y: sn.y },
-            dirty: true,
-        };
-
-        nodes.set(sn.id, node);
-        dirtySet.add(sn.id);
-        adjacency.set(sn.id, []);
-    }
-
-    for (const se of data.edges) {
-        edges.set(se.id, {
-            id: se.id,
-            fromNode: se.fromNode,
-            fromPort: se.fromPort,
-            toNode: se.toNode,
-            toPort: se.toPort,
-            isLive: false,
-        });
-
-        // Build adjacency list
-        const adj = adjacency.get(se.fromNode) ?? [];
-        if (!adj.includes(se.toNode)) adj.push(se.toNode);
-        adjacency.set(se.fromNode, adj);
-    }
-
-    return { nodes, edges, adjacency, dirtySet };
-}
-
-/**
- * Extract a serializable snapshot from CSE state.
- */
-function buildSnapshot(cse: CSE, timeNs: number): SerializedSnapshot {
-    const raw = cse.snapshot();
-    const entries: PortSnapshot[] = [];
-
-    for (const [nodeId, portStates] of raw) {
-        entries.push({
-            nodeId,
-            ports: portStates.map((p, i) => ({
-                id: String(i),
-                voltage: p.voltage,
-                logic: p.logic,
-                drive: p.drive,
-                connected: p.connected,
-            })),
-        });
-    }
-
-    return { entries, timeNs };
-}
 
 // ── Worker Message Handling ──────────────────────────────────────────────────
 
@@ -158,21 +38,22 @@ self.onmessage = (event: MessageEvent) => {
         switch (msg.type) {
 
             case 'LOAD_GRAPH': {
-                const graph = buildGraph(msg.graph as SerializedWorkerGraph);
-                cse.loadGraph(graph);
+                const graph = msg.graph as SerializedWorkerGraph;
+                engine.loadCircuit(graph.nodes, graph.segments);
                 loaded = true;
-                // Run initial flush for combinational circuits
-                cse.flush();
-                const snap = buildSnapshot(cse, 0);
-                self.postMessage({ type: 'SNAPSHOT', ...snap });
+
+                // Evaluates the initial steady state (combinational paths)
+                engine.evalFullFast();
+
+                self.postMessage({ type: 'SNAPSHOT', ...buildSnapshot() });
                 break;
             }
 
             case 'TICK': {
                 if (!loaded) break;
-                cse.tick(msg.deltaNs ?? 100);
-                const snap = buildSnapshot(cse, cse.currentTimeNs);
-                self.postMessage({ type: 'SNAPSHOT', ...snap });
+                // Step time forward
+                engine.tick(msg.deltaNs ?? 100);
+                self.postMessage({ type: 'SNAPSHOT', ...buildSnapshot() });
                 break;
             }
 
@@ -182,11 +63,18 @@ self.onmessage = (event: MessageEvent) => {
                 break;
             }
 
+            case 'INTERACT_PORT': {
+                // e.g. pressing a button
+                if (!loaded) break;
+                engine.interact(msg.nodeId, msg.portId, msg.data);
+                self.postMessage({ type: 'SNAPSHOT', ...buildSnapshot() });
+                break;
+            }
+
             case 'SET_PARAM': {
-                // Handles switch toggles, clock frequency changes, etc.
-                // The graph must be reloaded by the main thread for structural changes.
-                // This is for in-place param mutations only.
-                self.postMessage({ type: 'READY' });
+                if (!loaded) break;
+                engine.updateParam(msg.nodeId, msg.key, msg.value);
+                self.postMessage({ type: 'SNAPSHOT', ...buildSnapshot() });
                 break;
             }
 
@@ -197,5 +85,32 @@ self.onmessage = (event: MessageEvent) => {
         self.postMessage({ type: 'ERROR', message: String(err) });
     }
 };
+
+function buildSnapshot(): SerializedSnapshot {
+    const rawSnapshot = engine.getSnapshot();
+    const rawNetValues = engine.getNetValues();
+    const netErrorsSet = engine.getNetErrors();
+
+    // Map -> Record for JSON serialization
+    const portStatesObj: Record<string, Record<string, BusValue>> = {};
+    for (const [nodeId, portMap] of rawSnapshot) {
+        portStatesObj[nodeId] = {};
+        for (const [portId, val] of portMap) {
+            portStatesObj[nodeId][portId] = val;
+        }
+    }
+
+    const netValuesObj: Record<string, BusValue> = {};
+    for (const [netId, val] of rawNetValues) {
+        netValuesObj[netId] = val;
+    }
+
+    return {
+        portStatesObj,
+        netValuesObj,
+        netErrorsArr: Array.from(netErrorsSet),
+        timeNs: engine.currentTimeNs
+    };
+}
 
 self.postMessage({ type: 'READY' });

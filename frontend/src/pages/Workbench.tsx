@@ -15,7 +15,7 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useWorkbenchStore } from '../stores/useWorkbenchStore';
 import { workerBridge } from '../engine/WorkerBridge';
-import { ComponentPalette } from '../components/workbench/ComponentPalette';
+import { ComponentLibrary } from '../components/workbench/ComponentLibrary';
 import { CircuitCanvas } from '../components/workbench/CircuitCanvas';
 import { WaveformViewer } from '../components/workbench/WaveformViewer';
 import { PropertiesPanel } from '../components/workbench/PropertiesPanel';
@@ -42,7 +42,7 @@ export function Workbench() {
     const [showConsole, setShowConsole] = useState(true);
     const [showWaveform, setShowWaveform] = useState(true);
 
-    const { nodes, wires, probes, simRunning, simTimeNs, setSimRunning, resetSim, clearCanvas } = useWorkbenchStore();
+    const { nodes, segments, probes, simRunning, simTimeNs, setSimRunning, resetSim, clearCanvas } = useWorkbenchStore();
 
     // ── Worker lifecycle ──────────────────────────────────────────────────
 
@@ -62,7 +62,7 @@ export function Workbench() {
     // Re-load graph into worker whenever canvas nodes/wires change
     useEffect(() => {
         workerBridge.loadGraph();
-    }, [nodes, wires]);
+    }, [nodes, segments]);
 
     // ── Sim controls ──────────────────────────────────────────────────────
 
@@ -87,7 +87,21 @@ export function Workbench() {
                 consoleLog('sim', 'Simulation reset');
                 break;
         }
-    }, [setSimRunning, resetSim, simTimeNs]);
+    }, [workerBridge, resetSim, simTimeNs, consoleLog]);
+
+    // ── Save / Load ───────────────────────────────────────────────────────
+
+    const handleSave = useCallback(() => {
+        const cf = serializeCircuit(nodes, segments, probes);
+        saveToLocalStorage(cf);
+        consoleLog('info', `Circuit saved to localStorage`);
+    }, [nodes, segments, probes, consoleLog]);
+
+    const handleDownload = useCallback(() => {
+        const cf = serializeCircuit(nodes, segments, probes);
+        downloadCircuit(cf);
+        consoleLog('info', `Downloading circuit file`);
+    }, [nodes, segments, probes, consoleLog]);
 
     // ── Tool keyboard shortcuts ───────────────────────────────────────────
 
@@ -113,27 +127,7 @@ export function Workbench() {
         };
         window.addEventListener('keydown', onKey);
         return () => window.removeEventListener('keydown', onKey);
-    }, [simRunning, simControl]);
-
-    // ── Save / Load ───────────────────────────────────────────────────────
-
-    const handleSave = useCallback(() => {
-        const cf = serializeCircuit(nodes, wires, probes);
-        saveToLocalStorage(cf);
-        consoleLog('info', `Circuit saved to localStorage`);
-    }, [nodes, wires, probes]);
-
-    const handleDownload = useCallback(() => {
-        const cf = serializeCircuit(nodes, wires, probes);
-        downloadCircuit(cf);
-        consoleLog('info', `Downloading circuit file`);
-    }, [nodes, wires, probes]);
-
-    // ── Drag start from palette (just logs — canvas handles the drop) ─────
-
-    const handleDragStart = useCallback((typeId: string) => {
-        consoleLog('info', `Dragging ${typeId} to canvas`);
-    }, []);
+    }, [simRunning, simControl, handleSave, setTool]);
 
     // ── Layout calculation ────────────────────────────────────────────────
 
@@ -202,7 +196,7 @@ export function Workbench() {
 
                 {/* LEFT — Component Palette */}
                 <div style={{ width: PALETTE_W, borderRight: '1px solid #1A1D24', flexShrink: 0, overflowY: 'auto' }}>
-                    <ComponentPalette onDragStart={handleDragStart} />
+                    <ComponentLibrary />
                 </div>
 
                 {/* CENTER — Canvas + Bottom panels */}
@@ -238,7 +232,7 @@ export function Workbench() {
                 <StatusDot active={simRunning} label={simRunning ? 'Simulating' : 'Idle'} />
                 <StatusItem label={`t = ${simTimeNs}ns`} />
                 <StatusItem label={`${nodes.size} nodes`} />
-                <StatusItem label={`${wires.size} wires`} />
+                <StatusItem label={`${segments.size} segments`} />
                 <StatusItem label={`Tool: ${tool}`} />
                 <div style={{ flex: 1 }} />
                 <StatusItem label="VeriLog Workbench v2" muted />

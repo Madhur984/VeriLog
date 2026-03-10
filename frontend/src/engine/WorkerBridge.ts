@@ -1,73 +1,13 @@
 /**
  * engine/WorkerBridge.ts — Main-thread interface to sim.worker.ts
  *
- * Manages the worker lifecycle, serializes circuit graph, deserializes snapshots,
- * and updates the Zustand store at a throttled 30fps rate.
+ * Manages the worker lifecycle, serializes circuit graph (nodes + segments),
+ * deserializes snapshots, and updates the Zustand store at a throttled 30fps rate.
  */
 
-import type { CanvasNodeData, WireData } from '../stores/useWorkbenchStore';
 import { useWorkbenchStore } from '../stores/useWorkbenchStore';
 import type { SerializedWorkerGraph, SerializedSnapshot } from './sim.worker';
-import type { PortState } from './types';
-
-// ── Graph Serialization ──────────────────────────────────────────────────────
-
-/**
- * Convert the UI store's canvas nodes + wires into the CSE-compatible
- * message payload (no Maps, no Sets — pure JSON-serializable object).
- */
-function serializeForWorker(
-    nodes: Map<string, CanvasNodeData>,
-    wires: Map<string, WireData>
-): SerializedWorkerGraph {
-    const serializedNodes = Array.from(nodes.values()).map(n => ({
-        id: n.id,
-        type: n.type,
-        // Build port IDs: inputs first, then outputs by index
-        inputs: Array.from({ length: n.inputCount }, (_, i) => `${n.id}_in${i}`),
-        outputs: Array.from({ length: n.outputCount }, (_, i) => `${n.id}_out${i}`),
-        params: { ...n.params },
-        // Initialize all ports to 0V / LOW / float / disconnected
-        ports: [
-            ...Array.from({ length: n.inputCount }, (_, i) => ({
-                id: `${n.id}_in${i}`, voltage: 0, logic: false, drive: 'float' as const, connected: false,
-            })),
-            ...Array.from({ length: n.outputCount }, (_, i) => ({
-                id: `${n.id}_out${i}`, voltage: 0, logic: false, drive: 'float' as const, connected: false,
-            })),
-        ],
-        internalState: {},
-        x: n.x,
-        y: n.y,
-    }));
-
-    const serializedEdges = Array.from(wires.values()).map(w => ({
-        id: w.id,
-        fromNode: w.from.nodeId,
-        fromPort: `${w.from.nodeId}_out${w.from.portIndex}`,
-        toNode: w.to.nodeId,
-        toPort: `${w.to.nodeId}_in${w.to.portIndex}`,
-    }));
-
-    return { nodes: serializedNodes, edges: serializedEdges };
-}
-
-// ── Snapshot Deserialization ─────────────────────────────────────────────────
-
-function deserializeSnapshot(snap: SerializedSnapshot): Map<string, PortState[]> {
-    const out = new Map<string, PortState[]>();
-    for (const entry of snap.entries) {
-        out.set(entry.nodeId, entry.ports.map(p => ({
-            voltage: p.voltage,
-            logic: p.logic,
-            drive: p.drive,
-            connected: p.connected,
-        })));
-    }
-    return out;
-}
-
-// ── WorkerBridge ─────────────────────────────────────────────────────────────
+import type { BusValue } from './LogicValue';
 
 export class WorkerBridge {
     private worker: Worker | null = null;
@@ -94,13 +34,13 @@ export class WorkerBridge {
         this.worker.onmessage = (ev: MessageEvent) => {
             const msg = ev.data;
             if (msg.type === 'SNAPSHOT') {
-                this.handleSnapshot(msg as SerializedSnapshot & { timeNs: number });
+                this.handleSnapshot(msg as SerializedSnapshot);
             } else if (msg.type === 'ERROR') {
                 console.error('[WorkerBridge]', msg.message);
             }
         };
 
-        this.worker.onerror = (err) => {
+        this.worker.onerror = (err: ErrorEvent) => {
             console.error('[WorkerBridge] Worker error:', err.message);
         };
     }
@@ -108,8 +48,15 @@ export class WorkerBridge {
     /** Push the current circuit graph to the worker */
     loadGraph(): void {
         if (!this.worker) return;
-        const { nodes, wires } = useWorkbenchStore.getState();
-        const graph = serializeForWorker(nodes, wires);
+        const state = useWorkbenchStore.getState();
+        const nodes = Array.from(state.nodes.values());
+        const segments = Array.from(state.segments.values());
+
+        const graph: SerializedWorkerGraph = {
+            nodes,
+            segments
+        };
+
         this.worker.postMessage({ type: 'LOAD_GRAPH', graph });
     }
 
@@ -156,25 +103,56 @@ export class WorkerBridge {
         this.worker = null;
     }
 
+    // ── Input Interactions ──────────────────────────────────────────────────
+
+    /** Simulate user clicking a memory/button port */
+    interact(nodeId: string, portId: string, data?: unknown) {
+        this.worker?.postMessage({ type: 'INTERACT_PORT', nodeId, portId, data });
+    }
+
+    /** Update a component parameter */
+    updateParam(nodeId: string, key: string, value: unknown) {
+        this.worker?.postMessage({ type: 'SET_PARAM', nodeId, key, value });
+    }
+
     // ── Private ────────────────────────────────────────────────────────────────
 
-    private handleSnapshot(snap: SerializedSnapshot & { timeNs: number }): void {
+    private handleSnapshot(snap: SerializedSnapshot): void {
         const now = performance.now();
 
-        // Throttle React store updates to 30fps (simulation may run faster)
+        // Throttle React store updates to 30fps
         if (now - this.lastSnapshotTime < this.SNAPSHOT_INTERVAL_MS) return;
         this.lastSnapshotTime = now;
 
         const { applySnapshot, appendWaveformSample, probes } = useWorkbenchStore.getState();
-        const domainSnapshot = deserializeSnapshot(snap);
-        applySnapshot(domainSnapshot, snap.timeNs);
+
+        // Reconstruct Maps
+        const portStates = new Map<string, Map<string, BusValue>>();
+        for (const [nodeId, portMapObj] of Object.entries(snap.portStatesObj)) {
+            const portMap = new Map<string, BusValue>();
+            for (const [portId, val] of Object.entries(portMapObj)) {
+                portMap.set(portId, val);
+            }
+            portStates.set(nodeId, portMap);
+        }
+
+        const netValues = new Map<string, BusValue>();
+        for (const [netId, val] of Object.entries(snap.netValuesObj)) {
+            netValues.set(netId, val);
+        }
+
+        const netErrors = new Set<string>(snap.netErrorsArr);
+
+        applySnapshot(portStates, netValues, netErrors, snap.timeNs);
 
         // Append waveform samples for probed nodes
         for (const probe of probes) {
-            const ports = domainSnapshot.get(probe.nodeId);
-            if (ports && ports.length > 0) {
-                const p = ports[ports.length - 1]; // use last output port
-                appendWaveformSample(probe.nodeId, snap.timeNs, p.logic, p.voltage);
+            const ports = portStates.get(probe.nodeId);
+            if (ports) {
+                const val = ports.get(probe.portId);
+                if (val !== undefined) {
+                    appendWaveformSample(`${probe.nodeId}:${probe.portId}`, snap.timeNs, val);
+                }
             }
         }
     }
