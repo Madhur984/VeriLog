@@ -129,8 +129,7 @@ export const CircuitCanvas: React.FC<Props> = ({ tool }) => {
 
         if (wireInProgress && tool === 'wire') {
             const pt = clientToSvg(e.clientX, e.clientY);
-            // Must use store's update action
-            updateWireInProgress(snapToGrid(pt.x), snapToGrid(pt.y));
+            updateWireInProgress(snapToGrid(pt.x), snapToGrid(pt.y), e.altKey ? 'y' : 'x');
         }
     }, [isPanning, wireInProgress, tool, clientToSvg, zoom, setPan, updateWireInProgress]);
 

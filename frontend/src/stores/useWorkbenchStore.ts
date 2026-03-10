@@ -9,6 +9,7 @@ import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 import { WireSegment } from '../engine/NetGraph';
 import type { BusValue } from '../engine/LogicValue';
+import { optimizeSegments, TempSeg } from '../engine/WireOptimizer';
 
 // ── UI Data Models ─────────────────────────────────────────────────────────────
 
@@ -55,7 +56,7 @@ interface WorkbenchState {
     selectedIds: Set<string>;
     hoveredId: string | null;
     /** Current orthogonal wire path being drawn */
-    wireInProgress: { x1: number, y1: number, mouseX: number, mouseY: number } | null;
+    wireInProgress: { x1: number, y1: number, mouseX: number, mouseY: number, axisPreferred?: 'x' | 'y' } | null;
     zoom: number;
     panX: number;
     panY: number;
@@ -81,7 +82,7 @@ interface WorkbenchState {
     setHovered(id: string | null): void;
 
     startWire(x: number, y: number): void;
-    updateWireInProgress(mouseX: number, mouseY: number): void;
+    updateWireInProgress(mouseX: number, mouseY: number, axisPreferred?: 'x' | 'y'): void;
     commitWire(): void;
     cancelWire(): void;
 
@@ -181,34 +182,28 @@ export const useWorkbenchStore = create<WorkbenchState>()(
         // ── Wires ─────────────────────────────────────────────────────────────
 
         addSegments(segs) {
-            const ids: string[] = [];
+            const addedIds: string[] = [];
             set(state => {
-                for (const temp of segs) {
-                    // Normalize endpoints: always sort left-to-right, top-to-bottom
-                    let { x1, y1, x2, y2 } = temp;
-                    if (x1 > x2 || (x1 === x2 && y1 > y2)) {
-                        [x1, x2] = [x2, x1];
-                        [y1, y2] = [y2, y1];
-                    }
+                const tempSegs: TempSeg[] = Array.from(state.segments.values()).map(s => ({ ...s }));
+                for (const seg of segs) {
+                    tempSegs.push({ x1: seg.x1, y1: seg.y1, x2: seg.x2, y2: seg.y2 });
+                }
 
-                    // Don't add 0-length segments
-                    if (x1 === x2 && y1 === y2) continue;
+                const optimized = optimizeSegments(tempSegs, nextSegId);
 
-                    // Avoid duplicate purely overlapping segments
-                    let duplicate = false;
-                    for (const existing of state.segments.values()) {
-                        if (existing.x1 === x1 && existing.y1 === y1 && existing.x2 === x2 && existing.y2 === y2) {
-                            duplicate = true; break;
-                        }
-                    }
-                    if (duplicate) continue;
-
-                    const id = nextSegId();
-                    ids.push(id);
-                    state.segments.set(id, { id, x1, y1, x2, y2, netId: '' });
+                state.segments.clear();
+                for (const s of optimized) {
+                    const id = s.id || nextSegId();
+                    addedIds.push(id);
+                    state.segments.set(id, {
+                        id,
+                        x1: s.x1, y1: s.y1,
+                        x2: s.x2, y2: s.y2,
+                        netId: '' // Will be resolved by engine tick
+                    });
                 }
             });
-            return ids;
+            return addedIds;
         },
 
         removeSegment(id) {
@@ -218,14 +213,15 @@ export const useWorkbenchStore = create<WorkbenchState>()(
         // ── Wire Drawing ──────────────────────────────────────────────────────
 
         startWire(x, y) {
-            set(state => { state.wireInProgress = { x1: x, y1: y, mouseX: x, mouseY: y }; });
+            set(state => { state.wireInProgress = { x1: x, y1: y, mouseX: x, mouseY: y, axisPreferred: 'x' }; });
         },
 
-        updateWireInProgress(mouseX, mouseY) {
+        updateWireInProgress(mouseX, mouseY, axisPreferred) {
             set(state => {
                 if (state.wireInProgress) {
                     state.wireInProgress.mouseX = mouseX;
                     state.wireInProgress.mouseY = mouseY;
+                    if (axisPreferred) state.wireInProgress.axisPreferred = axisPreferred;
                 }
             });
         },
@@ -236,13 +232,14 @@ export const useWorkbenchStore = create<WorkbenchState>()(
                 if (!w) return;
 
                 // Manhattan routing: create up to 2 segments
-                // Horizontal first, then vertical (or based on initial drag direction)
                 const segs = [];
-                if (w.x1 !== w.mouseX) {
-                    segs.push({ x1: w.x1, y1: w.y1, x2: w.mouseX, y2: w.y1 });
-                }
-                if (w.y1 !== w.mouseY) {
-                    segs.push({ x1: w.mouseX, y1: w.y1, x2: w.mouseX, y2: w.mouseY });
+                const axis = w.axisPreferred || 'x';
+                if (axis === 'x') {
+                    if (w.x1 !== w.mouseX) segs.push({ x1: w.x1, y1: w.y1, x2: w.mouseX, y2: w.y1 });
+                    if (w.y1 !== w.mouseY) segs.push({ x1: w.mouseX, y1: w.y1, x2: w.mouseX, y2: w.mouseY });
+                } else {
+                    if (w.y1 !== w.mouseY) segs.push({ x1: w.x1, y1: w.y1, x2: w.x1, y2: w.mouseY });
+                    if (w.x1 !== w.mouseX) segs.push({ x1: w.x1, y1: w.mouseY, x2: w.mouseX, y2: w.mouseY });
                 }
 
                 state.wireInProgress = null;
@@ -255,9 +252,15 @@ export const useWorkbenchStore = create<WorkbenchState>()(
             // but the outer layer will do it. We'll reconstruct here to avoid unbound 'this'
             const w = get().wireInProgress;
             if (!w) return;
-            const segs = [];
-            if (w.x1 !== w.mouseX) segs.push({ x1: w.x1, y1: w.y1, x2: w.mouseX, y2: w.y1 });
-            if (w.y1 !== w.mouseY) segs.push({ x1: w.mouseX, y1: w.y1, x2: w.mouseX, y2: w.mouseY });
+            const axis = w.axisPreferred || 'x';
+            const segs: Omit<WireSegment, 'id' | 'netId'>[] = [];
+            if (axis === 'x') {
+                if (w.x1 !== w.mouseX) segs.push({ x1: w.x1, y1: w.y1, x2: w.mouseX, y2: w.y1 });
+                if (w.y1 !== w.mouseY) segs.push({ x1: w.mouseX, y1: w.y1, x2: w.mouseX, y2: w.mouseY });
+            } else {
+                if (w.y1 !== w.mouseY) segs.push({ x1: w.x1, y1: w.y1, x2: w.x1, y2: w.mouseY });
+                if (w.x1 !== w.mouseX) segs.push({ x1: w.x1, y1: w.mouseY, x2: w.mouseX, y2: w.mouseY });
+            }
 
             set(s => { s.wireInProgress = null; });
             get().addSegments(segs);
