@@ -92,3 +92,42 @@ export const SevenSegment: ComponentDef = {
         };
     }
 };
+
+// ── Probe ─────────────────────────────────────────────────────────────────────
+
+export const Probe: ComponentDef = {
+    type: 'io_probe',
+    label: 'Probe',
+    category: 'I/O',
+    defaultParams: { radix: 2 }, // 2 for Binary, 10 for Decimal, 16 for Hex
+    params: [
+        { key: 'radix', label: 'Radix Base', type: 'int', default: 2, min: 2, max: 16 }
+    ],
+    ports: () => [
+        { id: 'in', direction: 'input', bits: 1, label: '', side: 'left', x: 0, y: 1 } // bits dynamically changes if supported, defaulting to 1 for visual
+    ],
+    shape: () => ({ w: 2, h: 2, symbol: '?', color: '#FCD34D', style: 'custom' }),
+    initState: () => ({ value: 'X' }),
+    evaluate: (ctx) => {
+        const inBus = ctx.inputs['in'];
+        let displayVal = 'X';
+        if (inBus) {
+            if (inBus.length === 1) {
+                displayVal = String(inBus[0]);
+            } else {
+                const radix = Number(ctx.params.radix ?? 2);
+                let val = 0;
+                let isX = false;
+                for (const bit of inBus) {
+                    if (bit === 'X' || bit === 'Z') isX = true;
+                    val = (val << 1) | (bit === 1 ? 1 : 0);
+                }
+                displayVal = isX ? 'X' : val.toString(radix).toUpperCase();
+            }
+        }
+        return {
+            outputs: {},
+            state: { value: displayVal }
+        };
+    }
+};

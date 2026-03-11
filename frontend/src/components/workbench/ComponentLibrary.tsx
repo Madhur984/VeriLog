@@ -7,6 +7,10 @@
 
 import React, { useState } from 'react';
 import { getComponentsByCategory } from '../../engine/ComponentDef';
+import { registerAllComponents } from '../../engine/components';
+
+// Ensure components are registered before rendering
+registerAllComponents();
 
 const categoriesOrder = ['Wiring', 'Gates', 'Plexers', 'Memory', 'I/O', 'Subcircuit'];
 

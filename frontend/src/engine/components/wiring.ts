@@ -155,3 +155,63 @@ export const Splitter: ComponentDef = {
         return { outputs: outs };
     }
 };
+
+// ── Power ─────────────────────────────────────────────────────────────────────
+
+export const Power: ComponentDef = {
+    type: 'power',
+    label: 'Power',
+    category: 'Wiring',
+    defaultParams: {},
+    params: [],
+    ports: () => [
+        { id: 'out', direction: 'output', bits: 1, label: '', side: 'bottom', x: 1, y: 2 }
+    ],
+    shape: () => ({ w: 2, h: 2, symbol: 'VCC', color: '#EF4444', style: 'custom' }),
+    initState: () => ({}),
+    evaluate: () => {
+        return { outputs: { out: [1] } };
+    }
+};
+
+// ── Ground ────────────────────────────────────────────────────────────────────
+
+export const Ground: ComponentDef = {
+    type: 'ground',
+    label: 'Ground',
+    category: 'Wiring',
+    defaultParams: {},
+    params: [],
+    ports: () => [
+        { id: 'out', direction: 'output', bits: 1, label: '', side: 'top', x: 1, y: 0 }
+    ],
+    shape: () => ({ w: 2, h: 2, symbol: 'GND', color: '#10B981', style: 'custom' }),
+    initState: () => ({}),
+    evaluate: () => {
+        return { outputs: { out: [0] } };
+    }
+};
+
+// ── Tunnel ────────────────────────────────────────────────────────────────────
+
+export const Tunnel: ComponentDef = {
+    type: 'tunnel',
+    label: 'Tunnel',
+    category: 'Wiring',
+    defaultParams: { bits: 1, name: 'T' },
+    params: [
+        { key: 'bits', label: 'Data Bits', type: 'int', default: 1, min: 1, max: 32 },
+        { key: 'name', label: 'Name', type: 'string', default: 'T' }
+    ],
+    ports: (p) => [
+        { id: 'inout', direction: 'inout', bits: Number(p.bits ?? 1), label: String(p.name ?? 'T'), side: 'left', x: 0, y: 1 }
+    ],
+    shape: (p) => ({ w: 3, h: 2, symbol: String(p.name ?? 'T'), color: '#3B82F6', style: 'custom' }),
+    initState: () => ({}),
+    evaluate: () => {
+        // Tunnels are structurally connected by name in NetGraph, but here they just act as pass-throughs or sinks.
+        // For a full simulation, tunnels with the same name would merge their nets.
+        // Here, we just provide the component structure.
+        return { outputs: {} };
+    }
+};
