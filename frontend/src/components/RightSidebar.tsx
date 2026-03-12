@@ -1,5 +1,5 @@
 import { useGamificationStore } from '../stores/gamificationStore';
-import { Heart, Zap, Flame, Shield, LucideIcon } from 'lucide-react';
+import { Heart, Zap, Flame, LucideIcon } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const StatItem = ({ icon: Icon, value, color }: { icon: LucideIcon, value: number | string, color: string }) => (
@@ -28,19 +28,7 @@ export const RightSidebar = () => {
                 </div>
             </div>
 
-            {/* Try Super Box */}
-            <div className="border-2 border-neutral-200 rounded-2xl p-4 flex flex-col gap-4">
-                <h3 className="font-heading font-bold text-lg text-neutral-700">Unlock Super VeriQuest</h3>
-                <div className="flex items-center gap-4">
-                    <div className="w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center">
-                        <Shield className="text-white" size={40} fill="currentColor" />
-                    </div>
-                    <p className="text-sm text-neutral-500 font-medium">Unlimited hearts and no ads!</p>
-                </div>
-                <button className="w-full py-3 rounded-xl font-bold uppercase tracking-wide bg-gradient-to-b from-indigo-500 to-purple-600 text-white shadow-[0_4px_0_0_#4c1d95] active:translate-y-[2px] active:shadow-none transition-all">
-                    Try Super Free
-                </button>
-            </div>
+            {/* Try Super Box Removed */}
 
             {/* Daily Quests Preview */}
             <div className="border-2 border-neutral-200 rounded-2xl p-4">

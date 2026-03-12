@@ -15,22 +15,19 @@ import { AssessmentPage } from './pages/AssessmentPage';
 import AiLab from '@/pages/AiLab/AiLab';
 
 // New Integrated Pages
+import { SkillTree } from './pages/SkillTree';
+import { BossArena } from './pages/BossArena';
+import { EngineeringPortfolio } from './pages/EngineeringPortfolio';
+import { LogicStudio } from './pages/LogicStudio';
+import { DebugMissionPage } from './pages/DebugMissionPage';
 import { TrainingCockpitPage } from './pages/TrainingCockpitPage';
 import { SignalPlayground } from './pages/SignalPlayground';
 import { CircuitLab } from './circuit-lab/CircuitLab';
 import { VoltMonkeyIntro } from './pages/VoltMonkeyIntro';
 import { WhatAreSignals } from './pages/WhatAreSignals';
-import { FSMPlayground } from './pages/FSMPlayground';
-import { SkillTree } from './pages/SkillTree';
-import { VerilogPlayground } from './pages/VerilogPlayground';
-import { BossArena } from './pages/BossArena';
-import { EngineeringPortfolio } from './pages/EngineeringPortfolio';
-import { LogicStudio } from './pages/LogicStudio';
-import { DebugMissionPage } from './pages/DebugMissionPage';
-import { Workbench } from './pages/Workbench';
-import { CPULabPage } from './pages/CPULabPage';
+import Workbench from './pages/Workbench';
 import { CommunityPage } from './pages/CommunityPage';
-import { HardwareLeetCodePage } from './pages/HardwareLeetCodePage';
+import { PortalLayout } from './layouts/PortalLayout';
 
 import { TransitionProvider } from './hooks/useTransitionController';
 import { TransitionOverlay } from './components/TransitionOverlay';
@@ -41,35 +38,36 @@ export default function App() {
             <TransitionProvider>
                 <TransitionOverlay />
                 <Routes>
-                    {/* Welcome / Intro */}
+                    {/* Public / Intro Routes (Standalone) */}
                     <Route path="/" element={<GatekeeperLanding />} />
                     <Route path="/hero" element={<HeroExperience />} />
                     <Route path="/login" element={<LoginPage />} />
 
-                    {/* Main Hub */}
-                    <Route path="/portal" element={<WorkstationHome />} />
-                    <Route path="/home" element={<WorkstationHome />} />
-
-                    {/* Advanced Features & Lab */}
-                    <Route path="/ai-lab" element={<AiLab />} />
-                    <Route path="/circuit-lab" element={<CircuitLab />} />
-                    <Route path="/logic-studio" element={<LogicStudio />} />
-                    <Route path="/debug-mission/:id" element={<DebugMissionPage />} />
+                    {/* Standalone Workbench (No Portal Layout) */}
                     <Route path="/workbench" element={<Workbench />} />
-                    <Route path="/playground" element={<SignalPlayground />} />
-                    <Route path="/training" element={<TrainingCockpitPage />} />
-                    <Route path="/fsm" element={<FSMPlayground />} />
-                    <Route path="/skill-tree" element={<SkillTree />} />
-                    <Route path="/verilog" element={<VerilogPlayground />} />
-                    <Route path="/boss-arena" element={<BossArena />} />
-                    <Route path="/portfolio" element={<EngineeringPortfolio />} />
 
-                    {/* New Hub Features */}
-                    <Route path="/cpu-lab" element={<CPULabPage />} />
-                    <Route path="/community" element={<CommunityPage />} />
-                    <Route path="/hw-leetcode" element={<HardwareLeetCodePage />} />
+                    {/* Portal Routes (Wrapped in PortalLayout) */}
+                    <Route element={<PortalLayout />}>
+                        <Route path="/dashboard" element={<Navigate to="/portal" replace />} />
+                        <Route path="/portal" element={<WorkstationHome />} />
+                        <Route path="/home" element={<WorkstationHome />} />
+                        <Route path="/community" element={<CommunityPage />} />
+                        <Route path="/skill-tree" element={<SkillTree />} />
+                        <Route path="/boss-arena" element={<BossArena />} />
+                        <Route path="/portfolio" element={<EngineeringPortfolio />} />
+                        
+                        {/* Features & Labs with Layout */}
+                        <Route path="/ai-lab" element={<AiLab />} />
+                        <Route path="/circuit-lab" element={<CircuitLab />} />
+                        <Route path="/logic-studio" element={<LogicStudio />} />
+                        <Route path="/playground" element={<SignalPlayground />} />
+                        <Route path="/training" element={<TrainingCockpitPage />} />
+                    </Route>
 
-                    {/* Modules & Story Selection */}
+                    {/* Debug Missions (Standalone) */}
+                    <Route path="/debug-mission/:id" element={<DebugMissionPage />} />
+
+                    {/* Modules & Story Selection (Standalone) */}
                     <Route path="/module/1" element={<ModuleOneHub />} />
                     <Route path="/module/1/lab" element={<CircuitCanvas />} />
                     <Route path="/module/1/theory" element={<WhatAreSignals />} />
@@ -78,7 +76,7 @@ export default function App() {
                     <Route path="/module/4" element={<ModuleFour />} />
                     <Route path="/module/5" element={<ModuleFive />} />
 
-                    {/* Legacy / Game Support */}
+                    {/* Legacy / Game Support (Standalone) */}
                     <Route path="/gatekeeper" element={<GatekeeperGame />} />
                     <Route path="/assessment" element={<AssessmentPage />} />
                     <Route path="/voltmonkey" element={<VoltMonkeyIntro />} />

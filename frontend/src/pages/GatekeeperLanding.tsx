@@ -5,7 +5,7 @@ import { ArrowRight, Zap } from 'lucide-react';
 
 /* ═══════════════════════════════════════════════════════════════════
    GatekeeperLanding — The first page every user sees.
-   Full-screen circuit video, VeriQuest logo, single CTA → /login.
+   Full-screen circuit video, VeriLog logo, single CTA → /login.
    No auth check. Pure entry gate.
    ═══════════════════════════════════════════════════════════════ */
 
@@ -55,7 +55,7 @@ export const GatekeeperLanding = () => {
                 <div className="flex items-center gap-2">
                     <Zap className="w-7 h-7 text-emerald-400" strokeWidth={2.5} />
                     <span className="font-mono font-black text-xl tracking-widest text-white uppercase">
-                        VeriQuest
+                        VeriLog
                         <span className="text-emerald-500/60 text-xs ml-2">v2.0</span>
                     </span>
                 </div>

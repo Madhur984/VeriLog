@@ -22,7 +22,7 @@ export const SpaceshipLoader: React.FC = () => {
                 <span></span>
                 <span></span>
             </div>
-            <p className="loading-text">Loading VeriQuest...</p>
+            <p className="loading-text">Loading VeriLog...</p>
         </div>
     );
 };

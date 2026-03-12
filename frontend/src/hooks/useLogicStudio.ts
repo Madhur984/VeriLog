@@ -9,7 +9,24 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 import { MUREEngine } from '../mure/MUREEngine';
 import { NodeType, type NodeId } from '../mure/core/SignalNode';
 import type { PortState } from '../mure/core/Port';
-import { LogicOscilloscopeEngine, type WaveformTrace } from '../engine/LogicOscilloscope';
+// import { LogicOscilloscopeEngine, type WaveformTrace } from '../engine/LogicOscilloscope';
+
+// Stubs for LogicOscilloscope
+type WaveformTrace = {
+    signalId: string;
+    label: string;
+    color: string;
+    history: number[];
+};
+
+class LogicOscilloscopeEngine {
+    constructor(_limit: number) {}
+    tick(_states: Record<string, number>) {}
+    getTraces(): WaveformTrace[] { return []; }
+    reset() {}
+    addProbe(_id: string, _label: string) {}
+    removeProbe(_id: string) {}
+}
 
 // ─── Types ──────────────────────────────────────────────────────────────
 

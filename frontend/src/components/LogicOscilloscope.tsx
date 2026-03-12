@@ -6,7 +6,15 @@
  */
 
 import React from 'react';
-import type { WaveformTrace } from '../engine/LogicOscilloscope';
+// import type { WaveformTrace } from '../engine/LogicOscilloscope';
+
+// Stub for WaveformTrace
+export type WaveformTrace = {
+    signalId: string;
+    label: string;
+    color: string;
+    history: number[];
+};
 
 interface LogicOscilloscopeProps {
     traces: WaveformTrace[];

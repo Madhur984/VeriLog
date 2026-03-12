@@ -16,11 +16,25 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Play, RotateCcw, Download, AlertTriangle, CheckCircle2, Plus } from 'lucide-react';
 import { FSMCanvas } from '../components/fsm/FSMCanvas';
 import { FSMTimeline } from '../components/fsm/FSMTimeline';
-import {
-    createFSM, fsmRun, analyzeFSM, exportToVerilog,
-    type FSMDefinition, type StepResult,
-} from '../engine/FSMEngine';
-import type { StateId, FSMState, FSMTransition } from '../engine/types';
+// import {
+//     createFSM, fsmRun, analyzeFSM, exportToVerilog,
+//     type FSMDefinition, type StepResult,
+// } from '../engine/FSMEngine';
+// import type { StateId, FSMState, FSMTransition } from '../engine/types';
+
+// Stubs for FSM types and functions
+type StateId = string;
+type FSMDefinition = any;
+type StepResult = any;
+
+const fsmRun = (_fsm: any, _inputs: string[]): any[] => [];
+const analyzeFSM = (_fsm: any): any => ({
+    unreachableStates: [],
+    deadStates: [],
+    nondeterministicStates: [],
+    missingTransitions: []
+});
+const exportToVerilog = (_fsm: any): string => "// Verilog export disabled (engine removed)";
 
 const T = {
     bg: '#060C1A', card: '#0D0F16', surface: '#141C2E', border: '#1A1D24',
@@ -32,18 +46,19 @@ const T = {
 
 // ─── Demo FSM: Traffic Light Controller ─────────────────────────────────────
 function makeTrafficLightFSM(): FSMDefinition {
-    const fsm = createFSM({ type: 'Moore', alphabet: ['tick'] });
-    const states = new Map<StateId, FSMState>([
-        ['RED', { id: 'RED', label: 'RED', output: '100', isFinal: false, position: { x: 120, y: 200 } }],
-        ['GREEN', { id: 'GREEN', label: 'GREEN', output: '001', isFinal: false, position: { x: 350, y: 120 } }],
-        ['YELLOW', { id: 'YELLOW', label: 'YELLOW', output: '010', isFinal: false, position: { x: 580, y: 200 } }],
-    ]);
-    const transitions: FSMTransition[] = [
-        { id: 't0', from: 'RED', to: 'GREEN', condition: 'tick', output: '' },
-        { id: 't1', from: 'GREEN', to: 'YELLOW', condition: 'tick', output: '' },
-        { id: 't2', from: 'YELLOW', to: 'RED', condition: 'tick', output: '' },
-    ];
-    return { ...fsm, states, transitions, alphabet: ['tick'], initialState: 'RED', currentState: 'RED' };
+    // const fsm = createFSM({ type: 'Moore', alphabet: ['tick'] });
+    // const states = new Map<StateId, FSMState>([
+    //     ['RED', { id: 'RED', label: 'RED', output: '100', isFinal: false, position: { x: 120, y: 200 } }],
+    //     ['GREEN', { id: 'GREEN', label: 'GREEN', output: '001', isFinal: false, position: { x: 350, y: 120 } }],
+    //     ['YELLOW', { id: 'YELLOW', label: 'YELLOW', output: '010', isFinal: false, position: { x: 580, y: 200 } }],
+    // ]);
+    // const transitions: FSMTransition[] = [
+    //     { id: 't0', from: 'RED', to: 'GREEN', condition: 'tick', output: '' },
+    //     { id: 't1', from: 'GREEN', to: 'YELLOW', condition: 'tick', output: '' },
+    //     { id: 't2', from: 'YELLOW', to: 'RED', condition: 'tick', output: '' },
+    // ];
+    // return { ...fsm, states, transitions, alphabet: ['tick'], initialState: 'RED', currentState: 'RED' };
+    return { states: new Map(), transitions: [], type: 'Moore' };
 }
 
 export function FSMPlayground() {
@@ -68,11 +83,11 @@ export function FSMPlayground() {
         const t = fsmRun(copy, inputs);
         setTrace(t);
         setCurrentStep(t.length - 1);
-        setFSM(prev => ({ ...prev, currentState: copy.currentState }));
+        setFSM((prev: any) => ({ ...prev, currentState: copy.currentState }));
     }, [fsm, inputSeq]);
 
     const handleReset = useCallback(() => {
-        setFSM(prev => ({ ...prev, currentState: prev.initialState }));
+        setFSM((prev: any) => ({ ...prev, currentState: prev.initialState }));
         setTrace([]);
         setCurrentStep(-1);
         setActiveTransId(undefined);
@@ -82,17 +97,17 @@ export function FSMPlayground() {
         setCurrentStep(step);
         const s = trace[step];
         if (s) {
-            setFSM(prev => ({ ...prev, currentState: s.toState }));
-            const t = fsm.transitions.find(tr => tr.from === s.fromState && tr.to === s.toState);
+            setFSM((prev: any) => ({ ...prev, currentState: s.toState }));
+            const t = fsm.transitions.find((tr: any) => tr.from === s.fromState && tr.to === s.toState);
             setActiveTransId(t?.id);
         }
     }, [trace, fsm.transitions]);
 
     // ── State position update ─────────────────────────────────────────────
     const handlePositionChange = useCallback((stateId: StateId, pos: { x: number; y: number }) => {
-        setFSM(prev => {
+        setFSM((prev: any) => {
             const states = new Map(prev.states);
-            const s = states.get(stateId);
+            const s: any = states.get(stateId);
             if (s) states.set(stateId, { ...s, position: pos });
             return { ...prev, states };
         });
@@ -101,7 +116,7 @@ export function FSMPlayground() {
     // ── Add State ──────────────────────────────────────────────────────────
     const handleAddState = useCallback(() => {
         const id = `S${fsm.states.size}`;
-        setFSM(prev => {
+        setFSM((prev: any) => {
             const states = new Map(prev.states);
             states.set(id, {
                 id, label: id, output: '', isFinal: false,
@@ -133,7 +148,7 @@ export function FSMPlayground() {
                     marginLeft: 'auto', display: 'flex', gap: 8, alignItems: 'center',
                 }}>
                     {(['Moore', 'Mealy'] as const).map(type => (
-                        <button key={type} onClick={() => setFSM(p => ({ ...p, type }))}
+                        <button key={type} onClick={() => setFSM((p: any) => ({ ...p, type }))}
                             style={{
                                 padding: '4px 12px', fontFamily: T.mono, fontSize: 8,
                                 letterSpacing: '0.1em', textTransform: 'uppercase',
@@ -242,7 +257,7 @@ export function FSMPlayground() {
                             </button>
                         </div>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                            {Array.from(fsm.states.values()).map(s => (
+                            {Array.from(fsm.states.values()).map((s: any) => (
                                 <div key={s.id} style={{
                                     display: 'flex', alignItems: 'center', gap: 8,
                                     padding: '6px 10px',
@@ -291,7 +306,7 @@ export function FSMPlayground() {
                                 insight="Dead states have no outgoing transitions. Add transitions or mark as final."
                             />
                         )}
-                        {analysis.missingTransitions.map(m => (
+                        {analysis.missingTransitions.map((m: any) => (
                             <IssueCard
                                 key={m.state}
                                 title={`Missing in '${m.state}'`}

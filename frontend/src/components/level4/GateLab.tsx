@@ -7,8 +7,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle2 } from 'lucide-react';
-import { GATE_META } from '../../engine/gateMeta';
-import type { GateId } from '../../engine/gateMeta';
+import { GATE_META, type GateId } from '../../utils/gateMeta';
 
 const T = {
     card: '#0D0F16', surface: '#1A1D24', border: '#222633',

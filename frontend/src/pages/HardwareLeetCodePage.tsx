@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { ChallengeList } from '../components/challenges/ChallengeList';
 import { ChallengePanel } from '../components/challenges/ChallengePanel';
-import { HARDWARE_CHALLENGES } from '../engines/challenges/ChallengeEngine';
+// import { HARDWARE_CHALLENGES } from '../engines/challenges/ChallengeEngine';
+const HARDWARE_CHALLENGES: any[] = [];
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 

@@ -2,9 +2,41 @@ import React, { useState, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Lock, CheckCircle2, Zap, ArrowRight } from 'lucide-react';
-import { VisualCanvasEngine } from '../../engine/VisualCanvasEngine';
-import { useGamificationStore } from '../../stores/gamificationStore';
-import { SKILLS, SkillNode, DOMAIN_COLORS } from '../../constants/skills';
+// import { VisualCanvasEngine } from '../../engine/VisualCanvasEngine';
+class VisualCanvasEngine {
+    constructor(_config: any) {}
+    getTransform() { return { x: 0, y: 0, scale: 1 }; }
+    zoom(_delta: number, _x: number, _y: number, _rect: any) { return { x: 0, y: 0, scale: 1 }; }
+    pan(_dx: number, _dy: number) { return { x: 0, y: 0, scale: 1 }; }
+}
+
+// Stubs for Gamification and Skills
+const useGamificationStore = () => ({
+    xp: { total: 0 },
+    skills: { completedIds: [] as string[] }
+});
+
+type SkillDomain = 'combinational' | 'sequential' | 'system' | 'physical';
+interface SkillNode {
+    id: string;
+    title: string;
+    description: string;
+    x: number;
+    y: number;
+    tier: number;
+    domain: SkillDomain;
+    xpRequired: number;
+    prerequisites: string[];
+    route?: string;
+}
+
+const SKILLS: SkillNode[] = [];
+const DOMAIN_COLORS: Record<SkillDomain, string> = {
+    combinational: '#00D4FF',
+    sequential: '#10B981',
+    system: '#F59E0B',
+    physical: '#EF4444'
+};
 
 const engine = new VisualCanvasEngine({ snapToGrid: false });
 
@@ -35,11 +67,11 @@ export const SkillCanvas: React.FC = () => {
         const isComplete = skills.completedIds.includes(skillId);
         if (isComplete) return 'complete';
 
-        const skill = SKILLS.find(s => s.id === skillId);
+        const skill = SKILLS.find((s: SkillNode) => s.id === skillId);
         if (!skill) return 'locked';
 
         const prereqsMet = skill.prerequisites.length === 0 ||
-            skill.prerequisites.every(p => skills.completedIds.includes(p));
+            skill.prerequisites.every((p: string) => skills.completedIds.includes(p));
         const xpMet = xp.total >= skill.xpRequired;
 
         return prereqsMet && xpMet ? 'available' : 'locked';
@@ -86,9 +118,9 @@ export const SkillCanvas: React.FC = () => {
             >
                 <g transform={`translate(${transform.x}, ${transform.y}) scale(${transform.scale})`}>
                     {/* Connections (PCB Traces) */}
-                    {SKILLS.map(skill => (
-                        skill.prerequisites.map(prereqId => {
-                            const prereq = SKILLS.find(s => s.id === prereqId);
+                    {SKILLS.map((skill: SkillNode) => (
+                        skill.prerequisites.map((prereqId: string) => {
+                            const prereq = SKILLS.find((s: SkillNode) => s.id === prereqId);
                             if (!prereq) return null;
 
                             const status = getSkillStatus(skill.id);
@@ -124,7 +156,7 @@ export const SkillCanvas: React.FC = () => {
                     ))}
 
                     {/* Skill Nodes (ICs) */}
-                    {SKILLS.map(skill => {
+                    {SKILLS.map((skill: SkillNode) => {
                         const status = getSkillStatus(skill.id);
                         const color = DOMAIN_COLORS[skill.domain];
                         const isHovered = hoveredSkill?.id === skill.id;

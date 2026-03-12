@@ -1,6 +1,6 @@
-/**
+﻿/**
  * VeriLog - Circuit Data Models
- * Exactly replicates Logisim's graph structure where components and wires are distinct.
+ * Exactly replicates CircuitVerse's graph structure where components and wires are distinct.
  */
 
 export type LogicState = 0 | 1 | 'X' | 'Z';

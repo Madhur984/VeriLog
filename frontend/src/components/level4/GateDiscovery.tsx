@@ -7,7 +7,7 @@
  */
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { GATE_META, GATE_ORDER, type GateId } from '../../engine/gateMeta';
+import { GATE_META, GATE_ORDER, type GateId } from '../../utils/gateMeta';
 
 const T = {
     card: '#0D0F16', surface: '#1A1D24', border: '#222633',

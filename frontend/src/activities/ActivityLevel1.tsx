@@ -5,7 +5,7 @@ import { VoltMonkey, MonkeyState } from '../components/Bot/VoltMonkey';
 import { SpeechBubble } from '../components/Bot/SpeechBubble';
 import { Zap, Lightbulb, MousePointer2, RotateCcw, CheckCircle2 } from 'lucide-react';
 import { DragEngineProvider, useDragEngineContext } from '../contexts/DragEngineContext';
-import { CompType, DropResult } from '../engine/types';
+import { type CompType, type DropResult } from '../hooks/useDragEngine';
 import { DropRipple, RejectFlash } from '../components/Activities/DropEffects';
 
 interface ComponentInstance {

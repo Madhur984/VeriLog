@@ -41,7 +41,7 @@ export const HeroExperience = () => {
                         className="flex items-center space-x-2"
                     >
                         <LayoutDashboard className="w-8 h-8 text-primary shadow-glow-primary rounded-lg" />
-                        <span className="font-heading font-black text-2xl tracking-tighter uppercase">VeriQuest <span className="text-primary/50 text-sm ml-2 font-mono tracking-widest">v2.0</span></span>
+                        <span className="font-heading font-black text-2xl tracking-tighter uppercase">VeriLog <span className="text-primary/50 text-sm ml-2 font-mono tracking-widest">v2.0</span></span>
                     </motion.div>
 
                     <motion.nav

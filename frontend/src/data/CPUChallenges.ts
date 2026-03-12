@@ -5,7 +5,19 @@
  * to advanced pipeline optimization.
  */
 
-import type { CPUChallenge, CPULearningStage } from '../engines/cpu/CPUTypes';
+// import type { CPUChallenge, CPULearningStage } from '../engines/cpu/CPUTypes';
+
+// Stubs for CPU types
+export type CPULearningStage = 'single_cycle' | 'multi_cycle' | 'pipelined' | 'hazard_detection' | 'forwarding' | 'branch_prediction';
+export interface CPUChallenge {
+    id: string;
+    stage: CPULearningStage;
+    title: string;
+    description: string;
+    instruction: string;
+    expectedResult: any;
+    hints: string[];
+}
 
 export const CPU_CHALLENGES: CPUChallenge[] = [
     // ─── Stage 1: Single Cycle ─────────────────────────────────────

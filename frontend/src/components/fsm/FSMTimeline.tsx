@@ -6,7 +6,14 @@
  */
 
 import { useCallback } from 'react';
-import type { StepResult } from '../../engine/FSMEngine';
+// import type { StepResult } from '../../engine/FSMEngine';
+
+// Stub for StepResult
+type StepResult = {
+    isValid: boolean;
+    toState?: string;
+    output?: string;
+};
 
 const T = {
     card: '#0D0F16', border: '#1A1D24',

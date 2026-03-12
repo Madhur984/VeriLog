@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import { LabBattery, LabBulb, LabResistor, LabSwitch } from './CircuitComponent';
 import { SnapNodeVisual } from './SnapNodeVisual';
-import { CompType } from '../../engine/types';
+import { type CompType } from '../../hooks/useDragEngine';
 
 import { useDragEngineContext as useEngine } from '../../contexts/DragEngineContext';
 
