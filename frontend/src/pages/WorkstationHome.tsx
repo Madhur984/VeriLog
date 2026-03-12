@@ -697,28 +697,6 @@ export const WorkstationHome: React.FC = () => {
                     </div >
                 </div >
 
-                {/* ── WORKSTATION TERMINAL (Aesthetic Overdrive) ── */}
-                <div style={{
-                    position: 'absolute', bottom: 24, right: 32, width: 300,
-                    background: 'rgba(7,8,12,0.85)', backdropFilter: 'blur(12px)',
-                    border: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.12)'}`,
-                    borderRadius: 12, padding: 16, pointerEvents: 'none', zIndex: 100,
-                    boxShadow: '0 8px 32px rgba(0,0,0,0.4)'
-                }}>
-                    <div className="flex items-center gap-2 mb-3">
-                        <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                        <span style={{ fontFamily: t.mono, fontSize: 10, color: t.text, letterSpacing: '0.1em' }} className="uppercase">System Status</span>
-                    </div>
-                    <div style={{ fontFamily: t.mono, fontSize: 9, color: t.textMuted, lineHeight: 1.6 }}>
-                        <div className="flex justify-between"><span>Core Frequency</span><span className="text-blue-400">4.2 GHz</span></div>
-                        <div className="flex justify-between"><span>Logic Depth</span><span className="text-blue-400">Layer {completedCount + 1}</span></div>
-                        <div className="flex justify-between"><span>Memory Parity</span><span className="text-green-500">NOMINAL</span></div>
-                        <div className="flex justify-between"><span>VoltMonkey</span><span className="text-orange-400">SYNCED</span></div>
-                    </div>
-                    <div className="mt-3 pt-3 border-t border-white/5" style={{ fontSize: 8, color: t.textMuted, opacity: 0.6 }}>
-                        DIGILOGIC.OS [VER 2025.03] READY.
-                    </div>
-                </div>
             </div >
 
             {/* ── OVERLAYS ── */}

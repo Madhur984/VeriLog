@@ -112,11 +112,6 @@ export const HeroExperience = () => {
                 </div>
             </div>
 
-            {/* Footer Stats */}
-            <div className="absolute bottom-8 w-full flex justify-center space-x-12 text-xs font-mono text-slate-500 uppercase tracking-widest">
-                <div>System Status: <span className="text-signal-success">ONLINE</span></div>
-                <div>Cadets Active: <span className="text-primary">8,402</span></div>
-            </div>
 
             {/* Interactive Greeting Overlay */}
             <AnimatePresence>
