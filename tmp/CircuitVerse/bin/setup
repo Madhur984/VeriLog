@@ -1,0 +1,383 @@
+#!/usr/bin/env ruby
+require 'pathname'
+require 'fileutils'
+include FileUtils
+
+# path to your application root.
+APP_ROOT = Pathname.new File.expand_path('../../', __FILE__)
+
+def system!(*args)
+  system(*args) || abort("\n== Command #{args} failed ==")
+end
+
+def check_command(command)
+  system("which #{command} > /dev/null 2>&1")
+end
+
+def print_section(title)
+  puts "\n" + "=" * 50
+  puts "== #{title} =="
+  puts "=" * 50
+end
+
+def print_substep(message)
+  puts "   → #{message}"
+end
+
+def check_dependencies
+  print_section "Checking Dependencies"
+
+  dependencies = {
+    'git' => 'Git version control',
+    'ruby' => 'Ruby programming language',
+    'bundle' => 'Ruby Bundler',
+    'node' => 'Node.js runtime',
+    'yarn' => 'Yarn package manager',
+    'psql' => 'PostgreSQL client',
+    'redis-cli' => 'Redis client',
+    # 'convert' => 'ImageMagick (convert command)',
+    'cmake' => 'CMake build system',
+    'openssl' => 'OpenSSL',
+    'foreman' => 'Process manager (for bin/dev)'
+  }
+
+  missing_deps = []
+
+  dependencies.each do |cmd, desc|
+    if check_command(cmd)
+      print_substep "✓ #{desc} found"
+    else
+      print_substep "✗ #{desc} missing (#{cmd})"
+      missing_deps << cmd
+    end
+  end
+
+  # Check Yarn version specifically
+  if check_command('yarn')
+    yarn_version = `yarn --version`.strip
+    required_yarn = "1.22.19"
+    print_substep "Yarn version: #{yarn_version} (required: #{required_yarn})"
+
+    if yarn_version != required_yarn
+      puts "\n⚠️  Consider updating Yarn to version #{required_yarn}"
+      puts "Current version #{yarn_version} may work but #{required_yarn} is recommended"
+    end
+  end
+
+  # Check for Vite (frontend build tool)
+  if check_command('npx')
+    print_substep "✓ npx found (needed for Vite)"
+  end
+
+  unless missing_deps.empty?
+    puts "\n⚠️  Missing dependencies detected!"
+    puts "Please install the following before continuing:"
+    missing_deps.each { |dep| puts "   - #{dep}" }
+    puts "\nRefer to the installation guide for dependency installation commands."
+    puts "Or if using asdf, run: asdf install"
+    abort("Setup cannot continue without required dependencies.")
+  end
+
+  puts "\n✅ All dependencies found!"
+end
+
+def check_services
+  print_section "Checking Required Services"
+
+  # Check PostgreSQL
+  print_substep "Checking PostgreSQL connection..."
+  if system('pg_isready > /dev/null 2>&1')
+    print_substep "✓ PostgreSQL is running"
+  else
+    puts "\n⚠️  PostgreSQL is not running!"
+    puts "Please start PostgreSQL with:"
+    puts "   sudo systemctl start postgresql"
+    puts "   # or on macOS: brew services start postgresql"
+    abort("PostgreSQL must be running to continue setup.")
+  end
+
+  # Check Redis
+  print_substep "Checking Redis connection..."
+  if system('redis-cli ping > /dev/null 2>&1')
+    print_substep "✓ Redis is running"
+  else
+    puts "\n⚠️  Redis is not running!"
+    puts "Please start Redis with:"
+    puts "   sudo systemctl start redis"
+    puts "   # or on macOS: brew services start redis"
+    abort("Redis must be running to continue setup.")
+  end
+end
+
+def check_ruby_version
+  print_section "Checking Ruby Version"
+
+  minimum_version = "3.3.0"
+  current_version = RUBY_VERSION
+
+  print_substep "Minimum Ruby version: #{minimum_version}"
+  print_substep "Current Ruby version: #{current_version}"
+
+  if Gem::Version.new(current_version) < Gem::Version.new(minimum_version)
+    puts "\n⚠️  Ruby version too old!"
+    puts "This project requires Ruby #{minimum_version} or higher"
+    puts "Current version is #{current_version}"
+    puts "\nTo install a compatible version:"
+    puts "   # With RVM:"
+    puts "   rvm install #{minimum_version}"
+    puts "   rvm use #{minimum_version}"
+    puts "   # With rbenv:"
+    puts "   rbenv install #{minimum_version}"
+    puts "   rbenv local #{minimum_version}"
+    puts "   # With asdf:"
+    puts "   asdf install ruby #{minimum_version}"
+    puts "   asdf local ruby #{minimum_version}"
+    abort("Please install Ruby #{minimum_version} or higher before continuing.")
+  end
+
+  print_substep "✓ Ruby version is compatible"
+end
+
+def check_node_version
+  print_section "Checking Node.js Version"
+
+  minimum_version = "22.13.0"
+
+  if check_command('node')
+    current_version = `node --version`.strip.gsub('v', '')
+    print_substep "Minimum Node.js version: #{minimum_version}"
+    print_substep "Current Node.js version: #{current_version}"
+
+    # Check if current version meets minimum requirement
+    if Gem::Version.new(current_version) < Gem::Version.new(minimum_version)
+      puts "\n⚠️  Node.js version too old!"
+      puts "This project requires Node.js #{minimum_version} or higher"
+      puts "Current version is #{current_version}"
+      puts "\nTo install a compatible version:"
+      puts "   # With nvm:"
+      puts "   nvm install #{minimum_version}"
+      puts "   nvm use #{minimum_version}"
+      puts "   # With asdf:"
+      puts "   asdf install nodejs #{minimum_version}"
+      puts "   asdf local nodejs #{minimum_version}"
+      abort("Please install Node.js #{minimum_version} or higher before continuing.")
+    end
+
+    print_substep "✓ Node.js version is compatible"
+  end
+end
+
+chdir APP_ROOT do
+  puts "CircuitVerse Development Environment Setup"
+  puts "========================================="
+
+  # Check system dependencies
+  check_dependencies
+
+  # Check Ruby version
+  check_ruby_version
+
+  # Check Node.js version
+  check_node_version
+
+  # Check required services
+  check_services
+
+  print_section "Installing Ruby Dependencies"
+  print_substep "Installing/updating bundler..."
+  system! 'gem install bundler --conservative'
+
+  print_substep "Checking bundle status..."
+  unless system('bundle check > /dev/null 2>&1')
+    print_substep "Installing Ruby gems..."
+    system! 'bundle install'
+  else
+    print_substep "✓ Ruby dependencies already satisfied"
+  end
+
+  print_section "Installing JavaScript Dependencies"
+
+  # Main project dependencies
+  if File.exist?('package.json')
+    print_substep "Installing main project Node.js packages with Yarn..."
+    system! 'yarn install'
+  else
+    print_substep "No package.json found in root, skipping main Yarn installation"
+  end
+
+  # Frontend Vue project dependencies
+  if File.exist?('cv-frontend-vue/package.json')
+    print_substep "Installing cv-frontend-vue dependencies..."
+    chdir 'cv-frontend-vue' do
+      system! 'npm install'
+    end
+  else
+    print_substep "cv-frontend-vue directory not found, skipping frontend dependencies"
+  end
+
+  # Check if Vite is properly configured
+  if File.exist?('vite.config.ts')
+    print_substep "✓ Vite configuration found"
+  else
+    print_substep "⚠️  vite.config.ts not found"
+  end
+
+  print_section "Setting Up Configuration Files"
+
+  # Database configuration
+  unless File.exist?('config/database.yml')
+    if File.exist?('config/database.example.yml')
+      print_substep "Copying database.example.yml to database.yml..."
+      cp 'config/database.example.yml', 'config/database.yml'
+      puts "\n⚠️  Please update config/database.yml with your PostgreSQL credentials!"
+      puts "   You can also use database.docker.yml or database.appveyor.yml as references."
+    else
+      puts "\n⚠️  database.yml not found!"
+      puts "Available database configuration templates:"
+      puts "   - config/database.example.yml"
+      puts "   - config/database.docker.yml"
+      puts "   - config/database.appveyor.yml"
+      puts "Please copy one of these to config/database.yml and configure your PostgreSQL settings."
+    end
+  else
+    print_substep "✓ Database configuration already exists"
+  end
+
+  # Check for secrets.yml
+  if File.exist?('config/secrets.yml')
+    print_substep "✓ Secrets configuration exists"
+  else
+    print_substep "⚠️  config/secrets.yml not found!"
+    puts "   This file should contain your application secrets."
+    puts "   You may need to create it manually with Rails secret keys."
+  end
+
+  # Check other important config files
+  important_configs = {
+    'config/cable.yml' => 'WebSocket configuration',
+    'config/storage.yml' => 'File storage settings',
+    'config/puma.rb' => 'Web server configuration',
+    'config/sidekiq.yml' => 'Background job configuration',
+    'config/vite.json' => 'Vite asset configuration'
+  }
+
+  important_configs.each do |config_file, description|
+    if File.exist?(config_file)
+      print_substep "✓ #{description} (#{File.basename(config_file)})"
+    else
+      print_substep "⚠️  #{description} missing (#{File.basename(config_file)})"
+    end
+  end
+
+  # Check process management files
+  process_files = ['Procfile.dev', 'Procfile', 'bin/dev']
+  print_substep "Process management files:"
+  process_files.each do |file|
+    if File.exist?(file)
+      print_substep "  ✓ #{file} exists"
+    end
+  end
+
+  print_section "Setting Up Submodules and Additional Components"
+
+  # Check and initialize submodules (simulator, cv-frontend-vue)
+  if File.exist?('.gitmodules')
+    print_substep "Initializing Git submodules..."
+    system! 'git submodule update --init --recursive'
+  elsif File.directory?('simulator') && File.directory?('cv-frontend-vue')
+    print_substep "✓ Simulator and frontend components found"
+  else
+    print_substep "⚠️  Some project components may be missing"
+    puts "   Make sure you cloned with --recursive flag or run:"
+    puts "   git submodule update --init --recursive"
+  end
+  unless File.exist?('config/private.pem') && File.exist?('config/public.pem')
+    print_substep "Generating RSA key pairs..."
+    system! 'openssl genrsa -out ./config/private.pem 2048'
+    system! 'openssl rsa -in ./config/private.pem -outform PEM -pubout -out ./config/public.pem'
+    print_substep "✓ RSA key pairs generated"
+  else
+    print_substep "✓ RSA key pairs already exist"
+  end
+
+  print_section "Setting Up Database"
+
+  # Check if database exists
+  db_exists = system('bin/rails runner "ActiveRecord::Base.connection" > /dev/null 2>&1')
+
+  if db_exists
+    print_substep "Database already exists, running migrations..."
+    system! 'bin/rails db:migrate'
+  else
+    print_substep "Creating database..."
+    system! 'bin/rails db:create'
+    print_substep "Running migrations..."
+    system! 'bin/rails db:migrate'
+    print_substep "Seeding database with initial data..."
+    system! 'bin/rails db:seed'
+  end
+
+  print_section "Cleaning Up"
+  print_substep "Removing old logs and temporary files..."
+  system! 'bin/rails log:clear tmp:clear'
+
+system! 'gem install mailcatcher'
+
+  print_section "Final Steps"
+
+  # Check for process management and development tools
+  if File.exist?('bin/dev')
+    print_substep "✓ Development server script (bin/dev) found"
+    puts "\n🎉 Setup completed successfully!"
+    puts "\nTo start the development server, run:"
+    puts "   bin/dev"
+    puts "\nThis will start:"
+    puts "   • Rails server (backend)"
+    puts "   • Vite dev server (frontend assets)"
+    puts "   • Sidekiq (background jobs)"
+    puts "   • Any other processes defined in Procfile.dev"
+    puts "\nThen navigate to http://localhost:3000 in your browser."
+  elsif File.exist?('Procfile.dev')
+    print_substep "✓ Procfile.dev found"
+    unless check_command('foreman')
+      print_substep "Installing foreman for process management..."
+      system! 'gem install foreman'
+    end
+    puts "\n🎉 Setup completed successfully!"
+    puts "\nTo start the development server, run:"
+    puts "   foreman start -f Procfile.dev"
+    puts "\nOr start services individually:"
+    puts "   bundle exec rails server    # Backend"
+    puts "   yarn dev                     # Frontend assets"
+    puts "   bundle exec sidekiq          # Background jobs"
+    puts "\nThen navigate to http://localhost:3000 in your browser."
+  else
+    puts "\n🎉 Setup completed successfully!"
+    puts "\nTo start the development server, run:"
+    puts "   bundle exec rails server"
+    puts "\nFor asset compilation, also run:"
+    puts "   yarn dev"
+    puts "\nThen navigate to http://localhost:3000 in your browser."
+  end
+
+  puts "\n🔧 Additional development tools:"
+  puts "   • Test suite: bundle exec rspec"
+  puts "   • Code linting: yarn lint (if configured)"
+  puts "   • Type checking: yarn type-check (if configured)"
+  puts "   • API documentation: available in apidoc/v1/"
+  puts "   • Frontend Vue app: cd cv-frontend-vue && npm run dev"
+
+  puts "\n📋 Post-setup checklist:"
+  puts "   □ Verify config/database.yml has correct PostgreSQL credentials"
+  puts "   □ Check that PostgreSQL and Redis services are running"
+  puts "   □ Ensure config/secrets.yml exists and has required secrets"
+  puts "   □ Review config/cable.yml for WebSocket configuration"
+  puts "   □ Check config/storage.yml for file storage settings"
+  puts "   □ Verify config/sidekiq.yml for background job configuration"
+  puts "   □ Test the simulator: navigate to /simulator after starting the server"
+  puts "   □ Check frontend Vue app: cd cv-frontend-vue && npm run dev"
+  puts "   □ Run the test suite: bundle exec rspec"
+  puts "   □ Review installation_docs/ for additional setup information"
+
+  puts "\n📚 For more information, see the project documentation."
+end
