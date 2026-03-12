@@ -56,17 +56,15 @@ export const WireLayer: React.FC = () => {
                 let color = '#6B7280'; // Z or unresolved
                 if (seg.netId && netErrors.has(seg.netId)) {
                     color = '#3B82F6'; // 'X' -> Blue in Logisim (or Red for error. In LogicValue we set X to blue)
-                } else if (netValBus && netValBus.length > 0) {
-                    // For rendering a multi-bit bus wire, Logisim uses black/dark blue. 
-                    // We'll just display the LSB color for now, or black if bus > 1 bit
-                    if (netValBus.length === 1) {
-                        color = wireColor(netValBus[0]);
+                } else if (netValBus !== undefined) {
+                    if (Array.isArray(netValBus)) {
+                        color = netValBus.length === 1 ? wireColor(netValBus[0]) : '#000000'; // Multi-bit bus
                     } else {
-                        color = '#000000'; // Multi-bit bus
+                        color = wireColor(netValBus);
                     }
                 }
 
-                const isBus = netValBus && netValBus.length > 1;
+                const isBus = Array.isArray(netValBus) && netValBus.length > 1;
 
                 if (isSelected) color = '#00D4FF';
 
@@ -97,8 +95,8 @@ export const WireLayer: React.FC = () => {
                 const netValBus = dot.netId ? netValues.get(dot.netId) : undefined;
                 let color = '#6B7280';
                 if (dot.netId && netErrors.has(dot.netId)) color = '#3B82F6';
-                else if (netValBus && netValBus.length > 0) {
-                    color = netValBus.length === 1 ? wireColor(netValBus[0]) : '#000000';
+                else if (netValBus !== undefined) {
+                    color = Array.isArray(netValBus) ? (netValBus.length === 1 ? wireColor(netValBus[0]) : '#000000') : wireColor(netValBus);
                 }
 
                 if (isSelected) color = '#00D4FF';

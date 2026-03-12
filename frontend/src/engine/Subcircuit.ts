@@ -6,10 +6,8 @@
  * A Subcircuit appears as an IC box with pins derived from input/output components.
  */
 
-import { ComponentDef, registerComponent, PortDef, EvalContext, EvalResult } from './ComponentDef';
-import type { CanvasNodeData } from '../stores/useWorkbenchStore';
-import type { WireSegment } from './NetGraph';
-import type { LogicValue } from './LogicValue';
+import type { CanvasNodeData, WireSegment, LogicState } from '../types/circuit';
+import { ComponentDef, PortDef, EvalResult, registerComponent } from './ComponentDef';
 
 export interface SubcircuitData {
     name: string;
@@ -37,50 +35,36 @@ export function defineSubcircuit(id: string, name: string, nodes: CanvasNodeData
 
     // Distribute inputs on the left, outputs on the right
     let iY = 1;
-    inputNodes.forEach((node, i) => {
+    inputNodes.forEach((node) => {
         ports.push({
             id: `in_${node.id}`,
             direction: 'input',
-            bits: 1, // assumes 1-bit pins for subcircuits currently
+            bits: node.parameters?.bits ?? 1, // assumes 1-bit pins for subcircuits currently
             x: 0,
             y: iY++,
             side: 'left',
-            label: node.label || `in${i}`
+            label: node.parameters?.label ?? node.id
         });
     });
 
     let oY = 1;
-    outputNodes.forEach((node, i) => {
+    outputNodes.forEach((node) => {
         ports.push({
             id: `out_${node.id}`,
             direction: 'output',
-            bits: 1,
+            bits: node.parameters?.bits ?? 1,
             x: 4, // Box width will be 4
             y: oY++,
             side: 'right',
-            label: node.label || `out${i}`
+            label: node.parameters?.label ?? node.id
         });
     });
 
-    const boxHeight = Math.max(inputNodes.length, outputNodes.length) + 2;
-
     const def: ComponentDef = {
         type: id,
-        label: name,
-        category: 'Subcircuit',
-        defaultParams: {},
-        params: [],
-        ports: () => ports,
-        shape: () => ({
-            w: 4,
-            h: boxHeight,
-            style: 'custom',
-            color: '#3B82F6', // Blue border for subcircuits
-            symbol: name.substring(0, 4).toUpperCase(),
-            extras: ''
-        }),
-        initState: () => ({}),
-        evaluate: (_ctx: EvalContext): EvalResult => {
+        tpdHL: 5,
+        tpdLH: 5,
+        eval: (_inputs: Record<string, LogicState>, _state: any, _params: any): EvalResult => {
             // FULL HDL/SUBCIRCUIT EVALUATION IS A COMPLEX COMPILATION STEP.
             // In a production simulator, this would either:
             // a) run a localized mini-simulation of the subcircuit NetGraph
@@ -88,9 +72,9 @@ export function defineSubcircuit(id: string, name: string, nodes: CanvasNodeData
             // 
             // For this UI implementation, we act as a pass-through or return Zs
             // if runtime flattening is not enabled.
-            const out: Record<string, LogicValue[]> = {};
+            const out: Record<string, LogicState> = {};
             outputNodes.forEach(node => {
-                out[`out_${node.id}`] = [0]; // default '0' for stub
+                out[`out_${node.id}`] = 0; // default '0' for stub
             });
             return { outputs: out, state: {} };
         }

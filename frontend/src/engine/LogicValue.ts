@@ -1,129 +1,131 @@
-/**
- * engine/LogicValue.ts — Four-valued Logic System
- *
- * Fully implements IEEE 1164 four-valued logic: 0, 1, X (unknown), Z (high-impedance).
- *
- * This is the core data type for the Logisim-style simulator.
- * Every port, wire, and net carries a LogicValue.
- *
- * Resolution rules match Logisim behavior:
- *   - Z (floating) loses to any driver
- *   - 0 and 1 conflict → X (error)
- *   - X propagates through most gates
- */
+import { LogicState } from '../types/circuit';
 
-// ── Four-valued signal type ──────────────────────────────────────────────────
+export type BusValue = LogicState[];
 
-export type LogicValue = 0 | 1 | 'X' | 'Z';
-
-/** Multi-bit bus: array of LogicValues, index 0 = MSB */
-export type BusValue = LogicValue[];
-
-// ── Display colors (Logisim convention) ────────────────────────────────────
-
-export const LOGIC_COLOR: Record<string, string> = {
-    '0': '#334155',   // LOW   → dark slate
-    '1': '#10B981',   // HIGH  → green
-    'X': '#3B82F6',   // ERROR → blue (Logisim uses blue for X)
-    'Z': '#94A3B8',   // HIZ   → light gray (floating)
-};
-
-export function logicColor(v: LogicValue): string {
-    return LOGIC_COLOR[String(v)] ?? '#334155';
+export function floatingBus(bits: number): BusValue {
+    return Array(bits).fill('Z');
 }
 
-// ── Wire state color ────────────────────────────────────────────────────────
-
-export function wireColor(v: LogicValue): string {
-    switch (v) {
-        case 1: return '#10B981';   // HIGH: green
-        case 0: return '#334155';   // LOW:  dark gray
-        case 'X': return '#3B82F6';   // conflict/error: blue (matches Logisim)
-        case 'Z': return '#6B7280';   // floating: mid-gray
-        default: return '#334155';
+export function numberToBus(val: number, bits: number): BusValue {
+    const bus: BusValue = [];
+    for (let i = 0; i < bits; i++) {
+        bus.push(((val >> i) & 1) as LogicState);
     }
+    return bus;
 }
 
-// ── Resolution table ─────────────────────────────────────────────────────────
-//
-// When multiple drivers are connected to the same net, we must resolve conflicts.
-// Resolution follows Logisim's "wired logic" model:
-//
-//      | Z   | 0   | 1   | X
-//  ----+-----+-----+-----+----
-//   Z  |  Z  |  0  |  1  |  X
-//   0  |  0  |  0  |  X  |  X
-//   1  |  1  |  X  |  1  |  X
-//   X  |  X  |  X  |  X  |  X
-
-const RES: Record<string, Record<string, LogicValue>> = {
-    'Z': { 'Z': 'Z', '0': 0, '1': 1, 'X': 'X' },
-    '0': { 'Z': 0, '0': 0, '1': 'X', 'X': 'X' },
-    '1': { 'Z': 1, '0': 'X', '1': 1, 'X': 'X' },
-    'X': { 'Z': 'X', '0': 'X', '1': 'X', 'X': 'X' },
-};
-
-export function resolveValues(a: LogicValue, b: LogicValue): LogicValue {
-    return RES[String(a)]?.[String(b)] ?? 'X';
-}
-
-/** Resolve an array of drivers onto one net */
-export function resolveNet(drivers: LogicValue[]): LogicValue {
-    if (drivers.length === 0) return 'Z';
-    if (drivers.length === 1) return drivers[0];
-    return drivers.reduce(resolveValues);
-}
-
-// ── Gate evaluation helpers ───────────────────────────────────────────────────
-
-/** Convert logic value to boolean for gate evaluation. X/Z → false */
-export function toBoolean(v: LogicValue): boolean {
-    return v === 1;
-}
-
-/** Create a single-bit gate result, propagating X if any input is X */
-export function gateResult(inputs: LogicValue[], booleanResult: boolean): LogicValue {
-    if (inputs.some(i => i === 'X' || i === 'Z')) return 'X';
-    return booleanResult ? 1 : 0;
-}
-
-// ── Bus helpers ───────────────────────────────────────────────────────────────
-
-export function singleToBus(v: LogicValue): BusValue {
-    return [v];
+export function unknownBus(bits: number): BusValue {
+    return Array(bits).fill('X');
 }
 
 export function busToNumber(bus: BusValue): number {
-    let n = 0;
-    for (const bit of bus) {
-        n <<= 1;
-        if (bit === 1) n |= 1;
+    let val = 0;
+    for (let i = 0; i < bus.length; i++) {
+        if (bus[i] === 1) val |= (1 << i);
     }
-    return n;
+    return val;
 }
 
-export function numberToBus(n: number, bits: number): BusValue {
-    const result: BusValue = [];
-    for (let i = bits - 1; i >= 0; i--) {
-        result.push((n >> i) & 1 ? 1 : 0);
-    }
-    return result;
-}
-
-/** Create an N-bit undefined bus */
-export function unknownBus(bits: number): BusValue {
-    return Array.from({ length: bits }, () => 'X' as LogicValue);
-}
-
-/** Create an N-bit floating bus */
-export function floatingBus(bits: number): BusValue {
-    return Array.from({ length: bits }, () => 'Z' as LogicValue);
+export function wireColor(state: LogicState): string {
+    if (state === 1) return '#10B981'; // Bright green for logic high (1)
+    if (state === 0) return '#064E3B'; // Dark green for logic low (0)
+    if (state === 'X') return '#3B82F6'; // Blue for error/contention (X)
+    return '#6B7280'; // Gray for floating (Z)
 }
 
 export function busLabel(bus: BusValue): string {
-    if (bus.length === 1) return String(bus[0]);
-    if (bus.every(b => b === 0 || b === 1)) {
-        return `0x${busToNumber(bus).toString(16).toUpperCase()}`;
+    let hasX = false;
+    let hasZ = false;
+    for (const b of bus) {
+        if (b === 'X') hasX = true;
+        if (b === 'Z') hasZ = true;
     }
-    return bus.map(b => String(b)).join('');
+    if (hasX) return 'X';
+    if (hasZ) return 'Z';
+    return busToNumber(bus).toString(16).toUpperCase();
+}
+
+/**
+ * Handles resolution of multi-driver signal contention strictly following standard IEEE models.
+ */
+export class LogicValue {
+    
+    /**
+     * Resolves multiple driving sources connected to a single electrical net.
+     * Rules:
+     * - Only Z drivers = Z
+     * - Any X driver = X
+     * - Mix of 1 and 0 drivers = X
+     * - All 1s (and Zs) = 1
+     * - All 0s (and Zs) = 0
+     */
+    static resolve(drivers: LogicState[]): LogicState {
+        if (drivers.length === 0) return 'Z';
+        if (drivers.length === 1) return drivers[0];
+
+        let hasZero = false;
+        let hasOne = false;
+
+        for (const state of drivers) {
+            if (state === 'X') return 'X'; // Immediate contention
+            if (state === 0) hasZero = true;
+            if (state === 1) hasOne = true;
+        }
+
+        if (hasZero && hasOne) return 'X'; // Short circuit!
+        if (hasZero) return 0;
+        if (hasOne) return 1;
+
+        return 'Z';
+    }
+
+    /**
+     * Inverts a standard logic state.
+     */
+    static not(val: LogicState): LogicState {
+        if (val === 0) return 1;
+        if (val === 1) return 0;
+        return 'X';
+    }
+
+    /**
+     * Returns the strict logic union (AND).
+     */
+    static and(a: LogicState, b: LogicState): LogicState {
+        if (a === 0 || b === 0) return 0;
+        if (a === 1 && b === 1) return 1;
+        return 'X';
+    }
+
+    /**
+     * Returns the strict logic intersection (OR).
+     */
+    static or(a: LogicState, b: LogicState): LogicState {
+        if (a === 1 || b === 1) return 1;
+        if (a === 0 && b === 0) return 0;
+        return 'X';
+    }
+
+    /**
+     * Returns the exclusive OR (XOR).
+     */
+    static xor(a: LogicState, b: LogicState): LogicState {
+        if ((a === 1 || a === 0) && (b === 1 || b === 0)) {
+            return a === b ? 0 : 1;
+        }
+        return 'X';
+    }
+
+    /**
+     * Helper to safely map a LogicState into an SVG fill/stroke color for the UI.
+     */
+    static toColor(state: LogicState): string {
+        switch (state) {
+            case 1: return '#00ff00';   // HIGH: Bright Green
+            case 0: return '#1e4020';   // LOW: Dark Muted Green / Gray
+            case 'X': return '#ff0000'; // ERROR: Red
+            case 'Z': return '#0000ff'; // FLOAT: Blue
+            default: return '#555555';
+        }
+    }
 }

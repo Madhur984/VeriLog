@@ -7,7 +7,7 @@ import { Button, LED, SevenSegment, Probe } from './io';
 // Memory
 import { DFlipFlop, Register, RAM } from './memory';
 // Plexers
-import { Multiplexer, Demultiplexer } from './plexers';
+import { Multiplexer, Demultiplexer, Decoder, PriorityEncoder } from './plexers';
 // Wiring
 import { Pin, Constant, Clock, Splitter, Power, Ground, Tunnel } from './wiring';
 
@@ -36,6 +36,8 @@ export function registerAllComponents() {
     // Plexers
     registerComponent(Multiplexer);
     registerComponent(Demultiplexer);
+    registerComponent(Decoder);
+    registerComponent(PriorityEncoder);
 
     // Wiring
     registerComponent(Pin);

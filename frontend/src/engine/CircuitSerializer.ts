@@ -5,8 +5,8 @@
  * Supports localStorage and file download. Supabase will be a future addition.
  */
 
-import type { CanvasNodeData, ProbeEntry } from '../stores/useWorkbenchStore';
-import type { WireSegment } from './NetGraph';
+import type { ProbeEntry } from '../stores/useWorkbenchStore';
+import type { WireSegment, CanvasNodeData } from '../types/circuit';
 
 export const CIRCUIT_FORMAT_VERSION = '2.0';
 
@@ -78,8 +78,8 @@ export function serializeCircuit(
             x: n.x,
             y: n.y,
             rotation: n.rotation,
-            label: n.label,
-            params: { ...n.params } as Record<string, unknown>,
+            label: n.parameters?.label ?? '',
+            params: { ...n.parameters } as Record<string, unknown>,
         })),
         segments: Array.from(segments.values()).map(s => ({
             id: s.id,
@@ -114,17 +114,15 @@ export function deserializeCircuit(json: string): DeserializedCircuit | null {
 
         const nodes: CanvasNodeData[] = file.nodes.map(n => ({
             id: n.id,
-            type: n.type as CanvasNodeData['type'],
+            type: n.type,
             x: n.x,
             y: n.y,
             rotation: n.rotation,
-            label: n.label,
-            params: n.params as CanvasNodeData['params'],
+            parameters: { ...n.params, label: n.label },
         }));
 
         const segments: WireSegment[] = file.segments.map(s => ({
             id: s.id,
-            netId: '', // nets are rebuilt by store on loaded
             x1: s.x1,
             y1: s.y1,
             x2: s.x2,
@@ -162,15 +160,6 @@ export function loadFromLocalStorage(): DeserializedCircuit | null {
     return raw ? deserializeCircuit(raw) : null;
 }
 
-export function downloadCircuit(circuit: CircuitFile): void {
-    const blob = new Blob([JSON.stringify(circuit, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${circuit.metadata.name.replace(/\s+/g, '_')}.verilog.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-}
 
 export function loadCircuitFromFile(file: File): Promise<DeserializedCircuit | null> {
     return new Promise(resolve => {

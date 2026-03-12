@@ -15,6 +15,7 @@ import React, { useRef, useState, useCallback, useEffect } from 'react';
 import { useWorkbenchStore } from '../../stores/useWorkbenchStore';
 import { CanvasNode } from './CanvasNode';
 import { WireLayer } from './WireLayer';
+import { WorkerSync } from './WorkerSync';
 
 interface Props {
     tool: 'select' | 'wire' | 'probe' | 'delete';
@@ -219,6 +220,9 @@ export const CircuitCanvas: React.FC<Props> = ({ tool }) => {
 
                     {/* Render a large enough grid grid */}
                     <GridLines w={4000} h={3000} />
+
+                    {/* Sync logic */}
+                    <WorkerSync />
 
                     {/* Wires first (behind gates) */}
                     <WireLayer />

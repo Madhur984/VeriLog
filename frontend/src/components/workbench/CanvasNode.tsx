@@ -19,7 +19,7 @@ interface Props {
 
 export const CanvasNode: React.FC<Props> = ({ nodeId, tool, onWireStart }) => {
     const node = useWorkbenchStore(s => s.nodes.get(nodeId));
-    const portStates = useWorkbenchStore(s => s.portStates.get(nodeId));
+    const portStates = useWorkbenchStore(s => s.portStates);
     const isSelected = useWorkbenchStore(s => s.selectedIds.has(nodeId));
 
     // Store actions
@@ -32,8 +32,8 @@ export const CanvasNode: React.FC<Props> = ({ nodeId, tool, onWireStart }) => {
     const def = getComponentDef(node.type);
     if (!def) return <g><text fill="red">Missing: {node.type}</text></g>;
 
-    const ports = useMemo(() => def.ports(node.params), [def, node.params]);
-    const shape = useMemo(() => def.shape(node.params), [def, node.params]);
+    const ports = useMemo(() => def.ports ? def.ports(node.parameters || {}) : [], [def, node.parameters]);
+    const shape = useMemo(() => def.shape ? def.shape(node.parameters || {}) : { w: 2, h: 2, symbol: '?', color: '#ef4444', style: 'rect' }, [def, node.parameters]);
     const svgPath = useMemo(() => getSvgPath(shape.style, shape.extras), [shape.style, shape.extras]);
 
     // Grid to Pixel multiplier
@@ -55,23 +55,40 @@ export const CanvasNode: React.FC<Props> = ({ nodeId, tool, onWireStart }) => {
         e.stopPropagation();
 
         // Add probe to specific port? If we right-click the body, probe all outputs.
-        const outputPorts = ports.filter(p => p.direction === 'output');
+        const outputPorts = ports.filter((p: any) => p.direction === 'output');
+        const label = node.parameters?.label || node.id;
         if (outputPorts.length > 0) {
-            addProbe(node.id, outputPorts[0].id, `${node.label}.${outputPorts[0].id}`);
+            addProbe(node.id, outputPorts[0].id, `${label}.${outputPorts[0].id}`);
         } else {
-            addProbe(node.id, ports[0].id, node.label);
+            addProbe(node.id, ports[0].id, label);
         }
-    }, [node.id, node.label, ports, addProbe]);
+    }, [node.id, node.parameters, ports, addProbe]);
 
     const handlePortClick = useCallback((e: React.MouseEvent, portX: number, portY: number) => {
         e.stopPropagation();
         if (tool === 'wire') {
-            // portX/portY are relative grids. We need absolute grid coordinates.
-            // Rotation complicates this, but let's assume rotation=0 for now.
-            // (Logisim handles rotations by transforming port coordinates).
-            onWireStart(node.x + portX, node.y + portY);
+            // Calculate rotated port coordinates
+            const cx = shape.w / 2;
+            const cy = shape.h / 2;
+            const rad = (node.rotation * Math.PI) / 180;
+            const cos = Math.cos(rad);
+            const sin = Math.sin(rad);
+            
+            // Relative to center
+            const dx = portX - cx;
+            const dy = portY - cy;
+            
+            // Rotate
+            const rdx = dx * cos - dy * sin;
+            const rdy = dx * sin + dy * cos;
+            
+            // Map back to absolute grid
+            const absoluteX = Math.round(node.x + rdx + cx);
+            const absoluteY = Math.round(node.y + rdy + cy);
+            
+            onWireStart(absoluteX, absoluteY);
         }
-    }, [tool, node.x, node.y, onWireStart]);
+    }, [tool, node.x, node.y, node.rotation, shape.w, shape.h, onWireStart]);
 
     // Render 
     return (
@@ -123,16 +140,16 @@ export const CanvasNode: React.FC<Props> = ({ nodeId, tool, onWireStart }) => {
                 const { x: px, y: py, length } = getPortPosition(port);
 
                 // Determine port visual state from simulation
-                const portBus = portStates?.get(port.id);
+                const portBus = portStates?.get(`${nodeId}:${port.id}`);
                 // Draw multi-bit label if bits > 1
                 let label = '';
                 let color = '#334155'; // default LOW/unconnected
-                if (portBus && portBus.length > 0) {
-                    if (portBus.length === 1) {
-                        color = wireColor(portBus[0]);
-                    } else {
+                if (portBus !== undefined) {
+                    if (Array.isArray(portBus)) {
                         color = '#000000'; // bus line
                         label = busLabel(portBus);
+                    } else {
+                        color = wireColor(portBus);
                     }
                 }
 
@@ -188,7 +205,7 @@ export const CanvasNode: React.FC<Props> = ({ nodeId, tool, onWireStart }) => {
                 fill="#94A3B8" fontSize={10}
                 textAnchor="middle"
             >
-                {node.label}
+                {node.parameters?.label}
             </text>
         </g>
     );

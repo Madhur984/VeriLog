@@ -1,116 +1,79 @@
-/**
- * engine/sim.worker.ts — Event-driven NetGraph Web Worker
- *
- * Runs the new SimEngine on a background thread.
- */
-
+import { CanvasNodeData, WireSegment } from '../types/circuit';
+import { NetlistCompiler } from './NetlistCompiler';
 import { SimEngine } from './SimEngine';
-import type { WireSegment } from './NetGraph';
-import type { CanvasNodeData } from '../stores/useWorkbenchStore';
-import type { BusValue } from './LogicValue';
 
-// ── Serialized Types cross-thread ──────────────────────────────────────────
+// Worker-specific state
+let engine: SimEngine = new SimEngine();
 
-export interface SerializedWorkerGraph {
-    nodes: CanvasNodeData[];
-    segments: WireSegment[];
-}
+// MOCK: In the full app, this accesses GateShapes.ts or similar to find the geometric bounding box and port offsets
+const mockResolvePorts = (node: CanvasNodeData) => {
+    // For now, everything just has one input 'in' and one output 'out' for compilation testing
+    return [
+        { nodeId: node.id, portName: 'in', x: node.x, y: node.y + 10, direction: 'INPUT' as any },
+        { nodeId: node.id, portName: 'out', x: node.x + 40, y: node.y + 10, direction: 'OUTPUT'  as any }
+    ];
+};
 
-export interface SerializedSnapshot {
-    // Array format across worker boundary: [nodeId, [[portId, BusValue], ...]]
-    portStatesObj: Record<string, Record<string, BusValue>>;
-    netValuesObj: Record<string, BusValue>;
-    netErrorsArr: string[];
-    timeNs: number;
-}
+/**
+ * The authoritative Web Worker thread.
+ * Responsible for isolating all heavy graph traversal and high-frequency discrete time evaluation
+ * away from the React UI thread.
+ */
+self.onmessage = (e: MessageEvent) => {
+    const { type, payload } = e.data;
 
-// ── Main Worker Logic ────────────────────────────────────────────────────────
+    switch (type) {
+        
+        case 'INIT':
+            // Pre-allocate things if needed
+            console.log("[Worker] Initialized");
+            break;
 
-const engine = new SimEngine();
-let loaded = false;
+        case 'LOAD_GRAPH':
+            const { nodes, segments } = payload as { nodes: CanvasNodeData[], segments: WireSegment[] };
+            
+            // 1. Compile visual geometry into Electrical Topology
+            const t0 = performance.now();
+            const { nets, portToNet, segmentToNet } = NetlistCompiler.compile(nodes, segments, mockResolvePorts);
+            const t1 = performance.now();
+            console.log(`[Worker] Netlist Compiled in ${Math.round(t1 - t0)}ms. Found ${Object.keys(nets).length} discrete nets.`);
 
-// ── Worker Message Handling ──────────────────────────────────────────────────
+            // 2. Load into Engine
+            engine.loadTopology(nets, portToNet);
 
-self.onmessage = (event: MessageEvent) => {
-    const msg = event.data;
+            // 2.5 Share network mapping with UI correctly
+            self.postMessage({ type: 'TOPOLOGY_UPDATE', payload: { segmentToNet: Object.fromEntries(segmentToNet) } });
+            
+            // 3. Immediately emit initial state back to UI
+            self.postMessage({ type: 'SNAPSHOT', payload: engine.generateSnapshot() });
+            break;
 
-    try {
-        switch (msg.type) {
+        case 'TICK':
+            const { targetTimeNs } = payload;
+            
+            // Fast-forward engine to specific time bounds
+            engine.tick(targetTimeNs);
 
-            case 'LOAD_GRAPH': {
-                const graph = msg.graph as SerializedWorkerGraph;
-                engine.loadCircuit(graph.nodes, graph.segments);
-                loaded = true;
+            // Emit throttled state to UI
+            self.postMessage({ type: 'SNAPSHOT', payload: engine.generateSnapshot() });
+            break;
 
-                // Evaluates the initial steady state (combinational paths)
-                engine.evalFullFast();
-
-                self.postMessage({ type: 'SNAPSHOT', ...buildSnapshot() });
-                break;
+        case 'INTERACT_PORT':
+            const { portId, state } = payload;
+            
+            // Someone flipped a switch or pressed a button
+            // We forcefully inject an event exactly at *now* + 1ns propagation time
+            const targetNet = (engine as any).portToNet.get(portId);
+            if (targetNet) {
+                 engine.scheduleEvent(engine.currentTimeNs + 1, portId, targetNet, state);
             }
-
-            case 'TICK': {
-                if (!loaded) break;
-                // Step time forward
-                engine.tick(msg.deltaNs ?? 100);
-                self.postMessage({ type: 'SNAPSHOT', ...buildSnapshot() });
-                break;
-            }
-
-            case 'RESET': {
-                loaded = false;
-                self.postMessage({ type: 'READY' });
-                break;
-            }
-
-            case 'INTERACT_PORT': {
-                // e.g. pressing a button
-                if (!loaded) break;
-                engine.interact(msg.nodeId, msg.portId, msg.data);
-                self.postMessage({ type: 'SNAPSHOT', ...buildSnapshot() });
-                break;
-            }
-
-            case 'SET_PARAM': {
-                if (!loaded) break;
-                engine.updateParam(msg.nodeId, msg.key, msg.value);
-                self.postMessage({ type: 'SNAPSHOT', ...buildSnapshot() });
-                break;
-            }
-
-            default:
-                self.postMessage({ type: 'ERROR', message: `Unknown message type: ${msg.type}` });
-        }
-    } catch (err) {
-        self.postMessage({ type: 'ERROR', message: String(err) });
+            break;
+            
+        case 'SET_PARAM':
+            // (E.g. updating the bit width of a wire or frequency of a clock)
+            // Implementation requires finding the node in engine memory and updating it.
+            break;
     }
 };
 
-function buildSnapshot(): SerializedSnapshot {
-    const rawSnapshot = engine.getSnapshot();
-    const rawNetValues = engine.getNetValues();
-    const netErrorsSet = engine.getNetErrors();
-
-    // Map -> Record for JSON serialization
-    const portStatesObj: Record<string, Record<string, BusValue>> = {};
-    for (const [nodeId, portMap] of rawSnapshot) {
-        portStatesObj[nodeId] = {};
-        for (const [portId, val] of portMap) {
-            portStatesObj[nodeId][portId] = val;
-        }
-    }
-
-    const netValuesObj: Record<string, BusValue> = {};
-    for (const [netId, val] of rawNetValues) {
-        netValuesObj[netId] = val;
-    }
-
-    return {
-        portStatesObj,
-        netValuesObj,
-        netErrorsArr: Array.from(netErrorsSet),
-        timeNs: engine.currentTimeNs
-    };
-}
-
-self.postMessage({ type: 'READY' });
+export {};

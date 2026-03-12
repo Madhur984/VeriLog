@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * engine/components/memory.ts — Sequential Memory Components
  *

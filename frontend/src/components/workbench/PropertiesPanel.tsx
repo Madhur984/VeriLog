@@ -50,14 +50,14 @@ export const PropertiesPanel: React.FC = () => {
                     <label style={labelStyle}>Label</label>
                     <input
                         style={inputStyle}
-                        value={selectedNode.label}
+                        value={selectedNode.parameters?.label || ''}
                         onChange={(e) => updateNodeLabel(selectedNode.id, e.target.value)}
                     />
                 </div>
 
                 {/* Dynamic Params based on ComponentDef */}
-                {def.params.map(param => {
-                    const value = selectedNode.params[param.key] ?? def.defaultParams[param.key];
+                {def.params?.map((param: any) => {
+                    const value = selectedNode.parameters?.[param.key] ?? def.defaultParams?.[param.key];
                     return (
                         <div key={param.key} style={rowStyle}>
                             <label style={labelStyle}>{param.label || param.key}</label>
@@ -77,7 +77,7 @@ export const PropertiesPanel: React.FC = () => {
                                     value={value as string}
                                     onChange={(e) => handleParamChange(param.key, e.target.value)}
                                 >
-                                    {param.options.map(opt => (
+                                    {param.options.map((opt: any) => (
                                         <option key={opt} value={opt}>{opt}</option>
                                     ))}
                                 </select>

@@ -11,8 +11,8 @@
  * electrically connected points. The simulation evaluates at net level.
  */
 
-import type { BusValue } from './LogicValue';
-import { resolveNet, floatingBus } from './LogicValue';
+import { LogicValue } from './LogicValue';
+import type { LogicState } from '../types/circuit';
 
 // ── Point types ───────────────────────────────────────────────────────────────
 
@@ -54,7 +54,7 @@ export interface Net {
     segments: WireSegment[];
     ports: PortRef[];
     /** Resolved logic value for this net */
-    value: BusValue;
+    value: LogicState;
     /** True if short circuit (multiple conflicting outputs) */
     error: boolean;
 }
@@ -136,27 +136,23 @@ export class NetGraph {
     }
 
     /** Returns map of net values */
-    getNetValues(): Map<string, BusValue> {
-        const out = new Map<string, BusValue>();
+    getNetValues(): Map<string, LogicState> {
+        const out = new Map<string, LogicState>();
         for (const [id, net] of this.nets) {
             out.set(id, net.value);
         }
         return out;
     }
 
-    /**
-     * Apply simulation output: given the outputs from all components,
-     * resolve each net's value (handles multi-driver conflicts).
-     */
-    applyOutputs(outputs: Map<string, Map<string, BusValue>>): void {
+    applyOutputs(outputs: Map<string, Map<string, LogicState>>): void {
         // Reset all nets to floating
         for (const net of this.nets.values()) {
-            net.value = floatingBus(net.bits);
+            net.value = 'Z';
             net.error = false;
         }
 
         // For each output port, find its net, collect drivers
-        const netDrivers = new Map<string, BusValue[]>();
+        const netDrivers = new Map<string, LogicState[]>();
 
         for (const [componentId, portOutputs] of outputs) {
             for (const [portId, value] of portOutputs) {
@@ -171,11 +167,10 @@ export class NetGraph {
         for (const [netId, drivers] of netDrivers) {
             const net = this.nets.get(netId);
             if (!net) continue;
-            const resolved: BusValue = drivers[0].map((_, i) =>
-                resolveNet(drivers.map(d => d[i] ?? 'Z'))
-            );
+            // Since we use single-bit LogicState globally for now, we resolve normally.
+            const resolved: LogicState = LogicValue.resolve(drivers);
             net.value = resolved;
-            net.error = resolved.some(v => v === 'X');
+            net.error = (resolved === 'X');
         }
     }
 
@@ -250,7 +245,7 @@ export class NetGraph {
                 id, bits,
                 segments: group.segs,
                 ports: group.ports,
-                value: floatingBus(bits),
+                value: 'Z',
                 error: false,
             };
             this.nets.set(id, net);

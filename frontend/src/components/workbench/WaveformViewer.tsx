@@ -8,6 +8,7 @@
 
 import React, { useRef, useEffect, useCallback, useState } from 'react';
 import { useWorkbenchStore } from '../../stores/useWorkbenchStore';
+import { LogicState } from '../../types/circuit';
 
 const ROW_H = 36;
 const LABEL_W = 110;
@@ -110,15 +111,16 @@ export const WaveformViewer: React.FC = () => {
 
             const toX = (ns: number) => LABEL_W + ns / nsPerPx;
             const toY = (logic: boolean) => rowTop + (logic ? HIGH_Y : LOW_Y);
+            const isHigh = (val: LogicState | LogicState[]) => Array.isArray(val) ? val[0] === 1 : val === 1;
 
             let prevX = toX(samples[0].timeNs);
-            let prevY = toY(samples[0].value && samples[0].value[0] === 1 ? true : false);
+            let prevY = toY(isHigh(samples[0].value));
             ctx.moveTo(prevX, prevY);
 
             for (let i = 1; i < samples.length; i++) {
                 const s = samples[i];
                 const x = toX(s.timeNs);
-                const y = toY(s.value && s.value[0] === 1 ? true : false);
+                const y = toY(isHigh(s.value));
                 if (y !== prevY) {
                     ctx.lineTo(prevX, y);   // vertical edge
                 }
@@ -136,7 +138,7 @@ export const WaveformViewer: React.FC = () => {
 
             for (let i = 0; i < samples.length; i++) {
                 const x = toX(samples[i].timeNs);
-                const isHighResult = samples[i].value && samples[i].value[0] === 1;
+                const isHighResult = isHigh(samples[i].value);
                 if (isHighResult && !inHigh) { inHigh = true; highStart = x; }
                 if (!isHighResult && inHigh) {
                     ctx.rect(highStart, rowTop + HIGH_Y, x - highStart, SIGNAL_H);

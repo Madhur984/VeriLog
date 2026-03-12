@@ -7,25 +7,16 @@
 
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
-import { WireSegment } from '../engine/NetGraph';
-import type { BusValue } from '../engine/LogicValue';
+import { WireSegment, LogicState, CanvasNodeData, SimulationSnapshot } from '../types/circuit';
 import { optimizeSegments, TempSeg } from '../engine/WireOptimizer';
 
 // ── UI Data Models ─────────────────────────────────────────────────────────────
 
-export interface CanvasNodeData {
-    id: string;
-    type: string;
-    x: number;
-    y: number;
-    rotation: number;
-    label: string;
-    params: Record<string, unknown>;
-}
+// Removed local CanvasNodeData to use types/circuit.ts one
 
 export interface WaveformSample {
     timeNs: number;
-    value: BusValue;
+    value: LogicState | LogicState[];
 }
 
 export interface ProbeEntry {
@@ -46,10 +37,10 @@ interface WorkbenchState {
     simRunning: boolean;
     simTimeNs: number;
     tickRateHz: number;
-    /** Output states per component port: Map<nodeId, Map<portId, BusValue>> */
-    portStates: Map<string, Map<string, BusValue>>;
-    /** Net values: mapping from segment.netId -> BusValue */
-    netValues: Map<string, BusValue>;
+    /** Output states per component port: Map<PortID, LogicState | LogicState[]> */
+    portStates: Map<string, LogicState | LogicState[]>;
+    /** Net values: mapping from segment.netId -> LogicState | LogicState[] */
+    netValues: Map<string, LogicState | LogicState[]>;
     netErrors: Set<string>; // net IDs with 'X' values
 
     // ── View & Selection
@@ -89,8 +80,9 @@ interface WorkbenchState {
     addProbe(nodeId: string, portId: string, label?: string): void;
     removeProbe(nodeId: string, portId: string): void;
 
-    applySnapshot(portStates: Map<string, Map<string, BusValue>>, netValues: Map<string, BusValue>, netErrors: Set<string>, timeNs: number): void;
-    appendWaveformSample(probeKey: string, timeNs: number, value: BusValue): void;
+    applySnapshot(snapshot: SimulationSnapshot): void;
+    applyTopology(segmentToNetMap: Record<string, string>): void;
+    appendWaveformSample(probeKey: string, timeNs: number, value: LogicState | LogicState[]): void;
 
     setSimRunning(running: boolean): void;
     setSimTime(ns: number): void;
@@ -136,7 +128,7 @@ export const useWorkbenchStore = create<WorkbenchState>()(
         addNode(type, x, y, params = {}) {
             const id = nextNodeId();
             const node: CanvasNodeData = {
-                id, type, x, y, rotation: 0, label: `${type}_${nodeCounter}`, params
+                id, type, x, y, rotation: 0, parameters: params
             };
             set(state => { state.nodes.set(id, node); });
             return id;
@@ -168,14 +160,14 @@ export const useWorkbenchStore = create<WorkbenchState>()(
         updateNodeParams(id, params) {
             set(state => {
                 const node = state.nodes.get(id);
-                if (node) Object.assign(node.params, params);
+                if (node) Object.assign(node.parameters, params);
             });
         },
 
         updateNodeLabel(id, label) {
             set(state => {
                 const node = state.nodes.get(id);
-                if (node) node.label = label;
+                if (node) node.parameters.label = label;
             });
         },
 
@@ -184,12 +176,13 @@ export const useWorkbenchStore = create<WorkbenchState>()(
         addSegments(segs) {
             const addedIds: string[] = [];
             set(state => {
-                const tempSegs: TempSeg[] = Array.from(state.segments.values()).map(s => ({ ...s }));
-                for (const seg of segs) {
-                    tempSegs.push({ x1: seg.x1, y1: seg.y1, x2: seg.x2, y2: seg.y2 });
-                }
-
-                const optimized = optimizeSegments(tempSegs, nextSegId);
+                const existingSegs: TempSeg[] = Array.from(state.segments.values()).map(s => ({ 
+                    id: s.id, x1: s.x1, y1: s.y1, x2: s.x2, y2: s.y2 
+                }));
+                const newSegs: TempSeg[] = segs.map(s => ({ x1: s.x1, y1: s.y1, x2: s.x2, y2: s.y2 }));
+                
+                const combined = [...existingSegs, ...newSegs];
+                const optimized = optimizeSegments(combined, nextSegId);
 
                 state.segments.clear();
                 for (const s of optimized) {
@@ -198,8 +191,7 @@ export const useWorkbenchStore = create<WorkbenchState>()(
                     state.segments.set(id, {
                         id,
                         x1: s.x1, y1: s.y1,
-                        x2: s.x2, y2: s.y2,
-                        netId: '' // Will be resolved by engine tick
+                        x2: s.x2, y2: s.y2
                     });
                 }
             });
@@ -227,33 +219,12 @@ export const useWorkbenchStore = create<WorkbenchState>()(
         },
 
         commitWire() {
-            set(state => {
-                const w = state.wireInProgress;
-                if (!w) return;
-
-                // Manhattan routing: create up to 2 segments
-                const segs = [];
-                const axis = w.axisPreferred || 'x';
-                if (axis === 'x') {
-                    if (w.x1 !== w.mouseX) segs.push({ x1: w.x1, y1: w.y1, x2: w.mouseX, y2: w.y1 });
-                    if (w.y1 !== w.mouseY) segs.push({ x1: w.mouseX, y1: w.y1, x2: w.mouseX, y2: w.mouseY });
-                } else {
-                    if (w.y1 !== w.mouseY) segs.push({ x1: w.x1, y1: w.y1, x2: w.x1, y2: w.mouseY });
-                    if (w.x1 !== w.mouseX) segs.push({ x1: w.x1, y1: w.mouseY, x2: w.mouseX, y2: w.mouseY });
-                }
-
-                state.wireInProgress = null;
-                // Defer to addSegments logic
-                for (const seg of segs) {
-                    this.addSegments([seg]);
-                }
-            });
-            // Due to immer and calling our own action within an action, we should actually dispatch explicitly 
-            // but the outer layer will do it. We'll reconstruct here to avoid unbound 'this'
             const w = get().wireInProgress;
             if (!w) return;
+
             const axis = w.axisPreferred || 'x';
             const segs: Omit<WireSegment, 'id' | 'netId'>[] = [];
+            
             if (axis === 'x') {
                 if (w.x1 !== w.mouseX) segs.push({ x1: w.x1, y1: w.y1, x2: w.mouseX, y2: w.y1 });
                 if (w.y1 !== w.mouseY) segs.push({ x1: w.mouseX, y1: w.y1, x2: w.mouseX, y2: w.mouseY });
@@ -263,7 +234,9 @@ export const useWorkbenchStore = create<WorkbenchState>()(
             }
 
             set(s => { s.wireInProgress = null; });
-            get().addSegments(segs);
+            if (segs.length > 0) {
+                get().addSegments(segs);
+            }
         },
 
         cancelWire() {
@@ -309,12 +282,21 @@ export const useWorkbenchStore = create<WorkbenchState>()(
 
         // ── Simulation ────────────────────────────────────────────────────────
 
-        applySnapshot(portStates, netValues, netErrors, timeNs) {
+        applyTopology(segmentToNetMap) {
             set(state => {
-                state.portStates = portStates;
-                state.netValues = netValues;
-                state.netErrors = netErrors;
-                state.simTimeNs = timeNs;
+                for (const [segId, netId] of Object.entries(segmentToNetMap)) {
+                    const seg = state.segments.get(segId);
+                    if (seg) seg.netId = netId;
+                }
+            });
+        },
+
+        applySnapshot(snapshot) {
+            set(state => {
+                state.portStates = new Map(Object.entries(snapshot.portStates));
+                state.netValues = new Map(Object.entries(snapshot.netValues));
+                state.netErrors = new Set(snapshot.netErrors);
+                state.simTimeNs = snapshot.timeNs;
             });
         },
 
@@ -323,7 +305,7 @@ export const useWorkbenchStore = create<WorkbenchState>()(
                 if (!state.waveformData[probeKey]) state.waveformData[probeKey] = [];
                 const samples = state.waveformData[probeKey];
                 if (samples.length >= 2000) samples.shift();
-                samples.push({ timeNs, value });
+                samples.push({ timeNs, value: Array.isArray(value) ? value : value }); // Just keep it
             });
         },
 

@@ -1,141 +1,151 @@
-/**
- * engine/ComponentDef.ts — Canonical Component Definition Interface
- *
- * Every logical gate, flip-flop, MUX, Pin, etc. is expressed as a ComponentDef.
- * This is the registry contract that the simulation engine uses to evaluate components.
- *
- * Design mirrors Logisim's component model:
- *  - ports declare their direction and bit width
- *  - evaluate() is called when any input changes
- *  - state allows sequential components (FFs, registers) to hold internal state
- */
-
-import type { BusValue } from './LogicValue';
-
-// ── Port Direction ─────────────────────────────────────────────────────────────
-
-export type PortDirection = 'input' | 'output' | 'inout';
-
-// ── Port Definition (static shape) ────────────────────────────────────────────
+import { LogicState } from '../types/circuit';
+import { LogicValue } from './LogicValue';
 
 export interface PortDef {
-    id: string;
-    direction: PortDirection;
-    bits: number;                     // 1 for single-bit, N for bus
+    id: string; // Internal unique ID
+    direction: 'input' | 'output' | 'inout';
+    bits: number; // Bus width for Logisim compatibility
+    x: number; // Grid X relative to component center (0,0)
+    y: number; // Grid Y relative to center
+    side: 'top' | 'right' | 'bottom' | 'left';
     label: string;
-    /** Grid position relative to component origin */
-    x: number;
-    y: number;
-    /** Which side this port sits on (for visual rendering) */
-    side: 'left' | 'right' | 'top' | 'bottom';
 }
-
-// ── Component Evaluation ───────────────────────────────────────────────────────
-
-export interface EvalContext {
-    /** inputs keyed by port id, each is BusValue of the port's bit width */
-    inputs: Record<string, BusValue>;
-    /** Current internal state — mutable */
-    state: Record<string, unknown>;
-    /** Current simulated time in nanoseconds */
-    timeNs: number;
-    /** Component parameters */
-    params: Record<string, unknown>;
-}
-
-export interface EvalResult {
-    /** outputs keyed by port id */
-    outputs: Record<string, BusValue>;
-    /** Updated internal state (for sequential components) */
-    state?: Record<string, unknown>;
-    /** If set, emit a timed event for this many ns in the future (propagation delay) */
-    delayNs?: number;
-}
-
-// ── Visual Shape ───────────────────────────────────────────────────────────────
 
 export interface ComponentShape {
-    /** Width in grid units (10px each) */
     w: number;
-    /** Height in grid units */
     h: number;
-    /** SVG path for the body, relative to (0,0) top-left */
-    bodyPath?: string;
-    /** IEEE qualifier symbol shown inside */
     symbol: string;
-    /** Border/accent color */
     color: string;
-    /** Logisim-style curved bodies (gates use special shapes) */
-    style: 'rect' | 'and' | 'or' | 'not' | 'triangle' | 'custom';
-    /** Extra SVG elements (bubbles, clock chevron, etc.) */
+    style: 'rect' | 'custom' | 'and' | 'or' | 'not' | 'triangle' | string;
     extras?: string;
 }
 
-// ── Parameter Schema ───────────────────────────────────────────────────────────
-
-export type ParamType = 'int' | 'float' | 'bool' | 'select' | 'string';
-
-export interface ParamDef {
-    key: string;
-    label: string;
-    type: ParamType;
-    default: unknown;
-    min?: number;
-    max?: number;
-    options?: string[];
+export interface EvalContext {
+    inputs: Record<string, LogicValue[]>;
+    params: Record<string, any>;
+    state: any;
 }
 
-// ── Component Definition ───────────────────────────────────────────────────────
+export interface EvalResult {
+    /** Output port states */
+    outputs: Record<string, any>;
+    /** Modified internal memory for stateful devices */
+    state?: any;
+    /** Output propagation delays in nanoseconds. Defaults to ComponentDef values if omitted. */
+    customDelayNs?: Record<string, number>;
+}
 
 export interface ComponentDef {
+    /** Type id (e.g. 'AND_GATE') */
     type: string;
-    label: string;
-    category: 'Wiring' | 'Gates' | 'Plexers' | 'Memory' | 'I/O' | 'Subcircuit';
+    
+    label?: string;
+    category?: string;
+    defaultParams?: Record<string, any>;
+    params?: any[];
+    ports?: (params: Record<string, any>) => PortDef[];
+    shape?: (params: Record<string, any>) => ComponentShape;
+    initState?: () => any;
 
-    /** Default parameters */
-    defaultParams: Record<string, unknown>;
+    /** High-to-Low propagation delay in ns */
+    tpdHL?: number;
+    /** Low-to-High propagation delay in ns */
+    tpdLH?: number;
 
-    /** Parameter schema for the properties panel */
-    params: ParamDef[];
-
-    /** Static port layout — may be overridden by params (e.g. inputCount) */
-    ports(params: Record<string, unknown>): PortDef[];
-
-    /** Visual shape */
-    shape(params: Record<string, unknown>): ComponentShape;
-
-    /** Evaluate the component given inputs and state */
-    evaluate(ctx: EvalContext): EvalResult;
-
-    /** Initialize internal state on component creation */
-    initState(params: Record<string, unknown>): Record<string, unknown>;
+    /** 
+     * Core functional evaluation. Must be deterministic.
+     */
+    eval?: (inputs: Record<string, LogicState>, state: any, params: any) => EvalResult;
+    
+    /** Context-based evaluate (for UI components) */
+    evaluate?: (ctx: EvalContext) => EvalResult;
 }
 
-// ── Component Registry ─────────────────────────────────────────────────────────
+/**
+ * Global registry of all available simulation primitives
+ */
+export const ComponentTable: Record<string, ComponentDef> = {};
 
-const REGISTRY = new Map<string, ComponentDef>();
-
-export function registerComponent(def: ComponentDef): void {
-    REGISTRY.set(def.type, def);
+export function registerComponent(def: ComponentDef) {
+    ComponentTable[def.type] = def;
 }
 
 export function getComponentDef(type: string): ComponentDef | undefined {
-    return REGISTRY.get(type);
-}
-
-export function getAllComponentDefs(): ComponentDef[] {
-    return Array.from(REGISTRY.values());
-}
-
-export function getRegistry(): Map<string, ComponentDef> {
-    return REGISTRY;
+    return ComponentTable[type];
 }
 
 export function getComponentsByCategory(): Map<string, ComponentDef[]> {
     const map = new Map<string, ComponentDef[]>();
-    for (const def of REGISTRY.values()) {
-        if (!map.has(def.category)) map.set(def.category, []);
-        map.get(def.category)!.push(def);
+    for (const def of Object.values(ComponentTable)) {
+        const cat = def.category || 'Uncategorized';
+        if (!map.has(cat)) map.set(cat, []);
+        map.get(cat)!.push(def);
     }
     return map;
 }
+
+// --- Base Implementations ---
+
+ComponentTable['AND'] = {
+    type: 'AND',
+    tpdHL: 5, tpdLH: 5,
+    eval: (inputs) => {
+        // Multi-input AND
+        let output: LogicState = 1;
+        for (const port in inputs) {
+            output = LogicValue.and(output, inputs[port]);
+            if (output === 0) break; // Optimization
+        }
+        return { outputs: { out: output } };
+    }
+};
+
+ComponentTable['OR'] = {
+    type: 'OR',
+    tpdHL: 5, tpdLH: 5,
+    eval: (inputs) => {
+        let output: LogicState = 0;
+        for (const port in inputs) {
+            output = LogicValue.or(output, inputs[port]);
+            if (output === 1) break; 
+        }
+        return { outputs: { out: output } };
+    }
+};
+
+ComponentTable['NOT'] = {
+    type: 'NOT',
+    tpdHL: 3, tpdLH: 3,
+    eval: (inputs) => {
+        return { outputs: { out: LogicValue.not(inputs['in']) } };
+    }
+};
+
+ComponentTable['SWITCH'] = {
+    type: 'SWITCH',
+    tpdHL: 1, tpdLH: 1, // Almost instantaneous physical switch
+    eval: (_inputs, _state, params) => {
+        // The switch state is controlled EXTERNALLY via UI interaction (params.on)
+        return { outputs: { out: params.on ? 1 : 0 } };
+    }
+};
+
+ComponentTable['CLOCK'] = {
+    type: 'CLOCK',
+    tpdHL: 1, tpdLH: 1,
+    eval: (_inputs, _state, _params) => {
+        // Clocks must schedule themselves recursively inside SimEngine
+        // For now, it just emits its internally tracked state
+        const current = _state?.val ?? 0;
+        return { outputs: { out: current } };
+    }
+};
+
+ComponentTable['PROBE'] = {
+    type: 'PROBE',
+    tpdHL: 0, tpdLH: 0,
+    eval: (_inputs) => {
+        // Probes have no outputs, they just sit there visually
+        return { outputs: {} };
+    }
+};

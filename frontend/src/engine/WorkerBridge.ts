@@ -1,162 +1,131 @@
-/**
- * engine/WorkerBridge.ts — Main-thread interface to sim.worker.ts
- *
- * Manages the worker lifecycle, serializes circuit graph (nodes + segments),
- * deserializes snapshots, and updates the Zustand store at a throttled 30fps rate.
- */
-
+import { CanvasNodeData, WireSegment, SimulationSnapshot, PortID, LogicState } from '../types/circuit';
 import { useWorkbenchStore } from '../stores/useWorkbenchStore';
-import type { SerializedWorkerGraph, SerializedSnapshot } from './sim.worker';
-import type { BusValue } from './LogicValue';
 
-export class WorkerBridge {
+type WorkerMessage = 
+    | { type: 'INIT' }
+    | { type: 'LOAD_GRAPH'; payload: { nodes: CanvasNodeData[]; segments: WireSegment[] } }
+    | { type: 'TICK'; payload: { targetTimeNs: number } }
+    | { type: 'INTERACT_PORT'; payload: { portId: PortID; state: LogicState } };
+
+/**
+ * Singleton bridge handling all structured communication between the React Main Thread
+ * and the Web Worker Simulation engine.
+ */
+class WorkerBridge {
     private worker: Worker | null = null;
-    private rafId: number | null = null;
-    private lastSnapshotTime = 0;
-    private readonly SNAPSHOT_INTERVAL_MS = 1000 / 30; // 30fps cap for React updates
+    
+    // Configurable clock speeds
+    private targetFrequencyHz: number = 1;
+    private isRunning: boolean = false;
+    private timerId: number | null = null;
+    private virtualTimeNs: number = 0;
 
-    /** Tick payload — how many simulated nanoseconds per frame */
-    private deltaNs: number;
+    constructor() {}
 
-    constructor(deltaNs = 100) {
-        this.deltaNs = deltaNs;
-    }
-
-    /** Spawn the Web Worker and attach message handlers */
-    init(): void {
+    /**
+     * Spins up the worker. Should only be called once when the app mounts.
+     */
+    public init() {
         if (this.worker) return;
 
-        this.worker = new Worker(
-            new URL('./sim.worker.ts', import.meta.url),
-            { type: 'module' }
-        );
+        // Vite-specific worker import
+        this.worker = new Worker(new URL('./sim.worker.ts', import.meta.url), { type: 'module' });
 
-        this.worker.onmessage = (ev: MessageEvent) => {
-            const msg = ev.data;
-            if (msg.type === 'SNAPSHOT') {
-                this.handleSnapshot(msg as SerializedSnapshot);
-            } else if (msg.type === 'ERROR') {
-                console.error('[WorkerBridge]', msg.message);
+        // Bind incoming snapshot processor
+        this.worker.onmessage = (e: MessageEvent) => {
+            if (e.data.type === 'SNAPSHOT') {
+                const snapshot = e.data.payload as SimulationSnapshot;
+                // Dispatch directly to Zustand. React components listening to this store will auto-render.
+                useWorkbenchStore.getState().applySnapshot(snapshot);
+            } else if (e.data.type === 'TOPOLOGY_UPDATE') {
+                useWorkbenchStore.getState().applyTopology(e.data.payload.segmentToNet);
             }
         };
 
-        this.worker.onerror = (err: ErrorEvent) => {
-            console.error('[WorkerBridge] Worker error:', err.message);
+        this.post({ type: 'INIT' });
+    }
+
+    /**
+     * Sends the current visual graph to the worker for compilation.
+     * Used exclusively by the headless `WorkerSync.tsx` component.
+     */
+    public loadGraph(nodes: CanvasNodeData[], segments: WireSegment[]) {
+        this.post({
+            type: 'LOAD_GRAPH',
+            payload: { nodes, segments }
+        });
+    }
+
+    /**
+     * User clicks a switch or pushes a button on the canvas.
+     */
+    public interactPoint(portId: PortID, state: LogicState) {
+        this.post({
+            type: 'INTERACT_PORT',
+            payload: { portId, state }
+        });
+    }
+
+    // --- Simulation Clock Interface ---
+
+    public play() {
+        if (this.isRunning) return;
+        this.isRunning = true;
+        
+        let lastRealTime = performance.now();
+        
+        const tickLoop = () => {
+             if (!this.isRunning) return;
+             
+             const now = performance.now();
+             const deltaMs = now - lastRealTime;
+             lastRealTime = now;
+             
+             // Convert Delta Real-Time into Simulation Nanoseconds
+             // High Hz requires scaling real milliseconds heavily into virtual nanoseconds to avoid locking the UI thread
+             const virtualDeltaNs = (deltaMs * 1_000_000) * (this.targetFrequencyHz / 1000); 
+             this.virtualTimeNs += virtualDeltaNs;
+
+             this.post({
+                 type: 'TICK',
+                 payload: { targetTimeNs: this.virtualTimeNs }
+             });
+             
+             // Target max 30-60Hz communication overhead depending on browser
+             this.timerId = window.requestAnimationFrame(tickLoop);
         };
+        
+        this.timerId = window.requestAnimationFrame(tickLoop);
     }
 
-    /** Push the current circuit graph to the worker */
-    loadGraph(): void {
-        if (!this.worker) return;
-        const state = useWorkbenchStore.getState();
-        const nodes = Array.from(state.nodes.values());
-        const segments = Array.from(state.segments.values());
-
-        const graph: SerializedWorkerGraph = {
-            nodes,
-            segments
-        };
-
-        this.worker.postMessage({ type: 'LOAD_GRAPH', graph });
-    }
-
-    /** Start the tick loop (attaches to rAF) */
-    start(): void {
-        if (this.rafId !== null) return;
-        useWorkbenchStore.getState().setSimRunning(true);
-        const tick = () => {
-            if (!useWorkbenchStore.getState().simRunning) {
-                this.stop();
-                return;
-            }
-            this.worker?.postMessage({ type: 'TICK', deltaNs: this.deltaNs });
-            this.rafId = requestAnimationFrame(tick);
-        };
-        this.rafId = requestAnimationFrame(tick);
-    }
-
-    /** Pause the tick loop */
-    stop(): void {
-        if (this.rafId !== null) {
-            cancelAnimationFrame(this.rafId);
-            this.rafId = null;
+    public pause() {
+        this.isRunning = false;
+        if (this.timerId !== null) {
+            cancelAnimationFrame(this.timerId);
+            this.timerId = null;
         }
-        useWorkbenchStore.getState().setSimRunning(false);
     }
 
-    /** Single-step (one tick) */
-    step(): void {
-        this.worker?.postMessage({ type: 'TICK', deltaNs: this.deltaNs });
+    public step() {
+        // Step exactly 1 clock cycle worth of nanoseconds forward
+        this.virtualTimeNs += (1 / this.targetFrequencyHz) * 1_000_000_000;
+        this.post({
+            type: 'TICK',
+            payload: { targetTimeNs: this.virtualTimeNs }
+        });
     }
 
-    /** Reset simulation */
-    reset(): void {
-        this.stop();
-        this.worker?.postMessage({ type: 'RESET' });
-        useWorkbenchStore.getState().resetSim();
+    public setFrequency(hz: number) {
+        this.targetFrequencyHz = hz;
     }
 
-    /** Terminate worker completely */
-    destroy(): void {
-        this.stop();
-        this.worker?.terminate();
-        this.worker = null;
-    }
-
-    // ── Input Interactions ──────────────────────────────────────────────────
-
-    /** Simulate user clicking a memory/button port */
-    interact(nodeId: string, portId: string, data?: unknown) {
-        this.worker?.postMessage({ type: 'INTERACT_PORT', nodeId, portId, data });
-    }
-
-    /** Update a component parameter */
-    updateParam(nodeId: string, key: string, value: unknown) {
-        this.worker?.postMessage({ type: 'SET_PARAM', nodeId, key, value });
-    }
-
-    // ── Private ────────────────────────────────────────────────────────────────
-
-    private handleSnapshot(snap: SerializedSnapshot): void {
-        const now = performance.now();
-
-        // Throttle React store updates to 30fps
-        if (now - this.lastSnapshotTime < this.SNAPSHOT_INTERVAL_MS) return;
-        this.lastSnapshotTime = now;
-
-        const { applySnapshot, appendWaveformSample, probes } = useWorkbenchStore.getState();
-
-        // Reconstruct Maps
-        const portStates = new Map<string, Map<string, BusValue>>();
-        for (const [nodeId, portMapObj] of Object.entries(snap.portStatesObj)) {
-            const portMap = new Map<string, BusValue>();
-            for (const [portId, val] of Object.entries(portMapObj)) {
-                portMap.set(portId, val);
-            }
-            portStates.set(nodeId, portMap);
+    private post(msg: WorkerMessage) {
+        if (!this.worker) {
+            console.warn("WorkerBridge not initialized, ignoring message", msg.type);
+            return;
         }
-
-        const netValues = new Map<string, BusValue>();
-        for (const [netId, val] of Object.entries(snap.netValuesObj)) {
-            netValues.set(netId, val);
-        }
-
-        const netErrors = new Set<string>(snap.netErrorsArr);
-
-        applySnapshot(portStates, netValues, netErrors, snap.timeNs);
-
-        // Append waveform samples for probed nodes
-        for (const probe of probes) {
-            const ports = portStates.get(probe.nodeId);
-            if (ports) {
-                const val = ports.get(probe.portId);
-                if (val !== undefined) {
-                    appendWaveformSample(`${probe.nodeId}:${probe.portId}`, snap.timeNs, val);
-                }
-            }
-        }
+        this.worker.postMessage(msg);
     }
 }
 
-/** Singleton bridge shared by the Workbench */
-export const workerBridge = new WorkerBridge(100);
+export const workerBridge = new WorkerBridge();

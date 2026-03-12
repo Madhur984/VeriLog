@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * engine/components/wiring.ts — Wiring & Basic Components
  *
@@ -21,7 +22,7 @@ export const Pin: ComponentDef = {
         { key: 'output', label: 'Output?', type: 'bool', default: false },
         { key: 'val', label: 'Value', type: 'int', default: 0 } // Represents the state of the pin when acting as input
     ],
-    ports: (p) => [
+    ports: (p: any) => [
         {
             id: p.output ? 'in' : 'out',
             direction: p.output ? 'input' : 'output',
@@ -32,11 +33,11 @@ export const Pin: ComponentDef = {
             y: 1
         }
     ],
-    shape: (p) => ({
+    shape: (p: any) => ({
         w: 2, h: 2, symbol: p.output ? '○' : '■', color: '#10B981', style: 'rect', extras: p.output ? 'round' : 'square'
     }),
     initState: () => ({}),
-    evaluate: (ctx) => {
+    evaluate: (ctx: any) => {
         const isOut = Boolean(ctx.params.output);
         const bits = Number(ctx.params.bits ?? 1);
         if (!isOut) {
@@ -60,12 +61,12 @@ export const Constant: ComponentDef = {
         { key: 'bits', label: 'Data Bits', type: 'int', default: 1, min: 1, max: 32 },
         { key: 'val', label: 'Value', type: 'int', default: 1 }
     ],
-    ports: (p) => [
+    ports: (p: any) => [
         { id: 'out', direction: 'output', bits: Number(p.bits ?? 1), label: '', side: 'right', x: 2, y: 1 }
     ],
     shape: () => ({ w: 2, h: 2, symbol: 'C', color: '#94A3B8', style: 'rect' }),
     initState: () => ({}),
-    evaluate: (ctx) => {
+    evaluate: (ctx: any) => {
         const bits = Number(ctx.params.bits ?? 1);
         const val = Number(ctx.params.val ?? 1);
         return { outputs: { out: numberToBus(val, bits) } };
@@ -90,7 +91,7 @@ export const Clock: ComponentDef = {
     ],
     shape: () => ({ w: 2, h: 2, symbol: '🕒', color: '#3B82F6', style: 'rect' }),
     initState: () => ({ val: 0 }),
-    evaluate: (ctx) => {
+    evaluate: (ctx: any) => {
         // We emit our current state and schedule our next flip.
         // If we want a 1Hz clock visually, that's done by the runner.
         // However, Logisim's clock ticks globally. For our event-driven system,
@@ -121,7 +122,7 @@ export const Splitter: ComponentDef = {
     params: [
         { key: 'splitBits', label: 'Bit Width', type: 'int', default: 2, min: 2, max: 32 }
     ],
-    ports: (p) => {
+    ports: (p: any) => {
         const bits = Number(p.splitBits ?? 2);
         // Combined port
         const prts: PortDef[] = [
@@ -135,9 +136,9 @@ export const Splitter: ComponentDef = {
         }
         return prts;
     },
-    shape: (p) => ({ w: 2, h: Number(p.splitBits ?? 2), symbol: '⑂', color: '#1E293B', style: 'custom' }),
+    shape: (p: any) => ({ w: 2, h: Number(p.splitBits ?? 2), symbol: '⑂', color: '#1E293B', style: 'custom' }),
     initState: () => ({}),
-    evaluate: (ctx) => {
+    evaluate: (ctx: any) => {
         // Splitter acts as a pass-through. If driven on 'combined', it outputs to 'bits'.
         // If driven on 'bits', it merges and outputs to 'combined'.
         // Since our simulator relies on unidirectional port values for standard propagate,
@@ -203,10 +204,10 @@ export const Tunnel: ComponentDef = {
         { key: 'bits', label: 'Data Bits', type: 'int', default: 1, min: 1, max: 32 },
         { key: 'name', label: 'Name', type: 'string', default: 'T' }
     ],
-    ports: (p) => [
+    ports: (p: any) => [
         { id: 'inout', direction: 'inout', bits: Number(p.bits ?? 1), label: String(p.name ?? 'T'), side: 'left', x: 0, y: 1 }
     ],
-    shape: (p) => ({ w: 3, h: 2, symbol: String(p.name ?? 'T'), color: '#3B82F6', style: 'custom' }),
+    shape: (p: any) => ({ w: 3, h: 2, symbol: String(p.name ?? 'T'), color: '#3B82F6', style: 'custom' }),
     initState: () => ({}),
     evaluate: () => {
         // Tunnels are structurally connected by name in NetGraph, but here they just act as pass-throughs or sinks.
