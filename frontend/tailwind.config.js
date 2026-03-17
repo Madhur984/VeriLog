@@ -17,6 +17,11 @@ export default {
         },
         extend: {
             colors: {
+                midnight: "#020617",
+                chart: {
+                    cyan: "#06b6d4",
+                    blue: "#3b82f6",
+                },
                 border: "hsl(var(--border))",
                 input: "hsl(var(--input))",
                 ring: "hsl(var(--ring))",
@@ -78,31 +83,7 @@ export default {
                     500: '#F59E0B',
                 },
             },
-            borderRadius: {
-                lg: "var(--radius)",
-                md: "calc(var(--radius) - 2px)",
-                sm: "calc(var(--radius) - 4px)",
-            },
-            fontFamily: {
-                sans: ['DM Sans', 'Inter', 'sans-serif'],
-                heading: ['Space Grotesk', 'DM Sans', 'sans-serif'],
-                display: ['Space Grotesk', 'sans-serif'],
-                mono: ['Roboto Mono', 'monospace'],
-            },
-            keyframes: {
-                "accordion-down": {
-                    from: { height: "0" },
-                    to: { height: "var(--radix-accordion-content-height)" },
-                },
-                "accordion-up": {
-                    from: { height: "var(--radix-accordion-content-height)" },
-                    to: { height: "0" },
-                },
-            },
-            animation: {
-                "accordion-down": "accordion-down 0.2s ease-out",
-                "accordion-up": "accordion-up 0.2s ease-out",
-            },
+
         },
     },
     plugins: [require("tailwindcss-animate")],

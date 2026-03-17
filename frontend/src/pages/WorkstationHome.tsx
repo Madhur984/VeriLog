@@ -279,7 +279,7 @@ export const WorkstationHome: React.FC = () => {
     }, [completedModuleIds]);
 
     const MODULE_ROUTES: Record<string, string> = {
-        signals: '/module/1',
+        signals: '/module/signal-must-return',
         analog_digital: '/module/2',
         binary_awakening: '/module/3',
         logic_gates: '/module/4',
