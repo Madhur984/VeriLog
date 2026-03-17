@@ -285,15 +285,15 @@ export const WorkstationHome: React.FC = () => {
         logic_gates: '/module/4',
         kmap_optimization: '/module/5',
         // Branch modules → associated labs
-        B1: '/circuit-lab',
-        B2: '/circuit-lab',
-        B3: '/circuit-lab',
+        B1: '/workbench',
+        B2: '/workbench',
+        B3: '/workbench',
         D1: '/fsm',
         D2: '/fsm',
         D3: '/fsm',
-        V1: '/verilog',
-        V2: '/verilog',
-        V3: '/verilog',
+        V1: '/eda-playground',
+        V2: '/eda-playground',
+        V3: '/eda-playground',
     };
 
     const getModule = useCallback((id: string) => dynamicModules.find(m => m.id === id)!, [dynamicModules]);
@@ -362,9 +362,10 @@ export const WorkstationHome: React.FC = () => {
         { title: 'Boss Arena', icon: Gamepad2, path: '/boss-arena' },
         { title: 'Workbench', icon: FlaskConical, path: '/workbench' },
         { title: 'CPU Lab', icon: Cpu, path: '/cpu-lab' },
+        { title: 'EDA Playground', icon: Play, path: '/eda-playground' },
         { title: 'Community', icon: Users, path: '/community' },
         { title: 'HW LeetCode', icon: Zap, path: '/hw-leetcode' },
-        { title: 'Progress', icon: BarChart3, path: '/skill-tree' },
+        { title: 'Progress', icon: BarChart3, path: '/progress' },
         { title: 'Modules', icon: BookOpen, path: '/portal' },
         { title: 'Portfolio', icon: Shield, path: '/portfolio' },
         { title: 'Settings', icon: Settings, path: '/portfolio' },

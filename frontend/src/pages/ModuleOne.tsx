@@ -15,7 +15,7 @@ import { useEngagementAdapter as useXPSystem } from '../hooks/useEngagementAdapt
 import { useVoltMonkeyMentor } from '../hooks/useVoltMonkeyMentor';
 import { useGamificationStore } from '../stores/gamificationStore';
 import { BadgeToast } from '../components/level2/BadgeToast';
-import { CircuitLab } from '../circuit-lab/CircuitLab';
+
 import '../components/level1/level1.css';
 
 /* ═══════════════════════════════════════════════════════════════════════
@@ -551,10 +551,11 @@ linear - gradient(rgba(0, 212, 255, 0.04) 1px, transparent 1px),
                                         background: 'rgba(0,0,0,0.2)',
                                         border: `1px solid ${T.border} `
                                     }}>
-                                        <CircuitLab
-                                            standalone={false}
-                                            onCircuitComplete={handleLabWireSnap}
-                                        />
+                                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: 24 }}>
+                                            <Zap size={48} color={T.accent} />
+                                            <p style={{ color: T.text, fontSize: 18, textAlign: 'center' }}>Laboratory simulation has been moved to the Workbench.</p>
+                                            <EnterpriseBtn label="Complete Lab Phase" onClick={handleLabWireSnap} />
+                                        </div>
                                     </div>
 
                                     {labDone && (

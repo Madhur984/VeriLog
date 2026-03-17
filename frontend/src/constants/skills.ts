@@ -25,11 +25,11 @@ export const SKILLS: SkillNode[] = [
     // Tier 2
     { id: 'analog-digital', title: 'Analog vs Digital', tier: 2, domain: 'foundations', xpRequired: 50, prerequisites: ['signals'], route: '/module/3', description: 'Continuous signals vs. discrete binary representation.', x: 300, y: 300 },
     { id: 'binary', title: 'Binary Systems', tier: 2, domain: 'digital', xpRequired: 80, prerequisites: ['analog-digital'], route: '/module/3', description: 'Number bases, 2\'s complement, binary arithmetic.', x: 500, y: 200 },
-    { id: 'logic-gates', title: 'Logic Gates', tier: 2, domain: 'digital', xpRequired: 80, prerequisites: ['analog-digital'], route: '/circuit-lab', description: 'AND, OR, NOT, NAND, NOR, XOR — gate library unlocked.', x: 500, y: 400 },
+    { id: 'logic-gates', title: 'Logic Gates', tier: 2, domain: 'digital', xpRequired: 80, prerequisites: ['analog-digital'], route: '/workbench', description: 'AND, OR, NOT, NAND, NOR, XOR — gate library unlocked.', x: 500, y: 400 },
 
     // Tier 3
     { id: 'boolean', title: 'Boolean Algebra', tier: 3, domain: 'digital', xpRequired: 150, prerequisites: ['binary', 'logic-gates'], description: 'De Morgan\'s laws, minimization, Karnaugh maps.', x: 700, y: 300 },
-    { id: 'combi', title: 'Combinational Circuits', tier: 3, domain: 'digital', xpRequired: 200, prerequisites: ['logic-gates'], route: '/circuit-lab', description: 'Adders, multiplexers, decoders, encoders.', x: 700, y: 500 },
+    { id: 'combi', title: 'Combinational Circuits', tier: 3, domain: 'digital', xpRequired: 200, prerequisites: ['logic-gates'], route: '/workbench', description: 'Adders, multiplexers, decoders, encoders.', x: 700, y: 500 },
     { id: 'sequential', title: 'Sequential Logic', tier: 3, domain: 'digital', xpRequired: 280, prerequisites: ['combi'], description: 'Latches, flip-flops, registers, counters.', x: 900, y: 400 },
     { id: 'fsm', title: 'FSM Design', tier: 3, domain: 'digital', xpRequired: 320, prerequisites: ['sequential'], route: '/fsm', description: 'Moore/Mealy machines, state encoding, FSM Playground unlocked.', x: 900, y: 600 },
 

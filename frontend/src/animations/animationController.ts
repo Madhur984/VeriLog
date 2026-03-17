@@ -1,7 +1,7 @@
 /**
  * animationController.ts
  *
- * Central RAF orchestrator + event bus for all circuit-lab animations.
+ * Central RAF orchestrator + event bus for all Workbench animations.
  * Zero React involvement — pure imperative SVG mutation.
  */
 

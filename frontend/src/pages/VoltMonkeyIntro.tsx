@@ -203,7 +203,7 @@ export function VoltMonkeyIntro() {
         setIsExiting(true);
 
         window.setTimeout(() => {
-            navigate('/circuit-lab');
+            navigate('/workbench');
         }, 550);
     }, [navigate]);
 
@@ -297,7 +297,7 @@ export function VoltMonkeyIntro() {
 
             {/* ── Skip button (accessibility) ── */}
             <button
-                onClick={() => navigate('/circuit-lab')}
+                onClick={() => navigate('/workbench')}
                 style={{
                     position: 'absolute',
                     bottom: 32,

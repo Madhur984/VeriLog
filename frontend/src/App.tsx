@@ -22,7 +22,11 @@ import { LogicStudio } from './pages/LogicStudio';
 import { DebugMissionPage } from './pages/DebugMissionPage';
 import { TrainingCockpitPage } from './pages/TrainingCockpitPage';
 import { SignalPlayground } from './pages/SignalPlayground';
-import { CircuitLab } from './circuit-lab/CircuitLab';
+import { FSMPlayground } from './pages/FSMPlayground';
+import { CPULabPage } from './pages/CPULabPage';
+import { HardwareLeetCodePage } from './pages/HardwareLeetCodePage';
+import { VerilogPlayground } from './pages/VerilogPlayground';
+
 import { VoltMonkeyIntro } from './pages/VoltMonkeyIntro';
 import { WhatAreSignals } from './pages/WhatAreSignals';
 import Workbench from './pages/Workbench';
@@ -58,10 +62,15 @@ export default function App() {
                         
                         {/* Features & Labs with Layout */}
                         <Route path="/ai-lab" element={<AiLab />} />
-                        <Route path="/circuit-lab" element={<CircuitLab />} />
+
                         <Route path="/logic-studio" element={<LogicStudio />} />
                         <Route path="/playground" element={<SignalPlayground />} />
                         <Route path="/training" element={<TrainingCockpitPage />} />
+                        <Route path="/fsm" element={<FSMPlayground />} />
+                        <Route path="/cpu-lab" element={<CPULabPage />} />
+                        <Route path="/hw-leetcode" element={<HardwareLeetCodePage />} />
+                        <Route path="/eda-playground" element={<VerilogPlayground />} />
+                        <Route path="/progress" element={<Navigate to="/skill-tree" replace />} />
                     </Route>
 
                     {/* Debug Missions (Standalone) */}
