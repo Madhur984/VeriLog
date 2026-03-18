@@ -153,6 +153,55 @@
     pointer-events: none;
 }
 
+/* ─── Hessian Bloom — Core Concept Discovery Feedback ────────────────── */
+
+@keyframes bloom-propagate {
+    0% {
+        stroke-dashoffset: 1000;
+        filter: blur(4px) brightness(1);
+        opacity: 0.3;
+    }
+    50% {
+        filter: blur(8px) brightness(2.5);
+        opacity: 0.8;
+    }
+    100% {
+        stroke-dashoffset: 0;
+        filter: blur(4px) brightness(1.2);
+        opacity: 0.6;
+    }
+}
+
+.vl-bloom-trace {
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    animation: bloom-propagate 2.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    stroke: #00D2FF;
+    stroke-width: 8;
+    fill: none;
+    pointer-events: none;
+    filter: drop-shadow(0 0 15px rgba(0, 210, 255, 0.6));
+}
+
+/* ─── Magnetic Pull — Tactile snapping cues ──────────────────────────── */
+
+@keyframes magnetic-pull-cue {
+    0%, 100% {
+        transform: scale(1);
+        border-color: rgba(0, 210, 255, 0.2);
+    }
+    50% {
+        transform: scale(1.05);
+        border-color: rgba(0, 210, 255, 0.8);
+        box-shadow: 0 0 20px rgba(0, 210, 255, 0.3);
+    }
+}
+
+.vl-magnetic-cue {
+    animation: magnetic-pull-cue 1.5s ease-in-out infinite;
+    pointer-events: none;
+}
+
 
 /* ─── Short Circuit — controlled red ramp, no chaotic flash ─────────── */
 
@@ -782,4 +831,80 @@
         stroke-dashoffset: 0 !important;
         opacity: 1 !important;
     }
+
+    .vl-gap-intensified,
+    .vl-segment-nudge,
+    .vl-energy-ripple,
+    .vl-ghost-preview {
+        animation: none !important;
+    }
 }
+
+/* ─── Onboarding Engine — Guided Discovery Animations ────────────────── */
+
+/* Gap glow intensification — step 1 hint */
+@keyframes gap-intensify {
+    0%, 100% {
+        opacity: 0.12;
+        transform: scale(1);
+        filter: blur(24px);
+    }
+    50% {
+        opacity: 0.55;
+        transform: scale(1.15);
+        filter: blur(32px);
+    }
+}
+
+.vl-gap-intensified {
+    animation: gap-intensify 1.4s ease-in-out infinite;
+    will-change: opacity, transform, filter;
+}
+
+/* Segment nudge — step 2 hint (±8px x oscillation) */
+@keyframes segment-nudge {
+    0%, 100% { transform: translate3d(0, 0, 0); }
+    25%       { transform: translate3d(8px, 0, 0); }
+    75%       { transform: translate3d(-8px, 0, 0); }
+}
+
+.vl-segment-nudge {
+    animation: segment-nudge 0.5s cubic-bezier(0.4, 0, 0.2, 1) 2;
+    will-change: transform;
+}
+
+/* Energy ripple — radiates outward from snap point */
+@keyframes energy-ripple {
+    0% {
+        opacity: 0.9;
+        transform: scale(1);
+        border-color: rgba(0, 210, 255, 0.9);
+        box-shadow: 0 0 12px rgba(0, 210, 255, 0.6);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(1.1);
+        border-color: rgba(0, 210, 255, 0);
+        box-shadow: 0 0 40px rgba(0, 210, 255, 0);
+    }
+}
+
+.vl-energy-ripple {
+    animation: energy-ripple 700ms cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+    will-change: opacity, transform, box-shadow;
+}
+
+/* Ghost preview — drifts toward snap zone at 40% opacity */
+@keyframes ghost-drift {
+    0%   { opacity: 0; transform: translate3d(var(--ghost-dx, 0px), var(--ghost-dy, 0px), 0); }
+    30%  { opacity: 0.4; }
+    70%  { opacity: 0.4; transform: translate3d(0, 0, 0); }
+    100% { opacity: 0; transform: translate3d(0, 0, 0); }
+}
+
+.vl-ghost-preview {
+    animation: ghost-drift 1.4s ease-in-out infinite;
+    animation-delay: 0.2s;
+    will-change: opacity, transform;
+    pointer-events: none;
+}

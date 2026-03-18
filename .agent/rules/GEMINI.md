@@ -69,7 +69,7 @@ When auto-applying an agent, inform the user:
 
 1. **Silent Analysis**: No verbose meta-commentary ("I am analyzing...").
 2. **Respect Overrides**: If user mentions `@agent`, use it.
-3. **Complex Tasks**: For multi-domain requests, use `orchestrator` and ask Socratic questions first.
+3. **Complex Tasks**: For multi-domain requests, use `orchestrator` and proceed with analysis.
 
 ---
 
@@ -141,8 +141,9 @@ When user's prompt is NOT in English:
 
 **For complex requests, STOP and ASK first:**
 
-### 🛑 GLOBAL SOCRATIC GATE (TIER 0)
+### 🛑 GLOBAL SOCRATIC GATE (TIER 0) [DISABLED PER USER REQUEST]
 
+<!--
 **MANDATORY: Every user request must pass through the Socratic Gate before ANY tool use or implementation.**
 
 | Request Type            | Strategy       | Required Action                                                   |
@@ -159,6 +160,7 @@ When user's prompt is NOT in English:
 2. **Handle Spec-heavy Requests:** When user gives a list (Answers 1, 2, 3...), do NOT skip the gate. Instead, ask about **Trade-offs** or **Edge Cases** (e.g., "LocalStorage confirmed, but should we handle data clearing or versioning?") before starting.
 3. **Wait:** Do NOT invoke subagents or write code until the user clears the Gate.
 4. **Reference:** Full protocol in `@[skills/brainstorming]`.
+-->
 
 ### 🏁 Final Checklist Protocol
 

@@ -5,7 +5,7 @@ import ModuleTopBar from '@/components/ModuleTopBar';
 import ModuleContent from '@/components/ModuleContent';
 
 const SignalMustReturnModule = () => {
-    const [activeSection, setActiveSection] = useState('Signal Propagation');
+    const [activeSection, setActiveSection] = useState('Circuit Discovery Lab');
     const [progress] = useState(0);
 
     const sections = [
