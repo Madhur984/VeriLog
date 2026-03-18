@@ -66,7 +66,7 @@ const BOSSES: BossChallenge[] = [
         phases: [
             { id: 'p1', title: 'Draw State Diagram', tool: 'FSM Playground', toolRoute: '/fsm', description: 'Create a 4-state FSM: RED, GREEN, YELLOW, ALL_RED. Define transitions triggered by a timer tick.', xp: 40 },
             { id: 'p2', title: 'State Transition Table', tool: 'FSM Playground', toolRoute: '/fsm', description: 'Derive the complete next-state table for all state × input combinations. Export it.', xp: 40 },
-            { id: 'p3', title: 'Gate-Level Implementation', tool: 'Circuit Lab', toolRoute: '/workbench', description: 'Build the state register (D flip-flops) + output decoder in Circuit Lab. Verify LED outputs cycle correctly.', xp: 50 },
+            { id: 'p3', title: 'Gate-Level Implementation', tool: 'Circuit Lab', toolRoute: '/circuit-lab', description: 'Build the state register (D flip-flops) + output decoder in Circuit Lab. Verify LED outputs cycle correctly.', xp: 50 },
             { id: 'p4', title: 'Verilog Implementation', tool: 'Verilog Playground', toolRoute: '/verilog', description: 'Write synthesizable Verilog: state register, next-state logic, output logic. Use the Traffic Light FSM exercise as scaffold.', xp: 50 },
             { id: 'p5', title: 'Simulate & Verify', tool: 'Verilog Playground', toolRoute: '/verilog', description: 'Run simulation. Confirm light cycles RED→GREEN→YELLOW→RED with correct timing.', xp: 20 },
         ],
@@ -85,8 +85,8 @@ const BOSSES: BossChallenge[] = [
         description: 'Build a 4-bit binary adder starting from a single-bit full adder in Circuit Lab, chain four together, then optimize with carry-lookahead.',
         concepts: ['Full adder', 'Gate-level design', 'Carry propagation', 'Timing optimization'],
         phases: [
-            { id: 'p1', title: '1-bit Full Adder in Circuit Lab', tool: 'Circuit Lab', toolRoute: '/workbench', description: 'Build the full adder from gates: 2 XOR + 2 AND + 1 OR. Verify Sum and Carry for all 8 input combinations.', xp: 35 },
-            { id: 'p2', title: 'Chain 4 Full Adders', tool: 'Circuit Lab', toolRoute: '/workbench', description: 'Connect 4 full adders in ripple-carry configuration. Connect Cout[n] → Cin[n+1]. Verify 4-bit addition.', xp: 35 },
+            { id: 'p1', title: '1-bit Full Adder in Circuit Lab', tool: 'Circuit Lab', toolRoute: '/circuit-lab', description: 'Build the full adder from gates: 2 XOR + 2 AND + 1 OR. Verify Sum and Carry for all 8 input combinations.', xp: 35 },
+            { id: 'p2', title: 'Chain 4 Full Adders', tool: 'Circuit Lab', toolRoute: '/circuit-lab', description: 'Connect 4 full adders in ripple-carry configuration. Connect Cout[n] → Cin[n+1]. Verify 4-bit addition.', xp: 35 },
             { id: 'p3', title: 'Verilog Full Adder', tool: 'Verilog Playground', toolRoute: '/verilog', description: 'Implement the full adder in Verilog using assign statements. Pass the Full Adder exercise.', xp: 30 },
             { id: 'p4', title: '4-bit Adder Verilog', tool: 'Verilog Playground', toolRoute: '/verilog', description: 'Instantiate 4 full_adder modules. Use wire [4:0] result to capture carry out. Verify all 256 combinations pass.', xp: 50 },
             { id: 'p5', title: 'Carry-Lookahead Upgrade', tool: 'Verilog Playground', toolRoute: '/verilog', description: 'Replace ripple carry with CLA. Compute generate (G=AB) and propagate (P=A⊕B) signals. Measure timing improvement.', xp: 30 },
@@ -126,7 +126,7 @@ const BOSSES: BossChallenge[] = [
         description: 'Implement a complete UART transmitter: 8N1 format with baud rate generator. From shift register design → Verilog implementation → FPGA synthesis.',
         concepts: ['Serial protocol', 'Baud rate generator', 'Shift register', 'State machine'],
         phases: [
-            { id: 'p1', title: 'Shift Register in Circuit Lab', tool: 'Circuit Lab', toolRoute: '/workbench', description: 'Build an 8-bit parallel-to-serial shift register using 8 D flip-flops. Verify serial output matches parallel input MSB-first.', xp: 60 },
+            { id: 'p1', title: 'Shift Register in Circuit Lab', tool: 'Circuit Lab', toolRoute: '/circuit-lab', description: 'Build an 8-bit parallel-to-serial shift register using 8 D flip-flops. Verify serial output matches parallel input MSB-first.', xp: 60 },
             { id: 'p2', title: 'Verilog UART TX', tool: 'Verilog Playground', toolRoute: '/verilog', description: 'Complete the UART Transmitter exercise. Implement state machine: IDLE → START → DATA × 8 → STOP → IDLE.', xp: 80 },
             { id: 'p3', title: 'Baud Rate Generator', tool: 'Verilog Playground', toolRoute: '/verilog', description: 'Add a clock divider module to generate the baud clock from a 50MHz system clock. Target: 9600 baud.', xp: 80 },
             { id: 'p4', title: 'Integration & Waveform', tool: 'Verilog Playground', toolRoute: '/verilog', description: 'Connect UART TX to baud generator. Simulate sending 0xAB (10101011). Verify start → 8 data bits → stop on waveform.', xp: 80 },

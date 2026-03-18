@@ -1,1 +1,1 @@
-export {};
+export { SpaceshipLoader } from './SpaceshipLoader';
