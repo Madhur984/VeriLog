@@ -571,6 +571,7 @@ function setupPanelListeners(panelSelector) {
 }
 
 export function exitFullView(){
+    $('.navbar').show();
     $('.modules').show();
     $('.report-sidebar').show();
     $('#tabsBar').show();
@@ -582,6 +583,7 @@ export function exitFullView(){
 
 export function fullView () {
     const markUp = `<button id='exitViewBtn' >Exit Full Preview</button>`
+    $('.navbar').hide()
     $('.modules').hide()
     $('.report-sidebar').hide()
     $('#tabsBar').hide()

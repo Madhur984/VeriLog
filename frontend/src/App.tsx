@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { GatekeeperLanding } from './pages/GatekeeperLanding';
 import { HeroExperience } from './pages/HeroExperience';
 import { WorkstationHome } from './pages/WorkstationHome';
+import { ModuleOneHub } from './pages/ModuleOneHub';
 import { ModuleTwo } from './pages/ModuleTwo';
 import { ModuleThree } from './pages/ModuleThree';
 import { ModuleFour } from './pages/ModuleFour';
@@ -25,8 +26,9 @@ import { FSMPlayground } from './pages/FSMPlayground';
 import { CPULabPage } from './pages/CPULabPage';
 import { HardwareLeetCodePage } from './pages/HardwareLeetCodePage';
 import { VerilogPlayground } from './pages/VerilogPlayground';
-import ModulePage from './pages/ModulePage';
 
+import { VoltMonkeyIntro } from './pages/VoltMonkeyIntro';
+import { WhatAreSignals } from './pages/WhatAreSignals';
 import Workbench from './pages/Workbench';
 import { CommunityPage } from './pages/CommunityPage';
 import { PortalLayout } from './layouts/PortalLayout';
@@ -75,19 +77,19 @@ export default function App() {
                     <Route path="/debug-mission/:id" element={<DebugMissionPage />} />
 
                     {/* Modules & Story Selection (Standalone) */}
-                    <Route path="/module/1" element={<Navigate to="/module/signal-must-return" replace />} />
+                    <Route path="/module/1" element={<ModuleOneHub />} />
                     <Route path="/module/1/lab" element={<CircuitCanvas />} />
+                    <Route path="/module/1/theory" element={<WhatAreSignals />} />
                     <Route path="/module/2" element={<ModuleTwo />} />
                     <Route path="/module/3" element={<ModuleThree />} />
                     <Route path="/module/4" element={<ModuleFour />} />
                     <Route path="/module/5" element={<ModuleFive />} />
-                    <Route path="/module/signal-must-return" element={<ModulePage />} />
 
                     {/* Legacy / Game Support (Standalone) */}
                     <Route path="/gatekeeper" element={<GatekeeperGame />} />
                     <Route path="/assessment" element={<AssessmentPage />} />
-                    <Route path="/voltmonkey" element={<Navigate to="/module/signal-must-return" replace />} />
-                    <Route path="/level/1" element={<Navigate to="/module/signal-must-return" replace />} />
+                    <Route path="/voltmonkey" element={<VoltMonkeyIntro />} />
+                    <Route path="/level/1" element={<VoltMonkeyIntro />} />
 
                     <Route path="*" element={<Navigate to="/portal" replace />} />
                 </Routes>
