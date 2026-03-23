@@ -5,25 +5,34 @@ import { useCallback } from 'react';
 export const PACING = {
     TEXT_DELAY: 1800,
     MICRO_DELAY: 700,
-    ANIMATION: 500
+    ANIMATION: 500,
+    INTERACTION: 80, // Standard 80ms flip/tap
+    PROPAGATION: 300, // Standard 300ms ripple
 };
 
 // ─── Haptic System ────────────────────────────────────────────────────────
 
-export type HapticType = 'micro' | 'light' | 'medium' | 'heavy' | 'success' | 'warning';
+export type HapticType = 'micro' | 'light' | 'medium' | 'heavy' | 'success' | 'warning' | 'pulse' | 'error' | 'flow' | 'harsh' | 'boot' | 'snap' | 'tension';
 
 const HAPTICS: Record<HapticType, number | number[]> = {
-    micro: 3,
-    light: 5,
-    medium: 10,
-    heavy: 18,
-    success: [10, 30, 10],
-    warning: [20, 40, 20],
+    micro: 6,      
+    light: [10],   
+    medium: 25,
+    heavy: 45,
+    snap: [12, 10, 12], 
+    tension: [5], // Extremely subtle mechanical prep
+    success: [25, 50, 25],
+    warning: [40, 60, 40],
+    pulse: [20, 150, 20],
+    error: [150, 50, 150],
+    flow: [8, 20, 8],
+    harsh: [60, 30, 60, 30, 60],
+    boot: [15, 60, 15, 120, 25],
 };
 
 // ─── Sound System ─────────────────────────────────────────────────────────
 
-export type SoundType = 'ambient' | 'move' | 'tension' | 'snap' | 'success' | 'break' | 'fail' | 'spark';
+export type SoundType = 'ambient' | 'move' | 'tension' | 'snap' | 'success' | 'break' | 'fail' | 'spark' | 'glitch' | 'signal_chime' | 'whoosh' | 'transition' | 'boss_defeat';
 
 // Centralized asset map to ensure we load the same tracks app-wide
 const SOUNDS: Record<SoundType, string> = {
@@ -34,7 +43,12 @@ const SOUNDS: Record<SoundType, string> = {
     success: '/sounds/chord.mp3',
     break: '/sounds/cut.mp3',
     fail: '/sounds/drop.mp3',
-    spark: '/sounds/drop.mp3', 
+    spark: '/sounds/drop.mp3',
+    glitch: '/sounds/glitch.mp3',
+    signal_chime: '/sounds/signal_chime.mp3',
+    whoosh: '/sounds/whoosh_alt.mp3',
+    transition: '/sounds/whoosh.mp3',
+    boss_defeat: '/sounds/chord.mp3'
 };
 
 // Global ambient instance so it can survive unmounts if needed, 

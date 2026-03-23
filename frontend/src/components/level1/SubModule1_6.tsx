@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SignalRenderer } from '../../circuit-lab/SignalRenderer';
-import { Trophy, CheckCircle2, ShieldCheck, Cpu } from 'lucide-react';
+import { Trophy, ShieldCheck, Cpu } from 'lucide-react';
 
 interface SubModuleProps {
     onComplete: (sip: number) => void;
@@ -65,7 +65,7 @@ export const SubModule1_6: React.FC<SubModuleProps> = ({ onComplete }) => {
                                         onClick={() => state === 'idle' && verify(i)}
                                         className={`p-6 border rounded-2xl text-center transition-all ${
                                             selection === i 
-                                            ? (state === 'success' ? 'border-[#22C55E] bg-[#22C55E]/10 text-white' : (state === 'fail' ? 'border-red-500 bg-red-500/10 text-white' : 'border-[#00D2FF] bg-[#00D2FF]/10 text-white'))
+                                            ? (state === 'fail' ? 'border-red-500 bg-red-500/10 text-white' : 'border-[#00D2FF] bg-[#00D2FF]/10 text-white')
                                             : 'border-[#1E2332] bg-[#0A0E1A] text-slate-400 hover:border-[#00D2FF]/30'
                                         }`}
                                     >

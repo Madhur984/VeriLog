@@ -11,11 +11,20 @@
  *   - Square wave oscilloscope
  */
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle2 } from 'lucide-react';
 import { useDigitalSignal } from '../../hooks/useDigitalSignal';
 import { OscilloscopeCanvas } from './OscilloscopeCanvas';
+import { ConceptOverlay, ConceptData } from '../ui/ConceptOverlay';
+import { ActiveRecallSystem, Question } from '../ui/ActiveRecallSystem';
+import { ConceptGate, ConceptLevel } from '../ui/ConceptGate';
+import { useGlobalSensory } from '../../hooks/useGlobalSensory';
+import { DURATIONS, SPRINGS } from '../../constants/designTokens';
+import { useSpring, useTransform } from 'framer-motion';
+import { VeriSlider } from '../shared/VeriSlider';
+import { VeriButton } from '../shared/VeriButton';
+import { useAttentionLock } from '../../hooks/useAttentionLock';
 
 const T = {
     bg: '#0A0B10', card: '#0D0F16', surface: '#1A1D24', border: '#1A1D24',
@@ -53,8 +62,81 @@ export function DigitalLab({
     isGraphMode,
     setProbeData
 }: DigitalLabProps) {
+    const { triggerHaptic, playSound, playAmbient, stopAmbient } = useGlobalSensory();
+    const { focusProps } = useAttentionLock();
     const [noiseAmp, setNoiseAmp] = useState(0);
-    const { switchOn, toggle, inputVoltage, setInputVoltage, voltageClass, waveformSamples } = useDigitalSignal(noiseAmp);
+    const { switchOn, toggle, inputVoltage, setInputVoltage, voltageClass, waveformSamples, isGlitching } = useDigitalSignal(noiseAmp);
+
+    // Elite States
+    const [isGateUnlocked, setIsGateUnlocked] = useState(false);
+    const [isEngineerMode, setIsEngineerMode] = useState(false);
+    const [isPaused, setIsPaused] = useState(false);
+    const [isFreezeOnError, setIsFreezeOnError] = useState(false);
+    const [pulseOpacity, setPulseOpacity] = useState(0);
+
+    // Theory & Recall State
+    const [showTheory, setShowTheory] = useState(false);
+    const [showRecall, setShowRecall] = useState(false);
+
+    const DIGITAL_CONCEPT: ConceptData = {
+        id: 'digital_discrete',
+        title: 'Discrete Signals',
+        description: 'Digital signals use abstraction to ignore small variations. They operate on thresholds (LOW or HIGH), creating a "Noise Margin" that rejects interference.',
+        visualLink: 'Threshold Bands (LOW/HIGH)',
+        insight: 'By deciding that only 0 and 1 exist, computers can transmit data perfectly even if the wire has static.',
+        memoryHook: 'Digital is like a light switch—it is either ON or OFF.',
+        color: T.digital
+    };
+
+    const DIGITAL_RECALL: Question = {
+        id: 'digital_threshold',
+        type: 'prediction',
+        text: 'What happens if the voltage falls into the orange "UNDEFINED" zone?',
+        options: [
+            { text: 'The signal becomes unstable', isCorrect: true },
+            { text: 'It automatically rounds up', isCorrect: false },
+            { text: 'The computer ignores it', isCorrect: false }
+        ],
+        explanation: 'The Undefined zone (Between VIL and VIH) is a dangerous region where the hardware cannot reliably tell if the signal is a 0 or a 1.'
+    };
+
+    // Glitch effect trigger for Undefined zone
+    const isUndefined = voltageClass === 'UNDEFINED';
+    
+    useEffect(() => {
+        if (isUndefined) {
+            triggerHaptic('warning');
+            playSound('glitch');
+            if (isFreezeOnError) setIsPaused(true);
+        }
+    }, [isUndefined, isFreezeOnError, triggerHaptic, playSound]);
+
+    const DIGITAL_GATE_LEVELS: ConceptLevel[] = [
+        {
+            title: "Abstraction",
+            content: "Digital isn't 'real'—it's a decision. We take messy analog voltages and force them into two boxes: 0 and 1."
+        },
+        {
+            title: "Noise Margin",
+            content: "By ignoring small voltage ripples, digital systems can carry data across miles of wire without losing a single bit."
+        },
+        {
+            title: "The Danger Zone",
+            content: "What happens between 0 and 1? The 'Undefined' zone. Here, hardware enters a 'metastable' state—unstable, unpredictable, and dangerous for logic."
+        }
+    ];
+
+    // Engineering Hum & Pulse reaction
+    useEffect(() => {
+        playAmbient();
+        return () => stopAmbient();
+    }, [playAmbient, stopAmbient]);
+
+    useEffect(() => {
+        setPulseOpacity(1);
+        const t = setTimeout(() => setPulseOpacity(0), 400);
+        return () => clearTimeout(t);
+    }, [switchOn]);
 
     const [quizIdx, setQuizIdx] = useState(0);
     const [quizDone, setQuizDone] = useState(false);
@@ -80,8 +162,12 @@ export function DigitalLab({
     }, [quizAnswers, quizIdx, onComplete]);
 
     const ledOn = switchOn;
-    const voleZoneColor = voltageClass === 'HIGH' ? T.success : (voltageClass === 'LOW' ? T.error : T.warning);
-    const bandPercent = (inputVoltage / 5) * 100;
+    const ledGlowProgress = useSpring(ledOn ? 1 : 0, SPRINGS.ORGANIC);
+    const ledShadow = useTransform(ledGlowProgress, [0, 1], [
+        'none', 
+        'drop-shadow(0 0 10px rgba(0,212,255,0.9))'
+    ]);
+    
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 24, width: '100%' }}>
@@ -114,17 +200,31 @@ export function DigitalLab({
                         <line x1="36" y1="68" x2="80" y2="68"
                             stroke={ledOn ? T.accent : T.border} strokeWidth={ledOn ? "2" : "1.5"}
                             style={ledOn ? { filter: 'drop-shadow(0 0 6px rgba(0,212,255,0.8))' } : { opacity: 0.4 }} />
+                        {/* Causal Glow - Wire 1 */}
+                        <motion.line 
+                            x1="36" y1="68" x2="80" y2="68" 
+                            stroke={T.accent} strokeWidth="4" 
+                            animate={{ opacity: pulseOpacity * 0.4 }}
+                            transition={{ duration: DURATIONS.GLOW_TRAVEL }}
+                            style={{ filter: 'blur(3px)' }} 
+                        />
 
                         {/* Switch symbol */}
                         <circle cx="90" cy="68" r="3" fill={T.accent} />
                         {/* Switch arm */}
-                        <line
+                        <motion.line
                             x1="90" y1="68"
                             x2={switchOn ? "122" : "118"}
                             y2={switchOn ? "68" : "56"}
                             stroke={T.accent} strokeWidth="1.8"
-                            style={{ transition: 'all 0.15s ease', cursor: 'pointer' }}
-                            onClick={toggle}
+                            style={{ cursor: 'pointer' }}
+                            animate={{ x2: switchOn ? 122 : 118, y2: switchOn ? 68 : 56 }}
+                            transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                            onClick={() => {
+                                toggle();
+                                triggerHaptic('medium'); // Stronger haptic for switch
+                                playSound('snap');
+                            }}
                         />
                         <circle cx="124" cy="68" r="3" fill={ledOn ? T.accent : T.muted} />
                         <text x="105" y="84" fill={T.muted} fontSize="7" fontFamily="monospace" textAnchor="middle">
@@ -143,13 +243,47 @@ export function DigitalLab({
                         <line x1="127" y1="68" x2="168" y2="68"
                             stroke={ledOn ? T.accent : T.border} strokeWidth={ledOn ? "2" : "1.5"}
                             style={ledOn ? { filter: 'drop-shadow(0 0 6px rgba(0,212,255,0.8))' } : { opacity: 0.4 }} />
+                        {/* Causal Glow - Wire 2 */}
+                        <motion.line 
+                            x1="127" y1="68" x2="168" y2="68" 
+                            stroke={T.accent} strokeWidth="4" 
+                            animate={{ opacity: pulseOpacity * 0.4 }}
+                            transition={{ duration: DURATIONS.GLOW_TRAVEL, delay: 0.05 }}
+                            style={{ filter: 'blur(3px)' }} 
+                        />
 
                         {/* LED */}
                         <circle cx="186" cy="80" r="14" fill="none" stroke="#94A3B8" strokeWidth="1.5" />
-                        <circle cx="186" cy="80" r="10"
+                        <motion.circle cx="186" cy="80" r="10"
                             fill={ledOn ? 'rgba(0,212,255,0.9)' : 'rgba(0,212,255,0.04)'}
-                            style={{ transition: 'fill 0.08s step-end', filter: ledOn ? 'drop-shadow(0 0 10px rgba(0,212,255,0.9))' : 'none' }}
-                        />
+                            animate={{ 
+                                x: isUndefined ? [0, -1, 1, -1, 0] : 0,
+                                opacity: isGlitching ? 0.2 : 1 
+                            }}
+                            transition={{ 
+                                x: { repeat: Infinity, duration: 0.1 },
+                                opacity: { duration: 0.05 }
+                            }}
+                             style={{ 
+                                 filter: ledShadow as any
+                             }}
+                         />
+                         {/* Metastability Tooltip (Failure Intelligence) */}
+                         <AnimatePresence>
+                             {isUndefined && (
+                                 <motion.g
+                                     initial={{ opacity: 0, y: -5 }}
+                                     animate={{ opacity: 1, y: 0 }}
+                                     exit={{ opacity: 0 }}
+                                 >
+                                     <rect x="150" y="30" width="80" height="20" rx="2" fill={T.warning} />
+                                     <text x="190" y="43" fill="#000" fontSize="6" fontFamily={T.mono} textAnchor="middle" fontWeight="bold">
+                                         METASTABLE STATE
+                                     </text>
+                                     <line x1="186" y1="50" x2="186" y2="66" stroke={T.warning} strokeWidth="1" strokeDasharray="2 2" />
+                                 </motion.g>
+                             )}
+                         </AnimatePresence>
                         <polygon points="180,75 180,85 190,80" fill={T.accent} opacity={0.7} />
                         <line x1="190" y1="74" x2="190" y2="86" stroke={T.accent} strokeWidth="1.2" />
 
@@ -288,20 +422,16 @@ export function DigitalLab({
                     {/* Controls */}
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
                         {/* Switch Toggle Button */}
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 8, opacity: isGateUnlocked ? 1 : 0.4, transition: '0.3s' }}>
                             <span style={{ fontFamily: T.mono, fontSize: 8, color: T.muted, letterSpacing: '0.1em', textTransform: 'uppercase' }}>
                                 Switch Control
                             </span>
-                            <button
+                            <VeriButton
                                 onClick={toggle}
-                                style={{
-                                    padding: '10px 20px', display: 'flex', alignItems: 'center', gap: 10,
-                                    background: ledOn ? `${T.success}12` : `${T.error}08`,
-                                    border: `1px solid ${ledOn ? T.success : T.error}40`,
-                                    borderRadius: 4, color: ledOn ? T.success : T.error,
-                                    fontFamily: T.mono, fontSize: 10, letterSpacing: '0.12em',
-                                    cursor: 'pointer', transition: 'all 0.08s step-end',
-                                }}
+                                disabled={!isGateUnlocked}
+                                variant={ledOn ? 'logic' : 'secondary'}
+                                size="md"
+                                className="w-full"
                             >
                                 <div style={{
                                     width: 10, height: 10, borderRadius: '50%',
@@ -309,67 +439,37 @@ export function DigitalLab({
                                     boxShadow: `0 0 8px ${ledOn ? T.success : T.error}`,
                                 }} />
                                 {ledOn ? 'ON — HIGH (5V)' : 'OFF — LOW (0V)'}
-                            </button>
+                            </VeriButton>
                         </div>
 
                         {/* Voltage Threshold Visualization */}
-                        <div>
-                            <div style={{
-                                display: 'flex', justifyContent: 'space-between',
-                                fontFamily: T.mono, fontSize: 8, color: T.muted,
-                                letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 8,
-                            }}>
-                                <span>Input Voltage Demo</span>
-                                <span style={{ color: voleZoneColor }}>{inputVoltage.toFixed(1)}V — {voltageClass}</span>
-                            </div>
-                            {/* Zone bar */}
-                            <div style={{
-                                height: 28, borderRadius: 4, position: 'relative',
-                                background: 'linear-gradient(to right, rgba(239,68,68,0.2) 0%, rgba(239,68,68,0.2) 16%, rgba(245,158,11,0.2) 16%, rgba(245,158,11,0.2) 40%, rgba(16,185,129,0.2) 40%, rgba(16,185,129,0.2) 100%)',
-                                border: `1px solid ${T.border}`,
-                            }}>
-                                {/* LOW label */}
-                                <span style={{ position: 'absolute', left: 4, top: '50%', transform: 'translateY(-50%)', fontFamily: T.mono, fontSize: 7, color: T.error, letterSpacing: '0.1em' }}>LOW</span>
-                                {/* UNDEF label */}
-                                <span style={{ position: 'absolute', left: '22%', top: '50%', transform: 'translateY(-50%)', fontFamily: T.mono, fontSize: 7, color: T.warning, letterSpacing: '0.08em' }}>UNDEF</span>
-                                {/* HIGH label */}
-                                <span style={{ position: 'absolute', right: 4, top: '50%', transform: 'translateY(-50%)', fontFamily: T.mono, fontSize: 7, color: T.success, letterSpacing: '0.1em' }}>HIGH</span>
-                                {/* Indicator */}
-                                <div style={{
-                                    position: 'absolute', top: -4, bottom: -4,
-                                    left: `${bandPercent}%`, width: 2,
-                                    background: voleZoneColor,
-                                    boxShadow: `0 0 6px ${voleZoneColor}`,
-                                    borderRadius: 1, transition: 'left 0.05s ease',
-                                }} />
-                            </div>
-                            <input
-                                type="range" min={0} max={5} step={0.1} value={inputVoltage}
-                                onChange={e => setInputVoltage(Number(e.target.value))}
-                                style={{ width: '100%', accentColor: voleZoneColor, marginTop: 6, cursor: 'pointer' }}
+                        <div {...focusProps} className={isUndefined ? 'animate-ui-glitch' : ''}>
+                             <VeriSlider
+                                value={inputVoltage}
+                                onChange={setInputVoltage}
+                                min={0} max={5}
+                                label="Input Voltage Modulation"
+                                variant="logic"
+                                snaps={[
+                                    { value: 0.8, label: 'VIL' },
+                                    { value: 2.0, label: 'VIH' },
+                                    { value: 5.0, label: 'VCC' }
+                                ]}
                             />
                         </div>
 
                         {/* Noise Slider */}
-                        <div>
-                            <div style={{
-                                display: 'flex', justifyContent: 'space-between',
-                                fontFamily: T.mono, fontSize: 8, color: T.muted,
-                                letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 8,
-                            }}>
-                                <span>Noise Amplitude</span>
-                                <span>{noiseAmp.toFixed(1)} / 10</span>
-                            </div>
-                            <input
-                                type="range" min={0} max={10} step={0.5} value={noiseAmp}
-                                onChange={e => setNoiseAmp(Number(e.target.value))}
-                                style={{ width: '100%', accentColor: T.warning, cursor: 'pointer' }}
-                            />
-                            <div style={{ fontFamily: T.mono, fontSize: 8, color: T.muted, marginTop: 4 }}>
-                                {noiseAmp < 2 ? 'Signal stable — within noise margin' :
-                                    noiseAmp < 6 ? 'Approaching threshold — caution' :
-                                        'Exceeding noise margin — signal corrupted'}
-                            </div>
+                        <VeriSlider
+                            value={noiseAmp}
+                            onChange={setNoiseAmp}
+                            min={0} max={10}
+                            label="Noise Injection"
+                            variant="signal"
+                        />
+                        <div style={{ fontFamily: T.mono, fontSize: 8, color: T.muted, marginTop: -10 }}>
+                            {noiseAmp < 2 ? 'Signal stable — within noise margin' :
+                                noiseAmp < 6 ? 'Approaching threshold — caution' :
+                                    'Exceeding noise margin — signal corrupted'}
                         </div>
                     </div>
                 </div>
@@ -383,12 +483,40 @@ export function DigitalLab({
                 <div style={{
                     display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12,
                 }}>
-                    <span style={{
-                        fontFamily: T.mono, fontSize: 8, color: `${T.success}80`,
-                        letterSpacing: '0.2em', textTransform: 'uppercase',
-                    }}>
-                        Oscilloscope — CH2 Digital Square Wave
-                    </span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                        <span style={{
+                            fontFamily: T.mono, fontSize: 8, color: `${T.success}80`,
+                            letterSpacing: '0.2em', textTransform: 'uppercase',
+                        }}>
+                            Oscilloscope — CH2 Digital
+                        </span>
+                        <div style={{ display: 'flex', gap: 4 }}>
+                            <VeriButton
+                                onClick={() => { setIsPaused(!isPaused); triggerHaptic('medium'); }}
+                                variant={isPaused ? 'primary' : 'secondary'}
+                                size="sm"
+                                className="!py-1 !px-2 !text-[7px]"
+                            >
+                                {isPaused ? 'RESUME' : 'PAUSE'}
+                            </VeriButton>
+                            <VeriButton
+                                onClick={() => { setIsEngineerMode(!isEngineerMode); triggerHaptic('heavy'); }}
+                                variant={isEngineerMode ? 'logic' : 'secondary'}
+                                size="sm"
+                                className="!py-1 !px-2 !text-[7px]"
+                            >
+                                ENGINEER
+                            </VeriButton>
+                            <VeriButton
+                                onClick={() => { setIsFreezeOnError(!isFreezeOnError); triggerHaptic('light'); }}
+                                variant={isFreezeOnError ? 'primary' : 'secondary'}
+                                size="sm"
+                                className="!py-1 !px-2 !text-[7px]"
+                            >
+                                FREEZE_ON_ERR
+                            </VeriButton>
+                        </div>
+                    </div>
                     <span style={{ fontFamily: T.mono, fontSize: 8, color: T.muted }}>TIME/DIV: 100ms</span>
                 </div>
                 <OscilloscopeCanvas
@@ -396,6 +524,8 @@ export function DigitalLab({
                     showThreshold={true}
                     label1="CH2 — Digital"
                     height={160}
+                    isPaused={isPaused}
+                    isEngineerMode={isEngineerMode}
                 />
             </div>
 
@@ -423,26 +553,25 @@ export function DigitalLab({
                             const answered = quizAnswers[quizIdx];
                             const isCorrect = opt === currentVQ.correct;
                             const isSelected = answered === opt;
-                            let borderCol: string = T.border, bg = 'transparent', col: string = T.text;
+                            
+                            let variant: 'primary' | 'secondary' | 'logic' | 'signal' | 'ghost' = 'secondary';
                             if (answered) {
-                                if (isCorrect) { borderCol = `${T.success}50`; bg = `${T.success}08`; col = T.success; }
-                                else if (isSelected) { borderCol = `${T.error}50`; bg = `${T.error}08`; col = T.error; }
-                                else col = T.muted;
+                                if (isSelected) {
+                                    variant = isCorrect ? 'logic' : 'primary';
+                                }
                             }
+                            
                             return (
-                                <button key={opt}
+                                <VeriButton 
+                                    key={opt}
                                     onClick={() => handleQuizAnswer(opt)}
                                     disabled={!!answered}
-                                    style={{
-                                        flex: 1, padding: '10px 8px',
-                                        fontFamily: T.mono, fontSize: 10, letterSpacing: '0.1em',
-                                        background: bg, border: `1px solid ${borderCol}`, borderRadius: 2,
-                                        color: col, cursor: answered ? 'default' : 'pointer',
-                                        transition: 'all 0.15s ease',
-                                    }}
+                                    variant={variant}
+                                    size="sm"
+                                    className="flex-1"
                                 >
                                     {opt}
-                                </button>
+                                </VeriButton>
                             );
                         })}
                     </div>
@@ -467,6 +596,32 @@ export function DigitalLab({
                     </div>
                 </motion.div>
             )}
+
+            {/* Theory & Recall Overlays */}
+            <ConceptOverlay 
+                isVisible={showTheory} 
+                concept={DIGITAL_CONCEPT} 
+                onDismiss={() => setShowTheory(false)} 
+            />
+            
+            <ActiveRecallSystem 
+                isVisible={showRecall} 
+                question={DIGITAL_RECALL} 
+                onAnswer={() => {
+                    setShowRecall(false);
+                }} 
+            />
+
+            <ConceptGate
+                title="Digital Logic"
+                levels={DIGITAL_GATE_LEVELS}
+                isVisible={!isGateUnlocked}
+                onComplete={() => {
+                    setIsGateUnlocked(true);
+                    triggerHaptic('success');
+                    playSound('success');
+                }}
+            />
         </div>
     );
 }

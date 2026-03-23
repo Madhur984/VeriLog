@@ -67,22 +67,19 @@ export const ModuleOneHub: React.FC = () => {
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: 1 }}
-                    className="flex flex-col sm:flex-row items-center gap-6"
+                    className="flex flex-col items-center gap-6"
                 >
                     <button
-                        onClick={() => navigate('/module/1/theory')}
-                        className="px-8 py-3.5 rounded-lg border border-white/10 text-slate-300 font-mono text-xs tracking-[0.2em] hover:bg-white/5 hover:border-white/20 hover:text-white transition-all w-full sm:w-auto uppercase"
+                        onClick={() => navigate('/module/1/1')}
+                        className="group flex items-center justify-center gap-4 px-12 py-4 rounded-full bg-cyan-500 hover:bg-cyan-400 text-[#050914] font-bold text-sm tracking-[0.2em] transition-all w-full sm:w-auto shadow-[0_0_30px_rgba(6,182,212,0.3)] hover:shadow-[0_0_40px_rgba(6,182,212,0.5)] uppercase"
                     >
-                        Study Theory
+                        Begin Experience
+                        <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
                     </button>
-
-                    <button
-                        onClick={() => navigate('/module/1/lab')}
-                        className="group flex items-center justify-center gap-3 px-8 py-3.5 rounded-lg bg-[#0284c7] hover:bg-[#0369a1] text-white font-mono text-xs tracking-[0.2em] transition-all w-full sm:w-auto shadow-[0_0_20px_rgba(2,132,199,0.3)] hover:shadow-[0_0_30px_rgba(2,132,199,0.5)] uppercase"
-                    >
-                        Enter Laboratory
-                        <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                    </button>
+                    
+                    <p className="text-[10px] font-mono text-slate-500 uppercase tracking-[0.4em] opacity-40">
+                        Unified Module // Seamless Flow
+                    </p>
                 </motion.div>
             </motion.div>
         </div>

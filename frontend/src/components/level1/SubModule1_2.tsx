@@ -1,18 +1,11 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Battery, Zap, Gauge, ArrowRight } from 'lucide-react';
+import { Battery, Gauge, ArrowRight } from 'lucide-react';
 
 interface SubModuleProps {
     onComplete: (sip: number) => void;
 }
 
-const T = {
-    accent: '#00D2FF',
-    text: '#F8FAFC',
-    muted: '#64748B',
-    bg: '#0B0F14',
-    card: '#141B2D',
-};
 
 const AnalogyCard = ({ title, value, unit, label, color }: { title: string, value: string, unit: string, label: string, color: string }) => (
     <motion.div 

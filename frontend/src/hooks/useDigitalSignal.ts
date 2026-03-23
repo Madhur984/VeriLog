@@ -30,16 +30,22 @@ export interface DigitalSignalState {
     waveformSamples: Float32Array;
     /** Output voltage AFTER digital buffer (noise-immune) */
     outputVoltage: number;
+    /** True if the signal is currently in an unstable 'metastable' state */
+    isGlitching: boolean;
 }
 
 export function useDigitalSignal(noiseAmp = 0): DigitalSignalState {
     const [switchOn, setSwitchOn] = useState(false);
     const [inputVoltage, setInputVoltageState] = useState(3.3);
+    const [isGlitching, setIsGlitching] = useState(false);
+    
     const bufferRef = useRef(new Float32Array(BUFFER_SIZE));
     const writeHeadRef = useRef(0);
     const halfPeriodRef = useRef(0);
-    const stateRef = useRef(false);
     const rafRef = useRef(0);
+    
+    // Internal prop-delay state
+    const interpSwitchRef = useRef(0);
 
     const toggle = useCallback(() => setSwitchOn(v => !v), []);
 
@@ -48,21 +54,22 @@ export function useDigitalSignal(noiseAmp = 0): DigitalSignalState {
     }, []);
 
     const classifyVoltage = (v: number, noise: number): VoltageClass => {
-        // Add noise to analog input, then interpret
         const effective = v + noise;
         if (effective < VIL) return 'LOW';
         if (effective > VIH) return 'HIGH';
         return 'UNDEFINED';
     };
 
-    // Generate square wave buffer
+    // Generate square wave buffer & manage glitch state
     useEffect(() => {
-        const periodFrames = 60; // 1 second period at ~60fps
+        const periodFrames = 60;
 
         function tick() {
-            // Determine current half-period output
-            const highV = switchOn ? 5 : 0;
-            const squareSample = (halfPeriodRef.current < periodFrames / 2) ? highV : 0;
+            // Simulated propagation delay (t_prop)
+            const target = switchOn ? 5 : 0;
+            interpSwitchRef.current += (target - interpSwitchRef.current) * 0.3;
+            
+            const squareSample = (halfPeriodRef.current < periodFrames / 2) ? interpSwitchRef.current : 0;
 
             let noise = 0;
             if (noiseAmp > 0) {
@@ -72,14 +79,20 @@ export function useDigitalSignal(noiseAmp = 0): DigitalSignalState {
                 noise *= noiseAmp * 0.4;
             }
 
-            // Digital output is immune to noise below margin
             const analogNoisyV = squareSample + noise;
-
-            // Store normalized value (0–1)
             bufferRef.current[writeHeadRef.current % BUFFER_SIZE] = analogNoisyV / 5;
 
+            // Manage glitch flicker
+            const currentEffective = inputVoltage + (Math.random() - 0.5) * noiseAmp * 0.2;
+            const isUndef = currentEffective >= VIL && currentEffective <= VIH;
+            if (isUndef) {
+                // High frequency flicker simulation
+                setIsGlitching(Math.random() > 0.5);
+            } else {
+                setIsGlitching(false);
+            }
+
             halfPeriodRef.current = (halfPeriodRef.current + 1) % periodFrames;
-            stateRef.current = !stateRef.current;
             writeHeadRef.current++;
 
             rafRef.current = requestAnimationFrame(tick);
@@ -87,7 +100,7 @@ export function useDigitalSignal(noiseAmp = 0): DigitalSignalState {
 
         rafRef.current = requestAnimationFrame(tick);
         return () => cancelAnimationFrame(rafRef.current);
-    }, [switchOn, noiseAmp]);
+    }, [switchOn, noiseAmp, inputVoltage]);
 
     const getNoiseAmount = () => {
         if (noiseAmp <= 0) return 0;
@@ -105,5 +118,6 @@ export function useDigitalSignal(noiseAmp = 0): DigitalSignalState {
         voltageClass,
         waveformSamples: bufferRef.current,
         outputVoltage,
+        isGlitching
     };
 }

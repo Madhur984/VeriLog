@@ -6,7 +6,7 @@ import {
 import { motion } from 'framer-motion';
 
 // Modular Sub-module Imports
-import { SubModule1_1 } from './level1/SubModule1_1';
+import SubModule1_1 from './level1/SubModule1_1';
 import { SubModule1_2 } from './level1/SubModule1_2';
 import { SubModule1_3 } from './level1/SubModule1_3';
 import { SubModule1_4 } from './level1/SubModule1_4';
@@ -251,7 +251,7 @@ const ModuleContent: React.FC<ModuleContentProps> = ({ activeSection }) => {
     const renderContent = () => {
         switch (activeSection) {
             case 'Circuit Discovery Lab':
-                return <SubModule1_1 onComplete={(sip) => console.log('S1.1 Complete, SIP:', sip)} />;
+                return <SubModule1_1 onComplete={(sip: number) => console.log('S1.1 Complete, SIP:', sip)} />;
 
             case 'Signal Propagation':
                 return <SubModule1_2 onComplete={(sip) => console.log('S1.2 Complete, SIP:', sip)} />;

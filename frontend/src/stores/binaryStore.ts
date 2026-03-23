@@ -9,10 +9,10 @@
  */
 
 import { create } from 'zustand';
-
-// ── Types ──────────────────────────────────────────────────────────────────────
+// ── Types ──────────────────────────────────────────────────────────────────────
 
 export type Bit = 0 | 1;
+export type PredictionStatus = 'idle' | 'pending' | 'correct' | 'wrong';
 
 export interface CarryEvent {
     fromBit: number; // index of the bit that caused carry
@@ -29,40 +29,77 @@ export interface AddStep {
     revealed: boolean;
 }
 
+// ── Cognition Metrics ─────────────────────────────────────────────────────────
+
+export interface CognitionMetrics {
+    incorrectToggles: number;
+    arithmeticMistakes: number;
+    hesitationTime: number; // cumulative delay in ms
+    predictionAccuracy: number; // 0-1
+    interactions: number;
+    errorStreak: number;
+    lastInteractionTime: number;
+}
+
 // ── Store Interface ────────────────────────────────────────────────────────────
 
 interface BinaryState {
+    // Global Engine State
+    isProcessing: boolean;
+    isLogicOverlayVisible: boolean;
+    toggleLogicOverlay: () => void;
+    
     // Module 3.1 — Switch Register
-    switchBits: Bit[]; // 4 bits, index 0 = MSB
-    toggleSwitchBit: (index: number) => void;
+    switchBits: Bit[];
+    switchVoltages: number[];
+    isSwitchTransitioning: boolean[];
+    isBitUnstable: boolean[]; // NEW: Jitter/uncertainty state
+    toggleSwitchBit: (index: number) => Promise<void>;
     resetSwitches: () => void;
 
     // Module 3.2 — Counter
-    counterValue: number; // 0-15
+    counterValue: number;
     carryHistory: CarryEvent[];
-    increment: () => void;
+    isIncrementing: boolean;
+    predictionStatus: PredictionStatus; // NEW: Prediction gate
+    predictedBits: Bit[] | null;
+    startPrediction: () => void;
+    submitPrediction: (bits: Bit[]) => void;
+    increment: (force?: boolean) => Promise<void>;
     resetCounter: () => void;
 
     // Module 3.3 — Memory Register
-    registerBits: Bit[]; // 8 bits, index 0 = MSB
+    registerBits: Bit[];
     registerWidth: 8 | 16 | 32;
     storedValue: number | null;
+    isWriting: boolean;
+    lastRefreshTime: number; // REQ 5 Elite: Decay tracking
+    isDecayed: boolean;
     toggleRegisterBit: (index: number) => void;
     setRegisterWidth: (width: 8 | 16 | 32) => void;
-    storeValue: () => void;
+    storeValue: () => Promise<void>;
+    refreshMemory: () => void; // REQ 5 Elite: Manual refresh
     resetRegister: () => void;
 
     // Module 3.4 — Adder
-    operandA: Bit[]; // 4 bits MSB-first
+    operandA: Bit[];
     operandB: Bit[];
     addSteps: AddStep[];
-    addResult: Bit[]; // 5 bits (includes overflow)
+    addResult: Bit[];
     isAdding: boolean;
     additionComplete: boolean;
+    isArithmeticReverseMode: boolean; // NEW: Reverse challenge
+    targetSum: number | null;
     toggleOperandBit: (op: 'A' | 'B', index: number) => void;
     computeAddition: () => void;
     revealNextStep: () => void;
+    setReverseMode: (active: boolean) => void;
     resetAdder: () => void;
+
+    // Cognition Tracking
+    metrics: CognitionMetrics;
+    recordAction: (type: keyof CognitionMetrics, value?: number) => void;
+    updateHesitation: () => void;
 }
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
@@ -80,9 +117,8 @@ const bitsToNum = (bits: Bit[]): number =>
 const buildAddSteps = (a: Bit[], b: Bit[]): { steps: AddStep[]; result: Bit[] } => {
     const steps: AddStep[] = [];
     let carry: Bit = 0;
-    const resultBits: Bit[] = [0, 0, 0, 0, 0]; // 5 bits
+    const resultBits: Bit[] = [0, 0, 0, 0, 0];
 
-    // Process from LSB (index 3) to MSB (index 0)
     for (let i = 3; i >= 0; i--) {
         const sum3 = a[i] + b[i] + carry;
         const sum_bit = (sum3 % 2) as Bit;
@@ -91,60 +127,205 @@ const buildAddSteps = (a: Bit[], b: Bit[]): { steps: AddStep[]; result: Bit[] } 
         resultBits[i + 1] = sum_bit;
         carry = carry_out;
     }
-    resultBits[0] = carry; // overflow
-    // steps are built LSB→MSB, reverse to display MSB→LSB
+    resultBits[0] = carry;
     return { steps: steps.reverse(), result: resultBits };
 };
 
 // ── Store ──────────────────────────────────────────────────────────────────────
 
 export const useBinaryStore = create<BinaryState>((set, get) => ({
+    // ── Global ──
+    isProcessing: false,
+    isLogicOverlayVisible: false,
+    toggleLogicOverlay: () => set(s => ({ isLogicOverlayVisible: !s.isLogicOverlayVisible })),
+    
+    metrics: {
+        incorrectToggles: 0,
+        arithmeticMistakes: 0,
+        hesitationTime: 0,
+        predictionAccuracy: 1,
+        interactions: 0,
+        errorStreak: 0,
+        lastInteractionTime: Date.now(),
+    },
+
+    recordAction: (type, value = 1) => {
+        const now = Date.now();
+        set(s => {
+            const newMetrics = { 
+                ...s.metrics, 
+                [type]: s.metrics[type as keyof CognitionMetrics] + value,
+                lastInteractionTime: now
+            };
+            return { metrics: newMetrics };
+        });
+    },
+
+    updateHesitation: () => {
+        const now = Date.now();
+        const diff = now - get().metrics.lastInteractionTime;
+        if (diff > 3000) { // Only track if > 3s
+            set(s => ({ metrics: { ...s.metrics, hesitationTime: s.metrics.hesitationTime + diff, lastInteractionTime: now } }));
+        }
+    },
+
     // ── Module 3.1 ──
     switchBits: [0, 0, 0, 0],
-    toggleSwitchBit: (index) =>
-        set((s) => {
-            const next = [...s.switchBits] as Bit[];
-            next[index] = (next[index] === 0 ? 1 : 0) as Bit;
-            return { switchBits: next };
-        }),
-    resetSwitches: () => set({ switchBits: [0, 0, 0, 0] }),
+    switchVoltages: [0, 0, 0, 0],
+    isSwitchTransitioning: [false, false, false, false],
+    isBitUnstable: [false, false, false, false],
+
+    toggleSwitchBit: async (index) => {
+        // Elite Polish: Pre-action tension (15ms delay)
+        await new Promise(r => setTimeout(r, 15));
+
+        const bit = get().switchBits[index];
+        const targetVolt = bit === 0 ? 3.3 : 0;
+        
+        set(s => {
+            const trans = [...s.isSwitchTransitioning];
+            trans[index] = true;
+            return { isSwitchTransitioning: trans };
+        });
+
+        // REQ 2: BIT WEIGHTED TIMING (Bit 3 is heavy/slow, Bit 0 is light/fast)
+        const steps = 10 + (3 - index) * 5; 
+        const baseDelay = 30 + (3 - index) * 10;
+        
+        for (let i = 0; i < steps; i++) {
+            await new Promise(r => setTimeout(r, baseDelay));
+            
+            set(s => {
+                const volts = [...s.switchVoltages];
+                const volt = volts[index];
+                // Non-linear rise for physical feel
+                const progress = i / steps;
+                const easeOut = 1 - Math.pow(1 - progress, 3);
+                volts[index] = volt + (targetVolt - volt) * (easeOut - (i-1)/steps);
+                
+                // REQ 1: UNCERTAINTY WINDOW (Instability zone)
+                const isUnstable = volts[index] > 0.8 && volts[index] < 2.0;
+                if (isUnstable) {
+                    // Random Brownian motion jitter
+                    volts[index] += (Math.random() - 0.5) * 0.4;
+                }
+
+                const nextBit = (volts[index] > 2.0) ? 1 : (volts[index] < 0.8 ? 0 : s.switchBits[index]);
+                const bits = [...s.switchBits];
+                bits[index] = nextBit as Bit;
+                
+                const unstableArr = [...s.isBitUnstable];
+                unstableArr[index] = isUnstable;
+
+                return { switchVoltages: volts, switchBits: bits, isBitUnstable: unstableArr };
+            });
+        }
+
+        set(s => {
+            const trans = [...s.isSwitchTransitioning];
+            trans[index] = false;
+            const unstableArr = [...s.isBitUnstable];
+            unstableArr[index] = false;
+            return { isSwitchTransitioning: trans, isBitUnstable: unstableArr };
+        });
+    },
+    resetSwitches: () => set({ switchBits: [0, 0, 0, 0], switchVoltages: [0, 0, 0, 0], isBitUnstable: [false, false, false, false] }),
 
     // ── Module 3.2 ──
     counterValue: 0,
     carryHistory: [],
-    increment: () =>
-        set((s) => {
-            const next = (s.counterValue + 1) % 16;
-            const carries: CarryEvent[] = [];
-            // Detect which bits carry (bits that flip from 1 to 0)
-            const prev = toBits4(s.counterValue);
-            const curr = toBits4(next);
-            prev.forEach((bit, i) => {
-                if (bit === 1 && curr[i] === 0) {
+    isIncrementing: false,
+    predictionStatus: 'idle',
+    predictedBits: null,
+
+    startPrediction: () => set({ predictionStatus: 'pending', predictedBits: null }),
+    
+    submitPrediction: (bits) => {
+        const actualNext = (get().counterValue + 1) % 16;
+        const actualBits = toBits4(actualNext);
+        const isCorrect = bits.every((b, i) => b === actualBits[i]);
+        
+        set(s => ({ 
+            predictionStatus: isCorrect ? 'correct' : 'wrong',
+            predictedBits: bits,
+            metrics: {
+                ...s.metrics,
+                predictionAccuracy: (s.metrics.predictionAccuracy * s.metrics.interactions + (isCorrect ? 1 : 0)) / (s.metrics.interactions + 1),
+                errorStreak: isCorrect ? 0 : s.metrics.errorStreak + 1
+            }
+        }));
+    },
+
+    increment: async (force = false) => {
+        // REQ 3: PREDICTIVE GATE (Force prediction unless 'force' is used)
+        if (!force && get().predictionStatus !== 'correct') {
+            get().startPrediction();
+            return;
+        }
+
+        if (get().isIncrementing) return;
+        set({ isIncrementing: true });
+
+        const prevVal = get().counterValue;
+        const nextVal = (prevVal + 1) % 16;
+        const prevBits = toBits4(prevVal);
+        const nextBits = toBits4(nextVal);
+        const carries: CarryEvent[] = [];
+
+        for (let i = 3; i >= 0; i--) {
+            if (prevBits[i] !== nextBits[i]) {
+                // REQ 8: TEMPORAL ALIGNMENT (Weighted ripple delay)
+                const rippleDelay = 150 + (3 - i) * 100;
+                await new Promise(r => setTimeout(r, rippleDelay));
+                
+                if (prevBits[i] === 1 && nextBits[i] === 0) {
                     carries.push({ fromBit: i, timestamp: Date.now() });
                 }
-            });
-            return {
-                counterValue: next,
-                carryHistory: [...s.carryHistory.slice(-7), ...carries],
-            };
-        }),
-    resetCounter: () => set({ counterValue: 0, carryHistory: [] }),
+
+                set(s => {
+                    const currentBits = toBits4(s.counterValue);
+                    currentBits[i] = nextBits[i];
+                    return { 
+                        counterValue: bitsToNum(currentBits),
+                        carryHistory: [...s.carryHistory.slice(-7), ...carries]
+                    };
+                });
+            } else {
+                break;
+            }
+        }
+
+        set({ isIncrementing: false, predictionStatus: 'idle' });
+    },
+    resetCounter: () => set({ counterValue: 0, carryHistory: [], isIncrementing: false, predictionStatus: 'idle' }),
 
     // ── Module 3.3 ──
     registerBits: [0, 0, 0, 0, 0, 0, 0, 0],
     registerWidth: 8,
     storedValue: null,
+    isWriting: false,
+    lastRefreshTime: Date.now(),
+    isDecayed: false,
     toggleRegisterBit: (index) =>
         set((s) => {
             const next = [...s.registerBits] as Bit[];
             next[index] = (next[index] === 0 ? 1 : 0) as Bit;
-            return { registerBits: next, storedValue: null };
+            return { registerBits: next, storedValue: null, lastRefreshTime: Date.now(), isDecayed: false };
         }),
     setRegisterWidth: (width) => set({ registerWidth: width }),
-    storeValue: () =>
-        set((s) => ({ storedValue: bitsToNum(s.registerBits) })),
-    resetRegister: () => set({ registerBits: [0, 0, 0, 0, 0, 0, 0, 0], storedValue: null }),
+    storeValue: async () => {
+        set({ isWriting: true });
+        // REQ 5: MEMORY STABILIZATION (Longer delay for feeling)
+        await new Promise(r => setTimeout(r, 1200)); 
+        set((s) => ({ 
+            storedValue: bitsToNum(s.registerBits),
+            isWriting: false,
+            lastRefreshTime: Date.now(),
+            isDecayed: false
+        }));
+    },
+    refreshMemory: () => set({ lastRefreshTime: Date.now(), isDecayed: false }),
+    resetRegister: () => set({ registerBits: [0, 0, 0, 0, 0, 0, 0, 0], storedValue: null, isWriting: false, lastRefreshTime: Date.now(), isDecayed: false }),
 
     // ── Module 3.4 ──
     operandA: [0, 1, 0, 1],
@@ -153,6 +334,9 @@ export const useBinaryStore = create<BinaryState>((set, get) => ({
     addResult: [0, 0, 0, 0, 0],
     isAdding: false,
     additionComplete: false,
+    isArithmeticReverseMode: false,
+    targetSum: null,
+
     toggleOperandBit: (op, index) =>
         set((s) => {
             const bits = [...(op === 'A' ? s.operandA : s.operandB)] as Bit[];
@@ -176,13 +360,27 @@ export const useBinaryStore = create<BinaryState>((set, get) => ({
             const allDone = next.every((step) => step.revealed);
             return { addSteps: next, additionComplete: allDone, isAdding: !allDone };
         }),
-    resetAdder: () =>
-        set({ addSteps: [], addResult: [0, 0, 0, 0, 0], isAdding: false, additionComplete: false }),
+    setReverseMode: (active) => set({ 
+        isArithmeticReverseMode: active, 
+        targetSum: active ? Math.floor(Math.random() * 31) : null 
+    }),
+    resetAdder: () => set({ addSteps: [], addResult: [0, 0, 0, 0, 0], isAdding: false, additionComplete: false }),
 }));
 
-// ── Selector helpers ───────────────────────────────────────────────────────────
-
+// ── Selectors ──
 export const selectCounterBits = (s: BinaryState) => toBits4(s.counterValue);
 export const selectSwitchDecimal = (s: BinaryState) => bitsToNum(s.switchBits);
 export const selectRegisterHex = (s: BinaryState) =>
     bitsToNum(s.registerBits).toString(16).toUpperCase().padStart(2, '0');
+
+export const selectCognitionTier = (s: BinaryState) => {
+    const { interactions, incorrectToggles, arithmeticMistakes, predictionAccuracy, errorStreak } = s.metrics;
+    
+    if (errorStreak > 2) return 'struggling';
+    if (interactions > 15 && predictionAccuracy < 0.4) return 'overconfident';
+    if (arithmeticMistakes > 5 || incorrectToggles > 8) return 'struggling';
+    if (interactions > 0 && interactions < 3) return 'passive';
+    
+    return 'learning';
+};
+

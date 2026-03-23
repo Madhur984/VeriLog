@@ -40,7 +40,6 @@ interface FSMCanvasProps {
     activeTransitionId?: string;
     onStateClick?: (stateId: StateId) => void;
     onPositionChange?: (stateId: StateId, pos: Position) => void;
-    width?: number;
     height?: number;
 }
 

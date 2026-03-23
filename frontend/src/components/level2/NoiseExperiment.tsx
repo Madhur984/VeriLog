@@ -17,6 +17,10 @@ import { ChevronDown, CheckCircle2, AlertTriangle } from 'lucide-react';
 import { useAnalogSignal } from '../../hooks/useAnalogSignal';
 import { useDigitalSignal } from '../../hooks/useDigitalSignal';
 import { OscilloscopeCanvas } from './OscilloscopeCanvas';
+import { useGlobalSensory } from '../../hooks/useGlobalSensory';
+import { VeriSlider } from '../shared/VeriSlider';
+import { VeriButton } from '../shared/VeriButton';
+import { useAttentionLock } from '../../hooks/useAttentionLock';
 
 const T = {
     bg: '#0A0B10', card: '#0D0F16', surface: '#1A1D24', border: '#1A1D24',
@@ -72,6 +76,8 @@ interface NoiseExperimentProps {
 }
 
 export function NoiseExperiment({ onComplete }: NoiseExperimentProps) {
+    const { triggerHaptic } = useGlobalSensory();
+    const { focusProps } = useAttentionLock();
     const [noiseAmp, setNoiseAmp] = useState(0);
     const { waveformSamples: analogSamples, brightness } = useAnalogSignal(noiseAmp);
     const { waveformSamples: digitalSamples, switchOn } = useDigitalSignal(noiseAmp);
@@ -107,23 +113,15 @@ export function NoiseExperiment({ onComplete }: NoiseExperimentProps) {
                 background: T.card, border: `1px solid ${T.border}`,
                 borderRadius: 4, padding: 20,
             }}>
-                <div style={{
-                    display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12,
-                }}>
-                    <span style={{
-                        fontFamily: T.mono, fontSize: 8, letterSpacing: '0.2em',
-                        textTransform: 'uppercase', color: `${T.warning}80`,
-                    }}>
-                        Noise Generator — Shared Channel
-                    </span>
-                    <span style={{ fontFamily: T.mono, fontSize: 10, color: T.warning }}>
-                        {noiseAmp.toFixed(1)} / 10
-                    </span>
-                </div>
-                <input
-                    type="range" min={0} max={10} step={0.2} value={noiseAmp}
-                    onChange={e => setNoiseAmp(Number(e.target.value))}
-                    style={{ width: '100%', accentColor: T.warning, cursor: 'pointer' }}
+                <VeriSlider
+                    value={noiseAmp}
+                    onChange={(v) => {
+                        setNoiseAmp(v);
+                        triggerHaptic('light');
+                    }}
+                    min={0} max={10}
+                    label="Noise Generator — Shared Channel"
+                    variant="signal"
                 />
                 <div style={{
                     display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginTop: 12,
@@ -340,26 +338,25 @@ export function NoiseExperiment({ onComplete }: NoiseExperimentProps) {
                             const answered = scenarioAnswers[scenarioIdx];
                             const isCorrect = opt === SCENARIOS[scenarioIdx].correct;
                             const isSelected = answered === opt;
-                            let borderCol: string = T.border, bg = 'transparent', col: string = T.text;
+                            
+                            let variant: 'primary' | 'secondary' | 'logic' | 'signal' | 'ghost' = 'secondary';
                             if (answered) {
-                                if (isCorrect) { borderCol = `${T.success}50`; bg = `${T.success}08`; col = T.success; }
-                                else if (isSelected) { borderCol = `${T.error}50`; bg = `${T.error}08`; col = T.error; }
-                                else col = T.muted;
+                                if (isSelected) {
+                                    variant = isCorrect ? 'logic' : 'primary';
+                                }
                             }
+                            
                             return (
-                                <button key={opt}
+                                <VeriButton 
+                                    key={opt}
                                     onClick={() => handleAnswer(opt)}
                                     disabled={!!answered}
-                                    style={{
-                                        flex: 1, padding: '12px',
-                                        fontFamily: T.mono, fontSize: 10, letterSpacing: '0.12em',
-                                        background: bg, border: `1px solid ${borderCol}`, borderRadius: 2,
-                                        color: col, cursor: answered ? 'default' : 'pointer',
-                                        transition: 'all 0.15s ease',
-                                    }}
+                                    variant={variant}
+                                    size="md"
+                                    className="flex-1"
                                 >
                                     {opt}
-                                </button>
+                                </VeriButton>
                             );
                         })}
                     </div>

@@ -14,8 +14,9 @@
  */
 
 import { useCallback, useRef } from 'react';
+import { useBinaryStore, selectCognitionTier } from '../stores/binaryStore';
 
-export type SigmaTier = 'sharp' | 'steady' | 'struggling';
+export type SigmaTier = 'sharp' | 'steady' | 'struggling' | 'overconfident' | 'passive';
 export type L3Scene = 'switch' | 'counter' | 'register' | 'arithmetic';
 
 export interface SigmaResponse {
@@ -32,17 +33,17 @@ const SIGMA_DB: Record<L3Scene, Record<SigmaTier, SigmaResponse[]>> = {
     switch: {
         sharp: [
             {
-                observation: 'Switch state change detected. Binary digit updated.',
-                analysis: 'Logic HIGH (VDD) encodes 1; Logic LOW (GND) encodes 0. This is the foundational abstraction of digital electronics — all information reduces to binary potential states.',
-                conclusion: 'The binary string you see IS the voltage pattern across the register inputs.',
-                insight: 'In CMOS, HIGH is ~VDD (3.3V or 1.8V) and LOW is ~0V. Noise margins define how far from these rails a signal can deviate while still being correctly interpreted.',
+                observation: 'Switch transition detected. Binary state synchronized.',
+                analysis: 'Logic HIGH (VDD) vs Logic LOW (GND) abstraction. You are viewing the foundational binary digitization of physical voltage potential.',
+                conclusion: 'The current bit pattern is a direct representation of the voltage levels being fed into the register inputs.',
+                insight: 'In sub-micron CMOS processes, noise margins are razor-thin. What looks like a clean 1/0 here is actually a result of complex thresholding logic at the gate level.',
                 tier: 'sharp',
             },
             {
-                observation: 'Switch configuration: voltage states mapped to binary representation.',
-                analysis: '2^4 = 16 unique states are available with 4 bits. This is a 4-bit register operating in combinational mode — no clock, purely combinational logic from switch inputs.',
-                conclusion: 'This topology maps directly to a 4-bit DIP switch input in real embedded hardware.',
-                insight: 'Hardware engineers use pull-up/pull-down resistors to define the default (un-toggled) state of switches, preventing floating inputs.',
+                observation: 'Voltage-to-Binary mapping verified via switch matrix.',
+                analysis: '4-bit combinatorial input. Notice the attention dimming; it highlights the active interaction path to reduce cognitive noise during state transitions.',
+                conclusion: 'This simulates a physical DIP switch interface used for hardware bootstrapping.',
+                insight: 'Real hardware switches require debouncing circuits—either in code or using a Schmitt trigger—to prevent a single tap from registering as multiple "noisy" transitions.',
                 tier: 'sharp',
             },
         ],
@@ -64,6 +65,24 @@ const SIGMA_DB: Record<L3Scene, Record<SigmaTier, SigmaResponse[]>> = {
                 tier: 'struggling',
             },
         ],
+        overconfident: [
+            {
+                observation: 'Rapid switch toggling detected. Pattern integrity suspect.',
+                analysis: 'High interaction frequency without state analysis suggests trial-and-error rather than systematic engineering. Digital design requires precise state transitions.',
+                conclusion: 'Slowing down to observe the Voltage → Threshold → Bit transformation will stabilize your conceptual model.',
+                insight: 'Real-world bounce in physical switches requires debouncing logic. Your rapid input mimics switch bounce.',
+                tier: 'overconfident',
+            }
+        ],
+        passive: [
+            {
+                observation: 'Low interaction density in Switch Lab.',
+                analysis: 'Binary systems are experimental by nature. Observe how the LSB (bit 0) affects the total value differently than the MSB (bit 3).',
+                conclusion: 'Toggle each switch once to map the physical position to its binary power-of-two weight.',
+                insight: 'Passive observation misses the "feel" of digital thresholds. Experiment with the voltage slider.',
+                tier: 'passive',
+            }
+        ]
     },
 
     counter: {
@@ -101,6 +120,24 @@ const SIGMA_DB: Record<L3Scene, Record<SigmaTier, SigmaResponse[]>> = {
                 tier: 'struggling',
             },
         ],
+        overconfident: [
+            {
+                observation: 'Rapid incrementing. Observe the carry chain!',
+                analysis: 'Clicking too fast skips the most important part of this lab: the propagation wave. Carry bits don\'t move instantly; they ripple through gates.',
+                conclusion: 'Slow down. Watch how bit 0 flips, then bit 1, then bit 2. This is the "Ripple" in a Ripple Counter.',
+                insight: 'High-speed counters in CPUs use "Carry Lookahead" to bypass this sequential delay. You are using the basic sequential version.',
+                tier: 'overconfident',
+            }
+        ],
+        passive: [
+            {
+                observation: 'Counter interaction is low.',
+                analysis: 'Counting to 15 (1111) is the best way to see the full ripple effect. Each step reveals a different carry depth.',
+                conclusion: 'Increment until you see multiple bits flip at once. That is a multi-stage carry propagation.',
+                insight: 'Binary counters are the heartbeat of digital clocks. Every "second" is just an increment in a multi-bit counter.',
+                tier: 'passive',
+            }
+        ]
     },
 
     register: {
@@ -131,6 +168,24 @@ const SIGMA_DB: Record<L3Scene, Record<SigmaTier, SigmaResponse[]>> = {
                 tier: 'struggling',
             },
         ],
+        overconfident: [
+            {
+                observation: 'Register bits modified rapidly without storage.',
+                analysis: 'Data in a register is "volatile" and "input-only" until the WRITE ENABLE signal (the Store button) is pulsed.',
+                conclusion: 'The current bits represent the input buffer. They only become "Stored Value" after the write stabilization sequence.',
+                insight: 'Registers in real hardware have a "Setup" and "Hold" time — the data must be stable before the clock edge captures it.',
+                tier: 'overconfident',
+            }
+        ],
+        passive: [
+            {
+                observation: 'Memory interaction detected. Hex mapping active.',
+                analysis: 'A byte can represent anything: a number, a character (ASCII), or a pixel color. Notice how changing one bit changes one hex digit.',
+                conclusion: 'Toggle bits to see how the two hex digits (the "High Nibble" and "Low Nibble") update independently.',
+                insight: 'In assembly language, you often see instructions like `MOV R0, #0xFF`. This sets all bits in the 8-bit R0 register to 1.',
+                tier: 'passive',
+            }
+        ]
     },
 
     arithmetic: {
@@ -161,6 +216,24 @@ const SIGMA_DB: Record<L3Scene, Record<SigmaTier, SigmaResponse[]>> = {
                 tier: 'struggling',
             },
         ],
+        overconfident: [
+            {
+                observation: 'Repeated "Compute" triggers with same operands.',
+                analysis: 'The result is deterministic. The real engineering value is in the Ripple Step. Observe the specific inputs to each Full Adder cell.',
+                conclusion: 'The Full Adder takes 3 inputs. If (A+B+Cin) >= 2, you generate a carry-out. This is the core logic of all ALU arithmetic.',
+                insight: 'Arithmetic logic units (ALUs) use parallel prefix trees to speed up this process for 64-bit additions.',
+                tier: 'overconfident',
+            }
+        ],
+        passive: [
+            {
+                observation: 'Arithmetic engine idle.',
+                analysis: 'Change the operand bits to see how different combinations affect the carry flow. Can you create a carry that ripples through all 4 bits?',
+                conclusion: 'Try adding 1111 + 0001. This "Worst Case" addition creates a ripple that travels from the LSB (Bit 0) all the way to the Overflow bit.',
+                insight: 'The "Carry Out" of the leftmost bit is the "Overflow" flag in a CPU.',
+                tier: 'passive',
+            }
+        ]
     },
 };
 
@@ -171,17 +244,42 @@ export function useSigmaMentorL3() {
     const usedIndices = useRef<Record<string, Set<number>>>({});
 
     const recordInteraction = useCallback((success: boolean) => {
-        interactionHistory.current = [...interactionHistory.current.slice(-2), success];
+        interactionHistory.current = [...interactionHistory.current.slice(-6), success];
     }, []);
 
+    const cognitionTier = useBinaryStore(selectCognitionTier);
+    const metrics = useBinaryStore(s => s.metrics);
+
     const getTier = useCallback((): SigmaTier => {
+        // First check the cognition engine for behavioral flags
+        if (cognitionTier === 'overconfident' || cognitionTier === 'passive' || cognitionTier === 'struggling') {
+            return cognitionTier;
+        }
+
         const hist = interactionHistory.current;
         if (hist.length === 0) return 'steady';
         const successes = hist.filter(Boolean).length;
+        
         if (successes === hist.length && hist.length >= 2) return 'sharp';
         if (successes >= Math.ceil(hist.length * 0.6)) return 'steady';
         return 'struggling';
-    }, []);
+    }, [cognitionTier]);
+
+    // NEW: Proactive Detection
+    const getProactiveMessage = useCallback((_scene: L3Scene): string | null => {
+        const { hesitationTime, errorStreak } = metrics;
+        
+        if (errorStreak >= 2) {
+            return "Engineering Alert: Repeated state mismatch detected. System synchronization required. Try analyzing the carry chain at 0.5x speed.";
+        }
+        
+        // If they've been hesitating (handled in store updateHesitation elsewhere)
+        if (hesitationTime > 10000) {
+            return "Insight: Complex logical transition ahead. Remember, the LSB always toggles first in a ripple sequence.";
+        }
+
+        return null;
+    }, [metrics]);
 
     const getResponse = useCallback((scene: L3Scene): SigmaResponse => {
         const tier = getTier();
@@ -197,8 +295,15 @@ export function useSigmaMentorL3() {
         }
         const idx = available[Math.floor(Math.random() * available.length)];
         used.add(idx);
-        return pool[idx];
+        
+        const response = pool[idx];
+        
+        // REQ 10: Inject "Why This Matters" into Conclusion/Insight if not present
+        return {
+            ...response,
+            insight: response.insight + " [SYSTEM IMPACT: This principle directly determines clock speed and data integrity in modern processors.]"
+        };
     }, [getTier]);
 
-    return { recordInteraction, getResponse, getTier };
+    return { recordInteraction, getResponse, getTier, getProactiveMessage };
 }

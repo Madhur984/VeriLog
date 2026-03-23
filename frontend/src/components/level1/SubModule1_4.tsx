@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { SignalRenderer } from '../../circuit-lab/SignalRenderer';
-import { Power, ToggleRight, ToggleLeft } from 'lucide-react';
+import { ToggleRight, ToggleLeft } from 'lucide-react';
 
 interface SubModuleProps {
     onComplete: (sip: number) => void;

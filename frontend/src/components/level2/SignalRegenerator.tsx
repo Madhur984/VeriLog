@@ -10,6 +10,10 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { CheckCircle2 } from 'lucide-react';
+import { useGlobalSensory } from '../../hooks/useGlobalSensory';
+import { VeriSlider } from '../shared/VeriSlider';
+import { VeriButton } from '../shared/VeriButton';
+import { useAttentionLock } from '../../hooks/useAttentionLock';
 import { OscilloscopeCanvas } from './OscilloscopeCanvas';
 
 const T = {
@@ -27,6 +31,8 @@ interface SignalRegeneratorProps {
 }
 
 export function SignalRegenerator({ onComplete }: SignalRegeneratorProps) {
+    const { triggerHaptic } = useGlobalSensory();
+    const { focusProps } = useAttentionLock();
     const [noiseAmp, setNoiseAmp] = useState(5);
     const [complete, setComplete] = useState(false);
 
@@ -75,7 +81,7 @@ export function SignalRegenerator({ onComplete }: SignalRegeneratorProps) {
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 24, width: '100%' }}>
-            <div style={{
+            <div {...focusProps} style={{
                 background: T.card, border: `1px solid ${T.border}`,
                 borderRadius: 4, padding: 24,
             }}>
@@ -89,18 +95,15 @@ export function SignalRegenerator({ onComplete }: SignalRegeneratorProps) {
 
                 {/* Noise control */}
                 <div style={{ marginBottom: 24 }}>
-                    <div style={{
-                        display: 'flex', justifyContent: 'space-between',
-                        fontFamily: T.mono, fontSize: 8, color: T.muted,
-                        letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 8,
-                    }}>
-                        <span>Input Noise Amplitude</span>
-                        <span style={{ color: T.warning }}>{noiseAmp.toFixed(1)} / 10</span>
-                    </div>
-                    <input
-                        type="range" min={1} max={9} step={0.5} value={noiseAmp}
-                        onChange={e => setNoiseAmp(Number(e.target.value))}
-                        style={{ width: '100%', accentColor: T.warning, cursor: 'pointer' }}
+                    <VeriSlider
+                        value={noiseAmp}
+                        onChange={(v) => {
+                            setNoiseAmp(v);
+                            triggerHaptic('light');
+                        }}
+                        min={1} max={9}
+                        label="Input Noise Amplitude"
+                        variant="signal"
                     />
                 </div>
 
@@ -191,20 +194,13 @@ export function SignalRegenerator({ onComplete }: SignalRegeneratorProps) {
 
             {!complete ? (
                 <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                    <button
+                    <VeriButton
                         onClick={handleObserved}
-                        style={{
-                            padding: '10px 24px',
-                            fontFamily: T.mono, fontSize: 9, letterSpacing: '0.2em',
-                            textTransform: 'uppercase',
-                            background: 'rgba(0,212,255,0.07)',
-                            border: '1px solid rgba(0,212,255,0.3)',
-                            borderRadius: 2, color: T.accent,
-                            cursor: 'pointer',
-                        }}
+                        variant="primary"
+                        size="md"
                     >
                         I understand regeneration →
-                    </button>
+                    </VeriButton>
                 </div>
             ) : (
                 <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}

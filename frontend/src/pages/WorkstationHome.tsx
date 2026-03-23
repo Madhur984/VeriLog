@@ -279,7 +279,7 @@ export const WorkstationHome: React.FC = () => {
     }, [completedModuleIds]);
 
     const MODULE_ROUTES: Record<string, string> = {
-        signals: '/module/signal-must-return',
+        signals: '/module/1',
         analog_digital: '/module/2',
         binary_awakening: '/module/3',
         logic_gates: '/module/4',
@@ -498,15 +498,14 @@ export const WorkstationHome: React.FC = () => {
                             <p className="text-[10px] mt-2 font-mono" style={{ color: t.textMuted }}>{completedCount}/{MODULES.length} complete</p>
                         </div>
                     </div>
-                </aside >
+                </aside>
 
                 {/* ══ MAIN ═════════════════════════════════════════════════ */}
-                < div className="flex-1 flex flex-col min-w-0 overflow-hidden" >
+                <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
 
                     {/* Header */}
-                    < header className="h-14 shrink-0 flex items-center justify-between px-8 transition-colors duration-300"
-                        style={{ borderBottom: `1px solid ${t.sidebarBdr}`, background: t.bg }
-                        }>
+                    <header className="h-14 shrink-0 flex items-center justify-between px-8 transition-colors duration-300"
+                        style={{ borderBottom: `1px solid ${t.sidebarBdr}`, background: t.bg }}>
                         <button id="tour-header-search" onClick={() => setCmdOpen(true)}
                             className="flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-[12px] font-mono cursor-pointer transition-all"
                             style={{ background: t.inputBg, border: `1px solid ${t.inputBdr}`, color: t.textMuted }}>
@@ -536,12 +535,12 @@ export const WorkstationHome: React.FC = () => {
                                 {(firstName || 'S')[0].toUpperCase()}
                             </div>
                         </div>
-                    </header >
+                    </header>
 
                     {/* Content */}
-                    < div className="flex-1 overflow-y-auto overflow-x-hidden relative" >
+                    <div className="flex-1 overflow-y-auto overflow-x-hidden relative" >
                         {/* Blueprint grid */}
-                        < div className="fixed inset-0 pointer-events-none" style={{
+                        <div className="fixed inset-0 pointer-events-none" style={{
                             backgroundImage: [
                                 'linear-gradient(rgba(59,130,246,0.025) 1px,transparent 1px)',
                                 'linear-gradient(90deg,rgba(59,130,246,0.025) 1px,transparent 1px)',
@@ -549,10 +548,10 @@ export const WorkstationHome: React.FC = () => {
                             backgroundSize: '48px 48px',
                         }} />
 
-                        < div className="relative z-10 px-8 py-8" >
+                        <div className="relative z-10 px-8 py-8" >
 
                             {/* ── Page header ── */}
-                            < div className="mb-6" >
+                            <div className="mb-6" >
                                 <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-widest mb-2" style={{ color: t.textMuted }}>
                                     <Zap className="w-3 h-3" /> Curriculum Map
                                 </div>
@@ -560,10 +559,10 @@ export const WorkstationHome: React.FC = () => {
                                 <p className="text-[13px] mt-1" style={{ color: t.textMuted }}>
                                     Your progression path through digital electronics. Hover nodes to explore.
                                 </p>
-                            </div >
+                            </div>
 
                             {/* ── Breadcrumb ── */}
-                            < div className="flex items-center gap-1.5 mb-6 text-[11px] font-mono" style={{ color: t.textMuted }}>
+                            <div className="flex items-center gap-1.5 mb-6 text-[11px] font-mono" style={{ color: t.textMuted }}>
                                 {
                                     breadcrumb.map((crumb, i) => (
                                         <React.Fragment key={i}>
@@ -572,10 +571,10 @@ export const WorkstationHome: React.FC = () => {
                                         </React.Fragment>
                                     ))
                                 }
-                            </div >
+                            </div>
 
                             {/* ── Branch legend ── */}
-                            < div className="flex items-center gap-6 mb-6 flex-wrap" >
+                            <div className="flex items-center gap-6 mb-6 flex-wrap" >
                                 {
                                     [['#22c55e', 'Completed'], ['#10B981', 'In Progress'], [t.line, 'Locked']].map(([c, l]) => (
                                         <div key={l as string} className="flex items-center gap-1.5">
@@ -584,18 +583,18 @@ export const WorkstationHome: React.FC = () => {
                                         </div>
                                     ))
                                 }
-                                < div className="ml-auto flex items-center gap-4" >
+                                <div className="ml-auto flex items-center gap-4" >
                                     {(['basic', 'dsd', 'verilog'] as BranchKey[]).map(k => (
                                         <div key={k} className="flex items-center gap-1.5">
                                             <div className="w-2 h-2 rounded-full" style={{ background: BRANCH_META[k].color }} />
                                             <span className="text-[10px] font-mono" style={{ color: BRANCH_META[k].color }}>{BRANCH_META[k].label}</span>
                                         </div>
                                     ))}
-                                </div >
-                            </div >
+                                </div>
+                            </div>
 
                             {/* ══ SVG MAP ═════════════════════════════════════════ */}
-                            < div id="tour-map" className="w-full overflow-x-auto" >
+                            <div id="tour-map" className="w-full overflow-x-auto">
                                 <svg width={CW} height={CH} viewBox={`0 0 ${CW} ${CH}`} style={{ overflow: 'visible' }}>
 
                                     {/* ── Journey Layer Labels ── */}
@@ -672,10 +671,10 @@ export const WorkstationHome: React.FC = () => {
                                         </text>
                                     </g>
                                 </svg>
-                            </div >
+                            </div>
 
                             {/* ── Stats row ── */}
-                            < div className="grid grid-cols-4 gap-3 mt-10 max-w-2xl" >
+                            <div className="grid grid-cols-4 gap-3 mt-10 max-w-2xl">
                                 {
                                     [
                                         { label: 'Total Modules', value: String(MODULES.length), accent: '#94a3b8' },
@@ -690,14 +689,14 @@ export const WorkstationHome: React.FC = () => {
                                         </div>
                                     ))
                                 }
-                            </div >
+                            </div>
 
                             <div className="h-16" />
-                        </div >
-                    </div >
-                </div >
+                        </div>
+                    </div>
+                </div>
 
-            </div >
+            </div>
 
             {/* ── OVERLAYS ── */}
             < CommandPalette isOpen={cmdOpen} onClose={() => setCmdOpen(false)} navigate={navigate} tourKey={getTourKey(firstName)} />

@@ -1,0 +1,15 @@
+{
+  "extra_screens": [
+    {
+      "id": "signal_assignment",
+      "type": "interactive_quiz",
+      "mode": "multi_format",
+      "unlock_condition": "complete_previous"
+    },
+    {
+      "id": "module_transition",
+      "type": "gateway",
+      "cta": "module_2"
+    }
+  ]
+}

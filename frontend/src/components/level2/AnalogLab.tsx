@@ -11,11 +11,23 @@
  *   - Precision challenge: match target brightness ±3%
  */
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
+
 import { motion, AnimatePresence } from 'framer-motion';
+
+const CAUSAL_DELAY = 25; // ms propagation delay
 import { CheckCircle2, Target } from 'lucide-react';
 import { useAnalogSignal } from '../../hooks/useAnalogSignal';
 import { OscilloscopeCanvas } from './OscilloscopeCanvas';
+import { ConceptOverlay, ConceptData } from '../ui/ConceptOverlay';
+import { ActiveRecallSystem, Question } from '../ui/ActiveRecallSystem';
+import { ConceptGate, ConceptLevel } from '../ui/ConceptGate';
+import { useCognitionEngine } from '../../hooks/useCognitionEngine';
+import { useGlobalSensory } from '../../hooks/useGlobalSensory';
+import { DURATIONS } from '../../constants/designTokens';
+import { VeriSlider } from '../shared/VeriSlider';
+import { VeriButton } from '../shared/VeriButton';
+import { useAttentionLock } from '../../hooks/useAttentionLock';
 
 const T = {
     bg: '#0A0B10', card: '#0D0F16', surface: '#1A1D24', border: '#1A1D24',
@@ -49,10 +61,96 @@ export function AnalogLab({
     isGraphMode,
     setProbeData
 }: AnalogLabProps) {
-    const { sliderValue, setSlider, waveformSamples, voltageV, brightness } = useAnalogSignal(noiseAmp);
+    const { triggerHaptic, playSound, playAmbient, stopAmbient } = useGlobalSensory();
+    const { focusProps } = useAttentionLock();
+
+    const cognition = useCognitionEngine('analog_lab');
+    
+    // Physical Simulation State
+    const [sliderVoltage, setSliderVoltage] = useState(2.5);
+    const [actualVoltage, setActualVoltage] = useState(2.5); // Delayed "causal" voltage
+    const [wireDistance, setWireDistance] = useState(0); // 0-100% attenuation
+    const [isFreezeActive, setIsFreezeActive] = useState(false);
+    const [noiseType, setNoiseType] = useState<'gaussian' | 'burst' | 'drift' | 'emi'>('gaussian');
+    
+    const { setSlider, waveformSamples, sliderValue, voltageV, brightness } = useAnalogSignal(noiseAmp, noiseType);
+    
+    // Causal Engine logic
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            if (!isFreezeActive) {
+                setActualVoltage(sliderVoltage);
+                setSlider(sliderVoltage * 20); // Scale 0-5V to 0-100%
+            }
+        }, CAUSAL_DELAY);
+        return () => clearTimeout(timer);
+    }, [sliderVoltage, isFreezeActive, setSlider]);
+
+    const displayVoltage = actualVoltage * (1 - (wireDistance * 0.005));
+    const effectiveBrightness = displayVoltage / 5;
     const [challengeIdx, setChallengeIdx] = useState(0);
     const [challengeComplete, setChallengeComplete] = useState(false);
     const [targetsMet, setTargetsMet] = useState<boolean[]>([false, false, false]);
+    
+    // Causal Glow Pulse
+    const [pulseOpacity, setPulseOpacity] = useState(0);
+    const [isGateUnlocked, setIsGateUnlocked] = useState(false);
+    const [isEngineerMode, setIsEngineerMode] = useState(false);
+    const [isPaused, setIsPaused] = useState(false);
+
+    // Theory & Recall State
+    const [showTheory, setShowTheory] = useState(false);
+    const [showRecall, setShowRecall] = useState(false);
+    const [hasSeenRecall, setHasSeenRecall] = useState(false);
+
+    const ANALOG_CONCEPT: ConceptData = {
+        id: 'analog_continuous',
+        title: 'Continuous Signals',
+        description: 'Analog signals map physical quantities (like voltage) directly to information. They have infinite resolution—there is always a value between any two points.',
+        visualLink: 'Potentiometer Voltage',
+        insight: 'In the analog world, every micro-volt matters. This makes them precise but vulnerable to noise.',
+        memoryHook: 'Analog is like a dimmer switch, not a button.',
+        color: T.analog
+    };
+
+    const ANALOG_RECALL: Question = {
+        id: 'analog_precision',
+        type: 'instant',
+        text: 'Why does the LED brightness change smoothly rather than snapping?',
+        options: [
+            { text: 'It has infinite resolution', isCorrect: true },
+            { text: 'It uses binary logic', isCorrect: false },
+            { text: 'The battery is 9V', isCorrect: false }
+        ],
+        explanation: 'Analog signals are continuous, meaning they can represent any value between 0 and 5V, resulting in smooth transitions.'
+    };
+
+    const ANALOG_GATE_LEVELS: ConceptLevel[] = [
+        {
+            title: "Intuition",
+            content: "Analog signals are like a dimmer switch—there are no 'snaps' or 'jumps'. Every slight physical change is mirrored perfectly in the signal."
+        },
+        {
+            title: "Technical",
+            content: "We use voltage to represent value. A 0% slider = 0V, 100% slider = 5V. In between? Infinite possibilities (1.23V, 1.234V...)."
+        },
+        {
+            title: "Engineering",
+            content: "Because they map to physics directly, analog signals are 'Continuous'. This makes them the foundation of the real world, but vulnerable to electrical noise."
+        }
+    ];
+
+    // Engineering Hum & Pulse reaction
+    useEffect(() => {
+        playAmbient();
+        return () => stopAmbient();
+    }, [playAmbient, stopAmbient]);
+
+    useEffect(() => {
+        setPulseOpacity(1);
+        const t = setTimeout(() => setPulseOpacity(0), 400);
+        return () => clearTimeout(t);
+    }, [sliderValue]);
 
     const currentTarget = CHALLENGE_TARGETS[challengeIdx];
     const diff = Math.abs(sliderValue - currentTarget);
@@ -66,16 +164,15 @@ export function AnalogLab({
 
         if (challengeIdx < CHALLENGE_TARGETS.length - 1) {
             setChallengeIdx(i => i + 1);
+            triggerHaptic('success');
         } else {
             setChallengeComplete(true);
             onComplete(10);
+            if (!hasSeenRecall) setShowRecall(true);
         }
-    }, [isWithinTolerance, challengeIdx, targetsMet, onComplete]);
+    }, [isWithinTolerance, challengeIdx, targetsMet, onComplete, hasSeenRecall, triggerHaptic]);
 
-    const ledColor = `rgba(0, 212, 255, ${0.05 + brightness * 0.95})`;
-    const ledGlow = brightness > 0.1
-        ? `0 0 ${12 + brightness * 32}px rgba(0,212,255,${brightness * 0.8}), 0 0 ${4 + brightness * 12}px rgba(0,212,255,0.9)`
-        : 'none';
+    // Obsolete style variables removed
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 24, width: '100%' }}>
@@ -117,6 +214,14 @@ export function AnalogLab({
                         <line x1="40" y1="88" x2="90" y2="88" stroke={T.accent} strokeWidth="1.5" strokeDasharray="4 8" opacity={0.4 + brightness * 0.6}>
                             {brightness > 0.05 && <animate attributeName="stroke-dashoffset" from="12" to="0" dur="1.2s" repeatCount="indefinite" />}
                         </line>
+                        {/* Causal Glow Pulse - Wire 1 */}
+                        <motion.line 
+                            x1="40" y1="88" x2="90" y2="88" 
+                            stroke={T.accent} strokeWidth="4" 
+                            animate={{ opacity: pulseOpacity * 0.6 }}
+                            transition={{ duration: DURATIONS.GLOW_TRAVEL }}
+                            style={{ filter: 'blur(4px)' }} 
+                        />
 
                         {/* Potentiometer */}
                         <g>
@@ -144,14 +249,28 @@ export function AnalogLab({
                         <line x1="150" y1="88" x2="195" y2="88" stroke={T.accent} strokeWidth="1.5" strokeDasharray="4 8" opacity={0.4 + brightness * 0.6}>
                             {brightness > 0.05 && <animate attributeName="stroke-dashoffset" from="12" to="0" dur={`${1 + (1 - brightness)}s`} repeatCount="indefinite" />}
                         </line>
+                        {/* Causal Glow Pulse - Wire 2 */}
+                        <motion.line 
+                            x1="150" y1="88" x2="195" y2="88" 
+                            stroke={T.accent} strokeWidth="4" 
+                            animate={{ opacity: pulseOpacity * 0.6 }}
+                            transition={{ duration: DURATIONS.GLOW_TRAVEL, delay: 0.05 }}
+                            style={{ filter: 'blur(4px)' }} 
+                        />
 
                         {/* LED symbol */}
                         <g>
                             <circle cx="210" cy="100" r="16" fill="none" stroke="#94A3B8" strokeWidth="1.5" />
                             {/* LED bright fill */}
-                            <circle cx="210" cy="100" r="12"
+                            <motion.circle cx="210" cy="100" r="12"
                                 fill="url(#led-grad)"
-                                style={{ filter: `drop-shadow(0 0 ${8 * brightness}px rgba(0,212,255,${brightness * 0.9}))` }}
+                                animate={{ scale: targetsMet[0] ? [1, 1.1, 1] : 1 }}
+                                style={{ 
+                                    opacity: effectiveBrightness,
+                                    filter: effectiveBrightness > 0.1 
+                                        ? `drop-shadow(0 0 ${8 + effectiveBrightness * 20}px rgba(0,212,255,0.8))`
+                                        : 'none'
+                                }}
                             />
                             {/* LED symbol triangle */}
                             <polygon points="204,95 204,105 214,100" fill={T.accent} opacity={0.7} />
@@ -276,60 +395,115 @@ export function AnalogLab({
                                     onMouseEnter={() => setProbeData?.({ label: 'LED_ANODE', val: `${voltageV.toFixed(2)}V` })}
                                     onMouseLeave={() => setProbeData?.(null)}
                                 />
+                                
+                                {/* Mini Waveform Overlay on Probe */}
+                                <foreignObject x="130" y="20" width="80" height="50">
+                                     <div style={{ 
+                                         width: '100%', height: '100%', background: 'rgba(0,0,0,0.8)', 
+                                         border: `1px solid ${T.accent}`, borderRadius: 2, overflow: 'hidden'
+                                     }}>
+                                         <OscilloscopeCanvas 
+                                             ch1Samples={waveformSamples} 
+                                             height={50} 
+                                             className="opacity-80"
+                                         />
+                                     </div>
+                                </foreignObject>
                             </g>
                         )}
                     </svg>
 
                     {/* Controls */}
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-                        {/* LED Preview */}
+                    {/* LED Preview */}
                         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-                            <div style={{
+                            <motion.div style={{
                                 width: 40, height: 40, borderRadius: '50%',
-                                background: ledColor,
-                                boxShadow: ledGlow,
-                                border: `1px solid rgba(0,212,255,${0.2 + brightness * 0.6})`,
-                                transition: 'background 0.08s ease, box-shadow 0.08s ease',
+                                background: `rgba(0, 212, 255, ${0.05 + effectiveBrightness * 0.95})`,
+                                boxShadow: effectiveBrightness > 0.1
+                                    ? `0 0 ${12 + effectiveBrightness * 32}px rgba(0,212,255,${effectiveBrightness * 0.8}), 0 0 ${4 + effectiveBrightness * 12}px rgba(0,212,255,0.9)`
+                                    : 'none',
+                                border: `1px solid rgba(0,212,255,${0.2 + effectiveBrightness * 0.6})`,
+                                transition: 'background 0.08s ease',
                             }} />
                             <div>
                                 <div style={{ fontFamily: T.mono, fontSize: 11, color: T.accent }}>
-                                    {voltageV.toFixed(2)} V
+                                    {displayVoltage.toFixed(2)} V
                                 </div>
                                 <div style={{ fontFamily: T.mono, fontSize: 9, color: T.muted }}>
-                                    {Math.round(brightness * 100)}% brightness
+                                    {Math.round(effectiveBrightness * 100)}% brightness
                                 </div>
                             </div>
                         </div>
 
-                        {/* Potentiometer Slider */}
-                        <div>
-                            <div style={{
-                                display: 'flex', justifyContent: 'space-between',
-                                fontFamily: T.mono, fontSize: 8, color: T.muted,
-                                letterSpacing: '0.1em', textTransform: 'uppercase',
-                                marginBottom: 8,
-                            }}>
-                                <span>Potentiometer</span>
-                                <span>{sliderValue}%</span>
-                            </div>
-                            <input
-                                type="range"
-                                min={0} max={100} value={sliderValue}
-                                onChange={e => setSlider(Number(e.target.value))}
-                                style={{
-                                    width: '100%', accentColor: T.accent,
-                                    cursor: 'pointer', height: 4,
-                                }}
-                            />
-                            <div style={{
-                                display: 'flex', justifyContent: 'space-between',
-                                fontFamily: T.mono, fontSize: 7, color: T.muted,
-                                marginTop: 4, letterSpacing: '0.08em',
-                            }}>
-                                <span>0 V</span>
-                                <span>5 V</span>
-                            </div>
+                        {/* Simulation Logic Controls */}
+                        <div style={{ display: 'flex', gap: 8 }}>
+                             <VeriButton
+                                 onClick={() => { setIsFreezeActive(!isFreezeActive); triggerHaptic('medium'); }}
+                                 variant={isFreezeActive ? 'primary' : 'secondary'}
+                                 size="sm"
+                                 className="flex-1"
+                             >
+                                 {isFreezeActive ? 'RESUME SIM' : 'FREEZE SIM'}
+                             </VeriButton>
                         </div>
+
+                        {/* Potentiometer Slider */}
+                        <div {...focusProps} style={{ opacity: isGateUnlocked ? 1 : 0.4, transition: 'opacity 0.5s ease', pointerEvents: isGateUnlocked ? 'auto' : 'none' }}>
+                            <VeriSlider
+                                value={sliderVoltage * 20}
+                                onChange={(v) => {
+                                    setSliderVoltage(v / 20);
+                                    cognition.recordInteraction('potentiometer_drag');
+                                    setPulseOpacity(1);
+                                    setTimeout(() => setPulseOpacity(0), 400);
+                                }}
+                                label="Signal Voltage"
+                                variant="signal"
+                                snaps={[
+                                    { value: 0, label: '0V' },
+                                    { value: 50, label: '2.5V' },
+                                    { value: 100, label: '5V' },
+                                    { value: currentTarget, label: challengeComplete ? undefined : 'TARGET' }
+                                ]}
+                            />
+                        </div>
+
+                        {/* Feature 9: Line Loss (Distance Simulation) */}
+                        <div style={{ opacity: isGateUnlocked ? 1 : 0.4, transition: 'opacity 0.5s ease' }}>
+                            <VeriSlider
+                                value={wireDistance}
+                                onChange={(v) => {
+                                    setWireDistance(v);
+                                    cognition.recordInteraction('wire_distance_adjust');
+                                }}
+                                label="Line Loss / Distance"
+                                variant="signal"
+                                snaps={[
+                                    { value: 0, label: '0m' },
+                                    { value: 50, label: '50m' },
+                                    { value: 100, label: '100m' }
+                                ]}
+                            />
+                        </div>
+
+                        {/* Noise Personality Engine UI */}
+                        {isGateUnlocked && (
+                            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                                <span style={{ fontFamily: T.mono, fontSize: 8, color: T.muted }}>NOISE_TYPE:</span>
+                                {(['gaussian', 'burst', 'drift', 'emi'] as const).map(type => (
+                                    <VeriButton
+                                        key={type}
+                                        onClick={() => { setNoiseType(type); triggerHaptic('light'); }}
+                                        variant={noiseType === type ? 'primary' : 'secondary'}
+                                        size="sm"
+                                        className="!py-1 !px-2 !text-[7px]"
+                                    >
+                                        {type}
+                                    </VeriButton>
+                                ))}
+                            </div>
+                        )}
 
                         {/* Challenge */}
                         {!challengeComplete ? (
@@ -362,22 +536,14 @@ export function AnalogLab({
                                     }}>
                                         Δ {diff.toFixed(1)}%{isWithinTolerance ? ' ✓ In range' : ''}
                                     </span>
-                                    <button
+                                    <VeriButton
                                         onClick={handleChallengeCheck}
                                         disabled={!isWithinTolerance}
-                                        style={{
-                                            padding: '6px 14px',
-                                            fontFamily: T.mono, fontSize: 8,
-                                            letterSpacing: '0.15em', textTransform: 'uppercase',
-                                            background: isWithinTolerance ? `${T.success}12` : 'transparent',
-                                            border: `1px solid ${isWithinTolerance ? T.success : T.border}`,
-                                            borderRadius: 2, color: isWithinTolerance ? T.success : T.muted,
-                                            cursor: isWithinTolerance ? 'pointer' : 'not-allowed',
-                                            transition: 'all 0.2s ease',
-                                        }}
+                                        variant={isWithinTolerance ? 'primary' : 'secondary'}
+                                        size="sm"
                                     >
                                         Confirm
-                                    </button>
+                                    </VeriButton>
                                 </div>
                                 {/* Progress dots */}
                                 <div style={{ display: 'flex', gap: 4, marginTop: 8 }}>
@@ -425,12 +591,40 @@ export function AnalogLab({
                     display: 'flex', justifyContent: 'space-between', alignItems: 'center',
                     marginBottom: 12,
                 }}>
-                    <span style={{
-                        fontFamily: T.mono, fontSize: 8, color: `${T.accent}80`,
-                        letterSpacing: '0.2em', textTransform: 'uppercase',
-                    }}>
-                        Oscilloscope — CH1 Analog
-                    </span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                        <span style={{
+                            fontFamily: T.mono, fontSize: 8, color: `${T.accent}80`,
+                            letterSpacing: '0.2em', textTransform: 'uppercase',
+                        }}>
+                            Oscilloscope — CH1 Analog
+                        </span>
+                        <div style={{ display: 'flex', gap: 4 }}>
+                             <button
+                                 onClick={() => { setIsPaused(!isPaused); triggerHaptic('medium'); }}
+                                 style={{
+                                     padding: '2px 8px', fontFamily: T.mono, fontSize: 7,
+                                     background: isPaused ? T.error : 'rgba(255,255,255,0.05)',
+                                     color: isPaused ? '#FFF' : T.muted,
+                                     border: `1px solid ${isPaused ? T.error : T.border}`,
+                                     borderRadius: 2, cursor: 'pointer'
+                                 }}
+                             >
+                                 {isPaused ? 'RESUME' : 'PAUSE'}
+                             </button>
+                             <button
+                                 onClick={() => { setIsEngineerMode(!isEngineerMode); triggerHaptic('heavy'); }}
+                                 style={{
+                                     padding: '2px 8px', fontFamily: T.mono, fontSize: 7,
+                                     background: isEngineerMode ? T.accent : 'rgba(255,255,255,0.05)',
+                                     color: isEngineerMode ? '#000' : T.muted,
+                                     border: `1px solid ${isEngineerMode ? T.accent : T.border}`,
+                                     borderRadius: 2, cursor: 'pointer'
+                                 }}
+                             >
+                                 ENGINEER_MODE
+                             </button>
+                        </div>
+                    </div>
                     <div style={{ display: 'flex', gap: 16, fontFamily: T.mono, fontSize: 8, color: T.muted }}>
                         <span>TIME/DIV: 100ms</span>
                         <span>VOLT/DIV: 1V</span>
@@ -440,8 +634,37 @@ export function AnalogLab({
                     ch1Samples={waveformSamples}
                     label1="CH1 — Analog"
                     height={180}
+                    isPaused={isPaused}
+                    isEngineerMode={isEngineerMode}
                 />
             </div>
+
+            {/* Theory & Recall Overlays */}
+            <ConceptOverlay 
+                isVisible={showTheory} 
+                concept={ANALOG_CONCEPT} 
+                onDismiss={() => setShowTheory(false)} 
+            />
+            
+            <ActiveRecallSystem 
+                isVisible={showRecall} 
+                question={ANALOG_RECALL} 
+                onAnswer={() => {
+                    setShowRecall(false);
+                    setHasSeenRecall(true);
+                }} 
+            />
+
+            <ConceptGate
+                title="Analog Continuity"
+                levels={ANALOG_GATE_LEVELS}
+                isVisible={!isGateUnlocked}
+                onComplete={() => {
+                    setIsGateUnlocked(true);
+                    triggerHaptic('success');
+                    playSound('success');
+                }}
+            />
         </div>
     );
 }

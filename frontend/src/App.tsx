@@ -3,12 +3,13 @@ import { GatekeeperLanding } from './pages/GatekeeperLanding';
 import { HeroExperience } from './pages/HeroExperience';
 import { WorkstationHome } from './pages/WorkstationHome';
 import { ModuleOneHub } from './pages/ModuleOneHub';
+import SignalMustReturnModule from './pages/ModulePage';
+import SubModule1_1 from './components/level1/SubModule1_1';
 import { ModuleTwo } from './pages/ModuleTwo';
 import { ModuleThree } from './pages/ModuleThree';
 import { ModuleFour } from './pages/ModuleFour';
 import { ModuleFive } from './pages/ModuleFive';
 import { LoginPage } from './pages/LoginPage';
-import { CircuitCanvas } from './simulator/CircuitCanvas';
 import { MascotGuide } from './components/Bot/MascotGuide';
 import { GatekeeperGame } from './pages/GatekeeperGame';
 import { AssessmentPage } from './pages/AssessmentPage';
@@ -28,7 +29,6 @@ import { HardwareLeetCodePage } from './pages/HardwareLeetCodePage';
 import { VerilogPlayground } from './pages/VerilogPlayground';
 
 import { VoltMonkeyIntro } from './pages/VoltMonkeyIntro';
-import { WhatAreSignals } from './pages/WhatAreSignals';
 import Workbench from './pages/Workbench';
 import { CommunityPage } from './pages/CommunityPage';
 import { PortalLayout } from './layouts/PortalLayout';
@@ -78,8 +78,8 @@ export default function App() {
 
                     {/* Modules & Story Selection (Standalone) */}
                     <Route path="/module/1" element={<ModuleOneHub />} />
-                    <Route path="/module/1/lab" element={<CircuitCanvas />} />
-                    <Route path="/module/1/theory" element={<WhatAreSignals />} />
+                    <Route path="/module/1/1" element={<SubModule1_1 onComplete={() => window.location.href = '/portal'} />} />
+                    <Route path="/module/signal-must-return" element={<SignalMustReturnModule />} />
                     <Route path="/module/2" element={<ModuleTwo />} />
                     <Route path="/module/3" element={<ModuleThree />} />
                     <Route path="/module/4" element={<ModuleFour />} />

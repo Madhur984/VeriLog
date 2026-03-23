@@ -53,7 +53,7 @@ export function BadgeToast({ show, badgeName, xp, onDismiss }: BadgeToastProps) 
                     transition={{ type: 'spring', damping: 20, stiffness: 300 }}
                     style={{
                         position: 'fixed', bottom: 40, left: '50%',
-                        transform: 'translateX(-50%)', zIndex: 9999,
+                        x: '-50%', zIndex: 9999,
                         display: 'flex', alignItems: 'center', gap: 16,
                         padding: '16px 28px',
                         background: T.bg,

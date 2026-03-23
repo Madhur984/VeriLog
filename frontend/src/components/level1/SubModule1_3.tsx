@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SignalRenderer } from '../../circuit-lab/SignalRenderer';
-import { RotateCcw, Radio, Activity, CheckCircle2, Cpu, AlertTriangle } from 'lucide-react';
+import { Radio, Activity, CheckCircle2, Cpu } from 'lucide-react';
 
 interface SubModuleProps {
     onComplete: (sip: number) => void;
@@ -43,11 +43,6 @@ export const SubModule1_3: React.FC<SubModuleProps> = ({ onComplete }) => {
 
     // Path definitions for SVG
     const supplyPath = "M 150,150 L 650,150"; // Top straight path
-    const returnPaths = [
-        "M 650,250 L 550,250", // Seg 1
-        "M 550,250 L 400,250", // Seg 2
-        "M 400,250 L 150,250", // Seg 3
-    ];
 
     return (
         <div className="w-full h-full flex flex-col items-center p-12 bg-[#0B0F14] relative overflow-hidden">

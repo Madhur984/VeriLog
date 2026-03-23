@@ -88,7 +88,7 @@ export const SubModule1_5: React.FC<SubModuleProps> = ({ onComplete }) => {
                         <SignalRenderer 
                             path="M 150,150 L 350,150"
                             isActive={state !== 'safe'}
-                            state={state === 'shorted' ? 'rapid' : 'dissipate'}
+                            state={state === 'shorted' ? 'accelerated' : 'dissipate'}
                             color="#EF4444"
                         />
                     </svg>
