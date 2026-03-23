@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Activity, Zap, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import { Activity, AlertTriangle, CheckCircle2 } from 'lucide-react';
 
 interface HUDProps {
   signal: {

@@ -66,7 +66,7 @@ function OscilloscopeCanvasInner({
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
     const { triggerHaptic } = useGlobalSensory();
-    const { quality, glowFactor } = usePerformanceAdapter();
+    const { glowFactor } = usePerformanceAdapter();
     
     // State
     const [cursorX, setCursorX] = useState<number | null>(null);
@@ -161,30 +161,7 @@ function OscilloscopeCanvasInner({
                 ctx.shadowBlur = 15 * glowFactor;
                 ctx.shadowColor = color;
 
-                const signalToCanvas = (val: number) => {
-                    const centered = val - 0.5;
-                    const scaled = centered * (1 / voltsDiv.get());
-                    return H/2 - scaled * (H/2.5);
-                };
 
-                // Trigger find: Locate the crossing point
-                let triggerOffset = 0;
-                const threshold = 0.5; // Assuming 0.5 is the center for trigger
-                for (let i = 1; i < samples.length / 2; i++) {
-                    const prev = samples[i-1];
-                    const curr = samples[i];
-                    if (triggerEdge === 'rising') {
-                        if (prev < threshold && curr >= threshold) {
-                            triggerOffset = i;
-                            break;
-                        }
-                    } else {
-                        if (prev > threshold && curr <= threshold) {
-                            triggerOffset = i;
-                            break;
-                        }
-                    }
-                }
 
                 ctx.beginPath();
                 for (let i = 0; i < len; i++) {

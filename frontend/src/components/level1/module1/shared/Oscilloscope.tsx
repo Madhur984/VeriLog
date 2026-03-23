@@ -5,7 +5,7 @@ interface Signal {
   amplitude: number;
   frequency: number;
   phase: number;
-  type: string;
+  type?: string;
   samplingRate?: number;
   bitDepth?: number;
 }
@@ -40,6 +40,7 @@ interface OscilloscopeProps {
   gridOpacity?: number;
   propagationDelay?: number;
   showEnvelope?: boolean;
+  targetSignal?: Signal;
 }
 
 export const Oscilloscope: React.FC<OscilloscopeProps> = ({
@@ -56,27 +57,28 @@ export const Oscilloscope: React.FC<OscilloscopeProps> = ({
   className = "",
   gridOpacity = 0.05,
   propagationDelay = 0,
-  showEnvelope = true
+  showEnvelope = true,
+  targetSignal
 }) => {
   const [time, setTime] = useState(0);
   const requestRef = useRef<number>(0);
-  const [bufferedState, setBufferedState] = useState({ signalA, signalB, messageSignal, carrierSignal });
+  const [bufferedState, setBufferedState] = useState({ signalA, signalB, messageSignal, carrierSignal, targetSignal });
   const delayTimeout = useRef<any>(null);
 
   // Sync buffered state with delay to simulate causality
   useEffect(() => {
     if (propagationDelay <= 0) {
-      setBufferedState({ signalA, signalB, messageSignal, carrierSignal });
+      setBufferedState({ signalA, signalB, messageSignal, carrierSignal, targetSignal });
       return;
     }
 
     if (delayTimeout.current) clearTimeout(delayTimeout.current);
     delayTimeout.current = setTimeout(() => {
-      setBufferedState({ signalA, signalB, messageSignal, carrierSignal });
+      setBufferedState({ signalA, signalB, messageSignal, carrierSignal, targetSignal });
     }, propagationDelay);
 
     return () => { if (delayTimeout.current) clearTimeout(delayTimeout.current); };
-  }, [signalA, signalB, messageSignal, carrierSignal, propagationDelay]);
+  }, [signalA, signalB, messageSignal, carrierSignal, targetSignal, propagationDelay]);
 
   const animate = (t: number) => {
     if (!isFrozen) {
@@ -356,14 +358,24 @@ export const Oscilloscope: React.FC<OscilloscopeProps> = ({
               />
             )}
             
-            {/* Signal B comparison */}
-            {mode === 'compare' && bufferedState.signalB && (
+            {/* Signal B comparison or Target Signal */}
+            {(mode === 'compare' && bufferedState.signalB) && (
               <path
                 d={generatePath(bufferedState.signalB)}
                 fill="none"
                 stroke="var(--accent-secondary)"
                 strokeWidth="2"
                 className="opacity-50"
+              />
+            )}
+            {(mode === 'challenge' && bufferedState.targetSignal) && (
+              <path
+                d={generatePath(bufferedState.targetSignal)}
+                fill="none"
+                stroke="var(--accent-primary)"
+                strokeWidth="2"
+                strokeDasharray="4,4"
+                className="opacity-40"
               />
             )}
           </>

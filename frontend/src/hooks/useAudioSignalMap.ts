@@ -18,7 +18,6 @@ export const useAudioSignalMap = ({
   const audioCtx = useRef<AudioContext | null>(null);
   const oscillator = useRef<OscillatorNode | null>(null);
   const gainNode = useRef<GainNode | null>(null);
-  const noiseNode = useRef<AudioWorkletNode | ScriptProcessorNode | null>(null);
 
   useEffect(() => {
     if (!enabled) {

@@ -20,7 +20,6 @@ import { OscilloscopeCanvas } from './OscilloscopeCanvas';
 import { useGlobalSensory } from '../../hooks/useGlobalSensory';
 import { VeriSlider } from '../shared/VeriSlider';
 import { VeriButton } from '../shared/VeriButton';
-import { useAttentionLock } from '../../hooks/useAttentionLock';
 
 const T = {
     bg: '#0A0B10', card: '#0D0F16', surface: '#1A1D24', border: '#1A1D24',
@@ -77,7 +76,6 @@ interface NoiseExperimentProps {
 
 export function NoiseExperiment({ onComplete }: NoiseExperimentProps) {
     const { triggerHaptic } = useGlobalSensory();
-    const { focusProps } = useAttentionLock();
     const [noiseAmp, setNoiseAmp] = useState(0);
     const { waveformSamples: analogSamples, brightness } = useAnalogSignal(noiseAmp);
     const { waveformSamples: digitalSamples, switchOn } = useDigitalSignal(noiseAmp);

@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { useGlobalSensory, PACING } from '../../hooks/useGlobalSensory';
+import { useGlobalSensory } from '../../hooks/useGlobalSensory';
 
 interface VeriButtonProps {
     onClick: () => void;
