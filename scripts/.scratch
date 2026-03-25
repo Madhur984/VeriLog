@@ -64,3 +64,4 @@
 # 13: style: reduce motion duration on mobile for perf
 # 14: fix: guard against null companionRef in CircuitCanvas
 # 15: docs: document BotTrigger union type values
+# 16: chore: sync package-lock with latest deps
