@@ -59,3 +59,4 @@
 # 8: style: normalize spacing in CircuitCanvas layout
 # 9: chore: remove console.log from botBrain hook
 # 10: chore: bump framer-motion to patch version
+# 11: chore: add .editorconfig for consistent line endings
