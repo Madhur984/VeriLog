@@ -60,3 +60,4 @@
 # 9: chore: remove console.log from botBrain hook
 # 10: chore: bump framer-motion to patch version
 # 11: chore: add .editorconfig for consistent line endings
+# 12: refactor: simplify CrossPaw SVG helper in VoltMonkey
