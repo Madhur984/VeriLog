@@ -61,3 +61,4 @@
 # 10: chore: bump framer-motion to patch version
 # 11: chore: add .editorconfig for consistent line endings
 # 12: refactor: simplify CrossPaw SVG helper in VoltMonkey
+# 13: style: reduce motion duration on mobile for perf
