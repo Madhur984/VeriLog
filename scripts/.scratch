@@ -51,3 +51,4 @@
 # 20: docs: add inline comments to useBotBrain state machine
 # 1: fix: reset fail counter on route change in botBrain
 # 2: style: tighten grid gap in WorkstationHome cards
+# 3: chore: prune stale comments in LoginPage.css
