@@ -50,3 +50,4 @@
 # 19: refactor: extract wire color constants to theme file
 # 20: docs: add inline comments to useBotBrain state machine
 # 1: fix: reset fail counter on route change in botBrain
+# 2: style: tighten grid gap in WorkstationHome cards
