@@ -53,3 +53,4 @@
 # 2: style: tighten grid gap in WorkstationHome cards
 # 3: chore: prune stale comments in LoginPage.css
 # 4: docs: add JSDoc to BotCompanion props interface
+# 5: refactor: rename internal bot state vars for clarity
