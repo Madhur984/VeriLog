@@ -68,3 +68,4 @@
 # 17: docs: update README with new /hero route description
 # 18: style: update font-mono classes for consistency
 # 19: fix: prevent idle timer leak on component unmount
+# 20: style: soften aura opacity in MascotGuide
