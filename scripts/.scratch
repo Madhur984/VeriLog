@@ -66,3 +66,4 @@
 # 15: docs: document BotTrigger union type values
 # 16: chore: sync package-lock with latest deps
 # 17: docs: update README with new /hero route description
+# 18: style: update font-mono classes for consistency
