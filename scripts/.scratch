@@ -55,3 +55,4 @@
 # 4: docs: add JSDoc to BotCompanion props interface
 # 5: refactor: rename internal bot state vars for clarity
 # 6: refactor: move TONE_ACCENT map to shared constants
+# 7: fix: correct SVG viewBox in GatekeeperLanding video
