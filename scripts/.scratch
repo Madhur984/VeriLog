@@ -54,3 +54,4 @@
 # 3: chore: prune stale comments in LoginPage.css
 # 4: docs: add JSDoc to BotCompanion props interface
 # 5: refactor: rename internal bot state vars for clarity
+# 6: refactor: move TONE_ACCENT map to shared constants
