@@ -62,3 +62,4 @@
 # 11: chore: add .editorconfig for consistent line endings
 # 12: refactor: simplify CrossPaw SVG helper in VoltMonkey
 # 13: style: reduce motion duration on mobile for perf
+# 14: fix: guard against null companionRef in CircuitCanvas
