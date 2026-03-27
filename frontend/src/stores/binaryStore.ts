@@ -12,10 +12,20 @@ import { create } from 'zustand';
 // ── Types ──────────────────────────────────────────────────────────────────────
 
 export type Bit = 0 | 1;
+export type Scene = 'intro' | 'whybinary' | 'switch' | 'counter' | 'register' | 'arithmetic' | 'bridge' | 'complete';
 export type PredictionStatus = 'idle' | 'pending' | 'correct' | 'wrong';
+export type PredictionConfidence = 'low' | 'med' | 'high';
+export type LabStage = 'theory' | 'prediction' | 'execution' | 'observe' | 'explain' | 'apply' | 'complete';
 
 export interface CarryEvent {
     fromBit: number; // index of the bit that caused carry
+    timestamp: number;
+}
+
+export interface PulseEvent {
+    originIndex: number;
+    targetIndex: number;
+    type: 'carry' | 'write' | 'ripple';
     timestamp: number;
 }
 
@@ -38,6 +48,7 @@ export interface CognitionMetrics {
     predictionAccuracy: number; // 0-1
     interactions: number;
     errorStreak: number;
+    wrongAnswerCount: number;
     lastInteractionTime: number;
 }
 
@@ -46,14 +57,39 @@ export interface CognitionMetrics {
 interface BinaryState {
     // Global Engine State
     isProcessing: boolean;
+    isSystemBusy: boolean;
+    setSystemBusy: (busy: boolean) => void;
     isLogicOverlayVisible: boolean;
     toggleLogicOverlay: () => void;
+    
+    // Routing & Navigation (Elite Sync)
+    activeScene: Scene;
+    navigationLocked: boolean;
+    setNavigationLocked: (locked: boolean) => void;
+    nextScene: () => void;
+    prevScene: () => void;
+    goToScene: (scene: Scene) => void;
+    
+    // Cognitive Flow
+    labStage: LabStage;
+    setLabStage: (stage: LabStage) => void;
+    isStageLocked: boolean;
+    setStageLocked: (locked: boolean) => void;
+    
+    // Causality Engine
+    pulseHistory: PulseEvent[];
+    propagationDelay: number; // Total compute time in ns
+    recordPulse: (pulse: Omit<PulseEvent, 'timestamp'>) => void;
+    
+    // Standardized Bit State (across all labs)
+    bits: Bit[];
+    voltages: number[];
+    isBitTransitioning: boolean[];
+    isBitUnstable: boolean[];
     
     // Module 3.1 — Switch Register
     switchBits: Bit[];
     switchVoltages: number[];
-    isSwitchTransitioning: boolean[];
-    isBitUnstable: boolean[]; // NEW: Jitter/uncertainty state
     toggleSwitchBit: (index: number) => Promise<void>;
     resetSwitches: () => void;
 
@@ -61,7 +97,7 @@ interface BinaryState {
     counterValue: number;
     carryHistory: CarryEvent[];
     isIncrementing: boolean;
-    predictionStatus: PredictionStatus; // NEW: Prediction gate
+    predictionStatus: PredictionStatus;
     predictedBits: Bit[] | null;
     startPrediction: () => void;
     submitPrediction: (bits: Bit[]) => void;
@@ -73,12 +109,15 @@ interface BinaryState {
     registerWidth: 8 | 16 | 32;
     storedValue: number | null;
     isWriting: boolean;
-    lastRefreshTime: number; // REQ 5 Elite: Decay tracking
+    isAutoRefresh: boolean; // NEW: Auto Refresh toggle
+    lastRefreshTime: number;
     isDecayed: boolean;
     toggleRegisterBit: (index: number) => void;
     setRegisterWidth: (width: 8 | 16 | 32) => void;
-    storeValue: () => Promise<void>;
-    refreshMemory: () => void; // REQ 5 Elite: Manual refresh
+    toggleAutoRefresh: () => void;
+    submitRegisterPrediction: (value: number) => void;
+    storeValue: (force?: boolean) => Promise<void>;
+    refreshMemory: () => void;
     resetRegister: () => void;
 
     // Module 3.4 — Adder
@@ -88,16 +127,27 @@ interface BinaryState {
     addResult: Bit[];
     isAdding: boolean;
     additionComplete: boolean;
-    isArithmeticReverseMode: boolean; // NEW: Reverse challenge
+    submitArithmeticPrediction: (carry: Bit, sum: Bit) => void;
+    isArithmeticReverseMode: boolean;
     targetSum: number | null;
     toggleOperandBit: (op: 'A' | 'B', index: number) => void;
     computeAddition: () => void;
-    revealNextStep: () => void;
+    revealNextStep: () => Promise<void>;
     setReverseMode: (active: boolean) => void;
     resetAdder: () => void;
 
+    // Elite Polish & Realism
+    isSlowMotion: boolean;
+    setSlowMotion: (active: boolean) => void;
+    predictionConfidence: PredictionConfidence | null;
+    systemTemperature: number; // 0.0 to 1.0 (effects decay speed)
+    delayVariation: number; // jitter in ms
+    setPredictionConfidence: (conf: PredictionConfidence) => void;
+    setSystemTemperature: (temp: number) => void;
+
     // Cognition Tracking
     metrics: CognitionMetrics;
+    resetWrongAnswerCount: () => void;
     recordAction: (type: keyof CognitionMetrics, value?: number) => void;
     updateHesitation: () => void;
 }
@@ -111,7 +161,7 @@ const toBits4 = (n: number): Bit[] => [
     (n & 1) as Bit,
 ];
 
-const bitsToNum = (bits: Bit[]): number =>
+export const bitsToNum = (bits: Bit[]): number =>
     bits.reduce<number>((acc, b, i) => acc | (b << (bits.length - 1 - i)), 0);
 
 const buildAddSteps = (a: Bit[], b: Bit[]): { steps: AddStep[]; result: Bit[] } => {
@@ -136,9 +186,74 @@ const buildAddSteps = (a: Bit[], b: Bit[]): { steps: AddStep[]; result: Bit[] } 
 export const useBinaryStore = create<BinaryState>((set, get) => ({
     // ── Global ──
     isProcessing: false,
+    isSystemBusy: false,
+    setSystemBusy: (busy: boolean) => set({ isSystemBusy: busy }),
     isLogicOverlayVisible: false,
-    toggleLogicOverlay: () => set(s => ({ isLogicOverlayVisible: !s.isLogicOverlayVisible })),
+    toggleLogicOverlay: () => set(state => ({ isLogicOverlayVisible: !state.isLogicOverlayVisible })),
     
+    // Routing & Navigation
+    activeScene: 'intro',
+    navigationLocked: false,
+    setNavigationLocked: (locked: boolean) => set({ navigationLocked: locked }),
+    nextScene: () => set(state => {
+        if (state.navigationLocked) return state;
+        const SCENE_ORDER: Scene[] = ['intro', 'whybinary', 'switch', 'counter', 'register', 'arithmetic', 'bridge', 'complete'];
+        const idx = SCENE_ORDER.indexOf(state.activeScene);
+        
+        if (idx < SCENE_ORDER.length - 1) {
+            const nextS = SCENE_ORDER[idx + 1];
+            const updates: any = { activeScene: nextS, labStage: 'theory', isStageLocked: true };
+            
+            // State Continuity Logic
+            if (state.activeScene === 'switch' && nextS === 'counter') {
+                updates.counterValue = bitsToNum(state.switchBits);
+            } else if (state.activeScene === 'counter' && nextS === 'register') {
+                const newReg = [...state.registerBits];
+                const cBits = toBits4(state.counterValue);
+                for(let i=0; i<4; i++) newReg[i+4] = cBits[i];
+                updates.registerBits = newReg;
+            } else if (state.activeScene === 'register' && nextS === 'arithmetic') {
+                const regVal = bitsToNum(state.registerBits);
+                updates.operandA = toBits4(regVal % 16);
+            }
+            
+            return { ...updates };
+        }
+        return state;
+    }),
+    prevScene: () => set(state => {
+        const SCENE_ORDER: Scene[] = ['intro', 'whybinary', 'switch', 'counter', 'register', 'arithmetic', 'bridge', 'complete'];
+        const idx = SCENE_ORDER.indexOf(state.activeScene);
+        if (idx > 0) {
+            return { activeScene: SCENE_ORDER[idx - 1] };
+        }
+        return state;
+    }),
+    goToScene: (scene: Scene) => set({ activeScene: scene }),
+
+    // Cognitive Flow
+    labStage: 'theory',
+    setLabStage: (stage: LabStage) => set({ labStage: stage, isStageLocked: true }),
+    isStageLocked: true,
+    setStageLocked: (locked: boolean) => set({ isStageLocked: locked }),
+
+    // Causality Engine
+    pulseHistory: [],
+    propagationDelay: 0,
+    recordPulse: (pulse: Omit<PulseEvent, 'timestamp'>) => set(s => {
+        const cost = pulse.type === 'carry' ? 12 : (pulse.type === 'ripple' ? 5 : 20);
+        return { 
+            pulseHistory: [...s.pulseHistory.slice(-10), { ...pulse, timestamp: Date.now() }],
+            propagationDelay: s.propagationDelay + cost
+        };
+    }),
+
+    // Standardized Bit State
+    bits: [0, 0, 0, 0],
+    voltages: [0, 0, 0, 0],
+    isBitTransitioning: [false, false, false, false],
+    isBitUnstable: [false, false, false, false],
+
     metrics: {
         incorrectToggles: 0,
         arithmeticMistakes: 0,
@@ -146,17 +261,32 @@ export const useBinaryStore = create<BinaryState>((set, get) => ({
         predictionAccuracy: 1,
         interactions: 0,
         errorStreak: 0,
+        wrongAnswerCount: 0,
         lastInteractionTime: Date.now(),
     },
+    resetWrongAnswerCount: () => set(s => ({ metrics: { ...s.metrics, wrongAnswerCount: 0 } })),
 
-    recordAction: (type, value = 1) => {
+    // Elite State
+    isSlowMotion: false,
+    setSlowMotion: (active: boolean) => set({ isSlowMotion: active }),
+    predictionConfidence: null,
+    systemTemperature: 0.2, // Default cool
+    delayVariation: 10,
+    setPredictionConfidence: (conf: PredictionConfidence) => set({ predictionConfidence: conf }),
+    setSystemTemperature: (temp: number) => set({ systemTemperature: temp }),
+
+    recordAction: (type: keyof CognitionMetrics, value = 1) => {
         const now = Date.now();
         set(s => {
             const newMetrics = { 
                 ...s.metrics, 
-                [type]: s.metrics[type as keyof CognitionMetrics] + value,
+                [type]: (s.metrics[type as keyof CognitionMetrics] || 0) + value,
                 lastInteractionTime: now
             };
+            // Automatically track wrongAnswerCount for errors
+            if (type === 'incorrectToggles' || type === 'arithmeticMistakes') {
+                newMetrics.wrongAnswerCount += value;
+            }
             return { metrics: newMetrics };
         });
     },
@@ -172,10 +302,11 @@ export const useBinaryStore = create<BinaryState>((set, get) => ({
     // ── Module 3.1 ──
     switchBits: [0, 0, 0, 0],
     switchVoltages: [0, 0, 0, 0],
-    isSwitchTransitioning: [false, false, false, false],
-    isBitUnstable: [false, false, false, false],
 
     toggleSwitchBit: async (index) => {
+        if (get().isSystemBusy || index < 0 || index >= 4) return;
+        set({ isSystemBusy: true, isProcessing: true });
+        
         // Elite Polish: Pre-action tension (15ms delay)
         await new Promise(r => setTimeout(r, 15));
 
@@ -183,9 +314,9 @@ export const useBinaryStore = create<BinaryState>((set, get) => ({
         const targetVolt = bit === 0 ? 3.3 : 0;
         
         set(s => {
-            const trans = [...s.isSwitchTransitioning];
+            const trans = [...s.isBitTransitioning];
             trans[index] = true;
-            return { isSwitchTransitioning: trans };
+            return { isBitTransitioning: trans };
         });
 
         // REQ 2: BIT WEIGHTED TIMING (Bit 3 is heavy/slow, Bit 0 is light/fast)
@@ -193,40 +324,61 @@ export const useBinaryStore = create<BinaryState>((set, get) => ({
         const baseDelay = 30 + (3 - index) * 10;
         
         for (let i = 0; i < steps; i++) {
-            await new Promise(r => setTimeout(r, baseDelay));
+            // REQ: ±10ms delay variation (jitter)
+            const jitter = (Math.random() - 0.5) * get().delayVariation;
+            await new Promise(r => setTimeout(r, Math.max(5, baseDelay + jitter)));
             
             set(s => {
-                const volts = [...s.switchVoltages];
+                const volts = [...s.voltages];
                 const volt = volts[index];
-                // Non-linear rise for physical feel
                 const progress = i / steps;
                 const easeOut = 1 - Math.pow(1 - progress, 3);
-                volts[index] = volt + (targetVolt - volt) * (easeOut - (i-1)/steps);
                 
-                // REQ 1: UNCERTAINTY WINDOW (Instability zone)
+                // Base target voltage with subtle thermal noise
+                const thermalNoise = (Math.random() - 0.5) * 0.05 * s.systemTemperature;
+                volts[index] = volt + (targetVolt - volt) * (easeOut - (i-1)/steps) + thermalNoise;
+                
+                // INDETERMINATE ZONE (0.8V - 2.0V)
                 const isUnstable = volts[index] > 0.8 && volts[index] < 2.0;
                 if (isUnstable) {
-                    // Random Brownian motion jitter
-                    volts[index] += (Math.random() - 0.5) * 0.4;
+                    // Random Brownian jitter in the undefined zone
+                    volts[index] += (Math.random() - 0.5) * 0.6;
                 }
 
-                const nextBit = (volts[index] > 2.0) ? 1 : (volts[index] < 0.8 ? 0 : s.switchBits[index]);
-                const bits = [...s.switchBits];
+                const nextBit = (volts[index] > 2.0) ? 1 : (volts[index] < 0.8 ? 0 : s.bits[index]);
+                const bits = [...s.bits];
+                const switchBits = [...s.switchBits];
                 bits[index] = nextBit as Bit;
+                switchBits[index] = nextBit as Bit;
                 
                 const unstableArr = [...s.isBitUnstable];
                 unstableArr[index] = isUnstable;
 
-                return { switchVoltages: volts, switchBits: bits, isBitUnstable: unstableArr };
+                return { 
+                    voltages: volts, 
+                    switchVoltages: volts, 
+                    bits, 
+                    switchBits, 
+                    isBitUnstable: unstableArr 
+                };
             });
         }
 
+        get().recordPulse({ originIndex: index, targetIndex: index, type: 'ripple' });
+
         set(s => {
-            const trans = [...s.isSwitchTransitioning];
+            const trans = [...s.isBitTransitioning];
             trans[index] = false;
             const unstableArr = [...s.isBitUnstable];
             unstableArr[index] = false;
-            return { isSwitchTransitioning: trans, isBitUnstable: unstableArr };
+            // FINAL SYNC CHECK: Ensure visual is perfectly aligned with logical at end
+            return { 
+                bits: [...s.switchBits],
+                isBitTransitioning: trans, 
+                isBitUnstable: unstableArr, 
+                isSystemBusy: false,
+                isProcessing: false 
+            };
         });
     },
     resetSwitches: () => set({ switchBits: [0, 0, 0, 0], switchVoltages: [0, 0, 0, 0], isBitUnstable: [false, false, false, false] }),
@@ -240,7 +392,7 @@ export const useBinaryStore = create<BinaryState>((set, get) => ({
 
     startPrediction: () => set({ predictionStatus: 'pending', predictedBits: null }),
     
-    submitPrediction: (bits) => {
+    submitPrediction: (bits: Bit[]) => {
         const actualNext = (get().counterValue + 1) % 16;
         const actualBits = toBits4(actualNext);
         const isCorrect = bits.every((b, i) => b === actualBits[i]);
@@ -263,8 +415,8 @@ export const useBinaryStore = create<BinaryState>((set, get) => ({
             return;
         }
 
-        if (get().isIncrementing) return;
-        set({ isIncrementing: true });
+        if (get().isIncrementing || get().isSystemBusy) return;
+        set({ isIncrementing: true, isSystemBusy: true, isProcessing: true });
 
         const prevVal = get().counterValue;
         const nextVal = (prevVal + 1) % 16;
@@ -272,60 +424,122 @@ export const useBinaryStore = create<BinaryState>((set, get) => ({
         const nextBits = toBits4(nextVal);
         const carries: CarryEvent[] = [];
 
+        // 1. ANIMATION PHASE — Update visual bits only, keep counterValue stable
+        const visualBits = [...prevBits];
+        
         for (let i = 3; i >= 0; i--) {
+            // Safety: ensure index exists in the array (though toBits4 always returns 4)
+            if (i < 0 || i >= visualBits.length) break;
+
             if (prevBits[i] !== nextBits[i]) {
                 // REQ 8: TEMPORAL ALIGNMENT (Weighted ripple delay)
-                const rippleDelay = 150 + (3 - i) * 100;
+                const baseRipple = 120 + (3 - i) * 80;
+                const rippleDelay = get().isSlowMotion ? baseRipple * 3 : baseRipple;
                 await new Promise(r => setTimeout(r, rippleDelay));
                 
                 if (prevBits[i] === 1 && nextBits[i] === 0) {
                     carries.push({ fromBit: i, timestamp: Date.now() });
+                    if (i > 0) {
+                        get().recordPulse({ originIndex: i, targetIndex: i - 1, type: 'carry' });
+                    }
                 }
 
+                // Update visual bits layer
                 set(s => {
-                    const currentBits = toBits4(s.counterValue);
-                    currentBits[i] = nextBits[i];
-                    return { 
-                        counterValue: bitsToNum(currentBits),
-                        carryHistory: [...s.carryHistory.slice(-7), ...carries]
-                    };
+                    const nextVisual = [...s.bits];
+                    if (i < nextVisual.length) nextVisual[i] = nextBits[i];
+                    return { bits: nextVisual, carryHistory: [...s.carryHistory.slice(-7), ...carries] };
                 });
             } else {
+                // Ripple stops when bits match (no carry needed)
                 break;
             }
         }
 
-        set({ isIncrementing: false, predictionStatus: 'idle' });
+        // 2. COMMIT PHASE — Finalize counterValue atomically
+        set({ 
+            counterValue: nextVal, 
+            bits: nextBits, 
+            isIncrementing: false, 
+            isSystemBusy: false, 
+            predictionStatus: 'idle' 
+        });
     },
-    resetCounter: () => set({ counterValue: 0, carryHistory: [], isIncrementing: false, predictionStatus: 'idle' }),
+    resetCounter: () => set({ 
+        counterValue: 0, 
+        bits: [0, 0, 0, 0], 
+        carryHistory: [], 
+        isIncrementing: false, 
+        isSystemBusy: false,
+        predictionStatus: 'idle' 
+    }),
 
     // ── Module 3.3 ──
     registerBits: [0, 0, 0, 0, 0, 0, 0, 0],
     registerWidth: 8,
     storedValue: null,
     isWriting: false,
+    isAutoRefresh: false,
     lastRefreshTime: Date.now(),
     isDecayed: false,
-    toggleRegisterBit: (index) =>
+    toggleRegisterBit: (index: number) =>
         set((s) => {
+            if (index < 0 || index >= s.registerBits.length) return s;
             const next = [...s.registerBits] as Bit[];
             next[index] = (next[index] === 0 ? 1 : 0) as Bit;
-            return { registerBits: next, storedValue: null, lastRefreshTime: Date.now(), isDecayed: false };
+            const bits = [...s.bits];
+            if (index < bits.length) bits[index] = next[index];
+            return { registerBits: next, bits, storedValue: null, lastRefreshTime: Date.now(), isDecayed: false };
         }),
-    setRegisterWidth: (width) => set({ registerWidth: width }),
-    storeValue: async () => {
-        set({ isWriting: true });
-        // REQ 5: MEMORY STABILIZATION (Longer delay for feeling)
-        await new Promise(r => setTimeout(r, 1200)); 
-        set((s) => ({ 
-            storedValue: bitsToNum(s.registerBits),
-            isWriting: false,
+    setRegisterWidth: (width) => {
+        const bits = Array(width).fill(0) as Bit[];
+        set({ registerWidth: width, registerBits: bits, bits: bits.slice(0, 4) });
+    },
+    toggleAutoRefresh: () => set(s => ({ isAutoRefresh: !s.isAutoRefresh })),
+    submitRegisterPrediction: (value: number) => {
+        const actual = bitsToNum(get().registerBits);
+        const isCorrect = value === actual;
+        set(s => {
+            const newMetrics = {
+                ...s.metrics,
+                interactions: s.metrics.interactions + 1,
+                predictionAccuracy: (s.metrics.predictionAccuracy * s.metrics.interactions + (isCorrect ? 1 : 0)) / (s.metrics.interactions + 1),
+                wrongAnswerCount: isCorrect ? 0 : s.metrics.wrongAnswerCount + 1
+            };
+            return { 
+                predictionStatus: isCorrect ? 'correct' : 'wrong',
+                metrics: newMetrics
+            };
+        });
+    },
+    storeValue: async (force = false) => {
+        if (!force && get().predictionStatus !== 'correct') return;
+        if (get().isSystemBusy) return;
+        
+        set({ isWriting: true, isProcessing: true, isSystemBusy: true });
+        const val = bitsToNum(get().registerBits);
+        
+        // REQ 5: Propagation Causality (Temporal Delay)
+        const writeTime = get().registerWidth * 2; // 2ns per bit write
+        await new Promise(r => setTimeout(r, 600)); // Mimic propagation delay
+        
+        set(s => ({ 
+            storedValue: val, 
+            isWriting: false, 
+            isProcessing: false,
             lastRefreshTime: Date.now(),
-            isDecayed: false
+            isDecayed: false,
+            predictionStatus: 'idle',
+            isSystemBusy: false,
+            propagationDelay: s.propagationDelay + writeTime,
+            pulseHistory: [
+                ...s.pulseHistory, 
+                { originIndex: -1, targetIndex: 0, type: 'write', timestamp: Date.now() }
+            ]
         }));
     },
     refreshMemory: () => set({ lastRefreshTime: Date.now(), isDecayed: false }),
-    resetRegister: () => set({ registerBits: [0, 0, 0, 0, 0, 0, 0, 0], storedValue: null, isWriting: false, lastRefreshTime: Date.now(), isDecayed: false }),
+    resetRegister: () => set({ registerBits: [0, 0, 0, 0, 0, 0, 0, 0], storedValue: null, isWriting: false, isAutoRefresh: false, lastRefreshTime: Date.now(), isDecayed: false }),
 
     // ── Module 3.4 ──
     operandA: [0, 1, 0, 1],
@@ -337,7 +551,7 @@ export const useBinaryStore = create<BinaryState>((set, get) => ({
     isArithmeticReverseMode: false,
     targetSum: null,
 
-    toggleOperandBit: (op, index) =>
+    toggleOperandBit: (op: 'A' | 'B', index: number) =>
         set((s) => {
             const bits = [...(op === 'A' ? s.operandA : s.operandB)] as Bit[];
             bits[index] = (bits[index] === 0 ? 1 : 0) as Bit;
@@ -348,18 +562,51 @@ export const useBinaryStore = create<BinaryState>((set, get) => ({
     computeAddition: () => {
         const { operandA, operandB } = get();
         const { steps, result } = buildAddSteps(operandA, operandB);
-        set({ addSteps: steps, addResult: result, isAdding: true, additionComplete: false });
+        set({ addSteps: steps, addResult: result, isAdding: true, additionComplete: false, predictionStatus: 'idle' });
     },
-    revealNextStep: () =>
+    submitArithmeticPrediction: (carry: Bit, sum: Bit) => {
+        const idx = get().addSteps.findIndex(s => !s.revealed);
+        if (idx === -1) return;
+        const step = get().addSteps[idx];
+        const isCorrect = step.carry_out === carry && step.sum === sum;
+        
+        set(s => {
+            const newMetrics = {
+                ...s.metrics,
+                interactions: s.metrics.interactions + 1,
+                predictionAccuracy: (s.metrics.predictionAccuracy * s.metrics.interactions + (isCorrect ? 1 : 0)) / (s.metrics.interactions + 1),
+                wrongAnswerCount: isCorrect ? 0 : s.metrics.wrongAnswerCount + 1,
+                arithmeticMistakes: isCorrect ? s.metrics.arithmeticMistakes : s.metrics.arithmeticMistakes + 1
+            };
+            return { 
+                predictionStatus: isCorrect ? 'correct' : 'wrong',
+                metrics: newMetrics
+            };
+        });
+    },
+    revealNextStep: async () => {
+        if (get().predictionStatus !== 'correct') return;
+
         set((s) => {
             const idx = s.addSteps.findIndex((step) => !step.revealed);
             if (idx === -1) return { additionComplete: true, isAdding: false };
+            
+            const step = s.addSteps[idx];
+            if (step.carry_out === 1 && idx < s.addSteps.length - 1) {
+                get().recordPulse({ originIndex: 3 - idx, targetIndex: 3 - (idx + 1), type: 'carry' });
+            }
+
             const next = s.addSteps.map((step, i) =>
                 i === idx ? { ...step, revealed: true } : step
             );
+            
             const allDone = next.every((step) => step.revealed);
-            return { addSteps: next, additionComplete: allDone, isAdding: !allDone };
-        }),
+            const bits = [...s.bits];
+            if (idx < 4) bits[3 - idx] = step.sum;
+
+            return { addSteps: next, bits, additionComplete: allDone, isAdding: !allDone, predictionStatus: 'idle' };
+        });
+    },
     setReverseMode: (active) => set({ 
         isArithmeticReverseMode: active, 
         targetSum: active ? Math.floor(Math.random() * 31) : null 
