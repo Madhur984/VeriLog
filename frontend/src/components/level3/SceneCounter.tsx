@@ -6,7 +6,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useBinaryStore, selectCounterBits, Bit } from '../../stores/binaryStore';
 import { useGlobalSensory } from '../../hooks/useGlobalSensory';
-import { Eye, HelpCircle, AlertTriangle } from 'lucide-react';
+import { AlertTriangle, RefreshCcw } from 'lucide-react';
 
 const T = {
     bg: '#0A0B10', card: '#0D0F16', surface: '#1A1D24', border: '#1A1D24',
@@ -17,21 +17,96 @@ const T = {
 interface Props { onCarry: () => void; onReach8: () => void; hasReached8: boolean; }
 
 export const SceneCounter: React.FC<Props> = ({ onCarry, onReach8, hasReached8 }) => {
-    const { 
-        counterValue, carryHistory, isIncrementing, increment, resetCounter, recordAction,
-        predictionStatus, predictedBits, submitPrediction, startPrediction,
-        isLogicOverlayVisible, toggleLogicOverlay 
-    } = useBinaryStore();
-    const { triggerHaptic, playSound } = useGlobalSensory();
-    
-    const [userGuess, setUserGuess] = useState<Bit[]>([0, 0, 0, 0]);
-    const bits = useBinaryStore(selectCounterBits);
+    const counterValue = useBinaryStore(s => s.counterValue);
+    const carryHistory = useBinaryStore(s => s.carryHistory);
+    const isIncrementing = useBinaryStore(s => s.isIncrementing);
+    const increment = useBinaryStore(s => s.increment);
+    const recordAction = useBinaryStore(s => s.recordAction);
+    const isSystemBusy = useBinaryStore(s => s.isSystemBusy);
+    const predictionStatus = useBinaryStore(s => s.predictionStatus);
+    const submitPrediction = useBinaryStore(s => s.submitPrediction);
+    const startPrediction = useBinaryStore(s => s.startPrediction);
+    const pulseHistory = useBinaryStore(s => s.pulseHistory);
+    const labStage = useBinaryStore(s => s.labStage);
+    const setLabStage = useBinaryStore(s => s.setLabStage);
+    const isStageLocked = useBinaryStore(s => s.isStageLocked);
+    const setStageLocked = useBinaryStore(s => s.setStageLocked);
+    const setNavigationLocked = useBinaryStore(s => s.setNavigationLocked);
+    const isLogicOverlayVisible = useBinaryStore(s => s.isLogicOverlayVisible);
+    const resetCounter = useBinaryStore(s => s.resetCounter);
+    const isSlowMotion = useBinaryStore(s => s.isSlowMotion);
+    const setSlowMotion = useBinaryStore(s => s.setSlowMotion);
+    const bits = useBinaryStore(s => s.bits);
+    const propagationDelay = useBinaryStore(s => s.propagationDelay);
+    const nextScene = useBinaryStore(s => s.nextScene);
     const prevBits = useRef(bits);
 
+    const { triggerHaptic, playSound } = useGlobalSensory();
+    const [userGuess, setUserGuess] = useState<Bit[]>([0, 0, 0, 0]);
+    const [errorSimBits, setErrorSimBits] = useState<Bit[] | null>(null);
+
+    useEffect(() => {
+        if (labStage === 'execution' || labStage === 'complete') setNavigationLocked(false);
+        else setNavigationLocked(true);
+    }, [labStage, setNavigationLocked]);
+
+    const handlePredict = async () => {
+        const nextReal = (counterValue + 1) % 16;
+        const actualBits = selectCounterBits({ counterValue: nextReal } as any);
+        const isCorrect = userGuess.every((b: Bit, i: number) => b === actualBits[i]);
+
+        submitPrediction(userGuess);
+
+        if (isCorrect) {
+            triggerHaptic('success');
+            playSound('success');
+        } else {
+            triggerHaptic('error');
+            playSound('fail');
+            recordAction('incorrectToggles');
+            
+            // WRONG PREDICTION FLOW (FINAL)
+            // 1. Show correct ripple (slow)
+            setSlowMotion(true);
+            setErrorSimBits(null); 
+            await increment(true); // Run the actual correct increment in slow motion
+            setSlowMotion(false);
+
+            // 2. Show hint (1 line) + slight pause
+            setShowHint(true);
+            await new Promise(r => setTimeout(r, 800)); // Visible hint time
+            
+            // 3. Reset system after slight pause (300ms)
+            await new Promise(r => setTimeout(r, 300));
+            resetCounter(); 
+            setShowHint(false);
+        }
+    };
+
+    const [idleTime, setIdleTime] = useState(0);
+    const [showHint, setShowHint] = useState(false);
+
+    // Active Guidance: Hint after 3s inactivity
+    useEffect(() => {
+        if (labStage !== 'execution' || isStageLocked) return;
+        const timer = setInterval(() => setIdleTime(t => t + 1000), 1000);
+        if (idleTime >= 3000 && counterValue === 0) setShowHint(true);
+        return () => clearInterval(timer);
+    }, [labStage, isStageLocked, idleTime, counterValue]);
+
     const handleIncrement = () => {
-        // ALWAYS force prediction before increment (REQ 3 Elite)
+        if (isSystemBusy || isIncrementing || (labStage === 'theory' && isStageLocked)) {
+            if (isSystemBusy || isIncrementing) triggerHaptic('impact' as any);
+            return;
+        }
+        
+        // INSTANT FEEDBACK LAYER (<50ms)
+        triggerHaptic('light');
+        setIdleTime(0);
+        setShowHint(false);
+
         if (predictionStatus === 'idle') {
-            triggerHaptic('light');
+            setUserGuess([...bits]);
             startPrediction();
             return;
         }
@@ -39,353 +114,323 @@ export const SceneCounter: React.FC<Props> = ({ onCarry, onReach8, hasReached8 }
         if (predictionStatus === 'correct') {
             increment(true);
             recordAction('interactions');
+            if (labStage === 'execution') setStageLocked(false);
         }
     };
 
-    const handlePredict = () => {
-        submitPrediction(userGuess);
-        const nextState = selectCounterBits({ counterValue: (counterValue + 1) % 16 } as any);
-        if (userGuess.every((b, i) => b === nextState[i])) {
-            triggerHaptic('success');
-            playSound('success');
-        } else {
-            triggerHaptic('error');
-            playSound('fail');
-            recordAction('incorrectToggles');
+    // REQ: Precise carry-event detection (Stable effect)
+    const lastCarryTimestamp = useRef(0);
+    useEffect(() => {
+        if (carryHistory.length > 0) {
+            const last = carryHistory[carryHistory.length - 1];
+            if (last.timestamp > lastCarryTimestamp.current) {
+                lastCarryTimestamp.current = last.timestamp;
+                onCarry();
+            }
         }
-    };
+    }, [carryHistory, onCarry]);
 
     useEffect(() => {
-        if (carryHistory.length > 0) onCarry();
         if (counterValue === 8 && !hasReached8) onReach8();
-        // We delay updating prevBits.current until AFTER the animation has had a chance to see the change
-        const timeout = setTimeout(() => {
-            prevBits.current = bits;
-        }, 600);
-        return () => clearTimeout(timeout);
-    }, [counterValue, carryHistory, bits, onCarry, onReach8, hasReached8]);
+    }, [counterValue, hasReached8, onReach8]);
 
     useEffect(() => {
-        if (predictionStatus === 'pending') {
-            setUserGuess([...bits]);
-        }
+        const timeout = setTimeout(() => { prevBits.current = bits; }, 800);
+        return () => clearTimeout(timeout);
+    }, [bits]);
+
+    useEffect(() => {
+        if (predictionStatus === 'pending') setUserGuess([...bits]);
     }, [predictionStatus, bits]);
 
-    const LOG_ENTRIES = Array.from({ length: Math.min(counterValue + 1, 8) }, (_, i) => {
-        const v = counterValue - (Math.min(counterValue, 7) - i);
-        return { binary: v.toString(2).padStart(4, '0'), decimal: v };
-    }).reverse();
-
     return (
-        <div style={{ width: '100%', maxWidth: 800, margin: '0 auto', position: 'relative' }}>
-            <button 
-                onClick={toggleLogicOverlay}
-                style={{
-                    position: 'absolute', top: -40, right: 0,
-                    background: isLogicOverlayVisible ? T.accent : 'transparent',
-                    border: `1px solid ${T.accent}`, color: isLogicOverlayVisible ? T.bg : T.accent,
-                    padding: '4px 12px', borderRadius: 20, cursor: 'pointer',
-                    display: 'flex', alignItems: 'center', gap: 6, fontFamily: T.mono, fontSize: 10,
-                    zIndex: 50
-                }}
-            >
-                <Eye size={12} />
-                {isLogicOverlayVisible ? 'LOGIC VIEW: ON' : 'LOGIC VIEW: OFF'}
-            </button>
+        <div style={{ width: '100%', maxWidth: 720, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 48, minHeight: '100vh', paddingTop: 40 }}>            {/* 1. THEORY-FIRST OVERLAY (SEE -> CONNECT -> DO) */}
+            <AnimatePresence>
+                {labStage === 'theory' && (
+                    <motion.div 
+                        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                        style={{ 
+                            position: 'absolute', inset: 0, background: T.bg, zIndex: 100,
+                            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 40,
+                            padding: 40, textAlign: 'center'
+                        }}
+                    >
+                        {/* TOP: Concept */}
+                        <motion.div initial={{ y: -20 }} animate={{ y: 0 }}>
+                            <span style={{ fontFamily: T.mono, fontSize: 10, color: T.accent, letterSpacing: '0.3em', textTransform: 'uppercase', opacity: 0.5 }}>MODULE 3.2</span>
+                            <h2 style={{ fontSize: 24, fontWeight: 800, marginTop: 8 }}>Counting propagates from right to left.</h2>
+                        </motion.div>
 
-            <div style={{ textAlign: 'center', marginBottom: 40 }}>
-                <span style={{ fontFamily: T.mono, fontSize: 9, letterSpacing: '0.25em', textTransform: 'uppercase', color: T.accent, display: 'block', marginBottom: 8 }}>
-                    Module 3.2 — Binary Counting Machine
-                </span>
-                <h2 style={{ fontSize: 28, fontWeight: 700, color: T.text, marginBottom: 8 }}>4-Bit Counter</h2>
-                <p style={{ color: T.muted, fontSize: 14 }}>Watch bits flip and carries propagate on each increment.</p>
+                        {/* CENTER: Visual Explanation (Ripple Carry) */}
+                        <div style={{ width: 320, height: 120, display: 'flex', gap: 12, alignItems: 'center', justifyContent: 'center' }}>
+                            {[0, 1, 1, 1].map((b, i) => (
+                                <motion.div 
+                                    key={i}
+                                    initial={{ background: T.surface }}
+                                    animate={{ 
+                                        background: i > 0 ? T.accent : T.surface,
+                                        scale: [1, 1.1, 1],
+                                        boxShadow: i === 3 ? [`0 0 0px ${T.accent}`, `0 0 20px ${T.accent}`, `0 0 0px ${T.accent}`] : 'none'
+                                    }}
+                                    transition={{ 
+                                        delay: i * 0.4,
+                                        scale: { duration: 0.5, repeat: Infinity, repeatDelay: 1 }
+                                    }}
+                                    style={{ width: 40, height: 60, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: T.mono, fontSize: 24, fontWeight: 900, color: i > 0 ? T.bg : T.muted, border: i === 3 ? `2px solid ${T.accent}` : `1px solid ${T.border}` }}
+                                >
+                                    {b}
+                                </motion.div>
+                            ))}
+                        </div>
+
+                        {/* BOTTOM: Deep Theory */}
+                        <motion.div initial={{ y: 20 }} animate={{ y: 0 }} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24 }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: 16, maxWidth: 450 }}>
+                                <p style={{ color: T.text, fontSize: 13, lineHeight: 1.6, opacity: 0.9 }}>
+                                    Each bit waits for the previous one to overflow. 
+                                    This chain reaction, called Ripple Carry, is the physical speed-limit of hardware.
+                                </p>
+                                <p style={{ color: T.accent, fontSize: 14, fontWeight: 700, fontFamily: T.mono, letterSpacing: '-0.02em' }}>
+                                    "Counting is a chain reaction, not a jump."
+                                </p>
+                                <div style={{ height: 1, width: 40, background: T.accent, opacity: 0.2, alignSelf: 'center' }} />
+                                <p style={{ color: T.warning, fontSize: 11, fontWeight: 900, fontFamily: T.mono }}>
+                                    NOW YOU WILL: OBSERVE HOW CARRY MOVES THROUGH BITS.
+                                </p>
+                            </div>
+                            <button 
+                                onClick={() => { setLabStage('execution'); setStageLocked(false); triggerHaptic('success'); }}
+                                style={{ padding: '12px 32px', background: T.accent, color: T.bg, border: 'none', borderRadius: 4, fontWeight: 900, fontFamily: T.mono, cursor: 'pointer', fontSize: 11 }}
+                            >
+                                INITIALIZE LAB →
+                            </button>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            <div style={{ textAlign: 'center' }}>
+                <motion.span 
+                    initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
+                    style={{ fontFamily: T.mono, fontSize: 10, letterSpacing: '0.4em', textTransform: 'uppercase', color: T.accent, display: 'block', marginBottom: 12 }}
+                >
+                    3.2 — The Carry Chain
+                </motion.span>
+                <h2 style={{ fontSize: 32, fontWeight: 800, color: T.text, marginBottom: 12 }}>Sequential Logic</h2>
+                <div style={{ maxWidth: 500, margin: '0 auto' }}>
+                    <AnimatePresence mode="wait">
+                        <motion.div key="app" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                            <p style={{ color: T.accent, fontSize: 14, fontFamily: T.mono, marginBottom: 8 }}>
+                                PULSE DETECTOR: {isIncrementing ? 'Tracking carries...' : 'Awaiting trigger...'}
+                            </p>
+                            <div style={{ display: 'flex', justifyContent: 'center', gap: 16 }}>
+                                <span style={{ fontSize: 10, color: T.muted, fontFamily: T.mono }}>
+                                    TOTAL COMPUTE DELAY: <span style={{ color: T.warning }}>{propagationDelay}ns</span>
+                                </span>
+                            </div>
+                        </motion.div>
+                    </AnimatePresence>
+                </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 32 }}>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-                    <div style={{ padding: 24, background: T.card, border: `1px solid ${T.border}`, borderRadius: 12, position: 'relative' }}>
-                        <div style={{ fontFamily: T.mono, fontSize: 9, color: T.muted, textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: 16 }}>
-                            4-bit Register
-                        </div>
-
-                        <AnimatePresence>
-                            {predictionStatus === 'pending' && (
-                                <motion.div 
-                                    initial={{ opacity: 0, scale: 0.95 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    exit={{ opacity: 0, scale: 0.95 }}
-                                    style={{ 
-                                        position: 'absolute', inset: 0, zIndex: 100, 
-                                        background: 'rgba(13, 15, 22, 0.95)', 
-                                        borderRadius: 12, display: 'flex', flexDirection: 'column', 
-                                        alignItems: 'center', justifyContent: 'center', gap: 20,
-                                        border: `2px solid ${T.accent}`
-                                    }}
-                                >
-                                    <HelpCircle size={32} color={T.accent} />
-                                    <div style={{ textAlign: 'center' }}>
-                                        <h3 style={{ color: T.text, fontSize: 18, marginBottom: 4 }}>Predict Next State</h3>
-                                        <p style={{ color: T.muted, fontSize: 12 }}>What will binary {counterValue} (+1) become?</p>
-                                    </div>
-                                    <div style={{ display: 'flex', gap: 12 }}>
-                                        {userGuess.map((b, i) => (
-                                            <button 
-                                                key={i}
-                                                onClick={() => {
-                                                    const next = [...userGuess];
-                                                    next[i] = (b === 0 ? 1 : 0) as Bit;
-                                                    setUserGuess(next);
-                                                    triggerHaptic('micro');
-                                                }}
-                                                style={{
-                                                    width: 48, height: 48, borderRadius: 8,
-                                                    background: b ? T.accent : 'transparent',
-                                                    border: `2px solid ${T.accent}`,
-                                                    color: b ? T.bg : T.accent,
-                                                    fontFamily: T.mono, fontSize: 24, fontWeight: 700,
-                                                    cursor: 'pointer'
-                                                }}
-                                            >
-                                                {b}
-                                            </button>
-                                        ))}
-                                    </div>
-                                    <button 
-                                        onClick={handlePredict}
-                                        style={{
-                                            padding: '10px 24px', background: T.accent, color: T.bg,
-                                            border: 'none', borderRadius: 6, fontFamily: T.mono,
-                                            fontSize: 12, fontWeight: 700, cursor: 'pointer'
-                                        }}
-                                    >
-                                        VERIFY PREDICTION
-                                    </button>
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
-
-                        <AnimatePresence>
-                            {predictionStatus === 'wrong' && !isIncrementing && (
-                                <motion.div 
-                                    initial={{ opacity: 0, height: 0 }}
-                                    animate={{ opacity: 1, height: 'auto' }}
-                                    exit={{ opacity: 0, height: 0 }}
-                                    style={{ 
-                                        padding: 16, background: 'rgba(239,68,68,0.05)', 
-                                        border: `1px solid ${T.error}30`, borderRadius: 8,
-                                        marginTop: -10, marginBottom: 20
-                                    }}
-                                >
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: T.error, marginBottom: 8 }}>
-                                        <AlertTriangle size={14} />
-                                        <span style={{ fontFamily: T.mono, fontSize: 10, fontWeight: 700, letterSpacing: '0.1em' }}>MISMATCH DETECTED</span>
-                                    </div>
-                                    <div style={{ display: 'flex', gap: 20 }}>
-                                        <div>
-                                            <div style={{ fontSize: 8, color: T.muted, textTransform: 'uppercase', marginBottom: 4 }}>Your Prediction</div>
-                                            <div style={{ display: 'flex', gap: 4 }}>
-                                                {predictedBits?.map((b, i) => {
-                                                    const actualNext = selectCounterBits({ counterValue: (counterValue + 1) % 16 } as any);
-                                                    const isWrong = b !== actualNext[i];
-                                                    return (
-                                                        <span key={i} style={{ 
-                                                            fontFamily: T.mono, fontSize: 14, fontWeight: 700, 
-                                                            color: isWrong ? T.error : T.muted,
-                                                            borderBottom: isWrong ? `2px solid ${T.error}` : 'none'
-                                                        }}>{b}</span>
-                                                    );
-                                                })}
-                                            </div>
-                                        </div>
-                                        <div style={{ color: T.muted, fontSize: 14, alignSelf: 'center' }}>→</div>
-                                        <div>
-                                            <div style={{ fontSize: 8, color: T.muted, textTransform: 'uppercase', marginBottom: 4 }}>Expected Correct</div>
-                                            <div style={{ display: 'flex', gap: 4 }}>
-                                                {selectCounterBits({ counterValue: (counterValue + 1) % 16 } as any).map((b, i) => (
-                                                    <span key={i} style={{ fontFamily: T.mono, fontSize: 14, fontWeight: 700, color: T.success }}>{b}</span>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <p style={{ fontSize: 11, color: T.muted, marginTop: 12, lineHeight: 1.4 }}>
-                                        The carry at Bit 0 ripples through. Try to reason why the bits flip!
-                                    </p>
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
-
-                        <div style={{ display: 'flex', gap: 8, justifyContent: 'center', marginBottom: 16 }}>
-                            {bits.map((bit, i) => {
-                                const isCarryBit = carryHistory.some(c => c.fromBit === i && Date.now() - c.timestamp < 1000);
-                                const isRising = bit === 1 && prevBits.current[i] === 0;
-                                const isFalling = bit === 0 && prevBits.current[i] === 1;
-
-                                return (
-                                    <React.Fragment key={i}>
-                                        {i > 0 && (
-                                            <div style={{ position: 'relative', width: 32, height: 2, background: 'rgba(255,255,255,0.05)', alignSelf: 'center', marginTop: 12 }}>
-                                                <AnimatePresence>
-                                                    {isCarryBit && (
-                                                        <motion.div
-                                                            initial={{ x: 38, opacity: 1, scale: 1.2 }}
-                                                            animate={{ x: -18, opacity: 0.8, scale: 1 }}
-                                                            exit={{ opacity: 0, scale: 0.2 }}
-                                                            transition={{ 
-                                                                x: { duration: 0.4 + (3-i)*0.05, ease: 'linear' },
-                                                                opacity: { delay: 0.3 + (3-i)*0.05, duration: 0.1 }
-                                                            }}
-                                                            style={{ 
-                                                                position: 'absolute', top: -5, width: 12, height: 12, 
-                                                                borderRadius: '50%', background: T.warning, 
-                                                                boxShadow: `0 0 ${20 + (3-i)*5}px ${T.warning}`, zIndex: 10 
-                                                            }}
-                                                        />
-                                                    )}
-                                                </AnimatePresence>
-                                            </div>
-                                        )}
-                                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
-                                            <div style={{ fontFamily: T.mono, fontSize: 9, color: T.muted }}>2<sup>{3 - i}</sup></div>
-                                            <div style={{ position: 'relative' }}>
-                                                <AnimatePresence>
-                                                    {prevBits.current[i] !== bit && (
-                                                        <motion.div
-                                                            initial={{ opacity: 0.3, scale: 1 }}
-                                                            animate={{ opacity: 0, scale: 1.2 }}
-                                                            transition={{ duration: 0.2 + (3-i)*0.1 }}
-                                                            style={{
-                                                                position: 'absolute', inset: 0,
-                                                                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                                                fontFamily: T.mono, fontSize: 36, fontWeight: 800,
-                                                                color: prevBits.current[i] ? T.accent : T.muted,
-                                                                pointerEvents: 'none'
-                                                            }}
-                                                        >
-                                                            {prevBits.current[i]}
-                                                        </motion.div>
-                                                    )}
-                                                </AnimatePresence>
-
-                                                <AnimatePresence mode="wait">
-                                                    <motion.div
-                                                        key={`${i}-${bit}`}
-                                                        initial={{ scale: isRising ? 1.2 : 0.8, opacity: 0 }}
-                                                        animate={{ 
-                                                            scale: 1, opacity: 1,
-                                                            color: bit ? T.accent : T.muted,
-                                                            boxShadow: isCarryBit ? `0 0 ${30 + (3-i)*10}px ${T.warning}` : 'none',
-                                                            borderColor: predictionStatus === 'wrong' && predictedBits && predictedBits[i] !== bit ? T.error : (isCarryBit ? T.warning : bit ? T.accent : T.border)
-                                                        }}
-                                                        exit={{ scale: isFalling ? 0.8 : 1.2, opacity: 0 }}
-                                                        transition={{ 
-                                                            duration: 0.2 + (3-i)*0.1, // MSB (i=0) is heavier
-                                                            ease: bit === 1 ? [0.4, 0, 0.2, 1] : [0.2, 0, 0.4, 1.2] 
-                                                        }}
-                                                        onUpdate={() => {
-                                                            if (prevBits.current[i] !== bit) triggerHaptic(i === 0 ? 'heavy' : 'light');
-                                                        }}
-                                                        style={{
-                                                            width: 64, height: 64, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                                            fontFamily: T.mono, fontSize: 36, fontWeight: 800,
-                                                            background: isCarryBit ? 'rgba(245,158,11,0.15)' : bit ? 'rgba(0,212,255,0.08)' : T.surface,
-                                                            border: `2px solid`, borderRadius: 8
-                                                        }}
-                                                    >
-                                                        {bit}
-                                                    </motion.div>
-                                                </AnimatePresence>
-                                            </div>
-                                        </div>
-                                    </React.Fragment>
-                                );
-                            })}
-                        </div>
-
-                        <div style={{ textAlign: 'center', padding: '12px 0', borderTop: `1px solid ${T.border}` }}>
-                            <span style={{ fontFamily: T.mono, fontSize: 11, color: T.muted, letterSpacing: '0.15em', textTransform: 'uppercase' }}>Decimal: </span>
-                            <motion.span
-                                key={counterValue}
-                                initial={{ y: -10, opacity: 0 }}
-                                animate={{ y: 0, opacity: 1 }}
-                                style={{ fontFamily: T.mono, fontSize: 24, fontWeight: 700, color: T.success }}
+            {/* 2. PRIMARY SYSTEM (Center 70%) */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 40, alignItems: 'center' }}>
+                <div style={{ position: 'relative', padding: 40, background: T.card, border: `1px solid ${T.border}`, borderRadius: 12, width: '100%' }}>
+                    {/* Prediction Overlay (REQ 3) */}
+                    <AnimatePresence>
+                        {predictionStatus === 'pending' && (
+                            <motion.div 
+                                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                                style={{ position: 'absolute', inset: 0, zIndex: 100, background: 'rgba(13, 15, 22, 0.98)', borderRadius: 12, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 24 }}
                             >
-                                {counterValue}
-                            </motion.span>
-                        </div>
+                                <div style={{ textAlign: 'center' }}>
+                                    <h3 style={{ color: T.text, fontSize: 20, marginBottom: 8, fontWeight: 800 }}>Predict the Ripple</h3>
+                                    <p style={{ color: T.muted, fontSize: 13, fontFamily: T.mono }}>{counterValue} + 1 = ?</p>
+                                </div>
+                                <div style={{ display: 'flex', gap: 12 }}>
+                                    {userGuess.map((b, i) => (
+                                        <button 
+                                            key={i} onClick={() => {
+                                                const next = [...userGuess];
+                                                next[i] = (b === 0 ? 1 : 0) as Bit;
+                                                setUserGuess(next);
+                                                triggerHaptic('micro');
+                                            }}
+                                            style={{
+                                                width: 56, height: 64, borderRadius: 8, background: b ? T.accent : T.surface, border: `2px solid ${T.accent}`,
+                                                color: b ? T.bg : T.accent, fontFamily: T.mono, fontSize: 28, fontWeight: 900, cursor: 'pointer'
+                                            }}
+                                        >
+                                            {b}
+                                        </button>
+                                    ))}
+                                </div>
+                                <button onClick={handlePredict} style={{ padding: '12px 32px', background: T.accent, color: T.bg, border: 'none', borderRadius: 6, fontFamily: T.mono, fontSize: 12, fontWeight: 800, cursor: 'pointer' }}>
+                                    VERIFY STATE
+                                </button>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+
+                    {/* Standardized Bit Display */}
+                    <div style={{ display: 'flex', gap: 12, justifyContent: 'center', marginBottom: 32 }}>
+                        {(errorSimBits || bits).map((bit: Bit, i: number) => {
+                            const hasPulse = pulseHistory.some(p => p.type === 'carry' && p.targetIndex === i && Date.now() - p.timestamp < 1000);
+                            const isErrorState = errorSimBits !== null;
+                            const isCurrentFocus = i === 3 && counterValue === 0;
+
+                            return (
+                                <motion.div 
+                                    key={i}
+                                    animate={{ 
+                                        scale: (isIncrementing && bits[i] !== prevBits.current[i]) || isCurrentFocus ? 1.08 : 1,
+                                        boxShadow: hasPulse ? `0 0 35px ${T.warning}40` : (isErrorState ? `0 0 15px ${T.error}10` : (isCurrentFocus ? `0 0 20px ${T.accent}50` : 'none')),
+                                        borderColor: isErrorState ? `${T.error}80` : (hasPulse ? T.warning : (bit ? `${T.accent}80` : (isCurrentFocus ? T.accent : T.border))),
+                                        background: isCurrentFocus ? `rgba(0,212,255,0.05)` : T.surface,
+                                        opacity: (!isIncrementing && counterValue === 0 && i !== 3 && labStage !== 'complete') ? 0.3 : 1 
+                                    }}
+                                    style={{ 
+                                        width: 80, height: 100, background: T.surface, border: `2px solid`, borderRadius: 12,
+                                        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8,
+                                        position: 'relative'
+                                    }}
+                                >
+                                    <span style={{ fontFamily: T.mono, fontSize: 10, color: T.muted }}>2<sup>{3-i}</sup></span>
+                                    <span style={{ 
+                                        fontFamily: T.mono, fontSize: 48, fontWeight: 900, 
+                                        color: isErrorState ? T.error : (bit ? T.accent : T.muted) 
+                                    }}>
+                                        {bit}
+                                    </span>
+                                    {/* Engineering Overlay: Carry Logic Link */}
+                                    {isLogicOverlayVisible && i < 3 && (
+                                        <div style={{ position: 'absolute', right: -24, top: '50%', transform: 'translateY(-50%)', zIndex: 10, display: 'flex', alignItems: 'center' }}>
+                                            <motion.div 
+                                               animate={{ opacity: hasPulse ? 1 : 0.4, scale: hasPulse ? 1.2 : 1 }}
+                                               style={{ width: 14, height: 14, borderRadius: '50%', background: T.warning, border: `1px solid ${T.bg}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                                            >
+                                                <div style={{ width: 4, height: 4, borderRadius: '50%', background: T.bg }} />
+                                            </motion.div>
+                                            <div style={{ height: 1, width: 12, background: T.warning, opacity: 0.3 }} />
+                                        </div>
+                                    )}
+                                </motion.div>
+                            );
+                        })}
                     </div>
 
+                    <div style={{ textAlign: 'center', borderTop: `1px solid ${T.border}`, paddingTop: 24, position: 'relative' }}>
+                        {/* Micro-flow guidance & Inline Theory */}
+                        <AnimatePresence>
+                            {(isIncrementing || isSlowMotion) && (
+                                <motion.div 
+                                    initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+                                    style={{ position: 'absolute', top: -35, left: 0, right: 0, display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+                                >
+                                    <span style={{ color: isSlowMotion ? T.warning : T.accent, fontSize: 10, fontFamily: T.mono, fontWeight: 800, letterSpacing: '0.1em' }}>
+                                        {isSlowMotion ? '⚠️ SLOW-MOTION CORRECTIVE RIPPLE' : 'CORE PROPAGATION ACTIVE'}
+                                    </span>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+                        
+                        <span style={{ fontFamily: T.mono, fontSize: 13, color: T.muted }}>DECIMAL EQUIVALENT: </span>
+                        <motion.span key={counterValue} animate={{ scale: [1.2, 1] }} style={{ fontFamily: T.mono, fontSize: 32, fontWeight: 900, color: T.success }}>
+                            {counterValue}
+                        </motion.span>
+                    </div>
+                </div>
+
+                <div style={{ display: 'flex', gap: 16 }}>
                     <motion.button
                         onClick={handleIncrement}
-                        whileTap={{ scale: 0.96 }}
-                        whileHover={{ boxShadow: `0 0 20px rgba(0,212,255,0.2)` }}
-                        disabled={isIncrementing}
+                        disabled={isSystemBusy || isIncrementing || (labStage === 'theory' && isStageLocked)}
+                        whileHover={{ scale: (isSystemBusy || isIncrementing) ? 1 : 1.05 }}
+                        whileTap={{ scale: (isSystemBusy || isIncrementing) ? 0.98 : 0.95 }}
                         style={{
-                            padding: '14px 0', fontFamily: T.mono, fontSize: 11, fontWeight: 800,
-                            letterSpacing: '0.2em', textTransform: 'uppercase',
-                            background: predictionStatus === 'correct' ? T.success : 'rgba(0,212,255,0.08)', 
-                            border: `2px solid ${predictionStatus === 'correct' ? T.success : 'rgba(0,212,255,0.3)'}`,
-                            borderRadius: 8, color: predictionStatus === 'correct' ? T.bg : T.accent, 
-                            cursor: isIncrementing ? 'wait' : 'pointer', 
-                            transition: 'all 0.2s', opacity: isIncrementing ? 0.6 : 1
+                            padding: '16px 48px', fontFamily: T.mono, fontSize: 12, fontWeight: 900, letterSpacing: '0.2em',
+                            background: predictionStatus === 'correct' ? T.success : 'transparent',
+                            border: `2px solid ${predictionStatus === 'correct' ? T.success : T.accent}`,
+                            borderRadius: 8, color: predictionStatus === 'correct' ? T.bg : T.accent,
+                            cursor: (isSystemBusy || isIncrementing) ? 'wait' : 'pointer', 
+                            opacity: (isSystemBusy || isIncrementing) ? 0.6 : 1,
+                            boxShadow: showHint ? `0 0 20px ${T.accent}40` : 'none',
+                            position: 'relative', minWidth: 260
                         }}
                     >
-                        {isIncrementing ? '>> Propagating...' : predictionStatus === 'correct' ? 'CONFIRM TRANSITION' : '++ Increment'}
+                        {(isSystemBusy || isIncrementing) ? 'PROPAGATING...' : predictionStatus === 'correct' ? 'EXECUTE UPDATE' : '++ INCREMENT'}
+                        <AnimatePresence>
+                            {showHint && (
+                                <motion.div 
+                                    initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+                                    style={{ position: 'absolute', bottom: -35, left: 0, right: 0, color: T.accent, fontSize: 9, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em' }}
+                                >
+                                    WATCH HOW CARRY MOVES
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
                     </motion.button>
 
-                    <button
-                        onClick={resetCounter}
+                    <motion.button
+                        onClick={() => { resetCounter(); triggerHaptic('heavy'); playSound('fail'); }}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
                         style={{
-                            padding: '10px 0', fontFamily: T.mono, fontSize: 9, 
-                            color: T.muted, background: 'none', border: 'none', cursor: 'pointer',
-                            textTransform: 'uppercase', letterSpacing: '0.1em'
+                            padding: '16px 24px', fontFamily: T.mono, fontSize: 10, fontWeight: 900,
+                            background: 'transparent', border: `1px solid ${T.error}44`,
+                            borderRadius: 8, color: T.error, opacity: 0.6, cursor: 'pointer',
+                            display: 'flex', alignItems: 'center', gap: 8
                         }}
                     >
-                        Reset Circuit
-                    </button>
-                </div>
-
-                <div style={{ padding: 20, background: T.card, border: `1px solid ${T.border}`, borderRadius: 12 }}>
-                    <div style={{ fontFamily: T.mono, fontSize: 9, color: T.muted, textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: 12 }}>
-                        State History
-                    </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 4, maxHeight: 320, overflowY: 'auto' }}>
-                        {LOG_ENTRIES.map((e, idx) => (
-                            <motion.div
-                                key={e.decimal}
-                                initial={{ opacity: 0, x: -8 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                style={{
-                                    display: 'grid', gridTemplateColumns: '1fr 1fr',
-                                    padding: '6px 8px', borderRadius: 4,
-                                    background: idx === 0 ? 'rgba(0,212,255,0.06)' : 'transparent',
-                                    border: idx === 0 ? `1px solid rgba(0,212,255,0.15)` : '1px solid transparent',
-                                }}
-                            >
-                                <span style={{ fontFamily: T.mono, fontSize: 14, color: idx === 0 ? T.accent : T.text, letterSpacing: '0.08em' }}>
-                                    {e.binary}
-                                </span>
-                                <span style={{ fontFamily: T.mono, fontSize: 14, color: idx === 0 ? T.success : T.muted }}>
-                                    {e.decimal}
-                                </span>
-                            </motion.div>
-                        ))}
-                    </div>
+                        <RefreshCcw size={14} /> RESET SYSTEM
+                    </motion.button>
                 </div>
             </div>
 
-            <div style={{ marginTop: 48, padding: 20, background: 'rgba(245,158,11,0.02)', border: `1px solid ${T.border}`, borderRadius: 8 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
-                    <HelpCircle size={14} style={{ color: T.warning }} />
-                    <span style={{ fontFamily: T.mono, fontSize: 10, fontWeight: 700, color: T.warning, textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-                        Engineering Context: The Carry Chain
-                    </span>
-                </div>
-                <p style={{ fontSize: 13, color: T.muted, lineHeight: 1.6, margin: 0 }}>
-                    In a computer, counters don't update instantly. The "Bit 1" can only flip after "Bit 0" sends it 
-                    a carry signal. This is called **Propagation Delay**. If you have a 64-bit counter, the carry 
-                    has to "ripple" through 64 gates, which takes time. High-performance CPUs use complex 
-                    **Carry Lookahead** logic to skip the wait!
-                </p>
+            {/* 3. FEEDBACK / QUESTION */}
+            <div style={{ textAlign: 'center', paddingBottom: 60 }}>
+                {counterValue === 15 && (
+                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} style={{ background: 'rgba(239,68,68,0.05)', border: `1px solid ${T.error}30`, padding: 24, borderRadius: 12, maxWidth: 500, margin: '0 auto' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'center', marginBottom: 12 }}>
+                            <AlertTriangle size={16} color={T.error} />
+                            <span style={{ fontFamily: T.mono, fontSize: 11, fontWeight: 800, color: T.error, textTransform: 'uppercase' }}>Engineering Reality: Overflow</span>
+                        </div>
+                        <p style={{ fontSize: 14, color: T.text, marginBottom: 16 }}>
+                            A 4-bit counter has a finite depth. What happens to the carry signal when you add 1 to 1111 (15)?
+                        </p>
+                        <div style={{ display: 'flex', justifyContent: 'center', gap: 12 }}>
+                            {['Destroyed', 'Stored', 'Sent to Bit 4'].map(ans => (
+                                <button
+                                    key={ans}
+                                    onClick={() => {
+                                        if (ans === 'Sent to Bit 4') {
+                                            playSound('success'); triggerHaptic('success'); setLabStage('complete');
+                                        } else {
+                                            playSound('fail'); triggerHaptic('error');
+                                        }
+                                    }}
+                                    style={{ padding: '8px 20px', background: T.surface, border: `1px solid ${T.border}`, color: T.muted, borderRadius: 6, fontFamily: T.mono, fontSize: 11, cursor: 'pointer' }}
+                                >
+                                    {ans}
+                                </button>
+                            ))}
+                        </div>
+                    </motion.div>
+                )}
+
+                {labStage === 'complete' && (
+                    <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} style={{ marginTop: 24 }}>
+                        <p style={{ color: T.success, fontFamily: T.mono, fontSize: 14, fontWeight: 700, marginBottom: 16 }}>
+                            ✓ Overflow Understood. The Ripple effect is the speed-limit of physics.
+                        </p>
+                        <button 
+                            onClick={() => nextScene()}
+                            style={{ padding: '12px 32px', background: T.success, color: T.bg, border: 'none', borderRadius: 6, fontFamily: T.mono, fontSize: 12, fontWeight: 800, cursor: 'pointer' }}
+                        >
+                            ADVANCE TO MEMORY →
+                        </button>
+                    </motion.div>
+                )}
             </div>
         </div>
     );

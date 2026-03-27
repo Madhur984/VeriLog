@@ -6,10 +6,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, ArrowRight, CheckCircle2, Trophy } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
+import { SceneWhyBinary } from '../components/level3/SceneWhyBinary';
 import { SceneSwitch } from '../components/level3/SceneSwitch';
 import { SceneCounter } from '../components/level3/SceneCounter';
 import { SceneRegister } from '../components/level3/SceneRegister';
 import { SceneArithmetic } from '../components/level3/SceneArithmetic';
+import { SceneLogicBridge } from '../components/level3/SceneLogicBridge';
 import { CognitiveCheckpoint, CheckpointScene } from '../components/level3/CognitiveCheckpoint';
 import { VoltMonkeyPanel } from '../components/level1/VoltMonkeyPanel';
 import { XPCounter } from '../components/level1/XPCounter';
@@ -19,6 +21,7 @@ import { useEngagementAdapter } from '../hooks/useEngagementAdapter';
 import { useSigmaMentorL3, L3Scene } from '../hooks/useSigmaMentorL3';
 import { useGamificationStore } from '../stores/gamificationStore';
 import { useGlobalSensory } from '../hooks/useGlobalSensory';
+import { useBinaryStore } from '../stores/binaryStore';
 
 const T = {
     bg: '#0A0B10', card: '#0D0F16', surface: '#1A1D24', border: '#17191E',
@@ -28,7 +31,7 @@ const T = {
     sans: "'Inter', sans-serif",
 } as const;
 
-type Scene = 'intro' | 'switch' | 'counter' | 'register' | 'arithmetic' | 'complete';
+// Scene type is imported from binaryStore
 
 const BADGES: Record<string, { name: string; xp: number }> = {
     'bit-flip': { name: 'Bit Manipulator', xp: 10 },
@@ -55,15 +58,11 @@ const Btn: React.FC<{ label: string; onClick: () => void; disabled?: boolean }> 
     </button>
 );
 
-const SCENE_ORDER: Scene[] = ['intro', 'switch', 'counter', 'register', 'arithmetic', 'complete'];
+// SCENE_ORDER is managed in binaryStore
 
 export const ModuleThree: React.FC = () => {
     const navigate = useNavigate();
     const completeSkill = useGamificationStore(state => state.completeSkill);
-
-    const [scene, setScene] = useState<Scene>('intro');
-    const [screenFlash, setScreenFlash] = useState(false);
-    const [showCheckpoint, setShowCheckpoint] = useState(false);
 
     const { xp, awardXP, registerCounterEl } = useEngagementAdapter();
     const { triggerHaptic } = useGlobalSensory();
@@ -72,6 +71,22 @@ export const ModuleThree: React.FC = () => {
 
     const [toast, setToast] = useState<{ show: boolean; name: string; xp: number }>({ show: false, name: '', xp: 0 });
     const [earnedBadges, setEarnedBadges] = useState<Set<string>>(new Set());
+
+    const activeScene = useBinaryStore(s => s.activeScene);
+    const nextScene = useBinaryStore(s => s.nextScene);
+    const navigationLocked = useBinaryStore(s => s.navigationLocked);
+    const isSystemBusy = useBinaryStore(s => s.isSystemBusy);
+    const toggleLogicOverlay = useBinaryStore(s => s.toggleLogicOverlay);
+    const isLogicOverlayVisible = useBinaryStore(s => s.isLogicOverlayVisible);
+    const setNavigationLocked = useBinaryStore(s => s.setNavigationLocked);
+
+    useEffect(() => {
+        console.log("ModuleThree: activeScene changed to:", activeScene);
+        window.scrollTo(0,0);
+    }, [activeScene]);
+
+    const [screenFlash, setScreenFlash] = useState(false);
+    const [showCheckpoint, setShowCheckpoint] = useState(false);
 
     const [hasToggled, setHasToggled] = useState(false);
     const [hasReached8, setHasReached8] = useState(false);
@@ -96,10 +111,12 @@ export const ModuleThree: React.FC = () => {
     }, [getResponse]);
 
     useEffect(() => {
-        if (scene === 'intro' || scene === 'complete') return;
-        const msg = getProactiveMessage(scene as L3Scene);
-        if (msg) showSigma(scene as L3Scene, msg);
-    }, [scene, getProactiveMessage, showSigma]);
+        const sigmaScenes = ['whybinary', 'switch', 'counter', 'register', 'arithmetic', 'bridge'];
+        if (!sigmaScenes.includes(activeScene)) return;
+        
+        const msg = getProactiveMessage(activeScene as L3Scene);
+        if (msg) showSigma(activeScene as L3Scene, msg);
+    }, [activeScene, getProactiveMessage, showSigma]);
 
     const awardBadge = useCallback((key: string) => {
         if (earnedBadges.has(key)) return;
@@ -114,6 +131,7 @@ export const ModuleThree: React.FC = () => {
     const [recapData, setRecapData] = useState<{ title: string; points: string[] } | null>(null);
 
     const handleAdvance = () => {
+        console.log("ModuleThree: handleAdvance for", activeScene);
         const recaps: Record<string, { title: string; points: string[] }> = {
             switch: {
                 title: "Voltage to Logic Complete",
@@ -133,50 +151,75 @@ export const ModuleThree: React.FC = () => {
             }
         };
 
-        if (recaps[scene]) {
-            setRecapData(recaps[scene]);
+        if (navigationLocked || isSystemBusy) {
+            triggerHaptic('impact' as any);
+            return;
+        }
+
+        if (recaps[activeScene]) {
+            setRecapData(recaps[activeScene]);
             setShowRecap(true);
         } else {
             actuallyAdvance();
         }
     };
 
-    const confirmAdvance = () => {
-        setShowRecap(false);
-        actuallyAdvance();
-        triggerHaptic('success');
-    };
-
-    const actuallyAdvance = () => {
-        const idx = SCENE_ORDER.indexOf(scene);
-        const nextVal = SCENE_ORDER[idx + 1] as Scene;
-        setScene(nextVal);
+    const actuallyAdvance = useCallback(async () => {
+        if (isSystemBusy) return;
+        
+        // REQ 2: Transition Hardware Delay (Perceptual Continuity)
+        setNavigationLocked(true); 
+        await new Promise(r => setTimeout(r, 200)); 
+        
+        setNavigationLocked(false);
         setShowCheckpoint(false);
-        if (nextVal !== 'intro' && nextVal !== 'complete') showSigma(nextVal as L3Scene);
-        if (nextVal === 'complete') completeSkill('binary_awakening');
-    };
+        nextScene();
+        setShowRecap(false);
+    }, [isSystemBusy, setNavigationLocked, nextScene]);
+
+    const confirmAdvance = useCallback(() => {
+        setShowRecap(false);
+        setShowCheckpoint(true);
+        triggerHaptic('success');
+    }, [triggerHaptic]);
+
+    useEffect(() => {
+        if (activeScene !== 'intro' && activeScene !== 'complete') showSigma(activeScene as L3Scene);
+        if (activeScene === 'complete') completeSkill('binary_awakening');
+    }, [activeScene, showSigma, completeSkill]);
 
     const INTRO_LINES = [
         'Before logic gates. Before processors.',
         'There is one universal language.',
-        'Zero and One.',
+        'Computation is not a mathematical concept.',
+        'It is a physical act.',
         'Binary is the language of hardware.'
     ];
     const [introStep, setIntroStep] = useState(0);
 
     const handleIntroNext = () => {
+        if (isSystemBusy) return;
         if (introStep < INTRO_LINES.length - 1) {
             setIntroStep(s => s + 1);
         } else {
-            handleAdvance();
+            actuallyAdvance();
         }
     };
 
-    const handleFirstToggle = () => { setHasToggled(true); awardXP('structural', 10); awardBadge('bit-flip'); showSigma('switch'); };
-    const handleCarry = () => { showSigma('counter'); recordInteraction(true); };
-    const handleReach8 = () => { setHasReached8(true); awardXP('application', 15); awardBadge('bit-counter'); flash(); };
-    const handleStore = () => { setHasStored(true); awardXP('structural', 15); awardBadge('memory-writer'); showSigma('register'); flash(); };
-    const handleArithmeticCorrect = () => { setHasComputed(true); awardXP('application', 20); awardBadge('ripple-solver'); showSigma('arithmetic'); recordInteraction(true); flash(); };
+    // SAFETY: Global Lock Cleanup on Mount/Unmount
+    useEffect(() => {
+        return () => {
+            const state = useBinaryStore.getState();
+            state.setNavigationLocked(false);
+            if (state.isIncrementing) useBinaryStore.setState({ isIncrementing: false, isSystemBusy: false });
+        };
+    }, []);
+
+    const handleFirstToggle = useCallback(() => { setHasToggled(true); awardXP('structural', 10); awardBadge('bit-flip'); showSigma('switch'); }, [awardXP, awardBadge, showSigma]);
+    const handleCarry = useCallback(() => { showSigma('counter'); recordInteraction(true); }, [showSigma, recordInteraction]);
+    const handleReach8 = useCallback(() => { setHasReached8(true); awardXP('application', 15); awardBadge('bit-counter'); flash(); }, [awardXP, awardBadge, flash]);
+    const handleStore = useCallback(() => { setHasStored(true); awardXP('structural', 15); awardBadge('memory-writer'); showSigma('register'); flash(); }, [awardXP, awardBadge, showSigma, flash]);
+    const handleArithmeticCorrect = useCallback(() => { setHasComputed(true); awardXP('application', 20); awardBadge('ripple-solver'); showSigma('arithmetic'); recordInteraction(true); flash(); }, [awardXP, awardBadge, showSigma, recordInteraction, flash]);
 
     return (
         <div style={{ minHeight: '100vh', width: '100%', display: 'flex', flexDirection: 'column', fontFamily: T.sans, background: T.bg, color: T.text, overflow: 'hidden' }}>
@@ -189,7 +232,7 @@ export const ModuleThree: React.FC = () => {
 
             <BadgeToast show={toast.show} badgeName={toast.name} xp={toast.xp} onDismiss={() => setToast(t => ({ ...t, show: false }))} />
 
-            {scene !== 'intro' && scene !== 'complete' && (
+            {activeScene !== 'intro' && activeScene !== 'complete' && (
                 <header style={{
                     display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                     padding: '14px 24px', borderBottom: `1px solid ${T.border}`,
@@ -199,6 +242,19 @@ export const ModuleThree: React.FC = () => {
                         <ArrowLeft style={{ width: 11, height: 11 }} /> Exit
                     </button>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                        <button 
+                            onClick={toggleLogicOverlay}
+                            style={{
+                                background: isLogicOverlayVisible ? T.accent : 'transparent',
+                                border: `1px solid ${T.accent}`, color: isLogicOverlayVisible ? T.bg : T.accent,
+                                padding: '4px 12px', borderRadius: 20, cursor: 'pointer',
+                                display: 'flex', alignItems: 'center', gap: 6, fontFamily: T.mono, fontSize: 8,
+                                letterSpacing: '0.1em', transition: 'all 0.2s'
+                            }}
+                        >
+                            <span style={{ fontSize: 10 }}>{isLogicOverlayVisible ? '◉' : '○'}</span>
+                            ENGINEERING VIEW
+                        </button>
                         <ProgressTracker
                             stages={[
                                 { id: 'switch', label: 'Binary Intro' },
@@ -206,7 +262,7 @@ export const ModuleThree: React.FC = () => {
                                 { id: 'register', label: 'Memory' },
                                 { id: 'arithmetic', label: 'Arithmetic' },
                             ]}
-                            activeStageId={scene}
+                            activeStageId={activeScene}
                         />
                         <XPCounter total={xp.total} registerEl={registerCounterEl} breakdown={xp} />
                     </div>
@@ -247,12 +303,12 @@ export const ModuleThree: React.FC = () => {
                 <div style={{ flex: 1, overflowY: 'auto' }}>
                     <main style={{
                         display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                        padding: scene === 'intro' || scene === 'complete' ? 0 : '36px 24px',
-                        maxWidth: scene === 'intro' || scene === 'complete' ? 'none' : 1024,
+                        padding: activeScene === 'intro' || activeScene === 'complete' ? 0 : '36px 24px',
+                        maxWidth: activeScene === 'intro' || activeScene === 'complete' ? 'none' : 1024,
                         width: '100%', margin: '0 auto', minHeight: '100%',
                     }}>
                         <AnimatePresence mode="wait">
-                            {scene === 'intro' && (
+                            {activeScene === 'intro' && (
                                 <motion.div key="intro" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                                     style={{ minHeight: '100vh', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
                                     <h1 style={{ fontSize: 'clamp(32px, 5vw, 52px)', fontWeight: 700, textAlign: 'center', marginBottom: 52 }}>
@@ -261,36 +317,73 @@ export const ModuleThree: React.FC = () => {
                                     <Btn label={introStep < INTRO_LINES.length - 1 ? 'Next Line' : 'Enter Lab'} onClick={handleIntroNext} />
                                 </motion.div>
                             )}
-                            {scene === 'switch' && (
+                            {activeScene === 'whybinary' && (
+                                <motion.div key="whybinary" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} style={{ width: '100%' }}>
+                                    <SceneWhyBinary onComplete={actuallyAdvance} />
+                                </motion.div>
+                            )}
+                            {activeScene === 'switch' && (
                                 <motion.div key="switch" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} style={{ width: '100%' }}>
                                     <SceneSwitch onFirstToggle={handleFirstToggle} hasToggled={hasToggled} />
-                                    {hasToggled && <div style={{ display: 'flex', justifyContent: 'center', marginTop: 40 }}><Btn label="Continue to Counting Machine" onClick={handleAdvance} /></div>}
+                                    {hasToggled && (
+                                        <div style={{ display: 'flex', flexFlow: 'column', alignItems: 'center', marginTop: 40, gap: 12 }}>
+                                            <Btn label="Continue to Counting Machine" onClick={handleAdvance} disabled={navigationLocked} />
+                                            {navigationLocked && <span style={{ fontFamily: T.mono, fontSize: 9, color: T.warning, opacity: 0.8 }}>PREDICTION REQUIRED TO UNLOCK NAVIGATION</span>}
+                                        </div>
+                                    )}
                                 </motion.div>
                             )}
-                            {scene === 'counter' && (
+                            {activeScene === 'counter' && (
                                 <motion.div key="counter" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} style={{ width: '100%' }}>
                                     <SceneCounter onCarry={handleCarry} onReach8={handleReach8} hasReached8={hasReached8} />
-                                    {hasReached8 && <div style={{ display: 'flex', justifyContent: 'center', marginTop: 40 }}><Btn label="Continue to Memory Store" onClick={handleAdvance} /></div>}
+                                    {hasReached8 && (
+                                        <div style={{ display: 'flex', flexFlow: 'column', alignItems: 'center', marginTop: 40, gap: 12 }}>
+                                            <Btn label="Continue to Memory Store" onClick={handleAdvance} disabled={navigationLocked} />
+                                            {navigationLocked && <span style={{ fontFamily: T.mono, fontSize: 9, color: T.warning, opacity: 0.8 }}>PREDICTION REQUIRED TO UNLOCK NAVIGATION</span>}
+                                        </div>
+                                    )}
                                 </motion.div>
                             )}
-                            {scene === 'register' && (
+                            {activeScene === 'register' && (
                                 <motion.div key="register" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} style={{ width: '100%' }}>
                                     <SceneRegister onStore={handleStore} />
-                                    {hasStored && <div style={{ display: 'flex', justifyContent: 'center', marginTop: 40 }}><Btn label="Continue to Arithmetic" onClick={handleAdvance} /></div>}
+                                    {hasStored && (
+                                        <div style={{ display: 'flex', flexFlow: 'column', alignItems: 'center', marginTop: 40, gap: 12 }}>
+                                            <Btn label="Continue to Arithmetic" onClick={handleAdvance} disabled={navigationLocked} />
+                                            {navigationLocked && <span style={{ fontFamily: T.mono, fontSize: 9, color: T.warning, opacity: 0.8 }}>PREDICTION REQUIRED TO UNLOCK NAVIGATION</span>}
+                                        </div>
+                                    )}
                                 </motion.div>
                             )}
-                            {scene === 'arithmetic' && (
+                            {activeScene === 'arithmetic' && (
                                 <motion.div key="arithmetic" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} style={{ width: '100%' }}>
                                     <SceneArithmetic onCorrect={handleArithmeticCorrect} />
-                                    {hasComputed && <div style={{ display: 'flex', justifyContent: 'center', marginTop: 40 }}><Btn label="Complete Awakening" onClick={handleAdvance} /></div>}
+                                    {hasComputed && (
+                                        <div style={{ display: 'flex', flexFlow: 'column', alignItems: 'center', marginTop: 40, gap: 12 }}>
+                                            <Btn label="Examine Internal Logic" onClick={handleAdvance} disabled={navigationLocked} />
+                                            {navigationLocked && <span style={{ fontFamily: T.mono, fontSize: 9, color: T.warning, opacity: 0.8 }}>PREDICTION REQUIRED TO UNLOCK NAVIGATION</span>}
+                                        </div>
+                                    )}
                                 </motion.div>
                             )}
-                            {scene === 'complete' && (
+                            {activeScene === 'bridge' && (
+                                <motion.div key="bridge" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} style={{ width: '100%' }}>
+                                    <SceneLogicBridge onComplete={actuallyAdvance} />
+                                </motion.div>
+                            )}
+                            {activeScene === 'complete' && (
                                 <motion.div key="complete" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} style={{ textAlign: 'center', padding: '72px 24px' }}>
                                     <Trophy size={80} style={{ color: T.accent, marginBottom: 32 }} />
                                     <h1 style={{ fontSize: 60, fontWeight: 800, color: T.text, marginBottom: 16 }}>BINARY AWAKENED</h1>
                                     <Btn label="Exit to Portal" onClick={() => navigate('/portal')} />
                                 </motion.div>
+                            )}
+                            {/* Safety Fallback */}
+                            {!['intro', 'whybinary', 'switch', 'counter', 'register', 'arithmetic', 'bridge', 'complete'].includes(activeScene) && (
+                                <div key="fallback" style={{ textAlign: 'center', padding: 40 }}>
+                                    <p style={{ color: T.error, fontFamily: T.mono, fontSize: 14 }}>CRITICAL: Unknown Scene State "{activeScene}"</p>
+                                    <button onClick={() => window.location.reload()} style={{ marginTop: 20, color: T.accent }}>Re-initialize System</button>
+                                </div>
                             )}
                         </AnimatePresence>
 
@@ -298,13 +391,13 @@ export const ModuleThree: React.FC = () => {
                             {showCheckpoint && (
                                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                                     style={{ position: 'fixed', inset: 0, zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(5, 7, 12, 0.95)', backdropFilter: 'blur(12px)', padding: 24 }}>
-                                    <CognitiveCheckpoint scene={scene as CheckpointScene} onComplete={actuallyAdvance} />
+                                    <CognitiveCheckpoint scene={activeScene as CheckpointScene} onComplete={actuallyAdvance} />
                                 </motion.div>
                             )}
                         </AnimatePresence>
                     </main>
                 </div>
-                {scene !== 'intro' && scene !== 'complete' && <VoltMonkeyPanel response={panelResponse} />}
+                {activeScene !== 'intro' && activeScene !== 'complete' && <VoltMonkeyPanel response={panelResponse} />}
             </div>
         </div>
     );

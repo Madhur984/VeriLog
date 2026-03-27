@@ -1,12 +1,12 @@
 /**
  * CognitiveCheckpoint.tsx — Module 3: Post-Lab Verification
  * 
- * A modal-style interaction that appears after each lab to verify 
- * concept retention and update the Cognition Engine.
+ * Verifies concept retention and enforces "Correct Understanding" 
+ * before advancing to the next engineering phase.
  */
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Brain, CheckCircle, XCircle } from 'lucide-react';
+import { Brain, CheckCircle, XCircle, Info } from 'lucide-react';
 import { useBinaryStore } from '../../stores/binaryStore';
 
 const T = {
@@ -24,6 +24,7 @@ interface Question {
     options: string[];
     correctIndex: number;
     explanation: string;
+    hint: string;
 }
 
 const QUESTIONS: Record<CheckpointScene, Question> = {
@@ -36,29 +37,32 @@ const QUESTIONS: Record<CheckpointScene, Question> = {
             "The bit becomes 0.5"
         ],
         correctIndex: 1,
-        explanation: "Hardware uses thresholds. A signal must cross a specific high/low limit to change state, preventing noise from causing random flips."
+        explanation: "Hardware uses thresholds. A signal must cross a specific high/low limit to change state, preventing noise from causing random flips.",
+        hint: "Think about the gray zone between the thresholds. If you don't cross the upper limit, the bit doesn't wake up."
     },
     counter: {
         text: "Why do bits in a Ripple Counter flip sequentially rather than all at once?",
         options: [
             "To save battery power",
             "Because signals take time to travel through each stage (Propagation Delay)",
-            "It's a visual trick for the user",
-            "The bits are waiting for user permission"
+            "It's a visual trick",
+            "Sequential is cheaper"
         ],
         correctIndex: 1,
-        explanation: "Each bit's flip depends on the carry from the previous bit. This signal travel time is called propagation delay."
+        explanation: "Each bit's flip depends on the carry from the previous bit. This travel time is propagation delay.",
+        hint: "Imagine a line of dominoes. The first one must fall before the second one starts moving."
     },
     register: {
         text: "What does the 'Stabilization' phase represent in high-speed memory?",
         options: [
-            "The time needed for electrons to cool down",
-            "The time for the hard drive to spin up",
-            "Setup and Hold time: ensuring data is stable before capturing it",
-            "Calculating the hexadecimal value"
+            "Cooling time",
+            "Disk spin up",
+            "Setup and Hold time: ensuring data is stable before capturing",
+            "Hex conversion"
         ],
         correctIndex: 2,
-        explanation: "In digital design, data must be stable for a tiny window of time before and after a clock edge to be stored reliably."
+        explanation: "Data must be stable for a tiny window before and after a clock edge to be stored reliably.",
+        hint: "You can't take a clear photo if the subject is moving while the shutter clicks."
     },
     arithmetic: {
         text: "In a Full Adder, if A=1, B=1, and Carry-In=1, what is the outcome?",
@@ -69,7 +73,8 @@ const QUESTIONS: Record<CheckpointScene, Question> = {
             "Sum=3"
         ],
         correctIndex: 1,
-        explanation: "1 + 1 + 1 = 3 in decimal, which is 11 in binary (Sum=1, Carry=1)."
+        explanation: "1 + 1 + 1 = 3 in decimal, which is 11 in binary (Sum=1, Carry=1).",
+        hint: "Don't forget the 'Carry-In'! It's a third input that adds a '1' to the column."
     }
 };
 
@@ -82,7 +87,7 @@ export const CognitiveCheckpoint: React.FC<Props> = ({ scene, onComplete }) => {
     const q = QUESTIONS[scene];
     const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
     const [isSubmitted, setIsSubmitted] = useState(false);
-    const recordAction = useBinaryStore(s => s.recordAction);
+    const { recordAction, metrics, resetWrongAnswerCount } = useBinaryStore();
 
     const handleSubmit = (index: number) => {
         if (isSubmitted) return;
@@ -90,13 +95,21 @@ export const CognitiveCheckpoint: React.FC<Props> = ({ scene, onComplete }) => {
         setIsSubmitted(true);
         const isCorrect = index === q.correctIndex;
         
-        // Update cognition metrics
         recordAction('predictionAccuracy', isCorrect ? 1 : 0);
-        if (!isCorrect) recordAction('arithmeticMistakes', 1);
+        if (!isCorrect) {
+            recordAction('arithmeticMistakes', 1); // Track as mistake
+        }
         
         setTimeout(() => {
-            onComplete(isCorrect);
-        }, 2500);
+            if (isCorrect) {
+                resetWrongAnswerCount();
+                onComplete(true);
+            } else {
+                // If wrong, reset submission to allow retry
+                setIsSubmitted(false);
+                setSelectedIndex(null);
+            }
+        }, 2000);
     };
 
     return (
@@ -124,6 +137,26 @@ export const CognitiveCheckpoint: React.FC<Props> = ({ scene, onComplete }) => {
 
             <p style={{ fontSize: 15, color: T.text, lineHeight: 1.6, marginBottom: 24 }}>{q.text}</p>
 
+            <AnimatePresence>
+                {metrics.wrongAnswerCount >= 2 && !isSubmitted && (
+                    <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        style={{ 
+                            padding: 12, background: `${T.warning}15`, 
+                            border: `1px solid ${T.warning}40`, borderRadius: 8, 
+                            marginBottom: 24, display: 'flex', gap: 10
+                        }}
+                    >
+                        <Info size={16} color={T.warning} style={{ flexShrink: 0, marginTop: 2 }} />
+                        <div>
+                            <div style={{ fontSize: 11, color: T.warning, fontWeight: 700, textTransform: 'uppercase', marginBottom: 4 }}>Engineering Hint</div>
+                            <div style={{ fontSize: 13, color: T.text, opacity: 0.9 }}>{q.hint}</div>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 24 }}>
                 {q.options.map((opt, i) => {
                     let border = T.border;
@@ -150,13 +183,14 @@ export const CognitiveCheckpoint: React.FC<Props> = ({ scene, onComplete }) => {
                         <motion.button
                             key={i}
                             onClick={() => handleSubmit(i)}
+                            disabled={isSubmitted}
                             whileHover={!isSubmitted ? { x: 4, background: 'rgba(255,255,255,0.03)' } : {}}
                             style={{
                                 padding: '14px 18px', textAlign: 'left', fontFamily: T.sans,
                                 fontSize: 13, background: bg, border: `1px solid ${border}`,
                                 borderRadius: 8, color: color, cursor: isSubmitted ? 'default' : 'pointer',
                                 display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                                transition: 'all 0.2s'
+                                transition: 'all 0.2s', width: '100%'
                             }}
                         >
                             {opt}
@@ -167,18 +201,23 @@ export const CognitiveCheckpoint: React.FC<Props> = ({ scene, onComplete }) => {
                 })}
             </div>
 
-            <AnimatePresence>
+            <AnimatePresence mode="wait">
                 {isSubmitted && (
                     <motion.div
+                        key={selectedIndex === q.correctIndex ? 'success' : 'fail'}
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}
-                        style={{ padding: 16, background: 'rgba(255,255,255,0.03)', borderRadius: 8, borderLeft: `3px solid ${selectedIndex === q.correctIndex ? T.success : T.warning}` }}
+                        exit={{ opacity: 0, height: 0 }}
+                        style={{ 
+                            padding: 16, background: 'rgba(255,255,255,0.03)', 
+                            borderRadius: 8, borderLeft: `3px solid ${selectedIndex === q.correctIndex ? T.success : T.error}` 
+                        }}
                     >
                         <div style={{ fontFamily: T.mono, fontSize: 9, textTransform: 'uppercase', color: T.muted, marginBottom: 6 }}>
                             {selectedIndex === q.correctIndex ? 'Analysis Confirmed' : 'Concept Drift Detected'}
                         </div>
                         <div style={{ fontSize: 12, color: T.text, lineHeight: 1.5 }}>
-                            {q.explanation}
+                            {selectedIndex === q.correctIndex ? q.explanation : "Incorrect interpretation. Re-evaluating physical constraints..."}
                         </div>
                     </motion.div>
                 )}
