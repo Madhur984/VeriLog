@@ -9,20 +9,14 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { CheckCircle2 } from 'lucide-react';
+import { CheckCircle2, Activity, Cpu } from 'lucide-react';
 import { useGlobalSensory } from '../../hooks/useGlobalSensory';
 import { VeriSlider } from '../shared/VeriSlider';
 import { VeriButton } from '../shared/VeriButton';
 import { useAttentionLock } from '../../hooks/useAttentionLock';
 import { OscilloscopeCanvas } from './OscilloscopeCanvas';
 
-const T = {
-    card: '#0D0F16', border: '#1A1D24',
-    text: '#E5E7EB', muted: '#64748B', accent: '#00D4FF',
-    success: '#10B981', warning: '#F59E0B',
-    mono: "'IBM Plex Mono','Roboto Mono',monospace",
-    sans: "'Inter',system-ui,sans-serif",
-} as const;
+
 
 const BUFFER_SIZE = 256;
 
@@ -80,21 +74,22 @@ export function SignalRegenerator({ onComplete }: SignalRegeneratorProps) {
     }, [onComplete]);
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 24, width: '100%' }}>
-            <div {...focusProps} style={{
-                background: T.card, border: `1px solid ${T.border}`,
-                borderRadius: 4, padding: 24,
-            }}>
-                <span style={{
-                    display: 'block', fontFamily: T.mono, fontSize: 8,
-                    letterSpacing: '0.2em', textTransform: 'uppercase',
-                    color: `${T.accent}80`, marginBottom: 16,
-                }}>
-                    Signal Regeneration Lab — Digital Buffer
-                </span>
+        <div className="flex flex-col gap-6 w-full font-mono">
+            <div {...focusProps} className="bg-white border border-slate-200 rounded-[32px] p-8 shadow-xl">
+                <div className="flex items-center gap-3 mb-6">
+                    <div className="p-2 bg-sky-50 text-sky-600 rounded-xl">
+                        <Activity size={18} />
+                    </div>
+                    <div>
+                        <span className="text-[9px] uppercase tracking-[0.2em] text-slate-400 font-black block">
+                            Signal Regeneration Lab
+                        </span>
+                        <h2 className="text-sm font-black text-slate-900 italic uppercase">Digital Buffer Analysis</h2>
+                    </div>
+                </div>
 
                 {/* Noise control */}
-                <div style={{ marginBottom: 24 }}>
+                <div className="mb-8 p-6 bg-slate-50 rounded-2xl border border-slate-100">
                     <VeriSlider
                         value={noiseAmp}
                         onChange={(v) => {
@@ -108,31 +103,19 @@ export function SignalRegenerator({ onComplete }: SignalRegeneratorProps) {
                 </div>
 
                 {/* Pipeline diagram */}
-                <div style={{
-                    display: 'flex', alignItems: 'center', gap: 8,
-                    padding: '12px 16px', marginBottom: 20,
-                    background: 'rgba(0,212,255,0.03)', borderRadius: 4,
-                    border: `1px solid rgba(0,212,255,0.1)`,
-                }}>
+                <div className="flex items-center justify-between p-6 bg-slate-50/50 rounded-3xl border border-slate-100 mb-2">
                     {[
-                        { label: 'Noisy Source', color: T.warning, width: 100 },
-                        { label: '→', color: T.muted, width: 20 },
-                        { label: 'Digital Buffer', color: T.accent, width: 110 },
-                        { label: '→', color: T.muted, width: 20 },
-                        { label: 'Clean Output', color: T.success, width: 100 },
+                        { label: 'Noisy Source', color: 'text-rose-500' },
+                        { label: '→', color: 'text-slate-300' },
+                        { label: 'Digital Buffer', color: 'text-sky-600', special: true },
+                        { label: '→', color: 'text-slate-300' },
+                        { label: 'Clean Output', color: 'text-emerald-500' },
                     ].map((item, i) => (
-                        <div key={i} style={{
-                            fontFamily: T.mono, fontSize: item.label === '→' ? 14 : 8,
-                            letterSpacing: '0.1em', textTransform: 'uppercase',
-                            color: item.color, textAlign: 'center', flexShrink: 0,
-                        }}>
-                            {item.label === 'Digital Buffer' ? (
-                                <div style={{
-                                    padding: '6px 12px', border: `1px solid ${T.accent}40`,
-                                    borderRadius: 2, background: 'rgba(0,212,255,0.06)',
-                                }}>
+                        <div key={i} className={cn("text-[8px] uppercase tracking-widest font-black text-center", item.color)}>
+                            {item.special ? (
+                                <div className="px-4 py-2 border border-sky-200 bg-white rounded-xl shadow-sm">
                                     {item.label}<br />
-                                    <span style={{ fontSize: 7, color: T.muted }}>THRESHOLD DECISION</span>
+                                    <span className="text-[7px] text-slate-400 font-bold">THRESHOLD DECISION</span>
                                 </div>
                             ) : item.label}
                         </div>
@@ -141,87 +124,82 @@ export function SignalRegenerator({ onComplete }: SignalRegeneratorProps) {
             </div>
 
             {/* Dual-channel oscilloscope */}
-            <div style={{
-                background: T.card, border: `1px solid ${T.border}`,
-                borderRadius: 4, padding: 16,
-            }}>
-                <div style={{
-                    display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12,
-                }}>
-                    <span style={{
-                        fontFamily: T.mono, fontSize: 8, color: `${T.accent}80`,
-                        letterSpacing: '0.2em', textTransform: 'uppercase',
-                    }}>
-                        Oscilloscope — Regeneration Comparison
-                    </span>
-                    <div style={{ display: 'flex', gap: 16, fontFamily: T.mono, fontSize: 8 }}>
-                        <span style={{ color: '#00D4FF' }}>■ CH1 Noisy Input</span>
-                        <span style={{ color: '#F59E0B' }}>■ CH2 Clean Output</span>
+            <div className="bg-white border border-slate-200 rounded-[32px] p-8 shadow-xl">
+                <div className="flex justify-between items-center mb-6">
+                    <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-sky-500 animate-pulse" />
+                        <span className="text-[9px] text-slate-400 font-black uppercase tracking-widest">
+                            Real-time Scope
+                        </span>
+                    </div>
+                    <div className="flex gap-4 text-[9px] font-black uppercase tracking-tighter">
+                        <span className="text-sky-500 flex items-center gap-1.5">
+                            <div className="w-1.5 h-1.5 rounded-full bg-sky-500" /> CH1: Noisy Input
+                        </span>
+                        <span className="text-amber-500 flex items-center gap-1.5">
+                            <div className="w-1.5 h-1.5 rounded-full bg-amber-500" /> CH2: Clean Output
+                        </span>
                     </div>
                 </div>
-                <OscilloscopeCanvas
-                    ch1Samples={noisyRef.current}
-                    ch2Samples={cleanRef.current}
-                    showThreshold={true}
-                    thresholdLow={0.1}
-                    thresholdHigh={0.5}
-                    label1="CH1 Noisy"
-                    label2="CH2 Clean"
-                    height={200}
-                />
+                <div className="bg-slate-950 rounded-2xl overflow-hidden border border-slate-800">
+                    <OscilloscopeCanvas
+                        ch1Samples={noisyRef.current}
+                        ch2Samples={cleanRef.current}
+                        showThreshold={true}
+                        thresholdLow={0.1}
+                        thresholdHigh={0.5}
+                        label1="CH1 Noisy"
+                        label2="CH2 Clean"
+                        height={200}
+                    />
+                </div>
             </div>
 
-            {/* VoltMonkey insight */}
-            <div style={{
-                padding: '16px 20px',
-                border: `1px solid rgba(0,212,255,0.15)`,
-                borderRadius: 4, background: 'rgba(0,212,255,0.03)',
-                borderLeft: `2px solid ${T.accent}`,
-            }}>
-                <span style={{
-                    fontFamily: T.mono, fontSize: 8, color: T.accent,
-                    letterSpacing: '0.12em', textTransform: 'uppercase',
-                }}>
-                    VoltMonkey — Engineering Principle
-                </span>
-                <p style={{ fontFamily: T.sans, fontSize: 15, color: T.muted, marginTop: 8, lineHeight: 1.7, fontStyle: 'italic' }}>
-                    "A digital buffer compares input to threshold, then drives output rail to VCC or GND.
-                    Noise on the input is discarded — only the binary decision propagates.
-                    This is why a digital signal can traverse thousands of kilometers through
-                    repeater nodes with zero accumulated degradation."
-                </p>
+            {/* AI Insight */}
+            <div className="p-6 bg-white border border-slate-200 rounded-[24px] shadow-lg flex gap-6 items-start border-l-4 border-l-sky-500">
+                <div className="w-10 h-10 rounded-2xl bg-sky-50 text-sky-600 flex items-center justify-center shrink-0">
+                    <Cpu size={20} />
+                </div>
+                <div>
+                    <div className="text-[10px] text-sky-500 font-black uppercase tracking-widest mb-2">Engineering Principle · Digital Integrity</div>
+                    <p className="text-sm font-bold text-slate-600 leading-relaxed italic">
+                        "A digital buffer compares input to threshold, then drives output rail to VCC or GND.
+                        Noise on the input is discarded — only the binary decision propagates.
+                        This is why a digital signal can traverse thousands of kilometers through
+                        repeater nodes with zero accumulated degradation."
+                    </p>
+                </div>
             </div>
 
             {!complete ? (
-                <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <div className="flex justify-end mt-4">
                     <VeriButton
                         onClick={handleObserved}
                         variant="primary"
                         size="md"
                     >
-                        I understand regeneration →
+                        Synchronize Knowledge →
                     </VeriButton>
                 </div>
             ) : (
-                <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-                    style={{
-                        padding: '16px 20px',
-                        border: `1px solid ${T.success}40`,
-                        borderRadius: 4, background: `${T.success}08`,
-                        display: 'flex', alignItems: 'center', gap: 12,
-                    }}
+                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+                    className="p-6 bg-emerald-50 border border-emerald-100 rounded-[24px] flex items-center gap-4 text-emerald-600"
                 >
-                    <CheckCircle2 style={{ width: 18, height: 18, color: T.success, flexShrink: 0 }} />
-                    <div>
-                        <div style={{ fontFamily: T.mono, fontSize: 10, color: T.success, letterSpacing: '0.1em' }}>
+                    <CheckCircle2 size={24} />
+                    <div className="font-black">
+                        <div className="text-xs uppercase tracking-widest">
                             MODULE 2.4 COMPLETE — ADVANCED
                         </div>
-                        <div style={{ fontFamily: T.mono, fontSize: 8, color: T.muted, marginTop: 2 }}>
-                            +15 XP · Badge: Digital Advocate
+                        <div className="text-[10px] text-emerald-500/70 uppercase tracking-tighter mt-1">
+                            +15 XP · Badge: Digital Advocate Synchronized
                         </div>
                     </div>
                 </motion.div>
             )}
         </div>
     );
+}
+
+function cn(...inputs: any[]) {
+    return inputs.filter(Boolean).join(' ');
 }

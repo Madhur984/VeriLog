@@ -10,7 +10,6 @@ import { ModuleThree } from './pages/ModuleThree';
 import { ModuleFour } from './pages/ModuleFour';
 import { ModuleFive } from './pages/ModuleFive';
 import { LoginPage } from './pages/LoginPage';
-import { MascotGuide } from './components/Bot/MascotGuide';
 import { GatekeeperGame } from './pages/GatekeeperGame';
 import { AssessmentPage } from './pages/AssessmentPage';
 import AiLab from '@/pages/AiLab/AiLab';
@@ -28,7 +27,6 @@ import { CPULabPage } from './pages/CPULabPage';
 import { HardwareLeetCodePage } from './pages/HardwareLeetCodePage';
 import { VerilogPlayground } from './pages/VerilogPlayground';
 
-import { VoltMonkeyIntro } from './pages/VoltMonkeyIntro';
 import Workbench from './pages/Workbench';
 import { CommunityPage } from './pages/CommunityPage';
 import { PortalLayout } from './layouts/PortalLayout';
@@ -85,15 +83,11 @@ export default function App() {
                     <Route path="/module/4" element={<ModuleFour />} />
                     <Route path="/module/5" element={<ModuleFive />} />
 
-                    {/* Legacy / Game Support (Standalone) */}
                     <Route path="/gatekeeper" element={<GatekeeperGame />} />
                     <Route path="/assessment" element={<AssessmentPage />} />
-                    <Route path="/voltmonkey" element={<VoltMonkeyIntro />} />
-                    <Route path="/level/1" element={<VoltMonkeyIntro />} />
 
                     <Route path="*" element={<Navigate to="/portal" replace />} />
                 </Routes>
-                <MascotGuide />
             </TransitionProvider>
         </BrowserRouter>
     );

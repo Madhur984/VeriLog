@@ -5,8 +5,6 @@ interface AudioEngineProps {
   signal: {
     amplitude: number;
     frequency: number;
-    noise: number;
-    bitDepth?: number;
   };
   enabled: boolean;
 }

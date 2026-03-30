@@ -5,15 +5,14 @@
  *   - IEC electrical symbols (battery, resistive load, lamp)
  *   - Etched SVG dot-grid reference background
  *   - Three toggleable overlays: voltage labels, current arrows, loop highlight
- *   - Short circuit state: controlled red ramp + VoltMonkey diagnostic alert
+ *   - Short circuit state: controlled red ramp + Analyst diagnostic alert
  *   - Magnetic proximity glow via CSS var (RAF, no React state)
  *   - Electron flow animation (stroke-dashoffset, velocity ∝ current)
- *   - Procedural Web Audio snap sound
- *   - Micro-spark particles on snap
- *   - prefers-reduced-motion safe
  */
 
 import { useEffect, useRef, useState, useCallback, memo } from 'react';
+import { motion } from 'framer-motion';
+import { ShieldCheck, AlertTriangle } from 'lucide-react';
 import { useMagneticDrag } from '../../hooks/useMagneticDrag';
 import './level1.css';
 
@@ -54,9 +53,9 @@ const BatterySymbol = memo(({ x, y, color }: { x: number; y: number; color: stri
         <circle cx="0" cy="24" r="2.5" fill={color} />
 
         {/* Labels */}
-        <text x="-24" y="-2" textAnchor="end" fontSize="12" fill={color} fontFamily="IBM Plex Mono, monospace" fontWeight="500" opacity="0.8">+</text>
-        <text x="-24" y="12" textAnchor="end" fontSize="14" fill={color} fontFamily="IBM Plex Mono, monospace" fontWeight="600" opacity="0.8">−</text>
-        <text x="32" y="3" textAnchor="start" fontSize="9" fill={color} fontFamily="IBM Plex Mono, monospace" letterSpacing="0.1em" opacity="0.6">12V DC</text>
+        <text x="-24" y="-2" textAnchor="end" fontSize="12" fill={color} fontFamily="JetBrains Mono, monospace" fontWeight="500" opacity="0.8">+</text>
+        <text x="-24" y="12" textAnchor="end" fontSize="14" fill={color} fontFamily="JetBrains Mono, monospace" fontWeight="600" opacity="0.8">−</text>
+        <text x="32" y="3" textAnchor="start" fontSize="9" fill={color} fontFamily="JetBrains Mono, monospace" letterSpacing="0.1em" opacity="0.6">12V DC</text>
     </g>
 ));
 BatterySymbol.displayName = 'BatterySymbol';
@@ -77,7 +76,7 @@ const LampSymbol = memo(({ x, y, color, active }: { x: number; y: number; color:
         <circle cx="0" cy="-24" r="2.5" fill={color} />
         <circle cx="0" cy="24" r="2.5" fill={color} />
 
-        <text x="28" y="3" textAnchor="start" fontSize="9" fill={color} fontFamily="IBM Plex Mono, monospace" letterSpacing="0.1em" opacity="0.6">R_LOAD</text>
+        <text x="28" y="3" textAnchor="start" fontSize="9" fill={color} fontFamily="JetBrains Mono, monospace" letterSpacing="0.1em" opacity="0.6">R_LOAD</text>
     </g>
 ));
 LampSymbol.displayName = 'LampSymbol';
@@ -86,14 +85,14 @@ LampSymbol.displayName = 'LampSymbol';
 const MicroSpark = memo(({ x, y }: { x: number; y: number }) => (
     <g transform={`translate(${x},${y})`} aria-hidden="true">
         {[1, 2, 3, 4].map(i => (
-            <circle key={i} className="vl-spark" r="2" fill="#00D4FF" />
+            <circle key={i} className="vl-spark" r="2" fill="#0EA5E9" />
         ))}
     </g>
 ));
 MicroSpark.displayName = 'MicroSpark';
 
 // ── Main Component ────────────────────────────────────────────────────────────
-export const SocketSystem = memo(({ onComplete, isDark = true, diagnosticsMode = false }: SocketSystemProps) => {
+export const SocketSystem = memo(({ onComplete }: SocketSystemProps) => {
     const [snapped, setSnapped] = useState(false);
     const [shortCircuit] = useState(false);
     const [showSpark, setShowSpark] = useState(false);
@@ -161,42 +160,32 @@ export const SocketSystem = memo(({ onComplete, isDark = true, diagnosticsMode =
 
     const colors = {
         bg: 'transparent',
-        grid: isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.03)',
-        border: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.08)',
+        grid: 'rgba(15, 23, 42, 0.03)',
+        border: 'rgba(15, 23, 42, 0.08)',
         source: '#64748B',
-        load: snapped ? '#00D4FF' : '#64748B',
-        wire: snapped ? '#00D4FF' : '#475569',
-        socket: '#0D0F16',
-        accent: '#00D4FF',
-        text: isDark ? '#E5E7EB' : '#0D0F16',
+        load: snapped ? '#0EA5E9' : '#64748B',
+        wire: snapped ? '#0EA5E9' : '#475569',
+        socket: '#FFFFFF',
+        accent: '#0EA5E9',
+        text: '#0F172A',
     };
 
     return (
-        <div style={{
-            width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24,
-            transition: 'opacity 0.4s', opacity: shortCircuit ? 0.95 : 1 // 5% dim on short circuit
-        }}>
+        <div className="w-full flex flex-col items-center gap-8 font-mono">
 
             {/* ── Status Banner ─────────────────────────────────────────── */}
-            <div style={{
-                display: 'flex', alignItems: 'center', gap: 10,
-                padding: '5px 14px', borderRadius: 2,
-                border: `1px solid ${shortCircuit ? 'rgba(239,68,68,0.3)' : snapped ? 'rgba(16,185,129,0.3)' : 'rgba(0,212,255,0.12)'}`,
-                background: shortCircuit ? 'rgba(239,68,68,0.04)' : snapped ? 'rgba(16,185,129,0.04)' : 'rgba(0,212,255,0.03)',
-                transition: 'border-color 0.4s, background 0.4s',
-            }}>
-                <span style={{
-                    width: 5, height: 5, borderRadius: '50%', flexShrink: 0,
-                    background: shortCircuit ? '#EF4444' : snapped ? colors.accent : colors.load,
-                    boxShadow: `0 0 6px ${shortCircuit ? 'rgba(239,68,68,0.7)' : snapped ? 'rgba(0,212,255,0.5)' : 'transparent'}`,
-                    transition: 'background 0.4s',
-                }} />
-                <span style={{
-                    fontFamily: "'IBM Plex Mono', 'Roboto Mono', monospace",
-                    fontSize: 9, letterSpacing: '0.2em', textTransform: 'uppercase',
-                    color: shortCircuit ? '#EF4444' : snapped ? colors.accent : colors.load,
-                    transition: 'color 0.4s',
-                }}>
+            <div className={cn(
+                "flex items-center gap-3 px-5 py-2.5 rounded-2xl border transition-all duration-500 shadow-xl",
+                shortCircuit ? "bg-rose-50 border-rose-100 shadow-rose-50" : snapped ? "bg-emerald-50 border-emerald-100 shadow-emerald-50" : "bg-sky-50 border-sky-100 shadow-sky-50"
+            )}>
+                <span className={cn(
+                    "w-2 h-2 rounded-full flex-shrink-0 animate-pulse",
+                    shortCircuit ? "bg-rose-500" : snapped ? "bg-emerald-500" : "bg-sky-500"
+                )} />
+                <span className={cn(
+                    "text-[10px] uppercase font-black tracking-widest italic",
+                    shortCircuit ? "text-rose-600" : snapped ? "text-emerald-600" : "text-sky-600"
+                )}>
                     {shortCircuit
                         ? 'FAULT — SHORT CIRCUIT DETECTED'
                         : snapped
@@ -206,8 +195,8 @@ export const SocketSystem = memo(({ onComplete, isDark = true, diagnosticsMode =
             </div>
 
             {/* ── Overlay Toggle Bar & Current Meter ──────────────────────── */}
-            <div style={{ display: 'flex', width: '100%', maxWidth: 600, justifyContent: 'space-between', alignItems: 'flex-end' }}>
-                <div style={{ display: 'flex', gap: 8 }}>
+            <div className="flex w-full max-w-2xl justify-between items-end">
+                <div className="flex gap-3">
                     {[
                         { label: 'V', title: 'Voltage labels' },
                         { label: '→', title: 'Current direction' },
@@ -217,16 +206,10 @@ export const SocketSystem = memo(({ onComplete, isDark = true, diagnosticsMode =
                             key={i}
                             title={o.title}
                             onClick={() => toggleOverlay(i)}
-                            style={{
-                                padding: '4px 12px',
-                                fontFamily: "'IBM Plex Mono', monospace",
-                                fontSize: 11, letterSpacing: '0.1em',
-                                border: `1px solid ${overlays[i] ? colors.accent : 'rgba(255,255,255,0.1)'}`,
-                                borderRadius: 3,
-                                background: overlays[i] ? 'rgba(0,212,255,0.1)' : 'transparent',
-                                color: overlays[i] ? colors.accent : colors.text,
-                                cursor: 'pointer', transition: 'all 0.18s',
-                            }}
+                            className={cn(
+                                "p-3 rounded-xl border transition-all duration-300 font-bold text-xs uppercase shadow-sm",
+                                overlays[i] ? "bg-sky-50 border-sky-200 text-sky-600 shadow-sky-100" : "bg-white border-slate-100 text-slate-400 hover:border-slate-200"
+                            )}
                         >
                             {o.label}
                         </button>
@@ -235,161 +218,71 @@ export const SocketSystem = memo(({ onComplete, isDark = true, diagnosticsMode =
                         title="Scan circuit integrity"
                         onClick={handleScan}
                         disabled={!snapped || scanning}
-                        style={{
-                            padding: '4px 12px', marginLeft: 8,
-                            fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, letterSpacing: '0.1em',
-                            border: `1px solid ${scanning ? colors.accent : 'rgba(255,255,255,0.1)'}`,
-                            borderRadius: 3,
-                            background: scanning ? 'rgba(0,212,255,0.1)' : 'transparent',
-                            color: scanning ? colors.accent : (snapped ? colors.text : 'rgba(255,255,255,0.2)'),
-                            cursor: snapped && !scanning ? 'pointer' : 'default', transition: 'all 0.18s',
-                        }}
+                        className={cn(
+                            "px-5 py-3 ml-2 rounded-xl border transition-all duration-300 font-black text-[10px] uppercase tracking-widest",
+                            scanning ? "bg-sky-500 text-white border-sky-600 shadow-lg shadow-sky-100" : (snapped ? "bg-white border-sky-100 text-sky-600 hover:border-sky-200" : "bg-slate-50 border-slate-100 text-slate-300 cursor-not-allowed")
+                        )}
                     >
                         SCAN INTEGRITY
                     </button>
                 </div>
 
                 {/* Simulated Current Meter */}
-                <div style={{
-                    fontFamily: "'IBM Plex Mono', monospace", fontSize: 14,
-                    color: shortCircuit ? '#EF4444' : snapped ? colors.accent : colors.text,
-                    background: 'rgba(0,0,0,0.3)', padding: '4px 8px', borderRadius: 3, border: '1px solid rgba(255,255,255,0.05)',
-                    transition: 'color 0.4s'
-                }}>
-                    <span style={{ opacity: 0.5, fontSize: 11, marginRight: 6 }}>I=</span>
+                <div className={cn(
+                    "font-black text-xl italic px-8 py-3 rounded-2xl border transition-all duration-500 shadow-inner bg-slate-50",
+                    shortCircuit ? "text-rose-500 border-rose-100" : snapped ? "text-sky-500 border-sky-100" : "text-slate-300 border-slate-100"
+                )}>
+                    <span className="text-[10px] font-black uppercase tracking-tighter mr-3 opacity-40 not-italic">Node_Current</span>
                     {shortCircuit ? 'ERR' : snapped ? '0.15A' : '0.00A'}
                 </div>
             </div>
 
             {/* ── SVG Circuit ───────────────────────────────────────────── */}
-            <div style={{
-                position: 'relative', width: '100%', maxWidth: 600,
-                boxShadow: '0 20px 40px -10px rgba(0,0,0,0.8), inset 0 0 0 1px rgba(255,255,255,0.05)',
-                borderRadius: 8, overflow: 'hidden',
-                background: `radial-gradient(circle at 50% 50%, #151E32 0%, ${colors.bg} 100%)`
-            }}>
-                {/* ── Initial Micro Guidance ──────────────────────────── */}
+            <div className="relative w-full max-w-2xl bg-white border border-slate-200 rounded-[48px] overflow-hidden shadow-2xl">
                 {!snapped && !shortCircuit && (
-                    <div style={{
-                        position: 'absolute', top: 50, left: '50%', transform: 'translateX(-50%)',
-                        background: 'rgba(0,212,255,0.15)', border: '1px solid rgba(0,212,255,0.3)',
-                        padding: '6px 12px', borderRadius: 4, backdropFilter: 'blur(4px)',
-                        fontFamily: "'Inter', sans-serif", fontSize: 13, color: colors.accent,
-                        pointerEvents: 'none', animation: 'socket-breathe 2s infinite'
-                    }}>
-                        Drag from terminal to complete loop
-                    </div>
+                    <motion.div 
+                        initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                        className="absolute top-12 left-1/2 -translate-x-1/2 bg-sky-50 border border-sky-100 px-6 py-3 rounded-full text-[10px] font-black uppercase tracking-widest text-sky-600 shadow-lg shadow-sky-50 pointer-events-none z-10"
+                    >
+                        "Drag Terminal Node to Complete Path"
+                    </motion.div>
                 )}
 
                 <svg
                     ref={svgRef}
                     viewBox={`0 0 ${W} ${H}`}
                     width="100%"
-                    style={{ display: 'block', overflow: 'visible', contain: 'layout paint' }}
+                    className="block overflow-visible"
                     role="img"
-                    aria-label="Interactive circuit diagram. Drag the wire endpoint to the load socket to close the circuit."
                 >
                     <defs>
-                        {/* Etched dot grid */}
                         <pattern id="dot-grid" x="0" y="0" width="24" height="24" patternUnits="userSpaceOnUse">
-                            <circle cx="12" cy="12" r="0.8" fill={colors.grid} />
+                            <circle cx="12" cy="12" r="1.2" fill={colors.grid} />
                         </pattern>
-
-                        {/* Proximity glow filter */}
-                        <filter id="glow-soft">
-                            <feGaussianBlur stdDeviation="3" result="blur" />
-                            <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                        </filter>
-
-                        {/* Subtle calm flow gradient pattern */}
-                        <linearGradient id="live-wire" x1="0%" y1="0%" x2="100%" y2="0%">
-                            <stop offset="0%" stopColor="#00D4FF" stopOpacity="0.4" />
-                            <stop offset="50%" stopColor="#00D4FF" stopOpacity="1" />
-                            <stop offset="100%" stopColor="#00D4FF" stopOpacity="0.4" />
-                        </linearGradient>
-
-                        {/* Loop highlight */}
-                        <filter id="loop-glow">
-                            <feGaussianBlur stdDeviation="8" result="blur" />
-                            <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                        </filter>
                     </defs>
 
-                    {/* ── Background & Watermarks ─────────────────────────────────── */}
                     <rect x="0" y="0" width={W} height={H} fill="url(#dot-grid)" />
-                    <text x={W / 2} y={H / 2 + 12} textAnchor="middle" fontSize="120" fill="rgba(255,255,255,0.01)" fontFamily="IBM Plex Mono, monospace" fontWeight="700">LOOP 01</text>
 
-                    {/* ── Background Trace (Inactive Path) ────────────────────────── */}
-                    {/* Source to SA */}
+                    {/* Background Trace (Inactive Path) */}
                     <path
                         d={`M ${LOOP_LFT},${SRC_Y - 24} L ${LOOP_LFT},${LOOP_TOP + RX} Q ${LOOP_LFT},${LOOP_TOP} ${LOOP_LFT + RX},${LOOP_TOP} L ${SA_X},${LOOP_TOP}`}
-                        stroke={colors.border} strokeWidth="1.8" fill="none" opacity={snapped ? 0 : 0.6}
+                        stroke={colors.border} strokeWidth="2.5" fill="none" opacity={snapped ? 0 : 0.6}
                     />
-                    {/* SB to Load */}
                     <path
                         d={`M ${SB_X},${LOOP_TOP} L ${LOOP_RGT - RX},${LOOP_TOP} Q ${LOOP_RGT},${LOOP_TOP} ${LOOP_RGT},${LOOP_TOP + RX} L ${LOOP_RGT},${LOAD_Y - 24}`}
-                        stroke={colors.border} strokeWidth="1.8" fill="none" opacity={snapped ? 0 : 0.6}
-                    />
-                    {/* Load to Return (Bottom rail) */}
-                    <path
-                        d={`M ${LOOP_RGT},${LOAD_Y + 24} L ${LOOP_RGT},${LOOP_BOT - RX} Q ${LOOP_RGT},${LOOP_BOT} ${LOOP_RGT - RX},${LOOP_BOT} L ${LOOP_LFT + RX},${LOOP_BOT} Q ${LOOP_LFT},${LOOP_BOT} ${LOOP_LFT},${LOOP_BOT - RX} L ${LOOP_LFT},${SRC_Y + 24}`}
-                        stroke={colors.border} strokeWidth="1.8" fill="none" opacity={snapped ? 0 : 0.6}
-                        strokeDasharray="4 6"
+                        stroke={colors.border} strokeWidth="2.5" fill="none" opacity={snapped ? 0 : 0.6}
                     />
 
-                    {/* ── Loop highlight overlay ───────────────────────────── */}
-                    {overlays[2] && snapped && (
-                        <rect
-                            x={LOOP_LFT - 20} y={LOOP_TOP - 20}
-                            width={(LOOP_RGT - LOOP_LFT) + 40} height={(LOOP_BOT - LOOP_TOP) + 40}
-                            rx={RX + 20} fill="none"
-                            stroke="rgba(0,212,255,0.05)" strokeWidth="40"
-                            filter="url(#loop-glow)"
-                        />
-                    )}
-
-                    {/* ── Top reference rail voltage drops ──────────────────────────────── */}
-                    {(overlays[0] || diagnosticsMode) && (
-                        <g opacity={snapped ? 1 : 0.4} style={{ transition: 'opacity 0.4s' }}>
-                            <text x={LOOP_LFT + 10} y={LOOP_TOP - 16} fontSize="10" fill={colors.accent} fontFamily="IBM Plex Mono, monospace">+12V</text>
-                            <text x={LOOP_RGT + 10} y={LOOP_BOT - 16} fontSize="10" fill={colors.wire} fontFamily="IBM Plex Mono, monospace">-GND</text>
-                        </g>
-                    )}
-
-                    {/* ── Diagnostic Node Labels ──────────────────────────────────────── */}
-                    {diagnosticsMode && (
-                        <g fontSize="9" fill={colors.text} fontFamily="IBM Plex Mono, monospace" opacity="0.6" letterSpacing="0.1em">
-                            <text x={SA_X} y={LOOP_TOP - 28} textAnchor="middle">NODE A (SRC)</text>
-                            <text x={SB_X} y={LOOP_TOP - 28} textAnchor="middle">NODE B (LOAD)</text>
-                        </g>
-                    )}
-
-                    {/* ── Short circuit path (top wire bypass) ─────────────  */}
-                    {shortCircuit && (
-                        <path
-                            d={`M ${SA_X},${LOOP_TOP} L ${SB_X},${LOOP_TOP}`}
-                            stroke="#EF4444" strokeWidth="2.5" filter="url(#glow-soft)" opacity="0.8" fill="none"
-                        />
-                    )}
-
-                    {/* ── Source out path ─────────────────────────────────── */}
-                    <path
-                        d={`M ${LOOP_LFT},${SRC_Y - 24} L ${LOOP_LFT},${LOOP_TOP + RX} Q ${LOOP_LFT},${LOOP_TOP} ${LOOP_LFT + RX},${LOOP_TOP} L ${SA_X},${LOOP_TOP}`}
-                        stroke={colors.wire} strokeWidth="1.8" fill="none" style={{ transition: 'stroke 0.4s' }}
-                    />
-
-                    {/* ── IEC Battery ──────────────────────────────────────── */}
+                    {/* IEC Battery */}
                     <BatterySymbol x={SRC_X} y={SRC_Y} color={colors.wire} />
 
-                    {/* ── Socket A (source output pole) ─────────────────────────── */}
+                    {/* Socket A */}
                     <g transform={`translate(${SA_X},${LOOP_TOP})`}>
-                        <circle r="16" fill="rgba(0,0,0,0.2)" stroke={colors.border} strokeWidth="1" />
-                        <circle r="12" fill={colors.bg} stroke={colors.wire} strokeWidth="1.8" opacity="0.5" />
-                        <circle r="5" fill={colors.wire} />
-                        <circle r="2" fill={colors.bg} />
+                        <circle r="18" fill="white" stroke={colors.border} strokeWidth="2" shadow-sm />
+                        <circle r="6" fill={colors.wire} />
                     </g>
 
-                    {/* ── Main draggable wire segment ──────────────────────────── */}
+                    {/* Wire Segment */}
                     <line
                         ref={wireLineRef}
                         x1={SA_X + 14}
@@ -397,173 +290,69 @@ export const SocketSystem = memo(({ onComplete, isDark = true, diagnosticsMode =
                         x2={snapped ? SB_X - 14 : SA_X + 34}
                         y2={LOOP_TOP}
                         stroke={snapped ? colors.accent : colors.wire}
-                        strokeWidth="2.2"
+                        strokeWidth="3.5"
                         strokeLinecap="round"
+                        className="transition-all duration-500"
                     />
 
-                    {/* Electron flow overlay (calm) */}
-                    {snapped && !shortCircuit && (
-                        <g opacity="0.6">
-                            <line
-                                x1={SA_X + 14} y1={LOOP_TOP} x2={SB_X - 14} y2={LOOP_TOP}
-                                stroke={colors.accent} strokeWidth="2" strokeDasharray="2 12" strokeLinecap="round"
-                                className="vl-wire--live"
-                            />
-                            <path
-                                d={`M ${LOOP_RGT},${LOAD_Y + 24} L ${LOOP_RGT},${LOOP_BOT - RX} Q ${LOOP_RGT},${LOOP_BOT} ${LOOP_RGT - RX},${LOOP_BOT} L ${LOOP_LFT + RX},${LOOP_BOT} Q ${LOOP_LFT},${LOOP_BOT} ${LOOP_LFT},${LOOP_BOT - RX} L ${LOOP_LFT},${SRC_Y + 24}`}
-                                stroke={colors.accent} strokeWidth="2" strokeDasharray="2 12" strokeLinecap="round"
-                                className="vl-wire--live" fill="none"
-                            />
-                            <path
-                                d={`M ${LOOP_LFT},${SRC_Y - 24} L ${LOOP_LFT},${LOOP_TOP + RX} Q ${LOOP_LFT},${LOOP_TOP} ${LOOP_LFT + RX},${LOOP_TOP} L ${SA_X},${LOOP_TOP}`}
-                                stroke={colors.accent} strokeWidth="2" strokeDasharray="2 12" strokeLinecap="round"
-                                className="vl-wire--live" fill="none"
-                            />
-                            <path
-                                d={`M ${SB_X},${LOOP_TOP} L ${LOOP_RGT - RX},${LOOP_TOP} Q ${LOOP_RGT},${LOOP_TOP} ${LOOP_RGT},${LOOP_TOP + RX} L ${LOOP_RGT},${LOAD_Y - 24}`}
-                                stroke={colors.accent} strokeWidth="2" strokeDasharray="2 12" strokeLinecap="round"
-                                className="vl-wire--live" fill="none"
-                            />
-                        </g>
-                    )}
-
-                    {/* ── Current direction arrows ───────────────────── */}
-                    {(overlays[1] || diagnosticsMode) && snapped && (
-                        <g fill={colors.accent} opacity="0.6">
-                            <polygon points={`${(SA_X + SB_X) / 2 + 10},${LOOP_TOP - 4} ${(SA_X + SB_X) / 2},${LOOP_TOP} ${(SA_X + SB_X) / 2 + 10},${LOOP_TOP + 4}`} />
-                            <polygon points={`${(SA_X + SB_X) / 2 - 10},${LOOP_BOT - 4} ${(SA_X + SB_X) / 2},${LOOP_BOT} ${(SA_X + SB_X) / 2 - 10},${LOOP_BOT + 4}`} />
-                            <polygon points={`${LOOP_RGT - 4},${(LOOP_TOP + LOOP_BOT) / 2 - 10} ${LOOP_RGT},${(LOOP_TOP + LOOP_BOT) / 2} ${LOOP_RGT + 4},${(LOOP_TOP + LOOP_BOT) / 2 - 10}`} />
-                            <polygon points={`${LOOP_LFT - 4},${(LOOP_TOP + LOOP_BOT) / 2 + 10} ${LOOP_LFT},${(LOOP_TOP + LOOP_BOT) / 2} ${LOOP_LFT + 4},${(LOOP_TOP + LOOP_BOT) / 2 + 10}`} />
-                        </g>
-                    )}
-
-                    {/* ── Draggable wire engineered connector ───────────────────────────── */}
-                    {!snapped && (
-                        <g ref={wireEndRef as any} transform={`translate(${SA_X + 34},${LOOP_TOP})`} style={{ cursor: 'grab', touchAction: 'none' }}>
-                            <circle r="14" fill="transparent" stroke={colors.wire} strokeWidth="1" strokeDasharray="2 3" opacity="0.5" />
-                            <circle r="10" fill={colors.bg} stroke={colors.wire} strokeWidth="1.8" />
-                            <circle r="5" fill={colors.wire} />
-                            <circle r="2" fill="white" opacity="0.5" />
-                            <text y="28" textAnchor="middle" fontSize="8" fill={colors.wire} fontFamily="IBM Plex Mono, monospace" letterSpacing="0.1em" opacity="0.8">DRAG</text>
-                        </g>
-                    )}
-
-                    {/* ── Socket B (load receiver pole) ──────────────── */}
+                    {/* Socket B */}
                     <g transform={`translate(${SB_X},${LOOP_TOP})`}>
-                        <g style={{ transition: 'all 0.4s' }} opacity={snapped ? 1 : 0.6}>
-                            <circle r="16" fill="rgba(0,0,0,0.2)" stroke={colors.border} strokeWidth="1" />
-                            <circle r="12" fill={colors.bg} stroke={snapped ? colors.accent : colors.load} strokeWidth="1.8" style={{ transition: 'stroke 0.4s' }} />
-                            <circle ref={socketBRef} className={`vl-socket ${snapped ? 'vl-socket--locked' : ''}`} r="8" fill={snapped ? colors.accent : colors.load} style={{ transition: 'fill 0.4s' }} />
-                            {snapped && <circle r="3" fill="white" opacity="0.8" />}
-                            {!snapped && <circle r="3" fill={colors.bg} opacity="0.5" />}
-                        </g>
+                        <circle r="18" fill="white" stroke={snapped ? colors.accent : colors.border} strokeWidth="2" />
+                        <circle ref={socketBRef} r="8" fill={snapped ? colors.accent : colors.load} className="transition-all duration-500" />
                     </g>
 
-                    {/* ── Load wire stub ────────────────────────────────────── */}
-                    <path
-                        d={`M ${SB_X},${LOOP_TOP} L ${LOOP_RGT - RX},${LOOP_TOP} Q ${LOOP_RGT},${LOOP_TOP} ${LOOP_RGT},${LOOP_TOP + RX} L ${LOOP_RGT},${LOAD_Y - 24}`}
-                        stroke={colors.load} strokeWidth="1.8" fill="none" style={{ transition: 'stroke 0.4s' }}
-                    />
-
-                    {/* ── IEC Lamp / Load ───────────────────────────────────── */}
+                    {/* IEC Lamp */}
                     <LampSymbol x={LOAD_X} y={LOAD_Y} color={colors.load} active={snapped} />
 
-                    {/* Return path (bottom rail) */}
+                    {/* Return path */}
                     <path
                         d={`M ${LOOP_RGT},${LOAD_Y + 24} L ${LOOP_RGT},${LOOP_BOT - RX} Q ${LOOP_RGT},${LOOP_BOT} ${LOOP_RGT - RX},${LOOP_BOT} L ${LOOP_LFT + RX},${LOOP_BOT} Q ${LOOP_LFT},${LOOP_BOT} ${LOOP_LFT},${LOOP_BOT - RX} L ${LOOP_LFT},${SRC_Y + 24}`}
-                        stroke={snapped ? colors.load : colors.border}
-                        strokeWidth="1.8"
-                        fill="none"
-                        style={{ transition: 'stroke 0.4s' }}
+                        stroke={snapped ? colors.accent : colors.border} strokeWidth="2.5" fill="none" className="transition-all duration-500"
                     />
-
-                    {/* ── Scan Integrity Tracer Overlay ─────────────────────── */}
-                    {scanning && (
-                        <path
-                            d={`M ${SA_X},${LOOP_TOP} L ${SB_X},${LOOP_TOP} L ${LOOP_RGT - RX},${LOOP_TOP} Q ${LOOP_RGT},${LOOP_TOP} ${LOOP_RGT},${LOOP_TOP + RX} L ${LOOP_RGT},${LOAD_Y - 24} M ${LOOP_RGT},${LOAD_Y + 24} L ${LOOP_RGT},${LOOP_BOT - RX} Q ${LOOP_RGT},${LOOP_BOT} ${LOOP_RGT - RX},${LOOP_BOT} L ${LOOP_LFT + RX},${LOOP_BOT} Q ${LOOP_LFT},${LOOP_BOT} ${LOOP_LFT},${LOOP_BOT - RX} L ${LOOP_LFT},${SRC_Y + 24} M ${LOOP_LFT},${SRC_Y - 24} L ${LOOP_LFT},${LOOP_TOP + RX} Q ${LOOP_LFT},${LOOP_TOP} ${LOOP_LFT + RX},${LOOP_TOP} L ${SA_X},${LOOP_TOP}`}
-                            stroke={colors.accent}
-                            strokeWidth="2.5"
-                            fill="none"
-                            className="vl-scan-trace"
-                        />
-                    )}
-
-                    {/* ── Micro-spark burst ────────────────────────────────── */}
+                    
                     {showSpark && <MicroSpark x={SB_X} y={LOOP_TOP} />}
                 </svg>
             </div>
 
-            {/* ── Short Circuit Diagnostic Alert ────────────────────────── */}
-            {shortCircuit && (
-                <div style={{
-                    width: '100%', maxWidth: 480,
-                    padding: '12px 16px', borderRadius: 3,
-                    border: '1px solid rgba(239,68,68,0.25)',
-                    background: 'rgba(239,68,68,0.04)',
-                }} className="vl-short-circuit">
-                    <p style={{
-                        fontFamily: "'IBM Plex Mono', monospace", fontSize: 9,
-                        letterSpacing: '0.18em', color: 'rgba(239,68,68,0.7)',
-                        textTransform: 'uppercase', marginBottom: 6,
-                    }}>VoltMonkey: Fault Detected</p>
-                    <p style={{ fontSize: 12, color: '#94A3B8', lineHeight: 1.6 }}>
-                        <strong style={{ color: '#EF4444' }}>OBSERVATION:</strong> Zero-resistance path established.<br />
-                        <strong style={{ color: '#EF4444' }}>ANALYSIS:</strong> Current bypasses the load completely. V_load = 0. I_circuit → ∞ (limited by R_internal).<br />
-                        <strong style={{ color: '#EF4444' }}>CONCLUSION:</strong> Remove the short path and route current through the resistive load.
-                    </p>
-                </div>
-            )}
+            {/* AI Insight */}
+            <div className="w-full max-w-2xl flex flex-col gap-4">
+                {shortCircuit && (
+                    <div className="bg-rose-50 border border-rose-100 rounded-[32px] p-8 shadow-xl">
+                        <div className="flex items-center gap-3 mb-4">
+                            <AlertTriangle size={24} className="text-rose-600" />
+                            <span className="text-[10px] font-black uppercase tracking-widest text-rose-600 italic">Critical Fault Analysis</span>
+                        </div>
+                        <p className="text-sm font-bold text-slate-600 leading-relaxed italic">
+                            <strong className="text-rose-600">OBSERVATION:</strong> Zero-resistance path established.
+                            Current bypasses the load completely. V_load = 0. I_circuit → ∞.
+                            Remove the short path and route current through the resistive load.
+                        </p>
+                    </div>
+                )}
 
-            {/* ── Signal confirmed panel (on snap) ─────────────────────── */}
-            {snapped && (
-                <div style={{ width: '100%', maxWidth: 480 }}>
-                    <div style={{
-                        padding: '14px 18px', borderRadius: 3,
-                        border: '1px solid rgba(16,185,129,0.2)',
-                        background: 'rgba(16,185,129,0.04)',
-                        display: 'flex', alignItems: 'flex-start', gap: 12,
-                    }}>
-                        <span style={{
-                            width: 4, height: 4, borderRadius: '50%', flexShrink: 0, marginTop: 6,
-                            background: '#10B981', boxShadow: '0 0 6px rgba(16,185,129,0.8)',
-                        }} />
+                {snapped && (
+                    <motion.div 
+                        initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+                        className="bg-white border border-slate-200 rounded-[32px] p-8 shadow-xl flex gap-6 items-start border-l-4 border-l-emerald-500"
+                    >
+                        <div className="p-3 bg-emerald-50 rounded-2xl text-emerald-600">
+                            <ShieldCheck size={24} />
+                        </div>
                         <div>
-                            <p style={{
-                                fontFamily: "'IBM Plex Mono', monospace", fontSize: 9,
-                                letterSpacing: '0.18em', color: colors.accent,
-                                textTransform: 'uppercase', marginBottom: 6,
-                            }}>Engineering Check</p>
-                            <p style={{ fontSize: 13, color: '#94A3B8', lineHeight: 1.6 }}>
-                                Continuity validated. Current loop holds from <strong style={{ color: colors.text, fontWeight: 500 }}>+12V Source</strong> through <strong style={{ color: colors.text, fontWeight: 500 }}>R_LOAD</strong> to <strong style={{ color: colors.text, fontWeight: 500 }}>-GND</strong>. Loop invariant satisfied.
+                            <div className="text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-2">Loop Continuity Diagnostic</div>
+                            <p className="text-sm font-bold text-slate-600 italic">
+                                "Continuity validated. Current loop holds from <strong className="text-slate-900">+12V Source</strong> through <strong className="text-slate-900">R_LOAD</strong> to <strong className="text-slate-900">-GND</strong>. Logic Invariant Satisfied."
                             </p>
                         </div>
-                    </div>
-
-                    {/* ── Visual Circuit Schematic Overlay ─────────────────────── */}
-                    {!shortCircuit && (
-                        <div style={{
-                            padding: '12px 18px', borderRadius: 3,
-                            border: '1px solid rgba(0,212,255,0.2)',
-                            background: 'rgba(0,212,255,0.03)',
-                            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                            fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, color: colors.accent,
-                            marginTop: 12, opacity: 0, animation: 'vl-invariant-reveal 0.4s ease-out forwards'
-                        }}>
-                            <span style={{ color: colors.text, opacity: 0.8 }}>Battery</span>
-                            <span style={{ opacity: 0.5 }}>→</span>
-                            <span style={{ color: colors.accent }}>Wire (Path)</span>
-                            <span style={{ opacity: 0.5 }}>→</span>
-                            <span style={{ color: '#10B981', fontWeight: 600 }}>LED (Load)</span>
-                            <span style={{ opacity: 0.5 }}>→</span>
-                            <span style={{ color: colors.accent }}>Wire (Return)</span>
-                            <span style={{ opacity: 0.5 }}>→</span>
-                            <span style={{ color: colors.text, opacity: 0.8 }}>Battery</span>
-                        </div>
-                    )}
-                </div>
-            )}
+                    </motion.div>
+                )}
+            </div>
         </div>
     );
 });
 
 SocketSystem.displayName = 'SocketSystem';
+
+function cn(...inputs: any[]) {
+    return inputs.filter(Boolean).join(' ');
+}

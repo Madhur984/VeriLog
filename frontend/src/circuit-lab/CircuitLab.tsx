@@ -413,10 +413,10 @@ export function CircuitLab({ onCircuitComplete, standalone = true }: {
                     />
                 </div>
 
-                {/* ── VoltMonkey Short-Circuit Overlay ── */}
+                {/* ── Logic Analyst Short-Circuit Overlay ── */}
                 {/* Controlled directly by ShortCircuit AnimModule via DOM (id lookup) */}
                 <div
-                    id="VoltMonkey-short-overlay"
+                    id="Analyst-short-overlay"
                     style={{
                         display: 'none',
                         position: 'absolute',
@@ -445,7 +445,7 @@ export function CircuitLab({ onCircuitComplete, standalone = true }: {
                             fontWeight: 700,
                             letterSpacing: 2,
                             fontFamily: "'Courier New', monospace",
-                        }}>VoltMonkey WARNING</div>
+                        }}>LOGIC ANALYST WARNING</div>
                         <div style={{
                             color: 'rgba(252,165,165,0.7)',
                             fontSize: 10,

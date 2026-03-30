@@ -1,10 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Zap, Activity, Info } from 'lucide-react';
+import { Zap, Activity, Info, Settings, Play } from 'lucide-react';
 import gsap from 'gsap';
 import { MotionPathPlugin } from 'gsap/MotionPathPlugin';
 import { ScreenProps } from '../types';
-import { VoltMonkey, MonkeyState } from '../../../../components/Bot/VoltMonkey';
+import { cn } from '../../../../lib/utils';
+import { VeriSlider } from '../../../shared/VeriSlider';
+import { useAttentionLock } from '../../../../hooks/useAttentionLock';
+import { VeriButton } from '../../../shared/VeriButton';
 
 gsap.registerPlugin(MotionPathPlugin);
 
@@ -43,10 +46,6 @@ const NODES = {
   bl: { x: 160, y: 520 },
 };
 
-import { VeriSlider } from '../../../shared/VeriSlider';
-import { useAttentionLock } from '../../../../hooks/useAttentionLock';
-import { VeriButton } from '../../../shared/VeriButton';
-
 export const EmbeddedCircuitLab: React.FC<ScreenProps> = ({ 
   triggerHaptic, 
   onNext, 
@@ -56,7 +55,7 @@ export const EmbeddedCircuitLab: React.FC<ScreenProps> = ({
   const [isOpen, setIsOpen] = useState(true);
   const [resistance, setResistance] = useState(10);
   const [predictionMode, setPredictionMode] = useState(true);
-  const [botState, setBotState] = useState<MonkeyState>('idle');
+  const [analystStatus, setAnalystStatus] = useState("Initializing physics environment...");
   const electronContainerRef = useRef<SVGGElement>(null);
   const { focusProps } = useAttentionLock();
 
@@ -68,7 +67,7 @@ export const EmbeddedCircuitLab: React.FC<ScreenProps> = ({
 
   useEffect(() => {
     if (closed) {
-      setBotState('happy');
+      setAnalystStatus("Logic stream active. Signal verified.");
       triggerHaptic?.('success');
       
       const ctx = gsap.context(() => {
@@ -90,9 +89,9 @@ export const EmbeddedCircuitLab: React.FC<ScreenProps> = ({
       }, electronContainerRef);
       return () => ctx.revert();
     } else {
-      setBotState('idle');
+      setAnalystStatus("Neural bridge disconnected. Loop broken.");
     }
-  }, [closed, current, triggerHaptic]);
+  }, [closed, current, triggerHaptic, speed]);
 
   const handleToggle = () => {
     setIsOpen(!isOpen);
@@ -114,72 +113,87 @@ export const EmbeddedCircuitLab: React.FC<ScreenProps> = ({
   `;
 
   return (
-    <div className="section-content relative overflow-hidden flex flex-col items-center !justify-start pt-20" {...focusProps}>
+    <div className="section-content relative overflow-hidden flex flex-col items-center !justify-start pt-8" {...focusProps}>
       {/* AI Hint Notification */}
       <AnimatePresence>
         {currentHint?.type === 'hint' && (
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0 }}
-            className="absolute top-4 right-0 z-50 glass-card p-3 border-[var(--accent-primary)]/20 text-[var(--accent-primary)] text-[10px] uppercase tracking-[0.2em] font-mono"
+            className="absolute top-4 right-4 z-50 bg-white shadow-xl shadow-sky-100 rounded-2xl p-4 border border-sky-100 flex items-center gap-3"
           >
-            AI ASSIST: {currentHint.message}
+            <div className="p-2 bg-sky-50 text-sky-500 rounded-lg">
+                <Info size={16} />
+            </div>
+            <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">
+                LAB ASSIST: {currentHint.message}
+            </p>
           </motion.div>
         )}
       </AnimatePresence>
 
-      <div className="absolute top-12 left-1/2 -translate-x-1/2 z-20">
-        <VoltMonkey state={botState} size="sm" />
+      <div className="flex flex-col items-center gap-6 mb-12">
+        <div className="bg-white p-4 px-6 rounded-[24px] border border-slate-200 shadow-xl flex items-center gap-4">
+            <div className={cn("p-2 rounded-xl", closed ? "bg-emerald-50 text-emerald-500" : "bg-sky-50 text-sky-500")}>
+                <Activity size={18} />
+            </div>
+            <p className="text-xs font-bold text-slate-800 italic uppercase tracking-tighter tracking-wide">
+                "{analystStatus}"
+            </p>
+        </div>
       </div>
 
       <AnimatePresence>
         {circuit.isShortCircuited && (
           <motion.div 
             initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1, boxShadow: ["0 0 0px transparent", "0 0 40px var(--accent-secondary)", "0 0 0px transparent"] }}
-            transition={{ duration: 0.2, repeat: 3 }}
-            className="absolute top-32 glass-card border-[var(--accent-secondary)]/40 px-6 py-4 z-40 flex flex-col items-center gap-2"
+            animate={{ opacity: 1, scale: 1 }}
+            className="absolute top-40 bg-white border-2 border-rose-500/20 shadow-2xl shadow-rose-100 px-8 py-6 z-40 flex flex-col items-center gap-3 rounded-[32px]"
           >
-            <div className="flex items-center gap-2 text-[var(--accent-secondary)]">
-              <Zap size={16} fill="currentColor" className="animate-pulse" />
-              <span className="text-[10px] uppercase font-bold tracking-[0.2em] glitch-text" data-text="System Overload">System Overload</span>
+            <div className="flex items-center gap-2 text-rose-500">
+              <Zap size={20} fill="currentColor" className="animate-pulse" />
+              <span className="text-xs font-black uppercase tracking-[0.2em]">PHYSICS VIOLATION</span>
             </div>
-            <p className="text-[8px] font-mono text-slate-400 max-w-[200px] text-center leading-relaxed">
-              Infinite current detected. Increase resistance to protect the system.
+            <p className="text-[10px] font-bold text-slate-400 max-w-[200px] text-center leading-relaxed">
+              INFINITE ELECTRON DENSITY DETECTED. ADJUST RESISTANCE.
             </p>
           </motion.div>
         )}
       </AnimatePresence>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-8 w-full mt-10">
+      <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-12 w-full px-8">
         {/* Left Panel: Component Reference */}
-        <div className="glass-card p-6 flex flex-col gap-6 h-fit relative border-white/5">
-          {currentHint?.type === 'pulse' && (
-              <motion.div 
-                animate={{ opacity: [0, 0.4, 0], scale: [1, 1.05, 1] }}
-                transition={{ duration: 2, repeat: Infinity }}
-                className="absolute -inset-2 bg-[var(--accent-primary)]/5 rounded-xl border border-[var(--accent-primary)]/20 pointer-events-none"
-              />
-          )}
-          <h3 className="text-[10px] font-mono tracking-[0.2em] text-slate-500 uppercase">Components</h3>
-          <div className="space-y-4">
-            <div className="flex gap-4 items-center opacity-60">
-              <div className="w-10 h-10 border border-white/10 rounded-lg flex items-center justify-center text-[#00E5FF]">
-                <Zap size={20} />
+        <div className="bg-white rounded-[40px] p-8 border border-slate-200 shadow-lg flex flex-col gap-8 h-fit relative">
+          <div className="flex items-center justify-between">
+              <h3 className="text-[10px] font-black tracking-widest text-slate-400 uppercase">Hardware</h3>
+              <Settings size={14} className="text-slate-300" />
+          </div>
+
+          <div className="space-y-6">
+            <div className="flex gap-4 items-center group cursor-help">
+              <div className="w-12 h-12 bg-sky-50 border border-sky-100 rounded-2xl flex items-center justify-center text-sky-500 group-hover:scale-110 transition-transform shadow-sm">
+                <Zap size={24} />
               </div>
-              <div className="text-[10px] uppercase tracking-wider text-white/40 font-mono">DC Source</div>
+              <div className="flex flex-col">
+                  <span className="text-[11px] font-black uppercase tracking-widest text-slate-900">DC SOURCE</span>
+                  <span className="text-[9px] text-slate-400 font-bold">5.00V Stabilized</span>
+              </div>
             </div>
-            <div className="flex gap-4 items-center opacity-60">
-              <div className="w-10 h-10 border border-white/10 rounded-lg flex items-center justify-center text-[#00FF9C]">
-                <Activity size={20} />
+
+            <div className="flex gap-4 items-center group cursor-help">
+              <div className="w-12 h-12 bg-emerald-50 border border-emerald-100 rounded-2xl flex items-center justify-center text-emerald-500 group-hover:scale-110 transition-transform shadow-sm">
+                <Activity size={24} />
               </div>
-              <div className="text-[10px] uppercase tracking-wider text-white/40 font-mono">Load (Bulb)</div>
+              <div className="flex flex-col">
+                  <span className="text-[11px] font-black uppercase tracking-widest text-slate-900">SYSTEM LOAD</span>
+                  <span className="text-[9px] text-slate-400 font-bold">Resistive Node</span>
+              </div>
             </div>
             
-            <div className="pt-4">
+            <div className="pt-6 border-t border-slate-100">
               <VeriSlider 
-                label="Resistance"
+                label="RESISTANCE"
                 value={resistance}
                 min={1}
                 max={100}
@@ -193,31 +207,25 @@ export const EmbeddedCircuitLab: React.FC<ScreenProps> = ({
             </div>
           </div>
           
-          <div className="mt-8 pt-6 border-t border-white/5 space-y-4">
-            <div>
-              <div className="flex items-center gap-2 mb-2 text-[#00E5FF]">
-                <Info size={14} />
-                <span className="text-[10px] uppercase font-bold tracking-widest">Goal</span>
-              </div>
-              <p className="text-[11px] text-slate-400 leading-relaxed font-mono italic">
-                Close the switch to establish a continuous flow.
-              </p>
-            </div>
+          <div className="pt-8 border-t border-slate-100 space-y-4">
+            <p className="text-[11px] text-slate-400 leading-relaxed font-bold italic text-center">
+              Target: Establish 100% Loop Integrity
+            </p>
             
             {closed && (
               <VeriButton
                 variant="signal"
                 onClick={onNext}
-                className="w-full"
+                className="w-full h-14 rounded-[20px]"
               >
-                Proceed to Validation
+                Proceed to Data Log
               </VeriButton>
             )}
           </div>
         </div>
 
         {/* Center Canvas */}
-        <div className="relative group overflow-visible">
+        <div className="relative group overflow-visible aspect-[1.5] w-full max-w-[900px]">
           <AnimatePresence mode="wait">
             {predictionMode ? (
             <motion.div 
@@ -225,38 +233,44 @@ export const EmbeddedCircuitLab: React.FC<ScreenProps> = ({
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="absolute inset-0 z-30 bg-[#070B14]/80 backdrop-blur-sm flex flex-col items-center justify-center p-8 text-center rounded-2xl border border-white/5"
+                className="absolute inset-x-[-20px] inset-y-[-20px] z-30 bg-white/60 backdrop-blur-md flex flex-col items-center justify-center p-12 text-center rounded-[48px] border-4 border-white shadow-2xl"
             >
-                <Activity className="text-[var(--accent-primary)] w-10 h-10 mb-4 animate-pulse" />
-                <h3 className="text-[10px] font-mono uppercase tracking-[0.3em] mb-2">Closed Loop Theory</h3>
-                <p className="body text-white/50 text-[10px] max-w-xs mb-6">In a perfect vacuum, energy would flow forever. In our circuit, resistance is the gatekeeper. Ready to test?</p>
+                <div className="p-6 bg-sky-100 text-sky-500 rounded-full mb-6">
+                    <Play className="ml-1" fill="currentColor" size={32} />
+                </div>
+                <h3 className="text-xl font-black text-slate-900 uppercase tracking-widest mb-4">Physics Sandbox v2.0</h3>
+                <p className="text-slate-500 text-sm font-bold max-w-sm mb-10 leading-relaxed italic">
+                    "In every circuit, current seeks the return path. Close the switch to begin simulation."
+                </p>
                 <VeriButton 
                     variant="signal"
+                    size="lg"
                     onClick={() => {
                         setPredictionMode(false);
                         triggerHaptic?.('heavy');
                     }}
+                    className="px-12 rounded-2xl h-16"
                 >
-                    Initialize Lab
+                    INITIALIZE ENVIRONMENT
                 </VeriButton>
             </motion.div>
             ) : null}
           </AnimatePresence>
 
-          <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-auto rounded-2xl border border-white/10 bg-black/40 shadow-2xl overflow-visible">
-            {/* ... svg content remains mostly same but using V1 colors and standardized glow ... */}
+          <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-auto rounded-[48px] border-4 border-white bg-slate-50 shadow-2xl overflow-visible">
              <pattern id="labGrid" width="40" height="40" patternUnits="userSpaceOnUse">
-               <path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" strokeWidth="0.5" opacity="0.05"/>
+               <path d="M 40 0 L 0 0 0 40" fill="none" stroke="black" strokeWidth="0.5" opacity="0.03"/>
              </pattern>
-             <rect width="100%" height="100%" fill="url(#labGrid)" />
+             <rect width="100%" height="100%" fill="url(#labGrid)" rx="44" />
 
              {circuit.isShortCircuited && (
                <motion.rect
                  width="100%" height="100%"
-                 fill="var(--accent-secondary)"
+                 fill="#f43f5e"
                  animate={{ opacity: [0, 0.05, 0] }}
                  transition={{ duration: 0.1, repeat: Infinity }}
                  className="pointer-events-none"
+                 rx="44"
                />
              )}
 
@@ -264,11 +278,12 @@ export const EmbeddedCircuitLab: React.FC<ScreenProps> = ({
               id="circuit-path" 
               d={circuitPath} 
               fill="none" 
-              stroke={circuit.isShortCircuited ? "var(--accent-secondary)" : (closed ? "var(--accent-primary)" : "rgba(255,255,255,0.05)")} 
-              strokeWidth={circuit.isShortCircuited ? "8" : closed ? "6" : "4"}
+              stroke={circuit.isShortCircuited ? "#f43f5e" : (closed ? "#0ea5e9" : "#e2e8f0")} 
+              strokeWidth={circuit.isShortCircuited ? "12" : closed ? "8" : "6"}
+              strokeLinecap="round"
               className="transition-all duration-300"
               style={{ 
-                filter: closed ? `drop-shadow(0 0 ${8 + current * 4}px ${circuit.isShortCircuited ? 'var(--accent-secondary)' : 'var(--accent-primary)'})` : 'none',
+                filter: closed ? `drop-shadow(0 0 ${8 + current * 4}px ${circuit.isShortCircuited ? 'rgba(244,63,94,0.4)' : 'rgba(14,165,233,0.4)'})` : 'none',
               }}
              />
 
@@ -277,16 +292,16 @@ export const EmbeddedCircuitLab: React.FC<ScreenProps> = ({
                  <circle 
                    key={i} 
                    className="electron" 
-                   r={circuit.isShortCircuited ? "6" : "4"} 
-                   fill={circuit.isShortCircuited ? "var(--accent-secondary)" : "var(--accent-primary)"} 
+                   r={circuit.isShortCircuited ? "8" : "6"} 
+                   fill={circuit.isShortCircuited ? "#f43f5e" : "#0284c7"} 
                  />
                ))}
              </g>
 
              <g transform={`translate(${NODES.batPos.x - 20}, ${NODES.batPos.y})`}>
-                <rect width="40" height="120" rx="4" fill="#0A0F1C" stroke={closed ? "var(--accent-primary)" : "#1a2a3a"} strokeWidth="2" />
-                <text x="20" y="30" textAnchor="middle" fill="var(--accent-primary)" fontSize="12" className="font-bold">+</text>
-                <text x="20" y="100" textAnchor="middle" fill="var(--accent-primary)" fontSize="14" className="font-bold">-</text>
+                <rect width="40" height="120" rx="12" fill="white" stroke={closed ? "#0ea5e9" : "#cbd5e1"} strokeWidth="4" />
+                <text x="20" y="30" textAnchor="middle" fill="#0ea5e9" fontSize="18" className="font-black">+</text>
+                <text x="20" y="100" textAnchor="middle" fill="#0ea5e9" fontSize="18" className="font-black">-</text>
              </g>
 
              <g 
@@ -294,41 +309,42 @@ export const EmbeddedCircuitLab: React.FC<ScreenProps> = ({
               className="cursor-pointer group/switch"
               transform={`translate(${NODES.swL.x}, ${NODES.swL.y})`}
              >
-                <circle r="6" fill="var(--accent-primary)" />
+                <circle r="12" fill={closed ? "#0ea5e9" : "#cbd5e1"} />
                 <motion.line 
                   x1="0" y1="0" 
                   x2={isOpen ? 40 : 80} y2={isOpen ? -40 : 0} 
-                  stroke="var(--accent-primary)" strokeWidth="6" strokeLinecap="round"
+                  stroke={closed ? "#0ea5e9" : "#64748b"} strokeWidth="12" strokeLinecap="round"
                   animate={{ x2: isOpen ? 40 : 80, y2: isOpen ? -40 : 0 }}
                   transition={{ type: "spring", stiffness: 300, damping: 20 }}
                 />
-                <circle cx="80" cy="0" r="6" fill="var(--accent-primary)" />
+                <circle cx="80" cy="0" r="12" fill={closed ? "#0ea5e9" : "#cbd5e1"} />
              </g>
 
              <g transform={`translate(${NODES.bulbTop.x}, ${(NODES.bulbTop.y + NODES.bulbBot.y)/2})`}>
                 <motion.circle 
-                   r="40" 
-                   fill={closed ? (circuit.isShortCircuited ? "var(--accent-secondary)" : "var(--accent-primary)") : "#0A0F1C"} 
+                   r="60" 
+                   fill={closed ? (circuit.isShortCircuited ? "#f43f5e" : "#0ea5e9") : "transparent"} 
                    animate={{ 
-                     opacity: closed ? [0.2 * (current/0.5), 0.5 * (current/0.5), 0.2 * (current/0.5)] : 0,
-                     scale: closed ? [1, 1 + (current/5), 1] : 1
+                     opacity: closed ? [0.1, 0.3, 0.1] : 0,
+                     scale: closed ? [1, 1 + (current/4), 1] : 1
                    }}
                    transition={{ duration: speed, repeat: Infinity }}
-                   className="blur-2xl"
+                   className="blur-3xl"
                 />
-                <circle r="30" stroke={closed ? (circuit.isShortCircuited ? "var(--accent-secondary)" : "var(--accent-primary)") : "#1a2a3a"} strokeWidth="2" fill="none" />
+                <circle r="40" stroke={closed ? (circuit.isShortCircuited ? "#f43f5e" : "#0ea5e9") : "#e2e8f0"} strokeWidth="4" fill="white" />
                 <motion.path 
-                  d="M -10 -10 L 10 10 M 10 -10 L -10 10" 
-                  stroke={closed ? (circuit.isShortCircuited ? "var(--accent-secondary)" : "var(--accent-primary)") : "#1a2a3a"} 
-                  strokeWidth="3" 
+                  d="M -15 -15 L 15 15 M 15 -15 L -15 15" 
+                  stroke={closed ? (circuit.isShortCircuited ? "#f43f5e" : "#0ea5e9") : "#cbd5e1"} 
+                  strokeWidth="5" 
+                  strokeLinecap="round"
                   animate={{ 
-                    opacity: closed ? Math.min(1, 0.3 + current) : 0.3,
+                    opacity: closed ? Math.min(1, 0.4 + current/2) : 0.3,
                   }}
                 />
              </g>
 
-             <text x={W-20} y={H-20} textAnchor="end" className="text-[10px] font-mono fill-slate-700 tracking-[0.2em] uppercase italic">
-               Physics Sim v2.0 // {closed ? 'Flux Active' : 'Loop Broken'}
+             <text x={W-40} y={H-40} textAnchor="end" className="text-[10px] font-black fill-slate-300 tracking-[0.5em] uppercase italic">
+               CIRCUIT_PHYSICS_CORE // {closed ? 'STABLE' : 'OPEN'}
              </text>
           </svg>
         </div>

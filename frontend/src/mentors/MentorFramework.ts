@@ -8,7 +8,7 @@
 
 // ─── Types ──────────────────────────────────────────────────────────────
 
-export type MentorId = 'sigma' | 'voltmonkey' | 'chronos' | 'verity' | 'archon';
+export type MentorId = 'sigma' | 'analyst' | 'chronos' | 'verity' | 'archon';
 
 export type EmotionState = 'neutral' | 'happy' | 'thinking' | 'excited' | 'concerned' | 'teaching' | 'celebrating';
 

@@ -6,7 +6,7 @@
  *   - State + transition editor panel
  *   - Interactive SVG state diagram (FSMCanvas)
  *   - Input sequence runner with timeline scrubber
- *   - VoltMonkey static analysis panel
+ *   - Static analysis panel
  *   - Verilog export
  */
 
@@ -37,9 +37,9 @@ const analyzeFSM = (_fsm: any): any => ({
 const exportToVerilog = (_fsm: any): string => "// Verilog export disabled (engine removed)";
 
 const T = {
-    bg: '#060C1A', card: '#0D0F16', surface: '#141C2E', border: '#1A1D24',
-    text: '#E5E7EB', muted: '#64748B', accent: '#00D4FF',
-    success: '#10B981', warning: '#F59E0B', error: '#EF4444',
+    bg: '#FFFFFF', card: '#F8FAFC', surface: '#F1F5F9', border: '#E2E8F0',
+    text: '#0F172A', muted: '#64748B', accent: '#0EA5E9',
+    success: '#059669', warning: '#D97706', error: '#DC2626',
     mono: "'IBM Plex Mono','Roboto Mono',monospace",
     sans: "'Inter',system-ui,sans-serif",
 } as const;
@@ -135,11 +135,11 @@ export function FSMPlayground() {
                 borderBottom: `1px solid ${T.border}`,
                 background: T.card,
             }}>
-                <button onClick={() => navigate('/')} style={{ background: 'none', border: 'none', color: T.muted, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}>
+                <button onClick={() => navigate('/portal')} style={{ background: 'none', border: 'none', color: T.muted, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}>
                     <ArrowLeft size={16} /> <span style={{ fontFamily: T.mono, fontSize: 8, letterSpacing: '0.12em', textTransform: 'uppercase' }}>BACK</span>
                 </button>
                 <div style={{ width: 1, height: 20, background: T.border }} />
-                <span style={{ fontFamily: T.mono, fontSize: 9, letterSpacing: '0.2em', textTransform: 'uppercase', color: `${T.accent}80` }}>
+                <span style={{ fontFamily: T.mono, fontSize: 9, letterSpacing: '0.2em', textTransform: 'uppercase', color: `${T.accent}CC` }}>
                     FSM Visual Simulator
                 </span>
 
@@ -277,10 +277,10 @@ export function FSMPlayground() {
                         </div>
                     </div>
 
-                    {/* VoltMonkey Analysis */}
+                    {/* Logic Analysis */}
                     <div style={{ padding: 16, flex: 1 }}>
                         <span style={{ display: 'block', fontFamily: T.mono, fontSize: 8, letterSpacing: '0.15em', textTransform: 'uppercase', color: hasIssues ? `${T.warning}80` : `${T.success}80`, marginBottom: 12 }}>
-                            VoltMonkey Analysis
+                            Logic Analysis
                         </span>
 
                         {!hasIssues && (
@@ -295,7 +295,7 @@ export function FSMPlayground() {
                                 title="Unreachable States"
                                 items={analysis.unreachableStates}
                                 color={T.error}
-                                insight="These states can never be entered from the initial state. Consider removing them or adding a path from the initial state."
+                                insight="These states can never be entered from the initial state."
                             />
                         )}
                         {analysis.deadStates.length > 0 && (
@@ -303,7 +303,7 @@ export function FSMPlayground() {
                                 title="Dead States"
                                 items={analysis.deadStates}
                                 color={T.error}
-                                insight="Dead states have no outgoing transitions. Add transitions or mark as final."
+                                insight="Dead states have no outgoing transitions."
                             />
                         )}
                         {analysis.missingTransitions.map((m: any) => (
@@ -315,14 +315,6 @@ export function FSMPlayground() {
                                 insight={`Add transitions for inputs: ${m.missingInputs.join(', ')}`}
                             />
                         ))}
-                        {analysis.nondeterministicStates.length > 0 && (
-                            <IssueCard
-                                title="Non-Deterministic"
-                                items={analysis.nondeterministicStates}
-                                color={T.error}
-                                insight="Multiple transitions on the same input. Only one transition per input is allowed in a DFA."
-                            />
-                        )}
                     </div>
                 </div>
             </div>
@@ -333,9 +325,10 @@ export function FSMPlayground() {
                     <motion.div
                         initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                         style={{
-                            position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)',
+                            position: 'fixed', inset: 0, background: 'rgba(255,255,255,0.8)',
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
                             zIndex: 100,
+                            backdropFilter: 'blur(4px)',
                         }}
                         onClick={() => setShowExport(false)}
                     >
@@ -344,7 +337,7 @@ export function FSMPlayground() {
                             style={{
                                 background: T.card, border: `1px solid ${T.border}`,
                                 borderRadius: 4, padding: 24, width: 600, maxHeight: '80vh',
-                                overflow: 'auto',
+                                overflow: 'auto', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)'
                             }}
                             onClick={e => e.stopPropagation()}
                         >
@@ -352,8 +345,8 @@ export function FSMPlayground() {
                                 VERILOG EXPORT
                             </span>
                             <pre style={{
-                                fontFamily: T.mono, fontSize: 11, color: '#94A3B8',
-                                background: '#060C1A', padding: 16, borderRadius: 2,
+                                fontFamily: T.mono, fontSize: 11, color: T.text,
+                                background: T.surface, padding: 16, borderRadius: 2,
                                 overflow: 'auto', lineHeight: 1.6,
                                 border: `1px solid ${T.border}`,
                             }}>

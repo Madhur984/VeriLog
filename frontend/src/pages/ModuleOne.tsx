@@ -8,11 +8,9 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-import { VoltMonkeyPanel } from '../components/level1/VoltMonkeyPanel';
 import { XPCounter } from '../components/level1/XPCounter';
 import { ProgressTracker } from '../components/ui/ProgressTracker';
 import { useEngagementAdapter as useXPSystem } from '../hooks/useEngagementAdapter';
-import { useVoltMonkeyMentor } from '../hooks/useVoltMonkeyMentor';
 import { useGamificationStore } from '../stores/gamificationStore';
 import { BadgeToast } from '../components/level2/BadgeToast';
 import { CircuitLab } from '../circuit-lab/CircuitLab';
@@ -23,17 +21,17 @@ import '../components/level1/level1.css';
    ═══════════════════════════════════════════════════════════════════════ */
 
 const T = {
-    bg: '#0A0B10',
-    card: '#0D0F16',
-    surface: '#1A1D24',
-    border: '#1A1D24',
-    text: '#E5E7EB',
+    bg: '#FFFFFF',
+    card: '#F8FAFC',
+    surface: '#F1F5F9',
+    border: '#E2E8F0',
+    text: '#0F172A',
     muted: '#64748B',
-    accent: '#00D4FF',
-    secondary: '#14B8A6',
-    success: '#10B981',
-    error: '#EF4444',
-    warning: '#F59E0B',
+    accent: '#0EA5E9',
+    secondary: '#0D9488',
+    success: '#059669',
+    error: '#DC2626',
+    warning: '#D97706',
     mono: "'JetBrains Mono', 'IBM Plex Mono', monospace",
     sans: "'Inter', system-ui, sans-serif",
 } as const;
@@ -63,8 +61,7 @@ export const ModuleOne: React.FC = () => {
 
     // Systems
     const { xp, awardXP, registerCounterEl } = useXPSystem();
-    const { recordAnswer, getResponse } = useVoltMonkeyMentor();
-    const [VoltMonkeyResponse, setVoltMonkeyResponse] = useState<ReturnType<typeof getResponse> | null>(null);
+
 
     // Badge toast state
     const [toast, setToast] = useState<{ show: boolean; badge: Badge }>({
@@ -77,9 +74,7 @@ export const ModuleOne: React.FC = () => {
         setTimeout(() => setScreenFlash(false), 150);
     }, []);
 
-    const showVoltMonkey = useCallback((ctx: Parameters<typeof getResponse>[0]) => {
-        setVoltMonkeyResponse(getResponse(ctx));
-    }, [getResponse]);
+
 
     const awardBadge = useCallback((key: string) => {
         if (earnedBadges.has(key)) return;
@@ -152,26 +147,25 @@ export const ModuleOne: React.FC = () => {
             if (step < introLines.length - 1) setStep(s => s + 1);
             else { setScene('theory'); setStep(0); }
         } else if (scene === 'theory') {
-            setScene('lab'); showVoltMonkey('lab');
+            setScene('lab');
         } else if (scene === 'lab') {
-            if (labDone) { setScene('quiz'); showVoltMonkey('quiz'); }
+            if (labDone) { setScene('quiz'); }
         } else if (scene === 'quiz') {
             if (step < questions.length - 1) {
                 setStep(s => s + 1);
-                setVoltMonkeyResponse(null);
             }
             else {
                 setStep(0);
                 setScene('matching');
-                showVoltMonkey('matching');
             }
         } else if (scene === 'matching') {
-            setScene('blanks'); showVoltMonkey('blanks');
+            setScene('blanks');
         } else if (scene === 'blanks') {
-            setScene('diagnosis'); showVoltMonkey('diagnosis');
+            setScene('diagnosis');
         } else if (scene === 'diagnosis') {
-            setScene('summary'); setVoltMonkeyResponse(null);
+            setScene('summary');
         } else if (scene === 'summary') {
+
             setScene('complete');
             completeSkill('signals');
         } else if (scene === 'complete') {
@@ -208,15 +202,16 @@ export const ModuleOne: React.FC = () => {
     const handleLabWireSnap = () => {
         setLabDone(true);
         awardXP('structural', 15);
-        showVoltMonkey('lab');
+
         awardBadge('loop');
         triggerFlash();
     };
 
     const handleQuizAnswer = (idx: number) => {
         const isCorrect = idx === questions[step].correct;
-        recordAnswer(isCorrect);
-        showVoltMonkey('quiz');
+        // recordAnswer(isCorrect);
+        // showVoltMonkey('quiz');
+
         if (isCorrect) {
             awardXP('application', 10);
             triggerFlash();
@@ -230,8 +225,8 @@ export const ModuleOne: React.FC = () => {
 
     const checkMatches = () => {
         const isCorrect = sourceItems.every(item => matches[item.id] === item.matchId);
-        showVoltMonkey('matching');
         if (isCorrect) {
+
             awardXP('structural', 15);
             triggerFlash();
             setTimeout(nextStep, 1500);
@@ -240,8 +235,8 @@ export const ModuleOne: React.FC = () => {
 
     const checkBlank = () => {
         const isCorrect = blankValue.toLowerCase().trim() === 'return';
-        showVoltMonkey('blanks');
         if (isCorrect) {
+
             awardXP('application', 10);
             triggerFlash();
             setTimeout(nextStep, 1500);
@@ -251,8 +246,8 @@ export const ModuleOne: React.FC = () => {
     const checkDiagnosis = (idx: number) => {
         setDiagnosisSelection(idx);
         const isCorrect = idx === 2; // Short circuit
-        showVoltMonkey('diagnosis');
         if (isCorrect) {
+
             awardXP('diagnostic', 20);
             awardBadge('diagnostic');
             triggerFlash();
@@ -716,7 +711,7 @@ linear - gradient(rgba(0, 212, 255, 0.04) 1px, transparent 1px),
                             {scene === 'summary' && (
                                 <motion.div key="summary" style={{ width: '100%', maxWidth: 840 }}>
                                     <div style={{ textAlign: 'center', marginBottom: 48 }}>
-                                        <h1 style={{ fontSize: 'clamp(32px, 4vw, 40px)', fontWeight: 700, fontStyle: 'italic', letterSpacing: '-0.02em', color: T.text, marginBottom: 8 }}>VOLTMONKEY RECAP</h1>
+                                        <h1 style={{ fontSize: 'clamp(32px, 4vw, 40px)', fontWeight: 700, fontStyle: 'italic', letterSpacing: '-0.02em', color: T.text, marginBottom: 8 }}>SYSTEM ARCHITECTURE RECAP</h1>
                                         <p style={{ color: T.muted, fontSize: 18 }}>Return path integrity defines reliability.</p>
                                     </div>
 
@@ -814,10 +809,7 @@ linear - gradient(rgba(0, 212, 255, 0.04) 1px, transparent 1px),
                     </main>
                 </div>
 
-                {/* ── VoltMonkey Mentor Sidebar ── */}
-                {scene !== 'intro' && scene !== 'complete' && (
-                    <VoltMonkeyPanel response={VoltMonkeyResponse} />
-                )}
+
             </div>
         </div>
     );

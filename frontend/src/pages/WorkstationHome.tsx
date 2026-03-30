@@ -374,19 +374,19 @@ export const WorkstationHome: React.FC = () => {
 
     /* ── Adaptive tokens ── */
     const t = {
-        bg: isDark ? '#07080C' : '#f1f5f9',
-        sidebar: isDark ? '#08090D' : '#ffffff',
-        sidebarBdr: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.08)',
-        text: isDark ? '#e2e8f0' : '#0D0F16',
+        bg: isDark ? '#07080C' : '#FFFFFF',
+        sidebar: isDark ? '#08090D' : '#FFFFFF',
+        sidebarBdr: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)',
+        text: isDark ? '#e2e8f0' : '#0F172A',
         textMuted: isDark ? '#64748b' : '#64748b',
-        cardBg: isDark ? '#0c0f16' : '#ffffff',
-        cardBdr: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.1)',
+        cardBg: isDark ? '#0c0f16' : '#FFFFFF',
+        cardBdr: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.08)',
         navActive: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(59,130,246,0.08)',
-        navHover: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)',
-        inputBg: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)',
-        inputBdr: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.1)',
-        line: isDark ? '#1a2332' : '#cbd5e1',
-        lineFaint: isDark ? '#111827' : '#e2e8f0',
+        navHover: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)',
+        inputBg: isDark ? 'rgba(255,255,255,0.04)' : '#F8FAFC',
+        inputBdr: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)',
+        line: isDark ? '#1a2332' : '#E2E8F0',
+        lineFaint: isDark ? '#111827' : '#F1F5F9',
         mono: "'JetBrains Mono', 'IBM Plex Mono', monospace",
     };
 
@@ -528,7 +528,7 @@ export const WorkstationHome: React.FC = () => {
                             <StreakCounter days={streak.current} />
                             <div className="w-px h-5" style={{ background: t.sidebarBdr }} />
                             <div className="text-right">
-                                <p className="text-[13px] font-semibold" style={{ color: t.text }}>{firstName || 'VoltMonkey'}</p>
+                                <p className="text-[13px] font-semibold" style={{ color: t.text }}>{firstName || 'Guest'}</p>
                                 <p className="text-[10px] font-mono" style={{ color: t.textMuted }}>Beta Access</p>
                             </div>
                             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-violet-600 border border-white/10 flex items-center justify-center text-white font-bold text-[12px] cursor-pointer">

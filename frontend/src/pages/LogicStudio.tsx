@@ -78,7 +78,7 @@ export function LogicStudio() {
                         gap: '4px',
                         background: 'transparent',
                         border: 'none',
-                        color: '#94A3B8',
+                        color: '#64748B',
                         cursor: 'pointer',
                         fontSize: '12px',
                         fontFamily: 'inherit',
@@ -89,9 +89,9 @@ export function LogicStudio() {
 
                 <span style={{
                     fontSize: '13px',
-                    fontWeight: 700,
-                    color: '#00D4FF',
-                    letterSpacing: '0.06em',
+                    fontWeight: 800,
+                    color: '#0284C7',
+                    letterSpacing: '0.08em',
                 }}>
                     LOGIC STUDIO
                 </span>
@@ -186,11 +186,12 @@ export function LogicStudio() {
                         onClick={() => setBottomTab('timing')}
                         style={{
                             padding: '8px',
-                            background: bottomTab === 'timing' ? 'rgba(0, 212, 255, 0.08)' : 'transparent',
+                            background: bottomTab === 'timing' ? '#F0F9FF' : 'transparent',
                             border: 'none',
-                            color: bottomTab === 'timing' ? '#00D4FF' : '#64748B',
+                            color: bottomTab === 'timing' ? '#0284C7' : '#64748B',
                             cursor: 'pointer',
                             fontSize: '9px',
+                            fontWeight: 700,
                             fontFamily: 'inherit',
                             letterSpacing: '0.08em',
                             textAlign: 'left',
@@ -202,11 +203,12 @@ export function LogicStudio() {
                         onClick={() => setBottomTab('truth-table')}
                         style={{
                             padding: '8px',
-                            background: bottomTab === 'truth-table' ? 'rgba(0, 212, 255, 0.08)' : 'transparent',
+                            background: bottomTab === 'truth-table' ? '#F0F9FF' : 'transparent',
                             border: 'none',
-                            color: bottomTab === 'truth-table' ? '#00D4FF' : '#64748B',
+                            color: bottomTab === 'truth-table' ? '#0284C7' : '#64748B',
                             cursor: 'pointer',
                             fontSize: '9px',
+                            fontWeight: 700,
                             fontFamily: 'inherit',
                             letterSpacing: '0.08em',
                             textAlign: 'left',

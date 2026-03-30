@@ -4,7 +4,7 @@
  * Features:
  *   - Monaco editor with Verilog syntax (closest: `cpp` grammar)
  *   - Exercise bank sidebar (combinational → sequential → FSM → advanced)
- *   - VoltMonkey lint panel with real-time diagnostics
+ *   - Logic Analyst lint panel with real-time diagnostics
  *   - Simulated waveform output (reference waveform shown on "run")
  *   - Verilog export / copy
  *   - Gamified: XP reward on correct exercise completion
@@ -22,7 +22,7 @@ import {
 //     EXERCISES, getExercisesByLevel,
 //     type VerilogExercise, type ExerciseLevel,
 // } from '../engine/verilogExercises';
-// import { lintVerilog, type VerilogLintIssue } from '../engine/VoltMonkey';
+// import { lintVerilog, type VerilogLintIssue } from '../engine/LogicAnalyst';
 
 // Stubs
 type VerilogExercise = any;
@@ -33,11 +33,11 @@ const getExercisesByLevel = (_l: string) => EXERCISES;
 const lintVerilog = (_c: string) => [];
 
 const T = {
-    bg: '#060C1A', card: '#0D0F16', surface: '#0C1224', border: '#1A1D24',
-    panel: '#0A1020',
-    text: '#E5E7EB', muted: '#64748B', accent: '#00D4FF',
-    success: '#10B981', warning: '#F59E0B', error: '#EF4444',
-    keyword: '#A78BFA', string: '#34D399', comment: '#3B5278',
+    bg: '#FFFFFF', card: '#F8FAFC', surface: '#F1F5F9', border: '#E2E8F0',
+    panel: '#F8FAFC',
+    text: '#0F172A', muted: '#64748B', accent: '#0EA5E9',
+    success: '#059669', warning: '#D97706', error: '#DC2626',
+    keyword: '#7C3AED', string: '#059669', comment: '#64748B',
     mono: "'IBM Plex Mono','Roboto Mono',monospace",
     sans: "'Inter',system-ui,sans-serif",
 } as const;
@@ -50,8 +50,8 @@ const LEVEL_LABELS: Record<ExerciseLevel, string> = {
     advanced: 'Advanced HDL',
 };
 const LEVEL_COLORS: Record<ExerciseLevel, string> = {
-    combinational: '#00D4FF',
-    sequential: '#A78BFA',
+    combinational: '#0EA5E9',
+    sequential: '#8B5CF6',
     fsm: '#F59E0B',
     advanced: '#10B981',
 };
@@ -137,7 +137,7 @@ export function VerilogPlayground() {
                 background: T.card, borderBottom: `1px solid ${T.border}`,
                 flexShrink: 0,
             }}>
-                <button onClick={() => navigate('/')} style={{
+                <button onClick={() => navigate('/portal')} style={{
                     background: 'none', border: 'none', color: T.muted, cursor: 'pointer',
                     display: 'flex', alignItems: 'center', gap: 6,
                 }}>
@@ -145,7 +145,7 @@ export function VerilogPlayground() {
                 </button>
                 <div style={{ width: 1, height: 18, background: T.border }} />
                 <Cpu size={14} style={{ color: T.accent }} />
-                <span style={{ fontFamily: T.mono, fontSize: 9, letterSpacing: '0.2em', color: `${T.accent}80`, textTransform: 'uppercase' }}>
+                <span style={{ fontFamily: T.mono, fontSize: 9, letterSpacing: '0.2em', color: `${T.accent}CC`, textTransform: 'uppercase' }}>
                     Verilog Playground
                 </span>
 
@@ -273,7 +273,7 @@ export function VerilogPlayground() {
                                 <p style={{ margin: 0, fontFamily: T.sans, fontSize: 13, color: T.text, lineHeight: 1.5 }}>
                                     {selectedExercise.description}
                                 </p>
-                                <p style={{ margin: '6px 0 0', fontFamily: T.mono, fontSize: 10, color: `${T.accent}80` }}>
+                                <p style={{ margin: '6px 0 0', fontFamily: T.mono, fontSize: 10, color: `${T.accent}CC` }}>
                                     {selectedExercise.concept}
                                 </p>
                             </div>
@@ -335,7 +335,7 @@ export function VerilogPlayground() {
                             defaultLanguage="cpp"
                             value={code}
                             onChange={handleCodeChange}
-                            theme="vs-dark"
+                            theme="light"
                             options={{
                                 fontSize: 13,
                                 fontFamily: "'IBM Plex Mono','Roboto Mono',monospace",
@@ -398,7 +398,7 @@ export function VerilogPlayground() {
                     </div>
                 </div>
 
-                {/* Right — VoltMonkey Panel */}
+                {/* Right — LogicAnalysis Panel */}
                 <div style={{
                     width: 280, flexShrink: 0, overflowY: 'auto',
                     borderLeft: `1px solid ${T.border}`, background: T.panel,
@@ -408,8 +408,8 @@ export function VerilogPlayground() {
                     <div style={{ padding: '12px 16px', borderBottom: `1px solid ${T.border}` }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
                             <div style={{ width: 6, height: 6, borderRadius: '50%', background: T.accent }} />
-                            <span style={{ fontFamily: T.mono, fontSize: 8, letterSpacing: '0.2em', color: `${T.accent}80`, textTransform: 'uppercase' }}>
-                                VoltMonkey
+                            <span style={{ fontFamily: T.mono, fontSize: 8, letterSpacing: '0.2em', color: `${T.accent}CC`, textTransform: 'uppercase' }}>
+                                Logic Analysis
                             </span>
                         </div>
                         <span style={{ fontFamily: T.sans, fontSize: 11, color: T.muted }}>
@@ -447,7 +447,7 @@ export function VerilogPlayground() {
                                 <span style={{ fontFamily: T.mono, fontSize: 8, color: T.success }}>No lint issues</span>
                             </div>
                         )}
-                        {lintIssues.map((issue, i) => (
+                        {lintIssues.map((issue: any, i: number) => (
                             <div key={i} style={{
                                 marginBottom: 8, padding: '8px 10px',
                                 background: issue.severity === 'error' ? `${T.error}06` : issue.severity === 'warning' ? `${T.warning}06` : `${T.accent}06`,

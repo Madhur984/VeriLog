@@ -73,7 +73,13 @@
     }
 
     body {
-        @apply bg-[#0A0F1C] text-[#E3F2FD] overflow-x-hidden;
+        @apply bg-[#FFFFFF] text-[#0F172A] overflow-x-hidden transition-colors duration-300;
+        /* Dark mode overrides (if .dark class is added to html) */
+    }
+    .dark body {
+        @apply bg-[#0A0F1C] text-[#E3F2FD];
+    }
+    body {
         font-family: 'DM Sans', 'Inter', system-ui, sans-serif;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;

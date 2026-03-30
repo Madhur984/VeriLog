@@ -28,8 +28,8 @@ export class ShortCircuit implements AnimModule {
         this.unsubs.push(animController.subscribe('circuit:short', this.onShort));
         this.unsubs.push(animController.subscribe('circuit:short:cleared', this.onCleared));
 
-        // Find the VoltMonkey overlay element by ID (rendered in CircuitLab.tsx, initially hidden)
-        this.overlay = document.getElementById('VoltMonkey-short-overlay');
+        // Find the Logic Analyst overlay element by ID (rendered in CircuitLab.tsx, initially hidden)
+        this.overlay = document.getElementById('Analyst-short-overlay');
     }
 
     private onShort = (_payload: EventPayload) => {
@@ -37,7 +37,7 @@ export class ShortCircuit implements AnimModule {
             // Even with reduced motion, show the text overlay without animation
             if (this.overlay) {
                 this.overlay.style.display = 'flex';
-                this.overlay.classList.remove('VoltMonkey-overlay--drop');
+                this.overlay.classList.remove('Analyst-overlay--drop');
             }
             return;
         }
@@ -51,12 +51,12 @@ export class ShortCircuit implements AnimModule {
             p.classList.remove('wire--live');
         });
 
-        // 2. Show VoltMonkey overlay with gravity-drop animation
+        // 2. Show Logic Analyst overlay with gravity-drop animation
         if (this.overlay) {
             this.overlay.style.display = 'flex';
             // Force reflow so animation triggers fresh each time
             void (this.overlay as HTMLElement).offsetHeight;
-            this.overlay.classList.add('VoltMonkey-overlay--drop');
+            this.overlay.classList.add('Analyst-overlay--drop');
         }
     };
 
@@ -72,7 +72,7 @@ export class ShortCircuit implements AnimModule {
 
         // Hide overlay
         if (this.overlay) {
-            this.overlay.classList.remove('VoltMonkey-overlay--drop');
+            this.overlay.classList.remove('Analyst-overlay--drop');
             // Delay display:none to allow exit transition if one is added later
             setTimeout(() => {
                 if (this.overlay && !this.active) {

@@ -24,7 +24,6 @@ export interface TransitionMessage {
 }
 
 const ROUTE_MAP: Record<string, TransitionMessage> = {
-    '/VoltMonkey': { primary: 'INITIALIZING LAB ENVIRONMENT', level: 1 },
     '/level/1': { primary: 'INITIALIZING LAB ENVIRONMENT', level: 1 },
     '/module/1': { primary: 'INITIALIZING LAB ENVIRONMENT', level: 1 },
     '/circuit-lab': { primary: 'INITIALIZING LAB ENVIRONMENT', level: 1 },

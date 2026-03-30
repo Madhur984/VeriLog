@@ -5,15 +5,19 @@ import { ComponentPalette } from '../logic-studio/ComponentPalette';
 import { StudioCanvas } from '../logic-studio/StudioCanvas';
 import { StudioToolbox } from '../logic-studio/StudioToolbox';
 import { NodeType } from '../../mure/core/SignalNode';
-import { CheckCircle2 } from 'lucide-react';
+import { CheckCircle2, Zap, Activity, Database } from 'lucide-react';
 import { LogicOscilloscope } from '../LogicOscilloscope';
-import { VoltBot } from '../ui/VoltBot';
-import { useSigmaMentorL4 } from '../../hooks/useSigmaMentorL4';
+import { useLogicAnalystL4 } from '../../hooks/useLogicAnalystL4';
 
 const T = {
-    card: '#0D0F16', surface: '#1A1D24', border: '#1A1D24',
-    text: '#E5E7EB', muted: '#64748B', accent: '#00D4FF', success: '#10B981',
-    mono: "'JetBrains Mono', monospace",
+    card: '#FFFFFF', 
+    surface: '#F8FAFC', 
+    border: '#E2E8F0',
+    text: '#0F172A', 
+    muted: '#64748B', 
+    accent: '#0284C7', 
+    success: '#10B981',
+    mono: "'IBM Plex Mono', monospace",
 };
 
 interface Props {
@@ -23,29 +27,29 @@ interface Props {
 
 export const CircuitBuilder: React.FC<Props> = ({ onComplete, hasCompleted }) => {
     const studio = useLogicStudio();
-    const mentor = useSigmaMentorL4();
+    const analyst = useLogicAnalystL4();
     const [nextX, setNextX] = useState(100);
     const [nextY, setNextY] = useState(100);
 
-    // Mentor State
-    const [botMessage, setBotMessage] = useState<string | null>(null);
-    const [botState, setBotState] = useState<'idle' | 'speaking' | 'happy' | 'thinking'>('idle');
+    // Analyst State
+    const [analystMessage, setAnalystMessage] = useState<string | null>(null);
+    const [isAnalyzing, setIsAnalyzing] = useState(false);
 
     const triggerAnalysis = useCallback(() => {
-        setBotState('thinking');
+        setIsAnalyzing(true);
         setTimeout(() => {
-            const res = mentor.getResponse('oscilloscope');
-            setBotMessage(res.observation + " " + res.conclusion);
-            setBotState('speaking');
+            const res = analyst.getResponse('oscilloscope');
+            setAnalystMessage(res.observation + " " + res.conclusion);
+            setIsAnalyzing(false);
         }, 800);
-    }, [mentor]);
+    }, [analyst]);
 
-    // Auto-trigger mentor when first probe is added
+    // Auto-trigger analyst when first probe is added
     useEffect(() => {
-        if (studio.traces.length === 1 && !botMessage) {
+        if (studio.traces.length === 1 && !analystMessage) {
             triggerAnalysis();
         }
-    }, [studio.traces.length, botMessage, triggerAnalysis]);
+    }, [studio.traces.length, analystMessage, triggerAnalysis]);
 
     const handleAddComponent = useCallback((type: NodeType) => {
         studio.addNode(type, nextX, nextY);
@@ -55,7 +59,7 @@ export const CircuitBuilder: React.FC<Props> = ({ onComplete, hasCompleted }) =>
 
     const edges = studio.getNodeEdges();
 
-    // Check completion (simple heuristic: has at least one gate and one led connected)
+    // Check completion
     useEffect(() => {
         if (hasCompleted) return;
 
@@ -72,41 +76,56 @@ export const CircuitBuilder: React.FC<Props> = ({ onComplete, hasCompleted }) =>
 
     return (
         <div style={{ width: '100%', maxWidth: 1100, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 16 }}>
-            <div style={{ textAlign: 'center', marginBottom: 16 }}>
-                <span style={{ fontFamily: T.mono, fontSize: 9, letterSpacing: '0.25em', textTransform: 'uppercase', color: T.accent, display: 'block', marginBottom: 8 }}>
-                    Scene 4.3 — Circuit Builder
-                </span>
-                <h2 style={{ fontSize: 26, fontWeight: 700, color: T.text, marginBottom: 8 }}>Freeform Logic Sandbox</h2>
-                <p style={{ color: T.muted, fontSize: 14 }}>
-                    Drag gates from the palette, wire them into a working circuit, and verify the signals.
+            <div style={{ textAlign: 'center', marginBottom: 24 }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: 8 }}>
+                    <div style={{ padding: '2px 8px', background: '#F0F9FF', border: '1px solid #BAE6FD', color: '#0369A1', borderRadius: 4, fontFamily: T.mono, fontSize: 10, fontWeight: 700, textTransform: 'uppercase' }}>
+                        Scene 4.3
+                    </div>
+                    <span style={{ fontFamily: T.mono, fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: T.muted, fontWeight: 600 }}>
+                        Circuit Construction Lab
+                    </span>
+                </div>
+                <h2 style={{ fontSize: 32, fontWeight: 800, color: T.text, marginBottom: 12, letterSpacing: '-0.02em' }}>Freeform Logic Sandbox</h2>
+                <p style={{ color: T.muted, fontSize: 16, maxWidth: 600, margin: '0 auto', lineHeight: 1.5 }}>
+                    Drag gates from the palette, wire them into a functional circuit, and observe signal propagation in real-time.
                 </p>
             </div>
 
             <div style={{
-                display: 'flex',
-                height: 500,
+                display: 'grid',
+                gridTemplateColumns: '240px 1fr',
+                height: 600,
                 background: T.card,
                 border: `1px solid ${T.border}`,
-                borderRadius: 12,
-                overflow: 'hidden'
+                borderRadius: 24,
+                overflow: 'hidden',
+                boxShadow: '0 20px 50px -12px rgba(0, 0, 0, 0.05)'
             }}>
                 {/* Palette Sidebar */}
-                <div style={{ width: 220, borderRight: `1px solid ${T.border}`, background: 'rgba(0,0,0,0.2)' }}>
+                <div style={{ borderRight: `1px solid ${T.border}`, background: '#F8FAFC', padding: 12 }}>
+                    <div style={{ padding: '8px 12px 16px', borderBottom: `1px solid ${T.border}`, marginBottom: 12 }}>
+                        <div style={{ fontSize: 10, fontWeight: 800, color: T.muted, textTransform: 'uppercase', letterSpacing: '0.1em', display: 'flex', alignItems: 'center', gap: 6 }}>
+                            <Database size={10} /> Component Library
+                        </div>
+                    </div>
                     <ComponentPalette onAddComponent={handleAddComponent} />
                 </div>
 
                 {/* Canvas Area */}
-                <div style={{ flex: 1, position: 'relative', display: 'flex', flexDirection: 'column' }}>
+                <div style={{ position: 'relative', display: 'flex', flexDirection: 'column' }}>
                     <div style={{
-                        height: 48,
+                        height: 56,
                         borderBottom: `1px solid ${T.border}`,
                         display: 'flex',
                         alignItems: 'center',
-                        padding: '0 16px',
+                        padding: '0 20px',
                         justifyContent: 'space-between',
-                        background: 'rgba(255,255,255,0.02)'
+                        background: '#FFFFFF'
                     }}>
-                        <div style={{ fontFamily: T.mono, fontSize: 11, color: T.muted }}>Workspace Canvas</div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                            <div style={{ width: 8, height: 8, borderRadius: '50%', background: studio.isRunning ? T.success : '#CBD5E1' }} />
+                            <div style={{ fontFamily: T.mono, fontSize: 11, fontWeight: 700, color: T.muted, textTransform: 'uppercase' }}>Workspace Canvas</div>
+                        </div>
                         <StudioToolbox
                             isRunning={studio.isRunning}
                             simTime={studio.simTime}
@@ -121,7 +140,7 @@ export const CircuitBuilder: React.FC<Props> = ({ onComplete, hasCompleted }) =>
                         />
                     </div>
 
-                    <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
+                    <div style={{ flex: 1, position: 'relative', overflow: 'hidden', background: '#FFFFFF' }}>
                         <StudioCanvas
                             nodes={studio.canvasNodes}
                             edges={edges}
@@ -139,90 +158,107 @@ export const CircuitBuilder: React.FC<Props> = ({ onComplete, hasCompleted }) =>
                             onRemoveNode={studio.removeNode}
                         />
 
-                        {/* CSE Telemetry Panel */}
+                        {/* Telemetry Panel */}
                         <div style={{
-                            position: 'absolute', top: 16, right: 16,
-                            padding: '12px 16px', background: 'rgba(13,15,22,0.9)',
-                            border: `1px solid ${T.border}`, borderRadius: 8,
-                            backdropFilter: 'blur(6px)', pointerEvents: 'none',
-                            minWidth: 180,
+                            position: 'absolute', top: 20, right: 20,
+                            padding: '16px 20px', background: 'rgba(255,255,255,0.9)',
+                            border: `1px solid ${T.border}`, borderRadius: 16,
+                            backdropFilter: 'blur(12px)', pointerEvents: 'none',
+                            minWidth: 200, boxShadow: '0 10px 15px -3px rgba(0,0,0,0.05)'
                         }}>
-                            <div style={{ fontFamily: T.mono, fontSize: 9, color: T.accent, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 10, display: 'flex', alignItems: 'center', gap: 6 }}>
-                                CSE Telemetry
+                            <div style={{ fontFamily: T.mono, fontSize: 10, color: T.accent, textTransform: 'uppercase', fontWeight: 800, letterSpacing: '0.1em', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
+                                <Activity size={12} /> System Telemetry
                             </div>
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '6px 16px', fontFamily: T.mono, fontSize: 11 }}>
-                                <span style={{ color: T.muted }}>Sim Status</span>
-                                <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                                    <motion.div
-                                        animate={studio.isRunning ? {
-                                            background: ['#10B981', '#10B98170', '#10B981'],
-                                            boxShadow: ['0 0 6px #10B981', '0 0 2px #10B98140', '0 0 6px #10B981'],
-                                        } : { background: '#334155', boxShadow: 'none' }}
-                                        transition={{ duration: 1.2, repeat: Infinity }}
-                                        style={{ width: 7, height: 7, borderRadius: '50%' }}
-                                    />
-                                    <span style={{ color: studio.isRunning ? '#10B981' : T.muted }}>
-                                        {studio.isRunning ? 'ACTIVE' : 'IDLE'}
-                                    </span>
-                                </span>
-
-                                <span style={{ color: T.muted }}>Nodes</span>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '8px 24px', fontFamily: T.mono, fontSize: 11, fontWeight: 600 }}>
+                                <span style={{ color: T.muted }}>Node Count</span>
                                 <span style={{ color: T.text, textAlign: 'right' }}>{studio.canvasNodes.length}</span>
 
-                                <span style={{ color: T.muted }}>Edges</span>
-                                <span style={{ color: T.text, textAlign: 'right' }}>{edges.length}</span>
+                                <span style={{ color: T.muted }}>Propagation</span>
+                                <span style={{ color: T.text, textAlign: 'right' }}>{edges.length} connections</span>
 
-                                <span style={{ color: T.muted }}>Sim Time</span>
+                                <span style={{ color: T.muted }}>Sim Runtime</span>
                                 <span style={{ color: T.text, textAlign: 'right' }}>{studio.simTime}ns</span>
 
-                                <span style={{ color: T.muted }}>Prop Cycles</span>
+                                <span style={{ color: T.muted }}>Logic Cycles</span>
                                 <span style={{ color: studio.simTime > 0 ? T.accent : T.muted, textAlign: 'right' }}>
                                     {Math.floor(studio.simTime / 10)}
                                 </span>
                             </div>
                         </div>
 
-                        {/* Logic Oscilloscope Drawer Overlay */}
+                        {/* Analysis Overlay */}
                         <AnimatePresence>
                             {studio.traces && studio.traces.length > 0 && (
                                 <motion.div
-                                    initial={{ y: 200, opacity: 0 }}
+                                    initial={{ y: 250, opacity: 0 }}
                                     animate={{ y: 0, opacity: 1 }}
-                                    exit={{ y: 200, opacity: 0 }}
+                                    exit={{ y: 250, opacity: 0 }}
                                     style={{
                                         position: 'absolute',
                                         bottom: 0,
                                         left: 0,
                                         right: 0,
                                         borderTop: `1px solid ${T.border}`,
-                                        boxShadow: '0 -10px 40px rgba(0,0,0,0.5)',
+                                        boxShadow: '0 -20px 40px rgba(0,0,0,0.03)',
                                         zIndex: 20,
                                         background: T.card,
                                         display: 'flex',
                                         flexDirection: 'column'
                                     }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 16px', borderBottom: `1px solid ${T.border}`, background: 'rgba(255,255,255,0.03)' }}>
-                                        <div style={{ fontFamily: T.mono, fontSize: 10, color: T.accent, textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-                                            Live Waveform Analysis
+                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 24px', borderBottom: `1px solid ${T.border}`, background: '#F8FAFC' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                                            <div style={{ padding: '2px 8px', background: '#E0F2FE', color: '#0369A1', borderRadius: 4, fontFamily: T.mono, fontSize: 9, fontWeight: 800 }}>LIVE</div>
+                                            <div style={{ fontFamily: T.mono, fontSize: 11, color: T.text, textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.05em' }}>
+                                                Waveform Observation Engine
+                                            </div>
                                         </div>
-                                        <div style={{ display: 'flex', gap: 12 }}>
-                                            <button
-                                                onClick={triggerAnalysis}
-                                                style={{ background: 'none', border: 'none', color: T.muted, fontSize: 10, cursor: 'pointer', textDecoration: 'underline' }}>
-                                                Re-analyze
-                                            </button>
-                                        </div>
+                                        <button
+                                            onClick={triggerAnalysis}
+                                            style={{ background: '#FFFFFF', border: `1px solid ${T.border}`, color: T.accent, fontSize: 10, fontWeight: 700, padding: '6px 12px', borderRadius: 6, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}>
+                                            <Zap size={12} /> SCAN SIGNALS
+                                        </button>
                                     </div>
-                                    <div style={{ position: 'relative', flex: 1 }}>
-                                        <LogicOscilloscope traces={studio.traces} height={180} />
+                                    <div style={{ position: 'relative', flex: 1, padding: 20, background: '#FFFFFF' }}>
+                                        <LogicOscilloscope traces={studio.traces} height={160} />
 
-                                        {/* VoltBot Integration */}
-                                        <div style={{ position: 'absolute', right: 24, bottom: 20, pointerEvents: 'auto' }}>
-                                            <VoltBot
-                                                state={botState}
-                                                message={botMessage || undefined}
-                                                onClick={() => setBotMessage(null)}
-                                            />
+                                        {/* Logic Analyst Overlay */}
+                                        <div style={{ position: 'absolute', right: 32, bottom: 32, pointerEvents: 'auto', maxWidth: 300 }}>
+                                            <AnimatePresence>
+                                                {(analystMessage || isAnalyzing) && (
+                                                    <motion.div 
+                                                        initial={{ opacity: 0, x: 20, scale: 0.9 }}
+                                                        animate={{ opacity: 1, x: 0, scale: 1 }}
+                                                        exit={{ opacity: 0, x: 20 }}
+                                                        style={{ 
+                                                            padding: 20, 
+                                                            background: '#FFFFFF', 
+                                                            border: `1px solid ${T.border}`, 
+                                                            borderRadius: 20, 
+                                                            boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
+                                                            display: 'flex',
+                                                            flexDirection: 'column',
+                                                            gap: 12
+                                                        }}
+                                                    >
+                                                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                                                            <div style={{ padding: 8, background: '#F0F9FF', borderRadius: 8, color: '#0284C7' }}>
+                                                                <Activity size={18} className={isAnalyzing ? "animate-pulse" : ""} />
+                                                            </div>
+                                                            <div style={{ fontWeight: 800, fontSize: 13, color: T.text }}>Logic Analysis</div>
+                                                        </div>
+                                                        <p style={{ fontSize: 13, color: T.muted, lineHeight: 1.5, fontStyle: 'italic' }}>
+                                                            {isAnalyzing ? "Processing bitstream signatures..." : analystMessage}
+                                                        </p>
+                                                        {!isAnalyzing && (
+                                                            <button 
+                                                                onClick={() => setAnalystMessage(null)}
+                                                                style={{ background: '#F8FAFC', border: 'none', color: '#94A3B8', fontSize: 10, fontWeight: 700, padding: '4px 8px', borderRadius: 4, cursor: 'pointer', alignSelf: 'flex-end' }}>
+                                                                DISMISS
+                                                            </button>
+                                                        )}
+                                                    </motion.div>
+                                                )}
+                                            </AnimatePresence>
                                         </div>
                                     </div>
                                 </motion.div>
@@ -235,9 +271,9 @@ export const CircuitBuilder: React.FC<Props> = ({ onComplete, hasCompleted }) =>
             <AnimatePresence>
                 {hasCompleted && (
                     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-                        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: 16, background: 'rgba(16, 185, 129, 0.08)', borderRadius: 8, border: `1px solid rgba(16, 185, 129, 0.2)` }}>
-                        <CheckCircle2 size={16} style={{ color: T.success }} />
-                        <span style={{ fontFamily: T.mono, fontSize: 12, color: T.success }}>Circuit working! Proceed to Logic Puzzles when ready.</span>
+                        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12, padding: 20, background: '#F0FDF4', borderRadius: 16, border: `1px solid #BBF7D0`, boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)' }}>
+                        <CheckCircle2 size={20} style={{ color: T.success }} />
+                        <span style={{ fontFamily: T.mono, fontSize: 13, fontWeight: 700, color: '#166534' }}>Protocol sequence successful. The circuit logic is valid.</span>
                     </motion.div>
                 )}
             </AnimatePresence>

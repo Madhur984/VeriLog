@@ -7,7 +7,7 @@ export function useColorScheme(): [ColorScheme, () => void] {
     const getInitial = (): ColorScheme => {
         const stored = localStorage.getItem('digi_theme') as ColorScheme | null;
         if (stored) return stored;
-        return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        return 'light'; // Force light mode as default for the 'whitepage' request
     };
 
     const [scheme, setScheme] = useState<ColorScheme>(getInitial);
