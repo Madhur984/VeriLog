@@ -148,7 +148,7 @@ export const Activity4 = ({ onNext }: ActivityProps) => {
                     >
                         <Button
                             onClick={onNext}
-                            className="h-16 px-12 rounded-2xl bg-slate-900 hover:bg-black text-white font-heading font-black text-lg shadow-xl shadow-slate-200 active:scale-95 transition-all flex items-center gap-3 uppercase tracking-tight"
+                            className="h-16 px-12 rounded-2xl bg-sky-600 hover:bg-sky-700 text-white font-heading font-black text-lg shadow-xl shadow-sky-200 active:scale-95 transition-all flex items-center gap-3 uppercase tracking-tight"
                         >
                             Finish Protocol <ArrowRight size={20} />
                         </Button>

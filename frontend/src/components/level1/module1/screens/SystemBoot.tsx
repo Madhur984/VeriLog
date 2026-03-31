@@ -27,12 +27,12 @@ export const SystemBoot: React.FC<ScreenProps> = ({
   }, [triggerHaptic, playSound]);
 
   return (
-    <div className="section-content relative flex flex-col items-center justify-center bg-[#070B14] overflow-hidden w-full h-full">
+    <div className="section-content relative flex flex-col items-center justify-center bg-white overflow-hidden w-full h-full">
       {/* Background Pulse */}
       <motion.div 
-        animate={{ opacity: [0.05, 0.15, 0.05] }}
+        animate={{ opacity: [0.03, 0.08, 0.03] }}
         transition={{ duration: 4, repeat: Infinity }}
-        className="absolute inset-0 bg-radial-gradient from-[var(--accent-primary)]/10 to-transparent pointer-events-none"
+        className="absolute inset-0 bg-[radial-gradient(circle_at_center,#0EA5E911,transparent_70%)] pointer-events-none"
       />
 
       {/* AI Hint Notification */}
@@ -42,7 +42,7 @@ export const SystemBoot: React.FC<ScreenProps> = ({
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute top-8 glass-card p-3 border-[var(--accent-primary)]/20 text-[var(--accent-primary)] text-[10px] uppercase tracking-[0.2em] font-mono z-50"
+            className="absolute top-8 glass-card p-3 border-sky-100 bg-sky-50/50 text-sky-600 text-[10px] uppercase tracking-[0.2em] font-mono z-50 shadow-sm"
           >
             AI ASSIST: {currentHint.message}
           </motion.div>
@@ -54,7 +54,7 @@ export const SystemBoot: React.FC<ScreenProps> = ({
             <motion.div 
                 animate={{ rotate: 360 }}
                 transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
-                className="w-32 h-32 rounded-full border border-white/5 border-t-[var(--accent-primary)]"
+                className="w-32 h-32 rounded-full border border-slate-100 border-t-sky-500 shadow-sm"
             />
             <motion.div 
                 initial={{ scale: 0.8, opacity: 0 }}
@@ -62,7 +62,7 @@ export const SystemBoot: React.FC<ScreenProps> = ({
                 transition={{ delay: 0.5, duration: 1 }}
                 className="absolute inset-0 flex items-center justify-center"
             >
-                <Zap className="text-[var(--accent-primary)] w-10 h-10 drop-shadow-[0_0_15px_var(--accent-primary)]" />
+                <Zap className="text-sky-500 w-10 h-10 drop-shadow-[0_0_15px_rgba(14,165,233,0.3)]" />
             </motion.div>
         </div>
 
@@ -71,7 +71,7 @@ export const SystemBoot: React.FC<ScreenProps> = ({
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 1 }}
-                className="flex items-center gap-3 text-[var(--accent-primary)]"
+                className="flex items-center gap-3 text-sky-600"
             >
                 <Terminal size={14} className="opacity-60" />
                 <span className="text-[12px] font-mono font-black uppercase tracking-[0.5em] animate-pulse">
@@ -79,20 +79,20 @@ export const SystemBoot: React.FC<ScreenProps> = ({
                 </span>
             </motion.div>
 
-            <div className="w-64 h-[2px] bg-white/5 rounded-full overflow-hidden">
+            <div className="w-64 h-[2px] bg-slate-100 rounded-full overflow-hidden shadow-inner">
                 <motion.div 
                     initial={{ width: 0 }}
                     animate={{ width: '100%' }}
                     transition={{ duration: 5, ease: "easeInOut" }}
-                    className="h-full bg-[var(--accent-primary)]"
+                    className="h-full bg-sky-500"
                 />
             </div>
 
             <motion.p 
                 initial={{ opacity: 0 }}
-                animate={{ opacity: 0.4 }}
+                animate={{ opacity: 0.5 }}
                 transition={{ delay: 1.5 }}
-                className="text-[8px] font-mono uppercase tracking-widest"
+                className="text-[8px] font-mono uppercase tracking-widest text-slate-500 font-bold"
             >
                 Core Integrity: 100% | Latency: 4ms
             </motion.p>
@@ -107,14 +107,14 @@ export const SystemBoot: React.FC<ScreenProps> = ({
             animate={{ opacity: 1, y: 0 }}
             className="absolute bottom-12 flex flex-col items-center gap-2"
           >
-            <span className="text-[10px] font-mono font-black uppercase tracking-[0.4em] text-[var(--accent-primary)] animate-pulse">
+            <span className="text-[10px] font-mono font-black uppercase tracking-[0.4em] text-sky-600 animate-pulse">
               Scroll to Begin ↓
             </span>
             <motion.div
               animate={{ y: [0, 8, 0] }}
               transition={{ duration: 1.5, repeat: Infinity }}
             >
-              <ChevronDown size={20} className="text-[var(--accent-primary)]" />
+              <ChevronDown size={20} className="text-sky-600" />
             </motion.div>
           </motion.div>
         )}

@@ -23,7 +23,7 @@ export const SignalTypes: React.FC<ScreenProps> = ({
   ];
 
   const renderIcon = (type: string, isSelected: boolean) => {
-    const color = isSelected ? 'currentColor' : 'rgba(255,255,255,0.2)';
+    const color = isSelected ? 'currentColor' : 'rgba(15, 23, 42, 0.1)';
     switch (type) {
       case 'sine': return (
         <svg className="w-full h-full p-2" viewBox="0 0 100 100">
@@ -61,7 +61,7 @@ export const SignalTypes: React.FC<ScreenProps> = ({
   };
 
   return (
-    <div className="section-content relative flex flex-col items-center !justify-start pt-24 min-h-[120vh]" {...focusProps}>
+    <div className="section-content relative flex flex-col items-center !justify-start pt-24 min-h-[120vh] bg-white" {...focusProps}>
       {/* AI Hint Notification */}
       <AnimatePresence>
         {currentHint?.type === 'hint' && (
@@ -69,19 +69,19 @@ export const SignalTypes: React.FC<ScreenProps> = ({
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
-            className="absolute top-4 right-0 z-50 glass-card p-3 border-[var(--accent-primary)]/20 text-[var(--accent-primary)] text-[10px] uppercase tracking-[0.2em] font-mono"
+            className="absolute top-4 right-0 z-50 glass-card p-3 border-sky-200 bg-white/90 text-sky-600 text-[10px] uppercase tracking-[0.2em] font-mono shadow-lg"
           >
             AI ASSIST: {currentHint.message}
           </motion.div>
         )}
       </AnimatePresence>
 
-      <div className="mb-12 space-y-2 text-center w-full">
-        <h2 className="text-[var(--accent-primary)] font-mono text-[10px] uppercase tracking-[0.5em] opacity-40">Taxonomy</h2>
-        <h1 className="title-xl italic">SIX WAYS TO FLOW.</h1>
+      <div className="mb-12 space-y-2 text-center w-full px-4">
+        <h2 className="text-sky-600 font-mono text-[10px] uppercase tracking-[0.5em] opacity-60">Taxonomy</h2>
+        <h1 className="title-xl italic text-slate-900 font-black tracking-tighter">SIX WAYS TO FLOW.</h1>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-6 max-w-4xl w-full">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-6 max-w-4xl w-full px-4">
         {types.map((item) => (
           <VeriButton
             key={item.id}
@@ -89,25 +89,25 @@ export const SignalTypes: React.FC<ScreenProps> = ({
               setSelected(item.id);
               triggerHaptic?.('light');
             }}
-            variant={(selected === item.id ? item.variant : 'secondary') as any}
+            variant={(selected === item.id ? (item.variant === 'secondary' ? 'primary' : item.variant) : 'secondary') as any}
             className={`
-              group relative p-6 aspect-square flex flex-col items-center justify-center gap-4 overflow-hidden h-auto
-              ${selected === item.id ? 'shadow-[0_0_40px_rgba(0,229,255,0.1)]' : ''}
+              group relative p-6 aspect-square flex flex-col items-center justify-center gap-4 overflow-hidden h-auto transition-all duration-300
+              ${selected === item.id ? 'shadow-[0_0_40px_rgba(14,165,233,0.15)] ring-2 ring-sky-500 ring-offset-2' : 'bg-slate-50 border-slate-100 hover:border-slate-300'}
             `}
           >
-            <div className={`w-16 h-16 transition-colors duration-300 ${selected === item.id ? 'text-black' : 'text-[var(--accent-primary)] opacity-40 group-hover:opacity-100'}`}>
+            <div className={`w-16 h-16 transition-colors duration-300 ${selected === item.id ? 'text-white' : 'text-slate-400 group-hover:text-sky-600 opacity-60 group-hover:opacity-100'}`}>
                 {renderIcon(item.icon, selected === item.id)}
             </div>
             
             <div className="text-center space-y-1">
-                <h3 className={`font-bold text-[10px] uppercase tracking-widest transition-colors ${selected === item.id ? 'text-black' : 'text-white/60 group-hover:text-white'}`}>{item.label}</h3>
+                <h3 className={`font-bold text-[10px] uppercase tracking-[0.2em] transition-colors ${selected === item.id ? 'text-white' : 'text-slate-500 group-hover:text-slate-900'}`}>{item.label}</h3>
                 <AnimatePresence>
                     {selected === item.id && (
                         <motion.p
                             initial={{ opacity: 0, scale: 0.9 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.9 }}
-                            className="text-[8px] text-black/60 leading-tight font-mono px-2 normal-case"
+                            className="text-[8px] text-white/80 leading-tight font-mono px-2 normal-case font-medium"
                         >
                             {item.desc}
                         </motion.p>
@@ -118,12 +118,13 @@ export const SignalTypes: React.FC<ScreenProps> = ({
         ))}
       </div>
 
-      <div className="w-full max-w-lg mt-12 pb-12">
+      <div className="w-full max-w-lg mt-12 pb-12 px-4 text-left">
           <KnowledgeCard 
             title="Classification Theory"
             description="Engineers classify signals to decide which mathematical tools to use for analysis."
             details="Knowing your signal's nature is the first step in filter design and system optimization."
             icon={Network}
+            className="bg-white border-slate-200 shadow-sm"
           />
       </div>
     </div>

@@ -3,9 +3,13 @@ import { Trophy, Target, CheckCircle2, ChevronRight } from 'lucide-react';
 import { useGlobalSensory } from '../../hooks/useGlobalSensory';
 
 const T = {
-    card: '#0D0F16', border: '#1A1D24',
-    accent: '#00D4FF', success: '#34D399', warning: '#F59E0B',
-    muted: 'rgba(255,255,255,0.4)',
+    bg: '#FFFFFF',
+    card: '#F8FAFC',
+    border: '#E2E8F0',
+    accent: '#0EA5E9',
+    success: '#059669',
+    warning: '#D97706',
+    muted: '#64748B',
     mono: "'IBM Plex Mono',monospace"
 } as const;
 
@@ -82,14 +86,14 @@ export function SignalChallenges({ currentLevel, onStartChallenge, completedIds 
                             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
                                 <div style={{ 
                                     padding: '2px 6px', background: isDone ? T.success : T.accent, 
-                                    borderRadius: 2, fontSize: 8, color: '#000', fontWeight: 800 
+                                    borderRadius: 2, fontSize: 8, color: '#FFF', fontWeight: 800 
                                 }}>
                                     LV.{ch.level}
                                 </div>
                                 {isDone && <CheckCircle2 size={12} style={{ color: T.success }} />}
                             </div>
 
-                            <div style={{ fontSize: 11, fontWeight: 700, color: '#fff', marginBottom: 4 }}>
+                            <div style={{ fontSize: 11, fontWeight: 700, color: '#0F172A', marginBottom: 4 }}>
                                 {ch.title}
                             </div>
                             <div style={{ fontSize: 9, color: T.muted, lineHeight: 1.3, marginBottom: 8, height: 24 }}>

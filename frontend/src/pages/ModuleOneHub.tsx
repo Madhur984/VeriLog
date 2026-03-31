@@ -7,9 +7,9 @@ export const ModuleOneHub: React.FC = () => {
     const navigate = useNavigate();
 
     return (
-        <div className="min-h-screen bg-white flex flex-col items-center justify-center font-sans selection:bg-cyan-100 text-slate-900 relative overflow-hidden">
+        <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center font-sans selection:bg-sky-100 text-slate-900 relative overflow-hidden">
             {/* Ambient Background Glows */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyan-50 blur-[120px] rounded-full pointer-events-none" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-sky-100/50 blur-[120px] rounded-full pointer-events-none" />
 
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -23,7 +23,7 @@ export const ModuleOneHub: React.FC = () => {
                     transition={{ delay: 0.2, duration: 0.5 }}
                     className="mb-12 w-16 h-16 border border-slate-200 bg-white rounded-2xl flex items-center justify-center shadow-sm backdrop-blur-sm"
                 >
-                    <LinkIcon className="w-8 h-8 text-cyan-600" />
+                    <LinkIcon className="w-8 h-8 text-sky-600" />
                 </motion.div>
 
                 {/* Main Text Content */}
@@ -46,7 +46,7 @@ export const ModuleOneHub: React.FC = () => {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.6 }}
-                        className="text-3xl md:text-5xl font-bold text-cyan-600 tracking-tight leading-tight"
+                        className="text-3xl md:text-5xl font-bold text-sky-600 tracking-tight leading-tight"
                     >
                         "Energy must return to its source."
                     </motion.h1>
@@ -70,7 +70,7 @@ export const ModuleOneHub: React.FC = () => {
                 >
                     <button
                         onClick={() => navigate('/module/1/1')}
-                        className="group flex items-center justify-center gap-4 px-12 py-4 rounded-full bg-cyan-600 hover:bg-cyan-700 text-white font-bold text-sm tracking-[0.2em] transition-all w-full sm:w-auto shadow-lg hover:shadow-cyan-200/50 uppercase"
+                        className="group flex items-center justify-center gap-4 px-12 py-4 rounded-full bg-sky-600 hover:bg-sky-700 text-white font-bold text-sm tracking-[0.2em] transition-all w-full sm:w-auto shadow-lg hover:shadow-sky-200/50 uppercase"
                     >
                         Begin Experience
                         <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />

@@ -41,11 +41,11 @@ const SignalMustReturnModule = () => {
     };
 
     return (
-        <div className="min-h-screen bg-midnight text-slate-100 font-sans selection:bg-chart-cyan/30">
+        <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-sky-200">
             {/* Main Layout */}
             <div className="flex">
                 {/* Left Sidebar - Fixed */}
-                <aside className="w-72 h-screen sticky top-0 z-20 overflow-y-auto border-r border-slate-800/50 bg-slate-950/40 backdrop-blur-xl">
+                <aside className="w-72 h-screen sticky top-0 z-20 overflow-y-auto border-r border-slate-200 bg-white shadow-sm">
                     <ModuleSidebar 
                         moduleTitle="Signal Must Return" 
                         sections={sections} 

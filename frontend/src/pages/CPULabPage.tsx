@@ -3,7 +3,7 @@ import { CPUBuilderPanel } from '../components/cpu/CPUBuilderPanel';
 
 export const CPULabPage: React.FC = () => {
     return (
-        <div className="h-screen w-full bg-[#0a0f18] text-white overflow-hidden">
+        <div className="h-screen w-full bg-slate-50 text-slate-900 overflow-hidden">
             <CPUBuilderPanel />
         </div>
     );

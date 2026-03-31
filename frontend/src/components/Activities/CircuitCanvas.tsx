@@ -32,7 +32,7 @@ const StaticWire: React.FC<{ d: string; active?: boolean }> = ({ d, active }) =>
         <path
             d={d}
             fill="none"
-            stroke="#1A1D24"
+            stroke="#CBD5E1"
             strokeWidth={12}
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -40,7 +40,7 @@ const StaticWire: React.FC<{ d: string; active?: boolean }> = ({ d, active }) =>
         <path
             d={d}
             fill="none"
-            stroke="#2A2D35"
+            stroke="#94A3B8"
             strokeWidth={4}
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -152,10 +152,10 @@ export const CircuitCanvas: React.FC<CircuitCanvasProps> = ({
     const snapNodes = engine.snapGrid.getAll();
 
     return (
-        <div className="relative w-full h-[600px] bg-[#0A0B10] rounded-3xl overflow-hidden border border-[#1A1D24] shadow-2xl">
+        <div className="relative w-full h-[600px] bg-white rounded-3xl overflow-hidden border border-slate-200 shadow-2xl">
             {/* Blueprint Grid */}
-            <div className="absolute inset-0 opacity-20 pointer-events-none"
-                style={{ backgroundImage: 'radial-gradient(#2A2D35 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
+            <div className="absolute inset-0 opacity-40 pointer-events-none"
+                style={{ backgroundImage: 'radial-gradient(#F1F5F9 2px, transparent 2px)', backgroundSize: '30px 30px' }} />
 
             <style>{`
                 @keyframes dash {
@@ -173,12 +173,12 @@ export const CircuitCanvas: React.FC<CircuitCanvasProps> = ({
             >
                 <defs>
                     <linearGradient id="snapIdleGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#2A2D35" />
-                        <stop offset="100%" stopColor="#1A1D24" />
+                        <stop offset="0%" stopColor="#F1F5F9" />
+                        <stop offset="100%" stopColor="#E2E8F0" />
                     </linearGradient>
                     <linearGradient id="snapActiveGrad" x1="0" y1="0" x2="0" y2="1">
                         <stop offset="0%" stopColor="#10B981" />
-                        <stop offset="100%" stopColor="#2563EB" />
+                        <stop offset="100%" stopColor="#0EA5E9" />
                     </linearGradient>
                 </defs>
 

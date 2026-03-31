@@ -6,9 +6,14 @@ import { OscilloscopeCanvas } from './OscilloscopeCanvas';
 import { EnhancedSlider } from '../ui/EnhancedSlider';
 
 const T = {
-    card: '#0D0F16', border: '#1A1D24',
-    accent: '#00D4FF', success: '#34D399', warning: '#F59E0B', error: '#EF4444',
-    muted: 'rgba(255,255,255,0.4)',
+    bg: '#FFFFFF',
+    card: '#F8FAFC',
+    border: '#E2E8F0',
+    accent: '#0EA5E9',
+    success: '#059669',
+    warning: '#D97706',
+    error: '#DC2626',
+    muted: '#64748B',
     mono: "'IBM Plex Mono',monospace"
 } as const;
 
@@ -66,10 +71,10 @@ export function NoisyLineChallenge({ onComplete }: { onComplete: () => void }) {
     }, [isTransmitting, progress, threshold, filterStrength, errorDetected, onComplete, triggerHaptic, playSound]);
 
     return (
-        <div style={{ padding: 24, background: '#060912', borderRadius: 8, border: `1px solid ${T.border}` }}>
+        <div style={{ padding: 24, background: T.bg, borderRadius: 8, border: `1px solid ${T.border}` }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
                 <div>
-                    <h2 style={{ margin: 0, color: '#fff', fontSize: 18 }}>BOSS CHALLENGE: The Noisy Line</h2>
+                    <h2 style={{ margin: 0, color: '#0F172A', fontSize: 18 }}>BOSS CHALLENGE: The Noisy Line</h2>
                     <p style={{ margin: '4px 0 0', color: T.muted, fontSize: 11, fontFamily: T.mono }}>
                         MISSION: Clean the signal and transmit "HELLO WORLD"
                     </p>
@@ -93,7 +98,7 @@ export function NoisyLineChallenge({ onComplete }: { onComplete: () => void }) {
                     />
                     
                     <div style={{ 
-                        height: 4, background: 'rgba(255,255,255,0.05)', 
+                        height: 4, background: 'rgba(15, 23, 42, 0.05)', 
                         borderRadius: 2, overflow: 'hidden' 
                     }}>
                         <motion.div 
@@ -102,8 +107,8 @@ export function NoisyLineChallenge({ onComplete }: { onComplete: () => void }) {
                     </div>
 
                     <div style={{ 
-                        background: '#0D0F16', padding: 16, borderRadius: 4, 
-                        border: '1px solid rgba(0,212,255,0.1)', minHeight: 60,
+                        background: T.card, padding: 16, borderRadius: 4, 
+                        border: `1px solid ${T.accent}20`, minHeight: 60,
                         display: 'flex', alignItems: 'center', justifyContent: 'center'
                     }}>
                         <AnimatePresence mode="wait">
@@ -122,7 +127,7 @@ export function NoisyLineChallenge({ onComplete }: { onComplete: () => void }) {
                                     <span style={{ fontFamily: T.mono, fontWeight: 700 }}>HELLO WORLD [ACK]</span>
                                 </motion.div>
                             ) : (
-                                <div style={{ color: 'rgba(255,255,255,0.2)', fontSize: 12, fontFamily: T.mono }}>
+                                <div style={{ color: 'rgba(15, 23, 42, 0.2)', fontSize: 12, fontFamily: T.mono }}>
                                     ENCODE BUFFER EMPTY
                                 </div>
                             )}
@@ -130,7 +135,7 @@ export function NoisyLineChallenge({ onComplete }: { onComplete: () => void }) {
                     </div>
                 </div>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 20, background: '#0D0F16', padding: 20, borderRadius: 4 }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 20, background: T.card, padding: 20, borderRadius: 4 }}>
                     <div style={{ fontSize: 10, color: T.accent, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em' }}>
                         Engineer Overrides
                     </div>
@@ -156,8 +161,8 @@ export function NoisyLineChallenge({ onComplete }: { onComplete: () => void }) {
                             disabled={isTransmitting}
                             style={{ 
                                 width: '100%', padding: 14, background: isTransmitting ? 'transparent' : T.accent,
-                                border: isTransmitting ? '1px solid rgba(0,212,255,0.2)' : 'none',
-                                color: isTransmitting ? T.accent : '#000', fontWeight: 800,
+                                border: isTransmitting ? `1px solid ${T.accent}40` : 'none',
+                                color: isTransmitting ? T.accent : '#FFF', fontWeight: 800,
                                 borderRadius: 4, cursor: isTransmitting ? 'default' : 'pointer',
                                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8
                             }}

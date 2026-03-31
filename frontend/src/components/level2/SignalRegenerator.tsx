@@ -141,7 +141,7 @@ export function SignalRegenerator({ onComplete }: SignalRegeneratorProps) {
                         </span>
                     </div>
                 </div>
-                <div className="bg-slate-950 rounded-2xl overflow-hidden border border-slate-800">
+                <div className="bg-slate-50 rounded-2xl overflow-hidden border border-slate-200 shadow-inner">
                     <OscilloscopeCanvas
                         ch1Samples={noisyRef.current}
                         ch2Samples={cleanRef.current}

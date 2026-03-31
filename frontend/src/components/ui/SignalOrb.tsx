@@ -51,7 +51,7 @@ export const SignalOrb: React.FC<SignalOrbProps> = ({
             animate={controls}
             className={cn(
                 "relative flex items-center justify-center rounded-full cursor-pointer touch-none",
-                "w-32 h-32 bg-white/5 border border-white/10 backdrop-blur-xl shadow-2xl shadow-black/40",
+                "w-32 h-32 bg-sky-50/80 border border-sky-200/50 backdrop-blur-xl shadow-xl shadow-sky-600/10",
                 className
             )}
         >
@@ -59,13 +59,13 @@ export const SignalOrb: React.FC<SignalOrbProps> = ({
             <div className={cn(
                 "w-16 h-16 rounded-full opacity-40 blur-xl transition-colors duration-500",
                 type === 'analog' ? "bg-indigo-400 animate-pulse-slow" :
-                    type === 'clock' ? "bg-emerald-400" : "bg-blue-500"
+                    type === 'clock' ? "bg-emerald-400" : "bg-sky-500"
             )} />
 
             {/* Signal Visualization */}
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                 {type === 'digital' && (
-                    <div className="text-white/40 font-heading font-black text-xl tracking-tighter">
+                    <div className="text-sky-600/40 font-heading font-black text-xl tracking-tighter">
                         1010
                     </div>
                 )}

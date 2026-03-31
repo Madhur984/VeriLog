@@ -77,8 +77,8 @@ export const ElectricParticleField: React.FC = () => {
                 canvas.width / 2, canvas.height / 2, 0,
                 canvas.width / 2, canvas.height / 2, canvas.width
             );
-            bgGradient.addColorStop(0, '#0a0b10');
-            bgGradient.addColorStop(1, '#050508');
+            bgGradient.addColorStop(0, '#f8fafc');
+            bgGradient.addColorStop(1, '#f1f5f9');
             ctx.fillStyle = bgGradient;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -119,7 +119,7 @@ export const ElectricParticleField: React.FC = () => {
                 if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
 
                 // Draw Particle
-                ctx.fillStyle = '#00D4FF';
+                ctx.fillStyle = '#0284c7';
                 ctx.beginPath();
                 ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
                 ctx.fill();
@@ -132,7 +132,7 @@ export const ElectricParticleField: React.FC = () => {
                     const dist2 = Math.sqrt(dx2 * dx2 + dy2 * dy2);
 
                     if (dist2 < 100) {
-                        ctx.strokeStyle = `rgba(0, 212, 255, ${1 - dist2 / 100})`;
+                        ctx.strokeStyle = `rgba(2, 132, 199, ${0.4 - dist2 / 250})`;
                         ctx.lineWidth = 0.5;
                         ctx.beginPath();
                         ctx.moveTo(p.x, p.y);
@@ -165,8 +165,9 @@ export const ElectricParticleField: React.FC = () => {
                 width: '100%',
                 height: '100%',
                 zIndex: -1,
-                background: '#050508'
+                background: '#f8fafc'
             }}
         />
     );
 };
+

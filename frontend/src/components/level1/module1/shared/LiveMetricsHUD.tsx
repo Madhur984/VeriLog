@@ -19,9 +19,9 @@ export const LiveMetricsHUD: React.FC<HUDProps> = ({ signal, isDigital, classNam
   const isAliasing = isDigital && (signal.samplingRate || 0) < nyquist;
   const precision = isDigital ? Math.pow(2, signal.bitDepth || 8) : Infinity;
 
-  const Metric = ({ label, value, unit, color = "text-white/60", warning = false }: any) => (
+  const Metric = ({ label, value, unit, color = "text-slate-500", warning = false }: any) => (
     <div className="flex flex-col gap-1">
-      <span className="text-[7px] font-mono uppercase tracking-widest text-white/30">{label}</span>
+      <span className="text-[7px] font-mono uppercase tracking-widest text-slate-400">{label}</span>
       <div className={`flex items-baseline gap-1 ${warning ? 'text-[var(--error)]' : color}`}>
         <span className="text-xs font-mono font-bold leading-none">{value}</span>
         <span className="text-[7px] font-mono opacity-50">{unit}</span>
@@ -30,11 +30,11 @@ export const LiveMetricsHUD: React.FC<HUDProps> = ({ signal, isDigital, classNam
   );
 
   return (
-    <div className={`glass-card p-4 border-none bg-black/40 backdrop-blur-md flex flex-col gap-4 min-w-[140px] ${className}`}>
-      <div className="flex items-center justify-between border-b border-white/5 pb-2">
+    <div className={`glass-card p-4 flex flex-col gap-4 min-w-[140px] border border-slate-200 shadow-xl ${className}`}>
+      <div className="flex items-center justify-between border-b border-slate-100 pb-2">
         <div className="flex items-center gap-2">
           <Activity size={12} className="text-[var(--accent-primary)]" />
-          <span className="text-[9px] font-bold uppercase tracking-tighter">Live Monitor</span>
+          <span className="text-[9px] font-bold uppercase tracking-tighter text-slate-900">Live Monitor</span>
         </div>
         <AnimatePresence>
             {isAliasing ? (
@@ -42,7 +42,7 @@ export const LiveMetricsHUD: React.FC<HUDProps> = ({ signal, isDigital, classNam
                     <AlertTriangle size={12} className="text-[var(--error)]" />
                 </motion.div>
             ) : (
-                <CheckCircle2 size={12} className="text-[var(--accent-primary)]/40" />
+                <CheckCircle2 size={12} className="text-emerald-500/40" />
             )}
         </AnimatePresence>
       </div>

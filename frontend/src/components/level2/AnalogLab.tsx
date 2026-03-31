@@ -30,10 +30,10 @@ import { VeriButton } from '../shared/VeriButton';
 import { useAttentionLock } from '../../hooks/useAttentionLock';
 
 const T = {
-    bg: '#0A0B10', card: '#0D0F16', surface: '#1A1D24', border: '#1A1D24',
-    text: '#E5E7EB', muted: '#64748B', accent: '#00D4FF',
-    success: '#10B981', error: '#EF4444', warning: '#F59E0B',
-    analog: '#A78BFA',
+    bg: '#FFFFFF', card: '#F8FAFC', surface: '#F1F5F9', border: '#E2E8F0',
+    text: '#0F172A', muted: '#64748B', accent: '#0EA5E9',
+    success: '#059669', error: '#DC2626', warning: '#D97706',
+    analog: '#8B5CF6',
     mono: "'IBM Plex Mono','Roboto Mono',monospace",
     sans: "'Inter',system-ui,sans-serif",
 } as const;

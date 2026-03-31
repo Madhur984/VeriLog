@@ -71,24 +71,25 @@ export const CommunityFeed = memo(() => {
             <div style={{
                 display: 'flex',
                 gap: 8,
-                padding: '8px 12px',
-                borderBottom: '1px solid rgba(0, 212, 255, 0.06)',
+                padding: '12px 16px',
+                background: 'white',
+                borderBottom: '1px solid #E2E8F0',
                 alignItems: 'center',
             }}>
                 <input
                     type="text"
-                    placeholder="🔍 Search circuits..."
+                    placeholder="Search circuits..."
                     value={feedFilters.search || ''}
                     onChange={e => setFeedSearch(e.target.value)}
                     style={{
                         flex: 1,
-                        background: 'rgba(255,255,255,0.04)',
-                        border: '1px solid rgba(0, 212, 255, 0.1)',
-                        color: '#e6edf3',
+                        background: '#F8FAFC',
+                        border: '1px solid #E2E8F0',
+                        color: '#0F172A',
                         fontFamily: 'inherit',
-                        fontSize: 11,
-                        padding: '5px 10px',
-                        borderRadius: 4,
+                        fontSize: 12,
+                        padding: '8px 12px',
+                        borderRadius: 12,
                         outline: 'none',
                     }}
                 />
@@ -96,13 +97,13 @@ export const CommunityFeed = memo(() => {
                     value={feedFilters.sort}
                     onChange={e => setFeedSort(e.target.value as any)}
                     style={{
-                        background: 'rgba(255,255,255,0.04)',
-                        border: '1px solid rgba(0, 212, 255, 0.1)',
-                        color: '#e6edf3',
+                        background: '#F8FAFC',
+                        border: '1px solid #E2E8F0',
+                        color: '#0F172A',
                         fontFamily: 'inherit',
-                        fontSize: 10,
-                        padding: '4px 8px',
-                        borderRadius: 4,
+                        fontSize: 12,
+                        padding: '8px 12px',
+                        borderRadius: 12,
                         cursor: 'pointer',
                     }}
                 >
@@ -115,9 +116,10 @@ export const CommunityFeed = memo(() => {
             {/* Category Tabs */}
             <div style={{
                 display: 'flex',
-                gap: 2,
-                padding: '4px 12px',
-                borderBottom: '1px solid rgba(0, 212, 255, 0.04)',
+                gap: 8,
+                padding: '8px 16px',
+                background: 'white',
+                borderBottom: '1px solid #E2E8F0',
                 overflowX: 'auto',
             }}>
                 {CATEGORIES.map(cat => (
@@ -125,16 +127,17 @@ export const CommunityFeed = memo(() => {
                         key={cat.key}
                         onClick={() => handleCategoryChange(cat.key)}
                         style={{
-                            background: activeCategory === cat.key ? 'rgba(0, 212, 255, 0.08)' : 'transparent',
-                            border: `1px solid ${activeCategory === cat.key ? 'rgba(0, 212, 255, 0.2)' : 'transparent'}`,
-                            color: activeCategory === cat.key ? '#00D4FF' : 'rgba(255,255,255,0.3)',
-                            fontSize: 9,
-                            padding: '3px 8px',
-                            borderRadius: 3,
+                            background: activeCategory === cat.key ? '#F0F9FF' : 'transparent',
+                            border: `1px solid ${activeCategory === cat.key ? '#0284C7' : 'transparent'}`,
+                            color: activeCategory === cat.key ? '#0284C7' : '#94A3B8',
+                            fontSize: 11,
+                            padding: '6px 12px',
+                            borderRadius: 8,
                             cursor: 'pointer',
                             fontFamily: 'inherit',
+                            fontWeight: activeCategory === cat.key ? 600 : 400,
                             whiteSpace: 'nowrap',
-                            transition: 'all 100ms',
+                            transition: 'all 200ms',
                         }}
                     >
                         {cat.icon} {cat.label}
@@ -145,7 +148,7 @@ export const CommunityFeed = memo(() => {
             {/* Circuit Cards */}
             <div style={{ flex: 1, overflow: 'auto', padding: 12, display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {sorted.length === 0 && (
-                    <div style={{ color: 'rgba(255,255,255,0.1)', textAlign: 'center', padding: 40, fontSize: 12 }}>
+                    <div style={{ color: '#94A3B8', textAlign: 'center', padding: 40, fontSize: 13, fontWeight: 500 }}>
                         No circuits found. Try adjusting your filters!
                     </div>
                 )}
@@ -180,35 +183,37 @@ const CircuitCard = memo(({ circuit, onLike, onBookmark, onFork }: CircuitCardPr
 
     return (
         <div style={{
-            background: 'rgba(255,255,255,0.02)',
-            border: '1px solid rgba(0, 212, 255, 0.06)',
-            borderRadius: 6,
-            padding: '10px 12px',
-            transition: 'all 150ms',
+            background: 'white',
+            border: '1px solid #E2E8F0',
+            borderRadius: 16,
+            padding: '16px 20px',
+            transition: 'all 200ms',
             cursor: 'pointer',
+            boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.05)',
         }}>
             {/* Header */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
                 {/* Author avatar */}
                 <div style={{
-                    width: 24,
-                    height: 24,
-                    borderRadius: '50%',
-                    background: 'rgba(0, 212, 255, 0.1)',
+                    width: 32,
+                    height: 32,
+                    borderRadius: 10,
+                    background: '#F0F9FF',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    fontSize: 10,
-                    color: '#00D4FF',
+                    fontSize: 14,
+                    color: '#0284C7',
+                    fontWeight: 700,
                 }}>
                     {circuit.author.displayName[0]}
                 </div>
 
                 <div style={{ flex: 1 }}>
-                    <div style={{ color: '#e6edf3', fontWeight: 600, fontSize: 12 }}>
+                    <div style={{ color: '#0F172A', fontWeight: 700, fontSize: 14 }}>
                         {circuit.title}
                     </div>
-                    <div style={{ color: 'rgba(255,255,255,0.3)', fontSize: 9 }}>
+                    <div style={{ color: '#64748B', fontSize: 11 }}>
                         by {circuit.author.displayName} · Lv.{circuit.author.level}
                     </div>
                 </div>
@@ -230,10 +235,10 @@ const CircuitCard = memo(({ circuit, onLike, onBookmark, onFork }: CircuitCardPr
 
             {/* Description */}
             <div style={{
-                color: 'rgba(255,255,255,0.4)',
-                fontSize: 10,
-                lineHeight: 1.5,
-                marginBottom: 8,
+                color: '#475569',
+                fontSize: 12,
+                lineHeight: 1.6,
+                marginBottom: 12,
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
                 display: '-webkit-box',
@@ -244,15 +249,16 @@ const CircuitCard = memo(({ circuit, onLike, onBookmark, onFork }: CircuitCardPr
             </div>
 
             {/* Tags */}
-            <div style={{ display: 'flex', gap: 4, marginBottom: 8, flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: 6, marginBottom: 12, flexWrap: 'wrap' }}>
                 {circuit.tags.map(tag => (
                     <span key={tag} style={{
-                        fontSize: 8,
-                        padding: '1px 5px',
-                        background: 'rgba(0, 212, 255, 0.04)',
-                        border: '1px solid rgba(0, 212, 255, 0.08)',
-                        borderRadius: 2,
-                        color: 'rgba(0, 212, 255, 0.5)',
+                        fontSize: 10,
+                        padding: '3px 8px',
+                        background: '#F8FAFC',
+                        border: '1px solid #E2E8F0',
+                        borderRadius: 6,
+                        color: '#64748B',
+                        fontWeight: 500,
                     }}>
                         #{tag}
                     </span>
@@ -262,9 +268,9 @@ const CircuitCard = memo(({ circuit, onLike, onBookmark, onFork }: CircuitCardPr
             {/* Actions */}
             <div style={{
                 display: 'flex',
-                gap: 12,
-                borderTop: '1px solid rgba(255,255,255,0.03)',
-                paddingTop: 6,
+                gap: 16,
+                borderTop: '1px solid #F1F5F9',
+                paddingTop: 12,
                 alignItems: 'center',
             }}>
                 <ActionBtn
@@ -283,9 +289,10 @@ const CircuitCard = memo(({ circuit, onLike, onBookmark, onFork }: CircuitCardPr
                         background: 'none',
                         border: 'none',
                         cursor: 'pointer',
-                        fontSize: 12,
-                        padding: 0,
-                        color: circuit.isBookmarked ? '#F59E0B' : 'rgba(255,255,255,0.15)',
+                        fontSize: 14,
+                        padding: 4,
+                        color: circuit.isBookmarked ? '#F59E0B' : '#CBD5E1',
+                        transition: 'color 150ms',
                     }}
                 >
                     {circuit.isBookmarked ? '⭐' : '☆'}
@@ -314,14 +321,16 @@ const ActionBtn = memo(({ icon, count, active, onClick }: {
             display: 'flex',
             alignItems: 'center',
             gap: 3,
-            fontSize: 10,
-            color: active ? '#EF4444' : 'rgba(255,255,255,0.25)',
-            padding: 0,
+            fontSize: 11,
+            color: active ? '#F43F5E' : '#64748B',
+            padding: '4px 8px',
+            borderRadius: 6,
+            transition: 'all 150ms',
             fontFamily: "'IBM Plex Mono', monospace",
         }}
     >
-        <span style={{ fontSize: 11 }}>{icon}</span>
-        <span style={{ fontSize: 9 }}>{count}</span>
+        <span style={{ fontSize: 12 }}>{icon}</span>
+        <span style={{ fontSize: 11, fontWeight: 600 }}>{count}</span>
     </button>
 ));
 

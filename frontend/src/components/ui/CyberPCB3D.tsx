@@ -67,7 +67,7 @@ const ElectronPacket = ({ route }: any) => {
 const GridFloor = () => {
     return (
         <gridHelper
-            args={[50, 50, 0x1e293b, 0x0f172a]}
+            args={[50, 50, 0xe2e8f0, 0xf1f5f9]}
             position={[0, -2, 0]}
         />
     );
@@ -93,21 +93,21 @@ export const CyberPCB3D: React.FC<CyberPCB3DProps> = ({ className, intensity: _i
     }, []);
 
     return (
-        <div className={cn("absolute inset-0 -z-10 bg-slate-950", className)}>
+        <div className={cn("absolute inset-0 -z-10 bg-slate-50", className)}>
             <Canvas>
                 <PerspectiveCamera makeDefault position={[0, 2, 12]} fov={60} />
                 <ambientLight intensity={0.5} />
 
                 <GridFloor />
 
-                <fog attach="fog" args={['#0D0F16', 5, 25]} />
+                <fog attach="fog" args={['#F8FAFC', 5, 25]} />
 
                 {/* Circuit Traces */}
                 {routes.map((route, i) => (
                     <group key={i}>
                         <CircuitTrace
                             points={route}
-                            color={i % 2 === 0 ? "#3A86FF" : "#2EC4B6"}
+                            color={i % 2 === 0 ? "#0284C7" : "#0D9488"}
                             speed={1 + Math.random()}
                         />
                         <ElectronPacket route={route} />
@@ -122,12 +122,12 @@ export const CyberPCB3D: React.FC<CyberPCB3DProps> = ({ className, intensity: _i
                         (Math.random() * 20) - 10
                     ]}>
                         <boxGeometry args={[0.05, 0.05, 0.05]} />
-                        <meshBasicMaterial color={Math.random() > 0.5 ? "#FFBE0B" : "#3A86FF"} />
+                        <meshBasicMaterial color={Math.random() > 0.5 ? "#CA8A04" : "#0284C7"} />
                     </mesh>
                 ))}
             </Canvas>
-            {/* Vignette Overlay */}
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(15,23,42,0.8)_100%)] pointer-events-none" />
+            {/* Light Vignette Overlay */}
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(241,245,249,0.5)_100%)] pointer-events-none" />
         </div>
     );
 };

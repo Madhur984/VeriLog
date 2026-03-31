@@ -21,9 +21,9 @@ const AUDIO_CONTEXT = new (window.AudioContext || (window as any).webkitAudioCon
  */
 
 const T = {
-    bg: '#0A0B10', card: '#0D0F16', surface: '#1A1D24', border: '#1A1D24',
-    text: '#E5E7EB', muted: '#64748B', accent: '#00D4FF',
-    success: '#10B981', error: '#EF4444', warning: '#F59E0B',
+    bg: '#FFFFFF', card: '#F8FAFC', surface: '#F1F5F9', border: '#E2E8F0',
+    text: '#0F172A', muted: '#64748B', accent: '#0EA5E9',
+    success: '#059669', error: '#DC2626', warning: '#D97706',
     sampling: '#3B82F6',
     mono: "'IBM Plex Mono', monospace"
 };
@@ -256,9 +256,9 @@ export function SamplingLab({ onComplete }: { onComplete: (xp: number) => void }
                                 <button 
                                     onClick={() => setIsSweepActive(!isSweepActive)}
                                     style={{
-                                        padding: '12px', background: isSweepActive ? T.error : 'rgba(255,255,255,0.05)',
+                                        padding: '12px', background: isSweepActive ? T.error : 'rgba(15, 23, 42, 0.05)',
                                         border: `1px solid ${isSweepActive ? T.error : T.border}`,
-                                        borderRadius: 6, color: '#FFF', fontFamily: T.mono, fontSize: 10,
+                                        borderRadius: 6, color: isSweepActive ? '#FFF' : T.text, fontFamily: T.mono, fontSize: 10,
                                         cursor: 'pointer'
                                     }}
                                 >
@@ -267,9 +267,9 @@ export function SamplingLab({ onComplete }: { onComplete: (xp: number) => void }
                                 <button 
                                     onClick={() => setIsAudioLocked(!isAudioLocked)}
                                     style={{
-                                        padding: '12px', background: isAudioLocked ? T.accent : 'rgba(255,255,255,0.05)',
+                                        padding: '12px', background: isAudioLocked ? T.accent : 'rgba(15, 23, 42, 0.05)',
                                         border: `1px solid ${isAudioLocked ? T.accent : T.border}`,
-                                        borderRadius: 6, color: isAudioLocked ? '#000' : '#FFF', fontFamily: T.mono, fontSize: 10,
+                                        borderRadius: 6, color: isAudioLocked ? '#FFF' : T.text, fontFamily: T.mono, fontSize: 10,
                                         cursor: 'pointer', fontWeight: isAudioLocked ? 700 : 400
                                     }}
                                 >

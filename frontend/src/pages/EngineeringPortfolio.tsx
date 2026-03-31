@@ -15,13 +15,13 @@ import { useNavigate } from 'react-router-dom';
 import { useGamificationStore } from '../stores/gamificationStore';
 
 const T = {
-    bg: '#060B18',
-    card: '#0D0F16',
-    surface: '#1A1D24',
-    border: 'rgba(0,212,255,0.15)',
-    text: '#E5E7EB',
-    muted: '#94A3B8',
-    accent: '#00D4FF',
+    bg: '#F8FAFC',
+    card: '#FFFFFF',
+    surface: '#F1F5F9',
+    border: '#E2E8F0',
+    text: '#0F172A',
+    muted: '#64748B',
+    accent: '#0284C7',
     success: '#10B981',
     mono: "'JetBrains Mono', monospace",
     sans: "'Inter', system-ui, sans-serif",
@@ -50,7 +50,7 @@ export const EngineeringPortfolio: React.FC = () => {
         <div style={{
             minHeight: '100vh', width: '100%', background: T.bg,
             color: T.text, fontFamily: T.sans, padding: '40px 24px',
-            backgroundImage: 'radial-gradient(circle at 50% 0%, rgba(0,212,255,0.08) 0%, transparent 70%)',
+            backgroundImage: 'radial-gradient(circle at 50% 0%, rgba(2,132,199,0.05) 0%, transparent 70%)',
         }}>
             <div style={{ maxWidth: 800, margin: '0 auto' }}>
 
@@ -70,7 +70,7 @@ export const EngineeringPortfolio: React.FC = () => {
                         <button style={{ padding: '8px 16px', borderRadius: 6, background: T.surface, border: 'none', color: T.text, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8, fontSize: 13 }}>
                             <Share2 size={16} /> Share
                         </button>
-                        <button style={{ padding: '8px 16px', borderRadius: 6, background: T.accent, border: 'none', color: T.bg, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8, fontSize: 13 }}>
+                        <button style={{ padding: '8px 16px', borderRadius: 6, background: T.accent, border: 'none', color: '#FFFFFF', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8, fontSize: 13 }}>
                             <Download size={16} /> Export PDF
                         </button>
                     </div>
@@ -80,11 +80,12 @@ export const EngineeringPortfolio: React.FC = () => {
                 <header style={{ marginBottom: 64, textAlign: 'center' }}>
                     <div style={{
                         width: 100, height: 100, borderRadius: '50%',
-                        background: 'linear-gradient(135deg, #10B981 0%, #8B5CF6 100%)',
+                        background: 'linear-gradient(135deg, #0284C7 0%, #3B82F6 100%)',
                         margin: '0 auto 24px', display: 'flex', alignItems: 'center',
                         justifyContent: 'center', fontSize: 32, fontWeight: 800,
-                        border: '4px solid rgba(0,212,255,0.2)',
-                        boxShadow: '0 0 40px rgba(0,212,255,0.2)',
+                        border: '4px solid #FFFFFF',
+                        boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
+                        color: '#FFFFFF'
                     }}>
                         {(firstName || 'S')[0].toUpperCase()}
                     </div>
@@ -124,9 +125,9 @@ export const EngineeringPortfolio: React.FC = () => {
                             >
                                 <div style={{
                                     width: 48, height: 48, borderRadius: 8,
-                                    background: 'rgba(0,212,255,0.05)', display: 'flex',
+                                    background: 'rgba(2,132,199,0.05)', display: 'flex',
                                     alignItems: 'center', justifyContent: 'center', color: T.accent,
-                                    border: '1px solid rgba(0,212,255,0.2)'
+                                    border: `1px solid ${T.border}`
                                 }}>
                                     <Award size={24} />
                                 </div>
@@ -142,7 +143,7 @@ export const EngineeringPortfolio: React.FC = () => {
                 </section>
 
                 {/* Skills Radar / Competencies Teaser */}
-                <section style={{ padding: 32, borderRadius: 16, background: 'rgba(0,212,255,0.03)', border: `1px solid ${T.border}` }}>
+                <section style={{ padding: 32, borderRadius: 16, background: '#FFFFFF', border: `1px solid ${T.border}` }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 24 }}>
                         <div>
                             <h3 style={{ fontSize: 12, fontFamily: T.mono, textTransform: 'uppercase', letterSpacing: '0.2em', color: T.accent, marginBottom: 8 }}>

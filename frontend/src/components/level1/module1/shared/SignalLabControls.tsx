@@ -23,7 +23,7 @@ export const SignalLabControls: React.FC<LabControlsProps> = ({
   const presets = [
     { id: 'pure', label: 'Pure Tone', icon: Zap, color: 'text-[var(--accent-primary)]' },
     { id: 'aliased', label: 'Aliased', icon: Sliders, color: 'text-[var(--error)]' },
-    { id: 'noisy', label: 'Noisy', icon: Music, color: 'text-white/40' },
+    { id: 'noisy', label: 'Noisy', icon: Music, color: 'text-slate-400' },
     { id: 'retro', label: '8-bit Retro', icon: Volume2, color: 'text-[var(--accent-secondary)]' }
   ];
 
@@ -37,30 +37,30 @@ export const SignalLabControls: React.FC<LabControlsProps> = ({
             size="sm"
             variant="secondary"
             onClick={() => onPreset(p.id)}
-            className="flex items-center gap-2 !p-2"
+            className="flex items-center gap-2 !p-2 border-slate-200"
           >
             <p.icon size={10} className={`${p.color} transition-transform group-hover:scale-110`} />
-            <span className="text-[8px] font-mono uppercase tracking-widest">{p.label}</span>
+            <span className="text-[8px] font-mono uppercase tracking-widest text-slate-600">{p.label}</span>
           </VeriButton>
         ))}
       </div>
 
       {/* Time Controls */}
-      <div className="glass-card p-3 space-y-3 !bg-black/20">
-        <div className="flex items-center justify-between border-b border-white/5 pb-2">
-          <span className="text-[8px] font-mono uppercase tracking-[0.2em] text-white/20 font-bold">Time Domain</span>
+      <div className="glass-card p-3 space-y-3 !bg-slate-50/50 border-slate-200">
+        <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+          <span className="text-[8px] font-mono uppercase tracking-[0.2em] text-slate-400 font-bold">Time Domain</span>
           <VeriButton 
             size="sm"
             variant={isFrozen ? 'primary' : 'ghost'}
             onClick={() => onFreeze(!isFrozen)}
-            className="!p-1"
+            className="!p-1 text-slate-600"
           >
             {isFrozen ? <Play size={12} fill="currentColor" /> : <Pause size={12} fill="currentColor" />}
           </VeriButton>
         </div>
 
         <div className="flex items-center gap-3">
-          <VeriButton size="sm" variant="ghost" onClick={() => onTimeChange(Math.max(0, time - 0.1))} className="!p-1">
+          <VeriButton size="sm" variant="ghost" onClick={() => onTimeChange(Math.max(0, time - 0.1))} className="!p-1 text-slate-400">
             <Rewind size={12} />
           </VeriButton>
           
@@ -72,13 +72,13 @@ export const SignalLabControls: React.FC<LabControlsProps> = ({
             className="flex-1"
           />
 
-          <VeriButton size="sm" variant="ghost" onClick={() => onTimeChange(Math.min(10, time + 0.1))} className="!p-1">
+          <VeriButton size="sm" variant="ghost" onClick={() => onTimeChange(Math.min(10, time + 0.1))} className="!p-1 text-slate-400">
             <FastForward size={12} />
           </VeriButton>
         </div>
-        <div className="flex justify-between text-[7px] font-mono uppercase text-white/20 font-bold">
+        <div className="flex justify-between text-[7px] font-mono uppercase text-slate-400 font-bold">
             <span>0.00ms</span>
-            <span>T:{time.toFixed(2)}s</span>
+            <span className="text-slate-900">T:{time.toFixed(2)}s</span>
             <span>10.00ms</span>
         </div>
       </div>

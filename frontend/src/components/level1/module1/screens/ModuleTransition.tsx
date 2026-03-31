@@ -40,7 +40,7 @@ export const ModuleTransition: React.FC<ScreenProps & { onInitialize: () => void
   };
 
   return (
-    <div className="section-content relative overflow-hidden flex flex-col items-center justify-center min-h-[600px]" {...focusProps}>
+    <div className="section-content relative overflow-hidden flex flex-col items-center justify-center min-h-[600px] bg-white px-8" {...focusProps}>
       <div className="absolute inset-0 z-0" style={getDimStyle(false)}>
         <motion.div 
           animate={{
@@ -48,23 +48,23 @@ export const ModuleTransition: React.FC<ScreenProps & { onInitialize: () => void
             opacity: [0.1, 0.2, 0.1]
           }}
           transition={{ duration: 8, repeat: Infinity }}
-          className="absolute inset-0 bg-radial-gradient from-[var(--accent-secondary)]/10 to-transparent"
+          className="absolute inset-0 bg-radial-gradient from-sky-400/20 to-transparent"
         />
         
-        <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[300px] flex items-center justify-center opacity-20 blur-[2px]">
+        <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[300px] flex items-center justify-center opacity-10 blur-[2px]">
             <Oscilloscope 
                 signalA={signal} 
                 mode={isDigital ? 'digital' : 'analog'} 
-                className={`w-full h-full scale-125 transition-all duration-1000 ${isDigital ? 'text-[var(--accent-secondary)]' : 'text-[var(--accent-primary)]'}`} 
+                className={`w-full h-full scale-125 transition-all duration-1000 ${isDigital ? 'text-violet-500' : 'text-sky-500'}`} 
             />
         </div>
 
         <motion.div 
-          animate={{ opacity: isDigital ? 0.4 : 0 }}
+          animate={{ opacity: isDigital ? 0.3 : 0 }}
           className="absolute inset-0 pointer-events-none"
           style={{ 
-            backgroundImage: 'radial-gradient(circle at center, var(--accent-secondary-alpha) 1px, transparent 1px)', 
-            backgroundSize: '20px 20px' 
+            backgroundImage: 'radial-gradient(circle at center, #0ea5e9 1px, transparent 1px)', 
+            backgroundSize: '24px 24px' 
           }} 
         />
       </div>
@@ -74,14 +74,14 @@ export const ModuleTransition: React.FC<ScreenProps & { onInitialize: () => void
             <motion.div
                 initial={{ scale: 0, rotate: -180 }}
                 animate={{ scale: 1, rotate: 0 }}
-                className={`w-20 h-20 rounded-full flex items-center justify-center mx-auto border-2 transition-all duration-1000 ${isDigital ? 'border-[var(--accent-secondary)] bg-[var(--accent-secondary)]/10 shadow-[0_0_40px_var(--accent-secondary-alpha)]' : 'border-[var(--accent-primary)] bg-[var(--accent-primary)]/10'}`}
+                className={`w-20 h-20 rounded-full flex items-center justify-center mx-auto border-2 transition-all duration-1000 ${isDigital ? 'border-violet-500 bg-violet-50 shadow-xl shadow-violet-100/50' : 'border-sky-500 bg-sky-50 shadow-xl shadow-sky-100/50'}`}
             >
-                <Zap className={`w-10 h-10 transition-colors duration-1000 ${isDigital ? 'text-[var(--accent-secondary)]' : 'text-[var(--accent-primary)]'}`} />
+                <Zap className={`w-10 h-10 transition-colors duration-1000 ${isDigital ? 'text-violet-500' : 'text-sky-500'}`} />
             </motion.div>
             
             <motion.div
                 animate={{ opacity: isDigital ? 1 : 0 }}
-                className="text-[8px] font-mono text-[var(--accent-secondary)] uppercase tracking-[0.5em] font-bold"
+                className="text-[10px] font-mono text-violet-600 uppercase tracking-[0.5em] font-black"
             >
                 Protocol Shift: Analog → Digital
             </motion.div>
@@ -89,10 +89,10 @@ export const ModuleTransition: React.FC<ScreenProps & { onInitialize: () => void
 
         <div className="space-y-6">
           <motion.h2 
-            className="title-xl uppercase tracking-widest leading-tight italic"
+            className="title-xl uppercase tracking-tighter leading-tight italic text-slate-900 font-black"
           >
             THE TRANSITION <br />
-            <span className={isDigital ? 'text-[var(--accent-secondary)]' : 'text-[var(--accent-primary)]'}>IS COMPLETE.</span>
+            <span className={isDigital ? 'text-violet-600' : 'text-sky-600'}>IS COMPLETE.</span>
           </motion.h2>
 
           <AnimatePresence mode="wait">
@@ -102,7 +102,7 @@ export const ModuleTransition: React.FC<ScreenProps & { onInitialize: () => void
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="body italic opacity-60 leading-relaxed font-mono text-xs"
+                    className="body italic text-slate-400 leading-relaxed font-mono text-xs font-bold"
                 >
                     Capturing high-fidelity noise floor...
                 </motion.p>
@@ -111,7 +111,7 @@ export const ModuleTransition: React.FC<ScreenProps & { onInitialize: () => void
                     key="digital"
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="body font-bold text-[var(--accent-secondary)] leading-relaxed px-8 italic"
+                    className="body font-bold text-violet-600 leading-relaxed px-8 italic"
                 >
                     “This imperfect signal must now be controlled.”
                 </motion.p>
@@ -119,18 +119,21 @@ export const ModuleTransition: React.FC<ScreenProps & { onInitialize: () => void
           </AnimatePresence>
         </div>
 
-        <div className="grid grid-cols-3 gap-4 max-w-md mx-auto opacity-40" style={getDimStyle(false)}>
-            <div className="glass-card p-3 border-none flex flex-col items-center gap-1 bg-white/5">
-                <Target size={12} className="text-[var(--accent-primary)]" />
-                <span className="text-[7px] font-mono font-bold uppercase tracking-widest text-[#E3F2FD]">Accuracy: {memory?.performanceScore || 0}%</span>
+        <div className="grid grid-cols-3 gap-4 max-w-md mx-auto" style={getDimStyle(false)}>
+            <div className="glass-card p-4 border-slate-100 flex flex-col items-center gap-1 bg-white shadow-sm rounded-2xl">
+                <Target size={14} className="text-sky-500 mb-1" />
+                <span className="text-[8px] font-mono font-black uppercase tracking-widest text-slate-900">Accuracy</span>
+                <span className="text-[10px] font-black text-sky-600">{memory?.performanceScore || 0}%</span>
             </div>
-            <div className="glass-card p-3 border-none flex flex-col items-center gap-1 bg-white/5">
-                <AlertCircle size={12} className="text-[var(--error)]" />
-                <span className="text-[7px] font-mono font-bold uppercase tracking-widest text-[#E3F2FD]">Errors: {memory?.totalMistakes || 0}</span>
+            <div className="glass-card p-4 border-slate-100 flex flex-col items-center gap-1 bg-white shadow-sm rounded-2xl">
+                <AlertCircle size={14} className="text-rose-500 mb-1" />
+                <span className="text-[8px] font-mono font-black uppercase tracking-widest text-slate-900">Errors</span>
+                <span className="text-[10px] font-black text-rose-600">{memory?.totalMistakes || 0}</span>
             </div>
-            <div className="glass-card p-3 border-none flex flex-col items-center gap-1 bg-white/5">
-                <Power size={12} className="text-[var(--success)]" />
-                <span className="text-[7px] font-mono font-bold uppercase tracking-widest text-[#E3F2FD]">Stability: HIGH</span>
+            <div className="glass-card p-4 border-slate-100 flex flex-col items-center gap-1 bg-white shadow-sm rounded-2xl">
+                <Power size={14} className="text-emerald-500 mb-1" />
+                <span className="text-[8px] font-mono font-black uppercase tracking-widest text-slate-900">Stability</span>
+                <span className="text-[10px] font-black text-emerald-600">HIGH</span>
             </div>
         </div>
 
@@ -138,16 +141,16 @@ export const ModuleTransition: React.FC<ScreenProps & { onInitialize: () => void
           <VeriButton
             onClick={handleFinalize}
             variant={isDigital ? "logic" : "signal"}
-            className="shadow-xl"
+            className="shadow-xl rounded-2xl px-12 h-14 font-black uppercase tracking-widest text-xs"
           >
-            INIT MOD_02 <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+            INIT MOD_02 <ArrowRight size={16} className="ml-2 group-hover:translate-x-1 transition-transform" />
           </VeriButton>
         </div>
       </div>
 
-      <div className="absolute bottom-8 w-full px-12 flex justify-between items-center opacity-20 font-mono text-[7px] tracking-widest uppercase" style={getDimStyle(false)}>
+      <div className="absolute bottom-8 w-full px-12 flex justify-between items-center opacity-40 font-mono text-[8px] tracking-[0.4em] uppercase font-black text-slate-400" style={getDimStyle(false)}>
           <span>Signal_End: 0xFF</span>
-          <div className="h-px flex-1 mx-8 bg-white/10" />
+          <div className="h-px flex-1 mx-8 bg-slate-200" />
           <span>Next_Module: SYSTEM_LOGIC</span>
       </div>
     </div>

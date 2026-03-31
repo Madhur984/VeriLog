@@ -108,7 +108,7 @@ export const VeriSlider: React.FC<VeriSliderProps> = ({
         >
             {label && (
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-                    <span style={{ fontSize: 9, fontFamily: 'IBM Plex Mono', color: 'rgba(255,255,255,0.4)', letterSpacing: '0.15em', textTransform: 'uppercase' }}>{label}</span>
+                    <span style={{ fontSize: 9, fontFamily: 'IBM Plex Mono', color: '#64748B', letterSpacing: '0.15em', textTransform: 'uppercase', fontWeight: 600 }}>{label}</span>
                     <span style={{ fontSize: 11, fontFamily: 'IBM Plex Mono', color: color, fontWeight: 700 }}>
                         {value.toFixed(2)}{unit}
                     </span>
@@ -117,19 +117,19 @@ export const VeriSlider: React.FC<VeriSliderProps> = ({
             
             <div style={{ position: 'relative', height: 32, display: 'flex', alignItems: 'center' }}>
                 {/* Track */}
-                <div style={{ position: 'absolute', width: '100%', height: 2, background: 'rgba(255,255,255,0.05)', borderRadius: 1 }} />
+                <div style={{ position: 'absolute', width: '100%', height: 2, background: '#F1F5F9', borderRadius: 1 }} />
                 
                 {/* Magnetic Area Glow */}
                 <AnimatePresence>
                     {isDragging && (
                         <motion.div
-                            initial={{ opacity: 0 }} animate={{ opacity: 0.15 }} exit={{ opacity: 0 }}
-                            style={{ position: 'absolute', width: '100%', height: 40, background: `radial-gradient(circle at ${percent}%, ${color}, transparent 80%)`, pointerEvents: 'none', filter: 'blur(10px)' }}
+                            initial={{ opacity: 0 }} animate={{ opacity: 0.1 }} exit={{ opacity: 0 }}
+                            style={{ position: 'absolute', width: '100%', height: 32, background: `radial-gradient(circle at ${percent}%, ${color}, transparent 80%)`, pointerEvents: 'none', filter: 'blur(8px)' }}
                         />
                     )}
                 </AnimatePresence>
 
-                <motion.div style={{ position: 'absolute', width: `${percent}%`, height: 2, background: color, boxShadow: `0 0 10px ${glow}` }} />
+                <motion.div style={{ position: 'absolute', width: `${percent}%`, height: 2, background: color, boxShadow: `0 0 8px ${color}44` }} />
 
                 {/* Input Layer */}
                 <input
@@ -141,12 +141,12 @@ export const VeriSlider: React.FC<VeriSliderProps> = ({
 
                 {/* Handle */}
                 <motion.div
-                    animate={{ scale: isDragging ? 1.1 : 1, borderColor: isDragging ? '#FFF' : color }}
+                    animate={{ scale: isDragging ? 1.1 : 1, borderColor: isDragging ? color : color }}
                     style={{
                         position: 'absolute', left: `${percent}%`, width: 14, height: 14, borderRadius: '50%',
-                        background: '#0D0F16', border: `2px solid ${color}`, transform: 'translateX(-50%)',
+                        background: '#FFFFFF', border: `2px solid ${color}`, transform: 'translateX(-50%)',
                         pointerEvents: 'none', zIndex: 5, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        boxShadow: isDragging ? `0 0 20px ${glow}` : 'none'
+                        boxShadow: isDragging ? `0 0 15px ${color}66` : '0 2px 4px rgba(0,0,0,0.05)'
                     }}
                 >
                     <div style={{ width: 4, height: 4, borderRadius: '50%', background: color }} />

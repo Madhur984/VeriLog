@@ -527,7 +527,7 @@ export const AssessmentPage: React.FC = () => {
                                                     className={cn(
                                                         "group relative w-full h-18 rounded-2xl font-black text-xl flex items-center justify-center overflow-hidden transition-all active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed shadow-xl shadow-slate-200",
                                                         !isAnswered
-                                                            ? "bg-slate-900 text-white hover:bg-black"
+                                                            ? "bg-sky-600 text-white hover:bg-sky-700 shadow-sky-600/20"
                                                             : (isCorrect ? "bg-emerald-600 text-white hover:bg-emerald-500" : "bg-rose-600 text-white hover:bg-rose-500")
                                                     )}
                                                 >
@@ -628,7 +628,7 @@ export const AssessmentPage: React.FC = () => {
                                     >
                                         <button
                                             onClick={() => navigate('/portal')}
-                                            className="group relative px-16 py-8 bg-slate-900 text-white font-heading font-black text-3xl rounded-[32px] overflow-hidden shadow-2xl shadow-slate-300 hover:scale-105 transition-all active:scale-95"
+                                            className="group relative px-16 py-8 bg-sky-600 text-white font-heading font-black text-3xl rounded-[32px] overflow-hidden shadow-2xl shadow-sky-600/20 hover:scale-105 transition-all active:scale-95"
                                         >
                                             <span className="relative z-10 flex items-center tracking-tighter">
                                                 ENTER PORTAL <ArrowRight className="ml-6 w-12 h-12 group-hover:translate-x-2 transition-transform" />

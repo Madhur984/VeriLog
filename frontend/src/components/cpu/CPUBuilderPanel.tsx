@@ -127,30 +127,31 @@ export const CPUBuilderPanel = memo(() => {
             display: 'flex',
             flexDirection: 'column',
             fontFamily: "'IBM Plex Mono', monospace",
-            fontSize: 11,
-            background: 'rgba(0, 0, 0, 0.15)',
+            fontSize: 12,
+            background: 'white',
         }}>
             {/* Toolbar */}
             <div style={{
                 display: 'flex',
-                gap: 4,
-                padding: '4px 8px',
-                borderBottom: '1px solid rgba(0, 212, 255, 0.06)',
+                gap: 8,
+                padding: '12px 16px',
+                borderBottom: '1px solid #E2E8F0',
                 alignItems: 'center',
+                background: 'white',
             }}>
-                <button onClick={handleAssembleAndLoad} style={tbBtnStyle('#10B981')}>🔧 Assemble</button>
-                <button onClick={handleStep} style={tbBtnStyle('#00D4FF')} disabled={cpuState.halted}>⏭ Step</button>
-                <button onClick={handleRun} style={tbBtnStyle('#F59E0B')} disabled={cpuState.halted}>▶ Run</button>
-                <button onClick={handleReset} style={tbBtnStyle('#EF4444')}>⏹ Reset</button>
-                <div style={{ width: 1, height: 14, background: 'rgba(0, 212, 255, 0.08)', margin: '0 4px' }} />
-                <span style={{ color: 'rgba(255,255,255,0.25)', fontSize: 9 }}>
-                    PC: <span style={{ color: '#00D4FF' }}>0x{cpuState.pc.toString(16).padStart(4, '0')}</span>
+                <button onClick={handleAssembleAndLoad} style={tbBtnStyle('#0284C7')}>🔧 Assemble</button>
+                <button onClick={handleStep} style={tbBtnStyle('#0284C7')} disabled={cpuState.halted}>⏭ Step</button>
+                <button onClick={handleRun} style={tbBtnStyle('#0F766E')} disabled={cpuState.halted}>▶ Run</button>
+                <button onClick={handleReset} style={tbBtnStyle('#E11D48')}>⏹ Reset</button>
+                <div style={{ width: 1, height: 20, background: '#E2E8F0', margin: '0 8px' }} />
+                <span style={{ color: '#64748B', fontSize: 11, fontWeight: 600 }}>
+                    PC: <span style={{ color: '#0284C7' }}>0x{cpuState.pc.toString(16).padStart(4, '0')}</span>
                 </span>
-                <span style={{ color: 'rgba(255,255,255,0.25)', fontSize: 9, marginLeft: 8 }}>
-                    Cycle: <span style={{ color: '#F59E0B' }}>{cpuState.cycleCount}</span>
+                <span style={{ color: '#64748B', fontSize: 11, fontWeight: 600, marginLeft: 16 }}>
+                    Cycle: <span style={{ color: '#EA580C' }}>{cpuState.cycleCount}</span>
                 </span>
                 {cpuState.halted && (
-                    <span style={{ color: '#EF4444', fontSize: 9, fontWeight: 600, marginLeft: 8 }}>HALTED</span>
+                    <span style={{ color: '#E11D48', fontSize: 11, fontWeight: 700, marginLeft: 16 }}>HALTED</span>
                 )}
             </div>
 
@@ -158,12 +159,13 @@ export const CPUBuilderPanel = memo(() => {
             <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
                 {/* Code Editor */}
                 <div style={{
-                    width: 280,
-                    borderRight: '1px solid rgba(0, 212, 255, 0.06)',
+                    width: 320,
+                    borderRight: '1px solid #E2E8F0',
                     display: 'flex',
                     flexDirection: 'column',
+                    background: '#F8FAFC',
                 }}>
-                    <div style={{ padding: '4px 8px', color: 'rgba(0, 212, 255, 0.3)', fontSize: 9, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+                    <div style={{ padding: '8px 12px', color: '#64748B', fontSize: 10, fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase', borderBottom: '1px solid #E2E8F0' }}>
                         Assembly Editor (RISC-V)
                     </div>
                     <textarea
@@ -172,12 +174,12 @@ export const CPUBuilderPanel = memo(() => {
                         spellCheck={false}
                         style={{
                             flex: 1,
-                            background: 'rgba(0, 0, 0, 0.3)',
-                            color: '#e6edf3',
+                            background: '#F8FAFC',
+                            color: '#1E293B',
                             border: 'none',
-                            padding: 8,
+                            padding: 16,
                             fontFamily: "'IBM Plex Mono', monospace",
-                            fontSize: 11,
+                            fontSize: 12,
                             lineHeight: 1.6,
                             resize: 'none',
                             outline: 'none',
@@ -188,31 +190,33 @@ export const CPUBuilderPanel = memo(() => {
                 {/* Right Panel: Registers + Pipeline */}
                 <div style={{ flex: 1, overflow: 'auto', display: 'flex', flexDirection: 'column' }}>
                     {/* Register File */}
-                    <div style={{ padding: 8 }}>
-                        <div style={{ color: 'rgba(0, 212, 255, 0.3)', fontSize: 9, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 4 }}>
+                    <div style={{ padding: 16 }}>
+                        <div style={{ color: '#0284C7', fontSize: 10, fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
+                            <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#0284C7' }} />
                             Register File (x0-x31)
                         </div>
                         <div style={{
                             display: 'grid',
                             gridTemplateColumns: 'repeat(8, 1fr)',
-                            gap: 2,
+                            gap: 4,
                         }}>
                             {Array.from({ length: 32 }, (_, i) => {
                                 const val = i === 0 ? 0 : (cpuState.registers.registers[i] || 0);
                                 const isNonZero = val !== 0;
                                 return (
                                     <div key={i} style={{
-                                        padding: '2px 4px',
-                                        background: isNonZero ? 'rgba(16, 185, 129, 0.06)' : 'rgba(255,255,255,0.02)',
-                                        border: `1px solid ${isNonZero ? 'rgba(16, 185, 129, 0.15)' : 'rgba(255,255,255,0.03)'}`,
-                                        borderRadius: 2,
+                                        padding: '8px 12px',
+                                        background: isNonZero ? '#F0F9FF' : '#FFFFFF',
+                                        border: `1px solid ${isNonZero ? '#BAE6FD' : '#E2E8F0'}`,
+                                        borderRadius: 12,
                                         textAlign: 'center',
+                                        transition: 'all 200ms',
                                     }}>
-                                        <div style={{ color: 'rgba(255,255,255,0.25)', fontSize: 7 }}>x{i}</div>
+                                        <div style={{ color: '#94A3B8', fontSize: 9, fontWeight: 600 }}>x{i}</div>
                                         <div style={{
-                                            color: isNonZero ? '#10B981' : 'rgba(255,255,255,0.15)',
-                                            fontSize: 9,
-                                            fontWeight: isNonZero ? 600 : 400,
+                                            color: isNonZero ? '#0369A1' : '#CBD5E1',
+                                            fontSize: 13,
+                                            fontWeight: 700,
                                         }}>
                                             {val}
                                         </div>

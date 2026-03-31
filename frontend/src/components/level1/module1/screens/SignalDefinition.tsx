@@ -25,23 +25,23 @@ export const SignalDefinition: React.FC<ScreenProps> = ({
   return (
     <div className="section-content flex flex-col items-center justify-center space-y-12 relative" {...focusProps}>
       <div className="text-center space-y-4">
-        <h2 className="text-[var(--accent-primary)] font-mono text-[10px] uppercase tracking-[0.5em] opacity-40">Architecture</h2>
-        <h1 className="title-xl italic">WHAT MAKES A SIGNAL?</h1>
+        <h2 className="text-sky-600 font-mono text-[10px] uppercase tracking-[0.5em] opacity-60">Architecture</h2>
+        <h1 className="title-xl italic text-slate-900">WHAT MAKES A SIGNAL?</h1>
       </div>
 
       <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         {/* Visualizer Card */}
-        <div className="glass-card aspect-video flex items-center justify-center relative overflow-hidden group">
-          <div className="absolute inset-0 bg-grid-white/[0.02]" />
+        <div className="glass-card aspect-video flex items-center justify-center relative overflow-hidden group border-slate-200 bg-white shadow-lg">
+          <div className="absolute inset-0 bg-grid-slate-900/[0.02]" />
           
           <div className="absolute top-4 left-4 flex flex-col gap-1 z-20">
-              <div className="flex items-center gap-2 opacity-30">
-                <Cpu size={14} />
-                <span className="text-[8px] font-mono uppercase tracking-widest text-white">V-OS Core // Signal Layer</span>
+              <div className="flex items-center gap-2 opacity-40">
+                <Cpu size={14} className="text-slate-900" />
+                <span className="text-[8px] font-mono uppercase tracking-widest text-slate-900">V-OS Core // Signal Layer</span>
               </div>
               <button 
                 onClick={() => setAudioEnabled(!audioEnabled)}
-                className={`flex items-center gap-2 px-3 py-1 mt-2 rounded border text-[8px] font-mono uppercase tracking-widest transition-all ${audioEnabled ? 'bg-[var(--accent-primary)] border-[var(--accent-primary)] text-black' : 'bg-black/40 border-white/5 text-white/40'}`}
+                className={`flex items-center gap-2 px-3 py-1 mt-2 rounded border text-[8px] font-mono uppercase tracking-widest transition-all ${audioEnabled ? 'bg-sky-500 border-sky-500 text-white shadow-md' : 'bg-slate-50 border-slate-200 text-slate-400 hover:bg-slate-100'}`}
               >
                 {audioEnabled ? <Volume2 size={10} /> : <VolumeX size={10} />}
                 {audioEnabled ? 'Audio Live' : 'Muted'}
@@ -55,17 +55,17 @@ export const SignalDefinition: React.FC<ScreenProps> = ({
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="absolute inset-0 z-30 bg-[#070B14]/80 backdrop-blur-sm flex flex-col items-center justify-center p-8 text-center"
+                className="absolute inset-0 z-30 bg-white/90 backdrop-blur-sm flex flex-col items-center justify-center p-8 text-center"
               >
-                <BrainCircuit className="text-[var(--accent-primary)] w-12 h-12 mb-4 animate-pulse" />
-                <h3 className="text-sm font-mono uppercase tracking-[0.3em] mb-2">Observation Strategy</h3>
-                <p className="body text-white/60 text-xs max-w-xs mb-6">Signals represent energy changes. Predict how increasing **Amplitude** will affect the wave before activating the reveal.</p>
+                <BrainCircuit className="text-sky-500 w-12 h-12 mb-4 animate-pulse" />
+                <h3 className="text-sm font-mono uppercase tracking-[0.3em] mb-2 text-slate-800">Observation Strategy</h3>
+                <p className="body text-slate-500 text-xs max-w-xs mb-6">Signals represent energy changes. Predict how increasing **Amplitude** will affect the wave before activating the reveal.</p>
                 <button 
                   onClick={() => {
                     setPredictionMode(false);
                     triggerHaptic?.('heavy');
                   }}
-                  className="px-6 py-2 rounded-full border border-[var(--accent-primary)] text-[var(--accent-primary)] text-[10px] uppercase tracking-widest hover:bg-[var(--accent-primary)] hover:text-black transition-all"
+                  className="px-6 py-2 rounded-full border border-sky-500 text-sky-600 text-[10px] uppercase tracking-widest hover:bg-sky-500 hover:text-white transition-all shadow-sm"
                 >
                   Confirm & Reveal
                 </button>
@@ -86,13 +86,13 @@ export const SignalDefinition: React.FC<ScreenProps> = ({
         </div>
 
         {/* Controls Card */}
-        <div className="space-y-8 glass-card p-10 !bg-white/5 relative overflow-hidden">
-          <h3 className="text-[10px] font-mono uppercase tracking-[0.4em] text-white/30 mb-4 border-b border-white/5 pb-2">Component Forge</h3>
+        <div className="space-y-8 glass-card p-10 !bg-slate-50 relative overflow-hidden border-slate-200">
+          <h3 className="text-[10px] font-mono uppercase tracking-[0.4em] text-slate-400 mb-4 border-b border-slate-200 pb-2">Component Forge</h3>
           
           <div className="space-y-4 group relative">
              <div className={`
                 absolute -inset-4 rounded-xl transition-all duration-500 pointer-events-none
-                ${currentHint?.type === 'pulse' ? 'bg-[var(--accent-primary)]/5 border border-[var(--accent-primary)]/20 scale-105' : 'bg-transparent'}
+                ${currentHint?.type === 'pulse' ? 'bg-sky-500/5 border border-sky-500/20 scale-105' : 'bg-transparent'}
              `} />
 
             <VeriSlider 

@@ -26,16 +26,16 @@ export const SignalTransform: React.FC<ScreenProps> = ({
   };
 
   return (
-    <div className="section-content flex flex-col items-center justify-center space-y-12" {...focusProps}>
+    <div className="section-content flex flex-col items-center justify-center space-y-12 bg-white" {...focusProps}>
         <div className="text-center space-y-4">
-            <h2 className="text-[var(--accent-primary)] font-mono text-[10px] uppercase tracking-[0.5em] opacity-40">Manipulation</h2>
-            <h1 className="title-xl italic">TRANSFORM THE WAVE.</h1>
-            <p className="body max-w-lg opacity-60">Signals aren't static. We stretch them, shift them, and invert them to carry information.</p>
+            <h2 className="text-sky-600 font-mono text-[10px] uppercase tracking-[0.5em] opacity-60">Manipulation</h2>
+            <h1 className="title-xl italic text-slate-900">TRANSFORM THE WAVE.</h1>
+            <p className="body max-w-lg text-slate-500 mx-auto">Signals aren't static. We stretch them, shift them, and invert them to carry information.</p>
         </div>
 
         <div className="w-full max-w-4xl grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-            <div className="glass-card aspect-video flex items-center justify-center relative overflow-hidden group">
-                <div className="absolute inset-0 bg-grid-white/[0.02]" />
+            <div className="glass-card aspect-video flex items-center justify-center relative overflow-hidden group border-slate-200 bg-white shadow-lg">
+                <div className="absolute inset-0 bg-grid-slate-900/[0.02]" />
                 
                 <AnimatePresence mode="wait">
                     {predictionMode ? (
@@ -44,11 +44,11 @@ export const SignalTransform: React.FC<ScreenProps> = ({
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="absolute inset-0 z-30 bg-[#070B14]/80 backdrop-blur-sm flex flex-col items-center justify-center p-8 text-center"
+                        className="absolute inset-0 z-30 bg-white/95 backdrop-blur-sm flex flex-col items-center justify-center p-8 text-center rounded-2xl shadow-xl"
                     >
-                        <BrainCircuit className="text-[var(--accent-secondary)] w-12 h-12 mb-4 animate-pulse" />
-                        <h3 className="text-sm font-mono uppercase tracking-[0.3em] mb-2">Phase Prediction</h3>
-                        <p className="body text-white/60 text-xs max-w-xs mb-6">Phase Shift moves a signal in time. Predict which direction a positive shift will move the wave.</p>
+                        <BrainCircuit className="text-indigo-500 w-12 h-12 mb-4 animate-pulse" />
+                        <h3 className="text-sm font-mono uppercase tracking-[0.3em] mb-2 text-slate-800">Phase Prediction</h3>
+                        <p className="body text-slate-500 text-xs max-w-xs mb-6">Phase Shift moves a signal in time. Predict which direction a positive shift will move the wave.</p>
                         <VeriButton 
                             variant="secondary"
                             onClick={() => {
@@ -68,13 +68,13 @@ export const SignalTransform: React.FC<ScreenProps> = ({
                     className="w-full h-full"
                 />
 
-                <div className="absolute bottom-4 right-4 flex items-center gap-2 opacity-20 font-mono text-[8px] uppercase">
-                    <span className="text-[var(--accent-primary)]">Transform Active</span>
-                    <span className="w-1 h-1 rounded-full bg-[var(--accent-primary)] animate-pulse" />
+                <div className="absolute bottom-4 right-4 flex items-center gap-2 opacity-30 font-mono text-[8px] uppercase">
+                    <span className="text-sky-600">Transform Active</span>
+                    <span className="w-1 h-1 rounded-full bg-sky-500 animate-pulse" />
                 </div>
             </div>
 
-            <div className="space-y-6 glass-card p-10 !bg-white/5 relative overflow-hidden">
+            <div className="space-y-6 glass-card p-10 !bg-slate-50 relative overflow-hidden border-slate-200 shadow-sm">
                 <VeriSlider 
                     label="Frequency Scale (Stretch)"
                     min={0.5}
@@ -109,7 +109,7 @@ export const SignalTransform: React.FC<ScreenProps> = ({
                 <VeriButton 
                   onClick={() => { setScale(1); setShift(0); playTargetSound(); triggerHaptic?.('medium'); }}
                   variant="ghost"
-                  className="w-full mt-4"
+                  className="w-full mt-4 bg-white border-slate-100 shadow-xs"
                 >
                   <RotateCcw size={14} className="mr-2" /> Reset Transformation
                 </VeriButton>

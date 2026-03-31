@@ -102,13 +102,13 @@ export const SignalPlayground = () => {
                                 <span>Frequency Calibration</span>
                                 <span className="text-sky-600">{Math.round(analogLevel)}%</span>
                             </div>
-                            <div className="h-44 w-full bg-slate-900 rounded-xl border border-slate-800 relative overflow-hidden flex items-center justify-center shadow-inner">
+                            <div className="h-44 w-full bg-slate-50 rounded-xl border border-slate-200 relative overflow-hidden flex items-center justify-center shadow-inner">
                                 {/* Wave Viz */}
                                 <svg className="absolute inset-0 w-full h-full opacity-50" preserveAspectRatio="none">
                                     <motion.path
                                         animate={{
                                             d: `M0,88 Q112.5,${88 - (analogLevel * 1.5)} 225,88 T450,88`,
-                                            stroke: isAnalogSynced ? "#38bdf8" : "#475569"
+                                            stroke: isAnalogSynced ? "#0284c7" : "#cbd5e1"
                                         }}
                                         fill="none"
                                         strokeWidth="6"
@@ -197,7 +197,7 @@ export const SignalPlayground = () => {
                                 <span>Logic Phase</span>
                                 <span className="text-indigo-600">{digitalState ? "1 (High)" : "0 (Low)"}</span>
                             </div>
-                            <div className="h-44 w-full bg-slate-900 rounded-xl border border-slate-800 relative overflow-hidden flex items-center justify-center shadow-inner">
+                            <div className="h-44 w-full bg-slate-50 rounded-xl border border-slate-200 relative overflow-hidden flex items-center justify-center shadow-inner">
                                 <div className="absolute inset-0 flex items-center justify-around px-8 opacity-10">
                                     <div className="h-1 w-full bg-indigo-400 rounded-full" />
                                 </div>

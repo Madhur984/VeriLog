@@ -214,7 +214,7 @@ export const GatekeeperGame = () => {
                             className={cn(
                                 "group relative px-14 py-5 rounded-2xl font-black text-xl tracking-tight transition-all active:scale-95 shadow-2xl",
                                 isOpen 
-                                    ? "bg-slate-900 text-white hover:bg-black hover:shadow-slate-400/50" 
+                                    ? "bg-sky-600 text-white hover:bg-sky-700 shadow-sky-600/20" 
                                     : "bg-slate-100 text-slate-300 border border-slate-200 cursor-not-allowed shadow-none"
                             )}
                         >

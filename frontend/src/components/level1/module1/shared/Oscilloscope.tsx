@@ -313,17 +313,17 @@ export const Oscilloscope: React.FC<OscilloscopeProps> = ({
   const isAliasing = mode === 'digital' && bufferedState.signalA && (bufferedState.signalA.samplingRate || 20) < (bufferedState.signalA.frequency * 2);
 
   return (
-    <div className={`relative overflow-hidden ${className} bg-[#070B14]/40 rounded-xl border border-white/5`}>
+    <div className={`relative overflow-hidden ${className} bg-slate-50/80 rounded-xl border border-slate-200`}>
       {/* Oscilloscope Grid */}
       <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ opacity: gridOpacity }}>
         <defs>
           <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" strokeWidth="1"/>
+            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="black" strokeWidth="1"/>
           </pattern>
         </defs>
         <rect width="100%" height="100%" fill="url(#grid)" />
-        <line x1="0%" y1="50%" x2="100%" y2="50%" stroke="white" strokeWidth="2" strokeOpacity="0.1" />
-        <line x1="50%" y1="0%" x2="50%" y2="100%" stroke="white" strokeWidth="2" strokeOpacity="0.1" />
+        <line x1="0%" y1="50%" x2="100%" y2="50%" stroke="black" strokeWidth="2" strokeOpacity="0.05" />
+        <line x1="50%" y1="0%" x2="50%" y2="100%" stroke="black" strokeWidth="2" strokeOpacity="0.05" />
       </svg>
 
       {/* Waveform Canvas/SVG */}
@@ -350,7 +350,7 @@ export const Oscilloscope: React.FC<OscilloscopeProps> = ({
               <motion.path
                 animate={{ d: mode === 'sum' ? generateSummedPath() : generatePath(bufferedState.signalA, mode === 'digital') }}
                 fill="none"
-                stroke={isAliasing ? 'var(--error)' : (mode === 'digital' ? "var(--accent-secondary)" : (mode === 'sum' ? "white" : "var(--accent-primary)"))}
+                stroke={isAliasing ? 'var(--error)' : (mode === 'digital' ? "var(--accent-secondary)" : (mode === 'sum' ? "var(--text-primary)" : "var(--accent-primary)"))}
                 strokeWidth={mode === 'sum' ? "4" : "3"}
                 strokeLinecap="round"
                 className={isAliasing ? 'animate-pulse' : ''}

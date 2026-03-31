@@ -28,46 +28,46 @@ const SignalIntegrityTheory: React.FC = () => {
     return (
         <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
             <div className="text-center">
-                <h2 className="text-3xl font-black text-slate-100 italic tracking-tight uppercase">SIGNAL INTEGRITY</h2>
-                <p className="text-chart-cyan font-mono text-xs tracking-widest mt-2">REFLECTIONS & RETURN PATHS</p>
+                <h2 className="text-3xl font-black text-slate-800 italic tracking-tight uppercase">SIGNAL INTEGRITY</h2>
+                <p className="text-sky-600 font-mono text-xs tracking-widest mt-2 font-bold">REFLECTIONS & RETURN PATHS</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div className="p-8 rounded-3xl bg-slate-900/40 border border-slate-800 space-y-6">
-                    <h3 className="text-xl font-bold text-slate-100 flex items-center gap-3">
+                <div className="p-8 rounded-3xl bg-white border border-slate-200 shadow-sm space-y-6">
+                    <h3 className="text-xl font-bold text-slate-800 flex items-center gap-3">
                         <AlertTriangle className="text-amber-500" size={20} />
                         The Reflection Problem
                     </h3>
-                    <p className="text-sm text-slate-400 leading-relaxed">
+                    <p className="text-sm text-slate-600 leading-relaxed font-medium">
                         When a signal hits a break or a mismatch in the return path, it doesn't just stop. It bounces back, creating **Reflections** that interfere with the original signal.
                     </p>
-                    <div className="h-32 bg-slate-950/50 rounded-2xl border border-slate-800 flex items-center justify-center relative overflow-hidden">
+                    <div className="h-32 bg-slate-50 rounded-2xl border border-slate-200 flex items-center justify-center relative overflow-hidden shadow-inner">
                         <motion.div 
-                            className="absolute left-0 w-1/2 h-0.5 bg-chart-cyan"
+                            className="absolute left-0 w-1/2 h-0.5 bg-sky-500"
                             animate={{ x: [0, 200, 0] }}
                             transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
                         />
-                        <div className="absolute right-[45%] w-1 h-8 bg-rose-500/50 blur-[2px]" />
-                        <p className="text-[10px] uppercase font-mono text-slate-600 mt-12">Impedance Discontinuity</p>
+                        <div className="absolute right-[45%] w-1 h-8 bg-rose-500/20 blur-[2px]" />
+                        <p className="text-[10px] uppercase font-mono text-slate-400 mt-12 font-bold">Impedance Discontinuity</p>
                     </div>
                 </div>
 
-                <div className="p-8 rounded-3xl bg-chart-cyan/5 border border-chart-cyan/10 space-y-6">
-                    <h3 className="text-xl font-bold text-slate-100 flex items-center gap-3">
-                        <CheckCircle2 className="text-chart-cyan" size={20} />
+                <div className="p-8 rounded-3xl bg-sky-50 border border-sky-100 shadow-sm space-y-6">
+                    <h3 className="text-xl font-bold text-slate-800 flex items-center gap-3">
+                        <CheckCircle2 className="text-sky-600" size={20} />
                         The Golden Rule
                     </h3>
-                    <p className="text-sm text-slate-400 leading-relaxed italic">
+                    <p className="text-sm text-slate-600 leading-relaxed italic font-medium">
                         "Route the return path as close as possible to the signal path to minimize the loop area and prevent EMI interference."
                     </p>
                     <div className="grid grid-cols-2 gap-4">
-                        <div className="p-4 rounded-xl bg-slate-900 border border-slate-800">
-                            <p className="text-chart-cyan font-bold text-lg">90%</p>
-                            <p className="text-[8px] uppercase font-mono text-slate-500 leading-tight">Reduction in Noise Exposure</p>
+                        <div className="p-4 rounded-xl bg-white border border-slate-200 shadow-sm">
+                            <p className="text-sky-600 font-bold text-lg">90%</p>
+                            <p className="text-[8px] uppercase font-mono text-slate-500 leading-tight font-bold">Reduction in Noise Exposure</p>
                         </div>
-                        <div className="p-4 rounded-xl bg-slate-900 border border-slate-800">
-                            <p className="text-blue-400 font-bold text-lg">Speed</p>
-                            <p className="text-[8px] uppercase font-mono text-slate-500 leading-tight">Faster Switching Speeds</p>
+                        <div className="p-4 rounded-xl bg-white border border-slate-200 shadow-sm">
+                            <p className="text-blue-600 font-bold text-lg">Speed</p>
+                            <p className="text-[8px] uppercase font-mono text-slate-500 leading-tight font-bold">Faster Switching Speeds</p>
                         </div>
                     </div>
                 </div>
@@ -94,20 +94,20 @@ const AdvancedSignalLab: React.FC = () => {
     return (
         <div className="space-y-10 animate-in fade-in duration-700">
             <div className="text-center">
-                <h2 className="text-3xl font-black text-slate-100 italic tracking-tight uppercase">ADVANCED SIGNAL LAB</h2>
-                <p className="text-chart-cyan font-mono text-xs tracking-widest mt-2">COMPONENT LIBRARY SYNTHESIS</p>
+                <h2 className="text-3xl font-black text-slate-800 italic tracking-tight uppercase">ADVANCED SIGNAL LAB</h2>
+                <p className="text-sky-600 font-mono text-xs tracking-widest mt-2 font-bold">COMPONENT LIBRARY SYNTHESIS</p>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
                 {/* Toolbox */}
-                <div className="bg-slate-900/60 border border-slate-800 rounded-3xl p-6 h-fit">
-                    <h3 className="text-xs font-mono text-slate-500 uppercase tracking-widest mb-6">Component Library</h3>
+                <div className="bg-white border border-slate-200 shadow-md rounded-3xl p-6 h-fit">
+                    <h3 className="text-xs font-mono text-slate-400 uppercase tracking-widest mb-6 font-bold">Component Library</h3>
                     <div className="grid grid-cols-2 lg:grid-cols-1 gap-4">
                         {toolbox.map(item => (
                             <button 
                                 key={item.id}
                                 onClick={() => togglePlacement(item.id)}
-                                className={`p-4 rounded-2xl border transition-all flex items-center gap-4 ${item.placed ? 'bg-chart-cyan/10 border-chart-cyan/40 text-chart-cyan' : 'bg-slate-950 border-slate-800 text-slate-500 hover:border-slate-700'}`}
+                                className={`p-4 rounded-2xl border transition-all flex items-center gap-4 ${item.placed ? 'bg-sky-50 border-sky-400 text-sky-600 shadow-sm' : 'bg-slate-50 border-slate-200 text-slate-400 hover:border-slate-300'}`}
                             >
                                 <item.icon size={18} />
                                 <span className="font-bold text-xs">{item.name}</span>
@@ -117,9 +117,9 @@ const AdvancedSignalLab: React.FC = () => {
                 </div>
 
                 {/* Simulation Canvas */}
-                <div className="lg:col-span-3 bg-slate-950/40 border border-slate-800 rounded-3xl p-10 flex flex-col items-center justify-center relative min-h-[400px]">
+                <div className="lg:col-span-3 bg-slate-50 border border-slate-200 shadow-inner rounded-3xl p-10 flex flex-col items-center justify-center relative min-h-[400px]">
                     <div className="absolute inset-0 opacity-10" 
-                        style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, #475569 1px, transparent 0)', backgroundSize: '24px 24px' }} />
+                        style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, #94a3b8 1px, transparent 0)', backgroundSize: '24px 24px' }} />
                     
                     <div className="relative z-10 flex items-center justify-center gap-8">
                         {toolbox.filter(i => i.placed).map((item, idx) => (
@@ -127,15 +127,15 @@ const AdvancedSignalLab: React.FC = () => {
                                 <motion.div 
                                     initial={{ scale: 0, opacity: 0 }}
                                     animate={{ scale: 1, opacity: 1 }}
-                                    className="w-20 h-20 rounded-2xl bg-slate-900 border-2 border-slate-800 flex items-center justify-center relative group"
+                                    className="w-20 h-20 rounded-2xl bg-white border-2 border-slate-200 shadow-sm flex items-center justify-center relative group"
                                 >
-                                    <item.icon size={32} className={isLoopComplete ? "text-chart-cyan" : "text-slate-600"} />
+                                    <item.icon size={32} className={isLoopComplete ? "text-sky-500" : "text-slate-300"} />
                                     <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                                        <p className="text-[8px] font-mono text-slate-500 uppercase">{item.name}</p>
+                                        <p className="text-[8px] font-mono text-slate-400 uppercase font-bold">{item.name}</p>
                                     </div>
                                 </motion.div>
                                 {idx < toolbox.filter(i => i.placed).length - 1 && (
-                                    <div className={`h-1 w-8 rounded-full ${isLoopComplete ? 'bg-chart-cyan shadow-[0_0_10px_rgba(6,182,212,0.5)]' : 'bg-slate-800'}`} />
+                                    <div className={`h-1 w-8 rounded-full ${isLoopComplete ? 'bg-sky-500 shadow-[0_0_10px_rgba(14,165,233,0.5)]' : 'bg-slate-200'}`} />
                                 )}
                             </React.Fragment>
                         ))}
@@ -151,10 +151,10 @@ const AdvancedSignalLab: React.FC = () => {
                         <motion.div 
                             initial={{ y: 20, opacity: 0 }}
                             animate={{ y: 0, opacity: 1 }}
-                            className="mt-12 p-4 rounded-xl bg-chart-cyan/10 border border-chart-cyan/20 flex items-center gap-3"
+                            className="mt-12 p-4 rounded-xl bg-sky-50 border border-sky-200 flex items-center gap-3 shadow-sm"
                         >
-                            <CheckCircle2 className="text-chart-cyan" size={16} />
-                            <span className="text-chart-cyan text-xs font-bold uppercase tracking-widest">Loop Integral Verified</span>
+                            <CheckCircle2 className="text-sky-600" size={16} />
+                            <span className="text-sky-600 text-xs font-bold uppercase tracking-widest">Loop Integral Verified</span>
                         </motion.div>
                     )}
                 </div>
@@ -167,17 +167,17 @@ const ModulePreview: React.FC = () => {
     return (
         <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
             <div className="text-center">
-                <h2 className="text-4xl font-black text-slate-100 italic tracking-tight mb-4 uppercase">NEXT PHASE: VELOCITY</h2>
-                <p className="text-chart-cyan font-mono text-sm tracking-widest uppercase italic">You have mastered the Loop. Now, master the Speed.</p>
+                <h2 className="text-4xl font-black text-slate-800 italic tracking-tight mb-4 uppercase">NEXT PHASE: VELOCITY</h2>
+                <p className="text-sky-600 font-mono text-sm tracking-widest uppercase italic font-bold">You have mastered the Loop. Now, master the Speed.</p>
             </div>
 
-            <div className="bg-slate-900/60 border border-slate-800 rounded-[3rem] p-12 relative overflow-hidden group">
-                <div className="absolute top-0 right-0 p-12 text-slate-800 group-hover:text-chart-cyan/10 transition-colors">
+            <div className="bg-white border border-slate-200 shadow-lg rounded-[3rem] p-12 relative overflow-hidden group">
+                <div className="absolute top-0 right-0 p-12 text-slate-100 group-hover:text-sky-100 transition-colors">
                     <Zap size={180} />
                 </div>
                 
                 <div className="relative z-10 max-w-2xl">
-                    <h3 className="text-2xl font-bold text-slate-100 mb-6">Coming Up in Module 2:</h3>
+                    <h3 className="text-2xl font-bold text-slate-800 mb-6">Coming Up in Module 2:</h3>
                     <div className="space-y-6">
                         {[
                             { title: 'Propagation Delay', desc: 'Understanding why "instantly" doesn\'t exist in electronics.' },
@@ -185,18 +185,18 @@ const ModulePreview: React.FC = () => {
                             { title: 'Controlled Impedance', desc: 'Taming electromagnetic energy with geometric precision.' }
                         ].map((item, idx) => (
                             <div key={idx} className="flex gap-6">
-                                <div className="shrink-0 w-8 h-8 rounded-lg bg-slate-950 border border-slate-800 flex items-center justify-center font-mono text-chart-cyan text-xs">
+                                <div className="shrink-0 w-8 h-8 rounded-lg bg-slate-50 border border-slate-200 shadow-sm flex items-center justify-center font-mono text-sky-600 text-xs font-bold">
                                     0{idx + 2}
                                 </div>
                                 <div>
-                                    <h4 className="font-bold text-slate-200 mb-1">{item.title}</h4>
-                                    <p className="text-sm text-slate-500">{item.desc}</p>
+                                    <h4 className="font-bold text-slate-700 mb-1">{item.title}</h4>
+                                    <p className="text-sm text-slate-500 font-medium">{item.desc}</p>
                                 </div>
                             </div>
                         ))}
                     </div>
 
-                    <button className="mt-12 px-10 py-4 bg-slate-100 text-slate-950 font-black rounded-xl hover:bg-chart-cyan transition-all uppercase tracking-widest text-xs">
+                    <button className="mt-12 px-10 py-4 bg-sky-600 text-white font-black rounded-xl hover:bg-sky-700 shadow-lg shadow-sky-200 transition-all uppercase tracking-widest text-xs">
                         Unlock Next Module
                     </button>
                 </div>
@@ -272,16 +272,16 @@ const ModuleContent: React.FC<ModuleContentProps> = ({ activeSection }) => {
                 const q = quizQuestions[quizStep];
                 return (
                     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
-                        <div className="bg-slate-900/40 border border-slate-800 rounded-2xl p-8">
+                        <div className="bg-white border border-slate-200 shadow-md rounded-2xl p-8">
                             <div className="flex justify-between items-center mb-8">
-                                <span className="font-mono text-xs text-slate-500">CHECKPOINT {quizStep + 1}/{quizQuestions.length}</span>
+                                <span className="font-mono text-xs text-slate-400 font-bold">CHECKPOINT {quizStep + 1}/{quizQuestions.length}</span>
                                 <div className="flex gap-1.5">
                                     {quizQuestions.map((_, i) => (
-                                        <div key={i} className={`h-1 w-8 rounded-full ${i <= quizStep ? 'bg-chart-cyan' : 'bg-slate-800'}`} />
+                                        <div key={i} className={`h-1 w-8 rounded-full ${i <= quizStep ? 'bg-sky-500' : 'bg-slate-100'}`} />
                                     ))}
                                 </div>
                             </div>
-                            <h3 className="text-xl font-bold text-slate-100 mb-8 leading-relaxed">{q.q}</h3>
+                            <h3 className="text-xl font-bold text-slate-800 mb-8 leading-relaxed">{q.q}</h3>
                             <div className="grid gap-4">
                                 {q.options.map((opt, idx) => (
                                     <button 
@@ -291,12 +291,12 @@ const ModuleContent: React.FC<ModuleContentProps> = ({ activeSection }) => {
                                                 if (quizStep < quizQuestions.length - 1) setQuizStep((s: number) => s + 1);
                                             }
                                         }}
-                                        className="p-4 rounded-xl border border-slate-800 bg-slate-900/50 hover:border-chart-cyan hover:bg-chart-cyan/5 transition-all text-left flex items-center gap-4 group"
+                                        className="p-4 rounded-xl border border-slate-200 bg-slate-50 hover:border-sky-500 hover:bg-sky-50 transition-all text-left flex items-center gap-4 group shadow-sm"
                                     >
-                                        <div className="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center font-mono text-xs text-slate-500 group-hover:text-chart-cyan transition-colors">
+                                        <div className="w-8 h-8 rounded-lg bg-slate-200 flex items-center justify-center font-mono text-xs text-slate-400 group-hover:text-sky-600 group-hover:bg-sky-100 transition-colors font-bold">
                                             {String.fromCharCode(65 + idx)}
                                         </div>
-                                        <span className="text-slate-300 group-hover:text-slate-100">{opt}</span>
+                                        <span className="text-slate-700 group-hover:text-slate-900 font-medium">{opt}</span>
                                     </button>
                                 ))}
                             </div>
@@ -307,19 +307,19 @@ const ModuleContent: React.FC<ModuleContentProps> = ({ activeSection }) => {
             case 'Structural Matching':
                 return (
                     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
-                        <div className="bg-slate-900/40 border border-slate-800 rounded-2xl p-8">
-                            <h3 className="text-xl font-bold text-slate-100 mb-2">Structural Synthesis</h3>
-                            <p className="text-sm text-slate-500 mb-10">Match the components to their structural role in a circuit.</p>
+                        <div className="bg-white border border-slate-200 shadow-md rounded-2xl p-8">
+                            <h3 className="text-xl font-bold text-slate-800 mb-2">Structural Synthesis</h3>
+                            <p className="text-sm text-slate-500 mb-10 font-medium">Match the components to their structural role in a circuit.</p>
                             
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
                                 <div className="space-y-4">
                                     {sourceItems.map(item => {
                                         const isMatched = !!matches[item.id];
                                         return (
-                                            <div key={item.id} className={`p-4 rounded-xl border ${isMatched ? 'border-chart-cyan bg-chart-cyan/10' : 'border-slate-800 bg-slate-900/50'} relative transition-all`}>
-                                                <span className={isMatched ? 'text-chart-cyan font-semibold' : 'text-slate-300'}>{item.text}</span>
+                                            <div key={item.id} className={`p-4 rounded-xl border ${isMatched ? 'border-sky-400 bg-sky-50 shadow-sm' : 'border-slate-200 bg-slate-50'} relative transition-all`}>
+                                                <span className={isMatched ? 'text-sky-600 font-bold' : 'text-slate-700 font-medium'}>{item.text}</span>
                                                 {isMatched && (
-                                                    <div className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-chart-cyan text-slate-950 flex items-center justify-center text-[10px] font-bold">
+                                                    <div className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-sky-600 text-white flex items-center justify-center text-[10px] font-bold shadow-md">
                                                         {matches[item.id]}
                                                     </div>
                                                 )}
@@ -335,12 +335,12 @@ const ModuleContent: React.FC<ModuleContentProps> = ({ activeSection }) => {
                                                 const nextId = sourceItems.find(s => !matches[s.id])?.id;
                                                 if (nextId) setMatches((prev: Record<number, string>) => ({ ...prev, [nextId]: target.id }));
                                             }}
-                                            className="w-full flex items-center gap-4 p-4 rounded-xl border border-slate-800 bg-slate-900/50 hover:border-chart-cyan transition-all text-left"
+                                            className="w-full flex items-center gap-4 p-4 rounded-xl border border-slate-200 bg-white hover:border-sky-500 hover:bg-sky-50 shadow-sm transition-all text-left group"
                                         >
-                                            <div className="w-10 h-10 shrink-0 rounded-lg bg-chart-cyan/10 border border-chart-cyan/20 flex items-center justify-center font-mono text-chart-cyan">
+                                            <div className="w-10 h-10 shrink-0 rounded-lg bg-sky-100 border border-sky-200 flex items-center justify-center font-mono text-sky-600 font-bold">
                                                 {target.id}
                                             </div>
-                                            <span className="text-xs text-slate-400 group-hover:text-slate-200">{target.text}</span>
+                                            <span className="text-xs text-slate-600 group-hover:text-slate-900 font-bold">{target.text}</span>
                                         </button>
                                     ))}
                                 </div>
@@ -348,7 +348,7 @@ const ModuleContent: React.FC<ModuleContentProps> = ({ activeSection }) => {
                             {Object.keys(matches).length === sourceItems.length && (
                                 <button 
                                     onClick={() => setMatches({})}
-                                    className="mt-10 w-full py-3 rounded-xl border border-slate-700 text-slate-500 hover:text-chart-cyan hover:border-chart-cyan transition-all text-sm font-mono uppercase tracking-widest"
+                                    className="mt-10 w-full py-3 rounded-xl border border-slate-200 text-slate-400 hover:text-sky-600 hover:border-sky-400 hover:bg-sky-50 transition-all text-sm font-mono uppercase tracking-widest font-bold"
                                 >
                                     Reset Schema
                                 </button>
@@ -361,25 +361,25 @@ const ModuleContent: React.FC<ModuleContentProps> = ({ activeSection }) => {
                 return (
                     <div className="flex flex-col items-center justify-center min-h-[50vh] space-y-10 text-center animate-in fade-in slide-in-from-bottom-4 duration-700">
                         <div className="space-y-4">
-                            <GraduationCap className="mx-auto text-chart-cyan/40" size={48} />
-                            <h2 className="text-3xl font-bold text-slate-100 max-w-2xl leading-relaxed">
+                            <GraduationCap className="mx-auto text-sky-200" size={48} />
+                            <h2 className="text-3xl font-bold text-slate-800 max-w-2xl leading-relaxed">
                                 In a working circuit, current must leave the source and <br />
                                 <input 
                                     type="text" 
                                     placeholder="......" 
                                     value={blankValue}
                                     onChange={e => setBlankValue(e.target.value)}
-                                    className="mx-2 bg-transparent border-b-2 border-chart-cyan outline-none text-chart-cyan text-center w-28 uppercase font-mono tracking-widest"
+                                    className="mx-2 bg-transparent border-b-2 border-sky-600 outline-none text-sky-600 text-center w-28 uppercase font-mono tracking-widest font-bold"
                                 />
                                 to it.
                             </h2>
                         </div>
                         {blankValue.toLowerCase() === 'return' ? (
-                            <div className="flex items-center gap-3 text-emerald-400 font-mono text-sm animate-bounce">
+                            <div className="flex items-center gap-3 text-emerald-600 font-mono text-sm animate-bounce font-bold">
                                 <CheckCircle2 size={18} /> RULE VALIDATED
                             </div>
                         ) : (
-                            <p className="text-slate-500 text-xs uppercase tracking-widest font-mono">Fill in the missing principle</p>
+                            <p className="text-slate-400 text-xs uppercase tracking-widest font-mono font-bold">Fill in the missing principle</p>
                         )}
                     </div>
                 );
@@ -391,9 +391,9 @@ const ModuleContent: React.FC<ModuleContentProps> = ({ activeSection }) => {
                 return (
                     <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
                         <div className="text-center">
-                            <div className="w-16 h-1 w-chart-cyan mx-auto mb-6 rounded-full" />
-                            <h2 className="text-4xl font-black text-slate-100 italic tracking-tight mb-2 uppercase">RECAP PERSPECTIVE</h2>
-                            <p className="text-slate-500 font-mono text-sm tracking-widest">RETURN PATH INTEGRITY DEFINES RELIABILITY</p>
+                            <div className="w-16 h-1 w-sky-600 mx-auto mb-6 rounded-full" />
+                            <h2 className="text-4xl font-black text-slate-800 italic tracking-tight mb-2 uppercase">RECAP PERSPECTIVE</h2>
+                            <p className="text-slate-400 font-mono text-sm tracking-widest font-bold">RETURN PATH INTEGRITY DEFINES RELIABILITY</p>
                         </div>
                         
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -402,21 +402,21 @@ const ModuleContent: React.FC<ModuleContentProps> = ({ activeSection }) => {
                                 { title: 'PCB Failure', icon: Cpu, desc: 'Microscopic trace snap = Entire motherboard fails.' },
                                 { title: 'Electric Vehicle', icon: CarFront, desc: 'Loose return path = Catastrophic pack failure.' }
                             ].map((item, idx) => (
-                                <div key={idx} className="group p-6 rounded-2xl bg-slate-900/40 border border-slate-800 hover:border-chart-cyan/50 transition-all">
-                                    <item.icon className="text-chart-cyan mb-4 group-hover:scale-110 transition-transform" size={24} />
-                                    <h3 className="font-bold text-slate-100 mb-3">{item.title}</h3>
-                                    <p className="text-sm text-slate-400 leading-relaxed">{item.desc}</p>
+                                <div key={idx} className="group p-6 rounded-2xl bg-white border border-slate-200 hover:border-sky-400 shadow-sm transition-all">
+                                    <item.icon className="text-sky-600 mb-4 group-hover:scale-110 transition-transform" size={24} />
+                                    <h3 className="font-bold text-slate-800 mb-3">{item.title}</h3>
+                                    <p className="text-sm text-slate-600 leading-relaxed font-medium">{item.desc}</p>
                                 </div>
                             ))}
                         </div>
 
-                        <div className="p-10 rounded-3xl bg-chart-cyan/5 border border-chart-cyan/20 relative overflow-hidden">
-                            <div className="absolute top-0 right-0 p-8 text-chart-cyan/10">
+                        <div className="p-10 rounded-3xl bg-sky-50 border border-sky-100 shadow-sm relative overflow-hidden">
+                            <div className="absolute top-0 right-0 p-8 text-sky-100">
                                 <RefreshCw size={120} className="animate-[spin_10s_linear_infinite]" />
                             </div>
                             <div className="relative z-10 max-w-xl">
-                                <p className="text-chart-cyan font-mono text-[10px] uppercase tracking-[0.3em] mb-4">Core Invariant</p>
-                                <p className="text-2xl font-medium text-slate-100 leading-normal">
+                                <p className="text-sky-600 font-mono text-[10px] uppercase tracking-[0.3em] mb-4 font-black">Core Invariant</p>
+                                <p className="text-2xl font-bold text-slate-800 leading-normal">
                                     "Did you know? In high-speed digital design, return paths are not just wires—they are electromagnetic wave-guides. Master the loop, master the system."
                                 </p>
                             </div>
@@ -433,18 +433,18 @@ const ModuleContent: React.FC<ModuleContentProps> = ({ activeSection }) => {
             case 'Open Sandbox':
                 return (
                     <div className="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-8 animate-in zoom-in-95 duration-700">
-                        <div className="w-24 h-24 rounded-full bg-chart-cyan/10 border border-chart-cyan/30 flex items-center justify-center animate-pulse shadow-[0_0_50px_rgba(6,182,212,0.15)]">
-                            <div className="w-16 h-16 rounded-full bg-chart-cyan/20 flex items-center justify-center">
-                                <Play className="text-chart-cyan ml-1" fill="currentColor" size={32} />
+                        <div className="w-24 h-24 rounded-full bg-sky-50 border border-sky-200 flex items-center justify-center animate-pulse shadow-[0_0_50px_rgba(14,165,233,0.15)]">
+                            <div className="w-16 h-16 rounded-full bg-sky-100 flex items-center justify-center">
+                                <Play className="text-sky-600 ml-1" fill="currentColor" size={32} />
                             </div>
                         </div>
                         <div>
-                            <h2 className="text-4xl font-black text-slate-100 mb-4 tracking-tighter">INITIALIZE SANDBOX</h2>
-                            <p className="text-slate-400 max-w-md mx-auto font-sans leading-relaxed text-sm">
+                            <h2 className="text-4xl font-black text-slate-800 mb-4 tracking-tighter">INITIALIZE SANDBOX</h2>
+                            <p className="text-slate-500 max-w-md mx-auto font-sans leading-relaxed text-sm font-medium">
                                 Launch the high-fidelity circuit environment to manually verify signal propagation and loop integrity.
                             </p>
                         </div>
-                        <button className="px-12 py-5 bg-chart-cyan text-slate-950 font-black rounded-xl hover:shadow-[0_0_40px_rgba(6,182,212,0.6)] transition-all duration-300 transform hover:-translate-y-1 uppercase tracking-widest text-xs">
+                        <button className="px-12 py-5 bg-sky-600 text-white font-black rounded-xl hover:shadow-[0_0_40px_rgba(14,165,233,0.4)] transition-all duration-300 transform hover:-translate-y-1 uppercase tracking-widest text-xs">
                             Access Virtual Workbench
                         </button>
                     </div>
@@ -452,7 +452,7 @@ const ModuleContent: React.FC<ModuleContentProps> = ({ activeSection }) => {
 
             default:
                 return (
-                    <div className="p-20 border-2 border-dashed border-slate-800 rounded-3xl text-center text-slate-600 italic font-mono text-sm">
+                    <div className="p-20 border-2 border-dashed border-slate-200 rounded-3xl text-center text-slate-500 italic font-mono text-sm">
                         [ SYSTEM_LOG: Module section "{activeSection}" pending implementation ]
                     </div>
                 );
