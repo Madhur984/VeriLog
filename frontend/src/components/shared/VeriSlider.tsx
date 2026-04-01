@@ -129,7 +129,7 @@ export const VeriSlider: React.FC<VeriSliderProps> = ({
                     )}
                 </AnimatePresence>
 
-                <motion.div style={{ position: 'absolute', width: `${percent}%`, height: 2, background: color, boxShadow: `0 0 8px ${color}44` }} />
+                <motion.div style={{ position: 'absolute', width: `${percent}%`, height: 2, background: color, boxShadow: `0 0 8px ${glow}` }} />
 
                 {/* Input Layer */}
                 <input
@@ -146,7 +146,7 @@ export const VeriSlider: React.FC<VeriSliderProps> = ({
                         position: 'absolute', left: `${percent}%`, width: 14, height: 14, borderRadius: '50%',
                         background: '#FFFFFF', border: `2px solid ${color}`, transform: 'translateX(-50%)',
                         pointerEvents: 'none', zIndex: 5, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        boxShadow: isDragging ? `0 0 15px ${color}66` : '0 2px 4px rgba(0,0,0,0.05)'
+                        boxShadow: isDragging ? `0 0 15px ${glow}` : '0 2px 4px rgba(0,0,0,0.05)'
                     }}
                 >
                     <div style={{ width: 4, height: 4, borderRadius: '50%', background: color }} />
