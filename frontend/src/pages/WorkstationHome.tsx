@@ -1,16 +1,12 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import {
-    LayoutDashboard, Target, Settings, Binary, Command,
-    FlaskConical, Play, Zap, HelpCircle,
-    Cpu, Gamepad2,
-} from 'lucide-react';
-import { cn } from '../lib/utils';
+import { Target, Command, Play, Zap, HelpCircle } from 'lucide-react';
 import { useGamificationStore } from '../stores/gamificationStore';
 import { CommandPalette } from '../components/ui/CommandPalette';
 import { OnboardingTour } from '../components/ui/OnboardingTour';
 import { StreakCounter } from '../components/ui/StreakCounter';
+import { RadialMenu } from '../components/ui/RadialMenu';
 
 const getTourKey = (name: string | null) => `digi_tour_done_${name ?? 'guest'}`;
 
@@ -86,8 +82,8 @@ function getR(m: Module) { return m.isHub ? HUB_R : (NODE_R[m.depth] ?? 16); }
 
 function statusColor(s: Status) {
     if (s === 'completed') return '#10B981';
-    if (s === 'in-progress') return '#06B6D4';
-    return '#E2E8F0';
+    if (s === 'in-progress') return '#0EA5E9';
+    return '#334155';
 }
 function accentFor(m: Module) {
     if (m.branch) return BRANCH_META[m.branch].color;
@@ -95,10 +91,11 @@ function accentFor(m: Module) {
 }
 
 const Pulse: React.FC<{ x1: number; y1: number; x2: number; y2: number; color: string }> = ({ x1, y1, x2, y2, color }) => (
-    <motion.circle r={2} fill={color} opacity={0.6}
+    <motion.circle r={2.5} fill={color} opacity={0.8}
         initial={{ cx: x1, cy: y1, opacity: 0 }}
-        animate={{ cx: [x1, x2], cy: [y1, y2], opacity: [0, 0.6, 0.6, 0] }}
-        transition={{ duration: 2.5, repeat: Infinity, repeatDelay: 2, ease: 'linear' }}
+        animate={{ cx: [x1, x2], cy: [y1, y2], opacity: [0, 0.8, 0.8, 0], scale: [1, 1.5, 1.5, 1] }}
+        transition={{ duration: 2, repeat: Infinity, repeatDelay: 1.5, ease: 'linear' }}
+        style={{ filter: `drop-shadow(0 0 6px ${color})` }}
     />
 );
 
@@ -122,36 +119,37 @@ const ModuleBubble: React.FC<{
         >
             {mod.isHub && !locked && (
                 <>
-                    <circle cx={mod.cx} cy={mod.cy} r={r + 12} fill="none" stroke={accent} strokeWidth={0.5} opacity={0.1} />
-                    <motion.circle cx={mod.cx} cy={mod.cy} r={r + 8} fill="none" stroke={accent} strokeWidth={0.8}
-                        animate={{ opacity: [0.15, 0.05, 0.15] }} transition={{ duration: 3, repeat: Infinity }} />
+                    <circle cx={mod.cx} cy={mod.cy} r={r + 12} fill="none" stroke={accent} strokeWidth={0.5} opacity={0.2} />
+                    <motion.circle cx={mod.cx} cy={mod.cy} r={r + 8} fill="none" stroke={accent} strokeWidth={1}
+                        animate={{ opacity: [0.2, 0.05, 0.2] }} transition={{ duration: 3, repeat: Infinity }} />
                 </>
             )}
-            {done && <circle cx={mod.cx} cy={mod.cy} r={r + 4} fill="none" stroke="#10B981" strokeWidth={1} opacity={0.2} />}
+            {done && <circle cx={mod.cx} cy={mod.cy} r={r + 4} fill="none" stroke="#10B981" strokeWidth={1} opacity={0.4} />}
             {inProg && (
-                <motion.circle cx={mod.cx} cy={mod.cy} fill="none" stroke="#06B6D4" strokeWidth={1}
-                    initial={{ opacity: 0.3, r: r + 2 }} animate={{ opacity: 0, r: r + 12 }}
+                <motion.circle cx={mod.cx} cy={mod.cy} fill="none" stroke="#0EA5E9" strokeWidth={1.5}
+                    initial={{ opacity: 0.5, r: r + 2 }} animate={{ opacity: 0, r: r + 14 }}
                     transition={{ duration: 2.5, repeat: Infinity, ease: 'easeOut' }} />
             )}
             <motion.circle cx={mod.cx} cy={mod.cy}
                 r={r}
-                fill={locked ? '#F1F5F9' : done ? '#F0FDF4' : '#FFFFFF'}
-                stroke={locked ? '#E2E8F0' : accent}
-                strokeWidth={mod.isHub ? 2 : locked ? 1 : isHovered ? 2 : 1}
+                fill={locked ? '#0F172A' : done ? '#022C22' : '#0F172A'}
+                stroke={locked ? '#334155' : accent}
+                strokeWidth={mod.isHub ? 2 : locked ? 1 : isHovered ? 2 : 1.5}
                 animate={{ r: isHovered ? r * 1.1 : r }}
                 transition={{ duration: 0.2 }}
+                style={!locked ? { filter: `drop-shadow(0 0 ${isHovered ? 12 : 6}px ${accent}60)` } : undefined}
             />
             {mod.progress > 0 && mod.progress < 100 && (
-                <circle cx={mod.cx} cy={mod.cy} r={r - 3} fill="none" stroke={accent} strokeWidth={2}
+                <circle cx={mod.cx} cy={mod.cy} r={r - 3} fill="none" stroke={accent} strokeWidth={2.5}
                     strokeDasharray={`${(r - 3) * 2 * Math.PI * mod.progress / 100} 9999`}
-                    strokeLinecap="round" transform={`rotate(-90 ${mod.cx} ${mod.cy})`} opacity={0.4} />
+                    strokeLinecap="round" transform={`rotate(-90 ${mod.cx} ${mod.cy})`} opacity={0.8} />
             )}
             <text x={mod.cx} y={mod.cy + 1} textAnchor="middle" dominantBaseline="middle"
-                fill={locked ? '#94A3B8' : accent} fontSize={r > 20 ? 10 : 8} fontWeight="700">
+                fill={locked ? '#475569' : '#FFFFFF'} fontSize={r > 20 ? 10 : 8} fontWeight="700">
                 {done ? '✓' : locked ? '' : `${mod.progress}%`}
             </text>
             {!isHovered && (
-                <text x={mod.cx} y={mod.cy + r + 14} textAnchor="middle" fill="#475569" fontSize={9} fontWeight="500">
+                <text x={mod.cx} y={mod.cy + r + 18} textAnchor="middle" fill={locked ? '#475569' : '#94A3B8'} fontSize={9} fontWeight="600" letterSpacing="0.05em">
                     {mod.title}
                 </text>
             )}
@@ -173,24 +171,25 @@ const HoverCard: React.FC<{ mod: Module; onStart: (m: Module) => void }> = ({ mo
         <motion.foreignObject x={x} y={y} width={CARD_W} height={CARD_H}
             initial={{ opacity: 0, scale: 0.95, y: 5 }} animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 5 }} >
-            <div className="bg-white/95 border border-slate-200/60 rounded-2xl shadow-xl backdrop-blur-md p-4 flex flex-col justify-between h-full group">
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-right from-transparent via-cyan-500/20 to-transparent" />
-                <div>
-                   <div className="flex justify-between items-start mb-1">
-                        <span className="text-[9px] font-mono tracking-widest text-slate-400 uppercase">{mod.id}</span>
-                        {mod.branch && <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-500 font-bold">{mod.branch}</span>}
+            <div className="bg-slate-900/95 border border-slate-700/60 rounded-2xl shadow-[0_0_40px_rgba(0,0,0,0.5)] backdrop-blur-xl p-4 flex flex-col justify-between h-full group overflow-hidden">
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-right from-transparent via-sky-500/50 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-b from-white/[0.02] to-transparent pointer-events-none" />
+                <div className="relative z-10">
+                   <div className="flex justify-between items-start mb-2">
+                        <span className="text-[10px] font-mono tracking-widest text-slate-400 uppercase">{mod.id}</span>
+                        {mod.branch && <span className="text-[9px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 font-bold border border-slate-700/50 shadow-inner">{mod.branch}</span>}
                    </div>
-                   <h3 className="text-sm font-bold text-slate-900 leading-tight">{mod.title}</h3>
-                   <p className="text-[11px] text-slate-500 mt-1 line-clamp-2">{mod.subtitle}</p>
+                   <h3 className="text-sm font-bold text-white leading-tight drop-shadow-sm">{mod.title}</h3>
+                   <p className="text-[11px] text-slate-400 mt-1.5 line-clamp-2 leading-relaxed">{mod.subtitle}</p>
                 </div>
-                <div className="flex items-center justify-between pt-2">
-                    <div className="flex gap-2 text-[10px] text-slate-400 font-medium">
-                        <span>{mod.lessons}L</span>
-                        <span>{mod.hours}h</span>
+                <div className="flex items-center justify-between pt-3 relative z-10 border-t border-slate-800/80 mt-2">
+                    <div className="flex gap-3 text-[10px] text-slate-500 font-medium font-mono">
+                        <span className="flex items-center gap-1"><Target className="w-3 h-3" /> {mod.lessons}L</span>
+                        <span className="flex items-center gap-1"><Play className="w-3 h-3" /> {mod.hours}h</span>
                     </div>
                     <button onClick={() => onStart(mod)}
-                        className="px-4 py-1.5 bg-sky-600 text-white rounded-xl text-[11px] font-bold hover:bg-sky-700 transition-colors flex items-center gap-1.5">
-                        <Play className="w-3 h-3 fill-current" /> {mod.progress > 0 ? 'Continue' : 'Start'}
+                        className="px-4 py-1.5 bg-sky-500 hover:bg-sky-400 text-slate-950 rounded-lg text-[11px] font-bold transition-all flex items-center gap-1.5 shadow-[0_0_15px_rgba(14,165,233,0.3)] hover:shadow-[0_0_20px_rgba(14,165,233,0.5)]">
+                        <Play className="w-3 h-3 fill-current" /> {mod.progress > 0 ? 'Resume' : 'Start'}
                     </button>
                 </div>
             </div>
@@ -242,16 +241,6 @@ export const WorkstationHome: React.FC = () => {
         if (route) navigate(route);
     };
 
-    const navItems = [
-        { title: 'Dashboard', icon: LayoutDashboard, path: '/portal', active: true },
-        { title: 'Challenges', icon: Target, path: '/assessment' },
-        { title: 'Boss Arena', icon: Gamepad2, path: '/boss-arena' },
-        { title: 'Workbench', icon: FlaskConical, path: '/workbench' },
-        { title: 'CPU Lab', icon: Cpu, path: '/cpu-lab' },
-        { title: 'HW LeetCode', icon: Zap, path: '/hw-leetcode' },
-        { title: 'Settings', icon: Settings, path: '/portfolio' },
-    ];
-
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
             if ((e.metaKey || e.ctrlKey) && e.key === 'k') { e.preventDefault(); setCmdOpen(p => !p); }
@@ -261,95 +250,91 @@ export const WorkstationHome: React.FC = () => {
     }, []);
 
     return (
-        <div className="h-screen flex overflow-hidden bg-[#F8FAFC] text-[#1E293B]">
-            {/* Sidebar */}
-            <aside className="w-60 bg-white border-r border-slate-200 flex flex-col shrink-0">
-                <div className="h-16 flex items-center px-6 border-b border-slate-100 gap-3">
-                    <div className="w-8 h-8 bg-sky-600 rounded-lg flex items-center justify-center text-white">
-                        <Binary className="w-5 h-5" />
-                    </div>
-                    <span className="font-bold text-slate-900 tracking-tight">VeriLog AI</span>
-                </div>
-                <nav className="flex-1 p-4 space-y-1">
-                    {navItems.map(item => (
-                        <button key={item.title} onClick={() => navigate(item.path)}
-                            className={cn(
-                                "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors",
-                                item.active ? "bg-slate-100 text-slate-900" : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
-                            )}>
-                            <item.icon className={cn("w-4 h-4", item.active ? "text-sky-600" : "")} />
-                            {item.title}
-                        </button>
-                    ))}
-                </nav>
-
-                <div className="p-4">
-                    <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100">
-                        <div className="flex justify-between text-[11px] font-bold text-slate-500 mb-2 uppercase tracking-wider">
-                            <span>Progress</span>
-                            <span>{Math.round((dynamicModules.filter(m => m.status === 'completed').length / MODULES.length) * 100)}%</span>
-                        </div>
-                        <div className="h-1.5 w-full bg-slate-200 rounded-full overflow-hidden">
-                            <motion.div className="h-full bg-sky-600"
-                                initial={{ width: 0 }} animate={{ width: `${(dynamicModules.filter(m => m.status === 'completed').length / MODULES.length) * 100}%` }} />
-                        </div>
-                    </div>
-                </div>
-            </aside>
+        <div className="h-screen flex overflow-hidden bg-[#0B1120] text-slate-200 selection:bg-sky-500/30">
+            {/* Radial Menu Integration */}
+            <RadialMenu />
 
             {/* Main Content */}
-            <main className="flex-1 flex flex-col min-w-0 bg-[#F8FAFC] overflow-hidden">
-                <header className="h-16 border-b border-slate-200 bg-white/80 backdrop-blur-md flex items-center justify-between px-8 shrink-0 relative z-50">
-                    <div className="flex items-center gap-4">
-                        <button onClick={() => setCmdOpen(true)} className="h-10 px-4 rounded-xl bg-slate-100 border border-slate-200 text-slate-400 text-sm flex items-center gap-3 w-64 hover:bg-slate-200/50 transition-colors">
-                            <Command className="w-4 h-4" /> <span>Search modules...</span>
-                            <span className="ml-auto text-[10px] border border-slate-300 px-1.5 py-0.5 rounded-md">⌘K</span>
+            <main className="flex-1 flex flex-col min-w-0 bg-[#0B1120] relative overflow-hidden">
+                {/* Ambient dynamic background */}
+                <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-sky-900/20 rounded-full blur-[120px] pointer-events-none" />
+                <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-indigo-900/20 rounded-full blur-[120px] pointer-events-none" />
+
+                <header className="h-20 border-b border-slate-800/60 bg-slate-900/40 backdrop-blur-2xl flex items-center justify-between px-10 shrink-0 relative z-50">
+                    <div className="flex items-center gap-6">
+                        <button onClick={() => setCmdOpen(true)} className="h-11 px-5 rounded-2xl bg-slate-800/50 border border-slate-700/50 text-slate-400 text-sm flex items-center gap-3 w-72 hover:bg-slate-700/50 hover:border-slate-600/50 transition-all shadow-inner group">
+                            <Command className="w-4 h-4 text-slate-500 group-hover:text-sky-400 transition-colors" /> <span>Search workspace...</span>
+                            <span className="ml-auto text-[10px] border border-slate-700 bg-slate-800/80 text-slate-400 px-2 py-1 rounded-md shadow-sm font-mono">⌘K</span>
                         </button>
                     </div>
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-6">
                         <StreakCounter days={streak.current} />
-                        <button onClick={() => setTourOpen(true)} className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200 transition-colors">
+                        <button onClick={() => setTourOpen(true)} className="w-11 h-11 rounded-2xl bg-slate-800/50 border border-slate-700/50 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-700 hover:border-slate-600/50 transition-all shadow-sm">
                             <HelpCircle className="w-5 h-5" />
                         </button>
-                        <div className="h-8 w-px bg-slate-200" />
-                        <div className="flex items-center gap-3">
+                        <div className="h-8 w-px bg-slate-800" />
+                        <div className="flex items-center gap-4 bg-slate-800/30 pl-4 pr-1.5 py-1.5 rounded-full border border-slate-700/50 hover:bg-slate-800/50 cursor-pointer transition-colors">
                             <div className="text-right hidden sm:block">
-                                <p className="text-sm font-bold text-slate-900 leading-tight">{firstName || 'Scholar'}</p>
-                                <p className="text-[11px] text-slate-500 font-medium">Hardware Engineer</p>
+                                <p className="text-sm font-bold text-white leading-tight drop-shadow-sm">{firstName || 'Scholar'}</p>
+                                <p className="text-[10px] text-sky-400/80 font-mono tracking-wide uppercase">Hardware Eng.</p>
                             </div>
-                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-sky-400 to-sky-600 text-white flex items-center justify-center font-bold shadow-lg shadow-sky-500/20 uppercase">
+                            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-sky-400 to-indigo-600 text-white flex items-center justify-center font-bold shadow-lg shadow-sky-900/50 uppercase border border-white/10 ring-2 ring-slate-900">
                                 {(firstName || 'S')[0]}
                             </div>
                         </div>
                     </div>
                 </header>
 
-                <div className="flex-1 overflow-y-auto p-8 relative">
-                    <div className="absolute inset-0 pointer-events-none opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(#000 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
+                <div className="flex-1 overflow-y-auto p-10 relative z-10 scrollbar-hide">
+                    {/* Grid Pattern */}
+                    <div className="absolute inset-0 pointer-events-none opacity-[0.03] z-0" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px)', backgroundSize: '40px 40px', backgroundPosition: 'center center' }} />
                     
-                    <div className="max-w-5xl mx-auto relative z-10">
-                        <div className="mb-10">
-                            <div className="flex items-center gap-2 text-[11px] font-bold text-sky-600 uppercase tracking-widest mb-2">
-                                <Zap className="w-3.5 h-3.5 fill-current" /> Curriculum Visualization
+                    <div className="max-w-6xl mx-auto relative z-10">
+                        <div className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+                            <div>
+                                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center gap-2 text-[11px] font-bold text-sky-400 uppercase tracking-widest mb-3">
+                                    <div className="w-2 h-2 rounded-full bg-sky-400 animate-pulse shadow-[0_0_8px_rgba(56,189,248,0.8)]" /> Active Curriculum
+                                </motion.div>
+                                <motion.h1 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="text-4xl md:text-5xl font-black text-white tracking-tight drop-shadow-lg mb-4">
+                                    Learning Matrix
+                                </motion.h1>
+                                <motion.p initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="text-slate-400 text-base max-w-2xl leading-relaxed">
+                                    Scale the peaks of hardware design. Master digital logic from simple foundations to complex Verilog architectures and synthesis.
+                                </motion.p>
                             </div>
-                            <h1 className="text-3xl font-black text-slate-900 tracking-tight">Your Learning Map</h1>
-                            <p className="text-slate-500 mt-2 max-w-xl">Scale the peaks of hardware design. Master digital logic from simple foundations to complex Verilog architectures.</p>
+                            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.3 }} className="flex items-center gap-4 bg-slate-900/60 p-4 rounded-2xl border border-slate-700/50 backdrop-blur-md">
+                                <div className="text-center px-4 border-r border-slate-700">
+                                    <div className="text-2xl font-black text-white flex items-center justify-center gap-1">
+                                       <Zap className="w-5 h-5 text-yellow-400 inline" /> {dynamicModules.reduce((acc, m) => acc + (m.status === 'completed' ? m.hours : 0), 0).toFixed(1)}
+                                    </div>
+                                    <div className="text-[10px] text-slate-500 uppercase font-bold tracking-wider mt-1">Hours Logged</div>
+                                </div>
+                                <div className="text-center px-4">
+                                    <div className="text-2xl font-black text-white flex items-center justify-center gap-1">
+                                       <Target className="w-5 h-5 text-emerald-400 inline" /> {dynamicModules.filter(m => m.status === 'completed').length}
+                                    </div>
+                                    <div className="text-[10px] text-slate-500 uppercase font-bold tracking-wider mt-1">Modules Cleared</div>
+                                </div>
+                            </motion.div>
                         </div>
 
                         {/* Map Scroll Area */}
-                        <div className="bg-white border border-slate-200 rounded-[32px] p-8 shadow-2xl shadow-slate-200/50 overflow-x-auto">
-                            <svg width={CW} height={CH} viewBox={`0 0 ${CW} ${CH}`} className="overflow-visible">
+                        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="bg-slate-900/40 border border-slate-700/50 rounded-[40px] p-10 shadow-2xl shadow-black/50 backdrop-blur-xl overflow-x-auto relative group">
+                            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.03] to-transparent pointer-events-none rounded-[40px]" />
+                            <div className="absolute -inset-[1px] bg-gradient-to-t from-sky-500/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000 rounded-[40px] pointer-events-none" />
+                            
+                            <svg width={CW} height={CH} viewBox={`0 0 ${CW} ${CH}`} className="overflow-visible block mx-auto relative z-10">
                                 {/* Connection lines */}
                                 {CONNECTIONS.map((conn, i) => {
                                     const a = getModule(conn.from), b = getModule(conn.to);
                                     const ra = getR(a), rb = getR(b);
                                     const active = a.status === 'completed' || a.status === 'in-progress';
-                                    const color = active ? accentFor(a) : '#E2E8F0';
+                                    const color = active ? accentFor(a) : '#334155';
                                     
                                     if (conn.type === 'trunk') {
                                         return (
                                             <React.Fragment key={i}>
-                                                <line x1={a.cx + ra} y1={a.cy} x2={b.cx - rb} y2={b.cy} stroke={color} strokeWidth={2.5} strokeLinecap="round" opacity={active ? 0.6 : 0.2} />
+                                                <line x1={a.cx + ra} y1={a.cy} x2={b.cx - rb} y2={b.cy} stroke={color} strokeWidth={active ? 3 : 2} strokeLinecap="round" opacity={active ? 0.8 : 0.3} style={{ filter: active ? `drop-shadow(0 0 8px ${color}80)` : 'none' }} />
                                                 {active && <Pulse x1={a.cx + ra} y1={a.cy} x2={b.cx - rb} y2={b.cy} color={color} />}
                                             </React.Fragment>
                                         );
@@ -360,13 +345,13 @@ export const WorkstationHome: React.FC = () => {
                                         const d = `M ${a.cx} ${hubBot} L ${a.cx} ${JUNCTION_Y} L ${b.cx} ${JUNCTION_Y} L ${b.cx} ${tgtTop}`;
                                         return (
                                             <React.Fragment key={i}>
-                                                <path d={d} fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" opacity={active ? 0.5 : 0.15} />
+                                                <path d={d} fill="none" stroke={color} strokeWidth={active ? 2.5 : 2} strokeLinecap="round" opacity={active ? 0.6 : 0.2} style={{ filter: active ? `drop-shadow(0 0 6px ${color}60)` : 'none' }} />
                                                 {active && <Pulse x1={a.cx} y1={hubBot} x2={b.cx} y2={tgtTop} color={color} />}
                                             </React.Fragment>
                                         );
                                     }
                                     return (
-                                        <line key={i} x1={a.cx} y1={a.cy + ra} x2={b.cx} y2={b.cy - rb} stroke={color} strokeWidth={1.5} strokeLinecap="round" strokeDasharray="4 4" opacity={active ? 0.4 : 0.1} />
+                                        <line key={i} x1={a.cx} y1={a.cy + ra} x2={b.cx} y2={b.cy - rb} stroke={color} strokeWidth={active ? 2 : 1.5} strokeLinecap="round" strokeDasharray="6 6" opacity={active ? 0.5 : 0.2} style={{ filter: active ? `drop-shadow(0 0 4px ${color}40)` : 'none' }} />
                                     );
                                 })}
 
@@ -380,7 +365,7 @@ export const WorkstationHome: React.FC = () => {
                                     {hoveredId && <HoverCard mod={getModule(hoveredId)} onStart={handleModuleStart} />}
                                 </AnimatePresence>
                             </svg>
-                        </div>
+                        </motion.div>
                     </div>
                 </div>
             </main>

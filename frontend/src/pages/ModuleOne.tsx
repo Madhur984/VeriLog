@@ -461,7 +461,7 @@ export const ModuleOne: React.FC = () => {
                                     fontSize: 'clamp(36px, 6vw, 64px)',
                                     fontWeight: 800, textAlign: 'center',
                                     letterSpacing: '-0.04em', marginBottom: 56,
-                                    background: 'linear-gradient(135deg, #1E293B 0%, #4F46E5 50%, #EC4899 100%)',
+                                    background: 'linear-gradient(135deg, #F8FAFC 0%, #38BDF8 50%, #818CF8 100%)',
                                     WebkitBackgroundClip: 'text',
                                     WebkitTextFillColor: 'transparent',
                                     maxWidth: 800, lineHeight: 1.1,
