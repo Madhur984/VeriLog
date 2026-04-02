@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { Target, Command, Play, Zap, HelpCircle } from 'lucide-react';
+import { Target, Play } from 'lucide-react';
 import { useGamificationStore } from '../stores/gamificationStore';
 import { CommandPalette } from '../components/ui/CommandPalette';
 import { OnboardingTour } from '../components/ui/OnboardingTour';
-import { StreakCounter } from '../components/ui/StreakCounter';
 import { RadialMenu } from '../components/ui/RadialMenu';
+import { CircuitBackground } from '../components/ui/CircuitBackground';
 
 const getTourKey = (name: string | null) => `digi_tour_done_${name ?? 'guest'}`;
 
@@ -228,7 +228,7 @@ const HoverCard: React.FC<{ mod: Module; onStart: (m: Module) => void }> = ({ mo
 
 export const WorkstationHome: React.FC = () => {
     const navigate = useNavigate();
-    const { firstName, skills, streak, checkStreak } = useGamificationStore();
+    const { firstName, skills, checkStreak } = useGamificationStore();
     const completedModuleIds = skills.completedIds;
     const [hoveredId, setHoveredId] = useState<string | null>(null);
     const [cmdOpen, setCmdOpen] = useState(false);
@@ -280,72 +280,55 @@ export const WorkstationHome: React.FC = () => {
 
     return (
         <div className="h-screen flex overflow-hidden bg-[#0B1120] text-slate-200 selection:bg-sky-500/30">
+            {/* Ambient Background OS Circuitry */}
+            <CircuitBackground />
+
             {/* Radial Menu Integration */}
             <RadialMenu />
 
-            {/* Main Content */}
-            <main className="flex-1 flex flex-col min-w-0 bg-[#0B1120] relative overflow-hidden">
-                {/* Ambient dynamic background */}
-                <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-sky-900/20 rounded-full blur-[120px] pointer-events-none" />
-                <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-indigo-900/20 rounded-full blur-[120px] pointer-events-none" />
+            {/* Top-Right Floating Profile Card */}
+            <motion.div 
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.8, duration: 0.8, ease: "easeOut" }}
+                className="fixed top-8 right-12 z-50 group flex items-center gap-4 p-2 pr-6 rounded-2xl bg-slate-900/40 border border-slate-700/50 backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.05)] hover:bg-slate-800/60 transition-all duration-500 cursor-pointer overflow-hidden"
+            >
+                {/* Holographic Crystal Glow Background */}
+                <div className="absolute inset-0 bg-gradient-to-r from-sky-500/10 via-indigo-500/5 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
+                
+                {/* Avatar Container */}
+                <div className="relative">
+                    <div className="absolute -inset-2 bg-gradient-to-tr from-sky-400 to-indigo-600 rounded-full blur-xl opacity-20 group-hover:opacity-40 transition-opacity duration-700" />
+                    <div className="w-14 h-14 rounded-xl overflow-hidden border border-white/10 shadow-2xl relative z-10 bg-slate-950/50">
+                        <img 
+                            src="/holographic-crystal.png" 
+                            alt="Profile Avatar" 
+                            className="w-full h-full object-cover transform scale-110 group-hover:scale-125 transition-transform duration-700 ease-out"
+                        />
+                    </div>
+                </div>
 
-                <header className="h-20 border-b border-slate-800/60 bg-slate-900/40 backdrop-blur-2xl flex items-center justify-between px-10 shrink-0 relative z-50">
-                    <div className="flex items-center gap-6">
-                        <button onClick={() => setCmdOpen(true)} className="h-11 px-5 rounded-2xl bg-slate-800/50 border border-slate-700/50 text-slate-400 text-sm flex items-center gap-3 w-72 hover:bg-slate-700/50 hover:border-slate-600/50 transition-all shadow-inner group">
-                            <Command className="w-4 h-4 text-slate-500 group-hover:text-sky-400 transition-colors" /> <span>Search workspace...</span>
-                            <span className="ml-auto text-[10px] border border-slate-700 bg-slate-800/80 text-slate-400 px-2 py-1 rounded-md shadow-sm font-mono">⌘K</span>
-                        </button>
+                {/* Profile Details */}
+                <div className="relative z-10">
+                    <h2 className="text-sm font-black text-white tracking-[0.2em] uppercase leading-none mb-1.5 drop-shadow-md">
+                        {firstName?.toUpperCase() || 'MADHUR'}
+                    </h2>
+                    <div className="flex items-center gap-2">
+                        <div className="w-1.5 h-1.5 rounded-full bg-sky-400 animate-pulse shadow-[0_0_8px_rgba(56,189,248,0.8)]" />
+                        <span className="text-[9px] font-bold text-sky-400/80 tracking-[0.15em] uppercase">Hardware Architect</span>
                     </div>
-                    <div className="flex items-center gap-6">
-                        <StreakCounter days={streak.current} />
-                        <button onClick={() => setTourOpen(true)} className="w-11 h-11 rounded-2xl bg-slate-800/50 border border-slate-700/50 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-700 hover:border-slate-600/50 transition-all shadow-sm">
-                            <HelpCircle className="w-5 h-5" />
-                        </button>
-                        <div className="h-8 w-px bg-slate-800" />
-                        <div className="flex items-center gap-4 bg-slate-800/30 pl-4 pr-1.5 py-1.5 rounded-full border border-slate-700/50 hover:bg-slate-800/50 cursor-pointer transition-colors">
-                            <div className="text-right hidden sm:block">
-                                <p className="text-sm font-bold text-white leading-tight drop-shadow-sm">{firstName || 'Scholar'}</p>
-                                <p className="text-[10px] text-sky-400/80 font-mono tracking-wide uppercase">Hardware Eng.</p>
-                            </div>
-                            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-sky-400 to-indigo-600 text-white flex items-center justify-center font-bold shadow-lg shadow-sky-900/50 uppercase border border-white/10 ring-2 ring-slate-900">
-                                {(firstName || 'S')[0]}
-                            </div>
-                        </div>
-                    </div>
-                </header>
+                </div>
+            </motion.div>
+
+            {/* Main Content */}
+            <main className="flex-1 flex flex-col min-w-0 bg-transparent relative overflow-hidden">
+
+
 
                 <div className="flex-1 overflow-y-auto p-10 relative z-10 scrollbar-hide">
-                    {/* Grid Pattern */}
-                    <div className="absolute inset-0 pointer-events-none opacity-[0.03] z-0" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px)', backgroundSize: '40px 40px', backgroundPosition: 'center center' }} />
                     
                     <div className="max-w-6xl mx-auto relative z-10">
-                        <div className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
-                            <div>
-                                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center gap-2 text-[11px] font-bold text-sky-400 uppercase tracking-widest mb-3">
-                                    <div className="w-2 h-2 rounded-full bg-sky-400 animate-pulse shadow-[0_0_8px_rgba(56,189,248,0.8)]" /> Active Curriculum
-                                </motion.div>
-                                <motion.h1 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="text-4xl md:text-5xl font-black text-white tracking-tight drop-shadow-lg mb-4">
-                                    Learning Matrix
-                                </motion.h1>
-                                <motion.p initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="text-slate-400 text-base max-w-2xl leading-relaxed">
-                                    Scale the peaks of hardware design. Master digital logic from simple foundations to complex Verilog architectures and synthesis.
-                                </motion.p>
-                            </div>
-                            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.3 }} className="flex items-center gap-4 bg-slate-900/60 p-4 rounded-2xl border border-slate-700/50 backdrop-blur-md">
-                                <div className="text-center px-4 border-r border-slate-700">
-                                    <div className="text-2xl font-black text-white flex items-center justify-center gap-1">
-                                       <Zap className="w-5 h-5 text-yellow-400 inline" /> {dynamicModules.reduce((acc, m) => acc + (m.status === 'completed' ? m.hours : 0), 0).toFixed(1)}
-                                    </div>
-                                    <div className="text-[10px] text-slate-500 uppercase font-bold tracking-wider mt-1">Hours Logged</div>
-                                </div>
-                                <div className="text-center px-4">
-                                    <div className="text-2xl font-black text-white flex items-center justify-center gap-1">
-                                       <Target className="w-5 h-5 text-emerald-400 inline" /> {dynamicModules.filter(m => m.status === 'completed').length}
-                                    </div>
-                                    <div className="text-[10px] text-slate-500 uppercase font-bold tracking-wider mt-1">Modules Cleared</div>
-                                </div>
-                            </motion.div>
-                        </div>
+
 
                         {/* Map Scroll Area */}
                         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="bg-slate-900/40 border border-slate-700/50 rounded-[40px] p-10 shadow-[inset_0_4px_10px_rgba(0,0,0,0.5),0_20px_40px_rgba(0,0,0,0.6)] backdrop-blur-xl overflow-x-auto relative group overflow-visible" style={{ perspective: '1600px' }}>
