@@ -91,11 +91,11 @@ function accentFor(m: Module) {
 }
 
 const Pulse: React.FC<{ x1: number; y1: number; x2: number; y2: number; color: string }> = ({ x1, y1, x2, y2, color }) => (
-    <motion.circle r={2.5} fill={color} opacity={0.8}
+    <motion.circle r={3.5} fill="#fff" opacity={0.9}
         initial={{ cx: x1, cy: y1, opacity: 0 }}
-        animate={{ cx: [x1, x2], cy: [y1, y2], opacity: [0, 0.8, 0.8, 0], scale: [1, 1.5, 1.5, 1] }}
-        transition={{ duration: 2, repeat: Infinity, repeatDelay: 1.5, ease: 'linear' }}
-        style={{ filter: `drop-shadow(0 0 6px ${color})` }}
+        animate={{ cx: [x1, x2], cy: [y1, y2], opacity: [0, 1, 1, 0], scale: [0.8, 1.2, 1.2, 0.8] }}
+        transition={{ duration: 2.5, repeat: Infinity, repeatDelay: 1.5, ease: 'easeInOut' }}
+        style={{ filter: `drop-shadow(0 0 8px ${color}) drop-shadow(0 0 16px ${color})` }}
     />
 );
 
@@ -116,40 +116,63 @@ const ModuleBubble: React.FC<{
             onHoverStart={() => !locked && onHover(mod.id)}
             onHoverEnd={() => onHover(null)}
             onClick={() => !locked && onStart(mod)}
+            animate={{ y: isHovered ? -5 : 0 }}
+            transition={{ type: 'spring', damping: 15 }}
         >
+            <defs>
+                 <linearGradient id={`grad-${mod.id}`} x1="0%" y1="0%" x2="0%" y2="100%">
+                     <stop offset="0%" stopColor={locked ? '#1e293b' : done ? '#047857' : '#0369a1'} />
+                     <stop offset="100%" stopColor={locked ? '#0f172a' : done ? '#022c22' : '#0c4a6e'} />
+                 </linearGradient>
+            </defs>
+
+            {/* Ambient Aura */}
             {mod.isHub && !locked && (
                 <>
-                    <circle cx={mod.cx} cy={mod.cy} r={r + 12} fill="none" stroke={accent} strokeWidth={0.5} opacity={0.2} />
+                    <circle cx={mod.cx} cy={mod.cy} r={r + 14} fill="none" stroke={accent} strokeWidth={0.5} opacity={0.2} style={{ filter: 'blur(1px)' }} />
                     <motion.circle cx={mod.cx} cy={mod.cy} r={r + 8} fill="none" stroke={accent} strokeWidth={1}
-                        animate={{ opacity: [0.2, 0.05, 0.2] }} transition={{ duration: 3, repeat: Infinity }} />
+                        animate={{ opacity: [0.3, 0.1, 0.3] }} transition={{ duration: 3, repeat: Infinity }} style={{ filter: 'blur(1px)' }} />
                 </>
             )}
-            {done && <circle cx={mod.cx} cy={mod.cy} r={r + 4} fill="none" stroke="#10B981" strokeWidth={1} opacity={0.4} />}
+            {done && <circle cx={mod.cx} cy={mod.cy} r={r + 5} fill="none" stroke="#10B981" strokeWidth={1} opacity={0.4} />}
             {inProg && (
                 <motion.circle cx={mod.cx} cy={mod.cy} fill="none" stroke="#0EA5E9" strokeWidth={1.5}
-                    initial={{ opacity: 0.5, r: r + 2 }} animate={{ opacity: 0, r: r + 14 }}
-                    transition={{ duration: 2.5, repeat: Infinity, ease: 'easeOut' }} />
+                    initial={{ opacity: 0.6, r: r + 2 }} animate={{ opacity: 0, r: r + 16 }}
+                    transition={{ duration: 2.5, repeat: Infinity, ease: 'easeOut' }} style={{ filter: 'blur(1px)' }} />
             )}
+
+            {/* 3D Hardware Block Extrusion */}
+            <circle cx={mod.cx} cy={mod.cy + 4} r={r} fill="rgba(0,0,0,0.6)" filter="blur(6px)" />
+            <circle cx={mod.cx} cy={mod.cy + 2} r={r} fill="#020617" />
+
+            {/* Main Dome Component */}
             <motion.circle cx={mod.cx} cy={mod.cy}
                 r={r}
-                fill={locked ? '#0F172A' : done ? '#022C22' : '#0F172A'}
+                fill={`url(#grad-${mod.id})`}
                 stroke={locked ? '#334155' : accent}
                 strokeWidth={mod.isHub ? 2 : locked ? 1 : isHovered ? 2 : 1.5}
-                animate={{ r: isHovered ? r * 1.1 : r }}
+                animate={{ r: isHovered ? r * 1.05 : r }}
                 transition={{ duration: 0.2 }}
-                style={!locked ? { filter: `drop-shadow(0 0 ${isHovered ? 12 : 6}px ${accent}60)` } : undefined}
+                style={!locked ? { filter: `drop-shadow(0 0 ${isHovered ? 16 : 8}px ${accent}60)` } : undefined}
             />
+            {/* Top Glass Glare Bezel */}
+            <motion.circle cx={mod.cx} cy={mod.cy} r={r - 1.5} fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth={0.5} animate={{ r: isHovered ? (r * 1.05) - 1.5 : r - 1.5 }} style={{ transformOrigin: `${mod.cx}px ${mod.cy}px`, transform: 'translateY(-0.5px)' }} />
+
+            {/* Progress Arc */}
             {mod.progress > 0 && mod.progress < 100 && (
-                <circle cx={mod.cx} cy={mod.cy} r={r - 3} fill="none" stroke={accent} strokeWidth={2.5}
-                    strokeDasharray={`${(r - 3) * 2 * Math.PI * mod.progress / 100} 9999`}
-                    strokeLinecap="round" transform={`rotate(-90 ${mod.cx} ${mod.cy})`} opacity={0.8} />
+                <circle cx={mod.cx} cy={mod.cy} r={r - 4} fill="none" stroke={accent} strokeWidth={2.5}
+                    strokeDasharray={`${(r - 4) * 2 * Math.PI * mod.progress / 100} 9999`}
+                    strokeLinecap="round" transform={`rotate(-90 ${mod.cx} ${mod.cy})`} opacity={0.9} style={{ filter: `drop-shadow(0 0 4px ${accent})` }} />
             )}
+            
+            {/* Text & Labels */}
             <text x={mod.cx} y={mod.cy + 1} textAnchor="middle" dominantBaseline="middle"
-                fill={locked ? '#475569' : '#FFFFFF'} fontSize={r > 20 ? 10 : 8} fontWeight="700">
+                fill={locked ? '#64748b' : '#FFFFFF'} fontSize={r > 20 ? 10 : 8} fontWeight="800" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.8)' }}>
                 {done ? '✓' : locked ? '' : `${mod.progress}%`}
             </text>
+            
             {!isHovered && (
-                <text x={mod.cx} y={mod.cy + r + 18} textAnchor="middle" fill={locked ? '#475569' : '#94A3B8'} fontSize={9} fontWeight="600" letterSpacing="0.05em">
+                <text x={mod.cx} y={mod.cy + r + 22} textAnchor="middle" fill={locked ? '#475569' : '#94A3B8'} fontSize={9} fontWeight="600" letterSpacing="0.05em" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
                     {mod.title}
                 </text>
             )}
@@ -157,38 +180,44 @@ const ModuleBubble: React.FC<{
     );
 };
 
-const CARD_W = 220;
+const CARD_W = 240;
 const CARD_H = 150;
 
 const HoverCard: React.FC<{ mod: Module; onStart: (m: Module) => void }> = ({ mod, onStart }) => {
     const r = getR(mod);
     const rawX = mod.cx - CARD_W / 2;
-    const rawY = mod.cy - CARD_H - r - 16;
+    const rawY = mod.cy - CARD_H - r - 20;
     const x = Math.max(10, Math.min(rawX, CW - CARD_W - 10));
-    const y = rawY < 10 ? mod.cy + r + 16 : rawY;
+    const y = rawY < 10 ? mod.cy + r + 20 : rawY;
 
     return (
         <motion.foreignObject x={x} y={y} width={CARD_W} height={CARD_H}
-            initial={{ opacity: 0, scale: 0.95, y: 5 }} animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 5 }} >
-            <div className="bg-slate-900/95 border border-slate-700/60 rounded-2xl shadow-[0_0_40px_rgba(0,0,0,0.5)] backdrop-blur-xl p-4 flex flex-col justify-between h-full group overflow-hidden">
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-right from-transparent via-sky-500/50 to-transparent" />
-                <div className="absolute inset-0 bg-gradient-to-b from-white/[0.02] to-transparent pointer-events-none" />
+            initial={{ opacity: 0, scale: 0.9, y: 15 }} animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 15 }} 
+            transition={{ type: "spring", damping: 15 }}
+            className="pointer-events-none"
+        >
+            <div className="bg-[#0f172a]/80 border border-slate-600/50 rounded-2xl shadow-[0_20px_40px_rgba(0,0,0,0.8),inset_0_1px_0_rgba(255,255,255,0.1)] backdrop-blur-2xl p-4 flex flex-col justify-between h-full group overflow-hidden pointer-events-auto relative">
+                {/* Embedded Lighting & Reflections */}
+                <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-cyan-400/80 to-transparent" />
+                <div className="absolute top-0 right-0 w-32 h-32 bg-sky-500/10 rounded-full blur-2xl pointer-events-none" />
+                
                 <div className="relative z-10">
                    <div className="flex justify-between items-start mb-2">
-                        <span className="text-[10px] font-mono tracking-widest text-slate-400 uppercase">{mod.id}</span>
-                        {mod.branch && <span className="text-[9px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 font-bold border border-slate-700/50 shadow-inner">{mod.branch}</span>}
+                        <span className="text-[10px] font-mono tracking-widest text-slate-400 uppercase drop-shadow-md">{mod.id}</span>
+                        {mod.branch && <span className="text-[9px] px-2 py-0.5 rounded border shadow-[inset_0_1px_4px_rgba(0,0,0,0.5)] font-mono font-bold" style={{ backgroundColor: `${BRANCH_META[mod.branch].color}20`, borderColor: `${BRANCH_META[mod.branch].color}40`, color: BRANCH_META[mod.branch].color }}>{mod.branch}</span>}
                    </div>
-                   <h3 className="text-sm font-bold text-white leading-tight drop-shadow-sm">{mod.title}</h3>
+                   <h3 className="text-sm font-black text-white leading-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)]">{mod.title}</h3>
                    <p className="text-[11px] text-slate-400 mt-1.5 line-clamp-2 leading-relaxed">{mod.subtitle}</p>
                 </div>
-                <div className="flex items-center justify-between pt-3 relative z-10 border-t border-slate-800/80 mt-2">
-                    <div className="flex gap-3 text-[10px] text-slate-500 font-medium font-mono">
-                        <span className="flex items-center gap-1"><Target className="w-3 h-3" /> {mod.lessons}L</span>
-                        <span className="flex items-center gap-1"><Play className="w-3 h-3" /> {mod.hours}h</span>
+                
+                <div className="flex items-center justify-between pt-3 relative z-10 border-t border-slate-700/60 mt-2">
+                    <div className="flex gap-3 text-[10px] text-slate-300 font-medium font-mono drop-shadow-md">
+                        <span className="flex items-center gap-1.5"><Target className="w-3.5 h-3.5 text-sky-400" /> {mod.lessons}L</span>
+                        <span className="flex items-center gap-1.5"><Play className="w-3.5 h-3.5 text-indigo-400" /> {mod.hours}h</span>
                     </div>
-                    <button onClick={() => onStart(mod)}
-                        className="px-4 py-1.5 bg-sky-500 hover:bg-sky-400 text-slate-950 rounded-lg text-[11px] font-bold transition-all flex items-center gap-1.5 shadow-[0_0_15px_rgba(14,165,233,0.3)] hover:shadow-[0_0_20px_rgba(14,165,233,0.5)]">
+                    <button onClick={(e) => { e.stopPropagation(); onStart(mod); }}
+                        className="px-4 py-1.5 bg-gradient-to-t from-sky-600 to-sky-400 hover:from-sky-500 hover:to-sky-300 text-slate-950 rounded-md text-[11px] font-black transition-all flex items-center gap-1.5 shadow-[0_0_15px_rgba(14,165,233,0.4),inset_0_1px_rgba(255,255,255,0.4)] hover:shadow-[0_0_20px_rgba(14,165,233,0.8),inset_0_1px_rgba(255,255,255,0.6)]">
                         <Play className="w-3 h-3 fill-current" /> {mod.progress > 0 ? 'Resume' : 'Start'}
                     </button>
                 </div>
@@ -319,11 +348,15 @@ export const WorkstationHome: React.FC = () => {
                         </div>
 
                         {/* Map Scroll Area */}
-                        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="bg-slate-900/40 border border-slate-700/50 rounded-[40px] p-10 shadow-2xl shadow-black/50 backdrop-blur-xl overflow-x-auto relative group">
-                            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.03] to-transparent pointer-events-none rounded-[40px]" />
-                            <div className="absolute -inset-[1px] bg-gradient-to-t from-sky-500/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000 rounded-[40px] pointer-events-none" />
+                        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="bg-slate-900/40 border border-slate-700/50 rounded-[40px] p-10 shadow-[inset_0_4px_10px_rgba(0,0,0,0.5),0_20px_40px_rgba(0,0,0,0.6)] backdrop-blur-xl overflow-x-auto relative group overflow-visible" style={{ perspective: '1600px' }}>
+                            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.04] to-transparent pointer-events-none rounded-[40px]" />
+                            <div className="absolute -inset-[1px] bg-gradient-to-t from-sky-500/15 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000 rounded-[40px] pointer-events-none" />
                             
-                            <svg width={CW} height={CH} viewBox={`0 0 ${CW} ${CH}`} className="overflow-visible block mx-auto relative z-10">
+                            <motion.svg 
+                                width={CW} height={CH} viewBox={`0 0 ${CW} ${CH}`} 
+                                className="overflow-visible block mx-auto relative z-10"
+                                style={{ transformStyle: 'preserve-3d', rotateX: '12deg', rotateY: '-1deg' }}
+                            >
                                 {/* Connection lines */}
                                 {CONNECTIONS.map((conn, i) => {
                                     const a = getModule(conn.from), b = getModule(conn.to);
@@ -334,7 +367,9 @@ export const WorkstationHome: React.FC = () => {
                                     if (conn.type === 'trunk') {
                                         return (
                                             <React.Fragment key={i}>
-                                                <line x1={a.cx + ra} y1={a.cy} x2={b.cx - rb} y2={b.cy} stroke={color} strokeWidth={active ? 3 : 2} strokeLinecap="round" opacity={active ? 0.8 : 0.3} style={{ filter: active ? `drop-shadow(0 0 8px ${color}80)` : 'none' }} />
+                                                <line x1={a.cx + ra} y1={a.cy} x2={b.cx - rb} y2={b.cy} stroke="#000" strokeWidth={4} strokeLinecap="round" opacity={0.5} />
+                                                <line x1={a.cx + ra} y1={a.cy} x2={b.cx - rb} y2={b.cy} stroke={color} strokeWidth={active ? 3 : 2} strokeLinecap="round" opacity={active ? 0.9 : 0.3} style={{ filter: active ? `drop-shadow(0 0 8px ${color}80)` : 'none' }} />
+                                                <line x1={a.cx + ra} y1={a.cy} x2={b.cx - rb} y2={b.cy} stroke={color === '#334155' ? 'none' : '#fff'} strokeWidth={1} strokeLinecap="round" opacity={active ? 0.4 : 0} />
                                                 {active && <Pulse x1={a.cx + ra} y1={a.cy} x2={b.cx - rb} y2={b.cy} color={color} />}
                                             </React.Fragment>
                                         );
@@ -345,26 +380,31 @@ export const WorkstationHome: React.FC = () => {
                                         const d = `M ${a.cx} ${hubBot} L ${a.cx} ${JUNCTION_Y} L ${b.cx} ${JUNCTION_Y} L ${b.cx} ${tgtTop}`;
                                         return (
                                             <React.Fragment key={i}>
-                                                <path d={d} fill="none" stroke={color} strokeWidth={active ? 2.5 : 2} strokeLinecap="round" opacity={active ? 0.6 : 0.2} style={{ filter: active ? `drop-shadow(0 0 6px ${color}60)` : 'none' }} />
+                                                <path d={d} fill="none" stroke="#000" strokeWidth={3.5} strokeLinecap="round" opacity={0.5} />
+                                                <path d={d} fill="none" stroke={color} strokeWidth={active ? 2.5 : 2} strokeLinecap="round" opacity={active ? 0.8 : 0.2} style={{ filter: active ? `drop-shadow(0 0 6px ${color}80)` : 'none' }} />
+                                                <path d={d} fill="none" stroke={color === '#334155' ? 'none' : '#fff'} strokeWidth={0.8} strokeLinecap="round" opacity={active ? 0.4 : 0} />
                                                 {active && <Pulse x1={a.cx} y1={hubBot} x2={b.cx} y2={tgtTop} color={color} />}
                                             </React.Fragment>
                                         );
                                     }
                                     return (
-                                        <line key={i} x1={a.cx} y1={a.cy + ra} x2={b.cx} y2={b.cy - rb} stroke={color} strokeWidth={active ? 2 : 1.5} strokeLinecap="round" strokeDasharray="6 6" opacity={active ? 0.5 : 0.2} style={{ filter: active ? `drop-shadow(0 0 4px ${color}40)` : 'none' }} />
+                                        <g key={i}>
+                                            <line x1={a.cx} y1={a.cy + ra} x2={b.cx} y2={b.cy - rb} stroke="#000" strokeWidth={2.5} strokeDasharray="6 6" strokeLinecap="round" opacity={0.5} />
+                                            <line x1={a.cx} y1={a.cy + ra} x2={b.cx} y2={b.cy - rb} stroke={color} strokeWidth={active ? 2 : 1.5} strokeLinecap="round" strokeDasharray="6 6" opacity={active ? 0.8 : 0.2} style={{ filter: active ? `drop-shadow(0 0 6px ${color}80)` : 'none' }} />
+                                        </g>
                                     );
                                 })}
 
                                 {/* Modules */}
                                 {dynamicModules.map(mod => (
-                                    <ModuleBubble key={mod.id} mod={mod} isHovered={hoveredId === mod.id} onHover={setHoveredId} onStart={handleModuleStart} opacity={getNodeOpacity(mod)} />
+                                    <ModuleBubble key={`mod-${mod.id}`} mod={mod} isHovered={hoveredId === mod.id} onHover={setHoveredId} onStart={handleModuleStart} opacity={getNodeOpacity(mod)} />
                                 ))}
 
                                 {/* Overlay Hover Card */}
                                 <AnimatePresence>
-                                    {hoveredId && <HoverCard mod={getModule(hoveredId)} onStart={handleModuleStart} />}
+                                    {hoveredId && <HoverCard key="hover-card" mod={getModule(hoveredId)} onStart={handleModuleStart} />}
                                 </AnimatePresence>
-                            </svg>
+                            </motion.svg>
                         </motion.div>
                     </div>
                 </div>
