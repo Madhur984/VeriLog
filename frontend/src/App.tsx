@@ -2,7 +2,6 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { GatekeeperLanding } from './pages/GatekeeperLanding';
 import { HeroExperience } from './pages/HeroExperience';
 import { WorkstationHome } from './pages/WorkstationHome';
-import { ModuleOneHub } from './pages/ModuleOneHub';
 import SignalMustReturnModule from './pages/ModulePage';
 import SubModule1_1 from './components/level1/SubModule1_1';
 import { ModuleTwo } from './pages/ModuleTwo';
@@ -26,6 +25,7 @@ import { FSMPlayground } from './pages/FSMPlayground';
 import { CPULabPage } from './pages/CPULabPage';
 import { HardwareLeetCodePage } from './pages/HardwareLeetCodePage';
 import { VerilogPlayground } from './pages/VerilogPlayground';
+import { ModuleOneEntry } from './pages/ModuleOneEntry';
 
 import Workbench from './pages/Workbench';
 import { CommunityPage } from './pages/CommunityPage';
@@ -75,7 +75,7 @@ export default function App() {
                     <Route path="/debug-mission/:id" element={<DebugMissionPage />} />
 
                     {/* Modules & Story Selection (Standalone) */}
-                    <Route path="/module/1" element={<ModuleOneHub />} />
+                    <Route path="/module/1" element={<ModuleOneEntry />} />
                     <Route path="/module/1/1" element={<SubModule1_1 onComplete={() => window.location.href = '/portal'} />} />
                     <Route path="/module/signal-must-return" element={<SignalMustReturnModule />} />
                     <Route path="/module/2" element={<ModuleTwo />} />
