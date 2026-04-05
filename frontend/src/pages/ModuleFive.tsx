@@ -8,9 +8,9 @@
 import React, { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Bot, Loader2 } from 'lucide-react';
+import { ArrowLeft, Loader2 } from 'lucide-react';
 import { useEngagementAdapter } from '../hooks/useEngagementAdapter';
-import { useVoltMonkeyL5, type SceneId } from '../hooks/useVoltMonkeyL5';
+
 import { useKMapProgress } from '../hooks/useKMapProgress';
 import { KMapIntro } from '../components/level5/KMapIntro';
 import { KMapEngine } from '../components/level5/KMapEngine';
@@ -21,28 +21,36 @@ import { OptimizationComparison } from '../components/level5/OptimizationCompari
 
 // ── Design Tokens ─────────────────────────────────────────────────────────────
 const T = {
-    bg: '#07080C', card: '#0D0F16', surface: '#1A1D24',
-    accent: '#00D4FF', success: '#10B981', warning: '#F59E0B', error: '#EF4444',
-    text: '#E5E7EB', muted: '#64748B', border: '#1A1D24',
+    bg: '#FFFFFF',
+    card: '#F8FAFC',
+    surface: '#F1F5F9',
+    accent: '#0EA5E9',
+    success: '#059669',
+    warning: '#D97706',
+    error: '#DC2626',
+    text: '#0F172A',
+    muted: '#64748B',
+    border: '#E2E8F0',
     mono: "'JetBrains Mono', monospace",
 };
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 type TabId = 'intro' | 'kmap-builder' | 'grouping-lab' | 'challenges' | 'optimization';
 
-const TABS: { id: TabId; sceneId: SceneId; label: string; dbScene: string }[] = [
-    { id: 'intro', sceneId: 'scene-5-1', label: 'Intro', dbScene: 'scene-5-1' },
-    { id: 'kmap-builder', sceneId: 'scene-5-2', label: 'K-Map Builder', dbScene: 'scene-5-2' },
-    { id: 'grouping-lab', sceneId: 'scene-5-3', label: 'Grouping Lab', dbScene: 'scene-5-3' },
-    { id: 'challenges', sceneId: 'scene-5-4', label: 'Challenges', dbScene: 'scene-5-4' },
-    { id: 'optimization', sceneId: 'scene-5-5', label: 'Optimization', dbScene: 'scene-5-5' },
+const TABS: { id: TabId; label: string; dbScene: string }[] = [
+
+    { id: 'intro', label: 'Intro', dbScene: 'scene-5-1' },
+    { id: 'kmap-builder', label: 'K-Map Builder', dbScene: 'scene-5-2' },
+    { id: 'grouping-lab', label: 'Grouping Lab', dbScene: 'scene-5-3' },
+    { id: 'challenges', label: 'Challenges', dbScene: 'scene-5-4' },
+    { id: 'optimization', label: 'Optimization', dbScene: 'scene-5-5' },
 ];
 
 // ── Main Component ────────────────────────────────────────────────────────────
 export const ModuleFive: React.FC = () => {
     const navigate = useNavigate();
     const { awardXP, completeSkill } = useEngagementAdapter();
-    const { mentorState, triggerResponse, triggerContextual } = useVoltMonkeyL5();
+
     const {
         completedScenes,
         loading,
@@ -66,23 +74,20 @@ export const ModuleFive: React.FC = () => {
     const switchTab = useCallback((tab: (typeof TABS)[number], idx: number) => {
         if (!isTabUnlocked(idx)) return;
         setActiveTab(tab.id);
-        triggerResponse(tab.sceneId);
-    }, [isTabUnlocked, triggerResponse]);
+    }, [isTabUnlocked]);
 
     // ── Scene Completion Handlers ─────────────────────────────────────────────
     const handleIntroComplete = useCallback(async () => {
         await markSceneComplete('scene-5-1', 40);
         awardXP('structural', 40);
         setActiveTab('kmap-builder');
-        triggerResponse('scene-5-2');
-    }, [markSceneComplete, awardXP, triggerResponse]);
+    }, [markSceneComplete, awardXP]);
 
     const handleKMapBuilderComplete = useCallback(async () => {
         await markSceneComplete('scene-5-2', 60);
         awardXP('structural', 60);
         setActiveTab('grouping-lab');
-        triggerResponse('scene-5-3');
-    }, [markSceneComplete, awardXP, triggerResponse]);
+    }, [markSceneComplete, awardXP]);
 
     const handleGroupingComplete = useCallback(async (groups: string[][], expression: string) => {
         setSavedGroups(groups);
@@ -90,15 +95,13 @@ export const ModuleFive: React.FC = () => {
         await markSceneComplete('scene-5-3', 100);
         awardXP('diagnostic', 100);
         setActiveTab('challenges');
-        triggerResponse('scene-5-4');
-    }, [markSceneComplete, awardXP, triggerResponse]);
+    }, [markSceneComplete, awardXP]);
 
     const handleChallengesComplete = useCallback(async () => {
         await markSceneComplete('scene-5-4', 200);
         awardXP('application', 200);
         setActiveTab('optimization');
-        triggerResponse('scene-5-5');
-    }, [markSceneComplete, awardXP, triggerResponse]);
+    }, [markSceneComplete, awardXP]);
 
     const handleOptimizationComplete = useCallback(async () => {
         await markSceneComplete('scene-5-5', 100);
@@ -107,14 +110,13 @@ export const ModuleFive: React.FC = () => {
         completeSkill('kmap_optimization');
     }, [markSceneComplete, unlockSkill, awardXP, completeSkill]);
 
-    // VoltMonkey contextual triggers
     const handleInvalidGroup = useCallback(() => {
-        triggerContextual('invalid_group', mentorState.tier);
-    }, [triggerContextual, mentorState.tier]);
+        // triggerContextual('invalid_group', mentorState.tier);
+    }, []);
 
     const handleValidGroup = useCallback(() => {
-        triggerContextual('valid_group', mentorState.tier);
-    }, [triggerContextual, mentorState.tier]);
+        // triggerContextual('valid_group', mentorState.tier);
+    }, []);
 
     if (loading) {
         return (
@@ -232,67 +234,7 @@ export const ModuleFive: React.FC = () => {
                     </AnimatePresence>
                 </div>
 
-                {/* ── VoltMonkey Side Panel ─────────────────────────────────── */}
-                <div style={{ width: 340, borderLeft: `1px solid ${T.border}`, background: T.card, display: 'flex', flexDirection: 'column' }}>
-                    <div style={{ padding: 24, borderBottom: `1px solid ${T.border}`, display: 'flex', alignItems: 'center', gap: 12 }}>
-                        <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'rgba(245,158,11,0.1)', display: 'flex', justifyContent: 'center', alignItems: 'center', border: '1px solid rgba(245,158,11,0.2)' }}>
-                            <Bot size={24} color={T.warning} style={{ margin: '8px' }} />
-                        </div>
-                        <div>
-                            <div style={{ fontFamily: T.mono, fontSize: 13, fontWeight: 700, color: T.warning, letterSpacing: '0.1em' }}>VOLTMONKEY</div>
-                            <div style={{ fontSize: 11, color: T.muted, fontFamily: T.mono }}>Hardware Mentor AI</div>
-                        </div>
-                    </div>
 
-                    <div style={{ flex: 1, padding: 24, display: 'flex', flexDirection: 'column', gap: 20 }}>
-                        <AnimatePresence mode="wait">
-                            <motion.div
-                                key={activeTab + mentorState.observation}
-                                initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-                                style={{ display: 'flex', flexDirection: 'column', gap: 16 }}
-                            >
-                                <div>
-                                    <div style={{ fontSize: 10, fontFamily: T.mono, color: T.muted, textTransform: 'uppercase', marginBottom: 4 }}>OBSERVATION</div>
-                                    <div style={{ fontSize: 13, color: '#94A3B8', lineHeight: 1.5 }}>{mentorState.observation}</div>
-                                </div>
-                                <div>
-                                    <div style={{ fontSize: 10, fontFamily: T.mono, color: T.muted, textTransform: 'uppercase', marginBottom: 4 }}>ANALYSIS</div>
-                                    <div style={{ fontSize: 14, color: T.text, lineHeight: 1.6 }}>{mentorState.analysis}</div>
-                                </div>
-                                <div style={{ background: 'rgba(245,158,11,0.05)', border: `1px solid rgba(245,158,11,0.2)`, borderRadius: 6, padding: 12 }}>
-                                    <div style={{ fontSize: 10, fontFamily: T.mono, color: T.warning, textTransform: 'uppercase', marginBottom: 4 }}>SUGGESTION</div>
-                                    <div style={{ fontSize: 13, color: '#FDE68A', lineHeight: 1.5 }}>{mentorState.suggestion}</div>
-                                </div>
-                                <div>
-                                    <div style={{ fontSize: 10, fontFamily: T.mono, color: T.accent, textTransform: 'uppercase', marginBottom: 4 }}>ENGINEERING INSIGHT</div>
-                                    <div style={{ fontSize: 13, color: '#7DD3FC', lineHeight: 1.5 }}>{mentorState.insight}</div>
-                                </div>
-                            </motion.div>
-                        </AnimatePresence>
-                    </div>
-
-                    {/* Progress Footer */}
-                    <div style={{ padding: '12px 24px', borderTop: `1px solid ${T.border}`, display: 'flex', flexDirection: 'column', gap: 8 }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: T.mono, fontSize: 10, color: T.muted }}>
-                            <span>PERFORMANCE TIER</span>
-                            <span style={{ color: mentorState.tier === 'sharp' ? T.success : mentorState.tier === 'steady' ? T.accent : T.warning, textTransform: 'uppercase' }}>
-                                {mentorState.tier}
-                            </span>
-                        </div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: T.mono, fontSize: 10, color: T.muted }}>
-                            <span>SCENES COMPLETE</span>
-                            <span style={{ color: T.success }}>{completedScenes.size}/{TABS.length}</span>
-                        </div>
-                        {/* Small progress bar */}
-                        <div style={{ height: 3, background: T.surface, borderRadius: 2, overflow: 'hidden', marginTop: 4 }}>
-                            <motion.div
-                                animate={{ width: `${(completedScenes.size / TABS.length) * 100}%` }}
-                                transition={{ duration: 0.6, ease: 'easeOut' }}
-                                style={{ height: '100%', background: T.success, borderRadius: 2 }}
-                            />
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     );

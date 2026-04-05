@@ -1,15 +1,1 @@
-﻿src/components/level1/module1/ModuleContainer.tsx(1,17): error TS6133: 'useEffect' is declared but its value is never read.
-src/components/level1/module1/ModuleContainer.tsx(69,3): error TS6133: 'activeScreenId' is declared but its value is never read.
-src/components/level1/SubModule1_2.tsx(3,19): error TS6133: 'Zap' is declared but its value is never read.
-src/components/level1/SubModule1_2.tsx(9,7): error TS6133: 'T' is declared but its value is never read.
-src/components/level1/SubModule1_3.tsx(4,10): error TS6133: 'RotateCcw' is declared but its value is never read.
-src/components/level1/SubModule1_3.tsx(4,57): error TS6133: 'AlertTriangle' is declared but its value is never read.
-src/components/level1/SubModule1_3.tsx(46,11): error TS6133: 'returnPaths' is declared but its value is never read.
-src/components/level1/SubModule1_4.tsx(2,18): error TS6133: 'AnimatePresence' is declared but its value is never read.
-src/components/level1/SubModule1_4.tsx(4,10): error TS6133: 'Power' is declared but its value is never read.
-src/components/level1/SubModule1_5.tsx(91,29): error TS2322: Type '"dissipate" | "rapid"' is not assignable to type 'SignalState'.
-  Type '"rapid"' is not assignable to type 'SignalState'.
-src/components/level1/SubModule1_6.tsx(4,18): error TS6133: 'CheckCircle2' is declared but its value is never read.
-src/components/level1/SubModule1_6.tsx(68,48): error TS2367: This comparison appears to be unintentional because the types '"idle" | "fail" | "analyzing"' and '"success"' have no overlap.
-src/components/ModuleContent.tsx(9,10): error TS2614: Module '"./level1/SubModule1_1"' has no exported member 'SubModule1_1'. Did you mean to use 'import SubModule1_1 from "./level1/SubModule1_1"' instead?
-src/components/ModuleContent.tsx(254,51): error TS7006: Parameter 'sip' implicitly has an 'any' type.
+﻿src/components/shared/VeriSlider.tsx(49,11): error TS6133: 'glow' is declared but its value is never read.

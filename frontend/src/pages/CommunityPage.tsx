@@ -7,9 +7,9 @@ export const CommunityPage: React.FC = () => {
     const navigate = useNavigate();
 
     return (
-        <div className="min-h-screen bg-[#07080C] text-slate-200">
-            <header className="h-14 border-b border-white/5 flex items-center px-6">
-                <button onClick={() => navigate('/portal')} className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-sm font-medium">
+        <div className="min-h-screen bg-slate-50 text-slate-900">
+            <header className="h-14 border-b border-slate-200 bg-white flex items-center px-6">
+                <button onClick={() => navigate('/portal')} className="flex items-center gap-2 text-slate-500 hover:text-sky-600 transition-colors text-sm font-medium">
                     <ArrowLeft className="w-4 h-4" /> Back to Portal
                 </button>
             </header>

@@ -15,17 +15,20 @@ import { useGlobalSensory } from '../hooks/useGlobalSensory';
 import '../components/level2/level2.css';
 
 // Shared Level 1 systems
-import { VoltMonkeyPanel } from '../components/level1/VoltMonkeyPanel';
 import { XPCounter } from '../components/level1/XPCounter';
 import { ProgressTracker } from '../components/ui/ProgressTracker';
 import { useEngagementAdapter as useXPSystem } from '../hooks/useEngagementAdapter';
-import { useVoltMonkeyMentorL2 } from '../hooks/useVoltMonkeyMentorL2';
 import { useGamificationStore } from '../stores/gamificationStore';
 
 const T = {
-    bg: '#0A0B10', card: '#0D0F16', border: '#1A1D24',
-    text: '#E5E7EB', muted: '#94A3B8', accent: '#00D4FF',
-    success: '#10B981', error: '#EF4444',
+    bg: '#FFFFFF',
+    card: '#F8FAFC',
+    border: '#E2E8F0',
+    text: '#0F172A',
+    muted: '#64748B',
+    accent: '#0EA5E9',
+    success: '#059669',
+    error: '#DC2626',
     mono: "'IBM Plex Mono','Roboto Mono',monospace",
     sans: "'Inter',system-ui,sans-serif",
 } as const;
@@ -50,9 +53,8 @@ export const ModuleTwo: React.FC = () => {
     const [isTransitioning, setIsTransitioning] = useState(false);
 
     const { xp, awardXP, registerCounterEl } = useXPSystem();
-    const { getResponse } = useVoltMonkeyMentorL2();
     const { triggerHaptic, playSound } = useGlobalSensory();
-    const [VoltMonkeyResponse, setVoltMonkeyResponse] = useState<ReturnType<typeof getResponse> | null>(null);
+
 
     const [isHighContrast, setIsHighContrast] = useState(false);
     const [isXRayMode] = useState(false);
@@ -98,28 +100,23 @@ export const ModuleTwo: React.FC = () => {
 
     const handleAnalogComplete = useCallback(() => {
         awardBadge('analog');
-        setVoltMonkeyResponse(getResponse('analog'));
-    }, [awardBadge, getResponse]);
+    }, [awardBadge]);
 
     const handleDigitalComplete = useCallback(() => {
         awardBadge('digital');
-        setVoltMonkeyResponse(getResponse('digital'));
-    }, [awardBadge, getResponse]);
+    }, [awardBadge]);
 
     const handleComparisonComplete = useCallback(() => {
         awardBadge('comparison');
-        setVoltMonkeyResponse(getResponse('comparison'));
-    }, [awardBadge, getResponse]);
+    }, [awardBadge]);
 
     const handleRegenerationComplete = useCallback(() => {
         awardBadge('advanced');
-        setVoltMonkeyResponse(getResponse('advanced'));
-    }, [awardBadge, getResponse]);
+    }, [awardBadge]);
 
     const handleSamplingComplete = useCallback(() => {
         awardBadge('sampling');
-        setVoltMonkeyResponse(getResponse('advanced')); // Mapping to advanced as placeholder if sampling ctx missing
-    }, [awardBadge, getResponse]);
+    }, [awardBadge]);
 
     const startChallenge = useCallback((id: string) => {
         setActiveChallenge(id);
@@ -202,7 +199,7 @@ export const ModuleTwo: React.FC = () => {
                 </div>
             </header>
 
-            {scene !== 'intro' && scene !== 'complete' && <VoltMonkeyPanel response={VoltMonkeyResponse} />}
+
 
             <main style={{ 
                 flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center',

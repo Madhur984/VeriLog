@@ -31,22 +31,22 @@ interface OscilloscopeCanvasProps {
 }
 
 const T = {
-    accent: '#00D4FF',
-    success: '#34D399',
-    error: '#EF4444',
-    card: '#0D0F16',
-    border: '#1A1D24',
-    text: '#E5E7EB',
-    muted: '#94A3B8',
+    accent: '#0EA5E9',
+    success: '#059669',
+    error: '#DC2626',
+    card: '#F8FAFC',
+    border: '#E2E8F0',
+    text: '#0F172A',
+    muted: '#64748B',
     mono: "'IBM Plex Mono', 'Roboto Mono', monospace",
 };
 
-const GRID_COLOR = 'rgba(0,212,255,0.06)';
-const CURSOR_COLOR = 'rgba(245, 158, 11, 0.6)';
-const CH1_COLOR = '#00D4FF';
-const CH2_COLOR = '#F59E0B';
-const LOW_COLOR = 'rgba(239,68,68,0.7)';
-const HIGH_COLOR = 'rgba(16,185,129,0.7)';
+const GRID_COLOR = 'rgba(15, 23, 42, 0.08)';
+const CURSOR_COLOR = 'rgba(217, 119, 6, 0.6)';
+const CH1_COLOR = '#0EA5E9';
+const CH2_COLOR = '#D97706';
+const LOW_COLOR = 'rgba(220, 38, 38, 0.7)';
+const HIGH_COLOR = 'rgba(5, 150, 105, 0.7)';
 
 function OscilloscopeCanvasInner({
     ch1Samples,
@@ -116,7 +116,7 @@ function OscilloscopeCanvasInner({
             const s1 = getSample(history1Ref.current, ch1Samples);
             const s2 = ch2Samples ? getSample(history2Ref.current, ch2Samples) : null;
 
-            ctx.fillStyle = '#060912';
+            ctx.fillStyle = '#FFFFFF';
             ctx.fillRect(0, 0, W, H);
 
             if (showGrid || isEngineerMode) {
@@ -133,7 +133,7 @@ function OscilloscopeCanvasInner({
             }
 
             // Zero ref
-            ctx.strokeStyle = 'rgba(0,212,255,0.15)';
+            ctx.strokeStyle = 'rgba(15, 23, 42, 0.1)';
             ctx.setLineDash([4, 6]);
             ctx.beginPath(); ctx.moveTo(0, H * 0.5); ctx.lineTo(W, H * 0.5); ctx.stroke();
             ctx.setLineDash([]);
@@ -202,7 +202,7 @@ function OscilloscopeCanvasInner({
                 ctx.setLineDash([]);
                 const deltaT = Math.abs(cursors.t1 - cursors.t2) * timeDiv.get();
                 const deltaV = Math.abs(cursors.v1 - cursors.v2) / 20 * voltsDiv.get();
-                ctx.fillStyle = '#FFF'; ctx.font = '9px monospace';
+                ctx.fillStyle = T.text; ctx.font = '9px monospace';
                 ctx.fillText(`ΔT: ${deltaT.toFixed(1)}ms`, W - 100, H - 30);
                 ctx.fillText(`ΔV: ${deltaV.toFixed(2)}V`, W - 100, H - 18);
             }
@@ -271,7 +271,7 @@ function OscilloscopeCanvasInner({
 
     return (
         <div ref={containerRef} className={className}
-            style={{ position: 'relative', width: '100%', height, background: '#060912', borderRadius: 4, overflow: 'hidden' }}
+            style={{ position: 'relative', width: '100%', height, background: '#FFFFFF', borderRadius: 4, overflow: 'hidden' }}
             onMouseMove={handleMouseMove}
             onMouseUp={() => setDraggingCursor(null)}
             onMouseDown={handleMouseDown}
@@ -292,7 +292,7 @@ function OscilloscopeCanvasInner({
             />
 
             {isPaused && (
-                <div style={{ position: 'absolute', bottom: 12, left: '10%', right: '10%', height: 2, background: 'rgba(255,255,255,0.1)' }}>
+                <div style={{ position: 'absolute', bottom: 12, left: '10%', right: '10%', height: 2, background: 'rgba(15, 23, 42, 0.1)' }}>
                     <div style={{ position: 'absolute', left: `${scrubOffset}%`, top: -4, width: 2, height: 10, background: T.accent }} />
                 </div>
             )}
@@ -300,7 +300,7 @@ function OscilloscopeCanvasInner({
             <AnimatePresence>
                 {cursorX !== null && !draggingCursor && (
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                                style={{ position: 'absolute', top: 0, bottom: 0, left: `${cursorX}%`, width: 1, background: 'rgba(0,212,255,0.2)', pointerEvents: 'none' }} />
+                                style={{ position: 'absolute', top: 0, bottom: 0, left: `${cursorX}%`, width: 1, background: 'rgba(15, 23, 42, 0.1)', pointerEvents: 'none' }} />
                 )}
             </AnimatePresence>
         </div>
@@ -325,9 +325,9 @@ function HUD({
     onVoltsUp, onVoltsDown, onTimeUp, onTimeDown 
 }: HUDProps) {
     const btnStyle = {
-        background: 'rgba(0,212,255,0.05)', color: '#00D4FF', 
+        background: 'rgba(14, 165, 233, 0.05)', color: '#0EA5E9', 
         padding: '4px 10px', borderRadius: 4, fontSize: 9, 
-        border: '1px solid rgba(0,212,255,0.2)', cursor: 'pointer',
+        border: '1px solid rgba(14, 165, 233, 0.2)', cursor: 'pointer',
         fontFamily: "'IBM Plex Mono', monospace", pointerEvents: 'auto'
     } as const;
 
@@ -342,7 +342,7 @@ function HUD({
                 <div style={{ display: 'flex', gap: 12, pointerEvents: 'auto' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                         <button style={btnStyle} onClick={onVoltsDown}>−</button>
-                        <div style={{ color: '#FFF', fontSize: 10, fontFamily: "'IBM Plex Mono', monospace", minWidth: 60, textAlign: 'center' }}>
+                        <div style={{ color: T.text, fontSize: 10, fontFamily: "'IBM Plex Mono', monospace", minWidth: 60, textAlign: 'center' }}>
                             {voltsDiv < 1 ? (voltsDiv*1000).toFixed(0)+'m' : voltsDiv.toFixed(1)}V/DIV
                         </div>
                         <button style={btnStyle} onClick={onVoltsUp}>+</button>
@@ -350,7 +350,7 @@ function HUD({
 
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                         <button style={btnStyle} onClick={onTimeDown}>−</button>
-                        <div style={{ color: '#FFF', fontSize: 10, fontFamily: "'IBM Plex Mono', monospace", minWidth: 60, textAlign: 'center' }}>
+                        <div style={{ color: T.text, fontSize: 10, fontFamily: "'IBM Plex Mono', monospace", minWidth: 60, textAlign: 'center' }}>
                             {timeDiv.toFixed(0)}ms/DIV
                         </div>
                         <button style={btnStyle} onClick={onTimeUp}>+</button>

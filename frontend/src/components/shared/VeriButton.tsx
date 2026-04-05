@@ -27,12 +27,12 @@ export const VeriButton: React.FC<VeriButtonProps> = ({
 
     const getColors = () => {
         switch (variant) {
-            case 'signal': return { bg: 'var(--signal-cyan)', text: '#000', glow: 'var(--energy-glow)' };
+            case 'signal': return { bg: 'var(--signal-cyan)', text: '#FFF', glow: 'var(--energy-glow)' };
             case 'logic': return { bg: 'var(--logic-purple)', text: '#FFF', glow: 'var(--logic-glow)' };
-            case 'primary': return { bg: 'var(--text-strong)', text: '#000', glow: 'rgba(255,255,255,0.2)' };
-            case 'secondary': return { bg: 'rgba(255,255,255,0.05)', text: 'var(--text-primary)', glow: 'none' };
+            case 'primary': return { bg: 'var(--text-strong)', text: '#FFF', glow: 'rgba(0,0,0,0.1)' };
+            case 'secondary': return { bg: 'rgba(0,0,0,0.05)', text: 'var(--text-primary)', glow: 'none' };
             case 'ghost': return { bg: 'transparent', text: 'var(--text-secondary)', glow: 'none' };
-            default: return { bg: 'var(--text-strong)', text: '#000', glow: 'none' };
+            default: return { bg: 'var(--text-strong)', text: '#FFF', glow: 'none' };
         }
     };
 

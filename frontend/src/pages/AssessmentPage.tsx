@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { X, ChevronRight, Terminal, ArrowRight, Trophy } from 'lucide-react';
+import { X, ChevronRight, Terminal, ArrowRight, Trophy, Info, ShieldCheck, Activity } from 'lucide-react';
 import { cn } from '../lib/utils';
-import { VoltBot } from '../components/ui/VoltBot';
 import { LogicGateSVG } from '../components/ui/LogicGateSVG';
 import { LogicStormBackground } from '../components/ui/LogicStormBackground';
 import './assessment-cards.css';
@@ -274,16 +273,12 @@ export const AssessmentPage: React.FC = () => {
     const [selectedOption, setSelectedOption] = useState<string | null>(null);
     const [isAnswered, setIsAnswered] = useState(false);
     const [isCorrect, setIsCorrect] = useState(false);
-    const [botState, setBotState] = useState<'idle' | 'speaking' | 'happy' | 'sad' | 'thinking'>('speaking');
-    const [botMessage, setBotMessage] = useState("Educational module initialized. Ready for logic verification.");
+    const [statusMessage, setStatusMessage] = useState("Educational module initialized. Ready for logic verification.");
     const [successStep, setSuccessStep] = useState<0 | 1 | 2>(0);
 
-    // Structural reinforcement: track correct count WITHOUT useState (avoids re-render)
     const correctCountRef = useRef(0);
 
-    // Apply CSS structural reinforcement — reduces float amplitude after 3+ correct
     const applyStructuralReinforcement = useCallback((count: number) => {
-        // Amplitude ramps down from 2px → 0.5px as correctCount increases
         const amplitude = Math.max(0.5, 2 - (count - 3) * 0.3);
         document.documentElement.style.setProperty('--card-float-amplitude', `${amplitude.toFixed(1)}px`);
     }, []);
@@ -311,17 +306,14 @@ export const AssessmentPage: React.FC = () => {
 
         if (correct) {
             const msg = GUIDANCE_MESSAGES.correct[Math.floor(Math.random() * GUIDANCE_MESSAGES.correct.length)];
-            setBotState('happy');
-            setBotMessage(msg);
-            // Increment correct count ref and apply structural reinforcement
+            setStatusMessage(msg);
             correctCountRef.current += 1;
             if (correctCountRef.current >= 3) {
                 applyStructuralReinforcement(correctCountRef.current);
             }
         } else {
             const msg = GUIDANCE_MESSAGES.incorrect[Math.floor(Math.random() * GUIDANCE_MESSAGES.incorrect.length)];
-            setBotState('sad');
-            setBotMessage(`${msg} ${question.explanation}`);
+            setStatusMessage(`${msg} ${question.explanation}`);
         }
     };
 
@@ -330,8 +322,7 @@ export const AssessmentPage: React.FC = () => {
             setCurrentStep(s => s + 1);
             setSelectedOption(null);
             setIsAnswered(false);
-            setBotState('speaking');
-            setBotMessage("Loading next data packet...");
+            setStatusMessage("Loading next data packet...");
         } else {
             setSuccessStep(1);
         }
@@ -340,26 +331,39 @@ export const AssessmentPage: React.FC = () => {
     useEffect(() => {
         if (!isAnswered && successStep === 0) {
             if (selectedOption) {
-                setBotState('thinking');
-                setBotMessage("Analyzing selection... silicon gates are shifting!");
+                setStatusMessage("Analyzing selection... silicon gates are shifting!");
             } else {
-                setBotState('idle');
                 const hint = question.gateType
                     ? `Input A and B are ready. What is the ${question.gateType.toLowerCase()} output?`
                     : "Observation is key. Trust your logic.";
-                setBotMessage(hint);
+                setStatusMessage(hint);
             }
         }
     }, [selectedOption, isAnswered, question.gateType, successStep]);
 
-    const navItems = [1, 2]; // Define navItems for the progress indicators
+    const navItems = [1, 2];
+
+    const T = {
+        bg: 'bg-slate-50',
+        card: 'bg-white',
+        text: 'text-slate-900',
+        muted: 'text-slate-500',
+        border: 'border-slate-200',
+        shadow: 'shadow-xl shadow-slate-200/50',
+    };
 
     return (
-        <div className="h-screen bg-background flex flex-col font-sans overflow-hidden relative selection:bg-indigo-500/10 text-foreground">
-            {/* Soft Ambient Background Elements */}
-            <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-500/5 blur-[120px] rounded-full -translate-y-1/2 translate-x-1/2" />
-                <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-500/5 blur-[120px] rounded-full translate-y-1/2 -translate-x-1/2" />
+        <div className={`h-screen ${T.bg} flex flex-col font-sans overflow-hidden relative selection:bg-sky-500/10 ${T.text}`}>
+            {/* Ambient Background */}
+            <div className="absolute inset-0 pointer-events-none opacity-[0.03]">
+                <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <pattern id="grid" width="30" height="30" patternUnits="userSpaceOnUse">
+                            <path d="M 30 0 L 0 0 0 30" fill="none" stroke="black" strokeWidth="0.5" />
+                        </pattern>
+                    </defs>
+                    <rect width="100%" height="100%" fill="url(#grid)" />
+                </svg>
             </div>
 
             <AnimatePresence mode="wait">
@@ -368,38 +372,38 @@ export const AssessmentPage: React.FC = () => {
                         key="quiz"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        exit={{ opacity: 0, scale: 1.1, filter: 'blur(20px)' }}
-                        className="flex-1 flex flex-col"
+                        exit={{ opacity: 0, scale: 0.95, filter: 'blur(20px)' }}
+                        className="flex-1 flex flex-col relative z-10"
                     >
                         {/* Progress Header */}
-                        <header className="relative z-20 max-w-6xl w-full mx-auto pt-8 px-8 flex items-center space-x-8">
+                        <header className="max-w-6xl w-full mx-auto pt-8 px-8 flex items-center space-x-8">
                             <button
-                                onClick={() => navigate('/home')}
-                                className="p-3 bg-white/5 border border-white/10 rounded-2xl text-indigo-400 hover:text-indigo-300 transition-all hover:bg-white/10 active:scale-95"
+                                onClick={() => navigate('/portal')}
+                                className="p-3 bg-white border border-slate-200 rounded-2xl text-slate-400 hover:text-sky-600 hover:border-sky-200 transition-all shadow-sm active:scale-95"
                             >
                                 <X className="w-5 h-5" />
                             </button>
-                            <div className="flex-1 h-2 bg-white/5 rounded-full overflow-hidden">
+                            <div className="flex-1 h-3 bg-slate-200 rounded-full overflow-hidden shadow-inner">
                                 <motion.div
                                     initial={{ width: 0 }}
                                     animate={{ width: `${((currentStep) / QUESTIONS.length) * 100}%` }}
-                                    className="h-full bg-indigo-500 transition-all duration-700 shadow-[0_0_15px_rgba(99,102,241,0.5)]"
+                                    className="h-full bg-sky-600 transition-all duration-700 shadow-md"
                                 />
                             </div>
-                            <div className="px-5 py-2 rounded-2xl bg-white/5 border border-white/10">
-                                <span className="text-xs font-heading font-bold text-indigo-400 tracking-wide">
-                                    Unit {currentStep + 1} of {QUESTIONS.length}
+                            <div className="px-5 py-2 rounded-2xl bg-white border border-slate-200 shadow-sm">
+                                <span className="text-xs font-black text-slate-800 tracking-widest uppercase">
+                                    Progress: {Math.round(((currentStep) / QUESTIONS.length) * 100)}%
                                 </span>
                             </div>
                         </header>
 
-                        <main className="relative z-10 flex-1 max-w-6xl w-full mx-auto px-8 py-2 flex flex-col justify-center overflow-hidden">
+                        <main className="flex-1 max-w-6xl w-full mx-auto px-8 py-2 flex flex-col justify-center overflow-hidden">
                             <AnimatePresence mode="wait">
                                 <motion.div
                                     key={currentStep}
-                                    initial={{ opacity: 0, scale: 0.99, y: 5 }}
+                                    initial={{ opacity: 0, scale: 0.99, y: 10 }}
                                     animate={{ opacity: 1, scale: 1, y: 0 }}
-                                    exit={{ opacity: 0, scale: 1.01, y: -5 }}
+                                    exit={{ opacity: 0, scale: 1.01, y: -10 }}
                                     transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
                                     className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"
                                 >
@@ -411,18 +415,17 @@ export const AssessmentPage: React.FC = () => {
                                                 animate={{ opacity: 1, x: 0 }}
                                                 className="flex items-center space-x-3"
                                             >
-                                                <div className="w-1.5 h-3.5 bg-indigo-500 rounded-full shadow-[0_0_10px_rgba(99,102,241,0.5)]" />
-                                                <span className="text-xs font-heading font-bold text-indigo-400/80 tracking-widest uppercase">Logic Verification Phase</span>
+                                                <div className="p-1 px-3 bg-sky-50 text-sky-600 rounded-full border border-sky-100 text-[10px] font-black tracking-widest uppercase">Logic Verification Phase</div>
                                             </motion.div>
-                                            <h1 className="text-5xl font-heading font-bold text-white leading-tight tracking-tight">
+                                            <h1 className="text-5xl font-heading font-black text-slate-900 leading-tight tracking-tight">
                                                 {question.text}
                                             </h1>
-                                            <p className="text-xl text-slate-400 font-medium max-w-lg leading-relaxed">
+                                            <p className="text-xl text-slate-500 font-medium max-w-lg leading-relaxed">
                                                 {question.subtext}
                                             </p>
                                         </div>
 
-                                        <div className="grid grid-cols-1 gap-3 max-w-md">
+                                        <div className="grid grid-cols-1 gap-4 max-w-md">
                                             {question.options.map((option, optIdx) => {
                                                 const isSelected = selectedOption === option;
                                                 const isAnswerCorrect = isAnswered && option === question.correctAnswer;
@@ -432,25 +435,25 @@ export const AssessmentPage: React.FC = () => {
                                                         key={option}
                                                         disabled={isAnswered}
                                                         onClick={() => setSelectedOption(option)}
-                                                        style={{ '--card-delay': `${optIdx * 0.15}s` } as React.CSSProperties}
                                                         className={cn(
-                                                            // Base + CSS float animation from assessment-cards.css
-                                                            "question-option-card relative p-6 rounded-xl border transition-colors text-left group overflow-hidden bg-white/5 backdrop-blur-sm",
+                                                            "relative p-6 rounded-2xl border-2 transition-all text-left font-bold shadow-sm overflow-hidden",
                                                             isSelected
-                                                                ? "border-indigo-500 ring-4 ring-indigo-500/20 bg-indigo-500/10"
-                                                                : "border-white/5 text-slate-400 hover:border-white/10 hover:bg-white/10",
-                                                            isAnswerCorrect && "question-option-card--correct border-emerald-500/50 bg-emerald-500/10 !text-emerald-400",
-                                                            isAnswerWrong && "question-option-card--incorrect border-amber-500/50 bg-amber-500/10 !text-amber-400"
+                                                                ? "border-sky-600 bg-sky-50 text-sky-900 ring-4 ring-sky-100"
+                                                                : "border-slate-100 bg-white text-slate-500 hover:border-slate-200 hover:bg-slate-50",
+                                                            isAnswerCorrect && "border-emerald-500 bg-emerald-50 text-emerald-800 ring-4 ring-emerald-100",
+                                                            isAnswerWrong && "border-rose-500 bg-rose-50 text-rose-800 ring-4 ring-rose-100"
                                                         )}
                                                     >
                                                         <div className="flex items-center relative z-10">
                                                             <span className={cn(
-                                                                "w-10 h-10 rounded-xl flex items-center justify-center mr-5 font-heading font-bold text-sm border transition-all",
-                                                                isSelected ? "bg-indigo-500 border-indigo-400 text-white" : "bg-white/5 border-white/10 text-indigo-400"
+                                                                "w-10 h-10 rounded-xl flex items-center justify-center mr-5 font-heading font-black text-sm border-2 transition-all shadow-sm",
+                                                                isSelected 
+                                                                    ? (isAnswered ? (isAnswerCorrect ? "bg-emerald-500 border-white text-white" : "bg-rose-500 border-white text-white") : "bg-sky-600 border-white text-white") 
+                                                                    : "bg-white border-slate-100 text-slate-400"
                                                             )}>
-                                                                {option.charAt(0)}
+                                                                {String.fromCharCode(65 + optIdx)}
                                                             </span>
-                                                            <span className="font-heading font-bold text-xl tracking-tight">
+                                                            <span className="font-heading font-black text-xl tracking-tight">
                                                                 {option}
                                                             </span>
                                                         </div>
@@ -462,67 +465,74 @@ export const AssessmentPage: React.FC = () => {
 
                                     {/* Right Content */}
                                     <div className="flex flex-col space-y-8 h-full">
-                                        <div className="bg-white/5 rounded-2xl p-8 border border-white/10 shadow-2xl shadow-black/20 backdrop-blur-xl flex flex-col items-center justify-center min-h-[360px] relative overflow-hidden flex-1 group">
+                                        <div className="bg-white rounded-[32px] p-10 border border-slate-100 shadow-2xl shadow-slate-200/50 flex flex-col items-center justify-center min-h-[400px] relative overflow-hidden flex-1 group">
                                             {question.gateType ? (
                                                 <motion.div
                                                     initial={{ opacity: 0, scale: 0.9 }}
                                                     animate={{ opacity: 1, scale: 1 }}
-                                                    className="w-full max-w-[400px]"
+                                                    className="w-full max-w-[420px]"
                                                 >
                                                     <LogicGateSVG
                                                         type={question.gateType}
                                                         interactionState={isAnswered ? (isCorrect ? 'success' : 'error') : (selectedOption ? 'active' : 'idle')}
-                                                        className="bg-transparent border-none shadow-none backdrop-blur-none"
+                                                        className="bg-transparent border-none shadow-none grayscale-0"
                                                     />
                                                 </motion.div>
                                             ) : (
                                                 <div className="w-full h-full flex flex-col">
-                                                    <div className="flex items-center space-x-2 mb-6 text-purple-400/60 border-b border-purple-500/20 pb-4">
-                                                        <Terminal className="w-4 h-4" />
-                                                        <span className="font-mono text-[10px] uppercase tracking-[0.2em]">System_Lore_Logs v4.0</span>
+                                                    <div className="flex items-center space-x-3 mb-8 text-sky-600/60 border-b border-slate-100 pb-6">
+                                                        <Terminal className="w-5 h-5" />
+                                                        <span className="font-black text-xs uppercase tracking-[0.2em] text-slate-400">System_Lore_Logs v4.0</span>
                                                     </div>
-                                                    <div className="flex-1 overflow-y-auto pr-4 scrollbar-thin scrollbar-thumb-purple-500/20 scrollbar-track-transparent">
-                                                        <div className="space-y-4">
-                                                            {question.extraInfo?.map((info, idx) => (
-                                                                <motion.div
-                                                                    key={idx}
-                                                                    initial={{ opacity: 0, x: -10 }}
-                                                                    animate={{ opacity: 1, x: 0 }}
-                                                                    transition={{ delay: idx * 0.1 }}
-                                                                    className="flex items-start space-x-4 group/item"
-                                                                >
-                                                                    <span className="text-[10px] font-mono text-purple-500/40 mt-1">[{idx.toString().padStart(2, '0')}]</span>
-                                                                    <p className="text-sm font-mono text-purple-300/80 leading-relaxed group-hover/item:text-purple-300 transition-colors">
-                                                                        {info}
-                                                                    </p>
-                                                                </motion.div>
-                                                            ))}
-                                                        </div>
+                                                    <div className="flex-1 overflow-y-auto pr-4 space-y-6">
+                                                        {question.extraInfo?.map((info, idx) => (
+                                                            <motion.div
+                                                                key={idx}
+                                                                initial={{ opacity: 0, x: -10 }}
+                                                                animate={{ opacity: 1, x: 0 }}
+                                                                transition={{ delay: idx * 0.1 }}
+                                                                className="flex items-start space-x-5 group/item cursor-default"
+                                                            >
+                                                                <span className="text-[10px] font-black text-sky-500/30 mt-1.5 font-mono">[{idx.toString().padStart(2, '0')}]</span>
+                                                                <p className="text-base font-bold text-slate-500 leading-relaxed hover:text-sky-600 transition-colors">
+                                                                    {info}
+                                                                </p>
+                                                            </motion.div>
+                                                        ))}
                                                     </div>
-                                                    <div className="absolute inset-0 bg-gradient-to-b from-purple-500/0 via-purple-500/0 to-purple-500/5 pointer-events-none" />
                                                 </div>
                                             )}
                                         </div>
 
-                                        <div className="flex flex-col items-center justify-between space-y-8 bg-white/5 rounded-2xl p-10 border border-white/10 shadow-2xl shadow-black/20 backdrop-blur-xl transition-all">
-                                            <VoltBot
-                                                state={botState}
-                                                message={botMessage}
-                                                className="scale-110 !static"
-                                            />
-                                            <div className="w-full max-w-sm pt-8 border-t border-white/5">
+                                        <div className="flex flex-col p-10 bg-white rounded-[32px] border border-slate-100 shadow-xl shadow-slate-200/50 space-y-8">
+                                            <div className="flex items-start gap-4 p-5 bg-slate-50 rounded-2xl border border-slate-100">
+                                                <div className={cn(
+                                                    "p-2 rounded-xl shrink-0 mt-1",
+                                                    isAnswered ? (isCorrect ? "bg-emerald-100 text-emerald-600" : "bg-rose-100 text-rose-600") : "bg-sky-100 text-sky-600"
+                                                )}>
+                                                    {isAnswered ? (isCorrect ? <ShieldCheck size={20} /> : <Info size={20} />) : <Activity size={20} />}
+                                                </div>
+                                                <div className="space-y-1">
+                                                    <div className="text-[10px] font-black tracking-widest text-slate-400 uppercase">Analysis Feed</div>
+                                                    <p className="text-sm font-bold text-slate-700 leading-relaxed italic">
+                                                        "{statusMessage}"
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            <div className="w-full pt-4">
                                                 <button
                                                     onClick={isAnswered ? handleContinue : handleCheck}
                                                     disabled={!selectedOption}
                                                     className={cn(
-                                                        "group relative w-full h-16 rounded-xl font-heading font-black text-xl flex items-center justify-center overflow-hidden transition-all active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed shadow-xl",
+                                                        "group relative w-full h-18 rounded-2xl font-black text-xl flex items-center justify-center overflow-hidden transition-all active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed shadow-xl shadow-slate-200",
                                                         !isAnswered
-                                                            ? "bg-indigo-600 text-white hover:bg-indigo-500 shadow-indigo-500/20"
-                                                            : (isCorrect ? "bg-emerald-600 text-white hover:bg-emerald-500 shadow-emerald-500/20" : "bg-rose-600 text-white hover:bg-rose-500 shadow-rose-500/20")
+                                                            ? "bg-sky-600 text-white hover:bg-sky-700 shadow-sky-600/20"
+                                                            : (isCorrect ? "bg-emerald-600 text-white hover:bg-emerald-500" : "bg-rose-600 text-white hover:bg-rose-500")
                                                     )}
                                                 >
                                                     <span className="relative z-10 flex items-center tracking-tight">
-                                                        {isAnswered ? "Continue Path" : "Verify Logic"}
+                                                        {isAnswered ? "CONTINUE SEQUENCE" : "VERIFY LOGIC"}
                                                         <ChevronRight className="ml-3 w-7 h-7 group-hover:translate-x-1.5 transition-transform" />
                                                     </span>
                                                 </button>
@@ -539,13 +549,15 @@ export const AssessmentPage: React.FC = () => {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-[100] flex items-center justify-center bg-background pointer-events-auto"
+                        className="fixed inset-0 z-[100] flex items-center justify-center bg-white pointer-events-auto"
                         onClick={() => {
                             if (successStep === 1) setSuccessStep(2);
                             else navigate('/portal');
                         }}
                     >
-                        <LogicStormBackground />
+                        <div className="fixed inset-0 opacity-[0.05] pointer-events-none">
+                            <LogicStormBackground />
+                        </div>
 
                         <AnimatePresence mode="wait">
                             {successStep === 1 ? (
@@ -555,31 +567,31 @@ export const AssessmentPage: React.FC = () => {
                                     animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
                                     exit={{ opacity: 0, scale: 1.1, filter: 'blur(10px)' }}
                                     transition={{ duration: 0.5, ease: "easeOut" }}
-                                    className="relative z-10 text-center space-y-8 px-8 max-w-5xl"
+                                    className="relative z-10 text-center space-y-10 px-8 max-w-5xl"
                                 >
-                                    <div className="flex justify-center mb-12">
+                                    <div className="flex justify-center mb-16">
                                         <motion.div
                                             animate={{
                                                 scale: [1, 1.1, 1],
-                                                rotate: [0, 5, -5, 0]
+                                                y: [0, -10, 0]
                                             }}
-                                            transition={{ repeat: Infinity, duration: 4 }}
-                                            className="bg-primary/20 p-8 rounded-2xl border border-primary/30 shadow-[0_0_50px_rgba(58,134,255,0.2)]"
+                                            transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+                                            className="bg-sky-50 p-10 rounded-[40px] border border-sky-100 shadow-2xl shadow-sky-100"
                                         >
-                                            <Trophy className="w-20 h-20 text-primary" />
+                                            <Trophy className="w-24 h-24 text-sky-600" />
                                         </motion.div>
                                     </div>
 
-                                    <h1 className="font-heading font-black text-6xl md:text-8xl text-white tracking-tighter uppercase drop-shadow-[0_0_30px_rgba(255,255,255,0.3)]">
-                                        great job <span className="text-primary">Scientist!</span>
+                                    <h1 className="font-heading font-black text-7xl md:text-9xl text-slate-900 tracking-tighter uppercase">
+                                        GREAT JOB <span className="text-sky-600">SCIENTIST!</span>
                                     </h1>
 
-                                    <p className="font-mono text-slate-300 text-2xl md:text-3xl max-w-3xl mx-auto leading-relaxed">
-                                        you have overcome the fear of starting.
+                                    <p className="font-heading font-black text-slate-400 text-3xl md:text-4xl max-w-3xl mx-auto leading-tight uppercase tracking-tight">
+                                        YOU HAVE OVERCOME THE FEAR OF STARTING.
                                     </p>
 
-                                    <div className="pt-16">
-                                        <span className="text-primary/60 font-mono text-sm animate-pulse tracking-[0.3em] uppercase">
+                                    <div className="pt-24">
+                                        <span className="text-sky-400 font-black text-xs animate-pulse tracking-[0.5em] uppercase border-b-2 border-sky-100 pb-2">
                                             [ CLICK ANYWHERE TO CONTINUE ]
                                         </span>
                                     </div>
@@ -587,38 +599,41 @@ export const AssessmentPage: React.FC = () => {
                             ) : (
                                 <motion.div
                                     key="motivational-2"
-                                    initial={{ opacity: 0, x: 200, filter: 'blur(10px)' }}
+                                    initial={{ opacity: 0, x: 100, filter: 'blur(10px)' }}
                                     animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
-                                    exit={{ opacity: 0, x: -200, filter: 'blur(10px)' }}
+                                    exit={{ opacity: 0, x: -100, filter: 'blur(10px)' }}
                                     transition={{ duration: 0.5, ease: "easeOut" }}
-                                    className="relative z-10 text-center space-y-10 px-8 max-w-6xl"
+                                    className="relative z-10 text-center space-y-12 px-8 max-w-6xl"
                                 >
                                     <div className="flex justify-center mb-6">
-                                        <VoltBot state="happy" className="scale-[2.5]" />
+                                        <div className="p-8 bg-emerald-50 rounded-[48px] border-4 border-emerald-100 shadow-2xl shadow-emerald-100">
+                                            <ShieldCheck className="w-32 h-32 text-emerald-600" />
+                                        </div>
                                     </div>
 
-                                    <h1 className="font-heading font-black text-5xl md:text-7xl text-white tracking-tighter uppercase">
-                                        Protocol <span className="text-signal-success">Ascension</span>
-                                    </h1>
-
-                                    <p className="font-mono text-slate-400 text-xl md:text-2xl max-w-4xl mx-auto leading-relaxed">
-                                        now as you have decided and overcame a challenge let's go further to real world
-                                    </p>
+                                    <div className="space-y-4">
+                                        <h1 className="font-heading font-black text-6xl md:text-8xl text-slate-900 tracking-tighter uppercase">
+                                            PROTOCOL <span className="text-emerald-500">ASCENSION</span>
+                                        </h1>
+                                        <p className="font-heading font-black text-slate-400 text-2xl md:text-3xl max-w-4xl mx-auto leading-tight uppercase tracking-tight">
+                                            NOW AS YOU HAVE DECIDED AND OVERCAME A CHALLENGE LET'S GO FURTHER TO REAL WORLD
+                                        </p>
+                                    </div>
 
                                     <motion.div
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        transition={{ delay: 1 }}
-                                        className="pt-12"
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: 0.5 }}
+                                        className="pt-16"
                                     >
                                         <button
                                             onClick={() => navigate('/portal')}
-                                            className="group relative px-12 py-6 bg-primary text-background font-heading font-black text-2xl rounded-xl overflow-hidden shadow-glow-primary hover:scale-105 transition-all"
+                                            className="group relative px-16 py-8 bg-sky-600 text-white font-heading font-black text-3xl rounded-[32px] overflow-hidden shadow-2xl shadow-sky-600/20 hover:scale-105 transition-all active:scale-95"
                                         >
-                                            <span className="relative z-10 flex items-center">
-                                                ENTER REAL WORLD <ArrowRight className="ml-4 w-10 h-10 group-hover:translate-x-2 transition-transform" />
+                                            <span className="relative z-10 flex items-center tracking-tighter">
+                                                ENTER PORTAL <ArrowRight className="ml-6 w-12 h-12 group-hover:translate-x-2 transition-transform" />
                                             </span>
-                                            <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+                                            <div className="absolute inset-0 bg-sky-600 translate-x-full group-hover:translate-x-0 transition-transform duration-500" />
                                         </button>
                                     </motion.div>
                                 </motion.div>
@@ -626,13 +641,13 @@ export const AssessmentPage: React.FC = () => {
                         </AnimatePresence>
 
                         {/* Progress Indicators */}
-                        <div className="absolute bottom-16 left-0 right-0 flex justify-center space-x-4">
+                        <div className="absolute bottom-16 left-0 right-0 flex justify-center space-x-6">
                             {navItems.map((item) => (
                                 <div
                                     key={item}
                                     className={cn(
-                                        "h-1.5 w-24 rounded-full transition-all duration-700 shadow-glow-primary",
-                                        successStep >= item ? "bg-primary" : "bg-slate-800"
+                                        "h-2 w-32 rounded-full transition-all duration-1000",
+                                        successStep >= item ? "bg-sky-600 shadow-lg shadow-sky-200" : "bg-slate-100 shadow-inner"
                                     )}
                                 />
                             ))}

@@ -39,7 +39,7 @@ export const BasicSignals: React.FC<ScreenProps> = ({
   };
 
   return (
-    <div className="section-content relative flex flex-col items-center !justify-start pt-24 min-h-[110vh]" {...focusProps}>
+    <div className="section-content relative flex flex-col items-center !justify-start pt-24 min-h-[110vh] bg-white" {...focusProps}>
        {/* AI Hint Notification */}
        <AnimatePresence>
         {currentHint?.type === 'hint' && (
@@ -47,19 +47,19 @@ export const BasicSignals: React.FC<ScreenProps> = ({
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
-            className="absolute top-4 right-0 z-50 glass-card p-3 border-[var(--accent-primary)]/20 text-[var(--accent-primary)] text-[10px] uppercase tracking-[0.2em] font-mono"
+            className="absolute top-4 right-0 z-50 glass-card p-3 border-sky-200 bg-white/90 text-sky-600 text-[10px] uppercase tracking-[0.2em] font-mono shadow-lg"
           >
             AI ASSIST: {currentHint.message}
           </motion.div>
         )}
       </AnimatePresence>
 
-      <div className="mb-12 space-y-2 text-left w-full">
-        <h2 className="text-[var(--accent-primary)] font-mono text-[10px] uppercase tracking-[0.5em] opacity-40">Builder</h2>
-        <h1 className="title-xl italic">ATOMIC COMPONENTS.</h1>
+      <div className="mb-12 space-y-2 text-left w-full px-4">
+        <h2 className="text-sky-600 font-mono text-[10px] uppercase tracking-[0.5em] opacity-60">Builder</h2>
+        <h1 className="title-xl italic text-slate-900 font-black tracking-tighter">ATOMIC COMPONENTS.</h1>
       </div>
 
-      <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-8 items-stretch">
+      <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-8 items-stretch px-4">
         <div className="flex flex-col gap-3">
             {components.map((item) => (
                 <VeriButton
@@ -73,12 +73,12 @@ export const BasicSignals: React.FC<ScreenProps> = ({
                         triggerHaptic?.('light');
                     }}
                     variant={activeType === item.id ? 'signal' : compareType === item.id ? 'logic' : 'secondary'}
-                    className={`p-4 h-auto flex flex-col items-start gap-2 relative overflow-hidden ${activeType === item.id ? 'shadow-[0_0_20px_rgba(0,229,255,0.1)]' : ''}`}
+                    className={`p-4 h-auto flex flex-col items-start gap-2 relative overflow-hidden transition-all duration-300 ${activeType === item.id ? 'shadow-[0_0_20px_rgba(14,165,233,0.15)] ring-1 ring-sky-500/50' : 'bg-slate-50 border-slate-100 hover:border-slate-300'}`}
                 >
-                    <item.icon size={18} className={activeType === item.id ? 'text-black' : 'text-[var(--accent-primary)]'} />
+                    <item.icon size={18} className={activeType === item.id ? 'text-white' : 'text-sky-600'} />
                     <div className="text-left">
-                        <div className="text-[10px] font-bold uppercase tracking-widest">{item.label}</div>
-                        <p className="text-[8px] mt-1 opacity-60 leading-tight font-mono normal-case">{item.desc}</p>
+                        <div className={`text-[10px] font-bold uppercase tracking-widest ${activeType === item.id ? 'text-white' : 'text-slate-900'}`}>{item.label}</div>
+                        <p className={`text-[8px] mt-1 leading-tight font-mono normal-case font-medium ${activeType === item.id ? 'text-white/80' : 'text-slate-500'}`}>{item.desc}</p>
                     </div>
                 </VeriButton>
             ))}
@@ -90,19 +90,19 @@ export const BasicSignals: React.FC<ScreenProps> = ({
                     triggerHaptic?.('medium');
                 }}
                 variant="ghost"
-                className="mt-2 py-4"
+                className="mt-2 py-4 text-slate-400 hover:text-slate-900 hover:bg-slate-50 border border-transparent hover:border-slate-200"
             >
                 <Copy size={12} className="mr-2" /> {compareType ? 'Comparing Active' : 'Compare Signals'}
             </VeriButton>
         </div>
 
-        <div className="glass-card relative overflow-hidden p-8 flex flex-col min-h-[400px] bg-black/20">
-            <div className="absolute inset-0 bg-[var(--accent-secondary-alpha)] pointer-events-none opacity-[0.05]"
-                style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
+        <div className="glass-card relative overflow-hidden p-8 flex flex-col min-h-[400px] bg-slate-50/50 border-slate-200 shadow-sm">
+            <div className="absolute inset-0 bg-grid-slate-900/[0.03] pointer-events-none"
+                style={{ backgroundSize: '40px 40px' }} />
             
             <div className="flex-1 relative flex items-center justify-center">
                 <svg className="w-full h-48" viewBox="0 0 400 200" preserveAspectRatio="none">
-                    <line x1="0" y1="160" x2="400" y2="160" stroke="rgba(255,255,255,0.05)" strokeWidth="2" strokeDasharray="4 4" />
+                    <line x1="0" y1="160" x2="400" y2="160" stroke="rgba(15, 23, 42, 0.05)" strokeWidth="2" strokeDasharray="4 4" />
                     <AnimatePresence mode="wait">
                         <motion.path
                             key={`primary-${activeType}`}
@@ -110,7 +110,7 @@ export const BasicSignals: React.FC<ScreenProps> = ({
                             initial={{ pathLength: 0, opacity: 0 }}
                             animate={{ pathLength: 1, opacity: 1 }}
                             fill="none"
-                            stroke="var(--accent-primary)"
+                            stroke="#0284c7" // sky-600
                             strokeWidth="4"
                             transition={{ duration: 0.8 }}
                         />
@@ -121,7 +121,7 @@ export const BasicSignals: React.FC<ScreenProps> = ({
                                 initial={{ pathLength: 0, opacity: 0 }}
                                 animate={{ pathLength: 1, opacity: 0.4 }}
                                 fill="none"
-                                stroke="var(--accent-secondary)"
+                                stroke="#94a3b8" // slate-400
                                 strokeWidth="4"
                                 strokeDasharray="8 4"
                                 transition={{ duration: 0.8 }}
@@ -131,9 +131,9 @@ export const BasicSignals: React.FC<ScreenProps> = ({
                 </svg>
             </div>
             
-            <div className="mt-8 pt-6 border-t border-white/5 flex flex-col md:flex-row items-center gap-6">
+            <div className="mt-8 pt-6 border-t border-slate-200 flex flex-col md:flex-row items-center gap-6">
                 <div className="flex items-center gap-3 flex-1 w-full">
-                    <Snowflake size={14} className="text-white/20" />
+                    <Snowflake size={14} className="text-slate-300" />
                     <VeriSlider 
                         label="Time Scrub"
                         min={-50}
@@ -145,20 +145,21 @@ export const BasicSignals: React.FC<ScreenProps> = ({
                     />
                 </div>
                 
-                <div className="flex gap-12 font-mono text-[7px] uppercase tracking-widest text-white/20">
-                    <span className="text-[var(--accent-primary)]/60">Synthesis Lab v1.1 Polished</span>
+                <div className="flex gap-12 font-mono text-[7px] uppercase tracking-widest text-slate-400 font-bold">
+                    <span className="text-sky-600/80">Synthesis Lab v1.1 Polished</span>
                     <span>Domain: Time (t)</span>
                 </div>
             </div>
         </div>
       </div>
 
-      <div className="w-full max-w-lg mt-12 pb-24">
+      <div className="w-full max-w-lg mt-12 pb-24 px-4 text-left">
           <KnowledgeCard 
             title="The Dirac Delta & Heaviside Step"
             description="These 'Atomic' signals are the building blocks of System Response analysis."
             details="The Impulse (Dirac Delta) helps engineers find a system's 'Impulse Response'—it's like hitting a bell once to hear how it rings. The Unit Step (Heaviside) shows how a system stabilizes when turned on instantly."
             icon={FlaskConical}
+            className="bg-white border-slate-200 shadow-sm"
           />
       </div>
     </div>

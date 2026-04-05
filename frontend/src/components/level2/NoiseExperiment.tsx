@@ -22,10 +22,10 @@ import { VeriSlider } from '../shared/VeriSlider';
 import { VeriButton } from '../shared/VeriButton';
 
 const T = {
-    bg: '#0A0B10', card: '#0D0F16', surface: '#1A1D24', border: '#1A1D24',
-    text: '#E5E7EB', muted: '#64748B', accent: '#00D4FF',
-    success: '#10B981', error: '#EF4444', warning: '#F59E0B',
-    analog: '#A78BFA', digital: '#34D399',
+    bg: '#FFFFFF', card: '#F8FAFC', surface: '#F1F5F9', border: '#E2E8F0',
+    text: '#0F172A', muted: '#64748B', accent: '#0EA5E9',
+    success: '#059669', error: '#DC2626', warning: '#D97706',
+    analog: '#8B5CF6', digital: '#10B981',
     mono: "'IBM Plex Mono','Roboto Mono',monospace",
     sans: "'Inter',system-ui,sans-serif",
 } as const;
@@ -127,7 +127,7 @@ export function NoiseExperiment({ onComplete }: NoiseExperimentProps) {
                 }}>
                     <div style={{
                         padding: '8px 12px', borderRadius: 4,
-                        background: noiseAmp > 0 ? `${T.error}08` : 'transparent',
+                        background: noiseAmp > 0 ? `${T.error}08` : T.surface,
                         border: `1px solid ${noiseAmp > 0 ? `${T.error}20` : T.border}`,
                     }}>
                         <span style={{ color: T.analog }}>ANALOG:</span> noise directly corrupts signal
@@ -135,7 +135,7 @@ export function NoiseExperiment({ onComplete }: NoiseExperimentProps) {
                     </div>
                     <div style={{
                         padding: '8px 12px', borderRadius: 4,
-                        background: noiseAmp > 7 ? `${T.warning}08` : 'transparent',
+                        background: noiseAmp > 7 ? `${T.warning}08` : T.surface,
                         border: `1px solid ${noiseAmp > 7 ? `${T.warning}20` : T.border}`,
                     }}>
                         <span style={{ color: T.digital }}>DIGITAL:</span> stable within noise margin
@@ -148,7 +148,7 @@ export function NoiseExperiment({ onComplete }: NoiseExperimentProps) {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
                 {/* Analog LED */}
                 <div style={{
-                    background: T.card, border: `1px solid rgba(167,139,250,0.2)`,
+                    background: T.card, border: `1px solid ${T.analog}20`,
                     borderRadius: 4, padding: 20, display: 'flex', flexDirection: 'column',
                     alignItems: 'center', gap: 12,
                 }}>
@@ -158,11 +158,11 @@ export function NoiseExperiment({ onComplete }: NoiseExperimentProps) {
                     <div
                         style={{
                             width: 48, height: 48, borderRadius: '50%',
-                            background: `rgba(167,139,250,${0.1 + brightness * 0.85})`,
+                            background: `${T.analog}${Math.floor((0.1 + brightness * 0.85) * 255).toString(16).padStart(2, '0')}`,
                             boxShadow: brightness > 0.1
-                                ? `0 0 ${16 + brightness * 24}px rgba(167,139,250,${brightness * 0.7})`
+                                ? `0 0 ${16 + brightness * 24}px ${T.analog}${Math.floor(brightness * 0.7 * 255).toString(16).padStart(2, '0')}`
                                 : 'none',
-                            border: '1px solid rgba(167,139,250,0.4)',
+                            border: `1px solid ${T.analog}40`,
                         }}
                         className={flickering ? 'led--flickering' : ''}
                     />
@@ -173,7 +173,7 @@ export function NoiseExperiment({ onComplete }: NoiseExperimentProps) {
 
                 {/* Digital LED */}
                 <div style={{
-                    background: T.card, border: `1px solid rgba(52,211,153,0.2)`,
+                    background: T.card, border: `1px solid ${T.digital}20`,
                     borderRadius: 4, padding: 20, display: 'flex', flexDirection: 'column',
                     alignItems: 'center', gap: 12,
                 }}>
@@ -182,9 +182,9 @@ export function NoiseExperiment({ onComplete }: NoiseExperimentProps) {
                     </span>
                     <div style={{
                         width: 48, height: 48, borderRadius: '50%',
-                        background: ledDigitalOn ? 'rgba(52,211,153,0.9)' : 'rgba(52,211,153,0.05)',
-                        boxShadow: ledDigitalOn ? '0 0 24px rgba(52,211,153,0.7)' : 'none',
-                        border: '1px solid rgba(52,211,153,0.3)',
+                        background: ledDigitalOn ? `${T.digital}e6` : `${T.digital}1a`,
+                        boxShadow: ledDigitalOn ? `0 0 24px ${T.digital}b3` : 'none',
+                        border: `1px solid ${T.digital}4d`,
                         transition: 'background 0.08s step-end, box-shadow 0.08s step-end',
                     }} />
                     <span style={{ fontFamily: T.mono, fontSize: 9, color: T.muted }}>
@@ -208,8 +208,8 @@ export function NoiseExperiment({ onComplete }: NoiseExperimentProps) {
                         Dual-Channel Oscilloscope
                     </span>
                     <div style={{ display: 'flex', gap: 16, fontFamily: T.mono, fontSize: 8 }}>
-                        <span style={{ color: '#00D4FF' }}>■ CH1 Analog</span>
-                        <span style={{ color: '#F59E0B' }}>■ CH2 Digital</span>
+                        <span style={{ color: T.analog }}>■ CH1 Analog</span>
+                        <span style={{ color: T.warning }}>■ CH2 Digital</span>
                     </div>
                 </div>
                 <OscilloscopeCanvas

@@ -156,7 +156,7 @@ export const SignalParameters: React.FC<ScreenProps & {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-[100] bg-[#070B14]/95 backdrop-blur-xl flex items-center justify-center p-8"
+              className="fixed inset-0 z-[100] bg-white/95 backdrop-blur-xl flex items-center justify-center p-8"
             >
               <motion.div 
                 key={theoryStep}
@@ -167,8 +167,8 @@ export const SignalParameters: React.FC<ScreenProps & {
                 <div className="flex justify-center mb-4 scale-150">
                   {theorySlides[theoryStep].icon}
                 </div>
-                <h2 className="title-lg text-white tracking-widest uppercase italic">{theorySlides[theoryStep].title}</h2>
-                <p className="body text-white/70 text-lg leading-relaxed">{theorySlides[theoryStep].content}</p>
+                <h2 className="title-lg text-slate-900 tracking-widest uppercase italic">{theorySlides[theoryStep].title}</h2>
+                <p className="body text-slate-600 text-lg leading-relaxed">{theorySlides[theoryStep].content}</p>
                 <div className="flex justify-center gap-4 mt-8">
                   {theoryStep < theorySlides.length - 1 ? (
                     <VeriButton variant="secondary" onClick={() => setTheoryStep(theoryStep + 1)}>
@@ -193,19 +193,19 @@ export const SignalParameters: React.FC<ScreenProps & {
               animate={{ y: 0, opacity: 1 }}
               className="fixed top-12 left-1/2 -translate-x-1/2 z-50 w-full max-w-lg"
             >
-              <div className="glass-card p-6 border-[var(--accent-primary)]/40 bg-black/80">
+              <div className="glass-card p-6 border-sky-200 bg-white/95 shadow-2xl">
                 <div className="flex justify-between items-center mb-4">
-                  <span className="text-[8px] font-mono text-[var(--accent-primary)] uppercase tracking-widest">{QUESTIONS[activeQuestion].category}</span>
-                  <HelpCircle size={12} className="text-white/20" />
+                  <span className="text-[8px] font-mono text-sky-600 uppercase tracking-widest font-bold">{QUESTIONS[activeQuestion].category}</span>
+                  <HelpCircle size={12} className="text-slate-300" />
                 </div>
-                <p className="text-sm font-bold text-white mb-6 italic">"{QUESTIONS[activeQuestion].text}"</p>
+                <p className="text-sm font-bold text-slate-800 mb-6 italic">"{QUESTIONS[activeQuestion].text}"</p>
                 <div className="grid grid-cols-3 gap-3">
                   {QUESTIONS[activeQuestion].options.map((opt, i) => (
                     <VeriButton 
                       key={i} 
                       size="sm" 
                       variant="ghost" 
-                      className="!text-[10px]"
+                      className="!text-[10px] bg-slate-50 border-slate-100 hover:bg-slate-100"
                       onClick={() => handleAnswer(opt.isCorrect)}
                     >
                       {opt.label}
@@ -215,7 +215,7 @@ export const SignalParameters: React.FC<ScreenProps & {
                 {questionFeedback && (
                   <motion.p 
                     initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                    className={`text-center mt-4 text-[9px] font-mono uppercase tracking-widest ${questionFeedback.correct ? 'text-[var(--accent-primary)]' : 'text-[var(--error)]'}`}
+                    className={`text-center mt-4 text-[9px] font-mono uppercase tracking-widest ${questionFeedback.correct ? 'text-sky-600' : 'text-red-500'}`}
                   >
                     {questionFeedback.msg}
                   </motion.p>
@@ -226,19 +226,20 @@ export const SignalParameters: React.FC<ScreenProps & {
         </AnimatePresence>
 
         <div className="text-center space-y-2">
-            <h2 className="text-[var(--accent-primary)] font-mono text-[9px] uppercase tracking-[0.5em] opacity-40">Communication Lab</h2>
-            <h1 className="title-lg italic tracking-tighter">OSCILLOSCOPE COMMAND.</h1>
+            <h2 className="text-sky-600 font-mono text-[9px] uppercase tracking-[0.5em] opacity-40">Communication Lab</h2>
+            <h1 className="title-lg italic tracking-tighter text-slate-900">OSCILLOSCOPE COMMAND.</h1>
         </div>
 
         <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             {/* Visualizer Column */}
             <div className="lg:col-span-8 space-y-4">
-                <div className="glass-card aspect-[21/9] flex items-center justify-center relative overflow-hidden group border-white/10">
+                <div className="glass-card aspect-[21/9] flex items-center justify-center relative overflow-hidden group border-slate-200 bg-white shadow-lg">
                     {/* View Controls */}
                     <div className="absolute top-4 left-4 flex gap-2 z-20 scale-75 origin-top-left">
                         <VeriButton 
                             size="sm"
                             variant={activeTab === 'sim' ? 'signal' : 'ghost'}
+                            className={activeTab !== 'sim' ? 'bg-slate-50 border-slate-100' : ''}
                             onClick={() => setActiveTab('sim')}
                         >
                             Basic
@@ -246,6 +247,7 @@ export const SignalParameters: React.FC<ScreenProps & {
                         <VeriButton 
                             size="sm"
                             variant={activeTab === 'mod' ? 'logic' : 'ghost'}
+                            className={activeTab !== 'mod' ? 'bg-slate-50 border-slate-100' : ''}
                             onClick={() => setActiveTab('mod')}
                         >
                             Comm System
@@ -258,7 +260,7 @@ export const SignalParameters: React.FC<ScreenProps & {
                         <button 
                           key={ch}
                           onClick={() => setChannels(p => ({ ...p, [ch]: !p[ch] }))}
-                          className={`w-8 h-4 rounded-full border border-white/20 text-[6px] font-mono flex items-center justify-center transition-colors ${channels[ch] ? 'bg-white/10 text-white' : 'bg-transparent text-white/20'}`}
+                          className={`w-8 h-4 rounded-full border text-[6px] font-mono flex items-center justify-center transition-colors ${channels[ch] ? 'bg-slate-800 border-slate-800 text-white shadow-sm' : 'bg-slate-100 border-slate-200 text-slate-400 hover:bg-slate-200'}`}
                         >
                           {ch.toUpperCase()}
                         </button>
@@ -279,8 +281,8 @@ export const SignalParameters: React.FC<ScreenProps & {
                     />
 
                     <div className="absolute top-4 right-4 flex flex-col gap-2 scale-75 origin-top-right">
-                        <LiveMetricsHUD signal={messageSignal} className="!bg-black/60" />
-                        <LiveMetricsHUD signal={carrierSignal} className="!bg-black/60 opacity-60" />
+                        <LiveMetricsHUD signal={messageSignal} className="!bg-white/80 border-slate-100 shadow-sm" />
+                        <LiveMetricsHUD signal={carrierSignal} className="!bg-white/80 border-slate-100 opacity-60" />
                     </div>
                 </div>
 
@@ -297,7 +299,7 @@ export const SignalParameters: React.FC<ScreenProps & {
                   <VeriButton 
                     size="sm" 
                     variant={modulation.enabled ? 'signal' : 'ghost'}
-                    className="h-[40px] px-6"
+                    className={`h-[40px] px-6 ${!modulation.enabled ? 'bg-slate-50 border-slate-200' : ''}`}
                     onClick={() => {
                         updateModulation?.({ enabled: !modulation.enabled });
                         setAudioEnabled(!audioEnabled);
@@ -310,10 +312,10 @@ export const SignalParameters: React.FC<ScreenProps & {
 
             {/* Controls Column */}
             <div className="lg:col-span-4 space-y-4">
-                <div className="glass-card p-6 space-y-6 !bg-white/5 border-white/5">
+                <div className="glass-card p-6 space-y-6 !bg-slate-50 border-slate-200 shadow-sm">
                     <div className="flex items-center justify-between">
-                        <h3 className="text-[9px] font-mono uppercase tracking-[0.4em] text-white/40">Transmission Tuning</h3>
-                        <Activity className="text-[var(--accent-primary)] w-3 h-3 animate-pulse" />
+                        <h3 className="text-[9px] font-mono uppercase tracking-[0.4em] text-slate-400 font-bold">Transmission Tuning</h3>
+                        <Activity className="text-sky-500 w-3 h-3 animate-pulse" />
                     </div>
 
                     <div className="space-y-8">
@@ -341,11 +343,11 @@ export const SignalParameters: React.FC<ScreenProps & {
                           onChange={(val) => updateModulation?.({ depth: val })}
                           unit="%"
                       />
-                      <div className="pt-4 border-t border-white/5">
+                      <div className="pt-4 border-t border-slate-200">
                         <div className="flex justify-between items-center mb-4">
-                           <span className="text-[8px] font-mono text-[var(--error)] uppercase tracking-widest">Interference Engine</span>
+                           <span className="text-[8px] font-mono text-red-500 uppercase tracking-widest font-bold">Interference Engine</span>
                            <select 
-                             className="bg-transparent text-[8px] font-mono text-white/40 border-none outline-none"
+                             className="bg-transparent text-[8px] font-mono text-slate-400 border-none outline-none cursor-pointer hover:text-slate-600"
                              value={interference.type}
                              onChange={(e: any) => updateInterference?.({ type: e.target.value })}
                            >
@@ -366,13 +368,13 @@ export const SignalParameters: React.FC<ScreenProps & {
                     </div>
                 </div>
 
-                <div className="glass-card p-4 flex items-center gap-4 bg-[var(--accent-primary)]/5 border-[var(--accent-primary)]/10">
-                   <div className="p-2 rounded-lg bg-black/40">
-                      <HelpCircle size={16} className="text-[var(--accent-primary)]" />
+                <div className="glass-card p-4 flex items-center gap-4 bg-sky-50 border-sky-100 shadow-sm">
+                   <div className="p-2 rounded-lg bg-white shadow-xs">
+                      <HelpCircle size={16} className="text-sky-500" />
                    </div>
                    <div>
-                      <p className="text-[8px] font-mono text-white/40 uppercase">Pro Tip</p>
-                      <p className="text-[10px] text-white/70">Observe how the <span className="text-[var(--accent-primary)] font-bold">envelope</span> contains your actual data.</p>
+                      <p className="text-[8px] font-mono text-slate-400 uppercase font-bold">Pro Tip</p>
+                      <p className="text-[10px] text-slate-600 font-medium">Observe how the <span className="text-sky-600 font-bold">envelope</span> contains your actual data.</p>
                    </div>
                 </div>
             </div>

@@ -59,21 +59,21 @@ export const SignalPropagation: React.FC<ScreenProps> = ({
   }, [medium.speed]);
 
   return (
-    <div className="section-content flex flex-col items-center justify-center space-y-12 h-full" {...focusProps}>
+    <div className="section-content flex flex-col items-center justify-center space-y-12 h-full bg-white px-4" {...focusProps}>
       <div className="text-center space-y-4">
-        <h2 className="text-[var(--accent-primary)] font-mono text-[10px] uppercase tracking-[0.5em] opacity-40">Mediums</h2>
-        <h1 className="title-xl italic">SIGNALS IN MOTION</h1>
-        <p className="body max-w-lg opacity-60">A signal doesn't just exist; it travels. The medium dictates the rules of the journey.</p>
+        <h2 className="text-sky-600 font-mono text-[10px] uppercase tracking-[0.5em] opacity-60">Mediums</h2>
+        <h1 className="title-xl italic text-slate-900 font-black tracking-tighter">SIGNALS IN MOTION</h1>
+        <p className="body max-w-lg text-slate-500 mx-auto font-medium">A signal doesn't just exist; it travels. The medium dictates the rules of the journey.</p>
       </div>
 
-      <div className="w-full max-w-4xl glass-card p-12 relative overflow-hidden bg-black/20">
-        <div className="absolute inset-0 bg-grid-white/[0.02]" />
+      <div className="w-full max-w-4xl glass-card p-12 relative overflow-hidden bg-slate-50/50 border-slate-200 shadow-sm rounded-3xl">
+        <div className="absolute inset-0 bg-grid-slate-900/[0.02]" />
         
         {/* Propagation Track */}
         <div className="relative h-24 w-full flex items-center justify-center">
             {/* The "Wire" */}
             <div 
-                className="absolute w-full h-1 rounded-full opacity-20"
+                className="absolute w-full h-1 rounded-full opacity-10"
                 style={{ backgroundColor: medium.color }}
             />
             <motion.div 
@@ -87,7 +87,7 @@ export const SignalPropagation: React.FC<ScreenProps> = ({
             {pulses.map(pulse => (
                 <motion.div
                     key={pulse.id}
-                    className="absolute w-4 h-4 rounded-full flex items-center justify-center"
+                    className="absolute w-4 h-4 rounded-full flex items-center justify-center transform -translate-x-1/2"
                     style={{ 
                         left: `${pulse.x}%`,
                         backgroundColor: medium.color,
@@ -95,13 +95,13 @@ export const SignalPropagation: React.FC<ScreenProps> = ({
                         opacity: 1 - (pulse.x / 100) * medium.attenuation
                     }}
                 >
-                    <Zap size={8} className="text-black" />
+                    <Zap size={8} className="text-white" />
                 </motion.div>
             ))}
 
             {/* Start/End Gates */}
-            <div className="absolute left-0 h-8 w-1 bg-white/10 rounded-full" />
-            <div className="absolute right-0 h-8 w-1 bg-white/10 rounded-full" />
+            <div className="absolute left-0 h-8 w-1 bg-slate-200 rounded-full" />
+            <div className="absolute right-0 h-8 w-1 bg-slate-200 rounded-full" />
         </div>
 
         {/* Medium Selection */}
@@ -117,14 +117,14 @@ export const SignalPropagation: React.FC<ScreenProps> = ({
                             triggerHaptic?.('micro');
                         }}
                         variant={isActive ? (key === 'COPPER' ? 'logic' : 'signal') : 'secondary'}
-                        className="p-4 h-auto flex flex-col items-start gap-1"
+                        className={`p-4 h-auto flex flex-col items-start gap-1 transition-all duration-300 ${isActive ? 'shadow-md ring-2 ring-offset-2 ring-sky-500/20' : 'bg-white border-slate-100 hover:border-slate-300'}`}
                     >
                         <div className="flex justify-between items-center w-full mb-1">
-                            <span className="text-[10px] font-mono uppercase tracking-widest">
+                            <span className={`text-[10px] font-mono uppercase tracking-widest font-bold ${isActive ? 'text-white' : 'text-slate-900'}`}>
                                 {m.name}
                             </span>
                         </div>
-                        <p className="text-[8px] leading-relaxed opacity-60 text-left font-mono normal-case">
+                        <p className={`text-[8px] leading-relaxed text-left font-mono normal-case font-medium ${isActive ? 'text-white/80' : 'text-slate-500'}`}>
                             {m.description}
                         </p>
                     </VeriButton>
@@ -137,22 +137,23 @@ export const SignalPropagation: React.FC<ScreenProps> = ({
         <VeriButton
             onClick={triggerPulse}
             variant="primary"
-            className="px-8 !rounded-full !text-black font-bold uppercase tracking-widest text-[10px]"
+            className="px-8 !rounded-full bg-slate-900 !text-white hover:bg-slate-800 transition-colors font-bold uppercase tracking-widest text-[10px]"
         >
             <MousePointer2 size={12} className="mr-2" />
             Inject Signal Pulse
         </VeriButton>
-        <span className="text-[8px] font-mono uppercase tracking-[0.4em] text-white/20">
+        <span className="text-[8px] font-mono uppercase tracking-[0.4em] text-slate-400 font-bold">
             Observe attenuation and latency over distance
         </span>
       </div>
 
-      <div className="w-full max-w-lg mt-8 pb-12">
+      <div className="w-full max-w-lg mt-8 pb-12 text-left">
           <KnowledgeCard 
             title="Medium & Velocity"
             description="Signals travel at different speeds depending on the physical medium."
             details="In a vacuum, light travels at approx. 300,000 km/s. In Copper or Fiber, it's slower (Velocity Factor). Attenuation is the loss of signal strength over distance, which is why we need repeaters in long-distance cables!"
             icon={Share2}
+            className="bg-white border-slate-200 shadow-sm"
           />
       </div>
     </div>

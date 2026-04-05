@@ -1,20 +1,10 @@
 import { useEffect, useRef } from 'react';
 
-interface AudioSignalProps {
-  frequency: number;
-  amplitude: number;
-  noise: number;
-  bitDepth?: number;
-  enabled: boolean;
-}
-
 export const useAudioSignalMap = ({ 
   frequency, 
   amplitude, 
-  noise, 
-  bitDepth = 8, 
   enabled 
-}: AudioSignalProps) => {
+}: { frequency: number, amplitude: number, enabled: boolean }) => {
   const audioCtx = useRef<AudioContext | null>(null);
   const oscillator = useRef<OscillatorNode | null>(null);
   const gainNode = useRef<GainNode | null>(null);
@@ -54,10 +44,7 @@ export const useAudioSignalMap = ({
       gainNode.current.gain.setTargetAtTime(targetGain, audioCtx.current.currentTime, 0.1);
     }
 
-    // Bit-depth "Crunch" Simulation (Simplified via distortion logic)
-    // In a real app, we'd use a custom WaveShaperNode
-    
-  }, [frequency, amplitude, noise, bitDepth, enabled]);
+  }, [frequency, amplitude, enabled]);
 
   return null;
 };

@@ -2,7 +2,6 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { GatekeeperLanding } from './pages/GatekeeperLanding';
 import { HeroExperience } from './pages/HeroExperience';
 import { WorkstationHome } from './pages/WorkstationHome';
-import { ModuleOneHub } from './pages/ModuleOneHub';
 import SignalMustReturnModule from './pages/ModulePage';
 import SubModule1_1 from './components/level1/SubModule1_1';
 import { ModuleTwo } from './pages/ModuleTwo';
@@ -10,7 +9,6 @@ import { ModuleThree } from './pages/ModuleThree';
 import { ModuleFour } from './pages/ModuleFour';
 import { ModuleFive } from './pages/ModuleFive';
 import { LoginPage } from './pages/LoginPage';
-import { MascotGuide } from './components/Bot/MascotGuide';
 import { GatekeeperGame } from './pages/GatekeeperGame';
 import { AssessmentPage } from './pages/AssessmentPage';
 import AiLab from '@/pages/AiLab/AiLab';
@@ -27,8 +25,8 @@ import { FSMPlayground } from './pages/FSMPlayground';
 import { CPULabPage } from './pages/CPULabPage';
 import { HardwareLeetCodePage } from './pages/HardwareLeetCodePage';
 import { VerilogPlayground } from './pages/VerilogPlayground';
+import { ModuleOneEntry } from './pages/ModuleOneEntry';
 
-import { VoltMonkeyIntro } from './pages/VoltMonkeyIntro';
 import Workbench from './pages/Workbench';
 import { CommunityPage } from './pages/CommunityPage';
 import { PortalLayout } from './layouts/PortalLayout';
@@ -77,7 +75,7 @@ export default function App() {
                     <Route path="/debug-mission/:id" element={<DebugMissionPage />} />
 
                     {/* Modules & Story Selection (Standalone) */}
-                    <Route path="/module/1" element={<ModuleOneHub />} />
+                    <Route path="/module/1" element={<ModuleOneEntry />} />
                     <Route path="/module/1/1" element={<SubModule1_1 onComplete={() => window.location.href = '/portal'} />} />
                     <Route path="/module/signal-must-return" element={<SignalMustReturnModule />} />
                     <Route path="/module/2" element={<ModuleTwo />} />
@@ -85,15 +83,11 @@ export default function App() {
                     <Route path="/module/4" element={<ModuleFour />} />
                     <Route path="/module/5" element={<ModuleFive />} />
 
-                    {/* Legacy / Game Support (Standalone) */}
                     <Route path="/gatekeeper" element={<GatekeeperGame />} />
                     <Route path="/assessment" element={<AssessmentPage />} />
-                    <Route path="/voltmonkey" element={<VoltMonkeyIntro />} />
-                    <Route path="/level/1" element={<VoltMonkeyIntro />} />
 
                     <Route path="*" element={<Navigate to="/portal" replace />} />
                 </Routes>
-                <MascotGuide />
             </TransitionProvider>
         </BrowserRouter>
     );

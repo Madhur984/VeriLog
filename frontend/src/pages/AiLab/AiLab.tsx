@@ -15,16 +15,16 @@ export default function AiLab() {
     const [activeTab, setActiveTab] = useState<'voice' | 'vision'>('vision');
 
     return (
-        <div className="min-h-screen bg-[#060a12] text-slate-200 font-sans selection:bg-cyan-500/30 overflow-hidden relative">
+        <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-sky-500/10 overflow-hidden relative">
             {/* Blueprint Grid Background */}
-            <div className="absolute inset-0 z-0 opacity-20 pointer-events-none">
-                <div className="absolute inset-0 bg-[linear-gradient(to_right,#1A1D24_1px,transparent_1px),linear-gradient(to_bottom,#1A1D24_1px,transparent_1px)] bg-[size:40px_40px]" />
-                <div className="absolute inset-0 bg-[radial-gradient(circle_800px_at_50%_-100px,#1e3a8a,transparent)]" />
+            <div className="absolute inset-0 z-0 opacity-10 pointer-events-none">
+                <div className="absolute inset-0 bg-[linear-gradient(to_right,#e2e8f0_1px,transparent_1px),linear-gradient(to_bottom,#e2e8f0_1px,transparent_1px)] bg-[size:40px_40px]" />
+                <div className="absolute inset-0 bg-[radial-gradient(circle_800px_at_50%_-100px,#f0f9ff,transparent)]" />
             </div>
 
             {/* Ambient Glows */}
-            <div className="absolute -top-24 -left-24 w-96 h-96 bg-blue-500/10 blur-[120px] rounded-full" />
-            <div className="absolute top-1/2 -right-24 w-80 h-80 bg-cyan-500/10 blur-[100px] rounded-full" />
+            <div className="absolute -top-24 -left-24 w-96 h-96 bg-sky-500/5 blur-[120px] rounded-full" />
+            <div className="absolute top-1/2 -right-24 w-80 h-80 bg-indigo-500/5 blur-[100px] rounded-full" />
 
             <div className="relative z-10 max-w-7xl mx-auto px-6 py-12">
                 {/* Header Section */}
@@ -35,16 +35,16 @@ export default function AiLab() {
                     </div>
                     <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                         <div>
-                            <h1 className="text-5xl md:text-6xl font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-br from-white via-white to-blue-400">
-                                CIRCUIT <span className="text-cyan-400">VISION</span>
+                            <h1 className="text-5xl md:text-6xl font-black tracking-tighter text-slate-900">
+                                CIRCUIT <span className="text-sky-600">VISION</span>
                             </h1>
-                            <p className="text-slate-400 text-lg max-w-xl mt-4 leading-relaxed">
+                            <p className="text-slate-500 text-lg max-w-xl mt-4 leading-relaxed">
                                 Neural processing engine for real-time hardware verification and biometric authentication.
                                 Deploying ensemble ML models for digital forensics.
                             </p>
                         </div>
 
-                        <div className="flex p-1 bg-slate-900/50 backdrop-blur-xl border border-white/5 rounded-2xl">
+                        <div className="flex p-1 bg-white backdrop-blur-xl border border-slate-200 shadow-sm rounded-2xl">
                             {(['vision', 'voice'] as const).map((tab) => (
                                 <button
                                     key={tab}
@@ -52,14 +52,14 @@ export default function AiLab() {
                                     className={cn(
                                         "px-8 py-3 rounded-xl text-sm font-bold transition-all duration-300 flex items-center gap-2 relative overflow-hidden",
                                         activeTab === tab
-                                            ? "text-white shadow-2xl"
-                                            : "text-slate-500 hover:text-slate-300"
+                                            ? "text-white shadow-xl"
+                                            : "text-slate-400 hover:text-slate-600"
                                     )}
                                 >
                                     {activeTab === tab && (
                                         <motion.div
                                             layoutId="activeTabGlow"
-                                            className="absolute inset-0 bg-gradient-to-r from-blue-600 to-cyan-500"
+                                            className="absolute inset-0 bg-gradient-to-r from-sky-600 to-indigo-600"
                                             transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                                         />
                                     )}
@@ -84,8 +84,8 @@ export default function AiLab() {
                         >
                             {/* Vision Panel */}
                             <div className="lg:col-span-8 space-y-8">
-                                <div className="aspect-video bg-slate-950/50 rounded-3xl border border-white/5 overflow-hidden group relative flex items-center justify-center p-12">
-                                    <div className="absolute inset-0 bg-grid-blueprint opacity-10" />
+                                <div className="aspect-video bg-white rounded-3xl border border-slate-200 overflow-hidden group relative flex items-center justify-center p-12 shadow-sm">
+                                    <div className="absolute inset-0 bg-grid-slate-100 opacity-50" />
 
                                     <div className="relative text-center space-y-6">
                                         <div className="w-24 h-24 mx-auto bg-blue-500/10 rounded-full flex items-center justify-center border border-blue-500/20 group-hover:scale-110 transition-transform duration-500">
@@ -116,22 +116,22 @@ export default function AiLab() {
                             </div>
 
                             <aside className="lg:col-span-4 space-y-6">
-                                <div className="p-8 bg-slate-900/30 backdrop-blur-md rounded-3xl border border-white/5 space-y-6">
+                                <div className="p-8 bg-white backdrop-blur-md rounded-3xl border border-slate-200 shadow-sm space-y-6">
                                     <h3 className="text-lg font-bold flex items-center gap-2">
-                                        <Activity className="w-5 h-5 text-cyan-400" />
+                                        <Activity className="w-5 h-5 text-sky-600" />
                                         Scanning Engine
                                     </h3>
                                     <div className="space-y-4">
-                                        <ProgressItem label="Character Recognition" value={85} color="bg-blue-500" />
-                                        <ProgressItem label="Layout Structuring" value={42} color="bg-cyan-500" />
-                                        <ProgressItem label="Compliance Audit" value={10} color="bg-slate-700" />
+                                        <ProgressItem label="Character Recognition" value={85} color="bg-sky-600" />
+                                        <ProgressItem label="Layout Structuring" value={42} color="bg-sky-400" />
+                                        <ProgressItem label="Compliance Audit" value={10} color="bg-slate-200" />
                                     </div>
-                                    <hr className="border-white/5" />
+                                    <hr className="border-slate-100" />
                                     <div className="space-y-4">
-                                        <h4 className="text-xs font-bold text-slate-500 uppercase tracking-widest">Active Models</h4>
+                                        <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest">Active Models</h4>
                                         <div className="flex flex-wrap gap-2">
                                             {['Surya OCR', 'Layout-Gemma', 'Vision-v4', 'Rule-Base'].map(tag => (
-                                                <span key={tag} className="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-[10px] font-bold text-slate-400">
+                                                <span key={tag} className="px-3 py-1 bg-slate-50 border border-slate-100 rounded-full text-[10px] font-bold text-slate-500">
                                                     {tag}
                                                 </span>
                                             ))}
@@ -149,46 +149,46 @@ export default function AiLab() {
                             className="grid grid-cols-1 lg:grid-cols-3 gap-8"
                         >
                             {/* Voice Guards */}
-                            <div className="lg:col-span-2 p-12 bg-slate-950/50 rounded-3xl border border-white/5 flex flex-col items-center justify-center text-center space-y-8 relative">
-                                <div className="absolute inset-0 bg-dot-blueprint opacity-5" />
+                            <div className="lg:col-span-2 p-12 bg-white rounded-3xl border border-slate-200 shadow-sm flex flex-col items-center justify-center text-center space-y-8 relative">
+                                <div className="absolute inset-0 bg-dot-slate-200 opacity-20" />
 
                                 <div className="relative">
-                                    <div className="w-48 h-48 bg-cyan-500/5 rounded-full border border-cyan-500/20 flex items-center justify-center">
-                                        <div className="w-40 h-40 bg-cyan-500/10 rounded-full border border-cyan-500/30 flex items-center justify-center">
-                                            <Mic className="w-16 h-16 text-cyan-400 animate-pulse" />
+                                    <div className="w-48 h-48 bg-sky-50 rounded-full border border-sky-100 flex items-center justify-center">
+                                        <div className="w-40 h-40 bg-sky-100/50 rounded-full border border-sky-200 flex items-center justify-center">
+                                            <Mic className="w-16 h-16 text-sky-600 animate-pulse" />
                                         </div>
                                     </div>
                                     {/* Waveform Visualization Overlay would go here */}
                                 </div>
 
                                 <div className="max-w-md">
-                                    <h3 className="text-3xl font-black mb-4 italic tracking-tight uppercase">Live <span className="text-blue-500">Analyze</span></h3>
+                                    <h3 className="text-3xl font-black mb-4 italic tracking-tight uppercase text-slate-900">Live <span className="text-sky-600">Analyze</span></h3>
                                     <p className="text-slate-500 italic">Streaming multilingual audio payload to ensemble ML validators. Real-time pitch and spectral analysis active.</p>
                                 </div>
 
                                 <div className="flex gap-4">
-                                    <button className="px-10 py-4 bg-cyan-500 text-[#060a12] font-black rounded-2xl hover:bg-cyan-400 transition-all flex items-center gap-2">
+                                    <button className="px-10 py-4 bg-sky-600 text-white font-black rounded-2xl hover:bg-sky-700 transition-all flex items-center gap-2 shadow-lg shadow-sky-600/20">
                                         <Activity className="w-5 h-5" />
                                         START SESSION
                                     </button>
-                                    <button className="px-10 py-4 bg-slate-800 text-white font-black rounded-2xl hover:bg-slate-700 transition-all border border-white/10">
+                                    <button className="px-10 py-4 bg-white text-slate-700 font-black rounded-2xl hover:bg-slate-50 transition-all border border-slate-200 shadow-sm">
                                         UPLOAD CLIP
                                     </button>
                                 </div>
                             </div>
 
                             <aside className="space-y-6">
-                                <div className="p-8 bg-blue-900/10 rounded-3xl border border-blue-500/20">
+                                <div className="p-8 bg-sky-50 rounded-3xl border border-sky-100 shadow-sm">
                                     <div className="flex items-center justify-between mb-8">
-                                        <h3 className="font-black italic uppercase tracking-tighter text-blue-400">Deepfake Risk</h3>
-                                        <span className="px-3 py-1 bg-red-500/20 text-red-500 rounded-full text-xs font-bold">CRITICAL</span>
+                                        <h3 className="font-black italic uppercase tracking-tighter text-sky-600">Deepfake Risk</h3>
+                                        <span className="px-3 py-1 bg-rose-100 text-rose-600 rounded-full text-xs font-bold">CRITICAL</span>
                                     </div>
-                                    <div className="text-6xl font-black text-white mb-2">84<span className="text-blue-500 text-2xl tracking-normal">%</span></div>
-                                    <p className="text-slate-400 text-sm">Synthetic signature detected in higher spectral bands. Probability of clone: High.</p>
+                                    <div className="text-6xl font-black text-slate-900 mb-2">84<span className="text-sky-600 text-2xl tracking-normal">%</span></div>
+                                    <p className="text-slate-500 text-sm">Synthetic signature detected in higher spectral bands. Probability of clone: High.</p>
                                 </div>
 
-                                <div className="p-8 bg-slate-900/50 rounded-3xl border border-white/5 space-y-4">
-                                    <h3 className="text-xs font-black text-slate-500 uppercase tracking-widest mb-4">Spectral Metrics</h3>
+                                <div className="p-8 bg-white rounded-3xl border border-slate-200 shadow-sm space-y-4">
+                                    <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Spectral Metrics</h3>
                                     <MetricRow label="Zero Crossing" value="4.2k" />
                                     <MetricRow label="Centroid" value="1.8kHz" />
                                     <MetricRow label="RMS Energy" value="-12dB" />
@@ -206,12 +206,12 @@ export default function AiLab() {
 function MetricCard({ icon: Icon, label, value, active = false }: { icon: any, label: string, value: string, active?: boolean }) {
     return (
         <div className={cn(
-            "p-5 rounded-2xl border transition-all duration-300",
-            active ? "bg-blue-500/10 border-blue-500/30" : "bg-slate-900/30 border-white/5"
+            "p-5 rounded-2xl border transition-all duration-300 shadow-sm",
+            active ? "bg-sky-600 text-white border-sky-700 shadow-sky-600/10" : "bg-white border-slate-200"
         )}>
-            <Icon className={cn("w-5 h-5 mb-3", active ? "text-blue-400" : "text-slate-500")} />
-            <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">{label}</div>
-            <div className="text-lg font-black text-white leading-none tracking-tight">{value}</div>
+            <Icon className={cn("w-5 h-5 mb-3", active ? "text-white" : "text-sky-600")} />
+            <div className={cn("text-[10px] font-bold uppercase tracking-wider mb-1", active ? "text-sky-100" : "text-slate-400")}>{label}</div>
+            <div className={cn("text-lg font-black leading-none tracking-tight", active ? "text-white" : "text-slate-900")}>{value}</div>
         </div>
     );
 }
@@ -220,10 +220,10 @@ function ProgressItem({ label, value, color }: { label: string, value: number, c
     return (
         <div className="space-y-2">
             <div className="flex justify-between text-[11px] font-bold uppercase tracking-wider">
-                <span className="text-slate-400">{label}</span>
-                <span className="text-slate-200">{value}%</span>
+                <span className="text-slate-500">{label}</span>
+                <span className="text-slate-700">{value}%</span>
             </div>
-            <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden">
+            <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
                 <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${value}%` }}
@@ -237,8 +237,8 @@ function ProgressItem({ label, value, color }: { label: string, value: number, c
 function MetricRow({ label, value, active = false }: { label: string, value: string, active?: boolean }) {
     return (
         <div className="flex items-center justify-between py-1">
-            <span className="text-xs font-bold text-slate-500 uppercase">{label}</span>
-            <span className={cn("text-xs font-mono font-bold", active ? "text-blue-400" : "text-slate-300")}>{value}</span>
+            <span className="text-xs font-bold text-slate-400 uppercase">{label}</span>
+            <span className={cn("text-xs font-mono font-bold", active ? "text-sky-600" : "text-slate-600")}>{value}</span>
         </div>
     );
 }

@@ -30,8 +30,8 @@ export const KnowledgeCard: React.FC<KnowledgeCardProps> = ({
         </div>
         
         <div className="flex-1 space-y-1">
-          <h3 className="text-[10px] font-mono uppercase tracking-widest text-white/80">{title}</h3>
-          <p className="text-[11px] leading-relaxed text-white/50">{description}</p>
+          <h3 className="text-[10px] font-mono uppercase tracking-widest text-slate-900/80">{title}</h3>
+          <p className="text-[11px] leading-relaxed text-slate-500/80">{description}</p>
           
           {details && (
             <button 
@@ -59,7 +59,7 @@ export const KnowledgeCard: React.FC<KnowledgeCardProps> = ({
             exit={{ height: 0, opacity: 0 }}
             className="overflow-hidden"
           >
-            <div className="mt-4 pt-4 border-t border-white/5 text-[10px] leading-relaxed text-white/40 italic font-serif">
+            <div className="mt-4 pt-4 border-t border-slate-100 text-[10px] leading-relaxed text-slate-400 italic font-serif">
               {details}
             </div>
           </motion.div>

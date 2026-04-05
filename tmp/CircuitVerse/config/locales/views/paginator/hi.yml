@@ -1,4 +1,0 @@
-hi:
-  will_paginate:
-    previous_label: "&#8592; पिछला"
-    next_label: "अगला &#8594;"

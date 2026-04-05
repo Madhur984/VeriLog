@@ -170,11 +170,11 @@
     stroke-dasharray: 1000;
     stroke-dashoffset: 1000;
     animation: bloom-propagate 2.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-    stroke: #00D2FF;
+    stroke: #0284c7; /* Sky 600 */
     stroke-width: 8;
     fill: none;
     pointer-events: none;
-    filter: drop-shadow(0 0 15px rgba(0, 210, 255, 0.6));
+    filter: drop-shadow(0 0 15px rgba(2, 132, 199, 0.3));
 }
 
 /* ─── Magnetic Pull — Tactile snapping cues ──────────────────────────── */
@@ -182,12 +182,12 @@
 @keyframes magnetic-pull-cue {
     0%, 100% {
         transform: scale(1);
-        border-color: rgba(0, 210, 255, 0.2);
+        border-color: var(--accent-glow);
     }
     50% {
         transform: scale(1.05);
-        border-color: rgba(0, 210, 255, 0.8);
-        box-shadow: 0 0 20px rgba(0, 210, 255, 0.3);
+        border-color: var(--accent-primary);
+        box-shadow: 0 0 20px var(--accent-glow);
     }
 }
 
@@ -318,20 +318,19 @@
 }
 
 @keyframes node-badge-pulse {
-
     0%,
     100% {
-        box-shadow: 0 0 0 0 rgba(0, 212, 255, 0.35);
+        box-shadow: 0 0 0 0 var(--accent-glow);
     }
 
     50% {
-        box-shadow: 0 0 0 4px rgba(0, 212, 255, 0);
+        box-shadow: 0 0 0 4px transparent;
     }
 }
 
-/* ─── VoltMonkey Mentor ───────────────────────────────────────────────────── */
+/* ─── Logic Analyst Mentor ───────────────────────────────────────────────────── */
 
-@keyframes VoltMonkey-rise {
+@keyframes Analyst-rise {
     from {
         transform: translate3d(0, 14px, 0);
         opacity: 0;
@@ -343,7 +342,7 @@
     }
 }
 
-@keyframes VoltMonkey-pulse-ring {
+@keyframes Analyst-pulse-ring {
     0% {
         transform: scale(1);
         opacity: 0.5;
@@ -529,17 +528,17 @@
     animation-delay: 0.3s;
 }
 
-/* VoltMonkey mentor panel */
-.vl-VoltMonkey-panel {
-    animation: VoltMonkey-rise 280ms cubic-bezier(0.4, 0, 0.2, 1) both;
+/* Logic Analyst mentor panel */
+.vl-Analyst-panel {
+    animation: Analyst-rise 280ms cubic-bezier(0.4, 0, 0.2, 1) both;
 }
 
-.vl-VoltMonkey-ring {
-    animation: VoltMonkey-pulse-ring 1.4s ease-out infinite;
+.vl-Analyst-ring {
+    animation: Analyst-pulse-ring 1.4s ease-out infinite;
     will-change: transform, opacity;
 }
 
-@keyframes VoltMonkey-breath {
+@keyframes Analyst-breath {
 
     0%,
     100% {
@@ -551,8 +550,8 @@
     }
 }
 
-.vl-VoltMonkey-breath {
-    animation: VoltMonkey-breath 3s ease-in-out infinite;
+.vl-Analyst-breath {
+    animation: Analyst-breath 3s ease-in-out infinite;
     will-change: opacity;
 }
 
@@ -564,32 +563,32 @@
 
 .vl-zone--magnetic {
     transform: scale(1.015);
-    border-color: rgba(0, 212, 255, 0.4) !important;
-    background: rgba(0, 212, 255, 0.08) !important;
-    box-shadow: 0 0 15px rgba(0, 212, 255, 0.1);
+    border-color: var(--accent-primary) !important;
+    background: var(--accent-glow) !important;
+    box-shadow: 0 0 15px var(--accent-glow);
 }
 
 .vl-chip--dragging {
     opacity: 1 !important;
-    box-shadow: 0 12px 28px -6px rgba(0, 0, 0, 0.6), 0 4px 12px -3px rgba(0, 0, 0, 0.3);
-    border-color: rgba(0, 212, 255, 0.5) !important;
+    box-shadow: 0 12px 28px -6px rgba(0, 0, 0, 0.1), 0 4px 12px -3px rgba(0, 0, 0, 0.05);
+    border-color: var(--accent-primary) !important;
 }
 
 /* ─── Wire Connection Glow (on successful snap) ────────────────────── */
 
 @keyframes wire-connection-glow {
     0% {
-        filter: drop-shadow(0 0 0px rgba(0, 212, 255, 0));
+        filter: drop-shadow(0 0 0px transparent);
         stroke-width: 1.8;
     }
 
     40% {
-        filter: drop-shadow(0 0 8px rgba(0, 212, 255, 0.6));
+        filter: drop-shadow(0 0 8px var(--accent-primary));
         stroke-width: 2.4;
     }
 
     100% {
-        filter: drop-shadow(0 0 3px rgba(0, 212, 255, 0.2));
+        filter: drop-shadow(0 0 3px var(--accent-glow));
         stroke-width: 2;
     }
 }
@@ -698,7 +697,7 @@
 
 .vl-component-hover:hover {
     transform: scale(1.04);
-    filter: drop-shadow(0 0 6px rgba(0, 212, 255, 0.3));
+    filter: drop-shadow(0 0 6px var(--accent-glow));
 }
 
 .vl-component-hover:active {
@@ -728,12 +727,12 @@
     0%,
     100% {
         stroke-opacity: 0.6;
-        filter: drop-shadow(0 0 2px rgba(0, 212, 255, 0.2));
+        filter: drop-shadow(0 0 2px var(--accent-glow));
     }
 
     50% {
         stroke-opacity: 1;
-        filter: drop-shadow(0 0 6px rgba(0, 212, 255, 0.5));
+        filter: drop-shadow(0 0 6px var(--accent-primary));
     }
 }
 
@@ -784,8 +783,8 @@
     .vl-wire--live,
     .vl-wire--connected,
     .vl-xp--flash,
-    .vl-VoltMonkey-panel,
-    .vl-VoltMonkey-ring,
+    .vl-Analyst-panel,
+    .vl-Analyst-ring,
     .vl-short-circuit,
     .vl-chip--shake,
     .vl-chip--lock,
@@ -870,14 +869,14 @@
     0% {
         opacity: 0.9;
         transform: scale(1);
-        border-color: rgba(0, 210, 255, 0.9);
-        box-shadow: 0 0 12px rgba(0, 210, 255, 0.6);
+        border-color: var(--accent-primary);
+        box-shadow: 0 0 12px var(--accent-glow);
     }
     100% {
         opacity: 0;
         transform: scale(1.1);
-        border-color: rgba(0, 210, 255, 0);
-        box-shadow: 0 0 40px rgba(0, 210, 255, 0);
+        border-color: transparent;
+        box-shadow: 0 0 40px transparent;
     }
 }
 
@@ -924,21 +923,21 @@
 /* ─── Glowing Effects ────────────────────────────────────────────────── */
 
 .glow-cyan {
-    filter: drop-shadow(0 0 8px rgba(0, 229, 255, 0.8));
+    filter: drop-shadow(0 0 8px var(--signal-cyan));
 }
 
 .glow-purple {
-    filter: drop-shadow(0 0 8px rgba(124, 77, 255, 0.8));
+    filter: drop-shadow(0 0 8px var(--logic-purple));
 }
 
 .glow-yellow {
-    filter: drop-shadow(0 0 8px rgba(255, 215, 64, 0.8));
+    filter: drop-shadow(0 0 8px var(--warning-amber));
 }
 
 /* ─── Progressive Text Utilities ───────────────────────────────────────── */
 
 .text-progressive-reveal {
-    background: linear-gradient(90deg, #E3F2FD var(--progress, 0%), rgba(227, 242, 253, 0.1) var(--progress, 0%));
+    background: linear-gradient(90deg, #0F172A var(--progress, 0%), rgba(15, 23, 42, 0.1) var(--progress, 0%));
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -961,7 +960,7 @@
   contain: layout paint;
 
   transform: translateZ(0);
-  border-bottom: 2px solid rgba(255,255,255,0.03);
+  border-bottom: 2px solid rgba(0,0,0,0.03);
 }
 
 .main-container {

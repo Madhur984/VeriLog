@@ -13,20 +13,25 @@ import { SceneRegister } from '../components/level3/SceneRegister';
 import { SceneArithmetic } from '../components/level3/SceneArithmetic';
 import { SceneLogicBridge } from '../components/level3/SceneLogicBridge';
 import { CognitiveCheckpoint, CheckpointScene } from '../components/level3/CognitiveCheckpoint';
-import { VoltMonkeyPanel } from '../components/level1/VoltMonkeyPanel';
 import { XPCounter } from '../components/level1/XPCounter';
 import { BadgeToast } from '../components/level2/BadgeToast';
 import { ProgressTracker } from '../components/ui/ProgressTracker';
 import { useEngagementAdapter } from '../hooks/useEngagementAdapter';
-import { useSigmaMentorL3, L3Scene } from '../hooks/useSigmaMentorL3';
 import { useGamificationStore } from '../stores/gamificationStore';
 import { useGlobalSensory } from '../hooks/useGlobalSensory';
 import { useBinaryStore } from '../stores/binaryStore';
 
 const T = {
-    bg: '#0A0B10', card: '#0D0F16', surface: '#1A1D24', border: '#17191E',
-    text: '#E5E7EB', muted: '#64748B', accent: '#00D4FF',
-    success: '#10B981', warning: '#F59E0B', error: '#EF4444',
+    bg: '#FFFFFF',
+    card: '#F8FAFC',
+    surface: '#F1F5F9',
+    border: '#E2E8F0',
+    text: '#0F172A',
+    muted: '#64748B',
+    accent: '#0EA5E9',
+    success: '#059669',
+    warning: '#D97706',
+    error: '#DC2626',
     mono: "'JetBrains Mono', monospace",
     sans: "'Inter', sans-serif",
 } as const;
@@ -45,16 +50,17 @@ const Btn: React.FC<{ label: string; onClick: () => void; disabled?: boolean }> 
     <button
         onClick={onClick}
         disabled={disabled}
+        className="group"
         style={{
             padding: '12px 28px', fontFamily: T.mono, fontSize: 10, letterSpacing: '0.2em',
-            textTransform: 'uppercase', background: disabled ? 'transparent' : 'rgba(0,212,255,0.06)',
-            border: `1px solid rgba(0,212,255,${disabled ? 0.08 : 0.28})`,
-            borderRadius: 4, color: disabled ? 'rgba(0,212,255,0.3)' : T.accent,
+            textTransform: 'uppercase', background: disabled ? 'transparent' : `${T.accent}11`,
+            border: `1px solid ${disabled ? T.border : T.accent}44`,
+            borderRadius: 4, color: disabled ? T.muted : T.accent,
             cursor: disabled ? 'not-allowed' : 'pointer', transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
             display: 'inline-flex', alignItems: 'center', gap: 10,
         }}
     >
-        {label} <ArrowRight style={{ width: 12, height: 12 }} />
+        {label} <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
     </button>
 );
 
@@ -66,8 +72,6 @@ export const ModuleThree: React.FC = () => {
 
     const { xp, awardXP, registerCounterEl } = useEngagementAdapter();
     const { triggerHaptic } = useGlobalSensory();
-    const { recordInteraction, getResponse, getProactiveMessage } = useSigmaMentorL3();
-    const [panelResponse, setPanelResponse] = useState<any>(null);
 
     const [toast, setToast] = useState<{ show: boolean; name: string; xp: number }>({ show: false, name: '', xp: 0 });
     const [earnedBadges, setEarnedBadges] = useState<Set<string>>(new Set());
@@ -97,26 +101,6 @@ export const ModuleThree: React.FC = () => {
         setScreenFlash(true);
         setTimeout(() => setScreenFlash(false), 150);
     }, []);
-
-    const showSigma = useCallback((sc: L3Scene, proactive?: string) => {
-        const res = getResponse(sc);
-        if (res) {
-            setPanelResponse({
-                obs: proactive || res.observation,
-                why: res.analysis,
-                conclusion: res.conclusion,
-                tier: res.tier
-            });
-        }
-    }, [getResponse]);
-
-    useEffect(() => {
-        const sigmaScenes = ['whybinary', 'switch', 'counter', 'register', 'arithmetic', 'bridge'];
-        if (!sigmaScenes.includes(activeScene)) return;
-        
-        const msg = getProactiveMessage(activeScene as L3Scene);
-        if (msg) showSigma(activeScene as L3Scene, msg);
-    }, [activeScene, getProactiveMessage, showSigma]);
 
     const awardBadge = useCallback((key: string) => {
         if (earnedBadges.has(key)) return;
@@ -184,9 +168,8 @@ export const ModuleThree: React.FC = () => {
     }, [triggerHaptic]);
 
     useEffect(() => {
-        if (activeScene !== 'intro' && activeScene !== 'complete') showSigma(activeScene as L3Scene);
         if (activeScene === 'complete') completeSkill('binary_awakening');
-    }, [activeScene, showSigma, completeSkill]);
+    }, [activeScene, completeSkill]);
 
     const INTRO_LINES = [
         'Before logic gates. Before processors.',
@@ -215,18 +198,18 @@ export const ModuleThree: React.FC = () => {
         };
     }, []);
 
-    const handleFirstToggle = useCallback(() => { setHasToggled(true); awardXP('structural', 10); awardBadge('bit-flip'); showSigma('switch'); }, [awardXP, awardBadge, showSigma]);
-    const handleCarry = useCallback(() => { showSigma('counter'); recordInteraction(true); }, [showSigma, recordInteraction]);
+    const handleFirstToggle = useCallback(() => { setHasToggled(true); awardXP('structural', 10); awardBadge('bit-flip'); }, [awardXP, awardBadge]);
+    const handleCarry = useCallback(() => { }, []);
     const handleReach8 = useCallback(() => { setHasReached8(true); awardXP('application', 15); awardBadge('bit-counter'); flash(); }, [awardXP, awardBadge, flash]);
-    const handleStore = useCallback(() => { setHasStored(true); awardXP('structural', 15); awardBadge('memory-writer'); showSigma('register'); flash(); }, [awardXP, awardBadge, showSigma, flash]);
-    const handleArithmeticCorrect = useCallback(() => { setHasComputed(true); awardXP('application', 20); awardBadge('ripple-solver'); showSigma('arithmetic'); recordInteraction(true); flash(); }, [awardXP, awardBadge, showSigma, recordInteraction, flash]);
+    const handleStore = useCallback(() => { setHasStored(true); awardXP('structural', 15); awardBadge('memory-writer'); flash(); }, [awardXP, awardBadge, flash]);
+    const handleArithmeticCorrect = useCallback(() => { setHasComputed(true); awardXP('application', 20); awardBadge('ripple-solver'); flash(); }, [awardXP, awardBadge, flash]);
 
     return (
         <div style={{ minHeight: '100vh', width: '100%', display: 'flex', flexDirection: 'column', fontFamily: T.sans, background: T.bg, color: T.text, overflow: 'hidden' }}>
             <AnimatePresence>
                 {screenFlash && (
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.12 }}
-                        style={{ position: 'fixed', inset: 0, background: 'rgba(0,212,255,0.04)', pointerEvents: 'none', zIndex: 9999 }} />
+                        style={{ position: 'fixed', inset: 0, background: 'rgba(14, 165, 233, 0.05)', pointerEvents: 'none', zIndex: 9999 }} />
                 )}
             </AnimatePresence>
 
@@ -238,7 +221,7 @@ export const ModuleThree: React.FC = () => {
                     padding: '14px 24px', borderBottom: `1px solid ${T.border}`,
                     background: T.bg, position: 'sticky', top: 0, zIndex: 20,
                 }}>
-                    <button onClick={() => navigate('/portal')} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '5px 12px', borderRadius: 2, border: `1px solid ${T.border}`, background: 'transparent', color: T.muted, fontFamily: T.mono, fontSize: 8, letterSpacing: '0.18em', textTransform: 'uppercase', cursor: 'pointer' }}>
+                    <button onClick={() => navigate('/portal')} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '5px 12px', borderRadius: 4, border: `1px solid ${T.border}`, background: 'transparent', color: T.muted, fontFamily: T.mono, fontSize: 8, letterSpacing: '0.18em', textTransform: 'uppercase', cursor: 'pointer' }}>
                         <ArrowLeft style={{ width: 11, height: 11 }} /> Exit
                     </button>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
@@ -273,11 +256,11 @@ export const ModuleThree: React.FC = () => {
                 {showRecap && recapData && (
                     <motion.div
                         initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                        style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(5, 5, 10, 0.95)', backdropFilter: 'blur(12px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}
+                        style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(255, 255, 255, 0.95)', backdropFilter: 'blur(12px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}
                     >
                         <motion.div
                             initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }}
-                            style={{ width: '100%', maxWidth: 460, background: T.card, border: `1px solid ${T.accent}44`, borderRadius: 16, padding: 40, textAlign: 'center', boxShadow: `0 0 50px ${T.accent}11` }}
+                            style={{ width: '100%', maxWidth: 460, background: T.card, border: `1px solid ${T.border}`, borderRadius: 16, padding: 40, textAlign: 'center', boxShadow: '0 20px 50px rgba(0,0,0,0.05)' }}
                         >
                             <div style={{ width: 56, height: 56, borderRadius: '50%', background: `${T.success}11`, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px', border: `1px solid ${T.success}33` }}>
                                 <CheckCircle2 size={28} color={T.success} />
@@ -299,7 +282,7 @@ export const ModuleThree: React.FC = () => {
                 )}
             </AnimatePresence>
 
-            <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+            <div style={{ display: 'flex', flex: 1, overflow: 'hidden', background: T.bg }}>
                 <div style={{ flex: 1, overflowY: 'auto' }}>
                     <main style={{
                         display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
@@ -311,7 +294,7 @@ export const ModuleThree: React.FC = () => {
                             {activeScene === 'intro' && (
                                 <motion.div key="intro" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                                     style={{ minHeight: '100vh', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
-                                    <h1 style={{ fontSize: 'clamp(32px, 5vw, 52px)', fontWeight: 700, textAlign: 'center', marginBottom: 52 }}>
+                                    <h1 style={{ fontSize: 'clamp(32px, 5vw, 52px)', fontWeight: 700, textAlign: 'center', marginBottom: 52, color: T.text }}>
                                         "{INTRO_LINES[introStep]}"
                                     </h1>
                                     <Btn label={introStep < INTRO_LINES.length - 1 ? 'Next Line' : 'Enter Lab'} onClick={handleIntroNext} />
@@ -390,14 +373,13 @@ export const ModuleThree: React.FC = () => {
                         <AnimatePresence>
                             {showCheckpoint && (
                                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                                    style={{ position: 'fixed', inset: 0, zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(5, 7, 12, 0.95)', backdropFilter: 'blur(12px)', padding: 24 }}>
+                                    style={{ position: 'fixed', inset: 0, zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255, 255, 255, 0.95)', backdropFilter: 'blur(12px)', padding: 24 }}>
                                     <CognitiveCheckpoint scene={activeScene as CheckpointScene} onComplete={actuallyAdvance} />
                                 </motion.div>
                             )}
                         </AnimatePresence>
                     </main>
                 </div>
-                {activeScene !== 'intro' && activeScene !== 'complete' && <VoltMonkeyPanel response={panelResponse} />}
             </div>
         </div>
     );

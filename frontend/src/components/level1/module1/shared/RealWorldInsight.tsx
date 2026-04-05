@@ -25,13 +25,13 @@ export const RealWorldInsight: React.FC<InsightProps> = ({ type, visible }) => {
       title: "Data Payload",
       desc: "High frequency signals carry more data but require more energy and expensive hardware to process without distortion.",
       icon: Info,
-      color: "border-white/20 text-white/80"
+      color: "border-slate-200 text-slate-800"
     },
     clean: {
       title: "Hi-Fi Signal",
       desc: "Perfect reproduction. The digital model accurately tracks the analog source. This is the goal of high-end signal processing.",
       icon: Database,
-      color: "border-[var(--accent-primary)]/30 text-[var(--accent-primary)]"
+      color: "border-[var(--accent-primary)] text-[var(--accent-primary)]"
     }
   };
 
@@ -44,13 +44,13 @@ export const RealWorldInsight: React.FC<InsightProps> = ({ type, visible }) => {
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: 20 }}
-          className={`glass-card p-4 border-l-4 ${active.color} bg-black/40 backdrop-blur-xl w-[260px]`}
+          className={`glass-card p-4 border-l-4 ${active.color} bg-white/80 border border-slate-200/50 shadow-xl w-[260px]`}
         >
           <div className="flex items-center gap-3 mb-2">
             <active.icon size={16} />
-            <h4 className="text-[10px] font-bold uppercase tracking-widest">{active.title}</h4>
+            <h4 className="text-[10px] font-bold uppercase tracking-widest text-slate-900">{active.title}</h4>
           </div>
-          <p className="text-[10px] leading-relaxed opacity-60 font-medium">
+          <p className="text-[10px] leading-relaxed text-slate-500 font-medium">
             {active.desc}
           </p>
         </motion.div>

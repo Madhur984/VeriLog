@@ -4,12 +4,13 @@ import { SkillCanvas } from '../components/ui/SkillCanvas';
 import { useGamificationStore } from '../stores/gamificationStore';
 
 const T = {
-    bg: '#060C1A', card: '#0D0F16', border: '#1A1D24',
-    text: '#E5E7EB', muted: '#64748B', accent: '#00D4FF',
-    warning: '#F59E0B',
+    bg: '#F8FAFC', card: '#FFFFFF', border: '#E2E8F0',
+    text: '#0F172A', muted: '#64748B', accent: '#0284C7',
+    warning: '#D97706',
     mono: "'IBM Plex Mono','Roboto Mono',monospace",
     sans: "'Inter',system-ui,sans-serif",
 } as const;
+
 
 export function SkillTree() {
     const navigate = useNavigate();

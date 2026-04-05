@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Cpu, Zap, Trophy, ChevronRight } from 'lucide-react';
 import { useEngagementAdapter } from '../hooks/useEngagementAdapter';
-import { useSigmaMentorL4 } from '../hooks/useSigmaMentorL4';
 import { GateDiscovery } from '../components/level4/GateDiscovery';
 import { GateLab } from '../components/level4/GateLab';
 import { CircuitBuilder } from '../components/level4/CircuitBuilder';
@@ -11,9 +10,16 @@ import { LogicPuzzle } from '../components/level4/LogicPuzzle';
 
 // ── Design Tokens ─────────────────────────────────────────────────────────────
 const T = {
-    bg: '#07080C', card: '#0D0F16', surface: '#1A1D24',
-    accent: '#00D4FF', success: '#10B981', warning: '#F59E0B', error: '#EF4444',
-    text: '#E5E7EB', muted: '#64748B', border: '#1A1D24',
+    bg: '#FFFFFF',
+    card: '#F8FAFC',
+    surface: '#F1F5F9',
+    accent: '#0EA5E9',
+    success: '#059669',
+    warning: '#D97706',
+    error: '#DC2626',
+    text: '#0F172A',
+    muted: '#64748B',
+    border: '#E2E8F0',
     mono: "'JetBrains Mono', monospace",
     body: "'DM Sans', Inter, sans-serif",
 };
@@ -47,8 +53,8 @@ const EnterpriseBtn: React.FC<{
             fontFamily: T.mono, fontSize: 11, fontWeight: 700, letterSpacing: '0.13em', textTransform: 'uppercase' as const,
             cursor: disabled ? 'not-allowed' : 'pointer',
             opacity: disabled ? 0.38 : 1, transition: 'all 0.18s',
-            background: variant === 'primary' ? 'rgba(0,212,255,0.08)' : 'rgba(255,255,255,0.03)',
-            border: `1px solid ${variant === 'primary' ? 'rgba(0,212,255,0.35)' : 'rgba(255,255,255,0.08)'}`,
+            background: variant === 'primary' ? `${T.accent}11` : 'rgba(0,0,0,0.03)',
+            border: `1px solid ${variant === 'primary' ? `${T.accent}44` : 'rgba(0,0,0,0.08)'}`,
             color: variant === 'primary' ? T.accent : T.muted,
             backdropFilter: 'blur(8px)',
         }}>
@@ -61,10 +67,8 @@ const EnterpriseBtn: React.FC<{
 export const ModuleFour: React.FC = () => {
     const navigate = useNavigate();
     const { awardXP, completeSkill } = useEngagementAdapter();
-    const { getResponse, recordInteraction } = useSigmaMentorL4();
 
     const [scene, setScene] = useState<Scene>('intro');
-    const [sigmaMsg, setSigmaMsg] = useState<ReturnType<typeof getResponse> | null>(null);
 
 
     // Scene completion gates
@@ -73,32 +77,24 @@ export const ModuleFour: React.FC = () => {
     const [builderDone, setBuilderDone] = useState(false);
     const [puzzlesDone, setPuzzlesDone] = useState(false);
 
-    const callSigma = useCallback((sceneId: 'gates' | 'lab' | 'builder' | 'puzzle') => {
-        const resp = getResponse(sceneId);
-        setSigmaMsg(resp);
-    }, [getResponse]);
-
     const goNext = useCallback(() => {
         if (scene === 'intro') {
             setScene('gate_discovery');
         } else if (scene === 'gate_discovery') {
             awardXP('structural');
             setScene('gate_lab');
-            callSigma('lab');
         } else if (scene === 'gate_lab') {
             awardXP('diagnostic');
             setScene('circuit_builder');
-            callSigma('builder');
         } else if (scene === 'circuit_builder') {
             awardXP('application');
             setScene('logic_puzzle');
-            callSigma('puzzle');
         } else if (scene === 'logic_puzzle') {
             awardXP('application');
             setScene('complete');
             completeSkill('logic_gates');
         }
-    }, [scene, awardXP, callSigma, completeSkill]);
+    }, [scene, awardXP, completeSkill]);
 
     const goBack = useCallback(() => {
         if (scene === 'gate_discovery') setScene('intro');
@@ -116,8 +112,6 @@ export const ModuleFour: React.FC = () => {
                         scene === 'logic_puzzle' ? puzzlesDone :
                             false;
 
-    const sigmaVisible = sigmaMsg !== null;
-
     const progressPct = {
         intro: 0, gate_discovery: 15, gate_lab: 40, circuit_builder: 65, logic_puzzle: 85, complete: 100,
     }[scene];
@@ -129,7 +123,7 @@ export const ModuleFour: React.FC = () => {
                 <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }}
                     style={{ maxWidth: 640, width: '100%', textAlign: 'center' }}>
                     <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 32 }}>
-                        <div style={{ width: 80, height: 80, borderRadius: 20, background: 'rgba(0,212,255,0.1)', border: '1px solid rgba(0,212,255,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 0 40px rgba(0,212,255,0.15)' }}>
+                        <div style={{ width: 80, height: 80, borderRadius: 20, background: `${T.accent}11`, border: `1px solid ${T.accent}33`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 10px 40px ${T.accent}11` }}>
                             <Cpu size={36} style={{ color: T.accent }} />
                         </div>
                     </div>
@@ -207,7 +201,7 @@ export const ModuleFour: React.FC = () => {
             <header style={{
                 position: 'sticky', top: 0, zIndex: 40, padding: '0 24px',
                 height: 56, display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                background: 'rgba(7,8,12,0.92)', backdropFilter: 'blur(12px)',
+                background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(12px)',
                 borderBottom: `1px solid ${T.border}`,
             }}>
                 <button onClick={() => navigate('/portal')} style={{
@@ -234,17 +228,13 @@ export const ModuleFour: React.FC = () => {
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                    <button onClick={() => callSigma(
-                        scene === 'gate_discovery' ? 'gates' :
-                            scene === 'gate_lab' ? 'lab' :
-                                scene === 'circuit_builder' ? 'builder' : 'puzzle'
-                    )} style={{
+                    <div style={{
                         padding: '6px 14px', fontFamily: T.mono, fontSize: 9, letterSpacing: '0.12em',
-                        textTransform: 'uppercase', borderRadius: 6, cursor: 'pointer',
-                        background: 'rgba(0,212,255,0.06)', border: '1px solid rgba(0,212,255,0.2)', color: T.accent,
+                        textTransform: 'uppercase', borderRadius: 6,
+                        background: 'rgba(0,0,0,0.03)', border: `1px solid ${T.border}`, color: T.muted,
                     }}>
-                        SIGMA
-                    </button>
+                        UNIT 04
+                    </div>
                 </div>
             </header>
 
@@ -255,25 +245,25 @@ export const ModuleFour: React.FC = () => {
                         transition={{ duration: 0.28 }}>
                         {scene === 'gate_discovery' && (
                             <GateDiscovery
-                                onComplete={() => { setDiscoveryDone(true); recordInteraction(true); callSigma('gates'); }}
+                                onComplete={() => { setDiscoveryDone(true); }}
                                 hasCompleted={discoveryDone}
                             />
                         )}
                         {scene === 'gate_lab' && (
                             <GateLab
-                                onComplete={() => { setLabDone(true); recordInteraction(true); }}
+                                onComplete={() => { setLabDone(true); }}
                                 hasCompleted={labDone}
                             />
                         )}
                         {scene === 'circuit_builder' && (
                             <CircuitBuilder
-                                onComplete={() => { setBuilderDone(true); recordInteraction(true); callSigma('builder'); }}
+                                onComplete={() => { setBuilderDone(true); }}
                                 hasCompleted={builderDone}
                             />
                         )}
                         {scene === 'logic_puzzle' && (
                             <LogicPuzzle
-                                onAllComplete={() => { setPuzzlesDone(true); recordInteraction(true); }}
+                                onAllComplete={() => { setPuzzlesDone(true); }}
                                 onSolve={() => { }}
                             />
                         )}
@@ -285,7 +275,7 @@ export const ModuleFour: React.FC = () => {
             <div style={{
                 position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 30,
                 padding: '16px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                background: 'rgba(7,8,12,0.95)', backdropFilter: 'blur(16px)',
+                background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(16px)',
                 borderTop: `1px solid ${T.border}`,
             }}>
                 <EnterpriseBtn onClick={goBack} variant="ghost"
@@ -307,76 +297,6 @@ export const ModuleFour: React.FC = () => {
                     {scene === 'logic_puzzle' ? 'Complete' : 'Next'}
                 </EnterpriseBtn>
             </div>
-
-            {/* SIGMA Panel — structured engineering reasoning */}
-            <AnimatePresence>
-                {sigmaVisible && sigmaMsg && (
-                    <motion.div
-                        initial={{ opacity: 0, y: 20, scale: 0.97 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 16, scale: 0.97 }}
-                        transition={{ duration: 0.22 }}
-                        style={{
-                            position: 'fixed', bottom: 96, right: 24, zIndex: 50,
-                            width: 380, background: 'rgba(10,12,20,0.96)',
-                            border: '1px solid rgba(0,212,255,0.28)',
-                            borderRadius: 12, overflow: 'hidden',
-                            boxShadow: '0 16px 48px rgba(0,0,0,0.7), 0 0 0 1px rgba(0,212,255,0.05)',
-                            backdropFilter: 'blur(16px)',
-                        }}
-                    >
-                        {/* SIGMA header bar */}
-                        <div style={{
-                            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                            padding: '12px 18px', borderBottom: '1px solid rgba(0,212,255,0.12)',
-                            background: 'rgba(0,212,255,0.04)',
-                        }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                                <div style={{ width: 7, height: 7, borderRadius: '50%', background: T.accent, boxShadow: `0 0 8px ${T.accent}` }} />
-                                <span style={{ fontFamily: T.mono, fontSize: 9, color: T.accent, letterSpacing: '0.22em', textTransform: 'uppercase' }}>SIGMA — Engineering Analysis</span>
-                            </div>
-                            <button onClick={() => setSigmaMsg(null)}
-                                style={{ background: 'none', border: 'none', color: T.muted, cursor: 'pointer', fontSize: 18, lineHeight: 1, padding: '0 2px' }}
-                            >×</button>
-                        </div>
-
-                        {/* Structured sections */}
-                        <div style={{ padding: '16px 18px', display: 'flex', flexDirection: 'column', gap: 14 }}>
-                            {([
-                                { key: 'observation', label: 'Observation', color: T.muted, text: sigmaMsg.observation },
-                                { key: 'analysis', label: 'Analysis', color: T.text, text: sigmaMsg.analysis },
-                                { key: 'correction', label: 'Correction', color: T.warning, text: sigmaMsg.conclusion },
-                                { key: 'insight', label: 'Engineering Insight', color: T.accent, text: sigmaMsg.insight },
-                            ] as const).map(({ key, label, color, text }) => (
-                                <div key={key}>
-                                    <div style={{
-                                        fontFamily: T.mono, fontSize: 8, color, textTransform: 'uppercase',
-                                        letterSpacing: '0.2em', marginBottom: 5,
-                                        display: 'flex', alignItems: 'center', gap: 6,
-                                    }}>
-                                        <div style={{ width: 16, height: 1, background: color, opacity: 0.5 }} />
-                                        {label}
-                                    </div>
-                                    <p style={{
-                                        fontFamily: T.mono, fontSize: 11, lineHeight: 1.75,
-                                        color: key === 'insight' ? `${T.accent}CC` : key === 'correction' ? `${T.warning}CC` : T.text,
-                                        margin: 0,
-                                    }}>{text}</p>
-                                </div>
-                            ))}
-                        </div>
-
-                        {/* Footer tier indicator */}
-                        <div style={{
-                            padding: '8px 18px', borderTop: '1px solid rgba(255,255,255,0.04)',
-                            display: 'flex', alignItems: 'center', gap: 6,
-                        }}>
-                            <span style={{ fontFamily: T.mono, fontSize: 8, color: T.muted, letterSpacing: '0.12em' }}>PERFORMANCE TIER</span>
-                            <span style={{ fontFamily: T.mono, fontSize: 8, color: sigmaMsg.tier === 'sharp' ? T.success : sigmaMsg.tier === 'steady' ? T.accent : T.warning, textTransform: 'uppercase', letterSpacing: '0.12em' }}>{sigmaMsg.tier}</span>
-                        </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
         </div>
     );
 };

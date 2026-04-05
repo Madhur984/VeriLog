@@ -1,16 +1,37 @@
-﻿src/components/level1/module1/screens/AnalogDigital.tsx(84,19): error TS2322: Type '{ signalA: any; mode: "analog" | "challenge"; targetSignal: { amplitude: number; frequency: number; phase: number; }; isFrozen: boolean; timeScrub: number; className: string; }' is not assignable to type 'IntrinsicAttributes & OscilloscopeProps'.
-  Property 'targetSignal' does not exist on type 'IntrinsicAttributes & OscilloscopeProps'.
-src/components/level1/module1/screens/EmbeddedCircuitLab.tsx(4,18): error TS2307: Cannot find module 'gsap' or its corresponding type declarations.
-src/components/level1/module1/screens/EmbeddedCircuitLab.tsx(5,34): error TS2307: Cannot find module 'gsap/MotionPathPlugin' or its corresponding type declarations.
-src/components/level1/module1/shared/LiveMetricsHUD.tsx(3,20): error TS6133: 'Zap' is declared but its value is never read.
-src/components/level2/NoiseExperiment.tsx(80,11): error TS6133: 'focusProps' is declared but its value is never read.
-src/components/level2/OscilloscopeCanvas.tsx(69,13): error TS6133: 'quality' is declared but its value is never read.
-src/components/level2/OscilloscopeCanvas.tsx(164,23): error TS6133: 'signalToCanvas' is declared but its value is never read.
-src/components/level2/OscilloscopeCanvas.tsx(171,21): error TS6133: 'triggerOffset' is declared but its value is never read.
-src/components/shared/VeriButton.tsx(3,28): error TS6133: 'PACING' is declared but its value is never read.
-src/hooks/useAttentionLock.ts(1,33): error TS6133: 'useEffect' is declared but its value is never read.
-src/hooks/useAudioSignalMap.ts(21,9): error TS6133: 'noiseNode' is declared but its value is never read.
-src/hooks/useModuleAnimations.ts(2,22): error TS2307: Cannot find module 'gsap' or its corresponding type declarations.
-src/hooks/useModuleAnimations.ts(3,31): error TS2307: Cannot find module 'gsap/ScrollTrigger' or its corresponding type declarations.
-src/hooks/useModuleAnimations.ts(13,17): error TS7006: Parameter 'elements' implicitly has an 'any' type.
-src/hooks/useModuleAnimations.ts(38,38): error TS7006: Parameter 'st' implicitly has an 'any' type.
+﻿
+> veriquest-frontend@1.0.0 build
+> tsc && vite build
+
+src/components/Cockpit/Workbench.tsx(107,30): error TS2304: Cannot find name 'Zap'.
+src/components/level1/module1/screens/EmbeddedCircuitLab.tsx(3,47): error TS6133: 'ChevronRight' is declared but its value is never read.
+src/components/level1/module1/screens/EmbeddedCircuitLab.tsx(3,61): error TS6133: 'RefreshCw' is declared but its value is never read.
+src/components/level1/module1/screens/EmbeddedCircuitLab.tsx(302,124): error TS2322: Type '{ width: string; height: string; rx: string; fill: string; stroke: string; strokeWidth: string; shadow: string; }' is not assignable to type 'SVGProps<SVGRectElement>'.
+  Property 'shadow' does not exist on type 'SVGProps<SVGRectElement>'.
+src/components/level1/module1/screens/EmbeddedCircuitLab.tsx(334,142): error TS2322: Type '{ r: string; stroke: string; strokeWidth: string; fill: string; shadow: string; }' is not assignable to type 'SVGProps<SVGCircleElement>'.
+  Property 'shadow' does not exist on type 'SVGProps<SVGCircleElement>'.
+src/components/level1/SocketSystem.tsx(14,18): error TS6133: 'AnimatePresence' is declared but its value is never read.
+src/components/level1/SocketSystem.tsx(15,10): error TS6133: 'CheckCircle2' is declared but its value is never read.
+src/components/level1/SocketSystem.tsx(15,24): error TS6133: 'Activity' is declared but its value is never read.
+src/components/level1/SocketSystem.tsx(15,34): error TS6133: 'Zap' is declared but its value is never read.
+src/components/level1/SocketSystem.tsx(15,39): error TS6133: 'Cpu' is declared but its value is never read.
+src/components/level1/SocketSystem.tsx(95,49): error TS6133: 'isDark' is declared but its value is never read.
+src/components/level1/SocketSystem.tsx(95,65): error TS6133: 'diagnosticsMode' is declared but its value is never read.
+src/components/level2/SignalRegenerator.tsx(12,34): error TS6133: 'Zap' is declared but its value is never read.
+src/components/level2/SignalRegenerator.tsx(19,7): error TS6133: 'T' is declared but its value is never read.
+src/components/level4/CircuitBuilder.tsx(8,29): error TS6133: 'Info' is declared but its value is never read.
+src/components/level4/CircuitBuilder.tsx(81,35): error TS2353: Object literal may only specify known properties, and 'p' does not exist in type 'Properties<string | number, string & {}>'.
+src/components/level4/CircuitBuilder.tsx(88,94): error TS2353: Object literal may only specify known properties, and 'tracking' does not exist in type 'Properties<string | number, string & {}>'.
+src/components/level4/CircuitBuilder.tsx(210,59): error TS2353: Object literal may only specify known properties, and 'p' does not exist in type 'Properties<string | number, string & {}>'.
+src/components/level4/CircuitBuilder.tsx(217,158): error TS2353: Object literal may only specify known properties, and 'p' does not exist in type 'Properties<string | number, string & {}>'.
+src/components/level4/CircuitBuilder.tsx(244,75): error TS2353: Object literal may only specify known properties, and 'p' does not exist in type 'Properties<string | number, string & {}>'.
+src/components/level5/KMapGroupingLab.tsx(13,39): error TS6133: 'Trophy' is declared but its value is never read.
+src/components/level5/KMapGroupingLab.tsx(17,7): error TS6133: 'T' is declared but its value is never read.
+src/components/level5/KMapIntro.tsx(14,22): error TS6133: 'Cpu' is declared but its value is never read.
+src/components/level5/KMapIntro.tsx(16,7): error TS6133: 'T' is declared but its value is never read.
+src/components/level5/KMapIntro.tsx(65,11): error TS6133: 'CELL_SIZE' is declared but its value is never read.
+src/simulator/CircuitCanvas.tsx(1,27): error TS6133: 'useMemo' is declared but its value is never read.
+src/simulator/CircuitCanvas.tsx(1,36): error TS6133: 'useEffect' is declared but its value is never read.
+src/simulator/CircuitCanvas.tsx(1,47): error TS6133: 'useRef' is declared but its value is never read.
+src/simulator/CircuitCanvas.tsx(3,21): error TS6133: 'ShieldCheck' is declared but its value is never read.
+src/simulator/CircuitCanvas.tsx(270,102): error TS2304: Cannot find name 'Lightbulb'.
+src/simulator/CircuitCanvas.tsx(271,91): error TS2304: Cannot find name 'MousePointer2'.

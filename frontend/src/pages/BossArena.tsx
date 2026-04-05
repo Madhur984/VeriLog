@@ -15,8 +15,8 @@ import {
 } from 'lucide-react';
 
 const T = {
-    bg: '#060C1A', card: '#0D0F16', surface: '#090E1B', border: '#1A1D24',
-    text: '#E5E7EB', muted: '#64748B', accent: '#00D4FF',
+    bg: '#F8FAFC', card: '#FFFFFF', surface: '#F1F5F9', border: '#E2E8F0',
+    text: '#0F172A', muted: '#64748B', accent: '#0284C7',
     success: '#10B981', warning: '#F59E0B', error: '#EF4444',
     mono: "'IBM Plex Mono','Roboto Mono',monospace",
     sans: "'Inter',system-ui,sans-serif",
@@ -196,7 +196,7 @@ export function BossArena() {
             {/* Hero band */}
             <div style={{
                 padding: '40px 48px 32px',
-                background: `linear-gradient(180deg, #0F1929 0%, ${T.bg} 100%)`,
+                background: `linear-gradient(180deg, #E0F2FE 0%, ${T.bg} 100%)`,
                 borderBottom: `1px solid ${T.border}`,
             }}>
                 <div style={{ maxWidth: 720 }}>
@@ -248,12 +248,12 @@ export function BossArena() {
                             <div
                                 onClick={() => !isLocked && setExpandedBoss(isExpanded ? null : boss.id)}
                                 style={{
-                                    background: T.card, border: `1px solid ${isHovered && !isLocked ? boss.badgeColor + '40' : T.border}`,
+                                    background: T.card, border: `1px solid ${isHovered && !isLocked ? boss.badgeColor : T.border}`,
                                     borderRadius: isExpanded ? '4px 4px 0 0' : 4,
                                     padding: '20px 24px', cursor: isLocked ? 'not-allowed' : 'pointer',
                                     display: 'flex', alignItems: 'center', gap: 20,
-                                    transition: 'border-color 0.2s',
-                                    boxShadow: isHovered && !isLocked ? `0 0 24px ${boss.badgeColor}12` : 'none',
+                                    transition: 'all 0.2s',
+                                    boxShadow: isHovered && !isLocked ? `0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05)` : 'none',
                                 }}
                             >
                                 {/* Boss number */}

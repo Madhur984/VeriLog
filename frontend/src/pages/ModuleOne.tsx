@@ -8,11 +8,9 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-import { VoltMonkeyPanel } from '../components/level1/VoltMonkeyPanel';
 import { XPCounter } from '../components/level1/XPCounter';
 import { ProgressTracker } from '../components/ui/ProgressTracker';
 import { useEngagementAdapter as useXPSystem } from '../hooks/useEngagementAdapter';
-import { useVoltMonkeyMentor } from '../hooks/useVoltMonkeyMentor';
 import { useGamificationStore } from '../stores/gamificationStore';
 import { BadgeToast } from '../components/level2/BadgeToast';
 import { CircuitLab } from '../circuit-lab/CircuitLab';
@@ -23,17 +21,17 @@ import '../components/level1/level1.css';
    ═══════════════════════════════════════════════════════════════════════ */
 
 const T = {
-    bg: '#0A0B10',
-    card: '#0D0F16',
-    surface: '#1A1D24',
-    border: '#1A1D24',
-    text: '#E5E7EB',
+    bg: '#FFFFFF',
+    card: '#F8FAFC',
+    surface: '#F1F5F9',
+    border: '#E2E8F0',
+    text: '#0F172A',
     muted: '#64748B',
-    accent: '#00D4FF',
-    secondary: '#14B8A6',
-    success: '#10B981',
-    error: '#EF4444',
-    warning: '#F59E0B',
+    accent: '#0EA5E9',
+    secondary: '#0D9488',
+    success: '#059669',
+    error: '#DC2626',
+    warning: '#D97706',
     mono: "'JetBrains Mono', 'IBM Plex Mono', monospace",
     sans: "'Inter', system-ui, sans-serif",
 } as const;
@@ -63,8 +61,7 @@ export const ModuleOne: React.FC = () => {
 
     // Systems
     const { xp, awardXP, registerCounterEl } = useXPSystem();
-    const { recordAnswer, getResponse } = useVoltMonkeyMentor();
-    const [VoltMonkeyResponse, setVoltMonkeyResponse] = useState<ReturnType<typeof getResponse> | null>(null);
+
 
     // Badge toast state
     const [toast, setToast] = useState<{ show: boolean; badge: Badge }>({
@@ -77,9 +74,7 @@ export const ModuleOne: React.FC = () => {
         setTimeout(() => setScreenFlash(false), 150);
     }, []);
 
-    const showVoltMonkey = useCallback((ctx: Parameters<typeof getResponse>[0]) => {
-        setVoltMonkeyResponse(getResponse(ctx));
-    }, [getResponse]);
+
 
     const awardBadge = useCallback((key: string) => {
         if (earnedBadges.has(key)) return;
@@ -152,26 +147,25 @@ export const ModuleOne: React.FC = () => {
             if (step < introLines.length - 1) setStep(s => s + 1);
             else { setScene('theory'); setStep(0); }
         } else if (scene === 'theory') {
-            setScene('lab'); showVoltMonkey('lab');
+            setScene('lab');
         } else if (scene === 'lab') {
-            if (labDone) { setScene('quiz'); showVoltMonkey('quiz'); }
+            if (labDone) { setScene('quiz'); }
         } else if (scene === 'quiz') {
             if (step < questions.length - 1) {
                 setStep(s => s + 1);
-                setVoltMonkeyResponse(null);
             }
             else {
                 setStep(0);
                 setScene('matching');
-                showVoltMonkey('matching');
             }
         } else if (scene === 'matching') {
-            setScene('blanks'); showVoltMonkey('blanks');
+            setScene('blanks');
         } else if (scene === 'blanks') {
-            setScene('diagnosis'); showVoltMonkey('diagnosis');
+            setScene('diagnosis');
         } else if (scene === 'diagnosis') {
-            setScene('summary'); setVoltMonkeyResponse(null);
+            setScene('summary');
         } else if (scene === 'summary') {
+
             setScene('complete');
             completeSkill('signals');
         } else if (scene === 'complete') {
@@ -208,15 +202,16 @@ export const ModuleOne: React.FC = () => {
     const handleLabWireSnap = () => {
         setLabDone(true);
         awardXP('structural', 15);
-        showVoltMonkey('lab');
+
         awardBadge('loop');
         triggerFlash();
     };
 
     const handleQuizAnswer = (idx: number) => {
         const isCorrect = idx === questions[step].correct;
-        recordAnswer(isCorrect);
-        showVoltMonkey('quiz');
+        // recordAnswer(isCorrect);
+        // showVoltMonkey('quiz');
+
         if (isCorrect) {
             awardXP('application', 10);
             triggerFlash();
@@ -230,8 +225,8 @@ export const ModuleOne: React.FC = () => {
 
     const checkMatches = () => {
         const isCorrect = sourceItems.every(item => matches[item.id] === item.matchId);
-        showVoltMonkey('matching');
         if (isCorrect) {
+
             awardXP('structural', 15);
             triggerFlash();
             setTimeout(nextStep, 1500);
@@ -240,8 +235,8 @@ export const ModuleOne: React.FC = () => {
 
     const checkBlank = () => {
         const isCorrect = blankValue.toLowerCase().trim() === 'return';
-        showVoltMonkey('blanks');
         if (isCorrect) {
+
             awardXP('application', 10);
             triggerFlash();
             setTimeout(nextStep, 1500);
@@ -251,8 +246,8 @@ export const ModuleOne: React.FC = () => {
     const checkDiagnosis = (idx: number) => {
         setDiagnosisSelection(idx);
         const isCorrect = idx === 2; // Short circuit
-        showVoltMonkey('diagnosis');
         if (isCorrect) {
+
             awardXP('diagnostic', 20);
             awardBadge('diagnostic');
             triggerFlash();
@@ -323,7 +318,7 @@ export const ModuleOne: React.FC = () => {
                                 { id: 'lab', label: 'Lab' },
                                 { id: 'quiz', label: 'Challenge' },
                             ]}
-                            activeStageId={scene}
+                            activeStageId={scene as any}
                         />
 
                         {/* Signal Probe Toggle */}
@@ -388,86 +383,117 @@ export const ModuleOne: React.FC = () => {
                 </header>
             )}
 
-            <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
-                <div style={{ flex: 1, overflowY: 'auto' }}>
-                    <main style={{
-                        display: 'flex', flexDirection: 'column',
-                        alignItems: 'center', justifyContent: 'center',
-                        padding: scene === 'intro' || scene === 'complete' ? 0 : '32px 24px',
-                        maxWidth: scene === 'intro' || scene === 'complete' ? 'none' : 960,
-                        width: '100%', margin: '0 auto', minHeight: '100%'
-                    }}>
-                        <AnimatePresence mode="wait">
+            <main style={{
+                display: 'flex', flexDirection: 'column',
+                alignItems: 'center', justifyContent: 'center',
+                padding: scene === 'intro' || scene === 'complete' ? 0 : '32px 24px',
+                maxWidth: scene === 'intro' || scene === 'complete' ? 'none' : 960,
+                width: '100%', margin: '0 auto', minHeight: '100%'
+            }}>
+                <AnimatePresence mode="wait">
 
-                            {/* ── SCENE 1: INTRO ── */}
-                            {scene === 'intro' && (
-                                <motion.div
-                                    key="intro"
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    exit={{ opacity: 0 }}
-                                    transition={{ duration: 0.6 }}
+                    {/* ── SCENE 1: INTRO ── */}
+                    {scene === 'intro' && (
+                        <motion.div
+                            key="intro"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 1 }}
+                            style={{
+                                minHeight: '100vh', width: '100%',
+                                display: 'flex', flexDirection: 'column',
+                                alignItems: 'center', justifyContent: 'center',
+                                padding: '48px 24px', position: 'relative', overflow: 'hidden',
+                                background: 'linear-gradient(135deg, #FDFCFB 0%, #E2D1C3 100%)',
+                            }}
+                        >
+                            {/* Flowery / Organic Gradient Blobs */}
+                            <div style={{ position: 'absolute', inset: 0, filter: 'blur(80px)', opacity: 0.6, zIndex: 0 }}>
+                                <motion.div 
+                                    animate={{ scale: [1, 1.2, 1], x: [0, 50, 0], y: [0, -30, 0] }}
+                                    transition={{ duration: 15, repeat: Infinity, ease: 'linear' }}
+                                    style={{ position: 'absolute', top: '-10%', left: '10%', width: '40vw', height: '40vw', background: 'radial-gradient(circle, #FBCFE8 0%, transparent 70%)', borderRadius: '50%' }} 
+                                />
+                                <motion.div 
+                                    animate={{ scale: [1.2, 1, 1.2], x: [0, -40, 0], y: [0, 60, 0] }}
+                                    transition={{ duration: 18, repeat: Infinity, ease: 'linear' }}
+                                    style={{ position: 'absolute', bottom: '10%', right: '5%', width: '35vw', height: '35vw', background: 'radial-gradient(circle, #DDD6FE 0%, transparent 70%)', borderRadius: '50%' }} 
+                                />
+                                <motion.div 
+                                    animate={{ scale: [1, 1.1, 1], x: [0, 30, 0], y: [0, 40, 0] }}
+                                    transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
+                                    style={{ position: 'absolute', top: '20%', right: '15%', width: '30vw', height: '30vw', background: 'radial-gradient(circle, #CCFBF1 0%, transparent 70%)', borderRadius: '50%' }} 
+                                />
+                                <motion.div 
+                                    animate={{ scale: [1.1, 1.3, 1.1], x: [0, -60, 0], y: [0, -20, 0] }}
+                                    transition={{ duration: 22, repeat: Infinity, ease: 'linear' }}
+                                    style={{ position: 'absolute', bottom: '-5%', left: '20%', width: '45vw', height: '45vw', background: 'radial-gradient(circle, #FFEDD5 0%, transparent 70%)', borderRadius: '50%' }} 
+                                />
+                            </div>
+
+                            <div style={{
+                                position: 'absolute', inset: 0,
+                                backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(0, 0, 0, 0.05) 1px, transparent 0)',
+                                backgroundSize: '32px 32px', pointerEvents: 'none', zIndex: 1
+                            }} />
+
+                            <motion.div
+                                initial={{ opacity: 0, y: 8 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.3, duration: 0.4 }}
+                                style={{
+                                    fontFamily: T.mono, fontSize: 10,
+                                    letterSpacing: '0.4em', textTransform: 'uppercase',
+                                    color: '#4F46E5', marginBottom: 24, zIndex: 10,
+                                    fontWeight: 600
+                                }}
+                            >
+                                Level 01 · Signal Must Return
+                            </motion.div>
+
+                            <motion.h1
+                                key={step}
+                                initial={{ opacity: 0, y: 20, filter: 'blur(10px)' }}
+                                animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                                transition={{ delay: 0.1, duration: 0.8, ease: 'easeOut' }}
+                                style={{
+                                    fontSize: 'clamp(36px, 6vw, 64px)',
+                                    fontWeight: 800, textAlign: 'center',
+                                    letterSpacing: '-0.04em', marginBottom: 56,
+                                    background: 'linear-gradient(135deg, #F8FAFC 0%, #38BDF8 50%, #818CF8 100%)',
+                                    WebkitBackgroundClip: 'text',
+                                    WebkitTextFillColor: 'transparent',
+                                    maxWidth: 800, lineHeight: 1.1,
+                                    zIndex: 10
+                                }}
+                            >
+                                {introLines[step]}
+                            </motion.h1>
+
+                            <motion.div
+                                initial={{ opacity: 0, scale: 0.9 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{ delay: 0.8, duration: 0.5 }}
+                                style={{ display: 'flex', gap: 16, zIndex: 10 }}
+                            >
+                                <button
+                                    onClick={nextStep}
+                                    className="group relative px-10 py-5 bg-white text-slate-900 font-bold rounded-full shadow-2xl hover:shadow-indigo-500/20 transition-all active:scale-95 overflow-hidden"
                                     style={{
-                                        minHeight: '100vh', width: '100%',
-                                        display: 'flex', flexDirection: 'column',
-                                        alignItems: 'center', justifyContent: 'center',
-                                        padding: '48px 24px', position: 'relative', overflow: 'hidden'
+                                        fontFamily: T.mono, fontSize: 11, letterSpacing: '0.2em', textTransform: 'uppercase'
                                     }}
                                 >
-                                    <div style={{
-                                        position: 'absolute', inset: 0,
-                                        backgroundImage: `
-linear - gradient(rgba(0, 212, 255, 0.04) 1px, transparent 1px),
-    linear - gradient(90deg, rgba(0, 212, 255, 0.04) 1px, transparent 1px)
-        `,
-                                        backgroundSize: '40px 40px', pointerEvents: 'none',
-                                    }} />
+                                    <span className="relative z-10 flex items-center gap-3">
+                                        {step === introLines.length - 1 ? "Enter Laboratory" : "Next Concept"}
+                                        <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                                    </span>
+                                    <div className="absolute inset-0 bg-gradient-to-r from-indigo-50 to-pink-50 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                </button>
+                            </motion.div>
+                        </motion.div>
+                    )}
 
-                                    <motion.div
-                                        initial={{ opacity: 0, y: 8 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{ delay: 0.3, duration: 0.4 }}
-                                        style={{
-                                            fontFamily: T.mono, fontSize: 8,
-                                            letterSpacing: '0.3em', textTransform: 'uppercase',
-                                            color: `${T.accent} 80`, marginBottom: 16,
-                                        }}
-                                    >
-                                        Level 01 · Signal Must Return
-                                    </motion.div>
-
-                                    <motion.h1
-                                        key={step}
-                                        initial={{ opacity: 0, y: 12 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{ delay: 0.1, duration: 0.5 }}
-                                        style={{
-                                            fontSize: 'clamp(32px, 5vw, 48px)',
-                                            fontWeight: 700, textAlign: 'center',
-                                            letterSpacing: '-0.02em', marginBottom: 48,
-                                            background: `linear - gradient(135deg, ${T.text} 0 %, ${T.accent} 100 %)`,
-                                            WebkitBackgroundClip: 'text',
-                                            WebkitTextFillColor: 'transparent',
-                                            maxWidth: 600
-                                        }}
-                                    >
-                                        "{introLines[step]}"
-                                    </motion.h1>
-
-                                    <motion.div
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        transition={{ delay: 0.6, duration: 0.4 }}
-                                        style={{ display: 'flex', gap: 12, zIndex: 10 }}
-                                    >
-                                        {step === introLines.length - 1 ? (
-                                            <EnterpriseBtn label="Enter Laboratory" onClick={nextStep} />
-                                        ) : (
-                                            <EnterpriseBtn label="Next" onClick={nextStep} />
-                                        )}
-                                    </motion.div>
-                                </motion.div>
-                            )}
 
                             {/* ── SCENE 1.5: THEORY ── */}
                             {scene === 'theory' && (
@@ -716,7 +742,7 @@ linear - gradient(rgba(0, 212, 255, 0.04) 1px, transparent 1px),
                             {scene === 'summary' && (
                                 <motion.div key="summary" style={{ width: '100%', maxWidth: 840 }}>
                                     <div style={{ textAlign: 'center', marginBottom: 48 }}>
-                                        <h1 style={{ fontSize: 'clamp(32px, 4vw, 40px)', fontWeight: 700, fontStyle: 'italic', letterSpacing: '-0.02em', color: T.text, marginBottom: 8 }}>VOLTMONKEY RECAP</h1>
+                                        <h1 style={{ fontSize: 'clamp(32px, 4vw, 40px)', fontWeight: 700, fontStyle: 'italic', letterSpacing: '-0.02em', color: T.text, marginBottom: 8 }}>SYSTEM ARCHITECTURE RECAP</h1>
                                         <p style={{ color: T.muted, fontSize: 18 }}>Return path integrity defines reliability.</p>
                                     </div>
 
@@ -782,7 +808,7 @@ linear - gradient(rgba(0, 212, 255, 0.04) 1px, transparent 1px),
                             {scene === 'complete' && (
                                 <motion.div key="complete" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} style={{ textAlign: 'center', padding: '64px 0' }}>
                                     <div style={{ marginBottom: 48 }}>
-                                        <h1 style={{ fontSize: 'clamp(40px, 6vw, 64px)', fontWeight: 800, fontStyle: 'italic', letterSpacing: '-0.02em', background: `linear - gradient(135deg, ${T.text} 0 %, ${T.accent} 100 %)`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                                        <h1 style={{ fontSize: 'clamp(40px, 6vw, 64px)', fontWeight: 800, fontStyle: 'italic', letterSpacing: '-0.02em', background: `linear-gradient(135deg, ${T.text} 0%, ${T.accent} 100%)`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                                             "MODULE CLEARED"
                                         </h1>
                                         <p style={{ fontSize: 18, color: T.muted, maxWidth: 480, margin: '24px auto', lineHeight: 1.6 }}>
@@ -809,16 +835,10 @@ linear - gradient(rgba(0, 212, 255, 0.04) 1px, transparent 1px),
                                     </div>
                                 </motion.div>
                             )}
-
                         </AnimatePresence>
                     </main>
                 </div>
-
-                {/* ── VoltMonkey Mentor Sidebar ── */}
-                {scene !== 'intro' && scene !== 'complete' && (
-                    <VoltMonkeyPanel response={VoltMonkeyResponse} />
-                )}
-            </div>
-        </div>
     );
 };
+
+export default ModuleOne;

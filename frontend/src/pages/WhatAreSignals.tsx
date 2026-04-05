@@ -4,13 +4,13 @@ import { motion } from 'framer-motion';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 
 const T = {
-    bg: '#0A0B10',
-    card: '#0D0F16',
-    surface: '#1A1D24',
-    border: '#1A1D24',
-    text: '#E5E7EB',
-    muted: '#94A3B8',
-    accent: '#00D4FF',
+    bg: '#F8FAFC',
+    card: '#FFFFFF',
+    surface: '#F1F5F9',
+    border: '#E2E8F0',
+    text: '#0F172A',
+    muted: '#64748B',
+    accent: '#0284C7',
     success: '#10B981',
     error: '#EF4444',
     mono: "'IBM Plex Mono', 'Roboto Mono', monospace",
@@ -138,7 +138,7 @@ export const WhatAreSignals: React.FC = () => {
                         <React.Fragment key={idx}>
                             <section style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-                                    <span style={{ fontFamily: T.mono, color: 'rgba(255,255,255,0.15)', fontSize: 13, letterSpacing: '0.1em' }}>
+                                    <span style={{ fontFamily: T.mono, color: 'rgba(15,23,42,0.15)', fontSize: 13, letterSpacing: '0.1em' }}>
                                         0{idx + 1}
                                     </span>
                                     <h2 style={{ fontSize: 24, fontWeight: 400, letterSpacing: '-0.02em', color: T.text, margin: 0 }}>
@@ -186,13 +186,13 @@ export const WhatAreSignals: React.FC = () => {
                                         <div style={{
                                             display: 'flex', gap: 24, alignItems: 'baseline',
                                             marginTop: 8, padding: '16px 20px',
-                                            background: 'rgba(245,158,11,0.04)', borderRadius: 8, borderLeft: '2px solid rgba(245,158,11,0.5)'
+                                            background: 'rgba(245,158,11,0.08)', borderRadius: 8, borderLeft: '2px solid rgba(245,158,11,0.5)'
                                         }}>
                                             <span style={{
                                                 fontFamily: T.mono, color: '#F59E0B', fontSize: 10,
                                                 letterSpacing: '0.15em', textTransform: 'uppercase', width: 140, flexShrink: 0
                                             }}>Eng Insight</span>
-                                            <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.8)', margin: 0, maxWidth: '65ch', fontStyle: 'italic' }}>
+                                            <p style={{ fontSize: 14, color: '#0F172A', margin: 0, maxWidth: '65ch', fontStyle: 'italic', opacity: 0.8 }}>
                                                 {section.insight}
                                             </p>
                                         </div>
@@ -204,7 +204,7 @@ export const WhatAreSignals: React.FC = () => {
                             {idx < arr.length - 1 && (
                                 <div style={{
                                     height: 1, width: '100%',
-                                    background: 'rgba(255,255,255,0.06)',
+                                    background: T.border,
                                     margin: '48px 0'
                                 }} />
                             )}
@@ -224,9 +224,9 @@ export const WhatAreSignals: React.FC = () => {
                                 display: 'flex', alignItems: 'center', gap: 10,
                             }}
                             onMouseEnter={e => {
-                                (e.currentTarget as HTMLButtonElement).style.background = 'rgba(0,212,255,0.08)';
+                                (e.currentTarget as HTMLButtonElement).style.background = 'rgba(2,132,199,0.08)';
                                 (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(-1px)';
-                                (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 4px 12px rgba(0,212,255,0.15)';
+                                (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 4px 12px rgba(2,132,199,0.15)';
                             }}
                             onMouseLeave={e => {
                                 (e.currentTarget as HTMLButtonElement).style.background = 'transparent';

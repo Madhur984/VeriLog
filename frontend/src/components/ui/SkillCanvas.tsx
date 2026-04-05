@@ -32,10 +32,10 @@ interface SkillNode {
 
 const SKILLS: SkillNode[] = [];
 const DOMAIN_COLORS: Record<SkillDomain, string> = {
-    combinational: '#00D4FF',
-    sequential: '#10B981',
-    system: '#F59E0B',
-    physical: '#EF4444'
+    combinational: '#0284C7',
+    sequential: '#059669',
+    system: '#D97706',
+    physical: '#DC2626'
 };
 
 const engine = new VisualCanvasEngine({ snapToGrid: false });
@@ -85,7 +85,7 @@ export const SkillCanvas: React.FC = () => {
                 width: '100%',
                 height: '100%',
                 overflow: 'hidden',
-                background: '#0D0F16',
+                background: '#F1F5F9',
                 position: 'relative',
                 cursor: 'grab'
             }}
@@ -101,7 +101,7 @@ export const SkillCanvas: React.FC = () => {
                         height={40 * transform.scale}
                         patternUnits="userSpaceOnUse"
                     >
-                        <circle cx={2} cy={2} r={1} fill="#1A1D24" />
+                        <circle cx={2} cy={2} r={1} fill="#E2E8F0" />
                     </pattern>
                 </defs>
                 <rect width="100%" height="100%" fill="url(#skill-grid)" />
@@ -124,7 +124,7 @@ export const SkillCanvas: React.FC = () => {
                             if (!prereq) return null;
 
                             const status = getSkillStatus(skill.id);
-                            const color = status === 'locked' ? '#1A1D24' : DOMAIN_COLORS[skill.domain];
+                            const color = status === 'locked' ? '#E2E8F0' : DOMAIN_COLORS[skill.domain];
 
                             // Simple Bezier for trace
                             const dx = skill.x - prereq.x;
@@ -137,7 +137,7 @@ export const SkillCanvas: React.FC = () => {
                                         fill="none"
                                         stroke={color}
                                         strokeWidth={2}
-                                        opacity={status === 'locked' ? 0.2 : 0.6}
+                                        opacity={status === 'locked' ? 0.3 : 0.6}
                                     />
                                     {status === 'complete' && (
                                         <motion.path
@@ -182,18 +182,19 @@ export const SkillCanvas: React.FC = () => {
 
                                 {/* IC Body */}
                                 <rect
-                                    x={-40} y={-30} width={80} height={60} rx={2}
-                                    fill={status === 'locked' ? '#0A0B10' : '#0D0F16'}
-                                    stroke={status === 'locked' ? '#1A1D24' : color}
+                                    x={-40} y={-30} width={80} height={60} rx={4}
+                                    fill={status === 'locked' ? '#F1F5F9' : '#FFFFFF'}
+                                    stroke={status === 'locked' ? '#E2E8F0' : color}
                                     strokeWidth={isHovered ? 2 : 1}
-                                    opacity={status === 'locked' ? 0.5 : 1}
+                                    opacity={status === 'locked' ? 0.6 : 1}
+                                    style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.05))' }}
                                 />
 
                                 {/* Pins */}
                                 {[-20, 0, 20].map(py => (
                                     <React.Fragment key={py}>
-                                        <rect x={-46} y={py - 2} width={6} height={4} fill={status === 'locked' ? '#1A1D24' : '#64748B'} />
-                                        <rect x={40} y={py - 2} width={6} height={4} fill={status === 'locked' ? '#1A1D24' : '#64748B'} />
+                                        <rect x={-46} y={py - 2} width={6} height={4} fill={status === 'locked' ? '#E2E8F0' : '#94A3B8'} />
+                                        <rect x={40} y={py - 2} width={6} height={4} fill={status === 'locked' ? '#E2E8F0' : '#94A3B8'} />
                                     </React.Fragment>
                                 ))}
 
@@ -201,7 +202,7 @@ export const SkillCanvas: React.FC = () => {
                                 <text
                                     textAnchor="middle"
                                     y={-40}
-                                    fill={status === 'locked' ? '#475569' : color}
+                                    fill={status === 'locked' ? '#94A3B8' : color}
                                     fontSize={10}
                                     fontWeight="bold"
                                     fontFamily="monospace"
@@ -211,9 +212,9 @@ export const SkillCanvas: React.FC = () => {
 
                                 {/* Status Icon */}
                                 {status === 'complete' ? (
-                                    <CheckCircle2 x={-10} y={-10} size={20} color="#10B981" />
+                                    <CheckCircle2 x={-10} y={-10} size={20} color="#059669" />
                                 ) : status === 'locked' ? (
-                                    <Lock x={-10} y={-10} size={20} color="#475569" />
+                                    <Lock x={-10} y={-10} size={20} color="#94A3B8" />
                                 ) : (
                                     <Zap x={-10} y={-10} size={20} color={color} />
                                 )}
@@ -235,13 +236,13 @@ export const SkillCanvas: React.FC = () => {
                             right: 20,
                             top: 20,
                             width: 280,
-                            padding: 20,
-                            background: 'rgba(13, 15, 22, 0.95)',
-                            border: `1px solid ${DOMAIN_COLORS[hoveredSkill.domain]}40`,
-                            borderRadius: 8,
-                            backdropFilter: 'blur(10px)',
+                            padding: 24,
+                            background: 'rgba(255, 255, 255, 0.95)',
+                            border: `1px solid ${DOMAIN_COLORS[hoveredSkill.domain]}20`,
+                            borderRadius: 16,
+                            backdropFilter: 'blur(12px)',
                             zIndex: 100,
-                            boxShadow: '0 8px 32px rgba(0,0,0,0.5)'
+                            boxShadow: '0 12px 40px rgba(0,0,0,0.1)'
                         }}
                     >
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12 }}>
@@ -254,16 +255,16 @@ export const SkillCanvas: React.FC = () => {
                             }}>
                                 {hoveredSkill.domain}
                             </span>
-                            <span style={{ color: '#64748B', fontSize: 10 }}>TIER {hoveredSkill.tier}</span>
+                            <span style={{ color: '#94A3B8', fontSize: 10, fontWeight: 'bold' }}>TIER {hoveredSkill.tier}</span>
                         </div>
-                        <h3 style={{ color: '#F8FAFC', margin: '0 0 8px 0', fontSize: 16 }}>{hoveredSkill.title}</h3>
-                        <p style={{ color: '#94A3B8', fontSize: 12, lineHeight: 1.6, margin: '0 0 16px 0' }}>
+                        <h3 style={{ color: '#0F172A', margin: '0 0 8px 0', fontSize: 16, fontWeight: 800 }}>{hoveredSkill.title}</h3>
+                        <p style={{ color: '#64748B', fontSize: 12, lineHeight: 1.6, margin: '0 0 16px 0', fontWeight: 500 }}>
                             {hoveredSkill.description}
                         </p>
 
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 20 }}>
-                            <Zap size={14} color="#F59E0B" />
-                            <span style={{ color: xp.total >= hoveredSkill.xpRequired ? '#10B981' : '#EF4444', fontSize: 11, fontWeight: 'bold' }}>
+                            <Zap size={14} color="#D97706" />
+                            <span style={{ color: xp.total >= hoveredSkill.xpRequired ? '#059669' : '#DC2626', fontSize: 11, fontWeight: 'bold' }}>
                                 {hoveredSkill.xpRequired} XP Required
                             </span>
                         </div>
@@ -273,17 +274,18 @@ export const SkillCanvas: React.FC = () => {
                                 onClick={() => navigate(hoveredSkill.route!)}
                                 style={{
                                     width: '100%',
-                                    padding: '10px',
+                                    padding: '12px',
                                     background: DOMAIN_COLORS[hoveredSkill.domain],
                                     border: 'none',
-                                    borderRadius: 4,
+                                    borderRadius: 8,
                                     color: '#FFF',
                                     fontWeight: 'bold',
                                     cursor: 'pointer',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
-                                    gap: 8
+                                    gap: 8,
+                                    boxShadow: `0 4px 12px ${DOMAIN_COLORS[hoveredSkill.domain]}30`
                                 }}
                             >
                                 START MODULE <ArrowRight size={16} />
@@ -294,9 +296,10 @@ export const SkillCanvas: React.FC = () => {
             </AnimatePresence>
 
             {/* Controls Help */}
-            <div style={{ position: 'absolute', bottom: 20, left: 20, color: '#475569', fontSize: 10, fontFamily: 'monospace' }}>
+            <div style={{ position: 'absolute', bottom: 20, left: 20, color: '#94A3B8', fontSize: 10, fontFamily: 'monospace', fontWeight: 'bold' }}>
                 SCROLL: PAN // CTRL+SCROLL: ZOOM // CLICK: SELECT
             </div>
         </div>
     );
 };
+

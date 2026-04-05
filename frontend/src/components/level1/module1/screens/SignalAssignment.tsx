@@ -7,10 +7,14 @@ import {
   Target, 
   ChevronRight,
   RotateCcw,
-  Sparkles
+  Sparkles,
+  ShieldCheck,
+  Info
 } from 'lucide-react';
 import { ScreenProps } from '../types';
-import { VoltMonkey, MonkeyState } from '../../../../components/Bot/VoltMonkey';
+import { cn } from '../../../../lib/utils';
+import { VeriButton } from '../../../shared/VeriButton';
+import { useAttentionLock } from '../../../../hooks/useAttentionLock';
 
 interface Question {
   id: string;
@@ -65,9 +69,6 @@ const QUESTION_POOL: Question[] = [
   }
 ];
 
-import { VeriButton } from '../../../shared/VeriButton';
-import { useAttentionLock } from '../../../../hooks/useAttentionLock';
-
 export const SignalAssignment: React.FC<ScreenProps> = ({ 
   triggerHaptic, 
   onInteractionComplete,
@@ -80,7 +81,7 @@ export const SignalAssignment: React.FC<ScreenProps> = ({
   const [mistakes, setMistakes] = useState(0);
   const [streak, setStreak] = useState(0);
   const [completed, setCompleted] = useState(false);
-  const [botState, setBotState] = useState<MonkeyState>('idle');
+  const [analystMessage, setAnalystMessage] = useState("Signal integrity verification in progress. Precision required.");
   const [activePool, setActivePool] = useState<Question[]>([]);
   const { focusProps } = useAttentionLock();
 
@@ -101,12 +102,12 @@ export const SignalAssignment: React.FC<ScreenProps> = ({
     
     if (correct) {
       setStreak(prev => prev + 1);
-      setBotState('happy');
+      setAnalystMessage("Neural synchronization confirmed. Proceed with the next layer.");
       triggerHaptic?.('success');
     } else {
       setStreak(0);
       setMistakes(prev => prev + 1);
-      setBotState('thinking');
+      setAnalystMessage("Signal mismatch. Variance detected in the logic stream.");
       triggerHaptic?.('error');
       trackMistake?.();
     }
@@ -117,7 +118,7 @@ export const SignalAssignment: React.FC<ScreenProps> = ({
       setCurrentIdx(prev => prev + 1);
       setSelected(null);
       setShowFeedback(false);
-      setBotState('idle');
+      setAnalystMessage("Calibrating next challenge...");
     } else {
       setCompleted(true);
       onInteractionComplete?.();
@@ -129,33 +130,35 @@ export const SignalAssignment: React.FC<ScreenProps> = ({
       <motion.div 
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="section-content flex flex-col items-center justify-center text-center space-y-8"
+        className="section-content flex flex-col items-center justify-center text-center space-y-12"
         {...focusProps}
       >
         <div className="relative">
-            <VoltMonkey state="happy" size="md" />
+            <div className="p-8 bg-emerald-50 text-emerald-600 rounded-full shadow-2xl shadow-emerald-100">
+                <ShieldCheck size={64} />
+            </div>
             <motion.div 
                 animate={{ rotate: 360 }}
                 transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                className="absolute inset-x-[-60px] inset-y-[-60px] border border-dashed border-[var(--success)]/20 rounded-full"
+                className="absolute inset-x-[-40px] inset-y-[-40px] border border-dashed border-emerald-200 rounded-full"
             />
         </div>
         <div>
-          <h1 className="title-xl italic">VERIFICATION PASSED.</h1>
-          <p className="body opacity-60 mt-4 font-mono text-[10px] uppercase tracking-widest">Signal understanding stabilized at 98% coherence.</p>
+          <h1 className="text-4xl font-black text-slate-900 italic tracking-tighter uppercase">VERIFICATION PASSED.</h1>
+          <p className="text-slate-400 mt-4 font-mono text-[10px] uppercase tracking-[0.3em]">Signal understanding stabilized at 98% coherence.</p>
         </div>
-        <div className="grid grid-cols-3 gap-6 w-full max-w-xl mt-12">
-            <div className="glass-card p-4 border-white/5">
-                <span className="text-[8px] font-mono text-white/40 uppercase">Faults</span>
-                <div className="text-xl font-mono text-[var(--error)]">{mistakes}</div>
+        <div className="grid grid-cols-3 gap-8 w-full max-w-2xl mt-8">
+            <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
+                <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest block mb-2">Faults</span>
+                <div className="text-2xl font-black text-rose-500">{mistakes}</div>
             </div>
-            <div className="glass-card p-4 border-white/5">
-                <span className="text-[8px] font-mono text-white/40 uppercase">Accuracy</span>
-                <div className="text-xl font-mono text-[var(--success)]">{Math.round(((activePool.length - mistakes) / activePool.length) * 100)}%</div>
+            <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
+                <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest block mb-2">Accuracy</span>
+                <div className="text-2xl font-black text-emerald-500">{Math.round(((activePool.length - mistakes) / activePool.length) * 100)}%</div>
             </div>
-            <div className="glass-card p-4 border-white/5">
-                <span className="text-[8px] font-mono text-white/40 uppercase">Status</span>
-                <div className="text-xl font-mono text-[var(--accent-primary)]">Ready</div>
+            <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
+                <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest block mb-1">Status</span>
+                <div className="text-2xl font-black text-sky-500">READY</div>
             </div>
         </div>
       </motion.div>
@@ -163,28 +166,36 @@ export const SignalAssignment: React.FC<ScreenProps> = ({
   }
 
   return (
-    <div className="section-content relative flex flex-col items-center !justify-start pt-24 min-h-[700px]" {...focusProps}>
+    <div className="section-content relative flex flex-col items-center !justify-start pt-16 min-h-[700px] bg-slate-50/50 rounded-[48px] border border-slate-100 p-8" {...focusProps}>
         {/* Progress System */}
-        <div className="max-w-2xl w-full flex flex-col items-center gap-8 mb-12">
-            <VoltMonkey state={botState} size="sm" />
+        <div className="max-w-2xl w-full flex flex-col items-center gap-8 mb-16">
+            <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-xl flex items-center gap-4 w-fit">
+                <div className="p-2 bg-sky-50 text-sky-600 rounded-xl">
+                    <Info size={16} />
+                </div>
+                <p className="text-xs font-bold text-slate-600 italic">"{analystMessage}"</p>
+            </div>
             
-            <div className="flex justify-between items-center w-full px-4">
-                <div className="flex gap-1">
+            <div className="flex justify-between items-center w-full px-8">
+                <div className="flex gap-2">
                     {activePool.map((_, i) => (
-                        <div key={i} className={`h-1 w-12 rounded-full transition-all duration-500 ${i < currentIdx ? 'bg-[var(--success)]' : i === currentIdx ? 'bg-[var(--accent-primary)] shadow-[0_0_10px_var(--accent-primary)]' : 'bg-white/10'}`} />
+                        <div key={i} className={cn(
+                            "h-2 w-16 rounded-full transition-all duration-500",
+                            i < currentIdx ? "bg-emerald-400" : i === currentIdx ? "bg-sky-500 shadow-[0_0_15px_rgba(14,165,233,0.3)]" : "bg-slate-200"
+                        )} />
                     ))}
                 </div>
                 <div className="flex items-center gap-2">
-                    <Sparkles size={12} className="text-[var(--accent-primary)]" />
-                    <span className="text-[8px] font-mono text-white/40 uppercase tracking-widest">Streak: {streak}</span>
+                    <Sparkles size={14} className="text-sky-500" />
+                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Streak: {streak}</span>
                 </div>
             </div>
         </div>
 
-        <div className="max-w-3xl w-full space-y-10 z-10 px-4">
+        <div className="max-w-3xl w-full space-y-12 z-10 px-8">
             <div className="space-y-4 text-center">
-                <h2 className="text-[var(--accent-primary)] font-mono text-[10px] uppercase tracking-[0.5em] opacity-40">Layer Verification // {currentIdx + 1}</h2>
-                <h1 className="title-lg !text-[24px] font-mono italic leading-tight">" {currentQuestion?.question} "</h1>
+                <h2 className="text-sky-500 font-mono text-[10px] font-black uppercase tracking-[0.5em] opacity-40">Layer Verification // {currentIdx + 1}</h2>
+                <h1 className="text-3xl font-black text-slate-900 italic tracking-tight leading-tight">" {currentQuestion?.question} "</h1>
             </div>
 
             <div className="grid grid-cols-1 gap-4">
@@ -200,41 +211,46 @@ export const SignalAssignment: React.FC<ScreenProps> = ({
                                 : 'secondary'
                         }
                         size="lg"
-                        className={`
-                            !justify-between transition-all duration-300
-                            ${showFeedback && i === currentQuestion.correct ? '!border-[var(--success)]' : ''}
-                        `}
-                    >
-                        <span className="font-mono text-xs uppercase tracking-wider">{option}</span>
-                        {selected === i && (
-                            isCorrect ? <CheckCircle2 size={18} /> : <XCircle size={18} />
+                        className={cn(
+                            "!justify-between transition-all duration-300 rounded-[24px] h-16",
+                            showFeedback && i === currentQuestion.correct ? "!border-emerald-500 bg-emerald-50/50" : ""
                         )}
-                        {showFeedback && i === currentQuestion.correct && <CheckCircle2 size={18} />}
+                    >
+                        <span className="font-bold text-xs uppercase tracking-wider">{option}</span>
+                        {selected === i && (
+                            isCorrect ? <CheckCircle2 size={20} className="text-emerald-500" /> : <XCircle size={20} className="text-rose-500" />
+                        )}
+                        {showFeedback && i === currentQuestion.correct && !isCorrect && <CheckCircle2 size={20} className="text-emerald-500" />}
                     </VeriButton>
                 ))}
 
                 {currentQuestion?.type === 'simulation' && (
                     <div 
                         onClick={() => handleSelect(true)}
-                        className={`
-                            h-56 rounded-3xl border-2 border-dashed flex flex-col items-center justify-center cursor-pointer 
-                            group transition-all relative overflow-hidden
-                            ${showFeedback ? isCorrect ? 'border-[var(--success)] bg-[var(--success)]/5' : 'border-[var(--error)] bg-[var(--error)]/5' : 'border-white/10 bg-white/[0.02] hover:border-[var(--accent-primary)]/40'}
-                        `}
+                        className={cn(
+                            "h-64 rounded-[40px] border-3 border-dashed flex flex-col items-center justify-center cursor-pointer group transition-all relative overflow-hidden",
+                            showFeedback 
+                                ? isCorrect 
+                                    ? "border-emerald-500 bg-emerald-50/30" 
+                                    : "border-rose-500 bg-rose-50/30" 
+                                : "border-slate-200 bg-white hover:border-sky-400 shadow-sm hover:shadow-lg"
+                        )}
                     >
-                        <div className="relative z-10 flex flex-col items-center gap-6">
-                            <div className="flex items-center gap-4">
-                                <div className={`w-24 h-1 rounded-full ${selected !== null ? 'bg-[var(--success)] shadow-[0_0_20px_var(--success)]' : 'bg-white/10'}`} />
-                                <div className={`p-4 rounded-full border ${selected !== null ? 'border-[var(--success)] text-[var(--success)]' : 'border-white/10 text-white/20'}`}>
-                                    <Target size={24} />
+                        <div className="relative z-10 flex flex-col items-center gap-8">
+                            <div className="flex items-center gap-6">
+                                <div className={cn("w-24 h-1.5 rounded-full transition-all duration-500", selected !== null ? "bg-emerald-400 shadow-[0_0_20px_rgba(52,211,153,0.4)]" : "bg-slate-100")} />
+                                <div className={cn("p-5 rounded-full border-2 transition-all duration-500", selected !== null ? "border-emerald-500 text-emerald-500 bg-white" : "border-slate-100 text-slate-200 bg-slate-50")}>
+                                    <Target size={32} />
                                 </div>
-                                <div className={`w-24 h-1 rounded-full ${selected !== null ? 'bg-[var(--success)] shadow-[0_0_20px_var(--success)]' : 'bg-white/10'}`} />
+                                <div className={cn("w-24 h-1.5 rounded-full transition-all duration-500", selected !== null ? "bg-emerald-400 shadow-[0_0_20px_rgba(52,211,153,0.4)]" : "bg-slate-100")} />
                             </div>
-                            <span className="text-[8px] font-mono uppercase tracking-[0.4em] text-white/20 group-hover:text-white/40">
-                                {selected !== null ? "Link Established" : "Click to bridge the gap"}
+                            <span className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 group-hover:text-slate-600 transition-colors">
+                                {selected !== null ? "Link Established" : "Integrate Circuit Bridge"}
                             </span>
                         </div>
-                        <div className="absolute inset-0 bg-grid-white/[0.02] pointer-events-none" />
+                        <div className="absolute inset-0 opacity-[0.02] pointer-events-none">
+                            <svg width="100%" height="100%"><defs><pattern id="simGrid" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="1" fill="black" /></pattern></defs><rect width="100%" height="100%" fill="url(#simGrid)" /></svg>
+                        </div>
                     </div>
                 )}
             </div>
@@ -242,26 +258,31 @@ export const SignalAssignment: React.FC<ScreenProps> = ({
             <AnimatePresence>
                 {showFeedback && (
                     <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className={`p-6 rounded-3xl border ${isCorrect ? 'border-[var(--success)]/20 bg-gradient-to-br from-[var(--success)]/5 to-transparent' : 'border-[var(--error)]/20 bg-gradient-to-br from-[var(--error)]/5 to-transparent'}`}
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className={cn(
+                            "p-8 rounded-[32px] border-2",
+                            isCorrect ? "border-emerald-100 bg-emerald-50/30" : "border-rose-100 bg-rose-50/30"
+                        )}
                     >
-                        <div className="flex gap-4">
-                            <div className="space-y-2 flex-1">
-                                <div className="flex items-center gap-2 mb-2">
-                                    {isCorrect ? <Zap size={14} className="text-[var(--success)]" /> : <RotateCcw size={14} className="text-[var(--error)]" />}
-                                    <h3 className={`text-[10px] font-mono uppercase tracking-widest ${isCorrect ? 'text-[var(--success)]' : 'text-[var(--error)]'}`}>
-                                        {isCorrect ? 'Insight Synchronized' : 'Neural Link Broken'}
+                        <div className="flex gap-6">
+                            <div className="flex-1 space-y-4">
+                                <div className="flex items-center gap-3">
+                                    <div className={cn("p-2 rounded-xl", isCorrect ? "bg-emerald-100 text-emerald-600" : "bg-rose-100 text-rose-600")}>
+                                        {isCorrect ? <Zap size={16} /> : <RotateCcw size={16} />}
+                                    </div>
+                                    <h3 className={cn("text-[10px] font-black uppercase tracking-[0.2em]", isCorrect ? "text-emerald-600" : "text-rose-600")}>
+                                        {isCorrect ? "Logic Core Synchronized" : "Variance Discovered"}
                                     </h3>
                                 </div>
-                                <p className="text-white/80 text-xs leading-relaxed font-mono">
-                                    {isCorrect ? currentQuestion.explanation : `Error: ${currentQuestion.hint}`}
+                                <p className="text-slate-700 text-sm font-bold leading-relaxed italic">
+                                    "{isCorrect ? currentQuestion.explanation : currentQuestion.hint}"
                                 </p>
                                 <button 
                                     onClick={nextQuestion}
-                                    className="mt-6 flex items-center gap-2 group text-[10px] font-mono uppercase tracking-[0.2em] text-[var(--accent-primary)] hover:text-white transition-colors"
+                                    className="mt-6 flex items-center gap-2 group text-[10px] font-black uppercase tracking-[0.2em] text-slate-900 hover:text-sky-600 transition-colors"
                                 >
-                                    Proceed to Next Layer <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                                    Proceed to Next Logic Layer <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
                                 </button>
                             </div>
                         </div>

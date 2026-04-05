@@ -31,8 +31,8 @@ export function DebugMissionPage() {
                 alignItems: 'center',
                 justifyContent: 'center',
                 height: '100vh',
-                background: '#060912',
-                color: '#CBD5E1',
+                background: '#F8FAFC',
+                color: '#475569',
                 gap: '16px',
             }}>
                 <AlertTriangle size={48} color="#EF4444" />
@@ -41,10 +41,10 @@ export function DebugMissionPage() {
                     onClick={() => navigate('/logic-studio')}
                     style={{
                         padding: '8px 16px',
-                        background: 'rgba(0, 212, 255, 0.1)',
-                        border: '1px solid rgba(0, 212, 255, 0.3)',
+                        background: 'rgba(2, 132, 199, 0.1)',
+                        border: '1px solid rgba(2, 132, 199, 0.3)',
                         borderRadius: '4px',
-                        color: '#00D4FF',
+                        color: '#0284C7',
                         cursor: 'pointer',
                         fontFamily: "'IBM Plex Mono', monospace",
                     }}
@@ -64,8 +64,8 @@ export function DebugMissionPage() {
     return (
         <div style={{
             minHeight: '100vh',
-            background: '#060912',
-            color: '#CBD5E1',
+            background: '#F8FAFC',
+            color: '#475569',
             fontFamily: "'IBM Plex Mono', 'Roboto Mono', monospace",
             padding: '24px',
         }}>
@@ -97,7 +97,7 @@ export function DebugMissionPage() {
             }}>
                 <span style={{ fontSize: '28px' }}>🐛</span>
                 <div>
-                    <h1 style={{ fontSize: '20px', fontWeight: 700, color: '#F1F5F9', margin: 0 }}>
+                    <h1 style={{ fontSize: '20px', fontWeight: 700, color: '#0F172A', margin: 0 }}>
                         {mission.title}
                     </h1>
                     <span style={{
@@ -114,8 +114,8 @@ export function DebugMissionPage() {
             {/* Description */}
             <div style={{
                 padding: '16px',
-                background: 'rgba(15, 23, 42, 0.6)',
-                border: '1px solid rgba(100, 116, 139, 0.2)',
+                background: '#FFFFFF',
+                border: '1px solid #E2E8F0',
                 borderRadius: '8px',
                 marginBottom: '16px',
             }}>
@@ -140,7 +140,7 @@ export function DebugMissionPage() {
                     <div style={{ fontSize: '10px', color: '#EF4444', letterSpacing: '0.08em', marginBottom: '4px' }}>
                         SYMPTOM
                     </div>
-                    <p style={{ fontSize: '12px', color: '#F1F5F9', margin: 0 }}>
+                    <p style={{ fontSize: '12px', color: '#0F172A', margin: 0 }}>
                         {mission.symptom}
                     </p>
                 </div>
@@ -217,7 +217,7 @@ export function DebugMissionPage() {
                     borderRadius: '8px',
                     marginBottom: '12px',
                     fontSize: '12px',
-                    color: '#F1F5F9',
+                    color: '#0F172A',
                 }}>
                     💡 <strong>Hint:</strong> {mission.hint}
                 </div>
@@ -232,7 +232,7 @@ export function DebugMissionPage() {
                     borderRadius: '8px',
                     marginBottom: '12px',
                     fontSize: '12px',
-                    color: '#F1F5F9',
+                    color: '#0F172A',
                 }}>
                     ✅ <strong>Solution:</strong> {mission.solution}
                 </div>
