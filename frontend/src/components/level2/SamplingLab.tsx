@@ -11,7 +11,7 @@ import { DURATIONS, SPRINGS } from '../../constants/designTokens';
 import { useSpring } from 'framer-motion';
 import { usePerformanceAdapter } from '../../hooks/usePerformanceAdapter';
 
-const AUDIO_CONTEXT = new (window.AudioContext || (window as any).webkitAudioContext)();
+
 
 /**
  * SamplingLab.tsx
@@ -48,24 +48,36 @@ export function SamplingLab({ onComplete }: { onComplete: (xp: number) => void }
     const [pulseOpacity, setPulseOpacity] = useState(0);
     
     // Audio Resources
+    const audioCtxRef = useRef<AudioContext | null>(null);
     const oscRef = useRef<OscillatorNode | null>(null);
     const gainRef = useRef<GainNode | null>(null);
 
     // Audio Logic
     useEffect(() => {
         if (isAudioLocked) {
-            if (!oscRef.current) {
-                oscRef.current = AUDIO_CONTEXT.createOscillator();
-                gainRef.current = AUDIO_CONTEXT.createGain();
-                oscRef.current.connect(gainRef.current);
-                gainRef.current.connect(AUDIO_CONTEXT.destination);
-                oscRef.current.start();
+            if (!audioCtxRef.current) {
+                audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
             }
-            // Map 0-10Hz to audible 100-1000Hz for "Audio Lock"
-            oscRef.current.frequency.setTargetAtTime(signalFreq * 100, AUDIO_CONTEXT.currentTime, 0.05);
-            gainRef.current?.gain.setTargetAtTime(0.05, AUDIO_CONTEXT.currentTime, 0.1);
+            const ctx = audioCtxRef.current;
+
+            if (!oscRef.current && ctx) {
+                oscRef.current = ctx.createOscillator();
+                gainRef.current = ctx.createGain();
+                if (oscRef.current && gainRef.current) {
+                    oscRef.current.connect(gainRef.current);
+                    gainRef.current.connect(ctx.destination);
+                    oscRef.current.start();
+                }
+            }
+            
+            if (oscRef.current && ctx) {
+                // Map 0-10Hz to audible 100-1000Hz for "Audio Lock"
+                oscRef.current.frequency.setTargetAtTime(signalFreq * 100, ctx.currentTime, 0.05);
+                gainRef.current?.gain.setTargetAtTime(0.05, ctx.currentTime, 0.1);
+            }
         } else {
-            if (gainRef.current) gainRef.current.gain.setTargetAtTime(0, AUDIO_CONTEXT.currentTime, 0.1);
+            const ctx = audioCtxRef.current;
+            if (gainRef.current && ctx) gainRef.current.gain.setTargetAtTime(0, ctx.currentTime, 0.1);
         }
         return () => {
             if (oscRef.current && !isAudioLocked) {
