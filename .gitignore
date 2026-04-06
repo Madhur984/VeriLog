@@ -30,3 +30,6 @@ lerna-debug.log*
 
 # Gemini settings (track config, not secrets)
 !.gemini/settings.json
+
+# Study Materials
+study_material/

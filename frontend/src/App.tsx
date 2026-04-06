@@ -3,7 +3,7 @@ import { GatekeeperLanding } from './pages/GatekeeperLanding';
 import { HeroExperience } from './pages/HeroExperience';
 import { WorkstationHome } from './pages/WorkstationHome';
 import SignalMustReturnModule from './pages/ModulePage';
-import SubModule1_1 from './components/level1/SubModule1_1';
+import { Module1Root } from './components/level1/module1_v3/Module1Root';
 import { ModuleTwo } from './pages/ModuleTwo';
 import { ModuleThree } from './pages/ModuleThree';
 import { ModuleFour } from './pages/ModuleFour';
@@ -25,7 +25,7 @@ import { FSMPlayground } from './pages/FSMPlayground';
 import { CPULabPage } from './pages/CPULabPage';
 import { HardwareLeetCodePage } from './pages/HardwareLeetCodePage';
 import { VerilogPlayground } from './pages/VerilogPlayground';
-import { ModuleOneEntry } from './pages/ModuleOneEntry';
+// import { ModuleOneEntry } from './pages/ModuleOneEntry';
 
 import Workbench from './pages/Workbench';
 import { CommunityPage } from './pages/CommunityPage';
@@ -75,8 +75,8 @@ export default function App() {
                     <Route path="/debug-mission/:id" element={<DebugMissionPage />} />
 
                     {/* Modules & Story Selection (Standalone) */}
-                    <Route path="/module/1" element={<ModuleOneEntry />} />
-                    <Route path="/module/1/1" element={<SubModule1_1 onComplete={() => window.location.href = '/portal'} />} />
+                    <Route path="/module/1" element={<Module1Root />} />
+                    <Route path="/module/1/1" element={<Module1Root />} />
                     <Route path="/module/signal-must-return" element={<SignalMustReturnModule />} />
                     <Route path="/module/2" element={<ModuleTwo />} />
                     <Route path="/module/3" element={<ModuleThree />} />
