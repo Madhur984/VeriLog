@@ -180,12 +180,12 @@ export const RadialMenu: React.FC = () => {
   const tiltY = useSpring(rawTiltY, { stiffness: 150, damping: 20 });
 
   const SEGMENTS = [
-    { id: 'overview', label: 'Global Overview', icon: <Globe size={18} strokeWidth={2} />, path: '/portal' },
-    { id: 'grid', label: 'The Grid', icon: <LayoutGrid size={18} strokeWidth={2} />, path: '/workbench' },
-    { id: 'resources', label: 'Resources', icon: <Database size={18} strokeWidth={2} />, path: '/cpu-lab' },
-    { id: 'leaderboards', label: 'Leaderboards', icon: <Trophy size={18} strokeWidth={2} />, path: '/boss-arena' },
-    { id: 'glyph', label: 'Glyph', icon: <Hexagon size={18} strokeWidth={2} />, path: '/skill-tree' },
-    { id: 'settings', label: 'Settings', icon: <Settings size={18} strokeWidth={2} />, path: '/portfolio' }
+    { id: 'overview', label: 'Home Base', icon: <Globe size={18} strokeWidth={2} />, path: '/portal' },
+    { id: 'grid', label: 'Workbench', icon: <LayoutGrid size={18} strokeWidth={2} />, path: '/workbench' },
+    { id: 'lab', label: 'CPU Lab', icon: <Database size={18} strokeWidth={2} />, path: '/cpu-lab' },
+    { id: 'leaderboards', label: 'Boss Arena', icon: <Trophy size={18} strokeWidth={2} />, path: '/boss-arena' },
+    { id: 'glyph', label: 'Skill Tree', icon: <Hexagon size={18} strokeWidth={2} />, path: '/skill-tree' },
+    { id: 'leetcode', label: 'HW LeetCode', icon: <Settings size={18} strokeWidth={2} />, path: '/hw-leetcode' }
   ];
 
   const gap = 3.5;
@@ -201,7 +201,7 @@ export const RadialMenu: React.FC = () => {
        <motion.div
          className="pointer-events-auto rounded-full relative w-[320px] h-[320px] transition-colors duration-500"
          initial={{ rotateX: 50, rotateY: -5, scale: 0.85, y: 40, opacity: 0 }}
-         animate={{ rotateX: 38, rotateY: -4, scale: 1, y: 0, opacity: 0.25 }}
+         animate={{ rotateX: 38, rotateY: -4, scale: 1, y: 0, opacity: 0.6 }}
          whileHover={{ rotateX: 28, rotateY: -4, scale: 1.04, opacity: 1 }}
          transition={{ duration: 1.2, type: "spring", damping: 20 }}
          style={{ 
