@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { Target, Play } from 'lucide-react';
 import { useGamificationStore } from '../stores/gamificationStore';
 import { CommandPalette } from '../components/ui/CommandPalette';
 import { OnboardingTour } from '../components/ui/OnboardingTour';
@@ -10,265 +9,144 @@ import { CircuitBackground } from '../components/ui/CircuitBackground';
 
 const getTourKey = (name: string | null) => `digi_tour_done_${name ?? 'guest'}`;
 
-/* ══════════════════════════════════════════════════════════════════════
-   DATA LAYER
-   ══════════════════════════════════════════════════════════════════════ */
+// Hexagon Component
+const HexNode = ({ label, color, x, y, delay, onClick }: { label: string, color: string, x: number | string, y: number | string, delay: number, onClick?: () => void }) => (
+    <div className="absolute z-10" style={{ left: x, top: y, transform: 'translate(-50%, -50%)' }}>
+        <motion.div 
+            className="w-24 h-28 flex flex-col items-center justify-center cursor-pointer group"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay, duration: 0.5, type: 'spring' }}
+            onClick={onClick}
+        >
+            {/* Hexagon shape using pure CSS */}
+            <div className="absolute inset-0 transition-transform duration-300 group-hover:scale-110 flex items-center justify-center">
+                 <div 
+                    className="w-[86.6%] h-full absolute"
+                    style={{
+                        backgroundColor: `${color}15`,
+                        borderLeft: `2px solid ${color}80`,
+                        borderRight: `2px solid ${color}80`,
+                        boxShadow: `0 0 20px ${color}40 inset, 0 0 10px ${color}40`,
+                        clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)'
+                    }} 
+                 />
+                 <div className="absolute top-[-2px] bottom-[-2px] left-[6.7%] right-[6.7%]"
+                      style={{
+                        borderTop: `2px solid ${color}80`,
+                        borderBottom: `2px solid ${color}80`,
+                        clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)'
+                      }}
+                 />
+            </div>
+            
+            {/* Connection node point at the top center */}
+            <div className="absolute -top-1 w-2 h-2 rounded-full shadow-lg" style={{ backgroundColor: color, boxShadow: `0 0 12px ${color}` }} />
 
-type Status = 'completed' | 'in-progress' | 'locked';
-type BranchKey = 'basic' | 'dsd' | 'verilog';
-
-interface Module {
-    id: string; title: string; subtitle: string;
-    progress: number; status: Status;
-    hours: number; lessons: number;
-    cx: number; cy: number;
-    depth: number;          // 0=foundation, 1-3=branch depth
-    branch: BranchKey | null;
-    isHub?: boolean;
-}
-
-type ConnType = 'trunk' | 'hub-branch' | 'branch';
-interface Connection { from: string; to: string; type: ConnType; }
-
-const CW = 960;
-const FOUND_Y = 110;
-const JUNCTION_Y = 200;
-const BRANCH_Y = [296, 392, 488];
-const BRANCH_COL: Record<BranchKey, number> = { basic: 480, dsd: 640, verilog: 800 };
-const NODE_R = [24, 20, 18, 16];
-const HUB_R = 30;
-const CH = 580;
-
-const MODULES: Module[] = [
-    { id: 'signals', title: 'A Signal Must Return', subtitle: 'The Rule of the Closed Loop', progress: 0, status: 'locked', hours: 0.1, lessons: 1, cx: 80, cy: FOUND_Y, depth: 0, branch: null },
-    { id: 'analog_digital', title: 'Continuous vs Discrete', subtitle: 'Analog & Digital Signals', progress: 0, status: 'locked', hours: 1.5, lessons: 5, cx: 220, cy: FOUND_Y, depth: 0, branch: null },
-    { id: 'binary_awakening', title: 'Binary Awakening', subtitle: 'The Math of Two States', progress: 0, status: 'locked', hours: 3, lessons: 10, cx: 360, cy: FOUND_Y, depth: 0, branch: null },
-    { id: 'logic_gates', title: 'Logic Gates', subtitle: 'AND, OR, NOT, NAND, XOR', progress: 0, status: 'locked', hours: 4, lessons: 12, cx: 500, cy: FOUND_Y, depth: 0, branch: null },
-    { id: 'kmap_optimization', title: 'Karnaugh Maps', subtitle: 'Logic Synthesis & K-Maps', progress: 0, status: 'locked', hours: 2, lessons: 6, cx: 640, cy: FOUND_Y, depth: 0, branch: null, isHub: true },
-    { id: 'B1', title: 'BJT & MOSFET', subtitle: 'Transistor fundamentals', progress: 0, status: 'locked', hours: 3, lessons: 8, cx: BRANCH_COL.basic, cy: BRANCH_Y[0], depth: 1, branch: 'basic' },
-    { id: 'B2', title: 'Amplifiers', subtitle: 'Op-amp & gain stages', progress: 0, status: 'locked', hours: 3, lessons: 9, cx: BRANCH_COL.basic, cy: BRANCH_Y[1], depth: 2, branch: 'basic' },
-    { id: 'B3', title: 'Signal Analysis', subtitle: 'Fourier, filters, AC', progress: 0, status: 'locked', hours: 4, lessons: 10, cx: BRANCH_COL.basic, cy: BRANCH_Y[2], depth: 3, branch: 'basic' },
-    { id: 'D1', title: 'Flip-Flops', subtitle: 'SR, D, JK, T, edge-trig', progress: 0, status: 'locked', hours: 3.5, lessons: 8, cx: BRANCH_COL.dsd, cy: BRANCH_Y[0], depth: 1, branch: 'dsd' },
-    { id: 'D2', title: 'State Machines', subtitle: 'Mealy, Moore, FSM', progress: 0, status: 'locked', hours: 4, lessons: 10, cx: BRANCH_COL.dsd, cy: BRANCH_Y[1], depth: 2, branch: 'dsd' },
-    { id: 'D3', title: 'Sequential Sys.', subtitle: 'Counters, Shift Registers', progress: 0, status: 'locked', hours: 4, lessons: 11, cx: BRANCH_COL.dsd, cy: BRANCH_Y[2], depth: 3, branch: 'dsd' },
-    { id: 'V1', title: 'Verilog Basics', subtitle: 'Syntax, modules, wire/reg', progress: 0, status: 'locked', hours: 3, lessons: 8, cx: BRANCH_COL.verilog, cy: BRANCH_Y[0], depth: 1, branch: 'verilog' },
-    { id: 'V2', title: 'RTL Design', subtitle: 'Combinational & sequential RTL', progress: 0, status: 'locked', hours: 4, lessons: 10, cx: BRANCH_COL.verilog, cy: BRANCH_Y[1], depth: 2, branch: 'verilog' },
-    { id: 'V3', title: 'Testbenches', subtitle: 'Simulation, assertions', progress: 0, status: 'locked', hours: 4, lessons: 9, cx: BRANCH_COL.verilog, cy: BRANCH_Y[2], depth: 3, branch: 'verilog' },
-];
-
-const CONNECTIONS: Connection[] = [
-    { from: 'signals', to: 'analog_digital', type: 'trunk' },
-    { from: 'analog_digital', to: 'binary_awakening', type: 'trunk' },
-    { from: 'binary_awakening', to: 'logic_gates', type: 'trunk' },
-    { from: 'logic_gates', to: 'kmap_optimization', type: 'trunk' },
-    { from: 'kmap_optimization', to: 'B1', type: 'hub-branch' },
-    { from: 'kmap_optimization', to: 'D1', type: 'hub-branch' },
-    { from: 'kmap_optimization', to: 'V1', type: 'hub-branch' },
-    { from: 'B1', to: 'B2', type: 'branch' },
-    { from: 'B2', to: 'B3', type: 'branch' },
-    { from: 'D1', to: 'D2', type: 'branch' },
-    { from: 'D2', to: 'D3', type: 'branch' },
-    { from: 'V1', to: 'V2', type: 'branch' },
-    { from: 'V2', to: 'V3', type: 'branch' },
-];
-
-const BRANCH_META: Record<BranchKey, { label: string; color: string }> = {
-    basic: { label: 'BASIC ELECTRONICS', color: '#f59e0b' },
-    dsd: { label: 'DIGITAL SYSTEM DESIGN', color: '#10B981' },
-    verilog: { label: 'VERILOG & RTL', color: '#8b5cf6' },
-};
-
-function getR(m: Module) { return m.isHub ? HUB_R : (NODE_R[m.depth] ?? 16); }
-
-function statusColor(s: Status) {
-    if (s === 'completed') return '#10B981';
-    if (s === 'in-progress') return '#0EA5E9';
-    return '#334155';
-}
-function accentFor(m: Module) {
-    if (m.branch) return BRANCH_META[m.branch].color;
-    return statusColor(m.status);
-}
-
-const Pulse: React.FC<{ x1: number; y1: number; x2: number; y2: number; color: string }> = ({ x1, y1, x2, y2, color }) => (
-    <motion.circle r={3.5} fill="#fff" opacity={0.9}
-        initial={{ cx: x1, cy: y1, opacity: 0 }}
-        animate={{ cx: [x1, x2], cy: [y1, y2], opacity: [0, 1, 1, 0], scale: [0.8, 1.2, 1.2, 0.8] }}
-        transition={{ duration: 2.5, repeat: Infinity, repeatDelay: 1.5, ease: 'easeInOut' }}
-        style={{ filter: `drop-shadow(0 0 8px ${color}) drop-shadow(0 0 16px ${color})` }}
-    />
+            <div className="z-10 text-center mt-2 px-1">
+                <div className="text-[10px] font-black tracking-widest leading-tight text-white mb-1 drop-shadow-md">{label}</div>
+            </div>
+        </motion.div>
+    </div>
 );
 
-const ModuleBubble: React.FC<{
-    mod: Module; isHovered: boolean; onHover: (id: string | null) => void;
-    onStart: (mod: Module) => void;
-    opacity: number;
-}> = ({ mod, isHovered, onHover, onStart, opacity: nodeOpacity }) => {
-    const locked = mod.status === 'locked';
-    const done = mod.status === 'completed';
-    const inProg = mod.status === 'in-progress';
-    const accent = accentFor(mod);
-    const r = getR(mod);
 
-    return (
-        <motion.g
-            style={{ cursor: locked ? 'default' : 'pointer', opacity: nodeOpacity }}
-            onHoverStart={() => !locked && onHover(mod.id)}
-            onHoverEnd={() => onHover(null)}
-            onClick={() => !locked && onStart(mod)}
-            animate={{ y: isHovered ? -5 : 0 }}
-            transition={{ type: 'spring', damping: 15 }}
-        >
-            <defs>
-                 <linearGradient id={`grad-${mod.id}`} x1="0%" y1="0%" x2="0%" y2="100%">
-                     <stop offset="0%" stopColor={locked ? '#1e293b' : done ? '#047857' : '#0369a1'} />
-                     <stop offset="100%" stopColor={locked ? '#0f172a' : done ? '#022c22' : '#0c4a6e'} />
-                 </linearGradient>
-            </defs>
-
-            {/* Ambient Aura */}
-            {mod.isHub && !locked && (
-                <>
-                    <circle cx={mod.cx} cy={mod.cy} r={r + 14} fill="none" stroke={accent} strokeWidth={0.5} opacity={0.2} style={{ filter: 'blur(1px)' }} />
-                    <motion.circle cx={mod.cx} cy={mod.cy} r={r + 8} fill="none" stroke={accent} strokeWidth={1}
-                        animate={{ opacity: [0.3, 0.1, 0.3] }} transition={{ duration: 3, repeat: Infinity }} style={{ filter: 'blur(1px)' }} />
-                </>
-            )}
-            {done && <circle cx={mod.cx} cy={mod.cy} r={r + 5} fill="none" stroke="#10B981" strokeWidth={1} opacity={0.4} />}
-            {inProg && (
-                <motion.circle cx={mod.cx} cy={mod.cy} fill="none" stroke="#0EA5E9" strokeWidth={1.5}
-                    initial={{ opacity: 0.6, r: r + 2 }} animate={{ opacity: 0, r: r + 16 }}
-                    transition={{ duration: 2.5, repeat: Infinity, ease: 'easeOut' }} style={{ filter: 'blur(1px)' }} />
-            )}
-
-            {/* 3D Hardware Block Extrusion */}
-            <circle cx={mod.cx} cy={mod.cy + 4} r={r} fill="rgba(0,0,0,0.6)" filter="blur(6px)" />
-            <circle cx={mod.cx} cy={mod.cy + 2} r={r} fill="#020617" />
-
-            {/* Main Dome Component */}
-            <motion.circle cx={mod.cx} cy={mod.cy}
-                r={r}
-                fill={`url(#grad-${mod.id})`}
-                stroke={locked ? '#334155' : accent}
-                strokeWidth={mod.isHub ? 2 : locked ? 1 : isHovered ? 2 : 1.5}
-                animate={{ r: isHovered ? r * 1.05 : r }}
-                transition={{ duration: 0.2 }}
-                style={!locked ? { filter: `drop-shadow(0 0 ${isHovered ? 16 : 8}px ${accent}60)` } : undefined}
+// Right Side Chart Bar
+const ChartBar = ({ label, value, color }: { label: string, value: number, color: string }) => (
+    <div className="flex items-center gap-3 w-full">
+        <span className="text-[9px] font-mono text-slate-400 w-16 truncate">{label}</span>
+        <div className="flex-1 h-1.5 bg-slate-800 rounded-full overflow-hidden">
+            <motion.div 
+                className="h-full rounded-full" 
+                style={{ backgroundColor: color, boxShadow: `0 0 8px ${color}` }}
+                initial={{ width: 0 }}
+                animate={{ width: `${value}%` }}
+                transition={{ duration: 1, delay: 0.5 }}
             />
-            {/* Top Glass Glare Bezel */}
-            <motion.circle cx={mod.cx} cy={mod.cy} r={r - 1.5} fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth={0.5} animate={{ r: isHovered ? (r * 1.05) - 1.5 : r - 1.5 }} style={{ transformOrigin: `${mod.cx}px ${mod.cy}px`, transform: 'translateY(-0.5px)' }} />
+        </div>
+        <span className="text-[9px] font-mono text-slate-300 w-6 text-right">{value}%</span>
+    </div>
+);
 
-            {/* Progress Arc */}
-            {mod.progress > 0 && mod.progress < 100 && (
-                <circle cx={mod.cx} cy={mod.cy} r={r - 4} fill="none" stroke={accent} strokeWidth={2.5}
-                    strokeDasharray={`${(r - 4) * 2 * Math.PI * mod.progress / 100} 9999`}
-                    strokeLinecap="round" transform={`rotate(-90 ${mod.cx} ${mod.cy})`} opacity={0.9} style={{ filter: `drop-shadow(0 0 4px ${accent})` }} />
-            )}
-            
-            {/* Text & Labels */}
-            <text x={mod.cx} y={mod.cy + 1} textAnchor="middle" dominantBaseline="middle"
-                fill={locked ? '#64748b' : '#FFFFFF'} fontSize={r > 20 ? 10 : 8} fontWeight="800" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.8)' }}>
-                {done ? '✓' : locked ? '' : `${mod.progress}%`}
-            </text>
-            
-            {!isHovered && (
-                <text x={mod.cx} y={mod.cy + r + 22} textAnchor="middle" fill={locked ? '#475569' : '#94A3B8'} fontSize={9} fontWeight="600" letterSpacing="0.05em" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
-                    {mod.title}
-                </text>
-            )}
-        </motion.g>
-    );
-};
-
-const CARD_W = 240;
-const CARD_H = 150;
-
-const HoverCard: React.FC<{ mod: Module; onStart: (m: Module) => void }> = ({ mod, onStart }) => {
-    const r = getR(mod);
-    const rawX = mod.cx - CARD_W / 2;
-    const rawY = mod.cy - CARD_H - r - 20;
-    const x = Math.max(10, Math.min(rawX, CW - CARD_W - 10));
-    const y = rawY < 10 ? mod.cy + r + 20 : rawY;
-
+// Matrix Matrix Effect
+const LEDMatrix = () => {
     return (
-        <motion.foreignObject x={x} y={y} width={CARD_W} height={CARD_H}
-            initial={{ opacity: 0, scale: 0.9, y: 15 }} animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 15 }} 
-            transition={{ type: "spring", damping: 15 }}
-            className="pointer-events-none"
-        >
-            <div className="bg-[#0f172a]/80 border border-slate-600/50 rounded-2xl shadow-[0_20px_40px_rgba(0,0,0,0.8),inset_0_1px_0_rgba(255,255,255,0.1)] backdrop-blur-2xl p-4 flex flex-col justify-between h-full group overflow-hidden pointer-events-auto relative">
-                {/* Embedded Lighting & Reflections */}
-                <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-cyan-400/80 to-transparent" />
-                <div className="absolute top-0 right-0 w-32 h-32 bg-sky-500/10 rounded-full blur-2xl pointer-events-none" />
-                
-                <div className="relative z-10">
-                   <div className="flex justify-between items-start mb-2">
-                        <span className="text-[10px] font-mono tracking-widest text-slate-400 uppercase drop-shadow-md">{mod.id}</span>
-                        {mod.branch && <span className="text-[9px] px-2 py-0.5 rounded border shadow-[inset_0_1px_4px_rgba(0,0,0,0.5)] font-mono font-bold" style={{ backgroundColor: `${BRANCH_META[mod.branch].color}20`, borderColor: `${BRANCH_META[mod.branch].color}40`, color: BRANCH_META[mod.branch].color }}>{mod.branch}</span>}
-                   </div>
-                   <h3 className="text-sm font-black text-white leading-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)]">{mod.title}</h3>
-                   <p className="text-[11px] text-slate-400 mt-1.5 line-clamp-2 leading-relaxed">{mod.subtitle}</p>
-                </div>
-                
-                <div className="flex items-center justify-between pt-3 relative z-10 border-t border-slate-700/60 mt-2">
-                    <div className="flex gap-3 text-[10px] text-slate-300 font-medium font-mono drop-shadow-md">
-                        <span className="flex items-center gap-1.5"><Target className="w-3.5 h-3.5 text-sky-400" /> {mod.lessons}L</span>
-                        <span className="flex items-center gap-1.5"><Play className="w-3.5 h-3.5 text-indigo-400" /> {mod.hours}h</span>
-                    </div>
-                    <button onClick={(e) => { e.stopPropagation(); onStart(mod); }}
-                        className="px-4 py-1.5 bg-gradient-to-t from-sky-600 to-sky-400 hover:from-sky-500 hover:to-sky-300 text-slate-950 rounded-md text-[11px] font-black transition-all flex items-center gap-1.5 shadow-[0_0_15px_rgba(14,165,233,0.4),inset_0_1px_rgba(255,255,255,0.4)] hover:shadow-[0_0_20px_rgba(14,165,233,0.8),inset_0_1px_rgba(255,255,255,0.6)]">
-                        <Play className="w-3 h-3 fill-current" /> {mod.progress > 0 ? 'Resume' : 'Start'}
-                    </button>
-                </div>
-            </div>
-        </motion.foreignObject>
+        <div className="grid grid-cols-[repeat(20,minmax(0,1fr))] gap-[2px] p-2 bg-[#050810] rounded-lg border border-sky-500/20 shadow-[0_0_15px_rgba(14,165,233,0.1)]">
+            {Array.from({ length: 12 * 20 }).map((_, i) => {
+                const isLit = Math.random() > 0.7;
+                const colors = ['bg-sky-400', 'bg-blue-500', 'bg-indigo-500', 'bg-purple-500', 'bg-pink-500'];
+                const color = isLit ? colors[Math.floor(Math.random() * colors.length)] : 'bg-slate-800/30';
+                const shadow = isLit ? 'shadow-[0_0_5px_currentColor]' : '';
+                return <div key={i} className={`w-1.5 h-1.5 rounded-full ${color} ${shadow}`} />;
+            })}
+        </div>
     );
+}
+
+// --- TREE ARCHITECTURE DATA ---
+const TREE_NODES = {
+  root: { id: "N_ROOT", label: "FUNDAMENTALS", x: "50%", y: 150, color: "#0ea5e9" }, 
+  
+  bool: { id: "N_BOOL", label: "BOOLEAN ALG", x: "30%", y: 300, color: "#a855f7" }, 
+  sys: { id: "N_SYS", label: "NUM SYSTEMS", x: "70%", y: 300, color: "#ef4444" },
+  
+  gates: { id: "N_GATES", label: "LOGIC GATES", x: "30%", y: 450, color: "#ec4899" },
+  kmaps: { id: "N_KMAPS", label: "K-MAPS", x: "15%", y: 550, color: "#eab308" },
+  arith: { id: "N_ARITH", label: "ARITHMETIC", x: "45%", y: 550, color: "#3b82f6" },
+
+  codes: { id: "N_CODES", label: "DATA CODES", x: "85%", y: 450, color: "#f97316" },
+  
+  combo: { id: "N_COMBO", label: "COMBINATIONAL", x: "30%", y: 750, color: "#22c55e" },
+  
+  latch: { id: "N_LATCH", label: "LATCHES", x: "70%", y: 650, color: "#14b8a6" },
+  ff: { id: "N_FF", label: "FLIP-FLOPS", x: "70%", y: 850, color: "#06b6d4" },
+
+  seq: { id: "N_SEQ", label: "SEQUENTIAL", x: "50%", y: 1050, color: "#6366f1" },
+  
+  fsm: { id: "N_FSM", label: "FSM DESIGN", x: "50%", y: 1250, color: "#d946ef" },
+
+  rtl: { id: "N_RTL", label: "RTL DESIGN", x: "50%", y: 1450, color: "#8b5cf6" },
+
+  verilog: { id: "N_VLOG", label: "VERILOG", x: "30%", y: 1650, color: "#f43f5e" },
+  tb: { id: "N_TB", label: "TESTBENCHES", x: "70%", y: 1650, color: "#10b981" },
+
+  soc: { id: "N_SOC", label: "SYS ON CHIP", x: "50%", y: 1850, color: "#0ea5e9" }
 };
+
+const TREE_EDGES = [
+    { from: TREE_NODES.root, to: TREE_NODES.bool },
+    { from: TREE_NODES.root, to: TREE_NODES.sys },
+    
+    { from: TREE_NODES.bool, to: TREE_NODES.gates },
+    { from: TREE_NODES.gates, to: TREE_NODES.kmaps },
+    { from: TREE_NODES.gates, to: TREE_NODES.arith },
+    { from: TREE_NODES.kmaps, to: TREE_NODES.combo },
+    { from: TREE_NODES.arith, to: TREE_NODES.combo },
+    
+    { from: TREE_NODES.sys, to: TREE_NODES.codes },
+    { from: TREE_NODES.sys, to: TREE_NODES.latch },
+    { from: TREE_NODES.latch, to: TREE_NODES.ff },
+    
+    { from: TREE_NODES.combo, to: TREE_NODES.seq },
+    { from: TREE_NODES.ff, to: TREE_NODES.seq },
+    
+    { from: TREE_NODES.seq, to: TREE_NODES.fsm },
+    { from: TREE_NODES.fsm, to: TREE_NODES.rtl },
+    
+    { from: TREE_NODES.rtl, to: TREE_NODES.verilog },
+    { from: TREE_NODES.rtl, to: TREE_NODES.tb },
+    
+    { from: TREE_NODES.verilog, to: TREE_NODES.soc },
+    { from: TREE_NODES.tb, to: TREE_NODES.soc },
+];
 
 export const WorkstationHome: React.FC = () => {
     const navigate = useNavigate();
-    const { firstName, skills, checkStreak } = useGamificationStore();
-    const completedModuleIds = skills.completedIds;
-    const [hoveredId, setHoveredId] = useState<string | null>(null);
+    const { firstName, checkStreak } = useGamificationStore();
     const [cmdOpen, setCmdOpen] = useState(false);
     const [tourOpen, setTourOpen] = useState(false);
 
     useEffect(() => { checkStreak(); }, [checkStreak]);
-
-    const dynamicModules = useMemo(() => {
-        return MODULES.map((m) => {
-            const isCompleted = completedModuleIds.includes(m.id);
-            return {
-                ...m,
-                status: isCompleted ? ('completed' as Status) : ('in-progress' as Status),
-                progress: isCompleted ? 100 : 0
-            };
-        });
-    }, [completedModuleIds]);
-
-    const getModule = useCallback((id: string) => dynamicModules.find(m => m.id === id)!, [dynamicModules]);
-
-    const activeBranch = useMemo<BranchKey | null>(() => {
-        if (!hoveredId) return null;
-        return getModule(hoveredId).branch;
-    }, [hoveredId, getModule]);
-
-    const getNodeOpacity = (m: Module) => {
-        if (m.depth === 0) return 1;
-        if (!activeBranch) return 0.7;
-        return m.branch === activeBranch ? 1 : 0.2;
-    };
-
-    const handleModuleStart = (mod: Module) => {
-        const routes: Record<string, string> = {
-            signals: '/module/1', analog_digital: '/module/2', binary_awakening: '/module/3',
-            logic_gates: '/module/4', kmap_optimization: '/module/5',
-        };
-        const branchRoutes: Record<string, string> = { basic: '/circuit-lab', dsd: '/fsm', verilog: '/verilog' };
-        const route = routes[mod.id] || (mod.branch && branchRoutes[mod.branch]);
-        if (route) navigate(route);
-    };
 
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
@@ -279,11 +157,11 @@ export const WorkstationHome: React.FC = () => {
     }, []);
 
     return (
-        <div className="h-screen flex overflow-hidden bg-[#0B1120] text-slate-200 selection:bg-sky-500/30">
+        <div className="h-screen flex overflow-hidden bg-[#0A0D14] text-slate-200 selection:bg-sky-500/30 font-sans">
             {/* Ambient Background OS Circuitry */}
             <CircuitBackground />
 
-            {/* Radial Menu Integration */}
+            {/* PRESERVED: Radial Menu Integration */}
             <RadialMenu />
 
             {/* Top-Right Floating Profile Card */}
@@ -293,22 +171,14 @@ export const WorkstationHome: React.FC = () => {
                 transition={{ delay: 0.8, duration: 0.8, ease: "easeOut" }}
                 className="fixed top-8 right-12 z-50 group flex items-center gap-4 p-2 pr-6 rounded-2xl bg-slate-900/40 border border-slate-700/50 backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.05)] hover:bg-slate-800/60 transition-all duration-500 cursor-pointer overflow-hidden"
             >
-                {/* Holographic Crystal Glow Background */}
                 <div className="absolute inset-0 bg-gradient-to-r from-sky-500/10 via-indigo-500/5 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
-                
-                {/* Avatar Container */}
                 <div className="relative">
                     <div className="absolute -inset-2 bg-gradient-to-tr from-sky-400 to-indigo-600 rounded-full blur-xl opacity-20 group-hover:opacity-40 transition-opacity duration-700" />
-                    <div className="w-14 h-14 rounded-xl overflow-hidden border border-white/10 shadow-2xl relative z-10 bg-slate-950/50">
-                        <img 
-                            src="/holographic-crystal.png" 
-                            alt="Profile Avatar" 
-                            className="w-full h-full object-cover transform scale-110 group-hover:scale-125 transition-transform duration-700 ease-out"
-                        />
+                    <div className="w-14 h-14 rounded-xl overflow-hidden border border-white/10 shadow-2xl relative z-10 bg-slate-950/50 flex flex-col items-center justify-center">
+                        {/* Placeholder for Profile Logo since image was removed */}
+                        <div className="text-xl font-black text-sky-400">{firstName?.charAt(0).toUpperCase() || 'M'}</div>
                     </div>
                 </div>
-
-                {/* Profile Details */}
                 <div className="relative z-10">
                     <h2 className="text-sm font-black text-white tracking-[0.2em] uppercase leading-none mb-1.5 drop-shadow-md">
                         {firstName?.toUpperCase() || 'MADHUR'}
@@ -320,77 +190,149 @@ export const WorkstationHome: React.FC = () => {
                 </div>
             </motion.div>
 
-            {/* Main Content */}
-            <main className="flex-1 flex flex-col min-w-0 bg-transparent relative overflow-hidden">
-
-
-
-                <div className="flex-1 overflow-y-auto p-10 relative z-10 scrollbar-hide">
+            {/* Main Application Layout */}
+            <main className="flex-1 flex max-w-full h-full relative z-10 pl-[80px]">
+                
+                {/* LEFT SANDBOX (70%) - Pathways & Layout Map */}
+                <div className="flex-1 relative border-r border-sky-900/10 bg-transparent overflow-y-auto overflow-x-hidden" style={{ scrollbarWidth: 'thin', scrollbarColor: '#0ea5e9 transparent' }}>
                     
-                    <div className="max-w-6xl mx-auto relative z-10">
+                    <div className="relative w-full min-w-[700px] max-w-[1000px] mx-auto h-[2100px] pt-10 pb-40">
+                        {/* SVG WIRING LAYER (Underneath Hexagons) */}
+                        <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ filter: 'drop-shadow(0 0 12px rgba(14,165,233,0.5))' }}>
+                            {/* Grid gridlines subtle */}
+                            <pattern id="grid-pattern" width="40" height="40" patternUnits="userSpaceOnUse">
+                                <line x1="0" y1="0" x2="40" y2="0" stroke="rgba(255,255,255,0.01)" strokeWidth="1" />
+                                <line x1="0" y1="0" x2="0" y2="40" stroke="rgba(255,255,255,0.01)" strokeWidth="1" />
+                            </pattern>
+                            <rect width="100%" height="100%" fill="url(#grid-pattern)" />
 
+                            {/* Render Tree Connecting Lines */}
+                            {TREE_EDGES.map((edge, idx) => (
+                                <motion.line 
+                                    key={idx}
+                                    x1={edge.from.x} y1={edge.from.y} x2={edge.to.x} y2={edge.to.y}
+                                    stroke={edge.to.color} strokeWidth="3" strokeOpacity="1"
+                                    initial={{ pathLength: 0, opacity: 0 }}
+                                    animate={{ pathLength: 1, opacity: 1 }}
+                                    transition={{ delay: 0.5 + idx * 0.05, duration: 1.5, ease: 'easeOut' }}
+                                />
+                            ))}
 
-                        {/* Map Scroll Area */}
-                        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="bg-slate-900/40 border border-slate-700/50 rounded-[40px] p-10 shadow-[inset_0_4px_10px_rgba(0,0,0,0.5),0_20px_40px_rgba(0,0,0,0.6)] backdrop-blur-xl overflow-x-auto relative group overflow-visible" style={{ perspective: '1600px' }}>
-                            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.04] to-transparent pointer-events-none rounded-[40px]" />
-                            <div className="absolute -inset-[1px] bg-gradient-to-t from-sky-500/15 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000 rounded-[40px] pointer-events-none" />
-                            
-                            <motion.svg 
-                                width={CW} height={CH} viewBox={`0 0 ${CW} ${CH}`} 
-                                className="overflow-visible block mx-auto relative z-10"
-                                style={{ transformStyle: 'preserve-3d', rotateX: '12deg', rotateY: '-1deg' }}
-                            >
-                                {/* Connection lines */}
-                                {CONNECTIONS.map((conn, i) => {
-                                    const a = getModule(conn.from), b = getModule(conn.to);
-                                    const ra = getR(a), rb = getR(b);
-                                    const active = a.status === 'completed' || a.status === 'in-progress';
-                                    const color = active ? accentFor(a) : '#334155';
-                                    
-                                    if (conn.type === 'trunk') {
-                                        return (
-                                            <React.Fragment key={i}>
-                                                <line x1={a.cx + ra} y1={a.cy} x2={b.cx - rb} y2={b.cy} stroke="#000" strokeWidth={4} strokeLinecap="round" opacity={0.5} />
-                                                <line x1={a.cx + ra} y1={a.cy} x2={b.cx - rb} y2={b.cy} stroke={color} strokeWidth={active ? 3 : 2} strokeLinecap="round" opacity={active ? 0.9 : 0.3} style={{ filter: active ? `drop-shadow(0 0 8px ${color}80)` : 'none' }} />
-                                                <line x1={a.cx + ra} y1={a.cy} x2={b.cx - rb} y2={b.cy} stroke={color === '#334155' ? 'none' : '#fff'} strokeWidth={1} strokeLinecap="round" opacity={active ? 0.4 : 0} />
-                                                {active && <Pulse x1={a.cx + ra} y1={a.cy} x2={b.cx - rb} y2={b.cy} color={color} />}
-                                            </React.Fragment>
-                                        );
-                                    }
-                                    if (conn.type === 'hub-branch') {
-                                        const hubBot = a.cy + HUB_R;
-                                        const tgtTop = b.cy - rb;
-                                        const d = `M ${a.cx} ${hubBot} L ${a.cx} ${JUNCTION_Y} L ${b.cx} ${JUNCTION_Y} L ${b.cx} ${tgtTop}`;
-                                        return (
-                                            <React.Fragment key={i}>
-                                                <path d={d} fill="none" stroke="#000" strokeWidth={3.5} strokeLinecap="round" opacity={0.5} />
-                                                <path d={d} fill="none" stroke={color} strokeWidth={active ? 2.5 : 2} strokeLinecap="round" opacity={active ? 0.8 : 0.2} style={{ filter: active ? `drop-shadow(0 0 6px ${color}80)` : 'none' }} />
-                                                <path d={d} fill="none" stroke={color === '#334155' ? 'none' : '#fff'} strokeWidth={0.8} strokeLinecap="round" opacity={active ? 0.4 : 0} />
-                                                {active && <Pulse x1={a.cx} y1={hubBot} x2={b.cx} y2={tgtTop} color={color} />}
-                                            </React.Fragment>
-                                        );
-                                    }
-                                    return (
-                                        <g key={i}>
-                                            <line x1={a.cx} y1={a.cy + ra} x2={b.cx} y2={b.cy - rb} stroke="#000" strokeWidth={2.5} strokeDasharray="6 6" strokeLinecap="round" opacity={0.5} />
-                                            <line x1={a.cx} y1={a.cy + ra} x2={b.cx} y2={b.cy - rb} stroke={color} strokeWidth={active ? 2 : 1.5} strokeLinecap="round" strokeDasharray="6 6" opacity={active ? 0.8 : 0.2} style={{ filter: active ? `drop-shadow(0 0 6px ${color}80)` : 'none' }} />
-                                        </g>
-                                    );
-                                })}
+                            {/* Central Digital Logic Text watermark */}
+                            <text x="50%" y="80" fill="#0ea5e9" textAnchor="middle" fontSize="12" fontFamily="monospace" letterSpacing="4" opacity="0.6" fontWeight="bold">
+                                HARDWARE CURRICULUM TREE
+                            </text>
+                        </svg>
 
-                                {/* Modules */}
-                                {dynamicModules.map(mod => (
-                                    <ModuleBubble key={`mod-${mod.id}`} mod={mod} isHovered={hoveredId === mod.id} onHover={setHoveredId} onStart={handleModuleStart} opacity={getNodeOpacity(mod)} />
+                        {/* RENDER TREE HexNodes */}
+                        {Object.values(TREE_NODES).map((node, i) => (
+                            <HexNode 
+                                key={node.id} 
+                                label={node.label} 
+                                color={node.color} 
+                                x={node.x} 
+                                y={node.y} 
+                                delay={0.2 + i * 0.1} 
+                                onClick={() => {
+                                    if(node.label === 'K-MAPS') navigate('/kmap');
+                                    else if(['FSM DESIGN', 'FLIP-FLOPS', 'SEQUENTIAL'].includes(node.label)) navigate('/fsm');
+                                    else if(['RTL DESIGN', 'VERILOG', 'TESTBENCHES'].includes(node.label)) navigate('/verilog');
+                                }}
+                            />
+                        ))}
+                    </div>
+
+                </div>
+
+                {/* RIGHT SIDEBAR (30%) - Metrics & Charts */}
+                <div className="w-[380px] p-8 flex flex-col gap-10 bg-[#070b14] border-l border-slate-800/60 shadow-[-20px_0_50px_rgba(0,0,0,0.5)]">
+                    
+                    {/* Module Title */}
+                    <div className="">
+                        <h3 className="text-sky-500 font-mono text-[10px] tracking-[0.2em] mb-1">CURRENT MODULE</h3>
+                        <h1 className="text-2xl font-black text-white tracking-widest leading-none drop-shadow-[0_2px_10px_rgba(255,255,255,0.2)]">CORE LOGIC<br/><span className="text-sky-400">MASTER</span></h1>
+                    </div>
+
+                    {/* LED Matrix Block */}
+                    <div>
+                        <div className="flex justify-between items-center mb-2">
+                             <h4 className="text-[10px] text-slate-400 font-mono tracking-widest uppercase">Grid Activity</h4>
+                             <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.6)]" />
+                        </div>
+                        <LEDMatrix />
+                    </div>
+
+                    {/* Verilog Fluency Horizontal Bars */}
+                    <div>
+                        <h4 className="text-[10px] text-slate-400 font-mono tracking-widest uppercase mb-4">Verilog Fluency</h4>
+                        <div className="flex flex-col gap-3">
+                            <ChartBar label="Syntax" value={68} color="#3b82f6" />
+                            <ChartBar label="FSM logic" value={45} color="#ec4899" />
+                            <ChartBar label="Testbenches" value={22} color="#f59e0b" />
+                            <ChartBar label="Timing" value={89} color="#10b981" />
+                            <ChartBar label="Synthesis" value={12} color="#8b5cf6" />
+                        </div>
+                    </div>
+
+                    {/* Lower Layout Panel: Apex Chart & Crystal */}
+                    <div className="flex gap-6 mt-4 flex-1">
+                        
+                        {/* Challenge Apex Equalizer */}
+                        <div className="w-20 pl-2 border-l border-slate-800 flex flex-col justify-end">
+                            <h4 className="text-[9px] text-slate-500 font-mono tracking-widest uppercase mb-4 whitespace-nowrap rotate-180" style={{ writingMode: 'vertical-rl' }}>Challenge Apex</h4>
+                            <div className="flex items-end gap-1 h-32">
+                                {[30, 50, 70, 90, 40, 60, 20].map((h, i) => (
+                                    <motion.div 
+                                        key={i}
+                                        className="w-1.5 bg-sky-500 rounded-t-sm opacity-80"
+                                        initial={{ height: 0 }}
+                                        animate={{ height: `${h}%` }}
+                                        transition={{ delay: 0.5 + (i*0.1), duration: 0.8 }}
+                                        style={{ filter: 'drop-shadow(0 0 4px rgba(14,165,233,0.5))' }}
+                                    />
                                 ))}
+                            </div>
+                        </div>
 
-                                {/* Overlay Hover Card */}
-                                <AnimatePresence>
-                                    {hoveredId && <HoverCard key="hover-card" mod={getModule(hoveredId)} onStart={handleModuleStart} />}
-                                </AnimatePresence>
-                            </motion.svg>
-                        </motion.div>
+                        {/* Crystal Data Block */}
+                        <div className="flex-1 relative flex flex-col justify-end items-end pb-8">
+                             {/* Large Percentage Numbers */}
+                             <div className="flex flex-col gap-0 text-right z-10 mr-4">
+                                  <div className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-blue-600 drop-shadow-[0_2px_10px_rgba(14,165,233,0.5)]">45<span className="text-sm ml-1">%</span></div>
+                                  <div className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600 opacity-60">62<span className="text-xs ml-1">%</span></div>
+                                  <div className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-emerald-600 opacity-30 mt-[-5px]">88<span className="text-xs ml-1">%</span></div>
+                             </div>
+
+                             {/* Glowing Crystal Pure SVG */}
+                             <div className="absolute right-[-40px] bottom-[-20px] pointer-events-none opacity-80">
+                                  <svg width="200" height="200" viewBox="0 0 100 100" style={{ filter: 'drop-shadow(0 0 30px rgba(139,92,246,0.5))' }}>
+                                       {/* Core glow */}
+                                       <circle cx="50" cy="50" r="30" fill="url(#core-glow)" opacity="0.6" />
+                                       
+                                       {/* Polygons */}
+                                       <polygon points="50,15 80,40 50,90 20,40" fill="url(#front-face)" opacity="0.9" />
+                                       <polygon points="50,15 20,40 50,45" fill="rgba(255,255,255,0.4)" />
+                                       <polygon points="50,15 80,40 50,45" fill="rgba(168,85,247,0.6)" />
+                                       <polygon points="20,40 50,90 50,45" fill="rgba(56,189,248,0.5)" />
+                                       <polygon points="80,40 50,90 50,45" fill="rgba(14,165,233,0.8)" />
+
+                                       <defs>
+                                           <radialGradient id="core-glow" cx="50%" cy="50%" r="50%">
+                                               <stop offset="0%" stopColor="#c084fc" />
+                                               <stop offset="100%" stopColor="transparent" />
+                                           </radialGradient>
+                                           <linearGradient id="front-face" x1="0%" y1="0%" x2="100%" y2="100%">
+                                               <stop offset="0%" stopColor="#38bdf8" />
+                                               <stop offset="100%" stopColor="#1e3a8a" />
+                                           </linearGradient>
+                                       </defs>
+                                  </svg>
+                             </div>
+                        </div>
+
                     </div>
                 </div>
+
             </main>
 
             <CommandPalette isOpen={cmdOpen} onClose={() => setCmdOpen(false)} navigate={navigate} tourKey={getTourKey(firstName)} />

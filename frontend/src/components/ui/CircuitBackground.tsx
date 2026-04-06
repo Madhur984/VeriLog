@@ -228,14 +228,14 @@ export const CircuitBackground: React.FC = () => {
                 </defs>
 
                 {/* ── LAYER 0: GHOST BACKGROUND TRACES (instant) ── */}
-                <g opacity="0.06" stroke="#38bdf8" strokeWidth="1" fill="none">
+                <g opacity="0.015" stroke="#38bdf8" strokeWidth="1" fill="none">
                     {traces.map((t, i) => (
                         <path key={`ghost-${i}`} d={t.d} strokeLinecap="square" />
                     ))}
                 </g>
 
                 {/* ── LAYER 1: DRAW-OUT CIRCUIT TRACES ── */}
-                <g filter="url(#glow-sm)" opacity="0.85">
+                <g filter="url(#glow-sm)" opacity="0.30">
                     {traces.map((t, i) => (
                         <AnimatedTrace key={`trace-${i}`} {...t} />
                     ))}
@@ -245,15 +245,15 @@ export const CircuitBackground: React.FC = () => {
                 {vias.map((v, i) => (
                     <motion.g key={`via-${i}`}
                         initial={{ scale: 0, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
+                        animate={{ scale: 1, opacity: 0.2 }}
                         transition={{ delay: v.delay, duration: 0.4, ease: 'backOut' }}
                         style={{ transformOrigin: `${v.cx}px ${v.cy}px` }}
                     >
                         {/* Annular ring */}
-                        <circle cx={v.cx} cy={v.cy} r={v.r + 3} fill="none" stroke="#0ea5e9" strokeWidth="1.5" opacity="0.5" />
-                        <circle cx={v.cx} cy={v.cy} r={v.r + 5} fill="none" stroke="#0ea5e9" strokeWidth="0.5" opacity="0.2" />
+                        <circle cx={v.cx} cy={v.cy} r={v.r + 3} fill="none" stroke="#0ea5e9" strokeWidth="1.5" opacity="0.2" />
+                        <circle cx={v.cx} cy={v.cy} r={v.r + 5} fill="none" stroke="#0ea5e9" strokeWidth="0.5" opacity="0.1" />
                         {/* Filled via */}
-                        <circle cx={v.cx} cy={v.cy} r={v.r} fill="url(#viaGrad)" style={{ filter: 'drop-shadow(0 0 4px #22d3ee)' }} />
+                        <circle cx={v.cx} cy={v.cy} r={v.r} fill="url(#viaGrad)" style={{ filter: 'drop-shadow(0 0 2px #22d3ee)' }} />
                         {/* Center drill */}
                         <circle cx={v.cx} cy={v.cy} r={v.r * 0.4} fill="#030c1a" />
                     </motion.g>
@@ -263,11 +263,11 @@ export const CircuitBackground: React.FC = () => {
                 {pads.map((p, i) => (
                     <motion.g key={`pad-${i}`}
                         initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
+                        animate={{ opacity: 0.3 }}
                         transition={{ delay: p.delay, duration: 0.5 }}
                     >
                         <rect x={p.x - p.w / 2} y={p.y - p.h / 2} width={p.w} height={p.h}
-                            fill="#0c4a6e" stroke="#0ea5e9" strokeWidth="0.8" opacity="0.7" rx="1" />
+                            fill="#0c4a6e" stroke="#0ea5e9" strokeWidth="0.8" opacity="0.4" rx="1" />
                         <rect x={p.x - p.w / 2 + 2} y={p.y - p.h / 2 + 2} width={p.w - 4} height={p.h - 4}
                             fill="#075985" stroke="none" rx="0.5" />
                     </motion.g>
@@ -277,14 +277,14 @@ export const CircuitBackground: React.FC = () => {
                 {ics.map((ic, i) => (
                     <motion.g key={`ic-${i}`}
                         initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
+                        animate={{ opacity: 0.3 }}
                         transition={{ delay: ic.delay, duration: 0.8 }}
                     >
                         {/* IC body */}
                         <rect x={ic.x} y={ic.y} width={ic.w} height={ic.h}
-                            fill="#071828" stroke="#1e40af" strokeWidth="1" opacity="0.7" rx="2" />
+                            fill="#071828" stroke="#1e40af" strokeWidth="1" opacity="0.5" rx="2" />
                         {/* Pin 1 marker */}
-                        <circle cx={ic.x + 8} cy={ic.y + 8} r="2" fill="#7dd3fc" opacity="0.6" />
+                        <circle cx={ic.x + 8} cy={ic.y + 8} r="2" fill="#7dd3fc" opacity="0.3" />
                         {/* Notch */}
                         <path d={`M ${ic.x + ic.w / 2 - 8} ${ic.y} A 8 8 0 0 1 ${ic.x + ic.w / 2 + 8} ${ic.y}`}
                             fill="#030c1a" stroke="#1e40af" strokeWidth="0.8" />
@@ -299,7 +299,7 @@ export const CircuitBackground: React.FC = () => {
                 ))}
 
                 {/* ── LAYER 5: FLOWING LIGHT PULSES ── */}
-                <g>
+                <g opacity="0.5">
                     {primaryTraces.map((t, i) => (
                         <TracePulse key={`pulse-${i}`} d={t.d} color={t.color} delay={6 + i * 0.8} />
                     ))}
