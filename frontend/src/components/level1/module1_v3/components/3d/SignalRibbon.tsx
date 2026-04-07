@@ -18,7 +18,7 @@ export const SignalRibbon: React.FC<RibbonProps> = ({
   const labStore = useSignalLabStore();
 
   // CORE DESIGN: 0.08 height for precision look
-  const geometry = useMemo(() => new THREE.PlaneGeometry(8, 0.08, 512, 1), []);
+  const geometry = useMemo(() => new THREE.PlaneGeometry(8, 0.4, 512, 1), []);
 
   const material = useMemo(() => {
     return new THREE.ShaderMaterial({
@@ -59,6 +59,10 @@ export const SignalRibbon: React.FC<RibbonProps> = ({
           vec3 pos = position;
           float wave = getWave(pos.x, u_time);
           pos.y += wave;
+          
+          // Added subtle depth for 'controlled' feel, reduced as requested
+          pos.z += abs(wave) * u_amplitude * 0.08; 
+          
           vWave = wave;
           gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
         }
@@ -82,7 +86,7 @@ export const SignalRibbon: React.FC<RibbonProps> = ({
           vec3 color = mix(u_accentColor * 0.4, u_coreColor, core);
           float alpha = (core * 0.95 + glow * 0.15) * u_opacity;
 
-          gl_FragColor = vec4(color, alpha);
+          gl_FragColor = vec4(color, max(alpha, 0.6));
         }
       `,
       transparent: true,
@@ -106,9 +110,9 @@ export const SignalRibbon: React.FC<RibbonProps> = ({
     const targetFreq = isLab ? labStore.frequency : globalFreq;
     const targetNoise = isLab ? labStore.noise : globalNoise;
 
-    // Tight LERPing for 'controlled' feel
-    currentAmp.current += (targetAmp - currentAmp.current) * 0.07;
-    currentFreq.current += (targetFreq - currentFreq.current) * 0.05;
+    // Direct smoothing at 0.08 for stability
+    currentAmp.current += (targetAmp - currentAmp.current) * 0.08;
+    currentFreq.current += (targetFreq - currentFreq.current) * 0.08;
     currentNoise.current += (targetNoise - currentNoise.current) * 0.08;
 
     mat.uniforms.u_time.value = t;
@@ -135,7 +139,7 @@ export const SignalRibbon: React.FC<RibbonProps> = ({
   });
 
   return (
-    <mesh ref={meshRef} position={position} geometry={geometry} material={material} />
+    <mesh ref={meshRef} position={position} geometry={geometry} material={material} renderOrder={1} />
   );
 };
 

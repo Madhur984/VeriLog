@@ -1,30 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useSignalStore } from '../store/signalStore';
 
 interface TheoryOverlayProps {
   levels: {
-    l1: string;
-    l2: string;
-    l3: string;
+    l1: string; // Immediate (Level 1)
+    l2: string; // Concept (Level 2)
+    l3: string; // Engineering / Pedagogical (Bottom Detail)
   };
   deepMode?: {
     formula?: string;
-    explanation?: string;
+    explanation?: string; // Lines for Level 3
     mapping?: string;
   };
 }
 
+/**
+ * TheoryOverlay — Implements the "Invisible Theory Layer".
+ * Level 1/2 are revealed by time.
+ * Level 3 is revealed ONLY when theoryMode is ON.
+ */
 export const TheoryOverlay: React.FC<TheoryOverlayProps> = ({ levels, deepMode }) => {
   const [level, setLevel] = useState(0);
-  const [showDeep, setShowDeep] = useState(false);
+  const theoryMode = useSignalStore((s) => s.theoryMode);
 
   useEffect(() => {
+    // Level 1: Immediate
+    // Level 2: after 1.8s
     const t1 = setTimeout(() => setLevel(1), 1800);
-    const t2 = setTimeout(() => setLevel(2), 3600);
-    return () => {
-      clearTimeout(t1);
-      clearTimeout(t2);
-    };
+    return () => clearTimeout(t1);
   }, []);
 
   return (
@@ -34,33 +38,34 @@ export const TheoryOverlay: React.FC<TheoryOverlayProps> = ({ levels, deepMode }
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-        className="v3-text-anchor flex flex-col v3-gap-1"
+        className="v3-text-anchor flex flex-col v3-gap-1 items-center"
       >
-        {/* Level 1: Key Identity / Observation */}
-        <div className="v3-hero select-none">
+        {/* Level 1: Immediate Identity */}
+        <div className="v3-hero select-none text-center">
           {levels.l1}
         </div>
 
-        {/* Level 2: Body / Explanation */}
-        <AnimatePresence mode="wait">
+        {/* Level 2: Progressive Concept */}
+        <AnimatePresence>
           {level >= 1 && (
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="v3-body text-center"
+              transition={{ duration: 1 }}
+              className="v3-body text-center max-w-lg opacity-80"
             >
               {levels.l2}
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* Level 3: Pedagogical / Micro Detail */}
-        <AnimatePresence mode="wait">
-          {level >= 2 && (
+        {/* Subtle Level 3 Indicator (Engineering) */}
+        <AnimatePresence>
+          {level >= 1 && (
             <motion.div 
               initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="v3-micro opacity-40 v3-mt-1"
+              animate={{ opacity: 0.4 }}
+              className="v3-micro v3-mt-1 tracking-widest uppercase"
             >
               {levels.l3}
             </motion.div>
@@ -68,42 +73,39 @@ export const TheoryOverlay: React.FC<TheoryOverlayProps> = ({ levels, deepMode }
         </AnimatePresence>
       </motion.div>
 
-      {/* Technical Sidebar Toggle (Only for Hybrid scenes 09-11) */}
-      {deepMode && (
-        <div className="absolute top-2 right-8 pointer-events-auto flex flex-col items-end">
-          <button 
-            onClick={() => setShowDeep(!showDeep)}
-            className="v3-micro v3-interactive py-2"
+      {/* Level 3: Deep Theory Layer (Activated by Global Theory Mode) */}
+      <AnimatePresence>
+        {theoryMode && deepMode && (
+          <motion.div 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
+            className="v3-mt-8 p-6 bg-black/60 backdrop-blur-xl border border-white/5 rounded-sm w-full max-w-xl flex flex-col v3-gap-4 pointer-events-auto shadow-2xl"
           >
-            {showDeep ? '[-] Close' : '[+] Analyze'}
-          </button>
-          
-          <AnimatePresence>
-            {showDeep && (
-              <motion.div 
-                initial={{ opacity: 0, x: 8 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 8 }}
-                className="v3-mt-2 p-4 bg-black/90 backdrop-blur-md border border-white/5 rounded-sm w-72 space-y-4 shadow-2xl"
-              >
-                {deepMode.formula && (
-                  <div className="v3-gap-1 flex flex-col">
-                    <div className="v3-micro opacity-30">Formal Equation</div>
-                    <div className="v3-micro tabular-nums text-white/80">{deepMode.formula}</div>
-                  </div>
-                )}
-                {deepMode.explanation && (
-                  <div className="v3-gap-1 flex flex-col">
-                    <div className="v3-micro opacity-30">Physics</div>
-                    <div className="v3-body text-xs text-white/50 leading-relaxed font-light">{deepMode.explanation}</div>
-                  </div>
-                )}
-              </motion.div>
+            {deepMode.formula && (
+              <div className="flex flex-col v3-gap-1">
+                <div className="v3-micro opacity-30 uppercase tracking-tighter">Mathematical Model</div>
+                <div className="v3-micro tabular-nums text-v3-cyan font-medium text-base">{deepMode.formula}</div>
+              </div>
             )}
-          </AnimatePresence>
-        </div>
-      )}
+            
+            {deepMode.explanation && (
+              <div className="flex flex-col v3-gap-1">
+                <div className="v3-micro opacity-30 uppercase tracking-tighter">Engineering Insight</div>
+                <div className="v3-body text-xs text-white/70 leading-relaxed font-light whitespace-pre-wrap">
+                  {deepMode.explanation}
+                </div>
+              </div>
+            )}
+
+            {deepMode.mapping && (
+              <div className="v3-micro opacity-20 uppercase mt-2 italic">
+                {deepMode.mapping}
+              </div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
-

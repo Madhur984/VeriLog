@@ -38,10 +38,9 @@ export const SceneManager: React.FC = () => {
   const SceneComponent = SCENES[Math.min(scene, SCENES.length - 1)];
 
   return (
-    <div className="module1-v3-root fixed inset-0 overflow-hidden select-none">
+    <div className="fixed inset-0 overflow-hidden select-none pointer-events-none">
       {/* Global Persistence Overlays */}
-      <FloatingSidebar />
-      <SignalHUD />
+      {/* Persistent UI handles in Root */}
 
       <AnimatePresence mode="wait">
         <motion.div

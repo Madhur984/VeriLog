@@ -22,6 +22,8 @@ interface SignalStore {
   goToScene: (n: number) => void;
   unlockScene: (n: number) => void;
   unlockAll: () => void;
+  theoryMode: boolean;
+  toggleTheoryMode: () => void;
 }
 
 const TOTAL_SCENES = 13;
@@ -56,4 +58,6 @@ export const useSignalStore = create<SignalStore>((set) => ({
     set((s) => ({ maxUnlockedScene: Math.max(s.maxUnlockedScene, n) })),
 
   unlockAll: () => set({ maxUnlockedScene: 12 }),
+  theoryMode: false,
+  toggleTheoryMode: () => set((s) => ({ theoryMode: !s.theoryMode })),
 }));

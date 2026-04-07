@@ -32,14 +32,15 @@ export const S07_Noise: React.FC = () => {
   return (
     <div className="absolute inset-x-0 bottom-0 top-0 pointer-events-none flex flex-col items-center justify-end pb-32">
       <TheoryOverlay 
-        levels={{
-          l1: "Mastering Imperfection.",
-          l2: "No signal is perfect. Entropy adds noise to every transmission.",
-          l3: "MASTERING THE SYSTEM REQUIRES MASTERING THE NOISE."
+        levels={{ 
+          l1: "Real signals are imperfect.", 
+          l2: "Noise distorts information.",
+          l3: "Entropy: The Chaos of Physics"
         }}
         deepMode={{
-          formula: "S(t) + η(t)",
-          explanation: "Mastery is not about removing noise, but controlling its influence on the core truth.",
+          formula: "SNR = P_signal / P_noise",
+          explanation: "Noise = unwanted variation\n\nReal systems always include noise:\n- electrical interference\n- environment\n- measurement errors",
+          mapping: "S05 // INTERFERENCE"
         }}
       />
 

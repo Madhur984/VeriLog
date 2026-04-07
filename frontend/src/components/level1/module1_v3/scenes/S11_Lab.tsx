@@ -24,14 +24,14 @@ const Controls: React.FC = () => {
 
       // Vertical → Amplitude
       store.setAmplitude(1 - y);
-      // Horizontal → Frequency
-      store.setFrequency(x * 3.0);
+      // Horizontal → Frequency (Direct 2x mapping)
+      store.setFrequency(x * 2.0);
     };
 
     const handleScroll = (e: WheelEvent) => {
       const store = useSignalLabStore.getState();
-      // Increase/decrease noise slowly
-      const delta = e.deltaY * 0.0002;
+      // Increase/decrease noise slowly (0.0005 step)
+      const delta = e.deltaY * 0.0005;
       store.setNoise(store.noise + delta);
     };
 
@@ -134,14 +134,14 @@ export const S11_Lab: React.FC = () => {
       <AnimatePresence>
         {!locked && (
           <TheoryOverlay 
-            levels={{
-              l1: "Achieve Resonance.",
-              l2: "When the system matches the target frequency, entropy dissolves. The core truth emerges.",
-              l3: "PRECISION IS THE ONLY PATH TO CLARITY."
+            levels={{ 
+              l1: "Control the signal.", 
+              l2: "Balance defines stability.",
+              l3: "Synthesis: Final Convergence"
             }}
             deepMode={{
-              formula: "Σ(s_i * w_i) → MAX",
-              explanation: "Resonance occurs when the observation cycle synchronizes with the emitted signal. Chaos is phase-cancelled.",
+              explanation: "All concepts combine:\n• amplitude\n• frequency\n• noise\n• behavior",
+              mapping: "S12 // SYNTHESIS"
             }}
           />
         )}

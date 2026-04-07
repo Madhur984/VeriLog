@@ -46,14 +46,14 @@ export const S08_Control: React.FC = () => {
   return (
     <div className="absolute inset-0 flex flex-col pointer-events-none items-center">
       <TheoryOverlay 
-        levels={{
-          l1: "Systematic adjustment.",
-          l2: "Variables are not isolated.",
-          l3: "True control is the ability to maintain stability within a chaotic field."
+        levels={{ 
+          l1: "Signals can be processed.", 
+          l2: "Analog → Digital → Process → Analog",
+          l3: "Engineering: DSP Pipeline"
         }}
         deepMode={{
-          explanation: "Mastering a signal requires understanding the trade-offs between its parameters. High energy often invites high noise.",
-          mapping: "Precision -> Stability // Complexity -> Information Density"
+          explanation: "ADC → converts signal\nProcessing → modifies\nDAC → reconstructs",
+          mapping: "S10 // PROCESSING"
         }}
       />
 

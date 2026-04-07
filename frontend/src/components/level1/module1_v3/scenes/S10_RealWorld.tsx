@@ -39,14 +39,14 @@ export const S10_RealWorld: React.FC = () => {
   return (
     <div className="absolute inset-0 flex flex-col pointer-events-none items-center">
       <TheoryOverlay 
-        levels={{
-          l1: "This is not abstract.",
-          l2: "This is everywhere.",
-          l3: "Signals are the fundamental language of physical reality."
+        levels={{ 
+          l1: "Signals power everything.", 
+          l2: "Every system communicates through signals.",
+          l3: "Ubiquity: Connected Systems"
         }}
         deepMode={{
-          explanation: "From the beating of your heart to the radio waves carrying this data, everything is a signal. Oscillation is existence.",
-          mapping: "Heartbeat -> Electrical // Wireless -> Electromagnetic"
+          explanation: "✔ communication\n✔ audio\n✔ radar\n✔ medical imaging\n✔ sensors",
+          mapping: "S11 // APPLICATION"
         }}
       />
 

@@ -45,13 +45,15 @@ export const S01_Identity: React.FC = () => {
   return (
     <div className="absolute inset-x-0 bottom-0 top-0 pointer-events-none flex flex-col items-center justify-end pb-32">
       <TheoryOverlay 
-        levels={{
-          l1: "Proximity is influence.",
-          l2: "In physical systems, distance affects magnitude. Here, your presence is the measurement.",
-          l3: "OBSERVATION IS THE ACT OF CREATION."
+        levels={{ 
+          l1: "A signal is a change.", 
+          l2: "A signal is a function of variables representing a phenomenon.",
+          l3: "Engineering: Fundamental Data Carrier"
         }}
         deepMode={{
-          explanation: "In quantum systems, measurement collapses state. Here, your displacement creates the form.",
+          formula: "s(t) = f(x, y, z, ...)",
+          explanation: "A signal is a function of one or more variables that indicates a physical phenomenon.\n\nExamples:\n• sound waves\n• voltage\n• temperature\n• motion",
+          mapping: "S01 // DEFINITION"
         }}
       />
 

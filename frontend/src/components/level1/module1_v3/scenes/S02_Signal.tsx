@@ -49,14 +49,14 @@ export const S02_Signal: React.FC = () => {
   return (
     <div className="absolute inset-x-0 bottom-0 top-0 pointer-events-none flex flex-col items-center justify-end pb-32">
       <TheoryOverlay 
-        levels={{
-          l1: "Variance is information.",
-          l2: "A signal is change over time. Without change, there is zero information.",
-          l3: "STILLNESS IS THE ABSENCE OF TRUTH."
+        levels={{ 
+          l1: "Not all signals behave the same.", 
+          l2: "Signals can be continuous, discrete, predictable, or random.",
+          l3: "Pedagogical: Taxonomy of Information"
         }}
         deepMode={{
-          formula: "δs/δt ≠ 0",
-          explanation: "In information theory, a constant value carries zero information (H=0). Variance is the prerequisite for data.",
+          explanation: "Analog → continuous\nDigital → discrete\nDeterministic → predictable\nRandom → uncertain\nPeriodic → repeating\nAperiodic → non-repeating",
+          mapping: "S02 // VARIATION"
         }}
       />
 

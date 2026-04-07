@@ -30,15 +30,15 @@ export const S05_Frequency: React.FC = () => {
   return (
     <div className="absolute inset-0 flex flex-col pointer-events-none items-center">
       <TheoryOverlay 
-        levels={{
-          l1: "Frequency is repetition.",
-          l2: "How often change occurs per unit of time.",
-          l3: "Higher frequency allows for more data density within the same duration."
+        levels={{ 
+          l1: "Signals have properties.", 
+          l2: "Amplitude, frequency, and phase define behavior.",
+          l3: "Mechanical: Characteristic DNA"
         }}
         deepMode={{
-          formula: "f = 1 / T // T is the period",
-          explanation: "In the Hz (Hertz) scale, we measure cycles per second. The higher the frequency, the 'faster' the signal.",
-          mapping: "Rate of Change -> Frequency // Cycles -> Repetitions"
+          formula: "x(t) = A sin(ωt + θ)",
+          explanation: "Amplitude → strength\nFrequency → repetition\nPhase → shift in time\nWavelength → spatial repetition",
+          mapping: "S03 // PROPERTIES"
         }}
       />
 

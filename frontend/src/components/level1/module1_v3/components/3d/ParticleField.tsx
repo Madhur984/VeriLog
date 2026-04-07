@@ -9,7 +9,7 @@ export const ParticleField: React.FC = () => {
   const { amplitude: globalAmp, frequency: globalFreq, noise: globalNoise, waveType, scene } = useSignalStore();
   const labStore = useSignalLabStore();
 
-  const count = 2000;
+  const count = 600;
   
   const [positions, types] = useMemo(() => {
     const pos = new Float32Array(count * 3);

@@ -35,15 +35,14 @@ export const S04_Energy: React.FC = () => {
   return (
     <div className="absolute inset-0 flex flex-col pointer-events-none items-center">
       <TheoryOverlay 
-        levels={{
-          l1: "Amplitude is energy.",
-          l2: "It is the magnitude of change.",
-          l3: "Energy is perceived through intensity, brightness, and physical displacement."
+        levels={{ 
+          l1: "Signals can be smooth or discrete.", 
+          l2: "Analog is continuous. Digital is step-based.",
+          l3: "Architecture: The Quantum vs The Discrete"
         }}
         deepMode={{
-          formula: "P ∝ A² // Power is proportional to Amp squared",
-          explanation: "In physical systems, doubling the amplitude quadruples the energy. It is the 'loudness' of the data.",
-          mapping: "Volume -> Amplitude // Brightness -> Energy"
+          explanation: "Analog:\n- infinite values\n- smooth\n- noise-sensitive\n\nDigital:\n- binary (0,1)\n- robust\n- easier processing",
+          mapping: "S04 // DISCRETIZATION"
         }}
       />
 

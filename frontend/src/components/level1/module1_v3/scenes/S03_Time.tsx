@@ -57,14 +57,14 @@ export const S03_Time: React.FC = () => {
   return (
     <div className="absolute inset-x-0 bottom-0 top-0 pointer-events-none flex flex-col items-center justify-end pb-32">
       <TheoryOverlay 
-        levels={{
-          l1: "Time is the carrier.",
-          l2: "Without the dimension of time, the signal has no space to evolve. It is frozen in stasis.",
-          l3: "SIGNALS EXIST ONLY IN THE UNFOLDING OF NOW."
+        levels={{ 
+          l1: "All signals are built from simple forms.", 
+          l2: "Complex signals are combinations of basic signals.",
+          l3: "Foundational: Unit Step & Impulse"
         }}
         deepMode={{
-          formula: "s(t) | t ∈ ℝ",
-          explanation: "In DSP, the temporal domain is fundamental. A sample at t=0 has no meaning without the samples that follow it.",
+          explanation: "Include:\n• Unit Step\n• Impulse\n• Ramp\n• Parabolic",
+          mapping: "S06 // ELEMENTARY"
         }}
       />
 
@@ -84,4 +84,3 @@ export const S03_Time: React.FC = () => {
     </div>
   );
 };
-

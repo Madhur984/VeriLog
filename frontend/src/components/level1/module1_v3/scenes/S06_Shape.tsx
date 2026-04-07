@@ -24,15 +24,14 @@ export const S06_Shape: React.FC = () => {
   return (
     <div className="absolute inset-0 flex flex-col pointer-events-none items-center">
       <TheoryOverlay 
-        levels={{
-          l1: "Shape defines behavior.",
-          l2: "Form becomes function.",
-          l3: "The structure of a signal determines how a system responds to it."
+        levels={{ 
+          l1: "Signals can have shapes.", 
+          l2: "Shape affects behavior.",
+          l3: "Geometric: Waveform Morphology"
         }}
         deepMode={{
-          formula: "y(t) = sign(sin(t)) // Square",
-          explanation: "Signals aren't just smooth curves. Their geometry changes how they interact with circuits and algorithms.",
-          mapping: "Square -> Digital Switching // Sine -> Natural Resonance"
+          explanation: "Rectangular\nTriangular\nSinusoidal",
+          mapping: "S09 // GEOMETRY"
         }}
       />
 
