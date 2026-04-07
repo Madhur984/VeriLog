@@ -1,8 +1,7 @@
 /**
- * S08_Control — Full control panel floats in.
- * Unlock by 5s of interaction time (not "all sliders touched").
+ * S08_Control — DSP Pipeline.
  */
-import React, { useRef, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSignalStore } from '../store/signalStore';
 import { TheoryOverlay } from '../components/TheoryOverlay';
@@ -12,39 +11,25 @@ import { AudioEngine } from '../engine/audioEngine';
 const audio = new AudioEngine();
 
 export const S08_Control: React.FC = () => {
-  const amplitude  = useSignalStore((s) => s.amplitude);
-  const frequency  = useSignalStore((s) => s.frequency);
-  const noise      = useSignalStore((s) => s.noise);
-  const setAmp     = useSignalStore((s) => s.setAmplitude);
-  const setFreq    = useSignalStore((s) => s.setFrequency);
-  const setNoise   = useSignalStore((s) => s.setNoise);
-  const nextScene  = useSignalStore((s) => s.nextScene);
-
+  const signal = useSignalStore();
+  const nextScene = useSignalStore((s) => s.nextScene);
   const [showNext, setShowNext] = useState(false);
-  const interactMs = useRef(0);
-  const timer = useRef<ReturnType<typeof setInterval>>();
 
-  // Tick interaction time while user interacts
-  const startTimer = () => {
-    if (timer.current) return;
-    timer.current = setInterval(() => {
-      interactMs.current += 250;
-      if (interactMs.current >= 5000 && !showNext) {
-        setShowNext(true);
-        audio.stabilize();
-        clearInterval(timer.current!);
-      }
-    }, 250);
-  };
+  useEffect(() => {
+    useSignalStore.getState().setSignalMode('sinc');
+  }, []);
 
-  const handle = (setter: (v: number) => void) => (v: number) => {
-    setter(v);
+  const handleChange = (v: number) => {
+    signal.setAmplitude(v);
     audio.tick();
-    startTimer();
+    if (v > 0.4 && !showNext) {
+      setShowNext(true);
+      audio.snap();
+    }
   };
 
   return (
-    <div className="absolute inset-0 flex flex-col pointer-events-none items-center">
+    <div className="absolute inset-0 flex flex-col pointer-events-none items-center justify-end pb-32">
       <TheoryOverlay 
         levels={{ 
           l1: "Signals can be processed.", 
@@ -53,31 +38,33 @@ export const S08_Control: React.FC = () => {
         }}
         deepMode={{
           explanation: "ADC → converts signal\nProcessing → modifies\nDAC → reconstructs",
-          mapping: "S10 // PROCESSING"
+          mapping: "S08 // PROCESSING"
         }}
       />
 
       <motion.div
-        className="pointer-events-auto absolute bottom-40 w-72 flex flex-col v3-gap-4"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.8 }}
+        className="pointer-events-auto mb-20 w-64"
       >
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5, ease: [0.16, 1, 0.3, 1] }}>
-          <FloatingSlider label="Amplitude" value={amplitude} min={0.05} max={1} onChange={handle(setAmp)} />
-        </motion.div>
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.58, ease: [0.16, 1, 0.3, 1] }}>
-          <FloatingSlider label="Frequency" value={frequency} min={0.1} max={5} step={0.05} onChange={handle(setFreq)} />
-        </motion.div>
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.66, ease: [0.16, 1, 0.3, 1] }}>
-          <FloatingSlider label="Noise" value={noise} min={0} max={1} onChange={handle(setNoise)} />
-        </motion.div>
+        <FloatingSlider
+          label="PROCESSING GAIN"
+          value={signal.amplitude}
+          min={0.1}
+          max={1}
+          onChange={handleChange}
+        />
+        <p className="v3-micro text-center mt-2 opacity-30">Oscillate the filter.</p>
       </motion.div>
 
       <AnimatePresence>
         {showNext && (
           <motion.button
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
             onClick={nextScene}
-            className="v3-small pointer-events-auto absolute bottom-24 tracking-[0.4em] text-white/50 hover:text-white transition-colors"
+            className="continue-btn active pointer-events-auto"
           >
             continue →
           </motion.button>
@@ -86,4 +73,3 @@ export const S08_Control: React.FC = () => {
     </div>
   );
 };
-

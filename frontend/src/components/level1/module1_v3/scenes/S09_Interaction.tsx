@@ -1,90 +1,76 @@
 /**
- * S09_Interaction — "Signals interact."
- * Second signal appears. Align phase → attract + amplify.
+ * S09_Interaction — Geometric Signals.
  */
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useSignalStore } from '../store/signalStore';
-import { canvasState } from '../engine/canvasState';
+import { useSignalStore, SignalMode } from '../store/signalStore';
 import { TheoryOverlay } from '../components/TheoryOverlay';
-import { FloatingSlider } from '../components/FloatingSlider';
 import { AudioEngine } from '../engine/audioEngine';
 
 const audio = new AudioEngine();
 
+const MODES: { id: SignalMode; label: string }[] = [
+  { id: 'triangular', label: 'TRIANGLE (▲)' },
+  { id: 'rectangular', label: 'BINARY (■)' }
+];
+
 export const S09_Interaction: React.FC = () => {
-  const phase     = useSignalStore((s) => s.phase);
-  const setPhase  = useSignalStore((s) => s.setPhase);
+  const signal = useSignalStore();
   const nextScene = useSignalStore((s) => s.nextScene);
-  const [aligned, setAligned] = useState(false);
+  const [tried, setTried] = useState<Set<string>>(new Set());
   const [showNext, setShowNext] = useState(false);
 
   useEffect(() => {
-    canvasState.secondaryEnabled = true;
-    canvasState.secondaryPhase = Math.PI; // start misaligned
-    return () => { canvasState.secondaryEnabled = false; };
+    signal.setSignalMode('triangular');
   }, []);
 
-  useEffect(() => {
-    // Sync secondary phase offset
-    canvasState.secondaryPhase = Math.PI - phase;
-    const diff = Math.abs(canvasState.secondaryPhase) % (Math.PI * 2);
-    const isNearAligned = diff < 0.3 || diff > Math.PI * 2 - 0.3;
-    if (isNearAligned && !aligned) {
-      setAligned(true);
-      audio.snap();
-      setTimeout(() => setShowNext(true), 600);
-    }
-  }, [phase, aligned]);
+  const handleSelect = (mode: SignalMode) => {
+    signal.setSignalMode(mode);
+    audio.tick();
+    const newTried = new Set(tried);
+    newTried.add(mode);
+    setTried(newTried);
+    if (newTried.size >= 2 && !showNext) setShowNext(true);
+  };
 
   return (
-    <div className="absolute inset-0 flex flex-col pointer-events-none items-center">
+    <div className="absolute inset-0 flex flex-col pointer-events-none items-center justify-end pb-32">
       <TheoryOverlay 
-        levels={{
-          l1: "Signals interact.",
-          l2: "They combine. They cancel.",
-          l3: "No signal exists in isolation. Reality is an interference pattern."
+        levels={{ 
+          l1: "Signals define geometry.", 
+          l2: "Geometric signals are used to drive synthesizers and oscillators.",
+          l3: "Pedagogical: Waveform Geometry"
         }}
         deepMode={{
-          formula: "s_total = s1 + s2 // Superposition",
-          explanation: "In phase, they reinforce. Out of phase, they destroy each other. This is the heart of communication and noise cancellation.",
-          mapping: "Constructive -> Reinforcement // Destructive -> Cancellation"
+          explanation: "Triangle:\n• Linear slopes\n• Rich harmonics\n\nRectangular:\n• Binary switching\n• Pure fundamental",
+          mapping: "S09 // GEOMETRIC"
         }}
       />
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        className="pointer-events-auto absolute bottom-44 w-64"
-      >
-        <FloatingSlider
-          label="Alignment"
-          value={phase}
-          min={0}
-          max={Math.PI * 2}
-          step={0.05}
-          onChange={(v) => { 
-            setPhase(v); 
-            audio.tick(); 
-          }}
-        />
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 0.35 }}
-          className="v3-small text-center v3-mt-2 tracking-[0.4em]"
-        >
-          Explore alignment.
-        </motion.p>
-      </motion.div>
+      <div className="pointer-events-auto flex v3-gap-2 mb-20">
+        {MODES.map((m) => (
+          <motion.div
+            key={m.id}
+            whileHover={{ y: -2 }}
+            onClick={() => handleSelect(m.id)}
+            className={`v3-micro px-4 py-2 border rounded-sm cursor-pointer transition-all ${
+              signal.signalMode === m.id 
+                ? 'border-v3-cyan text-v3-cyan bg-v3-cyan/5' 
+                : 'border-white/10 text-white/40 hover:text-white/70'
+            }`}
+          >
+            {m.label}
+          </motion.div>
+        ))}
+      </div>
 
       <AnimatePresence>
         {showNext && (
           <motion.button
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
             onClick={nextScene}
-            className="v3-small pointer-events-auto absolute bottom-24 tracking-[0.4em] text-white/50 hover:text-white transition-colors"
+            className="continue-btn active pointer-events-auto"
           >
             continue →
           </motion.button>
@@ -93,4 +79,3 @@ export const S09_Interaction: React.FC = () => {
     </div>
   );
 };
-

@@ -1,8 +1,7 @@
 /**
- * S07_Noise — "Real signals are never perfect."
- * Noise slider adds particles + distortion. NOT glitchy.
+ * S07_Noise — "Chaos is also a signal."
  */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSignalStore } from '../store/signalStore';
 import { TheoryOverlay } from '../components/TheoryOverlay';
@@ -12,60 +11,65 @@ import { AudioEngine } from '../engine/audioEngine';
 const audio = new AudioEngine();
 
 export const S07_Noise: React.FC = () => {
-  const noise = useSignalStore((s) => s.noise);
-  const setNoise = useSignalStore((s) => s.setNoise);
+  const signal = useSignalStore();
   const nextScene = useSignalStore((s) => s.nextScene);
-  const [explored, setExplored] = useState(false);
   const [showNext, setShowNext] = useState(false);
 
+  useEffect(() => {
+    useSignalStore.getState().setSignalMode('random');
+  }, []);
+
   const handleChange = (v: number) => {
-    setNoise(v);
+    signal.setNoise(v);
     audio.tick();
-    
-    // FIX Checklist: Lower threshold to 0.3
-    if (v > 0.3 && !explored) {
-      setExplored(true);
-      setTimeout(() => setShowNext(true), 800);
+    if (v > 0.6 && !showNext) {
+      setShowNext(true);
+      audio.snap();
     }
   };
 
   return (
-    <div className="absolute inset-x-0 bottom-0 top-0 pointer-events-none flex flex-col items-center justify-end pb-32">
+    <div className="absolute inset-0 flex flex-col pointer-events-none items-center justify-end pb-32">
       <TheoryOverlay 
         levels={{ 
-          l1: "Real signals are imperfect.", 
-          l2: "Noise distorts information.",
-          l3: "Entropy: The Chaos of Physics"
+          l1: "Noise and Entropy.", 
+          l2: "Unwanted disturbance in a signal is called noise.",
+          l3: "Engineering: Signal-to-Noise Ratio (SNR)"
         }}
         deepMode={{
-          formula: "SNR = P_signal / P_noise",
-          explanation: "Noise = unwanted variation\n\nReal systems always include noise:\n- electrical interference\n- environment\n- measurement errors",
-          mapping: "S05 // INTERFERENCE"
+          explanation: "SNR:\n• P_signal / P_noise\n• Higher is better\n\nThermal Noise:\n• Random electron motion\n• Present in all conductors",
+          mapping: "S07 // INTERFERENCE"
         }}
       />
 
       <motion.div
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.6, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        className="pointer-events-auto w-48 flex flex-col items-center v3-gap-4"
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.8 }}
+        className="pointer-events-auto mb-20 w-64"
       >
-        <FloatingSlider label="Entropy (η)" value={noise} min={0} max={1} onChange={handleChange} />
-
-        <AnimatePresence>
-          {showNext && (
-            <motion.button
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              onClick={nextScene}
-              className="v3-micro v3-interactive opacity-40 hover:opacity-100 transition-opacity"
-            >
-              [ PROCEED ]
-            </motion.button>
-          )}
-        </AnimatePresence>
+        <FloatingSlider
+          label="ENTROPY (σ)"
+          value={signal.noise}
+          min={0}
+          max={1}
+          onChange={handleChange}
+        />
+        <p className="v3-micro text-center mt-2 opacity-30">Disturb the signal.</p>
       </motion.div>
+
+      <AnimatePresence>
+        {showNext && (
+          <motion.button
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            onClick={nextScene}
+            className="continue-btn active pointer-events-auto"
+          >
+            continue →
+          </motion.button>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
-

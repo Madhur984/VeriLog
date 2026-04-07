@@ -17,20 +17,19 @@ export const S01_Identity: React.FC = () => {
 
   useEffect(() => {
     canvasState.magneticStrength = 0.18;
-    canvasState.showTrail = false;
-    canvasState.frozen = false;
-
+    useSignalStore.getState().setSignalMode('analog');
+    
     const onMove = (e: MouseEvent) => {
       canvasState.cursorNormX = e.clientX / window.innerWidth;
       if (!interactedRef.current) {
         interactedRef.current = true;
         timerRef.current = setInterval(() => {
-          interactTime.current += 0.5;
-          if (interactTime.current >= 4) {
+          interactTime.current += 1;
+          if (interactTime.current >= 3) {
             setShowNext(true);
             clearInterval(timerRef.current!);
           }
-        }, 500);
+        }, 1000);
       }
     };
     window.addEventListener('mousemove', onMove, { passive: true });
@@ -60,13 +59,12 @@ export const S01_Identity: React.FC = () => {
       <AnimatePresence>
         {showNext && (
           <motion.button
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
             onClick={nextScene}
-            className="v3-micro v3-interactive pointer-events-auto opacity-40 hover:opacity-100 transition-opacity"
+            className="continue-btn active pointer-events-auto"
           >
-            [ PROCEED ]
+            continue →
           </motion.button>
         )}
       </AnimatePresence>

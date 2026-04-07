@@ -1,56 +1,80 @@
 /**
- * S06_Shape — "Shape defines behavior."
- * Floating wave type selector. Inactive options drift down.
+ * S06_Shape — Basic Signals.
+ * User selects between Step, Impulse, and Ramp.
  */
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useSignalStore } from '../store/signalStore';
+import { useSignalStore, SignalMode } from '../store/signalStore';
 import { TheoryOverlay } from '../components/TheoryOverlay';
-import { ShapeSelector } from '../components/ShapeSelector';
+import { AudioEngine } from '../engine/audioEngine';
+
+const audio = new AudioEngine();
+
+const MODES: { id: SignalMode; label: string }[] = [
+  { id: 'step', label: 'STEP (u)' },
+  { id: 'impulse', label: 'IMPULSE (δ)' },
+  { id: 'ramp', label: 'RAMP (r)' }
+];
 
 export const S06_Shape: React.FC = () => {
-  const waveType = useSignalStore((s) => s.waveType);
+  const signal = useSignalStore();
   const nextScene = useSignalStore((s) => s.nextScene);
-  const [tried, setTried] = useState<Set<string>>(new Set(['sine']));
+  const [tried, setTried] = useState<Set<string>>(new Set());
+  const [showNext, setShowNext] = useState(false);
 
   useEffect(() => {
-    if (!tried.has(waveType)) {
-      setTried((prev) => new Set([...prev, waveType]));
-    }
-  }, [waveType, tried]);
+    // Initial mode
+    signal.setSignalMode('step');
+  }, []);
 
-  const allTried = tried.size >= 3;
+  const handleSelect = (mode: SignalMode) => {
+    signal.setSignalMode(mode);
+    audio.tick();
+    const newTried = new Set(tried);
+    newTried.add(mode);
+    setTried(newTried);
+    if (newTried.size >= 3 && !showNext) setShowNext(true);
+  };
 
   return (
-    <div className="absolute inset-0 flex flex-col pointer-events-none items-center">
+    <div className="absolute inset-0 flex flex-col pointer-events-none items-center justify-end pb-32">
       <TheoryOverlay 
         levels={{ 
-          l1: "Signals can have shapes.", 
-          l2: "Shape affects behavior.",
-          l3: "Geometric: Waveform Morphology"
+          l1: "All signals are built from simple forms.", 
+          l2: "Complex signals are combinations of basic signals.",
+          l3: "Foundational: Unit Step & Impulse"
         }}
         deepMode={{
-          explanation: "Rectangular\nTriangular\nSinusoidal",
-          mapping: "S09 // GEOMETRY"
+          explanation: "Unit Step (u):\n• Sudden change of state\n\nImpulse (δ):\n• Infinite height, zero width\n\nRamp (r):\n• Linear growth",
+          mapping: "S06 // ELEMENTARY"
         }}
       />
 
-      <motion.div
-        initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.9, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-        className="pointer-events-auto absolute bottom-44"
-      >
-        <ShapeSelector />
-      </motion.div>
+      <div className="pointer-events-auto flex v3-gap-2 mb-20">
+        {MODES.map((m) => (
+          <motion.div
+            key={m.id}
+            whileHover={{ y: -2 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => handleSelect(m.id)}
+            className={`v3-micro px-4 py-2 border rounded-sm cursor-pointer transition-all ${
+              signal.signalMode === m.id 
+                ? 'border-v3-cyan text-v3-cyan bg-v3-cyan/5' 
+                : 'border-white/10 text-white/40 hover:text-white/70'
+            }`}
+          >
+            {m.label}
+          </motion.div>
+        ))}
+      </div>
 
       <AnimatePresence>
-        {allTried && (
+        {showNext && (
           <motion.button
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
             onClick={nextScene}
-            className="v3-small pointer-events-auto absolute bottom-24 tracking-[0.4em] text-white/50 hover:text-white transition-colors"
+            className="continue-btn active pointer-events-auto"
           >
             continue →
           </motion.button>
@@ -59,4 +83,3 @@ export const S06_Shape: React.FC = () => {
     </div>
   );
 };
-

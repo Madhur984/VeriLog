@@ -14,6 +14,11 @@ export const canvasState = {
   // Trail
   showTrail: false,
 
+  // Intro Cinematic / Entry
+  introProgress: 0, // 0 to 12s
+  cameraZ: 2.5,
+  tunnelOpacity: 0,
+
   // Time control (S03)
   timeOffset: 0,
   frozen: false,

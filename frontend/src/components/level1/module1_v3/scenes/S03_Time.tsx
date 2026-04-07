@@ -1,6 +1,6 @@
 /**
  * S03_Time — "Without time, a signal cannot exist."
- * Drag left/right to rewind/forward. Spring resistance.
+ * Drag left/right to rewind/forward.
  */
 import React, { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -11,16 +11,13 @@ import { TheoryOverlay } from '../components/TheoryOverlay';
 export const S03_Time: React.FC = () => {
   const nextScene = useSignalStore((s) => s.nextScene);
   const [isDragging, setIsDragging] = useState(false);
-  const [dragged, setDragged] = useState(false);
   const [showNext, setShowNext] = useState(false);
   const startX = useRef(0);
   const baseOffset = useRef(0);
   const dragCount = useRef(0);
 
   useEffect(() => {
-    canvasState.magneticStrength = 0;
-    canvasState.showTrail = false;
-    canvasState.frozen = false;
+    useSignalStore.getState().setSignalMode('periodic');
     canvasState.timeOffset = 0;
 
     const onDown = (e: MouseEvent) => {
@@ -32,11 +29,10 @@ export const S03_Time: React.FC = () => {
     const onMove = (e: MouseEvent) => {
       if (!isDragging) return;
       const delta = (e.clientX - startX.current) * 0.015;
-      canvasState.timeOffset = baseOffset.current - delta; // left = rewind
+      canvasState.timeOffset = baseOffset.current - delta;
       dragCount.current++;
-      if (dragCount.current > 40 && !dragged) {
-        setDragged(true);
-        setTimeout(() => setShowNext(true), 500);
+      if (dragCount.current > 40 && !showNext) {
+        setShowNext(true);
       }
     };
 
@@ -52,32 +48,32 @@ export const S03_Time: React.FC = () => {
       window.removeEventListener('mouseup', onUp);
       canvasState.timeOffset = 0;
     };
-  }, [isDragging, dragged]);
+  }, [isDragging, showNext]);
 
   return (
-    <div className="absolute inset-x-0 bottom-0 top-0 pointer-events-none flex flex-col items-center justify-end pb-32">
+    <div className="absolute inset-0 pointer-events-none flex flex-col items-center justify-end pb-32">
       <TheoryOverlay 
-        levels={{ 
-          l1: "All signals are built from simple forms.", 
-          l2: "Complex signals are combinations of basic signals.",
-          l3: "Foundational: Unit Step & Impulse"
+        levels={{
+          l1: "Time is the carrier.",
+          l2: "Without the dimension of time, the signal has no space to evolve. It is frozen in stasis.",
+          l3: "SIGNALS EXIST ONLY IN THE UNFOLDING OF NOW."
         }}
         deepMode={{
-          explanation: "Include:\n• Unit Step\n• Impulse\n• Ramp\n• Parabolic",
-          mapping: "S06 // ELEMENTARY"
+          formula: "s(t) | t ∈ ℝ",
+          explanation: "In DSP, the temporal domain is fundamental. A sample at t=0 has no meaning without the samples that follow it.",
+          mapping: "S03 // TEMPORALITY"
         }}
       />
 
       <AnimatePresence>
         {showNext && (
           <motion.button
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
             onClick={nextScene}
-            className="v3-micro v3-interactive pointer-events-auto opacity-40 hover:opacity-100 transition-opacity"
+            className="continue-btn active pointer-events-auto"
           >
-            [ PROCEED ]
+            continue →
           </motion.button>
         )}
       </AnimatePresence>

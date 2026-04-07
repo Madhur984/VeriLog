@@ -17,21 +17,16 @@ export const S02_Signal: React.FC = () => {
   useEffect(() => {
     canvasState.magneticStrength = 0.09;
     canvasState.showTrail = true;
-    canvasState.frozen = false;
+    useSignalStore.getState().setSignalMode('digital');
 
-    let lastX = -1;
     let dist = 0;
+    let lastX = -1;
 
     const onMove = (e: MouseEvent) => {
-      const normX = e.clientX / window.innerWidth;
-      canvasState.cursorNormX = normX;
-      // Phase shifts gently with Y movement for inertia feel
-      const normY = e.clientY / window.innerHeight;
-      setPhase(normY * Math.PI * 0.4);
-
-        if (lastX >= 0) {
+      canvasState.cursorNormX = e.clientX / window.innerWidth;
+      
+      if (lastX >= 0) {
         dist += Math.abs(e.clientX - lastX);
-        travelRef.current = dist;
         if (dist > window.innerWidth * 1.5 && !showNext) setShowNext(true);
       }
       lastX = e.clientX;
@@ -42,9 +37,8 @@ export const S02_Signal: React.FC = () => {
       window.removeEventListener('mousemove', onMove);
       canvasState.magneticStrength = 0;
       canvasState.showTrail = false;
-      canvasState.cursorNormX = -1;
     };
-  }, [setPhase, showNext]);
+  }, [showNext]);
 
   return (
     <div className="absolute inset-x-0 bottom-0 top-0 pointer-events-none flex flex-col items-center justify-end pb-32">
@@ -63,13 +57,12 @@ export const S02_Signal: React.FC = () => {
       <AnimatePresence>
         {showNext && (
           <motion.button
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
             onClick={nextScene}
-            transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
-            className="v3-micro v3-interactive pointer-events-auto opacity-40 hover:opacity-100 transition-opacity"
+            className="continue-btn active pointer-events-auto"
           >
-            [ PROCEED ]
+            continue →
           </motion.button>
         )}
       </AnimatePresence>
