@@ -1,72 +1,42 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useSignalStore } from '../store/signalStore';
-import { AudioEngine } from '../engine/audioEngine';
 
-const LABELS = [
-  'identity', 'signal', 'time', 'energy', 'frequency',
-  'shape', 'noise', 'control', 'interaction', 'real world', 'lab', 'conclusion',
-];
-
-const SPRING = { type: 'spring', stiffness: 200, damping: 22 };
-const audio = new AudioEngine();
+// Strict scene mapping for navigation
+const SCENE_COUNT = 12;
 
 export const FloatingSidebar: React.FC = () => {
-  const scene = useSignalStore((s) => s.scene);
+  const currentScene = useSignalStore((s) => s.scene);
   const maxUnlocked = useSignalStore((s) => s.maxUnlockedScene);
   const goToScene = useSignalStore((s) => s.goToScene);
 
+  // ZERO UI Rule: Hide during entry (0) and conclusion (12)
+  const isHidden = currentScene === 0 || currentScene === 12;
+
   return (
-    <div
-      className="fixed left-6 top-1/2 z-50 flex flex-col gap-3"
-      style={{ transform: 'translateY(-50%)' }}
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: isHidden ? 0 : 1 }}
+      className="v3-sidebar z-50"
     >
-      {LABELS.map((label, i) => {
-        const sceneIdx = i + 1; // scene 0 = entry, skip from sidebar
-        const isActive = scene === sceneIdx;
+      {[...Array(SCENE_COUNT)].map((_, i) => {
+        const sceneIdx = i + 1;
+        const isActive = currentScene === sceneIdx;
         const isUnlocked = sceneIdx <= maxUnlocked;
 
         return (
           <motion.button
-            key={label}
-            onClick={() => {
-              if (isUnlocked) {
-                goToScene(sceneIdx);
-                audio.tick();
-              }
+            key={sceneIdx}
+            onClick={() => isUnlocked && goToScene(sceneIdx)}
+            className={`v3-dot ${isActive ? 'active' : ''}`}
+            style={{ 
+              cursor: isUnlocked ? 'pointer' : 'default',
+              opacity: isActive ? 1 : isUnlocked ? 0.3 : 0.05
             }}
-            onMouseEnter={() => isUnlocked && audio.hover()}
-            whileHover={isUnlocked ? { x: 5 } : {}}
-            transition={SPRING}
-            title={isUnlocked ? label.toUpperCase() : ''}
-            style={{ cursor: isUnlocked ? 'pointer' : 'default' }}
-            className="group relative flex items-center gap-2"
-          >
-            {/* Dot */}
-            <motion.div
-              animate={{
-                width: isActive ? 18 : 6,
-                height: isActive ? 2 : 6,
-                borderRadius: isActive ? 1 : 3,
-                backgroundColor: isActive
-                  ? '#00E5FF'
-                  : isUnlocked
-                  ? 'rgba(255,255,255,0.4)'
-                  : 'rgba(255,255,255,0.1)',
-              }}
-              transition={{ duration: 0.25 }}
-            />
-            {/* Label — appears on active only */}
-            <motion.span
-              animate={{ opacity: isActive ? 1 : 0, x: isActive ? 0 : -4 }}
-              transition={{ duration: 0.2 }}
-              className="text-[9px] font-mono tracking-[0.18em] uppercase text-[#00E5FF] whitespace-nowrap pointer-events-none select-none"
-            >
-              {label}
-            </motion.span>
-          </motion.button>
+            transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+          />
         );
       })}
-    </div>
+    </motion.div>
   );
 };

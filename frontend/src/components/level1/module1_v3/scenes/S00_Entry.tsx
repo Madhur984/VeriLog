@@ -49,9 +49,19 @@ export const S00_Entry: React.FC = () => {
     <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
       <motion.p
         initial={{ opacity: 0 }}
-        animate={{ opacity: showHint ? 0.3 : 0 }}
-        transition={{ duration: 1.6, ease: 'easeOut' }}
-        className="v3-small tracking-[1.2em] font-medium"
+        animate={{ 
+          opacity: showHint ? [0, 0.4, 0.1, 0.4, 0.2, 0.5] : 0,
+        }}
+        transition={{ 
+          opacity: {
+            duration: 0.8,
+            times: [0, 0.1, 0.2, 0.3, 0.4, 1],
+            repeat: Infinity,
+            repeatDelay: 4,
+            ease: "linear"
+          }
+        }}
+        className="v3-small tracking-[1.2em] font-medium text-white"
       >
         Move.
       </motion.p>

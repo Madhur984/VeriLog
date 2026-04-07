@@ -6,7 +6,7 @@ import React, { useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSignalStore } from '../store/signalStore';
 import { canvasState } from '../engine/canvasState';
-import { InsightText } from '../components/InsightText';
+import { TheoryOverlay } from '../components/TheoryOverlay';
 import { FloatingSlider } from '../components/FloatingSlider';
 import { AudioEngine } from '../engine/audioEngine';
 
@@ -34,26 +34,28 @@ export const S04_Energy: React.FC = () => {
 
   return (
     <div className="absolute inset-0 flex flex-col pointer-events-none items-center">
-      <div className="absolute top-16 text-center">
-        <InsightText
-          lines={[
-            { text: 'Amplitude is energy.', delay: 0.3 },
-            { text: 'Not height.', delay: 1.6 },
-            { text: 'Energy is perceived, not just measured.', delay: 3.2 },
-          ]}
-          className="text-center"
-        />
-      </div>
+      <TheoryOverlay 
+        levels={{
+          l1: "Amplitude is energy.",
+          l2: "It is the magnitude of change.",
+          l3: "Energy is perceived through intensity, brightness, and physical displacement."
+        }}
+        deepMode={{
+          formula: "P ∝ A² // Power is proportional to Amp squared",
+          explanation: "In physical systems, doubling the amplitude quadruples the energy. It is the 'loudness' of the data.",
+          mapping: "Volume -> Amplitude // Brightness -> Energy"
+        }}
+      />
 
       {/* Control */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.8, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-        className="pointer-events-auto absolute bottom-28 w-64"
+        className="pointer-events-auto absolute bottom-44 w-64"
       >
         <FloatingSlider
-          label="Amplitude"
+          label="Energy (AMP)"
           value={amplitude}
           min={0.05}
           max={1}
@@ -67,7 +69,7 @@ export const S04_Energy: React.FC = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             onClick={nextScene}
-            className="v3-small pointer-events-auto absolute bottom-14 tracking-[0.4em] text-white/50 hover:text-white transition-colors"
+            className="v3-small pointer-events-auto absolute bottom-24 tracking-[0.4em] text-white/50 hover:text-white transition-colors"
           >
             continue →
           </motion.button>
@@ -76,3 +78,4 @@ export const S04_Energy: React.FC = () => {
     </div>
   );
 };
+

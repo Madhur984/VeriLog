@@ -1,8 +1,5 @@
 import React, { useId } from 'react';
 import { motion } from 'framer-motion';
-import { AudioEngine } from '../engine/audioEngine';
-
-const audio = new AudioEngine();
 
 interface Props {
   label: string;
@@ -23,53 +20,52 @@ export const FloatingSlider: React.FC<Props> = ({
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const v = Number(e.target.value);
     onChange(v);
-    audio.slide((v - min) / (max - min));
   };
 
   return (
-    <div className="flex flex-col v3-gap-2 group/slider">
-      <div className="flex justify-between items-end">
+    <div className="flex flex-col v3-gap-1 group relative w-full mb-4">
+      <div className="flex justify-between items-end px-1">
         <label
           htmlFor={id}
-          className="v3-small tracking-[0.25em] text-white/40 group-hover/slider:text-white/60 transition-colors"
+          className="v3-micro text-white/30 group-hover:text-white/60 transition-opacity"
         >
           {label}
         </label>
-        <span className="v3-small text-[#00E5FF]">
-          {value.toFixed(2)}{unit ? ` ${unit}` : ''}
+        <span className="v3-micro text-white/50 opacity-0 group-hover:opacity-100 transition-opacity tabular-nums">
+          {value.toFixed(2)}{unit || ''}
         </span>
       </div>
 
-      {/* Track */}
-      <div className="relative h-px bg-white/10 w-full group-hover/slider:bg-white/20 transition-colors">
-        {/* Fill */}
+      {/* Thin Precision Track */}
+      <div className="relative h-px w-full bg-white/10 group-hover:bg-white/20 transition-colors mt-1">
+        {/* Fill Layer - Active Range */}
         <motion.div
-          className="absolute left-0 top-0 h-full bg-[#00E5FF]"
+          className="absolute left-0 top-0 h-full bg-[#E6F9FF]"
           animate={{ width: `${pct}%` }}
-          transition={{ type: 'spring', stiffness: 200, damping: 28 }}
+          transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
         />
-        {/* Handle */}
+        
+        {/* Precision Handle - Scalar Dot */}
         <motion.div
-          className="absolute top-1/2 w-2 h-2 rounded-full bg-white border border-[#00E5FF]"
-          style={{ left: `calc(${pct}% - 4px)`, top: '50%', transform: 'translateY(-50%)' }}
-          animate={{ left: `calc(${pct}% - 4px)` }}
-          transition={{ type: 'spring', stiffness: 200, damping: 28 }}
+           className="absolute top-1/2 w-1.5 h-1.5 rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.4)]"
+           style={{ left: `calc(${pct}% - 3px)`, top: '50%', transform: 'translateY(-50%)' }}
+           animate={{ left: `calc(${pct}% - 3px)` }}
+           transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+        />
+
+        {/* Interaction Zone - Invisible native input */}
+        <input
+          id={id}
+          type="range"
+          min={min}
+          max={max}
+          step={step}
+          value={value}
+          onChange={handleChange}
+          className="absolute inset-0 opacity-0 cursor-ew-resize w-full h-[12px] -top-2"
+          style={{ margin: 0 }}
         />
       </div>
-
-      {/* Invisible native input on top */}
-      <input
-        id={id}
-        type="range"
-        min={min}
-        max={max}
-        step={step}
-        value={value}
-        onMouseDown={() => audio.tick()}
-        onChange={handleChange}
-        className="absolute inset-0 opacity-0 cursor-ew-resize w-full h-full"
-        style={{ margin: 0 }}
-      />
     </div>
   );
 };

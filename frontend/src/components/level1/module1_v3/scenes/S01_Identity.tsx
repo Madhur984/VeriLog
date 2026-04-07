@@ -6,13 +6,11 @@ import React, { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSignalStore } from '../store/signalStore';
 import { canvasState } from '../engine/canvasState';
-import { InsightText } from '../components/InsightText';
-import { useIdleSystem } from '../hooks/useIdleSystem';
+import { TheoryOverlay } from '../components/TheoryOverlay';
 
 export const S01_Identity: React.FC = () => {
   const nextScene = useSignalStore((s) => s.nextScene);
   const [showNext, setShowNext] = useState(false);
-  const { level } = useIdleSystem();
   const interactedRef = useRef(false);
   const interactTime = useRef(0);
   const timerRef = useRef<ReturnType<typeof setInterval>>();
@@ -45,43 +43,32 @@ export const S01_Identity: React.FC = () => {
   }, []);
 
   return (
-    <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-      <InsightText
-        lines={[
-          { text: 'You are not observing a signal.', delay: 0.4 },
-          { text: 'You are the signal.', delay: 2.0 },
-        ]}
-        className="text-center"
+    <div className="absolute inset-x-0 bottom-0 top-0 pointer-events-none flex flex-col items-center justify-end pb-32">
+      <TheoryOverlay 
+        levels={{
+          l1: "Proximity is influence.",
+          l2: "In physical systems, distance affects magnitude. Here, your presence is the measurement.",
+          l3: "OBSERVATION IS THE ACT OF CREATION."
+        }}
+        deepMode={{
+          explanation: "In quantum systems, measurement collapses state. Here, your displacement creates the form.",
+        }}
       />
-
-      {/* Idle hint */}
-      <AnimatePresence>
-        {level >= 2 && !showNext && (
-          <motion.p
-            key="hint"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.3 }}
-            exit={{ opacity: 0 }}
-            className="v3-small absolute bottom-32 tracking-[0.6em]"
-          >
-            Observe proximity.
-          </motion.p>
-        )}
-      </AnimatePresence>
 
       <AnimatePresence>
         {showNext && (
           <motion.button
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.4 }}
+            transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
             onClick={nextScene}
-            className="v3-small pointer-events-auto absolute bottom-20 tracking-[0.4em] text-white/50 hover:text-white transition-colors"
+            className="v3-micro v3-interactive pointer-events-auto opacity-40 hover:opacity-100 transition-opacity"
           >
-            continue →
+            [ PROCEED ]
           </motion.button>
         )}
       </AnimatePresence>
     </div>
   );
 };
+

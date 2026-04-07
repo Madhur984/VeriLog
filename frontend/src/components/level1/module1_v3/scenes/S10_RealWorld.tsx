@@ -5,7 +5,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSignalStore } from '../store/signalStore';
-import { InsightText } from '../components/InsightText';
+import { TheoryOverlay } from '../components/TheoryOverlay';
 import { AudioEngine } from '../engine/audioEngine';
 
 const audio = new AudioEngine();
@@ -38,18 +38,19 @@ export const S10_RealWorld: React.FC = () => {
 
   return (
     <div className="absolute inset-0 flex flex-col pointer-events-none items-center">
-      <div className="absolute top-16 text-center">
-        <InsightText
-          lines={[
-            { text: 'This is not abstract.', delay: 0.3 },
-            { text: 'This is real.', delay: 1.6 },
-            { text: 'Signals are the foundation of real systems.', delay: 3.2 },
-          ]}
-          className="text-center"
-        />
-      </div>
+      <TheoryOverlay 
+        levels={{
+          l1: "This is not abstract.",
+          l2: "This is everywhere.",
+          l3: "Signals are the fundamental language of physical reality."
+        }}
+        deepMode={{
+          explanation: "From the beating of your heart to the radio waves carrying this data, everything is a signal. Oscillation is existence.",
+          mapping: "Heartbeat -> Electrical // Wireless -> Electromagnetic"
+        }}
+      />
 
-      <div className="pointer-events-auto absolute bottom-32 flex v3-gap-8">
+      <div className="pointer-events-auto absolute bottom-44 flex v3-gap-8">
         {CARDS.map((card) => {
           const isActive = active === card.id;
           return (
@@ -88,7 +89,7 @@ export const S10_RealWorld: React.FC = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             onClick={nextScene}
-            className="v3-small pointer-events-auto absolute bottom-14 tracking-[0.4em] text-white/50 hover:text-white transition-colors"
+            className="v3-small pointer-events-auto absolute bottom-24 tracking-[0.4em] text-white/50 hover:text-white transition-colors"
           >
             continue →
           </motion.button>
@@ -97,3 +98,4 @@ export const S10_RealWorld: React.FC = () => {
     </div>
   );
 };
+

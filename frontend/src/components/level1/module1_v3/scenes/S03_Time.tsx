@@ -6,7 +6,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSignalStore } from '../store/signalStore';
 import { canvasState } from '../engine/canvasState';
-import { InsightText } from '../components/InsightText';
+import { TheoryOverlay } from '../components/TheoryOverlay';
 
 export const S03_Time: React.FC = () => {
   const nextScene = useSignalStore((s) => s.nextScene);
@@ -55,45 +55,33 @@ export const S03_Time: React.FC = () => {
   }, [isDragging, dragged]);
 
   return (
-    <div className="absolute inset-0 flex flex-col pointer-events-none items-center">
-      <div className="absolute top-16 text-center">
-        <InsightText
-          lines={[
-            { text: 'Without time,', delay: 0.3 },
-            { text: 'there is no signal.', delay: 1.6 },
-            { text: 'A signal is a recorded transformation.', delay: 3.2 },
-          ]}
-          className="text-center"
-        />
-      </div>
-
-      {/* Drag indicator */}
-      <AnimatePresence>
-        {!dragged && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.35 }}
-            exit={{ opacity: 0 }}
-            transition={{ delay: 2.0 }}
-            className="v3-small absolute bottom-36 tracking-[0.4em]"
-          >
-            Explore timeline.
-          </motion.div>
-        )}
-      </AnimatePresence>
+    <div className="absolute inset-x-0 bottom-0 top-0 pointer-events-none flex flex-col items-center justify-end pb-32">
+      <TheoryOverlay 
+        levels={{
+          l1: "Time is the carrier.",
+          l2: "Without the dimension of time, the signal has no space to evolve. It is frozen in stasis.",
+          l3: "SIGNALS EXIST ONLY IN THE UNFOLDING OF NOW."
+        }}
+        deepMode={{
+          formula: "s(t) | t ∈ ℝ",
+          explanation: "In DSP, the temporal domain is fundamental. A sample at t=0 has no meaning without the samples that follow it.",
+        }}
+      />
 
       <AnimatePresence>
         {showNext && (
           <motion.button
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
+            transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
             onClick={nextScene}
-            className="v3-small pointer-events-auto absolute bottom-20 tracking-[0.4em] text-white/50 hover:text-white transition-colors"
+            className="v3-micro v3-interactive pointer-events-auto opacity-40 hover:opacity-100 transition-opacity"
           >
-            continue →
+            [ PROCEED ]
           </motion.button>
         )}
       </AnimatePresence>
     </div>
   );
 };
+

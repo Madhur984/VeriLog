@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useSignalStore } from './store/signalStore';
-import { useStateOfMind } from './hooks/useStateOfMind';
-import { canvasState } from './engine/canvasState';
 import { AudioEngine } from './engine/audioEngine';
+
+import { FloatingSidebar } from './components/FloatingSidebar';
+import { SignalHUD } from './components/SignalHUD';
 
 import { S00_Entry }      from './scenes/S00_Entry';
 import { S01_Identity }   from './scenes/S01_Identity';
@@ -29,30 +30,31 @@ const audio = new AudioEngine();
 
 export const SceneManager: React.FC = () => {
   const scene = useSignalStore((s) => s.scene);
-  const mind = useStateOfMind(scene);
 
   useEffect(() => {
     if (scene > 0) audio.transition();
   }, [scene]);
 
-  // Sync state-of-mind to canvasState (no React re-render in loop)
-  canvasState.lineWidth = mind.lineWidth;
-  canvasState.opacity = mind.opacity;
-
-  const Scene = SCENES[Math.min(scene, SCENES.length - 1)];
+  const SceneComponent = SCENES[Math.min(scene, SCENES.length - 1)];
 
   return (
-    <AnimatePresence mode="wait">
-      <motion.div
-        key={scene}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.3 }}
-        className="absolute inset-0"
-      >
-        <Scene />
-      </motion.div>
-    </AnimatePresence>
+    <div className="module1-v3-root fixed inset-0 overflow-hidden select-none">
+      {/* Global Persistence Overlays */}
+      <FloatingSidebar />
+      <SignalHUD />
+
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={scene}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
+          className="absolute inset-0"
+        >
+          <SceneComponent />
+        </motion.div>
+      </AnimatePresence>
+    </div>
   );
 };

@@ -6,7 +6,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSignalStore } from '../store/signalStore';
 import { canvasState } from '../engine/canvasState';
-import { InsightText } from '../components/InsightText';
+import { TheoryOverlay } from '../components/TheoryOverlay';
 
 export const S02_Signal: React.FC = () => {
   const nextScene = useSignalStore((s) => s.nextScene);
@@ -47,31 +47,33 @@ export const S02_Signal: React.FC = () => {
   }, [setPhase, showNext]);
 
   return (
-    <div className="absolute inset-0 flex flex-col pointer-events-none items-center">
-      <div className="absolute top-16 text-center">
-        <InsightText
-          lines={[
-            { text: 'A signal is change over time.', delay: 0.3 },
-            { text: 'You create it.', delay: 1.6 },
-            { text: 'Signals are not static — they carry history.', delay: 3.0 },
-          ]}
-          className="text-center"
-        />
-      </div>
+    <div className="absolute inset-x-0 bottom-0 top-0 pointer-events-none flex flex-col items-center justify-end pb-32">
+      <TheoryOverlay 
+        levels={{
+          l1: "Variance is information.",
+          l2: "A signal is change over time. Without change, there is zero information.",
+          l3: "STILLNESS IS THE ABSENCE OF TRUTH."
+        }}
+        deepMode={{
+          formula: "δs/δt ≠ 0",
+          explanation: "In information theory, a constant value carries zero information (H=0). Variance is the prerequisite for data.",
+        }}
+      />
 
       <AnimatePresence>
         {showNext && (
           <motion.button
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
             onClick={nextScene}
-            className="v3-small pointer-events-auto absolute bottom-20 tracking-[0.4em] text-white/50 hover:text-white transition-colors"
+            transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
+            className="v3-micro v3-interactive pointer-events-auto opacity-40 hover:opacity-100 transition-opacity"
           >
-            continue →
+            [ PROCEED ]
           </motion.button>
         )}
       </AnimatePresence>
     </div>
   );
 };
+

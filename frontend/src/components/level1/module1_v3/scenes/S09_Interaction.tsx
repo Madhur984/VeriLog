@@ -6,7 +6,7 @@ import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSignalStore } from '../store/signalStore';
 import { canvasState } from '../engine/canvasState';
-import { InsightText } from '../components/InsightText';
+import { TheoryOverlay } from '../components/TheoryOverlay';
 import { FloatingSlider } from '../components/FloatingSlider';
 import { AudioEngine } from '../engine/audioEngine';
 
@@ -39,22 +39,24 @@ export const S09_Interaction: React.FC = () => {
 
   return (
     <div className="absolute inset-0 flex flex-col pointer-events-none items-center">
-      <div className="absolute top-16 text-center">
-        <InsightText
-          lines={[
-            { text: 'Signals interact.', delay: 0.3 },
-            { text: 'They combine. They cancel.', delay: 1.6 },
-            { text: 'Signals do not exist in isolation.', delay: 3.2 },
-          ]}
-          className="text-center"
-        />
-      </div>
+      <TheoryOverlay 
+        levels={{
+          l1: "Signals interact.",
+          l2: "They combine. They cancel.",
+          l3: "No signal exists in isolation. Reality is an interference pattern."
+        }}
+        deepMode={{
+          formula: "s_total = s1 + s2 // Superposition",
+          explanation: "In phase, they reinforce. Out of phase, they destroy each other. This is the heart of communication and noise cancellation.",
+          mapping: "Constructive -> Reinforcement // Destructive -> Cancellation"
+        }}
+      />
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        className="pointer-events-auto absolute bottom-28 w-64"
+        className="pointer-events-auto absolute bottom-44 w-64"
       >
         <FloatingSlider
           label="Alignment"
@@ -82,7 +84,7 @@ export const S09_Interaction: React.FC = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             onClick={nextScene}
-            className="v3-small pointer-events-auto absolute bottom-14 tracking-[0.4em] text-white/50 hover:text-white transition-colors"
+            className="v3-small pointer-events-auto absolute bottom-24 tracking-[0.4em] text-white/50 hover:text-white transition-colors"
           >
             continue →
           </motion.button>
@@ -91,3 +93,4 @@ export const S09_Interaction: React.FC = () => {
     </div>
   );
 };
+

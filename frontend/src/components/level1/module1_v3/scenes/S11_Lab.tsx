@@ -1,142 +1,175 @@
 /**
- * S11_Lab — Free exploration sandbox.
- * No explicit goal. System subtly stabilizes when signal is "good".
- * "stable" text appears quietly after achieving stability.
+ * S11_Lab — "Control the Signal" (Synthesis Screen)
+ * This is the final lab where user balances all variables.
+ * No UI sliders. Invisible interaction.
  */
-import React, { useEffect, useRef, useState } from 'react';
+"use client";
+
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useSignalLabStore } from '../store/signalLabStore';
 import { useSignalStore } from '../store/signalStore';
-import { FloatingSlider } from '../components/FloatingSlider';
-import { ShapeSelector } from '../components/ShapeSelector';
-import { InsightText } from '../components/InsightText';
 import { AudioEngine } from '../engine/audioEngine';
 
 const audio = new AudioEngine();
 
-function evaluate(amp: number, freq: number, noise: number) {
-  return {
-    stable: noise < 0.15,
-    strong: amp > 0.6,
-    fast:   freq > 1.5,
-  };
-}
+// --- 🖱️ INPUT SYSTEM ---
+const Controls: React.FC = () => {
+  useEffect(() => {
+    const handleMove = (e: MouseEvent) => {
+      const { innerWidth, innerHeight } = window;
+      const x = e.clientX / innerWidth;
+      const y = e.clientY / innerHeight;
+      const store = useSignalLabStore.getState();
 
+      // Vertical → Amplitude
+      store.setAmplitude(1 - y);
+      // Horizontal → Frequency
+      store.setFrequency(x * 3.0);
+    };
+
+    const handleScroll = (e: WheelEvent) => {
+      const store = useSignalLabStore.getState();
+      // Increase/decrease noise slowly
+      const delta = e.deltaY * 0.0002;
+      store.setNoise(store.noise + delta);
+    };
+
+    window.addEventListener("mousemove", handleMove);
+    window.addEventListener("wheel", handleScroll);
+
+    return () => {
+      window.removeEventListener("mousemove", handleMove);
+      window.removeEventListener("wheel", handleScroll);
+    };
+  }, []);
+
+  return null;
+};
+
+// --- 📊 STATUS UI (MINIMAL INSTRUMENT) ---
+const HUD: React.FC = () => {
+  const { status, stabilityProgress } = useSignalLabStore();
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="v3-hud z-30 flex v3-gap-3 items-center"
+    >
+      <div className="flex flex-col items-end">
+        <div className="v3-micro opacity-30">Status</div>
+        <motion.div 
+          key={status}
+          className="v3-micro text-white/80"
+        >
+          {status === 'OPTIMAL' ? 'STABLE' : status}
+        </motion.div>
+      </div>
+
+      <div className="relative w-10 h-10 flex items-center justify-center">
+        <svg className="absolute inset-0 transform -rotate-90" viewBox="0 0 48 48">
+          <circle cx="24" cy="24" r="20" fill="none" stroke="white" strokeOpacity="0.05" strokeWidth="1" />
+          <motion.circle 
+            cx="24" cy="24" r="20" fill="none" 
+            stroke="#E6F9FF" strokeWidth="1"
+            strokeDasharray="125.6"
+            animate={{ strokeDashoffset: 125.6 * (1 - stabilityProgress) }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          />
+        </svg>
+        <div className="v3-micro opacity-40 tabular-nums">{Math.round(stabilityProgress * 100)}</div>
+      </div>
+    </motion.div>
+  );
+};
+
+import { TheoryOverlay } from '../components/TheoryOverlay';
+
+// --- 🌌 MAIN SCENE ---
 export const S11_Lab: React.FC = () => {
-  const amplitude  = useSignalStore((s) => s.amplitude);
-  const frequency  = useSignalStore((s) => s.frequency);
-  const noise      = useSignalStore((s) => s.noise);
-  const setAmp     = useSignalStore((s) => s.setAmplitude);
-  const setFreq    = useSignalStore((s) => s.setFrequency);
-  const setNoise   = useSignalStore((s) => s.setNoise);
-  const nextScene  = useSignalStore((s) => s.nextScene);
-
-  const [status, setStatus] = useState({ stable: false, strong: false, fast: false });
-  const [showStable, setShowStable] = useState(false);
-  const [showNext, setShowNext] = useState(false);
-  const stableTimer = useRef<ReturnType<typeof setTimeout>>();
+  const { status, reset } = useSignalLabStore();
+  const nextScene = useSignalStore((s) => s.nextScene);
+  const [locked, setLocked] = useState(false);
+  const [fading, setFading] = useState(false);
+  const [finalText, setFinalText] = useState("");
 
   useEffect(() => {
-    const s = evaluate(amplitude, frequency, noise);
-    setStatus(s);
-    if (s.stable && s.strong && !showStable) {
-      stableTimer.current = setTimeout(() => {
-        setShowStable(true);
-        audio.stabilize();
-        setTimeout(() => setShowNext(true), 2000);
-      }, 1000);
-    } else {
-      clearTimeout(stableTimer.current!);
-    }
-    return () => clearTimeout(stableTimer.current!);
-  }, [amplitude, frequency, noise]);
+    reset();
+    return () => reset();
+  }, [reset]);
 
-  const handle = (setter: (v: number) => void) => (v: number) => {
-    setter(v);
-    audio.tick();
+  useEffect(() => {
+    if (status === "OPTIMAL" && !locked) {
+      setLocked(true);
+      triggerFinalSequence();
+    }
+  }, [status, locked]);
+
+  const triggerFinalSequence = () => {
+    audio.stabilize();
+    
+    // 0ms ->Brightness pulse (simulated via fading)
+    setTimeout(() => setFading(true), 200);
+    
+    // 400ms -> Text: Stable.
+    setTimeout(() => setFinalText("Stable."), 600);
+    
+    // 2000ms -> Transition to End
+    setTimeout(() => {
+      setFinalText("You are the signal.");
+      audio.collapse();
+    }, 2500);
+
+    setTimeout(() => {
+       nextScene();
+    }, 4500);
   };
 
   return (
-    <div className="absolute inset-0 flex flex-col pointer-events-none items-center">
-      <div className="absolute top-16 text-center">
-        <InsightText
-          lines={[
-            { text: 'Adjust.', delay: 0.3 },
-            { text: 'Observe.', delay: 1.6 },
-            { text: 'Understanding emerges through manipulation.', delay: 3.2 },
-          ]}
-          className="text-center"
-        />
-      </div>
+    <div className="absolute inset-0 z-10 pointer-events-none flex flex-col items-center justify-center">
+      <Controls />
+      <HUD />
 
-      {/* Status readout — very quiet */}
-      <div className="absolute top-12 right-12 flex flex-col v3-gap-1 text-right">
-        {[
-          { key: 'stable', label: 'stable' },
-          { key: 'strong', label: 'strong' },
-          { key: 'fast',   label: 'fast' },
-        ].map(({ key, label }) => (
-          <motion.span
-            key={key}
-            animate={{ opacity: status[key as keyof typeof status] ? 0.6 : 0.05 }}
-            transition={{ duration: 0.8 }}
-            className="v3-small tracking-[0.3em] text-[#00E5FF] pointer-events-none"
-          >
-            {label}
-          </motion.span>
-        ))}
-      </div>
-
-      {/* Stable confirmation — appears AFTER */}
       <AnimatePresence>
-        {showStable && (
+        {!locked && (
+          <TheoryOverlay 
+            levels={{
+              l1: "Achieve Resonance.",
+              l2: "When the system matches the target frequency, entropy dissolves. The core truth emerges.",
+              l3: "PRECISION IS THE ONLY PATH TO CLARITY."
+            }}
+            deepMode={{
+              formula: "Σ(s_i * w_i) → MAX",
+              explanation: "Resonance occurs when the observation cycle synchronizes with the emitted signal. Chaos is phase-cancelled.",
+            }}
+          />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence mode="wait">
+        {finalText && (
           <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 0.6, y: 0 }}
-            className="absolute top-1/2 -translate-y-24 text-center pointer-events-none"
+            key={finalText}
+            initial={{ opacity: 0, scale: 0.99 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+            className="v3-text-anchor"
           >
-            <p className="v3-title tracking-[0.6em]">Stable.</p>
-            <motion.p 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 0.4 }}
-              transition={{ delay: 0.8 }}
-              className="v3-small tracking-[0.4em] v3-mt-1"
-            >
-              Maintain it.
-            </motion.p>
+            <div className="v3-hero tracking-[0.4em] opacity-80 uppercase">
+              {finalText}
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Controls */}
-      <motion.div
-        className="pointer-events-auto absolute bottom-24 w-72 flex flex-col v3-gap-6"
-      >
-        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4, ease: [0.16, 1, 0.3, 1] }}>
-           <ShapeSelector />
-        </motion.div>
-        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.48, ease: [0.16, 1, 0.3, 1] }}>
-          <FloatingSlider label="Amplitude" value={amplitude} min={0.05} max={1} onChange={handle(setAmp)} />
-        </motion.div>
-        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.56, ease: [0.16, 1, 0.3, 1] }}>
-          <FloatingSlider label="Frequency" value={frequency} min={0.1} max={5} step={0.05} onChange={handle(setFreq)} />
-        </motion.div>
-        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.64, ease: [0.16, 1, 0.3, 1] }}>
-          <FloatingSlider label="Noise" value={noise} min={0} max={1} onChange={handle(setNoise)} />
-        </motion.div>
-      </motion.div>
-
-      <AnimatePresence>
-        {showNext && (
-          <motion.button
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            onClick={nextScene}
-            className="v3-small pointer-events-auto absolute bottom-8 tracking-[0.4em] text-white/50 hover:text-white transition-colors"
-          >
-            continue →
-          </motion.button>
-        )}
-      </AnimatePresence>
+      <motion.div 
+        animate={{ opacity: fading ? [0, 0.15, 0] : 0 }}
+        className="absolute inset-0 bg-white pointer-events-none z-50"
+      />
     </div>
   );
 };
+
+

@@ -5,7 +5,7 @@
 import React, { useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSignalStore } from '../store/signalStore';
-import { InsightText } from '../components/InsightText';
+import { TheoryOverlay } from '../components/TheoryOverlay';
 import { FloatingSlider } from '../components/FloatingSlider';
 import { AudioEngine } from '../engine/audioEngine';
 
@@ -29,31 +29,39 @@ export const S05_Frequency: React.FC = () => {
 
   return (
     <div className="absolute inset-0 flex flex-col pointer-events-none items-center">
-      <div className="absolute top-16 text-center">
-        <InsightText
-          lines={[
-            { text: 'Frequency is repetition.', delay: 0.3 },
-            { text: 'How often change occurs.', delay: 1.6 },
-            { text: 'Frequency defines how often change occurs.', delay: 3.2 },
-          ]}
-          className="text-center"
-        />
-      </div>
+      <TheoryOverlay 
+        levels={{
+          l1: "Frequency is repetition.",
+          l2: "How often change occurs per unit of time.",
+          l3: "Higher frequency allows for more data density within the same duration."
+        }}
+        deepMode={{
+          formula: "f = 1 / T // T is the period",
+          explanation: "In the Hz (Hertz) scale, we measure cycles per second. The higher the frequency, the 'faster' the signal.",
+          mapping: "Rate of Change -> Frequency // Cycles -> Repetitions"
+        }}
+      />
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.8, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-        className="pointer-events-auto absolute bottom-28 w-64"
+        className="pointer-events-auto absolute bottom-44 w-64"
       >
         <FloatingSlider
-          label="Frequency"
+          label="Frequency (Hz)"
           value={frequency}
           min={0.1}
           max={5}
           step={0.05}
           onChange={handleChange}
         />
+        <motion.p
+          animate={{ opacity: frequency > 1.5 ? 0 : 0.4 }}
+          className="v3-small text-center v3-mt-2 tracking-[0.3em]"
+        >
+          Which signal repeats faster?
+        </motion.p>
       </motion.div>
 
       <AnimatePresence>
@@ -62,7 +70,7 @@ export const S05_Frequency: React.FC = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             onClick={nextScene}
-            className="v3-small pointer-events-auto absolute bottom-14 tracking-[0.4em] text-white/50 hover:text-white transition-colors"
+            className="v3-small pointer-events-auto absolute bottom-24 tracking-[0.4em] text-white/50 hover:text-white transition-colors"
           >
             continue →
           </motion.button>
@@ -71,3 +79,4 @@ export const S05_Frequency: React.FC = () => {
     </div>
   );
 };
+
