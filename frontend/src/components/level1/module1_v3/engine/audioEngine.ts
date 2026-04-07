@@ -110,4 +110,28 @@ export class AudioEngine {
     osc.stop(now + 1.6);
     this.lastPlay = performance.now();
   }
+
+  // S00 Tunnel Entry Sounds
+  hum(duration: number) {
+    this.init();
+    if (!this.ctx) return;
+    const ctx = this.ctx;
+    const osc = ctx.createOscillator();
+    const g = ctx.createGain();
+    const now = ctx.currentTime;
+    osc.frequency.setValueAtTime(40, now);
+    osc.frequency.exponentialRampToValueAtTime(120, now + duration);
+    g.gain.setValueAtTime(0, now);
+    g.gain.linearRampToValueAtTime(0.03, now + duration * 0.5);
+    g.gain.linearRampToValueAtTime(0, now + duration);
+    osc.connect(g);
+    g.connect(ctx.destination);
+    osc.start(now);
+    osc.stop(now + duration + 0.1);
+  }
+
+  stabilized() {
+    this.note(880, 0.04, 0.2, 'sine');
+  }
 }
+export const audioEngine = new AudioEngine();

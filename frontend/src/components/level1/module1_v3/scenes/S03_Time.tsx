@@ -4,7 +4,7 @@ import { canvasState } from '../engine/canvasState';
 import { InlineText } from '../components/InlineText';
 
 export const S03_Time: React.FC = () => {
-  const { checkProceed } = useSignalStore();
+  const { checkProceed, updateInteraction } = useSignalStore();
   const isDragging = useRef(false);
   const startX = useRef(0);
   const baseOffset = useRef(0);
@@ -13,6 +13,7 @@ export const S03_Time: React.FC = () => {
   useEffect(() => {
     useSignalStore.getState().setSignalMode('periodic');
     canvasState.timeOffset = 0;
+    canvasState.magneticStrength = 0.5;
 
     const onDown = (e: MouseEvent) => {
       isDragging.current = true;
@@ -21,6 +22,11 @@ export const S03_Time: React.FC = () => {
     };
 
     const onMove = (e: MouseEvent) => {
+      canvasState.cursorNormX = e.clientX / window.innerWidth;
+      canvasState.cursorX = e.clientX;
+      canvasState.cursorY = e.clientY;
+      updateInteraction(0.12);
+
       if (!isDragging.current) return;
       const delta = (e.clientX - startX.current) * 0.025;
       canvasState.timeOffset = baseOffset.current - delta;

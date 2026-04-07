@@ -10,11 +10,13 @@ export const S02_Signal: React.FC = () => {
 
   useEffect(() => {
     setSignalMode('digital');
-    canvasState.magneticStrength = 0.1;
+    canvasState.magneticStrength = 0.3; // BOOSTED SENSITIVITY from 0.1
 
     const onMove = (e: MouseEvent) => {
       canvasState.cursorNormX = e.clientX / window.innerWidth;
-      updateInteraction(0.016);
+      canvasState.cursorX = e.clientX;
+      canvasState.cursorY = e.clientY;
+      updateInteraction(0.08); // BOOSTED SENSITIVITY from 0.016
       checkProceed();
     };
 

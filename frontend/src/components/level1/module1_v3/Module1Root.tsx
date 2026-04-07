@@ -19,7 +19,7 @@ export const Module1Root: React.FC = () => {
     <div className="module1-v3-root fixed inset-0 w-full h-full overflow-hidden select-none bg-black z-0">
       
       {/* 🌌 BACKGROUND LAYER 0: WEBGL (DEPTH) */}
-      <div className="absolute inset-0 z-0 opacity-40">
+      <div className="absolute inset-0 z-0 opacity-60">
         <WebGLLayer />
       </div>
 

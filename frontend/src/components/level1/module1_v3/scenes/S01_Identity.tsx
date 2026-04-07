@@ -10,11 +10,13 @@ export const S01_Identity: React.FC = () => {
 
   useEffect(() => {
     setSignalMode('analog');
-    canvasState.magneticStrength = 0.18;
+    canvasState.magneticStrength = 0.4; // BOOSTED SENSITIVITY from 0.18
     
     const onMove = (e: MouseEvent) => {
       canvasState.cursorNormX = e.clientX / window.innerWidth;
-      updateInteraction(0.016);
+      canvasState.cursorX = e.clientX;
+      canvasState.cursorY = e.clientY;
+      updateInteraction(0.08); // BOOSTED SENSITIVITY from 0.016
       checkProceed();
     };
     
