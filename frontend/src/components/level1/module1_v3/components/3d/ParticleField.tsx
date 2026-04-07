@@ -1,13 +1,13 @@
+import { useRef, useMemo } from 'react';
 import * as THREE from 'three';
-import React, { useRef, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { useSignalStore } from '../../store/signalStore';
-import { useSignalLabStore } from '../../store/signalLabStore';
+
 
 export const ParticleField: React.FC = () => {
   const pointsRef = useRef<THREE.Points>(null!);
-  const { amplitude: globalAmp, frequency: globalFreq, noise: globalNoise, waveType, scene } = useSignalStore();
-  const labStore = useSignalLabStore();
+  const { amplitude: globalAmp, frequency: globalFreq, noise: globalNoise, signalMode, scene } = useSignalStore();
+
 
   const count = 600;
   
@@ -87,9 +87,10 @@ export const ParticleField: React.FC = () => {
   useFrame((state) => {
     const t = state.clock.elapsedTime;
     
-    const targetAmp = scene === 11 ? labStore.amplitude : globalAmp;
-    const targetFreq = scene === 11 ? labStore.frequency : globalFreq;
-    const targetNoise = scene === 11 ? labStore.noise : globalNoise;
+    const targetAmp = globalAmp;
+    const targetFreq = globalFreq;
+    const targetNoise = globalNoise;
+
 
     currentAmp.current += (targetAmp - currentAmp.current) * 0.08;
     currentFreq.current += (targetFreq - currentFreq.current) * 0.06;
@@ -99,7 +100,7 @@ export const ParticleField: React.FC = () => {
     material.uniforms.u_amplitude.value = currentAmp.current;
     material.uniforms.u_frequency.value = currentFreq.current;
     material.uniforms.u_noise.value = currentNoise.current;
-    material.uniforms.u_waveType.value = waveType === 'sine' ? 0 : waveType === 'square' ? 1 : 2;
+    material.uniforms.u_waveType.value = signalMode === 'analog' ? 0 : signalMode === 'digital' ? 1 : 2;
 
     if (scene === 12) {
         pointsRef.current.scale.multiplyScalar(0.98);

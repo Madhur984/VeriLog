@@ -3,7 +3,6 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useSignalStore } from './store/signalStore';
 import { AudioEngine } from './engine/audioEngine';
 
-import { FloatingSidebar } from './components/FloatingSidebar';
 import { SignalHUD } from './components/SignalHUD';
 
 import { S00_Entry }      from './scenes/S00_Entry';
@@ -38,10 +37,9 @@ export const SceneManager: React.FC = () => {
   const SceneComponent = SCENES[Math.min(scene, SCENES.length - 1)];
 
   return (
-    <div className="fixed inset-0 overflow-hidden select-none pointer-events-none">
-      {/* Global Persistence Overlays */}
-      {/* Persistent UI handles in Root */}
-
+    <div className="fixed inset-0 overflow-hidden select-none pointer-events-none z-20">
+      <SignalHUD />
+      
       <AnimatePresence mode="wait">
         <motion.div
           key={scene}

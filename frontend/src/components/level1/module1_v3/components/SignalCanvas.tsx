@@ -1,11 +1,6 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useSignalStore } from '../store/signalStore';
-import { computeY, getNoiseValue, magneticPull, WaveParams } from '../engine/waveEngine';
 import { canvasState } from '../engine/canvasState';
-
-const RESOLUTION = 400;
-const isMobile = window.innerWidth < 768;
-const PARTICLE_COUNT = isMobile ? 30 : 100;
 
 interface Props {
   className?: string;
@@ -14,172 +9,171 @@ interface Props {
 export const SignalCanvas: React.FC<Props> = ({ className }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  // Sync store params to a ref — zero React overhead in RAF loop
-  const paramsRef = useRef<WaveParams>({
-    amplitude: 0.5,
-    frequency: 1,
-    phase: 0,
-    noise: 0,
-    waveType: 'sine',
+  // Params to interpolate for smoothness (0.18 lerp)
+  const paramsRef = useRef({
+    amplitude: 0.3,
+    frequency: 1.0,
+    noise: 0.1,
+    phase: 0
   });
-
-  useEffect(() => {
-    return useSignalStore.subscribe((s) => {
-      paramsRef.current = {
-        amplitude: s.amplitude,
-        frequency: s.frequency,
-        phase: s.phase,
-        noise: s.noise,
-        waveType: s.waveType,
-      };
-    });
-  }, []);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext('2d')!;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
 
     let raf: number;
-    let t = 0;
-    let frame = 0;
-    const trail: Float32Array[] = [];
-
     const resize = () => {
-      const dpr = window.devicePixelRatio || 1;
-      canvas.width = canvas.clientWidth * dpr;
-      canvas.height = canvas.clientHeight * dpr;
-      ctx.scale(dpr, dpr);
+      canvas.width = window.innerWidth * window.devicePixelRatio;
+      canvas.height = window.innerHeight * window.devicePixelRatio;
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
     };
 
-    const ro = new ResizeObserver(resize);
-    ro.observe(canvas);
+    window.addEventListener('resize', resize);
     resize();
 
-    const step = () => {
-      if (document.hidden) {
-        raf = requestAnimationFrame(step);
-        return;
-      }
-
-      const w = canvas.clientWidth;
-      const h = canvas.clientHeight;
+    const draw = () => {
+      const { amplitude, frequency, noise, phase, signalMode } = useSignalStore.getState();
       const p = paramsRef.current;
-      const cs = canvasState;
+      const lerp = 0.22; // HIGHEST RESPONSIVE (Upgraded from 0.18)
 
-      if (!cs.frozen) t += 0.016 * p.frequency;
-      const tEffective = t + cs.timeOffset;
+      // Premium Lerp
+      p.amplitude += (amplitude - p.amplitude) * lerp;
+      p.frequency += (frequency - p.frequency) * lerp;
+      p.noise += (noise - p.noise) * lerp;
+      p.phase += (phase - p.phase) * lerp;
+
+      const w = canvas.width / window.devicePixelRatio;
+      const h = canvas.height / window.devicePixelRatio;
+      const centerY = h / 2;
 
       ctx.clearRect(0, 0, w, h);
+      
+      // OPTIONAL: Multi-pass for glow/premium feel
+      ctx.shadowBlur = 4;
+      ctx.shadowColor = 'rgba(255, 255, 255, 0.1)';
 
-      // Compute current wave
-      const wave = new Float32Array(RESOLUTION + 1);
-      for (let i = 0; i <= RESOLUTION; i++) {
-        const normX = i / RESOLUTION;
-        let y = computeY(normX, tEffective, { ...p });
-
-        if (cs.cursorNormX >= 0 && cs.magneticStrength > 0) {
-          y += magneticPull(normX, cs.cursorNormX, cs.magneticStrength);
-        }
-
-        if (p.noise > 0) {
-          y += getNoiseValue(frame, i) * p.noise * 0.5;
-        }
-
-        wave[i] = y;
-      }
-      frame++;
-
-      // Trail (S02+)
-      if (cs.showTrail && trail.length > 0) {
-        for (let ti = 0; ti < trail.length; ti++) {
-          const age = (ti + 1) / (trail.length + 1);
-          ctx.globalAlpha = cs.opacity * age * 0.12;
-          ctx.strokeStyle = '#00E5FF';
-          ctx.lineWidth = cs.lineWidth * 0.6;
-          ctx.beginPath();
-          const buf = trail[ti];
-          for (let i = 0; i <= RESOLUTION; i++) {
-            const x = (i / RESOLUTION) * w;
-            const y = h / 2 - buf[i] * (h * 0.32);
-            if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-          }
-          ctx.stroke();
-        }
-      }
-
-      // Primary wave
-      ctx.globalAlpha = cs.opacity;
-      ctx.strokeStyle = '#00E5FF';
-      ctx.lineWidth = cs.lineWidth;
-      ctx.shadowBlur = cs.lineWidth * 4 * (canvasState.opacity);
-      ctx.shadowColor = 'rgba(0,229,255,0.15)';
       ctx.beginPath();
-      for (let i = 0; i <= RESOLUTION; i++) {
-        const x = (i / RESOLUTION) * w;
-        const y = h / 2 - wave[i] * (h * 0.32);
-        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-      }
-      ctx.stroke();
-      ctx.shadowBlur = 0;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.lineWidth = 1.3;
+      ctx.strokeStyle = '#FFFFFF';
 
-      // Secondary signal (S09)
-      if (cs.secondaryEnabled) {
-        ctx.globalAlpha = cs.secondaryOpacity;
-        ctx.strokeStyle = '#00E5FF';
-        ctx.lineWidth = cs.lineWidth * 0.7;
+      const time = performance.now() * 0.001;
+      const steps = 400;
+
+      for (let i = 0; i <= steps; i++) {
+        const xNorm = i / steps;
+        const x = xNorm * w;
+        
+        const t = time + canvasState.timeOffset;
+        let yNorm = 0;
+        const p_val = xNorm * p.frequency * 8 + t * 4 + p.phase;
+
+        // Waveform Logic
+        if (signalMode === 'analog') {
+          yNorm = Math.sin(p_val);
+        } else if (signalMode === 'digital') {
+          yNorm = Math.sign(Math.sin(p_val));
+        } else if (signalMode === 'periodic') {
+          yNorm = Math.sin(p_val) * 0.8 + Math.sin(p_val * 2) * 0.2;
+        } else if (signalMode === 'aperiodic') {
+          yNorm = Math.sin(p_val) * Math.cos(p_val * 0.3);
+        } else if (signalMode === 'deterministic') {
+          yNorm = Math.sin(p_val);
+        } else if (signalMode === 'random') {
+          yNorm = Math.sin(p_val + (Math.random() - 0.5) * 0.3); // Add chaotic drift
+        } else if (signalMode === 'step') {
+          yNorm = xNorm > 0.5 ? 1 : 0;
+        } else if (signalMode === 'impulse') {
+          yNorm = Math.exp(-Math.pow((xNorm - 0.5) * 50, 2)) * 10;
+        } else if (signalMode === 'ramp') {
+          yNorm = xNorm;
+        } else if (signalMode === 'sinc') {
+          const sx = (xNorm - 0.5) * 20;
+          yNorm = sx === 0 ? 1 : Math.sin(sx) / sx;
+        } else if (signalMode === 'triangular') {
+          yNorm = (Math.abs((p_val % (2 * Math.PI)) - Math.PI) / Math.PI) * 2 - 1;
+        } else if (signalMode === 'rectangular') {
+          yNorm = Math.sign(Math.sin(p_val));
+        }
+
+
+        // Noise
+        const n = (Math.random() - 0.5) * p.noise * 0.4;
+        yNorm += n;
+
+        // Amplitude base
+        let finalY = yNorm * p.amplitude * (h * 0.4);
+
+        // ENHANCED MAGNETIC BENDING (Highest Responsive)
+        if (canvasState.magneticStrength > 0 && canvasState.cursorNormX !== -1) {
+          const dist = Math.abs(xNorm - canvasState.cursorNormX);
+          // High-precision Gaussian influence with sharper falloff for "snappy" feel
+          const influence = Math.pow(Math.exp(-Math.pow(dist * 7.5, 2.0)), 1.2);
+          
+          // Hybrid Pull-Push: Bend toward and amplify at cursor
+          const pull = influence * canvasState.magneticStrength * 5.0;
+          finalY *= (1 + pull);
+          
+          // Subtle vertical compression near cursor to emphasize "pull"
+          finalY += (influence * canvasState.magneticStrength * 20); 
+        }
+
+        if (i === 0) ctx.moveTo(x, centerY + finalY);
+        else ctx.lineTo(x, centerY + finalY);
+      }
+
+      ctx.stroke();
+
+      // Secondary Signal (Interference S09/S11) - ENHANCED REACTIVE
+      if (canvasState.secondaryEnabled) {
         ctx.beginPath();
-        for (let i = 0; i <= RESOLUTION; i++) {
-          const normX = i / RESOLUTION;
-          const y2 = computeY(normX, tEffective, {
-            ...p,
-            phase: p.phase + cs.secondaryPhase,
-          });
-          const x = (i / RESOLUTION) * w;
-          const y = h / 2 - y2 * (h * 0.32);
-          if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        ctx.shadowBlur = 0;
+        ctx.strokeStyle = `rgba(0, 229, 255, ${canvasState.secondaryOpacity})`;
+        
+        // Interactive secondary phase shift based on cursor (Highest Responsive)
+        const mousePhaseShift = canvasState.cursorNormX !== -1 
+          ? (canvasState.cursorNormX - 0.5) * 4.0 
+          : 0;
+
+        for (let i = 0; i <= steps; i++) {
+          const xNorm = i / steps;
+          const px = xNorm * p.frequency * 8 * canvasState.secondaryFrequencyMult + 
+                    time * 4 + canvasState.secondaryPhase + mousePhaseShift;
+          
+          let ySec = Math.sin(px) * p.amplitude * canvasState.secondaryAmplitudeMult * (h * 0.3);
+
+          // INTERACTIVE SECONDARY BENDING
+          if (canvasState.secondaryMagneticStrength > 0 && canvasState.cursorNormX !== -1) {
+            const dist = Math.abs(xNorm - (1 - canvasState.cursorNormX)); // Opposing pull for clarity
+            const influence = Math.exp(-Math.pow(dist * 8.0, 2.0));
+            ySec *= (1 + influence * canvasState.secondaryMagneticStrength * 6);
+          }
+
+          if (i === 0) ctx.moveTo(xNorm * w, centerY + ySec);
+          else ctx.lineTo(xNorm * w, centerY + ySec);
         }
         ctx.stroke();
       }
 
-      ctx.globalAlpha = 1;
 
-      // Update trail buffer (keep last 3)
-      if (cs.showTrail) {
-        trail.push(new Float32Array(wave));
-        if (trail.length > 3) trail.shift();
-      } else {
-        trail.length = 0;
-      }
-
-      // Particles for S07 (noise screen)
-      if (p.noise > 0.1) {
-        const count = Math.floor(PARTICLE_COUNT * p.noise);
-        ctx.globalAlpha = p.noise * 0.3;
-        ctx.fillStyle = '#00E5FF';
-        for (let i = 0; i < count; i++) {
-          const px = Math.random() * w;
-          const py = Math.random() * h;
-          ctx.fillRect(px, py, 1, 1);
-        }
-        ctx.globalAlpha = 1;
-      }
-
-      raf = requestAnimationFrame(step);
+      raf = requestAnimationFrame(draw);
     };
 
-    raf = requestAnimationFrame(step);
+    raf = requestAnimationFrame(draw);
     return () => {
       cancelAnimationFrame(raf);
-      ro.disconnect();
+      window.removeEventListener('resize', resize);
     };
-  }, []); // empty deps — never restarts, reads from refs
+  }, []);
 
   return (
-    <canvas
-      ref={canvasRef}
-      className={className}
-      style={{ width: '100%', height: '100%', display: 'block', willChange: 'transform' }}
+    <canvas 
+      ref={canvasRef} 
+      className={`absolute inset-0 w-full h-full pointer-events-none ${className}`}
+      style={{ opacity: canvasState.opacity, zIndex: 10 }}
     />
   );
 };

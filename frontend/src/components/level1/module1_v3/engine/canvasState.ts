@@ -23,8 +23,12 @@ export const canvasState = {
   timeOffset: 0,
   frozen: false,
 
-  // Secondary signal (S09)
+  // Secondary signal (S09 - Interaction)
   secondaryEnabled: false,
   secondaryPhase: 0,
   secondaryOpacity: 0.35,
+  secondaryAmplitudeMult: 0.8,
+  secondaryFrequencyMult: 1.2,
+  secondaryMagneticStrength: 0.1,
 };
+
