@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { TransitionProvider } from './hooks/useTransitionController';
 import { TransitionOverlay } from './components/TransitionOverlay';
 
@@ -43,53 +43,51 @@ import { GatekeeperGame } from './pages/GatekeeperGame';
 
 function App() {
   return (
-    <BrowserRouter>
-      <TransitionProvider>
-        <TransitionOverlay />
-        <Routes>
-          {/* Landing / Auth / Entry */}
-          <Route path="/" element={<GatekeeperLanding />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/hero" element={<HeroExperience />} />
+    <TransitionProvider>
+      <TransitionOverlay />
+      <Routes>
+        {/* Landing / Auth / Entry */}
+        <Route path="/" element={<GatekeeperLanding />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/hero" element={<HeroExperience />} />
 
-          {/* Portal Layout Wrapper — Shared UI and Navigation Context */}
-          <Route element={<PortalLayout />}>
-            <Route path="/portal" element={<WorkstationHome />} />
-            <Route path="/portfolio" element={<EngineeringPortfolio />} />
-            <Route path="/workbench" element={<Workbench />} />
-            <Route path="/cpu-lab" element={<CPULabPage />} />
-            <Route path="/boss-arena" element={<BossArena />} />
-            <Route path="/skill-tree" element={<SkillTree />} />
-            <Route path="/hw-leetcode" element={<HardwareLeetCodePage />} />
-            
-            {/* Playgrounds & Studios */}
-            <Route path="/fsm" element={<FSMPlayground />} />
-            <Route path="/verilog-playground" element={<VerilogPlayground />} />
-            <Route path="/signal-playground" element={<SignalPlayground />} />
-            <Route path="/logic-studio" element={<LogicStudio />} />
-            
-            {/* Social & Persistence Features */}
-            <Route path="/quests" element={<QuestsPage />} />
-            <Route path="/activities" element={<ActivityPage />} />
-            <Route path="/community" element={<CommunityPage />} />
-            <Route path="/assessment" element={<AssessmentPage />} />
-            <Route path="/debug-mission" element={<DebugMissionPage />} />
-            <Route path="/gatekeeper-game" element={<GatekeeperGame />} />
+        {/* Portal Layout Wrapper — Shared UI and Navigation Context */}
+        <Route element={<PortalLayout />}>
+          <Route path="/portal" element={<WorkstationHome />} />
+          <Route path="/portfolio" element={<EngineeringPortfolio />} />
+          <Route path="/workbench" element={<Workbench />} />
+          <Route path="/cpu-lab" element={<CPULabPage />} />
+          <Route path="/boss-arena" element={<BossArena />} />
+          <Route path="/skill-tree" element={<SkillTree />} />
+          <Route path="/hw-leetcode" element={<HardwareLeetCodePage />} />
+          
+          {/* Playgrounds & Studios */}
+          <Route path="/fsm" element={<FSMPlayground />} />
+          <Route path="/verilog-playground" element={<VerilogPlayground />} />
+          <Route path="/signal-playground" element={<SignalPlayground />} />
+          <Route path="/logic-studio" element={<LogicStudio />} />
+          
+          {/* Social & Persistence Features */}
+          <Route path="/quests" element={<QuestsPage />} />
+          <Route path="/activities" element={<ActivityPage />} />
+          <Route path="/community" element={<CommunityPage />} />
+          <Route path="/assessment" element={<AssessmentPage />} />
+          <Route path="/debug-mission" element={<DebugMissionPage />} />
+          <Route path="/gatekeeper-game" element={<GatekeeperGame />} />
 
-            {/* Core Modules Hierarchy */}
-            <Route path="/module/1" element={<Module1Root />} />
-            <Route path="/module/1/1" element={<ModuleOne />} />
-            <Route path="/module/2" element={<ModuleTwo />} />
-            <Route path="/module/3" element={<ModuleThree />} />
-            <Route path="/module/4" element={<ModuleFour />} />
-            <Route path="/module/5" element={<ModuleFive />} />
-          </Route>
+          {/* Core Modules Hierarchy */}
+          <Route path="/module/1" element={<Module1Root />} />
+          <Route path="/module/1/1" element={<ModuleOne />} />
+          <Route path="/module/2" element={<ModuleTwo />} />
+          <Route path="/module/3" element={<ModuleThree />} />
+          <Route path="/module/4" element={<ModuleFour />} />
+          <Route path="/module/5" element={<ModuleFive />} />
+        </Route>
 
-          {/* Fallback Redirect to Portal */}
-          <Route path="*" element={<Navigate to="/portal" replace />} />
-        </Routes>
-      </TransitionProvider>
-    </BrowserRouter>
+        {/* Fallback Redirect to Portal */}
+        <Route path="*" element={<Navigate to="/portal" replace />} />
+      </Routes>
+    </TransitionProvider>
   );
 }
 
