@@ -3,7 +3,6 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useSignalStore } from './store/signalStore';
 import { AudioEngine } from './engine/audioEngine';
 
-import { FloatingSidebar } from './components/FloatingSidebar';
 import { SignalHUD } from './components/SignalHUD';
 
 import { S00_Entry }      from './scenes/S00_Entry';
@@ -19,11 +18,13 @@ import { S09_Interaction }from './scenes/S09_Interaction';
 import { S10_RealWorld }  from './scenes/S10_RealWorld';
 import { S11_Lab }        from './scenes/S11_Lab';
 import { S12_Conclusion } from './scenes/S12_Conclusion';
+import { SignalLab }      from './components/SignalLab';
 
 const SCENES = [
   S00_Entry, S01_Identity, S02_Signal, S03_Time,
   S04_Energy, S05_Frequency, S06_Shape, S07_Noise,
   S08_Control, S09_Interaction, S10_RealWorld, S11_Lab, S12_Conclusion,
+  SignalLab, // ✅ LAB
 ];
 
 const audio = new AudioEngine();
@@ -38,10 +39,9 @@ export const SceneManager: React.FC = () => {
   const SceneComponent = SCENES[Math.min(scene, SCENES.length - 1)];
 
   return (
-    <div className="fixed inset-0 overflow-hidden select-none pointer-events-none">
-      {/* Global Persistence Overlays */}
-      {/* Persistent UI handles in Root */}
-
+    <div className="fixed inset-0 overflow-hidden select-none pointer-events-none z-20">
+      <SignalHUD />
+      
       <AnimatePresence mode="wait">
         <motion.div
           key={scene}

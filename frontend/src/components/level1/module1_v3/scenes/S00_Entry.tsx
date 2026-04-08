@@ -1,99 +1,141 @@
-/**
- * S00_Entry — Cinematic Sequence.
- * 0-2s: Flicker
- * 2-6s: Tunnel
- * 6-10s: Flow
- * 10-12s: Stabilize
- */
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSignalStore } from '../store/signalStore';
-import { canvasState } from '../engine/canvasState';
+import { audioEngine } from '../engine/audioEngine';
 
 export const S00_Entry: React.FC = () => {
-  const nextScene = useSignalStore((s) => s.nextScene);
-  const [stage, setStage] = useState(0); // 0: flicker, 1: tunnel, 2: flow, 3: stable
-  const [showMove, setShowMove] = useState(false);
-  const startTime = useRef(performance.now());
+  const { 
+    setAmplitude, 
+    setFrequency, 
+    setIntroPhase, 
+    setTunnelProgress, 
+    setCollapseProgress,
+    setPhase: setGlobalPhase 
+  } = useSignalStore();
+
+  const [text, setText] = useState('Signal inactive.');
+  const [subText, setSubText] = useState('No variation detected.');
+  const [phase, setLocalPhase] = useState(1);
+  const activatedRef = useRef(false);
 
   useEffect(() => {
-    canvasState.magneticStrength = 0;
-    canvasState.showTrail = false;
-    canvasState.frozen = false;
-    canvasState.secondaryEnabled = false;
-    canvasState.opacity = 0.1;
-    canvasState.tunnelOpacity = 0;
-    canvasState.cameraZ = 5;
+    // START PHASE 1: THE DEAD SIGNAL
+    setIntroPhase(1);
+    setAmplitude(0); // Strictly horizontal
+    setFrequency(0);
+  }, [setAmplitude, setFrequency, setIntroPhase]);
 
-    let raf: number;
-    const update = () => {
-      const elapsed = (performance.now() - startTime.current) / 1000;
-      canvasState.introProgress = elapsed;
+  useEffect(() => {
+    const onMove = () => {
+      if (activatedRef.current) return;
+      activatedRef.current = true;
 
-      if (elapsed < 2) {
-        // Stage 0: Flicker
-        canvasState.opacity = 0.1 + Math.sin(elapsed * 20) * 0.05;
-        if (stage !== 0) setStage(0);
-      } else if (elapsed < 6) {
-        // Stage 1: Tunnel Forms
-        const t = (elapsed - 2) / 4;
-        canvasState.tunnelOpacity = t;
-        canvasState.opacity = 0.1 + t * 0.5;
-        if (stage !== 1) setStage(1);
-      } else if (elapsed < 10) {
-        // Stage 2: Forward Motion
-        const t = (elapsed - 6) / 4;
-        canvasState.cameraZ = 5 - t * 2.5;
-        canvasState.tunnelOpacity = 1 - t; // Fade out tunnel as we exit
-        if (stage !== 2) setStage(2);
-      } else if (elapsed < 12) {
-        // Stage 3: Stabilize
-        canvasState.cameraZ = 2.5;
-        canvasState.opacity = 0.6;
-        if (stage !== 3) setStage(3);
-        if (elapsed > 11 && !showMove) setShowMove(true);
-      } else {
-        // Sequence Complete
-      }
-
-      raf = requestAnimationFrame(update);
+      // PHASE 2: USER BREAKS IT
+      setIntroPhase(2);
+      setText('Signal = change.');
+      setSubText('Input detected.');
+      
+      startDelayedTunnelSequence();
     };
 
-    raf = requestAnimationFrame(update);
-    return () => cancelAnimationFrame(raf);
-  }, [stage, showMove]);
+    window.addEventListener('mousemove', onMove);
+    return () => window.removeEventListener('mousemove', onMove);
+  }, []);
+
+  const startDelayedTunnelSequence = () => {
+    // Wait for the realization (1.5s)
+    setTimeout(() => {
+      startTunnelSequence();
+    }, 1500);
+  };
+
+  const startTunnelSequence = () => {
+    // PHASE 3: TUNNEL FORMATION
+    setLocalPhase(3);
+    setIntroPhase(3);
+    audioEngine.hum(1.7);
+    
+    const startTime = Date.now();
+    const duration = 2400; // Smoother tunnel build-up
+
+    const animateTunnel = () => {
+      const elapsed = Date.now() - startTime;
+      const norm = Math.min(1, elapsed / duration);
+      
+      setTunnelProgress(norm);
+      setAmplitude(norm * 0.15); // Slight wave formation during tunnel
+      setFrequency(1.0);
+      
+      if (norm < 1) {
+        requestAnimationFrame(animateTunnel);
+      } else {
+        startCollapseSequence();
+      }
+    };
+    requestAnimationFrame(animateTunnel);
+  };
+
+  const startCollapseSequence = () => {
+    // PHASE 4: COLLAPSE
+    setLocalPhase(4);
+    setIntroPhase(4);
+    setText('Signal stabilized.');
+    setSubText('Control ready.');
+
+    let startTime = Date.now();
+    const duration = 800;
+
+    const animateCollapse = () => {
+      const elapsed = Date.now() - startTime;
+      const norm = Math.min(1, elapsed / duration);
+      
+      setCollapseProgress(norm);
+      setAmplitude(0.15 + norm * 0.4); // Handoff target 0.55
+      
+      if (norm < 1) {
+        requestAnimationFrame(animateCollapse);
+      } else {
+        audioEngine.stabilized();
+        // TRIGGER GLOBAL TRANSITION
+        setGlobalPhase('ACTIVE');
+        setIntroPhase(0);
+        setTunnelProgress(0);
+        setCollapseProgress(0);
+        useSignalStore.setState({ canProceed: true });
+      }
+    };
+    requestAnimationFrame(animateCollapse);
+  };
 
   return (
-    <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-50">
-      <AnimatePresence>
-        {showMove && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="flex flex-col items-center"
-          >
-            <p className="v3-hero tracking-[0.8em] font-light">ARRIVAL</p>
-            <motion.button
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 0.6, y: 0 }}
-              whileHover={{ opacity: 1, y: -2 }}
-              onClick={nextScene}
-              className="continue-btn active v3-mt-4"
-            >
-              [ ENTER LAB ]
-            </motion.button>
-          </motion.div>
-        )}
+    <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+      <AnimatePresence mode="wait">
+        <motion.div
+           key={text}
+           initial={{ opacity: 0, y: 10 }}
+           animate={{ opacity: 1, y: 0 }}
+           exit={{ opacity: 0, y: -10 }}
+           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+           className="text-center"
+        >
+          <div className="hero-text text-xl tracking-[0.4em] uppercase mb-2">
+            {text}
+          </div>
+          <div className="micro-text text-v3-cyan opacity-40 uppercase">
+            {subText}
+          </div>
+        </motion.div>
       </AnimatePresence>
 
-      {/* Cinematic Overlays */}
-      {stage < 2 && (
-        <motion.div 
-          className="absolute inset-0 bg-black pointer-events-none"
-          initial={{ opacity: 1 }}
-          animate={{ opacity: stage === 1 ? 0.3 : 0.8 }}
-          transition={{ duration: 2 }}
-        />
+      {phase === 2 && !activatedRef.current && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: [0.1, 0.4, 0.1] }}
+          transition={{ duration: 2, repeat: Infinity }}
+          className="absolute bottom-20 micro-text text-v3-cyan"
+        >
+          [ MOVE CURSOR TO INITIATE ]
+        </motion.div>
       )}
     </div>
   );

@@ -1,8 +1,8 @@
+import { useRef, useMemo } from 'react';
 import * as THREE from 'three';
-import React, { useRef, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { useSignalStore, SignalMode } from '../../store/signalStore';
-import { useSignalLabStore } from '../../store/signalLabStore';
+
 
 interface RibbonProps {
   position?: [number, number, number];
@@ -30,7 +30,7 @@ export const SignalRibbon: React.FC<RibbonProps> = ({
 }) => {
   const meshRef = useRef<THREE.Mesh>(null!);
   const { amplitude: globalAmp, frequency: globalFreq, phase, noise: globalNoise, signalMode, scene } = useSignalStore();
-  const labStore = useSignalLabStore();
+
 
   const geometry = useMemo(() => new THREE.PlaneGeometry(8, 0.4, 512, 1), []);
 
@@ -135,10 +135,10 @@ export const SignalRibbon: React.FC<RibbonProps> = ({
     const t = state.clock.elapsedTime;
     const mat = meshRef.current.material as THREE.ShaderMaterial;
 
-    const isLab = scene === 11;
-    const targetAmp = isLab ? labStore.amplitude : globalAmp;
-    const targetFreq = isLab ? labStore.frequency : globalFreq;
-    const targetNoise = isLab ? labStore.noise : globalNoise;
+    const targetAmp = globalAmp;
+    const targetFreq = globalFreq;
+    const targetNoise = globalNoise;
+
 
     currentAmp.current += (targetAmp - currentAmp.current) * 0.08;
     currentFreq.current += (targetFreq - currentFreq.current) * 0.08;
