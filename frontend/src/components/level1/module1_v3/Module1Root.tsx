@@ -8,6 +8,7 @@ import { TheoryOverlay } from './components/TheoryOverlay';
 import { ProceedButton } from './components/ProceedButton';
 import { VideoIntro } from './components/VideoIntro';
 import './v3-style.css';
+import './v3-animations.css';
 
 /**
  * Module1Root — Cinematic shell → Interactive laboratory.

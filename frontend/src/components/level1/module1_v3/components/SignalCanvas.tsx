@@ -5,16 +5,12 @@ import { useTaskStore } from '../store/taskStore';
 
 interface SignalCanvasProps { className?: string; }
 
-// ── SCENE-BASED COLOR EVOLUTION ──────────────────────────────────────────────
+// ─── SCENE COLOR EVOLUTION ────────────────────────────────────────────────────
 function getSignalColor(scene: number, entryFrames: number): string {
-  if (entryFrames < 12)  return '#BAE6FD'; // entry handoff — soft white-cyan
-  if (scene === 0)       return '#64748B'; // S00: desaturated (dead signal)
-  if (scene === 12)      return '#BAE6FD'; // S12: final — brightest
-  return '#7DD3FC';                         // S01–S11: signal core
-}
-
-function getShadowBlur(entryFrames: number): number {
-  return entryFrames < 12 ? 10 : 5; // reduced from 6→5 for sharper edge
+  if (entryFrames < 12)  return '#BAE6FD'; // soft entry handoff
+  if (scene === 0)       return '#64748B'; // S00 — dead/desaturated
+  if (scene === 12)      return '#BAE6FD'; // S12 — final, brightest
+  return '#7DD3FC';                         // S01–S11 — signal-core
 }
 
 export const SignalCanvas: React.FC<SignalCanvasProps> = ({ className }) => {
@@ -28,8 +24,8 @@ export const SignalCanvas: React.FC<SignalCanvasProps> = ({ className }) => {
 
     let raf: number;
     let t = 0;
-    let snapScale = 1;
-    let entryFrames = 0; // counts frames since entering ACTIVE phase
+    let snapScale   = 1;
+    let entryFrames = 0;
 
     // ── DPI-AWARE RESIZE ─────────────────────────────────────────────────────
     const resize = () => {
@@ -41,15 +37,13 @@ export const SignalCanvas: React.FC<SignalCanvasProps> = ({ className }) => {
     window.addEventListener('resize', resize);
     resize();
 
-    // ── MOUSE ────────────────────────────────────────────────────────────────
     const onMouseMove = (e: MouseEvent) => {
       if (canvasState.lastX !== undefined)
         canvasState.velocity += (e.clientX - canvasState.lastX) * 0.0025;
-      canvasState.lastX     = e.clientX;
+      canvasState.lastX       = e.clientX;
       canvasState.cursorNormX = e.clientX / window.innerWidth;
-      canvasState.cursorX   = e.clientX;
-      canvasState.cursorY   = e.clientY;
-
+      canvasState.cursorX     = e.clientX;
+      canvasState.cursorY     = e.clientY;
       const s = useSignalStore.getState();
       if (s.phase === 'ACTIVE') {
         s.setFrequency(canvasState.cursorNormX * 3);
@@ -58,7 +52,6 @@ export const SignalCanvas: React.FC<SignalCanvasProps> = ({ className }) => {
     };
     window.addEventListener('mousemove', onMouseMove);
 
-    // ── WHEEL ────────────────────────────────────────────────────────────────
     const onWheel = (e: WheelEvent) => {
       const s = useSignalStore.getState();
       if (s.phase === 'ACTIVE') s.setNoise(s.noise + e.deltaY * 0.001);
@@ -77,20 +70,17 @@ export const SignalCanvas: React.FC<SignalCanvasProps> = ({ className }) => {
       useTaskStore.getState().evaluate();
       if (s.hasMoved) s.updateInteraction(0.016);
 
-      // LERP smoothing
       const L = 0.18;
       canvasState.currentA += (s.amplitude - canvasState.currentA) * L;
       canvasState.currentF += (s.frequency - canvasState.currentF) * L;
       canvasState.currentN += (s.noise     - canvasState.currentN) * L;
 
-      // Time + velocity
       canvasState.velocity *= 0.96;
       t += 0.016 + Math.max(-0.08, Math.min(0.08, canvasState.velocity));
 
-      // Snap compression
       snapScale += ((s.stability > 0.85 ? 0.93 : 1.0) - snapScale) * 0.15;
 
-      // CLEAR — pure black, zero color accumulation
+      // Pure black clear — zero color accumulation
       if (s.phase === 'ACTIVE') {
         ctx.fillStyle = 'rgba(0,0,0,0.13)';
         ctx.fillRect(0, 0, w, h);
@@ -110,7 +100,7 @@ export const SignalCanvas: React.FC<SignalCanvasProps> = ({ className }) => {
         ctx.translate(0, h / 2);
         ctx.scale(1, snapScale);
         ctx.translate(0, -h / 2);
-        renderSignal(ctx, w, h, t, s, entryFrames);
+        renderActiveSignal(ctx, w, h, t, s, entryFrames);
         ctx.restore();
       }
 
@@ -119,23 +109,21 @@ export const SignalCanvas: React.FC<SignalCanvasProps> = ({ className }) => {
 
     // ── ENTRY PHASE ───────────────────────────────────────────────────────────
     const renderEntry = (
-      ctx: CanvasRenderingContext2D,
-      w: number, h: number,
+      ctx: CanvasRenderingContext2D, w: number, h: number,
       time: number, state: any
     ) => {
       if (state.introPhase <= 2) {
         ctx.beginPath();
-        ctx.strokeStyle = '#64748B'; // S00: desaturated
+        ctx.strokeStyle = '#64748B';
         ctx.lineWidth   = 1.8;
         ctx.globalAlpha = state.introPhase === 2 ? 1.0 : 0.35;
         ctx.shadowBlur  = 0;
-
-        for (let i = 0; i <= 100; i++) {
-          const x  = (i / 100) * w;
+        for (let i = 0; i <= 120; i++) {
+          const x  = (i / 120) * w;
           let   py = Math.sin(x * 0.011 + time) * (state.introPhase === 2 ? 5 : 1.5);
           if (state.introPhase === 2 && canvasState.cursorNormX !== -1) {
-            const influence = Math.exp(-Math.abs(canvasState.cursorX - x) * 0.005);
-            py += (canvasState.cursorY - h / 2) * influence * 0.12;
+            const inf = Math.exp(-Math.abs(canvasState.cursorX - x) * 0.005);
+            py += (canvasState.cursorY - h / 2) * inf * 0.12;
           }
           i === 0 ? ctx.moveTo(x, h / 2 + py) : ctx.lineTo(x, h / 2 + py);
         }
@@ -166,44 +154,64 @@ export const SignalCanvas: React.FC<SignalCanvasProps> = ({ className }) => {
       if (state.collapseProgress >= 1) { state.setPhase('ACTIVE'); state.setIntroPhase(0); }
     };
 
-    // ── ACTIVE SIGNAL ─────────────────────────────────────────────────────────
-    const renderSignal = (
-      ctx: CanvasRenderingContext2D,
-      w: number, h: number,
-      time: number, state: any,
-      frames: number
+    // ── 3-LAYER ACTIVE SIGNAL ─────────────────────────────────────────────────
+    const renderActiveSignal = (
+      ctx: CanvasRenderingContext2D, w: number, h: number,
+      time: number, state: any, frames: number
     ) => {
-      const A = Math.max(canvasState.currentA, 0.08); // Visibility floor
-      const F = canvasState.currentF;
-      const N = canvasState.currentN;
+      const A    = Math.max(canvasState.currentA, 0.08);
+      const F    = canvasState.currentF;
+      const N    = canvasState.currentN;
+      const cy   = h / 2;
+      const col  = getSignalColor(state.scene, frames);
+      const blur = frames < 12 ? 10 : 5;
 
+      // ── LAYER 1: SOFT FLOW RIBBON (depth / glow base) ──
       ctx.beginPath();
-      ctx.strokeStyle = getSignalColor(state.scene, frames);
-      ctx.lineWidth   = 2.2;
-      ctx.globalAlpha = 0.95;
-      ctx.shadowColor = '#38BDF8';
-      ctx.shadowBlur  = getShadowBlur(frames);
+      for (let i = 0; i <= 120; i++) {
+        const xn = i / 120;
+        const x  = xn * w;
+        let   py = Math.sin(xn * F * 4 + time * 1.8 + state.phase_offset) * A * h * 0.28;
+        py += (Math.random() - 0.5) * N * 35;
+        if (canvasState.cursorNormX !== -1 && state.scene >= 1) {
+          const dist = Math.sqrt((canvasState.cursorX - x) ** 2 + (canvasState.cursorY - (cy + py)) ** 2);
+          py += (canvasState.cursorY - (cy + py)) * Math.exp(-dist * 0.008) * 0.12;
+        }
+        i === 0 ? ctx.moveTo(x, cy + py) : ctx.lineTo(x, cy + py);
+      }
+      ctx.strokeStyle = col;
+      ctx.lineWidth   = 6;
+      ctx.globalAlpha = 0.06;
+      ctx.shadowBlur  = 0;
+      ctx.stroke();
 
+      // ── LAYER 2: MAIN RIBBON (signal) ──
+      ctx.beginPath();
       for (let i = 0; i <= 240; i++) {
-        const xNorm = i / 240;
-        const x     = xNorm * w;
-        let   wave  = Math.sin(xNorm * F * 4 + time * 2 + state.phase_offset);
+        const xn   = i / 240;
+        const x    = xn * w;
+        let   wave = Math.sin(xn * F * 4 + time * 2 + state.phase_offset);
         if (state.signalMode === 'digital') wave = wave > 0 ? 1 : -1;
 
         let py = wave * A * h * 0.25;
         py += (Math.random() - 0.5) * N * 55;
 
+        if (canvasState.cursorNormX !== -1 && state.scene >= 1) {
+          const dist = Math.sqrt((canvasState.cursorX - x) ** 2 + (canvasState.cursorY - (cy + py)) ** 2);
+          py += (canvasState.cursorY - (cy + py)) * Math.exp(-dist * 0.008) * 0.12;
+        }
+
         // Secondary signal (S09 interference)
         if (canvasState.secondaryEnabled) {
-          const spy = Math.sin(xNorm * F * 4 + time * 2 + canvasState.secondaryPhase) * A * h * 0.25;
+          const spy = Math.sin(xn * F * 4 + time * 2 + canvasState.secondaryPhase) * A * h * 0.25;
           ctx.save();
           ctx.beginPath();
           ctx.strokeStyle = '#7DD3FC';
           ctx.globalAlpha = (canvasState.secondaryOpacity || 0.3) * 0.8;
           ctx.lineWidth   = 1.0;
           ctx.shadowBlur  = 0;
-          ctx.moveTo(x, h / 2 + spy);
-          ctx.lineTo(x + 2, h / 2 + spy);
+          ctx.moveTo(x, cy + spy);
+          ctx.lineTo(x + 2, cy + spy);
           ctx.stroke();
           ctx.restore();
 
@@ -212,17 +220,32 @@ export const SignalCanvas: React.FC<SignalCanvasProps> = ({ className }) => {
           if (aligned !== state.phaseAligned) useSignalStore.setState({ phaseAligned: aligned });
         }
 
-        // Cursor magnetism
-        if (canvasState.cursorNormX !== -1 && state.scene >= 1) {
-          const cy  = h / 2 + py;
-          const dist = Math.sqrt((canvasState.cursorX - x) ** 2 + (canvasState.cursorY - cy) ** 2);
-          py += (canvasState.cursorY - cy) * Math.exp(-dist * 0.008) * 0.12;
-        }
+        i === 0 ? ctx.moveTo(x, cy + py) : ctx.lineTo(x, cy + py);
+      }
+      ctx.strokeStyle = col;
+      ctx.lineWidth   = 2.2;
+      ctx.globalAlpha = 0.95;
+      ctx.shadowColor = '#38BDF8';
+      ctx.shadowBlur  = blur;
+      ctx.stroke();
 
-        i === 0 ? ctx.moveTo(x, h / 2 + py) : ctx.lineTo(x, h / 2 + py);
+      // ── LAYER 3: SIGNAL PARTICLES (dots along the ribbon) ──
+      ctx.shadowBlur  = 0;
+      ctx.globalAlpha = 1;
+      const particleCount = 5;
+      for (let p = 0; p < particleCount; p++) {
+        const xnorm = ((p / particleCount) + (time * 0.06) % 1);
+        const xp    = xnorm * w;
+        const wave  = Math.sin(xnorm * F * 4 + time * 2 + state.phase_offset);
+        const yp    = cy + wave * A * h * 0.25;
+
+        ctx.beginPath();
+        ctx.arc(xp, yp, 1.5, 0, Math.PI * 2);
+        ctx.fillStyle   = col;
+        ctx.globalAlpha = 0.5 + Math.sin(time * 3 + p * 1.2) * 0.25;
+        ctx.fill();
       }
 
-      ctx.stroke();
       ctx.shadowBlur  = 0;
       ctx.globalAlpha = 1;
     };

@@ -1,0 +1,189 @@
+/**
+ * v3-animations.css
+ * 
+ * Gold-tier animation library — extracted from level1.css and refined.
+ * Rules: transform + opacity ONLY (GPU accelerated, no layout thrashing).
+ * Reduced from ~50 keyframes → 14 essential ones.
+ * 
+ * COLOR UPDATED: all feedback uses orange/neutral palette (no green/yellow/red).
+ */
+
+/* ════════════════════════════════════════════════════
+   SECTION 1 — SOCKET / MAGNETIC SYSTEM
+   (Kept: best-in-class snap intelligence)
+   ════════════════════════════════════════════════════ */
+
+@keyframes socket-breathe {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50%       { opacity: 0.6; transform: scale(1.03); }
+}
+@keyframes socket-magnetic-pulse {
+  0%, 100% { opacity: 0.7; transform: scale(1.04); }
+  50%       { opacity: 1;   transform: scale(1.10); }
+}
+@keyframes snap-stabilize {
+  0%   { transform: translate3d(0,0,0) scale(1.05); }
+  40%  { transform: translate3d(0,0,0) scale(0.97); }
+  70%  { transform: translate3d(0,0,0) scale(1.01); }
+  100% { transform: translate3d(0,0,0) scale(1); }
+}
+
+.vl-socket           { animation: socket-breathe 2.8s ease-in-out infinite; will-change: transform, opacity; }
+.vl-socket--magnetic { animation: socket-magnetic-pulse 0.7s ease-in-out infinite; will-change: transform, opacity; }
+.vl-socket--locked   { animation: snap-stabilize 280ms cubic-bezier(0.4, 0, 0.2, 1) forwards; opacity: 1; }
+
+/* ════════════════════════════════════════════════════
+   SECTION 2 — MICRO-SPARKS
+   (Kept: tactile feedback on snap — reduced intensity)
+   ════════════════════════════════════════════════════ */
+
+@keyframes micro-spark-1 { 0% { opacity: 0.8; transform: translate3d(0,0,0) scale(1); } 100% { opacity: 0; transform: translate3d(8px,-7px,0) scale(0); } }
+@keyframes micro-spark-2 { 0% { opacity: 0.8; transform: translate3d(0,0,0) scale(1); } 100% { opacity: 0; transform: translate3d(-7px,-9px,0) scale(0); } }
+@keyframes micro-spark-3 { 0% { opacity: 0.8; transform: translate3d(0,0,0) scale(1); } 100% { opacity: 0; transform: translate3d(5px,10px,0) scale(0); } }
+@keyframes micro-spark-4 { 0% { opacity: 0.8; transform: translate3d(0,0,0) scale(1); } 100% { opacity: 0; transform: translate3d(-10px,4px,0) scale(0); } }
+
+.vl-spark { will-change: transform, opacity; }
+.vl-spark:nth-child(1) { animation: micro-spark-1 180ms cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
+.vl-spark:nth-child(2) { animation: micro-spark-2 180ms cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; animation-delay: 12ms; }
+.vl-spark:nth-child(3) { animation: micro-spark-3 180ms cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; animation-delay: 6ms; }
+.vl-spark:nth-child(4) { animation: micro-spark-4 180ms cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; animation-delay: 20ms; }
+
+/* ════════════════════════════════════════════════════
+   SECTION 3 — INTERACTION FEEDBACK
+   (Kept: lock, shake — color updated to orange)
+   ════════════════════════════════════════════════════ */
+
+@keyframes vl-lock-stabilize {
+  0%   { transform: scale(1.04); }
+  60%  { transform: scale(0.98); }
+  100% { transform: scale(1); }
+}
+@keyframes vl-shake {
+  0%,100% { transform: translate3d(0,0,0); }
+  20%     { transform: translate3d(-4px,0,0); }
+  40%     { transform: translate3d(4px,0,0); }
+  60%     { transform: translate3d(-2px,0,0); }
+  80%     { transform: translate3d(2px,0,0); }
+}
+@keyframes vl-chip-return {
+  from { transform: translate3d(var(--chip-dx,0px), var(--chip-dy,0px), 0); }
+  to   { transform: translate3d(0,0,0); }
+}
+
+.vl-chip--shake  { animation: vl-shake 220ms cubic-bezier(0.4, 0, 0.2, 1) forwards; will-change: transform; }
+.vl-chip--lock   { animation: vl-lock-stabilize 260ms cubic-bezier(0.4, 0, 0.2, 1) forwards; will-change: transform; }
+.vl-chip--return { animation: vl-chip-return 300ms cubic-bezier(0.4, 0, 0.2, 1) forwards; will-change: transform; }
+
+/* ════════════════════════════════════════════════════
+   SECTION 4 — ONBOARDING GUIDANCE
+   (Kept: gap hint, ghost preview, energy ripple)
+   COLOR: uses orange accent instead of old cyan
+   ════════════════════════════════════════════════════ */
+
+@keyframes gap-intensify {
+  0%,100% { opacity: 0.10; transform: scale(1); }
+  50%     { opacity: 0.45; transform: scale(1.12); }
+}
+@keyframes energy-ripple {
+  0%   { opacity: 0.85; transform: scale(1); }
+  100% { opacity: 0;    transform: scale(1.1); }
+}
+@keyframes ghost-drift {
+  0%   { opacity: 0;    transform: translate3d(var(--ghost-dx,0px), var(--ghost-dy,0px), 0); }
+  30%  { opacity: 0.35; }
+  70%  { opacity: 0.35; transform: translate3d(0,0,0); }
+  100% { opacity: 0;    transform: translate3d(0,0,0); }
+}
+@keyframes segment-nudge {
+  0%,100% { transform: translate3d(0,0,0); }
+  25%     { transform: translate3d(7px,0,0); }
+  75%     { transform: translate3d(-7px,0,0); }
+}
+
+.vl-gap-intensified { animation: gap-intensify 1.4s ease-in-out infinite; will-change: opacity, transform; }
+.vl-energy-ripple   { animation: energy-ripple 650ms cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; will-change: opacity, transform; }
+.vl-ghost-preview   { animation: ghost-drift 1.4s ease-in-out infinite; animation-delay: 0.2s; will-change: opacity, transform; pointer-events: none; }
+.vl-segment-nudge   { animation: segment-nudge 0.45s cubic-bezier(0.4, 0, 0.2, 1) 2; will-change: transform; }
+
+/* ════════════════════════════════════════════════════
+   SECTION 5 — SIGNAL PARTICLES
+   (Kept: signal life feel — subtle, not loud)
+   ════════════════════════════════════════════════════ */
+
+@keyframes signal-dot-pulse {
+  0%,100% { opacity: 0.4; transform: scale(1); }
+  50%     { opacity: 0.9; transform: scale(1.4); }
+}
+
+.vl-signal-particle                  { animation: signal-dot-pulse 1.4s ease-in-out infinite; will-change: opacity, transform; }
+.vl-signal-particle:nth-child(1)     { animation-delay: 0s; }
+.vl-signal-particle:nth-child(2)     { animation-delay: 0.35s; }
+.vl-signal-particle:nth-child(3)     { animation-delay: 0.7s; }
+.vl-signal-particle:nth-child(4)     { animation-delay: 1.05s; }
+
+/* ════════════════════════════════════════════════════
+   SECTION 6 — WIRE / ELECTRON FLOW
+   (Kept: live wire feel for circuit lab)
+   ════════════════════════════════════════════════════ */
+
+@keyframes electron-flow {
+  from { stroke-dashoffset: 200; }
+  to   { stroke-dashoffset: 0; }
+}
+@keyframes wire-pulse {
+  0%,100% { stroke-opacity: 0.6; }
+  50%     { stroke-opacity: 1; }
+}
+
+.vl-wire--live {
+  stroke-dasharray: 6 8;
+  animation: electron-flow 1.4s linear infinite, wire-pulse 2.2s ease-in-out infinite;
+  will-change: stroke-dashoffset, stroke-opacity;
+}
+
+/* ════════════════════════════════════════════════════
+   SECTION 7 — COMPLETION / CIRCUIT REVEAL
+   (Kept: meaningful success feedback)
+   ════════════════════════════════════════════════════ */
+
+@keyframes vl-invariant-reveal {
+  from { opacity: 0; transform: translate3d(-5px,0,0); }
+  to   { opacity: 1; transform: translate3d(0,0,0); }
+}
+@keyframes vl-check-draw {
+  from { stroke-dashoffset: 40; opacity: 0; }
+  to   { stroke-dashoffset: 0;  opacity: 1; }
+}
+@keyframes circuit-complete-flash {
+  0%   { opacity: 0; transform: scale(0.96); }
+  30%  { opacity: 1; transform: scale(1.02); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+.vl-invariant { opacity: 0; will-change: transform, opacity; animation: vl-invariant-reveal 350ms cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+.vl-invariant:nth-child(1) { animation-delay: 0.12s; }
+.vl-invariant:nth-child(2) { animation-delay: 0.22s; }
+.vl-invariant:nth-child(3) { animation-delay: 0.32s; }
+.vl-invariant:nth-child(4) { animation-delay: 0.42s; }
+
+.vl-check-path           { stroke-dasharray: 40; stroke-dashoffset: 40; opacity: 0; will-change: stroke-dashoffset, opacity; }
+.vl-check-path.is-visible { animation: vl-check-draw 350ms cubic-bezier(0.4, 0, 0.2, 1) forwards; animation-delay: 0.25s; }
+
+.vl-circuit-complete { animation: circuit-complete-flash 480ms cubic-bezier(0.4, 0, 0.2, 1) forwards; will-change: opacity, transform; }
+
+/* ════════════════════════════════════════════════════
+   PREFERS-REDUCED-MOTION
+   ════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  .vl-socket, .vl-socket--magnetic, .vl-socket--locked,
+  .vl-spark, .vl-signal-particle, .vl-wire--live,
+  .vl-chip--shake, .vl-chip--lock, .vl-chip--return,
+  .vl-energy-ripple, .vl-ghost-preview, .vl-gap-intensified,
+  .vl-segment-nudge, .vl-circuit-complete, .vl-invariant {
+    animation: none !important;
+    transition: none !important;
+  }
+  .vl-check-path.is-visible { stroke-dashoffset: 0 !important; opacity: 1 !important; }
+  .vl-invariant             { opacity: 1 !important; transform: none !important; }
+}
