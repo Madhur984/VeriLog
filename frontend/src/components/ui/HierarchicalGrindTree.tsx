@@ -468,125 +468,121 @@ export const HierarchicalGrindTree: React.FC = () => {
     });
   };
 
-  // Precompute child X positions for SVG traces
-  // We'll render children in a row below each root node
-  // Traces are rendered in an overlay SVG
-
   return (
-    <div className="relative w-full flex flex-col items-center" style={{ paddingBottom: 60 }}>
+    <div className="w-full h-full flex flex-col items-center bg-transparent">
+      {/* ── Scrollable Modules Area ── */}
+      <div 
+        className="flex-1 w-full overflow-y-auto px-10 pt-10 pb-20 scrollbar-thin scrollbar-thumb-cyan-500/20 scrollbar-track-transparent"
+        style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(34,211,238,0.2) transparent' }}
+      >
+        <div className="flex flex-col items-center w-full min-h-full">
+          {/* Diagnostic console status — top */}
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="flex items-center gap-2 mb-10 text-[11px] font-mono tracking-widest text-cyan-400/60 uppercase"
+          >
+            <div className="w-1 h-1 rounded-full bg-cyan-400 animate-pulse" />
+            Active Module Recognition System Online
+          </motion.div>
 
-      {/* ── Root nodes row ── */}
-      <div className="relative flex items-end justify-center gap-4 z-10" style={{ width: '100%' }}>
-        {ROOT_NODES.map(node => (
-          <RootGem
-            key={node.id}
-            node={node}
-            expanded={expanded.has(node.id)}
-            onClick={() => {
-              toggle(node.id);
-              if (node.route && node.status !== 'locked') navigate(node.route);
-            }}
-          />
-        ))}
-      </div>
+          {/* ── Root nodes row ── */}
+          <div className="relative flex items-end justify-center gap-4 z-10 w-full">
+            {ROOT_NODES.map(node => (
+              <RootGem
+                key={node.id}
+                node={node}
+                expanded={expanded.has(node.id)}
+                onClick={() => {
+                  toggle(node.id);
+                  if (node.route && node.status !== 'locked') navigate(node.route);
+                }}
+              />
+            ))}
+          </div>
 
-      {/* ── Children rows — one row per root node ── */}
-      <div className="relative mt-6 w-full" style={{ maxWidth: 860 }}>
-        {ROOT_NODES.map((node) => (
-          <AnimatePresence key={node.id}>
-            {expanded.has(node.id) && (
-              <motion.div
-                initial={{ opacity: 0, height: 0, y: -10 }}
-                animate={{ opacity: 1, height: 'auto', y: 0 }}
-                exit={{ opacity: 0, height: 0, y: -10 }}
-                transition={{ duration: 0.45, ease: 'easeOut' }}
-                className="overflow-hidden"
-              >
-                {/* Connecting vertical stem */}
-                <div className="w-full flex justify-center mb-2">
+          {/* ── Children rows ── */}
+          <div className="relative mt-6 w-full" style={{ maxWidth: 1000 }}>
+            {ROOT_NODES.map((node) => (
+              <AnimatePresence key={node.id}>
+                {expanded.has(node.id) && (
                   <motion.div
-                    initial={{ scaleY: 0 }}
-                    animate={{ scaleY: 1 }}
-                    transition={{ duration: 0.3 }}
-                    style={{
-                      width: 2,
-                      height: 20,
-                      background: `linear-gradient(to bottom, ${node.glow}, ${node.glow}40)`,
-                      boxShadow: `0 0 6px ${node.glow}60`,
-                      transformOrigin: 'top',
-                    }}
-                  />
-                </div>
-
-                {/* Horizontal branch bar */}
-                <div className="w-full flex justify-center mb-3">
-                  <motion.div
-                    initial={{ scaleX: 0 }}
-                    animate={{ scaleX: 1 }}
-                    transition={{ duration: 0.4, delay: 0.15 }}
-                    style={{
-                      width: Math.min(node.children.length * 84, 520),
-                      height: 2,
-                      background: `linear-gradient(90deg, transparent, ${node.glow}80, ${node.glow}, ${node.glow}80, transparent)`,
-                      boxShadow: `0 0 8px ${node.glow}60`,
-                      transformOrigin: 'center',
-                    }}
-                  />
-                </div>
-
-                {/* Child nodes */}
-                <div className="flex justify-center gap-3 flex-wrap px-4">
-                  {node.children.map((child, ci) => (
-                    <div key={child.id} className="flex flex-col items-center">
-                      {/* vertical drop from branch bar */}
+                    initial={{ opacity: 0, height: 0, y: -10 }}
+                    animate={{ opacity: 1, height: 'auto', y: 0 }}
+                    exit={{ opacity: 0, height: 0, y: -10 }}
+                    transition={{ duration: 0.45, ease: 'easeOut' }}
+                    className="overflow-hidden"
+                  >
+                    <div className="w-full flex justify-center mb-2">
                       <motion.div
                         initial={{ scaleY: 0 }}
                         animate={{ scaleY: 1 }}
-                        transition={{ duration: 0.25, delay: 0.25 + ci * 0.05 }}
+                        transition={{ duration: 0.3 }}
                         style={{
-                          width: 1.5,
-                          height: 16,
-                          background: child.locked ? '#1e293b' : `${child.color}80`,
-                          boxShadow: child.locked ? 'none' : `0 0 4px ${child.color}60`,
+                          width: 2,
+                          height: 20,
+                          background: `linear-gradient(to bottom, ${node.glow}, ${node.glow}40)`,
+                          boxShadow: `0 0 6px ${node.glow}60`,
                           transformOrigin: 'top',
-                          marginBottom: 4,
                         }}
                       />
-                      <SubNodeBadge node={child} delay={0.3 + ci * 0.07} />
                     </div>
-                  ))}
-                </div>
 
-                {/* PCB land pad strip below children */}
-                <div
-                  className="flex justify-center mt-4 gap-2"
-                  style={{ opacity: 0.4 }}
-                >
-                  {node.children.map((_, ci) => (
-                    <div
-                      key={ci}
-                      className="rounded-sm"
-                      style={{
-                        width: 44,
-                        height: 4,
-                        background: `linear-gradient(90deg, transparent, ${node.glow}40, transparent)`,
-                      }}
-                    />
-                  ))}
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        ))}
+                    <div className="w-full flex justify-center mb-3">
+                      <motion.div
+                        initial={{ scaleX: 0 }}
+                        animate={{ scaleX: 1 }}
+                        transition={{ duration: 0.4, delay: 0.15 }}
+                        style={{
+                          width: Math.min(node.children.length * 84, 520),
+                          height: 2,
+                          background: `linear-gradient(90deg, transparent, ${node.glow}80, ${node.glow}, ${node.glow}80, transparent)`,
+                          boxShadow: `0 0 8px ${node.glow}60`,
+                          transformOrigin: 'center',
+                        }}
+                      />
+                    </div>
+
+                    <div className="flex justify-center gap-3 flex-wrap px-4">
+                      {node.children.map((child, ci) => (
+                        <div key={child.id} className="flex flex-col items-center">
+                          <motion.div
+                            initial={{ scaleY: 0 }}
+                            animate={{ scaleY: 1 }}
+                            transition={{ duration: 0.25, delay: 0.25 + ci * 0.05 }}
+                            style={{
+                              width: 1.5,
+                              height: 16,
+                              background: child.locked ? '#1e293b' : `${child.color}80`,
+                              boxShadow: child.locked ? 'none' : `0 0 4px ${child.color}60`,
+                              transformOrigin: 'top',
+                              marginBottom: 4,
+                            }}
+                          />
+                          <SubNodeBadge node={child} delay={0.3 + ci * 0.07} />
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="flex justify-center mt-4 gap-2" style={{ opacity: 0.4 }}>
+                      {node.children.map((_, ci) => (
+                        <div key={ci} className="rounded-sm" style={{ width: 44, height: 4, background: `linear-gradient(90deg, transparent, ${node.glow}40, transparent)` }} />
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            ))}
+          </div>
+        </div>
       </div>
 
-      {/* ── Bottom row: Jewel + data chips ── */}
-      <div className="flex items-end justify-between mt-10 w-full px-10" style={{ maxWidth: 860 }}>
-        {/* Data flow metrics (left) */}
+      {/* ── Bottom Fixed Legend ── */}
+      <div className="flex-shrink-0 flex items-end justify-between py-6 w-full px-10 border-t border-cyan-400/10 z-20" style={{ maxWidth: 1000, background: 'rgba(6,9,15,0.7)', backdropFilter: 'blur(12px)' }}>
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 2.0, duration: 0.7 }}
+          transition={{ delay: 1, duration: 0.7 }}
           className="flex flex-col gap-2"
         >
           {[
@@ -595,49 +591,41 @@ export const HierarchicalGrindTree: React.FC = () => {
             { label: 'XP Earned',       val: '2,480', color: '#fbbf24' },
             { label: 'Current Streak',  val: '7 days', color: '#fb7185' },
           ].map(({ label, val, color }) => (
-            <div key={label} className="flex items-center gap-3">
-              <div className="w-1.5 h-1.5 rounded-full" style={{ background: color, boxShadow: `0 0 4px ${color}` }} />
-              <div className="text-[8px] font-mono" style={{ color: '#334155' }}>{label}</div>
-              <div className="text-[9px] font-black font-mono" style={{ color }}>{val}</div>
+            <div key={label} className="flex items-center gap-4">
+              <div className="w-2 h-2 rounded-full" style={{ background: color, boxShadow: `0 0 8px ${color}` }} />
+              <div className="text-[11px] font-mono tracking-wider" style={{ color: 'rgba(255,255,255,0.4)' }}>{label}</div>
+              <div className="text-[13px] font-black font-mono" style={{ color }}>{val}</div>
             </div>
           ))}
         </motion.div>
 
-        {/* Single jewel construct (center-right) */}
-        <JewelPolyhedron />
+        <div className="flex flex-col items-center">
+          <JewelPolyhedron />
+          <div className="text-[11px] font-black tracking-[0.3em] uppercase mt-2 text-white/40">
+            JEWEL CONSTRUCT Ω
+          </div>
+        </div>
 
-        {/* Right floating HUD panel */}
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 2.2, duration: 0.7 }}
+          transition={{ delay: 1.2, duration: 0.7 }}
           className="flex flex-col gap-3"
-          style={{ width: 130 }}
+          style={{ width: 180 }}
         >
-          <div
-            className="rounded-xl p-3"
-            style={{
-              background: 'rgba(6,9,15,0.8)',
-              border: '1px solid rgba(34,211,238,0.1)',
-            }}
-          >
-            <div className="text-[6px] font-black tracking-[0.3em] uppercase mb-2" style={{ color: '#22d3ee40' }}>
+          <div className="rounded-xl p-3" style={{ background: 'rgba(6,9,15,0.8)', border: '1px solid rgba(34,211,238,0.1)' }}>
+            <div className="text-[10px] font-black tracking-[0.3em] uppercase mb-3 px-1" style={{ color: '#22d3ee' }}>
               DATA PACKETS
             </div>
             {Array.from({ length: 5 }).map((_, i) => (
-              <motion.div
-                key={i}
-                className="flex items-center gap-2 mb-1"
-              >
+              <motion.div key={i} className="flex items-center gap-2 mb-1">
                 <motion.div
-                  className="h-1 rounded-full flex-1"
-                  style={{
-                    background: `linear-gradient(90deg, ${['#22d3ee','#a78bfa','#34d399','#fbbf24','#fb7185'][i]}40, ${['#22d3ee','#a78bfa','#34d399','#fbbf24','#fb7185'][i]})`,
-                  }}
-                  animate={{ scaleX: [0.2, 1, 0.2], x: [-20, 0, 20] }}
+                  className="h-1.5 rounded-full flex-1"
+                  style={{ background: `linear-gradient(90deg, ${['#22d3ee','#a78bfa','#34d399','#fbbf24','#fb7185'][i]}40, ${['#22d3ee','#a78bfa','#34d399','#fbbf24','#fb7185'][i]})` }}
+                  animate={{ scaleX: [0.3, 1, 0.3], x: [-10, 0, 10] }}
                   transition={{ duration: 2.5 + i * 0.4, repeat: Infinity, delay: i * 0.3 }}
                 />
-                <div className="text-[6px] font-mono w-4" style={{ color: '#334155' }}>
+                <div className="text-[10px] font-mono font-bold w-6 text-right" style={{ color: 'rgba(255,255,255,0.4)' }}>
                   {['TX','RX','DM','CK','IN'][i]}
                 </div>
               </motion.div>

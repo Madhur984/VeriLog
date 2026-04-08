@@ -5,7 +5,7 @@ import { useGamificationStore } from '../stores/gamificationStore';
 import { CommandPalette } from '../components/ui/CommandPalette';
 import { OnboardingTour } from '../components/ui/OnboardingTour';
 import { RadialMenu } from '../components/ui/RadialMenu';
-import { FluencyLEDGrid } from '../components/ui/FluencyLEDGrid';
+
 import { DiagnosticConsole } from '../components/ui/DiagnosticConsole';
 import { HierarchicalGrindTree } from '../components/ui/HierarchicalGrindTree';
 
@@ -83,62 +83,161 @@ const PCBBackground: React.FC = () => (
 );
 
 // ─── PROFILE TILE ──────────────────────────────────────────────────────────────
-const ProfileTile: React.FC<{ name: string; xp: number; level: number }> = ({ name, xp, level }) => (
-  <motion.div
-    initial={{ opacity: 0, y: -16 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ delay: 1.2, duration: 0.6 }}
-    className="fixed top-6 right-8 z-50 flex items-center gap-3 px-4 py-2.5 rounded-xl"
-    style={{
-      background: 'rgba(6,9,15,0.88)',
-      border: '1px solid rgba(34,211,238,0.18)',
-      backdropFilter: 'blur(16px)',
-      boxShadow:
-        '0 0 0 1px rgba(34,211,238,0.06), 0 16px 40px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,255,255,0.04)',
-    }}
-  >
-    {/* Avatar */}
-    <div
-      className="w-10 h-10 rounded-lg flex items-center justify-center text-base font-black"
+// ─── PROFILE CARD ──────────────────────────────────────────────────────────────
+const ProfileCard: React.FC<{
+  name: string;
+  xp: { total: number };
+  level: number;
+  streak: number;
+  gems: number;
+  hearts: number;
+  badgesCount: number;
+  completedCount: number;
+}> = ({ name, xp, level, streak, gems, hearts, badgesCount, completedCount }) => {
+  // Calculate progress to next level
+  const currentLevelXP = Math.pow(level - 1, 2) * 100;
+  const nextLevelXP = Math.pow(level, 2) * 100;
+  const progress = ((xp.total - currentLevelXP) / (nextLevelXP - currentLevelXP)) * 100;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ delay: 1.2, duration: 0.6 }}
+      className="fixed top-8 right-8 z-50 p-4 rounded-2xl w-60"
       style={{
-        background: 'linear-gradient(135deg, #0e7490, #6d28d9)',
-        color: '#e2e8f0',
-        boxShadow: '0 0 12px rgba(34,211,238,0.3)',
-        fontFamily: 'monospace',
+        background: 'rgba(6,9,15,0.92)',
+        border: '1px solid rgba(34,211,238,0.2)',
+        backdropFilter: 'blur(20px)',
+        boxShadow: [
+          '0 20px 50px rgba(0,0,0,0.7)',
+          '0 0 0 1px rgba(255,255,255,0.03)',
+          'inset 0 1px 1px rgba(255,255,255,0.05)',
+        ].join(', '),
       }}
     >
-      {name.charAt(0).toUpperCase()}
-    </div>
-
-    <div>
-      <div className="text-[11px] font-black tracking-[0.18em] uppercase text-white leading-none">
-        {name}
+      {/* Profile Header */}
+      <div className="flex items-start justify-between mb-4">
+        <div className="flex items-center gap-3">
+          <div
+            className="w-12 h-12 rounded-xl flex items-center justify-center text-xl font-black relative overflow-hidden group"
+            style={{
+              background: 'linear-gradient(135deg, #0891b2, #4f46e5)',
+              color: '#e2e8f0',
+              boxShadow: '0 0 15px rgba(34,211,238,0.3)',
+              fontFamily: 'monospace',
+            }}
+          >
+            {name.charAt(0).toUpperCase()}
+            {/* Holographic sweep */}
+            <motion.div
+              className="absolute inset-0 bg-white/20 w-1/2 -skew-x-12 blur-sm"
+              animate={{ x: [-100, 200] }}
+              transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
+            />
+          </div>
+          <div>
+            <div className="text-[14px] font-black tracking-widest uppercase text-white leading-tight">
+              {name}
+            </div>
+            <div className="flex items-center gap-1.5 mt-0.5">
+              <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_6px_#22d3ee]" />
+              <span className="text-[9px] font-bold text-cyan-400/80 tracking-widest uppercase">
+                Active Session
+              </span>
+            </div>
+          </div>
+        </div>
+        <div className="flex flex-col items-end">
+          <div className="text-[10px] font-mono font-bold text-white leading-none">
+            <span className="text-cyan-400">LVL </span>{level}
+          </div>
+          <div className="text-[8px] font-mono text-slate-500 mt-1 uppercase">
+            {xp.total.toLocaleString()} total sip
+          </div>
+        </div>
       </div>
-      <div className="flex items-center gap-1.5 mt-1.5">
-        <motion.div
-          className="w-1.5 h-1.5 rounded-full"
-          style={{ background: '#f59e0b', boxShadow: '0 0 6px #f59e0b' }}
-          animate={{ opacity: [1, 0.3, 1] }}
-          transition={{ duration: 1.5, repeat: Infinity }}
-        />
-        <span className="text-[8px] font-bold tracking-[0.15em] uppercase" style={{ color: '#f59e0b' }}>
-          Hierarchical Grind
-        </span>
-      </div>
-    </div>
 
-    {/* Mini stat bar */}
-    <div className="ml-2 pl-3 border-l border-white/10 text-[9px] font-mono text-slate-400 leading-relaxed">
-      <div><span className="text-cyan-400">XP  </span>{xp.toLocaleString()}</div>
-      <div><span className="text-amber-400">LVL </span>{level}</div>
-    </div>
-  </motion.div>
-);
+      {/* Progress to next Level */}
+      <div className="mb-5">
+        <div className="flex justify-between items-center mb-1.5 px-0.5">
+          <span className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">Progression</span>
+          <span className="text-[9px] font-mono text-cyan-400 font-bold">{Math.round(progress)}%</span>
+        </div>
+        <div className="h-1.5 w-full bg-black/40 rounded-full overflow-hidden border border-white/5 p-[1px]">
+          <motion.div
+            className="h-full rounded-full"
+            style={{ background: 'linear-gradient(90deg, #0891b2, #22d3ee)' }}
+            initial={{ width: 0 }}
+            animate={{ width: `${progress}%` }}
+            transition={{ delay: 1.8, duration: 1.2 }}
+          />
+        </div>
+      </div>
+
+      {/* Core Stats Grid */}
+      <div className="grid grid-cols-2 gap-2 mb-4">
+        {[
+          { label: 'Streak', value: streak, unit: 'DAYS', color: '#f59e0b', icon: '🔥' },
+          { label: 'Hearts', value: hearts, unit: 'LIFE', color: '#ef4444', icon: '❤️' },
+          { label: 'Gems', value: gems, unit: 'SIP', color: '#10b981', icon: '💎' },
+          { label: 'Badges', value: badgesCount, unit: 'EARNED', color: '#a78bfa', icon: '👑' },
+        ].map((stat) => (
+          <div
+            key={stat.label}
+            className="bg-white/[0.03] border border-white/[0.05] rounded-xl px-3 py-2 flex items-center justify-between"
+          >
+            <div>
+              <div className="text-[9px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1">
+                {stat.label}
+              </div>
+              <div className="text-[11px] font-mono font-black text-white leading-none">
+                {stat.value} <span className="text-[8px] font-normal text-slate-500 ml-0.5">{stat.unit}</span>
+              </div>
+            </div>
+            <div className="text-xs opacity-80">{stat.icon}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Secondary readout */}
+      <div className="flex items-center justify-between pt-3 border-t border-white/5">
+        <div className="flex gap-4">
+          <div className="flex flex-col">
+            <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-0.5">Missions</span>
+            <span className="text-[10px] font-mono text-white font-bold">{completedCount} Completed</span>
+          </div>
+          <div className="flex flex-col">
+            <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-0.5">Rank</span>
+            <span className="text-[10px] font-mono text-amber-400 font-bold">Technician</span>
+          </div>
+        </div>
+        <motion.button
+          whileHover={{ scale: 1.05, background: 'rgba(34,211,238,0.1)' }}
+          whileTap={{ scale: 0.95 }}
+          className="px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-widest border border-cyan-400/20 text-cyan-400 transition-colors"
+        >
+          Details
+        </motion.button>
+      </div>
+    </motion.div>
+  );
+};
 
 // ─── MAIN ──────────────────────────────────────────────────────────────────────
 export const WorkstationHome: React.FC = () => {
   const navigate = useNavigate();
-  const { firstName, checkStreak } = useGamificationStore();
+  const {
+    firstName,
+    checkStreak,
+    xp,
+    level,
+    streak,
+    gems,
+    hearts,
+    badges,
+    skills
+  } = useGamificationStore();
   const [cmdOpen, setCmdOpen] = useState(false);
   const [tourOpen, setTourOpen] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -153,7 +252,7 @@ export const WorkstationHome: React.FC = () => {
   }, []);
 
   const name = firstName ?? 'Madhur';
-  const { xp, level } = useGamificationStore();
+
 
   return (
     <div className="h-screen flex overflow-hidden font-sans" style={{ backgroundColor: '#06090f', color: '#cbd5e1' }}>
@@ -163,83 +262,41 @@ export const WorkstationHome: React.FC = () => {
       {/* Left radial nav */}
       <RadialMenu />
 
-      {/* Madhur profile tile */}
-      <ProfileTile name={name} xp={xp.total} level={level} />
+      {/* Profile card — top right */}
+      <ProfileCard
+        name={name}
+        xp={xp}
+        level={level}
+        streak={streak.current}
+        gems={gems}
+        hearts={hearts}
+        badgesCount={badges.length}
+        completedCount={skills.completedIds.length}
+      />
 
       {/* Main scrollable canvas */}
       <main
         ref={scrollRef}
-        className="flex-1 pl-[76px] overflow-y-auto overflow-x-hidden relative z-10"
-        style={{ scrollbarWidth: 'thin', scrollbarColor: '#22d3ee20 transparent' }}
+        className="flex-1 pl-[76px] pr-[280px] h-screen flex flex-col relative z-10 overflow-hidden"
+        style={{ color: '#cbd5e1' }}
       >
-        <div className="min-h-screen flex flex-col items-center">
+        <div className="flex-1 flex flex-col items-start overflow-hidden">
+          {/* ─ Top spacing ─ */}
+          <div className="flex-shrink-0 h-10" />
 
-          {/* ── Section header ── */}
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="flex flex-col items-center mt-20 mb-8"
-          >
-            <div
-              className="text-[9px] font-black tracking-[0.5em] uppercase mb-3 flex items-center gap-3"
-              style={{ color: '#22d3ee60' }}
-            >
-              <span style={{ display: 'inline-block', width: 40, height: 1, background: 'linear-gradient(to right, transparent, #22d3ee)' }} />
-              DATA LOGIC TREE
-              <span style={{ display: 'inline-block', width: 40, height: 1, background: 'linear-gradient(to left, transparent, #22d3ee)' }} />
-            </div>
-            <h1
-              className="text-4xl font-black tracking-tight text-white text-center"
-              style={{ textShadow: '0 0 40px rgba(34,211,238,0.15)', letterSpacing: '-0.5px' }}
-            >
-              Hierarchical Grind
-            </h1>
-            <div className="text-[10px] font-mono text-slate-500 mt-2 tracking-[0.2em]">
-              SKILL NODE MAP · PCB SUBSTRATE v2.4
-            </div>
-          </motion.div>
-
-          {/* ── Fluency LED grid ── */}
-          <FluencyLEDGrid fluency={62} />
-
-          {/* ── Multi-bus data bar ── */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.8 }}
-            className="flex flex-col items-center gap-1.5 mb-8"
-            style={{ width: 860 }}
-          >
-            <div className="text-[7px] font-black tracking-[0.4em] uppercase" style={{ color: '#fbbf2450' }}>
-              ◈ DIGITAL LOGIC PATHWAYS ◈
-            </div>
-            <div className="flex gap-0.5 w-full" style={{ height: 5 }}>
-              {['#22d3ee', '#a78bfa', '#fbbf24', '#34d399', '#fb7185', '#c4b5fd'].map((c, i) => (
-                <motion.div
-                  key={i}
-                  className="flex-1 rounded-full"
-                  style={{ backgroundColor: c, boxShadow: `0 0 4px ${c}80` }}
-                  animate={{ opacity: [0.4, 0.85, 0.4] }}
-                  transition={{ duration: 2.2, repeat: Infinity, delay: i * 0.28 }}
-                />
-              ))}
-            </div>
-          </motion.div>
-
-          {/* ── Main platform with tree + console ── */}
+          {/* ─ Main platform with tree + console ─ */}
           <div
-            className="relative w-full flex gap-8 justify-center items-start px-6"
-            style={{ maxWidth: 1100 }}
+            className="flex-1 w-full flex gap-20 justify-start items-start px-6 overflow-hidden"
+            style={{ maxWidth: 1400 }}
           >
             {/* Diagnostic console — left */}
-            <div className="flex-shrink-0 pt-8">
+            <div className="flex-shrink-0 pt-8" style={{ marginLeft: 0 }}>
               <DiagnosticConsole onCommandPaletteOpen={() => setCmdOpen(true)} />
             </div>
 
             {/* Holographic skill tree — center/right */}
             <div
-              className="flex-1 relative rounded-3xl py-10 px-6"
+              className="flex-1 h-full relative rounded-3xl flex flex-col overflow-hidden"
               style={{
                 background: 'linear-gradient(160deg, rgba(14,20,36,0.92) 0%, rgba(6,9,15,0.97) 100%)',
                 border: '1px solid rgba(34,211,238,0.1)',
@@ -250,62 +307,39 @@ export const WorkstationHome: React.FC = () => {
                 ].join(', '),
               }}
             >
-              {/* Corner LED indicators */}
-              {[
-                ['top-3 left-3',     '#22d3ee'],
-                ['top-3 right-3',    '#a78bfa'],
-                ['bottom-3 left-3',  '#34d399'],
-                ['bottom-3 right-3', '#fbbf24'],
-              ].map(([pos, color], i) => (
-                <motion.div
-                  key={i}
-                  className={`absolute ${pos} w-2 h-2 rounded-full`}
-                  style={{ background: color, boxShadow: `0 0 8px ${color}` }}
-                  animate={{ opacity: [1, 0.3, 1] }}
-                  transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.4 }}
+              <div className="w-full h-full overflow-hidden px-10 pt-10">
+                {/* Corner LED indicators */}
+                {[
+                  ['top-3 left-3', '#22d3ee'],
+                  ['top-3 right-3', '#a78bfa'],
+                  ['bottom-3 left-3', '#34d399'],
+                  ['bottom-3 right-3', '#fbbf24'],
+                ].map(([pos, color], i) => (
+                  <motion.div
+                    key={i}
+                    className={`absolute ${pos} w-2 h-2 rounded-full z-20`}
+                    style={{ background: color, boxShadow: `0 0 8px ${color}` }}
+                    animate={{ opacity: [1, 0.3, 1] }}
+                    transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.4 }}
+                  />
+                ))}
+
+                {/* PCB grid overlay */}
+                <div
+                  className="absolute inset-0 rounded-3xl pointer-events-none opacity-20"
+                  style={{
+                    backgroundImage: `
+                      linear-gradient(rgba(34,211,238,0.07) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(34,211,238,0.07) 1px, transparent 1px)
+                    `,
+                    backgroundSize: '24px 24px',
+                  }}
                 />
-              ))}
 
-              {/* PCB grid overlay */}
-              <div
-                className="absolute inset-0 rounded-3xl pointer-events-none opacity-20"
-                style={{
-                  backgroundImage: `
-                    linear-gradient(rgba(34,211,238,0.07) 1px, transparent 1px),
-                    linear-gradient(90deg, rgba(34,211,238,0.07) 1px, transparent 1px)
-                  `,
-                  backgroundSize: '24px 24px',
-                }}
-              />
-
-              <HierarchicalGrindTree />
+                <HierarchicalGrindTree />
+              </div>
             </div>
           </div>
-
-          {/* ── Bottom legend ── */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.6 }}
-            className="flex items-center gap-10 mt-12 mb-16 text-[9px] font-bold tracking-[0.25em] uppercase"
-            style={{ color: '#334155' }}
-          >
-            {[
-              { color: '#22d3ee', label: 'Completed' },
-              { color: '#fbbf24', label: 'In Progress', pulse: true },
-              { color: '#334155', label: 'Locked' },
-            ].map(({ color, label, pulse }) => (
-              <div key={label} className="flex items-center gap-2">
-                <motion.div
-                  className="w-5 h-[2px] rounded-full"
-                  style={{ background: color, boxShadow: `0 0 6px ${color}` }}
-                  animate={pulse ? { opacity: [1, 0.3, 1] } : {}}
-                  transition={{ duration: 1.5, repeat: Infinity }}
-                />
-                <span style={{ color }}>{label}</span>
-              </div>
-            ))}
-          </motion.div>
 
         </div>
       </main>
