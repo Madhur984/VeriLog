@@ -93,10 +93,10 @@ export const useSignalStore = create<SignalStore>((set, get) => ({
   collapseProgress: 0,
   velocity: 0,
 
-  amplitude: 0.5,
-  frequency: 1,
+  amplitude: 0.18,
+  frequency: 1.4,
   phase_offset: 0,
-  noise: 0,
+  noise: 0.02,
   waveType: 'sine',
   signalMode: 'analog',
 

@@ -13,7 +13,7 @@ export const FloatingSidebar: React.FC = () => {
   const goToScene = useSignalStore((s) => s.goToScene);
 
   return (
-    <div className="v3-sidebar z-50 pointer-events-auto">
+    <div className="sidebar-container fixed left-8 top-1/2 -translate-y-1/2 flex flex-col gap-4 pointer-events-auto">
       {SCENES.map((name, i) => {
         const isActive = currentScene === i;
         const isCompleted = currentScene > i;

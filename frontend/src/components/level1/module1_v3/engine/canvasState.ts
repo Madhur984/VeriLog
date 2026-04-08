@@ -4,8 +4,8 @@
  */
 export const canvasState = {
   // Visual (from useStateOfMind)
-  lineWidth: 1.5,
-  opacity: 0.35,
+  lineWidth: 2.0,
+  opacity: 0.9,
 
   // Cursor (updated on every mousemove)
   cursorNormX: -1,    // -1 = no influence
@@ -14,7 +14,7 @@ export const canvasState = {
   magneticStrength: 0, // 0 = off
 
   // Resistance / Lerp targets
-  currentA: 0.5,
+  currentA: 0.15,
   currentF: 1.0,
   currentN: 0,
 

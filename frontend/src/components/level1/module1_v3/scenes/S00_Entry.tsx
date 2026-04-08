@@ -4,24 +4,20 @@ import { useSignalStore } from '../store/signalStore';
 import { audioEngine } from '../engine/audioEngine';
 
 export const S00_Entry: React.FC = () => {
-  const { 
-    setAmplitude, 
-    setFrequency, 
-    setIntroPhase, 
-    setTunnelProgress, 
-    setCollapseProgress,
-    setPhase: setGlobalPhase 
+  const {
+    setAmplitude, setFrequency,
+    setIntroPhase, setTunnelProgress,
+    setCollapseProgress, setPhase: setGlobalPhase
   } = useSignalStore();
 
-  const [text, setText] = useState('Signal inactive.');
+  const [text, setText]       = useState('Signal inactive.');
   const [subText, setSubText] = useState('No variation detected.');
-  const [phase, setLocalPhase] = useState(1);
+  const [localPhase, setLocalPhase] = useState(1);
   const activatedRef = useRef(false);
 
   useEffect(() => {
-    // START PHASE 1: THE DEAD SIGNAL
     setIntroPhase(1);
-    setAmplitude(0); // Strictly horizontal
+    setAmplitude(0);
     setFrequency(0);
   }, [setAmplitude, setFrequency, setIntroPhase]);
 
@@ -29,74 +25,44 @@ export const S00_Entry: React.FC = () => {
     const onMove = () => {
       if (activatedRef.current) return;
       activatedRef.current = true;
-
-      // PHASE 2: USER BREAKS IT
       setIntroPhase(2);
       setText('Signal = change.');
       setSubText('Input detected.');
-      
-      startDelayedTunnelSequence();
+      setTimeout(startTunnelSequence, 1500);
     };
-
     window.addEventListener('mousemove', onMove);
     return () => window.removeEventListener('mousemove', onMove);
   }, []);
 
-  const startDelayedTunnelSequence = () => {
-    // Wait for the realization (1.5s)
-    setTimeout(() => {
-      startTunnelSequence();
-    }, 1500);
-  };
-
   const startTunnelSequence = () => {
-    // PHASE 3: TUNNEL FORMATION
     setLocalPhase(3);
     setIntroPhase(3);
     audioEngine.hum(1.7);
-    
-    const startTime = Date.now();
-    const duration = 2400; // Smoother tunnel build-up
-
-    const animateTunnel = () => {
-      const elapsed = Date.now() - startTime;
-      const norm = Math.min(1, elapsed / duration);
-      
-      setTunnelProgress(norm);
-      setAmplitude(norm * 0.15); // Slight wave formation during tunnel
-      setFrequency(1.0);
-      
-      if (norm < 1) {
-        requestAnimationFrame(animateTunnel);
-      } else {
-        startCollapseSequence();
-      }
+    const start = Date.now();
+    const run = () => {
+      const n = Math.min(1, (Date.now() - start) / 2400);
+      setTunnelProgress(n);
+      setAmplitude(n * 0.18);
+      setFrequency(1.4);
+      if (n < 1) requestAnimationFrame(run);
+      else startCollapseSequence();
     };
-    requestAnimationFrame(animateTunnel);
+    requestAnimationFrame(run);
   };
 
   const startCollapseSequence = () => {
-    // PHASE 4: COLLAPSE
     setLocalPhase(4);
     setIntroPhase(4);
     setText('Signal stabilized.');
     setSubText('Control ready.');
-
-    let startTime = Date.now();
-    const duration = 800;
-
-    const animateCollapse = () => {
-      const elapsed = Date.now() - startTime;
-      const norm = Math.min(1, elapsed / duration);
-      
-      setCollapseProgress(norm);
-      setAmplitude(0.15 + norm * 0.4); // Handoff target 0.55
-      
-      if (norm < 1) {
-        requestAnimationFrame(animateCollapse);
-      } else {
+    const start = Date.now();
+    const run = () => {
+      const n = Math.min(1, (Date.now() - start) / 800);
+      setCollapseProgress(n);
+      setAmplitude(0.18 + n * 0.4);
+      if (n < 1) requestAnimationFrame(run);
+      else {
         audioEngine.stabilized();
-        // TRIGGER GLOBAL TRANSITION
         setGlobalPhase('ACTIVE');
         setIntroPhase(0);
         setTunnelProgress(0);
@@ -104,35 +70,38 @@ export const S00_Entry: React.FC = () => {
         useSignalStore.setState({ canProceed: true });
       }
     };
-    requestAnimationFrame(animateCollapse);
+    requestAnimationFrame(run);
   };
 
   return (
     <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
       <AnimatePresence mode="wait">
         <motion.div
-           key={text}
-           initial={{ opacity: 0, y: 10 }}
-           animate={{ opacity: 1, y: 0 }}
-           exit={{ opacity: 0, y: -10 }}
-           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-           className="text-center"
+          key={text}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -8 }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          className="text-center"
         >
-          <div className="hero-text text-xl tracking-[0.4em] uppercase mb-2">
+          {/* Neutral white — no cyan */}
+          <div className="hero-text text-xl tracking-[0.4em] uppercase mb-3">
             {text}
           </div>
-          <div className="micro-text text-v3-cyan opacity-40 uppercase">
+          {/* Dim gray subtext — no color */}
+          <div className="micro-text opacity-50">
             {subText}
           </div>
         </motion.div>
       </AnimatePresence>
 
-      {phase === 2 && !activatedRef.current && (
+      {/* Cursor hint — neutral pulsing text */}
+      {localPhase === 1 && (
         <motion.div
           initial={{ opacity: 0 }}
-          animate={{ opacity: [0.1, 0.4, 0.1] }}
-          transition={{ duration: 2, repeat: Infinity }}
-          className="absolute bottom-20 micro-text text-v3-cyan"
+          animate={{ opacity: [0.1, 0.35, 0.1] }}
+          transition={{ duration: 2.5, repeat: Infinity }}
+          className="absolute bottom-20 micro-text"
         >
           [ MOVE CURSOR TO INITIATE ]
         </motion.div>
