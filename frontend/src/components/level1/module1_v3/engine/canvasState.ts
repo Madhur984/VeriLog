@@ -16,6 +16,7 @@ export const canvasState = {
   // Resistance / Lerp targets
   currentA: 0.5,
   currentF: 1.0,
+  currentN: 0,
 
   // Trail
   showTrail: false,
@@ -33,6 +34,8 @@ export const canvasState = {
   // Time control (S03)
   timeOffset: 0,
   frozen: false,
+  velocity: 0,
+  lastX: undefined as number | undefined,
 
   // Secondary signal (S09 - Interaction)
   secondaryEnabled: false,

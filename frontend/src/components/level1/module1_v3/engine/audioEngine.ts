@@ -1,7 +1,7 @@
 export class AudioEngine {
   private ctx: AudioContext | null = null;
   private lastPlay = 0;
-  private readonly GAP = 220;
+  private readonly GAP = 200; // SPEC: 200ms gap
 
   private init() {
     if (this.ctx) return;
@@ -17,39 +17,39 @@ export class AudioEngine {
     return true;
   }
 
-  private note(freq: number, vol: number, dur = 0.15, type: OscillatorType = 'sine') {
+  private note(freq: number, vol: number, dur = 0.15, type: OscillatorType = 'sine', detune = 0) {
     this.init();
     if (!this.ctx || !this.canPlay()) return;
     const ctx = this.ctx;
     const osc = ctx.createOscillator();
     const g = ctx.createGain();
     osc.type = type;
-    osc.frequency.value = freq;
+    osc.frequency.setValueAtTime(freq, ctx.currentTime);
+    osc.detune.setValueAtTime(detune, ctx.currentTime);
+    
     const now = ctx.currentTime;
     g.gain.setValueAtTime(0, now);
     g.gain.linearRampToValueAtTime(vol, now + 0.01);
     g.gain.exponentialRampToValueAtTime(0.0001, now + dur);
+    
     osc.connect(g);
     g.connect(ctx.destination);
     osc.start(now);
     osc.stop(now + dur + 0.05);
   }
 
-  begin() { this.note(420, 0.03, 0.4); }
-  tick()  { this.note(660, 0.015, 0.08); }
-
-  // New: Subtle hover sound for UI elements
-  hover() { this.note(880, 0.008, 0.05, 'sine'); }
-
-  // New: Continuous slide sound (throttled)
-  slide(value: number) {
-    this.init();
-    if (!this.ctx || !this.canPlay()) return;
-    const freq = 200 + (value * 400); // 200Hz to 600Hz
-    this.note(freq, 0.005, 0.1, 'triangle');
+  // SPEC: Dynamic harmonic tone mapping
+  harmonic(f: number, a: number, n: number) {
+    const pitch = 120 + f * 200;
+    const volume = 0.02 + a * 0.08;
+    const detune = n * 200;
+    this.note(pitch, volume, 0.2, 'sine', detune);
   }
 
-  // New: Scene transition whoosh
+  begin() { this.note(420, 0.03, 0.4); }
+  tick()  { this.note(660, 0.015, 0.08); }
+  hover() { this.note(880, 0.008, 0.05, 'sine'); }
+
   transition() {
     this.init();
     if (!this.ctx) return;
@@ -89,7 +89,6 @@ export class AudioEngine {
   }
 
   stabilize() { 
-    // Multi-harmonic stabilization chord
     [528, 660, 792].forEach(f => this.note(f, 0.015, 1.2, 'sine'));
   }
 
@@ -111,7 +110,6 @@ export class AudioEngine {
     this.lastPlay = performance.now();
   }
 
-  // S00 Tunnel Entry Sounds
   hum(duration: number) {
     this.init();
     if (!this.ctx) return;

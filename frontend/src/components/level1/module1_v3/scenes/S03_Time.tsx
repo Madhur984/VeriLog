@@ -1,56 +1,18 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import { useSignalStore } from '../store/signalStore';
 import { canvasState } from '../engine/canvasState';
 import { InlineText } from '../components/InlineText';
 
 export const S03_Time: React.FC = () => {
-  const { checkProceed, updateInteraction } = useSignalStore();
-  const isDragging = useRef(false);
-  const startX = useRef(0);
-  const baseOffset = useRef(0);
-  const dragCount = useRef(0);
 
   useEffect(() => {
     useSignalStore.getState().setSignalMode('periodic');
-    canvasState.timeOffset = 0;
     canvasState.magneticStrength = 0.5;
 
-    const onDown = (e: MouseEvent) => {
-      isDragging.current = true;
-      startX.current = e.clientX;
-      baseOffset.current = canvasState.timeOffset;
-    };
-
-    const onMove = (e: MouseEvent) => {
-      canvasState.cursorNormX = e.clientX / window.innerWidth;
-      canvasState.cursorX = e.clientX;
-      canvasState.cursorY = e.clientY;
-      updateInteraction(0.12);
-
-      if (!isDragging.current) return;
-      const delta = (e.clientX - startX.current) * 0.025;
-      canvasState.timeOffset = baseOffset.current - delta;
-      dragCount.current++;
-      if (dragCount.current > 30) {
-        checkProceed();
-      }
-    };
-
-    const onUp = () => {
-      isDragging.current = false;
-    };
-
-    window.addEventListener('mousedown', onDown);
-    window.addEventListener('mousemove', onMove);
-    window.addEventListener('mouseup', onUp);
-
     return () => {
-      window.removeEventListener('mousedown', onDown);
-      window.removeEventListener('mousemove', onMove);
-      window.removeEventListener('mouseup', onUp);
-      canvasState.timeOffset = 0;
+      canvasState.magneticStrength = 0;
     };
-  }, [checkProceed]);
+  }, []);
 
   return (
     <div className="absolute inset-0 pointer-events-none flex flex-col items-center justify-end pb-32">

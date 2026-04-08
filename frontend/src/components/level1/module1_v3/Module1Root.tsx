@@ -1,6 +1,5 @@
 import React from 'react';
 import { SignalCanvas } from './components/SignalCanvas';
-import { SignalScene as WebGLLayer } from './components/3d/SignalScene';
 import { SceneManager } from './SceneManager';
 import { FloatingSidebar } from './components/FloatingSidebar';
 import { TheoryOverlay } from './components/TheoryOverlay';
@@ -18,12 +17,7 @@ export const Module1Root: React.FC = () => {
   return (
     <div className="module1-v3-root fixed inset-0 w-full h-full overflow-hidden select-none bg-black z-0">
       
-      {/* 🌌 BACKGROUND LAYER 0: WEBGL (DEPTH) */}
-      <div className="absolute inset-0 z-0 opacity-60">
-        <WebGLLayer />
-      </div>
-
-      {/* 🌊 BACKGROUND LAYER 1: PURE CANVAS (SIGNAL) */}
+      {/* 🌊 UNIFIED ENGINE (SIGNAL + TUNNEL) */}
       <SignalCanvas className="z-10" />
 
       {/* 🧱 INTERFACE: DYNAMIC SCENE CONTENT */}

@@ -1,38 +1,39 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSignalStore } from '../store/signalStore';
-import { canvasState } from '../engine/canvasState';
-
 import { audioEngine } from '../engine/audioEngine';
 
 export const S00_Entry: React.FC = () => {
-  const { setAmplitude, setFrequency } = useSignalStore();
-  const [phase, setPhase] = useState(1); // 1: Void, 2: Activation, 3: Tunnel, 4: Collapse
+  const { 
+    setAmplitude, 
+    setFrequency, 
+    setIntroPhase, 
+    setTunnelProgress, 
+    setCollapseProgress,
+    setPhase: setGlobalPhase 
+  } = useSignalStore();
+
   const [text, setText] = useState('Signal initializing.');
   const [subText, setSubText] = useState('System inactive.');
+  const [phase, setLocalPhase] = useState(1);
   const activatedRef = useRef(false);
 
   useEffect(() => {
     // START PHASE 1: VOID
-    canvasState.introPhase = 1;
-    canvasState.opacity = 0.4; // Boosted from 0.05
-    canvasState.magneticStrength = 0;
-    setAmplitude(0.15); // Boosted from 0.05
+    setIntroPhase(1);
+    setAmplitude(0.15);
     setFrequency(1.0);
 
-    // After 1.2s, move to Phase 2
     const t1 = setTimeout(() => {
-      setPhase(2); // Fix: required to enable the mousemove listener
-      canvasState.introPhase = 2;
-      canvasState.opacity = 0.5;
+      setLocalPhase(2);
+      setIntroPhase(2);
       setText('Signal = change.');
       setSubText('Input detected.');
     }, 1200);
 
     return () => clearTimeout(t1);
-  }, [setAmplitude, setFrequency]);
+  }, [setAmplitude, setFrequency, setIntroPhase]);
 
-  // Listener for Phase 2 -> 3 transition
   useEffect(() => {
     if (phase !== 2) return;
 
@@ -47,26 +48,20 @@ export const S00_Entry: React.FC = () => {
   }, [phase]);
 
   const startTunnelSequence = () => {
-    // PHASE 2 RESPONSE: Magnetic Pull
-    canvasState.magneticStrength = 0.4;
-    
-    // PHASE 3: TUNNEL FORMATION (2800ms)
+    // PHASE 3: TUNNEL FORMATION
     setTimeout(() => {
-      setPhase(3);
-      canvasState.introPhase = 3;
-      
+      setLocalPhase(3);
+      setIntroPhase(3);
       audioEngine.hum(1.7);
+      
       const startTime = Date.now();
-      const duration = 1700; // Phase 3 duration
+      const duration = 2000;
 
       const animateTunnel = () => {
         const elapsed = Date.now() - startTime;
         const norm = Math.min(1, elapsed / duration);
         
-        // forward motion simulated via scaling + fade
-        canvasState.tunnelLayerCount = Math.floor(norm * 8);
-        canvasState.tunnelOpacity = norm * 0.2;
-        canvasState.opacity = 0.1 + norm * 0.25;
+        setTunnelProgress(norm);
         
         if (norm < 1) {
           requestAnimationFrame(animateTunnel);
@@ -74,41 +69,39 @@ export const S00_Entry: React.FC = () => {
           startCollapseSequence();
         }
       };
-      
       requestAnimationFrame(animateTunnel);
-    }, 800);
+    }, 400);
   };
 
   const startCollapseSequence = () => {
-    // PHASE 4: COLLAPSE (1000ms)
-    setPhase(4);
-    canvasState.introPhase = 4;
+    // PHASE 4: COLLAPSE
+    setLocalPhase(4);
+    setIntroPhase(4);
     setText('Signal stabilized.');
     setSubText('Control ready.');
 
     let startTime = Date.now();
-    const duration = 1000;
+    const duration = 800;
 
     const animateCollapse = () => {
       const elapsed = Date.now() - startTime;
       const norm = Math.min(1, elapsed / duration);
       
-      // tunnel layers converge
-      canvasState.tunnelOpacity = 0.2 * (1 - norm);
-      // quick compression (scale Y -> 0.8 -> 1)
-      canvasState.stabilizeCompress = 0.8 + (norm * 0.2);
-      // amplitude stabilizes
-      setAmplitude(0.1 + norm * 0.3);
+      setCollapseProgress(norm);
+      setAmplitude(0.15 + norm * 0.4); // Handoff target 0.55
       
       if (norm < 1) {
         requestAnimationFrame(animateCollapse);
       } else {
         audioEngine.stabilized();
-        canvasState.introPhase = 0; // End intro
+        // TRIGGER GLOBAL TRANSITION
+        setGlobalPhase('ACTIVE');
+        setIntroPhase(0);
+        setTunnelProgress(0);
+        setCollapseProgress(0);
         useSignalStore.setState({ canProceed: true });
       }
     };
-    
     requestAnimationFrame(animateCollapse);
   };
 
@@ -116,12 +109,12 @@ export const S00_Entry: React.FC = () => {
     <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
       <AnimatePresence mode="wait">
         <motion.div
-          key={text}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          className="text-center"
+           key={text}
+           initial={{ opacity: 0, y: 10 }}
+           animate={{ opacity: 1, y: 0 }}
+           exit={{ opacity: 0, y: -10 }}
+           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+           className="text-center"
         >
           <div className="hero-text text-xl tracking-[0.4em] uppercase mb-2">
             {text}
