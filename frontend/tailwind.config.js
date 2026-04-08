@@ -11,79 +11,64 @@ export default {
         container: {
             center: true,
             padding: "2rem",
-            screens: {
-                "2xl": "1400px",
-            },
+            screens: { "2xl": "1400px" },
         },
         extend: {
             colors: {
-                midnight: "#020617",
-                chart: {
-                    cyan: "#06b6d4",
-                    blue: "#3b82f6",
-                },
-                border: "hsl(var(--border))",
-                input: "hsl(var(--input))",
-                ring: "hsl(var(--ring))",
-                background: "hsl(var(--background))",
-                foreground: "hsl(var(--foreground))",
+                // ════ FINAL MASTER COLOR SYSTEM ════
+                // Background (90% of UI — neutral only)
+                'bg-void': '#0E1116',
+                'bg-base': '#141922',
+                'bg-elev': '#1C2430',
+
+                // Text (strict neutrals)
+                'text-main': '#E6EDF3',
+                'text-sub':  '#9AA4B2',
+                'text-dim':  '#6B7280',
+
+                // Signal → waveform ONLY (8% of visual surface)
+                'signal-core':    '#7DD3FC',
+                'signal-bright':  '#BAE6FD',
+                'signal-dim':     '#38BDF8',
+                'signal-primary': '#7DD3FC', // alias
+
+                // Accent → rare active/success states (2%)
+                'accent-orange': '#F97316',
+                'accent-soft':   '#FB923C',
+
+                // Legacy shadcn tokens
+                border:     'hsl(var(--border))',
+                background: 'hsl(var(--background))',
+                foreground: 'hsl(var(--foreground))',
                 primary: {
-                    DEFAULT: "hsl(var(--primary))",
-                    foreground: "hsl(var(--primary-foreground))",
+                    DEFAULT: 'hsl(var(--primary))',
+                    foreground: 'hsl(var(--primary-foreground))',
                 },
                 secondary: {
-                    DEFAULT: "hsl(var(--secondary))",
-                    foreground: "hsl(var(--secondary-foreground))",
+                    DEFAULT: 'hsl(var(--secondary))',
+                    foreground: 'hsl(var(--secondary-foreground))',
                 },
                 destructive: {
-                    DEFAULT: "hsl(var(--destructive))",
-                    foreground: "hsl(var(--destructive-foreground))",
+                    DEFAULT: 'hsl(var(--destructive))',
+                    foreground: 'hsl(var(--destructive-foreground))',
                 },
                 muted: {
-                    DEFAULT: "hsl(var(--muted))",
-                    foreground: "hsl(var(--muted-foreground))",
+                    DEFAULT: 'hsl(var(--muted))',
+                    foreground: 'hsl(var(--muted-foreground))',
                 },
                 accent: {
-                    DEFAULT: "hsl(var(--accent))",
-                    foreground: "hsl(var(--accent-foreground))",
+                    DEFAULT: 'hsl(var(--accent))',
+                    foreground: 'hsl(var(--accent-foreground))',
                 },
                 popover: {
-                    DEFAULT: "hsl(var(--popover))",
-                    foreground: "hsl(var(--popover-foreground))",
+                    DEFAULT: 'hsl(var(--popover))',
+                    foreground: 'hsl(var(--popover-foreground))',
                 },
                 card: {
-                    DEFAULT: "hsl(var(--card))",
-                    foreground: "hsl(var(--card-foreground))",
-                },
-                // Specialized Signal Colors
-                signal: {
-                    analog: "hsl(var(--signal-analog))",
-                    digital: "hsl(var(--signal-digital))",
-                    clock: "hsl(var(--signal-clock))",
-                    success: "hsl(var(--signal-success))",
-                    error: "hsl(var(--signal-error))",
-                    gold: "hsl(var(--signal-gold))",
-                },
-                // Vivid accent colors
-                emerald: {
-                    DEFAULT: '#10B981',
-                    50: '#ECFDF5',
-                    400: '#34D399',
-                    500: '#10B981',
-                    600: '#059669',
-                },
-                cyan: {
-                    DEFAULT: '#06B6D4',
-                    400: '#22D3EE',
-                    500: '#06B6D4',
-                },
-                amber: {
-                    DEFAULT: '#F59E0B',
-                    400: '#FBBF24',
-                    500: '#F59E0B',
+                    DEFAULT: 'hsl(var(--card))',
+                    foreground: 'hsl(var(--card-foreground))',
                 },
             },
-
         },
     },
     plugins: [require("tailwindcss-animate")],

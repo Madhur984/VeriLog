@@ -1,137 +1,237 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSignalStore } from '../store/signalStore';
+import {
+  SineGraph, SquareGraph,
+  NoiseGraph, RampGraph, LiveAmplitudeGraph
+} from './GraphComponents';
 
+// ─── THEORY SECTIONS WITH GRAPH TYPES ───────────────────────────────────────
+const SECTIONS = [
+  {
+    id: '01', title: 'DEFINITION',
+    graph: 'sine',
+    body: 'A signal is a function of one or more variables that conveys information about a physical phenomenon.',
+    technical: 's(t) maps physical change into the digital domain.',
+  },
+  {
+    id: '02', title: 'ANALOG vs DIGITAL',
+    graph: 'square',
+    body: 'Analog signals are continuous. Digital signals are discrete, representing state as 0 or 1.',
+    technical: 'Discretization introduces quantization error. ADC bridges both worlds.',
+  },
+  {
+    id: '03', title: 'NOISE',
+    graph: 'noise',
+    body: 'Noise is unwanted random variation superimposed on the true signal. It degrades information quality.',
+    technical: 'SNR = Signal Power / Noise Power. Higher SNR = better channel.',
+  },
+  {
+    id: '04', title: 'PARAMETERS',
+    graph: 'ramp',
+    body: 'Every signal has four dimensions: Amplitude (A), Frequency (f), Phase (φ), and Noise (η).',
+    technical: 'x(t) = A · cos(2πft + φ) + η(t)',
+  },
+  {
+    id: '05', title: 'LIVE SIGNAL',
+    graph: 'live',
+    body: 'Your current signal, rendered in real time. Amplitude controls energy. Frequency controls repetition.',
+    technical: 'Interact with the canvas to observe parameter changes.',
+  },
+] as const;
+
+type GraphType = 'sine' | 'square' | 'noise' | 'ramp' | 'live';
+
+const GraphBlock: React.FC<{ type: GraphType; amplitude?: number; frequency?: number }> = ({
+  type, amplitude = 0.5, frequency = 1.4,
+}) => {
+  const wrapperClass = 'w-full rounded-sm bg-white/[0.02] border border-white/[0.06] p-4 mb-4';
+  switch (type) {
+    case 'sine':    return <div className={wrapperClass}><SineGraph /></div>;
+    case 'square':  return <div className={wrapperClass}><SquareGraph /></div>;
+    case 'noise':   return <div className={wrapperClass}><NoiseGraph /></div>;
+    case 'ramp':    return <div className={wrapperClass}><RampGraph /></div>;
+    case 'live':    return <div className={wrapperClass}><LiveAmplitudeGraph amplitude={amplitude} frequency={frequency} /></div>;
+  }
+};
+
+// ─── VERIFICATION QUESTIONS ──────────────────────────────────────────────────
+const QUESTIONS = [
+  {
+    id: 'q1', label: 'Q1 // CONCEPTUAL',
+    question: 'What defines a signal at its fundamental level?',
+    options: ['VARIATION', 'CONSTANCY', 'VOID'],
+    correct: 'VARIATION',
+    type: 'choice' as const,
+  },
+  {
+    id: 'q2', label: 'Q2 // INTERACTION',
+    question: 'Increase frequency above 1.8 Hz using the canvas.',
+    type: 'interaction' as const,
+  },
+  {
+    id: 'q3', label: 'Q3 // INTERACTION',
+    question: 'Reduce noise below 0.1 by scrolling down.',
+    type: 'noise' as const,
+  },
+];
+
+// ─── MAIN OVERLAY ────────────────────────────────────────────────────────────
 export const TheoryOverlay: React.FC = () => {
-  const { theoryMode, toggleTheoryMode, frequency } = useSignalStore();
+  const { theoryMode, toggleTheoryMode, frequency, noise, amplitude } = useSignalStore();
   const [showQuestions, setShowQuestions] = useState(false);
-  const [answers, setAnswers] = useState({ q1: "" });
+  const [answers, setAnswers] = useState<Record<string, string>>({});
 
-  const sections = [
-    {
-      id: "01",
-      title: "DEFINITION",
-      content: "Signal = A function of variables representing a physical phenomenon.",
-      technical: "In this module, s(t) maps physical changes into the digital domain."
-    },
-    {
-      id: "02",
-      title: "TYPES",
-      content: "Analog → Continuous. Digital → Discrete.\nDeterministic → Predictable. Random → Stochastic.\nPeriodic → Repeating. Aperiodic → Non-Repeating.",
-      technical: "Classification determines the processing complexity."
-    },
-    {
-      id: "03",
-      title: "PARAMETERS",
-      content: "A → Amplitude (Energy)\nf → Frequency (Rate)\nt → Time (Domain)\nη → Noise (Distortion)\nφ → Phase (Shift)",
-      technical: "These parameters form the DNA of any communication system."
-    },
-    {
-      id: "04",
-      title: "DSP PIPELINE",
-      content: "Analog Source → ADC → Processing → DAC → Analog Sink",
-      technical: "Analog to Digital Conversion (ADC) is the bridge to logic."
-    },
-    {
-      id: "05",
-      title: "BASIC SIGNALS",
-      content: "Step → State change (0 → 1)\nImpulse → Instant spike\nRamp → Linear growth\nParabolic → Quadratic growth",
-      technical: "Elementary building blocks of complex systems."
-    },
-    {
-      id: "06",
-      title: "PERIODIC MODEL",
-      content: "x(t) = A cos(ωt + φ)",
-      technical: "The fundamental harmonic oscillation model."
-    },
-    {
-      id: "07",
-      title: "APPLICATIONS",
-      content: "Audio Systems // Communication // Medical Imaging // Radar // Sensors",
-      technical: "DSP is the foundation of modern infrastructure."
-    }
-  ];
+  const q1Pass = answers.q1 === 'VARIATION';
+  const q2Pass = frequency > 1.8;
+  const q3Pass = noise < 0.1;
+  const allPass = q1Pass && q2Pass && q3Pass;
 
   return (
     <AnimatePresence>
       {theoryMode && (
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}
-          className="fixed inset-0 z-50 bg-black/95 backdrop-blur-xl overflow-y-auto pointer-events-auto p-12 md:p-24"
+          transition={{ duration: 0.35 }}
+          className="fixed inset-0 z-[200] overflow-y-auto pointer-events-auto"
+          style={{ background: 'rgba(14,17,22,0.97)', backdropFilter: 'blur(16px)' }}
         >
-          <div className="max-w-4xl mx-auto flex flex-col min-h-full">
-            <header className="flex justify-between items-start border-b border-white/10 pb-16 mb-16">
+          <div className="max-w-3xl mx-auto px-8 py-20 md:px-16 md:py-24">
+
+            {/* ── HEADER ── */}
+            <header className="flex justify-between items-start mb-20 pb-8 border-b border-white/[0.07]">
               <div>
-                <span className="micro-text text-v3-cyan tracking-[0.5em] opacity-60 uppercase">Technical Archive // v3.1</span>
-                <h2 className="hero-text text-4xl mt-4">Signal Theory</h2>
+                <div className="micro-text mb-3 tracking-[0.4em] opacity-60">Technical Archive // v3.1</div>
+                <h2 className="hero-text text-3xl">Signal Theory</h2>
               </div>
-              <button 
-                onClick={toggleTheoryMode}
-                className="micro-text border border-white/20 px-6 py-2 hover:bg-white hover:text-black transition-all uppercase"
-              >
+              <button onClick={toggleTheoryMode} className="theory-btn">
                 [ CLOSE ]
               </button>
             </header>
 
-            <div className="space-y-24 pb-32">
-              {sections.map((sec) => (
-                <section key={sec.id} className="grid grid-cols-1 md:grid-cols-3 gap-8 items-baseline group">
-                   <div className="micro-text text-v3-cyan opacity-40 group-hover:opacity-100 transition-opacity">
-                     SEC // {sec.id}
-                   </div>
-                   <div className="md:col-span-2">
-                     <h3 className="hero-text text-xl mb-6 opacity-40 tracking-wider group-hover:opacity-100 transition-opacity uppercase">{sec.title}</h3>
-                     <p className="body-text text-2xl leading-relaxed mb-6 pre-line">{sec.content}</p>
-                     <p className="micro-text opacity-30 italic leading-loose uppercase tracking-widest">{sec.technical}</p>
-                   </div>
-                </section>
+            {/* ── SECTIONS WITH GRAPHS ── */}
+            <div className="space-y-20 mb-24">
+              {SECTIONS.map((sec, i) => (
+                <motion.section
+                  key={sec.id}
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.06, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                >
+                  {/* Graph first, text below */}
+                  <GraphBlock
+                    type={sec.graph}
+                    amplitude={amplitude}
+                    frequency={frequency}
+                  />
+
+                  <div className="grid grid-cols-[48px_1fr] gap-6 items-start">
+                    <div className="micro-text opacity-30 pt-1">{sec.id}</div>
+                    <div>
+                      <h3 className="hero-text text-lg mb-3 tracking-wider opacity-70">{sec.title}</h3>
+                      <p className="body-text text-lg leading-relaxed mb-3 whitespace-pre-line">{sec.body}</p>
+                      <p className="micro-text opacity-25 italic">{sec.technical}</p>
+                    </div>
+                  </div>
+                </motion.section>
               ))}
             </div>
 
-            <footer className="mt-auto pt-16 border-t border-white/5 flex flex-col items-center gap-12">
+            {/* ── VERIFICATION ── */}
+            <div className="border-t border-white/[0.07] pt-16">
               {!showQuestions ? (
-                <button 
-                  onClick={() => setShowQuestions(true)}
-                  className="px-12 py-4 border border-v3-cyan text-v3-cyan bg-v3-cyan/5 tracking-[0.4em] uppercase hover:scale-105 transition-all"
-                >
-                  Start System Verification
-                </button>
+                <div className="flex justify-center">
+                  <button
+                    onClick={() => setShowQuestions(true)}
+                    className="btn active tracking-[0.4em]"
+                  >
+                    BEGIN VERIFICATION
+                  </button>
+                </div>
               ) : (
-                <div className="w-full space-y-12 pb-24">
-                  <header className="text-center opacity-40 micro-text tracking-[0.5em] mb-12">Verification // Hybrid Logic</header>
-                  
-                  <div className="bg-white/5 p-12 rounded-sm border border-white/10">
-                    <h4 className="micro-text text-v3-cyan mb-4">Q1 // CONCEPTUAL</h4>
-                    <p className="hero-text text-2xl mb-8">What defines a signal at its most fundamental level?</p>
-                    <div className="flex gap-4">
-                      {["VARIATION", "CONSTANCY", "VOID"].map(opt => (
-                        <button 
+                <div className="space-y-10">
+                  <div className="micro-text text-center opacity-40 tracking-[0.4em] mb-12">
+                    System Verification // 3 Checks
+                  </div>
+
+                  {/* Q1 — CHOICE */}
+                  <div className="bg-white/[0.03] border border-white/[0.07] p-8 space-y-5">
+                    <div className="micro-text opacity-50">{QUESTIONS[0].label}</div>
+                    <p className="hero-text text-xl">{QUESTIONS[0].question}</p>
+                    <div className="flex flex-wrap gap-3 pt-2">
+                      {QUESTIONS[0].options!.map((opt) => (
+                        <button
                           key={opt}
-                          onClick={() => setAnswers({...answers, q1: opt})}
-                          className={`px-6 py-2 border text-xs tracking-widest ${answers.q1 === opt ? 'bg-v3-cyan text-black border-v3-cyan' : 'border-white/20'}`}
+                          onClick={() => setAnswers(a => ({ ...a, q1: opt }))}
+                          className={`px-5 py-2 border text-xs tracking-widest font-mono uppercase transition-all duration-200
+                            ${answers.q1 === opt
+                              ? 'border-accent-orange text-accent-orange bg-accent-orange/10'
+                              : 'border-white/10 text-white/40 hover:border-white/25'}`}
                         >
                           {opt}
                         </button>
                       ))}
                     </div>
+                    {q1Pass && (
+                      <p className="micro-text text-accent-orange opacity-80 pt-2">✓ CORRECT</p>
+                    )}
                   </div>
 
-                  <div className="bg-white/5 p-12 rounded-sm border border-white/10">
-                    <h4 className="micro-text text-v3-cyan mb-4">Q2 // INTERACTION</h4>
-                    <p className="hero-text text-2xl mb-4">Increase frequency above 1.8 Hz.</p>
-                    <div className={`micro-text ${frequency > 1.8 ? 'text-v3-cyan' : 'opacity-40'}`}>
-                      {frequency > 1.8 ? "SUCCESS // PARAMETER MET" : "SYSTEM WAITING..."}
+                  {/* Q2 — FREQ INTERACTION */}
+                  <div className="bg-white/[0.03] border border-white/[0.07] p-8 space-y-4">
+                    <div className="micro-text opacity-50">{QUESTIONS[1].label}</div>
+                    <p className="hero-text text-xl">{QUESTIONS[1].question}</p>
+                    <div className="flex items-center gap-4 pt-2">
+                      <div className="text-xs font-mono text-white/30">
+                        CURRENT: <span className={q2Pass ? 'text-signal-core' : 'text-white/50'}>
+                          {frequency.toFixed(2)} Hz
+                        </span>
+                      </div>
+                      {q2Pass
+                        ? <span className="micro-text text-accent-orange">✓ PARAMETER MET</span>
+                        : <span className="micro-text opacity-30">Move cursor right →</span>
+                      }
                     </div>
                   </div>
 
-                  {answers.q1 === "VARIATION" && frequency > 1.8 && (
-                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex justify-center pt-12">
-                      <button 
-                        onClick={() => window.location.href = '/'} // End of Module 1
-                        className="px-16 py-6 border-2 border-v3-cyan text-v3-cyan text-xl tracking-[0.3em] font-bold hover:bg-v3-cyan hover:text-black transition-all"
+                  {/* Q3 — NOISE INTERACTION */}
+                  <div className="bg-white/[0.03] border border-white/[0.07] p-8 space-y-4">
+                    <div className="micro-text opacity-50">{QUESTIONS[2].label}</div>
+                    <p className="hero-text text-xl">{QUESTIONS[2].question}</p>
+                    <div className="flex items-center gap-4 pt-2">
+                      <div className="text-xs font-mono text-white/30">
+                        NOISE: <span className={q3Pass ? 'text-signal-core' : 'text-white/50'}>
+                          {noise.toFixed(3)}
+                        </span>
+                      </div>
+                      {q3Pass
+                        ? <span className="micro-text text-accent-orange">✓ PARAMETER MET</span>
+                        : <span className="micro-text opacity-30">Scroll down to reduce</span>
+                      }
+                    </div>
+                  </div>
+
+                  {/* ── ALL PASS → CLOSE MODULE ── */}
+                  {allPass && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="flex flex-col items-center gap-6 pt-8"
+                    >
+                      {/* Pink micro-pulse — 1% accent, only on final success */}
+                      <motion.div
+                        animate={{ opacity: [0, 1, 0] }}
+                        transition={{ duration: 0.15, repeat: 2 }}
+                        className="text-xs font-mono tracking-[0.3em] text-center"
+                        style={{ color: '#EC4899' }}
+                      >
+                        ALL PARAMETERS CONFIRMED
+                      </motion.div>
+                      <button
+                        onClick={() => { window.location.href = '/'; }}
+                        className="btn active text-lg px-16 py-5"
                       >
                         CLOSE MODULE
                       </button>
@@ -139,12 +239,13 @@ export const TheoryOverlay: React.FC = () => {
                   )}
                 </div>
               )}
-              
-              <div className="w-full flex justify-between items-center opacity-20">
-                <div className="micro-text">Module 1 // Final Verification</div>
-                <div className="micro-text tracking-[0.3em]">Validation Mode: {showQuestions ? "ACTIVE" : "PENDING"}</div>
-              </div>
-            </footer>
+            </div>
+
+            {/* Footer */}
+            <div className="flex justify-between items-center opacity-15 mt-20 pt-8 border-t border-white/[0.05]">
+              <div className="micro-text">Module 1 // Signal Theory</div>
+              <div className="micro-text">Verification: {showQuestions ? 'ACTIVE' : 'PENDING'}</div>
+            </div>
           </div>
         </motion.div>
       )}

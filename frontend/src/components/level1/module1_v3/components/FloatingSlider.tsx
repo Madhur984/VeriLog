@@ -14,46 +14,56 @@ interface Props {
 export const FloatingSlider: React.FC<Props> = ({
   label, value, min = 0, max = 1, step = 0.01, unit, onChange,
 }) => {
-  const id = useId();
+  const id  = useId();
   const pct = ((value - min) / (max - min)) * 100;
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const v = Number(e.target.value);
-    onChange(v);
-  };
-
   return (
-    <div className="flex flex-col v3-gap-1 group relative w-full mb-4">
-      <div className="flex justify-between items-end px-1">
+    <div className="flex flex-col group relative w-full mb-5">
+      {/* Label + live value */}
+      <div className="flex justify-between items-end px-1 mb-2">
         <label
           htmlFor={id}
-          className="v3-micro text-white/30 group-hover:text-white/60 transition-opacity"
+          className="micro-text group-hover:opacity-80 transition-opacity"
         >
           {label}
         </label>
-        <span className="v3-micro text-white/50 opacity-0 group-hover:opacity-100 transition-opacity tabular-nums">
+        <span
+          className="micro-text tabular-nums opacity-0 group-hover:opacity-100 transition-opacity"
+          style={{ color: 'var(--accent-orange)' }}
+        >
           {value.toFixed(2)}{unit || ''}
         </span>
       </div>
 
-      {/* Thin Precision Track */}
-      <div className="relative h-px w-full bg-white/10 group-hover:bg-white/20 transition-colors mt-1">
-        {/* Fill Layer - Active Range */}
+      {/* Custom track */}
+      <div
+        className="relative w-full"
+        style={{ height: '2px', background: 'rgba(255,255,255,0.08)', borderRadius: '1px' }}
+      >
+        {/* Orange fill */}
         <motion.div
-          className="absolute left-0 top-0 h-full bg-[#E6F9FF]"
+          style={{ background: 'var(--accent-orange)', height: '100%', borderRadius: '1px' }}
           animate={{ width: `${pct}%` }}
-          transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-        />
-        
-        {/* Precision Handle - Scalar Dot */}
-        <motion.div
-           className="absolute top-1/2 w-1.5 h-1.5 rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.4)]"
-           style={{ left: `calc(${pct}% - 3px)`, top: '50%', transform: 'translateY(-50%)' }}
-           animate={{ left: `calc(${pct}% - 3px)` }}
-           transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 0.15, ease: [0.16, 1, 0.3, 1] }}
         />
 
-        {/* Interaction Zone - Invisible native input */}
+        {/* Orange handle dot */}
+        <motion.div
+          style={{
+            position:  'absolute',
+            top:       '50%',
+            width:     '8px',
+            height:    '8px',
+            borderRadius: '50%',
+            background: 'var(--accent-orange)',
+            boxShadow:  'var(--glow-orange)',
+            transform:  'translateY(-50%)',
+          }}
+          animate={{ left: `calc(${pct}% - 4px)` }}
+          transition={{ duration: 0.15, ease: [0.16, 1, 0.3, 1] }}
+        />
+
+        {/* Invisible native input for interaction */}
         <input
           id={id}
           type="range"
@@ -61,9 +71,17 @@ export const FloatingSlider: React.FC<Props> = ({
           max={max}
           step={step}
           value={value}
-          onChange={handleChange}
-          className="absolute inset-0 opacity-0 cursor-ew-resize w-full h-[12px] -top-2"
-          style={{ margin: 0 }}
+          onChange={(e) => onChange(Number(e.target.value))}
+          className="absolute cursor-ew-resize"
+          style={{
+            inset:   0,
+            opacity: 0,
+            width:   '100%',
+            height:  '20px',
+            top:     '-9px',
+            margin:  0,
+            padding: 0,
+          }}
         />
       </div>
     </div>

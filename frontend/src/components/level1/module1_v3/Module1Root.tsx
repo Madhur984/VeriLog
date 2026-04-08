@@ -1,49 +1,76 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { useSignalStore } from './store/signalStore';
 import { SignalCanvas } from './components/SignalCanvas';
 import { SceneManager } from './SceneManager';
 import { FloatingSidebar } from './components/FloatingSidebar';
 import { TheoryOverlay } from './components/TheoryOverlay';
 import { ProceedButton } from './components/ProceedButton';
-import { useSignalStore } from './store/signalStore';
+import { VideoIntro } from './components/VideoIntro';
 import './v3-style.css';
 
 /**
- * Module1Root — The persistent premium shell.
+ * Module1Root — Cinematic shell → Interactive laboratory.
+ * Layer stack: Video(4) > UI(3) > Canvas(2) > Background(0)
  */
 export const Module1Root: React.FC = () => {
-  const theoryMode = useSignalStore((s) => s.theoryMode);
+  const [introDone, setIntroDone] = useState(false);
+  const theoryMode       = useSignalStore((s) => s.theoryMode);
   const toggleTheoryMode = useSignalStore((s) => s.toggleTheoryMode);
+  const setPhase         = useSignalStore((s) => s.setPhase);
+
+  const handleVideoComplete = () => {
+    setIntroDone(true);
+    setPhase('ACTIVE');
+  };
 
   return (
-    <div className="module1-v3-root fixed inset-0 w-full h-full overflow-hidden select-none bg-black z-0">
-      
-      {/* 🌊 UNIFIED ENGINE (SIGNAL + TUNNEL) */}
-      <SignalCanvas className="z-10" />
+    <div
+      className="module1-v3-root fixed inset-0 overflow-hidden select-none"
+      style={{ background: 'var(--bg-void)', filter: 'contrast(1.06) brightness(1.02)' }}
+    >
+      {/* ── z-4: VIDEO INTRO (removed from DOM after done) ── */}
+      {!introDone && (
+        <div className="fixed inset-0" style={{ zIndex: 4 }}>
+          <VideoIntro onComplete={handleVideoComplete} />
+        </div>
+      )}
 
-      {/* 🧱 INTERFACE: DYNAMIC SCENE CONTENT */}
-      <div className="relative z-20 w-full h-full pointer-events-none">
+      {/* ── z-2: SIGNAL CANVAS ── */}
+      <motion.div
+        className="canvas-layer"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: introDone ? 1 : 0 }}
+        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+      >
+        <SignalCanvas />
+      </motion.div>
+
+      {/* ── z-3: SCENE CONTENT ── */}
+      <motion.div
+        className="ui-layer w-full h-full"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: introDone ? 1 : 0 }}
+        transition={{ duration: 0.5, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
+      >
         <SceneManager />
-      </div>
+      </motion.div>
 
-      {/* 🔘 GLOBAL UI ELEMENTS */}
+      {/* ── z-100: GLOBAL PERSISTENT CONTROLS ── */}
       <FloatingSidebar />
       <ProceedButton />
 
-      {/* 🧪 THEORY TOGGLE (TOP RIGHT) */}
-      <div className="absolute top-8 right-8 z-[100]">
-        <button 
+      {/* ── THEORY TOGGLE (top-right) ── */}
+      <div className="fixed top-8 right-8 pointer-events-auto" style={{ zIndex: 120 }}>
+        <button
           onClick={toggleTheoryMode}
-          className={`micro-text px-4 py-2 border transition-all duration-300 pointer-events-auto ${
-            theoryMode 
-              ? 'bg-v3-cyan/10 border-v3-cyan/40 text-v3-cyan' 
-              : 'bg-white/5 border-white/10 text-white/30 hover:text-white/60'
-          }`}
+          className={`theory-btn ${theoryMode ? 'active' : ''}`}
         >
           {theoryMode ? '[ THEORY ON ]' : '[ THEORY ]'}
         </button>
       </div>
 
-      {/* 📖 FULLSCREEN THEORY */}
+      {/* ── z-200: THEORY OVERLAY ── */}
       <TheoryOverlay />
     </div>
   );
