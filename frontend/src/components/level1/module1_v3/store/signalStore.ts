@@ -82,7 +82,7 @@ interface SignalStore {
   toggleTheoryMode: () => void;
 }
 
-const TOTAL_SCENES = 13;
+const TOTAL_SCENES = 14;
 
 const clamp = (v: number, min: number, max: number) => Math.max(min, Math.min(max, v));
 
@@ -105,7 +105,7 @@ export const useSignalStore = create<SignalStore>((set, get) => ({
   interactionTime: 0,
 
   scene: 0,
-  maxUnlockedScene: 12,
+  maxUnlockedScene: 13,
   showContinue: false,
   canProceed: false,
 
@@ -151,7 +151,11 @@ export const useSignalStore = create<SignalStore>((set, get) => ({
 
   setIsDragging: (v) => set({ isDragging: v }),
   setHasMoved: (v) => set({ hasMoved: v }),
-  updateInteraction: (dt) => set((s) => ({ interactionTime: s.interactionTime + dt, hasMoved: true })),
+  updateInteraction: (dt) => {
+    const nextTime = get().interactionTime + dt;
+    set({ interactionTime: nextTime, hasMoved: true });
+    get().checkProceed();
+  },
 
   nextScene: () =>
     set((s) => {
@@ -160,7 +164,7 @@ export const useSignalStore = create<SignalStore>((set, get) => ({
         scene: next, 
         maxUnlockedScene: Math.max(s.maxUnlockedScene, next),
         canProceed: false,
-        interactionProgress: 0,
+        showContinue: false,
         interactionTime: 0,
         hasMoved: false
       };
@@ -170,14 +174,13 @@ export const useSignalStore = create<SignalStore>((set, get) => ({
     set(() => ({ 
       scene: Math.min(n, TOTAL_SCENES - 1),
       canProceed: false,
+      showContinue: false,
       interactionTime: 0,
       hasMoved: false
     })),
 
   computeStability: () => {
     const { amplitude, frequency, noise } = get();
-    // SPEC: stability = (1 - η)*0.5 + (A optimal ? 0.25 : 0) + (f optimal ? 0.25 : 0);
-    // Optimal: A=0.6, f=1.5, η=0.0
     const aOpt = amplitude > 0.55 && amplitude < 0.65;
     const fOpt = frequency > 1.4 && frequency < 1.6;
     
@@ -196,13 +199,17 @@ export const useSignalStore = create<SignalStore>((set, get) => ({
     switch (s.scene) {
       case 1: canProceed = s.interactionTime > 2; break;
       case 4: canProceed = s.amplitude > 0.6; break;
-      case 5: canProceed = s.frequency > 1.5; break;
+      case 5: canProceed = s.frequency > 1.6; break;
       case 7: canProceed = s.noise > 0.5; break;
       case 9: canProceed = s.phaseAligned; break;
       case 11: canProceed = s.stability > 0.8; break;
       default: canProceed = true;
     }
-    set({ canProceed });
+
+    // 🔵 SMART ASSIST MODE
+    const showContinue = s.interactionTime > 4.5 && !canProceed;
+
+    set({ canProceed, showContinue });
   },
 
   theoryMode: false,

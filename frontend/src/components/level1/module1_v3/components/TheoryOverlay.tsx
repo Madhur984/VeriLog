@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSignalStore } from '../store/signalStore';
 
 export const TheoryOverlay: React.FC = () => {
-  const { theoryMode, toggleTheoryMode } = useSignalStore();
+  const { theoryMode, toggleTheoryMode, frequency } = useSignalStore();
+  const [showQuestions, setShowQuestions] = useState(false);
+  const [answers, setAnswers] = useState({ q1: "" });
 
   const sections = [
     {
@@ -89,9 +91,59 @@ export const TheoryOverlay: React.FC = () => {
               ))}
             </div>
 
-            <footer className="mt-auto pt-16 border-t border-white/5 opacity-20 flex justify-between items-center">
-              <div className="micro-text">Module 1 // Acquisition</div>
-              <div className="micro-text tracking-[0.3em]">Theory System Active</div>
+            <footer className="mt-auto pt-16 border-t border-white/5 flex flex-col items-center gap-12">
+              {!showQuestions ? (
+                <button 
+                  onClick={() => setShowQuestions(true)}
+                  className="px-12 py-4 border border-v3-cyan text-v3-cyan bg-v3-cyan/5 tracking-[0.4em] uppercase hover:scale-105 transition-all"
+                >
+                  Start System Verification
+                </button>
+              ) : (
+                <div className="w-full space-y-12 pb-24">
+                  <header className="text-center opacity-40 micro-text tracking-[0.5em] mb-12">Verification // Hybrid Logic</header>
+                  
+                  <div className="bg-white/5 p-12 rounded-sm border border-white/10">
+                    <h4 className="micro-text text-v3-cyan mb-4">Q1 // CONCEPTUAL</h4>
+                    <p className="hero-text text-2xl mb-8">What defines a signal at its most fundamental level?</p>
+                    <div className="flex gap-4">
+                      {["VARIATION", "CONSTANCY", "VOID"].map(opt => (
+                        <button 
+                          key={opt}
+                          onClick={() => setAnswers({...answers, q1: opt})}
+                          className={`px-6 py-2 border text-xs tracking-widest ${answers.q1 === opt ? 'bg-v3-cyan text-black border-v3-cyan' : 'border-white/20'}`}
+                        >
+                          {opt}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="bg-white/5 p-12 rounded-sm border border-white/10">
+                    <h4 className="micro-text text-v3-cyan mb-4">Q2 // INTERACTION</h4>
+                    <p className="hero-text text-2xl mb-4">Increase frequency above 1.8 Hz.</p>
+                    <div className={`micro-text ${frequency > 1.8 ? 'text-v3-cyan' : 'opacity-40'}`}>
+                      {frequency > 1.8 ? "SUCCESS // PARAMETER MET" : "SYSTEM WAITING..."}
+                    </div>
+                  </div>
+
+                  {answers.q1 === "VARIATION" && frequency > 1.8 && (
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex justify-center pt-12">
+                      <button 
+                        onClick={() => window.location.href = '/'} // End of Module 1
+                        className="px-16 py-6 border-2 border-v3-cyan text-v3-cyan text-xl tracking-[0.3em] font-bold hover:bg-v3-cyan hover:text-black transition-all"
+                      >
+                        CLOSE MODULE
+                      </button>
+                    </motion.div>
+                  )}
+                </div>
+              )}
+              
+              <div className="w-full flex justify-between items-center opacity-20">
+                <div className="micro-text">Module 1 // Final Verification</div>
+                <div className="micro-text tracking-[0.3em]">Validation Mode: {showQuestions ? "ACTIVE" : "PENDING"}</div>
+              </div>
             </footer>
           </div>
         </motion.div>

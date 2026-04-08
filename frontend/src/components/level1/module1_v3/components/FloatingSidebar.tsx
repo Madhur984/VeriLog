@@ -5,7 +5,7 @@ import { useSignalStore } from '../store/signalStore';
 const SCENES = [
   "ENTRY", "IDENTITY", "SIGNAL", "TIME", "ENERGY",
   "FREQ", "SHAPE", "NOISE", "CONTROL", "INTERACT",
-  "REAL", "LAB", "END"
+  "REAL", "LAB_S11", "END", "MASTER_LAB"
 ];
 
 export const FloatingSidebar: React.FC = () => {
@@ -24,7 +24,10 @@ export const FloatingSidebar: React.FC = () => {
             className={`v3-dot ${isActive ? 'active' : ''} ${isCompleted ? 'completed' : ''}`}
             title={name}
             onClick={() => goToScene(i)}
-            style={{ cursor: 'pointer' }}
+            style={{ 
+              cursor: 'pointer',
+              boxShadow: '0 0 4px rgba(0,0,0,0.4)' 
+            }}
             whileHover={{ scale: 1.5, opacity: 1 }}
           />
         );

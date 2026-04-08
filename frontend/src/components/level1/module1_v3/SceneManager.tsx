@@ -18,11 +18,13 @@ import { S09_Interaction }from './scenes/S09_Interaction';
 import { S10_RealWorld }  from './scenes/S10_RealWorld';
 import { S11_Lab }        from './scenes/S11_Lab';
 import { S12_Conclusion } from './scenes/S12_Conclusion';
+import { SignalLab }      from './components/SignalLab';
 
 const SCENES = [
   S00_Entry, S01_Identity, S02_Signal, S03_Time,
   S04_Energy, S05_Frequency, S06_Shape, S07_Noise,
   S08_Control, S09_Interaction, S10_RealWorld, S11_Lab, S12_Conclusion,
+  SignalLab, // ✅ LAB
 ];
 
 const audio = new AudioEngine();

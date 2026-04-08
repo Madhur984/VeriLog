@@ -4,18 +4,21 @@ import { InlineText } from '../components/InlineText';
 import { canvasState } from '../engine/canvasState';
 
 export const S12_Conclusion: React.FC = () => {
+  const nextScene = useSignalStore(s => s.nextScene);
+
   useEffect(() => {
     canvasState.magneticStrength = 0.25;
-    const handleMove = (e: MouseEvent) => {
-      canvasState.cursorNormX = e.clientX / window.innerWidth;
-    };
-    window.addEventListener('mousemove', handleMove);
+    
+    // Auto-transition to Master Lab after 4s
+    const timer = setTimeout(() => {
+      nextScene();
+    }, 4500);
+
     return () => {
-      window.removeEventListener('mousemove', handleMove);
+      clearTimeout(timer);
       canvasState.magneticStrength = 0;
-      canvasState.cursorNormX = -1;
     };
-  }, []);
+  }, [nextScene]);
 
   return (
     <div className="absolute inset-0 flex flex-col pointer-events-none items-center justify-end pb-32">
