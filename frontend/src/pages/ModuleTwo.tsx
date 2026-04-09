@@ -1,357 +1,338 @@
-import { useState, useCallback, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Monitor, Zap } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-
-// Level 2 components
-import { AnalogLab } from '../components/level2/AnalogLab';
-import { DigitalLab } from '../components/level2/DigitalLab';
-import { NoiseExperiment } from '../components/level2/NoiseExperiment';
-import { SignalRegenerator } from '../components/level2/SignalRegenerator';
-import { SamplingLab } from '../components/level2/SamplingLab';
-import { NoisyLineChallenge } from '../components/level2/NoisyLineChallenge';
-import { BadgeToast } from '../components/level2/BadgeToast';
-import { useGlobalSensory } from '../hooks/useGlobalSensory';
-import '../components/level2/level2.css';
-
-// Shared Level 1 systems
-import { XPCounter } from '../components/level1/XPCounter';
-import { ProgressTracker } from '../components/ui/ProgressTracker';
-import { useEngagementAdapter as useXPSystem } from '../hooks/useEngagementAdapter';
-import { useGamificationStore } from '../stores/gamificationStore';
-
-const T = {
-    bg: '#FFFFFF',
-    card: '#F8FAFC',
-    border: '#E2E8F0',
-    text: '#0F172A',
-    muted: '#64748B',
-    accent: '#0EA5E9',
-    success: '#059669',
-    error: '#DC2626',
-    mono: "'IBM Plex Mono','Roboto Mono',monospace",
-    sans: "'Inter',system-ui,sans-serif",
-} as const;
-
-type Scene = 'intro' | 'analog' | 'digital' | 'sampling' | 'comparison' | 'advanced' | 'boss' | 'summary' | 'complete';
-
-interface Badge { name: string; xp: number; }
-
-const BADGES_MAP: Record<string, Badge> = {
-    analog: { name: 'Analog Explorer', xp: 10 },
-    digital: { name: 'Digital Discoverer', xp: 10 },
-    sampling: { name: 'Nyquist Master', xp: 15 },
-    comparison: { name: 'Comparison Master', xp: 10 },
-    advanced: { name: 'Digital Advocate', xp: 15 },
-    boss: { name: 'Signal Architect', xp: 30 },
-};
+import React, { useState, useEffect } from 'react';
+import { Moon, Sun, Copy, Check, LayoutGrid, BookOpen, ClipboardList, ChevronsRight } from 'lucide-react';
 
 export const ModuleTwo: React.FC = () => {
-    const navigate = useNavigate();
-    const completeSkill = useGamificationStore(state => state.completeSkill);
-    const [scene, setScene] = useState<Scene>('intro');
-    const [isTransitioning, setIsTransitioning] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(true);
+  const [copied, setCopied] = useState(false);
+  
+  // Sidebar state
+  const [primaryTab, setPrimaryTab] = useState('All');
+  const [secondaryItem, setSecondaryItem] = useState(0);
 
-    const { xp, awardXP, registerCounterEl } = useXPSystem();
-    const { triggerHaptic, playSound } = useGlobalSensory();
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [isDarkMode]);
 
+  const verilogCode = `// Simple ADC (Analog to Digital) Interface Mockup
+module adc_interface (
+    input  wire clk,
+    input  wire rst_n,
+    input  wire analog_cmp_in,  // From analog comparator
+    output reg  [7:0] digital_out
+);
 
-    const [isHighContrast, setIsHighContrast] = useState(false);
-    const [isXRayMode] = useState(false);
-    const setProbeData = useCallback(() => {}, []);
+    reg [7:0] counter;
 
-    const [toast, setToast] = useState<{ show: boolean; badge: Badge }>({
-        show: false, badge: { name: '', xp: 0 },
-    });
-    const [earnedBadges, setEarnedBadges] = useState<Set<string>>(new Set());
-    const [activeChallenge, setActiveChallenge] = useState<string | null>(null);
+    // A simple tracking ADC logic using a counter
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            digital_out <= 8'b0;
+            counter <= 8'b0;
+        end else begin
+            // If analog input is higher, count up, else count down
+            if (analog_cmp_in)
+                counter <= counter + 1;
+            else
+                counter <= counter - 1;
+                
+            digital_out <= counter;
+        end
+    end
 
-    // Evolution Logic Persistence
-    const [intel, setIntel] = useState({ accuracy: 0, exploration: 0 });
-    useEffect(() => {
-        const checkIntel = () => {
-            const keys = Object.keys(localStorage).filter(k => k.startsWith('verilog_cognition_'));
-            if (keys.length === 0) return;
-            try {
-                const data = JSON.parse(localStorage.getItem(keys[keys.length-1]) || '{}');
-                setIntel({ accuracy: data.predictionAccuracy || 0, exploration: data.explorationScore || 0 });
-            } catch (e) {
-                console.error("Failed to parse cognition data", e);
-            }
-        };
-        const interval = setInterval(checkIntel, 2000);
-        return () => clearInterval(interval);
-    }, []);
+endmodule`;
 
-    const awardBadge = useCallback((id: string) => {
-        if (earnedBadges.has(id)) return;
-        const badge = BADGES_MAP[id];
-        if (!badge) return;
-        setEarnedBadges(prev => {
-            const next = new Set(prev);
-            next.add(id);
-            return next;
-        });
-        setToast({ show: true, badge });
-        awardXP('structural', badge.xp);
-        triggerHaptic('success');
-        playSound('success');
-    }, [earnedBadges, awardXP, triggerHaptic, playSound]);
+  const handleCopy = () => {
+    navigator.clipboard.writeText(verilogCode);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
-    const handleAnalogComplete = useCallback(() => {
-        awardBadge('analog');
-    }, [awardBadge]);
+  const primaryTabs = [
+    { id: 'All', icon: LayoutGrid, label: 'All' },
+    { id: 'Articles', icon: BookOpen, label: 'Articles' },
+    { id: 'Quiz', icon: ClipboardList, label: 'Quiz' },
+  ];
 
-    const handleDigitalComplete = useCallback(() => {
-        awardBadge('digital');
-    }, [awardBadge]);
+  const articles = [
+    { id: 0, title: 'Signal Domains: Analog vs Digital', date: '2026-04-09' },
+    { id: 1, title: 'The Nyquist-Shannon Theorem', date: '2025-08-14' },
+    { id: 2, title: 'Handling Signal Noise & Regeneration', date: '2025-10-02' },
+    { id: 3, title: 'Interfacing Analog with FPGAs', date: '2025-11-21' },
+  ];
 
-    const handleComparisonComplete = useCallback(() => {
-        awardBadge('comparison');
-    }, [awardBadge]);
-
-    const handleRegenerationComplete = useCallback(() => {
-        awardBadge('advanced');
-    }, [awardBadge]);
-
-    const handleSamplingComplete = useCallback(() => {
-        awardBadge('sampling');
-    }, [awardBadge]);
-
-    const startChallenge = useCallback((id: string) => {
-        setActiveChallenge(id);
-        triggerHaptic('heavy');
-    }, [triggerHaptic]);
-
-    const binaryChars = useRef(Array.from({ length: 40 }, () => ({
-        x: Math.random() * 100,
-        delay: Math.random() * 3,
-        dur: 1.5 + Math.random() * 2,
-        char: Math.random() > 0.5 ? '1' : '0'
-    })));
-
-    return (
-        <div style={{ 
-            minHeight: '100vh', background: T.bg, color: T.text,
-            fontFamily: T.sans, position: 'relative', overflowX: 'hidden',
-            filter: isHighContrast ? 'contrast(1.2) brightness(1.1)' : 'none'
-        }}>
-            <AnimatePresence mode="wait">
-                {isTransitioning && (
-                    <motion.div key="transition-overlay" initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                        style={{ position: 'fixed', inset: 0, background: '#000', zIndex: 10000, pointerEvents: 'none' }} />
-                )}
-            </AnimatePresence>
-
-            <header style={{ 
-                position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
-                padding: '16px 24px', background: 'rgba(10, 11, 16, 0.8)',
-                backdropFilter: 'blur(12px)', borderBottom: `1px solid ${T.border}`,
-                display: 'flex', justifyContent: 'space-between', alignItems: 'center'
-            }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-                    <button onClick={() => navigate('/dashboard')} style={{ background: 'none', border: 'none', color: T.muted, cursor: 'pointer' }}>
-                        <ArrowLeft size={20} />
-                    </button>
-                    <div style={{ width: 1, height: 24, background: T.border }} />
-                    <ProgressTracker stages={[
-                        { id: 'intro', label: 'Start' }, { id: 'analog', label: 'Analog' },
-                        { id: 'digital', label: 'Digital' }, { id: 'comparison', label: 'Compare' },
-                        { id: 'advanced', label: 'Regen' }, { id: 'sampling', label: 'Sampling' },
-                        { id: 'boss', label: 'Boss' }, { id: 'summary', label: 'Final' }
-                    ]} activeStageId={scene} />
-                    
-                    {/* Evolution Logic: Engineering Intelligence Dashboard */}
-                    <div style={{ 
-                        display: 'flex', gap: 12, padding: '4px 12px', 
-                        background: 'rgba(255,255,255,0.03)', borderRadius: 20, 
-                        border: '1px solid rgba(255,255,255,0.05)', marginLeft: 8 
-                    }}>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                             <span style={{ fontSize: 7, color: T.muted, fontFamily: T.mono }}>ACCURACY</span>
-                             <div style={{ width: 40, height: 3, background: 'rgba(255,255,255,0.1)', borderRadius: 2 }}>
-                                 <motion.div animate={{ width: `${intel.accuracy * 100}%` }} style={{ height: '100%', background: T.accent }} />
-                             </div>
-                        </div>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                             <span style={{ fontSize: 7, color: T.muted, fontFamily: T.mono }}>EXPLORE</span>
-                             <div style={{ width: 40, height: 3, background: 'rgba(255,255,255,0.1)', borderRadius: 2 }}>
-                                 <motion.div animate={{ width: `${intel.exploration * 100}%` }} style={{ height: '100%', background: T.success }} />
-                             </div>
-                        </div>
-                    </div>
-
-                    <XPCounter total={xp.total} registerEl={registerCounterEl} breakdown={xp} />
-                    
-                    {/* Accessibility Toggle */}
-                    <button 
-                        onClick={() => { setIsHighContrast(!isHighContrast); triggerHaptic('light'); }}
-                        style={{ 
-                            background: isHighContrast ? T.accent : 'rgba(255,255,255,0.05)', 
-                            border: 'none', borderRadius: 4, width: 28, height: 28, 
-                            display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            cursor: 'pointer', color: isHighContrast ? '#000' : T.muted
-                        }}
-                        title="High Contrast Mode"
-                    >
-                        <Zap size={14} />
-                    </button>
-                </div>
-            </header>
-
-
-
-            <main style={{ 
-                flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center',
-                padding: scene === 'intro' || scene === 'complete' ? 0 : '100px 24px 32px',
-                maxWidth: scene === 'intro' || scene === 'complete' ? 'none' : 1000,
-                width: '100%', margin: '0 auto'
-            }}>
-                <AnimatePresence mode="wait">
-                    {scene === 'intro' && (
-                        <motion.div key="intro" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                            style={{ minHeight: '100vh', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
-                            <div style={{ textAlign: 'center', zIndex: 1 }}>
-                                <motion.h1 
-                                    initial={{ y: 20, opacity: 0 }}
-                                    animate={{ y: 0, opacity: 1 }}
-                                    style={{ fontSize: 'clamp(40px, 8vw, 84px)', fontWeight: 800, color: T.text, marginBottom: 24 }}
-                                >
-                                    SIGNAL<br /><span style={{ color: 'transparent', WebkitTextStroke: `1px ${T.accent}` }}>DOMAINS</span>
-                                </motion.h1>
-                                <motion.button 
-                                    initial={{ y: 20, opacity: 0 }}
-                                    animate={{ y: 0, opacity: 1 }}
-                                    transition={{ delay: 0.2 }}
-                                    onClick={() => setScene('analog')} 
-                                    style={{ padding: '16px 40px', background: T.accent, color: T.bg, border: 'none', cursor: 'pointer', fontFamily: T.mono, fontWeight: 700 }}
-                                >
-                                    Initialize Level 2
-                                </motion.button>
-                            </div>
-                        </motion.div>
-                    )}
-
-                    {scene === 'analog' && (
-                        <motion.div key="analog" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 1, filter: 'blur(10px)' }} style={{ width: '100%' }}>
-                            <AnalogLab onComplete={handleAnalogComplete} isXRayMode={isXRayMode} setProbeData={setProbeData} />
-                            {earnedBadges.has('analog') && (
-                                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} style={{ marginTop: 40, display: 'flex', justifyContent: 'flex-end' }}>
-                                    <button onClick={() => setScene('digital')} style={{ padding: '12px 24px', background: T.accent, color: T.bg, border: 'none', cursor: 'pointer', fontFamily: T.mono }}>Proceed to Digital</button>
-                                </motion.div>
-                            )}
-                        </motion.div>
-                    )}
-
-                    {scene === 'digital' && (
-                        <motion.div key="digital" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 1, filter: 'blur(10px)' }} style={{ width: '100%' }}>
-                            <DigitalLab onComplete={handleDigitalComplete} isXRayMode={isXRayMode} setProbeData={setProbeData} />
-                            {earnedBadges.has('digital') && (
-                                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} style={{ marginTop: 40, display: 'flex', justifyContent: 'flex-end' }}>
-                                    <button onClick={() => setScene('comparison')} style={{ padding: '12px 24px', background: T.accent, color: T.bg, border: 'none', cursor: 'pointer', fontFamily: T.mono }}>Comparison Lab</button>
-                                </motion.div>
-                            )}
-                        </motion.div>
-                    )}
-
-                    {scene === 'comparison' && (
-                        <motion.div key="comparison" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 1, filter: 'blur(10px)' }} style={{ width: '100%' }}>
-                            <NoiseExperiment onComplete={handleComparisonComplete} />
-                            {earnedBadges.has('comparison') && (
-                                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} style={{ marginTop: 40, display: 'flex', justifyContent: 'flex-end', gap: 12 }}>
-                                    <button onClick={() => setScene('advanced')} style={{ padding: '12px 24px', background: 'transparent', border: `1px solid ${T.accent}`, color: T.accent, cursor: 'pointer', fontFamily: T.mono }}>Advanced Regen</button>
-                                    <button onClick={() => setScene('sampling')} style={{ padding: '12px 24px', background: T.accent, color: T.bg, border: 'none', cursor: 'pointer', fontFamily: T.mono }}>Nyquist Lab</button>
-                                </motion.div>
-                            )}
-                        </motion.div>
-                    )}
-
-                    {scene === 'advanced' && (
-                        <motion.div key="advanced" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 1, filter: 'blur(10px)' }} style={{ width: '100%' }}>
-                            <SignalRegenerator onComplete={handleRegenerationComplete} />
-                            {earnedBadges.has('advanced') && (
-                                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} style={{ marginTop: 40, display: 'flex', justifyContent: 'flex-end' }}>
-                                    <button onClick={() => setScene('sampling')} style={{ padding: '12px 24px', background: T.accent, color: T.bg, border: 'none', cursor: 'pointer', fontFamily: T.mono }}>Nyquist Lab</button>
-                                </motion.div>
-                            )}
-                        </motion.div>
-                    )}
-
-                    {scene === 'sampling' && (
-                        <motion.div key="sampling" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 1, filter: 'blur(10px)' }} style={{ width: '100%' }}>
-                            <SamplingLab onComplete={handleSamplingComplete} />
-                            {earnedBadges.has('sampling') && (
-                                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} style={{ marginTop: 40, display: 'flex', justifyContent: 'flex-end' }}>
-                                    <button onClick={() => setScene('boss')} style={{ padding: '12px 24px', background: T.accent, color: T.bg, border: 'none', cursor: 'pointer', fontFamily: T.mono }}>The Final Boss</button>
-                                </motion.div>
-                            )}
-                        </motion.div>
-                    )}
-
-                    {scene === 'boss' && ( activeChallenge === 'noisy_line' ? (
-                        <NoisyLineChallenge onComplete={() => { awardBadge('boss'); awardXP('application', 50); setScene('summary'); }} />
-                    ) : (
-                        <motion.div key="boss" initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ width: '100%', textAlign: 'center' }}>
-                            <h2 style={{ fontSize: 32, marginBottom: 40 }}>FINAL CHALLENGE</h2>
-                            <button onClick={() => startChallenge('noisy_line')} style={{ padding: '16px 40px', background: T.accent, color: T.bg, border: 'none', cursor: 'pointer', fontFamily: T.mono, fontWeight: 700, borderRadius: 8 }}>Begin Transmission</button>
-                        </motion.div>
-                    ))}
-
-                    {scene === 'summary' && (
-                        <motion.div key="summary" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} style={{ width: '100%', maxWidth: 600 }}>
-                            <div style={{ background: T.card, padding: 40, borderRadius: 24, border: `1px solid ${T.border}`, textAlign: 'center', boxShadow: '0 20px 40px rgba(0,0,0,0.4)' }}>
-                                <div style={{ width: 64, height: 64, background: `${T.accent}20`, borderRadius: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px', color: T.accent }}>
-                                    <Monitor size={32} />
-                                </div>
-                                <h2 style={{ color: T.accent, marginBottom: 12, fontSize: 24, fontWeight: 800 }}>MODULE 2 CAPTURED</h2>
-                                <p style={{ color: T.muted, marginBottom: 32 }}>You've mastered the bridge between worlds.</p>
-                                <button onClick={() => setScene('complete')} style={{ padding: '14px 32px', background: T.accent, color: T.bg, border: 'none', cursor: 'pointer', fontFamily: T.mono, fontWeight: 800, borderRadius: 8 }}>Finalize Graduation</button>
-                            </div>
-                        </motion.div>
-                    )}
-
-                    {scene === 'complete' && (
-                        <motion.div key="complete" initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ minHeight: '100vh', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden' }}>
-                            {binaryChars.current.map((c, i) => (
-                                <div key={i} style={{ position: 'absolute', left: `${c.x}%`, top: '-20px', fontFamily: T.mono, fontSize: 10, color: T.accent, opacity: 0.2, animation: `binary-fall ${c.dur}s linear ${c.delay}s infinite` }}>{c.char}</div>
-                            ))}
-                            <motion.h1 
-                                initial={{ scale: 0.9, opacity: 0 }}
-                                animate={{ scale: 1, opacity: 1 }}
-                                style={{ fontSize: 'clamp(40px, 10vw, 84px)', fontWeight: 800, color: T.text, marginBottom: 24, textAlign: 'center' }}
-                            >
-                                LEVEL 2<br/><span style={{ color: T.accent }}>COMPLETE</span>
-                            </motion.h1>
-                            <motion.button 
-                                initial={{ y: 20, opacity: 0 }}
-                                animate={{ y: 0, opacity: 1 }}
-                                transition={{ delay: 0.5 }}
-                                onClick={() => { setIsTransitioning(true); triggerHaptic('heavy'); playSound('boss_defeat'); setTimeout(() => { completeSkill('signal_representation'); navigate('/module/3'); }, 2500); }} 
-                                style={{ padding: '16px 40px', background: T.accent, color: T.bg, border: 'none', cursor: 'pointer', fontFamily: T.mono, fontWeight: 700, boxShadow: `0 0 30px ${T.accent}60`, borderRadius: 8 }}
-                            >
-                                Enter Level 3
-                            </motion.button>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
-            </main>
-
-            <BadgeToast 
-                show={toast.show} 
-                badgeName={toast.badge.name} 
-                xp={toast.badge.xp} 
-                onDismiss={() => setToast({ ...toast, show: false })} 
-            />
-            
-            {/* Global Legend Style */}
-            <style dangerouslySetInnerHTML={{ __html: `
-                @keyframes binary-fall {
-                    0% { transform: translateY(-20px); opacity: 0; }
-                    10% { opacity: 0.3; }
-                    90% { opacity: 0.3; }
-                    100% { transform: translateY(110vh); opacity: 0; }
-                }
-            ` }} />
+  return (
+    <div className="flex h-screen w-full overflow-hidden bg-black text-gray-200 font-sans">
+      
+      {/* 1. Primary Sidebar (Leftmost) */}
+      <div className="w-[84px] flex-shrink-0 bg-black border-r border-orange-900/30 flex flex-col justify-between py-6 z-20">
+        <div className="flex flex-col gap-4 items-center">
+          {primaryTabs.map((tab) => {
+            const isActive = primaryTab === tab.id;
+            const Icon = tab.icon;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setPrimaryTab(tab.id)}
+                className={`flex flex-col items-center justify-center w-16 h-16 rounded-xl transition-all ${
+                  isActive 
+                    ? 'bg-orange-950/40 border border-orange-500/50 text-orange-500' 
+                    : 'text-gray-500 hover:text-orange-400 hover:bg-orange-950/20'
+                }`}
+              >
+                <Icon size={22} className="mb-1" strokeWidth={isActive ? 2.5 : 2} />
+                <span className="text-[11px] font-medium">{tab.label}</span>
+              </button>
+            );
+          })}
         </div>
-    );
+        
+        <div className="flex flex-col items-center">
+          <button className="flex flex-col items-center justify-center w-16 h-16 rounded-xl text-gray-500 hover:text-orange-400 hover:bg-orange-950/20 transition-all">
+            <ChevronsRight size={24} className="mb-1" />
+            <span className="text-[11px] font-medium">Next Track</span>
+          </button>
+        </div>
+      </div>
+
+      {/* 2. Secondary Sidebar (List items) */}
+      <div className="w-[340px] flex-shrink-0 bg-[#050505] border-r border-orange-900/30 flex flex-col z-10 box-border overflow-y-auto">
+        <div className="p-5 border-b border-orange-900/30">
+          <h2 className="text-xl font-semibold text-gray-100">{primaryTab} ({articles.length})</h2>
+        </div>
+        
+        <div className="flex flex-col">
+          {articles.map((article) => {
+            const isActive = secondaryItem === article.id;
+            return (
+              <button
+                key={article.id}
+                onClick={() => setSecondaryItem(article.id)}
+                className={`text-left border-b border-orange-900/20 p-4 transition-colors relative flex flex-col gap-2 ${
+                  isActive 
+                    ? 'bg-orange-950/30 hover:bg-orange-950/50' 
+                    : 'bg-transparent hover:bg-orange-950/10'
+                }`}
+              >
+                <div 
+                  className={`absolute left-0 top-0 bottom-0 w-1 ${
+                    isActive ? 'bg-orange-500' : 'bg-transparent'
+                  }`} 
+                />
+                <h3 className={`font-medium line-clamp-1 pr-2 ${isActive ? 'text-orange-50' : 'text-gray-400'}`}>
+                  {article.title}
+                </h3>
+                <div className={`flex items-center gap-1.5 text-xs ${isActive ? 'text-orange-400' : 'text-gray-600'}`}>
+                  <BookOpen size={13} />
+                  <span>Last Updated: {article.date}</span>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* 3. Main Content Area (Right) */}
+      <div className="flex-1 h-full overflow-y-auto relative bg-[#030303]">
+        <div className={`min-h-full font-sans transition-colors duration-300 pb-20 ${isDarkMode ? 'bg-[#030303] text-gray-300' : 'bg-[#fff5ee] text-[#1a0f00]'}`}>
+          {/* Navigation inside content area */}
+          <nav className={`sticky top-0 z-50 px-8 py-4 flex justify-between items-center border-b transition-colors duration-300 shadow-sm ${isDarkMode ? 'bg-[#030303]/90 backdrop-blur-md border-orange-900/30' : 'bg-[#fff5ee]/90 backdrop-blur-md border-orange-200'}`}>
+            <div className="font-mono font-semibold text-lg text-orange-500">
+              {articles.find(a => a.id === secondaryItem)?.title || 'module/2'}
+            </div>
+            <button
+              onClick={() => setIsDarkMode(!isDarkMode)}
+              className={`flex items-center gap-2 px-4 py-2 rounded-md border text-sm transition-colors ${
+                isDarkMode 
+                  ? 'bg-transparent border-orange-900/50 hover:bg-orange-900/30 text-orange-200' 
+                  : 'bg-transparent border-orange-300 hover:bg-orange-100 text-orange-800'
+              }`}
+            >
+              {isDarkMode ? <Sun size={16} /> : <Moon size={16} />}
+              {isDarkMode ? 'Light Mode' : 'Dark Mode'}
+            </button>
+          </nav>
+
+          {/* Main Document Content */}
+          <main className="max-w-5xl mx-auto px-8 py-16">
+            
+            {/* Hero Section */}
+            <section className="mb-20 animate-in fade-in slide-in-from-bottom-4 duration-700">
+              <h1 className="text-5xl md:text-6xl font-bold mb-6 tracking-tight text-center text-orange-500">Signal <span className="text-orange-800 font-light">—</span> Domains</h1>
+              <p className={`text-xl max-w-2xl mx-auto text-center ${isDarkMode ? 'text-orange-200/60' : 'text-orange-900/70'}`}>
+                Bridging the physical world and digital logic. Understanding how continuous analog signals are sampled and quantized for FPGA processing.
+              </p>
+            </section>
+
+            {/* Key Concepts Grid */}
+            <section className="mb-20">
+              <h2 className={`text-3xl font-semibold mb-8 pb-3 border-b ${isDarkMode ? 'border-orange-900/30 text-orange-400' : 'border-orange-200 text-orange-600'}`}>Key Concepts</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {[
+                  {
+                    title: "Analog Signals",
+                    desc: "Continuous waveforms representing physical phenomena (voltage, sound). Susceptible to noise and degradation."
+                  },
+                  {
+                    title: "Digital Signals",
+                    desc: "Discrete binary values (0s and 1s). Highly resilient to noise, forming the absolute foundation of Verilog logic."
+                  },
+                  {
+                    title: "Nyquist Sampling",
+                    desc: "To perfectly reconstruct a continuous signal, the sampling rate must be at least twice the maximum frequency of the signal."
+                  },
+                  {
+                    title: "Signal Regeneration",
+                    desc: "Using logical thresholds and Schmitt triggers to clean up noisy inputs and restore crisp digital edges."
+                  }
+                ].map((concept, idx) => (
+                  <div 
+                    key={idx}
+                    className={`p-6 rounded-xl border transition-all duration-300 hover:-translate-y-1 hover:shadow-lg ${
+                      isDarkMode 
+                        ? 'bg-[#080503] border-orange-900/40 shadow-black hover:border-orange-500/50' 
+                        : 'bg-white border-orange-200 shadow-sm hover:border-orange-400'
+                    }`}
+                  >
+                    <h3 className={`font-mono text-lg mb-3 ${isDarkMode ? 'text-orange-400' : 'text-orange-600'}`}>{concept.title}</h3>
+                    <p className="text-sm md:text-base leading-relaxed opacity-90">{concept.desc}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* Comparison Table */}
+            <section className="mb-20">
+              <h2 className={`text-3xl font-semibold mb-8 pb-3 border-b ${isDarkMode ? 'border-orange-900/30 text-orange-400' : 'border-orange-200 text-orange-600'}`}>Analog vs Digital</h2>
+              <div className="overflow-x-auto rounded-xl border border-orange-900/30 dark:border-orange-900/30">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className={isDarkMode ? 'bg-[#0a0502]' : 'bg-orange-50'}>
+                      <th className={`p-4 font-semibold border-b ${isDarkMode ? 'border-orange-900/30' : 'border-orange-200'}`}>Characteristic</th>
+                      <th className={`p-4 font-semibold border-b ${isDarkMode ? 'border-orange-900/30' : 'border-orange-200'}`}>Analog</th>
+                      <th className={`p-4 font-semibold border-b ${isDarkMode ? 'border-orange-900/30' : 'border-orange-200'}`}>Digital</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-orange-900/20 dark:divide-orange-900/30">
+                    <tr className={`transition-colors ${isDarkMode ? 'hover:bg-[#0f0703]' : 'hover:bg-orange-100/50'}`}>
+                      <td className="p-4 font-medium">Representation</td>
+                      <td className="p-4">Continuous values (e.g., 0V to 3.3V curve)</td>
+                      <td className="p-4">Discrete states (0 or 1)</td>
+                    </tr>
+                    <tr className={`transition-colors ${isDarkMode ? 'hover:bg-[#0f0703]' : 'hover:bg-orange-100/50'}`}>
+                      <td className="p-4 font-medium">Noise Immunity</td>
+                      <td className="p-4">Low - Noise directly degrades accuracy</td>
+                      <td className="p-4">High - Noise ignored if below thresholds</td>
+                    </tr>
+                    <tr className={`transition-colors ${isDarkMode ? 'hover:bg-[#0f0703]' : 'hover:bg-orange-100/50'}`}>
+                      <td className="p-4 font-medium">Processing</td>
+                      <td className="p-4">Op-amps, filters, inductors</td>
+                      <td className="p-4">Logic gates, flip-flops, FPGAs</td>
+                    </tr>
+                    <tr className={`transition-colors ${isDarkMode ? 'hover:bg-[#0f0703]' : 'hover:bg-orange-100/50'}`}>
+                      <td className="p-4 font-medium">Verilog Support</td>
+                      <td className="p-4">Requires Verilog-AMS (Analog Mixed Signal)</td>
+                      <td className="p-4">Native to standard Verilog</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            {/* Code Example Section */}
+            <section className="mb-16">
+              <h2 className={`text-3xl font-semibold mb-6 pb-3 border-b ${isDarkMode ? 'border-orange-900/30 text-orange-400' : 'border-orange-200 text-orange-600'}`}>Code Example</h2>
+              <p className="mb-6 text-lg opacity-90 leading-relaxed">
+                In real hardware, converting analog signals to digital format requires sampling. Below is a simplified mock module of a <strong>tracking Analog-to-Digital Converter (ADC)</strong> implemented in Verilog. It receives a fast digital pulse from a continuous analog comparator.
+              </p>
+
+              <div className="rounded-xl overflow-hidden border border-orange-900/40 shadow-2xl shadow-orange-900/20">
+                <div className="flex justify-between items-center px-4 py-2 bg-[#0a0502] text-orange-500/70 border-b border-orange-900/40 text-sm font-mono">
+                  <span>adc_tracker.v</span>
+                  <button 
+                    onClick={handleCopy}
+                    className="flex items-center gap-1.5 hover:text-orange-400 transition-colors px-2.5 py-1 rounded bg-[#0f0703] hover:bg-orange-950/50 border border-orange-900/40"
+                  >
+                    {copied ? <Check size={14} className="text-orange-500" /> : <Copy size={14} />}
+                    {copied ? 'Copied!' : 'Copy code'}
+                  </button>
+                </div>
+                <div className="relative">
+                  <pre className="p-6 overflow-x-auto bg-[#030100] text-orange-100 text-sm md:text-base font-mono leading-relaxed">
+                    <code>
+<span className="text-orange-700 italic">// Simple ADC (Analog to Digital) Interface Mockup</span>
+{'\n'}
+<span className="text-orange-500">module</span> <span className="text-[#ffb74d]">adc_interface</span> (
+{'\n'}
+    <span className="text-orange-500">input</span>  <span className="text-orange-300">wire</span> clk,
+{'\n'}
+    <span className="text-orange-500">input</span>  <span className="text-orange-300">wire</span> rst_n,
+{'\n'}
+    <span className="text-orange-500">input</span>  <span className="text-orange-300">wire</span> analog_cmp_in,  <span className="text-orange-700 italic">// From analog comparator</span>
+{'\n'}
+    <span className="text-orange-500">output</span> <span className="text-orange-500">reg</span>  [<span className="text-orange-400">7</span>:<span className="text-orange-400">0</span>] digital_out
+{'\n'}
+);
+{'\n\n'}
+    <span className="text-orange-500">reg</span> [<span className="text-orange-400">7</span>:<span className="text-orange-400">0</span>] counter;
+{'\n\n'}
+    <span className="text-orange-700 italic">// A simple tracking ADC logic using a counter</span>
+{'\n'}
+    <span className="text-orange-500">always</span> @(<span className="text-orange-500">posedge</span> clk <span className="text-orange-500">or</span> <span className="text-orange-500">negedge</span> rst_n) <span className="text-orange-500">begin</span>
+{'\n'}
+        <span className="text-orange-500">if</span> (!rst_n) <span className="text-orange-500">begin</span>
+{'\n'}
+            digital_out &lt;= <span className="text-orange-400">8'b0</span>;
+{'\n'}
+            counter &lt;= <span className="text-orange-400">8'b0</span>;
+{'\n'}
+        <span className="text-orange-500">end else begin</span>
+{'\n'}
+            <span className="text-orange-700 italic">// If analog input is higher, count up, else count down</span>
+{'\n'}
+            <span className="text-orange-500">if</span> (analog_cmp_in)
+{'\n'}
+                counter &lt;= counter + <span className="text-orange-400">1</span>;
+{'\n'}
+            <span className="text-orange-500">else</span>
+{'\n'}
+                counter &lt;= counter - <span className="text-orange-400">1</span>;
+{'\n'}
+                
+{'\n'}
+            digital_out &lt;= counter;
+{'\n'}
+        <span className="text-orange-500">end</span>
+{'\n'}
+    <span className="text-orange-500">end</span>
+{'\n\n'}
+<span className="text-orange-500">endmodule</span>
+                    </code>
+                  </pre>
+                </div>
+              </div>
+            </section>
+
+            {/* Simulation Output */}
+            <section className="mb-20">
+              <h2 className={`text-2xl font-semibold mb-6 pb-3 border-b ${isDarkMode ? 'border-orange-900/30 text-orange-400' : 'border-orange-200 text-orange-600'}`}>Quantization Results</h2>
+              <p className="mb-4 opacity-90 text-lg">In real-world tracking ADCs, the counter constantly hunts the analog value creating discrete digital output changes:</p>
+              <div className="bg-[#050200] p-6 rounded-xl border border-orange-900/50 shadow-inner font-mono text-orange-400 text-sm md:text-base whitespace-pre-wrap leading-relaxed inline-block">
+                {`Time | clk | cmp_in | digital_out
+--------------------------------
+  10 |  1  |   1    |   00000001
+  20 |  1  |   1    |   00000010
+  30 |  1  |   1    |   00000011
+  40 |  1  |   0    |   00000010 // Signal dropping`}
+              </div>
+            </section>
+
+          </main>
+        </div>
+      </div>
+    </div>
+  );
 };
