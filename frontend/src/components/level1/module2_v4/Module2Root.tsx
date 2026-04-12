@@ -16,17 +16,6 @@ import { S07_ADCArchitecture } from './scenes/S07_ADCArchitecture';
 import { S08_Lab } from './scenes/S08_Lab';
 import { S09_KnowledgeGate } from './scenes/S09_KnowledgeGate';
 
-// Placeholder scenes for the rest (no longer needed, but keeping for reference if any others added)
-const S_Placeholder: React.FC<{ title: string; desc: string }> = ({ title, desc }) => (
-    <div className="flex flex-col gap-8 max-w-4xl mx-auto">
-        <h2 className="text-5xl font-black italic tracking-tighter text-white/50">{title}</h2>
-        <div className="h-[400px] flex flex-col items-center justify-center border-2 border-dashed border-white/5 rounded-[3rem] bg-white/[0.01]">
-            <p className="text-[10px] font-mono uppercase tracking-[0.4em] text-white/20 mb-4">Architecture Refactor in Progress</p>
-            <p className="text-sm text-white/30 max-w-sm text-center italic">"{desc}"</p>
-        </div>
-    </div>
-);
-
 // All scenes implemented.
 
 const SECTIONS = [
@@ -84,7 +73,7 @@ export const Module2Root: React.FC = () => {
   const progress = ((activeScreenIndex + 1) / scenes.length) * 100;
 
   return (
-    <div className={`flex h-screen w-full font-sans transition-colors duration-500 overflow-hidden ${isDarkMode ? 'bg-[#030100]' : 'bg-white'}`}>
+    <div className={`flex h-screen w-full font-sans transition-colors duration-500 overflow-hidden ${isDarkMode ? 'bg-[#030100]' : 'bg-gray-50'}`}>
       <Sidebar 
         sections={SECTIONS}
         activeSection={SECTIONS[activeScreenIndex].id}
@@ -96,26 +85,27 @@ export const Module2Root: React.FC = () => {
       
       <main className="flex-1 relative overflow-hidden flex flex-col">
         {/* Top Floating HUD */}
-        <header className="absolute top-0 left-0 right-0 z-20 px-12 py-8 flex justify-between items-center pointer-events-none">
+        <header className="absolute top-0 left-0 right-0 z-20 px-12 py-10 flex justify-between items-center pointer-events-none">
             <motion.div 
                 initial={{ y: -20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
-                className="flex items-center gap-4 bg-black/40 backdrop-blur-xl border border-white/5 px-6 py-3 rounded-2xl pointer-events-auto"
+                className={`flex items-center gap-5 backdrop-blur-2xl border px-8 py-4 rounded-[2rem] pointer-events-auto shadow-2xl transition-all duration-500 ${isDarkMode ? 'bg-black/60 border-white/10 shadow-black' : 'bg-white/90 border-gray-200 shadow-orange-500/10'}`}
             >
-                <div className="w-2 h-2 rounded-full bg-orange-500 shadow-[0_0_10px_#f97316]" />
-                <span className="text-[10px] font-mono font-black text-white/50">M02</span>
-                <div className="w-px h-3 bg-white/10" />
-                <span className="text-[10px] font-mono tracking-[0.2em] text-cyan-500 uppercase font-black">{SECTIONS[activeScreenIndex].label}</span>
+                <div className={`w-2.5 h-2.5 rounded-full bg-orange-500 shadow-[0_0_15px_#f97316]`} />
+                <div className="flex flex-col">
+                    <span className={`text-[10px] font-mono font-black tracking-tighter ${isDarkMode ? 'text-white/30' : 'text-gray-400'}`}>CORE_NODE::V-02</span>
+                    <span className={`text-xs font-black tracking-[0.2em] uppercase ${isDarkMode ? 'text-orange-500' : 'text-orange-600'}`}>{SECTIONS[activeScreenIndex].label}</span>
+                </div>
             </motion.div>
 
             <motion.div 
                 initial={{ y: -20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.1 }}
-                className="bg-black/40 backdrop-blur-xl border border-white/5 px-6 py-3 rounded-2xl pointer-events-auto"
+                className={`flex flex-col items-end backdrop-blur-2xl border px-8 py-4 rounded-[2rem] pointer-events-auto transition-all duration-500 ${isDarkMode ? 'bg-black/60 border-white/5' : 'bg-white/90 border-gray-100 shadow-sm'}`}
             >
-                <span className="text-[9px] font-mono text-white/40 uppercase tracking-tighter">Instrument Status:</span>
-                <span className="text-[9px] font-mono text-cyan-500 uppercase ml-3 font-bold tracking-[0.2em]">Ready</span>
+                <span className={`text-[10px] font-mono uppercase tracking-widest ${isDarkMode ? 'text-white/30' : 'text-gray-400'}`}>Status:</span>
+                <span className={`text-[10px] font-black uppercase tracking-[0.2em] animate-pulse ${isDarkMode ? 'text-orange-500' : 'text-orange-600'}`}>Synchro Active</span>
             </motion.div>
         </header>
 
@@ -124,6 +114,7 @@ export const Module2Root: React.FC = () => {
             activeScene={activeScreenIndex}
             onSceneChange={handleSceneChange}
             time={time}
+            isDarkMode={isDarkMode}
         />
       </main>
     </div>

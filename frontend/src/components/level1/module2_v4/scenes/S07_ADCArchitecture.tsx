@@ -1,6 +1,4 @@
 import React from 'react';
-import { motion } from 'framer-motion';
-import { ConceptCard } from '../components/ConceptCard';
 import { Cpu, Zap, Layers, RefreshCw } from 'lucide-react';
 
 /**
@@ -8,59 +6,130 @@ import { Cpu, Zap, Layers, RefreshCw } from 'lucide-react';
  * 1. Physical incarnations of the Digital Bridge.
  * 2. SAR, Flash, and Delta-Sigma trade-offs.
  */
-export const S07_ADCArchitecture: React.FC = () => {
+/**
+ * S07_ADCArchitecture: Silicon Reality
+ */
+export const S07_ADCArchitecture: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
+  const textColor = isDarkMode ? 'text-white' : 'text-gray-900';
+  const subTextColor = isDarkMode ? 'text-white/50' : 'text-gray-500';
+  const accentColor = isDarkMode ? 'text-orange-500' : 'text-orange-600';
+
   return (
-    <div className="flex flex-col gap-16 max-w-5xl mx-auto">
-      <header className="space-y-6 text-center max-w-3xl mx-auto">
-        <h2 className="text-6xl font-black italic tracking-tighter text-white">
-          Physical <span className="text-cyan-500">Silicon</span>
+    <div className="flex flex-col gap-12 max-w-5xl mx-auto">
+      <header className="space-y-6">
+        <h2 className={`text-6xl font-black italic tracking-tighter ${textColor}`}>
+          Physical <span className={accentColor}>Silicon</span>
         </h2>
-        <p className="text-xl text-white/50 leading-relaxed font-medium">
-          Theory meets hardware. Depending on your needs — speed vs precision — 
-          silicon engineers have built different types of bridges.
-        </p>
-      </header>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-        <div className="space-y-6">
-            <ConceptCard 
-                icon={<Zap />}
-                title="Flash ADC"
-                layman="The Speed Demon. Sees everything at once."
-                technical="Direct conversion using a large bank of comparators and a resistor ladder. N bits require 2^N resistors and comparators."
-                example="Oscilloscopes and high-speed data acquisition where speed is the only priority."
-                extra="O(1) conversion time, but exponentially power-hungry."
-                color="#ef4444"
-            />
-            <ConceptCard 
-                icon={<Layers />}
-                title="SAR ADC"
-                layman="The Logical Scout. Narrows it down step by step."
-                technical="Successive Approximation Register. Uses a binary search algorithm to narrow down the input voltage bit by bit."
-                example="Standard microcontrollers (Arduino, ESP32) and general purpose sensors."
-                extra="Excellent balance of resolution (8-18 bits) and medium speed."
-                color="#f97316"
-            />
-        </div>
-
-        <div className="space-y-6">
-            <ConceptCard 
-                icon={<RefreshCw />}
-                title="Delta-Sigma"
-                layman="The Precision Sculptor. Samples fast to hear deep."
-                technical="Oversampling and noise shaping. Uses high-speed 1-bit sampling followed by heavy digital filtering to recover high resolution."
-                example="High-end audio equipment, music production, and precision laboratory scales."
-                extra="Ultra-high resolution (24-32 bits) but limited speed."
-                color="#06b6d4"
-            />
-            
-            <div className="p-10 rounded-[2.5rem] bg-cyan-500/5 border border-cyan-500/10 flex flex-col justify-center items-center text-center space-y-4 shadow-xl">
-                <Cpu size={48} className="text-cyan-500/40 mb-2" />
-                <h4 className="text-sm font-black uppercase tracking-[0.3em] text-cyan-500">The Power of Noise Shaping</h4>
-                <p className="text-xs text-white/30 leading-relaxed font-medium italic">
-                    "Modern Delta-Sigma ADCs can resolve changes as small as a single microvolt by simply out-sampling the noise."
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-start">
+            <p className={`text-xl leading-relaxed font-medium ${subTextColor}`}>
+              Theory meets hardware. Depending on whether you need raw speed or infinite precision, engineers have designed three main "Silicon Bridges".
+            </p>
+            <div className={`p-6 rounded-3xl border flex flex-col gap-3 ${isDarkMode ? 'bg-orange-500/5 border-orange-500/10' : 'bg-orange-50 border-orange-100 shadow-sm'}`}>
+                <span className={`text-[10px] font-mono font-black uppercase tracking-[0.3em] font-black ${accentColor}`}>The Hardware Trap</span>
+                <p className={`text-xs leading-relaxed font-medium ${isDarkMode ? 'text-white/60' : 'text-gray-600'}`}>
+                   You can have **Resolution**, **Speed**, or **Cheap Power**. Pick any two.
                 </p>
             </div>
+        </div>
+      </header>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="group space-y-4">
+            <div className={`h-full p-8 rounded-[2.5rem] border transition-all duration-500 flex flex-col gap-8 ${isDarkMode ? 'bg-black/40 border-white/5 hover:border-orange-500/30 shadow-black' : 'bg-white border-gray-100 shadow-sm hover:border-orange-200'}`}>
+                <div className="flex justify-between items-start">
+                    <div className={`p-4 rounded-2xl border ${isDarkMode ? 'bg-red-500/10 border-red-500/20' : 'bg-red-50 border-red-100'}`}>
+                        <Zap className="text-red-500" size={24} />
+                    </div>
+                    <span className="text-[10px] font-mono font-black uppercase tracking-widest text-[#ef444466]">Speed: Peta-Samples</span>
+                </div>
+                <div className="space-y-4 flex-1">
+                    <h3 className={`text-2xl font-black italic tracking-tighter ${textColor}`}>Flash ADC</h3>
+                    <p className={`text-[11px] leading-relaxed font-medium ${subTextColor}`}>
+                        The **Speed Demon**. It uses a massive ladder of comparators to see the signal instantly.
+                    </p>
+                    <div className={`p-4 rounded-2xl border ${isDarkMode ? 'bg-black/40 border-white/5' : 'bg-gray-50'}`}>
+                        <span className={`text-[9px] font-mono uppercase tracking-widest font-black block mb-2 ${accentColor}`}>Technical</span>
+                        <p className={`text-[10px] leading-relaxed italic ${subTextColor}`}>
+                            Uses $2^n - 1$ comparators in parallel. Latency is O(1)—the fastest possible.
+                        </p>
+                    </div>
+                </div>
+                <div className="pt-4 border-t border-white/5 flex flex-col gap-2">
+                    <span className={`text-[9px] font-mono uppercase tracking-widest font-black ${isDarkMode ? 'text-white/20' : 'text-gray-400'}`}>Best For</span>
+                    <span className={`text-[11px] font-black italic ${textColor}`}>Oscilloscopes, RF Comms</span>
+                </div>
+            </div>
+        </div>
+
+        <div className="group space-y-4">
+            <div className={`h-full p-8 rounded-[2.5rem] border transition-all duration-500 flex flex-col gap-8 relative overflow-hidden ${isDarkMode ? 'bg-orange-500/5 border-orange-500/20 shadow-orange-950/20' : 'bg-orange-50 border-orange-200'}`}>
+                <div className="absolute top-0 right-0 p-4">
+                    <div className={`text-[40px] font-black italic opacity-5 leading-none ${accentColor}`}>SAR</div>
+                </div>
+                <div className="flex justify-between items-start">
+                    <div className={`p-4 rounded-2xl border bg-orange-500 text-black shadow-lg shadow-orange-500/20`}>
+                        <Layers size={24} />
+                    </div>
+                    <span className="text-[10px] font-mono font-black uppercase tracking-widest text-orange-500/60">Efficiency Master</span>
+                </div>
+                <div className="space-y-4 flex-1">
+                    <h3 className={`text-2xl font-black italic tracking-tighter ${textColor}`}>SAR ADC</h3>
+                    <p className={`text-[11px] leading-relaxed font-medium ${subTextColor}`}>
+                        The **Binary Scout**. It closes in on the signal like a logical search algorithm.
+                    </p>
+                    <div className={`p-4 rounded-2xl border ${isDarkMode ? 'bg-black/40 border-white/5' : 'bg-white shadow-sm'}`}>
+                        <span className={`text-[9px] font-mono uppercase tracking-widest font-black block mb-2 ${accentColor}`}>Analogy</span>
+                        <p className={`text-[10px] leading-relaxed italic ${subTextColor}`}>
+                            Like guessing a number between 1-100 by asking "Higher? Lower?".
+                        </p>
+                    </div>
+                </div>
+                <div className="pt-4 border-t border-white/5 flex flex-col gap-2">
+                    <span className={`text-[9px] font-mono uppercase tracking-widest font-black ${isDarkMode ? 'text-white/20' : 'text-gray-400'}`}>Best For</span>
+                    <span className={`text-[11px] font-black italic ${textColor}`}>Embedded MCU (Arduino), Sensors</span>
+                </div>
+            </div>
+        </div>
+
+        <div className="group space-y-4">
+            <div className={`h-full p-8 rounded-[2.5rem] border transition-all duration-500 flex flex-col gap-8 ${isDarkMode ? 'bg-black/40 border-white/5 hover:border-orange-500/30 shadow-black' : 'bg-white border-gray-100 shadow-sm hover:border-orange-200'}`}>
+                <div className="flex justify-between items-start">
+                    <div className={`p-4 rounded-2xl border ${isDarkMode ? 'bg-orange-500/10 border-orange-500/20' : 'bg-orange-50 border-orange-100'}`}>
+                        <RefreshCw className={accentColor} size={24} />
+                    </div>
+                    <span className="text-[10px] font-mono font-black uppercase tracking-widest text-orange-500/60">Audio Fidelity</span>
+                </div>
+                <div className="space-y-4 flex-1">
+                    <h3 className={`text-2xl font-black italic tracking-tighter ${textColor}`}>Delta-Sigma</h3>
+                    <p className={`text-[11px] leading-relaxed font-medium ${subTextColor}`}>
+                        The **Purist**. It samples at extreme speeds to achieve 24-bit+ resolution.
+                    </p>
+                    <div className={`p-4 rounded-2xl border ${isDarkMode ? 'bg-black/40 border-white/5' : 'bg-gray-50'}`}>
+                        <span className={`text-[9px] font-mono uppercase tracking-widest font-black block mb-2 ${accentColor}`}>The Magic</span>
+                        <p className={`text-[10px] leading-relaxed italic ${subTextColor}`}>
+                            Uses noise-shaping to push error frequencies out of human hearing.
+                        </p>
+                    </div>
+                </div>
+                <div className="pt-4 border-t border-white/5 flex flex-col gap-2">
+                    <span className={`text-[9px] font-mono uppercase tracking-widest font-black ${isDarkMode ? 'text-white/20' : 'text-gray-400'}`}>Best For</span>
+                    <span className={`text-[11px] font-black italic ${textColor}`}>Music Recording, High-End Audio</span>
+                </div>
+            </div>
+        </div>
+      </div>
+
+      <div className={`p-10 rounded-[2.5rem] border flex flex-col md:flex-row items-center gap-10 shadow-2xl ${isDarkMode ? 'bg-black/60 border-white/5 shadow-black' : 'bg-gray-50 border-gray-200 shadow-sm'}`}>
+        <div className={`p-6 rounded-[2rem] border ${isDarkMode ? 'bg-orange-500/5 border-orange-500/10' : 'bg-orange-100 border-orange-200'}`}>
+            <Cpu size={48} className={accentColor} />
+        </div>
+        <div className="flex-1 space-y-4 text-left">
+            <h4 className={`text-xl font-black italic uppercase tracking-tighter ${textColor}`}>Silicon Selection</h4>
+            <p className={`text-sm leading-relaxed font-medium ${subTextColor}`}>
+                Hardware design is always a trade-off. A Flash ADC might be perfect for your oscilloscope, 
+                but it would drain the battery of your smartwatch in minutes. Engineers choose the bridge 
+                based on the "Signal requirements" of the application.
+            </p>
         </div>
       </div>
     </div>

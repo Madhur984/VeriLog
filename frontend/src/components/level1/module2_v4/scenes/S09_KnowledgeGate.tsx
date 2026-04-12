@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShieldCheck, CheckCircle2, XCircle, ChevronRight, Lock, Unlock } from 'lucide-react';
+import { CheckCircle2, XCircle, ChevronRight, Lock, Unlock } from 'lucide-react';
 
 interface Question {
     id: number;
@@ -34,11 +34,20 @@ const QUESTIONS: Question[] = [
     }
 ];
 
-export const S09_KnowledgeGate: React.FC = () => {
+/**
+ * S09_KnowledgeGate: The Validation Pass
+ */
+export const S09_KnowledgeGate: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
   const [currentIdx, setCurrentIdx] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
   const [showResult, setShowResult] = useState(false);
   const [mastered, setMastered] = useState(false);
+
+  const textColor = isDarkMode ? 'text-white' : 'text-gray-900';
+  const subTextColor = isDarkMode ? 'text-white/40' : 'text-gray-500';
+  const accentColor = isDarkMode ? 'text-orange-500' : 'text-orange-600';
+  const cardBg = isDarkMode ? 'bg-black/40 border-white/10' : 'bg-gray-50 border-gray-200';
+  const buttonBg = isDarkMode ? 'bg-white/5 border-white/10 hover:bg-white/10' : 'bg-white border-gray-200 hover:bg-gray-100 shadow-sm';
 
   const handleNext = () => {
     if (currentIdx < QUESTIONS.length - 1) {
@@ -57,23 +66,23 @@ export const S09_KnowledgeGate: React.FC = () => {
 
   if (mastered) {
     return (
-        <div className="flex flex-col items-center justify-center space-y-10 py-20 text-center max-w-2xl mx-auto">
+        <div className="flex flex-col items-center justify-center space-y-12 py-24 text-center max-w-2xl mx-auto">
             <motion.div 
                 initial={{ scale: 0.5, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
-                className="w-24 h-24 rounded-full bg-cyan-500/20 border border-cyan-500 flex items-center justify-center shadow-[0_0_40px_rgba(6,182,212,0.4)]"
+                className={`w-28 h-28 rounded-full border flex items-center justify-center shadow-2xl transition-all duration-700 ${isDarkMode ? 'bg-orange-500/20 border-orange-500 shadow-orange-500/20' : 'bg-orange-50 border-orange-200 shadow-orange-500/10'}`}
             >
-                <Unlock className="text-cyan-500" size={40} />
+                <Unlock className={accentColor} size={48} />
             </motion.div>
-            <div className="space-y-4">
-                <h2 className="text-5xl font-black italic tracking-tighter text-white">Bridge <span className="text-cyan-500">Mastered</span></h2>
-                <p className="text-lg text-white/40 leading-relaxed font-medium">
-                    The gap between reality and digital calculation has been solved. You are ready for 
-                    Module 3: Linear Systems.
+            <div className="space-y-6">
+                <h2 className={`text-6xl font-black italic tracking-tighter ${textColor}`}>Bridge <span className={accentColor}>Mastered</span></h2>
+                <p className={`text-xl leading-relaxed font-medium ${subTextColor}`}>
+                    The gap between reality and digital calculation has been solved. You are officially 
+                    qualified to manipulate signals in the discrete domain.
                 </p>
             </div>
-            <button className="px-12 py-5 rounded-full bg-cyan-500 text-black font-black uppercase tracking-[0.3em] shadow-2xl hover:scale-105 transition-transform">
-                Proceed to V-CORE
+            <button className={`px-14 py-6 rounded-full font-black uppercase tracking-[0.3em] shadow-2xl hover:scale-105 active:scale-95 transition-all duration-300 ${isDarkMode ? 'bg-orange-500 text-black shadow-orange-500/40' : 'bg-orange-600 text-white shadow-orange-600/40'}`}>
+                Initialize V-CORE
             </button>
         </div>
     );
@@ -82,26 +91,28 @@ export const S09_KnowledgeGate: React.FC = () => {
   const q = QUESTIONS[currentIdx];
 
   return (
-    <div className="flex flex-col gap-12 max-w-4xl mx-auto py-10">
-      <header className="flex items-center gap-6">
-        <div className="p-4 rounded-2xl bg-orange-500/10 border border-orange-500/20 shadow-lg shadow-orange-500/5">
-            <Lock className="text-orange-500" size={24} />
+    <div className="flex flex-col gap-14 max-w-4xl mx-auto py-12">
+      <header className="flex items-center gap-8 px-4">
+        <div className={`p-5 rounded-3xl border shadow-xl transition-all duration-500 ${isDarkMode ? 'bg-orange-500/10 border-orange-500/20 shadow-orange-500/5' : 'bg-orange-50 border-orange-100'}`}>
+            <Lock className={accentColor} size={28} />
         </div>
-        <div className="space-y-1">
-            <h2 className="text-4xl font-black italic tracking-tighter text-white">The Final <span className="text-orange-500">Gate</span></h2>
-            <p className="text-[10px] font-mono uppercase tracking-[0.3em] text-white/20 font-black">Validation Required for Transit</p>
+        <div className="space-y-2">
+            <h2 className={`text-5xl font-black italic tracking-tighter ${textColor}`}>The Final <span className={accentColor}>Gate</span></h2>
+            <p className={`text-[11px] font-mono uppercase tracking-[0.4em] font-black ${isDarkMode ? 'text-white/20' : 'text-gray-400'}`}>Access Verification Required</p>
         </div>
       </header>
 
-      <div className="p-10 rounded-[3rem] border border-white/10 bg-black/40 space-y-10 shadow-2xl relative overflow-hidden">
-        <div className="absolute top-0 right-0 p-8">
-            <span className="text-[40px] font-black italic text-white/[0.03]">0{currentIdx + 1} / 03</span>
+      <div className={`p-12 rounded-[3.5rem] border space-y-12 shadow-2xl relative overflow-hidden transition-colors duration-500 ${cardBg}`}>
+        <div className="absolute top-0 right-0 p-10 select-none">
+            <span className={`text-[48px] font-black italic ${isDarkMode ? 'text-white/[0.03]' : 'text-black/[0.03]'}`}>
+                0{currentIdx + 1} <span className="text-[24px]">/ 03</span>
+            </span>
         </div>
 
-        <div className="space-y-10 relative z-10">
-            <p className="text-2xl font-black text-white/90 leading-tight pr-12">{q.text}</p>
+        <div className="space-y-12 relative z-10">
+            <p className={`text-3xl font-black leading-tight pr-12 ${textColor}`}>{q.text}</p>
             
-            <div className="grid grid-cols-1 gap-4">
+            <div className="grid grid-cols-1 gap-5">
                 {q.options.map((opt, i) => {
                     const isCorrect = i === q.correct;
                     const isSelected = i === selected;
@@ -112,15 +123,17 @@ export const S09_KnowledgeGate: React.FC = () => {
                             disabled={showResult}
                             onClick={() => handleCheck(i)}
                             className={`
-                                w-full p-6 rounded-[2rem] border text-left transition-all duration-300 flex justify-between items-center group
-                                ${showResult && isCorrect ? 'bg-cyan-500/10 border-cyan-500 text-white' : 
-                                  showResult && isSelected ? 'bg-red-500/10 border-red-500 text-white' : 
-                                  'bg-white/[0.02] border-white/10 hover:border-white/20 hover:bg-white/[0.04]'}
+                                w-full p-8 rounded-[2.5rem] border text-left transition-all duration-300 flex justify-between items-center group
+                                ${showResult && isCorrect 
+                                    ? (isDarkMode ? 'bg-green-500/10 border-green-500 text-white shadow-[0_0_30px_rgba(34,197,94,0.1)]' : 'bg-green-50 border-green-500 text-green-900') 
+                                    : showResult && isSelected 
+                                    ? (isDarkMode ? 'bg-red-500/10 border-red-500 text-white shadow-[0_0_30px_rgba(239,68,68,0.1)]' : 'bg-red-50 border-red-500 text-red-900') 
+                                    : buttonBg}
                             `}
                         >
-                            <span className={`text-sm font-bold tracking-tight ${showResult && !isCorrect && !isSelected ? 'opacity-30' : ''}`}>{opt}</span>
-                            {showResult && isCorrect && <CheckCircle2 className="text-cyan-500" size={20} />}
-                            {showResult && isSelected && !isCorrect && <XCircle className="text-red-500" size={20} />}
+                            <span className={`text-lg font-bold tracking-tight ${showResult && !isCorrect && !isSelected ? 'opacity-30' : ''}`}>{opt}</span>
+                            {showResult && isCorrect && <CheckCircle2 className="text-green-500" size={24} />}
+                            {showResult && isSelected && !isCorrect && <XCircle className="text-red-500" size={24} />}
                         </button>
                     );
                 })}
@@ -131,17 +144,17 @@ export const S09_KnowledgeGate: React.FC = () => {
                     <motion.div 
                         initial={{ height: 0, opacity: 0 }}
                         animate={{ height: 'auto', opacity: 1 }}
-                        className="p-8 rounded-[2rem] bg-white/5 border border-white/5 space-y-3"
+                        className={`p-10 rounded-[2.5rem] border space-y-4 shadow-inner ${isDarkMode ? 'bg-white/5 border-white/5' : 'bg-white border-gray-100 shadow-sm'}`}
                     >
-                        <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-cyan-500 font-black">Engineering Insight</span>
-                        <p className="text-sm text-white/50 leading-relaxed font-medium italic">"{q.insight}"</p>
+                        <span className={`text-[11px] font-mono uppercase tracking-[0.3em] font-black ${accentColor}`}>Technical Audit Case</span>
+                        <p className={`text-base leading-relaxed font-medium italic ${isDarkMode ? 'text-white/50' : 'text-gray-600'}`}>"{q.insight}"</p>
                         
-                        <div className="flex justify-end mt-4">
+                        <div className="flex justify-end mt-8">
                             <button 
                                 onClick={handleNext}
-                                className="flex items-center gap-3 px-8 py-4 rounded-full bg-white text-black font-black uppercase tracking-[0.2em] text-[10px] active:scale-95 transition-transform"
+                                className={`flex items-center gap-4 px-10 py-5 rounded-full font-black uppercase tracking-[0.2em] text-[11px] active:scale-95 transition-all duration-300 shadow-xl ${isDarkMode ? 'bg-white text-black hover:bg-gray-200' : 'bg-gray-900 text-white hover:bg-black'}`}
                             >
-                                {currentIdx < QUESTIONS.length - 1 ? 'Next Challenge' : 'Confirm Mastery'} <ChevronRight size={14} />
+                                {currentIdx < QUESTIONS.length - 1 ? 'Next Challenge' : 'Confirm Mastery'} <ChevronRight size={18} />
                             </button>
                         </div>
                     </motion.div>

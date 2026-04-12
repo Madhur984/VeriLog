@@ -1,7 +1,6 @@
 import React, { useState, useMemo } from 'react';
-import { motion } from 'framer-motion';
+import { Activity } from 'lucide-react';
 import { SignalEngine, SignalConfig } from '../SignalEngine';
-import { Activity, MoveHorizontal } from 'lucide-react';
 
 /**
  * S06_Reconstruction: The Final Bridge
@@ -9,7 +8,7 @@ import { Activity, MoveHorizontal } from 'lucide-react';
  * 2. Realization: Mathematics can fill the gaps between samples.
  * 3. Label: Sinc Interpolation / Low-pass Filtering.
  */
-export const S06_Reconstruction: React.FC<{ time: number }> = ({ time }) => {
+export const S06_Reconstruction: React.FC<{ time: number; isDarkMode: boolean }> = ({ time, isDarkMode }) => {
   const [method, setMethod] = useState<'zoh' | 'sinc'>('zoh');
 
   const config = useMemo((): SignalConfig => ({
@@ -23,91 +22,113 @@ export const S06_Reconstruction: React.FC<{ time: number }> = ({ time }) => {
   }), [method]);
 
   const { analogPoints, reconstructedPoints, samples } = useMemo(() => 
-    SignalEngine(config, time, 600, 200), [config, time]
+    SignalEngine(config, time, 600, 250), [config, time]
   );
 
+  const textColor = isDarkMode ? 'text-white' : 'text-gray-900';
+  const subTextColor = isDarkMode ? 'text-white/60' : 'text-gray-500';
+  const accentColor = isDarkMode ? 'text-orange-500' : 'text-orange-600';
+  const strokeColor = isDarkMode ? '#f97316' : '#ea580c';
+  const cardBg = isDarkMode ? 'bg-black/40 border-white/10' : 'bg-gray-50 border-gray-200';
+  const innerBg = isDarkMode ? 'bg-black/60 border-white/5' : 'bg-white border-gray-100';
+
   return (
-    <div className="flex flex-col gap-12 max-w-4xl mx-auto">
-      <header className="space-y-4">
-        <h2 className="text-5xl font-black italic tracking-tighter text-white">
-          <span className="text-cyan-500">Materialization</span>
+    <div className="flex flex-col gap-12 max-w-5xl mx-auto">
+      <header className="space-y-6">
+        <h2 className={`text-6xl font-black italic tracking-tighter ${textColor}`}>
+          The Final <span className={accentColor}>Bridge</span>
         </h2>
-        <p className="text-lg text-white/60 leading-relaxed max-w-2xl font-medium">
-          Once sampled, the signal is just a list of numbers. To turn it back into physical flow, 
-          we must bridge the gaps. While **Zero-Order Hold** creates a jagged staircase, 
-          **Sinc Interpolation** recovers the smooth, infinite truth.
-        </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-start">
+            <p className={`text-xl leading-relaxed font-medium ${subTextColor}`}>
+              The samples are just dots in a void. To turn them back into reality, we must 
+              "connect" them. This magical reconstruction is the job of the **DAC**.
+            </p>
+            <div className={`p-6 rounded-3xl border flex flex-col gap-3 ${isDarkMode ? 'bg-orange-500/5 border-orange-500/10' : 'bg-orange-50 border-orange-100 shadow-sm'}`}>
+                <span className={`text-[10px] font-mono font-black uppercase tracking-[0.3em] font-black ${accentColor}`}>The Sinc Function</span>
+                <p className={`text-sm leading-relaxed ${isDarkMode ? 'text-white/60' : 'text-gray-600'}`}>
+                   Perfect math for a perfect curve:
+                </p>
+                <div className={`mt-2 font-mono text-center p-3 rounded-xl text-xl font-bold ${isDarkMode ? 'bg-black/60 text-orange-400 border border-white/5' : 'bg-orange-100 text-orange-700 border border-orange-200'}`}>
+                    y(t) = Σ y_n × sinc(t - nT)
+                </div>
+            </div>
+        </div>
       </header>
 
-      <div className="p-10 rounded-[2.5rem] border border-white/10 bg-black/40 space-y-10 shadow-2xl">
-        <div className="flex items-center justify-between px-4">
-            <div className="flex items-center gap-6">
-                <div className="p-4 rounded-2xl bg-cyan-500/10 border border-cyan-500/20">
-                    <Activity className="text-cyan-500" size={24} />
+      <div className={`p-10 rounded-[3rem] border shadow-2xl transition-all duration-700 ${cardBg}`}>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+            <div className="lg:col-span-8 space-y-10">
+                <div className="flex items-center justify-between px-6">
+                    <div className="flex items-center gap-6">
+                        <div className={`w-14 h-14 rounded-2xl border transition-all duration-500 flex items-center justify-center ${method === 'sinc' ? 'bg-orange-500 text-black shadow-[0_0_20px_rgba(249,115,22,0.3)] border-orange-500' : (isDarkMode ? 'bg-white/5 border-white/10' : 'bg-gray-100 border-gray-200')}`}>
+                            <Activity size={28} />
+                        </div>
+                        <div className="flex flex-col text-left">
+                            <span className={`text-[10px] font-mono uppercase tracking-[0.3em] mb-1 ${isDarkMode ? 'text-white/20' : 'text-gray-400'}`}>Materialization Mode</span>
+                            <span className={`text-2xl font-black uppercase tracking-tighter italic ${textColor}`}>
+                                {method === 'zoh' ? 'Lego (Staircase)' : 'Clay (Natural)'}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div className={`flex p-2 rounded-2xl border shadow-inner ${isDarkMode ? 'bg-black/40 border-white/5' : 'bg-gray-200 border-gray-100'}`}>
+                        {['zoh', 'sinc'].map((m) => (
+                            <button 
+                                key={m}
+                                onClick={() => setMethod(m as any)}
+                                className={`px-8 py-3 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all duration-300 transform active:scale-95 ${method === m 
+                                    ? (isDarkMode ? 'bg-orange-500 text-black shadow-lg scale-105 px-10' : 'bg-orange-600 text-white shadow-lg scale-105 px-10 border-orange-700') 
+                                    : (isDarkMode ? 'text-white/40 hover:text-white/70' : 'text-gray-500 hover:text-gray-900')}`}
+                            >
+                                {m}
+                            </button>
+                        ))}
+                    </div>
                 </div>
-                <div className="flex flex-col text-left">
-                    <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-white/20 mb-1">Reconstruction Filter</span>
-                    <span className="text-xl font-black uppercase tracking-tighter italic text-white">
-                        {method === 'zoh' ? 'Zero-Order Hold (Quantized)' : 'Sinc Interpolation (Natural)'}
-                    </span>
+
+                <div className={`relative h-[320px] rounded-[2.5rem] border overflow-hidden shadow-inner flex items-center justify-center transition-all ${innerBg}`}>
+                    <svg width="100%" height="100%" viewBox="0 0 600 250" preserveAspectRatio="none" className="p-8">
+                        {/* Analog Reference */}
+                        <path d={analogPoints.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x},${p.y}`).join(' ')} fill="none" stroke={isDarkMode ? 'white' : 'black'} strokeWidth="1.5" strokeOpacity="0.05" strokeDasharray="8 8" />
+                        
+                        {/* Reconstructed Path */}
+                        <path 
+                            d={reconstructedPoints.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x},${p.y}`).join(' ')} 
+                            fill="none" 
+                            stroke={method === 'sinc' ? strokeColor : (isDarkMode ? "#ffffff20" : "#64748b40")} 
+                            strokeWidth="4"
+                            className="transition-all duration-700"
+                            style={{ filter: (method === 'sinc' && isDarkMode) ? `drop-shadow(0 0 20px ${strokeColor}88)` : 'none' }}
+                        />
+
+                        {/* Samples */}
+                        {samples.map((p, i) => (
+                            <circle key={i} cx={p.x} cy={p.y} r="3" fill={isDarkMode ? "#f97316" : "#ea580c"} stroke={isDarkMode ? "#000" : "#fff"} strokeWidth="1.5" className="transition-all duration-300" />
+                        ))}
+                    </svg>
                 </div>
             </div>
 
-            <div className="flex bg-white/5 p-1.5 rounded-2xl border border-white/10 shadow-inner">
-                {['zoh', 'sinc'].map((m) => (
-                    <button 
-                        key={m}
-                        onClick={() => setMethod(m as any)}
-                        className={`px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 ${method === m ? 'bg-cyan-500 text-black shadow-lg scale-105' : 'text-white/30 hover:text-white/60'}`}
-                    >
-                        {m}
-                    </button>
-                ))}
-            </div>
-        </div>
+            <div className="lg:col-span-4 flex flex-col gap-6 text-left">
+                <div className={`p-8 rounded-[2.5rem] border transition-all ${isDarkMode ? 'bg-black/40 border-white/5 shadow-black' : 'bg-white border-gray-100 shadow-sm'}`}>
+                    <h4 className={`text-sm font-black uppercase tracking-widest mb-4 flex items-center gap-2 ${textColor}`}>
+                        <span className="w-2 h-2 rounded-full bg-blue-500" /> Lego vs Clay
+                    </h4>
+                    <p className={`text-xs leading-relaxed font-medium ${subTextColor}`}>
+                       **Zero-Order Hold (ZOH)** is like building with LEGO blocks—it's fast and easy, but jagged. **Sinc Interpolation** is like smoothing clay; it mathematically weaves through every point to recover the exact wave.
+                    </p>
+                </div>
 
-        <div className="relative h-[280px] bg-black/60 rounded-3xl border border-white/5 overflow-hidden shadow-inner px-2">
-          <svg width="100%" height="100%" viewBox="0 0 600 250" preserveAspectRatio="none">
-            {/* Analog Reference (Invisible/Faint) */}
-            <path d={analogPoints.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x},${p.y}`).join(' ')} fill="none" stroke="white" strokeWidth="1" strokeOpacity="0.05" strokeDasharray="6 6" />
-            
-            {/* Reconstructed Path */}
-            <path 
-                d={reconstructedPoints.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x},${p.y}`).join(' ')} 
-                fill="none" 
-                stroke={method === 'sinc' ? "#06b6d4" : "#ffffff40"} 
-                strokeWidth="3.5"
-                className="transition-all duration-700"
-                style={{ filter: method === 'sinc' ? 'drop-shadow(0 0 15px rgba(6,182,212,0.4))' : 'none' }}
-            />
-
-            {/* Samples */}
-            {samples.map((p, i) => (
-                <circle key={i} cx={p.x} cy={p.y} r="2.5" fill="#f97316" stroke="#000" strokeWidth="1" className="transition-all duration-300" />
-            ))}
-          </svg>
-
-          {method === 'sinc' && (
-              <motion.div 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="absolute inset-0 pointer-events-none flex items-center justify-center"
-              >
-                  <div className="text-[120px] font-black italic text-cyan-500/[0.02] uppercase tracking-tighter">Interpolated</div>
-              </motion.div>
-          )}
-        </div>
-
-        <div className="p-8 rounded-[2rem] bg-cyan-500/5 border border-cyan-500/10 flex items-start gap-6 mx-2">
-            <div className="p-3 rounded-2xl bg-cyan-500/10 border border-cyan-500/20">
-                <MoveHorizontal size={18} className="text-cyan-500" />
-            </div>
-            <div className="space-y-2">
-                <span className="text-[10px] font-mono uppercase tracking-[0.3em] font-black text-cyan-500">The Whittaker–Shannon Proof</span>
-                <p className="text-sm text-white/40 leading-relaxed font-medium italic">
-                    If you sample fast enough (Nyquist), you don't lose anything. The smooth curve can be perfectly 
-                    reconstructed from the discrete dots using a sinc filter.
-                </p>
+                <div className={`flex-1 p-8 rounded-[2.5rem] border transition-all ${isDarkMode ? 'bg-orange-500/5 border-orange-500/10 shadow-black' : 'bg-orange-50 border-orange-100 shadow-sm'}`}>
+                    <h4 className={`text-sm font-black uppercase tracking-widest mb-4 ${accentColor}`}>The Brick Wall</h4>
+                    <p className={`text-xs leading-relaxed font-black uppercase tracking-tighter mb-4 ${isDarkMode ? 'text-white/40' : 'text-gray-400'}`}>Reconstruction Filter</p>
+                    <p className={`text-xs leading-relaxed font-medium ${subTextColor}`}>
+                        In the real world, we use a **Low-Pass Filter** set right at $Fs/2$. This filter "cuts off" the sharp staircase corners (high-frequency noise) and leaves behind nothing but the smooth original signal.
+                    </p>
+                    <div className={`mt-6 p-4 rounded-xl border flex items-center justify-center font-mono text-[10px] ${isDarkMode ? 'bg-black/60 border-white/5 text-white/30' : 'bg-white border-orange-200 text-gray-400'}`}>
+                        STAIRCASE = SIGNAL + NOISE
+                    </div>
+                </div>
             </div>
         </div>
       </div>

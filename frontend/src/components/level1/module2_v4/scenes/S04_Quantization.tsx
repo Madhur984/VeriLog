@@ -1,12 +1,14 @@
 import React, { useState, useMemo } from 'react';
-import { motion } from 'framer-motion';
 import { SignalEngine, SignalConfig } from '../SignalEngine';
-import { Binary, Hash } from 'lucide-react';
+import { Binary } from 'lucide-react';
 
 /**
  * S04_Quantization (Optimized)
  */
-export const S04_Quantization: React.FC<{ time: number }> = ({ time }) => {
+/**
+ * S04_Quantization (Optimized)
+ */
+export const S04_Quantization: React.FC<{ time: number; isDarkMode: boolean }> = ({ time, isDarkMode }) => {
   const [bitDepth, setBitDepth] = useState(3);
 
   const config = useMemo((): SignalConfig => ({
@@ -20,89 +22,125 @@ export const S04_Quantization: React.FC<{ time: number }> = ({ time }) => {
   }), [bitDepth]);
 
   const { analogPoints, reconstructedPoints } = useMemo(() => 
-    SignalEngine(config, time, 600, 200), [config, time]
+    SignalEngine(config, time, 600, 250), [config, time]
   );
 
   const levels = Math.pow(2, bitDepth);
   const gridLines = Array.from({ length: levels }, (_, i) => (i / (levels - 1)) * 200);
 
+  const textColor = isDarkMode ? 'text-white' : 'text-gray-900';
+  const subTextColor = isDarkMode ? 'text-white/60' : 'text-gray-500';
+  const accentColor = isDarkMode ? 'text-orange-500' : 'text-orange-600';
+  const strokeColor = isDarkMode ? '#f97316' : '#ea580c';
+  const cardBg = isDarkMode ? 'bg-black/40 border-white/10' : 'bg-gray-50 border-gray-200';
+  const innerBg = isDarkMode ? 'bg-black/60 border-white/5' : 'bg-white border-gray-100';
+
   return (
-    <div className="flex flex-col gap-12 max-w-4xl mx-auto">
-      <header className="space-y-4">
-        <h2 className="text-5xl font-black italic tracking-tighter text-white">
-          The <span className="text-orange-500">Rung</span> Paradox
+    <div className="flex flex-col gap-12 max-w-5xl mx-auto">
+      <header className="space-y-6">
+        <h2 className={`text-6xl font-black italic tracking-tighter ${textColor}`}>
+          The <span className={accentColor}>Rung</span> Paradox
         </h2>
-        <p className="text-lg text-white/60 leading-relaxed max-w-2xl font-medium">
-          If sampling is **when** we look, quantization is **what** we see. 
-          A computer must round to the nearest available step. This creates the
-          **Quantization Noise** floor.
-        </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-start">
+            <p className={`text-xl leading-relaxed font-medium ${subTextColor}`}>
+              If sampling is **when** we look, quantization is **how precisely** we measure. 
+              A computer has finite steps—it must round $smooth$ reality to the nearest $ladder$ rung.
+            </p>
+            <div className={`p-6 rounded-3xl border flex flex-col gap-3 ${isDarkMode ? 'bg-orange-500/5 border-orange-500/10' : 'bg-orange-50 border-orange-200 shadow-sm'}`}>
+                <span className={`text-[10px] font-mono font-black uppercase tracking-[0.3em] font-black ${accentColor}`}>Precision Math</span>
+                <p className={`text-sm leading-relaxed ${isDarkMode ? 'text-white/60' : 'text-gray-600'}`}>
+                   Number of available levels ($L$) for $n$ bits:
+                </p>
+                <div className={`mt-2 font-mono text-center p-3 rounded-xl text-xl font-bold ${isDarkMode ? 'bg-black/60 text-orange-400 border border-white/5' : 'bg-orange-100 text-orange-700 border border-orange-200'}`}>
+                    L = 2^n
+                </div>
+            </div>
+        </div>
       </header>
 
-      <div className="relative p-10 rounded-[2.5rem] border border-white/10 bg-black/40 space-y-10 shadow-2xl">
-        <div className="flex items-center justify-between px-4">
-            <div className="flex items-center gap-5 text-orange-500 font-mono text-[10px] uppercase tracking-[0.3em] font-black">
-                <Binary size={18} /> Amplitude Resolver
-            </div>
-            <div className="flex items-center gap-10">
-                <div className="flex flex-col items-end">
-                    <span className="text-[9px] font-mono text-white/20 uppercase tracking-[0.2em] mb-1">Grid Density</span>
-                    <span className="text-2xl font-black italic text-white tracking-tighter">{levels} <span className="text-xs text-white/20 uppercase tracking-widest not-italic ml-2">Steps</span></span>
+      <div className={`relative p-10 rounded-[3rem] border shadow-2xl transition-all duration-700 ${cardBg}`}>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+            <div className="lg:col-span-8 space-y-10">
+                <div className="flex items-center justify-between px-4">
+                    <div className={`flex items-center gap-5 font-mono text-[10px] uppercase tracking-[0.3em] font-black ${accentColor}`}>
+                        <Binary size={24} /> Amplitude Resolver
+                    </div>
+                    <div className="flex items-center gap-10">
+                        <div className="flex flex-col items-end">
+                            <span className={`text-[9px] font-mono uppercase tracking-[0.2em] mb-1 ${isDarkMode ? 'text-white/20' : 'text-gray-400'}`}>Vertical Density</span>
+                            <span className={`text-3xl font-black italic tracking-tighter ${textColor}`}>{levels} <span className={`text-xs uppercase tracking-widest not-italic ml-2 ${isDarkMode ? 'text-white/20' : 'text-gray-400'}`}>Levels</span></span>
+                        </div>
+                        <div className="flex flex-col items-end">
+                            <span className={`text-[9px] font-mono uppercase tracking-[0.2em] mb-1 ${isDarkMode ? 'text-white/20' : 'text-gray-400'}`}>Current Resolution</span>
+                            <span className={`text-3xl font-black italic tracking-tighter ${accentColor}`}>{bitDepth} Bits</span>
+                        </div>
+                    </div>
                 </div>
-                <div className="flex flex-col items-end">
-                    <span className="text-[9px] font-mono text-white/20 uppercase tracking-[0.2em] mb-1">Bit Depth</span>
-                    <span className="text-2xl font-black italic text-orange-500 tracking-tighter">{bitDepth} Bits</span>
+
+                <div className={`relative h-[320px] rounded-[2.5rem] border overflow-hidden shadow-inner flex items-center justify-center transition-all ${innerBg}`}>
+                    <svg width="100%" height="100%" viewBox="0 0 600 250" preserveAspectRatio="none" className="p-8">
+                        {/* Resolution Grid */}
+                        {gridLines.map((y, i) => (
+                            <line key={i} x1="0" y1={y + 25} x2="600" y2={y + 25} stroke={isDarkMode ? 'white' : 'black'} strokeWidth="1" strokeOpacity="0.04" />
+                        ))}
+
+                        {/* Analog Background Reference */}
+                        <path d={analogPoints.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x},${p.y}`).join(' ')} fill="none" stroke={isDarkMode ? 'white' : 'black'} strokeWidth="1.5" strokeOpacity="0.05" strokeDasharray="8 8" />
+                        
+                        {/* Quantized Staircase */}
+                        <path 
+                            d={reconstructedPoints.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x},${p.y}`).join(' ')} 
+                            fill="none" 
+                            stroke={strokeColor} 
+                            strokeWidth="4"
+                            style={{ filter: isDarkMode ? `drop-shadow(0 0 20px ${strokeColor}88)` : 'none' }}
+                        />
+                    </svg>
+                </div>
+
+                <div className="space-y-8 px-6">
+                    <input 
+                        type="range" 
+                        min={1} 
+                        max={8} 
+                        step={1} 
+                        value={bitDepth} 
+                        onChange={(e) => setBitDepth(parseInt(e.target.value))}
+                        className={`w-full h-2 rounded-full appearance-none cursor-pointer transition-all ${isDarkMode ? 'bg-white/10 accent-white' : 'bg-gray-200 accent-gray-600 shadow-inner'}`}
+                    />
+                    <div className={`flex justify-between text-[11px] font-mono uppercase tracking-[0.2em] font-black ${isDarkMode ? 'text-white/30' : 'text-gray-400'}`}>
+                        <div className="flex flex-col gap-1">
+                            <span className={textColor}>1 Bit</span>
+                            <span>On / Off Only</span>
+                        </div>
+                        <div className="flex flex-col gap-1 text-right">
+                            <span className={textColor}>8 Bits</span>
+                            <span>256 Possible Rungs</span>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div className="relative h-[280px] bg-black/60 rounded-3xl border border-white/5 overflow-hidden shadow-inner flex items-center justify-center">
-          <svg width="100%" height="100%" viewBox="0 0 600 250" preserveAspectRatio="none" className="p-4">
-            {/* Resolution Grid */}
-            {gridLines.map((y, i) => (
-                <line key={i} x1="0" y1={y + 25} x2="600" y2={y + 25} stroke="white" strokeWidth="0.5" strokeOpacity="0.03" />
-            ))}
+            <div className="lg:col-span-4 flex flex-col gap-6 text-left">
+                <div className={`p-8 rounded-[2.5rem] border transition-all ${isDarkMode ? 'bg-black/40 border-white/5 shadow-black' : 'bg-white border-gray-100 shadow-sm'}`}>
+                    <h4 className={`text-sm font-black uppercase tracking-widest mb-4 flex items-center gap-2 ${textColor}`}>
+                        <span className="w-2 h-2 rounded-full bg-orange-500" /> The Ruler Problem
+                    </h4>
+                    <p className={`text-xs leading-relaxed font-medium ${subTextColor}`}>
+                        Imagine measuring a wave with a ruler that only has "inch" marks. You can't record 1.5 inches—you have to pick 1 or 2. That "rounding error" is **Quantization Noise**. 
+                    </p>
+                </div>
 
-            {/* Analog Background Reference */}
-            <path d={analogPoints.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x},${p.y}`).join(' ')} fill="none" stroke="white" strokeWidth="1" strokeOpacity="0.05" strokeDasharray="6 6" />
-            
-            {/* Quantized Staircase */}
-            <path 
-                d={reconstructedPoints.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x},${p.y}`).join(' ')} 
-                fill="none" 
-                stroke="#f97316" 
-                strokeWidth="3.5"
-                style={{ filter: 'drop-shadow(0 0 12px rgba(249,115,22,0.4))' }}
-            />
-          </svg>
-        </div>
-
-        <div className="space-y-6 px-4">
-            <input 
-                type="range" 
-                min={1} 
-                max={8} 
-                step={1} 
-                value={bitDepth} 
-                onChange={(e) => setBitDepth(parseInt(e.target.value))}
-                className="w-full h-1.5 bg-white/5 rounded-full appearance-none accent-orange-500 cursor-pointer hover:bg-white/10 transition-colors"
-            />
-            <div className="flex justify-between text-[10px] font-mono text-white/30 uppercase tracking-[0.2em] font-black">
-                <span>Coarse (8 Levels)</span>
-                <span>Subtle (256 Levels)</span>
-            </div>
-        </div>
-
-        <div className="p-8 rounded-[2rem] bg-orange-500/5 border border-orange-500/10 flex items-start gap-6 mx-2">
-            <div className="p-3 rounded-2xl bg-orange-500/10 border border-orange-500/20">
-                <Hash size={18} className="text-orange-500" />
-            </div>
-            <div className="space-y-2">
-                <span className="text-[10px] font-mono uppercase tracking-[0.3em] font-black text-orange-500">The 6dB Golden Rule</span>
-                <p className="text-sm text-white/40 leading-relaxed font-medium italic">
-                    Every extra bit you add roughly **doubles** the precision. In engineering math, 
-                    each bit reduces the noise floor by exactly **6.02 dB**.
-                </p>
+                <div className={`flex-1 p-8 rounded-[2.5rem] border transition-all ${isDarkMode ? 'bg-orange-500/5 border-orange-500/10 shadow-black' : 'bg-orange-50 border-orange-100 shadow-sm'}`}>
+                    <h4 className={`text-sm font-black uppercase tracking-widest mb-4 ${accentColor}`}>The Golden Rule</h4>
+                    <p className={`text-xs leading-relaxed font-black uppercase tracking-tighter mb-4 ${isDarkMode ? 'text-white/40' : 'text-gray-400'}`}>The 6dB Per Bit Law</p>
+                    <p className={`text-xs leading-relaxed font-medium ${subTextColor}`}>
+                        In audio and data, adding 1 bit of resolution reduces the noise floor by approximately **6.02 dB**. 16-bit audio (CD quality) has &gt; 96dB of dynamic range—meaning the noise is essentially silent.
+                    </p>
+                    <div className={`mt-6 p-4 rounded-xl border font-mono text-[10px] ${isDarkMode ? 'bg-black/40 border-white/5 text-white/40' : 'bg-white border-orange-200 text-gray-500'}`}>
+                        SNR ≈ 6.02n + 1.76 dB
+                    </div>
+                </div>
             </div>
         </div>
       </div>

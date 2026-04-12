@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 interface SceneManagerProps {
   scenes: React.FC<any>[];
   activeScene: number;
   onSceneChange: (index: number) => void;
   time: number;
+  isDarkMode: boolean;
 }
 
 /**
@@ -13,7 +14,13 @@ interface SceneManagerProps {
  * Coordinates the display and transition between pedagogical scenes.
  * Matches Module 1's architectural discipline.
  */
-export const SceneManager: React.FC<SceneManagerProps> = ({ scenes, activeScene, onSceneChange, time }) => {
+export const SceneManager: React.FC<SceneManagerProps> = ({ 
+    scenes, 
+    activeScene, 
+    onSceneChange, 
+    time,
+    isDarkMode
+}) => {
   const [visibleIndices, setVisibleIndices] = useState<Set<number>>(new Set([0]));
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -49,7 +56,7 @@ export const SceneManager: React.FC<SceneManagerProps> = ({ scenes, activeScene,
   }, [onSceneChange]);
 
   return (
-    <div ref={containerRef} className="flex-1 overflow-y-auto scroll-smooth snap-y snap-mandatory bg-black">
+    <div ref={containerRef} className={`flex-1 overflow-y-auto scroll-smooth snap-y snap-mandatory transition-colors duration-500 ${isDarkMode ? 'bg-[#030100]' : 'bg-white'}`}>
       {scenes.map((Scene, index) => (
         <section 
           key={index} 
@@ -67,6 +74,7 @@ export const SceneManager: React.FC<SceneManagerProps> = ({ scenes, activeScene,
                 index={index} 
                 time={visibleIndices.has(index) ? time : 0} 
                 isActive={activeScene === index}
+                isDarkMode={isDarkMode}
             />
           </motion.div>
         </section>
