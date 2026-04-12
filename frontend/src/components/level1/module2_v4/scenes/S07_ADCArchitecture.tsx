@@ -119,16 +119,52 @@ export const S07_ADCArchitecture: React.FC<{ isDarkMode: boolean }> = ({ isDarkM
         </div>
       </div>
 
+      <div className={`p-10 rounded-[2.5rem] border overflow-hidden shadow-2xl ${isDarkMode ? 'bg-black/60 border-white/5 shadow-black' : 'bg-gray-50 border-gray-200 shadow-sm'}`}>
+        <h4 className={`text-xl font-black italic uppercase tracking-tighter mb-8 ${textColor}`}>ADC Selection Matrix</h4>
+        <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+                <thead>
+                    <tr className={`border-b ${isDarkMode ? 'border-white/10' : 'border-gray-200'}`}>
+                        <th className={`pb-4 text-[10px] font-mono uppercase tracking-[0.2em] font-black ${subTextColor}`}>Architecture</th>
+                        <th className={`pb-4 text-[10px] font-mono uppercase tracking-[0.2em] font-black ${subTextColor}`}>Speed</th>
+                        <th className={`pb-4 text-[10px] font-mono uppercase tracking-[0.2em] font-black ${subTextColor}`}>Precision</th>
+                        <th className={`pb-4 text-[10px] font-mono uppercase tracking-[0.2em] font-black ${subTextColor}`}>Cost/Power</th>
+                    </tr>
+                </thead>
+                <tbody className={`text-[11px] font-medium ${textColor}`}>
+                    <tr className={`border-b ${isDarkMode ? 'border-white/5' : 'border-gray-100'}`}>
+                        <td className="py-4 font-black italic uppercase">Flash</td>
+                        <td className="py-4 text-red-500 font-black">ULTRA FAST</td>
+                        <td className="py-4 opacity-40">Low (8-bit)</td>
+                        <td className="py-4 text-red-400">Very High</td>
+                    </tr>
+                    <tr className={`border-b ${isDarkMode ? 'border-white/5' : 'border-gray-100'}`}>
+                        <td className="py-4 font-black italic uppercase">SAR</td>
+                        <td className="py-4 text-orange-400 font-black">MODERATE</td>
+                        <td className="py-4">Mid (12-16 bit)</td>
+                        <td className="py-4 text-orange-300 font-black uppercase tracking-tighter">Gold Standard</td>
+                    </tr>
+                    <tr>
+                        <td className="py-4 font-black italic uppercase">Delta-Sigma</td>
+                        <td className="py-4 opacity-40">Slow</td>
+                        <td className="py-4 text-orange-500 font-black italic">ULTRA HIGH</td>
+                        <td className="py-4 opacity-60">Efficient</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+      </div>
+
       <div className={`p-10 rounded-[2.5rem] border flex flex-col md:flex-row items-center gap-10 shadow-2xl ${isDarkMode ? 'bg-black/60 border-white/5 shadow-black' : 'bg-gray-50 border-gray-200 shadow-sm'}`}>
         <div className={`p-6 rounded-[2rem] border ${isDarkMode ? 'bg-orange-500/5 border-orange-500/10' : 'bg-orange-100 border-orange-200'}`}>
             <Cpu size={48} className={accentColor} />
         </div>
         <div className="flex-1 space-y-4 text-left">
             <h4 className={`text-xl font-black italic uppercase tracking-tighter ${textColor}`}>Silicon Selection</h4>
-            <p className={`text-sm leading-relaxed font-medium ${subTextColor}`}>
-                Hardware design is always a trade-off. A Flash ADC might be perfect for your oscilloscope, 
-                but it would drain the battery of your smartwatch in minutes. Engineers choose the bridge 
-                based on the "Signal requirements" of the application.
+            <p className="text-xs leading-relaxed font-medium">
+               Hardware design is always a trade-off. A Flash ADC might be perfect for your oscilloscope, 
+               but it would drain the battery of your smartwatch in minutes. Engineers choose the bridge 
+               based on the "Signal requirements" of the application.
             </p>
         </div>
       </div>

@@ -74,41 +74,45 @@ export const S09_KnowledgeGate: React.FC<{ isDarkMode: boolean }> = ({ isDarkMod
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className={`p-6 rounded-3xl border ${isDarkMode ? 'bg-white/5 border-white/10' : 'bg-gray-50 border-gray-100'}`}>
-                        <span className={`text-[10px] font-mono uppercase tracking-widest ${accentColor}`}>Sampling (Hz)</span>
+                        <span className={`text-[10px] font-mono uppercase tracking-widest ${accentColor}`}>Sampling (Nyquist)</span>
                         <pre className={`mt-4 text-[11px] font-mono leading-relaxed overflow-x-auto ${isDarkMode ? 'text-white/40' : 'text-gray-500'}`}>
 {`  Fs > 2 * Fmax
-  Snapshot rule: Take 2
-  pictures per wiggle.`}
+  The bridge requires 2 
+  snapshots per period
+  to resolve the wave.`}
                         </pre>
                     </div>
                     <div className={`p-6 rounded-3xl border ${isDarkMode ? 'bg-white/5 border-white/10' : 'bg-gray-50 border-gray-100'}`}>
-                        <span className={`text-[10px] font-mono uppercase tracking-widest ${accentColor}`}>Quantization (Bits)</span>
+                        <span className={`text-[10px] font-mono uppercase tracking-widest ${accentColor}`}>Resolution (SNR)</span>
                         <pre className={`mt-4 text-[11px] font-mono leading-relaxed overflow-x-auto ${isDarkMode ? 'text-white/40' : 'text-gray-500'}`}>
 {`  SNR = 6.02 * N + 1.76
-  Each bit = 6dB lower
-  noise floor.`}
+  Each bit expands the 
+  dynamic range by 6dB,
+  lowering the staircase.`}
                         </pre>
                     </div>
 
-                    <div className={`mt-8 p-6 rounded-3xl border ${isDarkMode ? 'bg-white/5 border-white/5 shadow-inner' : 'bg-gray-50 border-gray-100'}`}>
-                        <span className={`text-[10px] font-mono uppercase tracking-widest ${accentColor}`}>Engineer's Visual Mental Model</span>
-                        <pre className={`mt-4 text-[11px] font-mono leading-relaxed overflow-x-auto ${isDarkMode ? 'text-white/40' : 'text-gray-500'}`}>
-{`  ANALOG (Ramp)          DIGITAL (Staircase)
-        ^                      ^
-     10 |~~~~~~/~~~~           |--/-- 
-      5 |    /                 |/    
-      0 |__/                   |_____
-        +----> time            +----> time`}
-                        </pre>
+                    <div className={`p-6 rounded-3xl border ${isDarkMode ? 'bg-white/5 border-white/10' : 'bg-gray-50 border-gray-100'}`}>
+                        <span className={`text-[10px] font-mono uppercase tracking-widest ${accentColor}`}>Linearization (Dither)</span>
+                        <p className={`mt-3 text-[11px] leading-relaxed ${isDarkMode ? 'text-white/40' : 'text-gray-500'}`}>
+                            Stochastic decorrelation (noise) replaces harmonic distortion with random floor error, preserving low-level linearity at the cost of slight hiss.
+                        </p>
+                    </div>
+
+                    <div className={`p-6 rounded-3xl border ${isDarkMode ? 'bg-white/5 border-white/10' : 'bg-gray-50 border-gray-100'}`}>
+                        <span className={`text-[10px] font-mono uppercase tracking-widest ${accentColor}`}>Architecture (SAR vs Flash)</span>
+                        <p className={`mt-3 text-[11px] leading-relaxed ${isDarkMode ? 'text-white/40' : 'text-gray-500'}`}>
+                            Flash ADCs trade density for speed (parallel), while SAR ADCs use a binary search (serial) for precision at lower power.
+                        </p>
                     </div>
                 </div>
 
                 <div className="flex flex-col md:flex-row gap-6 items-center justify-between pt-6 border-t border-dashed border-orange-500/20">
                     <p className={`text-sm italic font-medium max-w-sm ${subTextColor}`}>
-                        "You've learned that computers don't just 'miss' data—they reconstruct it using math you now control."
+                        "You've transitioned from an analog pilot to a digital architect. The bridge is secure."
                     </p>
                     <button className={`px-14 py-6 rounded-full font-black uppercase tracking-[0.3em] shadow-2xl hover:scale-105 active:scale-95 transition-all duration-300 ${isDarkMode ? 'bg-orange-500 text-black shadow-orange-500/40' : 'bg-orange-600 text-white shadow-orange-600/40'}`}>
-                        Initialize V-CORE
+                        Initiate V-CORE
                     </button>
                 </div>
             </div>

@@ -294,18 +294,31 @@ export const S08_Lab: React.FC<{ time: number; isDarkMode: boolean }> = ({ time,
 
         {/* Right Panel: Metrics HUD */}
         <section className="lg:col-span-1 space-y-6">
-            <MetricBox icon={Activity} label="Dynamic Range" value={`${results.metrics.snr.toFixed(1)} dB`} sub="Logarithmic Scale" isDarkMode={isDarkMode} />
-            <MetricBox icon={Hash} label="Linearity" value={`${results.metrics.enob.toFixed(2)}`} sub="Effective Bit Resolution" isDarkMode={isDarkMode} />
-            <MetricBox icon={Target} label="Precision" value={`${results.metrics.thdn.toFixed(1)} dB`} sub="Total Harm. Distortion" isDarkMode={isDarkMode} />
-            <MetricBox icon={ShieldCheck} label="Linearization" value={uiConfig.dither ? "T-Dither ACTIVE" : "No Dither"} sub="Phase Linear Condition" active={uiConfig.dither} isDarkMode={isDarkMode} />
+            <MetricBox icon={Activity} label="Dynamic Range" value={`${results.metrics.snr.toFixed(1)} dB`} sub="Theoretical SNR Window" isDarkMode={isDarkMode} />
+            <MetricBox icon={Hash} label="Linearity" value={`${results.metrics.enob.toFixed(2)} bits`} sub="Effective Resolution" isDarkMode={isDarkMode} />
+            <MetricBox icon={Target} label="Precision" value={`${results.metrics.thdn.toFixed(1)} dB`} sub="Quantization Accuracy" isDarkMode={isDarkMode} />
+            <MetricBox icon={ShieldCheck} label="Inter-Sample State" value={uiConfig.reconstruction === 'sinc' ? "Mathematically Exact" : "Non-Ideal Approximation"} sub="Reconstruction Health" active={true} isDarkMode={isDarkMode} />
             
-            <div className={`p-10 rounded-[3rem] border mt-10 transition-all duration-700 ${isDarkMode ? 'bg-orange-500/[0.03] border-orange-500/10 hover:bg-orange-500/5' : 'bg-orange-50 border-orange-100 hover:bg-orange-100/50'}`}>
-                <p className={`text-[13px] leading-relaxed italic font-medium ${isDarkMode ? 'text-white/40' : 'text-gray-600'}`}>
-                    "High sampling rates aren't for 'high frequency' sounds; they are to push reconstruction artifacts far beyond the audible bridge."
-                </p>
-                <div className="mt-6 flex items-center gap-3">
-                    <div className={`w-1.5 h-1.5 rounded-full ${isDarkMode ? 'bg-orange-500/40' : 'bg-orange-500'}`} />
-                    <span className={`text-[9px] font-mono uppercase tracking-[0.3em] font-bold ${isDarkMode ? 'text-orange-500/40' : 'text-orange-600'}`}>Bridge Insight</span>
+            <div className={`p-8 rounded-[2.5rem] border mt-10 transition-all duration-700 ${isDarkMode ? 'bg-orange-500/[0.03] border-orange-500/10' : 'bg-orange-50 border-orange-100'}`}>
+                <h4 className={`text-[10px] font-black uppercase tracking-widest mb-4 ${accentColor}`}>Engineer's Report</h4>
+                <div className="space-y-4">
+                    <div className="flex justify-between items-center text-[9px] font-bold uppercase tracking-tight">
+                        <span className={subTextColor}>Theoretical Max</span>
+                        <span className={textColor}>{(uiConfig.bitDepth * 6.02 + 1.76).toFixed(1)} dB</span>
+                    </div>
+                    <div className="w-full h-1 rounded-full bg-white/5 overflow-hidden">
+                        <div 
+                            className="h-full bg-orange-500 transition-all duration-1000" 
+                            style={{ width: `${Math.min(100, (results.metrics.snr / (uiConfig.bitDepth * 6.02 + 1.76)) * 100)}%` }} 
+                        />
+                    </div>
+                    <p className={`text-[10px] leading-relaxed italic ${isDarkMode ? 'text-white/30' : 'text-gray-500'}`}>
+                        {results.metrics.aliasing 
+                            ? "Aliasing detected: The reconstruction includes 'ghost' frequencies from the folding effect."
+                            : uiConfig.bitDepth < 8 
+                            ? "Low resolution: Significant quantization error masks low-level signal detail." 
+                            : "Ideal Bridge: The digital representation preserves the analog intent with minimal residual loss."}
+                    </p>
                 </div>
             </div>
         </section>

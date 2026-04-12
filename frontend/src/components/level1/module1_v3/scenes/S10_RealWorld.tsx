@@ -40,8 +40,9 @@ export const S10_RealWorld: React.FC = () => {
         </div>
 
         <div className="pointer-events-auto mt-12 px-8 py-6 rounded-sm bg-v3-cyan/5 border border-v3-cyan/20 backdrop-blur-xl text-center max-w-2xl">
-            <p className="text-xs font-mono text-v3-cyan leading-relaxed">
-                "Signal Processing is the art of extracting meaning from the noise of the universe. Welcome to the first step of your journey into the Digital Bridge."
+            <h5 className="micro-text text-v3-cyan mb-2 font-black uppercase tracking-widest">Architectural Insight</h5>
+            <p className="text-[11px] font-mono text-white/50 leading-relaxed">
+                "Signal Processing is the art of extracting meaning from the noise of the universe. Every waveform we've studied—Energy, Frequency, Noise—converges here. In the next phase, we build the Bridge to translate these infinite flows into the finite calculations of Verilog."
             </p>
         </div>
       </div>

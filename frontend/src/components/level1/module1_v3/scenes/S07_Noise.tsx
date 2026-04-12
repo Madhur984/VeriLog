@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { useSignalStore } from '../store/signalStore';
 import { InlineText } from '../components/InlineText';
 import { canvasState } from '../engine/canvasState';
@@ -18,11 +19,42 @@ export const S07_Noise: React.FC = () => {
   }, [setSignalMode]);
 
   return (
-    <div className="absolute inset-0 flex flex-col pointer-events-none items-center justify-end pb-32">
-      <InlineText 
-        primary="Introduce distortion." 
-        secondary="η ↑ → noise ↑" 
-      />
+    <div className="absolute inset-0 flex flex-col pointer-events-none items-center justify-end pb-12 overflow-y-auto">
+      <div className="w-full max-w-4xl mx-auto px-6 space-y-12 pb-24 flex flex-col items-center">
+        <InlineText 
+            primary="Introduce distortion." 
+            secondary="η ↑ → noise ↑" 
+        />
+
+        {/* NEW: Signal-to-Noise (SNR) Deep Dive */}
+        <div className="pointer-events-auto grid grid-cols-1 md:grid-cols-2 gap-8 w-full mt-12 bg-black/40 p-6 rounded-xl border border-white/5 backdrop-blur-sm">
+            <div className="space-y-4">
+                <h4 className="micro-text text-v3-cyan font-black italic tracking-widest uppercase">The Signal Floor</h4>
+                <p className="text-[10px] text-white/40 leading-relaxed">
+                    Every physical system has a "noise floor"—a level of random electrical variation caused by heat, nearby interference, or the limits of your sensing hardware. If your signal is too weak, it gets "swallowed" by this floor.
+                </p>
+                <div className="h-1 w-full bg-white/5 overflow-hidden">
+                    <motion.div animate={{ x: [-20, 20] }} transition={{ repeat: Infinity, duration: 0.1 }} className="h-full w-20 bg-v3-cyan/40" />
+                </div>
+            </div>
+            
+            <div className="space-y-4">
+                <h4 className="micro-text text-v3-cyan font-black italic tracking-widest uppercase">The SNR Ratio</h4>
+                <p className="text-[10px] text-white/40 leading-relaxed">
+                    SNR (Signal-to-Noise Ratio) is the distance between your message and the noise. A higher SNR means a cleaner bridge between analog and digital. In digital systems, we measure this in **decibels (dB)**.
+                </p>
+                <div className="mt-2 font-mono text-[9px] text-v3-cyan bg-black/40 px-3 py-1 border border-v3-cyan/10 rounded-sm">
+                    SNR = 20 * log10( V_signal / V_noise )
+                </div>
+            </div>
+        </div>
+
+        <div className="pointer-events-auto mt-8 max-w-2xl">
+             <p className="text-[10px] leading-relaxed text-white/30 text-center">
+                Noise is the enemy of information. The goal of any engineer is to maximize the SNR while minimizing the bandwidth required.
+             </p>
+        </div>
+      </div>
     </div>
   );
 };

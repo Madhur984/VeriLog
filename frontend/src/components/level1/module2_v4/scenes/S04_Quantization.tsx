@@ -130,13 +130,24 @@ export const S04_Quantization: React.FC<{ time: number; isDarkMode: boolean }> =
                 </div>
 
                 <div className={`flex-1 p-8 rounded-[2.5rem] border transition-all ${isDarkMode ? 'bg-orange-500/5 border-orange-500/10 shadow-black' : 'bg-orange-50 border-orange-100 shadow-sm'}`}>
-                    <h4 className={`text-sm font-black uppercase tracking-widest mb-4 ${accentColor}`}>The Golden Rule</h4>
-                    <p className={`text-xs leading-relaxed font-black uppercase tracking-tighter mb-4 ${isDarkMode ? 'text-white/40' : 'text-gray-400'}`}>The 6dB Per Bit Law</p>
+                    <h4 className={`text-sm font-black uppercase tracking-widest mb-4 ${accentColor}`}>The SNR Law</h4>
+                    <p className={`text-xs leading-relaxed font-black uppercase tracking-tighter mb-4 ${isDarkMode ? 'text-white/40' : 'text-gray-400'}`}>The 6dB Per Bit Standard</p>
                     <p className={`text-xs leading-relaxed font-medium ${subTextColor}`}>
-                        In audio and data, adding 1 bit of resolution reduces the noise floor by approximately **6.02 dB**. 16-bit audio (CD quality) has &gt; 96dB of dynamic range—meaning the noise is essentially silent.
+                        In every digital system, adding 1 bit of resolution doubles the number of rungs, which reduces the noise floor by approximately **6.02 dB**. 
                     </p>
-                    <div className={`mt-6 p-4 rounded-xl border font-mono text-[10px] ${isDarkMode ? 'bg-black/40 border-white/5 text-white/40' : 'bg-white border-orange-200 text-gray-500'}`}>
-                        SNR ≈ 6.02n + 1.76 dB
+                    <div className={`mt-6 p-6 rounded-2xl border font-mono text-[11px] leading-relaxed transition-all duration-500 ${isDarkMode ? 'bg-black/40 border-white/5 text-orange-400 shadow-inner' : 'bg-white border-orange-200 text-orange-700'}`}>
+                        <div className="flex justify-between items-center mb-2">
+                            <span>8-bit (Telephony)</span>
+                            <span className="font-black">~49.9 dB</span>
+                        </div>
+                        <div className="flex justify-between items-center mb-2">
+                            <span>16-bit (CD / Pro)</span>
+                            <span className="font-black">~98.1 dB</span>
+                        </div>
+                        <div className="flex justify-between items-center border-t border-orange-500/20 pt-2 mt-2">
+                            <span>24-bit (Hi-Fi)</span>
+                            <span className="font-black">~146.2 dB</span>
+                        </div>
                     </div>
                 </div>
             </div>

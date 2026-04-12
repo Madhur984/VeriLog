@@ -136,6 +136,28 @@ export const S03_Aliasing: React.FC<{ time: number; isDarkMode: boolean }> = ({ 
             </div>
         </div>
 
+        <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className={`p-8 rounded-[2.5rem] border ${isDarkMode ? 'bg-black/40 border-white/5' : 'bg-white border-gray-100'}`}>
+                <h4 className={`text-sm font-black uppercase tracking-widest mb-6 ${textColor}`}>The Folding Effect</h4>
+                <div className="space-y-4">
+                    <p className={`text-xs leading-relaxed ${subTextColor}`}>
+                        When a frequency exceeds Fs/2, it doesn't just "disappear"—it **folds** back into the audible range. 22 kHz sampled at 40 kHz appears as an 18 kHz ghost (40 - 22 = 18).
+                    </p>
+                    <div className="flex gap-2">
+                        {[1, 2, 3].map(i => (
+                            <div key={i} className={`flex-1 h-1 rounded-full ${i === 1 ? 'bg-red-500' : 'bg-white/10'}`} />
+                        ))}
+                    </div>
+                </div>
+            </div>
+            <div className={`p-8 rounded-[2.5rem] border ${isDarkMode ? 'bg-red-500/5 border-red-500/10' : 'bg-red-50 border-red-200'}`}>
+                <h4 className={`text-sm font-black uppercase tracking-widest mb-6 text-red-500`}>Why 44.1 kHz?</h4>
+                <p className={`text-xs leading-relaxed ${subTextColor}`}>
+                    Human hearing stops at 20 kHz. To capture this perfectly, we need {'>'} 40 kHz. The extra 4.1 kHz is a "safety margin" for the anti-aliasing filter to slope down without cutting into the music.
+                </p>
+            </div>
+        </div>
+
         <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-12 px-6">
             <div className="space-y-6">
                 <div className={`flex justify-between text-[11px] font-mono uppercase tracking-[0.2em] font-black ${isDarkMode ? 'text-white/30' : 'text-gray-400'}`}>

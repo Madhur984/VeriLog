@@ -167,27 +167,27 @@ export const S01_AnalogVsDigital: React.FC<{ time: number; isDarkMode: boolean }
                 {[
                     {
                         title: "The Carrier",
-                        desc: "The physical medium. Voltage in a wire, pressure in the air, or photons in a fiber optic cable.",
+                        desc: "The physical medium. Voltage in a wire, pressure in the air, or photons in fiber.",
                         icon: "⚡",
                         meta: "PHYSICAL LAYER"
                     },
                     {
                         title: "Information",
-                        desc: "The meaning encoded within the variations. The music inside the wave or the bits in the pulse.",
+                        desc: "The meaning encoded within variations. The music inside the wave or the bits in the pulse.",
                         icon: "💡",
                         meta: "LOGICAL LAYER"
                     },
                     {
-                        title: "Sample Period",
-                        desc: "The 'T' in our equations. The precise heartbeat of the digital observer.",
-                        icon: "⏱️",
-                        meta: "TEMPORAL RESOLUTION"
+                        title: "Snapshot Rule",
+                        desc: "Digital systems don't see the flow; they take 'pictures' 44,100 times per second.",
+                        icon: "📸",
+                        meta: "SAMPLING"
                     },
                     {
-                        title: "Linearity",
-                        desc: "How well the digital copy follows the analog original without adding its own 'opinions'.",
-                        icon: "📏",
-                        meta: "FIDELITY"
+                        title: "The Fallacy",
+                        desc: "Digital isn't 'broken' into steps. With math, those steps become a perfect smooth wave again.",
+                        icon: "🧩",
+                        meta: "RECONSTRUCTION"
                     }
                 ].map((item, i) => (
                     <div key={i} className={`p-8 rounded-[2.5rem] border text-left group transition-all duration-300 hover:scale-[1.02] ${isDarkMode ? 'bg-black/40 border-white/5 hover:border-orange-500/20' : 'bg-gray-50 border-gray-200 hover:border-orange-200 shadow-sm'}`}>
@@ -199,6 +199,22 @@ export const S01_AnalogVsDigital: React.FC<{ time: number; isDarkMode: boolean }
                         <p className={`text-xs leading-relaxed font-medium ${subTextColor}`}>{item.desc}</p>
                     </div>
                 ))}
+            </div>
+        </div>
+
+        {/* Deep Dive Theory */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-12">
+            <div className={`p-8 rounded-[2.5rem] border ${isDarkMode ? 'bg-orange-500/5 border-orange-500/10' : 'bg-orange-50 border-orange-200'}`}>
+                <h4 className={`text-[10px] font-black uppercase tracking-widest mb-4 ${accentColor}`}>The Continuity Paradox</h4>
+                <p className={`text-xs leading-relaxed ${isDarkMode ? 'text-white/40' : 'text-gray-600'}`}>
+                    An analog signal is like a ramp. You can stand at 1.0V, 1.00001V, or 1.0000000000001V. In theory, it has **infinite vertical resolution**. However, at that extreme, random thermal noise makes those tiny differences impossible to read.
+                </p>
+            </div>
+            <div className={`p-8 rounded-[2.5rem] border ${isDarkMode ? 'bg-white/5 border-white/5' : 'bg-gray-100 border-gray-100'}`}>
+                <h4 className={`text-[10px] font-black uppercase tracking-widest mb-4 ${isDarkMode ? 'text-white/40' : 'text-gray-500'}`}>The Digital Robustness</h4>
+                <p className={`text-xs leading-relaxed ${isDarkMode ? 'text-white/40' : 'text-gray-600'}`}>
+                    Digital isn't "infinite," but it is **repeatable**. If you send a "1" through a noisy wire and it arrives as "0.8", the computer still knows it was a "1". This "noise margin" is why your internet doesn't fail every time someone turns on a microwave.
+                </p>
             </div>
         </div>
       </div>

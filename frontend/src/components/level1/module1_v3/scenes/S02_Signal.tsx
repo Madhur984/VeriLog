@@ -35,8 +35,53 @@ export const S02_Signal: React.FC = () => {
           primary="Variation exists." 
           secondary="Signals classify change as discrete or continuous." 
         />
+        {/* Signal Theory Comparison Table */}
+        <div className="pointer-events-auto mt-12 overflow-hidden rounded-sm border border-white/5 bg-black/40 backdrop-blur-xl">
+            <table className="w-full text-left border-collapse">
+                <thead>
+                    <tr className="border-b border-white/10 bg-white/5">
+                        <th className="p-4 micro-text text-white/40 font-black uppercase tracking-widest">Dimension</th>
+                        <th className="p-4 micro-text text-v3-cyan font-black uppercase tracking-widest">Analog (Continuous)</th>
+                        <th className="p-4 micro-text text-white/60 font-black uppercase tracking-widest">Digital (Discrete)</th>
+                    </tr>
+                </thead>
+                <tbody className="text-[10px] font-medium text-white/50">
+                    <tr className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+                        <td className="p-4 border-r border-white/5 font-bold text-white/30 tracking-widest uppercase">Precision</td>
+                        <td className="p-4 text-v3-cyan/80">Infinite (Theoretical)</td>
+                        <td className="p-4 italic">Limited by Bits (Finite)</td>
+                    </tr>
+                    <tr className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+                        <td className="p-4 border-r border-white/5 font-bold text-white/30 tracking-widest uppercase">Represent</td>
+                        <td className="p-4 text-v3-cyan/80">Voltage, Pressure, Temp</td>
+                        <td className="p-4 italic">Binary States (0 / 1)</td>
+                    </tr>
+                    <tr className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+                        <td className="p-4 border-r border-white/5 font-bold text-white/30 tracking-widest uppercase">Interference</td>
+                        <td className="p-4 text-v3-cyan/80">Additive Noise (Irreversible)</td>
+                        <td className="p-4 italic">Error Correction (Robust)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
-        {/* NEW: Interactive Signal Theory for Module 1 */}
+        {/* Signal Taxonomy & Duality */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12 pointer-events-auto">
+            <div className="p-8 rounded-sm border bg-black/40 border-white/5 shadow-black">
+                <h4 className="text-[10px] font-black uppercase tracking-widest mb-4 text-v3-cyan">The Periodic Rule</h4>
+                <p className="text-xs leading-relaxed text-white/40">
+                    Signals are either **Periodic** (they repeat perfectly over time, like a heartbeat or a clock) or **Aperiodic** (they never repeat exactly, like human speech or thermal noise). Periodicity allows us to define "Frequency" ($f = 1/T$).
+                </p>
+            </div>
+            <div className="p-8 rounded-sm border bg-white/5 border-white/5">
+                <h4 className="text-[10px] font-black uppercase tracking-widest mb-4 text-white/40">Time-Frequency Duality</h4>
+                <p className="text-xs leading-relaxed text-white/40">
+                    Everything about a signal is visible in the **Time Domain** (how it changes now), but its true character is revealed in the **Frequency Domain** (what components it is made of). A sharp pulse in time requires an infinite spread in frequency.
+                </p>
+            </div>
+        </div>
+
+        {/* Previous Grid */}
         <div className="pointer-events-auto grid grid-cols-1 md:grid-cols-3 gap-4">
             {[
                 {

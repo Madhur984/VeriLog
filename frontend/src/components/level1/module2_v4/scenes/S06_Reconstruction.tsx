@@ -110,24 +110,38 @@ export const S06_Reconstruction: React.FC<{ time: number; isDarkMode: boolean }>
             </div>
 
             <div className="lg:col-span-4 flex flex-col gap-6 text-left">
-                <div className={`p-8 rounded-[2.5rem] border transition-all ${isDarkMode ? 'bg-black/40 border-white/5 shadow-black' : 'bg-white border-gray-100 shadow-sm'}`}>
+                <div className={`p-8 rounded-[2.5rem] border ${isDarkMode ? 'bg-black/40 border-white/5 shadow-black' : 'bg-white border-gray-100 shadow-sm'}`}>
                     <h4 className={`text-sm font-black uppercase tracking-widest mb-4 flex items-center gap-2 ${textColor}`}>
                         <span className="w-2 h-2 rounded-full bg-blue-500" /> Lego vs Clay
                     </h4>
                     <p className={`text-xs leading-relaxed font-medium ${subTextColor}`}>
-                       **Zero-Order Hold (ZOH)** is like building with LEGO blocks—it's fast and easy, but jagged. **Sinc Interpolation** is like smoothing clay; it mathematically weaves through every point to recover the exact wave.
+                        **Zero-Order Hold (ZOH)** is like building with LEGO blocks—it's fast and easy, but jagged. **Sinc Interpolation** is like smoothing clay; it mathematically weaves through every point to recover the exact wave.
                     </p>
                 </div>
 
-                <div className={`flex-1 p-8 rounded-[2.5rem] border transition-all ${isDarkMode ? 'bg-orange-500/5 border-orange-500/10 shadow-black' : 'bg-orange-50 border-orange-100 shadow-sm'}`}>
+                <div className={`p-8 rounded-[2.5rem] border transition-all ${isDarkMode ? 'bg-orange-500/5 border-orange-500/10' : 'bg-orange-50 border-orange-100'}`}>
+                    <h4 className={`text-sm font-black uppercase tracking-widest mb-4 ${accentColor}`}>Imaging Artifacts</h4>
+                    <p className={`text-xs leading-relaxed font-medium ${subTextColor}`}>
+                        When you look at the raw staircase (ZOH), you see "images" of the original signal repeated at every multiple of the sampling rate. These are high-frequency mirrors. The reconstruction filter's job is to smash these mirrors!
+                    </p>
+                </div>
+
+                <div className={`p-8 rounded-[2.5rem] border transition-all ${isDarkMode ? 'bg-orange-500/5 border-orange-500/10 shadow-black' : 'bg-orange-50 border-orange-100 shadow-sm'}`}>
                     <h4 className={`text-sm font-black uppercase tracking-widest mb-4 ${accentColor}`}>The Brick Wall</h4>
                     <p className={`text-xs leading-relaxed font-black uppercase tracking-tighter mb-4 ${isDarkMode ? 'text-white/40' : 'text-gray-400'}`}>Reconstruction Filter</p>
                     <p className={`text-xs leading-relaxed font-medium ${subTextColor}`}>
-                        In the real world, we use a **Low-Pass Filter** set right at $Fs/2$. This filter "cuts off" the sharp staircase corners (high-frequency noise) and leaves behind nothing but the smooth original signal.
+                        In the real world, we use a **Low-Pass Filter** set right at Fs/2. This filter "cuts off" the sharp staircase corners (high-frequency noise) and leaves behind nothing but the smooth original signal.
                     </p>
                     <div className={`mt-6 p-4 rounded-xl border flex items-center justify-center font-mono text-[10px] ${isDarkMode ? 'bg-black/60 border-white/5 text-white/30' : 'bg-white border-orange-200 text-gray-400'}`}>
                         STAIRCASE = SIGNAL + NOISE
                     </div>
+                </div>
+                
+                <div className={`p-8 rounded-[2.5rem] border ${isDarkMode ? 'bg-black/40 border-white/5' : 'bg-white border-gray-100'}`}>
+                    <h4 className={`text-sm font-black uppercase tracking-widest mb-4 ${textColor}`}>Post-Filter Bliss</h4>
+                    <p className={`text-xs leading-relaxed ${subTextColor}`}>
+                        Once filtered, the signal is identical to the original analog wave (within the limits of bit depth). Mathematical perfection achieved in copper and silicon.
+                    </p>
                 </div>
             </div>
         </div>
