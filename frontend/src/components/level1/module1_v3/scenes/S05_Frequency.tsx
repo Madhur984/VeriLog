@@ -33,6 +33,29 @@ export const S05_Frequency: React.FC = () => {
             ))}
         </div>
 
+        {/* Fourier's Insight */}
+        <div className="pointer-events-auto mt-12 p-8 rounded-sm border border-white/10 bg-black/60 backdrop-blur-2xl">
+            <h4 className="micro-text text-v3-cyan font-black uppercase tracking-widest mb-4">Fourier's Insight</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <p className="text-[10px] leading-relaxed text-white/40">
+                    Jean-Baptiste Joseph Fourier discovered that any periodic signal, no matter how complex (square, triangle, or the sound of a violin), can be represented as a **sum of simple sine waves** of different frequencies and amplitudes.
+                </p>
+                <div className="space-y-2 border-l border-white/10 pl-8">
+                    <div className="flex justify-between items-center text-left">
+                        <span className="text-[9px] text-white/20 uppercase tracking-tighter font-mono">Fundamental</span>
+                        <span className="text-v3-cyan font-black text-[10px]">f1</span>
+                    </div>
+                    <div className="flex justify-between items-center text-left">
+                        <span className="text-[9px] text-white/20 uppercase tracking-tighter font-mono">Harmonics</span>
+                        <span className="text-white/40 font-black text-[10px]">f2, f3, f4...</span>
+                    </div>
+                    <p className="text-[9px] italic text-white/20 mt-4 leading-relaxed text-left">
+                        The spectrum of a signal is the map of these hidden sine waves.
+                    </p>
+                </div>
+            </div>
+        </div>
+
         <div className="pointer-events-auto mt-8 max-w-2xl">
              <p className="text-[10px] leading-relaxed text-white/30 text-center">
                 Frequency represents how many times a signal repeats its cycle within one second (Hertz). In the digital domain, higher frequencies require faster sampling rates to avoid becoming "ghosts" (aliasing).

@@ -36,14 +36,14 @@ export const S06_Shape: React.FC = () => {
   };
 
   return (
-    <div className="absolute inset-0 flex flex-col pointer-events-none items-center justify-end pb-12">
+    <div className="absolute inset-0 flex flex-col pointer-events-none items-center justify-end pb-12 overflow-y-auto">
       <div className="w-full max-w-2xl mx-auto space-y-8 flex flex-col items-center pb-24">
         <InlineText 
           primary="Elementary Forms." 
           secondary="The building blocks of complex signals." 
         />
 
-        {/* NEW: Shape Description Card */}
+        {/* Shape Description Card */}
         <div className="pointer-events-auto h-24 flex items-center justify-center text-center px-12">
             <p className="text-xs font-mono text-v3-cyan/80 italic leading-relaxed animate-in fade-in slide-in-from-bottom-2 duration-500">
                 {SHAPE_INFO[signalMode] || SHAPE_INFO.analog}
@@ -66,8 +66,36 @@ export const S06_Shape: React.FC = () => {
           ))}
         </div>
 
+        {/* Unit Step vs Unit Impulse Expansion */}
+        <div className="pointer-events-auto grid grid-cols-1 md:grid-cols-2 gap-8 w-full mt-8 bg-black/60 p-8 rounded-sm border border-white/10 backdrop-blur-2xl">
+            <div className="space-y-4 border-r border-white/5 pr-8 text-left">
+                <h4 className="micro-text text-v3-cyan font-black uppercase tracking-widest">The Unit Step</h4>
+                <p className="text-[10px] leading-relaxed text-white/40 italic">
+                    u(t) = 1 for t ≥ 0, 0 otherwise. It represents the "turning on" or DC transition of a system.
+                </p>
+                <div className="pt-2 flex justify-center">
+                    <div className="w-24 h-px bg-white/10 relative">
+                        <div className="absolute left-1/2 bottom-0 w-px h-12 bg-v3-cyan" />
+                        <div className="absolute left-1/2 bottom-12 w-12 h-px bg-v3-cyan shadow-[0_0_10px_rgba(34,211,238,0.5)]" />
+                    </div>
+                </div>
+            </div>
+            <div className="space-y-4 text-left">
+                <h4 className="micro-text text-white/60 font-black uppercase tracking-widest">The Dirac Delta</h4>
+                <p className="text-[10px] leading-relaxed text-white/40 italic">
+                    δ(t) = ∞ for t = 0, 0 otherwise. Area = 1. A spike that contains all frequencies simultaneously.
+                </p>
+                <div className="pt-2 flex justify-center">
+                    <div className="w-24 h-px bg-white/10 relative">
+                        <div className="absolute left-1/2 bottom-0 w-px h-12 bg-v3-cyan animate-pulse shadow-[0_0_15px_rgba(34,211,238,0.8)]" />
+                        <div className="absolute left-1/2 bottom-12 -translate-x-1/2 -translate-y-1/2 border-2 border-v3-cyan w-2 h-2 rounded-full shadow-[0_0_10px_rgba(34,211,238,0.5)]" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div className="pointer-events-auto py-4">
-             <p className="text-[10px] text-white/20 font-bold uppercase tracking-[0.3em]">
+             <p className="text-[10px] text-white/20 font-bold uppercase tracking-[0.3em] text-center">
                 Select 3 forms to proceed
              </p>
         </div>

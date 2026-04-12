@@ -180,6 +180,34 @@ export const S02_Sampling: React.FC<{ time: number; isDarkMode: boolean }> = ({ 
             </div>
         </div>
       </div>
+      {/* Nyquist Proof / Derivation */}
+      <div className={`mt-16 p-10 rounded-[3rem] border ${isDarkMode ? 'bg-black/60 border-white/5 shadow-inner' : 'bg-white border-gray-100 shadow-sm'}`}>
+          <div className="flex flex-col md:flex-row gap-12 items-center">
+              <div className="flex-1 space-y-4 text-left">
+                  <h3 className={`text-2xl font-black italic tracking-tighter ${textColor}`}>The Mathematical Proof</h3>
+                  <p className={`text-xs leading-relaxed ${subTextColor}`}>
+                      Shannon-Nyquist tells us that to avoid overlapping spectral copies (aliasing), the sampling frequency must satisfy:
+                  </p>
+                  <div className={`p-4 rounded-xl font-mono text-xs ${isDarkMode ? 'bg-orange-500/10 text-orange-400' : 'bg-orange-50 text-orange-700'}`}>
+                      f_s \ge 2 \cdot B
+                  </div>
+                  <p className={`text-[10px] italic ${subTextColor}`}>
+                      Where <strong>B</strong> is the bandwidth of the signal. If this condition is met, the sinc function can perfectly interpolate between samples.
+                  </p>
+              </div>
+              <div className="w-px h-24 bg-white/5 hidden md:block" />
+              <div className="flex-1 space-y-4 text-left">
+                  <h4 className={`text-sm font-black uppercase tracking-widest ${accentColor}`}>Visual Check</h4>
+                  <p className={`text-[10px] leading-relaxed ${subTextColor}`}>
+                      Think of a revolving wheel. If you blink too slow, it looks like it's spinning backwards. That's Aliasing. If you blink fast enough, you see the true rotation.
+                  </p>
+                  <div className="flex gap-2 items-center">
+                      <div className={`w-3 h-3 rounded-full animate-ping bg-orange-500`} />
+                      <span className={`text-[9px] font-mono font-black uppercase tracking-widest ${textColor}`}>Nyquist Condition: EVALUATING...</span>
+                  </div>
+              </div>
+          </div>
+      </div>
     </div>
   );
 };

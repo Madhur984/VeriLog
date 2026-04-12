@@ -49,6 +49,18 @@ export const S07_Noise: React.FC = () => {
             </div>
         </div>
 
+        {/* Colors of Noise */}
+        <div className="pointer-events-auto grid grid-cols-1 md:grid-cols-2 gap-4 w-full mt-8">
+            <div className="p-6 rounded-sm border border-white/5 bg-black/60 backdrop-blur-xl">
+                <h5 className="micro-text text-white/60 mb-2 font-black uppercase tracking-widest text-left">White Noise</h5>
+                <p className="text-[9px] text-white/30 leading-relaxed italic text-left">Equal energy across all frequencies. Sounds like static or rain.</p>
+            </div>
+            <div className="p-6 rounded-sm border border-white/5 bg-black/60 backdrop-blur-xl">
+                <h5 className="micro-text text-[#f97316] mb-2 font-black uppercase tracking-widest text-left">Pink Noise</h5>
+                <p className="text-[9px] text-white/30 leading-relaxed italic text-left">Energy decreases as frequency increases. Sounds more natural to the human ear.</p>
+            </div>
+        </div>
+
         <div className="pointer-events-auto mt-8 max-w-2xl">
              <p className="text-[10px] leading-relaxed text-white/30 text-center">
                 Noise is the enemy of information. The goal of any engineer is to maximize the SNR while minimizing the bandwidth required.

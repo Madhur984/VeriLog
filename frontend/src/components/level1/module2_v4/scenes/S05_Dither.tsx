@@ -150,6 +150,26 @@ export const S05_Dither: React.FC<{ time: number; isDarkMode: boolean }> = ({ ti
             </div>
         </div>
       </div>
+      {/* Noise Shaping (The Modern Magic) */}
+      <div className={`mt-16 p-12 rounded-[3.5rem] border ${isDarkMode ? 'bg-white/[0.02] border-white/5 shadow-2xl' : 'bg-white border-gray-100 shadow-xl'}`}>
+          <div className="flex flex-col md:flex-row gap-12 items-center text-left">
+              <div className="flex-1 space-y-6">
+                  <h3 className={`text-3xl font-black italic tracking-tighter ${textColor}`}>Noise <span className={accentColor}>Shaping</span></h3>
+                  <p className={`text-sm leading-relaxed ${subTextColor}`}>
+                      Standard dither is flat (White). **Noise Shaping** is "Smart Dither." It pushes the noise away from the frequencies humans are sensitive to (2-5 kHz) and hides it in the ultra-high frequencies (&gt;18 kHz).
+                  </p>
+              </div>
+              <div className={`flex-1 p-8 rounded-[2.5rem] border ${isDarkMode ? 'bg-orange-500/5 border-orange-500/10 shadow-black' : 'bg-orange-50 border-orange-200 shadow-sm'}`}>
+                  <h4 className={`text-[10px] font-black uppercase tracking-widest mb-4 ${accentColor}`}>The Frequency Shift</h4>
+                  <div className="h-24 w-full relative flex items-end gap-1">
+                      {[0.1, 0.2, 0.1, 0.3, 0.2, 0.8, 1.0].map((h, i) => (
+                          <div key={i} className={`flex-1 ${accentColor.replace('text', 'bg')} opacity-40`} style={{ height: `${h * 100}%` }} />
+                      ))}
+                  </div>
+                  <p className={`mt-4 text-[9px] italic text-center ${subTextColor}`}>Noise is shifted to the high-frequency spectrum.</p>
+              </div>
+          </div>
+      </div>
     </div>
   );
 };

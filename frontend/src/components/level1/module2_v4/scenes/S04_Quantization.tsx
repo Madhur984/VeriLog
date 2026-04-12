@@ -211,6 +211,27 @@ export const S04_Quantization: React.FC<{ time: number; isDarkMode: boolean }> =
             </div>
         </div>
       </div>
+      {/* Uniform vs Non-Uniform Quantization */}
+      <div className={`mt-16 grid grid-cols-1 md:grid-cols-2 gap-8`}>
+          <div className={`p-10 rounded-[3rem] border ${isDarkMode ? 'bg-black/60 border-white/5 shadow-inner' : 'bg-white border-gray-100 shadow-sm'}`}>
+              <h4 className={`text-sm font-black uppercase tracking-widest mb-4 flex items-center justify-between ${accentColor}`}>
+                Uniform (Linear)
+                <span className="text-[9px] font-mono opacity-40">PCM / WAV</span>
+              </h4>
+              <p className={`text-xs leading-relaxed text-left ${subTextColor}`}>
+                  Every rung on the ladder is exactly the same size. This is how high-fidelity audio (WAV, FLAC) works. It's simple but wastes bits on very quiet or very loud parts.
+              </p>
+          </div>
+          <div className={`p-10 rounded-[3rem] border ${isDarkMode ? 'bg-orange-500/10 border-orange-500/20 shadow-orange-500/5' : 'bg-orange-50 border-orange-200 shadow-sm'}`}>
+              <h4 className={`text-sm font-black uppercase tracking-widest mb-4 flex items-center justify-between ${accentColor}`}>
+                Non-Uniform (Logarithmic)
+                <span className="text-[9px] font-mono opacity-40">VOIP / μ-LAW</span>
+              </h4>
+              <p className={`text-xs leading-relaxed text-left ${subTextColor}`}>
+                  Rungs are smaller for quiet signals and larger for loud ones. This follows human perception (we are more sensitive to small changes in quiet environments). Used in Telephony.
+              </p>
+          </div>
+      </div>
     </div>
   );
 };
