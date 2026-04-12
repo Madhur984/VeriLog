@@ -122,6 +122,64 @@ export const S02_Sampling: React.FC<{ time: number; isDarkMode: boolean }> = ({ 
             </div>
         </div>
       </div>
+
+      {/* NEW: The Sampling Microscope */}
+      <div className={`mt-16 p-12 rounded-[3.5rem] border transition-all duration-700 ${isDarkMode ? 'bg-white/[0.02] border-white/5 shadow-2xl' : 'bg-white border-gray-100 shadow-xl'}`}>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+            <div className="lg:col-span-1 space-y-6 text-left">
+                <h3 className={`text-4xl font-black italic tracking-tighter ${textColor}`}>
+                    The Sampling <span className={accentColor}>Microscope</span>
+                </h3>
+                <p className={`text-sm leading-relaxed font-medium ${subTextColor}`}>
+                    Zooming into the moment of capture. Here is what happens when the computer "blinks".
+                </p>
+                <div className={`p-6 rounded-3xl border border-dashed ${isDarkMode ? 'bg-orange-500/5 border-orange-500/10 shadow-inner' : 'bg-orange-50 border-orange-200 shadow-sm'}`}>
+                    <span className={`text-[10px] font-mono font-black uppercase tracking-[0.3em] ${accentColor}`}>Engineer's Fact</span>
+                    <p className={`mt-2 text-[11px] leading-relaxed italic ${isDarkMode ? 'text-white/30' : 'text-gray-500'}`}>
+                        "A perfect sampler takes zero time to measure. In reality, we have **Aperture Jitter**—the tiny uncertainty in *exactly* when the sample was taken."
+                    </p>
+                </div>
+            </div>
+
+            <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+                {[
+                    {
+                        title: "Discrete Time",
+                        desc: "Once sampled, time is no longer a sliding scale. It becomes a sequence of indices: n=0, 1, 2...",
+                        icon: "📉",
+                        metric: "n [INDEX]"
+                    },
+                    {
+                        title: "Shannon's Proof",
+                        desc: "Claude Shannon proved that if you follow the Nyquist rule, you lose **ZERO** information. You can reconstruct the original perfectly.",
+                        icon: "🎓",
+                        metric: "LOSSLESS BRIDGE"
+                    },
+                    {
+                        title: "The Heartbeat (T)",
+                        desc: "The time between samples. $T = 1 / Fs$. A smaller T means more data, but higher fidelity.",
+                        icon: "💓",
+                        metric: "PERIOD"
+                    },
+                    {
+                        title: "Clock Jitter",
+                        desc: "Tiny timing errors in the clock. It creates 'phase noise' that can blur the fine details of a signal.",
+                        icon: "🎢",
+                        metric: "TEMPORAL NOISE"
+                    }
+                ].map((item, i) => (
+                    <div key={i} className={`p-8 rounded-[2.5rem] border text-left group transition-all duration-300 hover:scale-[1.02] ${isDarkMode ? 'bg-black/40 border-white/5 hover:border-orange-500/20' : 'bg-gray-50 border-gray-200 hover:border-orange-200 shadow-sm'}`}>
+                        <div className="flex justify-between items-start mb-6">
+                            <span className="text-3xl">{item.icon}</span>
+                            <span className={`px-3 py-1 rounded-lg text-[9px] font-mono font-black uppercase tracking-widest ${isDarkMode ? 'bg-white/5 text-orange-400' : 'bg-orange-100 text-orange-700'}`}>{item.metric}</span>
+                        </div>
+                        <h4 className={`text-lg font-black italic mb-2 ${textColor}`}>{item.title}</h4>
+                        <p className={`text-xs leading-relaxed font-medium ${subTextColor}`}>{item.desc}</p>
+                    </div>
+                ))}
+            </div>
+        </div>
+      </div>
     </div>
   );
 };

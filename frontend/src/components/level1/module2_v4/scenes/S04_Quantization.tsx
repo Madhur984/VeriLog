@@ -142,6 +142,64 @@ export const S04_Quantization: React.FC<{ time: number; isDarkMode: boolean }> =
             </div>
         </div>
       </div>
+
+      {/* NEW: The Digital Microscope (Quantization Error Visualization) */}
+      <div className={`p-12 rounded-[3.5rem] border transition-all duration-700 ${isDarkMode ? 'bg-white/[0.02] border-white/5 shadow-2xl' : 'bg-white border-gray-100 shadow-xl'}`}>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+            <div className="lg:col-span-1 space-y-6 text-left">
+                <h3 className={`text-4xl font-black italic tracking-tighter ${textColor}`}>
+                    The Digital <span className={accentColor}>Microscope</span>
+                </h3>
+                <p className={`text-sm leading-relaxed font-medium ${subTextColor}`}>
+                    To truly see the error, we must subtract the Original from the Copy. What remains is **Quantization Distortion**.
+                </p>
+                <div className={`p-6 rounded-3xl border border-dashed ${isDarkMode ? 'bg-orange-500/5 border-orange-500/10 shadow-inner' : 'bg-orange-50 border-orange-200 shadow-sm'}`}>
+                    <span className={`text-[10px] font-mono font-black uppercase tracking-[0.3em] ${accentColor}`}>Engineer's Insight</span>
+                    <p className={`mt-2 text-[11px] leading-relaxed italic ${isDarkMode ? 'text-white/30' : 'text-gray-500'}`}>
+                        "At low bit depths, this noise follows the signal perfectly—making it sound 'harsh'. As we increase bits, the noise detaches and becomes a smooth floor."
+                    </p>
+                </div>
+            </div>
+
+            <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+                {[
+                    {
+                        title: "LSB (Least Significant Bit)",
+                        desc: "The smallest possible change the system can record. This is the height of one single rung on your ladder.",
+                        icon: "🧩",
+                        metric: "Δ = V_fs / 2^n"
+                    },
+                    {
+                        title: "Dynamic Range",
+                        desc: "The ratio between the loudest possible signal and the quietest detail that doesn't get lost in noise.",
+                        icon: "🔊",
+                        metric: "DR = 20 log10(2^n)"
+                    },
+                    {
+                        title: "Resolution floor",
+                        desc: "Anything smaller than 1 LSB is invisible to the computer. It treats small movements as zero or jumps to the next rung.",
+                        icon: "📉",
+                        metric: "PRECISION LIMIT"
+                    },
+                    {
+                        title: "Harmonic Distortion",
+                        desc: "The mathematical byproduct of rounding. It adds 'phantom' frequencies that weren't in the original sound.",
+                        icon: "👻",
+                        metric: "ALIASING RELATIVES"
+                    }
+                ].map((item, i) => (
+                    <div key={i} className={`p-8 rounded-[2.5rem] border text-left group transition-all duration-300 hover:scale-[1.02] ${isDarkMode ? 'bg-black/40 border-white/5 hover:border-orange-500/20' : 'bg-gray-50 border-gray-200 hover:border-orange-200 shadow-sm'}`}>
+                        <div className="flex justify-between items-start mb-6">
+                            <span className="text-3xl">{item.icon}</span>
+                            <span className={`px-3 py-1 rounded-lg text-[9px] font-mono font-black uppercase tracking-widest ${isDarkMode ? 'bg-white/5 text-orange-400' : 'bg-orange-100 text-orange-700'}`}>{item.metric}</span>
+                        </div>
+                        <h4 className={`text-lg font-black italic mb-2 ${textColor}`}>{item.title}</h4>
+                        <p className={`text-xs leading-relaxed font-medium ${subTextColor}`}>{item.desc}</p>
+                    </div>
+                ))}
+            </div>
+        </div>
+      </div>
     </div>
   );
 };

@@ -146,6 +146,62 @@ export const S01_AnalogVsDigital: React.FC<{ time: number; isDarkMode: boolean }
           </div>
         </section>
       </div>
+
+      {/* NEW: Signal Anatomy Section */}
+      <div className={`mt-16 p-12 rounded-[3.5rem] border transition-all duration-700 ${isDarkMode ? 'bg-white/[0.02] border-white/5' : 'bg-white border-gray-100 shadow-xl'}`}>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+            <div className="lg:col-span-1 space-y-6 text-left">
+                <h3 className={`text-3xl font-black italic tracking-tighter ${textColor}`}>Signal <span className={accentColor}>Anatomy</span></h3>
+                <p className={`text-sm leading-relaxed font-medium ${subTextColor}`}>
+                    A signal is more than just a wave. It is a **carrier of meaning**. To master the bridge, you must understand what makes a signal *useful*.
+                </p>
+                <div className={`p-6 rounded-3xl border border-dashed ${isDarkMode ? 'bg-orange-500/5 border-orange-500/10 shadow-inner' : 'bg-orange-50 border-orange-200'}`}>
+                    <span className={`text-[10px] font-mono font-black uppercase tracking-[0.3em] ${accentColor}`}>Engineer's Note</span>
+                    <p className={`mt-2 text-[11px] leading-relaxed italic ${isDarkMode ? 'text-white/30' : 'text-gray-500'}`}>
+                        "A signal without change is just a static value. A signal without a receiver is just energy. The bridge connects the physical to the logical."
+                    </p>
+                </div>
+            </div>
+
+            <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+                {[
+                    {
+                        title: "The Carrier",
+                        desc: "The physical medium. Voltage in a wire, pressure in the air, or photons in a fiber optic cable.",
+                        icon: "⚡",
+                        meta: "PHYSICAL LAYER"
+                    },
+                    {
+                        title: "Information",
+                        desc: "The meaning encoded within the variations. The music inside the wave or the bits in the pulse.",
+                        icon: "💡",
+                        meta: "LOGICAL LAYER"
+                    },
+                    {
+                        title: "Sample Period",
+                        desc: "The 'T' in our equations. The precise heartbeat of the digital observer.",
+                        icon: "⏱️",
+                        meta: "TEMPORAL RESOLUTION"
+                    },
+                    {
+                        title: "Linearity",
+                        desc: "How well the digital copy follows the analog original without adding its own 'opinions'.",
+                        icon: "📏",
+                        meta: "FIDELITY"
+                    }
+                ].map((item, i) => (
+                    <div key={i} className={`p-8 rounded-[2.5rem] border text-left group transition-all duration-300 hover:scale-[1.02] ${isDarkMode ? 'bg-black/40 border-white/5 hover:border-orange-500/20' : 'bg-gray-50 border-gray-200 hover:border-orange-200 shadow-sm'}`}>
+                        <div className="flex justify-between items-start mb-6">
+                            <span className="text-3xl">{item.icon}</span>
+                            <span className={`text-[9px] font-mono font-black uppercase tracking-widest ${isDarkMode ? 'text-white/20' : 'text-gray-400'}`}>{item.meta}</span>
+                        </div>
+                        <h4 className={`text-lg font-black italic mb-2 ${textColor}`}>{item.title}</h4>
+                        <p className={`text-xs leading-relaxed font-medium ${subTextColor}`}>{item.desc}</p>
+                    </div>
+                ))}
+            </div>
+        </div>
+      </div>
     </div>
   );
 };
