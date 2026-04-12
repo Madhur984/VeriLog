@@ -1,99 +1,95 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { SignalEngine, SignalConfig } from '../SignalEngine';
-import { Ruler } from 'lucide-react';
+import { Timer } from 'lucide-react';
 
 /**
- * S02_Sampling: Points Appear
- * 1. Show phenomenon: Dots appearing on the analog wave.
- * 2. Realization: We only check the signal at specific intervals.
- * 3. Label: Sampling Rate (Fs).
+ * S02_Sampling (Optimized)
  */
-export const S02_Sampling: React.FC = () => {
-  const [time, setTime] = useState(0);
-  const [sampleRate, setSampleRate] = useState(8);
+export const S02_Sampling: React.FC<{ time: number }> = ({ time }) => {
+  const [sampleRate, setSampleRate] = useState(12);
 
-  useEffect(() => {
-    let raf: number;
-    const animate = (t: number) => {
-      setTime(t / 1000);
-      raf = requestAnimationFrame(animate);
-    };
-    raf = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(raf);
-  }, []);
-
-  const config: SignalConfig = {
-    frequency: 1,
-    amplitude: 60,
+  const config = useMemo((): SignalConfig => ({
+    frequency: 0.5,
+    amplitude: 70,
     sampleRate: sampleRate,
-    bitDepth: 8, // High precision to focus only on sampling
+    bitDepth: 12,
     jitter: 0,
     dither: false,
     reconstruction: 'zoh'
-  };
+  }), [sampleRate]);
 
-  const { analogPoints, samples } = SignalEngine(config, time, 600, 200);
+  const { analogPoints, samples } = useMemo(() => 
+    SignalEngine(config, time, 600, 200), [config, time]
+  );
 
   return (
     <div className="flex flex-col gap-12 max-w-4xl mx-auto">
-      <div className="space-y-4">
+      <header className="space-y-4">
         <h2 className="text-5xl font-black italic tracking-tighter text-white">
-          The <span className="text-cyan-500">Capture</span>
+          The Temporal <span className="text-cyan-500">Blink</span>
         </h2>
-        <p className="text-lg text-white/60 leading-relaxed max-w-2xl">
-          An ADC doesn't watch the whole movie. It takes **snapshots**.
-          Sampling is the process of measuring the signal at regular intervals. 
-          The faster we "blink", the more detail we capture.
+        <p className="text-lg text-white/60 leading-relaxed max-w-2xl font-medium">
+          A computer cannot watch the world continuously. It takes snapshots — **samples** — 
+          at fixed intervals. The speed of this "blink" determines what reality you see.
         </p>
-      </div>
+      </header>
 
-      <div className="relative p-8 rounded-3xl border border-white/10 bg-black/40 space-y-8">
-        <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4 text-cyan-500 font-mono text-[10px] uppercase tracking-widest font-black">
-                <Ruler size={16} /> Sampling Rate Generator
+      <div className="p-10 rounded-[2.5rem] border border-white/10 bg-black/40 space-y-10 shadow-2xl">
+        <div className="flex justify-between items-center px-4">
+            <div className="flex flex-col">
+                <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-white/20 mb-1">Snapshot Rate</span>
+                <span className="text-3xl font-black italic text-cyan-500 tracking-tighter">{sampleRate} <span className="text-xs text-white/20 uppercase tracking-widest not-italic ml-2">Samples / Period</span></span>
             </div>
-            <div className="flex items-center gap-3">
-                <span className="text-[10px] font-mono text-white/30 uppercase">Fs =</span>
-                <span className="text-2xl font-black text-cyan-500">{sampleRate} Hz</span>
+            <div className="w-12 h-12 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center">
+                <Timer className="text-cyan-500" size={24} />
             </div>
         </div>
 
-        <div className="h-[250px] bg-black/60 rounded-2xl border border-white/5 overflow-hidden flex items-center justify-center">
+        <div className="relative h-[250px] bg-black/60 rounded-3xl border border-white/5 overflow-hidden shadow-inner flex items-center justify-center">
           <svg width="100%" height="100%" viewBox="0 0 600 250" preserveAspectRatio="none">
-            {/* Analog Background */}
-            <path d={analogPoints.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x},${p.y}`).join(' ')} fill="none" stroke="white" strokeWidth="1.5" strokeOpacity="0.1" strokeDasharray="4 4" />
+            {/* Analog Path */}
+            <path 
+                d={analogPoints.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x},${p.y}`).join(' ')} 
+                fill="none" 
+                stroke="white" 
+                strokeWidth="1.5" 
+                strokeOpacity="0.05" 
+                strokeDasharray="4 4" 
+            />
             
-            {/* Samples */}
+            {/* Sample Logic Visuals */}
             {samples.map((p, i) => (
-                <g key={i}>
-                    <line x1={p.x} y1={125} x2={p.x} y2={p.y} stroke="#06b6d4" strokeWidth="1" strokeOpacity="0.4" strokeDasharray="2 2" />
-                    <circle 
-                        cx={p.x} 
-                        cy={p.y} 
-                        r="3.5" 
-                        fill="#06b6d4" 
-                        style={{ filter: 'drop-shadow(0 0 8px rgba(6,182,212,0.8))' }}
-                    />
-                </g>
+                <motion.g key={i}>
+                    <line x1={p.x} y1={125} x2={p.x} y2={p.y} stroke="#06b6d4" strokeWidth="1" strokeOpacity="0.2" />
+                    <circle cx={p.x} cy={p.y} r="3.5" fill="#06b6d4" style={{ filter: 'drop-shadow(0 0 8px rgba(6,182,212,0.6))' }} />
+                </motion.g>
             ))}
           </svg>
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-6 px-4">
             <input 
                 type="range" 
-                min={2} 
+                min={4} 
                 max={48} 
                 step={1} 
                 value={sampleRate} 
                 onChange={(e) => setSampleRate(parseInt(e.target.value))}
-                className="w-full h-1.5 bg-white/5 rounded-full appearance-none accent-cyan-500 cursor-pointer"
+                className="w-full h-1.5 bg-white/5 rounded-full appearance-none accent-cyan-500 cursor-pointer hover:bg-white/10 transition-colors"
             />
-            <div className="flex justify-between text-[9px] font-mono text-white/30 uppercase tracking-widest">
-                <span>Low Detail</span>
-                <span>High Fidelity</span>
+            <div className="flex justify-between text-[10px] font-mono text-white/30 uppercase tracking-[0.2em] font-black">
+                <span>Slow (Lossy)</span>
+                <span>Fast (Fidelity)</span>
             </div>
+        </div>
+
+        <div className="p-6 rounded-2xl bg-cyan-500/5 border border-cyan-500/10 flex items-start gap-4 mx-2">
+            <div className="w-1.5 h-1.5 rounded-full bg-cyan-500 mt-1.5" />
+            <p className="text-sm text-white/40 leading-relaxed font-medium italic">
+                Observe how the "staircase" becomes smoother as you increase the rate. This is the foundation of 
+                High-Resolution audio and video.
+            </p>
         </div>
       </div>
     </div>

@@ -10,9 +10,13 @@ import { S01_AnalogVsDigital } from './scenes/S01_AnalogVsDigital';
 import { S02_Sampling } from './scenes/S02_Sampling';
 import { S03_Aliasing } from './scenes/S03_Aliasing';
 import { S04_Quantization } from './scenes/S04_Quantization';
+import { S05_Dither } from './scenes/S05_Dither';
+import { S06_Reconstruction } from './scenes/S06_Reconstruction';
+import { S07_ADCArchitecture } from './scenes/S07_ADCArchitecture';
 import { S08_Lab } from './scenes/S08_Lab';
+import { S09_KnowledgeGate } from './scenes/S09_KnowledgeGate';
 
-// Placeholder scenes for the rest
+// Placeholder scenes for the rest (no longer needed, but keeping for reference if any others added)
 const S_Placeholder: React.FC<{ title: string; desc: string }> = ({ title, desc }) => (
     <div className="flex flex-col gap-8 max-w-4xl mx-auto">
         <h2 className="text-5xl font-black italic tracking-tighter text-white/50">{title}</h2>
@@ -23,10 +27,7 @@ const S_Placeholder: React.FC<{ title: string; desc: string }> = ({ title, desc 
     </div>
 );
 
-const S05_Dither = () => <S_Placeholder title="S05: Dither" desc="Sometimes, adding random noise is the only way to find the truth." />;
-const S06_Reconstruction = () => <S_Placeholder title="S06: Reconstruction" desc="Bridging the final gap back to the physical world." />;
-const S07_ADCArchitecture = () => <S_Placeholder title="S07: ADC Architecture" desc="How real silicon builds the bridge." />;
-const S09_KnowledgeGate = () => <S_Placeholder title="S09: Knowledge Gate" desc="Validation of mastery across the digital domain." />;
+// All scenes implemented.
 
 const SECTIONS = [
   { id: 'intro', label: 'The Sense of Flow' },
@@ -45,6 +46,18 @@ export const Module2Root: React.FC = () => {
   const [scheme, toggleTheme] = useColorScheme();
   const isDarkMode = scheme === 'dark';
   const [activeScreenIndex, setActiveScreenIndex] = useState(0);
+  const [time, setTime] = useState(0);
+
+  // Unified Animation Clock: Single RAF loop for the entire module
+  useEffect(() => {
+    let raf: number;
+    const animate = (t: number) => {
+      setTime(t / 1000);
+      raf = requestAnimationFrame(animate);
+    };
+    raf = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(raf);
+  }, []);
 
   const scenes = [
     S00_Intro,
@@ -110,6 +123,7 @@ export const Module2Root: React.FC = () => {
             scenes={scenes} 
             activeScene={activeScreenIndex}
             onSceneChange={handleSceneChange}
+            time={time}
         />
       </main>
     </div>

@@ -5,6 +5,7 @@ interface SceneManagerProps {
   scenes: React.FC<any>[];
   activeScene: number;
   onSceneChange: (index: number) => void;
+  time: number;
 }
 
 /**
@@ -12,23 +13,31 @@ interface SceneManagerProps {
  * Coordinates the display and transition between pedagogical scenes.
  * Matches Module 1's architectural discipline.
  */
-export const SceneManager: React.FC<SceneManagerProps> = ({ scenes, activeScene, onSceneChange }) => {
+export const SceneManager: React.FC<SceneManagerProps> = ({ scenes, activeScene, onSceneChange, time }) => {
+  const [visibleIndices, setVisibleIndices] = useState<Set<number>>(new Set([0]));
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Intersection Observer for scroll-based scene detection
+  // Intersection Observer for scroll-based scene detection & visibility
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
+          const index = parseInt(entry.target.getAttribute('data-scene-index') || '0');
           if (entry.isIntersecting) {
-            const index = parseInt(entry.target.getAttribute('data-scene-index') || '0');
             onSceneChange(index);
+            setVisibleIndices(prev => new Set(prev).add(index));
+          } else {
+            setVisibleIndices(prev => {
+                const next = new Set(prev);
+                next.delete(index);
+                return next;
+            });
           }
         });
       },
       { 
-        root: null,
-        rootMargin: '-50% 0px -50% 0px', // Trigger when section is in the middle of the viewport
+        root: containerRef.current,
+        rootMargin: '-10% 0px -10% 0px', 
         threshold: 0 
       }
     );
@@ -52,8 +61,13 @@ export const SceneManager: React.FC<SceneManagerProps> = ({ scenes, activeScene,
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
+            className="w-full h-full flex flex-col justify-center"
           >
-            <Scene index={index} />
+            <Scene 
+                index={index} 
+                time={visibleIndices.has(index) ? time : 0} 
+                isActive={activeScene === index}
+            />
           </motion.div>
         </section>
       ))}
