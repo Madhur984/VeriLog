@@ -180,31 +180,76 @@ export const S02_Sampling: React.FC<{ time: number; isDarkMode: boolean }> = ({ 
             </div>
         </div>
       </div>
-      {/* Nyquist Proof / Derivation */}
-      <div className={`mt-16 p-10 rounded-[3rem] border ${isDarkMode ? 'bg-black/60 border-white/5 shadow-inner' : 'bg-white border-gray-100 shadow-sm'}`}>
-          <div className="flex flex-col md:flex-row gap-12 items-center">
-              <div className="flex-1 space-y-4 text-left">
-                  <h3 className={`text-2xl font-black italic tracking-tighter ${textColor}`}>The Mathematical Proof</h3>
-                  <p className={`text-xs leading-relaxed ${subTextColor}`}>
-                      Shannon-Nyquist tells us that to avoid overlapping spectral copies (aliasing), the sampling frequency must satisfy:
-                  </p>
-                  <div className={`p-4 rounded-xl font-mono text-xs ${isDarkMode ? 'bg-orange-500/10 text-orange-400' : 'bg-orange-50 text-orange-700'}`}>
-                      f_s \ge 2 \cdot B
-                  </div>
-                  <p className={`text-[10px] italic ${subTextColor}`}>
-                      Where <strong>B</strong> is the bandwidth of the signal. If this condition is met, the sinc function can perfectly interpolate between samples.
+      {/* Detailed Nyquist Mathematical Proof */}
+      <div className={`mt-16 p-12 rounded-[3.5rem] border transition-all duration-700 ${isDarkMode ? 'bg-black/80 border-white/5 shadow-2xl' : 'bg-white border-gray-100 shadow-xl'}`}>
+          <div className="space-y-12 text-left">
+              <div className="text-center space-y-4">
+                  <span className={`text-[10px] font-mono font-black uppercase tracking-[0.4em] ${accentColor}`}>Formal Derivation</span>
+                  <h3 className={`text-4xl font-black italic tracking-tighter ${textColor}`}>Nyquist-Shannon Proof</h3>
+                  <p className={`text-sm max-w-2xl mx-auto ${subTextColor}`}>
+                      How Claude Shannon mathematically proved that reality can be perfectly captured in digits.
                   </p>
               </div>
-              <div className="w-px h-24 bg-white/5 hidden md:block" />
-              <div className="flex-1 space-y-4 text-left">
-                  <h4 className={`text-sm font-black uppercase tracking-widest ${accentColor}`}>Visual Check</h4>
-                  <p className={`text-[10px] leading-relaxed ${subTextColor}`}>
-                      Think of a revolving wheel. If you blink too slow, it looks like it's spinning backwards. That's Aliasing. If you blink fast enough, you see the true rotation.
-                  </p>
-                  <div className="flex gap-2 items-center">
-                      <div className={`w-3 h-3 rounded-full animate-ping bg-orange-500`} />
-                      <span className={`text-[9px] font-mono font-black uppercase tracking-widest ${textColor}`}>Nyquist Condition: EVALUATING...</span>
+
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                  {/* Step 1 */}
+                  <div className={`p-8 rounded-3xl border flex flex-col ${isDarkMode ? 'bg-white/5 border-white/5 shadow-inner' : 'bg-gray-50 border-gray-200'}`}>
+                      <div className="flex items-center gap-3 mb-4">
+                          <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold ${isDarkMode ? 'bg-orange-500 text-black' : 'bg-orange-500 text-white'}`}>1</span>
+                          <h4 className={`text-sm font-black uppercase tracking-widest ${textColor}`}>Time Sampling</h4>
+                      </div>
+                      <p className="text-[11px] leading-relaxed text-white/40 mb-6 flex-grow">
+                          Sampling $x(t)$ is modeled as multiplication by a **Dirac Comb** $s(t)$. This turns a continuous wave into a series of infinitesimally narrow spikes.
+                      </p>
+                      <div className={`p-4 rounded-xl font-mono text-[11px] leading-tight ${isDarkMode ? 'bg-black/60 text-orange-400 border border-white/10' : 'bg-white text-orange-700 border border-orange-100 shadow-sm'}`}>
+                          {`x_s(t) = x(t) \\cdot \\sum_{n=-\\infty}^{+\\infty} \\delta(t - nT)`}
+                      </div>
                   </div>
+
+                  {/* Step 2 */}
+                  <div className={`p-8 rounded-3xl border flex flex-col ${isDarkMode ? 'bg-white/5 border-white/5 shadow-inner' : 'bg-gray-50 border-gray-200'}`}>
+                      <div className="flex items-center gap-3 mb-4">
+                          <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold ${isDarkMode ? 'bg-orange-500 text-black' : 'bg-orange-500 text-white'}`}>2</span>
+                          <h4 className={`text-sm font-black uppercase tracking-widest ${textColor}`}>Fourier Mapping</h4>
+                      </div>
+                      <p className="text-[11px] leading-relaxed text-white/40 mb-6 flex-grow">
+                          In the frequency domain, multiplication becomes **Convolution**. The original spectrum $X(f)$ is cloned and repeated every $f_s$ Hertz across the spectrum.
+                      </p>
+                      <div className={`p-4 rounded-xl font-mono text-[11px] leading-tight ${isDarkMode ? 'bg-black/60 text-orange-400 border border-white/10' : 'bg-white text-orange-700 border border-orange-100 shadow-sm'}`}>
+                          {`X_s(f) = \\frac{1}{T} \\sum_{k=-\\infty}^{+\\infty} X(f - kf_s)`}
+                      </div>
+                  </div>
+
+                  {/* Step 3 */}
+                  <div className={`p-8 rounded-3xl border flex flex-col border-orange-500/20 ${isDarkMode ? 'bg-orange-500/5 shadow-inner' : 'bg-orange-50'}`}>
+                      <div className="flex items-center gap-3 mb-4">
+                          <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold bg-orange-500 text-black`}>3</span>
+                          <h4 className={`text-sm font-black uppercase tracking-widest ${textColor}`}>Separation</h4>
+                      </div>
+                      <p className="text-[11px] leading-relaxed text-white/40 mb-6 flex-grow">
+                          To recover the original, these copies must **not overlap** (Aliasing). The gap between the signal's bandwidth $B$ and the next copy's start must satisfy $f_s - B \ge B$.
+                      </p>
+                      <div className={`p-4 rounded-xl font-mono text-xs text-center font-bold ${isDarkMode ? 'bg-orange-500 text-black' : 'bg-orange-500 text-white'}`}>
+                          f_s \ge 2 \cdot B
+                      </div>
+                  </div>
+              </div>
+
+              <div className={`p-10 rounded-[2.5rem] border flex flex-col items-center gap-8 ${isDarkMode ? 'bg-orange-500/5 border-orange-500/10' : 'bg-orange-50 border-orange-200 shadow-inner'}`}>
+                 <p className={`text-xs text-center max-w-3xl leading-loose ${isDarkMode ? 'text-white/60' : 'text-gray-700 font-medium'}`}>
+                    <strong className={textColor}>The Master Conclusion:</strong> If you blink at least twice as fast as the fastest thing in your signal, the Fourier clones in your bucket of data will stay separated. You can then use a simple **Low-Pass Filter** to grab just one copy, and like magic, the continuous world is restored with **zero loss** of information.
+                 </p>
+                 <div className="flex items-center gap-6 opacity-40">
+                    <div className="flex flex-col items-center">
+                        <span className={`text-[8px] font-mono font-black uppercase tracking-[0.4em] ${textColor}`}>Sampling</span>
+                        <div className="w-16 h-px bg-current mt-2" />
+                    </div>
+                    <div className="text-xl">➔</div>
+                    <div className="flex flex-col items-center">
+                        <span className={`text-[8px] font-mono font-black uppercase tracking-[0.4em] ${accentColor}`}>Reconstruction</span>
+                        <div className="w-16 h-px bg-current mt-2" />
+                    </div>
+                 </div>
               </div>
           </div>
       </div>
