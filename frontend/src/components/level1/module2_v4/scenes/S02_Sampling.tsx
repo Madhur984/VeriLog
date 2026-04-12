@@ -180,76 +180,113 @@ export const S02_Sampling: React.FC<{ time: number; isDarkMode: boolean }> = ({ 
             </div>
         </div>
       </div>
-      {/* Detailed Nyquist Mathematical Proof */}
-      <div className={`mt-16 p-12 rounded-[3.5rem] border transition-all duration-700 ${isDarkMode ? 'bg-black/80 border-white/5 shadow-2xl' : 'bg-white border-gray-100 shadow-xl'}`}>
-          <div className="space-y-12 text-left">
+      {/* Detailed Sampling Theorem Proof (Derivation) */}
+      <div className={`mt-16 p-12 rounded-[3.5rem] border transition-all duration-700 ${isDarkMode ? 'bg-black/80 border-white/5 shadow-2xl transition-all' : 'bg-white border-gray-100 shadow-xl'}`}>
+          <div className="space-y-16 text-left">
               <div className="text-center space-y-4">
-                  <span className={`text-[10px] font-mono font-black uppercase tracking-[0.4em] ${accentColor}`}>Formal Derivation</span>
-                  <h3 className={`text-4xl font-black italic tracking-tighter ${textColor}`}>Nyquist-Shannon Proof</h3>
+                  <span className={`text-[10px] font-mono font-black uppercase tracking-[0.4em] ${accentColor}`}>Full Mathematical Derivation</span>
+                  <h3 className={`text-4xl font-black italic tracking-tighter ${textColor}`}>The Sampling Theorem Proof</h3>
                   <p className={`text-sm max-w-2xl mx-auto ${subTextColor}`}>
-                      How Claude Shannon mathematically proved that reality can be perfectly captured in digits.
+                      A step-by-step engineering proof using Fourier Series and Transform pairs.
                   </p>
               </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                  {/* Step 1 */}
-                  <div className={`p-8 rounded-3xl border flex flex-col ${isDarkMode ? 'bg-white/5 border-white/5 shadow-inner' : 'bg-gray-50 border-gray-200'}`}>
-                      <div className="flex items-center gap-3 mb-4">
-                          <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold ${isDarkMode ? 'bg-orange-500 text-black' : 'bg-orange-500 text-white'}`}>1</span>
-                          <h4 className={`text-sm font-black uppercase tracking-widest ${textColor}`}>Time Sampling</h4>
+              <div className="space-y-24">
+                  {/* Phase 1: The Model */}
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+                      <div className="space-y-4">
+                          <h4 className={`text-xl font-bold italic ${textColor}`}>1. Sampling as Multiplication</h4>
+                          <p className={`text-xs leading-relaxed ${subTextColor}`}>
+                            Sampling a continuous signal $x(t)$ is mathematically equivalent to multiplying it by an impulse train $\delta(t)$. This is our base model.
+                          </p>
+                          <div className={`p-6 rounded-2xl font-mono text-xs ${isDarkMode ? 'bg-black/40 text-v3-cyan border border-white/5' : 'bg-gray-50 text-blue-600 border border-gray-100 shadow-inner'}`}>
+                             {`y(t) = x(t) \\cdot \\delta(t) \\quad \\dots (1)`}
+                          </div>
                       </div>
-                      <p className="text-[11px] leading-relaxed text-white/40 mb-6 flex-grow">
-                          Sampling $x(t)$ is modeled as multiplication by a **Dirac Comb** $s(t)$. This turns a continuous wave into a series of infinitesimally narrow spikes.
-                      </p>
-                      <div className={`p-4 rounded-xl font-mono text-[11px] leading-tight ${isDarkMode ? 'bg-black/60 text-orange-400 border border-white/10' : 'bg-white text-orange-700 border border-orange-100 shadow-sm'}`}>
-                          {`x_s(t) = x(t) \\cdot \\sum_{n=-\\infty}^{+\\infty} \\delta(t - nT)`}
-                      </div>
-                  </div>
-
-                  {/* Step 2 */}
-                  <div className={`p-8 rounded-3xl border flex flex-col ${isDarkMode ? 'bg-white/5 border-white/5 shadow-inner' : 'bg-gray-50 border-gray-200'}`}>
-                      <div className="flex items-center gap-3 mb-4">
-                          <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold ${isDarkMode ? 'bg-orange-500 text-black' : 'bg-orange-500 text-white'}`}>2</span>
-                          <h4 className={`text-sm font-black uppercase tracking-widest ${textColor}`}>Fourier Mapping</h4>
-                      </div>
-                      <p className="text-[11px] leading-relaxed text-white/40 mb-6 flex-grow">
-                          In the frequency domain, multiplication becomes **Convolution**. The original spectrum $X(f)$ is cloned and repeated every $f_s$ Hertz across the spectrum.
-                      </p>
-                      <div className={`p-4 rounded-xl font-mono text-[11px] leading-tight ${isDarkMode ? 'bg-black/60 text-orange-400 border border-white/10' : 'bg-white text-orange-700 border border-orange-100 shadow-sm'}`}>
-                          {`X_s(f) = \\frac{1}{T} \\sum_{k=-\\infty}^{+\\infty} X(f - kf_s)`}
+                      <div className="space-y-4">
+                          <h4 className={`text-xl font-bold italic ${textColor}`}>2. The Fourier Series Bridge</h4>
+                          <p className={`text-xs leading-relaxed ${subTextColor}`}>
+                            The periodic impulse train $\delta(t)$ can be represented by a **Trigonometric Fourier Series**.
+                          </p>
+                          <div className={`p-6 rounded-2xl font-mono text-xs ${isDarkMode ? 'bg-black/40 text-v3-cyan border border-white/5' : 'bg-gray-50 text-blue-600 border border-gray-100 shadow-inner'}`}>
+                             {`\\delta(t) = a_0 + \\sum_{n=1}^{\\infty} (a_n \\cos n\\omega_s t + b_n \\sin n\\omega_s t) \\quad \\dots (2)`}
+                          </div>
                       </div>
                   </div>
 
-                  {/* Step 3 */}
-                  <div className={`p-8 rounded-3xl border flex flex-col border-orange-500/20 ${isDarkMode ? 'bg-orange-500/5 shadow-inner' : 'bg-orange-50'}`}>
-                      <div className="flex items-center gap-3 mb-4">
-                          <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold bg-orange-500 text-black`}>3</span>
-                          <h4 className={`text-sm font-black uppercase tracking-widest ${textColor}`}>Separation</h4>
+                  {/* Phase 2: Solving Coefficients */}
+                  <div className="space-y-8">
+                      <h4 className={`text-xl font-bold italic text-center ${textColor}`}>3. Solving the Coefficients</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        {[
+                            { 
+                                label: "DC Component (a0)", 
+                                formula: `a_0 = \\frac{1}{T_s} \\int_{-T/2}^{T/2} \\delta(t)dt = \\frac{1}{T_s}`,
+                                desc: "The average value of the impulse train over one period."
+                            },
+                            { 
+                                label: "Cosine Parts (an)", 
+                                formula: `a_n = \\frac{2}{T_s} \\int_{-T/2}^{T/2} \\delta(t)\\cos n\\omega_s t dt = \\frac{2}{T_s}`,
+                                desc: "Fourier coefficients for even symmetry (cosines)."
+                            },
+                            { 
+                                label: "Sine Parts (bn)", 
+                                formula: `b_n = 0`,
+                                desc: "Zero for even functions like the impulse train delta(t)."
+                            }
+                        ].map((c, i) => (
+                            <div key={i} className={`p-8 rounded-3xl border ${isDarkMode ? 'bg-white/5 border-white/5 shadow-inner' : 'bg-white border-gray-100 shadow-sm'}`}>
+                                <h5 className={`text-[10px] font-mono font-black uppercase tracking-widest mb-4 ${accentColor}`}>{c.label}</h5>
+                                <div className={`mb-4 font-mono text-xs ${textColor}`}>{`{${c.formula}}`}</div>
+                                <p className={`text-[10px] italic ${subTextColor}`}>{c.desc}</p>
+                            </div>
+                        ))}
                       </div>
-                      <p className="text-[11px] leading-relaxed text-white/40 mb-6 flex-grow">
-                          To recover the original, these copies must **not overlap** (Aliasing). The gap between the signal's bandwidth $B$ and the next copy's start must satisfy $f_s - B \ge B$.
-                      </p>
-                      <div className={`p-4 rounded-xl font-mono text-xs text-center font-bold ${isDarkMode ? 'bg-orange-500 text-black' : 'bg-orange-500 text-white'}`}>
-                          f_s \ge 2 \cdot B
-                      </div>
+                  </div>
+
+                  {/* Phase 3: Synthesis */}
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                    <div className="space-y-6">
+                        <h4 className={`text-xl font-bold italic ${textColor}`}>4. Synthesis into Time-Domain</h4>
+                        <p className={`text-xs leading-relaxed ${subTextColor}`}>
+                            Substituting the coefficients back into Eq (2) and then multiplying by $x(t)$, we get the time-domain synthesis of the sampled signal:
+                        </p>
+                        <div className={`p-8 rounded-3xl font-mono text-[11px] space-y-4 ${isDarkMode ? 'bg-black/60 text-white/80 border border-white/10' : 'bg-gray-50 text-gray-700 border border-gray-200'}`}>
+                            <div>{`\\delta(t) = \\frac{1}{T_s} + \\sum_{n=1}^{\\infty} \\frac{2}{T_s} \\cos n\\omega_s t`}</div>
+                            <div className="text-orange-500 font-black">↓ Multiply by x(t)</div>
+                            <div className="leading-loose">
+                                {`y(t) = \\frac{1}{T_s} [x(t) + 2 \\sum_{n=1}^{\\infty} x(t) \\cos n\\omega_s t]`}
+                            </div>
+                        </div>
+                    </div>
+                    <div className="space-y-6">
+                        <h4 className={`text-xl font-bold italic ${textColor}`}>5. The Frequency Shift Result</h4>
+                        <p className={`text-xs leading-relaxed ${subTextColor}`}>
+                            Taking the **Fourier Transform** of the synthesis result, we see the original spectrum $X(\omega)$ repeated at every multiple of the sampling frequency $\omega_s$:
+                        </p>
+                        <div className={`p-8 rounded-3xl font-mono text-[11px] border border-orange-500/20 ${isDarkMode ? 'bg-orange-500/5 text-orange-400' : 'bg-orange-50 text-orange-800'}`}>
+                             {`Y(\\omega) = \\frac{1}{T_s} \\sum_{n=-\\infty}^{+\\infty} X(\\omega - n\\omega_s)`}
+                        </div>
+                        <p className={`text-[10px] italic font-medium leading-relaxed ${subTextColor}`}>
+                            Reconstruction is possible **ONLY** when these cycles of $Y(\omega)$ do not overlap. This leads directly to the core requirement for sampling.
+                        </p>
+                    </div>
                   </div>
               </div>
 
-              <div className={`p-10 rounded-[2.5rem] border flex flex-col items-center gap-8 ${isDarkMode ? 'bg-orange-500/5 border-orange-500/10' : 'bg-orange-50 border-orange-200 shadow-inner'}`}>
-                 <p className={`text-xs text-center max-w-3xl leading-loose ${isDarkMode ? 'text-white/60' : 'text-gray-700 font-medium'}`}>
-                    <strong className={textColor}>The Master Conclusion:</strong> If you blink at least twice as fast as the fastest thing in your signal, the Fourier clones in your bucket of data will stay separated. You can then use a simple **Low-Pass Filter** to grab just one copy, and like magic, the continuous world is restored with **zero loss** of information.
-                 </p>
-                 <div className="flex items-center gap-6 opacity-40">
-                    <div className="flex flex-col items-center">
-                        <span className={`text-[8px] font-mono font-black uppercase tracking-[0.4em] ${textColor}`}>Sampling</span>
-                        <div className="w-16 h-px bg-current mt-2" />
-                    </div>
-                    <div className="text-xl">➔</div>
-                    <div className="flex flex-col items-center">
-                        <span className={`text-[8px] font-mono font-black uppercase tracking-[0.4em] ${accentColor}`}>Reconstruction</span>
-                        <div className="w-16 h-px bg-current mt-2" />
-                    </div>
-                 </div>
+              <div className={`p-10 rounded-[3rem] border border-orange-500/10 flex flex-col items-center gap-6 ${isDarkMode ? 'bg-white/5 shadow-2xl' : 'bg-orange-50 shadow-inner'}`}>
+                  <h4 className={`text-sm font-black uppercase tracking-widest ${accentColor}`}>Sampling Theorem Condition</h4>
+                  <div className="flex gap-12 items-center">
+                      <div className="text-center">
+                        <div className={`text-2xl font-black italic tracking-tighter ${textColor}`}>$\omega_s &gt; 2\omega_m$</div>
+                        <span className="text-[10px] uppercase font-mono tracking-widest opacity-40">No Overlap</span>
+                      </div>
+                      <div className="w-px h-12 bg-white/10" />
+                      <div className="text-center opacity-40">
+                        <div className={`text-2xl font-black italic tracking-tighter ${textColor}`}>$\omega_s &lt; 2\omega_m$</div>
+                        <span className="text-[10px] uppercase font-mono tracking-widest opacity-40">Aliasing Occurs</span>
+                      </div>
+                  </div>
               </div>
           </div>
       </div>
