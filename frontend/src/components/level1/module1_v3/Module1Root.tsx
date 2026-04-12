@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Moon, Sun, Activity, Zap, Radio, Cpu, ChevronRight, ChevronDown, MousePointer2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useColorScheme } from '../../../hooks/useColorScheme';
 
 // ── Interactive Animated SVG Waveforms ─────────────────────────────────────
 
@@ -467,7 +468,8 @@ const SignalTypeCard: React.FC<{
 // ── Main Page Layout ───────────────────────────────────────────────────────
 
 export const Module1Root: React.FC = () => {
-  const [isDarkMode, setIsDarkMode] = useState(true);
+  const [scheme, toggleTheme] = useColorScheme();
+  const isDarkMode = scheme === 'dark';
   const [activeSection, setActiveSection] = useState<string>('intro');
   const [showHook, setShowHook] = useState(true);
 
@@ -553,7 +555,7 @@ export const Module1Root: React.FC = () => {
 
         <div className="mt-auto p-8 border-t" style={{ borderColor }}>
            <button
-            onClick={() => setIsDarkMode(!isDarkMode)}
+            onClick={toggleTheme}
             className={`w-full flex items-center justify-center gap-3 px-4 py-3 rounded-xl border font-medium transition-all ${isDarkMode 
               ? 'border-orange-900/40 text-orange-400 hover:bg-orange-950/30' 
               : 'border-gray-200 text-gray-700 hover:bg-gray-100'}`}

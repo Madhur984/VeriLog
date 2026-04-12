@@ -19,16 +19,16 @@ export interface M2ScreenProps {
 
 /** Design token constants shared across all M2 screens */
 export const T = {
-  bg: '#FFFFFF',
-  card: '#F8FAFC',
-  surface: '#F1F5F9',
-  border: '#E2E8F0',
-  text: '#0F172A',
-  muted: '#64748B',
-  signal: '#0EA5E9',   // sky-500 — THE signal color
-  interact: '#F97316', // orange — ONLY for sliders/handles
-  success: '#059669',
-  error: '#DC2626',
+  bg: 'var(--t-bg, #FFFFFF)',
+  card: 'var(--t-card, #F8FAFC)',
+  surface: 'var(--t-surface, #F1F5F9)',
+  border: 'var(--t-border, #E2E8F0)',
+  text: 'var(--t-text, #0F172A)',
+  muted: 'var(--t-muted, #64748B)',
+  signal: 'var(--t-signal, #0EA5E9)',   // sky-500 — THE signal color
+  interact: 'var(--t-interact, #F97316)', // orange — ONLY for sliders/handles
+  success: 'var(--t-success, #059669)',
+  error: 'var(--t-error, #DC2626)',
   mono: "'IBM Plex Mono', 'Roboto Mono', monospace",
 } as const;
 

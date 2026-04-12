@@ -11,10 +11,12 @@
  *   ACT III — Sampling        (S09–S13)
  *   ACT IV  — Quantization    (S14–S18)
  */
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Sun, Moon } from 'lucide-react';
 import { useGlobalSensory } from '../../hooks/useGlobalSensory';
 import { useModuleLogic } from '../../hooks/useModuleLogic';
+import { useColorScheme } from '../../hooks/useColorScheme';
 import { M2Signal, DEFAULT_SIGNAL, T } from './module2/types';
 import {
   M2_S00_Entry, M2_S01_SmoothVsStepped, M2_S02_DirectManipulation, M2_S03_Naming,
@@ -66,10 +68,43 @@ const ACT_COLORS: Record<string, string> = {
 
 export const SubModule2_1: React.FC = () => {
   const { triggerHaptic, playSound } = useGlobalSensory();
+  const [scheme, toggleTheme] = useColorScheme();
+  const isDark = scheme === 'dark';
+
   const { activeScreenIndex, setActiveScreenIndex, progress } = useModuleLogic({
     screens: [...SCREEN_ORDER],
     initialState: 'intro',
   });
+
+  // Theme-aware tokens injected as CSS variables
+  const themeVars = useMemo(() => {
+    if (isDark) {
+      return {
+        '--t-bg': '#020617',
+        '--t-card': '#0F172A',
+        '--t-surface': '#1E293B',
+        '--t-border': 'rgba(148, 163, 184, 0.1)',
+        '--t-text': '#F8FAFC',
+        '--t-muted': '#94A3B8',
+        '--t-signal': '#38BDF8',
+        '--t-interact': '#FB923C',
+        '--t-success': '#10B981',
+        '--t-error': '#EF4444',
+      };
+    }
+    return {
+      '--t-bg': '#FFFFFF',
+      '--t-card': '#F8FAFC',
+      '--t-surface': '#F1F5F9',
+      '--t-border': '#E2E8F0',
+      '--t-text': '#0F172A',
+      '--t-muted': '#64748B',
+      '--t-signal': '#0EA5E9',
+      '--t-interact': '#F97316',
+      '--t-success': '#059669',
+      '--t-error': '#DC2626',
+    };
+  }, [isDark]);
 
   const [signal, setSignal] = useState<M2Signal>(DEFAULT_SIGNAL as M2Signal);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -140,7 +175,13 @@ export const SubModule2_1: React.FC = () => {
   const progressPercent = Math.round(progress * 100);
 
   return (
-    <div style={{ position: 'relative', width: '100%', height: '100%', fontFamily: T.mono }}>
+    <div style={{ 
+      position: 'relative', 
+      width: '100%', 
+      height: '100%', 
+      fontFamily: T.mono,
+      ...(themeVars as React.CSSProperties)
+    }}>
 
       {/* ── Progress Bar ── */}
       <div style={{
@@ -160,9 +201,10 @@ export const SubModule2_1: React.FC = () => {
         zIndex: 99, height: 44,
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         padding: '0 32px',
-        background: 'rgba(255,255,255,0.92)',
+        background: isDark ? 'rgba(15, 23, 42, 0.85)' : 'rgba(255,255,255,0.92)',
         backdropFilter: 'blur(12px)',
         borderBottom: `1px solid ${T.border}`,
+        transition: 'background-color 0.3s, border-color 0.3s',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <span style={{ fontFamily: T.mono, fontSize: 9, fontWeight: 700, color: T.text, letterSpacing: '0.2em' }}>M02</span>
@@ -172,47 +214,76 @@ export const SubModule2_1: React.FC = () => {
           </span>
         </div>
 
-        <motion.div
-          key={actLabel}
-          initial={{ opacity: 0, y: -6 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-          style={{ display: 'flex', alignItems: 'center', gap: 10 }}
-        >
-          <div style={{ width: 6, height: 6, borderRadius: '50%', background: actColor }} />
-          <span style={{ fontFamily: T.mono, fontSize: 8, color: actColor, letterSpacing: '0.25em', textTransform: 'uppercase' }}>
-            {actLabel}
-          </span>
-        </motion.div>
+        <div style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={actLabel}
+              initial={{ opacity: 0, y: -6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 6 }}
+              transition={{ duration: 0.4 }}
+              style={{ display: 'flex', alignItems: 'center', gap: 10 }}
+            >
+              <div style={{ width: 6, height: 6, borderRadius: '50%', background: actColor }} />
+              <span style={{ fontFamily: T.mono, fontSize: 8, color: actColor, letterSpacing: '0.25em', textTransform: 'uppercase' }}>
+                {actLabel}
+              </span>
+            </motion.div>
+          </AnimatePresence>
+        </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          {/* Screen dots */}
-          <div style={{ display: 'flex', gap: 4 }}>
-            {SCREEN_ORDER.map((id, idx) => (
-              <motion.button
-                key={id}
-                onClick={() => {
-                  const el = document.getElementById(id);
-                  el?.scrollIntoView({ behavior: 'smooth' });
-                  setActiveScreenIndex(idx);
-                }}
-                aria-label={`Go to screen ${idx + 1}`}
-                style={{
-                  width: idx === activeScreenIndex ? 16 : 6,
-                  height: 6,
-                  borderRadius: 3,
-                  border: 'none',
-                  background: idx === activeScreenIndex ? actColor : (idx < activeScreenIndex ? `${actColor}60` : T.border),
-                  cursor: 'pointer',
-                  padding: 0,
-                  transition: 'width 0.3s, background 0.3s',
-                }}
-              />
-            ))}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            {/* Screen dots */}
+            <div style={{ display: 'flex', gap: 4 }}>
+              {SCREEN_ORDER.map((id, idx) => (
+                <motion.button
+                  key={id}
+                  onClick={() => {
+                    const el = document.getElementById(id);
+                    el?.scrollIntoView({ behavior: 'smooth' });
+                    setActiveScreenIndex(idx);
+                  }}
+                  aria-label={`Go to screen ${idx + 1}`}
+                  style={{
+                    width: idx === activeScreenIndex ? 16 : 6,
+                    height: 6,
+                    borderRadius: 3,
+                    border: 'none',
+                    background: idx === activeScreenIndex ? actColor : (idx < activeScreenIndex ? `${actColor}60` : T.border),
+                    cursor: 'pointer',
+                    padding: 0,
+                    transition: 'width 0.3s, background 0.3s',
+                  }}
+                />
+              ))}
+            </div>
+            <span style={{ fontFamily: T.mono, fontSize: 9, color: T.muted, letterSpacing: '0.1em' }}>
+              {progressPercent}%
+            </span>
           </div>
-          <span style={{ fontFamily: T.mono, fontSize: 9, color: T.muted, letterSpacing: '0.1em' }}>
-            {progressPercent}%
-          </span>
+
+          <span style={{ width: 1, height: 12, background: T.border }} />
+          
+          <button
+            onClick={toggleTheme}
+            style={{
+              background: 'none',
+              border: 'none',
+              padding: 4,
+              cursor: 'pointer',
+              color: T.muted,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderRadius: '50%',
+              transition: 'color 0.2s',
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = T.text)}
+            onMouseLeave={(e) => (e.currentTarget.style.color = T.muted)}
+          >
+            {isDark ? <Sun size={14} /> : <Moon size={14} />}
+          </button>
         </div>
       </div>
 
@@ -337,6 +408,7 @@ const sectionStyle: React.CSSProperties = {
   justifyContent: 'center',
   padding: '40px 24px 40px',
   boxSizing: 'border-box',
-  background: '#FFFFFF',
+  background: T.bg,
   borderBottom: `1px solid ${T.border}`,
+  transition: 'background-color 0.3s, border-color 0.3s',
 };
