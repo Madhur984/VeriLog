@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle2, XCircle, ChevronRight, Lock, Unlock } from 'lucide-react';
+import { CheckCircle2, XCircle, ChevronRight, Lock } from 'lucide-react';
 
 interface Question {
     id: number;
@@ -13,24 +13,24 @@ interface Question {
 const QUESTIONS: Question[] = [
     {
         id: 1,
-        text: "You are designing a high-end audio recorder for an 20kHz orchestra. What is the minimum absolute sample rate required to avoid aliasing?",
-        options: ["20 kHz", "40.1 kHz", "10 kHz", "96 kHz"],
+        text: "You're recording a 20kHz orchestra. Why is 40.1 kHz the standard 'bridge' instead of exactly 40 kHz?",
+        options: ["To save storage", "To allow for realistic filter rolloff", "It was a random guess", "To make it louder"],
         correct: 1,
-        insight: "Nyquist criterion: Fs must be > 2 * Fmax. 40.1kHz covers the full human hearing range."
+        insight: "Nyquist says > 2 * Fmax. At exactly 40kHz, you'd need an impossible 'Brick Wall' filter. That 100Hz extra (40.1) gives the hardware room to breathe and filter out ghosts without destroying the music."
     },
     {
         id: 2,
-        text: "Increasing bit depth from 8-bit to 16-bit mainly improves which characteristic?",
-        options: ["Frequency response", "Power consumption", "Quantization Noise floor", "Sampling speed"],
-        correct: 2,
-        insight: "Each bit adds 6dB of range. 16-bit provides a much lower 'floor' for subtle details."
+        text: "If you jump from 8-bit to 16-bit audio, what's the actual impact on the 'noise staircase'?",
+        options: ["It becomes 2x faster", "The noise floor drops by ~48 dB", "The bass becomes louder", "The file size triples"],
+        correct: 1,
+        insight: "Each bit doubles the rungs (6dB rule). Adding 8 bits is like halving the noise staircase 8 times. 6 * 8 = 48dB. Suddenly, silence actually sounds like silence."
     },
     {
         id: 3,
-        text: "Why do engineers add dither (random noise) to a digital signal?",
-        options: ["To save power", "To mask mistakes", "To linearize quantization distortion", "To speed up the ADC"],
+        text: "You see 'Dither' in a plugin. Why would you ever WANT to add noise to a perfect digital signal?",
+        options: ["To make it sound vintage", "To mask background hiss", "To fix 'stuck' bits at low volumes", "To speed up rendering"],
         correct: 2,
-        insight: "Dither trades a slightly higher noise floor for the ability to hear signals 'buried' between rungs."
+        insight: "Quantization error is a predictable pattern (distortion). Dither breaks that pattern into random noise. We'd much rather hear a faint 'shhh' than a weird robotic crunch during a quiet piano fade."
     }
 ];
 
@@ -66,25 +66,52 @@ export const S09_KnowledgeGate: React.FC<{ isDarkMode: boolean }> = ({ isDarkMod
 
   if (mastered) {
     return (
-        <div className="flex flex-col items-center justify-center space-y-12 py-24 text-center max-w-2xl mx-auto">
-            <motion.div 
-                initial={{ scale: 0.5, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                className={`w-28 h-28 rounded-full border flex items-center justify-center shadow-2xl transition-all duration-700 ${isDarkMode ? 'bg-orange-500/20 border-orange-500 shadow-orange-500/20' : 'bg-orange-50 border-orange-200 shadow-orange-500/10'}`}
-            >
-                <Unlock className={accentColor} size={48} />
-            </motion.div>
-            <div className="space-y-6">
-                <h2 className={`text-6xl font-black italic tracking-tighter ${textColor}`}>Bridge <span className={accentColor}>Mastered</span></h2>
-                <p className={`text-xl leading-relaxed font-medium ${subTextColor}`}>
-                    The gap between reality and digital calculation has been solved. You are officially 
-                    qualified to manipulate signals in the discrete domain.
-                </p>
+            <div className={`p-10 rounded-[3rem] border space-y-8 ${isDarkMode ? 'bg-black/60 border-orange-500/20 shadow-[0_0_50px_rgba(249,115,22,0.1)]' : 'bg-white border-orange-200'}`}>
+                <div className="flex items-center gap-4">
+                    <CheckCircle2 className="text-orange-500" size={32} />
+                    <h3 className={`text-2xl font-black italic ${textColor}`}>Module Summary: The Digital Cheat Sheet</h3>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className={`p-6 rounded-3xl border ${isDarkMode ? 'bg-white/5 border-white/10' : 'bg-gray-50 border-gray-100'}`}>
+                        <span className={`text-[10px] font-mono uppercase tracking-widest ${accentColor}`}>Sampling (Hz)</span>
+                        <pre className={`mt-4 text-[11px] font-mono leading-relaxed overflow-x-auto ${isDarkMode ? 'text-white/40' : 'text-gray-500'}`}>
+{`  Fs > 2 * Fmax
+  Snapshot rule: Take 2
+  pictures per wiggle.`}
+                        </pre>
+                    </div>
+                    <div className={`p-6 rounded-3xl border ${isDarkMode ? 'bg-white/5 border-white/10' : 'bg-gray-50 border-gray-100'}`}>
+                        <span className={`text-[10px] font-mono uppercase tracking-widest ${accentColor}`}>Quantization (Bits)</span>
+                        <pre className={`mt-4 text-[11px] font-mono leading-relaxed overflow-x-auto ${isDarkMode ? 'text-white/40' : 'text-gray-500'}`}>
+{`  SNR = 6.02 * N + 1.76
+  Each bit = 6dB lower
+  noise floor.`}
+                        </pre>
+                    </div>
+
+                    <div className={`mt-8 p-6 rounded-3xl border ${isDarkMode ? 'bg-white/5 border-white/5 shadow-inner' : 'bg-gray-50 border-gray-100'}`}>
+                        <span className={`text-[10px] font-mono uppercase tracking-widest ${accentColor}`}>Engineer's Visual Mental Model</span>
+                        <pre className={`mt-4 text-[11px] font-mono leading-relaxed overflow-x-auto ${isDarkMode ? 'text-white/40' : 'text-gray-500'}`}>
+{`  ANALOG (Ramp)          DIGITAL (Staircase)
+        ^                      ^
+     10 |~~~~~~/~~~~           |--/-- 
+      5 |    /                 |/    
+      0 |__/                   |_____
+        +----> time            +----> time`}
+                        </pre>
+                    </div>
+                </div>
+
+                <div className="flex flex-col md:flex-row gap-6 items-center justify-between pt-6 border-t border-dashed border-orange-500/20">
+                    <p className={`text-sm italic font-medium max-w-sm ${subTextColor}`}>
+                        "You've learned that computers don't just 'miss' data—they reconstruct it using math you now control."
+                    </p>
+                    <button className={`px-14 py-6 rounded-full font-black uppercase tracking-[0.3em] shadow-2xl hover:scale-105 active:scale-95 transition-all duration-300 ${isDarkMode ? 'bg-orange-500 text-black shadow-orange-500/40' : 'bg-orange-600 text-white shadow-orange-600/40'}`}>
+                        Initialize V-CORE
+                    </button>
+                </div>
             </div>
-            <button className={`px-14 py-6 rounded-full font-black uppercase tracking-[0.3em] shadow-2xl hover:scale-105 active:scale-95 transition-all duration-300 ${isDarkMode ? 'bg-orange-500 text-black shadow-orange-500/40' : 'bg-orange-600 text-white shadow-orange-600/40'}`}>
-                Initialize V-CORE
-            </button>
-        </div>
     );
   }
 

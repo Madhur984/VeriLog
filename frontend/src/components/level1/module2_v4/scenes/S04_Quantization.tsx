@@ -3,10 +3,8 @@ import { SignalEngine, SignalConfig } from '../SignalEngine';
 import { Binary } from 'lucide-react';
 
 /**
- * S04_Quantization (Optimized)
- */
-/**
- * S04_Quantization (Optimized)
+ * S04_Quantization
+ * Explains quantization steps, resolution, and SNR.
  */
 export const S04_Quantization: React.FC<{ time: number; isDarkMode: boolean }> = ({ time, isDarkMode }) => {
   const [bitDepth, setBitDepth] = useState(3);
@@ -37,19 +35,19 @@ export const S04_Quantization: React.FC<{ time: number; isDarkMode: boolean }> =
 
   return (
     <div className="flex flex-col gap-12 max-w-5xl mx-auto">
-      <header className="space-y-6">
+      <header className="space-y-6 text-left">
         <h2 className={`text-6xl font-black italic tracking-tighter ${textColor}`}>
           The <span className={accentColor}>Rung</span> Paradox
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-start">
             <p className={`text-xl leading-relaxed font-medium ${subTextColor}`}>
               If sampling is **when** we look, quantization is **how precisely** we measure. 
-              A computer has finite steps—it must round $smooth$ reality to the nearest $ladder$ rung.
+              A computer has finite steps—it must round smooth reality to the nearest ladder rung.
             </p>
             <div className={`p-6 rounded-3xl border flex flex-col gap-3 ${isDarkMode ? 'bg-orange-500/5 border-orange-500/10' : 'bg-orange-50 border-orange-200 shadow-sm'}`}>
                 <span className={`text-[10px] font-mono font-black uppercase tracking-[0.3em] font-black ${accentColor}`}>Precision Math</span>
                 <p className={`text-sm leading-relaxed ${isDarkMode ? 'text-white/60' : 'text-gray-600'}`}>
-                   Number of available levels ($L$) for $n$ bits:
+                   Number of available levels (L) for n bits:
                 </p>
                 <div className={`mt-2 font-mono text-center p-3 rounded-xl text-xl font-bold ${isDarkMode ? 'bg-black/60 text-orange-400 border border-white/5' : 'bg-orange-100 text-orange-700 border border-orange-200'}`}>
                     L = 2^n
@@ -79,37 +77,25 @@ export const S04_Quantization: React.FC<{ time: number; isDarkMode: boolean }> =
 
                 <div className={`relative h-[320px] rounded-[2.5rem] border overflow-hidden shadow-inner flex items-center justify-center transition-all ${innerBg}`}>
                     <svg width="100%" height="100%" viewBox="0 0 600 250" preserveAspectRatio="none" className="p-8">
-                        {/* Resolution Grid */}
                         {gridLines.map((y, i) => (
                             <line key={i} x1="0" y1={y + 25} x2="600" y2={y + 25} stroke={isDarkMode ? 'white' : 'black'} strokeWidth="1" strokeOpacity="0.04" />
                         ))}
-
-                        {/* Analog Background Reference */}
                         <path d={analogPoints.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x},${p.y}`).join(' ')} fill="none" stroke={isDarkMode ? 'white' : 'black'} strokeWidth="1.5" strokeOpacity="0.05" strokeDasharray="8 8" />
-                        
-                        {/* Quantized Staircase */}
                         <path 
                             d={reconstructedPoints.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x},${p.y}`).join(' ')} 
-                            fill="none" 
-                            stroke={strokeColor} 
-                            strokeWidth="4"
+                            fill="none" stroke={strokeColor} strokeWidth="4"
                             style={{ filter: isDarkMode ? `drop-shadow(0 0 20px ${strokeColor}88)` : 'none' }}
                         />
                     </svg>
                 </div>
-
-                <div className="space-y-8 px-6">
+                <div className="space-y-8 px-6 mt-8">
                     <input 
-                        type="range" 
-                        min={1} 
-                        max={8} 
-                        step={1} 
-                        value={bitDepth} 
+                        type="range" min={1} max={8} step={1} value={bitDepth} 
                         onChange={(e) => setBitDepth(parseInt(e.target.value))}
                         className={`w-full h-2 rounded-full appearance-none cursor-pointer transition-all ${isDarkMode ? 'bg-white/10 accent-white' : 'bg-gray-200 accent-gray-600 shadow-inner'}`}
                     />
                     <div className={`flex justify-between text-[11px] font-mono uppercase tracking-[0.2em] font-black ${isDarkMode ? 'text-white/30' : 'text-gray-400'}`}>
-                        <div className="flex flex-col gap-1">
+                        <div className="flex flex-col gap-1 text-left">
                             <span className={textColor}>1 Bit</span>
                             <span>On / Off Only</span>
                         </div>
@@ -117,6 +103,15 @@ export const S04_Quantization: React.FC<{ time: number; isDarkMode: boolean }> =
                             <span className={textColor}>8 Bits</span>
                             <span>256 Possible Rungs</span>
                         </div>
+                    </div>
+
+                    <div className={`mt-8 p-6 rounded-3xl border border-dashed text-left ${isDarkMode ? 'bg-white/5 border-white/5 shadow-inner' : 'bg-gray-50 border-gray-100'}`}>
+                        <span className={`text-[10px] font-mono uppercase tracking-widest ${accentColor}`}>Engineer's Visual Mental Model</span>
+                        <pre className={`mt-4 text-[11px] font-mono leading-relaxed overflow-x-auto ${isDarkMode ? 'text-white/40' : 'text-gray-500'}`}>
+{`  3 BITS (8 levels):    ███ ███ ███ ███ (Blocky)
+  4 BITS (16 levels):   ████▐████▐████▐ (Smoother)
+  16 BITS (65k levels): ~~~~~~~~~~~~~~~~ (Perfect)`}
+                        </pre>
                     </div>
                 </div>
             </div>
@@ -128,6 +123,9 @@ export const S04_Quantization: React.FC<{ time: number; isDarkMode: boolean }> =
                     </h4>
                     <p className={`text-xs leading-relaxed font-medium ${subTextColor}`}>
                         Imagine measuring a wave with a ruler that only has "inch" marks. You can't record 1.5 inches—you have to pick 1 or 2. That "rounding error" is **Quantization Noise**. 
+                    </p>
+                    <p className={`mt-4 text-[10px] italic ${isDarkMode ? 'text-white/20' : 'text-gray-400'}`}>
+                        *Next Level Hint:* We can hide this error using static noise called **Dither**. 
                     </p>
                 </div>
 

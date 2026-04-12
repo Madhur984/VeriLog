@@ -34,15 +34,48 @@ export const S01_AnalogVsDigital: React.FC<{ time: number; isDarkMode: boolean }
           Nature <span className={isDarkMode ? 'text-white/10' : 'text-gray-200'}>vs</span> <span className={accentColor}>Numbers</span>
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-            <p className={`text-xl leading-relaxed font-medium ${subTextColor}`}>
-              To process signals, we must convert them into a language computers understand: **Bits**.
-              One is smooth and eternal; the other is discrete and calculated.
-            </p>
-            <div className={`p-6 rounded-3xl border flex flex-col gap-3 ${isDarkMode ? 'bg-orange-500/5 border-orange-500/10' : 'bg-orange-50 border-orange-100 shadow-sm'}`}>
-                <span className={`text-[10px] font-mono font-black uppercase tracking-[0.3em] ${accentColor}`}>1 AM Coffee Insight</span>
-                <p className={`text-sm leading-relaxed ${isDarkMode ? 'text-white/60' : 'text-gray-600'}`}>
-                   Analog is a smooth ramp you slide down. Digital is a ladder. You can't just stand "anywhere" on a ladder—you're either on one rung or the next. No in-betweens.
+            <div className="space-y-6">
+                <p className={`text-xl leading-relaxed font-medium ${subTextColor}`}>
+                  To process signals, we must convert them into a language computers understand: **Bits**.
+                  One is smooth and eternal; the other is discrete and calculated.
                 </p>
+                <div className={`p-6 rounded-3xl border ${isDarkMode ? 'bg-white/5 border-white/10' : 'bg-gray-100 border-gray-200'}`}>
+                    <span className={`text-[10px] font-mono uppercase tracking-widest ${accentColor}`}>Mathematical Identity</span>
+                    <pre className={`mt-4 text-[13px] font-mono leading-relaxed ${isDarkMode ? 'text-orange-400' : 'text-orange-700'}`}>
+{` x(t) = A × sin(2π × f × t + φ)`}
+                    </pre>
+                    <p className={`mt-2 text-[10px] uppercase tracking-widest font-black ${isDarkMode ? 'text-white/20' : 'text-gray-400'}`}>
+                        A=Amp | f=Freq | φ=Phase
+                    </p>
+                </div>
+            </div>
+            
+            <div className={`p-6 rounded-3xl border flex flex-col gap-3 ${isDarkMode ? 'bg-orange-500/5 border-orange-500/10' : 'bg-orange-50 border-orange-200 shadow-sm'}`}>
+                <span className={`text-[10px] font-mono font-black uppercase tracking-[0.3em] ${accentColor}`}>The Bridge Objective</span>
+                <p className={`text-sm leading-relaxed ${isDarkMode ? 'text-white/60' : 'text-gray-600'}`}>
+                   **Nature is analog.** Sound, light, heat—they change infinitely.
+                   **Computers are digital.** Switches, bits, logic—they change in steps.
+                </p>
+                <div className="mt-4 overflow-hidden rounded-xl border border-white/5">
+                    <table className="w-full text-left text-[10px] font-mono">
+                        <thead className={isDarkMode ? 'bg-white/5' : 'bg-gray-100'}>
+                            <tr>
+                                <th className="p-2 border-r border-white/5">Domain</th>
+                                <th className="p-2">Properties</th>
+                            </tr>
+                        </thead>
+                        <tbody className={isDarkMode ? 'text-white/40' : 'text-gray-500'}>
+                            <tr className="border-t border-white/5">
+                                <td className="p-2 border-r border-white/5 font-bold text-gray-400 uppercase">Analog</td>
+                                <td className="p-2 italic">Continuous, Infinite, Noisy</td>
+                            </tr>
+                            <tr className="border-t border-white/5">
+                                <td className="p-2 border-r border-white/5 font-bold text-orange-500 uppercase">Digital</td>
+                                <td className="p-2 italic">Discrete, Finite, Robust</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
       </header>

@@ -76,6 +76,17 @@ export const S03_Aliasing: React.FC<{ time: number; isDarkMode: boolean }> = ({ 
                             </span>
                         </div>
                     </div>
+
+                    <div className={`mt-8 p-6 rounded-3xl border border-dashed ${isDarkMode ? 'bg-orange-500/5 border-orange-500/20 shadow-inner' : 'bg-orange-50 border-orange-200'}`}>
+                        <span className={`text-[10px] font-mono uppercase tracking-widest ${accentColor}`}>Engineer's Visual Mental Model</span>
+                        <pre className={`mt-4 text-[11px] font-mono leading-relaxed overflow-x-auto ${isDarkMode ? 'text-white/40' : 'text-gray-500'}`}>
+{`  FAST SIGNAL (Red)      SAMPLED (Slow Ghost)
+     ^    /\\  /\\           ^ ●       ●
+   1 |   /  \\/  \\          |● ●     ● ●
+   0 |__/        \\__       +---●---●----> time
+     +----> time           ALIAS DETECTED!`}
+                        </pre>
+                    </div>
                 </div>
 
                 <div className={`relative h-[320px] rounded-[2rem] border overflow-hidden shadow-inner transition-all ${innerBg}`}>
