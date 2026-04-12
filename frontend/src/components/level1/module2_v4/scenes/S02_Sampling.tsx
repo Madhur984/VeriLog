@@ -180,111 +180,206 @@ export const S02_Sampling: React.FC<{ time: number; isDarkMode: boolean }> = ({ 
             </div>
         </div>
       </div>
-      {/* Detailed Sampling Theorem Proof (Derivation) */}
-      <div className={`mt-16 p-12 rounded-[3.5rem] border transition-all duration-700 ${isDarkMode ? 'bg-black/80 border-white/5 shadow-2xl transition-all' : 'bg-white border-gray-100 shadow-xl'}`}>
-          <div className="space-y-16 text-left">
-              <div className="text-center space-y-4">
-                  <span className={`text-[10px] font-mono font-black uppercase tracking-[0.4em] ${accentColor}`}>Full Mathematical Derivation</span>
-                  <h3 className={`text-4xl font-black italic tracking-tighter ${textColor}`}>The Sampling Theorem Proof</h3>
-                  <p className={`text-sm max-w-2xl mx-auto ${subTextColor}`}>
-                      A step-by-step engineering proof using Fourier Series and Transform pairs.
-                  </p>
-              </div>
+      {/* Formal Mathematical Proof Manuscript */}
+      <div className={`mt-16 p-1 rounded-[3.5rem] border transition-all duration-700 ${isDarkMode ? 'bg-white/5 border-white/10 shadow-2xl' : 'bg-white border-gray-100 shadow-xl'}`}>
+          <div className={`p-16 rounded-[3.4rem] ${isDarkMode ? 'bg-black/40' : 'bg-white'}`}>
+              <div className="max-w-4xl mx-auto space-y-16">
+                  <div className="text-center space-y-4">
+                      <span className={`text-[10px] font-mono font-black uppercase tracking-[0.6em] ${accentColor}`}>Academic Specification</span>
+                      <h3 className={`text-5xl font-serif italic tracking-tighter ${textColor}`}>Derivation of the Sampling Theorem</h3>
+                      <div className={`w-32 h-0.5 mx-auto ${isDarkMode ? 'bg-white/20' : 'bg-gray-700'}`} />
+                  </div>
 
-              <div className="space-y-24">
-                  {/* Phase 1: The Model */}
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-                      <div className="space-y-4">
-                          <h4 className={`text-xl font-bold italic ${textColor}`}>1. Sampling as Multiplication</h4>
-                          <p className={`text-xs leading-relaxed ${subTextColor}`}>
-                            Sampling a continuous signal $x(t)$ is mathematically equivalent to multiplying it by an impulse train $\delta(t)$. This is our base model.
+                  {/* The "Paper" Area */}
+                  <div className={`font-serif text-[1.1rem] leading-[2.8] text-left p-16 rounded-[2.5rem] ${isDarkMode ? 'bg-black/30 text-white/90' : 'bg-gray-50 text-gray-800'}`}>
+                      
+                      {/* Equation 1 */}
+                      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-12">
+                          <p>
+                             Sampled signal <span className="font-bold">y(t) = x(t) · δ(t)</span>
                           </p>
-                          <div className={`p-6 rounded-2xl font-mono text-xs ${isDarkMode ? 'bg-black/40 text-v3-cyan border border-white/5' : 'bg-gray-50 text-blue-600 border border-gray-100 shadow-inner'}`}>
-                             {`y(t) = x(t) \\cdot \\delta(t) \\quad \\dots (1)`}
+                          <span className="text-xs font-mono opacity-40 italic tracking-widest self-end">...... (1)</span>
+                      </div>
+
+                      <p className="mb-6 opacity-70">The trigonometric Fourier series representation of <span className="italic">δ(t)</span> is given by:</p>
+                      
+                      {/* Equation 2 */}
+                      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-12">
+                          <div className="flex items-center gap-3 translate-x-12">
+                            <span className="italic">δ(t) = a₀ + </span>
+                            <div className="inline-flex flex-col items-center align-middle leading-none mx-2">
+                                <span className="text-[12px] mb-[-4px] italic">∞</span>
+                                <span className="text-4xl not-italic font-sans">Σ</span>
+                                <span className="text-[12px] mt-[-4px] italic">n=1</span>
+                            </div>
+                            <span className="italic">(aₙ cos nωₛt + bₙ sin nωₛt)</span>
+                          </div>
+                          <span className="text-xs font-mono opacity-40 italic tracking-widest self-end">...... (2)</span>
+                      </div>
+
+                      {/* Constants Block */}
+                      <div className="space-y-12 my-16 pl-12 border-l-2 border-orange-500/10">
+                          <p className="not-italic opacity-40 text-[10px] uppercase font-mono tracking-[0.3em] mb-4">Parameter Determination:</p>
+                          
+                          {/* a0 Row */}
+                          <div className="flex flex-wrap items-center gap-x-2 gap-y-4 min-h-[60px]">
+                            <span className="whitespace-nowrap">Where <span className="italic">a₀</span> = </span>
+                            <div className="inline-flex flex-col items-center align-middle leading-none text-xs font-sans tracking-tighter">
+                                <span className="border-b border-black/20 dark:border-white/20 pb-0.5 px-3 italic text-xs">1</span>
+                                <span className="pt-0.5 px-3 italic text-xs">Tₛ</span>
+                            </div>
+                            <div className="inline-flex flex-col items-center align-middle leading-none">
+                                <span className="text-[11px] mb-[-6px] italic">T/2</span>
+                                <span className="text-4xl not-italic font-light">∫</span>
+                                <span className="text-[11px] mt-[-6px] italic">-T/2</span>
+                            </div>
+                            <span className="whitespace-nowrap">δ(t) dt = </span>
+                            <div className="inline-flex flex-col items-center align-middle leading-none text-xs font-sans tracking-tighter">
+                                <span className="border-b border-black/20 dark:border-white/20 pb-0.5 px-3 italic text-xs">1</span>
+                                <span className="pt-0.5 px-3 italic text-xs">Tₛ</span>
+                            </div>
+                            <span className="whitespace-nowrap">δ(0) = </span>
+                            <div className="inline-flex flex-col items-center align-middle leading-none text-sm font-bold font-sans tracking-tighter text-orange-500">
+                                <span className="border-b border-orange-500/20 pb-0.5 px-3 italic uppercase text-sm">1</span>
+                                <span className="pt-0.5 px-3 italic uppercase text-sm">Tₛ</span>
+                            </div>
+                          </div>
+
+                          {/* an Row */}
+                          <div className="flex flex-wrap items-center gap-x-2 gap-y-4 min-h-[60px]">
+                            <span className="whitespace-nowrap italic">aₙ</span> = 
+                            <div className="inline-flex flex-col items-center align-middle leading-none text-xs font-sans tracking-tighter">
+                                <span className="border-b border-black/20 dark:border-white/20 pb-0.5 px-3 italic text-xs">2</span>
+                                <span className="pt-0.5 px-3 italic text-xs">Tₛ</span>
+                            </div>
+                            <div className="inline-flex flex-col items-center align-middle leading-none">
+                                <span className="text-[11px] mb-[-6px] italic">T/2</span>
+                                <span className="text-4xl not-italic font-light">∫</span>
+                                <span className="text-[11px] mt-[-6px] italic">-T/2</span>
+                            </div>
+                            <span className="whitespace-nowrap">δ(t) cos nωₛt dt = </span>
+                            <div className="inline-flex flex-col items-center align-middle leading-none text-xs font-sans tracking-tighter text-orange-500">
+                                <span className="border-b border-orange-500/20 pb-0.5 px-3 italic text-xs">2</span>
+                                <span className="pt-0.5 px-3 italic text-xs">Tₛ</span>
+                            </div>
+                            <span className="whitespace-nowrap italic">δ(0) cos nωₛ0 = </span>
+                            <div className="inline-flex flex-col items-center align-middle leading-none text-sm font-bold font-sans tracking-tighter text-orange-500">
+                                <span className="border-b border-orange-500/20 pb-0.5 px-3 italic text-sm">2</span>
+                                <span className="pt-0.5 px-3 italic text-sm">Tₛ</span>
+                            </div>
+                          </div>
+
+                          {/* bn Row */}
+                          <div className="flex flex-wrap items-center gap-x-2 gap-y-4 min-h-[60px]">
+                            <span className="whitespace-nowrap italic">bₙ</span> = 
+                            <div className="inline-flex flex-col items-center align-middle leading-none text-xs font-sans tracking-tighter opacity-40">
+                                <span className="border-b border-current pb-0.5 px-3">2</span>
+                                <span className="pt-0.5 px-3">Tₛ</span>
+                            </div>
+                            <div className="inline-flex flex-col items-center align-middle leading-none opacity-40">
+                                <span className="text-[11px] mb-[-6px]">T/2</span>
+                                <span className="text-4xl not-italic font-light">∫</span>
+                                <span className="text-[11px] mt-[-6px]">-T/2</span>
+                            </div>
+                            <span className="whitespace-nowrap italic opacity-40">δ(t) sin nωₛt dt = 0</span>
                           </div>
                       </div>
-                      <div className="space-y-4">
-                          <h4 className={`text-xl font-bold italic ${textColor}`}>2. The Fourier Series Bridge</h4>
-                          <p className={`text-xs leading-relaxed ${subTextColor}`}>
-                            The periodic impulse train $\delta(t)$ can be represented by a **Trigonometric Fourier Series**.
-                          </p>
-                          <div className={`p-6 rounded-2xl font-mono text-xs ${isDarkMode ? 'bg-black/40 text-v3-cyan border border-white/5' : 'bg-gray-50 text-blue-600 border border-gray-100 shadow-inner'}`}>
-                             {`\\delta(t) = a_0 + \\sum_{n=1}^{\\infty} (a_n \\cos n\\omega_s t + b_n \\sin n\\omega_s t) \\quad \\dots (2)`}
+
+                      {/* Synthesis */}
+                      <div className="pt-12 mt-12 border-t border-black/5 dark:border-white/5 space-y-10">
+                          <p className="opacity-50 text-xs uppercase font-mono italic">Substitute parameters into eq (2):</p>
+                          <div className="flex flex-wrap items-center gap-x-2 gap-y-4 translate-x-12 italic">
+                            <span>δ(t) = </span>
+                            <div className="inline-flex flex-col items-center align-middle leading-none text-xs font-sans tracking-tighter">
+                                <span className="border-b border-black/20 dark:border-white/20 pb-0.5 px-3">1</span>
+                                <span className="pt-0.5 px-3">Tₛ</span>
+                            </div>
+                            <span> + </span>
+                            <div className="inline-flex flex-col items-center align-middle leading-none mx-4">
+                                <span className="text-[12px] mb-[-4px]">∞</span>
+                                <span className="text-4xl not-italic font-sans">Σ</span>
+                                <span className="text-[12px] mt-[-4px]">n=1</span>
+                            </div>
+                            <span className="mr-2">(</span>
+                            <div className="inline-flex flex-col items-center align-middle leading-none text-xs font-sans tracking-tighter">
+                                <span className="border-b border-black/20 dark:border-white/20 pb-0.5 px-3">2</span>
+                                <span className="pt-0.5 px-3">Tₛ</span>
+                            </div>
+                            <span className="ml-2">cos nωₛt + 0)</span>
+                          </div>
+
+                          <p className="opacity-50 text-xs uppercase font-mono italic mt-16">Applying δ(t) to eq (1):</p>
+                          <div className="space-y-8 translate-x-12 italic text-[1.2rem]">
+                            <div className="flex items-center gap-2">
+                               <span>➔ y(t) = x(t) · δ(t)</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                               <span>= x(t) [ </span>
+                               <div className="inline-flex flex-col items-center align-middle leading-none text-xs font-sans tracking-tighter">
+                                   <span className="border-b border-black/20 dark:border-white/20 pb-0.2 px-2">1</span>
+                                   <span className="pt-0.2 px-2">Tₛ</span>
+                               </div>
+                               <span> + </span>
+                               <div className="inline-flex flex-col items-center align-middle leading-none mx-2">
+                                    <span className="text-[10px] mb-[-2px]">∞</span>
+                                    <span className="text-3xl not-italic font-sans">Σ</span>
+                                    <span className="text-[10px] mt-[-2px]">n=1</span>
+                               </div>
+                               <span> (</span>
+                               <div className="inline-flex flex-col items-center align-middle leading-none text-xs font-sans tracking-tighter">
+                                   <span className="border-b border-black/20 dark:border-white/20 pb-0.2 px-2">2</span>
+                                   <span className="pt-0.2 px-2">Tₛ</span>
+                               </div>
+                               <span> cos nωₛt ) ]</span>
+                            </div>
+                            <div className="flex items-center gap-2 font-bold text-orange-500">
+                               <span>y(t) = </span>
+                               <div className="inline-flex flex-col items-center align-middle leading-none text-xs font-sans tracking-tighter">
+                                   <span className="border-b border-orange-500/30 pb-0.2 px-3">1</span>
+                                   <span className="pt-0.2 px-3">Tₛ</span>
+                               </div>
+                               <span className="ml-2 tracking-tighter">[ x(t) + 2 cos ωₛt · x(t) + 2 cos 2ωₛt · x(t) + ... ]</span>
+                            </div>
                           </div>
                       </div>
-                  </div>
 
-                  {/* Phase 2: Solving Coefficients */}
-                  <div className="space-y-8">
-                      <h4 className={`text-xl font-bold italic text-center ${textColor}`}>3. Solving the Coefficients</h4>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        {[
-                            { 
-                                label: "DC Component (a0)", 
-                                formula: `a_0 = \\frac{1}{T_s} \\int_{-T/2}^{T/2} \\delta(t)dt = \\frac{1}{T_s}`,
-                                desc: "The average value of the impulse train over one period."
-                            },
-                            { 
-                                label: "Cosine Parts (an)", 
-                                formula: `a_n = \\frac{2}{T_s} \\int_{-T/2}^{T/2} \\delta(t)\\cos n\\omega_s t dt = \\frac{2}{T_s}`,
-                                desc: "Fourier coefficients for even symmetry (cosines)."
-                            },
-                            { 
-                                label: "Sine Parts (bn)", 
-                                formula: `b_n = 0`,
-                                desc: "Zero for even functions like the impulse train delta(t)."
-                            }
-                        ].map((c, i) => (
-                            <div key={i} className={`p-8 rounded-3xl border ${isDarkMode ? 'bg-white/5 border-white/5 shadow-inner' : 'bg-white border-gray-100 shadow-sm'}`}>
-                                <h5 className={`text-[10px] font-mono font-black uppercase tracking-widest mb-4 ${accentColor}`}>{c.label}</h5>
-                                <div className={`mb-4 font-mono text-xs ${textColor}`}>{`{${c.formula}}`}</div>
-                                <p className={`text-[10px] italic ${subTextColor}`}>{c.desc}</p>
+                      {/* Frequency Domain */}
+                      <div className="pt-16 mt-16 border-t border-black/5 dark:border-white/5">
+                          <p className="opacity-50 text-xs uppercase font-mono italic">Spectral Analysis (Fourier Transform):</p>
+                          <div className="space-y-12 translate-x-12 mt-12 italic">
+                            <div className="flex items-center gap-2">
+                               <span>Y(ω) = </span>
+                               <div className="inline-flex flex-col items-center align-middle leading-none text-xs font-sans tracking-tighter mx-2">
+                                   <span className="border-b border-black/20 dark:border-white/20 pb-0.2 px-4 italic">1</span>
+                                   <span className="pt-0.2 px-4 italic">Tₛ</span>
+                               </div>
+                               <span className="tracking-tight">[ X(ω) + X(ω - ωₛ) + X(ω + ωₛ) + ... ]</span>
                             </div>
-                        ))}
-                      </div>
-                  </div>
-
-                  {/* Phase 3: Synthesis */}
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                    <div className="space-y-6">
-                        <h4 className={`text-xl font-bold italic ${textColor}`}>4. Synthesis into Time-Domain</h4>
-                        <p className={`text-xs leading-relaxed ${subTextColor}`}>
-                            Substituting the coefficients back into Eq (2) and then multiplying by $x(t)$, we get the time-domain synthesis of the sampled signal:
-                        </p>
-                        <div className={`p-8 rounded-3xl font-mono text-[11px] space-y-4 ${isDarkMode ? 'bg-black/60 text-white/80 border border-white/10' : 'bg-gray-50 text-gray-700 border border-gray-200'}`}>
-                            <div>{`\\delta(t) = \\frac{1}{T_s} + \\sum_{n=1}^{\\infty} \\frac{2}{T_s} \\cos n\\omega_s t`}</div>
-                            <div className="text-orange-500 font-black">↓ Multiply by x(t)</div>
-                            <div className="leading-loose">
-                                {`y(t) = \\frac{1}{T_s} [x(t) + 2 \\sum_{n=1}^{\\infty} x(t) \\cos n\\omega_s t]`}
+                            <div className="flex items-center gap-4 mt-12 bg-orange-500/5 p-6 rounded-2xl border border-orange-500/10">
+                               <span className="not-italic mr-4 text-2xl">∴</span>
+                               <span className="text-2xl font-black">Y(ω) = </span>
+                               <div className="inline-flex flex-col items-center align-middle leading-none text-sm font-bold font-sans tracking-tighter mx-2">
+                                   <span className="border-b border-orange-500/40 pb-0.5 px-4 italic">1</span>
+                                   <span className="pt-0.5 px-4 italic">Tₛ</span>
+                               </div>
+                               <div className="inline-flex flex-col items-center align-middle leading-none mx-4">
+                                    <span className="text-[14px] mb-[-2px]">∞</span>
+                                    <span className="text-5xl not-italic font-light">Σ</span>
+                                    <span className="text-[14px] mt-[-2px]">n=-∞</span>
+                               </div>
+                               <span className="text-2xl font-black">X(ω - nωₛ)</span>
                             </div>
-                        </div>
-                    </div>
-                    <div className="space-y-6">
-                        <h4 className={`text-xl font-bold italic ${textColor}`}>5. The Frequency Shift Result</h4>
-                        <p className={`text-xs leading-relaxed ${subTextColor}`}>
-                            Taking the **Fourier Transform** of the synthesis result, we see the original spectrum $X(\omega)$ repeated at every multiple of the sampling frequency $\omega_s$:
-                        </p>
-                        <div className={`p-8 rounded-3xl font-mono text-[11px] border border-orange-500/20 ${isDarkMode ? 'bg-orange-500/5 text-orange-400' : 'bg-orange-50 text-orange-800'}`}>
-                             {`Y(\\omega) = \\frac{1}{T_s} \\sum_{n=-\\infty}^{+\\infty} X(\\omega - n\\omega_s)`}
-                        </div>
-                        <p className={`text-[10px] italic font-medium leading-relaxed ${subTextColor}`}>
-                            Reconstruction is possible **ONLY** when these cycles of $Y(\omega)$ do not overlap. This leads directly to the core requirement for sampling.
-                        </p>
-                    </div>
-                  </div>
-              </div>
-
-              <div className={`p-10 rounded-[3rem] border border-orange-500/10 flex flex-col items-center gap-6 ${isDarkMode ? 'bg-white/5 shadow-2xl' : 'bg-orange-50 shadow-inner'}`}>
-                  <h4 className={`text-sm font-black uppercase tracking-widest ${accentColor}`}>Sampling Theorem Condition</h4>
-                  <div className="flex gap-12 items-center">
-                      <div className="text-center">
-                        <div className={`text-2xl font-black italic tracking-tighter ${textColor}`}>$\omega_s &gt; 2\omega_m$</div>
-                        <span className="text-[10px] uppercase font-mono tracking-widest opacity-40">No Overlap</span>
+                          </div>
                       </div>
-                      <div className="w-px h-12 bg-white/10" />
-                      <div className="text-center opacity-40">
-                        <div className={`text-2xl font-black italic tracking-tighter ${textColor}`}>$\omega_s &lt; 2\omega_m$</div>
-                        <span className="text-[10px] uppercase font-mono tracking-widest opacity-40">Aliasing Occurs</span>
+
+                      {/* Summary Section */}
+                      <div className={`mt-20 p-10 rounded-[2.5rem] italic leading-relaxed text-[1rem] ${isDarkMode ? 'bg-orange-500/5 text-white/40' : 'bg-orange-50 text-gray-600'}`}>
+                          <p>
+                            To reconstruct <span className="font-bold text-orange-500 underline underline-offset-8 decoration-orange-500/30">x(t)</span>, 
+                            one must recover the input signal spectrum <span className="font-bold">X(ω)</span> from the sampled signal spectrum <span className="font-bold">Y(ω)</span>. 
+                            This is possible only when there is <span className="font-black text-white dark:text-gray-900 bg-orange-500 px-2 rounded-lg not-italic mx-1">no overlapping</span> 
+                            between the cycles of <span className="italic font-bold text-orange-600 dark:text-orange-400">Y(ω)</span>.
+                          </p>
                       </div>
                   </div>
               </div>

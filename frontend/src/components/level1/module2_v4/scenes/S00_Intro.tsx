@@ -86,45 +86,115 @@ export const S00_Intro: React.FC<{ time: number; isDarkMode: boolean }> = ({ tim
         </div>
       </div>
 
-      {/* NEW: The Anatomy of Variation (Pre-Bridge Concepts) */}
-      <div className="mt-24 space-y-12">
+      {/* Deep Dive: Signal Mechanics */}
+      <div className="mt-32 space-y-16">
+          <div className="flex flex-col md:flex-row items-end justify-between gap-6 border-b border-orange-500/10 pb-8">
+              <div className="space-y-4">
+                  <span className={`text-[10px] font-mono font-black uppercase tracking-[0.4em] ${accentColor}`}>Fundamental Physics</span>
+                  <h2 className={`text-5xl font-black italic tracking-tighter ${textColor}`}>
+                      How Signals <span className="underline decoration-orange-500/30 underline-offset-8">Work</span>
+                  </h2>
+              </div>
+              <p className={`max-w-md text-sm font-medium leading-relaxed opacity-60 text-right ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                  Information is never stationary. It rides on the back of physical change. 
+                  To capture it, we must first understand its motion.
+              </p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              <div className={`p-10 rounded-[2.5rem] border space-y-6 ${isDarkMode ? 'bg-white/[0.02] border-white/5 shadow-2xl shadow-black' : 'bg-white border-gray-100 shadow-xl'}`}>
+                  <div className="w-12 h-12 rounded-2xl bg-orange-500/10 flex items-center justify-center text-2xl">⚡</div>
+                  <h4 className={`text-xl font-bold italic tracking-tight ${textColor}`}>Physical Carriers</h4>
+                  <p className={`text-sm leading-loose opacity-60 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                      In the physical world, a signal is energy. It could be electrons flowing through a copper wire (Voltage), 
+                      air molecules colliding (Sound), or photons hitting a sensor (Light). 
+                      <span className="block mt-4 text-orange-500 font-black">Information = Change.</span>
+                  </p>
+              </div>
+
+              <div className={`p-10 rounded-[2.5rem] border border-orange-500/20 space-y-6 ${isDarkMode ? 'bg-orange-500/[0.03] shadow-2xl shadow-orange-500/5' : 'bg-orange-50 shadow-xl shadow-orange-500/10'}`}>
+                  <div className="w-12 h-12 rounded-2xl bg-orange-500 flex items-center justify-center text-2xl shadow-lg shadow-orange-500/20 text-white">f</div>
+                  <h4 className={`text-xl font-bold italic tracking-tight ${textColor}`}>Mathematical Identity</h4>
+                  <p className={`text-sm leading-loose opacity-70 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                      Mathematically, we treat a signal as a function <span className="font-mono font-bold italic underline">x(t)</span>. 
+                      For any moment in time <span className="italic">t</span>, there is a unique value <span className="italic">x</span>. 
+                      In nature, this function is <span className="underline decoration-orange-500/40 font-bold">continuous</span>—there are no gaps.
+                  </p>
+              </div>
+
+              <div className={`p-10 rounded-[2.5rem] border border-dashed space-y-6 ${isDarkMode ? 'bg-white/[0.02] border-white/10' : 'bg-gray-50 border-gray-200 shadow-inner'}`}>
+                  <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-2xl">🧩</div>
+                  <h4 className={`text-xl font-bold italic tracking-tight ${textColor}`}>The Digital Gap</h4>
+                  <p className={`text-sm leading-loose opacity-50 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                      Digital systems are <strong>discrete</strong>. They can't see the gaps between their internal clock ticks. 
+                      The "Bridge" is our attempt to map the infinite richness of nature into these finite slots.
+                  </p>
+              </div>
+          </div>
+
+          <div className={`grid grid-cols-1 md:grid-cols-2 gap-8 p-12 rounded-[3.5rem] border ${isDarkMode ? 'bg-black/40 border-white/5' : 'bg-gray-50 border-gray-100 shadow-sm'}`}>
+              <div className="space-y-6">
+                  <h4 className={`text-2xl font-black italic tracking-tight border-l-4 border-orange-500 pl-6 ${textColor}`}>The Sampling Philosophy</h4>
+                  <p className={`text-base leading-relaxed opacity-60 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                      Why don't we just build analog computers? Because analog is <strong>fragile</strong>. 
+                      A tiny bit of heat or a nearby power line adds "noise" that becomes permanent. 
+                      Digital is <strong>robust</strong>—a 1 is a 1, even if it's a bit fuzzy.
+                  </p>
+                  <div className="flex gap-4">
+                      <span className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest ${isDarkMode ? 'bg-white/5 text-white/40' : 'bg-white text-gray-400'}`}>Noise Immunity</span>
+                      <span className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest ${isDarkMode ? 'bg-white/5 text-white/40' : 'bg-white text-gray-400'}`}>Perfect Replication</span>
+                  </div>
+              </div>
+              <div className={`flex items-center justify-center p-8 rounded-[2rem] border-2 border-dashed ${isDarkMode ? 'bg-orange-500/5 border-orange-500/20' : 'bg-orange-50 border-orange-200'}`}>
+                  <p className={`text-sm italic text-center leading-loose font-medium ${isDarkMode ? 'text-orange-200/50' : 'text-orange-800/70'}`}>
+                    "A song on a vinyl record wears out every time you play it. <br/>
+                    A song in a FLAC file is a mathematical truth; <br/>
+                    it stays the same until the end of time."
+                  </p>
+              </div>
+          </div>
+      </div>
+
+      {/* The Anatomy of Variation */}
+      <div className="mt-32 space-y-12">
         <div className="text-center space-y-4">
             <h2 className={`text-4xl font-black italic tracking-tighter ${textColor}`}>
-                Before we cross the <span className={accentColor}>Bridge...</span>
+                Anatomy of the <span className={accentColor}>Conversion</span>
             </h2>
-            <p className={`max-w-2xl mx-auto text-sm font-medium ${subTextColor}`}>
-                To understand the "Digital Bridge," we must first look at the bricks of the Analog world.
+            <p className={`max-w-2xl mx-auto text-sm font-medium leading-relaxed ${subTextColor}`}>
+                To turn reality into numbers, we follow four sacred steps. 
+                Move through these in order as we progress through the module.
             </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
                 {
-                    title: "What is a Signal?",
-                    brief: "It's just a variable that changes over time.",
-                    deep: "Mathematically, it's a function x(t). Physically, it's energy—voltage, pressure, or magnetic flux—encoding information. If it doesn't change, it's just static; it's not a signal.",
-                    icon: "📡",
-                    color: "orange"
-                },
-                {
-                    title: "Why Sample?",
-                    brief: "Because computers can't handle infinity.",
-                    deep: "An analog signal has infinite points between 0 and 1. A computer would run out of memory just trying to store a single second of it. We take 'snapshots' to make the data manageable.",
+                    title: "1. The Snapshot",
+                    brief: "We stop time for a fraction of a second.",
+                    deep: "Sampling is the process of selecting specific moments to record the signal's value. We ignore everything in between. If we ignore too much, we lose the curve (Aliasing).",
                     icon: "📸",
                     color: "orange"
                 },
                 {
-                    title: "The Heartbeat",
-                    brief: "The interval between those snapshots.",
-                    deep: "We call this the Sample Period (T). The faster the heartbeat, the more 'Analog' the digital copy feels. If the heartbeat is too slow, we lose reality entirely (Aliasing).",
-                    icon: "💓",
+                    title: "2. The Measurement",
+                    brief: "Assigning a number to the height.",
+                    deep: "Quantization is mapping a continuous value to a fixed 'bin'. It's like rounding 0.52 to 0.5. This creates a tiny error called 'Quantization Noise'.",
+                    icon: "📏",
                     color: "orange"
                 },
                 {
-                    title: "The Ruler",
-                    brief: "How accurately we measure the height.",
-                    deep: "Once we take a snapshot, we need to measure its height. This is Quantization. A better ruler (more bits) means a more accurate digital reconstruction.",
-                    icon: "📏",
+                    title: "3. The Code",
+                    brief: "Converting that height to Binary.",
+                    deep: "Once we have a bin number (e.g., 42), we convert it to 101010. This is the only language a processor understands. Now, the signal is manageable data.",
+                    icon: "💻",
+                    color: "orange"
+                },
+                {
+                    title: "4. The Reconstruction",
+                    brief: "Connecting the dots back to reality.",
+                    deep: "A DAC (Digital to Analog Converter) takes our numbers and draws the smooth ramp back. If we sampled correctly, the reconstruction is mathematically identical.",
+                    icon: "🎨",
                     color: "orange"
                 }
             ].map((item, i) => (
@@ -132,15 +202,23 @@ export const S00_Intro: React.FC<{ time: number; isDarkMode: boolean }> = ({ tim
             ))}
         </div>
 
-        <div className={`p-10 rounded-[3rem] border flex flex-col md:flex-row items-center gap-10 ${isDarkMode ? 'bg-orange-500/5 border-orange-500/10' : 'bg-orange-50 border-orange-200 shadow-sm'}`}>
-            <div className="flex-1 space-y-4">
-                <h3 className={`text-2xl font-black italic tracking-tighter ${textColor}`}>The Golden Rule</h3>
-                <p className={`text-sm leading-relaxed ${isDarkMode ? 'text-white/40' : 'text-gray-600'}`}>
-                    "You cannot represent what you did not capture. In the digital world, **Loss is Forever**. This module teaches you how to lose as little as possible while building the bridge."
+        <div className={`p-12 rounded-[3.5rem] border flex flex-col md:flex-row items-center gap-10 overflow-hidden relative ${isDarkMode ? 'bg-orange-500/5 border-orange-500/10' : 'bg-orange-50 border-orange-200 shadow-sm'}`}>
+            <div className={`absolute top-0 right-0 w-64 h-64 blur-3xl rounded-full ${isDarkMode ? 'bg-orange-500/10' : 'bg-orange-500/5'}`} />
+            <div className="flex-1 space-y-6 relative z-10">
+                <h3 className={`text-3xl font-black italic tracking-tighter ${textColor}`}>The Engineer's Curse</h3>
+                <p className={`text-base leading-relaxed ${isDarkMode ? 'text-white/40' : 'text-gray-600'}`}>
+                    "You cannot represent what you did not capture. In the digital world, **Loss is Forever**. High precision requires more memory; low memory causes distortion. This module is the art of finding the perfect balance."
                 </p>
+                <div className="flex items-center gap-4">
+                    <div className="flex -space-x-3">
+                        {[1,2,3].map(i => <div key={i} className={`w-8 h-8 rounded-full border-2 ${isDarkMode ? 'bg-black border-white/10' : 'bg-white border-gray-100'}`} />)}
+                    </div>
+                    <span className="text-[10px] font-black uppercase tracking-widest opacity-40 italic">Joined by 12.4k Engineers</span>
+                </div>
             </div>
-            <div className={`px-8 py-4 rounded-2xl border-2 border-dashed ${isDarkMode ? 'border-orange-500/30 font-mono text-orange-500' : 'border-orange-300 font-mono text-orange-600'} text-xs font-bold`}>
-                PRECISION &lt;=&gt; PERFORMANCE
+            <div className={`relative px-12 py-10 rounded-[2.5rem] border-2 border-dashed flex flex-col items-center justify-center gap-2 ${isDarkMode ? 'border-orange-500/30' : 'border-orange-300'} z-10 group transition-all duration-500 hover:border-solid hover:bg-orange-500 hover:text-white`}>
+                <span className="font-mono text-3xl font-black italic tracking-tighter">NYQUIST</span>
+                <span className="font-mono text-[9px] font-black uppercase tracking-[0.4em] opacity-60">The Limit</span>
             </div>
         </div>
       </div>
