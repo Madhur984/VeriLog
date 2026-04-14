@@ -58,7 +58,7 @@ export const SceneManager: React.FC<SceneManagerProps> = ({
   }, [onSceneChange]);
 
   return (
-    <div ref={containerRef} className={`flex-1 overflow-y-auto scroll-smooth snap-y snap-mandatory transition-colors duration-500 ${isDarkMode ? 'bg-[#040b15]' : 'bg-white'}`}>
+    <div ref={containerRef} className={`flex-1 overflow-y-auto scroll-smooth snap-y snap-mandatory transition-colors duration-500 ${isDarkMode ? 'bg-black' : 'bg-white'}`}>
       {scenes.map((Scene, index) => (
         <section 
           key={index} 

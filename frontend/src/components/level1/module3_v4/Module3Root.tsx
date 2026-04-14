@@ -100,7 +100,7 @@ export const Module3Root: React.FC = () => {
   const progress = ((activeScreenIndex + 1) / scenes.length) * 100;
 
   return (
-    <div className={`flex h-screen w-full font-sans transition-colors duration-500 overflow-hidden ${isDarkMode ? 'bg-[#040b15]' : 'bg-gray-50'}`}>
+    <div className={`flex h-screen w-full font-sans transition-colors duration-500 overflow-hidden ${isDarkMode ? 'bg-black' : 'bg-gray-50'}`}>
       <Sidebar 
         sections={SECTIONS}
         activeSection={SECTIONS[activeScreenIndex]?.id || 'intro'}

@@ -33,7 +33,7 @@ const SidebarComponent: React.FC<SidebarProps> = ({
   progress
 }) => {
   const borderColor = isDarkMode ? 'rgba(14, 165, 233, 0.1)' : 'rgba(0, 0, 0, 0.05)';
-  const sidebarBg = isDarkMode ? '#040b15' : '#f9fafb'; // Deep Navy Blue for Module 3 dark mode
+  const sidebarBg = isDarkMode ? '#000000' : '#f9fafb'; // Complete black for Module 3 dark mode
   const textColor = isDarkMode ? 'text-sky-50' : 'text-gray-900';
   const subTextColor = isDarkMode ? 'text-sky-400/60' : 'text-sky-600';
 
