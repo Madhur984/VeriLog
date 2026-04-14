@@ -4,6 +4,8 @@ import { Sidebar } from './components/Sidebar';
 import { SceneManager } from './SceneManager';
 import { useColorScheme } from '../../../hooks/useColorScheme';
 import { useBinaryStore } from '../../../stores/binaryStore';
+import { M3Activities } from './M3Activities';
+import { AnimatePresence } from 'framer-motion';
 
 import { S00_Intro } from './scenes/S00_Intro';
 import { S00_A_DecimalSystem } from './scenes/S00_A_DecimalSystem';
@@ -46,6 +48,7 @@ export const Module3Root: React.FC = () => {
   const SCENE_NAMES: any[] = ['intro', 'decimal', 'binary', 'octal', 'hex', 'conversions', 'whybinary', 'switch', 'counter', 'register', 'bridge', 'complete', 'complete'];  
   const [activeScreenIndex, setActiveScreenIndex] = useState(0);
   const [time, setTime] = useState(0);
+  const [isLabOpen, setIsLabOpen] = useState(false);
 
   // Sync index to store
   useEffect(() => {
@@ -124,8 +127,14 @@ export const Module3Root: React.FC = () => {
                 transition={{ delay: 0.1 }}
                 className={`flex flex-col items-end backdrop-blur-2xl border px-8 py-4 rounded-[2rem] pointer-events-auto transition-all duration-500 ${isDarkMode ? 'bg-black/60 border-white/5' : 'bg-white/90 border-gray-100 shadow-sm'}`}
             >
-                <span className={`text-[10px] font-mono uppercase tracking-widest ${isDarkMode ? 'text-white/30' : 'text-gray-400'}`}>Engine:</span>
-                <span className={`text-[10px] font-black uppercase tracking-[0.2em] animate-pulse ${isDarkMode ? 'text-sky-500' : 'text-sky-600'}`}>Boolean Active</span>
+                <button 
+                  onClick={() => setIsLabOpen(true)}
+                  className={`text-[10px] font-black uppercase tracking-[0.2em] transition-all hover:scale-110 active:scale-95 cursor-pointer ${isDarkMode ? 'text-sky-400' : 'text-sky-600'}`}
+                  style={{ background: 'none', border: 'none', padding: 0 }}
+                >
+                  ⚡ Engineering Lab
+                </button>
+                <span className={`text-[8px] font-mono uppercase tracking-widest opacity-50 ${isDarkMode ? 'text-white' : 'text-gray-400'}`}>v3.0.1_m3_activities</span>
             </motion.div>
         </header>
 
@@ -137,6 +146,30 @@ export const Module3Root: React.FC = () => {
             isDarkMode={isDarkMode}
         />
       </main>
+
+      <AnimatePresence>
+        {isLabOpen && (
+          <motion.div
+            initial={{ opacity: 0, scale: 1.1 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 1.1 }}
+            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+            className="fixed inset-0 z-[1000] bg-black"
+          >
+            <M3Activities 
+              onClose={() => setIsLabOpen(false)} 
+            />
+            
+            {/* Close Button */}
+            <button
+              onClick={() => setIsLabOpen(false)}
+              className="fixed top-8 right-8 z-[1100] px-6 py-3 bg-white/10 hover:bg-white/20 border border-white/20 rounded-full text-white font-mono text-xs tracking-widest transition-all"
+            >
+              CLOSE LAB [ESC]
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

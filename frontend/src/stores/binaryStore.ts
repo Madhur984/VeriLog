@@ -150,6 +150,8 @@ interface BinaryState {
     resetWrongAnswerCount: () => void;
     recordAction: (type: keyof CognitionMetrics, value?: number) => void;
     updateHesitation: () => void;
+    setBit: (index: number, value: Bit) => void;
+    toggleBit: (index: number) => void;
 }
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
@@ -622,6 +624,18 @@ export const useBinaryStore = create<BinaryState>((set, get) => ({
         targetSum: active ? Math.floor(Math.random() * 31) : null 
     }),
     resetAdder: () => set({ addSteps: [], addResult: [0, 0, 0, 0, 0], isAdding: false, additionComplete: false }),
+
+    setBit: (index, value) => set(s => {
+        const next = [...s.bits];
+        next[index] = value;
+        return { bits: next };
+    }),
+
+    toggleBit: (index) => set(s => {
+        const next = [...s.bits];
+        next[index] = (next[index] === 0 ? 1 : 0) as Bit;
+        return { bits: next };
+    }),
 }));
 
 // ── Selectors ──
