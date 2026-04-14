@@ -12,6 +12,7 @@ import { S00_B_BinarySystem } from './scenes/S00_B_BinarySystem';
 import { S00_C_OctalSystem } from './scenes/S00_C_OctalSystem';
 import { S00_D_HexSystem } from './scenes/S00_D_HexSystem';
 import { S00_E_Conversions } from './scenes/S00_E_Conversions';
+import { S05_LabActivity } from './scenes/S05_LabActivity';
 import { S01_WhyBinary } from './scenes/S01_WhyBinary';
 import { S02_InteractionGates } from './scenes/S02_InteractionGates';
 import { S02_B_PhysicalSwitches } from './scenes/S02_B_PhysicalSwitches';
@@ -28,6 +29,7 @@ const SECTIONS = [
   { id: 'octal', label: 'Octal System' },
   { id: 'hex', label: 'Hexadecimal' },
   { id: 'conversions', label: 'Art of Conversion' },
+  { id: 'lab-activity', label: 'Engineering Labs' },
   { id: 'binary-choice', label: '1. Why Binary?' },
   { id: 'voltage-bit', label: '2. Voltage to Bit' },
   { id: 'switches', label: '3. Physical Switches' },
@@ -44,13 +46,12 @@ export const Module3Root: React.FC = () => {
   
   const setSceneStr = useBinaryStore(s => s.goToScene);
   const SCENE_NAMES: any[] = [
-    'intro', 'decimal', 'binary', 'octal', 'hex', 'conversions', 
+    'intro', 'decimal', 'binary', 'octal', 'hex', 'conversions', 'lab',
     'whybinary', 'switch', 'switch', 'counter', 'register', 'bridge', 'complete', 'complete'
   ];  
 
   const [activeScreenIndex, setActiveScreenIndex] = useState(0);
   const [time, setTime] = useState(0);
-  const [viewMode, setViewMode] = useState<'guide' | 'lab'>('guide');
 
   // Sync index to store
   useEffect(() => {
@@ -76,6 +77,7 @@ export const Module3Root: React.FC = () => {
     S00_C_OctalSystem,
     S00_D_HexSystem,
     S00_E_Conversions,
+    S05_LabActivity,
     S01_WhyBinary,
     S02_InteractionGates,
     S02_B_PhysicalSwitches,
@@ -103,7 +105,7 @@ export const Module3Root: React.FC = () => {
         sections={SECTIONS}
         activeSection={SECTIONS[activeScreenIndex]?.id || 'intro'}
         onSectionClick={scrollToScene}
-        onEnterLabs={() => setViewMode('lab')}
+        onEnterLabs={() => scrollToScene('lab-activity')}
         isDarkMode={isDarkMode}
         toggleTheme={toggleTheme}
         progress={progress}
@@ -141,22 +143,10 @@ export const Module3Root: React.FC = () => {
             onSceneChange={handleSceneChange}
             time={time}
             isDarkMode={isDarkMode}
-            extraProps={{ onEnterLabs: () => setViewMode('lab') }}
         />
       </main>
 
-      <AnimatePresence>
-        {viewMode === 'lab' && (
-          <motion.div
-            initial={{ opacity: 0, backdropFilter: 'blur(0px)' }}
-            animate={{ opacity: 1, backdropFilter: 'blur(20px)' }}
-            exit={{ opacity: 0, backdropFilter: 'blur(0px)' }}
-            className="fixed inset-0 z-[1000] bg-black/40"
-          >
-            <M3LabEngine onClose={() => setViewMode('guide')} />
-          </motion.div>
-        )}
-      </AnimatePresence>
+
     </div>
   );
 };
