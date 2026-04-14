@@ -305,81 +305,83 @@ export const useBinaryStore = create<BinaryState>((set, get) => ({
 
     toggleSwitchBit: async (index) => {
         if (get().isSystemBusy || index < 0 || index >= 4) return;
-        set({ isSystemBusy: true, isProcessing: true });
-        
-        // Elite Polish: Pre-action tension (15ms delay)
-        await new Promise(r => setTimeout(r, 15));
+        try {
+            set({ isSystemBusy: true, isProcessing: true });
+            
+            // Elite Polish: Pre-action tension (15ms delay)
+            await new Promise(r => setTimeout(r, 15));
 
-        const bit = get().switchBits[index];
-        const targetVolt = bit === 0 ? 3.3 : 0;
-        
-        set(s => {
-            const trans = [...s.isBitTransitioning];
-            trans[index] = true;
-            return { isBitTransitioning: trans };
-        });
-
-        // REQ 2: BIT WEIGHTED TIMING (Bit 3 is heavy/slow, Bit 0 is light/fast)
-        const steps = 10 + (3 - index) * 5; 
-        const baseDelay = 30 + (3 - index) * 10;
-        
-        for (let i = 0; i < steps; i++) {
-            // REQ: ±10ms delay variation (jitter)
-            const jitter = (Math.random() - 0.5) * get().delayVariation;
-            await new Promise(r => setTimeout(r, Math.max(5, baseDelay + jitter)));
+            const bit = get().switchBits[index];
+            const targetVolt = bit === 0 ? 3.3 : 0;
             
             set(s => {
-                const volts = [...s.voltages];
-                const volt = volts[index];
-                const progress = i / steps;
-                const easeOut = 1 - Math.pow(1 - progress, 3);
-                
-                // Base target voltage with subtle thermal noise
-                const thermalNoise = (Math.random() - 0.5) * 0.05 * s.systemTemperature;
-                volts[index] = volt + (targetVolt - volt) * (easeOut - (i-1)/steps) + thermalNoise;
-                
-                // INDETERMINATE ZONE (0.8V - 2.0V)
-                const isUnstable = volts[index] > 0.8 && volts[index] < 2.0;
-                if (isUnstable) {
-                    // Random Brownian jitter in the undefined zone
-                    volts[index] += (Math.random() - 0.5) * 0.6;
-                }
+                const trans = [...s.isBitTransitioning];
+                trans[index] = true;
+                return { isBitTransitioning: trans };
+            });
 
-                const nextBit = (volts[index] > 2.0) ? 1 : (volts[index] < 0.8 ? 0 : s.bits[index]);
-                const bits = [...s.bits];
-                const switchBits = [...s.switchBits];
-                bits[index] = nextBit as Bit;
-                switchBits[index] = nextBit as Bit;
+            // REQ 2: BIT WEIGHTED TIMING (Bit 3 is heavy/slow, Bit 0 is light/fast)
+            const steps = 10 + (3 - index) * 5; 
+            const baseDelay = 30 + (3 - index) * 10;
+            
+            for (let i = 0; i < steps; i++) {
+                // REQ: ±10ms delay variation (jitter)
+                const jitter = (Math.random() - 0.5) * get().delayVariation;
+                await new Promise(r => setTimeout(r, Math.max(5, baseDelay + jitter)));
                 
+                set(s => {
+                    const volts = [...s.voltages];
+                    const volt = volts[index];
+                    const progress = i / steps;
+                    const easeOut = 1 - Math.pow(1 - progress, 3);
+                    
+                    // Base target voltage with subtle thermal noise
+                    const thermalNoise = (Math.random() - 0.5) * 0.05 * s.systemTemperature;
+                    volts[index] = volt + (targetVolt - volt) * (easeOut - (i-1)/steps) + thermalNoise;
+                    
+                    // INDETERMINATE ZONE (0.8V - 2.0V)
+                    const isUnstable = volts[index] > 0.8 && volts[index] < 2.0;
+                    if (isUnstable) {
+                        // Random Brownian jitter in the undefined zone
+                        volts[index] += (Math.random() - 0.5) * 0.6;
+                    }
+
+                    const nextBit = (volts[index] > 2.0) ? 1 : (volts[index] < 0.8 ? 0 : s.bits[index]);
+                    const bits = [...s.bits];
+                    const switchBits = [...s.switchBits];
+                    bits[index] = nextBit as Bit;
+                    switchBits[index] = nextBit as Bit;
+                    
+                    const unstableArr = [...s.isBitUnstable];
+                    unstableArr[index] = isUnstable;
+
+                    return { 
+                        voltages: volts, 
+                        switchVoltages: volts, 
+                        bits, 
+                        switchBits, 
+                        isBitUnstable: unstableArr 
+                    };
+                });
+            }
+
+            get().recordPulse({ originIndex: index, targetIndex: index, type: 'ripple' });
+        } finally {
+            set(s => {
+                const trans = [...s.isBitTransitioning];
+                trans[index] = false;
                 const unstableArr = [...s.isBitUnstable];
-                unstableArr[index] = isUnstable;
-
+                unstableArr[index] = false;
+                // FINAL SYNC CHECK: Ensure visual is perfectly aligned with logical at end
                 return { 
-                    voltages: volts, 
-                    switchVoltages: volts, 
-                    bits, 
-                    switchBits, 
-                    isBitUnstable: unstableArr 
+                    bits: [...s.switchBits],
+                    isBitTransitioning: trans, 
+                    isBitUnstable: unstableArr, 
+                    isSystemBusy: false,
+                    isProcessing: false 
                 };
             });
         }
-
-        get().recordPulse({ originIndex: index, targetIndex: index, type: 'ripple' });
-
-        set(s => {
-            const trans = [...s.isBitTransitioning];
-            trans[index] = false;
-            const unstableArr = [...s.isBitUnstable];
-            unstableArr[index] = false;
-            // FINAL SYNC CHECK: Ensure visual is perfectly aligned with logical at end
-            return { 
-                bits: [...s.switchBits],
-                isBitTransitioning: trans, 
-                isBitUnstable: unstableArr, 
-                isSystemBusy: false,
-                isProcessing: false 
-            };
-        });
     },
     resetSwitches: () => set({ switchBits: [0, 0, 0, 0], switchVoltages: [0, 0, 0, 0], isBitUnstable: [false, false, false, false] }),
 
@@ -416,54 +418,61 @@ export const useBinaryStore = create<BinaryState>((set, get) => ({
         }
 
         if (get().isIncrementing || get().isSystemBusy) return;
-        set({ isIncrementing: true, isSystemBusy: true, isProcessing: true });
-
-        const prevVal = get().counterValue;
-        const nextVal = (prevVal + 1) % 16;
-        const prevBits = toBits4(prevVal);
-        const nextBits = toBits4(nextVal);
-        const carries: CarryEvent[] = [];
-
-        // 1. ANIMATION PHASE — Update visual bits only, keep counterValue stable
-        const visualBits = [...prevBits];
         
-        for (let i = 3; i >= 0; i--) {
-            // Safety: ensure index exists in the array (though toBits4 always returns 4)
-            if (i < 0 || i >= visualBits.length) break;
+        try {
+            set({ isIncrementing: true, isSystemBusy: true, isProcessing: true });
 
-            if (prevBits[i] !== nextBits[i]) {
-                // REQ 8: TEMPORAL ALIGNMENT (Weighted ripple delay)
-                const baseRipple = 120 + (3 - i) * 80;
-                const rippleDelay = get().isSlowMotion ? baseRipple * 3 : baseRipple;
-                await new Promise(r => setTimeout(r, rippleDelay));
-                
-                if (prevBits[i] === 1 && nextBits[i] === 0) {
-                    carries.push({ fromBit: i, timestamp: Date.now() });
-                    if (i > 0) {
-                        get().recordPulse({ originIndex: i, targetIndex: i - 1, type: 'carry' });
+            const prevVal = get().counterValue;
+            const nextVal = (prevVal + 1) % 16;
+            const prevBits = toBits4(prevVal);
+            const nextBits = toBits4(nextVal);
+            const carries: CarryEvent[] = [];
+
+            // 1. ANIMATION PHASE — Update visual bits only, keep counterValue stable
+            const visualBits = [...prevBits];
+            
+            for (let i = 3; i >= 0; i--) {
+                // Safety: ensure index exists in the array (though toBits4 always returns 4)
+                if (i < 0 || i >= visualBits.length) break;
+
+                if (prevBits[i] !== nextBits[i]) {
+                    // REQ 8: TEMPORAL ALIGNMENT (Weighted ripple delay)
+                    const baseRipple = 120 + (3 - i) * 80;
+                    const rippleDelay = get().isSlowMotion ? baseRipple * 3 : baseRipple;
+                    await new Promise(r => setTimeout(r, rippleDelay));
+                    
+                    if (prevBits[i] === 1 && nextBits[i] === 0) {
+                        carries.push({ fromBit: i, timestamp: Date.now() });
+                        if (i > 0) {
+                            get().recordPulse({ originIndex: i, targetIndex: i - 1, type: 'carry' });
+                        }
                     }
+
+                    // Update visual bits layer
+                    set(s => {
+                        const nextVisual = [...s.bits];
+                        if (i < nextVisual.length) nextVisual[i] = nextBits[i];
+                        return { bits: nextVisual, carryHistory: [...s.carryHistory.slice(-7), ...carries] };
+                    });
+                } else {
+                    // Ripple stops when bits match (no carry needed)
+                    break;
                 }
-
-                // Update visual bits layer
-                set(s => {
-                    const nextVisual = [...s.bits];
-                    if (i < nextVisual.length) nextVisual[i] = nextBits[i];
-                    return { bits: nextVisual, carryHistory: [...s.carryHistory.slice(-7), ...carries] };
-                });
-            } else {
-                // Ripple stops when bits match (no carry needed)
-                break;
             }
-        }
 
-        // 2. COMMIT PHASE — Finalize counterValue atomically
-        set({ 
-            counterValue: nextVal, 
-            bits: nextBits, 
-            isIncrementing: false, 
-            isSystemBusy: false, 
-            predictionStatus: 'idle' 
-        });
+            // 2. COMMIT PHASE — Finalize counterValue atomically
+            set({ 
+                counterValue: nextVal, 
+                bits: nextBits,
+                predictionStatus: 'idle' 
+            });
+        } finally {
+            set({ 
+                isIncrementing: false, 
+                isSystemBusy: false, 
+                isProcessing: false
+            });
+        }
     },
     resetCounter: () => set({ 
         counterValue: 0, 
@@ -516,27 +525,28 @@ export const useBinaryStore = create<BinaryState>((set, get) => ({
         if (!force && get().predictionStatus !== 'correct') return;
         if (get().isSystemBusy) return;
         
-        set({ isWriting: true, isProcessing: true, isSystemBusy: true });
-        const val = bitsToNum(get().registerBits);
-        
-        // REQ 5: Propagation Causality (Temporal Delay)
-        const writeTime = get().registerWidth * 2; // 2ns per bit write
-        await new Promise(r => setTimeout(r, 600)); // Mimic propagation delay
-        
-        set(s => ({ 
-            storedValue: val, 
-            isWriting: false, 
-            isProcessing: false,
-            lastRefreshTime: Date.now(),
-            isDecayed: false,
-            predictionStatus: 'idle',
-            isSystemBusy: false,
-            propagationDelay: s.propagationDelay + writeTime,
-            pulseHistory: [
-                ...s.pulseHistory, 
-                { originIndex: -1, targetIndex: 0, type: 'write', timestamp: Date.now() }
-            ]
-        }));
+        try {
+            set({ isWriting: true, isProcessing: true, isSystemBusy: true });
+            const val = bitsToNum(get().registerBits);
+            
+            // REQ 5: Propagation Causality (Temporal Delay)
+            const writeTime = get().registerWidth * 2; // 2ns per bit write
+            await new Promise(r => setTimeout(r, 600)); // Mimic propagation delay
+            
+            set(s => ({ 
+                storedValue: val, 
+                lastRefreshTime: Date.now(),
+                isDecayed: false,
+                predictionStatus: 'idle',
+                propagationDelay: s.propagationDelay + writeTime,
+                pulseHistory: [
+                    ...s.pulseHistory, 
+                    { originIndex: -1, targetIndex: 0, type: 'write', timestamp: Date.now() }
+                ]
+            }));
+        } finally {
+            set({ isWriting: false, isProcessing: false, isSystemBusy: false });
+        }
     },
     refreshMemory: () => set({ lastRefreshTime: Date.now(), isDecayed: false }),
     resetRegister: () => set({ registerBits: [0, 0, 0, 0, 0, 0, 0, 0], storedValue: null, isWriting: false, isAutoRefresh: false, lastRefreshTime: Date.now(), isDecayed: false }),

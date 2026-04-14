@@ -451,12 +451,9 @@ export const SceneArithmetic: React.FC<Props> = ({ onCorrect }) => {
                         <p style={{ color: T.success, fontFamily: T.mono, fontSize: 14, fontWeight: 700, marginBottom: 16 }}>
                             ✓ Binary Synthesis Complete. Logic has manifest as Mathematics.
                         </p>
-                        <button 
-                            onClick={() => nextScene()}
-                            style={{ padding: '12px 48px', background: T.success, color: T.bg, border: 'none', borderRadius: 6, fontFamily: T.mono, fontSize: 12, fontWeight: 900, cursor: 'pointer', letterSpacing: '0.1em' }}
-                        >
-                            GRADUATE MODULE →
-                        </button>
+                        <div style={{ padding: '12px 48px', border: `1px solid ${T.success}`, borderRadius: 6, fontFamily: T.mono, fontSize: 12, fontWeight: 900, color: T.success, letterSpacing: '0.1em' }}>
+                            MODULE GRADUATION READY →
+                        </div>
                     </motion.div>
                 )}
             </div>

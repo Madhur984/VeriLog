@@ -354,12 +354,9 @@ export const SceneSwitch: React.FC<Props> = ({ onFirstToggle, hasToggled }) => {
                         <p style={{ color: T.success, fontFamily: T.mono, fontSize: 14, fontWeight: 700, marginBottom: 16 }}>
                             ✓ Concepts Captured. Reality Digitized.
                         </p>
-                        <button 
-                            onClick={() => nextScene()}
-                            style={{ padding: '12px 32px', background: T.success, color: T.bg, border: 'none', borderRadius: 6, fontFamily: T.mono, fontSize: 12, fontWeight: 800, cursor: 'pointer', letterSpacing: '0.1em' }}
-                        >
-                            ADVANCE TO COUNTING →
-                        </button>
+                        <div style={{ padding: '12px 32px', border: `1px solid ${T.success}`, borderRadius: 6, fontFamily: T.mono, fontSize: 12, fontWeight: 800, color: T.success, letterSpacing: '0.1em', display: 'inline-block' }}>
+                            LAB INITIALIZED →
+                        </div>
                     </motion.div>
                 )}
             </motion.div>

@@ -94,7 +94,7 @@ export const SceneCounter: React.FC<Props> = ({ onCarry, onReach8, hasReached8 }
         return () => clearInterval(timer);
     }, [labStage, isStageLocked, idleTime, counterValue]);
 
-    const handleIncrement = () => {
+    async function handleIncrement() {
         if (isSystemBusy || isIncrementing || (labStage === 'theory' && isStageLocked)) {
             if (isSystemBusy || isIncrementing) triggerHaptic('impact' as any);
             return;
@@ -112,11 +112,11 @@ export const SceneCounter: React.FC<Props> = ({ onCarry, onReach8, hasReached8 }
         }
         
         if (predictionStatus === 'correct') {
-            increment(true);
+            await increment(true);
             recordAction('interactions');
             if (labStage === 'execution') setStageLocked(false);
         }
-    };
+    }
 
     // REQ: Precise carry-event detection (Stable effect)
     const lastCarryTimestamp = useRef(0);
@@ -423,12 +423,9 @@ export const SceneCounter: React.FC<Props> = ({ onCarry, onReach8, hasReached8 }
                         <p style={{ color: T.success, fontFamily: T.mono, fontSize: 14, fontWeight: 700, marginBottom: 16 }}>
                             ✓ Overflow Understood. The Ripple effect is the speed-limit of physics.
                         </p>
-                        <button 
-                            onClick={() => nextScene()}
-                            style={{ padding: '12px 32px', background: T.success, color: T.bg, border: 'none', borderRadius: 6, fontFamily: T.mono, fontSize: 12, fontWeight: 800, cursor: 'pointer' }}
-                        >
-                            ADVANCE TO MEMORY →
-                        </button>
+                        <div style={{ padding: '12px 32px', border: `1px solid ${T.success}`, borderRadius: 6, fontFamily: T.mono, fontSize: 12, fontWeight: 800, color: T.success }}>
+                            OVERFLOW MODE COMPLETE →
+                        </div>
                     </motion.div>
                 )}
             </div>

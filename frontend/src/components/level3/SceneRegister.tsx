@@ -91,8 +91,7 @@ export const SceneRegister: React.FC<SceneRegisterProps> = ({ onStore }) => {
         if (val === bitsToNum(registerBits)) {
             triggerHaptic('success');
             playSound('success');
-            await new Promise(r => setTimeout(r, 600));
-            storeValue(true);
+            await storeValue(true);
             if (onStore) onStore();
             if (labStage === 'execution') setStageLocked(false);
         } else {
@@ -417,12 +416,9 @@ export const SceneRegister: React.FC<SceneRegisterProps> = ({ onStore }) => {
                         <p style={{ color: T.success, fontFamily: T.mono, fontSize: 14, fontWeight: 700, marginBottom: 16 }}>
                             ✓ Information is Entropy. Memory is a Cycle, not a State.
                         </p>
-                        <button 
-                            onClick={() => nextScene()}
-                            style={{ padding: '12px 32px', background: T.success, color: T.bg, border: 'none', borderRadius: 6, fontFamily: T.mono, fontSize: 12, fontWeight: 800, cursor: 'pointer' }}
-                        >
-                            THE CALCULATION BEGINS →
-                        </button>
+                        <div style={{ padding: '12px 32px', border: `1px solid ${T.success}`, borderRadius: 6, fontFamily: T.mono, fontSize: 12, fontWeight: 800, color: T.success }}>
+                            READY TO COMPUTE →
+                        </div>
                     </motion.div>
                 )}
             </div>
