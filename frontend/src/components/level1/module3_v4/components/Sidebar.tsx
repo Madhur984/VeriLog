@@ -108,7 +108,7 @@ const SidebarComponent: React.FC<SidebarProps> = ({
                 <Activity size={12} className="animate-pulse" />
                 Engineering Labs
             </button>
-            
+
             <button 
                 onClick={toggleTheme} 
                 className={`w-full h-11 flex items-center justify-center gap-2 rounded-xl border font-bold text-[10px] uppercase tracking-widest transition-all duration-300 active:scale-[0.98] ${isDarkMode 

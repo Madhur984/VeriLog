@@ -5,6 +5,7 @@ import { useGamificationStore } from '../stores/gamificationStore';
 import { CommandPalette } from '../components/ui/CommandPalette';
 import { OnboardingTour } from '../components/ui/OnboardingTour';
 import { RadialMenu } from '../components/ui/RadialMenu';
+import { Globe, Briefcase } from 'lucide-react';
 
 import { DiagnosticConsole } from '../components/ui/DiagnosticConsole';
 import { HierarchicalGrindTree } from '../components/ui/HierarchicalGrindTree';
@@ -290,8 +291,36 @@ export const WorkstationHome: React.FC = () => {
             style={{ maxWidth: 1400 }}
           >
             {/* Diagnostic console — left */}
-            <div className="flex-shrink-0 pt-8" style={{ marginLeft: 0 }}>
+            <div className="flex-shrink-0 pt-8 flex flex-col gap-6" style={{ marginLeft: 0 }}>
               <DiagnosticConsole onCommandPaletteOpen={() => setCmdOpen(true)} />
+              
+              {/* CAREER PULSE WIDGET */}
+              <motion.div 
+                whileHover={{ scale: 1.02 }}
+                onClick={() => navigate('/career-roadmap')}
+                className="w-[280px] p-4 rounded-2xl border border-cyan-400/20 bg-[#0d1526]/80 backdrop-blur-md cursor-pointer group transition-all hover:border-cyan-400/50 shadow-xl"
+              >
+                  <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        <Briefcase size={14} className="text-cyan-400" />
+                        <span className="text-[10px] font-mono font-black uppercase tracking-widest text-white">Career Pulse</span>
+                      </div>
+                      <div className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-ping" />
+                  </div>
+                  <div className="space-y-2">
+                      <div className="flex justify-between items-center text-[9px] font-mono text-slate-500 uppercase">
+                         <span>VLSI Resonance</span>
+                         <span className="text-cyan-400 font-bold">18.4L Avg</span>
+                      </div>
+                      <div className="h-1 w-full bg-black/40 rounded-full overflow-hidden">
+                         <div className="h-full bg-cyan-400 w-[75%]" />
+                      </div>
+                  </div>
+                  <div className="mt-4 pt-3 border-t border-white/5 flex items-center justify-between">
+                      <span className="text-[8px] font-mono text-slate-600 uppercase font-black">Professional_Stratosphere</span>
+                      <span className="text-[9px] font-black text-cyan-400 group-hover:underline">Launch Pokédex</span>
+                  </div>
+              </motion.div>
             </div>
 
             {/* Holographic skill tree — center/right */}
