@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import dagre from "dagre";
 import {
   CircuitBoard, Cpu, Wifi, Radio, Zap, Move3d, Shield, Eye, TrendingUp,
   Lock, Unlock, RefreshCw, Maximize2, Minimize2, Download, Upload, Search,
-  GitBranch, Layout, Sparkles, Activity
+  GitBranch, Layout, Sparkles, Activity, Share2, Target, Info
 } from "lucide-react";
 
 // ---------- Types ----------
@@ -17,24 +17,25 @@ interface GraphNode {
   icon: React.ReactNode;
   domainId: string;
   prerequisites: string[];
-  group: number; // For colored categorization (from ForceGraph2D)
+  group: number;
+  demandIntensity?: number; // 1-10 for glow logic
 }
 
-// ---------- Default Data with Group Mapping ----------
+// ---------- Default Data with Enhanced Metadata ----------
 const defaultNodesRaw: Omit<GraphNode, "x" | "y">[] = [
-  { id: "basic_electronics", name: "Basic Electronics", icon: <Zap size={20} />, domainId: "", prerequisites: [], group: 1 },
-  { id: "digital_logic", name: "Digital Logic", icon: <CircuitBoard size={20} />, domainId: "", prerequisites: ["basic_electronics"], group: 2 },
-  { id: "verilog", name: "Verilog/VHDL", icon: <Cpu size={20} />, domainId: "", prerequisites: ["digital_logic"], group: 3 },
-  { id: "vlsi", name: "VLSI Design", icon: <Cpu size={20} />, domainId: "vlsi", prerequisites: ["verilog"], group: 4 },
-  { id: "embedded", name: "Embedded Systems", icon: <CircuitBoard size={20} />, domainId: "embedded", prerequisites: ["digital_logic"], group: 4 },
-  { id: "signal_processing", name: "Signal Processing", icon: <Radio size={20} />, domainId: "signal", prerequisites: ["basic_electronics"], group: 2 },
-  { id: "wireless", name: "Wireless Comm", icon: <Wifi size={20} />, domainId: "wireless", prerequisites: ["signal_processing"], group: 4 },
-  { id: "rf", name: "RF & Microwave", icon: <Radio size={20} />, domainId: "rf", prerequisites: ["wireless"], group: 4 },
-  { id: "power", name: "Power Electronics", icon: <Zap size={20} />, domainId: "power", prerequisites: ["basic_electronics"], group: 4 },
-  { id: "control", name: "Control Systems", icon: <Move3d size={20} />, domainId: "control", prerequisites: ["basic_electronics"], group: 4 },
-  { id: "medical", name: "Medical Electronics", icon: <Shield size={20} />, domainId: "medical", prerequisites: ["signal_processing", "embedded"], group: 4 },
-  { id: "photonics", name: "Photonics", icon: <Eye size={20} />, domainId: "photonics", prerequisites: ["basic_electronics"], group: 4 },
-  { id: "defense", name: "Defense & Aerospace", icon: <TrendingUp size={20} />, domainId: "defense", prerequisites: ["rf", "control"], group: 4 },
+  { id: "basic_electronics", name: "Basic Electronics", icon: <Zap size={20} />, domainId: "", prerequisites: [], group: 1, demandIntensity: 5 },
+  { id: "digital_logic", name: "Digital Logic", icon: <CircuitBoard size={20} />, domainId: "", prerequisites: ["basic_electronics"], group: 2, demandIntensity: 7 },
+  { id: "verilog", name: "Verilog/VHDL", icon: <Cpu size={20} />, domainId: "", prerequisites: ["digital_logic"], group: 3, demandIntensity: 9 },
+  { id: "vlsi", name: "VLSI Design", icon: <Cpu size={20} />, domainId: "vlsi", prerequisites: ["verilog"], group: 4, demandIntensity: 10 },
+  { id: "embedded", name: "Embedded Systems", icon: <CircuitBoard size={20} />, domainId: "embedded", prerequisites: ["digital_logic"], group: 4, demandIntensity: 9 },
+  { id: "signal_processing", name: "Signal Processing", icon: <Radio size={20} />, domainId: "signal", prerequisites: ["basic_electronics"], group: 2, demandIntensity: 8 },
+  { id: "wireless", name: "Wireless Comm", icon: <Wifi size={20} />, domainId: "wireless", prerequisites: ["signal_processing"], group: 4, demandIntensity: 8 },
+  { id: "rf", name: "RF & Microwave", icon: <Radio size={20} />, domainId: "rf", prerequisites: ["wireless"], group: 4, demandIntensity: 9 },
+  { id: "power", name: "Power Electronics", icon: <Zap size={20} />, domainId: "power", prerequisites: ["basic_electronics"], group: 4, demandIntensity: 9 },
+  { id: "control", name: "Control Systems", icon: <Move3d size={20} />, domainId: "control", prerequisites: ["basic_electronics"], group: 4, demandIntensity: 7 },
+  { id: "medical", name: "Medical Electronics", icon: <Shield size={20} />, domainId: "medical", prerequisites: ["signal_processing", "embedded"], group: 4, demandIntensity: 6 },
+  { id: "photonics", name: "Photonics", icon: <Eye size={20} />, domainId: "photonics", prerequisites: ["basic_electronics"], group: 4, demandIntensity: 7 },
+  { id: "defense", name: "Defense & Aerospace", icon: <TrendingUp size={20} />, domainId: "defense", prerequisites: ["rf", "control"], group: 4, demandIntensity: 10 },
 ];
 
 const groupColors: Record<number, string> = {
@@ -46,48 +47,18 @@ const groupColors: Record<number, string> = {
 
 const defaultPositions: Record<string, { x: number; y: number }> = {
   basic_electronics: { x: 100, y: 350 },
-  digital_logic: { x: 300, y: 150 },
-  verilog: { x: 600, y: 150 },
-  vlsi: { x: 900, y: 150 },
-  embedded: { x: 600, y: 350 },
-  signal_processing: { x: 600, y: 550 },
-  wireless: { x: 900, y: 550 },
-  rf: { x: 1200, y: 550 },
-  power: { x: 900, y: 350 },
-  control: { x: 1200, y: 350 },
-  medical: { x: 1500, y: 350 },
-  photonics: { x: 1500, y: 150 },
-  defense: { x: 1800, y: 350 },
-};
-
-const applyAutoLayout = (nodesRaw: Omit<GraphNode, "x" | "y">[], direction: "LR" | "TB" = "LR"): GraphNode[] => {
-  const g = new dagre.graphlib.Graph();
-  g.setGraph({ rankdir: direction, nodesep: 150, ranksep: 200, marginx: 150, marginy: 150 });
-  g.setDefaultEdgeLabel(() => ({}));
-  nodesRaw.forEach(node => g.setNode(node.id, { width: 100, height: 100 }));
-  nodesRaw.forEach(node => node.prerequisites.forEach(pre => g.setEdge(pre, node.id)));
-  dagre.layout(g);
-  return nodesRaw.map(node => {
-     const p = g.node(node.id);
-     return { ...node, x: p.x, y: p.y };
-  });
-};
-
-const loadSavedPositions = () => {
-  try {
-    const saved = localStorage.getItem("skill_graph_mixed_positions");
-    if (saved) return JSON.parse(saved);
-  } catch (e) {}
-  return defaultPositions;
-};
-
-const buildNodes = (saved: Record<string, { x: number; y: number }>, auto = false): GraphNode[] => {
-  if (auto) return applyAutoLayout(defaultNodesRaw, "LR");
-  return defaultNodesRaw.map(node => ({
-    ...node,
-    x: saved[node.id]?.x ?? defaultPositions[node.id].x,
-    y: saved[node.id]?.y ?? defaultPositions[node.id].y,
-  }));
+  digital_logic: { x: 400, y: 150 },
+  verilog: { x: 750, y: 150 },
+  vlsi: { x: 1100, y: 150 },
+  embedded: { x: 750, y: 350 },
+  signal_processing: { x: 400, y: 550 },
+  wireless: { x: 750, y: 550 },
+  rf: { x: 1100, y: 550 },
+  power: { x: 750, y: 750 },
+  control: { x: 1100, y: 400 },
+  medical: { x: 1400, y: 350 },
+  photonics: { x: 1400, y: 150 },
+  defense: { x: 1700, y: 400 },
 };
 
 interface SkillGraphProps {
@@ -96,27 +67,78 @@ interface SkillGraphProps {
 }
 
 export const SkillGraph: React.FC<SkillGraphProps> = ({ onNodeClick, unlockedNodes = new Set() }) => {
-  const [nodes, setNodes] = useState<GraphNode[]>(() => buildNodes(loadSavedPositions(), false));
+  const [nodes, setNodes] = useState<GraphNode[]>(() => {
+    const saved = localStorage.getItem("skill_graph_mixed_positions_v2");
+    const positions = saved ? JSON.parse(saved) : defaultPositions;
+    return defaultNodesRaw.map(n => ({
+      ...n,
+      x: positions[n.id]?.x ?? defaultPositions[n.id].x,
+      y: positions[n.id]?.y ?? defaultPositions[n.id].y,
+    }));
+  });
+
   const [editMode, setEditMode] = useState(false);
   const [draggingId, setDraggingId] = useState<string | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [showMinimap, setShowMinimap] = useState(true);
   const [physicsOn, setPhysicsOn] = useState(true);
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  // ---------- Path Logic ----------
+  const activePath = useMemo(() => {
+    if (!hoveredId) return { upstream: new Set<string>(), downstream: new Set<string>() };
+    
+    const upstream = new Set<string>();
+    const findUpstream = (id: string) => {
+      const node = nodes.find(n => n.id === id);
+      if (!node) return;
+      node.prerequisites.forEach(pre => {
+        if (!upstream.has(pre)) {
+          upstream.add(pre);
+          findUpstream(pre);
+        }
+      });
+    };
+
+    const downstream = new Set<string>();
+    const findDownstream = (id: string) => {
+      nodes.forEach(node => {
+        if (node.prerequisites.includes(id)) {
+          if (!downstream.has(node.id)) {
+            downstream.add(node.id);
+            findDownstream(node.id);
+          }
+        }
+      });
+    };
+
+    findUpstream(hoveredId);
+    findDownstream(hoveredId);
+    return { upstream, downstream };
+  }, [hoveredId, nodes]);
+
+  // ---------- Persistence ----------
   useEffect(() => {
     const positions: Record<string, { x: number; y: number }> = {};
-    nodes.forEach(node => { positions[node.id] = { x: node.x, y: node.y }; });
-    localStorage.setItem("skill_graph_mixed_positions", JSON.stringify(positions));
+    nodes.forEach(n => { positions[n.id] = { x: n.x, y: n.y }; });
+    localStorage.setItem("skill_graph_mixed_positions_v2", JSON.stringify(positions));
   }, [nodes]);
 
-  const updateNodePosition = useCallback((id: string, x: number, y: number) => {
-    setNodes(prev => prev.map(node => node.id === id ? { ...node, x, y } : node));
-  }, []);
+  const updateNodePosition = (id: string, x: number, y: number) => {
+    setNodes(prev => prev.map(n => n.id === id ? { ...n, x, y } : n));
+  };
 
-  const resetLayout = () => setNodes(buildNodes(defaultPositions, false));
-  const autoLayout = () => setNodes(applyAutoLayout(defaultNodesRaw, "LR"));
+  const autoLayout = (dir: "LR" | "TB") => {
+    const g = new dagre.graphlib.Graph();
+    g.setGraph({ rankdir: dir, nodesep: 150, ranksep: 200, marginx: 200, marginy: 200 });
+    g.setDefaultEdgeLabel(() => ({}));
+    defaultNodesRaw.forEach(n => g.setNode(n.id, { width: 100, height: 100 }));
+    defaultNodesRaw.forEach(n => n.prerequisites.forEach(p => g.setEdge(p, n.id)));
+    dagre.layout(g);
+    setNodes(prev => prev.map(n => ({ ...n, x: g.node(n.id).x, y: g.node(n.id).y })));
+  };
 
   const toggleFullscreen = () => {
     if (!containerRef.current) return;
@@ -136,112 +158,98 @@ export const SkillGraph: React.FC<SkillGraphProps> = ({ onNodeClick, unlockedNod
     return `M ${from.x} ${from.y} C ${cp1x} ${from.y}, ${cp2x} ${to.y}, ${to.x} ${to.y}`;
   };
 
-  const filteredNodeIds = searchTerm
-    ? nodes.filter(node => node.name.toLowerCase().includes(searchTerm.toLowerCase())).map(n => n.id)
-    : [];
-
-  const edges = nodes.flatMap(node =>
-    node.prerequisites.map(pre => ({ from: pre, to: node.id }))
-  );
+  const edges = nodes.flatMap(n => n.prerequisites.map(p => ({ from: p, to: n.id })));
 
   return (
-    <div ref={containerRef} className={`w-full ${isFullscreen ? "fixed inset-0 z-[100] bg-matte-obsidian" : "h-[700px] bg-matte-obsidian/40 border border-ghost-trace rounded-3xl"} overflow-hidden relative transition-all duration-500`}>
-      {/* Mixed HUD HUD (Combining both vibes) */}
-      <div className="absolute top-6 right-6 z-50 flex gap-3 p-1 bg-black/40 backdrop-blur-md rounded-2xl border border-white/5">
-        <button
-           onClick={() => setPhysicsOn(!physicsOn)}
-           className={`p-3 rounded-xl transition-all ${physicsOn ? "text-plasma-cyan shadow-cyan-glow bg-plasma-cyan/10" : "text-grid-line"}`}
-           title="Toggle Particle Physics"
-        >
-          <Activity size={18} />
-        </button>
-        <button
-          onClick={autoLayout}
-          className="p-3 text-grid-line hover:text-white transition-all"
-          title="Hierarchical Sort"
-        >
-          <Layout size={18} />
-        </button>
-        <button
-          onClick={() => setEditMode(!editMode)}
-          className={`p-3 rounded-xl transition-all ${editMode ? "bg-plasma-cyan text-black" : "text-plasma-cyan hover:bg-plasma-cyan/10"}`}
-          title="Reposition Nodes"
-        >
-          {editMode ? <Unlock size={18} /> : <Lock size={18} />}
-        </button>
-        <button onClick={resetLayout} className="p-3 text-grid-line hover:text-white"><RefreshCw size={18} /></button>
-        <button onClick={toggleFullscreen} className="p-3 text-grid-line hover:text-white">
-           {isFullscreen ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
-        </button>
+    <div ref={containerRef} className={`w-full ${isFullscreen ? "fixed inset-0 z-[100] bg-[#050505]" : "h-[750px] bg-[#050505]/40 border border-[#1A1A25] rounded-[2rem] shadow-[0_0_40px_rgba(0,0,0,0.5)]"} overflow-hidden relative transition-all duration-700 font-ui`}>
+      {/* Neo-Brutalist HUD */}
+      <div className="absolute top-8 right-8 z-50 flex flex-col gap-4">
+        <div className="flex gap-2 p-1.5 bg-[#0A0A0F]/80 backdrop-blur-xl rounded-2xl border border-white/5 shadow-2xl">
+          <button onClick={() => setPhysicsOn(!physicsOn)} className={`p-3 rounded-xl transition-all ${physicsOn ? "text-plasma-cyan shadow-cyan-glow bg-plasma-cyan/10" : "text-white/20 hover:text-white"}`} title="Bio-Luminescence Flow"><Activity size={18} /></button>
+          <button onClick={() => autoLayout("LR")} className="p-3 text-white/20 hover:text-plasma-cyan transition-all"><Layout size={18} /></button>
+          <button onClick={() => setEditMode(!editMode)} className={`p-3 rounded-xl transition-all ${editMode ? "bg-plasma-cyan text-black" : "text-white/20 hover:text-plasma-cyan"}`}>{editMode ? <Unlock size={18} /> : <Lock size={18} />}</button>
+          <button onClick={() => setNodes(defaultNodesRaw.map(n => ({ ...n, x: defaultPositions[n.id].x, y: defaultPositions[n.id].y })))} className="p-3 text-white/20 hover:text-white"><RefreshCw size={18} /></button>
+          <button onClick={toggleFullscreen} className="p-3 text-white/20 hover:text-white">{isFullscreen ? <Minimize2 size={18} /> : <Maximize2 size={18} />}</button>
+        </div>
+        
+        {/* Real-time Diagnostics HUD */}
+        <div className="p-4 bg-[#0A0A0F]/80 backdrop-blur-xl border border-white/5 rounded-2xl shadow-2xl space-y-3">
+           <div className="text-[10px] font-black text-plasma-cyan uppercase tracking-[0.2em] mb-2 flex items-center gap-2">
+              <Sparkles size={12} /> TRAJECTORY_PULSE
+           </div>
+           <div className="space-y-1">
+              <div className="flex justify-between text-[8px] font-mono text-white/40 uppercase"><span>Active Path</span> <span className="text-plasma-cyan">{activePath.upstream.size + activePath.downstream.size} Nodes</span></div>
+              <div className="flex justify-between text-[8px] font-mono text-white/40 uppercase"><span>System Load</span> <span className="text-green-400">0.04ms</span></div>
+           </div>
+        </div>
       </div>
 
-      <div className="absolute top-6 left-6 z-50 flex items-center gap-3 bg-black/40 border border-white/5 rounded-2xl px-4 py-3 backdrop-blur-md">
-        <Search size={16} className="text-plasma-cyan" />
+      <div className="absolute top-8 left-8 z-50 flex items-center gap-4 bg-[#0A0A0F]/80 border border-white/5 rounded-2xl px-5 py-4 backdrop-blur-xl shadow-2xl group/search">
+        <Search size={18} className="text-plasma-cyan group-focus-within/search:scale-125 transition-transform" />
         <input
           type="text"
-          placeholder="SEARCH_SILICON_WEB..."
+          placeholder="IDENTIFY_SILICON_NODE..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="bg-transparent border-none text-[10px] font-mono text-oscilloscope-trace outline-none w-48 uppercase tracking-widest"
+          className="bg-transparent border-none text-[11px] font-mono text-white outline-none w-64 uppercase tracking-[0.3em] placeholder:opacity-20 decoration-none"
         />
       </div>
 
       <TransformWrapper
-        initialScale={0.6}
-        minScale={0.3}
-        maxScale={2.5}
+        initialScale={0.5}
+        minScale={0.2}
+        maxScale={3}
         centerOnInit
         panning={{ disabled: draggingId !== null }}
-        wheel={{ step: 0.1 }}
+        wheel={{ step: 0.15 }}
       >
-        {({ zoomIn, zoomOut, resetTransform, setTransform, state }) => (
+        {({ zoomIn, zoomOut, resetTransform, state }) => (
           <>
-            <div className="absolute bottom-6 left-6 z-50 flex gap-2">
-              <button onClick={() => zoomIn()} className="w-10 h-10 bg-black/40 border border-white/5 rounded-xl text-grid-line">+</button>
-              <button onClick={() => zoomOut()} className="w-10 h-10 bg-black/40 border border-white/5 rounded-xl text-grid-line">-</button>
-              <button onClick={() => resetTransform()} className="px-4 h-10 bg-black/40 border border-white/5 rounded-xl text-[10px] font-mono text-grid-line">CENTER_VIEW</button>
-            </div>
+            <TransformComponent wrapperStyle={{ width: "100%", height: "100%" }} contentStyle={{ width: "100%", height: "100%" }}>
+              <div className="relative" style={{ width: 4000, height: 3000 }}>
+                {/* Plasma SVG Layer */}
+                <svg className="absolute inset-0 w-full h-full pointer-events-none">
+                  {edges.map((edge, idx) => {
+                    const from = nodes.find(n => n.id === edge.from);
+                    const to = nodes.find(n => n.id === edge.to);
+                    if (!from || !to) return null;
+                    const path = getBezierPath(from, to);
+                    
+                    const isPartOfActivePath = (hoveredId === edge.from && activePath.downstream.has(edge.to)) || 
+                                              (hoveredId === edge.to && activePath.upstream.has(edge.from));
+                    
+                    const isFaint = hoveredId && !isPartOfActivePath;
 
-            <TransformComponent
-              wrapperStyle={{ width: "100%", height: "100%" }}
-              contentStyle={{ width: "100%", height: "100%" }}
-            >
-              <svg className="absolute top-0 left-0 w-full h-full pointer-events-none" style={{ width: 3000, height: 2000 }}>
-                {edges.map((edge, idx) => {
-                  const from = nodes.find(n => n.id === edge.from);
-                  const to = nodes.find(n => n.id === edge.to);
-                  if (!from || !to) return null;
-                  const path = getBezierPath(from, to);
-                  const pathId = `path-${idx}`;
-                  
-                  return (
-                    <React.Fragment key={idx}>
-                      <path
-                        id={pathId}
-                        d={path}
-                        fill="none"
-                        stroke={groupColors[from.group] + "40"}
-                        strokeWidth={2}
-                        className="transition-all"
-                      />
-                      {physicsOn && (
-                        <circle r="3" fill={groupColors[from.group]}>
-                          <animateMotion
-                            dur={`${2 + Math.random() * 2}s`}
-                            repeatCount="indefinite"
-                            path={path}
-                          />
-                        </circle>
-                      )}
-                    </React.Fragment>
-                  );
-                })}
-              </svg>
+                    return (
+                      <React.Fragment key={idx}>
+                        <path
+                          d={path}
+                          fill="none"
+                          stroke={groupColors[from.group]}
+                          strokeWidth={isPartOfActivePath ? 4 : 1.5}
+                          className="transition-all duration-500"
+                          style={{
+                            opacity: isPartOfActivePath ? 0.8 : isFaint ? 0.05 : 0.2,
+                            filter: isPartOfActivePath ? `drop-shadow(0 0 8px ${groupColors[from.group]})` : 'none'
+                          }}
+                        />
+                        {physicsOn && (
+                          <circle r={isPartOfActivePath ? 4 : 2} fill={groupColors[from.group]}>
+                            <animateMotion dur={`${isPartOfActivePath ? 1 : 2.5 + Math.random() * 2}s`} repeatCount="indefinite" path={path} />
+                            {isPartOfActivePath && <animate attributeName="r" values="3;6;3" dur="1s" repeatCount="indefinite" />}
+                          </circle>
+                        )}
+                      </React.Fragment>
+                    );
+                  })}
+                </svg>
 
-              <div className="relative" style={{ width: 3000, height: 2000 }}>
+                {/* Cyber-Nodes Layer */}
                 {nodes.map((node) => {
-                  const isHighlighted = filteredNodeIds.includes(node.id);
+                  const isHighlighted = searchTerm && node.name.toLowerCase().includes(searchTerm.toLowerCase());
                   const isDragging = draggingId === node.id;
+                  const isInActivePath = hoveredId === node.id || activePath.upstream.has(node.id) || activePath.downstream.has(node.id);
+                  const isDimmed = hoveredId && !isInActivePath;
                   
                   return (
                     <motion.div
@@ -253,19 +261,17 @@ export const SkillGraph: React.FC<SkillGraphProps> = ({ onNodeClick, unlockedNod
                         setDraggingId(null);
                         updateNodePosition(node.id, node.x + info.offset.x, node.y + info.offset.y);
                       }}
-                      style={{
-                        position: "absolute",
-                        left: node.x - 45,
-                        top: node.y - 45,
-                        zIndex: isDragging ? 50 : 10,
-                      }}
+                      onMouseEnter={() => setHoveredId(node.id)}
+                      onMouseLeave={() => setHoveredId(null)}
+                      style={{ position: "absolute", left: node.x - 50, top: node.y - 50, zIndex: isInActivePath ? 50 : 10 }}
                       animate={{
-                         scale: isDragging ? 1.15 : 1,
-                         y: physicsOn && !isDragging ? [0, -10, 0] : 0
+                         scale: isDragging ? 1.2 : isInActivePath ? 1.1 : 1,
+                         opacity: isDimmed ? 0.2 : 1,
+                         y: physicsOn && !isDragging ? [0, -12, 0] : 0
                       }}
                       transition={{
-                         y: { duration: 3 + Math.random() * 2, repeat: Infinity, ease: "easeInOut" },
-                         scale: { type: "spring", stiffness: 400, damping: 25 }
+                         y: { duration: 4 + Math.random() * 3, repeat: Infinity, ease: "easeInOut" },
+                         opacity: { duration: 0.4 }
                       }}
                     >
                       <button
@@ -273,55 +279,101 @@ export const SkillGraph: React.FC<SkillGraphProps> = ({ onNodeClick, unlockedNod
                           if (!editMode && node.domainId) onNodeClick(node.domainId);
                           e.stopPropagation();
                         }}
-                        className={`w-24 h-24 rounded-full flex flex-col items-center justify-center border-4 transition-all shadow-2xl relative group/node ${
-                          isDragging ? "opacity-90" : "opacity-100"
-                        } ${isHighlighted ? "border-white shadow-white/20" : "border-white/5"}`}
+                        className={`w-28 h-28 rounded-3xl flex flex-col items-center justify-center border-[3px] transition-all shadow-[0_0_30px_rgba(0,0,0,0.5)] relative overflow-hidden group/node ${
+                          isHighlighted ? "border-white shadow-white/40 scale-110" : ""
+                        }`}
                         style={{
-                          background: `radial-gradient(circle at center, ${groupColors[node.group]}30, transparent)`,
-                          borderColor: groupColors[node.group] + (isHighlighted ? "FF" : "40")
+                          background: `linear-gradient(135deg, ${groupColors[node.group]}15, ${groupColors[node.group]}05)`,
+                          borderColor: isInActivePath ? groupColors[node.group] : groupColors[node.group] + "20",
                         }}
                       >
-                        <div style={{ color: groupColors[node.group] }}>{node.icon}</div>
-                        <span className="text-[10px] font-mono leading-tight px-1 text-center font-black uppercase mt-1" style={{ color: groupColors[node.group] }}>
+                         {/* Dynamic Glow Intensity based on Demand */}
+                        <div 
+                          className="absolute inset-0 opacity-20 transition-opacity group-hover/node:opacity-40"
+                          style={{
+                             boxShadow: isInActivePath ? `inset 0 0 30px ${groupColors[node.group]}` : 'none'
+                          }}
+                        />
+                        
+                        <div 
+                           className="mb-2 transition-transform duration-500 group-hover/node:scale-125" 
+                           style={{ color: groupColors[node.group], filter: `drop-shadow(0 0 10px ${groupColors[node.group]}80)` }}
+                        >
+                          {node.icon}
+                        </div>
+                        
+                        <span className="text-[9px] font-black leading-tight px-2 text-center uppercase tracking-wider" style={{ color: groupColors[node.group] }}>
                            {node.name}
                         </span>
 
-                        {/* Particle Ring (from ForceGraph flavor) */}
-                        <div className="absolute inset-[-8px] rounded-full border border-dashed opacity-20 group-hover/node:opacity-100 transition-opacity animate-spin-slow" style={{ borderColor: groupColors[node.group] }} />
+                        {/* Demand Indicator (Nodal Analytics) */}
+                        <div className="absolute bottom-2 flex gap-1">
+                           {[...Array(5)].map((_, i) => (
+                              <div 
+                                key={i} 
+                                className={`w-1 h-1 rounded-full ${i < (node.demandIntensity || 5)/2 ? '' : 'bg-white/5'}`} 
+                                style={{ backgroundColor: i < (node.demandIntensity || 5)/2 ? groupColors[node.group] : undefined }}
+                              />
+                           ))}
+                        </div>
+
+                        {/* Interactive Scan-lines */}
+                        <div className="absolute inset-0 bg-scan-line opacity-[0.03] pointer-events-none" />
                       </button>
+
+                      <AnimatePresence>
+                        {hoveredId === node.id && (
+                          <motion.div
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 120 }}
+                            exit={{ opacity: 0, x: 20 }}
+                            className="absolute top-0 left-0 w-48 bg-[#0A0A0F]/95 border border-white/5 p-4 rounded-2xl shadow-3xl pointer-events-none z-[100] backdrop-blur-xl"
+                          >
+                             <div className="text-[10px] font-black text-white mb-2 uppercase tracking-[0.1em]">{node.name}</div>
+                             <div className="h-0.5 w-full bg-white/5 mb-2" />
+                             <div className="space-y-2">
+                                <div className="text-[8px] font-mono text-white/40 uppercase">Demand Scalar: <span className="text-plasma-cyan">{node.demandIntensity}/10</span></div>
+                                <div className="text-[8px] font-mono text-white/40 uppercase">Prerequisites: <span className="text-orange-400">{node.prerequisites.length || "ROOT"}</span></div>
+                                <div className="text-[7px] text-grid-line italic leading-tight mt-2">[ CLICK_TO_INIT_INDUSTRIAL_PROBE ]</div>
+                             </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
                     </motion.div>
                   );
                 })}
               </div>
             </TransformComponent>
 
-            {/* Force-Style Minimap */}
+            {/* Tactical Minimap */}
             {showMinimap && (
-              <div className="absolute bottom-6 right-6 z-50 w-60 h-44 bg-black/60 border border-white/10 rounded-3xl overflow-hidden backdrop-blur-xl">
-                <div className="w-full h-full relative">
-                  <svg width="100%" height="100%" viewBox="0 0 3000 2000" preserveAspectRatio="none">
-                    {edges.map((e, i) => {
-                      const f = nodes.find(n => n.id === e.from);
-                      const t = nodes.find(n => n.id === e.to);
-                      return f && t ? <line key={i} x1={f.x} y1={f.y} x2={t.x} y2={t.y} stroke={groupColors[f.group]} strokeWidth={15} opacity={0.3} /> : null;
-                    })}
-                    {nodes.map(n => <circle key={n.id} cx={n.x} cy={n.y} r={30} fill={groupColors[n.group]} />)}
-                  </svg>
-                  <div className="absolute inset-0 hover:bg-white/5 transition-all cursor-crosshair" onClick={() => setShowMinimap(!showMinimap)} />
+              <div className="absolute bottom-8 right-8 z-50 w-72 h-44 bg-[#0A0A0F]/80 border border-white/5 rounded-[1.5rem] overflow-hidden backdrop-blur-3xl shadow-3xl group/minimap">
+                <div className="w-full h-full relative cursor-crosshair">
+                   <svg width="100%" height="100%" viewBox="0 0 4000 3000" preserveAspectRatio="none">
+                      {edges.map((e, i) => {
+                         const f = nodes.find(n => n.id === e.from);
+                         const t = nodes.find(n => n.id === e.to);
+                         return f && t ? <line key={i} x1={f.x} y1={f.y} x2={t.x} y2={t.y} stroke={groupColors[f.group]} strokeWidth={20} opacity={0.2} /> : null;
+                      })}
+                      {nodes.map(n => <circle key={n.id} cx={n.x} cy={n.y} r={hoveredId === n.id ? 80 : 40} fill={groupColors[n.group]} className="transition-all" />)}
+                   </svg>
+                   <div className="absolute inset-0 bg-transparent hover:bg-white/5 transition-all" />
+                   <div className="absolute top-3 left-4 text-[7px] font-black text-white/20 uppercase tracking-widest pointer-events-none">MINIMAP_RADAR</div>
                 </div>
               </div>
             )}
+            
+            {/* View HUD */}
+            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-10 text-[9px] font-mono text-white/20 bg-[#0A0A0F]/60 px-10 py-3 rounded-full border border-white/5 backdrop-blur-xl z-50">
+               <div className="flex items-center gap-2">ZOOM: <span className="text-white font-black">{(state.scale * 100).toFixed(0)}%</span></div>
+               <div className="h-3 w-px bg-white/5" />
+               <div className="flex items-center gap-2">ENGINE: <span className="text-plasma-cyan font-black">HYBRID_V4.2</span></div>
+               <div className="h-3 w-px bg-white/5" />
+               <div className="flex items-center gap-2">STATUS: <span className="text-green-400 font-black">STABLE</span></div>
+            </div>
           </>
         )}
       </TransformWrapper>
-
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-6 text-[9px] font-mono text-grid-line bg-black/60 px-8 py-2 rounded-full border border-white/5 z-50">
-        <div className="flex items-center gap-2"><Sparkles size={12} className="text-plasma-cyan" /> MIXED_ENGINE_ACTIVE</div>
-        <div className="h-2 w-px bg-white/10" />
-        <div>DRAG_NODE: {editMode ? "READY" : "LOCKED"}</div>
-        <div className="h-2 w-px bg-white/10" />
-        <div>PHYSICS: {physicsOn ? "LIVE" : "IDLE"}</div>
-      </div>
     </div>
   );
 };
