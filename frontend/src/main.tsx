@@ -11,3 +11,12 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         </BrowserRouter>
     </React.StrictMode>,
 )
+
+// PWA: Registration for Offline & Home Screen Integration
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/sw.js").catch(err => {
+      console.log("CRITICAL ERROR: Service Worker Registration Protocol Failure", err);
+    });
+  });
+}

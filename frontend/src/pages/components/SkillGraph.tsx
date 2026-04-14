@@ -64,9 +64,10 @@ const defaultPositions: Record<string, { x: number; y: number }> = {
 interface SkillGraphProps {
   onNodeClick: (domainId: string) => void;
   unlockedNodes?: Set<string>;
+  onDragCount?: (count: number) => void; 
 }
 
-export const SkillGraph: React.FC<SkillGraphProps> = ({ onNodeClick, unlockedNodes = new Set() }) => {
+export const SkillGraph: React.FC<SkillGraphProps> = ({ onNodeClick, unlockedNodes = new Set(), onDragCount }) => {
   const [nodes, setNodes] = useState<GraphNode[]>(() => {
     const saved = localStorage.getItem("skill_graph_mixed_positions_v2");
     const positions = saved ? JSON.parse(saved) : defaultPositions;
@@ -79,6 +80,7 @@ export const SkillGraph: React.FC<SkillGraphProps> = ({ onNodeClick, unlockedNod
 
   const [editMode, setEditMode] = useState(false);
   const [draggingId, setDraggingId] = useState<string | null>(null);
+  const dragCountRef = useRef(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [showMinimap, setShowMinimap] = useState(true);
@@ -128,6 +130,10 @@ export const SkillGraph: React.FC<SkillGraphProps> = ({ onNodeClick, unlockedNod
 
   const updateNodePosition = (id: string, x: number, y: number) => {
     setNodes(prev => prev.map(n => n.id === id ? { ...n, x, y } : n));
+    if (onDragCount) {
+      dragCountRef.current += 1;
+      onDragCount(dragCountRef.current);
+    }
   };
 
   const autoLayout = (dir: "LR" | "TB") => {

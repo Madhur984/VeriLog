@@ -1,55 +1,19 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { motion, AnimatePresence, useInView } from "framer-motion";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { SkillGraph } from "./components/SkillGraph";
 import { useColorScheme } from "../hooks/useColorScheme";
 import {
-  Cpu,
-  Wifi,
-  CircuitBoard,
-  Radio,
-  Zap,
-  Move3d,
-  Shield,
-  Eye,
-  TrendingUp,
-  Briefcase,
-  Building2,
-  Rocket,
-  GraduationCap,
-  Award,
-  BookOpen,
-  Linkedin,
-  Github,
-  Mail,
-  DollarSign,
-  Target,
-  Users,
-  FileText,
-  Sparkles,
-  Globe,
-  MapPin,
-  Clock,
-  Calendar,
-  Download,
-  Trophy,
-  Landmark,
-  Search,
-  Heart,
-  Brain,
-  ChevronRight,
-  Info,
-  X,
-  Calculator,
-  Share2,
-  Bookmark,
-  Star,
-  Columns,
-  ExternalLink,
-  Layers,
-  BarChart,
-  Settings,
+  Cpu, Wifi, CircuitBoard, Radio, Zap, Move3d, Shield, Eye, TrendingUp,
+  Briefcase, Building2, Rocket, GraduationCap, Award, BookOpen, Linkedin,
+  Github, Mail, DollarSign, Target, Users, FileText, Sparkles, Globe,
+  MapPin, Clock, Calendar, Download, Trophy, Landmark, Search, Heart,
+  Brain, ChevronRight, Info, X, Calculator, Share2, Bookmark, Star,
+  Columns, ExternalLink, Layers, GraduationHat, Lightbulb, CheckCircle,
+  Copy, TrendingDown, CalendarDays, Gamepad2, Coffee, GitBranch, RefreshCw,
+  Maximize2, Minimize2,
+  BarChart, Settings
 } from "lucide-react";
 
 // ----------------------------------------------------------------------
@@ -441,9 +405,267 @@ const timelineMilestones = [
   { year: "0–2 yrs", title: "Early Career", description: "First job – learn and growth.", actions: ["GET at core company.", "Master internal tools.", "Contribute to OSS."] },
 ];
 
+// ------------------------------------------------------------------
+// 1. AI Next‑Skill Recommender
+// ------------------------------------------------------------------
+interface NextSkillRecommenderProps {
+  bookmarks: string[];
+  quizAnswers: Record<number, number>;
+  viewedDomains: string[];
+  onDismiss: (id: string) => void;
+  dismissedIds: string[];
+}
+const NextSkillRecommender: React.FC<NextSkillRecommenderProps> = ({
+  bookmarks, quizAnswers, viewedDomains, onDismiss, dismissedIds
+}) => {
+  const [recommendation, setRecommendation] = useState<{ id: string; text: string } | null>(null);
+
+  useEffect(() => {
+    // Rule 1: VLSI/Embedded bookmarked but no Verilog
+    if (!dismissedIds.includes("verilog_bridge") &&
+        (bookmarks.includes("vlsi") || bookmarks.includes("embedded")) &&
+        !bookmarks.includes("verilog")) {
+      setRecommendation({ id: "verilog_bridge", text: "Learn Verilog – it's the bridge between hardware design and embedded firmware." });
+      return;
+    }
+    // Rule 2: Missed specific quiz topic (Nyquist)
+    if (!dismissedIds.includes("nyquist_review") && quizAnswers[0] !== undefined && quizAnswers[0] !== 0) {
+      setRecommendation({ id: "nyquist_review", text: "Review Sampling & Nyquist – you missed that question in the mastery quiz." });
+      return;
+    }
+    // Rule 3: Broad exploration without focus
+    if (!dismissedIds.includes("focus_suggestion") && viewedDomains.length >= 4 && bookmarks.length === 0) {
+      setRecommendation({ id: "focus_suggestion", text: "Bookmark domains you like to get deeper personalised career suggestions!" });
+      return;
+    }
+    setRecommendation(null);
+  }, [bookmarks, quizAnswers, viewedDomains, dismissedIds]);
+
+  if (!recommendation) return null;
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      className="p-6 bg-gradient-to-r from-plasma-cyan/20 to-transparent border border-plasma-cyan/30 rounded-3xl shadow-cyan-glow flex items-center justify-between gap-6"
+    >
+      <div className="flex items-center gap-4">
+        <div className="p-3 bg-plasma-cyan/10 rounded-2xl"><Lightbulb className="text-plasma-cyan" /></div>
+        <p className="text-sm font-mono text-white/80 leading-relaxed uppercase tracking-widest">{recommendation.text}</p>
+      </div>
+      <button onClick={() => onDismiss(recommendation.id)} className="text-grid-line hover:text-white transition-colors"><X size={20} /></button>
+    </motion.div>
+  );
+};
+
+// ------------------------------------------------------------------
+// 2. Daily Challenge Engine
+// ------------------------------------------------------------------
+const challenges = [
+  { question: "What is the primary carrier in N-type silicon?", answer: "Electrons", pts: 5 },
+  { question: "Minimum sampling rate for 10kHz signal?", answer: "20kHz", pts: 5 },
+  { question: "Who holds the process patent for MOSFET?", answer: "Bell Labs", pts: 5 }
+];
+const DailyChallenge = () => {
+  const [points, setPoints] = useState(() => parseInt(localStorage.getItem("daily_points") || "0"));
+  const [streak, setStreak] = useState(() => parseInt(localStorage.getItem("daily_streak") || "0"));
+  const [ans, setAns] = useState("");
+  const [msg, setMsg] = useState("");
+  const today = new Date().toDateString();
+  const challengeIdx = Math.floor(Date.now() / 86400000) % challenges.length;
+  const curr = challenges[challengeIdx];
+
+  const submit = () => {
+    if (localStorage.getItem("last_challenge") === today) return setMsg("MISSION_ACCOMPLISHED_TODAY");
+    if (ans.toLowerCase().includes(curr.answer.toLowerCase())) {
+      const p = points + curr.pts; const s = streak + 1;
+      setPoints(p); setStreak(s); setMsg("CALIBRATION_SUCCESSFUL");
+      localStorage.setItem("daily_points", p.toString());
+      localStorage.setItem("daily_streak", s.toString());
+      localStorage.setItem("last_challenge", today);
+    } else setMsg("CALIBRATION_FAILURE");
+  };
+
+  return (
+    <div className="p-8 bg-solder-mask border border-white/5 rounded-3xl space-y-4">
+      <div className="flex justify-between font-mono text-[10px] tracking-widest text-grid-line uppercase"><span>Daily Calibration</span> <span>Streak: {streak}</span></div>
+      <p className="text-lg font-black">{curr.question}</p>
+      <input type="text" value={ans} onChange={e => setAns(e.target.value)} placeholder="ENTER_SOLUTION" className="w-full bg-black/40 border border-white/5 px-4 py-3 rounded-xl font-mono text-sm text-plasma-cyan outline-none" />
+      <button onClick={submit} className="w-full py-3 bg-plasma-cyan text-black font-black uppercase text-xs tracking-widest rounded-xl hover:shadow-cyan-glow">Submit Response</button>
+      {msg && <p className="text-[10px] font-mono text-plasma-cyan text-center">{msg}</p>}
+    </div>
+  );
+};
+
+// ------------------------------------------------------------------
+// 3. Career Path Simulator
+// ------------------------------------------------------------------
+const storyTree = [
+  { id: "start", text: "You are a junior in ECE. The semester break is coming. What is your silicon priority?", options: [{ text: "Master VLSI RTL", nextId: "vlsi_route" }, { text: "Learn Embedded RTOS", nextId: "embedded_route" }] },
+  { id: "vlsi_route", text: "You master Verilog but the physical design is difficult. Do you pivot?", options: [{ text: "Stick to Front-end", nextId: "front_end" }, { text: "Pursue PG in Digital", nextId: "mtech" }] },
+  { id: "embedded_route", text: "A startup offers an unpaid R&D internship. Do you take it?", options: [{ text: "Yes, for the nodes", nextId: "startup" }, { text: "No, focus on studies", nextId: "psu" }] },
+  { id: "front_end", outcome: "STATUS: Design Engineer at Intel (18 LPA). Specialist in SoC timing." },
+  { id: "startup", outcome: "STATUS: Lead Firmware Engineer at a unicorn drone startup (24 LPA)." },
+  { id: "mtech", outcome: "STATUS: MS candidate at ETH Zurich. Future in silicon architecture." },
+  { id: "psu", outcome: "STATUS: Scientific Officer at DRDO. Contribution to national defense radar." }
+];
+
+const CareerSimulator = () => {
+  const [node, setNode] = useState(storyTree[0]);
+  return (
+    <div className="p-10 bg-black/80 border border-plasma-cyan/30 rounded-3xl max-w-xl mx-auto shadow-2xl">
+      <p className="text-2xl font-black mb-8 italic">{node.text}</p>
+      {node.options ? (
+        <div className="space-y-4">
+          {node.options.map(o => (
+            <button key={o.text} onClick={() => setNode(storyTree.find(n => n.id === o.nextId)!)} className="w-full py-4 border border-white/10 rounded-2xl hover:border-plasma-cyan transition-all text-sm font-bold uppercase">{o.text}</button>
+          ))}
+        </div>
+      ) : (
+        <div className="space-y-6">
+          <p className="text-xl text-plasma-cyan font-mono animate-pulse">{node.outcome}</p>
+          <button onClick={() => setNode(storyTree[0])} className="w-full py-3 bg-white text-black font-black uppercase text-xs rounded-xl">Re-Simulate Trajectory</button>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ------------------------------------------------------------------
+// 4. Achievement Master logic
+// ------------------------------------------------------------------
+const badgeDefinitions = [
+  { id: "explorer", name: "Domain Explorer", icon: <Globe size={16} />, condition: (s: any) => s.viewed >= 5 },
+  { id: "quiz_master", name: "Silicon Master", icon: <Brain size={16} />, condition: (s: any) => s.quiz === 1 },
+  { id: "rearranger", name: "Trajectory Architect", icon: <GitBranch size={16} />, condition: (s: any) => s.dragCount >= 5 },
+  { id: "calculator", name: "Fiscal Forecaster", icon: <Calculator size={16} />, condition: (s: any) => s.calcUsed }
+];
+
 const quizQuestions: QuizQuestion[] = [{ q: "What is Nyquist rate?", options: ["Fs > 2×Fmax", "Fs = Fmax", "Fs < Fmax", "Fs = 0"], correct: 0 }];
 
-// Data managed in SkillGraph component.
+// ------------------------------------------------------------------
+// 5. Study Plan Engine
+// ------------------------------------------------------------------
+const studyPlans: Record<string, { months: string; items: string[] }[]> = {
+  vlsi: [
+    { months: "Month 1-2", items: ["Digital Logic (NPTEL)", "Basics of CMOS"] },
+    { months: "Month 3-4", items: ["Verilog (Udemy)", "Timing Analysis basics"] },
+    { months: "Month 5-6", items: ["Physical Design (Coursera)", "Place & Route"] },
+    { months: "Month 7-8", items: ["Timing Analysis (Synopsys tutorials)", "STA"] },
+    { months: "Month 9-10", items: ["Tape‑out simulation project", "DRC/LVS"] },
+    { months: "Month 11-12", items: ["Mock interviews", "GATE prep (optional)"] }
+  ],
+  embedded: [
+    { months: "Month 1-2", items: ["C Programming (CS50)", "Microcontrollers basics"] },
+    { months: "Month 3-4", items: ["ARM Cortex (STM32)", "Peripheral drivers"] },
+    { months: "Month 5-6", items: ["RTOS (FreeRTOS)", "Task scheduling"] },
+    { months: "Month 7-8", items: ["Embedded Linux (Yocto)", "Device tree"] },
+    { months: "Month 9-10", items: ["IoT project (ESP32 + MQTT)", "Cloud integration"] },
+    { months: "Month 11-12", items: ["Interview preparation", "Build portfolio"] }
+  ],
+};
+
+const StudyPlanModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
+  const [domain, setDomain] = useState("");
+  const [plan, setPlan] = useState<any>(null);
+
+  return (
+    <div className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-md flex items-center justify-center p-4">
+      <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="bg-solder-mask border border-plasma-cyan/30 rounded-[2.5rem] max-w-2xl w-full p-10 overflow-y-auto max-h-[90vh] shadow-cyan-glow">
+        <div className="flex justify-between items-center mb-8">
+           <div className="flex items-center gap-3">
+              <div className="p-3 bg-plasma-cyan/10 rounded-2xl"><CalendarDays className="text-plasma-cyan" /></div>
+              <h2 className="text-3xl font-black uppercase italic">Study Matrix</h2>
+           </div>
+           <button onClick={onClose} className="p-3 hover:bg-white/5 rounded-full"><X /></button>
+        </div>
+
+        {!plan ? (
+           <div className="space-y-6">
+              <label className="text-[10px] font-black text-grid-line uppercase tracking-widest block">Choose Target Domain</label>
+              <div className="grid grid-cols-2 gap-4">
+                 {["vlsi", "embedded"].map(d => (
+                    <button key={d} onClick={() => setPlan(studyPlans[d])} className="p-6 bg-black/40 border border-white/5 rounded-2xl hover:border-plasma-cyan transition-all text-sm font-bold uppercase">{d}</button>
+                 ))}
+              </div>
+           </div>
+        ) : (
+           <div className="space-y-8">
+              <div className="space-y-4">
+                 {plan.map((step: any, i: number) => (
+                    <div key={i} className="p-6 bg-black/40 border border-white/5 rounded-2xl">
+                       <div className="text-[10px] font-black text-plasma-cyan mb-2 uppercase">{step.months}</div>
+                       <ul className="space-y-2">
+                          {step.items.map((it: string, j: number) => <li key={j} className="text-sm font-mono text-grid-line flex items-center gap-2"><div className="w-1 h-1 bg-plasma-cyan rounded-full"/> {it}</li>)}
+                       </ul>
+                    </div>
+                 ))}
+              </div>
+              <button onClick={() => setPlan(null)} className="w-full py-4 border border-white/10 rounded-2xl text-[10px] font-black uppercase">Switch Specialization</button>
+           </div>
+        )}
+      </motion.div>
+    </div>
+  );
+};
+
+// ------------------------------------------------------------------
+// 6. City-Wise Salary Matrix
+// ------------------------------------------------------------------
+// ------------------------------------------------------------------
+// 7. LinkedIn & Portfolio Synthesizer
+// ------------------------------------------------------------------
+const LinkedInWidget: React.FC<{ bookmarks: string[] }> = ({ bookmarks }) => {
+  const [data, setData] = useState<any>(null);
+  const generate = () => {
+    setData({
+      headline: `ECE Junior | Aspiring ${bookmarks.join(" & ") || "VLSI Specialist"} | Focus on RTL Design & Embedded Systems`,
+      projects: bookmarks.map(b => `Industrial Node: ${b.toUpperCase()} Implementation`).join("\n")
+    });
+  };
+  return (
+    <div className="p-8 bg-solder-mask border border-white/5 rounded-[2rem] space-y-6">
+       <div className="flex items-center gap-3">
+          <Linkedin className="text-plasma-cyan" />
+          <h3 className="text-lg font-black uppercase tracking-widest">Professional Identity</h3>
+       </div>
+       {!data ? (
+          <button onClick={generate} className="w-full py-4 bg-plasma-cyan/10 border border-plasma-cyan/30 text-plasma-cyan font-black uppercase text-xs rounded-xl hover:bg-plasma-cyan hover:text-black transition-all">Synthesize Profile</button>
+       ) : (
+          <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2">
+             <div className="p-4 bg-black/40 border border-white/5 rounded-xl font-mono text-[10px] text-grid-line leading-relaxed">{data.headline}</div>
+             <div className="flex gap-2">
+                <button onClick={() => { navigator.clipboard.writeText(data.headline); alert("Headline Copied!"); }} className="flex-1 py-2 bg-white/5 border border-white/10 rounded-lg text-[10px] font-black uppercase hover:bg-white/10">Copy Headline</button>
+                <button onClick={() => setData(null)} className="p-2 bg-white/5 border border-white/10 rounded-lg"><RefreshCw size={14}/></button>
+             </div>
+          </div>
+       )}
+    </div>
+  );
+};
+
+// ------------------------------------------------------------------
+// 8. Industrial Countdown Widget
+// ------------------------------------------------------------------
+const CountdownWidget = () => {
+  const [gateDays, setGateDays] = useState(0);
+  useEffect(() => {
+    const gateDate = new Date("2026-02-01");
+    const diff = gateDate.getTime() - new Date().getTime();
+    setGateDays(Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24))));
+  }, []);
+  return (
+    <div className="p-6 bg-gradient-to-br from-plasma-cyan/20 to-transparent border border-plasma-cyan/40 rounded-3xl shadow-cyan-glow">
+       <div className="flex items-center justify-between mb-4">
+          <div className="text-[10px] font-black text-plasma-cyan uppercase tracking-widest flex items-center gap-2"><Clock size={12}/> Industrial Tempo</div>
+          <div className="px-2 py-0.5 bg-plasma-cyan text-black text-[8px] font-black rounded uppercase">Live</div>
+       </div>
+       <div className="flex items-end gap-2">
+          <span className="text-4xl font-black text-white">{gateDays}</span>
+          <span className="text-[10px] font-mono text-grid-line mb-1 uppercase tracking-widest">Days until GATE 26</span>
+       </div>
+    </div>
+  );
+};
 
 // ----------------------------------------------------------------------
 // REUSABLE COMPONENTS
@@ -744,6 +966,7 @@ const TimelineSlider: React.FC = () => {
 // ----------------------------------------------------------------------
 
 export const PortalPage: React.FC = () => {
+  const [showStudyPlan, setShowStudyPlan] = useState(false);
   const [activeSection, setActiveSection] = useState("intro");
   const [searchTerm, setSearchTerm] = useState("");
   const [filterDemand, setFilterDemand] = useState<"All" | "High" | "Growing" | "Medium">("All");
@@ -761,7 +984,27 @@ export const PortalPage: React.FC = () => {
 
   const [compareIds, setCompareIds] = useState<string[]>([]);
   const [salaryCalc, setSalaryCalc] = useState({ base: 12, country: "India", experience: "Fresher" });
-  const [unlockedNodes, setUnlockedNodes] = useState<Set<string>>(new Set(["basic_electronics", "digital_logic"]));
+  const [viewedDomainIds, setViewedDomainIds] = useState<string[]>(() => JSON.parse(localStorage.getItem("ece_viewed_ids") || "[]"));
+  const [dragCount, setDragCount] = useState(0);
+  const [viewedCount, setViewedCount] = useState(() => JSON.parse(localStorage.getItem("ece_viewed_count") || "0"));
+  const [badges, setBadges] = useState<string[]>(() => JSON.parse(localStorage.getItem("ece_badges") || "[]"));
+  const [quizSubmitted, setQuizSubmitted] = useState(false);
+  const [dismissedRecs, setDismissedRecs] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem("ece_dismissed_recs");
+      return saved ? JSON.parse(saved) : [];
+    } catch { return []; }
+  });
+  const [unlockedNodes, setUnlockedNodes] = useState<string[]>(domains.map(d => d.id));
+
+  useEffect(() => {
+    const s = { viewed: viewedCount, quiz: quizSubmitted ? 1 : 0, dragCount, calcUsed: salaryCalc.base !== 12 };
+    const earned = badgeDefinitions.filter(b => b.condition(s)).map(b => b.id);
+    if (earned.length > badges.length) {
+      setBadges(earned);
+      localStorage.setItem("ece_badges", JSON.stringify(earned));
+    }
+  }, [viewedCount, quizSubmitted, dragCount, salaryCalc, badges]);
 
   const toggleBookmark = (id: string) => {
     const next = bookmarks.includes(id) ? bookmarks.filter(b => b !== id) : [...bookmarks, id];
@@ -771,6 +1014,19 @@ export const PortalPage: React.FC = () => {
 
   const toggleCompare = (id: string) => {
     setCompareIds(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id].slice(0, 2));
+  };
+
+  const handleOpenModal = (domain: Domain) => {
+    setSelectedDomain(domain);
+    const nextViewedCount = viewedCount + 1;
+    setViewedCount(nextViewedCount);
+    localStorage.setItem("ece_viewed_count", JSON.stringify(nextViewedCount));
+    
+    if (!viewedDomainIds.includes(domain.id)) {
+      const nextIds = [...viewedDomainIds, domain.id];
+      setViewedDomainIds(nextIds);
+      localStorage.setItem("ece_viewed_ids", JSON.stringify(nextIds));
+    }
   };
 
   const filteredDomains = domains.filter(domain => {
@@ -802,11 +1058,11 @@ export const PortalPage: React.FC = () => {
     { id: "intro", label: "Intro" },
     { id: "skill-graph", label: "Skill Graph" },
     { id: "domains", label: "Pokedex" },
-    { id: "calculator", label: "Salary Calc" },
-    { id: "dream", label: "Dream Cos" },
+    { id: "calculator", label: "Fiscal Matrix" },
     { id: "global", label: "Global" },
     { id: "timeline", label: "Timeline" },
-    { id: "quiz", label: "Quiz" },
+    { id: "achievements", label: "Achievements" },
+    { id: "simulator", label: "Simulator" },
   ];
 
   const scrollTo = (id: string) => {
@@ -845,6 +1101,14 @@ export const PortalPage: React.FC = () => {
   };
 
   const takeHome = calculateTakeHome();
+
+  const shareRoadmap = () => {
+    const state = { bookmarks, badges, viewedCount, quizSubmitted };
+    const hash = btoa(JSON.stringify(state));
+    const url = `${window.location.origin}${window.location.pathname}#share=${hash}`;
+    navigator.clipboard.writeText(url);
+    alert("TRAJECTORY_LINK_COPIED: Your custom roadmap is synchronized to the clipboard.");
+  };
 
   return (
     <div className={`min-h-screen ${scheme === 'dark' ? 'bg-matte-obsidian text-oscilloscope-trace' : 'bg-white text-black'} font-ui relative overflow-y-auto h-screen scrollbar-hide transition-colors duration-500`}>
@@ -926,6 +1190,20 @@ export const PortalPage: React.FC = () => {
           )}
         </AnimatePresence>
 
+        <section id="recommender">
+           <NextSkillRecommender 
+              bookmarks={bookmarks} 
+              quizAnswers={{}} 
+              viewedDomains={viewedDomainIds}
+              dismissedIds={dismissedRecs}
+              onDismiss={(id) => {
+                const updated = [...dismissedRecs, id];
+                setDismissedRecs(updated);
+                localStorage.setItem("ece_dismissed_recs", JSON.stringify(updated));
+              }}
+           />
+        </section>
+
         <section id="intro" ref={(el) => (sectionRefs.current["intro"] = el)} className="text-center pt-10">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-plasma-cyan/5 border border-plasma-cyan/20 text-plasma-cyan text-xs font-mono mb-6">
@@ -949,16 +1227,17 @@ export const PortalPage: React.FC = () => {
         </section>
 
         <section id="skill-graph" ref={(el) => (sectionRefs.current["skill-graph"] = el)}>
-          <SectionTitle icon={<Brain size={28} />} title="Interactive Dependency" subtitle="🔓 Press 'E' to unlock dragging. Drag silicon-nodes to build your own trajectory." />
+          <SectionTitle icon={<Brain size={28} />} title="Interactive Dependency" subtitle="🔓 Toggle edit mode to drag nodes. Build your own dependency map!" />
           <SkillGraph 
             onNodeClick={(domainId) => {
               const domain = domains.find(d => d.id === domainId);
-              if (domain) setSelectedDomain(domain);
+              if (domain) handleOpenModal(domain);
             }} 
             unlockedNodes={unlockedNodes} 
+            onDragCount={setDragCount}
           />
           <p className="text-center text-[10px] font-mono text-grid-line mt-4 uppercase tracking-widest opacity-50">
-             [ POSITIONS_SAVED // RESET_LAYOUT_WITH_R_KEY ]
+             [ POSITIONS_CACHED_IN_LOCAL_DOMAIN // REVERT_ENABLED ]
           </p>
         </section>
 
@@ -994,7 +1273,7 @@ export const PortalPage: React.FC = () => {
                 isBookmarked={bookmarks.includes(domain.id)} onToggleBookmark={toggleBookmark}
                 isComparing={compareIds.includes(domain.id)} onToggleCompare={toggleCompare}
                 canCompare={compareIds.length < 2 || compareIds.includes(domain.id)}
-                onOpenModal={setSelectedDomain}
+                onOpenModal={handleOpenModal}
               />
             ))}
           </div>
@@ -1057,27 +1336,50 @@ export const PortalPage: React.FC = () => {
         <section id="timeline" ref={(el) => (sectionRefs.current["timeline"] = el)}>
           <SectionTitle icon={<Clock size={28} />} title="Execution Timeline" subtitle="From foundation nodes to industrial deployment." />
           <TimelineSlider />
+          <div className="mt-12 text-center">
+             <button onClick={() => setShowStudyPlan(true)} className="px-12 py-5 bg-plasma-cyan text-black font-black uppercase text-xs tracking-widest rounded-full hover:shadow-cyan-glow transition-all">
+                GENERATE AUTONOMOUS STUDY PLAN
+             </button>
+          </div>
         </section>
 
-        <section id="quiz" ref={(el) => (sectionRefs.current["quiz"] = el)}>
-          <SectionTitle icon={<Brain size={28} />} title="Mastery Node" subtitle="Solve to verify trajectory calibration." />
-          <div className="bg-solder-mask border border-ghost-trace rounded-3xl p-12 max-w-4xl mx-auto shadow-2xl text-center space-y-10">
-            {quizQuestions.map((q, qIdx) => (
-              <div key={qIdx} className="space-y-6">
-                <p className="text-3xl font-black">{q.q}</p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {q.options.map((opt, optIdx) => (
-                    <button key={optIdx} className="p-6 bg-white/5 border border-white/10 rounded-2xl text-sm font-bold hover:border-plasma-cyan transition-all uppercase">
-                       {opt}
-                    </button>
-                  ))}
+        {showStudyPlan && <StudyPlanModal onClose={() => setShowStudyPlan(false)} />}
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+            <section id="linkedin">
+               <SectionTitle icon={<Linkedin size={28} />} title="Identity Engine" subtitle="Synthesize LinkedIn-ready headlines based on your trajectoy." />
+               <LinkedInWidget bookmarks={bookmarks} />
+            </section>
+            <section id="countdown">
+               <SectionTitle icon={<Target size={28} />} title="Deadline Pulse" subtitle="Real-time awareness of upcoming industrial gate-exams." />
+               <CountdownWidget />
+            </section>
+        </div>
+
+        <section id="achievements">
+           <SectionTitle icon={<Award size={28} />} title="Nodal Achievements" subtitle="Gamified trajectory tracking for high-density academic performance." />
+           <div className="flex flex-wrap justify-center gap-6">
+              {badgeDefinitions.map(b => (
+                <div key={b.id} className={`flex flex-col items-center gap-2 p-6 rounded-2xl border transition-all ${badges.includes(b.id) ? 'bg-plasma-cyan/10 border-plasma-cyan shadow-cyan-glow text-plasma-cyan' : 'bg-solder-mask border-white/5 text-grid-line opacity-30 grayscale'}`}>
+                   {b.icon}
+                   <span className="text-[10px] font-black uppercase tracking-widest font-mono">{b.name}</span>
                 </div>
-              </div>
-            ))}
-            <div className="pt-8 border-t border-white/5 italic text-sm text-grid-line uppercase font-black">
-               [ VERIFICATION REQUIRED FOR FULL ACCESS ]
-            </div>
-          </div>
+              ))}
+           </div>
+        </section>
+
+        <section id="challenge">
+           <SectionTitle icon={<Target size={28} />} title="Daily Calibration" subtitle="Execute nodal verification to maintain career-streak density." />
+           <div className="max-w-2xl mx-auto">
+              <DailyChallenge />
+           </div>
+        </section>
+
+        <section id="simulator">
+           <SectionTitle icon={<Gamepad2 size={28} />} title="Trajectory Simulator" subtitle="Interactive branching logic to explore potential industrial futures." />
+           <div className="max-w-4xl mx-auto">
+              <CareerSimulator />
+           </div>
         </section>
 
         <section className="text-center py-40 border-t border-white/5">
@@ -1086,7 +1388,12 @@ export const PortalPage: React.FC = () => {
             <button onClick={downloadPDF} className="px-16 py-6 bg-white text-black font-black uppercase text-xs tracking-widest rounded-full hover:bg-plasma-cyan hover:scale-105 transition-all">
               EXTRACT DATA PDF
             </button>
-            <button className="p-6 border border-white/10 rounded-full hover:bg-white/5 transition-all"><Share2 /></button>
+            <button 
+              onClick={shareRoadmap}
+              className="p-6 border border-white/10 rounded-full hover:bg-white/5 transition-all text-plasma-cyan"
+            >
+              <Share2 />
+            </button>
           </div>
         </section>
       </main>
