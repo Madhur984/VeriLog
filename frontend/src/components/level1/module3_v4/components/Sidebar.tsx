@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 import { motion } from 'framer-motion';
-import { Moon, Sun, Cpu } from 'lucide-react';
+import { Moon, Sun, Cpu, Activity } from 'lucide-react';
 
 interface Section {
   id: string;
@@ -11,6 +11,7 @@ interface SidebarProps {
   sections: Section[];
   activeSection: string;
   onSectionClick: (id: string) => void;
+  onEnterLabs?: () => void;
   isDarkMode: boolean;
   toggleTheme: () => void;
   progress: number;
@@ -25,6 +26,7 @@ const SidebarComponent: React.FC<SidebarProps> = ({
   sections, 
   activeSection, 
   onSectionClick, 
+  onEnterLabs,
   isDarkMode, 
   toggleTheme,
   progress
@@ -79,7 +81,7 @@ const SidebarComponent: React.FC<SidebarProps> = ({
         </div>
       </nav>
 
-      <footer className="mt-auto p-8 border-t space-y-8" style={{ borderColor }}>
+      <footer className="mt-auto p-8 border-t space-y-6" style={{ borderColor }}>
         <div className="space-y-4 px-1">
             <div className="flex justify-between items-end">
                 <span className={`text-[10px] font-mono uppercase tracking-[0.1em] font-black ${isDarkMode ? 'text-sky-900' : 'text-gray-400'}`}>Completion</span>
@@ -95,15 +97,27 @@ const SidebarComponent: React.FC<SidebarProps> = ({
             </div>
         </div>
 
-        <button 
-            onClick={toggleTheme} 
-            className={`w-full h-12 flex items-center justify-center gap-3 rounded-xl border font-bold text-[11px] uppercase tracking-widest transition-all duration-300 active:scale-[0.98] ${isDarkMode 
-                ? 'border-sky-900/40 text-sky-400 hover:bg-sky-950/30' 
-                : 'border-gray-200 text-gray-700 hover:bg-gray-100'}`}
-        >
-            {isDarkMode ? <Sun size={14} className="text-sky-500" /> : <Moon size={14} className="text-sky-600" />} 
-            {isDarkMode ? 'Light Mode' : 'Dark Mode'}
-        </button>
+        <div className="flex flex-col gap-2">
+            <button 
+                onClick={onEnterLabs}
+                className={`w-full h-11 flex items-center justify-center gap-2 rounded-xl border-2 font-black text-[10px] uppercase tracking-[0.15em] transition-all duration-300 active:scale-[0.96] shadow-2xl ${isDarkMode 
+                    ? 'border-sky-500/20 bg-sky-500/5 text-sky-400 hover:bg-sky-500/10 hover:border-sky-500/40' 
+                    : 'border-sky-100 bg-sky-50 text-sky-600 hover:bg-sky-100'}`}
+            >
+                <Activity size={12} className="animate-pulse" />
+                Engineering Labs
+            </button>
+            
+            <button 
+                onClick={toggleTheme} 
+                className={`w-full h-11 flex items-center justify-center gap-2 rounded-xl border font-bold text-[10px] uppercase tracking-widest transition-all duration-300 active:scale-[0.98] ${isDarkMode 
+                    ? 'border-sky-900/40 text-sky-400 hover:bg-sky-950/30' 
+                    : 'border-gray-200 text-gray-700 hover:bg-gray-100'}`}
+            >
+                {isDarkMode ? <Sun size={12} className="text-sky-500" /> : <Moon size={12} className="text-sky-600" />} 
+                {isDarkMode ? 'Light' : 'Dark'}
+            </button>
+        </div>
       </footer>
     </div>
   );

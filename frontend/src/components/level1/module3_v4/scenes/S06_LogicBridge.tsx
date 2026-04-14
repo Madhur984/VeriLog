@@ -5,9 +5,10 @@ import { SceneLogicBridge } from '../../../level3/SceneLogicBridge';
 interface Props {
   isActive: boolean;
   isDarkMode: boolean;
+  onEnterLabs?: () => void;
 }
 
-export const S06_LogicBridge: React.FC<Props> = ({ isActive, isDarkMode }) => {
+export const S06_LogicBridge: React.FC<Props> = ({ isActive, isDarkMode, onEnterLabs }) => {
     const textColor = isDarkMode ? 'text-white' : 'text-gray-900';
     const subTextColor = isDarkMode ? 'text-sky-400' : 'text-sky-600';
 
@@ -99,9 +100,17 @@ export const S06_LogicBridge: React.FC<Props> = ({ isActive, isDarkMode }) => {
           <p className={`font-mono text-xs font-black mb-4 ${isDarkMode ? 'text-sky-400' : 'text-sky-600'}`}>
               "1 AM Mentor Take"
           </p>
-          <p className={`text-xl md:text-2xl font-medium italic ${textColor} max-w-3xl mx-auto leading-tight`}>
+          <p className={`text-xl md:text-2xl font-medium italic ${textColor} max-w-3xl mx-auto leading-tight mb-8`}>
               "Everything you see on a screen—every pixel, every AI thought, every line of code—is just a carefully arranged sequence of <strong>silicon switches</strong> closing and opening. You now see the code behind reality."
           </p>
+
+          <button
+            onClick={onEnterLabs}
+            className="group px-10 py-5 bg-sky-500 hover:bg-sky-400 text-white rounded-2xl font-mono text-[11px] font-black tracking-widest uppercase shadow-xl shadow-sky-500/20 transition-all flex items-center gap-4 mx-auto"
+          >
+            [ Enter Interactive Labs ]
+            <motion.span animate={{ x: [0, 5, 0] }} transition={{ repeat: Infinity, duration: 1.5 }}>⚡</motion.span>
+          </button>
       </div>
     </div>
     );
