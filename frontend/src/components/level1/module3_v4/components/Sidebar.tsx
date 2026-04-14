@@ -5,6 +5,7 @@ import { Moon, Sun, Cpu, Activity } from 'lucide-react';
 interface Section {
   id: string;
   label: string;
+  hidden?: boolean;
 }
 
 interface SidebarProps {
@@ -53,7 +54,7 @@ const SidebarComponent: React.FC<SidebarProps> = ({
       <nav className="p-8 flex-1">
         <p className={`text-[10px] font-mono uppercase tracking-[0.2em] mb-6 ${isDarkMode ? 'text-sky-900' : 'text-gray-400'}`}>Logical Path</p>
         <div className="flex flex-col gap-2">
-          {sections.map(s => {
+          {sections.filter(s => !s.hidden).map(s => {
             const isActive = activeSection === s.id;
             return (
                 <button 

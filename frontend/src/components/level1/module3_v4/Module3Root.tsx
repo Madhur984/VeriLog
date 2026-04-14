@@ -29,7 +29,7 @@ const SECTIONS = [
   { id: 'octal', label: 'Octal System' },
   { id: 'hex', label: 'Hexadecimal' },
   { id: 'conversions', label: 'Art of Conversion' },
-  { id: 'lab-activity', label: 'Engineering Labs' },
+  { id: 'lab-activity', label: 'Engineering Labs', hidden: true },
   { id: 'binary-choice', label: '1. Why Binary?' },
   { id: 'voltage-bit', label: '2. Voltage to Bit' },
   { id: 'switches', label: '3. Physical Switches' },
