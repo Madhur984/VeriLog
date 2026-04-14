@@ -7,6 +7,7 @@ interface SceneManagerProps {
   onSceneChange: (index: number) => void;
   time: number;
   isDarkMode: boolean;
+  extraProps?: Record<string, any>;
 }
 
 /**
@@ -19,7 +20,8 @@ export const SceneManager: React.FC<SceneManagerProps> = ({
     activeScene, 
     onSceneChange, 
     time,
-    isDarkMode
+    isDarkMode,
+    extraProps
 }) => {
   const [visibleIndices, setVisibleIndices] = useState<Set<number>>(new Set([0]));
   const containerRef = useRef<HTMLDivElement>(null);
@@ -75,6 +77,7 @@ export const SceneManager: React.FC<SceneManagerProps> = ({
                 time={visibleIndices.has(index) ? time : 0} 
                 isActive={activeScene === index}
                 isDarkMode={isDarkMode}
+                {...extraProps}
             />
           </motion.div>
         </section>

@@ -1,11 +1,10 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Sidebar } from './components/Sidebar';
 import { SceneManager } from './SceneManager';
 import { useColorScheme } from '../../../hooks/useColorScheme';
 import { useBinaryStore } from '../../../stores/binaryStore';
-import { M3Activities } from './M3Activities';
-import { AnimatePresence } from 'framer-motion';
+import { M3LabEngine } from './M3LabEngine';
 
 import { S00_Intro } from './scenes/S00_Intro';
 import { S00_A_DecimalSystem } from './scenes/S00_A_DecimalSystem';
@@ -43,12 +42,15 @@ export const Module3Root: React.FC = () => {
   const [scheme, toggleTheme] = useColorScheme();
   const isDarkMode = scheme === 'dark';
   
-  const activeSceneStr = useBinaryStore(s => s.activeScene);
   const setSceneStr = useBinaryStore(s => s.goToScene);
-  const SCENE_NAMES: any[] = ['intro', 'decimal', 'binary', 'octal', 'hex', 'conversions', 'whybinary', 'switch', 'counter', 'register', 'bridge', 'complete', 'complete'];  
+  const SCENE_NAMES: any[] = [
+    'intro', 'decimal', 'binary', 'octal', 'hex', 'conversions', 
+    'whybinary', 'switch', 'switch', 'counter', 'register', 'bridge', 'complete', 'complete'
+  ];  
+
   const [activeScreenIndex, setActiveScreenIndex] = useState(0);
   const [time, setTime] = useState(0);
-  const [isLabOpen, setIsLabOpen] = useState(false);
+  const [viewMode, setViewMode] = useState<'guide' | 'lab'>('guide');
 
   // Sync index to store
   useEffect(() => {
@@ -56,7 +58,7 @@ export const Module3Root: React.FC = () => {
     setSceneStr(SCENE_NAMES[idx]);
   }, [activeScreenIndex, setSceneStr]);
 
-  // Unified Animation Clock: Single RAF loop for the entire module
+  // Unified Animation Clock
   useEffect(() => {
     let raf: number;
     const animate = (t: number) => {
@@ -67,7 +69,7 @@ export const Module3Root: React.FC = () => {
     return () => cancelAnimationFrame(raf);
   }, []);
 
-  const scenes = React.useMemo(() => [
+  const scenes = useMemo(() => [
     S00_Intro,
     S00_A_DecimalSystem,
     S00_B_BinarySystem,
@@ -99,15 +101,16 @@ export const Module3Root: React.FC = () => {
     <div className={`flex h-screen w-full font-sans transition-colors duration-500 overflow-hidden ${isDarkMode ? 'bg-[#040b15]' : 'bg-gray-50'}`}>
       <Sidebar 
         sections={SECTIONS}
-        activeSection={SECTIONS[activeScreenIndex].id}
+        activeSection={SECTIONS[activeScreenIndex]?.id || 'intro'}
         onSectionClick={scrollToScene}
+        onEnterLabs={() => setViewMode('lab')}
         isDarkMode={isDarkMode}
         toggleTheme={toggleTheme}
         progress={progress}
       />
       
       <main className="flex-1 relative overflow-hidden flex flex-col">
-        {/* Top Floating HUD (Mirrored from Module 2) */}
+        {/* Top Floating HUD */}
         <header className="absolute top-0 left-0 right-0 z-20 px-12 py-10 flex justify-between items-center pointer-events-none">
             <motion.div 
                 initial={{ y: -20, opacity: 0 }}
@@ -117,7 +120,7 @@ export const Module3Root: React.FC = () => {
                 <div className={`w-2.5 h-2.5 rounded-full bg-sky-500 shadow-[0_0_15px_#0ea5e9]`} />
                 <div className="flex flex-col">
                     <span className={`text-[10px] font-mono font-black tracking-tighter ${isDarkMode ? 'text-white/30' : 'text-gray-400'}`}>CORE_NODE::V-03</span>
-                    <span className={`text-xs font-black tracking-[0.2em] uppercase ${isDarkMode ? 'text-sky-500' : 'text-sky-600'}`}>{SECTIONS[activeScreenIndex].label}</span>
+                    <span className={`text-xs font-black tracking-[0.2em] uppercase ${isDarkMode ? 'text-sky-500' : 'text-sky-600'}`}>{SECTIONS[activeScreenIndex]?.label || ''}</span>
                 </div>
             </motion.div>
 
@@ -127,14 +130,8 @@ export const Module3Root: React.FC = () => {
                 transition={{ delay: 0.1 }}
                 className={`flex flex-col items-end backdrop-blur-2xl border px-8 py-4 rounded-[2rem] pointer-events-auto transition-all duration-500 ${isDarkMode ? 'bg-black/60 border-white/5' : 'bg-white/90 border-gray-100 shadow-sm'}`}
             >
-                <button 
-                  onClick={() => setIsLabOpen(true)}
-                  className={`text-[10px] font-black uppercase tracking-[0.2em] transition-all hover:scale-110 active:scale-95 cursor-pointer ${isDarkMode ? 'text-sky-400' : 'text-sky-600'}`}
-                  style={{ background: 'none', border: 'none', padding: 0 }}
-                >
-                  ⚡ Engineering Lab
-                </button>
-                <span className={`text-[8px] font-mono uppercase tracking-widest opacity-50 ${isDarkMode ? 'text-white' : 'text-gray-400'}`}>v3.0.1_m3_activities</span>
+                <span className={`text-[10px] font-mono uppercase tracking-widest ${isDarkMode ? 'text-white/30' : 'text-gray-400'}`}>Engine:</span>
+                <span className={`text-[10px] font-black uppercase tracking-[0.2em] animate-pulse ${isDarkMode ? 'text-sky-500' : 'text-sky-600'}`}>Boolean Active</span>
             </motion.div>
         </header>
 
@@ -144,29 +141,19 @@ export const Module3Root: React.FC = () => {
             onSceneChange={handleSceneChange}
             time={time}
             isDarkMode={isDarkMode}
+            extraProps={{ onEnterLabs: () => setViewMode('lab') }}
         />
       </main>
 
       <AnimatePresence>
-        {isLabOpen && (
+        {viewMode === 'lab' && (
           <motion.div
-            initial={{ opacity: 0, scale: 1.1 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 1.1 }}
-            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed inset-0 z-[1000] bg-black"
+            initial={{ opacity: 0, backdropFilter: 'blur(0px)' }}
+            animate={{ opacity: 1, backdropFilter: 'blur(20px)' }}
+            exit={{ opacity: 0, backdropFilter: 'blur(0px)' }}
+            className="fixed inset-0 z-[1000] bg-black/40"
           >
-            <M3Activities 
-              onClose={() => setIsLabOpen(false)} 
-            />
-            
-            {/* Close Button */}
-            <button
-              onClick={() => setIsLabOpen(false)}
-              className="fixed top-8 right-8 z-[1100] px-6 py-3 bg-white/10 hover:bg-white/20 border border-white/20 rounded-full text-white font-mono text-xs tracking-widest transition-all"
-            >
-              CLOSE LAB [ESC]
-            </button>
+            <M3LabEngine onClose={() => setViewMode('guide')} />
           </motion.div>
         )}
       </AnimatePresence>
