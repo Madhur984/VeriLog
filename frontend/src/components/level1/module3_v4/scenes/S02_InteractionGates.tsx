@@ -35,77 +35,58 @@ export const S02_InteractionGates: React.FC<Props> = ({ isActive, isDarkMode }) 
     const cardBg = isDarkMode ? 'bg-black/40 border-white/10' : 'bg-white shadow-2xl shadow-sky-500/5 border-gray-100';
 
     return (
-        <div className="max-w-4xl mx-auto flex flex-col items-center">
-            <div className="text-center mb-12">
-                <motion.span 
-                    initial={{ opacity: 0 }}
-                    animate={isActive ? { opacity: 1 } : {}}
-                    className={`font-mono text-[10px] tracking-[0.4em] uppercase ${subTextColor} block mb-4`}
-                >
-                    3.2 — Interaction Gates
-                </motion.span>
-                <h2 className={`text-4xl font-black mb-6 ${textColor}`}>The Digital Lever</h2>
-                <div className="max-w-xl mx-auto">
-                    <p className={`text-sm md:text-base leading-relaxed ${isDarkMode ? 'text-white/60' : 'text-gray-500'}`}>
-                        Manipulation of discrete states starts here. Each switch represents a <b>Bit</b> — the smallest unit of information. 
-                        Toggle the switches to see the physical transition between logic levels.
-                    </p>
-                </div>
-            </div>
-
-            <div className={`w-full backdrop-blur-xl border rounded-[2rem] p-10 relative overflow-hidden transition-colors duration-500 ${cardBg}`}>
-                {/* Switch Grid */}
-                <div className="grid grid-cols-4 gap-8 mb-12">
-                    {bits.map((bit, i) => (
-                        <div key={i} className="flex flex-col items-center gap-6">
-                            <span className="font-mono text-[10px] opacity-40 font-black tracking-widest uppercase">BIT_{3-i}</span>
-                            <motion.button
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.9 }}
-                                onClick={() => handleToggle(i)}
-                                className={`w-16 h-28 rounded-2xl relative transition-all duration-300 border-2 overflow-hidden ${
-                                    bit === 1 
-                                    ? (isDarkMode ? 'bg-sky-500 border-sky-400' : 'bg-sky-500 border-sky-600 shadow-xl shadow-sky-500/40') 
-                                    : (isDarkMode ? 'bg-black border-white/10' : 'bg-gray-100 border-gray-200')
-                                }`}
-                            >
-                                <motion.div 
-                                    animate={{ y: bit === 1 ? -10 : 10 }}
-                                    className={`absolute inset-0 m-auto w-10 h-10 rounded-xl transition-all duration-300 shadow-lg ${
-                                        bit === 1 
-                                        ? 'bg-white' 
-                                        : (isDarkMode ? 'bg-white/10' : 'bg-white')
-                                    }`}
-                                />
-                                {bit === 1 && (
-                                    <motion.div 
-                                        initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                                        className="absolute inset-0 bg-gradient-to-t from-white/20 to-transparent"
-                                    />
-                                )}
-                            </motion.button>
-                            <span className={`font-mono text-2xl font-black transition-colors ${bit === 1 ? subTextColor : 'opacity-20 ' + textColor}`}>
-                                {bit}
-                            </span>
-                        </div>
-                    ))}
-                </div>
-
-                {/* Info Bar */}
-                <div className={`w-full p-6 rounded-2xl border flex items-center justify-between ${isDarkMode ? 'bg-black/40 border-white/5' : 'bg-gray-50 border-gray-100'}`}>
-                   <div className="flex items-center gap-4">
-                        <Terminal size={14} className={subTextColor} />
-                        <span className={`font-mono text-[10px] tracking-widest font-black uppercase ${isDarkMode ? 'text-white/40' : 'text-gray-400'}`}>
-                            Binary State:
-                        </span>
-                        <span className={`font-mono text-xs font-black ${subTextColor}`}>{bits.join('')}</span>
-                   </div>
-                   <div className="flex items-center gap-2">
-                        <Info size={12} className="text-yellow-500" />
-                        <span className="text-[10px] font-bold text-yellow-500/80 uppercase tracking-tight">Toggle bits to unlock counting</span>
-                   </div>
-                </div>
-            </div>
+        <div className="max-w-5xl mx-auto space-y-16 py-12">
+      {/* 2. The Engineering Choice — From Voltage to Bit */}
+      <section className="space-y-8">
+        <div className="text-center space-y-4">
+            <motion.span 
+                initial={{ opacity: 0 }}
+                animate={isActive ? { opacity: 1 } : {}}
+                className={`font-mono text-[10px] tracking-[0.4em] uppercase ${subTextColor} block mb-4`}
+            >
+                2. The Engineering Choice — From Voltage to Bit
+            </motion.span>
+            <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>From Voltage to Bit</h2>
+            <p className={`text-lg max-w-2xl mx-auto opacity-70 ${textColor}`}>
+                Computers are made of silicon and metal. They don't understand "3" or "7". They understand <span className={subTextColor}>High Voltage</span> and <span className={subTextColor}>Low Voltage</span>.
+            </p>
         </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+            <motion.div 
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={isActive ? { opacity: 1, scale: 1 } : {}}
+                className={`p-6 rounded-3xl border ${isDarkMode ? 'bg-black/40 border-white/10' : 'bg-white border-gray-100 shadow-xl'}`}
+            >
+                <h3 className={`font-mono text-xs uppercase tracking-widest mb-6 ${subTextColor}`}>Comparator Theory</h3>
+                <pre className={`font-mono text-[10px] sm:text-[11px] leading-relaxed ${textColor}`}>
+{`Input voltage ──┬── Comparator ──┬── Output 
+                │                 │
+Reference ──────┘                 │
+                                  ▼
+                          The "noise margin" 
+                          protects the decision.
+`}
+                </pre>
+            </motion.div>
+
+            <motion.div 
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={isActive ? { opacity: 1, scale: 1 } : {}}
+                className={`p-6 rounded-3xl border ${isDarkMode ? 'bg-black/40 border-white/10' : 'bg-white border-gray-100 shadow-xl'}`}
+            >
+                <h3 className={`font-mono text-xs uppercase tracking-widest mb-6 ${subTextColor}`}>Noise Margin Visual</h3>
+                <pre className={`font-mono text-[10px] sm:text-[11px] leading-relaxed ${textColor}`}>
+{`Logic 1:  V_OH (High)
+            ↑  Noise Margin High
+Undefined:  V_IH to V_IL (Forbidden)
+            ↓  Noise Margin Low
+Logic 0:  V_OL (Low)
+`}
+                </pre>
+            </motion.div>
+        </div>
+      </section>
+    </div>
     );
 };

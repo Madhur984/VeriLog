@@ -15,21 +15,33 @@ export const S07_Conclusion: React.FC<Props> = ({ isActive, isDarkMode }) => {
 
     return (
         <div className="max-w-4xl mx-auto flex flex-col items-center text-center">
-            <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={isActive ? { opacity: 1, scale: 1 } : {}}
-                className={`w-24 h-24 rounded-[2.5rem] flex items-center justify-center mb-10 transition-colors duration-500 ${isDarkMode ? 'bg-sky-500/10 border border-sky-500/20' : 'bg-sky-500 border border-sky-600 shadow-2xl shadow-sky-500/20'}`}
+            <motion.span 
+                initial={{ opacity: 0 }}
+                animate={isActive ? { opacity: 1 } : {}}
+                className={`font-mono text-[10px] tracking-[0.4em] uppercase ${subTextColor} block mb-8`}
             >
-                <Trophy size={40} className={isDarkMode ? 'text-sky-500' : 'text-white'} />
-            </motion.div>
+                8. Module 03 Conclusion — Binary Awakened
+            </motion.span>
 
-            <h1 className={`text-5xl md:text-7xl font-black tracking-tighter mb-8 ${textColor}`}>
-                Binary <span className={subTextColor}>Mastered</span>
-            </h1>
+            <h2 className={`text-2xl font-black mb-6 ${textColor}`}>What you should be able to do now:</h2>
+            <div className={`grid grid-cols-1 md:grid-cols-2 gap-4 text-left max-w-2xl mx-auto mb-16`}>
+                {[
+                    "Convert Dec/Bin/Hex/Oct systems effortlessly",
+                    "Understand Propagation Delay constraints",
+                    "See CPU math as a chain of binary blocks"
+                ].map((skill, index) => (
+                    <div key={index} className={`flex items-center gap-3 p-4 rounded-xl ${isDarkMode ? 'bg-white/5 border-white/5' : 'bg-sky-50 border-sky-100'} border`}>
+                        <div className="w-5 h-5 rounded-full bg-sky-500/20 flex items-center justify-center">
+                            <ArrowRight size={12} className="text-sky-500" />
+                        </div>
+                        <span className={`text-sm font-medium ${textColor} opacity-80`}>{skill}</span>
+                    </div>
+                ))}
+            </div>
 
-            <p className={`text-xl max-w-2xl mx-auto mb-16 leading-relaxed ${isDarkMode ? 'text-white/60' : 'text-gray-500'}`}>
+            <p className={`text-lg max-w-2xl mx-auto mb-16 leading-relaxed ${isDarkMode ? 'text-white/40' : 'text-gray-500'}`}>
                 You have successfully deconstructed the atom of the digital world. 
-                The "1" is no longer just a number; it is a physical state, a threshold met, and a logic gate opened.
+                All computer logic is built from these tiny binary blocks.
             </p>
 
             <div className="flex flex-col md:flex-row gap-6">

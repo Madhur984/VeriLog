@@ -39,81 +39,123 @@ export const S03_TheCarryChain: React.FC<Props> = ({ isActive, isDarkMode }) => 
     const cardBg = isDarkMode ? 'bg-black/40 border-white/10' : 'bg-white shadow-2xl shadow-sky-500/5 border-gray-100';
 
     return (
-        <div className="max-w-4xl mx-auto flex flex-col items-center">
-            <div className="text-center mb-12">
-                <motion.span 
-                    initial={{ opacity: 0 }}
-                    animate={isActive ? { opacity: 1 } : {}}
-                    className={`font-mono text-[10px] tracking-[0.4em] uppercase ${subTextColor} block mb-4`}
-                >
-                    3.3 — The Carry Chain
-                </motion.span>
-                <h2 className={`text-4xl font-black mb-6 ${textColor}`}>Synchronous Progress</h2>
-                <div className="max-w-xl mx-auto">
-                    <p className={`text-sm md:text-base leading-relaxed ${isDarkMode ? 'text-white/60' : 'text-gray-500'}`}>
-                        Binary counting isn't just incrementing. It's a cascade of transitions. Notice how a single bit flip can ripple 
-                        across the entire bits (nibble) when it overflows. This is the <b>Carry Chain</b>.
-                    </p>
-                </div>
+        <div className="max-w-5xl mx-auto space-y-16 py-12">
+      {/* 4. The Carry Chain — Binary Counting in Action */}
+      <section className="space-y-8">
+        <div className="text-center space-y-4">
+            <motion.span 
+                initial={{ opacity: 0 }}
+                animate={isActive ? { opacity: 1 } : {}}
+                className={`font-mono text-[10px] tracking-[0.4em] uppercase ${subTextColor} block mb-4`}
+            >
+                4. The Carry Chain — Binary Counting in Action
+            </motion.span>
+            <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>Binary Counting</h2>
+            <p className={`text-lg max-w-2xl mx-auto opacity-70 ${textColor}`}>
+                To increment a binary number, we follow a simple recursive rule that creates a <strong>ripple effect</strong> across bits.
+            </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <motion.div 
+                initial={{ opacity: 0, x: -20 }}
+                animate={isActive ? { opacity: 1, x: 0 } : {}}
+                className={`p-8 rounded-3xl border ${isDarkMode ? 'bg-black/40 border-white/10' : 'bg-white border-gray-100 shadow-xl'}`}
+            >
+                <h3 className={`font-mono text-xs uppercase tracking-widest mb-6 ${subTextColor}`}>The counting Rule</h3>
+                <ol className={`space-y-4 text-sm ${textColor}`}>
+                    <li className="flex gap-4">
+                        <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black ${isDarkMode ? 'bg-white/10' : 'bg-sky-100 text-sky-700'}`}>1</span>
+                        <span>Start at bit 0 (LSB). If it's 0, change to 1. <strong>Done</strong>.</span>
+                    </li>
+                    <li className="flex gap-4">
+                        <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black ${isDarkMode ? 'bg-white/10' : 'bg-sky-100 text-sky-700'}`}>2</span>
+                        <span>If it's 1, change to 0 and <strong>carry</strong> 1 to the next bit.</span>
+                    </li>
+                    <li className="flex gap-4">
+                        <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black ${isDarkMode ? 'bg-white/10' : 'bg-sky-100 text-sky-700'}`}>3</span>
+                        <span>Repeat for the next bit until no carry remains.</span>
+                    </li>
+                </ol>
+            </motion.div>
+
+            <motion.div 
+                initial={{ opacity: 0, x: 20 }}
+                animate={isActive ? { opacity: 1, x: 0 } : {}}
+                className={`p-8 rounded-3xl border ${isDarkMode ? 'bg-sky-500/5 border-sky-500/20' : 'bg-sky-50 border-sky-100 shadow-xl'}`}
+            >
+                <h3 className={`font-mono text-xs uppercase tracking-widest mb-6 ${subTextColor}`}>The Ripple Effect (7 → 8)</h3>
+                <pre className={`font-mono text-[10px] sm:text-[11px] leading-relaxed ${textColor}`}>
+{`  0 1 1 1  (7)
++        1
+-----------
+  1 0 0 0  (8)
+
+Clock ──┬─► bit0: 1 → 0 (Carry 1)
+        │           │
+        └───────────► bit1: 1 → 0 (Carry 1)
+                    │           │
+                    └───────────► bit2: 1 → 0 (Carry 1)
+                                │           │
+                                └───────────► bit3: 0 → 1
+`}
+                </pre>
+            </motion.div>
+        </div>
+      </section>
+
+      {/* Propagation Delay & Overflow */}
+      <section className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+        <div className={`p-8 rounded-3xl border ${isDarkMode ? 'bg-red-500/5 border-red-500/20' : 'bg-red-50 border-red-100'}`}>
+            <div className="flex items-center gap-3 mb-4 text-red-500">
+                <Boxes size={20} />
+                <h3 className="font-black text-xl">Overflow Condition</h3>
             </div>
+            <p className="text-sm opacity-70 mb-6 font-medium leading-relaxed">
+                When adding to the maximum value (1111 for 4 bits), the carry propagates out of the system.
+            </p>
+            <div className={`p-6 rounded-2xl font-mono text-xs ${isDarkMode ? 'bg-black/40' : 'bg-white border border-red-100'}`}>
+{`  1 1 1 1  (15)
++         1
+-----------
+1 0 0 0 0  (Stored: 0000)
 
-            <div className={`w-full backdrop-blur-xl border rounded-[2rem] p-12 relative overflow-hidden transition-colors duration-500 ${cardBg}`}>
-                {/* Counter Simulation Visual */}
-                <div className="flex justify-center gap-6 mb-16">
-                    {bits.map((bit, i) => (
-                        <div key={i} className="flex flex-col items-center gap-4">
-                            <motion.div 
-                                animate={{ 
-                                    scale: isIncrementing ? [1, 1.1, 1] : 1,
-                                    rotateX: bit === 1 ? 0 : 180
-                                }}
-                                className={`w-16 h-16 rounded-2xl flex items-center justify-center border-2 transition-all duration-300 ${
-                                    bit === 1 
-                                    ? (isDarkMode ? 'bg-sky-500/20 border-sky-500' : 'bg-sky-50 border-sky-400 shadow-lg shadow-sky-500/10') 
-                                    : (isDarkMode ? 'bg-black border-white/10 opacity-30' : 'bg-gray-100 border-gray-200 opacity-50')
-                                }`}
-                                style={{ perspective: 1000 }}
-                            >
-                                <span className={`text-2xl font-black ${bit === 1 ? subTextColor : textColor}`}>{bit}</span>
-                            </motion.div>
-                            <span className="font-mono text-[9px] opacity-30 font-bold">2^{3-i}</span>
-                        </div>
-                    ))}
-                </div>
-
-                <div className="flex flex-col items-center gap-8">
-                    <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={handleIncrement}
-                        disabled={isSystemBusy || isIncrementing}
-                        className={`group px-12 py-6 rounded-2xl font-mono text-xs font-black tracking-[0.2em] uppercase transition-all flex items-center gap-4 ${
-                            isSystemBusy || isIncrementing
-                            ? 'bg-gray-800 text-gray-600 cursor-not-allowed'
-                            : (isDarkMode ? 'bg-sky-500 text-white shadow-2xl shadow-sky-500/20' : 'bg-sky-600 text-white shadow-2xl shadow-sky-600/30')
-                        }`}
-                    >
-                        <Zap size={16} className={isIncrementing ? 'animate-pulse' : ''} />
-                        Cycle Hardware Clock
-                        <ArrowRightCircle size={16} className="group-hover:translate-x-1 transition-transform" />
-                    </motion.button>
-                    
-                    <div className="flex items-center gap-8 opacity-40">
-                         <div className="flex items-center gap-2">
-                            <Boxes size={14} />
-                            <span className="font-mono text-[10px] font-bold uppercase tracking-widest">Base_10: {parseInt(bits.join(''), 2)}</span>
-                         </div>
-                         <div className="h-4 w-px bg-current opacity-20" />
-                         <div className="flex items-center gap-2">
-                             <span className="font-mono text-[10px] font-bold uppercase tracking-widest">Overflow: {parseInt(bits.join(''), 2) === 15 ? 'Critical' : 'Safe'}</span>
-                         </div>
-                    </div>
-                </div>
-
-                {/* Aesthetic Detail: Connection Lines */}
-                <div className="absolute top-1/2 left-0 right-0 h-px bg-gradient-to-r from-transparent via-sky-500/10 to-transparent -z-10" />
+Result: Overflow flag = 1
+`}
             </div>
         </div>
+
+        <div className={`p-8 rounded-3xl border ${isDarkMode ? 'bg-white/5 border-white/10' : 'bg-gray-50 border-gray-200'}`}>
+            <div className="flex items-center gap-3 mb-4 text-sky-500">
+                <Zap size={20} />
+                <h3 className="font-black text-xl">Propagation Delay</h3>
+            </div>
+            <p className="text-sm opacity-70 mb-6 leading-relaxed">
+                Each bit flip takes a small amount of time (gate delay). The total ripple time is:
+            </p>
+            <div className="text-2xl font-mono font-black text-center mb-6">
+                T_total = N × t_gate
+            </div>
+            <p className="text-xs opacity-50 italic">
+                This "chain reaction" time is why higher clock speeds require faster physical materials and smaller circuits.
+            </p>
+        </div>
+      </section>
+
+      {/* Key Principle Callout */}
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={isActive ? { opacity: 1 } : {}}
+        className={`p-10 rounded-[2.5rem] text-center border ${isDarkMode ? 'bg-white/5 border-white/10' : 'bg-white border-gray-100'}`}
+      >
+          <div className={`p-2 w-10 h-10 rounded-full flex items-center justify-center mx-auto mb-6 bg-sky-500`}>
+            <Boxes size={20} className="text-white" />
+          </div>
+          <p className="text-xl md:text-2xl font-black leading-tight">
+            "Binary counting is a cascade of decisions. One flip can trigger a chain reaction across the entire machine."
+          </p>
+      </motion.div>
+    </div>
     );
 
 };

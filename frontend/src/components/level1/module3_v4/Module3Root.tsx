@@ -6,25 +6,35 @@ import { useColorScheme } from '../../../hooks/useColorScheme';
 import { useBinaryStore } from '../../../stores/binaryStore';
 
 import { S00_Intro } from './scenes/S00_Intro';
+import { S00_A_DecimalSystem } from './scenes/S00_A_DecimalSystem';
+import { S00_B_BinarySystem } from './scenes/S00_B_BinarySystem';
+import { S00_C_OctalSystem } from './scenes/S00_C_OctalSystem';
+import { S00_D_HexSystem } from './scenes/S00_D_HexSystem';
+import { S00_E_Conversions } from './scenes/S00_E_Conversions';
 import { S01_WhyBinary } from './scenes/S01_WhyBinary';
 import { S02_InteractionGates } from './scenes/S02_InteractionGates';
+import { S02_B_PhysicalSwitches } from './scenes/S02_B_PhysicalSwitches';
 import { S03_TheCarryChain } from './scenes/S03_TheCarryChain';
 import { S04_SiliconPersistence } from './scenes/S04_SiliconPersistence';
-import { S05_ArithmeticSynthesis } from './scenes/S05_ArithmeticSynthesis';
 import { S06_LogicBridge } from './scenes/S06_LogicBridge';
 import { S08_KnowledgeGate } from './scenes/S08_KnowledgeGate';
 import { S07_Conclusion } from './scenes/S07_Conclusion';
 
 const SECTIONS = [
   { id: 'intro', label: 'The Pulse of Logic' },
-  { id: 'binary-choice', label: 'The Engineering Choice' },
-  { id: 'interaction', label: 'Interaction Gates' },
-  { id: 'carry-chain', label: 'The Carry Chain' },
-  { id: 'persistence', label: 'Silicon Persistence' },
-  { id: 'arithmetic', label: 'Arithmetic Synthesis' },
-  { id: 'logic-bridge', label: 'The Logic Bridge' },
-  { id: 'knowledge-gate', label: 'The Knowledge Gate' },
-  { id: 'discovery-end', label: 'Binary Awakened' },
+  { id: 'decimal', label: 'Decimal System' },
+  { id: 'binary', label: 'Binary System' },
+  { id: 'octal', label: 'Octal System' },
+  { id: 'hex', label: 'Hexadecimal' },
+  { id: 'conversions', label: 'Art of Conversion' },
+  { id: 'binary-choice', label: '1. Why Binary?' },
+  { id: 'voltage-bit', label: '2. Voltage to Bit' },
+  { id: 'switches', label: '3. Physical Switches' },
+  { id: 'carry-chain', label: '4. The Carry Chain' },
+  { id: 'persistence', label: '5. Silicon Persistence' },
+  { id: 'logic-bridge', label: '6. The Logic Bridge' },
+  { id: 'knowledge-gate', label: '7. The Knowledge Gate' },
+  { id: 'discovery-end', label: '8. Binary Awakened' },
 ];
 
 export const Module3Root: React.FC = () => {
@@ -33,8 +43,7 @@ export const Module3Root: React.FC = () => {
   
   const activeSceneStr = useBinaryStore(s => s.activeScene);
   const setSceneStr = useBinaryStore(s => s.goToScene);
-  const SCENE_NAMES: any[] = ['intro', 'whybinary', 'switch', 'counter', 'register', 'arithmetic', 'bridge', 'complete', 'complete']; // Approximate mapping
-  
+  const SCENE_NAMES: any[] = ['intro', 'decimal', 'binary', 'octal', 'hex', 'conversions', 'whybinary', 'switch', 'counter', 'register', 'bridge', 'complete', 'complete'];  
   const [activeScreenIndex, setActiveScreenIndex] = useState(0);
   const [time, setTime] = useState(0);
 
@@ -57,11 +66,16 @@ export const Module3Root: React.FC = () => {
 
   const scenes = React.useMemo(() => [
     S00_Intro,
+    S00_A_DecimalSystem,
+    S00_B_BinarySystem,
+    S00_C_OctalSystem,
+    S00_D_HexSystem,
+    S00_E_Conversions,
     S01_WhyBinary,
     S02_InteractionGates,
+    S02_B_PhysicalSwitches,
     S03_TheCarryChain,
     S04_SiliconPersistence,
-    S05_ArithmeticSynthesis,
     S06_LogicBridge,
     S08_KnowledgeGate,
     S07_Conclusion

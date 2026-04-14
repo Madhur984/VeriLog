@@ -86,65 +86,130 @@ export const S01_WhyBinary: React.FC<Props> = ({ isActive, isDarkMode }) => {
     const subTextColor = isDarkMode ? 'text-sky-400' : 'text-sky-600';
 
     return (
-        <div className="max-w-4xl mx-auto flex flex-col items-center">
-            <div className="text-center mb-12">
-                <motion.span 
-                    initial={{ opacity: 0 }}
-                    animate={isActive ? { opacity: 1 } : {}}
-                    className={`font-mono text-[10px] tracking-[0.4em] uppercase ${subTextColor} block mb-4`}
-                >
-                    3.1 — The Engineering Choice
-                </motion.span>
-                <h2 className={`text-4xl font-black mb-6 ${textColor}`}>The Cost of Continuity</h2>
-                <div className="max-w-xl mx-auto">
-                    <p className={`text-sm md:text-base leading-relaxed ${isDarkMode ? 'text-white/60' : 'text-gray-500'}`}>
-                        Analog signals are rich, but they are fragile. Every electron collision in the wire adds noise. 
-                        By choosing only <b>0</b> and <b>1</b>, we build a machine that can never be wrong.
-                    </p>
-                </div>
-            </div>
+        <div className="max-w-5xl mx-auto space-y-16 py-12">
+      {/* 1.1 The Fundamental Choice */}
+      <section className="text-center space-y-4">
+        <motion.span 
+            initial={{ opacity: 0 }}
+            animate={isActive ? { opacity: 1 } : {}}
+            className={`font-mono text-[10px] tracking-[0.4em] uppercase ${subTextColor} block mb-4`}
+        >
+          1. The Pulse of Logic — Why Binary?
+        </motion.span>
+        <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>The Fundamental Choice</h2>
+        <p className={`text-lg max-w-2xl mx-auto opacity-70 ${textColor}`}>
+          At the heart of every computer is a simple, powerful idea: <span className={subTextColor}>represent information using only two symbols, 0 and 1</span>.
+        </p>
+      </section>
 
-            <div className={`w-full backdrop-blur-xl border rounded-[2rem] p-10 relative overflow-hidden transition-colors duration-500 ${isDarkMode ? 'bg-black/40 border-white/10' : 'bg-white shadow-2xl shadow-sky-500/5 border-gray-100'}`}>
-                <div className={`w-full h-48 rounded-2xl overflow-hidden border relative mb-8 ${isDarkMode ? 'bg-black border-white/5' : 'bg-gray-50 border-gray-100'}`}>
-                    <canvas ref={canvasRef} width={640} height={200} className="w-full h-full" />
-                    <div className="absolute top-4 left-4 flex items-center gap-2">
-                        <Activity size={14} className={subTextColor} />
-                        <span className={`font-mono text-[10px] uppercase font-bold ${subTextColor}`}>Physical Signal (V)</span>
-                    </div>
-                </div>
+      {/* 1.2 Analog vs Binary Visual Comparison */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <motion.div 
+            initial={{ opacity: 0, x: -20 }}
+            animate={isActive ? { opacity: 1, x: 0 } : {}}
+            className={`p-8 rounded-3xl border ${isDarkMode ? 'bg-white/5 border-white/10' : 'bg-gray-50 border-gray-200 shadow-sm'}`}
+        >
+          <div className="flex items-center gap-2 mb-6">
+            <Activity size={16} className="text-red-500" />
+            <h3 className={`font-mono text-xs uppercase tracking-widest ${isDarkMode ? 'text-red-400' : 'text-red-600'}`}>Analog Signal (Continuous)</h3>
+          </div>
+          <pre className={`font-mono text-[10px] sm:text-[11px] leading-relaxed opacity-80 overflow-x-auto ${textColor}`}>
+{`Voltage
+ 5V ┤     ╱─────
+ 4V ┤    ╱
+ 3V ┤   ╱
+ 2V ┤  ╱
+ 1V ┤ ╱
+ 0V ┼╱──────────→ Time
+`}
+          </pre>
+          <div className={`mt-6 p-4 rounded-xl text-xs opacity-60 italic border border-dashed ${isDarkMode ? 'border-white/10' : 'border-gray-300'}`}>
+            Every tiny wiggle matters — noise is part of the signal.
+          </div>
+        </motion.div>
 
-                <AnimatePresence>
-                    {!isThresholdOn ? (
-                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="text-center">
-                            <p className="text-yellow-500 font-mono text-[10px] tracking-widest uppercase mb-6 font-bold">
-                                Signal Corruption Detected. Recover Truth?
-                            </p>
-                            <motion.button
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                                onClick={handleThreshold}
-                                className="px-10 py-5 bg-sky-500 hover:bg-sky-400 text-white rounded-2xl font-mono text-[11px] font-black tracking-widest uppercase shadow-xl shadow-sky-500/20 transition-all active:scale-95"
-                            >
-                                <Zap size={14} className="inline mr-3" /> Apply Threshold
-                            </motion.button>
-                        </motion.div>
-                    ) : (
-                        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="text-center">
-                            <p className={`font-mono text-sm font-black mb-4 ${isDarkMode ? 'text-sky-400' : 'text-sky-600'}`}>
-                                "Reality is noisy. Binary is Certain."
-                            </p>
-                            <p className={`text-xs max-w-sm mx-auto opacity-60 leading-relaxed italic ${textColor}`}>
-                                Thresholding effectively "cleans" the signal by mapping variable voltages to discrete logical levels.
-                            </p>
-                            <div className="mt-8 flex justify-center gap-2">
-                                <span className="w-1 h-1 rounded-full bg-sky-500 animate-pulse" />
-                                <span className="w-1 h-1 rounded-full bg-sky-500 animate-pulse delay-75" />
-                                <span className="w-1 h-1 rounded-full bg-sky-500 animate-pulse delay-150" />
-                            </div>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
-            </div>
-        </div>
+        <motion.div 
+            initial={{ opacity: 0, x: 20 }}
+            animate={isActive ? { opacity: 1, x: 0 } : {}}
+            className={`p-8 rounded-3xl border ${isDarkMode ? 'bg-sky-500/5 border-sky-500/20' : 'bg-sky-50 border-sky-100 shadow-sm'}`}
+        >
+          <div className="flex items-center gap-2 mb-6">
+            <Zap size={16} className={subTextColor} />
+            <h3 className={`font-mono text-xs uppercase tracking-widest ${subTextColor}`}>Binary Signal (Discrete)</h3>
+          </div>
+          <pre className={`font-mono text-[10px] sm:text-[11px] leading-relaxed ${subTextColor} overflow-x-auto`}>
+{`Voltage
+ 5V ┤████████████  (1)
+    │
+ 2V ┼────────────  Threshold
+    │
+0.8V┤████████████  (0)
+    └────────────→ Time
+`}
+          </pre>
+          <div className={`mt-6 p-4 rounded-xl text-xs opacity-80 font-medium italic border border-dashed ${isDarkMode ? 'border-sky-500/20' : 'border-sky-200'}`}>
+            Small noise (wiggles) does not cross the threshold → signal is clean.
+          </div>
+        </motion.div>
+      </div>
+
+      {/* 1.3 Why Binary Wins Table */}
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={isActive ? { opacity: 1, y: 0 } : {}}
+        className={`overflow-hidden rounded-3xl border ${isDarkMode ? 'bg-white/5 border-white/10' : 'bg-white border-gray-100 shadow-xl'}`}
+      >
+        <table className="w-full text-left border-collapse">
+            <thead>
+                <tr className={isDarkMode ? 'bg-white/5' : 'bg-gray-50'}>
+                    <th className={`p-6 font-mono text-xs uppercase tracking-widest ${subTextColor} w-1/4`}>Property</th>
+                    <th className={`p-6 font-mono text-xs uppercase tracking-widest ${subTextColor}`}>Analog</th>
+                    <th className={`p-6 font-mono text-xs uppercase tracking-widest ${subTextColor}`}>Binary</th>
+                </tr>
+            </thead>
+            <tbody className={`text-sm ${textColor}`}>
+                <tr className={`border-t ${isDarkMode ? 'border-white/5' : 'border-gray-100'}`}>
+                    <td className="p-6 font-bold">Noise immunity</td>
+                    <td className="p-6 opacity-60">Poor — noise changes value</td>
+                    <td className="p-6">
+                        <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${isDarkMode ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-emerald-100 text-emerald-700'}`}>
+                            Excellent
+                        </span>
+                        <div className="mt-2 text-xs opacity-60 italic">Noise must cross large gap</div>
+                    </td>
+                </tr>
+                <tr className={`border-t ${isDarkMode ? 'border-white/5' : 'border-gray-100'}`}>
+                    <td className="p-6 font-bold">Precision</td>
+                    <td className="p-6 opacity-60">Infinite in theory, limited by noise</td>
+                    <td className="p-6 font-bold text-sky-500">Finite but Exact</td>
+                </tr>
+                <tr className={`border-t ${isDarkMode ? 'border-white/5' : 'border-gray-100'}`}>
+                    <td className="p-6 font-bold">Storage</td>
+                    <td className="p-6 opacity-60">Fragile (magnetic tape degrades)</td>
+                    <td className="p-6 font-bold text-sky-500">Robust (perfect copies)</td>
+                </tr>
+                <tr className={`border-t ${isDarkMode ? 'border-white/5' : 'border-gray-100'}`}>
+                    <td className="p-6 font-bold">Computation</td>
+                    <td className="p-6 opacity-60">Hard (needs precise components)</td>
+                    <td className="p-6 font-bold text-sky-500">Easy (just switches)</td>
+                </tr>
+            </tbody>
+        </table>
+      </motion.div>
+
+      {/* Final Insight Callout */}
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={isActive ? { opacity: 1 } : {}}
+        className={`p-10 rounded-[2.5rem] text-center border ${isDarkMode ? 'bg-sky-500/5 border-sky-500/20' : 'bg-sky-50 border-sky-100'}`}
+      >
+          <div className={`p-2 w-10 h-10 rounded-full flex items-center justify-center mx-auto mb-6 ${isDarkMode ? 'bg-sky-500/20' : 'bg-sky-500'}`}>
+            <Zap size={20} className="text-white" />
+          </div>
+          <p className="text-xl md:text-2xl font-black leading-tight italic">
+            "Binary is not about representing all possible values — it’s about representing enough values with <span className={subTextColor}>certainty</span>."
+          </p>
+      </motion.div>
+    </div>
     );
 };

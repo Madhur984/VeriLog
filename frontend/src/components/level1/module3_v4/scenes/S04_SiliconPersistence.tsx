@@ -32,93 +32,75 @@ export const S04_SiliconPersistence: React.FC<Props> = ({ isActive, isDarkMode }
     const formattedStoredVal = storedValue !== null ? storedValue.toString(16).toUpperCase() : '?';
 
     return (
-        <div className="max-w-4xl mx-auto flex flex-col items-center">
-            <div className="text-center mb-12">
-                <motion.span 
-                    initial={{ opacity: 0 }}
-                    animate={isActive ? { opacity: 1 } : {}}
-                    className={`font-mono text-[10px] tracking-[0.4em] uppercase ${subTextColor} block mb-4`}
-                >
-                    3.4 — Silicon Persistence
-                </motion.span>
-                <h2 className={`text-4xl font-black mb-6 ${textColor}`}>The Memory Abstraction</h2>
-                <div className="max-w-xl mx-auto">
-                    <p className={`text-sm md:text-base leading-relaxed ${isDarkMode ? 'text-white/60' : 'text-gray-500'}`}>
-                        Computation is temporary. Memory is persistent. By storing a binary state into a <b>Register</b>, 
-                        we capture a moment in time, allowing it to be used as an input for future operations.
-                    </p>
-                </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
-                {/* Active Bus */}
-                <div className={`backdrop-blur-xl border rounded-[2rem] p-10 flex flex-col items-center justify-between transition-colors duration-500 ${cardBg}`}>
-                    <div className="flex items-center gap-3 self-start opacity-40 font-mono text-[10px] font-bold uppercase tracking-widest mb-8">
-                        <History size={14} />
-                        Active Logic Bus
-                    </div>
-                    
-                    <div className="flex flex-col items-center">
-                        <span className={`text-6xl font-black font-mono mb-2 ${textColor}`}>{currentVal}</span>
-                        <span className={`text-[10px] font-mono uppercase tracking-[0.2em] opacity-40 ${textColor}`}>Hex Output</span>
-                    </div>
-
-                    <div className="w-full h-px bg-current opacity-5 my-8" />
-                    
-                    <div className="flex gap-2">
-                        {bits.slice(0, 4).map((b, i) => (
-                            <div key={i} className={`w-3 h-3 rounded-full ${b === 1 ? 'bg-sky-500' : 'bg-gray-200 opacity-20'}`} />
-                        ))}
-                    </div>
-                </div>
-
-                {/* Stored Register */}
-                <div className={`backdrop-blur-xl border rounded-[2rem] p-10 flex flex-col items-center justify-between transition-colors duration-500 overflow-hidden relative ${
-                    storedValue !== null 
-                    ? (isDarkMode ? 'bg-sky-950/20 border-sky-400' : 'bg-sky-50 border-sky-200') 
-                    : cardBg
-                }`}>
-                    <div className="flex items-center gap-3 self-start opacity-40 font-mono text-[10px] font-bold uppercase tracking-widest mb-8">
-                        <Database size={14} />
-                        Static Register Store
-                    </div>
-
-                    <div className="flex flex-col items-center relative z-10">
-                        <motion.span 
-                            key={formattedStoredVal}
-                            initial={{ scale: 0.8, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            className={`text-6xl font-black font-mono mb-2 ${storedValue !== null ? subTextColor : 'opacity-10 ' + textColor}`}
-                        >
-                            {formattedStoredVal}
-                        </motion.span>
-                        <span className={`text-[10px] font-mono uppercase tracking-[0.2em] opacity-40 ${textColor}`}>Stored State</span>
-                    </div>
-
-                    <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={handleStore}
-                        disabled={isSystemBusy || isWriting}
-                        className={`w-full mt-8 py-5 rounded-2xl font-mono text-[10px] font-black tracking-[0.2em] uppercase transition-all flex items-center justify-center gap-3 ${
-                            isWriting 
-                            ? 'bg-sky-400 text-white cursor-wait' 
-                            : (isDarkMode ? 'bg-white text-black' : 'bg-black text-white')
-                        }`}
-                    >
-                        <Save size={14} className={isWriting ? 'animate-bounce' : ''} />
-                        {isWriting ? 'Writing to Silicon...' : 'Commit to Register'}
-                    </motion.button>
-
-                    {isWriting && (
-                         <motion.div 
-                            className="absolute inset-0 bg-sky-500/10 pointer-events-none"
-                            initial={{ x: '-100%' }} animate={{ x: '100%' }}
-                            transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-                         />
-                    )}
-                </div>
-            </div>
+        <div className="max-w-5xl mx-auto space-y-16 py-12">
+      {/* 5. Silicon Persistence — Memory and Registers */}
+      <section className="space-y-8">
+        <div className="text-center space-y-4">
+            <motion.span 
+                initial={{ opacity: 0 }}
+                animate={isActive ? { opacity: 1 } : {}}
+                className={`font-mono text-[10px] tracking-[0.4em] uppercase ${subTextColor} block mb-4`}
+            >
+                5. Silicon Persistence — Memory and Registers
+            </motion.span>
+            <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>Silicon Persistence</h2>
+            <p className={`text-lg max-w-2xl mx-auto opacity-70 ${textColor}`}>
+                Logic gates are instantaneous—they have no memory. To store a bit, we need <strong>Persistence</strong>.
+            </p>
         </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={isActive ? { opacity: 1, y: 0 } : {}}
+                className={`p-8 rounded-3xl border ${isDarkMode ? 'bg-black/40 border-white/10' : 'bg-white border-gray-100 shadow-xl'}`}
+            >
+                <h3 className={`font-mono text-xs uppercase tracking-widest mb-6 ${subTextColor}`}>The D-Flip-Flop</h3>
+                <p className={`text-sm mb-6 ${textColor} leading-relaxed`}>
+                    This is the atom of memory. It captures the input <strong>D</strong> only at the exact moment the <strong>Clock</strong> clicks (rising edge).
+                </p>
+                <pre className={`font-mono text-[10px] sm:text-[11px] leading-relaxed ${textColor} bg-black/20 p-4 rounded-xl`}>
+{`Clock:  _┌┐_┌┐_┌┐_
+Data:   __████____
+        |
+Capture Moment: Q = 1
+Value stays until next tick.
+`}
+                </pre>
+            </motion.div>
+
+            <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={isActive ? { opacity: 1, y: 0 } : {}}
+                className={`p-8 rounded-3xl border ${isDarkMode ? 'bg-sky-500/5 border-sky-500/20' : 'bg-sky-50 border-sky-100'}`}
+            >
+                <h3 className={`font-mono text-xs uppercase tracking-widest mb-6 ${subTextColor}`}>The Register</h3>
+                <p className={`text-sm mb-6 ${textColor} leading-relaxed`}>
+                    A register is just a row of Flip-Flops sharing a single clock signal.
+                </p>
+                <div className="grid grid-cols-4 gap-2">
+                    {[3,2,1,0].map(i => (
+                        <div key={i} className={`p-4 rounded-xl border text-center ${isDarkMode ? 'bg-white/5 border-white/10' : 'bg-white border-gray-200 shadow-sm'}`}>
+                            <div className="text-[10px] opacity-40 mb-2">FlipFlop {i}</div>
+                            <div className="font-mono font-bold">1 Bit</div>
+                        </div>
+                    ))}
+                </div>
+                <p className="mt-4 text-[10px] opacity-50 italic text-center">Together: 4-Bit Output Bus</p>
+            </motion.div>
+        </div>
+      </section>
+
+
+      {/* 1 AM Mentor Take */}
+      <div className={`p-8 rounded-3xl text-center ${isDarkMode ? 'bg-sky-500/10 border border-sky-500/20' : 'bg-sky-50 border border-sky-100'}`}>
+          <p className={`font-mono text-xs font-black mb-4 ${isDarkMode ? 'text-sky-400' : 'text-sky-600'}`}>
+              "1 AM Mentor Take"
+          </p>
+          <p className={`text-lg md:text-xl font-medium italic ${textColor}`}>
+              "Logic is the lightning; memory is the jar. Without flip-flops, a computer is just a reaction—with them, it becomes a system with a past."
+          </p>
+      </div>
+    </div>
     );
 };

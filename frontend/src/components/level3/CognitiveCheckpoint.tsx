@@ -17,7 +17,7 @@ const T = {
     sans: "'Inter', sans-serif",
 };
 
-export type CheckpointScene = 'switch' | 'counter' | 'register' | 'arithmetic';
+export type CheckpointScene = 'numbersystems' | 'switch' | 'counter' | 'register' | 'arithmetic';
 
 interface Question {
     text: string;
@@ -28,6 +28,18 @@ interface Question {
 }
 
 const QUESTIONS: Record<CheckpointScene, Question> = {
+    numbersystems: {
+        text: "Why is Hexadecimal specifically chosen to represent computer memory addresses?",
+        options: [
+            "Because it has letters which look cooler",
+            "Because exactly 4 binary bits (a nibble) fit into one hex digit",
+            "To prevent web crawlers from reading it",
+            "Because it was invented by biological brains"
+        ],
+        correctIndex: 1,
+        explanation: "Since 2^4 = 16, a single hexadecimal character represents 4 bits. This allows us to compress long binary sequences while maintaining a power-of-2 mapping.",
+        hint: "Think about how many binary bits can be compressed into a single character if the base is 16 (2 to the power of what is 16?)."
+    },
     switch: {
         text: "In our physical simulation, what happens when voltage is at 1.5V (the 'Uncertainty Zone')?",
         options: [
@@ -65,16 +77,16 @@ const QUESTIONS: Record<CheckpointScene, Question> = {
         hint: "You can't take a clear photo if the subject is moving while the shutter clicks."
     },
     arithmetic: {
-        text: "In a Full Adder, if A=1, B=1, and Carry-In=1, what is the outcome?",
+        text: "In our silicon grid, why is a number like '82' considered illegal in the Octal system?",
         options: [
-            "Sum=0, Carry-Out=0",
-            "Sum=1, Carry-Out=1",
-            "Sum=0, Carry-Out=1",
-            "Sum=3"
+            "Because 82 is too large for the screen",
+            "Because an Octal system only recognizes digits from 0 to 7",
+            "Because 82 is an odd number",
+            "Because it hasn't been converted to binary yet"
         ],
         correctIndex: 1,
-        explanation: "1 + 1 + 1 = 3 in decimal, which is 11 in binary (Sum=1, Carry=1).",
-        hint: "Don't forget the 'Carry-In'! It's a third input that adds a '1' to the column."
+        explanation: "Base-8 (Octal) only uses eight symbols: 0, 1, 2, 3, 4, 5, 6, and 7. The digit '8' simply doesn't exist in that system's alphabet.",
+        hint: "Look back at the Octal grid. Which digits were missing from the number set?"
     }
 };
 
