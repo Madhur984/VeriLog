@@ -144,7 +144,7 @@ export const SignalAssignment: React.FC<ScreenProps> = ({
             />
         </div>
         <div>
-          <h1 className="text-4xl font-black text-slate-900 italic tracking-tighter uppercase">VERIFICATION PASSED.</h1>
+          <h2 className="text-4xl font-black text-slate-900 italic tracking-tighter uppercase">VERIFICATION PASSED.</h2>
           <p className="text-slate-400 mt-4 font-mono text-[10px] uppercase tracking-[0.3em]">Signal understanding stabilized at 98% coherence.</p>
         </div>
         <div className="grid grid-cols-3 gap-8 w-full max-w-2xl mt-8">
@@ -195,7 +195,7 @@ export const SignalAssignment: React.FC<ScreenProps> = ({
         <div className="max-w-3xl w-full space-y-12 z-10 px-8">
             <div className="space-y-4 text-center">
                 <h2 className="text-sky-500 font-mono text-[10px] font-black uppercase tracking-[0.5em] opacity-40">Layer Verification // {currentIdx + 1}</h2>
-                <h1 className="text-3xl font-black text-slate-900 italic tracking-tight leading-tight">" {currentQuestion?.question} "</h1>
+                <div className="text-3xl font-black text-slate-900 italic tracking-tight leading-tight">" {currentQuestion?.question} "</div>
             </div>
 
             <div className="grid grid-cols-1 gap-4">
