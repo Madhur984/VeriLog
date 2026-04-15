@@ -64,10 +64,31 @@ export default {
                     DEFAULT: 'hsl(var(--popover))',
                     foreground: 'hsl(var(--popover-foreground))',
                 },
-                card: {
+                'card': {
                     DEFAULT: 'hsl(var(--card))',
                     foreground: 'hsl(var(--card-foreground))',
                 },
+                // ════ ECE POKÉDEX DESIGN TOKENS ════
+                'matte-obsidian': '#0A0A0B',
+                'solder-mask': '#121215',
+                'ghost-trace': '#2A2A35',
+                'plasma-cyan': '#00D4FF',
+                'cyan-mist': '#0088AA',
+                'burnished-copper': '#FF5F1F',
+                'oscilloscope-trace': '#E6E6ED',
+                'grid-line': '#8A8A99',
+            },
+            fontFamily: {
+                ui: ['Inter', 'system-ui', 'sans-serif'],
+                mono: ['IBM Plex Mono', 'monospace'],
+            },
+            backgroundImage: {
+                'dot-grid': `radial-gradient(circle at 1px 1px, #2A2A35 0.5px, transparent 0.5px)`,
+                'ghost-traces': `repeating-linear-gradient(90deg, #2A2A35 0px, #2A2A35 1px, transparent 1px, transparent 40px),
+                                 repeating-linear-gradient(0deg, #2A2A35 0px, #2A2A35 1px, transparent 1px, transparent 40px)`,
+            },
+            boxShadow: {
+                'cyan-glow': '0 0 6px #00D4FF, 0 0 2px #00D4FF inset',
             },
         },
     },

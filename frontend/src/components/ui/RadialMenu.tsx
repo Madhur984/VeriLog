@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, useMotionValue, useTransform, useSpring } from 'framer-motion';
-import { Globe, LayoutGrid, Database, Trophy, Hexagon, Settings } from 'lucide-react';
+import { Globe, LayoutGrid, Database, Trophy, Settings, Briefcase } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { cn } from '../../lib/utils';
 
@@ -157,8 +157,8 @@ export const RadialMenu: React.FC = () => {
      const path = location.pathname;
      if (path.includes('/workbench')) setActiveId('grid');
      else if (path.includes('/boss-arena') || path.includes('/assessment')) setActiveId('leaderboards');
-     else if (path.includes('/skill-tree')) setActiveId('glyph');
      else if (path.includes('/portfolio')) setActiveId('settings');
+     else if (path.includes('/career-roadmap')) setActiveId('career');
      else setActiveId('overview');
   }, [location.pathname]);
 
@@ -182,9 +182,9 @@ export const RadialMenu: React.FC = () => {
   const SEGMENTS = [
     { id: 'overview', label: 'Home Base', icon: <Globe size={18} strokeWidth={2} />, path: '/portal' },
     { id: 'grid', label: 'Workbench', icon: <LayoutGrid size={18} strokeWidth={2} />, path: '/workbench' },
+    { id: 'career', label: 'Career Roadmap', icon: <Briefcase size={18} strokeWidth={2} />, path: '/career-roadmap' },
     { id: 'lab', label: 'CPU Lab', icon: <Database size={18} strokeWidth={2} />, path: '/cpu-lab' },
     { id: 'leaderboards', label: 'Boss Arena', icon: <Trophy size={18} strokeWidth={2} />, path: '/boss-arena' },
-    { id: 'glyph', label: 'Skill Tree', icon: <Hexagon size={18} strokeWidth={2} />, path: '/skill-tree' },
     { id: 'leetcode', label: 'HW LeetCode', icon: <Settings size={18} strokeWidth={2} />, path: '/hw-leetcode' }
   ];
 
