@@ -1,0 +1,16 @@
+node_modules
+.next
+.vscode
+dist
+build
+.env
+*.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.DS_Store
+tsconfig.tsbuildinfo
+build_error.txt
+build_log.txt
+dev_log.txt
+next-env.d.ts
