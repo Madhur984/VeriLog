@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useSpring } from 'framer-motion';
 import { SignalEngine, SignalConfig } from '../SignalEngine';
-import { Activity, Radio, Minimize2, Maximize2, Zap, Sliders, Cpu, Terminal } from 'lucide-react';
+import { Activity, Radio, Minimize2, Maximize2, Zap, Sliders, Cpu, Terminal, ArrowRight } from 'lucide-react';
 
 import { TechnicalAudit } from '../components/TechnicalAudit';
 
@@ -422,6 +422,49 @@ export const S00_Intro: React.FC<{ time: number; isDarkMode: boolean }> = ({ tim
               → What happens when we try to capture this?
            </p>
       </div>
+
+      {/* 🚀 THE ARCHITECTURE PREVIEW */}
+      <section className="mt-32 space-y-12">
+        <header className="text-center space-y-4">
+            <h3 className={`text-4xl font-black italic tracking-tighter ${textColor}`}>The <span className={accentColor}>Pipeline</span> of Nature</h3>
+            <p className={`text-lg font-medium opacity-60 max-w-2xl mx-auto ${textColor}`}>
+                How nature becomes logic. Every step is a transformation of energy into information.
+            </p>
+        </header>
+
+        <div className="relative flex flex-col md:flex-row items-center justify-between gap-8 py-10">
+            {/* Animated Flow Line (Background) */}
+            <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-orange-500/10 hidden md:block -translate-y-1/2 overflow-hidden">
+                <motion.div 
+                    animate={{ x: [-200, 1200] }} transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                    className="w-48 h-full bg-gradient-to-r from-transparent via-orange-500 to-transparent"
+                />
+            </div>
+
+            {[
+                { id: "nature", icon: <Radio size={24} />, title: "The Sensor", sub: "Voltage", desc: "Captures physical reality." },
+                { id: "sampler", icon: <Activity size={24} />, title: "The Sampler", sub: "Time", desc: "Discretizes the timeline." },
+                { id: "quantizer", icon: <Minimize2 size={24} />, title: "The Quantizer", sub: "Value", desc: "Maps height to integers." },
+                { id: "encoder", icon: <Cpu size={24} />, title: "The Encoder", sub: "Binary", desc: "Final binary mapping." }
+            ].map((step, idx) => (
+                <div key={idx} className="relative z-10 flex flex-col items-center group w-full max-w-[200px]">
+                    <motion.div 
+                        initial={{ scale: 0.9, opacity: 0 }} whileInView={{ scale: 1, opacity: 1 }}
+                        className={`w-20 h-20 rounded-[2rem] border mb-6 flex items-center justify-center transition-all duration-500 ${isDarkMode ? 'bg-black border-white/10 group-hover:border-orange-500 shadow-2xl' : 'bg-white border-gray-100 group-hover:border-orange-500 shadow-xl'}`}
+                    >
+                        <div className={isDarkMode ? 'text-white/40 group-hover:text-orange-500' : 'text-gray-400 group-hover:text-orange-600'}>
+                            {step.icon}
+                        </div>
+                    </motion.div>
+                    <div className="text-center space-y-1">
+                        <span className={`text-[9px] font-mono font-black uppercase tracking-widest ${accentColor}`}>{step.sub}</span>
+                        <h4 className={`text-lg font-black italic tracking-tight ${textColor}`}>{step.title}</h4>
+                        <p className={`text-[10px] font-medium opacity-40 leading-relaxed ${textColor}`}>{step.desc}</p>
+                    </div>
+                </div>
+            ))}
+        </div>
+      </section>
 
       <div className="mt-32 space-y-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

@@ -1,93 +1,70 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { M2ScreenProps, T } from '../types';
-
-const LABELS: { key: string; x: string; y: string; text: string; sub: string; color: string }[] = [
-  { key: 'analog', x: '20%', y: '38%', text: 'Analog', sub: '∞ values · continuous in time', color: T.signal },
-  { key: 'digital', x: '60%', y: '62%', text: 'Digital', sub: '2^n values · discrete in time', color: T.interact },
-];
+import { dailyExamples } from '../shared/UltimateComponents';
 
 export const M2_S03_Naming: React.FC<M2ScreenProps> = ({ triggerHaptic }) => {
-  const [revealed, setRevealed] = useState<string[]>([]);
-
-  useEffect(() => {
-    const timers = LABELS.map((l, i) =>
-      setTimeout(() => {
-        setRevealed(r => [...r, l.key]);
-        triggerHaptic('light');
-      }, 800 + i * 900)
-    );
-    return () => timers.forEach(clearTimeout);
-  }, [triggerHaptic]);
+  const [activeId, setActiveId] = useState<string | null>(null);
 
   return (
-    <div style={{ width: '100%', maxWidth: 700, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 40 }}>
-
-      <div style={{ textAlign: 'center' }}>
-        <p style={{ fontFamily: T.mono, fontSize: 9, letterSpacing: '0.35em', textTransform: 'uppercase', color: `${T.signal}70`, marginBottom: 12 }}>
-          Act I · Language
-        </p>
-        <h2 style={{ fontFamily: T.mono, fontSize: 32, fontWeight: 900, color: T.text, letterSpacing: '-0.02em' }}>
-          Now name them.
+    <div className="w-full max-w-5xl flex flex-col items-center gap-10 px-6">
+      
+      <div className="text-center space-y-3">
+        <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tighter">
+          Where do they hide?
         </h2>
+        <p className="font-mono text-xs text-[#8A8A99] tracking-widest">
+          Explore how these signals manifest in your everyday existence.
+        </p>
       </div>
 
-      {/* Label reveal arena */}
-      <div style={{ position: 'relative', width: '100%', height: 280, border: `1px solid ${T.border}`, borderRadius: 2, overflow: 'hidden', background: T.card }}>
-
-        {/* Background signal deco */}
-        <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', opacity: 0.05 }} viewBox="0 0 600 280" preserveAspectRatio="none">
-          <path d="M0,140 C50,80 100,200 150,140 S250,80 300,140 S400,200 450,140 S550,80 600,140" fill="none" stroke={T.signal} strokeWidth="3"/>
-          <path d="M0,170 L75,170 L75,110 L150,110 L150,170 L225,170 L225,110 L300,110 L300,170 L375,170 L375,110 L450,110 L450,170 L600,170" fill="none" stroke={T.interact} strokeWidth="3"/>
-        </svg>
-
-        {/* Reveal labels */}
-        {LABELS.map(label => (
-          <AnimatePresence key={label.key}>
-            {revealed.includes(label.key) && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.85 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5, type: 'spring', stiffness: 300, damping: 20 }}
-                style={{
-                  position: 'absolute',
-                  left: label.x, top: label.y,
-                  transform: 'translate(-50%, -50%)',
-                  textAlign: 'center',
-                }}
-              >
-                <div style={{
-                  display: 'inline-block',
-                  padding: '10px 20px',
-                  border: `2px solid ${label.color}`,
-                  borderRadius: 2,
-                  background: `${label.color}10`,
-                }}>
-                  <div style={{ fontFamily: T.mono, fontSize: 20, fontWeight: 900, color: label.color, letterSpacing: '-0.02em' }}>
-                    {label.text}
-                  </div>
-                  <div style={{ fontFamily: T.mono, fontSize: 9, color: T.muted, marginTop: 4, letterSpacing: '0.1em' }}>
-                    {label.sub}
-                  </div>
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
+        {dailyExamples.map((item) => (
+          <motion.div
+            key={item.id}
+            onClick={() => { setActiveId(activeId === item.id ? null : item.id); triggerHaptic('light'); }}
+            whileHover={{ scale: 1.02 }}
+            className={`cursor-pointer overflow-hidden rounded-2xl border transition-all duration-300 ${
+              activeId === item.id 
+                ? 'bg-[#121215] border-[#00D4FF] shadow-[0_0_30px_rgba(0,212,255,0.1)]' 
+                : 'bg-black/40 border-[#2A2A35] hover:border-[#00D4FF]/40'
+            }`}
+          >
+            <div className="p-6 space-y-4">
+              <div className="flex items-center gap-4">
+                <div className={`p-3 rounded-xl ${activeId === item.id ? 'bg-[#00D4FF] text-black' : 'bg-[#2A2A35] text-[#00D4FF]'}`}>
+                  {item.icon}
                 </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+                <h3 className="font-bold uppercase text-sm tracking-wide">{item.title}</h3>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <div className="text-[10px] uppercase text-[#8A8A99] font-mono">Analog</div>
+                  <div className="text-[11px] leading-tight text-white/90">{item.analogExample.split(' – ')[0]}</div>
+                </div>
+                <div className="space-y-1">
+                  <div className="text-[10px] uppercase text-[#FF5F1F] font-mono">Digital</div>
+                  <div className="text-[11px] leading-tight text-white/90">{item.digitalExample.split(' – ')[0]}</div>
+                </div>
+              </div>
+
+              <AnimatePresence>
+                {activeId === item.id && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    className="pt-4 border-t border-[#2A2A35] text-[11px] leading-relaxed text-[#8A8A99] font-mono"
+                  >
+                    {item.description}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </motion.div>
         ))}
       </div>
-
-      <AnimatePresence>
-        {revealed.length === LABELS.length && (
-          <motion.p
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            style={{ fontFamily: T.mono, fontSize: 11, color: T.muted, textAlign: 'center', letterSpacing: '0.05em' }}
-          >
-            These are the two fundamental signal domains.
-          </motion.p>
-        )}
-      </AnimatePresence>
     </div>
   );
 };
