@@ -66,6 +66,37 @@ const useSystemAudio = () => {
     thumpGain.connect(ctx.destination);
     osc.start();
     osc.stop(ctx.currentTime + 0.04);
+
+    // Layer 3: Tactical Thud (Sub-bass)
+    const subOsc = ctx.createOscillator();
+    const gSub = ctx.createGain();
+    subOsc.type = "sine";
+    subOsc.frequency.setValueAtTime(40, ctx.currentTime);
+    subOsc.frequency.exponentialRampToValueAtTime(10, ctx.currentTime + 0.2);
+    gSub.gain.setValueAtTime(0.15, ctx.currentTime);
+    gSub.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.2);
+    subOsc.connect(gSub);
+    gSub.connect(ctx.destination);
+    subOsc.start();
+    subOsc.stop(ctx.currentTime + 0.2);
+  }, []);
+
+  const playTacticalThud = useCallback(() => {
+    if (!ctxRef.current) return;
+    const ctx = ctxRef.current;
+    if (ctx.state === 'suspended') ctx.resume();
+    
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(60, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(10, ctx.currentTime + 0.5);
+    gain.gain.setValueAtTime(0.3, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.5);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.5);
   }, []);
 
   const playHum = useCallback(() => {
@@ -219,7 +250,7 @@ export const GatekeeperLanding: React.FC = () => {
 
   const handleEnter = () => {
     setEntering(true);
-    playClick();
+    playTacticalThud();
     setTimeout(() => {
       navigate('/login');
     }, 2500);
@@ -248,6 +279,21 @@ export const GatekeeperLanding: React.FC = () => {
       {/* 🛠️ HUD LAYER */}
       <div className="grid-overlay" />
       <div className="hud-layer" />
+      <div className="vignette" />
+      <div className="scan-beam" />
+      
+      {/* TACTICAL HUD ELEMENTS */}
+      {systemReady && (
+        <>
+          <div className="hud-tl hud-corner" />
+          <div className="hud-tr hud-corner" />
+          <div className="hud-bl hud-corner" />
+          <div className="hud-br hud-corner" />
+          <div className="tactical-compass hidden lg:block">
+            <div className="compass-ring" />
+          </div>
+        </>
+      )}
 
       {/* INITIALIZING OVERLAY (ON CLICK) */}
       <AnimatePresence>

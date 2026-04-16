@@ -1,13 +1,14 @@
 /* AXE-OR GATEWAY - SYSTEM CSS v2.0 (Cinematic Boot Edition) */
 
 :root {
-  --bg-deep: #0a0f18;
+  --bg-deep: #05080c; 
   --primary-cyan: #00D4FF;
-  --secondary-blue: #0084ff; 
-  --accent-orange: #ff9d00;
-  --text-dim: rgba(255, 255, 255, 0.6);
-  --glass-bg: rgba(10, 15, 24, 0.4);
-  --system-border: rgba(255, 255, 255, 0.1);
+  --secondary-blue: #0055ff; 
+  --accent-orange: #ffb400; 
+  --nvg-green: #33ff33; /* Tactical Night-Vision Phosphor */
+  --text-dim: rgba(255, 255, 255, 0.5);
+  --glass-bg: rgba(5, 8, 12, 0.6);
+  --system-border: rgba(51, 255, 51, 0.15); /* Green-tinted borders */
 }
 
 .axe-gateway-container {
@@ -34,7 +35,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: brightness(0.5) contrast(1.1) blur(3px); /* Slightly clearer video */
+  filter: brightness(0.5) contrast(1.1) blur(3px) sepia(0.5) hue-rotate(80deg); /* NVG Tint */
 }
 
 .video-overlay {
@@ -73,6 +74,31 @@
   z-index: 2;
 }
 
+.vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle, transparent 30%, rgba(5, 8, 12, 0.9) 100%);
+  z-index: 3;
+}
+
+/* SCAN BEAM */
+.scan-beam {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 10%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(51, 255, 51, 0.2), transparent);
+  z-index: 4;
+  animation: scan-sweep 12s infinite linear;
+}
+
+@keyframes scan-sweep {
+  0% { left: -100%; }
+  30% { left: 150%; }
+  100% { left: 150%; }
+}
+
 /* BOOT LOGS / TERMINAL */
 .boot-terminal {
   position: absolute;
@@ -83,8 +109,8 @@
   justify-content: center;
   z-index: 50;
   font-family: 'Space Mono', monospace;
-  color: var(--primary-cyan);
-  text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+  color: var(--nvg-green); /* NVG Green */
+  text-shadow: 0 0 8px rgba(51, 255, 51, 0.6);
 }
 
 .terminal-line {
@@ -107,9 +133,10 @@
   font-family: 'Space Mono', monospace;
   font-size: 0.75rem;
   letter-spacing: 0.4rem;
-  color: var(--primary-cyan);
+  color: var(--nvg-green);
   opacity: 0.8;
   margin-bottom: 1rem;
+  text-shadow: 0 0 10px rgba(51, 255, 51, 0.4); /* Phosphor Bloom */
 }
 
 .hero-main {
@@ -122,11 +149,14 @@
 }
 
 .hero-title-v2 {
-  font-size: 6rem;
+  font-size: 7.5rem; /* Massive tactical impact */
   font-weight: 900;
   margin: 0;
-  line-height: 0.9;
-  letter-spacing: -2px;
+  line-height: 0.85;
+  letter-spacing: -4px;
+  text-transform: uppercase;
+  font-family: 'Inter', sans-serif;
+  filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.2));
 }
 
 .hero-title-v2 .signal-gradient {
@@ -138,10 +168,12 @@
 }
 
 .hero-punchline {
-  font-size: 2.5rem;
-  font-weight: 300;
-  color: rgba(255, 255, 255, 0.9);
+  font-size: 2.8rem;
+  font-weight: 800;
+  color: #fff;
   margin-top: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
 }
 
 .hero-tagline {
@@ -224,10 +256,11 @@
   bottom: 6rem;
   font-family: 'Space Mono', monospace;
   font-size: 0.7rem;
-  color: var(--primary-cyan);
-  opacity: 0.6;
+  color: var(--nvg-green);
+  opacity: 0.8;
   text-align: left;
   line-height: 1.8;
+  text-shadow: 0 0 3px var(--nvg-green);
 }
 
 /* STATUS BAR */
@@ -291,6 +324,67 @@
   opacity: 0.15;
   pointer-events: none;
   mix-blend-mode: overlay;
+}
+
+/* TACTICAL COMPASS */
+.tactical-compass {
+  position: absolute;
+  right: 4rem;
+  bottom: 12rem;
+  width: 100px;
+  height: 100px;
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  border-radius: 50%;
+  padding: 5px;
+}
+
+.compass-ring {
+  width: 100%;
+  height: 100%;
+  border: 1px dashed rgba(0, 212, 255, 0.5);
+  border-radius: 50%;
+  animation: rotate-slow 20s linear infinite;
+  position: relative;
+}
+
+.compass-ring::before {
+  content: 'N';
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Space Mono', monospace;
+  font-size: 0.6rem;
+  color: var(--primary-cyan);
+}
+
+@keyframes rotate-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* CORNER HUD ELEMENTS */
+.hud-corner {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  border: 2px solid var(--nvg-green);
+  opacity: 0.5;
+}
+
+.hud-tl { top: 2rem; left: 2rem; border-right: none; border-bottom: none; }
+.hud-tr { top: 2rem; right: 2rem; border-left: none; border-bottom: none; }
+.hud-bl { bottom: 2rem; left: 2rem; border-right: none; border-top: none; }
+.hud-br { bottom: 2rem; right: 2rem; border-left: none; border-top: none; }
+
+.hud-corner::after {
+  content: 'SEC-72';
+  position: absolute;
+  top: -12px;
+  left: 0;
+  font-size: 0.5rem;
+  color: var(--nvg-green);
+  white-space: nowrap;
 }
 
 /* INITIALIZING SEQUENCE */
