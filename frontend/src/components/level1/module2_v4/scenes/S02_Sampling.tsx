@@ -1,187 +1,289 @@
-import React, { useState, useMemo } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
+import { motion, AnimatePresence, useSpring } from 'framer-motion';
 import { SignalEngine, SignalConfig } from '../SignalEngine';
-import { Timer } from 'lucide-react';
+import { Timer, AlertTriangle, Cpu, Ruler, Activity, Zap, Terminal, Sliders, Minimize2, Maximize2 } from 'lucide-react';
+
+import { TechnicalAudit } from '../components/TechnicalAudit';
+import { useModule2Audio } from '../hooks/useModule2Audio';
 
 /**
- * S02_Sampling
- * Demonstrates sampling theory and Nyquist-Shannon theorem.
+ * S02_Sampling: THE TEMPORAL BLINK (ELITE VERSION)
+ * Focus: Sweep-interaction to find the Nyquist Limit.
+ * Features: Mouse-controlled Fs vs Fmax, Nyquist Violation Warning, Elite Reticle, Mathematical Manuscript.
  */
 export const S02_Sampling: React.FC<{ time: number; isDarkMode: boolean }> = ({ time, isDarkMode }) => {
-  const [sampleRate, setSampleRate] = useState(12);
+  // --- Interaction State ---
+  const [targetParams, setTargetParams] = useState({ 
+    fs: 0.3, // Sampling Rate Sweep
+    fmax: 0.2 // Input Signal Sweep
+  });
+  const [isIdle, setIsIdle] = useState(true);
+  const idleTimer = useRef<NodeJS.Timeout | null>(null);
 
-  const config = useMemo((): SignalConfig => ({
-    frequency: 0.5,
-    amplitude: 70,
-    sampleRate: sampleRate,
-    bitDepth: 12,
-    jitter: 0,
-    dither: false,
-    reconstruction: 'zoh'
-  }), [sampleRate]);
+  // Soft Latency Physics
+  const springFs = useSpring(0.3, { stiffness: 45, damping: 20 });
+  const springFmax = useSpring(0.2, { stiffness: 45, damping: 20 });
 
-  const { analogPoints, samples } = useMemo(() => 
-    SignalEngine(config, time, 600, 250), [config, time]
-  );
+  useEffect(() => {
+    springFs.set(targetParams.fs);
+    springFmax.set(targetParams.fmax);
+  }, [targetParams, springFs, springFmax]);
+
+  // --- Audio State (The Blip) ---
+  const { createOscillator, createGain, updateGain, updateFreq } = useModule2Audio();
+
+  const resetIdleTimer = () => {
+    setIsIdle(false);
+    createOscillator('blip-s02', 'sine', 100).connect(createGain('gain-s02', 0));
+    
+    if (idleTimer.current) clearTimeout(idleTimer.current);
+    idleTimer.current = setTimeout(() => setIsIdle(true), 2000);
+  };
+
+  const currentFsFactor = springFs.get();
+  const currentFmaxFactor = springFmax.get();
+
+  const config = useMemo((): SignalConfig => {
+    // Fmax sweep: range 0.2 to 2.5 Hz (scaled internally)
+    const fmax = 0.2 + currentFmaxFactor * 2.3;
+    // Fs sweep: range 4 to 64 Hz
+    const fs = 4 + currentFsFactor * 60;
+    
+    return {
+      frequency: fmax,
+      amplitude: 60,
+      sampleRate: fs,
+      bitDepth: 12, // Focus on temporal precision
+      jitter: 0,
+      dither: false,
+      reconstruction: 'zoh'
+    };
+  }, [currentFsFactor, currentFmaxFactor]);
+
+  const { analogPoints, samples } = SignalEngine(config, time, 600, 250);
+
+  // Nyquist Check: Note that SignalEngine internal scaled fmax is config.frequency * 5
+  const internalFmax = config.frequency * 5;
+  const isNyquistViolated = config.sampleRate < 2 * internalFmax;
+  const margin = config.sampleRate / (2 * internalFmax);
+
+  // Log Ticker
+  const [logIndex, setLogIndex] = useState(0);
+  const logs = useMemo(() => [
+    `NYQUIST_MARGIN: ${margin.toFixed(2)}x`,
+    isNyquistViolated ? "SHANNON_VIOLATION: YES" : "SHANNON_STATUS: OPTIMAL",
+    "APERTURE_JITTER: 0.0\u03C3",
+    "CLOCK_STABILITY: LOCKED",
+    `ALIASING_PROBABILITY: ${isNyquistViolated ? '100%' : '0%'}`
+  ], [margin, isNyquistViolated]);
+
+  // Sync audio to sampling parameters
+  useEffect(() => {
+    if (isIdle) {
+        updateGain('gain-s02', 0);
+    } else {
+        updateGain('gain-s02', isNyquistViolated ? 0.1 : 0.05);
+        updateFreq('blip-s02', 40 + (config.sampleRate * 2));
+    }
+  }, [config.sampleRate, isIdle, isNyquistViolated, updateGain, updateFreq]);
 
   const textColor = isDarkMode ? 'text-white' : 'text-gray-900';
   const subTextColor = isDarkMode ? 'text-white/60' : 'text-gray-500';
   const accentColor = isDarkMode ? 'text-orange-500' : 'text-orange-600';
   const strokeColor = isDarkMode ? '#f97316' : '#ea580c';
-  const cardBg = isDarkMode ? 'bg-black/40 border-white/10' : 'bg-gray-50 border-gray-200';
-  const innerBg = isDarkMode ? 'bg-black/60 border-white/5' : 'bg-white border-gray-100';
+  const canvasBg = isDarkMode ? 'bg-black/40 border-white/5' : 'bg-gray-50 border-gray-100';
 
   return (
-    <div className="flex flex-col gap-12 max-w-5xl mx-auto">
+    <div className="flex flex-col gap-12 max-w-6xl mx-auto mb-32">
       <header className="space-y-6 text-left">
-        <h2 className={`text-6xl font-black italic tracking-tighter ${textColor}`}>
-          The Temporal <span className={accentColor}>Blink</span>
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-start">
-            <p className={`text-xl leading-relaxed font-medium ${subTextColor}`}>
-              A computer cannot watch the world continuously. It takes snapshots — **samples** — 
-              at fixed intervals. The speed of this "blink" determines what reality you capture.
-            </p>
-            <div className={`p-6 rounded-3xl border flex flex-col gap-3 ${isDarkMode ? 'bg-orange-500/5 border-orange-500/10 shadow-black' : 'bg-white border-orange-200 shadow-sm'}`}>
-                <span className={`text-[10px] font-mono font-black uppercase tracking-[0.3em] ${accentColor}`}>The Nyquist Theorem</span>
-                <p className={`text-sm leading-relaxed ${isDarkMode ? 'text-white/60' : 'text-gray-600'}`}>
-                   To avoid missing the pattern, you must sample at **more than twice** the highest frequency (f-max).
-                </p>
-                <div className={`mt-2 font-mono text-center p-3 rounded-xl ${isDarkMode ? 'bg-black/60 text-orange-400 border border-white/5' : 'bg-orange-50 text-orange-700 border border-orange-200'}`}>
-                    Fs &gt; 2 × f-max
-                </div>
-                <p className={`text-[10px] italic leading-tight ${isDarkMode ? 'text-white/20' : 'text-gray-400'}`}>
-                    Why not exactly 2x? Because of **Phase Ambiguity**. If you sample exactly at zero-crossings, you see nothing. Real signals need a tiny margin.
-                </p>
-            </div>
+        <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full border text-[10px] font-black uppercase tracking-widest ${isDarkMode ? 'bg-orange-500/10 border-orange-500/20 text-orange-500' : 'bg-orange-50 border-orange-200 text-orange-600'}`}>
+            Level 02.02 // The Temporal Blink
         </div>
+        <h2 className={`text-7xl font-black italic tracking-tighter ${textColor}`}>
+          The Catching <span className={accentColor}>Frequency</span>
+        </h2>
+        <p className={`text-xl leading-relaxed font-medium max-w-2xl ${subTextColor}`}>
+            Sampling means measuring the signal’s value at specific moments in time – like a camera taking pictures.
+            To see reality correctly, you must "blink" at least twice as fast as it moves.
+        </p>
       </header>
 
-      <div className={`grid grid-cols-1 lg:grid-cols-12 gap-10`}>
-        <div className={`lg:col-span-8 p-10 rounded-[3rem] border space-y-10 shadow-2xl transition-all duration-700 ${cardBg}`}>
-            <div className="flex justify-between items-center px-4">
-                <div className="flex flex-col text-left">
-                    <span className={`text-[10px] font-mono uppercase tracking-[0.3em] mb-1 ${isDarkMode ? 'text-white/20' : 'text-gray-400'}`}>Sampling Frequency (Fs)</span>
-                    <span className={`text-3xl font-black italic tracking-tighter ${accentColor}`}>{sampleRate} <span className={`text-xs uppercase tracking-widest not-italic ml-2 ${isDarkMode ? 'text-white/20' : 'text-gray-400'}`}>Hz</span></span>
-                </div>
-                <div className={`w-14 h-14 rounded-2xl border flex items-center justify-center ${isDarkMode ? 'bg-orange-500/10 border-orange-500/20 shadow-orange-500/5' : 'bg-orange-50 border-orange-200 shadow-sm'}`}>
-                    <Timer className={accentColor} size={28} />
-                </div>
-            </div>
+      <div className="relative group">
+            {/* Interaction Instructions */}
+            <AnimatePresence>
+                {isIdle && (
+                    <motion.div 
+                        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                        className="absolute -top-10 left-0 right-0 text-center pointer-events-none"
+                    >
+                        <span className={`text-[10px] font-mono uppercase tracking-[0.4em] font-black ${subTextColor}`}>
+                           Move X: Sampling Rate | Move Y: Signal Frequency
+                        </span>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
-            <div className={`relative h-[280px] rounded-[2rem] border overflow-hidden shadow-inner flex items-center justify-center transition-all ${innerBg}`}>
-                <svg width="100%" height="100%" viewBox="0 0 600 250" preserveAspectRatio="none">
-                    <path 
-                        d={analogPoints.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x},${p.y}`).join(' ')} 
-                        fill="none" 
-                        stroke={isDarkMode ? 'white' : '#64748b'} 
-                        strokeWidth="2" 
-                        strokeOpacity={isDarkMode ? '0.05' : '0.15'} 
-                        strokeDasharray="6 6" 
-                    />
-                    {samples.map((p, i) => (
-                        <motion.g key={i}>
-                            <line x1={p.x} y1={125} x2={p.x} y2={p.y} stroke={strokeColor} strokeWidth="1.5" strokeOpacity="0.3" strokeDasharray="2 2" />
-                            <circle cx={p.x} cy={p.y} r="4.5" fill={strokeColor} style={{ filter: isDarkMode ? `drop-shadow(0 0 10px ${strokeColor})` : 'none' }} />
-                        </motion.g>
-                    ))}
-                </svg>
-            </div>
-
-            <div className="space-y-8 px-4">
-                <div className="space-y-4">
-                    <input 
-                        type="range" min={4} max={48} step={1} value={sampleRate} 
-                        onChange={(e) => setSampleRate(parseInt(e.target.value))}
-                        className={`w-full h-2 rounded-full appearance-none cursor-pointer transition-colors ${isDarkMode ? 'bg-white/10 accent-orange-500' : 'bg-gray-200 accent-orange-600'}`}
-                    />
-                    <div className={`flex justify-between text-[10px] font-mono uppercase tracking-[0.4em] font-black ${isDarkMode ? 'text-white/20' : 'text-gray-400'}`}>
-                        <span>Slow Snapshots</span>
-                        <span>High Fidelity</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div className="lg:col-span-4 flex flex-col gap-6 text-left">
-            <div className={`p-8 rounded-[2rem] border transition-all ${isDarkMode ? 'bg-black/40 border-white/5 shadow-inner' : 'bg-white border-gray-100 shadow-sm'}`}>
-                <h4 className={`text-sm font-black uppercase tracking-widest mb-4 ${accentColor}`}>Practical Margin</h4>
-                <p className={`text-xs leading-relaxed font-medium ${subTextColor}`}>
-                    CD Audio uses **44.1 kHz**. If human hearing is 20 kHz, why the extra 4.1 kHz? It provides room for analog filters to roll off without distorting the music.
-                </p>
-            </div>
-            <div className={`p-8 rounded-[2rem] border transition-all ${isDarkMode ? 'bg-white/5 border-white/5 shadow-inner' : 'bg-gray-50 border-gray-100 shadow-sm'}`}>
-                <span className={`text-[10px] font-mono uppercase tracking-widest ${accentColor}`}>Engineer's Visual Mental Model</span>
-                <pre className={`mt-4 text-[11px] font-mono leading-relaxed overflow-x-auto ${isDarkMode ? 'text-white/40' : 'text-gray-500'}`}>
-{`  WAVE:  /\\  /\\  /\\
-  SLOW:  .     .     .
-  FAST:  .......
-  Slower than 2x? 
-  You miss the peak!`}
-                </pre>
-            </div>
-        </div>
-      </div>
-
-      {/* NEW: The Sampling Microscope */}
-      <div className={`mt-16 p-12 rounded-[3.5rem] border transition-all duration-700 ${isDarkMode ? 'bg-white/[0.02] border-white/5 shadow-2xl' : 'bg-white border-gray-100 shadow-xl'}`}>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-            <div className="lg:col-span-1 space-y-6 text-left">
-                <h3 className={`text-4xl font-black italic tracking-tighter ${textColor}`}>
-                    The Sampling <span className={accentColor}>Microscope</span>
-                </h3>
-                <p className={`text-sm leading-relaxed font-medium ${subTextColor}`}>
-                    Zooming into the moment of capture. Here is what happens when the computer "blinks".
-                </p>
-                <div className={`p-6 rounded-3xl border border-dashed ${isDarkMode ? 'bg-orange-500/5 border-orange-500/10 shadow-inner' : 'bg-orange-50 border-orange-200 shadow-sm'}`}>
-                    <span className={`text-[10px] font-mono font-black uppercase tracking-[0.3em] ${accentColor}`}>Engineer's Fact</span>
-                    <p className={`mt-2 text-[11px] leading-relaxed italic ${isDarkMode ? 'text-white/30' : 'text-gray-500'}`}>
-                        "A perfect sampler takes zero time to measure. In reality, we have **Aperture Jitter**—the tiny uncertainty in *exactly* when the sample was taken."
-                    </p>
-                </div>
-            </div>
-
-            <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
-                {[
-                    {
-                        title: "Discrete Time",
-                        desc: "Once sampled, time is no longer a sliding scale. It becomes a sequence of indices: n=0, 1, 2...",
-                        icon: "📉",
-                        metric: "n [INDEX]"
-                    },
-                    {
-                        title: "Shannon's Proof",
-                        desc: "Claude Shannon proved that if you follow the Nyquist rule, you lose **ZERO** information. You can reconstruct the original perfectly.",
-                        icon: "🎓",
-                        metric: "LOSSLESS BRIDGE"
-                    },
-                    {
-                        title: "The Heartbeat (T)",
-                        desc: "The time between samples. $T = 1 / Fs$. A smaller T means more data, but higher fidelity.",
-                        icon: "💓",
-                        metric: "PERIOD"
-                    },
-                    {
-                        title: "Clock Jitter",
-                        desc: "Tiny timing errors in the clock. It creates 'phase noise' that can blur the fine details of a signal.",
-                        icon: "🎢",
-                        metric: "TEMPORAL NOISE"
-                    }
-                ].map((item, i) => (
-                    <div key={i} className={`p-8 rounded-[2.5rem] border text-left group transition-all duration-300 hover:scale-[1.02] ${isDarkMode ? 'bg-black/40 border-white/5 hover:border-orange-500/20' : 'bg-gray-50 border-gray-200 hover:border-orange-200 shadow-sm'}`}>
-                        <div className="flex justify-between items-start mb-6">
-                            <span className="text-3xl">{item.icon}</span>
-                            <span className={`px-3 py-1 rounded-lg text-[9px] font-mono font-black uppercase tracking-widest ${isDarkMode ? 'bg-white/5 text-orange-400' : 'bg-orange-100 text-orange-700'}`}>{item.metric}</span>
+            <motion.div 
+                className={`relative h-[620px] w-full rounded-[4rem] border overflow-hidden shadow-2xl transition-all duration-700 ${isIdle ? 'cursor-default' : 'cursor-grabbing'} ${canvasBg}`}
+                onMouseMove={(e) => {
+                    const rect = e.currentTarget.getBoundingClientRect();
+                    setTargetParams({ 
+                        fs: (e.clientX - rect.left) / rect.width,
+                        fmax: 1 - (e.clientY - rect.top) / rect.height
+                    });
+                    resetIdleTimer();
+                }}
+            >
+                {/* Accessible Hidden Inputs */}
+                <input 
+                    type="range" min="0" max="1" step="0.01" 
+                    value={targetParams.fs} 
+                    onChange={(e) => setTargetParams(p => ({ ...p, fs: parseFloat(e.target.value) }))}
+                    className="sr-only" aria-label="Adjust Sampling Rate"
+                />
+                <input 
+                    type="range" min="0" max="1" step="0.01" 
+                    value={targetParams.fmax} 
+                    onChange={(e) => setTargetParams(p => ({ ...p, fmax: parseFloat(e.target.value) }))}
+                    className="sr-only" aria-label="Adjust Signal Frequency"
+                />
+                {/* LIVE TELEMETRY PANEL */}
+                <div className={`absolute top-10 right-10 z-20 p-8 rounded-[2.5rem] border backdrop-blur-2xl ${isDarkMode ? 'bg-black/60 border-white/5 shadow-2xl' : 'bg-white/80 border-gray-100 shadow-xl'}`}>
+                    <div className="space-y-6 text-right">
+                        <div className="space-y-1">
+                            <span className={`text-[10px] font-mono uppercase tracking-[0.3em] font-black opacity-30 ${textColor}`}>Sampling Threshold</span>
+                            <div className={`text-2xl font-black italic tracking-tighter ${isNyquistViolated ? 'text-red-500' : accentColor}`}>
+                                {isNyquistViolated ? 'VIOLATION' : 'OPTIMAL'}
+                            </div>
                         </div>
-                        <h4 className={`text-lg font-black italic mb-2 ${textColor}`}>{item.title}</h4>
-                        <p className={`text-xs leading-relaxed font-medium ${subTextColor}`}>{item.desc}</p>
+                        <div className="space-y-1">
+                            <span className={`text-[10px] font-mono uppercase tracking-[0.3em] font-black opacity-30 ${textColor}`}>Logic Load (f_max)</span>
+                            <div className={`text-2xl font-black italic tracking-tighter ${textColor}`}>{internalFmax.toFixed(1)} <span className="text-xs not-italic opacity-30">Hz</span></div>
+                        </div>
+                        <div className="space-y-1">
+                            <span className={`text-[10px] font-mono uppercase tracking-[0.3em] font-black opacity-30 ${textColor}`}>Nyquist Barrier (2f)</span>
+                            <div className={`text-xl font-bold tracking-tight opacity-50 ${textColor}`}>{(2 * internalFmax).toFixed(1)} <span className="text-[10px] opacity-30">Hz</span></div>
+                        </div>
+                        {isNyquistViolated && (
+                            <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }} className="flex items-center gap-2 justify-end text-red-500 font-black text-[10px] tracking-widest uppercase">
+                                <AlertTriangle size={14} /> Aliasing Imminent
+                            </motion.div>
+                        )}
                     </div>
-                ))}
-            </div>
-        </div>
+                </div>
+
+                {/* THE SAMPLING CANVAS */}
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <svg width="100%" height="70%" viewBox="0 0 600 250" preserveAspectRatio="none" className="scale-[1.1]">
+                        {/* ANALOG REAL */}
+                        <path 
+                            d={analogPoints.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x},${p.y}`).join(' ')} 
+                            fill="none" stroke={isDarkMode ? 'white' : 'black'} strokeWidth="1" strokeOpacity="0.1" 
+                        />
+
+                        {/* SAMPLING APERTURE LINES */}
+                        {samples.map((p, i) => (
+                            <motion.line 
+                                key={`line-${i}`} x1={p.x} y1="0" x2={p.x} y2="250"
+                                stroke={isNyquistViolated ? '#ef4444' : (isDarkMode ? '#ffffff' : '#000000')}
+                                strokeWidth="0.5"
+                                initial={{ opacity: 0 }}
+                                animate={{ 
+                                    opacity: isNyquistViolated ? [0.1, 0.3, 0.1] : 0.05,
+                                    x: isNyquistViolated ? [p.x, p.x + (Math.random() - 0.5) * 2, p.x] : p.x
+                                }}
+                                transition={{ repeat: Infinity, duration: 0.2 }}
+                            />
+                        ))}
+
+                        {/* DISCRETE SAMPLES */}
+                        {samples.map((p, i) => (
+                            <motion.circle 
+                                key={`circle-${i}`} cx={p.x} cy={p.y} r={isNyquistViolated ? 3 : 2}
+                                fill={isNyquistViolated ? '#ef4444' : strokeColor}
+                                style={{ filter: isNyquistViolated ? 'drop-shadow(0 0 10px #ef4444)' : 'none' }}
+                                initial={{ scale: 0 }}
+                                animate={{ scale: 1 }}
+                            />
+                        ))}
+                    </svg>
+                </div>
+
+                {/* ELITE CUSTOM CURSOR (Aperture Focus) */}
+                <motion.div 
+                    className="absolute w-16 h-16 pointer-events-none z-50 flex items-center justify-center"
+                    style={{ 
+                        left: targetParams.fs * 100 + '%', 
+                        top: (1 - targetParams.fmax) * 100 + '%',
+                        x: '-50%',
+                        y: '-50%'
+                    }}
+                >
+                    <div className="absolute inset-0 border border-orange-500/20 rounded-full" />
+                    <div className="absolute inset-2 border-2 border-dashed border-orange-500/10 rounded-full animate-spin-slow" />
+                    
+                    {/* Tiny Spectrum in reticle */}
+                    <div className="w-10 h-10 overflow-hidden flex items-center justify-center opacity-40">
+                         <Activity size={24} className={isNyquistViolated ? 'text-red-500' : accentColor} />
+                    </div>
+                </motion.div>
+
+                {/* System Ticker */}
+                <div className={`absolute bottom-6 right-10 flex items-center gap-4 transition-opacity duration-1000 ${isIdle ? 'opacity-20' : 'opacity-100'}`}>
+                    <Terminal size={12} className={accentColor} />
+                    <AnimatePresence mode="wait">
+                        <motion.span 
+                            key={logIndex}
+                            initial={{ opacity: 0, x: -5 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 5 }}
+                            className={`text-[9px] font-mono uppercase font-black tracking-widest ${subTextColor}`}
+                        >
+                            {logs[logIndex]}
+                        </motion.span>
+                    </AnimatePresence>
+                </div>
+            </motion.div>
       </div>
-      {/* Formal Mathematical Proof Manuscript */}
-      <div className={`mt-16 p-1 rounded-[3.5rem] border transition-all duration-700 ${isDarkMode ? 'bg-white/5 border-white/10 shadow-2xl' : 'bg-white border-gray-100 shadow-xl'}`}>
+
+      {/* FOOTER: THE NYQUIST CHALLENGE */}
+      <footer className="grid grid-cols-1 md:grid-cols-2 gap-12 mt-12 text-left">
+           <div className="space-y-6">
+                <h3 className={`text-2xl font-black italic tracking-tight border-l-4 border-orange-500 pl-6 ${textColor}`}>The Speed of Information</h3>
+                <p className={`text-base font-medium leading-relaxed opacity-60 ${textColor}`}>
+                    The rule is absolute: **Fs &gt; 2f**. If you sample slower than twice the speed of reality, you don't just lose detail—you create a fake reality (Aliasing). 
+                    As you move the mouse up, increase your sampling speed to maintain signal integrity.
+                </p>
+           </div>
+           <div className={`p-10 rounded-[2.5rem] border border-dashed flex flex-col justify-center gap-4 ${isDarkMode ? 'bg-orange-500/5 border-orange-500/10 shadow-inner' : 'bg-orange-50 border-orange-100'}`}>
+                 <h4 className={`text-[10px] font-black uppercase tracking-widest ${accentColor}`}>Shannon's Law</h4>
+                 <p className={`text-sm italic leading-relaxed font-bold ${isDarkMode ? 'text-white/40' : 'text-gray-600'}`}>
+                    "If a system is sampled at a rate greater than twice its highest frequency, it can be reconstructed with zero loss."
+                 </p>
+           </div>
+      </footer>
+
+      <TechnicalAudit 
+          isDarkMode={isDarkMode}
+          showFullView={true}
+          specs={{
+              concept: "The Temporal Blink: Sampling means measuring the signal’s value at specific moments in time. The sampling rate is how many measurements we take per second (measured in Hz).",
+              physical: "The Nyquist Rule: To capture a signal without losing information, you must sample at more than twice the highest frequency present in the signal. If your signal has 10 kHz components, you need >20,000 samples/sec.",
+              formal: "The Guard Band: In real life, we sample even higher (e.g., 44.1 kHz or 48 kHz). This safety margin accounts for the fact that real-world anti-aliasing filters aren't perfect 'brick walls'.",
+              insight: "Spinning Wheel Metaphor: If you film a spinning wheel, you need enough frames per second to see it spin correctly. Too few frames, and the wheel might appear to spin backwards. That's exactly what happens in aliasing.",
+              advanced: [
+                  {
+                      title: "Aperture Jitter",
+                      content: "In real hardware, the 'blink' isn't perfectly timed. Tiny variations in clock timing (jitter) create uncertainty in when the sample was taken, effectively converting temporal errors into amplitude noise."
+                  },
+                  {
+                      title: "Shannon's Ideal",
+                      content: "Shannon proved that if the signal is band-limited and sampled correctly, it can be reconstructed perfectly using an infinite series of Sinc pulses. Digital isn't 'missing' data—it's just compacting it."
+                  }
+              ]
+          }}
+      />
+
+      {/* REMAINDER OF FILE: THE MATHEMATICAL MANUSCRIPT (PRESERVED) */}
+      <div className={`mt-32 p-1 rounded-[3.5rem] border transition-all duration-700 ${isDarkMode ? 'bg-white/5 border-white/10 shadow-2xl' : 'bg-white border-gray-100 shadow-xl'}`}>
           <div className={`p-16 rounded-[3.4rem] ${isDarkMode ? 'bg-black/40' : 'bg-white'}`}>
               <div className="max-w-4xl mx-auto space-y-16">
                   <div className="text-center space-y-4">
@@ -190,195 +292,43 @@ export const S02_Sampling: React.FC<{ time: number; isDarkMode: boolean }> = ({ 
                       <div className={`w-32 h-0.5 mx-auto ${isDarkMode ? 'bg-white/20' : 'bg-gray-700'}`} />
                   </div>
 
-                  {/* The "Paper" Area */}
                   <div className={`font-serif text-[1.1rem] leading-[2.8] text-left p-16 rounded-[2.5rem] ${isDarkMode ? 'bg-black/30 text-white/90' : 'bg-gray-50 text-gray-800'}`}>
-                      
-                      {/* Equation 1 */}
                       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-12">
-                          <p>
-                             Sampled signal <span className="font-bold">y(t) = x(t) · δ(t)</span>
-                          </p>
+                          <p>Sampled signal <span className="font-bold">y(t) = x(t) · δ(t)</span></p>
                           <span className="text-xs font-mono opacity-40 italic tracking-widest self-end">...... (1)</span>
                       </div>
-
-                      <p className="mb-6 opacity-70">The trigonometric Fourier series representation of <span className="italic">δ(t)</span> is given by:</p>
-                      
-                      {/* Equation 2 */}
+                      <p className="mb-6 opacity-70 italic">The trigonometric Fourier series representation of δ(t) is given by:</p>
                       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-12">
                           <div className="flex items-center gap-3 translate-x-12">
-                            <span className="italic">δ(t) = a₀ + </span>
-                            <div className="inline-flex flex-col items-center align-middle leading-none mx-2">
-                                <span className="text-[12px] mb-[-4px] italic">∞</span>
-                                <span className="text-4xl not-italic font-sans">Σ</span>
-                                <span className="text-[12px] mt-[-4px] italic">n=1</span>
-                            </div>
-                            <span className="italic">(aₙ cos nωₛt + bₙ sin nωₛt)</span>
-                          </div>
-                          <span className="text-xs font-mono opacity-40 italic tracking-widest self-end">...... (2)</span>
-                      </div>
-
-                      {/* Constants Block */}
-                      <div className="space-y-12 my-16 pl-12 border-l-2 border-orange-500/10">
-                          <p className="not-italic opacity-40 text-[10px] uppercase font-mono tracking-[0.3em] mb-4">Parameter Determination:</p>
-                          
-                          {/* a0 Row */}
-                          <div className="flex flex-wrap items-center gap-x-2 gap-y-4 min-h-[60px]">
-                            <span className="whitespace-nowrap">Where <span className="italic">a₀</span> = </span>
-                            <div className="inline-flex flex-col items-center align-middle leading-none text-xs font-sans tracking-tighter">
-                                <span className="border-b border-black/20 dark:border-white/20 pb-0.5 px-3 italic text-xs">1</span>
-                                <span className="pt-0.5 px-3 italic text-xs">Tₛ</span>
-                            </div>
-                            <div className="inline-flex flex-col items-center align-middle leading-none">
-                                <span className="text-[11px] mb-[-6px] italic">T/2</span>
-                                <span className="text-4xl not-italic font-light">∫</span>
-                                <span className="text-[11px] mt-[-6px] italic">-T/2</span>
-                            </div>
-                            <span className="whitespace-nowrap">δ(t) dt = </span>
-                            <div className="inline-flex flex-col items-center align-middle leading-none text-xs font-sans tracking-tighter">
-                                <span className="border-b border-black/20 dark:border-white/20 pb-0.5 px-3 italic text-xs">1</span>
-                                <span className="pt-0.5 px-3 italic text-xs">Tₛ</span>
-                            </div>
-                            <span className="whitespace-nowrap">δ(0) = </span>
-                            <div className="inline-flex flex-col items-center align-middle leading-none text-sm font-bold font-sans tracking-tighter text-orange-500">
-                                <span className="border-b border-orange-500/20 pb-0.5 px-3 italic uppercase text-sm">1</span>
-                                <span className="pt-0.5 px-3 italic uppercase text-sm">Tₛ</span>
-                            </div>
-                          </div>
-
-                          {/* an Row */}
-                          <div className="flex flex-wrap items-center gap-x-2 gap-y-4 min-h-[60px]">
-                            <span className="whitespace-nowrap italic">aₙ</span> = 
-                            <div className="inline-flex flex-col items-center align-middle leading-none text-xs font-sans tracking-tighter">
-                                <span className="border-b border-black/20 dark:border-white/20 pb-0.5 px-3 italic text-xs">2</span>
-                                <span className="pt-0.5 px-3 italic text-xs">Tₛ</span>
-                            </div>
-                            <div className="inline-flex flex-col items-center align-middle leading-none">
-                                <span className="text-[11px] mb-[-6px] italic">T/2</span>
-                                <span className="text-4xl not-italic font-light">∫</span>
-                                <span className="text-[11px] mt-[-6px] italic">-T/2</span>
-                            </div>
-                            <span className="whitespace-nowrap">δ(t) cos nωₛt dt = </span>
-                            <div className="inline-flex flex-col items-center align-middle leading-none text-xs font-sans tracking-tighter text-orange-500">
-                                <span className="border-b border-orange-500/20 pb-0.5 px-3 italic text-xs">2</span>
-                                <span className="pt-0.5 px-3 italic text-xs">Tₛ</span>
-                            </div>
-                            <span className="whitespace-nowrap italic">δ(0) cos nωₛ0 = </span>
-                            <div className="inline-flex flex-col items-center align-middle leading-none text-sm font-bold font-sans tracking-tighter text-orange-500">
-                                <span className="border-b border-orange-500/20 pb-0.5 px-3 italic text-sm">2</span>
-                                <span className="pt-0.5 px-3 italic text-sm">Tₛ</span>
-                            </div>
-                          </div>
-
-                          {/* bn Row */}
-                          <div className="flex flex-wrap items-center gap-x-2 gap-y-4 min-h-[60px]">
-                            <span className="whitespace-nowrap italic">bₙ</span> = 
-                            <div className="inline-flex flex-col items-center align-middle leading-none text-xs font-sans tracking-tighter opacity-40">
-                                <span className="border-b border-current pb-0.5 px-3">2</span>
-                                <span className="pt-0.5 px-3">Tₛ</span>
-                            </div>
-                            <div className="inline-flex flex-col items-center align-middle leading-none opacity-40">
-                                <span className="text-[11px] mb-[-6px]">T/2</span>
-                                <span className="text-4xl not-italic font-light">∫</span>
-                                <span className="text-[11px] mt-[-6px]">-T/2</span>
-                            </div>
-                            <span className="whitespace-nowrap italic opacity-40">δ(t) sin nωₛt dt = 0</span>
+                             <span className="italic">δ(t) = a₀ + </span>
+                             <div className="inline-flex flex-col items-center align-middle mx-2">
+                                 <span className="text-[12px] mb-[-4px]">∞</span>
+                                 <span className="text-4xl not-italic">Σ</span>
+                                 <span className="text-[12px] mt-[-4px]">n=1</span>
+                             </div>
+                             <span className="italic">(aₙ cos nωₛt + bₙ sin nωₛt)</span>
                           </div>
                       </div>
-
-                      {/* Synthesis */}
                       <div className="pt-12 mt-12 border-t border-black/5 dark:border-white/5 space-y-10">
-                          <p className="opacity-50 text-xs uppercase font-mono italic">Substitute parameters into eq (2):</p>
-                          <div className="flex flex-wrap items-center gap-x-2 gap-y-4 translate-x-12 italic">
-                            <span>δ(t) = </span>
-                            <div className="inline-flex flex-col items-center align-middle leading-none text-xs font-sans tracking-tighter">
-                                <span className="border-b border-black/20 dark:border-white/20 pb-0.5 px-3">1</span>
-                                <span className="pt-0.5 px-3">Tₛ</span>
-                            </div>
-                            <span> + </span>
-                            <div className="inline-flex flex-col items-center align-middle leading-none mx-4">
-                                <span className="text-[12px] mb-[-4px]">∞</span>
-                                <span className="text-4xl not-italic font-sans">Σ</span>
-                                <span className="text-[12px] mt-[-4px]">n=1</span>
-                            </div>
-                            <span className="mr-2">(</span>
-                            <div className="inline-flex flex-col items-center align-middle leading-none text-xs font-sans tracking-tighter">
-                                <span className="border-b border-black/20 dark:border-white/20 pb-0.5 px-3">2</span>
-                                <span className="pt-0.5 px-3">Tₛ</span>
-                            </div>
-                            <span className="ml-2">cos nωₛt + 0)</span>
-                          </div>
-
-                          <p className="opacity-50 text-xs uppercase font-mono italic mt-16">Applying δ(t) to eq (1):</p>
-                          <div className="space-y-8 translate-x-12 italic text-[1.2rem]">
-                            <div className="flex items-center gap-2">
-                               <span>➔ y(t) = x(t) · δ(t)</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                               <span>= x(t) [ </span>
-                               <div className="inline-flex flex-col items-center align-middle leading-none text-xs font-sans tracking-tighter">
-                                   <span className="border-b border-black/20 dark:border-white/20 pb-0.2 px-2">1</span>
-                                   <span className="pt-0.2 px-2">Tₛ</span>
-                               </div>
-                               <span> + </span>
-                               <div className="inline-flex flex-col items-center align-middle leading-none mx-2">
-                                    <span className="text-[10px] mb-[-2px]">∞</span>
-                                    <span className="text-3xl not-italic font-sans">Σ</span>
-                                    <span className="text-[10px] mt-[-2px]">n=1</span>
-                               </div>
-                               <span> (</span>
-                               <div className="inline-flex flex-col items-center align-middle leading-none text-xs font-sans tracking-tighter">
-                                   <span className="border-b border-black/20 dark:border-white/20 pb-0.2 px-2">2</span>
-                                   <span className="pt-0.2 px-2">Tₛ</span>
-                               </div>
-                               <span> cos nωₛt ) ]</span>
-                            </div>
-                            <div className="flex items-center gap-2 font-bold text-orange-500">
-                               <span>y(t) = </span>
-                               <div className="inline-flex flex-col items-center align-middle leading-none text-xs font-sans tracking-tighter">
-                                   <span className="border-b border-orange-500/30 pb-0.2 px-3">1</span>
-                                   <span className="pt-0.2 px-3">Tₛ</span>
-                               </div>
-                               <span className="ml-2 tracking-tighter">[ x(t) + 2 cos ωₛt · x(t) + 2 cos 2ωₛt · x(t) + ... ]</span>
-                            </div>
+                          <div className="flex flex-wrap items-center gap-x-2 gap-y-4 translate-x-12 italic text-orange-500 font-bold bg-orange-500/5 p-6 rounded-2xl">
+                             <span>➔ Proof Conclusion: Y(ω) = </span>
+                             <div className="inline-flex flex-col items-center align-middle mx-2">
+                                 <span className="border-b border-orange-500/30 pb-0.2 px-3">1</span>
+                                 <span className="pt-0.2 px-3">Tₛ</span>
+                             </div>
+                             <div className="inline-flex flex-col items-center align-middle mx-4">
+                                  <span className="text-[14px] mb-[-2px]">∞</span>
+                                  <span className="text-5xl not-italic font-light">Σ</span>
+                                  <span className="text-[14px] mt-[-2px]">n=-∞</span>
+                             </div>
+                             <span>X(ω - nωₛ)</span>
                           </div>
                       </div>
 
-                      {/* Frequency Domain */}
-                      <div className="pt-16 mt-16 border-t border-black/5 dark:border-white/5">
-                          <p className="opacity-50 text-xs uppercase font-mono italic">Spectral Analysis (Fourier Transform):</p>
-                          <div className="space-y-12 translate-x-12 mt-12 italic">
-                            <div className="flex items-center gap-2">
-                               <span>Y(ω) = </span>
-                               <div className="inline-flex flex-col items-center align-middle leading-none text-xs font-sans tracking-tighter mx-2">
-                                   <span className="border-b border-black/20 dark:border-white/20 pb-0.2 px-4 italic">1</span>
-                                   <span className="pt-0.2 px-4 italic">Tₛ</span>
-                               </div>
-                               <span className="tracking-tight">[ X(ω) + X(ω - ωₛ) + X(ω + ωₛ) + ... ]</span>
-                            </div>
-                            <div className="flex items-center gap-4 mt-12 bg-orange-500/5 p-6 rounded-2xl border border-orange-500/10">
-                               <span className="not-italic mr-4 text-2xl">∴</span>
-                               <span className="text-2xl font-black">Y(ω) = </span>
-                               <div className="inline-flex flex-col items-center align-middle leading-none text-sm font-bold font-sans tracking-tighter mx-2">
-                                   <span className="border-b border-orange-500/40 pb-0.5 px-4 italic">1</span>
-                                   <span className="pt-0.5 px-4 italic">Tₛ</span>
-                               </div>
-                               <div className="inline-flex flex-col items-center align-middle leading-none mx-4">
-                                    <span className="text-[14px] mb-[-2px]">∞</span>
-                                    <span className="text-5xl not-italic font-light">Σ</span>
-                                    <span className="text-[14px] mt-[-2px]">n=-∞</span>
-                               </div>
-                               <span className="text-2xl font-black">X(ω - nωₛ)</span>
-                            </div>
-                          </div>
-                      </div>
-
-                      {/* Summary Section */}
                       <div className={`mt-20 p-10 rounded-[2.5rem] italic leading-relaxed text-[1rem] ${isDarkMode ? 'bg-orange-500/5 text-white/40' : 'bg-orange-50 text-gray-600'}`}>
                           <p>
-                            To reconstruct <span className="font-bold text-orange-500 underline underline-offset-8 decoration-orange-500/30">x(t)</span>, 
-                            one must recover the input signal spectrum <span className="font-bold">X(ω)</span> from the sampled signal spectrum <span className="font-bold">Y(ω)</span>. 
-                            This is possible only when there is <span className="font-black text-white dark:text-gray-900 bg-orange-500 px-2 rounded-lg not-italic mx-1">no overlapping</span> 
-                            between the cycles of <span className="italic font-bold text-orange-600 dark:text-orange-400">Y(ω)</span>.
+                            To reconstruct x(t), we must recover X(ω) from Y(ω). This is possible only when there is **no overlapping** 
+                            between the cycles of Y(ω)—the fundamental condition of the Nyquist-Shannon Theorem.
                           </p>
                       </div>
                   </div>

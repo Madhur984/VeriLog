@@ -1,237 +1,274 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
+import { motion, AnimatePresence, useSpring } from 'framer-motion';
 import { SignalEngine, SignalConfig } from '../SignalEngine';
-import { Binary } from 'lucide-react';
+import { Binary, AlertTriangle, Cpu, Ruler, Activity, Zap, Terminal, Sliders, Volume2, Maximize2 } from 'lucide-react';
+import { TechnicalAudit } from '../components/TechnicalAudit';
+import { useModule2Audio } from '../hooks/useModule2Audio';
 
 /**
- * S04_Quantization
- * Explains quantization steps, resolution, and SNR.
+ * S04_Quantization: THE RUNG PARADOX (ELITE VERSION)
+ * Focus: Vertical precision and the SNR Law.
+ * Features: Mouse-controlled Bit Depth, Live SNR Meter, Quantization Audio, Floating Data Planes.
  */
 export const S04_Quantization: React.FC<{ time: number; isDarkMode: boolean }> = ({ time, isDarkMode }) => {
-  const [bitDepth, setBitDepth] = useState(3);
+  // --- Interaction State ---
+  const [targetParams, setTargetParams] = useState({ bitDepthFactor: 0.3 });
+  const [isIdle, setIsIdle] = useState(true);
+  const idleTimer = useRef<NodeJS.Timeout | null>(null);
+
+  // --- Audio State (Quantization Noise Layer) ---
+  const { createOscillator, createGain, updateGain } = useModule2Audio();
+
+  const initAudio = () => {
+    createOscillator('noise-s04', 'sawtooth', 55).connect(createGain('gain-s04', 0));
+  };
+
+  // Physics
+  const springBits = useSpring(0.3, { stiffness: 45, damping: 20 });
+  useEffect(() => {
+    springBits.set(targetParams.bitDepthFactor);
+  }, [targetParams, springBits]);
+
+  const resetIdleTimer = () => {
+    setIsIdle(false);
+    initAudio();
+    if (idleTimer.current) clearTimeout(idleTimer.current);
+    idleTimer.current = setTimeout(() => setIsIdle(true), 1500);
+  };
+
+  const currentBitsFactor = springBits.get();
+  const bitDepth = Math.max(1, Math.floor(1 + currentBitsFactor * 11)); // 1 to 12 bits
 
   const config = useMemo((): SignalConfig => ({
     frequency: 1,
     amplitude: 60,
-    sampleRate: 48, 
+    sampleRate: 64, // High sample rate to focus on vertical precision
     bitDepth: bitDepth,
     jitter: 0,
     dither: false,
     reconstruction: 'zoh'
   }), [bitDepth]);
 
-  const { analogPoints, reconstructedPoints } = useMemo(() => 
-    SignalEngine(config, time, 600, 250), [config, time]
-  );
+  const { analogPoints, reconstructedPoints } = SignalEngine(config, time, 600, 250);
 
+  // Scientific SNR Calculation (6.02N + 1.76 dB)
+  const snr = useMemo(() => (6.02 * bitDepth + 1.76).toFixed(1), [bitDepth]);
   const levels = Math.pow(2, bitDepth);
-  const gridLines = Array.from({ length: levels }, (_, i) => (i / (levels - 1)) * 200);
+  const gridLines = useMemo(() => {
+    if (levels > 64) return []; // Don't draw too many lines
+    return Array.from({ length: levels }, (_, i) => (i / (levels - 1)) * 200 + 25);
+  }, [levels]);
+
+  // Sync Audio Gain to Bit Depth (Higher bits -> Lower noise)
+  useEffect(() => {
+    const baseGain = isIdle ? 0 : (1.2 - (bitDepth / 12)) * 0.05;
+    updateGain('gain-s04', baseGain);
+  }, [bitDepth, isIdle, updateGain]);
 
   const textColor = isDarkMode ? 'text-white' : 'text-gray-900';
   const subTextColor = isDarkMode ? 'text-white/60' : 'text-gray-500';
   const accentColor = isDarkMode ? 'text-orange-500' : 'text-orange-600';
   const strokeColor = isDarkMode ? '#f97316' : '#ea580c';
-  const cardBg = isDarkMode ? 'bg-black/40 border-white/10' : 'bg-gray-50 border-gray-200';
-  const innerBg = isDarkMode ? 'bg-black/60 border-white/5' : 'bg-white border-gray-100';
+  const canvasBg = isDarkMode ? 'bg-black/60 border-white/5' : 'bg-gray-50 border-gray-200';
 
   return (
-    <div className="flex flex-col gap-12 max-w-5xl mx-auto">
-      <header className="space-y-6 text-left">
-        <h2 className={`text-6xl font-black italic tracking-tighter ${textColor}`}>
-          The <span className={accentColor}>Rung</span> Paradox
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-start">
-            <p className={`text-xl leading-relaxed font-medium ${subTextColor}`}>
-              If sampling is **when** we look, quantization is **how precisely** we measure. 
-              A computer has finite steps—it must round smooth reality to the nearest ladder rung.
-            </p>
-            <div className={`p-6 rounded-3xl border flex flex-col gap-3 ${isDarkMode ? 'bg-orange-500/5 border-orange-500/10' : 'bg-orange-50 border-orange-200 shadow-sm'}`}>
-                <span className={`text-[10px] font-mono font-black uppercase tracking-[0.3em] font-black ${accentColor}`}>Precision Math</span>
-                <p className={`text-sm leading-relaxed ${isDarkMode ? 'text-white/60' : 'text-gray-600'}`}>
-                   Number of available levels (L) for n bits:
-                </p>
-                <div className={`mt-2 font-mono text-center p-3 rounded-xl text-xl font-bold ${isDarkMode ? 'bg-black/60 text-orange-400 border border-white/5' : 'bg-orange-100 text-orange-700 border border-orange-200'}`}>
-                    L = 2^n
-                </div>
-            </div>
+    <div className="flex flex-col gap-12 max-w-6xl mx-auto mb-32 text-left">
+      <header className="space-y-6">
+        <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full border text-[10px] font-black uppercase tracking-widest ${isDarkMode ? 'bg-orange-500/10 border-orange-500/20 text-orange-500' : 'bg-orange-50 border-orange-200 text-orange-600'}`}>
+            Level 02.04 // The Rung Paradox
         </div>
+        <h2 className={`text-7xl font-black italic tracking-tighter ${textColor}`}>
+          Vertical <span className={accentColor}>Resolution</span>
+        </h2>
+        <p className={`text-xl leading-relaxed font-medium max-w-2xl ${subTextColor}`}>
+            Quantization means rounding the measured value to the nearest allowed level. 
+            A computer is a ladder; quantization is the act of rounding reality to the nearest available rung.
+        </p>
       </header>
 
-      <div className={`relative p-10 rounded-[3rem] border shadow-2xl transition-all duration-700 ${cardBg}`}>
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-            <div className="lg:col-span-8 space-y-10">
-                <div className="flex items-center justify-between px-4">
-                    <div className={`flex items-center gap-5 font-mono text-[10px] uppercase tracking-[0.3em] font-black ${accentColor}`}>
-                        <Binary size={24} /> Amplitude Resolver
-                    </div>
-                    <div className="flex items-center gap-10">
-                        <div className="flex flex-col items-end">
-                            <span className={`text-[9px] font-mono uppercase tracking-[0.2em] mb-1 ${isDarkMode ? 'text-white/20' : 'text-gray-400'}`}>Vertical Density</span>
-                            <span className={`text-3xl font-black italic tracking-tighter ${textColor}`}>{levels} <span className={`text-xs uppercase tracking-widest not-italic ml-2 ${isDarkMode ? 'text-white/20' : 'text-gray-400'}`}>Levels</span></span>
+      <div className="relative group">
+            {/* Interaction Instruction */}
+            <AnimatePresence>
+                {isIdle && (
+                    <motion.div 
+                        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                        className="absolute -top-10 left-0 right-0 text-center pointer-events-none"
+                    >
+                        <span className={`text-[10px] font-mono uppercase tracking-[0.4em] font-black ${subTextColor}`}>
+                           Move Vertical: Bit-Depth Resolution
+                        </span>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            <motion.div 
+                className={`relative h-[580px] w-full rounded-[4rem] border overflow-hidden shadow-2xl transition-all duration-700 ${isIdle ? 'cursor-default' : 'cursor-grabbing'} ${canvasBg}`}
+                onMouseMove={(e) => {
+                    const rect = e.currentTarget.getBoundingClientRect();
+                    setTargetParams({ 
+                        bitDepthFactor: 1 - (e.clientY - rect.top) / rect.height
+                    });
+                    resetIdleTimer();
+                }}
+            >
+                {/* Accessible Hidden Input */}
+                <input 
+                    type="range" min="0" max="1" step="0.01" 
+                    value={targetParams.bitDepthFactor} 
+                    onChange={(e) => setTargetParams({ bitDepthFactor: parseFloat(e.target.value) })}
+                    className="sr-only" aria-label="Adjust Bit Depth"
+                />
+                {/* FLOATING DATA PLANES (Grid Lines) */}
+                <div className="absolute inset-x-0 top-[15%] bottom-[15%] pointer-events-none opacity-[0.08]">
+                    {gridLines.map((y, i) => (
+                        <motion.div 
+                            key={i} 
+                            style={{ top: `${(y / 250) * 100}%` }}
+                            className={`absolute w-full h-[1px] ${isDarkMode ? 'bg-white' : 'bg-black'}`}
+                            initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                        />
+                    ))}
+                </div>
+
+                {/* CLIPPING BOUNDARIES */}
+                <div className="absolute inset-x-0 h-4 top-0 bg-red-500/5 border-b border-red-500/10 pointer-events-none" />
+                <div className="absolute inset-x-0 h-4 bottom-0 bg-red-500/5 border-t border-red-500/10 pointer-events-none" />
+
+                {/* LIVE SNR GAUGE */}
+                <div className={`absolute top-10 left-10 z-20 p-8 rounded-[2.5rem] border backdrop-blur-2xl ${isDarkMode ? 'bg-black/60 border-white/5 shadow-2xl' : 'bg-white/80 border-gray-100 shadow-xl'}`}>
+                    <div className="space-y-6">
+                        <div className="space-y-1" aria-live="polite">
+                            <span className={`text-[10px] font-mono uppercase tracking-[0.3em] font-black opacity-30 ${textColor}`}>Signal-to-Noise Ratio</span>
+                            <div className={`text-4xl font-black italic tracking-tighter ${accentColor}`}>
+                                {snr}<span className="text-xs not-italic opacity-30 font-mono ml-2">dB</span>
+                            </div>
                         </div>
-                        <div className="flex flex-col items-end">
-                            <span className={`text-[9px] font-mono uppercase tracking-[0.2em] mb-1 ${isDarkMode ? 'text-white/20' : 'text-gray-400'}`}>Current Resolution</span>
-                            <span className={`text-3xl font-black italic tracking-tighter ${accentColor}`}>{bitDepth} Bits</span>
+                        <div className="flex gap-10">
+                            <div className="space-y-1">
+                                <span className={`text-[10px] font-mono uppercase tracking-[0.3em] font-black opacity-30 ${textColor}`}>Bit Horizon</span>
+                                <div className={`text-2xl font-black italic tracking-tighter ${textColor}`}>{bitDepth} <span className="text-xs not-italic opacity-30 font-mono">bit</span></div>
+                            </div>
+                            <div className="space-y-1">
+                                <span className={`text-[10px] font-mono uppercase tracking-[0.3em] font-black opacity-30 ${textColor}`}>Resolution</span>
+                                <div className={`text-2xl font-black italic tracking-tighter ${textColor}`}>{levels.toLocaleString()} <span className="text-xs not-italic opacity-30 font-mono">levels</span></div>
+                            </div>
+                        </div>
+
+                        {/* SNR GROWTH THERMOMETER */}
+                        <div className="pt-6 flex items-end gap-3 h-20">
+                             {Array.from({ length: 12 }).map((_, i) => (
+                                 <motion.div 
+                                    key={i}
+                                    className={`w-2 rounded-t-sm transition-colors ${i < bitDepth ? 'bg-orange-500 shadow-[0_0_10px_orange]' : 'bg-white/5'}`}
+                                    animate={{ height: `${(i + 1) * 8}%` }}
+                                 />
+                             ))}
+                             <div className="flex flex-col justify-between h-full py-1">
+                                 <span className={`text-[7px] font-mono ${accentColor}`}>96dB</span>
+                                 <span className={`text-[7px] font-mono ${subTextColor}`}>6dB</span>
+                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div className={`relative h-[320px] rounded-[2.5rem] border overflow-hidden shadow-inner flex items-center justify-center transition-all ${innerBg}`}>
-                    <svg width="100%" height="100%" viewBox="0 0 600 250" preserveAspectRatio="none" className="p-8">
-                        {gridLines.map((y, i) => (
-                            <line key={i} x1="0" y1={y + 25} x2="600" y2={y + 25} stroke={isDarkMode ? 'white' : 'black'} strokeWidth="1" strokeOpacity="0.04" />
-                        ))}
-                        <path d={analogPoints.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x},${p.y}`).join(' ')} fill="none" stroke={isDarkMode ? 'white' : 'black'} strokeWidth="1.5" strokeOpacity="0.05" strokeDasharray="8 8" />
+                {/* THE QUANTIZATION CANVAS */}
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <svg width="100%" height="70%" viewBox="0 0 600 250" preserveAspectRatio="none" className="scale-[1.1]">
+                        {/* ERROR GAP Visualization */}
                         <path 
+                             d={analogPoints.map((p, i) => {
+                                 const rp = reconstructedPoints[i];
+                                 return `M${p.x},${p.y} L${rp.x},${rp.y}`;
+                             }).join(' ')}
+                             stroke="#ef4444"
+                             strokeWidth="1"
+                             strokeOpacity={Math.max(0, 0.4 - (bitDepth / 16))}
+                        />
+
+                        {/* Analog Ghost */}
+                        <path d={analogPoints.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x},${p.y}`).join(' ')} fill="none" stroke={isDarkMode ? 'white' : 'black'} strokeWidth="1" strokeOpacity="0.05" strokeDasharray="4 4" />
+                        
+                        {/* Digital Staircase */}
+                        <motion.path 
                             d={reconstructedPoints.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x},${p.y}`).join(' ')} 
-                            fill="none" stroke={strokeColor} strokeWidth="4"
-                            style={{ filter: isDarkMode ? `drop-shadow(0 0 20px ${strokeColor}88)` : 'none' }}
+                            fill="none" stroke={strokeColor} strokeWidth="5" strokeLinecap="round"
+                            style={{ filter: isDarkMode ? `drop-shadow(0 0 20px ${strokeColor}44)` : 'none' }}
+                            animate={{ opacity: [1, 0.8, 1], strokeWidth: [5, 6, 5] }}
+                            transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
                         />
                     </svg>
                 </div>
-                <div className="space-y-8 px-6 mt-8">
-                    <input 
-                        type="range" min={1} max={8} step={1} value={bitDepth} 
-                        onChange={(e) => setBitDepth(parseInt(e.target.value))}
-                        className={`w-full h-2 rounded-full appearance-none cursor-pointer transition-all ${isDarkMode ? 'bg-white/10 accent-white' : 'bg-gray-200 accent-gray-600 shadow-inner'}`}
-                    />
-                    <div className={`flex justify-between text-[11px] font-mono uppercase tracking-[0.2em] font-black ${isDarkMode ? 'text-white/30' : 'text-gray-400'}`}>
-                        <div className="flex flex-col gap-1 text-left">
-                            <span className={textColor}>1 Bit</span>
-                            <span>On / Off Only</span>
-                        </div>
-                        <div className="flex flex-col gap-1 text-right">
-                            <span className={textColor}>8 Bits</span>
-                            <span>256 Possible Rungs</span>
-                        </div>
-                    </div>
 
-                    <div className={`mt-8 p-6 rounded-3xl border border-dashed text-left ${isDarkMode ? 'bg-white/5 border-white/5 shadow-inner' : 'bg-gray-50 border-gray-100'}`}>
-                        <span className={`text-[10px] font-mono uppercase tracking-widest ${accentColor}`}>Engineer's Visual Mental Model</span>
-                        <pre className={`mt-4 text-[11px] font-mono leading-relaxed overflow-x-auto ${isDarkMode ? 'text-white/40' : 'text-gray-500'}`}>
-{`  3 BITS (8 levels):    ███ ███ ███ ███ (Blocky)
-  4 BITS (16 levels):   ████▐████▐████▐ (Smoother)
-  16 BITS (65k levels): ~~~~~~~~~~~~~~~~ (Perfect)`}
-                        </pre>
+                {/* ELITE CUSTOM CURSOR (Axe Grip) */}
+                <motion.div 
+                    className="absolute w-12 h-12 pointer-events-none z-50 flex items-center justify-center"
+                    style={{ 
+                        left: '50%', 
+                        top: (1 - currentBitsFactor) * 100 + '%',
+                        y: '-50%',
+                        x: '-50%'
+                    }}
+                >
+                    <div className="absolute inset-x-[-100vw] h-[1px] bg-orange-500/10 border-t border-dashed border-orange-500/20" />
+                    <div className="w-10 h-10 border border-orange-500/40 rounded-full flex items-center justify-center bg-black/40 backdrop-blur-md">
+                         <Ruler size={16} className="text-orange-500" />
                     </div>
-                </div>
-            </div>
-
-            <div className="lg:col-span-4 flex flex-col gap-6 text-left">
-                <div className={`p-8 rounded-[2.5rem] border transition-all ${isDarkMode ? 'bg-black/40 border-white/5 shadow-black' : 'bg-white border-gray-100 shadow-sm'}`}>
-                    <h4 className={`text-sm font-black uppercase tracking-widest mb-4 flex items-center gap-2 ${textColor}`}>
-                        <span className="w-2 h-2 rounded-full bg-orange-500" /> The Ruler Problem
-                    </h4>
-                    <p className={`text-xs leading-relaxed font-medium ${subTextColor}`}>
-                        Imagine measuring a wave with a ruler that only has "inch" marks. You can't record 1.5 inches—you have to pick 1 or 2. That "rounding error" is **Quantization Noise**. 
-                    </p>
-                    <p className={`mt-4 text-[10px] italic ${isDarkMode ? 'text-white/20' : 'text-gray-400'}`}>
-                        *Next Level Hint:* We can hide this error using static noise called **Dither**. 
-                    </p>
-                </div>
-
-                <div className={`flex-1 p-8 rounded-[2.5rem] border transition-all ${isDarkMode ? 'bg-orange-500/5 border-orange-500/10 shadow-black' : 'bg-orange-50 border-orange-100 shadow-sm'}`}>
-                    <h4 className={`text-sm font-black uppercase tracking-widest mb-4 ${accentColor}`}>The SNR Law</h4>
-                    <p className={`text-xs leading-relaxed font-black uppercase tracking-tighter mb-4 ${isDarkMode ? 'text-white/40' : 'text-gray-400'}`}>The 6dB Per Bit Standard</p>
-                    <p className={`text-xs leading-relaxed font-medium ${subTextColor}`}>
-                        In every digital system, adding 1 bit of resolution doubles the number of rungs, which reduces the noise floor by approximately **6.02 dB**. 
-                    </p>
-                    <div className={`mt-6 p-6 rounded-2xl border font-mono text-[11px] leading-relaxed transition-all duration-500 ${isDarkMode ? 'bg-black/40 border-white/5 text-orange-400 shadow-inner' : 'bg-white border-orange-200 text-orange-700'}`}>
-                        <div className="flex justify-between items-center mb-2">
-                            <span>8-bit (Telephony)</span>
-                            <span className="font-black">~49.9 dB</span>
-                        </div>
-                        <div className="flex justify-between items-center mb-2">
-                            <span>16-bit (CD / Pro)</span>
-                            <span className="font-black">~98.1 dB</span>
-                        </div>
-                        <div className="flex justify-between items-center border-t border-orange-500/20 pt-2 mt-2">
-                            <span>24-bit (Hi-Fi)</span>
-                            <span className="font-black">~146.2 dB</span>
-                        </div>
+                    {/* Audio visualizer hint */}
+                    <div className="absolute top-12 flex gap-0.5 items-end h-4">
+                        {[1, 2, 3, 4].map(i => (
+                            <motion.div 
+                                key={i} className="w-1 bg-orange-500/40 rounded-full" 
+                                animate={{ height: isIdle ? 2 : Math.random() * 12 }} 
+                            />
+                        ))}
                     </div>
+                </motion.div>
+
+                {/* STATE LABEL */}
+                <div className={`absolute bottom-10 left-10 flex items-center gap-4 transition-opacity duration-1000 ${isIdle ? 'opacity-20' : 'opacity-100'}`}>
+                    <Terminal size={12} className={accentColor} />
+                    <span className={`text-[9px] font-mono uppercase font-black tracking-widest ${subTextColor}`}>
+                        DYNAMIC_RANGE: {snr} dB | RESOLUTION_FLOOR: {(1/levels).toFixed(6)} V
+                    </span>
                 </div>
-            </div>
-        </div>
+            </motion.div>
       </div>
 
-      {/* NEW: The Digital Microscope (Quantization Error Visualization) */}
-      <div className={`p-12 rounded-[3.5rem] border transition-all duration-700 ${isDarkMode ? 'bg-white/[0.02] border-white/5 shadow-2xl' : 'bg-white border-gray-100 shadow-xl'}`}>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-            <div className="lg:col-span-1 space-y-6 text-left">
-                <h3 className={`text-4xl font-black italic tracking-tighter ${textColor}`}>
-                    The Digital <span className={accentColor}>Microscope</span>
-                </h3>
-                <p className={`text-sm leading-relaxed font-medium ${subTextColor}`}>
-                    To truly see the error, we must subtract the Original from the Copy. What remains is **Quantization Distortion**.
+      <footer className="grid grid-cols-1 md:grid-cols-2 gap-12 mt-12 text-left">
+            <div className="space-y-6">
+                <h3 className={`text-2xl font-black italic tracking-tight border-l-4 border-orange-500 pl-6 ${textColor}`}>The 6dB Golden Rule</h3>
+                <p className={`text-base font-medium leading-relaxed opacity-60 ${textColor}`}>
+                    Every single bit you add doubles the number of available rungs. Each extra bit improves the signal‑to‑noise ratio (SNR) by about 6 dB. This is the **6.02 dB per bit rule**.
                 </p>
-                <div className={`p-6 rounded-3xl border border-dashed ${isDarkMode ? 'bg-orange-500/5 border-orange-500/10 shadow-inner' : 'bg-orange-50 border-orange-200 shadow-sm'}`}>
-                    <span className={`text-[10px] font-mono font-black uppercase tracking-[0.3em] ${accentColor}`}>Engineer's Insight</span>
-                    <p className={`mt-2 text-[11px] leading-relaxed italic ${isDarkMode ? 'text-white/30' : 'text-gray-500'}`}>
-                        "At low bit depths, this noise follows the signal perfectly—making it sound 'harsh'. As we increase bits, the noise detaches and becomes a smooth floor."
-                    </p>
-                </div>
-            </div>
+           </div>
+           <div className={`p-10 rounded-[2.5rem] border border-dashed flex flex-col justify-center gap-4 ${isDarkMode ? 'bg-orange-500/5 border-orange-500/10 shadow-inner' : 'bg-orange-50 border-orange-100'}`}>
+                 <h4 className={`text-[10px] font-black uppercase tracking-widest ${accentColor}`}>Aha! Moment</h4>
+                 <p className={`text-sm italic leading-relaxed font-bold ${isDarkMode ? 'text-white/40' : 'text-gray-600'}`}>
+                    "A ruler with only centimetre marks is coarse. A ruler with millimetre marks is precise. Both are digital approximations of a smooth length."
+                 </p>
+           </div>
+      </footer>
 
-            <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
-                {[
-                    {
-                        title: "LSB (Least Significant Bit)",
-                        desc: "The smallest possible change the system can record. This is the height of one single rung on your ladder.",
-                        icon: "🧩",
-                        metric: "Δ = V_fs / 2^n"
-                    },
-                    {
-                        title: "Dynamic Range",
-                        desc: "The ratio between the loudest possible signal and the quietest detail that doesn't get lost in noise.",
-                        icon: "🔊",
-                        metric: "DR = 20 log10(2^n)"
-                    },
-                    {
-                        title: "Resolution floor",
-                        desc: "Anything smaller than 1 LSB is invisible to the computer. It treats small movements as zero or jumps to the next rung.",
-                        icon: "📉",
-                        metric: "PRECISION LIMIT"
-                    },
-                    {
-                        title: "Harmonic Distortion",
-                        desc: "The mathematical byproduct of rounding. It adds 'phantom' frequencies that weren't in the original sound.",
-                        icon: "👻",
-                        metric: "ALIASING RELATIVES"
-                    }
-                ].map((item, i) => (
-                    <div key={i} className={`p-8 rounded-[2.5rem] border text-left group transition-all duration-300 hover:scale-[1.02] ${isDarkMode ? 'bg-black/40 border-white/5 hover:border-orange-500/20' : 'bg-gray-50 border-gray-200 hover:border-orange-200 shadow-sm'}`}>
-                        <div className="flex justify-between items-start mb-6">
-                            <span className="text-3xl">{item.icon}</span>
-                            <span className={`px-3 py-1 rounded-lg text-[9px] font-mono font-black uppercase tracking-widest ${isDarkMode ? 'bg-white/5 text-orange-400' : 'bg-orange-100 text-orange-700'}`}>{item.metric}</span>
-                        </div>
-                        <h4 className={`text-lg font-black italic mb-2 ${textColor}`}>{item.title}</h4>
-                        <p className={`text-xs leading-relaxed font-medium ${subTextColor}`}>{item.desc}</p>
-                    </div>
-                ))}
-            </div>
-        </div>
-      </div>
-      {/* Uniform vs Non-Uniform Quantization */}
-      <div className={`mt-16 grid grid-cols-1 md:grid-cols-2 gap-8`}>
-          <div className={`p-10 rounded-[3rem] border ${isDarkMode ? 'bg-black/60 border-white/5 shadow-inner' : 'bg-white border-gray-100 shadow-sm'}`}>
-              <h4 className={`text-sm font-black uppercase tracking-widest mb-4 flex items-center justify-between ${accentColor}`}>
-                Uniform (Linear)
-                <span className="text-[9px] font-mono opacity-40">PCM / WAV</span>
-              </h4>
-              <p className={`text-xs leading-relaxed text-left ${subTextColor}`}>
-                  Every rung on the ladder is exactly the same size. This is how high-fidelity audio (WAV, FLAC) works. It's simple but wastes bits on very quiet or very loud parts.
-              </p>
-          </div>
-          <div className={`p-10 rounded-[3rem] border ${isDarkMode ? 'bg-orange-500/10 border-orange-500/20 shadow-orange-500/5' : 'bg-orange-50 border-orange-200 shadow-sm'}`}>
-              <h4 className={`text-sm font-black uppercase tracking-widest mb-4 flex items-center justify-between ${accentColor}`}>
-                Non-Uniform (Logarithmic)
-                <span className="text-[9px] font-mono opacity-40">VOIP / μ-LAW</span>
-              </h4>
-              <p className={`text-xs leading-relaxed text-left ${subTextColor}`}>
-                  Rungs are smaller for quiet signals and larger for loud ones. This follows human perception (we are more sensitive to small changes in quiet environments). Used in Telephony.
-              </p>
-          </div>
-      </div>
+      <TechnicalAudit 
+          isDarkMode={isDarkMode}
+          showFullView={true}
+          specs={{
+              concept: "Rung Paradox: Quantization means rounding the measured value to the nearest allowed level. The number of levels is 2^N, where N is the bit depth.",
+              physical: "The 6dB Rule: More bits mean smaller steps, so the error is smaller. Each extra bit improves the signal‑to‑noise ratio (SNR) by about 6 dB.",
+              formal: "Quantization Error: The difference between the analog value and the rounded digital value. This rounding creates 'Quantization Noise'.",
+              insight: "The Danger of Clipping: If a signal is too loud (exceeds the full scale), the quantizer hits the maximum level and stays there. This is clipping – it sounds terrible and must be avoided.",
+              advanced: [
+                  {
+                      title: "Differential Nonlinearity (DNL)",
+                      content: "In real silicon, the rungs aren't perfectly spaced. DNL measures the deviation between adjacent levels. If a rung is missing entirely, it's called a 'missing code'—a catastrophic ADC failure."
+                  },
+                  {
+                      title: "Dynamic Range vs. S/N",
+                      content: "Bit depth defines the dynamic range: the distance between the loudest possible signal and the quietest floor. 24-bit audio allows for a range of 144dB—wider than the difference between a whisper and a jet engine."
+                  }
+              ]
+          }}
+      />
     </div>
   );
 };

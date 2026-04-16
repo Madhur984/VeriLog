@@ -1,147 +1,392 @@
-import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Zap } from 'lucide-react';
+import React, { useEffect, useState, useRef, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+import { motion, AnimatePresence, useSpring, useMotionValue } from "framer-motion";
+import { ArrowRight, Terminal, Activity, Zap, Cpu } from "lucide-react";
+import './AxeOrGateway.css';
 
-/* ═══════════════════════════════════════════════════════════════════
-   GatekeeperLanding — The first page every user sees.
-   Full-screen circuit video, VeriLog logo, single CTA → /login.
-   No auth check. Pure entry gate.
-   ═══════════════════════════════════════════════════════════════ */
+/**
+ * AXE-OR SYSTEM INITIALIZATION EXPERIENCE
+ * "The system awakens."
+ */
 
-export const GatekeeperLanding = () => {
-    const navigate = useNavigate();
-    const videoRef = useRef<HTMLVideoElement>(null);
-    const [titleVisible, setTitleVisible] = useState(false);
+// ----------------------------------------------------------------------
+// 1. AUDIO ENGINE
+// ----------------------------------------------------------------------
+const useSystemAudio = () => {
+  const ctxRef = useRef<AudioContext | null>(null);
 
-    // Stagger title in after video begins playing
-    useEffect(() => {
-        const timer = setTimeout(() => setTitleVisible(true), 800);
-        return () => clearTimeout(timer);
-    }, []);
+  const init = useCallback(() => {
+    if (!ctxRef.current) {
+      ctxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+    }
+  }, []);
 
-    return (
-        <div
-            className="relative w-full h-screen overflow-hidden bg-slate-50"
-            aria-label="gatekeeper-landing"
-        >
-            {/* ── FULL-SCREEN BACKGROUND VIDEO ── */}
-            <div className="absolute inset-0 z-0">
-                <video
-                    ref={videoRef}
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    className="w-full h-full object-cover opacity-30"
-                    style={{ filter: 'grayscale(1) brightness(1.2) contrast(1.1)' }}
-                >
-                    <source src="/videos/Circuit_Repair_Cartoon_Animation.mp4" type="video/mp4" />
-                </video>
+  const playClick = useCallback(() => {
+    if (!ctxRef.current) return;
+    const ctx = ctxRef.current;
+    if (ctx.state === 'suspended') ctx.resume();
+    
+    // AUTHENTIC MECHANICAL TYPEWRITER / TERMINAL CLICK
+    // Layer 1: Sharp high-freq noise (The "snap")
+    const noiseBuffer = ctx.createBuffer(1, ctx.sampleRate * 0.05, ctx.sampleRate);
+    const output = noiseBuffer.getChannelData(0);
+    for (let i = 0; i < noiseBuffer.length; i++) {
+      output[i] = (Math.random() * 2 - 1) * 0.5;
+    }
+    
+    const noise = ctx.createBufferSource();
+    noise.buffer = noiseBuffer;
+    
+    const highPass = ctx.createBiquadFilter();
+    highPass.type = "highpass";
+    highPass.frequency.value = 1800;
+    highPass.Q.value = 5;
+    
+    const mainGain = ctx.createGain();
+    mainGain.gain.setValueAtTime(0.08, ctx.currentTime);
+    mainGain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.03);
+    
+    noise.connect(highPass);
+    highPass.connect(mainGain);
+    mainGain.connect(ctx.destination);
+    
+    noise.start();
 
-                {/* Gradient overlay — lightens for content readability */}
-                <div className="absolute inset-0 bg-gradient-to-t from-white via-white/40 to-transparent" />
-                {/* Subtle light vignette edges */}
-                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_40%,rgba(255,255,255,0.45)_100%)]" />
-            </div>
+    // Layer 2: Resonant body "thump"
+    const osc = ctx.createOscillator();
+    const thumpGain = ctx.createGain();
+    osc.type = "square";
+    osc.frequency.setValueAtTime(120, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(40, ctx.currentTime + 0.04);
+    
+    thumpGain.gain.setValueAtTime(0.02, ctx.currentTime);
+    thumpGain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.04);
+    
+    osc.connect(thumpGain);
+    thumpGain.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.04);
 
-            {/* ── TOP-LEFT LOGO ── */}
-            <motion.header
-                initial={{ opacity: 0, y: -16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                className="absolute top-0 left-0 right-0 z-20 p-8 flex items-center justify-between"
-            >
-                <div className="flex items-center gap-2">
-                    <Zap className="w-7 h-7 text-sky-600" strokeWidth={2.5} />
-                    <span className="font-mono font-black text-xl tracking-widest text-slate-900 uppercase">
-                        VeriLog
-                        <span className="text-sky-600/60 text-xs ml-2">v2.0</span>
-                    </span>
-                </div>
+    // Layer 3: Tactical Thud (Sub-bass)
+    const subOsc = ctx.createOscillator();
+    const gSub = ctx.createGain();
+    subOsc.type = "sine";
+    subOsc.frequency.setValueAtTime(40, ctx.currentTime);
+    subOsc.frequency.exponentialRampToValueAtTime(10, ctx.currentTime + 0.2);
+    gSub.gain.setValueAtTime(0.15, ctx.currentTime);
+    gSub.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.2);
+    subOsc.connect(gSub);
+    gSub.connect(ctx.destination);
+    subOsc.start();
+    subOsc.stop(ctx.currentTime + 0.2);
+  }, []);
 
-                {/* Subtle "already have an account" link */}
-                <button
-                    onClick={() => navigate('/login')}
-                    className="text-xs font-mono text-slate-400 hover:text-sky-600 transition-colors tracking-widest uppercase font-bold"
-                >
-                    Sign in →
-                </button>
-            </motion.header>
+  const playTacticalThud = useCallback(() => {
+    if (!ctxRef.current) return;
+    const ctx = ctxRef.current;
+    if (ctx.state === 'suspended') ctx.resume();
+    
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(60, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(10, ctx.currentTime + 0.5);
+    gain.gain.setValueAtTime(0.3, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.5);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.5);
+  }, []);
 
-            {/* ── MAIN CONTENT — CENTER ── */}
-            <div className="relative z-10 flex flex-col items-center justify-end h-full pb-20 px-6 text-center">
-                <AnimatePresence>
-                    {titleVisible && (
-                        <motion.div
-                            initial={{ opacity: 0, y: 32 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                            className="flex flex-col items-center gap-6"
-                        >
-                            {/* Eyebrow label */}
-                            <motion.div
-                                initial={{ opacity: 0, scale: 0.9 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                transition={{ delay: 0.2 }}
-                                className="flex items-center gap-2 px-4 py-1.5 rounded-full border border-sky-200 bg-sky-50 shadow-sm"
-                            >
-                                <span className="w-1.5 h-1.5 rounded-full bg-sky-500 animate-pulse" />
-                                <span className="text-xs font-mono text-sky-600 tracking-[0.2em] uppercase font-bold">
-                                    System Online
-                                </span>
-                            </motion.div>
+  const playHum = useCallback(() => {
+    if (!ctxRef.current) return () => {};
+    const ctx = ctxRef.current;
+    if (ctx.state === 'suspended') ctx.resume();
 
-                            {/* Main headline */}
-                            <h1 className="font-mono font-black text-5xl md:text-7xl text-slate-900 leading-none tracking-tight">
-                                Master the{' '}
-                                <span className="bg-clip-text text-transparent bg-gradient-to-r from-sky-600 to-indigo-600">
-                                    Signal.
-                                </span>
-                            </h1>
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(60, ctx.currentTime); // Low 60Hz hum
+    gain.gain.setValueAtTime(0, ctx.currentTime);
+    gain.gain.linearRampToValueAtTime(0.01, ctx.currentTime + 2);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    return () => {
+      gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 1);
+      setTimeout(() => osc.stop(), 1000);
+    };
+  }, []);
 
-                            <p className="font-mono text-slate-500 text-sm md:text-base max-w-md leading-relaxed font-medium">
-                                An interactive electronics lab where logic comes alive.
-                                <br />
-                                Build circuits. Break paths. Understand current.
-                            </p>
-
-                            {/* Primary CTA */}
-                            <motion.button
-                                whileHover={{ scale: 1.04 }}
-                                whileTap={{ scale: 0.97 }}
-                                onClick={() => navigate('/login')}
-                                className="group relative mt-2 flex items-center gap-3 px-10 py-4 rounded-xl font-mono font-bold text-base text-white overflow-hidden"
-                                style={{
-                                    background: 'linear-gradient(135deg, #0284c7, #4f46e5)',
-                                    boxShadow: '0 10px 32px rgba(2,132,199,0.25), 0 4px 12px rgba(0,0,0,0.05)',
-                                }}
-                            >
-                                <span className="relative z-10">Enter the System</span>
-                                <ArrowRight
-                                    className="relative z-10 w-5 h-5 group-hover:translate-x-1 transition-transform"
-                                    strokeWidth={2.5}
-                                />
-                                {/* Shine sweep on hover */}
-                                <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-500 skew-x-12" />
-                            </motion.button>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
-            </div>
-
-            {/* ── BOTTOM STATUS BAR ── */}
-            <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 2 }}
-                className="absolute bottom-6 w-full flex justify-center gap-10 text-[10px] font-mono text-slate-400 uppercase tracking-widest z-10 font-bold"
-            >
-                <span>Signal: <span className="text-sky-600">LIVE</span></span>
-                <span>Cadets: <span className="text-indigo-600">8,402</span></span>
-                <span>Voltage: <span className="text-sky-600">5V</span></span>
-            </motion.div>
-        </div>
-    );
+  return { init, playClick, playHum };
 };
 
+// ----------------------------------------------------------------------
+// 2. BOOT TERMINAL (Char-by-Char)
+// ----------------------------------------------------------------------
+const BOOT_LOGS = [
+  "AXE-OR BOOT SEQUENCE INITIATED...",
+  "CHECKING CORE SYSTEMS...",
+  "MEMORY: [ OK ] 64GB ALLOCATED",
+  "SIGNAL ENGINE: [ ONLINE ]",
+  "INPUT STREAM: [ DETECTED ]",
+  "NEURAL_MAP: [ SYNCED ]",
+  "AXE-OR READY"
+];
+
+const BootTerminal: React.FC<{ onComplete: () => void; playClick: () => void }> = ({ onComplete, playClick }) => {
+  const [displayedLines, setDisplayedLines] = useState<string[]>([]);
+  const [currentLine, setCurrentLine] = useState("");
+  const [lineIdx, setLineIdx] = useState(0);
+  const [charIdx, setCharIdx] = useState(0);
+
+  useEffect(() => {
+    if (lineIdx >= BOOT_LOGS.length) {
+      setTimeout(onComplete, 800);
+      return;
+    }
+
+    const fullText = BOOT_LOGS[lineIdx];
+    if (charIdx < fullText.length) {
+      const timer = setTimeout(() => {
+        setCurrentLine(prev => prev + fullText[charIdx]);
+        setCharIdx(prev => prev + 1);
+        playClick();
+      }, 25);
+      return () => clearTimeout(timer);
+    } else {
+      const timer = setTimeout(() => {
+        setDisplayedLines(prev => [...prev, fullText]);
+        setCurrentLine("");
+        setCharIdx(0);
+        setLineIdx(prev => prev + 1);
+      }, 150);
+      return () => clearTimeout(timer);
+    }
+  }, [charIdx, lineIdx, onComplete, playClick]);
+
+  return (
+    <div className="boot-terminal">
+      {displayedLines.map((line, i) => (
+        <div key={i} className="terminal-line">{`> ${line}`}</div>
+      ))}
+      {lineIdx < BOOT_LOGS.length && (
+        <div className="terminal-line">
+          {`> ${currentLine}`}
+          <span className="animate-pulse">_</span>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ----------------------------------------------------------------------
+// 3. CUSTOM CROSSHAIR
+// ----------------------------------------------------------------------
+const CustomCrosshair: React.FC = () => {
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  const springConfig = { damping: 25, stiffness: 200 };
+  const sx = useSpring(mouseX, springConfig);
+  const sy = useSpring(mouseY, springConfig);
+  const [coords, setCoords] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const handleMove = (e: MouseEvent) => {
+      mouseX.set(e.clientX);
+      mouseY.set(e.clientY);
+      setCoords({ x: e.clientX, y: e.clientY });
+    };
+    window.addEventListener("mousemove", handleMove);
+    return () => window.removeEventListener("mousemove", handleMove);
+  }, [mouseX, mouseY]);
+
+  return (
+    <motion.div className="crosshair-container" style={{ left: sx, top: sy }}>
+      <div className="bracket-tl crosshair-bracket" />
+      <div className="bracket-tr crosshair-bracket" />
+      <div className="bracket-bl crosshair-bracket" />
+      <div className="bracket-br crosshair-bracket" />
+      <div className="crosshair-center" />
+      <div className="crosshair-coords">X:{coords.x} Y:{coords.y}</div>
+    </motion.div>
+  );
+};
+
+// ----------------------------------------------------------------------
+// 4. MAIN GATEKEEPER LANDING
+// ----------------------------------------------------------------------
+export const GatekeeperLanding: React.FC = () => {
+  const navigate = useNavigate();
+  const [phase, setPhase] = useState<"dark" | "booting" | "initializing" | "ready">("dark");
+  const [systemReady, setSystemReady] = useState(false);
+  const [glitch, setGlitch] = useState(false);
+  const [entering, setEntering] = useState(false);
+  const { init, playClick, playHum } = useSystemAudio();
+
+  // Phase Controller
+  useEffect(() => {
+    document.title = "AXE-OR | System Wake";
+    const t1 = setTimeout(() => setPhase("booting"), 800); // Phase 1 -> 2
+    return () => clearTimeout(t1);
+  }, []);
+
+  // Glitch Engine
+  useEffect(() => {
+    if (phase !== "ready") return;
+    const interval = setInterval(() => {
+      setGlitch(true);
+      setTimeout(() => setGlitch(false), 250);
+    }, 5000 + Math.random() * 5000);
+    return () => clearInterval(interval);
+  }, [phase]);
+
+  const handleBootComplete = () => {
+    setPhase("ready");
+    setSystemReady(true);
+    playHum();
+  };
+
+  const handleEnter = () => {
+    setEntering(true);
+    playTacticalThud();
+    setTimeout(() => {
+      navigate('/login');
+    }, 2500);
+  };
+
+  return (
+    <div className="axe-gateway-container" onClick={init}>
+      
+      {/* 🎬 CROSSHAIR */}
+      {systemReady && <CustomCrosshair />}
+
+      {/* 🎥 VIDEO ENVIRONMENT */}
+      <motion.div 
+        className="video-bg-container"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: phase === "ready" ? 1 : 0 }}
+        transition={{ duration: 3 }}
+      >
+        <video autoPlay muted loop playsInline className="video-bg">
+          <source src="/videos/axe-or-bg.mp4" type="video/mp4" />
+        </video>
+        <div className="video-overlay" />
+        <div className="static-noise-overlay" />
+      </motion.div>
+
+      {/* 🛠️ HUD LAYER */}
+      <div className="grid-overlay" />
+      <div className="hud-layer" />
+      <div className="vignette" />
+      <div className="scan-beam" />
+      
+      {/* TACTICAL HUD ELEMENTS */}
+      {systemReady && (
+        <>
+          <div className="hud-tl hud-corner" />
+          <div className="hud-tr hud-corner" />
+          <div className="hud-bl hud-corner" />
+          <div className="hud-br hud-corner" />
+          <div className="tactical-compass hidden lg:block">
+            <div className="compass-ring" />
+          </div>
+        </>
+      )}
+
+      {/* INITIALIZING OVERLAY (ON CLICK) */}
+      <AnimatePresence>
+        {entering && (
+          <motion.div 
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+            className="init-sequence-overlay"
+          >
+            <motion.div animate={{ opacity: [0.5, 1, 0.5] }} transition={{ repeat: Infinity, duration: 1 }} className="init-text text-cyan-400 font-mono text-xl tracking-[0.5rem]">
+              INITIALIZING SESSION...
+            </motion.div>
+            <div className="init-loader">
+              <motion.div initial={{ width: 0 }} animate={{ width: "100%" }} transition={{ duration: 2.3 }} className="init-loader-fill" />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* 📠 PHASE 2: BOOT TERMINAL */}
+      <AnimatePresence>
+        {phase === "booting" && (
+          <motion.div exit={{ opacity: 0, scale: 1.1 }} transition={{ duration: 0.8 }}>
+            <BootTerminal onComplete={handleBootComplete} playClick={playClick} />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* 🛡️ PHASE 3-5: HERO UI */}
+      {systemReady && (
+        <motion.div 
+          className="hero-ui-container"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1.2, delay: 0.5 }}
+        >
+          {/* TOP NAV */}
+          <header className="flex justify-between items-start">
+            <div className="system-tag-large">[ AXE-OR SYSTEM ]</div>
+            <div className="flex gap-10">
+              <div className="radar-scope hidden md:block" />
+              <div className="text-xs font-mono text-white/40 hover:text-white cursor-pointer tracking-widest transition-colors" onClick={() => navigate('/login')}>
+                SIGN IN →
+              </div>
+            </div>
+          </header>
+
+          {/* MAIN CONTENT */}
+          <main className="hero-main">
+            <motion.div 
+              className={`flex flex-col items-center ${glitch ? 'glitch-text' : ''}`}
+            >
+              <h1 className="hero-title-v2">
+                <span className="signal-gradient">AXE-OR</span>
+              </h1>
+              <div className="hero-punchline">
+                Master the Signal.<br />
+                <span className="text-cyan-400/80">Control the System.</span>
+              </div>
+              <p className="hero-tagline">
+                Signals become logic. Logic becomes systems.
+              </p>
+            </motion.div>
+
+            <motion.button 
+              onClick={handleEnter}
+              className="cta-command group"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <span className="relative z-10 flex items-center gap-4">
+                {"> "} ENTER AXE-OR <ArrowRight className="group-hover:translate-x-2 transition-transform" />
+              </span>
+            </motion.button>
+          </main>
+
+          {/* SIDE CORE LOG */}
+          <div className="core-log-v2">
+            <div>SIGNAL_ENGINE: [ STABLE ]</div>
+            <div>MEMORY_SYNC: [ LOCKED ]</div>
+            <div className="flex items-center gap-2">INPUT_LATENCY: <span className="text-white">12ms</span></div>
+          </div>
+
+          {/* FOOTER STATUS */}
+          <footer className="flex justify-center pb-4">
+            <div className="status-bar-v2">
+              <div className="flex items-center gap-2"><Activity size={12} /> SYSTEM: ONLINE</div>
+              <div className="flex items-center gap-2"><Zap size={12} /> SIGNAL: LIVE</div>
+              <div className="flex items-center gap-2"><Cpu size={12} /> STATE: INITIALIZED</div>
+            </div>
+          </footer>
+        </motion.div>
+      )}
+
+    </div>
+  );
+};

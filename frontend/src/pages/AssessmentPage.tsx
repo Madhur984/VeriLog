@@ -417,9 +417,9 @@ export const AssessmentPage: React.FC = () => {
                                             >
                                                 <div className="p-1 px-3 bg-sky-50 text-sky-600 rounded-full border border-sky-100 text-[10px] font-black tracking-widest uppercase">Logic Verification Phase</div>
                                             </motion.div>
-                                            <h1 className="text-5xl font-heading font-black text-slate-900 leading-tight tracking-tight">
+                                            <div className="text-5xl font-heading font-black text-slate-900 leading-tight tracking-tight">
                                                 {question.text}
-                                            </h1>
+                                            </div>
                                             <p className="text-xl text-slate-500 font-medium max-w-lg leading-relaxed">
                                                 {question.subtext}
                                             </p>
@@ -582,9 +582,9 @@ export const AssessmentPage: React.FC = () => {
                                         </motion.div>
                                     </div>
 
-                                    <h1 className="font-heading font-black text-7xl md:text-9xl text-slate-900 tracking-tighter uppercase">
+                                    <h2 className="font-heading font-black text-7xl md:text-9xl text-slate-900 tracking-tighter uppercase">
                                         GREAT JOB <span className="text-sky-600">SCIENTIST!</span>
-                                    </h1>
+                                    </h2>
 
                                     <p className="font-heading font-black text-slate-400 text-3xl md:text-4xl max-w-3xl mx-auto leading-tight uppercase tracking-tight">
                                         YOU HAVE OVERCOME THE FEAR OF STARTING.
@@ -612,9 +612,9 @@ export const AssessmentPage: React.FC = () => {
                                     </div>
 
                                     <div className="space-y-4">
-                                        <h1 className="font-heading font-black text-6xl md:text-8xl text-slate-900 tracking-tighter uppercase">
+                                        <h2 className="font-heading font-black text-6xl md:text-8xl text-slate-900 tracking-tighter uppercase">
                                             PROTOCOL <span className="text-emerald-500">ASCENSION</span>
-                                        </h1>
+                                        </h2>
                                         <p className="font-heading font-black text-slate-400 text-2xl md:text-3xl max-w-4xl mx-auto leading-tight uppercase tracking-tight">
                                             NOW AS YOU HAVE DECIDED AND OVERCAME A CHALLENGE LET'S GO FURTHER TO REAL WORLD
                                         </p>

@@ -5,6 +5,7 @@ import { Moon, Sun, Activity } from 'lucide-react';
 interface Section {
   id: string;
   label: string;
+  act: string;
 }
 
 interface SidebarProps {
@@ -49,31 +50,32 @@ const SidebarComponent: React.FC<SidebarProps> = ({
       </header>
 
       <nav className="p-8 flex-1">
-        <p className={`text-[10px] font-mono uppercase tracking-[0.2em] mb-6 ${isDarkMode ? 'text-orange-900' : 'text-gray-400'}`}>Foundation Path</p>
         <div className="flex flex-col gap-2">
-          {sections.map(s => {
+          {sections.map((s, idx) => {
             const isActive = activeSection === s.id;
+            const showAct = idx === 0 || sections[idx-1].act !== s.act;
+            
             return (
-                <button 
-                  key={s.id} 
-                  onClick={() => onSectionClick(s.id)}
-                  className={`
-                    group relative block w-full text-left py-2.5 px-4 rounded-xl text-sm font-medium transition-all duration-300
-                    ${isActive 
-                      ? (isDarkMode ? 'text-orange-400 bg-orange-950/30 border border-orange-500/20 translate-x-1' : 'text-orange-600 bg-orange-50 border border-orange-200 shadow-sm translate-x-1') 
-                      : (isDarkMode ? 'text-orange-800 hover:text-orange-400 hover:bg-orange-950/20 border border-transparent' : 'text-gray-500 hover:text-orange-600 hover:bg-gray-100 border border-transparent')}
-                  `}
-                >
-                    <span className="relative z-10 inline-block">
-                        {s.label}
-                    </span>
-                    {isActive && (
-                        <motion.div 
-                            layoutId="active-pill"
-                            className="absolute inset-0 bg-transparent rounded-xl"
-                        />
+                <React.Fragment key={s.id}>
+                    {showAct && (
+                        <p className={`text-[9px] font-mono whitespace-nowrap uppercase tracking-[0.2em] mb-3 mt-8 first:mt-0 ${isDarkMode ? 'text-orange-900/60' : 'text-gray-400'}`}>
+                            {s.act}
+                        </p>
                     )}
-                </button>
+                    <button 
+                    onClick={() => onSectionClick(s.id)}
+                    className={`
+                        group relative block w-full text-left py-3.5 px-4 rounded-xl text-sm font-medium transition-all duration-300
+                        ${isActive 
+                        ? (isDarkMode ? 'text-orange-400 bg-orange-950/30 border border-orange-500/20 translate-x-1' : 'text-orange-600 bg-orange-50 border border-orange-200 shadow-sm translate-x-1') 
+                        : (isDarkMode ? 'text-orange-800 hover:text-orange-400 hover:bg-orange-950/20 border border-transparent' : 'text-gray-500 hover:text-orange-600 hover:bg-gray-100 border border-transparent')}
+                    `}
+                    >
+                        <span className="relative z-10 inline-block">
+                            {s.label}
+                        </span>
+                    </button>
+                </React.Fragment>
             );
           })}
         </div>
