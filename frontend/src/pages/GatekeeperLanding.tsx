@@ -1,147 +1,256 @@
-import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Zap } from 'lucide-react';
+import React, { useEffect, useState, useRef, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import { ArrowRight, Activity, Zap, Cpu, Terminal } from "lucide-react";
+import './AxeOrGateway.css';
 
-/* ═══════════════════════════════════════════════════════════════════
-   GatekeeperLanding — The first page every user sees.
-   Full-screen circuit video, VeriLog logo, single CTA → /login.
-   No auth check. Pure entry gate.
-   ═══════════════════════════════════════════════════════════════ */
+/**
+ * AXE-OR SYSTEM GATEWAY v2.0
+ * Advanced Cinematic System Environment
+ */
 
-export const GatekeeperLanding = () => {
-    const navigate = useNavigate();
-    const videoRef = useRef<HTMLVideoElement>(null);
-    const [titleVisible, setTitleVisible] = useState(false);
+const SYSTEM_LOG_MESSAGES = [
+  "INFRA: [OK] KERNEL LOADED",
+  "SIGNAL: [OK] AD-CONVERTER READY",
+  "MEMORY: [OK] 64GB ALLOCATED",
+  "NETWORK: [OK] P2P_NODE_7 ACTIVE",
+  "PROTOCOL: [OK] VERILOG_V4",
+  "VRAM: [OK] SHADER_ENGINE_BOOT",
+  "SYSCALL: [OK] ENTROPY_GEN_01"
+];
 
-    // Stagger title in after video begins playing
-    useEffect(() => {
-        const timer = setTimeout(() => setTitleVisible(true), 800);
-        return () => clearTimeout(timer);
-    }, []);
+const SYSTEM_STATUS_MESSAGES = [
+  "SYSTEM: ONLINE",
+  "MODE: LEARNING",
+  "SIGNAL: LIVE",
+  "STATE: INITIALIZED"
+];
 
-    return (
-        <div
-            className="relative w-full h-screen overflow-hidden bg-slate-50"
-            aria-label="gatekeeper-landing"
-        >
-            {/* ── FULL-SCREEN BACKGROUND VIDEO ── */}
-            <div className="absolute inset-0 z-0">
-                <video
-                    ref={videoRef}
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    className="w-full h-full object-cover opacity-30"
-                    style={{ filter: 'grayscale(1) brightness(1.2) contrast(1.1)' }}
-                >
-                    <source src="/videos/Circuit_Repair_Cartoon_Animation.mp4" type="video/mp4" />
-                </video>
+const METRICS = [
+  { label: "SIGNAL", value: "LIVE", icon: <Activity size={12} /> },
+  { label: "CADETS", value: "8,402", icon: <Cpu size={12} /> },
+  { label: "VOLTAGE", value: "5V", icon: <Zap size={12} /> }
+];
 
-                {/* Gradient overlay — lightens for content readability */}
-                <div className="absolute inset-0 bg-gradient-to-t from-white via-white/40 to-transparent" />
-                {/* Subtle light vignette edges */}
-                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_40%,rgba(255,255,255,0.45)_100%)]" />
-            </div>
+export const GatekeeperLanding: React.FC = () => {
+  const navigate = useNavigate();
+  const [initializing, setInitializing] = useState(false);
+  const [statusIndex, setStatusIndex] = useState(0);
+  const [mouseCoord, setMouseCoord] = useState({ x: 0, y: 0 });
+  const [voltage, setVoltage] = useState(5.00);
+  const [cadets, setCadets] = useState(8402);
+  const [logIndex, setLogIndex] = useState(0);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
-            {/* ── TOP-LEFT LOGO ── */}
-            <motion.header
-                initial={{ opacity: 0, y: -16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                className="absolute top-0 left-0 right-0 z-20 p-8 flex items-center justify-between"
-            >
-                <div className="flex items-center gap-2">
-                    <Zap className="w-7 h-7 text-sky-600" strokeWidth={2.5} />
-                    <span className="font-mono font-black text-xl tracking-widest text-slate-900 uppercase">
-                        VeriLog
-                        <span className="text-sky-600/60 text-xs ml-2">v2.0</span>
-                    </span>
-                </div>
+  // Audio Context for Tactical Feedback
+  const audioCtxRef = useRef<AudioContext | null>(null);
 
-                {/* Subtle "already have an account" link */}
-                <button
-                    onClick={() => navigate('/login')}
-                    className="text-xs font-mono text-slate-400 hover:text-sky-600 transition-colors tracking-widest uppercase font-bold"
-                >
-                    Sign in →
-                </button>
-            </motion.header>
+  const playTacticalClick = useCallback(() => {
+    if (!audioCtxRef.current) audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const ctx = audioCtxRef.current;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(150, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(10, ctx.currentTime + 0.1);
+    gain.gain.setValueAtTime(0.05, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.1);
+  }, []);
 
-            {/* ── MAIN CONTENT — CENTER ── */}
-            <div className="relative z-10 flex flex-col items-center justify-end h-full pb-20 px-6 text-center">
-                <AnimatePresence>
-                    {titleVisible && (
-                        <motion.div
-                            initial={{ opacity: 0, y: 32 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                            className="flex flex-col items-center gap-6"
-                        >
-                            {/* Eyebrow label */}
-                            <motion.div
-                                initial={{ opacity: 0, scale: 0.9 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                transition={{ delay: 0.2 }}
-                                className="flex items-center gap-2 px-4 py-1.5 rounded-full border border-sky-200 bg-sky-50 shadow-sm"
-                            >
-                                <span className="w-1.5 h-1.5 rounded-full bg-sky-500 animate-pulse" />
-                                <span className="text-xs font-mono text-sky-600 tracking-[0.2em] uppercase font-bold">
-                                    System Online
-                                </span>
-                            </motion.div>
+  // Fluctuating Metrics
+  useEffect(() => {
+    const vInterval = setInterval(() => {
+      setVoltage(5.00 + (Math.random() - 0.5) * 0.05);
+    }, 400);
+    const cInterval = setInterval(() => {
+      setCadets(prev => prev + (Math.random() > 0.8 ? 1 : 0));
+    }, 2000);
+    const logInterval = setInterval(() => {
+      setLogIndex(prev => (prev + 1) % SYSTEM_LOG_MESSAGES.length);
+    }, 3000);
+    return () => {
+      clearInterval(vInterval);
+      clearInterval(cInterval);
+      clearInterval(logInterval);
+    };
+  }, []);
 
-                            {/* Main headline */}
-                            <h1 className="font-mono font-black text-5xl md:text-7xl text-slate-900 leading-none tracking-tight">
-                                Master the{' '}
-                                <span className="bg-clip-text text-transparent bg-gradient-to-r from-sky-600 to-indigo-600">
-                                    Signal.
-                                </span>
-                            </h1>
+  // Mouse Tracking for Crosshair
+  const handleMouseMove = (e: React.MouseEvent) => {
+    setMouseCoord({ x: e.clientX, y: e.clientY });
+  };
 
-                            <p className="font-mono text-slate-500 text-sm md:text-base max-w-md leading-relaxed font-medium">
-                                An interactive electronics lab where logic comes alive.
-                                <br />
-                                Build circuits. Break paths. Understand current.
-                            </p>
+  // Sequential status appearance
+  useEffect(() => {
+    document.title = "AXE-OR | System Entry";
+    if (statusIndex < SYSTEM_STATUS_MESSAGES.length - 1) {
+      const timer = setTimeout(() => {
+        setStatusIndex(prev => prev + 1);
+      }, 400);
+      return () => clearTimeout(timer);
+    }
+  }, [statusIndex]);
 
-                            {/* Primary CTA */}
-                            <motion.button
-                                whileHover={{ scale: 1.04 }}
-                                whileTap={{ scale: 0.97 }}
-                                onClick={() => navigate('/login')}
-                                className="group relative mt-2 flex items-center gap-3 px-10 py-4 rounded-xl font-mono font-bold text-base text-white overflow-hidden"
-                                style={{
-                                    background: 'linear-gradient(135deg, #0284c7, #4f46e5)',
-                                    boxShadow: '0 10px 32px rgba(2,132,199,0.25), 0 4px 12px rgba(0,0,0,0.05)',
-                                }}
-                            >
-                                <span className="relative z-10">Enter the System</span>
-                                <ArrowRight
-                                    className="relative z-10 w-5 h-5 group-hover:translate-x-1 transition-transform"
-                                    strokeWidth={2.5}
-                                />
-                                {/* Shine sweep on hover */}
-                                <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-500 skew-x-12" />
-                            </motion.button>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
-            </div>
+  const handleEnter = () => {
+    playTacticalClick();
+    setInitializing(true);
+    setTimeout(() => {
+      navigate('/login');
+    }, 2500);
+  };
 
-            {/* ── BOTTOM STATUS BAR ── */}
-            <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 2 }}
-                className="absolute bottom-6 w-full flex justify-center gap-10 text-[10px] font-mono text-slate-400 uppercase tracking-widest z-10 font-bold"
-            >
-                <span>Signal: <span className="text-sky-600">LIVE</span></span>
-                <span>Cadets: <span className="text-indigo-600">8,402</span></span>
-                <span>Voltage: <span className="text-sky-600">5V</span></span>
-            </motion.div>
+  return (
+    <div className="axe-gateway-container" onMouseMove={handleMouseMove}>
+      <title>AXE-OR | System Entry</title>
+
+      {/* 🎯 CROSSHAIR CURSOR */}
+      <div 
+        className="custom-cursor" 
+        style={{ left: mouseCoord.x, top: mouseCoord.y }}
+      >
+        <div className="crosshair-h" />
+        <div className="crosshair-v" />
+        <div className="cursor-coords">
+          X:{mouseCoord.x} Y:{mouseCoord.y}
         </div>
-    );
-};
+      </div>
 
+      {/* 🎥 VIDEO BACKGROUND */}
+      <div className="video-bg-container">
+        <video 
+          ref={videoRef}
+          autoPlay 
+          muted 
+          loop 
+          playsInline
+          className={`video-bg ${initializing ? 'brightness-[0.2] transition-all duration-1000' : ''}`}
+        >
+          <source src="/videos/axe-or-bg.mp4" type="video/mp4" />
+        </video>
+        <div className="video-overlay" />
+      </div>
+
+      {/* 🎬 HUD LAYERS */}
+      <div className="grid-overlay" />
+      <div className="hud-layer jitter-anim" />
+      <div className="vignette" />
+
+      {/* INITIALIZING OVERLAY */}
+      <AnimatePresence>
+        {initializing && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="initializing-overlay"
+          >
+            <motion.div
+              animate={{ opacity: [0.5, 1, 0.5] }}
+              transition={{ repeat: Infinity, duration: 1.5 }}
+              className="init-text"
+            >
+              INITIALIZING AXE-OR...
+            </motion.div>
+            <motion.div 
+              initial={{ width: 0 }}
+              animate={{ width: 200 }}
+              transition={{ duration: 2 }}
+              className="init-bar"
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* 🧩 UI LAYER */}
+      <div className="ui-layer">
+        
+        {/* TOP NAV */}
+        <header className="ui-header">
+          <div className="system-tag">AXE-OR v1.0</div>
+          <div className="sign-in-link" onClick={() => navigate('/login')}>SIGN IN →</div>
+        </header>
+
+        {/* ROLLING SYSTEM LOG (Left Side) */}
+        <div className="system-log-sidebar">
+          <div className="log-header"><Terminal size={10} /> CORE_LOG</div>
+          <div className="log-content">
+            {SYSTEM_LOG_MESSAGES.slice(Math.max(0, logIndex - 4), logIndex + 1).map((msg, idx) => (
+              <div key={idx} className="log-line">{msg}</div>
+            ))}
+          </div>
+        </div>
+
+        {/* CENTER HERO */}
+        <main className="ui-center">
+          <div className="system-status-container">
+            {SYSTEM_STATUS_MESSAGES.slice(0, statusIndex + 1).map((msg, i) => (
+              <motion.div 
+                key={msg}
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 0.6, x: 0 }}
+                transition={{ duration: 0.5 }}
+                className={`status-line font-mono ${i === statusIndex ? 'flicker' : ''}`}
+              >
+                {msg}{i === statusIndex && "_"}
+              </motion.div>
+            ))}
+          </div>
+
+          <motion.h1 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.5, duration: 1 }}
+            className="hero-title"
+          >
+            Master the <span className="accent">Signal.</span>
+          </motion.h1>
+
+          <motion.p 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.8, duration: 1 }}
+            className="hero-subtext"
+          >
+            From analog flow to digital logic.<br />
+            Control systems. Build computation.
+          </motion.p>
+
+          <motion.button 
+            onClick={handleEnter}
+            onMouseEnter={playTacticalClick}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="cta-button"
+          >
+            <span className="btn-content">
+              Enter AXE-OR <ArrowRight size={18} />
+            </span>
+          </motion.button>
+        </main>
+
+        {/* BOTTOM SYSTEM STRIP */}
+        <footer className="ui-footer">
+          <div className="flex items-center gap-2">
+            <span className="opacity-50"><Activity size={12} /></span>
+            <span>SIGNAL:</span>
+            <span className="text-white">LIVE</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="opacity-50"><Cpu size={12} /></span>
+            <span>CADETS:</span>
+            <span className="text-white">{cadets.toLocaleString()}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="opacity-50"><Zap size={12} /></span>
+            <span>VOLTAGE:</span>
+            <span className="text-white font-mono">{voltage.toFixed(2)}V</span>
+          </div>
+        </footer>
+
+      </div>
+    </div>
+  );
+};
