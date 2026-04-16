@@ -119,7 +119,7 @@ const useSystemAudio = () => {
     };
   }, []);
 
-  return { init, playClick, playHum };
+  return { init, playClick, playTacticalThud, playHum };
 };
 
 // ----------------------------------------------------------------------
@@ -223,7 +223,7 @@ export const GatekeeperLanding: React.FC = () => {
   const [systemReady, setSystemReady] = useState(false);
   const [glitch, setGlitch] = useState(false);
   const [entering, setEntering] = useState(false);
-  const { init, playClick, playHum } = useSystemAudio();
+  const { init, playClick, playTacticalThud, playHum } = useSystemAudio();
 
   // Phase Controller
   useEffect(() => {

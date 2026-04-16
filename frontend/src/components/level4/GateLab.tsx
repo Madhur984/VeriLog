@@ -8,19 +8,25 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle2 } from 'lucide-react';
 import { GATE_META, type GateId } from '../../utils/gateMeta';
+import { getGateIcon } from './GateIcons';
 
-const T = {
-    card: '#0D0F16', surface: '#1A1D24', border: '#222633',
-    text: '#E5E7EB', muted: '#64748B',
-    mono: "'JetBrains Mono', monospace",
-};
+
 
 const LAB_GATES: GateId[] = ['AND', 'OR', 'NOT', 'NAND', 'NOR', 'XOR'];
 
 interface GateState { inputA: boolean; inputB: boolean; tested: Set<number>; }
-interface Props { onComplete: () => void; hasCompleted: boolean; }
+interface Props { onComplete: () => void; hasCompleted: boolean; isDarkMode?: boolean; }
 
-export const GateLab: React.FC<Props> = ({ onComplete, hasCompleted }) => {
+export const GateLab: React.FC<Props> = ({ onComplete, hasCompleted, isDarkMode = true }) => {
+    const T = {
+        card: isDarkMode ? '#0D0F16' : '#FFFFFF', 
+        surface: isDarkMode ? '#1A1D24' : '#F8FAFC', 
+        border: isDarkMode ? '#222633' : '#E2E8F0',
+        text: isDarkMode ? '#E5E7EB' : '#0F172A', 
+        muted: isDarkMode ? '#64748B' : '#64748B',
+        mono: "'JetBrains Mono', monospace",
+    };
+
     const [gateStates, setGateStates] = useState<Record<GateId, GateState>>({} as Record<GateId, GateState>);
 
     const getState = (id: GateId): GateState =>
@@ -123,7 +129,7 @@ export const GateLab: React.FC<Props> = ({ onComplete, hasCompleted }) => {
                                     fontFamily: T.mono, fontSize: 16, fontWeight: 800, color: meta.color,
                                     boxShadow: output ? `0 0 10px ${meta.color}50` : 'none',
                                     transition: 'all 0.2s',
-                                }}>{meta.symbol}</div>
+                                }}>{getGateIcon(meta.id, 24, output ? meta.color : T.muted)}</div>
                             </div>
 
                             {/* Per-gate progress bar */}

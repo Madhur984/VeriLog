@@ -7,13 +7,9 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle2, XCircle, RotateCcw, Play } from 'lucide-react';
 import { GATE_META, type GateId } from '../../utils/gateMeta';
+import { getGateIcon } from './GateIcons';
 
-const T = {
-    card: '#0D0F16', surface: '#1A1D24', border: '#1A1D24',
-    text: '#E5E7EB', muted: '#64748B', accent: '#00D4FF',
-    success: '#10B981', warning: '#F59E0B', error: '#EF4444',
-    mono: "'JetBrains Mono', monospace",
-};
+
 
 // ── Puzzle Definitions ────────────────────────────────────────────────────────
 
@@ -130,9 +126,20 @@ function verify(puzzle: Puzzle, selectedGates: GateId[]): { pass: boolean; failR
 
 // ── Component ──────────────────────────────────────────────────────────────────
 
-interface Props { onAllComplete: () => void; onSolve: () => void; }
+interface Props { onAllComplete: () => void; onSolve: () => void; isDarkMode?: boolean; }
 
-export const LogicPuzzle: React.FC<Props> = ({ onAllComplete, onSolve }) => {
+export const LogicPuzzle: React.FC<Props> = ({ onAllComplete, onSolve, isDarkMode = true }) => {
+    const T = {
+        card: isDarkMode ? '#0D0F16' : '#FFFFFF', 
+        surface: isDarkMode ? '#1A1D24' : '#F8FAFC', 
+        border: isDarkMode ? '#222633' : '#E2E8F0',
+        text: isDarkMode ? '#E5E7EB' : '#0F172A', 
+        muted: isDarkMode ? '#64748B' : '#64748B', 
+        accent: '#00D4FF',
+        success: '#10B981', warning: '#F59E0B', error: '#EF4444',
+        mono: "'JetBrains Mono', monospace",
+    };
+
     const [activePuzzle, setActivePuzzle] = useState(0);
     const [solvedPuzzles, setSolvedPuzzles] = useState<Set<number>>(new Set());
     const [selectedGates, setSelectedGates] = useState<GateId[]>([]);
@@ -284,10 +291,11 @@ export const LogicPuzzle: React.FC<Props> = ({ onAllComplete, onSolve }) => {
                                             letterSpacing: '0.12em', borderRadius: 6, cursor: 'pointer',
                                             background: meta.accentBg, border: `1px solid ${meta.color}40`,
                                             color: meta.color, transition: 'all 0.15s',
+                                            display: 'flex', alignItems: 'center', gap: 6,
                                         }}
                                         onMouseEnter={e => (e.currentTarget.style.borderColor = meta.color)}
                                         onMouseLeave={e => (e.currentTarget.style.borderColor = `${meta.color}40`)}>
-                                        + {id}
+                                        {getGateIcon(id, 16, meta.color)} + {id}
                                     </motion.button>
                                 );
                             })}
@@ -314,9 +322,10 @@ export const LogicPuzzle: React.FC<Props> = ({ onAllComplete, onSolve }) => {
                                                         padding: '8px 12px', fontFamily: T.mono, fontSize: 11, fontWeight: 800,
                                                         borderRadius: 6, cursor: 'pointer', color: meta.color,
                                                         background: meta.accentBg, border: `1px solid ${meta.color}`,
+                                                        display: 'flex', alignItems: 'center', gap: 6
                                                     }}
                                                     title="Click to remove">
-                                                    {id}
+                                                    {getGateIcon(id, 16, meta.color)} {id}
                                                 </motion.button>
                                                 {i < selectedGates.length - 1 && <span style={{ fontFamily: T.mono, fontSize: 10, color: T.muted }}>→</span>}
                                             </React.Fragment>

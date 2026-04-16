@@ -7,15 +7,13 @@
  */
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Zap, Cpu } from 'lucide-react';
 import { GATE_META, GATE_ORDER, type GateId } from '../../utils/gateMeta';
+import { getGateIcon } from './GateIcons';
 
-const T = {
-    card: '#0D0F16', surface: '#1A1D24', border: '#222633',
-    text: '#E5E7EB', muted: '#64748B',
-    mono: "'JetBrains Mono', monospace",
-};
 
-interface Props { onComplete: () => void; hasCompleted: boolean; }
+
+interface Props { onComplete: () => void; hasCompleted: boolean; isDarkMode?: boolean; }
 
 // Keyframe injected once
 const INJECTED = { current: false };
@@ -38,7 +36,7 @@ function injectWireKeyframes() {
 
 // ── Input switch button ───────────────────────────────────────────────────────
 
-const SwitchBtn: React.FC<{ val: boolean; onToggle: () => void; label: string; color: string }> = ({ val, onToggle, label, color }) => (
+const SwitchBtn: React.FC<{ val: boolean; onToggle: () => void; label: string; color: string; T: any }> = ({ val, onToggle, label, color, T }) => (
     <button onClick={onToggle} style={{
         display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
         background: 'none', border: 'none', cursor: 'pointer',
@@ -60,7 +58,17 @@ const SwitchBtn: React.FC<{ val: boolean; onToggle: () => void; label: string; c
 
 // ── Main component ────────────────────────────────────────────────────────────
 
-export const GateDiscovery: React.FC<Props> = ({ onComplete, hasCompleted }) => {
+export const GateDiscovery: React.FC<Props> = ({ onComplete, hasCompleted, isDarkMode = true }) => {
+    const T = {
+        card: isDarkMode ? '#0D0F16' : '#FFFFFF', 
+        surface: isDarkMode ? '#1A1D24' : '#F8FAFC', 
+        border: isDarkMode ? '#222633' : '#E2E8F0',
+        text: isDarkMode ? '#E5E7EB' : '#0F172A', 
+        muted: isDarkMode ? '#64748B' : '#64748B',
+        accent: '#00D4FF', warning: '#F59E0B', error: '#EF4444', success: '#10B981',
+        mono: "'JetBrains Mono', monospace",
+    };
+
     const [activeGate, setActiveGate] = useState<GateId>('AND');
     const [inputA, setInputA] = useState(false);
     const [inputB, setInputB] = useState(false);
@@ -128,41 +136,93 @@ export const GateDiscovery: React.FC<Props> = ({ onComplete, hasCompleted }) => 
                     {/* Subtle gate color accent at top */}
                     <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: meta.color, opacity: 0.5, borderRadius: '12px 12px 0 0' }} />
 
-                    <div style={{ fontFamily: T.mono, fontSize: 9, color: T.muted, textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: 6 }}>
-                        {meta.label}
-                    </div>
-                    <div style={{ fontFamily: T.mono, fontSize: 11, color: meta.color, marginBottom: 24 }}>
-                        {meta.equation}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24, zIndex: 10, position: 'relative' }}>
+                        <div>
+                            <div style={{ fontFamily: T.mono, fontSize: 14, fontWeight: 700, color: meta.color, marginBottom: 4 }}>
+                                {meta.humanRule}
+                            </div>
+                            <div style={{ fontFamily: T.mono, fontSize: 10, color: T.muted }}>
+                                {meta.label} — {meta.equation}
+                            </div>
+                        </div>
+                        <div style={{ padding: '4px 10px', background: `${meta.color}15`, borderRadius: 4, border: `1px solid ${meta.color}30`, fontFamily: T.mono, fontSize: 9, color: meta.color }}>
+                            {meta.id}
+                        </div>
                     </div>
 
-                    {/* Gate diagram: Inputs — Gate — Output, relative positioned for SVG overlay */}
-                    <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: 32, justifyContent: 'center', marginBottom: 24, height: 140 }}>
+                    {/* Gate diagram: Inputs — Gate — Output */}
+                    <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: 32, justifyContent: 'center', marginBottom: 32, height: 160 }}>
 
                         {/* Inputs */}
                         <div style={{ display: 'flex', flexDirection: 'column', gap: 16, zIndex: 2 }}>
-                            <SwitchBtn val={inputA} onToggle={handleToggleA} label="Input A" color={meta.color} />
-                            {meta.inputs === 2 && <SwitchBtn val={inputB} onToggle={handleToggleB} label="Input B" color={meta.color} />}
+                            <SwitchBtn val={inputA} onToggle={handleToggleA} label="Input A" color={meta.color} T={T} />
+                            {meta.inputs === 2 && <SwitchBtn val={inputB} onToggle={handleToggleB} label="Input B" color={meta.color} T={T} />}
                         </div>
 
-                        {/* Gate symbol */}
-                        <motion.div
-                            key={`${activeGate}-${pulseTick}`}
-                            animate={{
-                                boxShadow: output
-                                    ? [`0 0 0px ${meta.color}00`, `0 0 20px ${meta.color}99`, `0 0 10px ${meta.color}55`]
-                                    : 'none',
-                            }}
-                            transition={{ duration: 0.4 }}
-                            style={{
-                                width: 72, height: 72, borderRadius: 8, zIndex: 2,
-                                background: meta.accentBg,
-                                border: `2px solid ${output ? meta.color : T.border}`,
-                                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                                transition: 'border-color 0.25s ease',
-                            }}>
-                            <span style={{ fontFamily: T.mono, fontSize: 22, fontWeight: 800, color: meta.color }}>{meta.symbol}</span>
-                            <span style={{ fontFamily: T.mono, fontSize: 8, color: meta.color, marginTop: 4, opacity: 0.7 }}>{meta.id}</span>
-                        </motion.div>
+                        {/* Central Gate Logic Visualizer */}
+                        <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <motion.div
+                                key={`${activeGate}-${pulseTick}`}
+                                animate={{
+                                    boxShadow: output
+                                        ? [`0 0 0px ${meta.color}00`, `0 0 30px ${meta.color}60`, `0 0 15px ${meta.color}30`]
+                                        : 'none',
+                                    scale: output ? [1, 1.05, 1] : 1,
+                                }}
+                                transition={{ duration: 0.4 }}
+                                style={{
+                                    width: 84, height: 84, borderRadius: 12, zIndex: 2,
+                                    background: meta.accentBg,
+                                    border: `2px solid ${output ? meta.color : T.border}`,
+                                    display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                                    transition: 'border-color 0.25s ease',
+                                }}>
+                                {getGateIcon(meta.id, 48, meta.color)}
+                            </motion.div>
+                            
+                            {/* Connection Wires with Glowing Paths */}
+                            <svg width="240" height="120" style={{ position: 'absolute', zIndex: 1, overflow: 'visible', left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }}>
+                                {/* Base wires */}
+                                {meta.inputs === 2 ? (
+                                    <>
+                                        <path d="M-80, 25 L-20, 25 L-20, 60 L40, 60" fill="none" stroke={T.border} strokeWidth="3" strokeLinejoin="round" />
+                                        <path d="M-80, 95 L-20, 95 L-20, 60 L40, 60" fill="none" stroke={T.border} strokeWidth="3" strokeLinejoin="round" />
+                                    </>
+                                ) : (
+                                    <path d="M-80, 60 L40, 60" fill="none" stroke={T.border} strokeWidth="3" />
+                                )}
+                                <path d="M124, 60 L180, 60" fill="none" stroke={T.border} strokeWidth="3" />
+
+                                {/* Animated glowing pulses overlay */}
+                                {meta.inputs === 2 ? (
+                                    <>
+                                        {/* Pulse A */}
+                                        {inputA && (
+                                            <path d="M-80, 25 L-20, 25 L-20, 60 L40, 60" fill="none" stroke={meta.color} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"
+                                              strokeDasharray="140" style={{ animation: `wire-pulse-generic 1s ease-out forwards ${pulseTick % 2 === 0 ? '' : 'reverse'}` }} />
+                                        )}
+                                        {/* Pulse B */}
+                                        {inputB && (
+                                            <path d="M-80, 95 L-20, 95 L-20, 60 L40, 60" fill="none" stroke={meta.color} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"
+                                              strokeDasharray="140" style={{ animation: `wire-pulse-generic 1s ease-out forwards ${pulseTick % 2 === 0 ? '' : 'reverse'}` }} />
+                                        )}
+                                    </>
+                                ) : (
+                                    <>
+                                        {inputA && (
+                                            <path d="M-80, 60 L40, 60" fill="none" stroke={meta.color} strokeWidth="3" strokeLinecap="round" strokeDasharray="120"
+                                              style={{ animation: `wire-pulse-generic 0.8s ease-out forwards ${pulseTick % 2 === 0 ? '' : 'reverse'}` }} />
+                                        )}
+                                    </>
+                                )}
+
+                                {/* Pulse Output */}
+                                {output && (
+                                    <path d="M124, 60 L180, 60" fill="none" stroke={meta.color} strokeWidth="4" strokeLinecap="round" strokeDasharray="60"
+                                        style={{ animation: `wire-pulse-generic 0.8s ease-out forwards ${pulseTick % 2 === 0 ? '' : 'reverse'}` }} />
+                                )}
+                            </svg>
+                        </div>
 
                         {/* Output */}
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, zIndex: 2 }}>
@@ -171,50 +231,34 @@ export const GateDiscovery: React.FC<Props> = ({ onComplete, hasCompleted }) => 
                                 <motion.div key={`out-${output}`}
                                     initial={{ scale: 1.3, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
                                     style={{
-                                        width: 56, height: 56, borderRadius: 8,
+                                        width: 64, height: 64, borderRadius: 10,
                                         background: output ? `${meta.color}20` : T.surface,
                                         border: `2px solid ${output ? meta.color : T.border}`,
                                         display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                        boxShadow: output ? `0 0 20px ${meta.color}60` : 'none',
+                                        boxShadow: output ? `0 0 25px ${meta.color}40` : 'none',
                                     }}>
-                                    <span style={{ fontFamily: T.mono, fontSize: 28, fontWeight: 800, color: output ? meta.color : T.muted }}>
+                                    <span style={{ fontFamily: T.mono, fontSize: 32, fontWeight: 800, color: output ? meta.color : T.muted }}>
                                         {output ? 1 : 0}
                                     </span>
                                 </motion.div>
                             </AnimatePresence>
-                            {/* LED indicator */}
-                            <motion.div
-                                animate={{
-                                    background: output ? meta.color : '#1A1D24',
-                                    boxShadow: output ? `0 0 16px ${meta.color}90` : 'none',
-                                }}
-                                style={{ width: 14, height: 14, borderRadius: '50%', transition: 'all 0.22s' }}
-                            />
                         </div>
                     </div>
 
-                    {/* Signal state indicator */}
-                    <motion.div
-                        animate={{ opacity: 1 }}
-                        style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 16 }}
-                    >
-                        {[inputA, ...(meta.inputs === 2 ? [inputB] : []), output].map((v, i) => (
-                            <div key={i} style={{
-                                flex: 1, padding: '6px 0', textAlign: 'center',
-                                background: v ? `${meta.color}15` : T.surface,
-                                borderRadius: 4,
-                                border: `1px solid ${v ? meta.color + '40' : T.border}`,
-                                fontFamily: T.mono, fontSize: 9, color: v ? meta.color : T.muted,
-                                transition: 'all 0.2s',
-                            }}>
-                                {i < (meta.inputs === 2 ? 2 : 1) ? `IN${i === 0 ? 'A' : 'B'}` : 'OUT'} — {v ? 'HIGH' : 'LOW'}
-                            </div>
-                        ))}
-                    </motion.div>
-
-                    <div style={{ padding: 12, background: T.surface, borderRadius: 6 }}>
-                        <p style={{ fontFamily: T.mono, fontSize: 10, color: T.muted, lineHeight: 1.7 }}>{meta.description}</p>
-                        <p style={{ fontFamily: T.mono, fontSize: 9, color: `${meta.color}80`, marginTop: 6 }}>⚙ {meta.cmosNote}</p>
+                    <div style={{ padding: 16, background: T.surface, borderRadius: 8, border: `1px solid ${T.border}` }}>
+                        <div style={{ fontFamily: T.mono, fontSize: 10, fontWeight: 700, color: meta.color, marginBottom: 6, textTransform: 'uppercase' }}>
+                            Human Example:
+                        </div>
+                        <p style={{ fontFamily: T.mono, fontSize: 11, color: T.text, lineHeight: 1.6, marginBottom: 12 }}>
+                            {meta.humanExample}
+                        </p>
+                        <div style={{ height: 1, background: T.border, margin: '0 0 12px 0' }} />
+                        <p style={{ fontFamily: T.mono, fontSize: 10, color: T.muted, lineHeight: 1.7 }}>
+                            {meta.description}
+                        </p>
+                        <p style={{ fontFamily: T.mono, fontSize: 9, color: `${meta.color}80`, marginTop: 8, fontStyle: 'italic' }}>
+                            {meta.cmosNote}
+                        </p>
                     </div>
                 </div>
 
@@ -260,6 +304,35 @@ export const GateDiscovery: React.FC<Props> = ({ onComplete, hasCompleted }) => 
                             <span style={{ fontFamily: T.mono, fontSize: 9, color: T.muted }}>LOW = 0</span>
                         </div>
                     </div>
+                </div>
+            </div>
+
+
+            {/* Premium Category Panel: Universal & Exclusive Gates */}
+            <div style={{ marginTop: 32, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
+                <div style={{ padding: 24, background: `${T.warning}08`, border: `1px solid ${T.warning}30`, borderRadius: 12 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
+                        <div style={{ padding: 6, background: `${T.warning}20`, borderRadius: 6 }}>
+                            <Zap size={16} color={T.warning} />
+                        </div>
+                        <h3 style={{ fontFamily: T.mono, fontSize: 13, fontWeight: 700, color: T.text, margin: 0 }}>The Universal Gates</h3>
+                    </div>
+                    <p style={{ fontSize: 13, color: T.muted, lineHeight: 1.6, margin: 0 }}>
+                        <b style={{ color: T.text }}>NAND</b> and <b style={{ color: T.text }}>NOR</b> are called "Universal" because you can build <i style={{ color: T.accent }}>any other gate</i> using only them. In the real world, most computer chips are made primarily of NAND gates!
+                    </p>
+                </div>
+
+                <div style={{ padding: 24, background: `${T.accent}08`, border: `1px solid ${T.accent}30`, borderRadius: 12 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
+                        <div style={{ padding: 6, background: `${T.accent}20`, borderRadius: 6 }}>
+                            <Cpu size={16} color={T.accent} />
+                        </div>
+                        <h3 style={{ fontFamily: T.mono, fontSize: 13, fontWeight: 700, color: T.text, margin: 0 }}>The Exclusive Gates</h3>
+                    </div>
+                    <p style={{ fontSize: 13, color: T.muted, lineHeight: 1.6, margin: 0 }}>
+                        <b style={{ color: T.text }}>XOR</b> and <b style={{ color: T.text }}>XNOR</b> are decision specialists. 
+                        XOR acts as a <span style={{ color: T.error }}>Difference Checker</span> (YES if inputs differ), while XNOR is an <span style={{ color: T.success }}>Equality Checker</span> (YES if inputs match).
+                    </p>
                 </div>
             </div>
         </div>
