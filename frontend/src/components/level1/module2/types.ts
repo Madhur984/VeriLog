@@ -17,19 +17,19 @@ export interface M2ScreenProps {
   updateSignal?: (updates: Partial<M2Signal>) => void;
 }
 
-/** Design token constants shared across all M2 screens */
+/** Design token constants shared across all M2 screens - ULTIMATE AXE-OR EDITION */
 export const T = {
-  bg: 'var(--t-bg, #FFFFFF)',
-  card: 'var(--t-card, #F8FAFC)',
-  surface: 'var(--t-surface, #F1F5F9)',
-  border: 'var(--t-border, #E2E8F0)',
-  text: 'var(--t-text, #0F172A)',
-  muted: 'var(--t-muted, #64748B)',
-  signal: 'var(--t-signal, #0EA5E9)',   // sky-500 — THE signal color
-  interact: 'var(--t-interact, #F97316)', // orange — ONLY for sliders/handles
-  success: 'var(--t-success, #059669)',
-  error: 'var(--t-error, #DC2626)',
-  mono: "'IBM Plex Mono', 'Roboto Mono', monospace",
+  bg: '#0A0A0B',        // matte-obsidian
+  card: '#121215',      // solder-mask
+  surface: '#1A1A20',
+  border: '#2A2A35',    // ghost-trace
+  text: '#E6E6ED',      // oscilloscope-trace
+  muted: '#8A8A99',     // grid-line
+  signal: '#00D4FF',    // plasma-cyan
+  interact: '#FF5F1F',  // burnished-copper
+  success: '#10B981',   // success-green
+  error: '#DC2626',
+  mono: "'IBM Plex Mono', 'Space Mono', monospace",
 } as const;
 
 export const DEFAULT_SIGNAL: M2Signal = {

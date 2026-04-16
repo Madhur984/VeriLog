@@ -1,19 +1,20 @@
 /**
  * SignalEngine.ts
- * High-fidelity mathematical engine for Module 2: The Digital Bridge.
+ * High-fidelity mathematical engine for Module 2 v5: The Digital Bridge.
  * 
  * Features:
  * - Lanczos-3 (3rd order sinc) Reconstruction Kernel
  * - TPDF Dither (Triangular PDF) for Harmonic Linearization
  * - Scientifically Standard SNR Metrics (6.02N + 1.76 dB)
+ * - Real-time Signal Integrity (Fidelity) Metrics
  */
 
 export interface SignalConfig {
-    frequency: number;   // f_max
+    frequency: number;   
     amplitude: number;
     sampleRate: number;  // Fs
     bitDepth: number;    // N
-    jitter: number;      // sigma
+    jitter: number;      
     dither: boolean;
     reconstruction: 'sinc' | 'zoh';
 }
@@ -31,9 +32,6 @@ const noiseBuffer = Array.from({ length: NOISE_BUFFER_SIZE }, () => Math.random(
 let noisePtr = 0;
 const getNoise = () => noiseBuffer[(noisePtr++) % NOISE_BUFFER_SIZE];
 
-/**
- * Lanczos Kernel (Order 3) - Superior to standard Sinc for visual reconstruction
- */
 const lanczos = (x: number, a: number = 3) => {
     if (Math.abs(x) < 0.0001) return 1;
     if (Math.abs(x) >= a) return 0;
@@ -42,11 +40,10 @@ const lanczos = (x: number, a: number = 3) => {
 };
 
 export const SignalEngine = (config: SignalConfig, time: number, width: number, height: number) => {
-    // 0. Safety Sanitize
     const frequency = Math.max(0.001, config.frequency || 0.1);
     const amplitude = Math.max(0, config.amplitude || 10);
-    const sampleRate = Math.max(0, config.sampleRate || 0);
-    const bitDepth = Math.max(0, Math.min(24, config.bitDepth || 0)); // Cap at 24-bit for stability
+    const sampleRate = Math.max(1, config.sampleRate || 1);
+    const bitDepth = Math.max(1, Math.min(24, config.bitDepth || 1)); 
     const jitter = Math.max(0, Math.min(1, config.jitter || 0));
     const { dither, reconstruction } = config;
 
@@ -55,18 +52,17 @@ export const SignalEngine = (config: SignalConfig, time: number, width: number, 
     
     noisePtr = Math.floor(time * 60) % NOISE_BUFFER_SIZE;
 
-    // Aliasing Detection
+    // Aliasing Logic
     const f_max_scaled = frequency * 5; 
     const aliasing = sampleRate > 0 && sampleRate < 2 * f_max_scaled;
 
-    // Quantization Constants
-    const effectiveBits = bitDepth;
-    const levels = effectiveBits > 0 ? Math.pow(2, effectiveBits) : 0;
-    const stepSize = levels > 1 ? 2 / (levels - 1) : 0;
+    // Quantization Logic
+    const levels = Math.pow(2, bitDepth);
+    const stepSize = 2 / (levels - 1);
 
-    // 1. Generate Analog Path (Reference)
+    // 1. Analog Reference (The Truth)
     const analogPoints: { x: number; y: number }[] = [];
-    const resolution = 200;
+    const resolution = 300;
     for (let i = 0; i < resolution; i++) {
         const x = (i / (resolution - 1)) * width;
         const t_factor = (x / width) * Math.PI * 2 * f_max_scaled + time * 2;
@@ -74,9 +70,10 @@ export const SignalEngine = (config: SignalConfig, time: number, width: number, 
         analogPoints.push({ x, y });
     }
 
-    // 2. Generate Samples
-    const numSamples = Math.max(2, Math.floor(sampleRate || 2));
+    // 2. Discrete Samples (The Capture)
+    const numSamples = Math.floor(sampleRate);
     const samples: Sample[] = [];
+    let totalError = 0;
     
     for (let i = 0; i < numSamples; i++) {
         const idealX = (i / (numSamples - 1)) * width;
@@ -86,33 +83,28 @@ export const SignalEngine = (config: SignalConfig, time: number, width: number, 
         const timeFactor = (idealX / width) * Math.PI * 2 * f_max_scaled + time * 2;
         let analogVal = Math.sin(timeFactor);
         
-        // Elite Dither: TPDF (Triangular) instead of Rectangular
-        if (dither && bitDepth > 0 && stepSize > 0) {
+        if (dither && bitDepth > 0) {
             const d1 = getNoise();
             const d2 = getNoise();
             analogVal += (d1 + d2 - 1) * stepSize;
         }
         
-        const quantizedVal = (bitDepth > 0 && stepSize > 0) 
-            ? Math.round(analogVal / stepSize) * stepSize 
-            : analogVal;
-            
+        const quantizedVal = Math.round(analogVal / stepSize) * stepSize;
         const y = cy + quantizedVal * amp;
-        const error = analogVal - quantizedVal;
+        const error = Math.abs(analogVal - quantizedVal);
+        totalError += error;
         
         samples.push({ x, y, analogVal, quantizedVal, error });
     }
 
-    // 3. Reconstruction
+    // 3. Digital Reconstruction (The Illusion)
     const reconstructedPoints: { x: number; y: number }[] = [];
-    const sampleInterval = numSamples > 1 ? width / (numSamples - 1) : width;
+    const sampleInterval = width / (numSamples - 1);
 
-    if (reconstruction === 'sinc' && sampleRate > 0 && sampleInterval > 0) {
+    if (reconstruction === 'sinc' && numSamples > 2) {
         for (let i = 0; i < resolution; i++) {
             const x = (i / (resolution - 1)) * width;
             let sum = 0;
-            
-            // Optimization: Only use Lanczos window
             const nearIndex = Math.floor(x / sampleInterval);
             const window = 3; 
             for (let s = Math.max(0, nearIndex - window); s <= Math.min(numSamples - 1, nearIndex + window); s++) {
@@ -124,7 +116,6 @@ export const SignalEngine = (config: SignalConfig, time: number, width: number, 
             reconstructedPoints.push({ x, y: cy + sum * amp });
         }
     } else {
-        // Zero-Order Hold
         let sIdx = 0;
         for (let i = 0; i < resolution; i++) {
             const x = (i / (resolution - 1)) * width;
@@ -133,19 +124,29 @@ export const SignalEngine = (config: SignalConfig, time: number, width: number, 
         }
     }
 
-    // 4. Metrics calculation
-    const snr = bitDepth > 0 ? 6.02 * bitDepth + 1.76 : 120; // Default to 120dB for infiniteish
-    const thdn = bitDepth > 0 ? -snr : -120; 
+    // 4. Advanced Metrics
+    const snr = 6.02 * bitDepth + 1.76;
+    const avgError = totalError / numSamples;
+    const fidelity = Math.max(0, 100 - (avgError * 50) - (aliasing ? 40 : 0));
+    const dataLoss = 100 - fidelity;
+
+    // Buffers for Canvas
+    const analogBuffer = new Float32Array(analogPoints.map(p => (cy - p.y) / amp));
+    const digitalBuffer = new Float32Array(reconstructedPoints.map(p => (cy - p.y) / amp));
 
     return {
         analogPoints,
         samples,
         reconstructedPoints,
+        analogBuffer,
+        digitalBuffer,
         metrics: {
             snr,
             enob: bitDepth,
-            thdn,
-            aliasing
+            fidelity,
+            dataLoss,
+            aliasing,
+            error: avgError
         }
     };
 };

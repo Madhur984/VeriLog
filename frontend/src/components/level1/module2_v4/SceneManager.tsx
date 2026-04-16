@@ -22,7 +22,10 @@ export const SceneManager: React.FC<SceneManagerProps> = ({
     activeScene, 
     onSceneChange, 
     time,
-    isDarkMode
+    isDarkMode,
+    signalState,
+    onUpdateSignal,
+    addLog
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   
@@ -38,37 +41,39 @@ export const SceneManager: React.FC<SceneManagerProps> = ({
         });
       },
       { 
-        root: null,
-        rootMargin: '-20% 0px -20% 0px', 
+        root: containerRef.current,
+        rootMargin: '-50% 0px -50% 0px', 
         threshold: 0 
       }
     );
 
-    const sceneElements = document.querySelectorAll('[data-scene-index]');
-    sceneElements.forEach((el) => observer.observe(el));
+    const sceneElements = containerRef.current?.querySelectorAll('[data-scene-index]');
+    sceneElements?.forEach((el) => observer.observe(el));
 
     return () => observer.disconnect();
   }, [onSceneChange]);
 
   return (
-    <div ref={containerRef} className={`flex-1 overflow-y-auto scroll-smooth snap-y snap-mandatory transition-colors duration-500 ${isDarkMode ? 'bg-[#030100]' : 'bg-white'}`}>
-      {scenes.map((Scene, index) => {
+    <div ref={containerRef} className={`flex-1 overflow-y-auto scroll-smooth snap-y snap-mandatory transition-colors duration-500 pb-40 ${isDarkMode ? 'bg-[#030100]' : 'bg-white'}`}>
+      {scenes.map((Phase, index) => {
         return (
           <section 
             key={index} 
             id={`scene-${index}`}
             data-scene-index={index}
-            className="min-h-screen snap-start relative flex flex-col justify-center px-8 md:px-24 py-20"
+            className="min-h-screen snap-start relative flex flex-col justify-center px-8 md:px-24"
           >
             <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8 }}
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                transition={{ duration: 1 }}
                 className="w-full h-full flex flex-col justify-center"
             >
-                <Scene 
-                    index={index} 
+                <Phase 
+                    state={signalState}
                     time={time} 
+                    onUpdate={onUpdateSignal}
+                    addLog={addLog}
                     isActive={activeScene === index}
                     isDarkMode={isDarkMode}
                 />

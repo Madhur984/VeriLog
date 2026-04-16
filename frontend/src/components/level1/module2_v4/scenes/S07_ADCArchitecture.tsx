@@ -181,8 +181,54 @@ export const S07_ADCArchitecture: React.FC<{ isDarkMode: boolean }> = ({ isDarkM
               </div>
           </div>
       </div>
-            <TechnicalAudit 
-                isDarkMode={isDarkMode}
+            {/* 🏥 REAL WORLD APPLICATIONS */}
+      <section className="space-y-10">
+        <div className="flex flex-col gap-2">
+            <h3 className={`text-3xl font-black italic tracking-tight border-l-4 border-orange-500 pl-6 ${textColor}`}>The Digital Pulse</h3>
+            <p className={`text-sm font-medium opacity-60 pl-6 ${textColor}`}>Where these architectures meet human reality.</p>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-6 w-full">
+            {[
+                { 
+                    icon: <Activity size={20} />, 
+                    title: "Medical Diagnostic", 
+                    use: "ECG Monitoring", 
+                    desc: "Precision is survival. High-resolution Delta-Sigma ADCs capture the microvolt-level electrical signals of the human heart without missing a beat." 
+                },
+                { 
+                    icon: <Layers size={20} />, 
+                    title: "Automotive Safety", 
+                    use: "ABS & Airbag Sensors", 
+                    desc: "Reliability is key. SAR ADCs provide the perfect balance of speed and power to detect sudden deceleration in milliseconds." 
+                },
+                { 
+                    icon: <Zap size={20} />, 
+                    title: "Broadband Comm.", 
+                    use: "5G Infrastructure", 
+                    desc: "Speed is everything. Flash ADCs process billions of bits per second to keep global networks synchronized in real-time." 
+                }
+            ].map((app, idx) => (
+                <div key={idx} className={`p-8 rounded-[2.5rem] border ${isDarkMode ? 'bg-white/5 border-white/5' : 'bg-gray-50 border-gray-100 hover:shadow-xl transition-all'}`}>
+                    <div className="flex flex-col gap-6">
+                        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${isDarkMode ? 'bg-orange-500/20 text-orange-500' : 'bg-orange-600 text-white'}`}>
+                            {app.icon}
+                        </div>
+                        <div>
+                            <h4 className={`text-[10px] font-black uppercase tracking-widest ${accentColor}`}>{app.title}</h4>
+                            <h3 className={`text-lg font-black italic mt-1 ${textColor}`}>{app.use}</h3>
+                            <p className={`text-xs mt-4 leading-relaxed font-medium opacity-60 ${textColor}`}>
+                                {app.desc}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            ))}
+        </div>
+      </section>
+
+      <TechnicalAudit 
+          isDarkMode={isDarkMode}
                 showFullView={true}
                 specs={{
                     concept: "The Silicon Bridge: ADCs are physical implementations of the sampling theorem. Different silicon topologies (Flash, SAR, Delta-Sigma) represent different engineering philosophies regarding speed, power, and precision.",
