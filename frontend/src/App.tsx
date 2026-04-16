@@ -11,7 +11,7 @@ import { LoginPage } from './pages/LoginPage';
 import { HeroExperience } from './pages/HeroExperience';
 import { WorkstationHome } from './pages/WorkstationHome';
 import { EngineeringPortfolio } from './pages/EngineeringPortfolio';
-import { CPULabPage } from './pages/CPULabPage';
+import { KMapLabPage } from './pages/KMapLabPage';
 import { HardwareLeetCodePage } from './pages/HardwareLeetCodePage';
 import { SkillTree } from './pages/SkillTree';
 import { BossArena } from './pages/BossArena';
@@ -58,7 +58,7 @@ function App() {
           <Route path="/career-roadmap" element={<PortalPage />} />
           <Route path="/portfolio" element={<EngineeringPortfolio />} />
           <Route path="/workbench" element={<Workbench />} />
-          <Route path="/cpu-lab" element={<CPULabPage />} />
+          <Route path="/kmap-lab" element={<KMapLabPage />} />
           <Route path="/boss-arena" element={<BossArena />} />
           <Route path="/skill-tree" element={<SkillTree />} />
           <Route path="/hw-leetcode" element={<HardwareLeetCodePage />} />

@@ -5,13 +5,7 @@ import { StudioCanvas } from '../logic-studio/StudioCanvas';
 import { NodeType } from '../../mure/core/SignalNode';
 import { CheckCircle2, Zap, Cpu, Activity } from 'lucide-react';
 
-const T = {
-    card: '#0D0F16', surface: '#1A1D24', border: '#222633',
-    text: '#E5E7EB', muted: '#64748B', accent: '#00D4FF', success: '#10B981', warning: '#F59E0B',
-    mono: "'JetBrains Mono', monospace",
-};
-
-export const OptimizationComparison: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
+export const OptimizationComparison: React.FC<{ onComplete: () => void; isDarkMode?: boolean }> = ({ onComplete, isDarkMode = true }) => {
     const studio = useLogicStudio();
     const [isSimulating, setIsSimulating] = useState(false);
 
@@ -35,112 +29,113 @@ export const OptimizationComparison: React.FC<{ onComplete: () => void }> = ({ o
     }, [studio]);
 
     return (
-        <div style={{ width: '100%', maxWidth: 1200, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 32 }}>
-            <div style={{ textAlign: 'center' }}>
-                <span style={{ fontFamily: T.mono, fontSize: 9, letterSpacing: '0.25em', textTransform: 'uppercase', color: T.success, display: 'block', marginBottom: 8 }}>
-                    Scene 5.5 — The Power of Optimization
+        <div className="flex flex-col gap-8 w-full max-w-6xl mx-auto px-10">
+            <div className="text-center mb-4">
+                <span className="font-mono text-[9px] tracking-[0.25em] uppercase text-emerald-500 font-black mb-2 block">
+                    Scene 5.6 — The Power of Optimization
                 </span>
-                <h2 style={{ fontSize: 26, fontWeight: 700, color: T.text, marginBottom: 8 }}>From 11 Gates to 0</h2>
-                <p style={{ color: T.muted, fontSize: 14, maxWidth: 600, margin: '0 auto' }}>
+                <h2 className={`text-3xl font-black ${isDarkMode ? 'text-white' : 'text-slate-900'} mb-3`}>
+                    From 11 Gates to 0
+                </h2>
+                <p className={`text-sm ${isDarkMode ? 'text-slate-400' : 'text-slate-500'} font-sans font-medium max-w-2xl mx-auto leading-relaxed`}>
                     The complex expression $F = A'BC + ABC + AB'C$ simplifies entirely to $F = C$.
                     Notice how changes in A or B have no effect on the output.
                     This is why hardware engineers use Karnaugh Maps.
                 </p>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
-
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* ── Before (Unoptimized) Metrics ── */}
-                <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 12, padding: 24 }}>
-                    <h3 style={{ fontSize: 14, fontWeight: 600, color: T.muted, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 24 }}>Before Optimization</h3>
+                <div className={`p-8 rounded-3xl border transition-colors duration-300 ${isDarkMode ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'}`}>
+                    <h3 className={`text-xs font-bold uppercase tracking-widest mb-6 ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>Before Optimization</h3>
 
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', background: T.surface, borderRadius: 8 }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 12, color: T.text }}>
-                                <Cpu size={18} color={T.muted} />
-                                <span style={{ fontFamily: T.mono, fontSize: 13 }}>Total Gates</span>
+                    <div className="flex flex-col gap-4">
+                        <div className={`flex items-center justify-between p-4 rounded-xl ${isDarkMode ? 'bg-slate-950' : 'bg-slate-50'}`}>
+                            <div className={`flex items-center gap-3 ${isDarkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+                                <Cpu size={18} className="opacity-50" />
+                                <span className="font-mono text-sm">Total Gates</span>
                             </div>
-                            <span style={{ fontFamily: T.mono, fontSize: 16, color: '#EF4444', fontWeight: 700 }}>11</span>
+                            <span className="font-mono text-lg font-bold text-rose-500">11</span>
                         </div>
 
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', background: T.surface, borderRadius: 8 }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 12, color: T.text }}>
-                                <Activity size={18} color={T.muted} />
-                                <span style={{ fontFamily: T.mono, fontSize: 13 }}>Logic Depth</span>
+                        <div className={`flex items-center justify-between p-4 rounded-xl ${isDarkMode ? 'bg-slate-950' : 'bg-slate-50'}`}>
+                            <div className={`flex items-center gap-3 ${isDarkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+                                <Activity size={18} className="opacity-50" />
+                                <span className="font-mono text-sm">Logic Depth</span>
                             </div>
-                            <span style={{ fontFamily: T.mono, fontSize: 16, color: '#EF4444', fontWeight: 700 }}>4 levels</span>
+                            <span className="font-mono text-lg font-bold text-rose-500">4 levels</span>
                         </div>
 
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', background: T.surface, borderRadius: 8 }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 12, color: T.text }}>
-                                <Zap size={18} color={T.muted} />
-                                <span style={{ fontFamily: T.mono, fontSize: 13 }}>Transistor Count</span>
+                        <div className={`flex items-center justify-between p-4 rounded-xl ${isDarkMode ? 'bg-slate-950' : 'bg-slate-50'}`}>
+                            <div className={`flex items-center gap-3 ${isDarkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+                                <Zap size={18} className="opacity-50" />
+                                <span className="font-mono text-sm">Transistor Count</span>
                             </div>
-                            <span style={{ fontFamily: T.mono, fontSize: 16, color: '#EF4444', fontWeight: 700 }}>66</span>
+                            <span className="font-mono text-lg font-bold text-rose-500">66</span>
                         </div>
 
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', background: T.surface, borderRadius: 8 }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 12, color: T.text }}>
-                                <Activity size={18} color={T.muted} />
-                                <span style={{ fontFamily: T.mono, fontSize: 13 }}>Est. Power (mW)</span>
+                        <div className={`flex items-center justify-between p-4 rounded-xl ${isDarkMode ? 'bg-slate-950' : 'bg-slate-50'}`}>
+                            <div className={`flex items-center gap-3 ${isDarkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+                                <Activity size={18} className="opacity-50" />
+                                <span className="font-mono text-sm">Est. Power (mW)</span>
                             </div>
-                            <span style={{ fontFamily: T.mono, fontSize: 16, color: '#EF4444', fontWeight: 700 }}>142</span>
+                            <span className="font-mono text-lg font-bold text-rose-500">142</span>
                         </div>
                     </div>
                 </div>
 
                 {/* ── After (Optimized) Metrics ── */}
-                <div style={{ background: 'rgba(16,185,129,0.05)', border: `1px solid ${T.success}`, borderRadius: 12, padding: 24, position: 'relative', overflow: 'hidden' }}>
-                    <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: 'radial-gradient(circle at 100% 0%, rgba(16,185,129,0.15) 0%, transparent 50%)', pointerEvents: 'none' }} />
-                    <h3 style={{ fontSize: 14, fontWeight: 600, color: T.success, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 24 }}>After Optimization</h3>
+                <div className={`p-8 rounded-3xl border relative overflow-hidden transition-colors duration-300 ${isDarkMode ? 'bg-emerald-950/20 border-emerald-500/30' : 'bg-emerald-50 border-emerald-200'}`}>
+                    <div className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-50" style={{ background: 'radial-gradient(circle at 100% 0%, rgba(16,185,129,0.15) 0%, transparent 50%)' }} />
+                    <h3 className="text-xs font-bold uppercase tracking-widest mb-6 text-emerald-500 relative z-10">After Optimization</h3>
 
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 16, position: 'relative', zIndex: 1 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', background: 'rgba(16,185,129,0.1)', borderRadius: 8, border: '1px solid rgba(16,185,129,0.2)' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 12, color: T.text }}>
-                                <Cpu size={18} color={T.success} />
-                                <span style={{ fontFamily: T.mono, fontSize: 13 }}>Total Gates</span>
+                    <div className="flex flex-col gap-4 relative z-10">
+                        <div className={`flex items-center justify-between p-4 rounded-xl border ${isDarkMode ? 'bg-emerald-900/20 border-emerald-500/20' : 'bg-emerald-100/50 border-emerald-200'}`}>
+                            <div className={`flex items-center gap-3 ${isDarkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+                                <Cpu size={18} className="text-emerald-500" />
+                                <span className="font-mono text-sm">Total Gates</span>
                             </div>
-                            <span style={{ fontFamily: T.mono, fontSize: 16, color: T.success, fontWeight: 700 }}>0</span>
+                            <span className="font-mono text-lg font-bold text-emerald-500">0</span>
                         </div>
 
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', background: 'rgba(16,185,129,0.1)', borderRadius: 8, border: '1px solid rgba(16,185,129,0.2)' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 12, color: T.text }}>
-                                <Activity size={18} color={T.success} />
-                                <span style={{ fontFamily: T.mono, fontSize: 13 }}>Logic Depth</span>
+                        <div className={`flex items-center justify-between p-4 rounded-xl border ${isDarkMode ? 'bg-emerald-900/20 border-emerald-500/20' : 'bg-emerald-100/50 border-emerald-200'}`}>
+                            <div className={`flex items-center gap-3 ${isDarkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+                                <Activity size={18} className="text-emerald-500" />
+                                <span className="font-mono text-sm">Logic Depth</span>
                             </div>
-                            <span style={{ fontFamily: T.mono, fontSize: 16, color: T.success, fontWeight: 700 }}>0 levels</span>
+                            <span className="font-mono text-lg font-bold text-emerald-500">0 levels</span>
                         </div>
 
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', background: 'rgba(16,185,129,0.1)', borderRadius: 8, border: '1px solid rgba(16,185,129,0.2)' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 12, color: T.text }}>
-                                <Zap size={18} color={T.success} />
-                                <span style={{ fontFamily: T.mono, fontSize: 13 }}>Transistor Count</span>
+                        <div className={`flex items-center justify-between p-4 rounded-xl border ${isDarkMode ? 'bg-emerald-900/20 border-emerald-500/20' : 'bg-emerald-100/50 border-emerald-200'}`}>
+                            <div className={`flex items-center gap-3 ${isDarkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+                                <Zap size={18} className="text-emerald-500" />
+                                <span className="font-mono text-sm">Transistor Count</span>
                             </div>
-                            <span style={{ fontFamily: T.mono, fontSize: 16, color: T.success, fontWeight: 700 }}>0*</span>
+                            <span className="font-mono text-lg font-bold text-emerald-500">0*</span>
                         </div>
 
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', background: 'rgba(16,185,129,0.1)', borderRadius: 8, border: '1px solid rgba(16,185,129,0.2)' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 12, color: T.text }}>
-                                <Activity size={18} color={T.success} />
-                                <span style={{ fontFamily: T.mono, fontSize: 13 }}>Est. Power (mW)</span>
+                        <div className={`flex items-center justify-between p-4 rounded-xl border ${isDarkMode ? 'bg-emerald-900/20 border-emerald-500/20' : 'bg-emerald-100/50 border-emerald-200'}`}>
+                            <div className={`flex items-center gap-3 ${isDarkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+                                <Activity size={18} className="text-emerald-500" />
+                                <span className="font-mono text-sm">Est. Power (mW)</span>
                             </div>
-                            <span style={{ fontFamily: T.mono, fontSize: 16, color: T.success, fontWeight: 700 }}>~0</span>
+                            <span className="font-mono text-lg font-bold text-emerald-500">~0</span>
                         </div>
                     </div>
-                    <div style={{ fontSize: 9, color: T.muted, textAlign: 'right', marginTop: 12 }}>*Direct connection (wire only)</div>
+                    <div className={`text-[9px] text-right mt-3 font-mono ${isDarkMode ? 'text-emerald-500/50' : 'text-emerald-700/50'}`}>*Direct connection (wire only)</div>
                 </div>
             </div>
 
             {/* Live Interactive Circuit */}
-            <div style={{ width: '100%', height: 400, background: T.card, border: `1px solid ${T.success}`, borderRadius: 12, position: 'relative', overflow: 'hidden', boxShadow: '0 0 40px rgba(16,185,129,0.1)' }}>
-                <div style={{ position: 'absolute', top: 16, left: 16, zIndex: 10, background: 'rgba(13,15,22,0.8)', padding: '6px 12px', borderRadius: 4, backdropFilter: 'blur(4px)', border: `1px solid ${T.border}` }}>
-                    <span style={{ fontFamily: T.mono, fontSize: 10, color: T.text, letterSpacing: '0.1em' }}>LIVE OPTIMIZED CIRCUIT: F = C</span>
+            <div className={`w-full h-[400px] rounded-3xl border relative overflow-hidden transition-all duration-300 ${isDarkMode ? 'bg-slate-950 border-emerald-500 shadow-[0_0_40px_rgba(16,185,129,0.1)]' : 'bg-slate-50 border-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.1)]'}`}>
+                <div className={`absolute top-4 left-4 z-10 px-3 py-1.5 rounded-md backdrop-blur-md border ${isDarkMode ? 'bg-slate-900/80 border-slate-700 text-slate-300' : 'bg-white/80 border-slate-200 text-slate-600'}`}>
+                    <span className="font-mono text-[10px] tracking-widest uppercase font-bold text-emerald-500">LIVE OPTIMIZED CIRCUIT: F = C</span>
                 </div>
 
                 {isSimulating && (
-                    <div style={{ position: 'absolute', top: 16, right: 16, zIndex: 10, display: 'flex', alignItems: 'center', gap: 8 }}>
-                        <div style={{ width: 8, height: 8, background: T.success, borderRadius: '50%', boxShadow: `0 0 8px ${T.success}` }} />
-                        <span style={{ fontFamily: T.mono, fontSize: 10, color: T.success, letterSpacing: '0.1em' }}>SIMULATION ACTIVE</span>
+                    <div className="absolute top-4 right-4 z-10 flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
+                        <span className="font-mono text-[10px] text-emerald-500 tracking-[0.1em] font-bold">SIMULATION ACTIVE</span>
                     </div>
                 )}
 
@@ -161,17 +156,15 @@ export const OptimizationComparison: React.FC<{ onComplete: () => void }> = ({ o
                     onRemoveNode={studio.removeNode}
                 />
 
-                <div style={{ position: 'absolute', bottom: 24, left: '50%', transform: 'translateX(-50%)', zIndex: 10 }}>
+                <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10">
                     <motion.button
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={onComplete}
-                        style={{
-                            padding: '16px 32px', background: T.success, color: '#000', border: 'none',
-                            borderRadius: 8, fontFamily: T.mono, fontSize: 14, fontWeight: 700,
-                            cursor: 'pointer', letterSpacing: '0.1em', display: 'flex', alignItems: 'center', gap: 12,
-                            boxShadow: '0 8px 20px rgba(16,185,129,0.3)'
-                        }}>
+                        className={`px-8 py-4 rounded-xl font-mono text-sm font-black uppercase tracking-[0.15em] flex items-center gap-3 transition-colors duration-300 ${
+                            isDarkMode ? 'bg-emerald-500 text-slate-950 hover:bg-emerald-400 hover:shadow-[0_8px_20px_rgba(16,185,129,0.3)]' : 'bg-emerald-500 text-white hover:bg-emerald-600 hover:shadow-lg'
+                        }`}
+                    >
                         <CheckCircle2 size={20} />
                         COMPLETE LEVEL 5
                     </motion.button>

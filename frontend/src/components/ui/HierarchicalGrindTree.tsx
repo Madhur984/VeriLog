@@ -108,7 +108,7 @@ const ROOT_NODES: RootNode[] = [
     icon: '▦',
     color: ['#9f1239', '#fb7185'],
     glow: '#fb7185',
-    route: '/kmap',
+    route: '/module/5',
     status: 'active',
     children: [
       { id: 'r5c1', label: '2-Variable Maps',   pct: 0, color: '#fb7185', icon: '▣', locked: false },

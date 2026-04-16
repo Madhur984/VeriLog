@@ -14,13 +14,6 @@ import { CheckCircle2, XCircle, ChevronRight, Cpu, Activity, Trophy } from 'luci
 import { KMapEngine } from './KMapEngine';
 import type { ChallengeAttempt } from '../../hooks/useKMapProgress';
 
-const T = {
-    card: '#0D0F16', surface: '#1A1D24', border: '#222633',
-    text: '#E5E7EB', muted: '#64748B', accent: '#00D4FF',
-    success: '#10B981', warning: '#F59E0B', error: '#EF4444',
-    mono: "'JetBrains Mono', monospace",
-};
-
 // ─── Challenge Definitions ────────────────────────────────────────────────────
 
 interface Challenge {
@@ -172,60 +165,62 @@ export const KMapChallenges: React.FC<Props> = ({ onComplete, submitChallenge, c
     }, [allPassed, onComplete]);
 
     const diffColor = (d: Challenge['difficulty']) =>
-        d === 'easy' ? T.success : d === 'medium' ? T.warning : T.error;
+        d === 'easy' ? 'text-emerald-500 border-emerald-500' : 
+        d === 'medium' ? 'text-amber-500 border-amber-500' : 'text-rose-500 border-rose-500';
 
     if (activeId && challenge) {
         return (
-            <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', gap: 24, padding: '0 40px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+            <div className="relative flex flex-col gap-6 px-10 w-full max-w-5xl mx-auto font-mono">
+                <div className="flex items-center gap-4">
                     <button onClick={() => setActiveId(null)}
-                        style={{ background: 'none', border: `1px solid ${T.border}`, color: T.muted, cursor: 'pointer', padding: '6px 14px', borderRadius: 6, fontFamily: T.mono, fontSize: 11 }}>
+                        className="bg-transparent border border-slate-200 dark:border-slate-800 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 cursor-pointer px-4 py-1.5 rounded-lg text-xs font-bold transition-colors">
                         ← Back
                     </button>
-                    <div style={{ fontFamily: T.mono, fontSize: 13, color: T.text, fontWeight: 700 }}>{challenge.title}</div>
-                    <span style={{ fontSize: 9, padding: '2px 8px', border: `1px solid ${diffColor(challenge.difficulty)}40`, color: diffColor(challenge.difficulty), borderRadius: 4, textTransform: 'uppercase', fontFamily: T.mono }}>
+                    <div className="text-sm text-slate-900 dark:text-white font-black">{challenge.title}</div>
+                    <span className={`text-[9px] px-2 py-0.5 border bg-white/5 bg-opacity-10 rounded uppercase ${diffColor(challenge.difficulty)}`}>
                         {challenge.difficulty}
                     </span>
-                    <span style={{ marginLeft: 'auto', fontFamily: T.mono, fontSize: 11, color: T.warning }}>⚡ {challenge.xp} XP</span>
+                    <span className="ml-auto text-xs text-amber-500 font-bold tracking-widest">⚡ {challenge.xp} XP</span>
                 </div>
-                <p style={{ color: T.muted, fontFamily: T.mono, fontSize: 13, margin: 0 }}>{challenge.description}</p>
+                <p className="text-slate-500 dark:text-slate-400 text-sm font-sans font-medium italic m-0">{challenge.description}</p>
 
-                <KMapEngine
-                    variables={challenge.variables}
-                    targetMinterms={challenge.minterms}
-                    mode="group"
-                    onGroupsVerified={handleGroupsVerified}
-                />
+                <div className="bg-white dark:bg-slate-950 rounded-[48px] p-12 border border-slate-200 dark:border-slate-800 shadow-2xl transition-colors duration-300">
+                    <KMapEngine
+                        variables={challenge.variables}
+                        targetMinterms={challenge.minterms}
+                        mode="group"
+                        onGroupsVerified={handleGroupsVerified}
+                    />
+                </div>
 
                 {/* Result overlay */}
                 <AnimatePresence>
                     {showResult && (
                         <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}
-                            style={{
-                                position: 'fixed', top: '35%', left: '50%', transform: 'translate(-50%, -50%)',
-                                zIndex: 1000, background: showResult.passed ? 'rgba(16,185,129,0.12)' : 'rgba(239,68,68,0.12)',
-                                border: `2px solid ${showResult.passed ? T.success : T.error}`,
-                                borderRadius: 20, padding: '32px 48px', textAlign: 'center',
-                                backdropFilter: 'blur(16px)', fontFamily: T.mono,
-                                boxShadow: `0 0 60px ${showResult.passed ? 'rgba(16,185,129,0.3)' : 'rgba(239,68,68,0.2)'}`,
-                            }}>
-                            {showResult.passed ? <CheckCircle2 size={48} color={T.success} style={{ marginBottom: 12 }} /> : <XCircle size={48} color={T.error} style={{ marginBottom: 12 }} />}
-                            <div style={{ fontSize: 20, fontWeight: 700, color: showResult.passed ? T.success : T.error, marginBottom: 8 }}>
+                            className={`fixed top-[35%] left-1/2 -translate-x-1/2 z-[1000] border-2 rounded-[32px] p-10 text-center backdrop-blur-2xl shadow-2xl transition-all
+                                ${showResult.passed 
+                                    ? 'bg-emerald-50/90 dark:bg-emerald-950/90 border-emerald-500 shadow-emerald-500/20' 
+                                    : 'bg-rose-50/90 dark:bg-rose-950/90 border-rose-500 shadow-rose-500/20'}`}
+                        >
+                            {showResult.passed 
+                                ? <CheckCircle2 size={48} className="text-emerald-500 mx-auto mb-4" /> 
+                                : <XCircle size={48} className="text-rose-500 mx-auto mb-4" />}
+                            <div className={`text-2xl font-black uppercase tracking-wider mb-4 ${showResult.passed ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
                                 {showResult.passed ? 'Accepted!' : 'Wrong Answer'}
                             </div>
                             {showResult.passed && (
-                                <div style={{ display: 'flex', gap: 24, marginTop: 8, justifyContent: 'center' }}>
-                                    <div style={{ textAlign: 'center' }}>
-                                        <div style={{ fontSize: 22, fontWeight: 700, color: T.warning }}>{showResult.score}</div>
-                                        <div style={{ fontSize: 10, color: T.muted }}>SCORE</div>
+                                <div className="flex gap-8 mt-6 justify-center">
+                                    <div className="text-center">
+                                        <div className="text-2xl font-black text-amber-500">{showResult.score}</div>
+                                        <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1">SCORE</div>
                                     </div>
-                                    <div style={{ textAlign: 'center' }}>
-                                        <div style={{ fontSize: 22, fontWeight: 700, color: T.accent }}>{showResult.reduction}%</div>
-                                        <div style={{ fontSize: 10, color: T.muted }}>GATE REDUCTION</div>
+                                    <div className="text-center">
+                                        <div className="text-2xl font-black text-sky-500">{showResult.reduction}%</div>
+                                        <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1">GATE REDUCTION</div>
                                     </div>
-                                    <div style={{ textAlign: 'center' }}>
-                                        <div style={{ fontSize: 22, fontWeight: 700, color: T.success }}>+{challenge.xp}</div>
-                                        <div style={{ fontSize: 10, color: T.muted }}>XP EARNED</div>
+                                    <div className="text-center">
+                                        <div className="text-2xl font-black text-emerald-500">+{challenge.xp}</div>
+                                        <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1">XP EARNED</div>
                                     </div>
                                 </div>
                             )}
@@ -237,55 +232,56 @@ export const KMapChallenges: React.FC<Props> = ({ onComplete, submitChallenge, c
     }
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 32, padding: '0 40px', fontFamily: T.mono }}>
+        <div className="flex flex-col gap-10 px-10 font-mono w-full max-w-5xl mx-auto">
             {/* Header */}
-            <div style={{ textAlign: 'center' }}>
-                <span style={{ fontSize: 9, letterSpacing: '0.25em', textTransform: 'uppercase', color: T.accent, display: 'block', marginBottom: 8 }}>
+            <div className="text-center">
+                <span className="text-[9px] tracking-[0.25em] uppercase text-sky-500 font-black block mb-3">
                     Scene 5.4 — Optimization Challenges
                 </span>
-                <h2 style={{ fontSize: 26, fontWeight: 700, color: T.text, margin: 0 }}>Hardware LeetCode</h2>
-                <p style={{ color: T.muted, fontSize: 14, marginTop: 8 }}>
+                <h2 className="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tighter m-0">Hardware LeetCode</h2>
+                <p className="text-slate-500 dark:text-slate-400 text-sm mt-4 font-sans font-medium italic">
                     Solve real-world logic minimization problems. Complete all 6 to advance.
                 </p>
             </div>
 
             {/* Challenge Grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 16 }}>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {CHALLENGES.map((ch, i) => {
                     const isComplete = passed.has(ch.id) || completedChallengeIds.has(ch.id);
                     return (
-                        <motion.div key={ch.id} whileHover={!isComplete ? { y: -4, boxShadow: `0 12px 32px rgba(0,0,0,0.5)` } : undefined}
+                        <motion.div key={ch.id} whileHover={!isComplete ? { y: -4, boxShadow: '0 20px 40px -10px rgba(0,0,0,0.1)' } : undefined}
                             onClick={() => !isComplete && setActiveId(ch.id)}
-                            style={{
-                                background: isComplete ? 'rgba(16,185,129,0.06)' : T.card,
-                                border: `1px solid ${isComplete ? T.success : T.border}`,
-                                borderRadius: 12, padding: '20px 24px',
-                                cursor: isComplete ? 'default' : 'pointer',
-                                transition: 'all 0.2s',
-                                position: 'relative', overflow: 'hidden',
-                            }}>
+                            className={`relative overflow-hidden rounded-2xl p-6 border transition-all duration-300
+                                ${isComplete 
+                                    ? 'bg-emerald-50/50 dark:bg-emerald-900/10 border-emerald-500/50 cursor-default shadow-none' 
+                                    : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 cursor-pointer shadow-lg hover:border-sky-500/30'}`}
+                        >
                             {isComplete && (
-                                <CheckCircle2 size={16} color={T.success} style={{ position: 'absolute', top: 16, right: 16 }} />
+                                <CheckCircle2 size={16} className="text-emerald-500 absolute top-5 right-5" />
                             )}
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
-                                <span style={{ fontSize: 11, color: T.muted, opacity: 0.6 }}>#{i + 1}</span>
-                                <span style={{ fontSize: 9, padding: '2px 8px', border: `1px solid ${diffColor(ch.difficulty)}40`, color: diffColor(ch.difficulty), borderRadius: 4, textTransform: 'uppercase' }}>
+                            <div className="flex items-center gap-3 mb-4">
+                                <span className="text-[11px] text-slate-400 dark:text-slate-600 font-bold">#{i + 1}</span>
+                                <span className={`text-[9px] px-2 py-0.5 border rounded uppercase font-bold bg-white/5 ${diffColor(ch.difficulty)}`}>
                                     {ch.difficulty}
                                 </span>
-                                <span style={{ marginLeft: 'auto', fontSize: 10, color: T.warning }}>⚡ {ch.xp} XP</span>
+                                <span className="ml-auto text-[10px] font-bold tracking-widest text-amber-500">⚡ {ch.xp} XP</span>
                             </div>
-                            <div style={{ fontSize: 15, fontWeight: 700, color: isComplete ? T.success : T.text, marginBottom: 6 }}>{ch.title}</div>
-                            <div style={{ fontSize: 12, color: T.muted, lineHeight: 1.6 }}>{ch.description}</div>
-                            <div style={{ display: 'flex', gap: 16, marginTop: 14 }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 10, color: T.muted }}>
-                                    <Cpu size={11} /> {ch.variables} vars
+                            <div className={`text-base font-black mb-2 ${isComplete ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-900 dark:text-white'}`}>
+                                {ch.title}
+                            </div>
+                            <div className="text-xs text-slate-500 dark:text-slate-400 font-sans leading-relaxed mb-6 font-medium italic">
+                                {ch.description}
+                            </div>
+                            <div className="flex gap-4 mt-auto">
+                                <div className="flex items-center gap-1.5 text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">
+                                    <Cpu size={12} /> {ch.variables} vars
                                 </div>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 10, color: T.muted }}>
-                                    <Activity size={11} /> {ch.optimalGates}→{ch.reducedGates} gates
+                                <div className="flex items-center gap-1.5 text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">
+                                    <Activity size={12} /> {ch.optimalGates}→{ch.reducedGates} gates
                                 </div>
                             </div>
                             {!isComplete && (
-                                <ChevronRight size={18} color={T.muted} style={{ position: 'absolute', right: 16, bottom: 20 }} />
+                                <ChevronRight size={18} className="text-slate-300 dark:text-slate-600 absolute right-4 bottom-5" />
                             )}
                         </motion.div>
                     );
@@ -293,11 +289,11 @@ export const KMapChallenges: React.FC<Props> = ({ onComplete, submitChallenge, c
             </div>
 
             {/* Progress Footer */}
-            <div style={{ textAlign: 'center', fontFamily: T.mono, fontSize: 12, color: T.muted }}>
+            <div className="text-center font-mono text-xs font-bold text-slate-500 dark:text-slate-400 mt-4">
                 {passed.size + completedChallengeIds.size}/{CHALLENGES.length} completed
                 {allPassed && (
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                        style={{ marginTop: 16, display: 'flex', alignItems: 'center', gap: 10, justifyContent: 'center', color: T.warning }}>
+                        className="mt-6 flex items-center justify-center gap-2 text-amber-500 font-black uppercase tracking-widest">
                         <Trophy size={20} /> All challenges complete! Moving to final scene...
                     </motion.div>
                 )}

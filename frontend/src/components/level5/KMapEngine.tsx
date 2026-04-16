@@ -2,12 +2,6 @@ import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle2 } from 'lucide-react';
 
-const T = {
-    card: '#0D0F16', surface: '#1A1D24', border: '#222633',
-    text: '#E5E7EB', muted: '#64748B', accent: '#00D4FF', success: '#10B981', warning: '#F59E0B', error: '#EF4444',
-    mono: "'JetBrains Mono', monospace",
-};
-
 export type VarCount = 2 | 3 | 4;
 
 interface Props {
@@ -157,7 +151,7 @@ export const KMapEngine: React.FC<Props> = ({ variables, targetMinterms, mode = 
         ...(draftGroup.length ? [{ g: draftGroup, idx: -1, isDraft: true }] : [])];
 
         return allToRender.map(({ g: group, idx, isDraft }) => {
-            const color = isDraft ? T.accent : COLORS[idx % COLORS.length];
+            const color = isDraft ? '#00D4FF' : COLORS[idx % COLORS.length];
             const cells = group.map(c => c.split('-').map(Number));
             const rs = Array.from(new Set(cells.map(c => c[0]))).sort((a, b) => a - b);
             const cs = Array.from(new Set(cells.map(c => c[1]))).sort((a, b) => a - b);
@@ -184,93 +178,116 @@ export const KMapEngine: React.FC<Props> = ({ variables, targetMinterms, mode = 
     };
 
     return (
-        <div style={{ display: 'flex', gap: 48, justifyContent: 'center', alignItems: 'flex-start', fontFamily: T.mono, padding: 24, userSelect: mode === 'group' ? 'none' : 'auto' }}>
-            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 12, padding: 24, boxShadow: '0 8px 32px rgba(0,0,0,0.5)', opacity: mode === 'group' ? 0.5 : 1 }}>
-                <div style={{ fontSize: 10, color: T.accent, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 16 }}>Truth Table</div>
-                <div style={{ display: 'grid', gridTemplateColumns: `repeat(${variables}, 32px) 48px`, gap: 8, textAlign: 'center', fontSize: 13 }}>
+        <div className={`flex gap-12 justify-center items-start font-mono p-6 ${mode === 'group' ? 'select-none' : ''}`}>
+            {/* Truth Table */}
+            <div className={`bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-6 shadow-xl transition-opacity duration-300 ${mode === 'group' ? 'opacity-50' : 'opacity-100'}`}>
+                <div className="text-[10px] text-sky-500 uppercase tracking-widest font-bold mb-4">Truth Table</div>
+                <div 
+                    className="grid gap-2 text-center text-[13px] font-bold text-slate-800 dark:text-slate-200" 
+                    style={{ gridTemplateColumns: `repeat(${variables}, 32px) 48px` }}
+                >
                     {getAxisLabels(variables).rowVars.split('').concat(getAxisLabels(variables).colVars.split('')).map((v, i) => <div key={i}>{v}</div>)}
-                    <div style={{ color: T.accent }}>F</div>
-                    <div style={{ gridColumn: '1 / -1', height: 1, background: T.border, margin: '8px 0' }} />
-                    {Array.from({ length: Math.pow(2, variables) }).map((_, i) => (
-                        <React.Fragment key={i}>
-                            {i.toString(2).padStart(variables, '0').split('').map((bit, idx) => <div key={idx} style={{ color: bit === '1' ? T.text : T.muted }}>{bit}</div>)}
-                            <div draggable={mode === 'map' && targetMinterms.includes(i)} onDragStart={e => e.dataTransfer.setData('text/plain', '1')}
-                                style={{ color: targetMinterms.includes(i) ? T.success : T.muted, background: mode === 'map' && targetMinterms.includes(i) ? 'rgba(16,185,129,0.1)' : 'transparent', borderRadius: 4, width: 24, height: 24, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: mode === 'map' && targetMinterms.includes(i) ? 'grab' : 'default' }}>
-                                {targetMinterms.includes(i) ? '1' : '0'}
-                            </div>
-                        </React.Fragment>
-                    ))}
+                    <div className="text-sky-500">F</div>
+                    <div className="col-span-full h-[1px] bg-slate-200 dark:bg-slate-800 my-2" />
+                    {Array.from({ length: Math.pow(2, variables) }).map((_, i) => {
+                        const isTarget = targetMinterms.includes(i);
+                        return (
+                            <React.Fragment key={i}>
+                                {i.toString(2).padStart(variables, '0').split('').map((bit, idx) => (
+                                    <div key={idx} className={bit === '1' ? 'text-slate-800 dark:text-slate-200' : 'text-slate-400 dark:text-slate-600'}>{bit}</div>
+                                ))}
+                                <div 
+                                    draggable={mode === 'map' && isTarget} 
+                                    onDragStart={e => e.dataTransfer.setData('text/plain', '1')}
+                                    className={`w-6 h-6 mx-auto rounded flex items-center justify-center transition-colors
+                                        ${isTarget ? 'text-emerald-500 font-bold' : 'text-slate-400 dark:text-slate-600'}
+                                        ${mode === 'map' && isTarget ? 'bg-emerald-500/10 cursor-grab hover:bg-emerald-500/20 active:cursor-grabbing' : 'cursor-default'}`
+                                    }
+                                >
+                                    {isTarget ? '1' : '0'}
+                                </div>
+                            </React.Fragment>
+                        );
+                    })}
                 </div>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 12, padding: 32, position: 'relative', boxShadow: '0 8px 32px rgba(0,0,0,0.5)' }}>
-                    <div style={{ position: 'absolute', top: 12, right: 16, fontSize: 10, color: T.accent, letterSpacing: '0.15em' }}>K-MAP ({variables}-VAR)</div>
-                    <div style={{ display: 'flex', marginBottom: 8, position: 'relative' }}>
-                        <div style={{ width: 40 }} />
-                        <div style={{ position: 'absolute', top: -16, left: 12, color: T.muted, fontSize: 12 }}>{rowVars} \ {colVars}</div>
-                        {cols.map((c, i) => <div key={i} style={{ width: 64, textAlign: 'center', color: T.text, fontSize: 13 }}>{c}</div>)}
+
+            {/* Right Column: K-Map & Group Manager */}
+            <div className="flex flex-col gap-4">
+                {/* K-MAP */}
+                <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-8 shadow-xl relative transition-colors duration-300">
+                    <div className="absolute top-3 right-4 text-[10px] text-sky-500 uppercase tracking-widest font-bold">K-MAP ({variables}-VAR)</div>
+                    <div className="flex mb-2 relative">
+                        <div className="w-[40px]" />
+                        <div className="absolute -top-4 left-3 text-slate-400 dark:text-slate-500 text-xs font-bold">{rowVars} \ {colVars}</div>
+                        {cols.map((c, i) => <div key={i} className="w-[64px] text-center text-slate-800 dark:text-slate-200 text-[13px] font-bold">{c}</div>)}
                     </div>
                     {rows.map((r, rIdx) => (
-                        <div key={rIdx} style={{ display: 'flex', alignItems: 'center' }}>
-                            <div style={{ width: 40, textAlign: 'right', paddingRight: 12, color: T.text, fontSize: 13 }}>{r}</div>
+                        <div key={rIdx} className="flex items-center">
+                            <div className="w-[40px] text-right pr-3 text-slate-800 dark:text-slate-200 text-[13px] font-bold">{r}</div>
                             {cols.map((c, cIdx) => {
                                 const cellKey = `${rIdx}-${cIdx}`;
                                 const isDrafting = draftGroup.includes(cellKey);
+                                const cellVal = mapState[cellKey];
                                 return (
-                                    <div key={cIdx} onDragOver={e => mode === 'map' && e.preventDefault()} onDrop={e => { if (mode === 'map' && e.dataTransfer.getData('text/plain') === '1') setMapState(p => ({ ...p, [cellKey]: 1 })) }}
+                                    <div key={cIdx} 
+                                        onDragOver={e => mode === 'map' && e.preventDefault()} 
+                                        onDrop={e => { if (mode === 'map' && e.dataTransfer.getData('text/plain') === '1') setMapState(p => ({ ...p, [cellKey]: 1 })) }}
                                         onClick={() => handleCellClick(cellKey)}
-                                        style={{
-                                            width: 64, height: 64, border: `1px solid ${T.border}`,
-                                            background: isDrafting ? 'rgba(0,212,255,0.1)' : (mapState[cellKey] === 1 ? 'rgba(16,185,129,0.05)' : T.surface),
-                                            display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, fontWeight: 700,
-                                            color: mapState[cellKey] === 1 ? T.success : 'transparent', cursor: (mode === 'group' && mapState[cellKey] === 1) ? 'pointer' : (mode === 'map' ? 'pointer' : 'default'), transition: 'all 0.1s ease', position: 'relative'
-                                        }}
+                                        className={`w-[64px] h-[64px] border border-slate-200 dark:border-slate-800 relative flex items-center justify-center text-xl font-black transition-all duration-200
+                                            ${isDrafting ? 'bg-sky-500/10' : cellVal === 1 ? 'bg-emerald-500/5' : 'bg-slate-50 dark:bg-slate-900/50'}
+                                            ${mode === 'group' && cellVal === 1 ? 'cursor-pointer hover:bg-emerald-500/10' : mode === 'map' ? 'cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800/50' : 'cursor-default'}
+                                            ${cellVal === 1 ? 'text-emerald-500' : 'text-transparent'}
+                                        `}
                                     >
-                                        <div style={{ position: 'absolute', top: 4, right: 4, fontSize: 8, color: T.muted, fontWeight: 400 }}>{r}{c}</div>
-                                        {mapState[cellKey] ?? ''}
+                                        <div className="absolute top-1 right-1 text-[8px] text-slate-400 dark:text-slate-600 font-normal">{r}{c}</div>
+                                        {cellVal ?? ''}
                                     </div>
                                 );
                             })}
                         </div>
                     ))}
-                    <div style={{ position: 'absolute', top: 32, left: 32, right: 32, bottom: 32, pointerEvents: 'none' }}>
-                        <svg width="100%" height="100%" style={{ overflow: 'visible' }}>{renderGroupBlobs()}</svg>
+                    <div className="absolute top-[32px] left-[32px] right-[32px] bottom-[32px] pointer-events-none">
+                        <svg width="100%" height="100%" className="overflow-visible">{renderGroupBlobs()}</svg>
                     </div>
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+
+                {/* Sub-panels */}
+                <div className="flex flex-col gap-3">
                     <AnimatePresence>
                         {mode === 'map' && isMapCompleted && (
                             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-                                style={{ padding: '12px 24px', background: 'rgba(16,185,129,0.1)', border: '1px solid #10B981', borderRadius: 8, display: 'flex', alignItems: 'center', gap: 12, color: '#10B981', fontSize: 14 }}>
+                                className="px-6 py-3 bg-emerald-500/10 border border-emerald-500/30 rounded-lg flex items-center gap-3 text-emerald-600 dark:text-emerald-400 text-sm font-bold shadow-lg">
                                 <CheckCircle2 size={20} /> Mapping Complete
                             </motion.div>
                         )}
                         {mode === 'group' && (
-                            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 12, padding: 20, width: 280, boxShadow: '0 8px 32px rgba(0,0,0,0.4)' }}>
-                                <div style={{ fontSize: 10, color: T.accent, letterSpacing: '0.15em', marginBottom: 12 }}>GROUP MANAGER</div>
+                            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} 
+                                className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 w-[280px] shadow-xl">
+                                <div className="text-[10px] text-sky-500 uppercase tracking-widest font-bold mb-3">GROUP MANAGER</div>
 
                                 {draftGroup.length > 0 ? (
-                                    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                                        <div style={{ fontSize: 12, color: T.text }}>{draftGroup.length} Cells Selected</div>
-                                        <div style={{ display: 'flex', gap: 8 }}>
-                                            <button onClick={saveGroup} style={{ flex: 1, padding: '8px', background: T.success, border: 'none', borderRadius: 4, color: '#fff', fontSize: 11, fontWeight: 700, cursor: 'pointer' }}>SAVE GROUP</button>
-                                            <button onClick={clearDraft} style={{ flex: 1, padding: '8px', background: T.surface, border: `1px solid ${T.border}`, borderRadius: 4, color: T.text, fontSize: 11, cursor: 'pointer' }}>CLEAR</button>
+                                    <div className="flex flex-col gap-3">
+                                        <div className="text-xs text-slate-800 dark:text-slate-200 font-bold">{draftGroup.length} Cells Selected</div>
+                                        <div className="flex gap-2">
+                                            <button onClick={saveGroup} className="flex-1 py-2 bg-emerald-500 hover:bg-emerald-600 text-white border-none rounded text-[11px] font-black cursor-pointer transition-colors">SAVE GROUP</button>
+                                            <button onClick={clearDraft} className="flex-1 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 rounded text-[11px] font-bold cursor-pointer transition-colors">CLEAR</button>
                                         </div>
                                     </div>
                                 ) : (
-                                    <div style={{ fontSize: 12, color: T.muted, fontStyle: 'italic' }}>Click 1s to form a group...</div>
+                                    <div className="text-xs text-slate-400 dark:text-slate-500 italic">Click 1s to form a group...</div>
                                 )}
 
                                 {confirmedGroups.length > 0 && (
                                     <>
-                                        <div style={{ height: 1, background: T.border, margin: '16px 0' }} />
-                                        <div style={{ fontSize: 10, color: T.accent, letterSpacing: '0.15em', marginBottom: 12 }}>DERIVED EXPRESSION</div>
-                                        <div style={{ fontFamily: T.mono, fontSize: 18, fontWeight: 700, color: T.text, wordBreak: 'break-all' }}>{expression}</div>
-                                        <div style={{ fontSize: 10, color: T.muted, marginTop: 12 }}>
+                                        <div className="h-[1px] bg-slate-200 dark:bg-slate-800 my-4" />
+                                        <div className="text-[10px] text-sky-500 uppercase tracking-widest font-bold mb-3">DERIVED EXPRESSION</div>
+                                        <div className="font-mono text-lg font-black text-slate-900 dark:text-white break-all">{expression}</div>
+                                        <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-3 flex flex-col gap-1">
                                             {confirmedGroups.map((g, i) => (
-                                                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-                                                    <span>Term {i + 1}: {deriveTerm(g)}</span>
-                                                    <button onClick={() => removeGroup(i)} style={{ background: 'none', border: 'none', color: T.error || '#ef4444', cursor: 'pointer', fontSize: 10 }}>Remove</button>
+                                                <div key={i} className="flex justify-between items-center bg-slate-50 dark:bg-slate-800/50 p-1.5 rounded">
+                                                    <span className="font-bold">Term {i + 1}: <span className="text-slate-800 dark:text-slate-200">{deriveTerm(g)}</span></span>
+                                                    <button onClick={() => removeGroup(i)} className="bg-transparent hover:bg-rose-500/10 px-1.5 py-0.5 rounded border-none text-rose-500 cursor-pointer text-[10px] font-bold transition-colors">Remove</button>
                                                 </div>
                                             ))}
                                         </div>

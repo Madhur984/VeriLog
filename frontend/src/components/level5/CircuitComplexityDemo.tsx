@@ -3,14 +3,9 @@ import { motion } from 'framer-motion';
 import { useLogicStudio } from '../../hooks/useLogicStudio';
 import { StudioCanvas } from '../logic-studio/StudioCanvas';
 import { NodeType } from '../../mure/core/SignalNode';
+import { ArrowRight } from 'lucide-react';
 
-const T = {
-    card: '#0D0F16', surface: '#1A1D24', border: '#222633',
-    text: '#E5E7EB', muted: '#64748B', accent: '#00D4FF',
-    mono: "'JetBrains Mono', monospace",
-};
-
-export const CircuitComplexityDemo: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
+export const CircuitComplexityDemo: React.FC<{ onComplete: () => void; isDarkMode?: boolean }> = ({ onComplete, isDarkMode = true }) => {
     const studio = useLogicStudio();
 
     // Build the complex circuit: F = A'BC + ABC + AB'C
@@ -71,19 +66,21 @@ export const CircuitComplexityDemo: React.FC<{ onComplete: () => void }> = ({ on
     }, [studio]);
 
     return (
-        <div style={{ width: '100%', maxWidth: 1200, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 24 }}>
-            <div style={{ textAlign: 'center' }}>
-                <span style={{ fontFamily: T.mono, fontSize: 9, letterSpacing: '0.25em', textTransform: 'uppercase', color: '#00D4FF', display: 'block', marginBottom: 8 }}>
+        <div className="flex flex-col gap-8 w-full max-w-6xl mx-auto px-10">
+            <div className="text-center mb-4">
+                <span className="font-mono text-[9px] tracking-[0.25em] uppercase text-cyan-500 font-black mb-2 block">
                     Scene 5.1 — The Complexity Problem
                 </span>
-                <h2 style={{ fontSize: 26, fontWeight: 700, color: T.text, marginBottom: 8 }}>Boolean Expression Translation</h2>
-                <p style={{ color: T.muted, fontSize: 14 }}>
+                <h2 className={`text-3xl font-black ${isDarkMode ? 'text-white' : 'text-slate-900'} mb-3`}>
+                    Boolean Expression Translation
+                </h2>
+                <p className={`text-sm ${isDarkMode ? 'text-slate-400' : 'text-slate-500'} font-sans font-medium max-w-2xl mx-auto leading-relaxed`}>
                     Notice how many gates are required to implement $F = A'BC + ABC + AB'C$<br />
                     More gates mean more heat, higher cost, and slower propagation delay.
                 </p>
             </div>
 
-            <div style={{ position: 'relative', width: '100%', height: 650, background: T.card, border: `1px solid ${T.border}`, borderRadius: 12, overflow: 'hidden' }}>
+            <div className={`relative w-full h-[650px] rounded-3xl border overflow-hidden transition-colors duration-300 ${isDarkMode ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'}`}>
                 <StudioCanvas
                     nodes={studio.canvasNodes}
                     edges={studio.getNodeEdges()}
@@ -102,37 +99,32 @@ export const CircuitComplexityDemo: React.FC<{ onComplete: () => void }> = ({ on
                 />
 
                 {/* Telemetry Panel */}
-                <div style={{
-                    position: 'absolute', top: 16, right: 16,
-                    padding: '12px 16px', background: 'rgba(13,15,22,0.9)',
-                    border: `1px solid ${T.border}`, borderRadius: 8,
-                    backdropFilter: 'blur(6px)', pointerEvents: 'none',
-                    minWidth: 180,
-                }}>
-                    <div style={{ fontFamily: T.mono, fontSize: 9, color: T.accent, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 10 }}>Circuit Metrics</div>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '6px 16px', fontFamily: T.mono, fontSize: 11 }}>
-                        <span style={{ color: T.muted }}>Total Gates</span>
-                        <span style={{ color: '#EF4444', textAlign: 'right' }}>11</span>
+                <div className={`absolute top-4 right-4 p-4 rounded-2xl border backdrop-blur-xl min-w-[200px] transition-colors duration-300 ${isDarkMode ? 'bg-slate-900/80 border-slate-700/50' : 'bg-white/80 border-slate-200/50 shadow-lg'}`}>
+                    <div className="font-mono text-[10px] text-cyan-500 font-bold uppercase tracking-[0.15em] mb-4">Circuit Metrics</div>
+                    <div className="grid grid-cols-[1fr_auto] gap-y-3 gap-x-4 font-mono text-xs">
+                        <span className={isDarkMode ? 'text-slate-400' : 'text-slate-500'}>Total Gates</span>
+                        <span className="text-rose-500 font-black text-right">11</span>
 
-                        <span style={{ color: T.muted }}>Logic Depth</span>
-                        <span style={{ color: '#EF4444', textAlign: 'right' }}>4 levels</span>
+                        <span className={isDarkMode ? 'text-slate-400' : 'text-slate-500'}>Logic Depth</span>
+                        <span className="text-rose-500 font-black text-right">4 levels</span>
 
-                        <span style={{ color: T.muted }}>Est. Delay</span>
-                        <span style={{ color: '#EF4444', textAlign: 'right' }}>40 ns</span>
+                        <span className={isDarkMode ? 'text-slate-400' : 'text-slate-500'}>Est. Delay</span>
+                        <span className="text-rose-500 font-black text-right">40 ns</span>
                     </div>
                 </div>
 
                 {/* Check button overlay */}
-                <div style={{ position: 'absolute', bottom: 24, right: 24, zIndex: 10 }}>
+                <div className="absolute bottom-6 right-6 z-10">
                     <motion.button
                         whileTap={{ scale: 0.95 }}
                         onClick={onComplete}
-                        style={{
-                            padding: '12px 24px', background: 'rgba(0,212,255,0.1)', border: '1px solid rgba(0,212,255,0.3)',
-                            borderRadius: 8, color: T.accent, fontFamily: T.mono, fontSize: 12, fontWeight: 700,
-                            letterSpacing: '0.1em', cursor: 'pointer', backdropFilter: 'blur(8px)',
-                        }}>
-                        PROCEED TO K-MAP &rarr;
+                        className={`px-6 py-3 rounded-xl border font-mono text-xs font-black uppercase tracking-[0.15em] flex items-center gap-2 backdrop-blur-md transition-colors duration-300 ${
+                            isDarkMode 
+                            ? 'bg-cyan-500/10 border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/20' 
+                            : 'bg-cyan-50 border-cyan-200 text-cyan-600 hover:bg-cyan-100'
+                        }`}
+                    >
+                        PROCEED TO K-MAP <ArrowRight size={16} />
                     </motion.button>
                 </div>
             </div>

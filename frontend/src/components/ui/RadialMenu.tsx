@@ -183,7 +183,7 @@ export const RadialMenu: React.FC = () => {
     { id: 'overview', label: 'Home Base', icon: <Globe size={18} strokeWidth={2} />, path: '/portal' },
     { id: 'grid', label: 'Workbench', icon: <LayoutGrid size={18} strokeWidth={2} />, path: '/workbench' },
     { id: 'career', label: 'Career Roadmap', icon: <Briefcase size={18} strokeWidth={2} />, path: '/career-roadmap' },
-    { id: 'lab', label: 'CPU Lab', icon: <Database size={18} strokeWidth={2} />, path: '/cpu-lab' },
+    { id: 'lab', label: 'K-Map Lab', icon: <Database size={18} strokeWidth={2} />, path: '/kmap-lab' },
     { id: 'leaderboards', label: 'Boss Arena', icon: <Trophy size={18} strokeWidth={2} />, path: '/boss-arena' },
     { id: 'leetcode', label: 'HW LeetCode', icon: <Settings size={18} strokeWidth={2} />, path: '/hw-leetcode' }
   ];
