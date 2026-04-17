@@ -94,7 +94,7 @@ export const SceneLogicBridge: React.FC<Props> = ({ onComplete }) => {
                     >
                         {/* TOP: Concept */}
                         <motion.div initial={{ y: -20 }} animate={{ y: 0 }}>
-                            <span style={{ fontFamily: T.mono, fontSize: 10, color: T.accent, letterSpacing: '0.3em', textTransform: 'uppercase', opacity: 0.5 }}>MODULE 3.5</span>
+                            <span style={{ fontFamily: T.mono, fontSize: 12, color: T.accent, letterSpacing: '0.3em', textTransform: 'uppercase', opacity: 0.5 }}>MODULE 3.5</span>
                             <h2 style={{ fontSize: 24, fontWeight: 800, marginTop: 8 }}>Gates are the atoms of thought.</h2>
                         </motion.div>
 
@@ -109,7 +109,7 @@ export const SceneLogicBridge: React.FC<Props> = ({ onComplete }) => {
                                 <motion.div 
                                     animate={{ opacity: [0.2, 1, 0.2], scale: [1, 1.1, 1] }}
                                     transition={{ duration: 2, repeat: Infinity }}
-                                    style={{ width: 32, height: 20, background: T.surface, border: `1px solid ${T.accent}`, borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 8, fontFamily: T.mono, color: T.accent }}
+                                    style={{ width: 32, height: 20, background: T.surface, border: `1px solid ${T.accent}`, borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontFamily: T.mono, color: T.accent }}
                                 >
                                     AND
                                 </motion.div>
@@ -133,13 +133,13 @@ export const SceneLogicBridge: React.FC<Props> = ({ onComplete }) => {
                                     "A gate is a decision made by physics."
                                 </p>
                                 <div style={{ height: 1, width: 40, background: T.accent, opacity: 0.2, alignSelf: 'center' }} />
-                                <p style={{ color: T.warning, fontSize: 11, fontWeight: 900, fontFamily: T.mono }}>
+                                <p style={{ color: T.warning, fontSize: 12, fontWeight: 900, fontFamily: T.mono }}>
                                     NOW YOU WILL: CONNECT THE PHYSICAL WORLD TO LOGICAL CONCLUSIONS.
                                 </p>
                             </div>
                             <button 
                                 onClick={() => { setLabStage('execution'); setStageLocked(false); triggerHaptic('success'); }}
-                                style={{ padding: '12px 32px', background: T.accent, color: T.bg, border: 'none', borderRadius: 4, fontWeight: 900, fontFamily: T.mono, cursor: 'pointer', fontSize: 11 }}
+                                style={{ padding: '12px 32px', background: T.accent, color: T.bg, border: 'none', borderRadius: 4, fontWeight: 900, fontFamily: T.mono, cursor: 'pointer', fontSize: 13 }}
                             >
                                 INITIALIZE BRIDGE →
                             </button>
@@ -151,7 +151,7 @@ export const SceneLogicBridge: React.FC<Props> = ({ onComplete }) => {
             <div style={{ textAlign: 'center' }}>
                 <motion.span 
                     initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                    style={{ fontFamily: T.mono, fontSize: 10, letterSpacing: '0.4em', color: T.accent, display: 'block', marginBottom: 16 }}
+                    style={{ fontFamily: T.mono, fontSize: 12, letterSpacing: '0.4em', color: T.accent, display: 'block', marginBottom: 16 }}
                 >
                     3.5 — The Bridge to Logic
                 </motion.span>
@@ -178,7 +178,7 @@ export const SceneLogicBridge: React.FC<Props> = ({ onComplete }) => {
                             }}
                         >
                             <Hexagon size={64} color={T.accent} fill={`${T.accent}20`} />
-                            <span style={{ fontFamily: T.mono, fontSize: 12, fontWeight: 900, color: T.accent }}>OPEN LOGIC CORE</span>
+                            <span style={{ fontFamily: T.mono, fontSize: 14, fontWeight: 900, color: T.accent }}>OPEN LOGIC CORE</span>
                         </motion.div>
                     ) : (
                         <motion.div 
@@ -196,7 +196,7 @@ export const SceneLogicBridge: React.FC<Props> = ({ onComplete }) => {
                                     {/* Inputs */}
                                     <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
                                         <div style={{ textAlign: 'center' }}>
-                                            <span style={{ fontSize: 9, fontFamily: T.mono, color: T.muted, display: 'block', marginBottom: 8 }}>INPUT A</span>
+                                            <span style={{ fontSize: 11, fontFamily: T.mono, color: T.muted, display: 'block', marginBottom: 8 }}>INPUT A</span>
                                             <button 
                                                 onClick={() => { setInputA(a => a === 0 ? 1 : 0); triggerHaptic('light'); }}
                                                 style={{ width: 64, height: 64, borderRadius: 12, background: inputA ? T.accent : T.surface, border: `2px solid ${T.accent}`, color: inputA ? T.bg : T.accent, fontSize: 24, fontWeight: 900, cursor: 'pointer', fontFamily: T.mono }}
@@ -205,7 +205,7 @@ export const SceneLogicBridge: React.FC<Props> = ({ onComplete }) => {
                                             </button>
                                         </div>
                                         <div style={{ textAlign: 'center' }}>
-                                            <span style={{ fontSize: 9, fontFamily: T.mono, color: T.muted, display: 'block', marginBottom: 8 }}>INPUT B</span>
+                                            <span style={{ fontSize: 11, fontFamily: T.mono, color: T.muted, display: 'block', marginBottom: 8 }}>INPUT B</span>
                                             <button 
                                                 onClick={() => { setInputB(b => b === 0 ? 1 : 0); triggerHaptic('light'); }}
                                                 style={{ width: 64, height: 64, borderRadius: 12, background: inputB ? T.accent : T.surface, border: `2px solid ${T.accent}`, color: inputB ? T.bg : T.accent, fontSize: 24, fontWeight: 900, cursor: 'pointer', fontFamily: T.mono }}
@@ -218,12 +218,12 @@ export const SceneLogicBridge: React.FC<Props> = ({ onComplete }) => {
                                     {/* Gate Configuration */}
                                     <div style={{ display: 'flex', flexDirection: 'column', gap: 60 }}>
                                         <div style={{ position: 'relative' }}>
-                                            <span style={{ position: 'absolute', top: -18, left: 10, fontSize: 8, fontFamily: T.mono, color: T.success, fontWeight: 800 }}>SUM PATH</span>
+                                            <span style={{ position: 'absolute', top: -18, left: 10, fontSize: 11, fontFamily: T.mono, color: T.success, fontWeight: 800 }}>SUM PATH</span>
                                             <div style={{ display: 'flex', gap: 8 }}>
                                                 {(['XOR', 'AND', 'OR'] as GateType[]).map(g => (
                                                     <button 
                                                         key={g} onClick={() => { setSumGate(g); triggerHaptic('micro'); }}
-                                                        style={{ flex: 1, padding: '10px 4px', fontSize: 10, fontFamily: T.mono, fontWeight: 800, borderRadius: 6, cursor: 'pointer', background: sumGate === g ? T.success : T.surface, color: sumGate === g ? T.bg : T.muted, border: `1px solid ${sumGate === g ? T.success : T.border}` }}
+                                                        style={{ flex: 1, padding: '10px 4px', fontSize: 12, fontFamily: T.mono, fontWeight: 800, borderRadius: 6, cursor: 'pointer', background: sumGate === g ? T.success : T.surface, color: sumGate === g ? T.bg : T.muted, border: `1px solid ${sumGate === g ? T.success : T.border}` }}
                                                     >
                                                         {g}
                                                     </button>
@@ -231,7 +231,7 @@ export const SceneLogicBridge: React.FC<Props> = ({ onComplete }) => {
                                             </div>
                                         </div>
                                         <div style={{ position: 'relative' }}>
-                                            <span style={{ position: 'absolute', top: -18, left: 10, fontSize: 8, fontFamily: T.mono, color: T.warning, fontWeight: 800 }}>CARRY PATH</span>
+                                            <span style={{ position: 'absolute', top: -18, left: 10, fontSize: 11, fontFamily: T.mono, color: T.warning, fontWeight: 800 }}>CARRY PATH</span>
                                             <div style={{ display: 'flex', gap: 8 }}>
                                                 {(['AND', 'OR', 'NAND'] as GateType[]).map(g => (
                                                     <button 
@@ -252,7 +252,7 @@ export const SceneLogicBridge: React.FC<Props> = ({ onComplete }) => {
                                     {/* Outputs */}
                                     <div style={{ display: 'flex', flexDirection: 'column', gap: 48, alignItems: 'center' }}>
                                         <div style={{ textAlign: 'center' }}>
-                                            <span style={{ fontSize: 9, fontFamily: T.mono, color: T.muted, display: 'block', marginBottom: 8 }}>SUM</span>
+                                            <span style={{ fontSize: 11, fontFamily: T.mono, color: T.muted, display: 'block', marginBottom: 8 }}>SUM</span>
                                             <motion.div 
                                                 animate={{ 
                                                     borderColor: isTesting ? T.accent : (isSuccess ? `${T.success}33` : T.border), 
@@ -264,7 +264,7 @@ export const SceneLogicBridge: React.FC<Props> = ({ onComplete }) => {
                                             </motion.div>
                                         </div>
                                         <div style={{ textAlign: 'center' }}>
-                                            <span style={{ fontSize: 9, fontFamily: T.mono, color: T.muted, display: 'block', marginBottom: 8 }}>CARRY</span>
+                                            <span style={{ fontSize: 11, fontFamily: T.mono, color: T.muted, display: 'block', marginBottom: 8 }}>CARRY</span>
                                             <motion.div 
                                                 animate={{ 
                                                     borderColor: isTesting ? T.accent : (isSuccess ? `${T.warning}33` : T.border), 
@@ -282,11 +282,11 @@ export const SceneLogicBridge: React.FC<Props> = ({ onComplete }) => {
                                 <div style={{ marginTop: 40, paddingTop: 32, borderTop: `1px solid ${T.border}`, display: 'flex', justifyContent: 'center', gap: 40 }}>
                                     <div style={{ display: 'flex', gap: 16, alignItems: 'center', opacity: 0.6 }}>
                                         <Zap size={14} color={T.accent} />
-                                        <span style={{ fontSize: 9, fontFamily: T.mono, color: T.muted }}>GOAL: SUM = 1 only if Input A ≠ Input B</span>
+                                        <span style={{ fontSize: 11, fontFamily: T.mono, color: T.muted }}>GOAL: SUM = 1 only if Input A ≠ Input B</span>
                                     </div>
                                     <div style={{ display: 'flex', gap: 16, alignItems: 'center', opacity: 0.6 }}>
                                         <Layers size={14} color={T.warning} />
-                                        <span style={{ fontSize: 9, fontFamily: T.mono, color: T.muted }}>GOAL: CARRY = 1 only if Input A AND B are 1</span>
+                                        <span style={{ fontSize: 11, fontFamily: T.mono, color: T.muted }}>GOAL: CARRY = 1 only if Input A AND B are 1</span>
                                     </div>
                                 </div>
                             </div>
@@ -295,7 +295,7 @@ export const SceneLogicBridge: React.FC<Props> = ({ onComplete }) => {
                                 <motion.button
                                     whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
                                     onClick={handleTest}
-                                    style={{ padding: '16px 40px', background: T.accent, color: T.bg, border: 'none', borderRadius: 12, fontFamily: T.mono, fontSize: 13, fontWeight: 900, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 10 }}
+                                    style={{ padding: '16px 40px', background: T.accent, color: T.bg, border: 'none', borderRadius: 12, fontFamily: T.mono, fontSize: 14, fontWeight: 900, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 10 }}
                                 >
                                     <RefreshCcw size={16} /> RUN LOGIC TEST
                                 </motion.button>
@@ -305,7 +305,7 @@ export const SceneLogicBridge: React.FC<Props> = ({ onComplete }) => {
                                         initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}
                                         whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
                                         onClick={onComplete}
-                                        style={{ padding: '16px 40px', background: T.success, color: T.bg, border: 'none', borderRadius: 12, fontFamily: T.mono, fontSize: 13, fontWeight: 900, cursor: 'pointer', boxShadow: `0 8px 30px ${T.success}40` }}
+                                        style={{ padding: '16px 40px', background: T.success, color: T.bg, border: 'none', borderRadius: 12, fontFamily: T.mono, fontSize: 14, fontWeight: 900, cursor: 'pointer', boxShadow: `0 8px 30px ${T.success}40` }}
                                     >
                                         FINALIZE BRIDGE →
                                     </motion.button>
@@ -318,7 +318,7 @@ export const SceneLogicBridge: React.FC<Props> = ({ onComplete }) => {
             
             {/* Context Line */}
             {isSuccess && (
-                <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ color: T.success, fontSize: 12, fontFamily: T.mono, textAlign: 'center', letterSpacing: '0.1em' }}>
+                <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ color: T.success, fontSize: 13, fontFamily: T.mono, textAlign: 'center', letterSpacing: '0.1em' }}>
                     [ ANALYSIS: HALF-ADDER DETECTED. BINARY TRANSITION COMPLETE. ]
                 </motion.p>
             )}

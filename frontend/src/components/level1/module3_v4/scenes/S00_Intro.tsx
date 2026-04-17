@@ -17,7 +17,7 @@ export const S00_Intro: React.FC<Props> = ({ isActive, isDarkMode }) => {
         animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 0.8 }}
       >
-        <span className={`font-mono text-[10px] tracking-[0.5em] uppercase ${subTextColor}`}>Module 03 — First Principles</span>
+        <span className={`font-mono text-[10px] tracking-[0.5em] uppercase ${subTextColor}`}>Module 03 - First Principles</span>
         <h1 className={`text-5xl md:text-7xl font-black tracking-tighter mt-4 ${textColor}`}>
           Binary <br/>
           <span className={subTextColor}>Awakening</span>

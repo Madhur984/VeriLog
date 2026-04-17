@@ -9,6 +9,7 @@
  */
 
 import { create } from 'zustand';
+import { setThermalResonance } from '../utils/synesthesiaEngine';
 // ── Types ──────────────────────────────────────────────────────────────────────
 
 export type Bit = 0 | 1;
@@ -50,6 +51,7 @@ export interface CognitionMetrics {
     errorStreak: number;
     wrongAnswerCount: number;
     lastInteractionTime: number;
+    thermalUpdateInterval?: any;
 }
 
 // ── Store Interface ────────────────────────────────────────────────────────────
@@ -265,8 +267,24 @@ export const useBinaryStore = create<BinaryState>((set, get) => ({
         errorStreak: 0,
         wrongAnswerCount: 0,
         lastInteractionTime: Date.now(),
+        thermalUpdateInterval: null as any,
     },
     resetWrongAnswerCount: () => set(s => ({ metrics: { ...s.metrics, wrongAnswerCount: 0 } })),
+
+    // Thermal Engine Logic
+    initThermalEngine: () => {
+        if (get().metrics.thermalUpdateInterval) return;
+        const interval = setInterval(() => {
+            const { systemTemperature } = get();
+            if (systemTemperature > 0.05) {
+                const coolingRate = 0.01 + (systemTemperature * 0.05); // Faster cooling at higher temps
+                const nextTemp = Math.max(0.05, systemTemperature - coolingRate);
+                set({ systemTemperature: nextTemp });
+                setThermalResonance(nextTemp);
+            }
+        }, 1000);
+        set(s => ({ metrics: { ...s.metrics, thermalUpdateInterval: interval } }));
+    },
 
     // Elite State
     isSlowMotion: false,
@@ -279,17 +297,25 @@ export const useBinaryStore = create<BinaryState>((set, get) => ({
 
     recordAction: (type: keyof CognitionMetrics, value = 1) => {
         const now = Date.now();
+        const { initThermalEngine } = get();
+        initThermalEngine(); // Ensure engine is running
+
         set(s => {
             const newMetrics = { 
                 ...s.metrics, 
                 [type]: (s.metrics[type as keyof CognitionMetrics] || 0) + value,
                 lastInteractionTime: now
             };
-            // Automatically track wrongAnswerCount for errors
+            
+            // Thermal accumulation
+            const heatGain = type === 'interactions' ? 0.04 : 0.02;
+            const newTemp = Math.min(1, s.systemTemperature + heatGain);
+            setThermalResonance(newTemp);
+            
             if (type === 'incorrectToggles' || type === 'arithmeticMistakes') {
                 newMetrics.wrongAnswerCount += value;
             }
-            return { metrics: newMetrics };
+            return { metrics: newMetrics, systemTemperature: newTemp };
         });
     },
 

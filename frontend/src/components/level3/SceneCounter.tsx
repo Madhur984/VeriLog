@@ -6,6 +6,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useBinaryStore, selectCounterBits, Bit } from '../../stores/binaryStore';
 import { useGlobalSensory } from '../../hooks/useGlobalSensory';
+import { playBitTone } from '../../utils/synesthesiaEngine';
 import { AlertTriangle, RefreshCcw } from 'lucide-react';
 
 const T = {
@@ -38,12 +39,25 @@ export const SceneCounter: React.FC<Props> = ({ onCarry, onReach8, hasReached8 }
     const setSlowMotion = useBinaryStore(s => s.setSlowMotion);
     const bits = useBinaryStore(s => s.bits);
     const propagationDelay = useBinaryStore(s => s.propagationDelay);
+    const systemTemperature = useBinaryStore(s => s.systemTemperature);
     const nextScene = useBinaryStore(s => s.nextScene);
     const prevBits = useRef(bits);
 
     const { triggerHaptic, playSound } = useGlobalSensory();
     const [userGuess, setUserGuess] = useState<Bit[]>([0, 0, 0, 0]);
     const [errorSimBits, setErrorSimBits] = useState<Bit[] | null>(null);
+
+    const containerRef = useRef<HTMLDivElement>(null);
+
+    const tracePaths = React.useMemo<TracePath[]>(() => {
+        return pulseHistory.filter(p => p.type === 'carry' && Date.now() - p.timestamp < 1000).map((p, i) => ({
+            id: `counter-trace-${i}`,
+            from: { x: (3 - p.targetIndex) * 92 + 100, y: 100 }, 
+            to: { x: (3 - p.targetIndex - 1) * 92 + 100, y: 100 },
+            active: true,
+            color: '#F59E0B'
+        }));
+    }, [pulseHistory]);
 
     useEffect(() => {
         if (labStage === 'execution' || labStage === 'complete') setNavigationLocked(false);
@@ -114,6 +128,7 @@ export const SceneCounter: React.FC<Props> = ({ onCarry, onReach8, hasReached8 }
         if (predictionStatus === 'correct') {
             await increment(true);
             recordAction('interactions');
+            playBitTone(0, 'low');
             if (labStage === 'execution') setStageLocked(false);
         }
     }
@@ -143,8 +158,14 @@ export const SceneCounter: React.FC<Props> = ({ onCarry, onReach8, hasReached8 }
         if (predictionStatus === 'pending') setUserGuess([...bits]);
     }, [predictionStatus, bits]);
 
+    const glowColor = systemTemperature > 0.6 ? '245, 158, 11' : '0, 212, 255';
+
     return (
-        <div style={{ width: '100%', maxWidth: 720, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 48, minHeight: '100vh', paddingTop: 40 }}>            {/* 1. THEORY-FIRST OVERLAY (SEE -> CONNECT -> DO) */}
+        <div style={{ 
+            width: '100%', maxWidth: 720, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 48, minHeight: '100vh', paddingTop: 40,
+            transition: 'filter 1.2s ease',
+            filter: systemTemperature > 0.1 ? `drop-shadow(0 0 ${systemTemperature * 30}px rgba(${glowColor}, 0.25))` : 'none'
+        }}>            {/* 1. THEORY-FIRST OVERLAY (SEE -> CONNECT -> DO) */}
             <AnimatePresence>
                 {labStage === 'theory' && (
                     <motion.div 
@@ -157,7 +178,7 @@ export const SceneCounter: React.FC<Props> = ({ onCarry, onReach8, hasReached8 }
                     >
                         {/* TOP: Concept */}
                         <motion.div initial={{ y: -20 }} animate={{ y: 0 }}>
-                            <span style={{ fontFamily: T.mono, fontSize: 10, color: T.accent, letterSpacing: '0.3em', textTransform: 'uppercase', opacity: 0.5 }}>MODULE 3.2</span>
+                            <span style={{ fontFamily: T.mono, fontSize: 12, color: T.accent, letterSpacing: '0.3em', textTransform: 'uppercase', opacity: 0.5 }}>MODULE 3.2</span>
                             <h2 style={{ fontSize: 24, fontWeight: 800, marginTop: 8 }}>Counting propagates from right to left.</h2>
                         </motion.div>
 
@@ -186,21 +207,21 @@ export const SceneCounter: React.FC<Props> = ({ onCarry, onReach8, hasReached8 }
                         {/* BOTTOM: Deep Theory */}
                         <motion.div initial={{ y: 20 }} animate={{ y: 0 }} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24 }}>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: 16, maxWidth: 450 }}>
-                                <p style={{ color: T.text, fontSize: 13, lineHeight: 1.6, opacity: 0.9 }}>
+                                <p style={{ color: T.text, fontSize: 14, lineHeight: 1.6, opacity: 0.9 }}>
                                     Each bit waits for the previous one to overflow. 
                                     This chain reaction, called Ripple Carry, is the physical speed-limit of hardware.
                                 </p>
-                                <p style={{ color: T.accent, fontSize: 14, fontWeight: 700, fontFamily: T.mono, letterSpacing: '-0.02em' }}>
+                                <p style={{ color: T.accent, fontSize: 15, fontWeight: 700, fontFamily: T.mono, letterSpacing: '-0.02em' }}>
                                     "Counting is a chain reaction, not a jump."
                                 </p>
                                 <div style={{ height: 1, width: 40, background: T.accent, opacity: 0.2, alignSelf: 'center' }} />
-                                <p style={{ color: T.warning, fontSize: 11, fontWeight: 900, fontFamily: T.mono }}>
+                                <p style={{ color: T.warning, fontSize: 12, fontWeight: 900, fontFamily: T.mono }}>
                                     NOW YOU WILL: OBSERVE HOW CARRY MOVES THROUGH BITS.
                                 </p>
                             </div>
                             <button 
                                 onClick={() => { setLabStage('execution'); setStageLocked(false); triggerHaptic('success'); }}
-                                style={{ padding: '12px 32px', background: T.accent, color: T.bg, border: 'none', borderRadius: 4, fontWeight: 900, fontFamily: T.mono, cursor: 'pointer', fontSize: 11 }}
+                                style={{ padding: '12px 32px', background: T.accent, color: T.bg, border: 'none', borderRadius: 4, fontWeight: 900, fontFamily: T.mono, cursor: 'pointer', fontSize: 13 }}
                             >
                                 INITIALIZE LAB →
                             </button>
@@ -212,7 +233,7 @@ export const SceneCounter: React.FC<Props> = ({ onCarry, onReach8, hasReached8 }
             <div style={{ textAlign: 'center' }}>
                 <motion.span 
                     initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
-                    style={{ fontFamily: T.mono, fontSize: 10, letterSpacing: '0.4em', textTransform: 'uppercase', color: T.accent, display: 'block', marginBottom: 12 }}
+                    style={{ fontFamily: T.mono, fontSize: 12, letterSpacing: '0.4em', textTransform: 'uppercase', color: T.accent, display: 'block', marginBottom: 12 }}
                 >
                     3.2 — The Carry Chain
                 </motion.span>
@@ -220,11 +241,11 @@ export const SceneCounter: React.FC<Props> = ({ onCarry, onReach8, hasReached8 }
                 <div style={{ maxWidth: 500, margin: '0 auto' }}>
                     <AnimatePresence mode="wait">
                         <motion.div key="app" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                            <p style={{ color: T.accent, fontSize: 14, fontFamily: T.mono, marginBottom: 8 }}>
+                            <p style={{ color: T.accent, fontSize: 15, fontFamily: T.mono, marginBottom: 8 }}>
                                 PULSE DETECTOR: {isIncrementing ? 'Tracking carries...' : 'Awaiting trigger...'}
                             </p>
                             <div style={{ display: 'flex', justifyContent: 'center', gap: 16 }}>
-                                <span style={{ fontSize: 10, color: T.muted, fontFamily: T.mono }}>
+                                <span style={{ fontSize: 12, color: T.muted, fontFamily: T.mono }}>
                                     TOTAL COMPUTE DELAY: <span style={{ color: T.warning }}>{propagationDelay}ns</span>
                                 </span>
                             </div>
@@ -235,7 +256,8 @@ export const SceneCounter: React.FC<Props> = ({ onCarry, onReach8, hasReached8 }
 
             {/* 2. PRIMARY SYSTEM (Center 70%) */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 40, alignItems: 'center' }}>
-                <div style={{ position: 'relative', padding: 40, background: T.card, border: `1px solid ${T.border}`, borderRadius: 12, width: '100%' }}>
+                <div ref={containerRef} style={{ position: 'relative', padding: 40, background: T.card, border: `1px solid ${T.border}`, borderRadius: 12, width: '100%', overflow: 'hidden' }}>
+                    <KineticTraces paths={tracePaths} containerRef={containerRef} />
                     {/* Prediction Overlay (REQ 3) */}
                     <AnimatePresence>
                         {predictionStatus === 'pending' && (
@@ -245,7 +267,7 @@ export const SceneCounter: React.FC<Props> = ({ onCarry, onReach8, hasReached8 }
                             >
                                 <div style={{ textAlign: 'center' }}>
                                     <h3 style={{ color: T.text, fontSize: 20, marginBottom: 8, fontWeight: 800 }}>Predict the Ripple</h3>
-                                    <p style={{ color: T.muted, fontSize: 13, fontFamily: T.mono }}>{counterValue} + 1 = ?</p>
+                                    <p style={{ color: T.muted, fontSize: 14, fontFamily: T.mono }}>{counterValue} + 1 = ?</p>
                                 </div>
                                 <div style={{ display: 'flex', gap: 12 }}>
                                     {userGuess.map((b, i) => (
@@ -265,7 +287,7 @@ export const SceneCounter: React.FC<Props> = ({ onCarry, onReach8, hasReached8 }
                                         </button>
                                     ))}
                                 </div>
-                                <button onClick={handlePredict} style={{ padding: '12px 32px', background: T.accent, color: T.bg, border: 'none', borderRadius: 6, fontFamily: T.mono, fontSize: 12, fontWeight: 800, cursor: 'pointer' }}>
+                                <button onClick={handlePredict} style={{ padding: '12px 32px', background: T.accent, color: T.bg, border: 'none', borderRadius: 6, fontFamily: T.mono, fontSize: 14, fontWeight: 800, cursor: 'pointer' }}>
                                     VERIFY STATE
                                 </button>
                             </motion.div>
@@ -295,7 +317,7 @@ export const SceneCounter: React.FC<Props> = ({ onCarry, onReach8, hasReached8 }
                                         position: 'relative'
                                     }}
                                 >
-                                    <span style={{ fontFamily: T.mono, fontSize: 10, color: T.muted }}>2<sup>{3-i}</sup></span>
+                                    <span style={{ fontFamily: T.mono, fontSize: 12, color: T.muted }}>2<sup>{3-i}</sup></span>
                                     <span style={{ 
                                         fontFamily: T.mono, fontSize: 48, fontWeight: 900, 
                                         color: isErrorState ? T.error : (bit ? T.accent : T.muted) 
@@ -327,14 +349,14 @@ export const SceneCounter: React.FC<Props> = ({ onCarry, onReach8, hasReached8 }
                                     initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
                                     style={{ position: 'absolute', top: -35, left: 0, right: 0, display: 'flex', flexDirection: 'column', alignItems: 'center' }}
                                 >
-                                    <span style={{ color: isSlowMotion ? T.warning : T.accent, fontSize: 10, fontFamily: T.mono, fontWeight: 800, letterSpacing: '0.1em' }}>
+                                    <span style={{ color: isSlowMotion ? T.warning : T.accent, fontSize: 12, fontFamily: T.mono, fontWeight: 800, letterSpacing: '0.1em' }}>
                                         {isSlowMotion ? '⚠️ SLOW-MOTION CORRECTIVE RIPPLE' : 'CORE PROPAGATION ACTIVE'}
                                     </span>
                                 </motion.div>
                             )}
                         </AnimatePresence>
                         
-                        <span style={{ fontFamily: T.mono, fontSize: 13, color: T.muted }}>DECIMAL EQUIVALENT: </span>
+                        <span style={{ fontFamily: T.mono, fontSize: 14, color: T.muted }}>DECIMAL EQUIVALENT: </span>
                         <motion.span key={counterValue} animate={{ scale: [1.2, 1] }} style={{ fontFamily: T.mono, fontSize: 32, fontWeight: 900, color: T.success }}>
                             {counterValue}
                         </motion.span>
@@ -348,7 +370,7 @@ export const SceneCounter: React.FC<Props> = ({ onCarry, onReach8, hasReached8 }
                         whileHover={{ scale: (isSystemBusy || isIncrementing) ? 1 : 1.05 }}
                         whileTap={{ scale: (isSystemBusy || isIncrementing) ? 0.98 : 0.95 }}
                         style={{
-                            padding: '16px 48px', fontFamily: T.mono, fontSize: 12, fontWeight: 900, letterSpacing: '0.2em',
+                            padding: '16px 48px', fontFamily: T.mono, fontSize: 14, fontWeight: 900, letterSpacing: '0.2em',
                             background: predictionStatus === 'correct' ? T.success : 'transparent',
                             border: `2px solid ${predictionStatus === 'correct' ? T.success : T.accent}`,
                             borderRadius: 8, color: predictionStatus === 'correct' ? T.bg : T.accent,
@@ -363,7 +385,7 @@ export const SceneCounter: React.FC<Props> = ({ onCarry, onReach8, hasReached8 }
                             {showHint && (
                                 <motion.div 
                                     initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-                                    style={{ position: 'absolute', bottom: -35, left: 0, right: 0, color: T.accent, fontSize: 9, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em' }}
+                                    style={{ position: 'absolute', bottom: -35, left: 0, right: 0, color: T.accent, fontSize: 11, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em' }}
                                 >
                                     WATCH HOW CARRY MOVES
                                 </motion.div>
@@ -376,7 +398,7 @@ export const SceneCounter: React.FC<Props> = ({ onCarry, onReach8, hasReached8 }
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         style={{
-                            padding: '16px 24px', fontFamily: T.mono, fontSize: 10, fontWeight: 900,
+                            padding: '16px 24px', fontFamily: T.mono, fontSize: 12, fontWeight: 900,
                             background: 'transparent', border: `1px solid ${T.error}44`,
                             borderRadius: 8, color: T.error, opacity: 0.6, cursor: 'pointer',
                             display: 'flex', alignItems: 'center', gap: 8
@@ -393,7 +415,7 @@ export const SceneCounter: React.FC<Props> = ({ onCarry, onReach8, hasReached8 }
                     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} style={{ background: 'rgba(239,68,68,0.05)', border: `1px solid ${T.error}30`, padding: 24, borderRadius: 12, maxWidth: 500, margin: '0 auto' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'center', marginBottom: 12 }}>
                             <AlertTriangle size={16} color={T.error} />
-                            <span style={{ fontFamily: T.mono, fontSize: 11, fontWeight: 800, color: T.error, textTransform: 'uppercase' }}>Engineering Reality: Overflow</span>
+                            <span style={{ fontFamily: T.mono, fontSize: 13, fontWeight: 800, color: T.error, textTransform: 'uppercase' }}>Engineering Reality: Overflow</span>
                         </div>
                         <p style={{ fontSize: 14, color: T.text, marginBottom: 16 }}>
                             A 4-bit counter has a finite depth. What happens to the carry signal when you add 1 to 1111 (15)?
@@ -409,7 +431,7 @@ export const SceneCounter: React.FC<Props> = ({ onCarry, onReach8, hasReached8 }
                                             playSound('fail'); triggerHaptic('error');
                                         }
                                     }}
-                                    style={{ padding: '8px 20px', background: T.surface, border: `1px solid ${T.border}`, color: T.muted, borderRadius: 6, fontFamily: T.mono, fontSize: 11, cursor: 'pointer' }}
+                                    style={{ padding: '8px 20px', background: T.surface, border: `1px solid ${T.border}`, color: T.muted, borderRadius: 6, fontFamily: T.mono, fontSize: 13, cursor: 'pointer' }}
                                 >
                                     {ans}
                                 </button>
@@ -420,10 +442,10 @@ export const SceneCounter: React.FC<Props> = ({ onCarry, onReach8, hasReached8 }
 
                 {labStage === 'complete' && (
                     <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} style={{ marginTop: 24 }}>
-                        <p style={{ color: T.success, fontFamily: T.mono, fontSize: 14, fontWeight: 700, marginBottom: 16 }}>
+                        <p style={{ color: T.success, fontFamily: T.mono, fontSize: 15, fontWeight: 700, marginBottom: 16 }}>
                             ✓ Overflow Understood. The Ripple effect is the speed-limit of physics.
                         </p>
-                        <div style={{ padding: '12px 32px', border: `1px solid ${T.success}`, borderRadius: 6, fontFamily: T.mono, fontSize: 12, fontWeight: 800, color: T.success }}>
+                        <div style={{ padding: '12px 32px', border: `1px solid ${T.success}`, borderRadius: 6, fontFamily: T.mono, fontSize: 14, fontWeight: 800, color: T.success }}>
                             OVERFLOW MODE COMPLETE →
                         </div>
                     </motion.div>

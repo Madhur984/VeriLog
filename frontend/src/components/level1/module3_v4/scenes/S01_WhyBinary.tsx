@@ -94,7 +94,7 @@ export const S01_WhyBinary: React.FC<Props> = ({ isActive, isDarkMode }) => {
             animate={isActive ? { opacity: 1 } : {}}
             className={`font-mono text-[10px] tracking-[0.4em] uppercase ${subTextColor} block mb-4`}
         >
-          1. The Pulse of Logic — Why Binary?
+          1. The Pulse of Logic - Why Binary?
         </motion.span>
         <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>The Fundamental Choice</h2>
         <p className={`text-lg max-w-2xl mx-auto opacity-70 ${textColor}`}>
@@ -115,16 +115,16 @@ export const S01_WhyBinary: React.FC<Props> = ({ isActive, isDarkMode }) => {
           </div>
           <pre className={`font-mono text-[10px] sm:text-[11px] leading-relaxed opacity-80 overflow-x-auto ${textColor}`}>
 {`Voltage
- 5V ┤     ╱─────
- 4V ┤    ╱
- 3V ┤   ╱
- 2V ┤  ╱
- 1V ┤ ╱
- 0V ┼╱──────────→ Time
+ 5V -|     /-----
+ 4V -|    /
+ 3V -|   /
+ 2V -|  /
+ 1V -| /
+ 0V -+/----------> Time
 `}
           </pre>
           <div className={`mt-6 p-4 rounded-xl text-xs opacity-60 italic border border-dashed ${isDarkMode ? 'border-white/10' : 'border-gray-300'}`}>
-            Every tiny wiggle matters — noise is part of the signal.
+            Every tiny wiggle matters - noise is part of the signal.
           </div>
         </motion.div>
 
@@ -139,16 +139,16 @@ export const S01_WhyBinary: React.FC<Props> = ({ isActive, isDarkMode }) => {
           </div>
           <pre className={`font-mono text-[10px] sm:text-[11px] leading-relaxed ${subTextColor} overflow-x-auto`}>
 {`Voltage
- 5V ┤████████████  (1)
-    │
- 2V ┼────────────  Threshold
-    │
-0.8V┤████████████  (0)
-    └────────────→ Time
+ 5V -|############  (1)
+     |
+ 2V -+------------  Threshold
+     |
+0.8V-|############  (0)
+     +-----------> Time
 `}
           </pre>
           <div className={`mt-6 p-4 rounded-xl text-xs opacity-80 font-medium italic border border-dashed ${isDarkMode ? 'border-sky-500/20' : 'border-sky-200'}`}>
-            Small noise (wiggles) does not cross the threshold → signal is clean.
+            Small noise (wiggles) does not cross the threshold - signal is clean.
           </div>
         </motion.div>
       </div>
@@ -170,7 +170,7 @@ export const S01_WhyBinary: React.FC<Props> = ({ isActive, isDarkMode }) => {
             <tbody className={`text-sm ${textColor}`}>
                 <tr className={`border-t ${isDarkMode ? 'border-white/5' : 'border-gray-100'}`}>
                     <td className="p-6 font-bold">Noise immunity</td>
-                    <td className="p-6 opacity-60">Poor — noise changes value</td>
+                    <td className="p-6 opacity-60">Poor - noise changes value</td>
                     <td className="p-6">
                         <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${isDarkMode ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-emerald-100 text-emerald-700'}`}>
                             Excellent
@@ -207,7 +207,13 @@ export const S01_WhyBinary: React.FC<Props> = ({ isActive, isDarkMode }) => {
             <Zap size={20} className="text-white" />
           </div>
           <p className="text-xl md:text-2xl font-black leading-tight italic">
-            "Binary is not about representing all possible values — it’s about representing enough values with <span className={subTextColor}>certainty</span>."
+            "Binary is not about representing all possible values - it is about representing enough values with <span className={subTextColor}>certainty</span>."
+          </p>
+      </motion.div>
+    </div>
+    );
+};
+ng all possible values -- its about representing enough values with <span className={subTextColor}>certainty</span>."
           </p>
       </motion.div>
     </div>

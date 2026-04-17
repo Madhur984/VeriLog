@@ -87,7 +87,7 @@ export const SceneWhyBinary: React.FC<Props> = ({ onComplete }) => {
             <div style={{ textAlign: 'center' }}>
                 <motion.span 
                     initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                    style={{ fontFamily: T.mono, fontSize: 10, letterSpacing: '0.4em', color: T.accent, display: 'block', marginBottom: 12 }}
+                    style={{ fontFamily: T.mono, fontSize: 12, letterSpacing: '0.4em', color: T.accent, display: 'block', marginBottom: 12 }}
                 >
                     3.0 — The Engineering Choice
                 </motion.span>
@@ -105,20 +105,20 @@ export const SceneWhyBinary: React.FC<Props> = ({ onComplete }) => {
                     <canvas ref={canvasRef} width={640} height={200} style={{ width: '100%', height: '100%' }} />
                     <div style={{ position: 'absolute', top: 12, left: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
                         <Activity size={14} color={T.accent} />
-                        <span style={{ fontFamily: T.mono, fontSize: 10, color: T.accent }}>PHYSICAL SIGNAL (V)</span>
+                        <span style={{ fontFamily: T.mono, fontSize: 12, color: T.accent }}>PHYSICAL SIGNAL (V)</span>
                     </div>
                 </div>
 
                 <AnimatePresence>
                     {!isThresholdOn ? (
                         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} style={{ marginTop: 32, textAlign: 'center' }}>
-                            <p style={{ color: T.warning, fontFamily: T.mono, fontSize: 12, marginBottom: 20 }}>
+                            <p style={{ color: T.warning, fontFamily: T.mono, fontSize: 13, marginBottom: 20 }}>
                                 SIGNAL CORRUPTION DETECTED. RECOVER TRUTH?
                             </p>
                             <motion.button
                                 whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
                                 onClick={handleThreshold}
-                                style={{ padding: '16px 48px', background: T.accent, color: T.bg, border: 'none', borderRadius: 12, fontFamily: T.mono, fontSize: 12, fontWeight: 900, cursor: 'pointer' }}
+                                style={{ padding: '16px 48px', background: T.accent, color: T.bg, border: 'none', borderRadius: 12, fontFamily: T.mono, fontSize: 13, fontWeight: 900, cursor: 'pointer' }}
                             >
                                 <Zap size={14} style={{ marginRight: 8, display: 'inline' }} /> APPLY THRESHOLD
                             </motion.button>
@@ -134,7 +134,7 @@ export const SceneWhyBinary: React.FC<Props> = ({ onComplete }) => {
                             </p>
                             <button 
                                 onClick={onComplete}
-                                style={{ padding: '12px 32px', background: T.success, color: T.bg, border: 'none', borderRadius: 6, fontFamily: T.mono, fontSize: 12, fontWeight: 800, cursor: 'pointer' }}
+                                style={{ padding: '12px 32px', background: T.success, color: T.bg, border: 'none', borderRadius: 6, fontFamily: T.mono, fontSize: 13, fontWeight: 800, cursor: 'pointer' }}
                             >
                                 START AWAKENING →
                             </button>

@@ -14,7 +14,7 @@ export const S06_LogicBridge: React.FC<Props> = ({ isActive, isDarkMode, onEnter
 
     return (
         <div className="max-w-5xl mx-auto space-y-16 py-12">
-      {/* 7. Logic Bridge — From Physics to Code */}
+      {/* 7. Logic Bridge -- From Physics to Code */}
       <section className="space-y-8">
         <div className="text-center space-y-4">
             <motion.span 
@@ -22,7 +22,7 @@ export const S06_LogicBridge: React.FC<Props> = ({ isActive, isDarkMode, onEnter
                 animate={isActive ? { opacity: 1 } : {}}
                 className={`font-mono text-[10px] tracking-[0.4em] uppercase ${subTextColor} block mb-4`}
             >
-                7. Logic Bridge — From Physics to Code
+                7. Logic Bridge -- From Physics to Code
             </motion.span>
             <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>The Hierarchy</h2>
             <p className={`text-lg max-w-2xl mx-auto opacity-70 ${textColor}`}>
@@ -40,10 +40,10 @@ export const S06_LogicBridge: React.FC<Props> = ({ isActive, isDarkMode, onEnter
                 <h3 className={`font-mono text-xs uppercase tracking-widest mb-8 ${subTextColor}`}>The Silicon Stack</h3>
                 <div className="space-y-2 font-mono text-xs">
                     {[
-                        { level: "Level 3", name: "ALU/CPU", icon: "🧠", color: "text-sky-400" },
-                        { level: "Level 2", name: "REGISTERS/MEM", icon: "📦", color: "text-sky-500" },
-                        { level: "Level 1", name: "LOGIC GATES", icon: "🔌", color: "text-sky-600" },
-                        { level: "Base", name: "PHYSICAL VOLTAGE", icon: "⚡", color: "text-orange-500" }
+                        { level: "Level 3", name: "ALU/CPU", icon: "", color: "text-sky-400" },
+                        { level: "Level 2", name: "REGISTERS/MEM", icon: "", color: "text-sky-500" },
+                        { level: "Level 1", name: "LOGIC GATES", icon: "", color: "text-sky-600" },
+                        { level: "Base", name: "PHYSICAL VOLTAGE", icon: "[!] ", color: "text-orange-500" }
                     ].map((item, i) => (
                         <div key={i} className={`group flex items-center p-3 rounded-xl border border-transparent hover:border-sky-500/20 hover:bg-sky-500/5 transition-all duration-300`}>
                             <span className="w-16 opacity-30 text-[9px] font-black">{item.level}</span>
@@ -55,9 +55,9 @@ export const S06_LogicBridge: React.FC<Props> = ({ isActive, isDarkMode, onEnter
                 <div className="mt-8 pt-8 border-t border-white/5">
                     <pre className={`text-[10px] opacity-40 leading-tight ${textColor}`}>
 {`[ ABSTRACT INTEL ]
-       ▲
-       │ (Architecture)
-       ▼
+       [^]
+        (Architecture)
+       [v]
 [ PHYSICAL MATTER ]
 `}
                     </pre>
@@ -81,12 +81,12 @@ export const S06_LogicBridge: React.FC<Props> = ({ isActive, isDarkMode, onEnter
 
                 <div className="grid grid-cols-2 gap-4">
                     <div className={`p-6 rounded-2xl border ${isDarkMode ? 'bg-white/5 border-white/10' : 'bg-gray-50 border-gray-200'}`}>
-                        <div className="text-3xl mb-2">⚡</div>
+                        <div className="text-3xl mb-2">[!] </div>
                         <div className="text-[10px] font-bold uppercase opacity-40 mb-1">Reality</div>
                         <div className="text-sm font-black">Electrons</div>
                     </div>
                     <div className={`p-6 rounded-2xl border ${isDarkMode ? 'bg-white/5 border-white/10' : 'bg-gray-50 border-gray-200'}`}>
-                        <div className="text-3xl mb-2">💡</div>
+                        <div className="text-3xl mb-2"></div>
                         <div className="text-[10px] font-bold uppercase opacity-40 mb-1">Logic</div>
                         <div className="text-sm font-black">Truth</div>
                     </div>
@@ -101,7 +101,7 @@ export const S06_LogicBridge: React.FC<Props> = ({ isActive, isDarkMode, onEnter
               "1 AM Mentor Take"
           </p>
           <p className={`text-xl md:text-2xl font-medium italic ${textColor} max-w-3xl mx-auto leading-tight`}>
-              "Everything you see on a screen—every pixel, every AI thought, every line of code—is just a carefully arranged sequence of <strong>silicon switches</strong> closing and opening. You now see the code behind reality."
+              "Everything you see on a screen--every pixel, every AI thought, every line of code--is just a carefully arranged sequence of <strong>silicon switches</strong> closing and opening. You now see the code behind reality."
           </p>
       </div>
     </div>

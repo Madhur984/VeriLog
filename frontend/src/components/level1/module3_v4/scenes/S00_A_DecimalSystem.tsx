@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { useBinaryStore } from '../../../../stores/binaryStore';
+import { playBitTone } from '../../../../utils/synesthesiaEngine';
 import { GridCountingSystem } from '../components/GridCountingSystem';
 
 interface Props { isActive: boolean; isDarkMode: boolean; }
@@ -14,10 +16,16 @@ const WEIGHTS = [1000, 100, 10, 1];
 const EXAMPLE = [2, 0, 0, 9];
 
 export const S00_A_DecimalSystem: React.FC<Props> = ({ isActive, isDarkMode }) => {
+  const systemTemperature = useBinaryStore(state => state.systemTemperature);
+  const recordAction = useBinaryStore(state => state.recordAction);
   const [digits, setDigits] = useState<number[]>([1, 2, 3, 4]);
-  const textColor = isDarkMode ? 'text-white' : 'text-gray-900';
+
+  const textColor = isDarkMode ? 'text-white' : 'text-slate-900';
   const subTextColor = isDarkMode ? 'text-amber-400' : 'text-amber-600';
   const cardBg = isDarkMode ? 'bg-white/5 border-white/10' : 'bg-white border-gray-200 shadow-xl';
+  
+  const glowColor = systemTemperature > 0.6 ? '245, 158, 11' : '14, 165, 233';
+  const glowOpacity = systemTemperature * 0.4;
 
   const total = digits.reduce((acc, d, i) => acc + d * WEIGHTS[i], 0);
 
@@ -29,11 +37,11 @@ export const S00_A_DecimalSystem: React.FC<Props> = ({ isActive, isDarkMode }) =
           initial={{ opacity: 0 }} animate={isActive ? { opacity: 1 } : {}}
           className={`font-mono text-[10px] tracking-[0.4em] uppercase ${subTextColor} block mb-4`}
         >
-          Number Systems — Chapter 1.1
+          Number Systems - Chapter 1.1
         </motion.span>
         <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>The Decimal System</h2>
         <p className={`text-lg max-w-2xl mx-auto opacity-70 ${textColor}`}>
-          Base 10 — the system your brain grew up with. But <em>why</em> does it work?
+          Base 10 - the system your brain grew up with. But <em>why</em> does it work?
           Every digit's value depends entirely on <strong>its position</strong>.
         </p>
       </section>
@@ -45,17 +53,17 @@ export const S00_A_DecimalSystem: React.FC<Props> = ({ isActive, isDarkMode }) =
       >
         <p className={`font-mono text-xs uppercase tracking-widest mb-4 ${subTextColor}`}>General Positional Notation</p>
         <div className={`text-xl md:text-2xl font-black font-mono ${textColor}`}>
-          (a₅ a₄ a₃ a₂ a₁ a₀)ᵣ = a₅·r⁵ + a₄·r⁴ + a₃·r³ + a₂·r² + a₁·r¹ + a₀·r⁰
+          (a5 a4 a3 a2 a1 a0)_r = a5*r^5 + a4*r^4 + a3*r^3 + a2*r^2 + a1*r^1 + a0*r^0
         </div>
         <p className={`mt-4 text-sm opacity-60 ${textColor}`}>
-          Where <strong>r = base (radix)</strong> and each <strong>aᵢ</strong> is a digit multiplied by a power of the base.
+          Where <strong>r = base (radix)</strong> and each <strong>a_i</strong> is a digit multiplied by a power of the base.
         </p>
       </motion.div>
 
       {/* Worked Example: 2009 */}
       <div className={`p-8 rounded-[2rem] border ${cardBg}`}>
         <h3 className={`font-mono text-xs uppercase tracking-widest mb-8 text-center ${subTextColor}`}>
-          Worked Example: (2009)₁₀
+          Worked Example: (2009)_10
         </h3>
         <div className="flex justify-center gap-4 flex-wrap mb-8">
           {EXAMPLE.map((d, i) => (
@@ -71,13 +79,13 @@ export const S00_A_DecimalSystem: React.FC<Props> = ({ isActive, isDarkMode }) =
               >
                 {d}
               </div>
-              <span className={`font-mono text-[10px] font-bold ${subTextColor} opacity-70`}>× 10^{3 - i}</span>
+              <span className={`font-mono text-[10px] font-bold ${subTextColor} opacity-70`}>* 10^{3 - i}</span>
               <span className={`font-mono text-xs font-black ${textColor}`}>= {d * WEIGHTS[i]}</span>
             </motion.div>
           ))}
         </div>
         <div className={`text-center font-mono text-sm p-4 rounded-xl ${isDarkMode ? 'bg-black/40' : 'bg-amber-50/50 border border-amber-100'}`}>
-          <span className={`opacity-60 ${textColor}`}>2×1000 + 0×100 + 0×10 + 9×1 = </span>
+          <span className={`opacity-60 ${textColor}`}>2*1000 + 0*100 + 0*10 + 9*1 = </span>
           <span className="text-amber-500 font-black text-lg">2009</span>
         </div>
       </div>
@@ -85,7 +93,7 @@ export const S00_A_DecimalSystem: React.FC<Props> = ({ isActive, isDarkMode }) =
       {/* Interactive Builder */}
       <div className={`p-8 rounded-[2rem] border ${cardBg}`}>
         <h3 className={`font-mono text-xs uppercase tracking-widest mb-2 text-center ${subTextColor}`}>
-          Interactive Builder — Adjust Each Digit
+          Interactive Builder - Adjust Each Digit
         </h3>
         <p className={`text-xs text-center opacity-50 mb-8 ${textColor}`}>Click the arrows to change any digit and watch the value update live.</p>
         <div className="flex justify-center gap-6 flex-wrap mb-8">
@@ -96,7 +104,7 @@ export const S00_A_DecimalSystem: React.FC<Props> = ({ isActive, isDarkMode }) =
                 <button
                   onClick={() => setDigits(prev => prev.map((v, idx) => idx === i ? Math.min(9, v + 1) : v))}
                   className={`text-lg font-black w-10 h-8 rounded-lg transition-all ${isDarkMode ? 'hover:bg-amber-500/20 text-white/40 hover:text-amber-400' : 'hover:bg-amber-50 text-gray-400 hover:text-amber-600'}`}
-                >▲</button>
+                >[^]</button>
                 <div className={`w-16 h-16 rounded-2xl border-2 flex items-center justify-center text-2xl font-black transition-all cursor-pointer
                   ${d > 0 ? (isDarkMode ? 'bg-amber-500/15 border-amber-500/40 text-amber-300' : 'bg-amber-50 border-amber-300 text-amber-700')
                           : (isDarkMode ? 'bg-white/5 border-white/10 text-white/20' : 'bg-gray-50 border-gray-200 text-gray-300')}`}
@@ -106,9 +114,9 @@ export const S00_A_DecimalSystem: React.FC<Props> = ({ isActive, isDarkMode }) =
                 <button
                   onClick={() => setDigits(prev => prev.map((v, idx) => idx === i ? Math.max(0, v - 1) : v))}
                   className={`text-lg font-black w-10 h-8 rounded-lg transition-all ${isDarkMode ? 'hover:bg-amber-500/20 text-white/40 hover:text-amber-400' : 'hover:bg-amber-50 text-gray-400 hover:text-amber-600'}`}
-                >▼</button>
+                >[v]</button>
               </div>
-              <span className={`font-mono text-xs font-bold ${isDarkMode ? 'text-amber-400/70' : 'text-amber-600/70'}`}>× {WEIGHTS[i]}</span>
+              <span className={`font-mono text-xs font-bold ${isDarkMode ? 'text-amber-400/70' : 'text-amber-600/70'}`}>* {WEIGHTS[i]}</span>
               <span className={`font-mono text-[10px] ${isDarkMode ? 'text-white/50' : 'text-gray-500'}`}>= {d * WEIGHTS[i]}</span>
             </div>
           ))}
@@ -117,7 +125,7 @@ export const S00_A_DecimalSystem: React.FC<Props> = ({ isActive, isDarkMode }) =
           <p className={`font-mono text-xs uppercase tracking-widest opacity-60 mb-2 ${textColor}`}>Total Value</p>
           <div className="text-5xl font-black text-amber-500">{total}</div>
           <p className={`font-mono text-[10px] mt-2 opacity-40 ${textColor}`}>
-            {digits.map((d, i) => `${d}×${WEIGHTS[i]}`).join(' + ')} = {total}
+            {digits.map((d, i) => `${d}*${WEIGHTS[i]}`).join(' + ')} = {total}
           </p>
         </div>
       </div>
@@ -126,7 +134,7 @@ export const S00_A_DecimalSystem: React.FC<Props> = ({ isActive, isDarkMode }) =
       <GridCountingSystem
         base={10}
         highlightIllegal={false}
-        title="All Valid Decimal Digits (0–9)"
+        title="All Valid Decimal Digits (0-9)"
         description="In base 10, only 10 symbols (0 through 9) are valid. Every number is built by combining these in different positions."
         isDarkMode={isDarkMode}
       />
@@ -137,7 +145,7 @@ export const S00_A_DecimalSystem: React.FC<Props> = ({ isActive, isDarkMode }) =
         <div className={`font-mono text-sm leading-loose ${textColor}`}>
           <div className="opacity-60 mb-2">Decimal fractions use negative powers:</div>
           <div className={`p-4 rounded-xl text-base ${isDarkMode ? 'bg-black/40' : 'bg-white border border-gray-100'}`}>
-            (123.24)₁₀ = 1×10² + 2×10¹ + 3×10⁰ + <span className="text-amber-500">2×10⁻¹</span> + <span className="text-amber-500">4×10⁻²</span>
+            (123.24)_10 = 1*10^2 + 2*10^1 + 3*10^0 + <span className="text-amber-500">2*10^-1</span> + <span className="text-amber-500">4*10^-2</span>
             <br />= 100 + 20 + 3 + 0.2 + 0.04 = <strong className="text-amber-400">123.24</strong>
           </div>
         </div>

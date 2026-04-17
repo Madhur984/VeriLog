@@ -18,7 +18,11 @@ import { S00_F_UniversalConverter }  from './scenes/S00_F_UniversalConverter';
 import { S10_BinaryArithmetic }      from './scenes/S10_BinaryArithmetic';
 import { S11_Complements }           from './scenes/S11_Complements';
 import { S12_BooleanAlgebra }        from './scenes/S12_BooleanAlgebra';
+import { S12_B_SevenSegment }        from './scenes/S12_B_SevenSegment';
 import { S13_LabActivity_v2 }        from './scenes/S13_LabActivity_v2';
+import { S13_B_FloatingPoint }       from './scenes/S13_B_FloatingPoint';
+import { S13_D_MemoryHorizon }       from './scenes/S13_D_MemoryHorizon';
+import { S13_E_ErrorCorrection }      from './scenes/S13_E_ErrorCorrection';
 
 // ── Page registry ─────────────────────────────────────────────────
 interface Page {
@@ -104,8 +108,36 @@ const PAGES: Page[] = [
     accentHex: '#F97316', kind: 'activity',
     Component: S12_BooleanAlgebra,
   },
+  {
+    id: 'seven-segment', part: 'PART IV · BOOLEAN ALGEBRA', partNum: 4,
+    label: '7-Segment Decoder',
+    subtitle: 'BCD to 7-Segment logic · Hardware mapping & LED simulation',
+    accentHex: '#F97316', kind: 'activity',
+    Component: S12_B_SevenSegment,
+  },
 
   // ── PART V · MEGA LAB ───────────────────────────────────────
+  {
+    id: 'floating-point', part: 'PART V · MEGA LAB', partNum: 5,
+    label: 'Floating Point',
+    subtitle: 'IEEE 754 16-bit explorer · Sign, Exponent & Mantissa',
+    accentHex: '#00D4FF', kind: 'theory',
+    Component: S13_B_FloatingPoint,
+  },
+  {
+    id: 'memory-horizon', part: 'PART V · MEGA LAB', partNum: 5,
+    label: 'Memory Horizon',
+    subtitle: 'Data serialization & layout · Big vs Little Endian',
+    accentHex: '#0EA5E9', kind: 'activity',
+    Component: S13_D_MemoryHorizon,
+  },
+  {
+    id: 'error-correction', part: 'PART V · MEGA LAB', partNum: 5,
+    label: 'Error Correction',
+    subtitle: 'Data integrity · Hamming(7,4) & bit healing',
+    accentHex: '#EF4444', kind: 'lab',
+    Component: S13_E_ErrorCorrection,
+  },
   {
     id: 'lab', part: 'PART V · MEGA LAB', partNum: 5,
     label: 'Engineering Mega Lab',
