@@ -23,10 +23,10 @@ export const DiagnosticConsole: React.FC<DiagnosticConsoleProps> = ({
   const [tickerIdx, setTickerIdx] = useState(0);
 
   const TICKER_MSGS = [
-    'HIERARCHICAL CORE GRIND',
-    'SIGNAL PATHWAY: ACTIVE',
-    'LOGIC GATES: ONLINE',
-    'PCB SUBSTRATE: NOMINAL',
+    'AXE-OR // CORE_STABILITY: NOMINAL',
+    'CAPTURE_FIDELITY: 99.8%',
+    'SIGNAL_ENGINE: LOCKED',
+    'NEURAL_MAP: SYNC_READY',
   ];
 
   React.useEffect(() => {
@@ -35,14 +35,14 @@ export const DiagnosticConsole: React.FC<DiagnosticConsoleProps> = ({
   }, []);
 
   const BUTTONS: ConsoleButton[] = [
-    { id: 'globe',      icon: '◉',  label: 'Globe',          color: '#22d3ee', route: '/' },
-    { id: 'gear',       icon: '⚙',  label: 'Settings',       color: '#a78bfa', route: '/settings' },
-    { id: 'code',       icon: '<>', label: 'Code',           color: '#34d399', route: '/verilog' },
-    { id: 'grind',      icon: '⬡',  label: 'Grind Control',  color: '#fbbf24' },
-    { id: 'resources',  icon: '≋',  label: 'Resources',      color: '#fb7185', route: '/resources' },
-    { id: 'analytics',  icon: '▦',  label: 'Data Analytics', color: '#60a5fa', route: '/analytics' },
-    { id: 'leaderboard',icon: '⊞',  label: 'Leaderboards',   color: '#f472b6', route: '/community' },
-    { id: 'cmd',        icon: '⌘',  label: 'Command',        color: '#c4b5fd', action: onCommandPaletteOpen },
+    { id: 'globe',      icon: '◉',  label: 'Globe',          color: '#f97316', route: '/' },
+    { id: 'gear',       icon: '⚙',  label: 'Settings',       color: '#ea580c', route: '/settings' },
+    { id: 'code',       icon: '<>', label: 'Code',           color: '#f97316', route: '/verilog' },
+    { id: 'grind',      icon: '⬡',  label: 'Grind Status',   color: '#fbbf24' },
+    { id: 'resources',  icon: '≋',  label: 'Intel',          color: '#f97316', route: '/resources' },
+    { id: 'analytics',  icon: '▦',  label: 'Telemetry',      color: '#fbbf24', route: '/analytics' },
+    { id: 'leaderboard',icon: '⊞',  label: 'Rankings',       color: '#f97316', route: '/community' },
+    { id: 'cmd',        icon: '⌘',  label: 'Command',        color: '#fbbf24', action: onCommandPaletteOpen },
   ];
 
   const handleBtn = (btn: ConsoleButton) => {
@@ -64,8 +64,8 @@ export const DiagnosticConsole: React.FC<DiagnosticConsoleProps> = ({
       <div
         className="relative rounded-2xl overflow-hidden"
         style={{
-          background: 'linear-gradient(145deg, #1a1f2e 0%, #0d1120 40%, #080c15 100%)',
-          border: '1px solid rgba(255,255,255,0.08)',
+          background: 'linear-gradient(145deg, #0a0f1a 0%, #05080c 40%, #020408 100%)',
+          border: '1px solid rgba(249, 115, 22, 0.15)',
           boxShadow: [
             '0 20px 60px rgba(0,0,0,0.9)',
             '0 0 0 1px rgba(255,255,255,0.04)',
@@ -92,19 +92,19 @@ export const DiagnosticConsole: React.FC<DiagnosticConsoleProps> = ({
         <div
           className="flex items-center justify-between px-4 py-2"
           style={{
-            background: 'linear-gradient(90deg, rgba(34,211,238,0.08) 0%, transparent 100%)',
-            borderBottom: '1px solid rgba(34,211,238,0.1)',
+            background: 'linear-gradient(90deg, rgba(249, 115, 22, 0.08) 0%, transparent 100%)',
+            borderBottom: '1px solid rgba(249, 115, 22, 0.1)',
           }}
         >
           <div className="flex items-center gap-2">
             <motion.div
               className="w-2 h-2 rounded-full"
-              style={{ background: '#22d3ee', boxShadow: '0 0 6px #22d3ee' }}
+              style={{ background: '#f97316', boxShadow: '0 0 6px #f97316' }}
               animate={{ opacity: [1, 0.3, 1] }}
               transition={{ duration: 1.2, repeat: Infinity }}
             />
-            <span className="text-[7px] font-black tracking-[0.35em] uppercase" style={{ color: '#22d3ee80' }}>
-              SYS ONLINE
+            <span className="text-[7px] font-black tracking-[0.35em] uppercase" style={{ color: '#f9731680' }}>
+              AXE-OR // READY
             </span>
           </div>
           <div className="flex gap-1.5">
@@ -125,9 +125,9 @@ export const DiagnosticConsole: React.FC<DiagnosticConsoleProps> = ({
           <div
             className="rounded-lg p-3 relative overflow-hidden"
             style={{
-              background: '#030609',
-              border: '1px solid rgba(34,211,238,0.15)',
-              boxShadow: 'inset 0 2px 8px rgba(0,0,0,0.8), 0 0 20px rgba(34,211,238,0.05)',
+              background: '#020408',
+              border: '1px solid rgba(249, 115, 22, 0.25)',
+              boxShadow: 'inset 0 2px 8px rgba(0,0,0,0.9), 0 0 20px rgba(249, 115, 22, 0.05)',
             }}
           >
             {/* CRT scanline */}
@@ -136,15 +136,15 @@ export const DiagnosticConsole: React.FC<DiagnosticConsoleProps> = ({
               style={{
                 backgroundImage: `repeating-linear-gradient(
                   0deg,
-                  rgba(34,211,238,0.15) 0px,
-                  rgba(34,211,238,0.15) 1px,
+                  rgba(249, 115, 22, 0.15) 0px,
+                  rgba(249, 115, 22, 0.15) 1px,
                   transparent 1px,
                   transparent 3px
                 )`,
               }}
             />
-            <div className="text-[6px] font-mono tracking-[0.25em] uppercase mb-1" style={{ color: '#22d3ee40' }}>
-              CURRENT HARDWARE PROJECT
+            <div className="text-[6px] font-mono tracking-[0.25em] uppercase mb-1" style={{ color: '#f9731640' }}>
+              MISSION_TELEMETRY
             </div>
             <AnimatePresence mode="wait">
               <motion.div
@@ -154,7 +154,7 @@ export const DiagnosticConsole: React.FC<DiagnosticConsoleProps> = ({
                 exit={{ opacity: 0, y: -4 }}
                 transition={{ duration: 0.3 }}
                 className="text-[9px] font-black tracking-[0.2em] font-mono"
-                style={{ color: '#22d3ee', textShadow: '0 0 10px #22d3ee80' }}
+                style={{ color: '#f97316', textShadow: '0 0 10px #f9731680' }}
               >
                 {TICKER_MSGS[tickerIdx]}
               </motion.div>
@@ -162,7 +162,7 @@ export const DiagnosticConsole: React.FC<DiagnosticConsoleProps> = ({
             {/* Blinking cursor */}
             <motion.span
               className="inline-block ml-1 text-[9px] font-mono"
-              style={{ color: '#22d3ee' }}
+              style={{ color: '#f97316' }}
               animate={{ opacity: [1, 0, 1] }}
               transition={{ duration: 0.8, repeat: Infinity }}
             >
@@ -280,6 +280,6 @@ export const DiagnosticConsole: React.FC<DiagnosticConsoleProps> = ({
 };
 
 const LED_STRIP_COLORS = [
-  '#22d3ee', '#34d399', '#fbbf24', '#fb7185',
-  '#a78bfa', '#60a5fa', '#4ade80', '#f472b6',
+  '#f97316', '#ea580c', '#fbbf24', '#7c2d12',
+  '#f97316', '#ca8a04', '#ea580c', '#9a3412',
 ];

@@ -6,82 +6,104 @@ import { CommandPalette } from '../components/ui/CommandPalette';
 import { OnboardingTour } from '../components/ui/OnboardingTour';
 import { RadialMenu } from '../components/ui/RadialMenu';
 import { Globe } from 'lucide-react';
+import { KineticText } from '../components/ui/KineticText';
 
 import { DiagnosticConsole } from '../components/ui/DiagnosticConsole';
 import { HierarchicalGrindTree } from '../components/ui/HierarchicalGrindTree';
+import { GlobalStatusHUD, GlobalOscilloscope } from '../components/ui/PortalInstrumentation';
 
 const getTourKey = (n: string | null) => `digi_tour_done_${n ?? 'guest'}`;
 
 // ─── PCB ISOMETRIC BACKGROUND ──────────────────────────────────────────────────
-const PCBBackground: React.FC = () => (
-  <div className="absolute inset-0 overflow-hidden pointer-events-none">
-    {/* Base darkfield */}
-    <div
-      className="absolute inset-0"
-      style={{ background: 'radial-gradient(ellipse 120% 100% at 50% 0%, #0d1526 0%, #06090f 80%)' }}
-    />
+// ─── PCB ISOMETRIC BACKGROUND ──────────────────────────────────────────────────
+const PCBBackground: React.FC = () => {
+  const [mouse, setMouse] = useState({ x: 0, y: 0 });
+  
+  return (
+    <div 
+      className="absolute inset-0 overflow-hidden pointer-events-none"
+      onMouseMove={(e) => setMouse({ x: e.clientX, y: e.clientY })}
+    >
+      {/* Base darkfield */}
+      <div
+        className="absolute inset-0"
+        style={{ background: 'radial-gradient(ellipse 120% 100% at 50% 0%, #0d1526 0%, #06090f 80%)' }}
+      />
 
-    {/* Fine grid */}
-    <div
-      className="absolute inset-0"
-      style={{
-        backgroundImage: `
-          linear-gradient(rgba(34,211,238,0.05) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(34,211,238,0.05) 1px, transparent 1px),
-          linear-gradient(rgba(34,211,238,0.02) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(34,211,238,0.02) 1px, transparent 1px)
-        `,
-        backgroundSize: '80px 80px, 80px 80px, 16px 16px, 16px 16px',
-      }}
-    />
-
-    {/* Gold circuit trace decoration */}
-    <svg className="absolute inset-0 w-full h-full opacity-[0.07]" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <pattern id="gold-trace" x="0" y="0" width="200" height="200" patternUnits="userSpaceOnUse">
-          {/* Gold horizontal traces */}
-          <path d="M0,100 L60,100 L60,60 L100,60 L100,0" stroke="#fbbf24" strokeWidth="1.5" fill="none" />
-          <path d="M200,100 L140,100 L140,140 L100,140 L100,200" stroke="#fbbf24" strokeWidth="1.5" fill="none" />
-          {/* Cyan traces */}
-          <path d="M0,50 L30,50 L30,100 L80,100" stroke="#22d3ee" strokeWidth="1" fill="none" />
-          <path d="M200,150 L170,150 L170,100 L120,100" stroke="#a78bfa" strokeWidth="1" fill="none" />
-          {/* Solder pads */}
-          <circle cx="60" cy="100" r="4" fill="none" stroke="#fbbf24" strokeWidth="1.5" />
-          <circle cx="140" cy="100" r="4" fill="none" stroke="#fbbf24" strokeWidth="1.5" />
-          <rect x="96" y="56" width="8" height="8" fill="none" stroke="#22d3ee" strokeWidth="1" />
-          <rect x="96" y="136" width="8" height="8" fill="none" stroke="#a78bfa" strokeWidth="1" />
-        </pattern>
-      </defs>
-      <rect width="100%" height="100%" fill="url(#gold-trace)" />
-    </svg>
-
-    {/* Moving data packets */}
-    {Array.from({ length: 8 }).map((_, i) => (
-      <motion.div
-        key={i}
-        className="absolute"
+      {/* Kinetic Glow Follower */}
+      <div 
+        className="absolute w-[600px] h-[600px] rounded-full pointer-events-none opacity-20"
         style={{
-          width: 4,
-          height: 4,
-          borderRadius: '50%',
-          background: ['#22d3ee', '#a78bfa', '#34d399', '#fbbf24', '#fb7185', '#60a5fa', '#4ade80', '#f472b6'][i],
-          boxShadow: `0 0 6px ${['#22d3ee', '#a78bfa', '#34d399', '#fbbf24', '#fb7185', '#60a5fa', '#4ade80', '#f472b6'][i]}`,
-          top: `${10 + i * 11}%`,
-        }}
-        animate={{
-          x: ['-2vw', '102vw'],
-          opacity: [0, 1, 1, 0],
-        }}
-        transition={{
-          duration: 6 + i * 1.5,
-          repeat: Infinity,
-          delay: i * 1.2,
-          ease: 'linear',
+          background: 'radial-gradient(circle, rgba(249, 115, 22, 0.15) 0%, transparent 70%)',
+          left: mouse.x - 300,
+          top: mouse.y - 300,
+          filter: 'blur(40px)',
+          transition: 'left 0.1s ease-out, top 0.1s ease-out',
         }}
       />
-    ))}
-  </div>
-);
+
+      {/* Fine grid */}
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundImage: `
+            linear-gradient(rgba(249, 115, 22, 0.05) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(249, 115, 22, 0.05) 1px, transparent 1px),
+            linear-gradient(rgba(249, 115, 22, 0.02) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(249, 115, 22, 0.02) 1px, transparent 1px)
+          `,
+          backgroundSize: '80px 80px, 80px 80px, 16px 16px, 16px 16px',
+        }}
+      />
+
+      {/* Gold circuit trace decoration */}
+      <svg className="absolute inset-0 w-full h-full opacity-[0.07]" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <pattern id="gold-trace" x="0" y="0" width="200" height="200" patternUnits="userSpaceOnUse">
+            {/* Gold horizontal traces */}
+            <path d="M0,100 L60,100 L60,60 L100,60 L100,0" stroke="#f97316" strokeWidth="1.5" fill="none" opacity="0.3" />
+            <path d="M200,100 L140,100 L140,140 L100,140 L100,200" stroke="#f97316" strokeWidth="1.5" fill="none" opacity="0.3" />
+            {/* Indigo traces */}
+            <path d="M0,50 L30,50 L30,100 L80,100" stroke="#00D4FF" strokeWidth="1" fill="none" opacity="0.2" />
+            <path d="M200,150 L170,150 L170,100 L120,100" stroke="#A855F7" strokeWidth="1" fill="none" opacity="0.2" />
+            {/* Solder pads */}
+            <circle cx="60" cy="100" r="4" fill="none" stroke="#f97316" strokeWidth="1.5" />
+            <circle cx="140" cy="100" r="4" fill="none" stroke="#f97316" strokeWidth="1.5" />
+            <rect x="96" y="56" width="8" height="8" fill="none" stroke="#00D4FF" strokeWidth="1" />
+            <rect x="96" y="136" width="8" height="8" fill="none" stroke="#a78bfa" strokeWidth="1" />
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#gold-trace)" />
+      </svg>
+
+      {/* Moving data packets */}
+      {Array.from({ length: 8 }).map((_, i) => (
+        <motion.div
+          key={i}
+          className="absolute"
+          style={{
+            width: 4,
+            height: 4,
+            borderRadius: '50%',
+            background: ['#22d3ee', '#a78bfa', '#34d399', '#fbbf24', '#fb7185', '#60a5fa', '#4ade80', '#f472b6'][i],
+            boxShadow: `0 0 6px ${['#22d3ee', '#a78bfa', '#34d399', '#fbbf24', '#fb7185', '#60a5fa', '#4ade80', '#f472b6'][i]}`,
+            top: `${10 + i * 11}%`,
+          }}
+          animate={{
+            x: ['-2vw', '102vw'],
+            opacity: [0, 1, 1, 0],
+          }}
+          transition={{
+            duration: 6 + i * 1.5,
+            repeat: Infinity,
+            delay: i * 1.2,
+            ease: 'linear',
+          }}
+        />
+      ))}
+    </div>
+  );
+};
 
 // ─── PROFILE TILE ──────────────────────────────────────────────────────────────
 // ─── PROFILE CARD ──────────────────────────────────────────────────────────────
@@ -107,13 +129,13 @@ const ProfileCard: React.FC<{
       transition={{ delay: 1.2, duration: 0.6 }}
       className="fixed top-8 right-8 z-50 p-4 rounded-2xl w-60"
       style={{
-        background: 'rgba(6,9,15,0.92)',
-        border: '1px solid rgba(34,211,238,0.2)',
+        background: 'rgba(5, 8, 12, 0.95)',
+        border: '1px solid rgba(249, 115, 22, 0.2)',
         backdropFilter: 'blur(20px)',
         boxShadow: [
-          '0 20px 50px rgba(0,0,0,0.7)',
-          '0 0 0 1px rgba(255,255,255,0.03)',
-          'inset 0 1px 1px rgba(255,255,255,0.05)',
+          '0 20px 50px rgba(0,0,0,0.8)',
+          '0 0 0 1px rgba(249, 115, 22, 0.05)',
+          'inset 0 1px 1px rgba(255,255,255,0.02)',
         ].join(', '),
       }}
     >
@@ -123,9 +145,9 @@ const ProfileCard: React.FC<{
           <div
             className="w-12 h-12 rounded-xl flex items-center justify-center text-xl font-black relative overflow-hidden group"
             style={{
-              background: 'linear-gradient(135deg, #0891b2, #4f46e5)',
-              color: '#e2e8f0',
-              boxShadow: '0 0 15px rgba(34,211,238,0.3)',
+              background: 'linear-gradient(135deg, #f97316, #ea580c)',
+              color: '#000',
+              boxShadow: '0 0 15px rgba(249, 115, 22, 0.3)',
               fontFamily: 'monospace',
             }}
           >
@@ -139,12 +161,12 @@ const ProfileCard: React.FC<{
           </div>
           <div>
             <div className="text-[14px] font-black tracking-widest uppercase text-white leading-tight">
-              {name}
+              <KineticText text={name} />
             </div>
             <div className="flex items-center gap-1.5 mt-0.5">
-              <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_6px_#22d3ee]" />
-              <span className="text-[9px] font-bold text-cyan-400/80 tracking-widest uppercase">
-                Active Session
+              <div className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse shadow-[0_0_6px_#f97316]" />
+              <span className="text-[9px] font-bold text-orange-500/80 tracking-widest uppercase">
+                Tactical Session
               </span>
             </div>
           </div>
@@ -165,10 +187,10 @@ const ProfileCard: React.FC<{
           <span className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">Progression</span>
           <span className="text-[9px] font-mono text-cyan-400 font-bold">{Math.round(progress)}%</span>
         </div>
-        <div className="h-1.5 w-full bg-black/40 rounded-full overflow-hidden border border-white/5 p-[1px]">
+        <div className="h-1.5 w-full bg-black/60 rounded-full overflow-hidden border border-white/5 p-[1px]">
           <motion.div
             className="h-full rounded-full"
-            style={{ background: 'linear-gradient(90deg, #0891b2, #22d3ee)' }}
+            style={{ background: 'linear-gradient(90deg, #f97316, #fbbf24)' }}
             initial={{ width: 0 }}
             animate={{ width: `${progress}%` }}
             transition={{ delay: 1.8, duration: 1.2 }}
@@ -214,11 +236,11 @@ const ProfileCard: React.FC<{
           </div>
         </div>
         <motion.button
-          whileHover={{ scale: 1.05, background: 'rgba(34,211,238,0.1)' }}
+          whileHover={{ scale: 1.05, background: 'rgba(249,115,22,0.1)' }}
           whileTap={{ scale: 0.95 }}
-          className="px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-widest border border-cyan-400/20 text-cyan-400 transition-colors"
+          className="px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-widest border border-orange-500/20 text-orange-500 transition-colors"
         >
-          Details
+          Analysis
         </motion.button>
       </div>
     </motion.div>
@@ -257,6 +279,18 @@ export const WorkstationHome: React.FC = () => {
 
   return (
     <div className="h-screen flex overflow-hidden font-sans" style={{ backgroundColor: '#06090f', color: '#cbd5e1' }}>
+      {/* ── TOP CENTER HUD ── */}
+      <div className="fixed top-8 left-1/2 -translate-x-1/2 z-[60] pointer-events-none">
+        <motion.div
+           initial={{ opacity: 0, y: -20 }}
+           animate={{ opacity: 1, y: 0 }}
+           transition={{ delay: 1.0, duration: 0.8 }}
+           className="pointer-events-auto"
+        >
+            <GlobalStatusHUD />
+        </motion.div>
+      </div>
+
       {/* PCB substrate background with moving data packets */}
       <PCBBackground />
 
@@ -300,12 +334,12 @@ export const WorkstationHome: React.FC = () => {
             <div
               className="flex-1 h-full relative rounded-3xl flex flex-col overflow-hidden"
               style={{
-                background: 'linear-gradient(160deg, rgba(14,20,36,0.92) 0%, rgba(6,9,15,0.97) 100%)',
-                border: '1px solid rgba(34,211,238,0.1)',
+                background: 'linear-gradient(160deg, rgba(5, 8, 12, 0.95) 0%, rgba(3, 5, 8, 1) 100%)',
+                border: '1px solid rgba(249, 115, 22, 0.1)',
                 boxShadow: [
-                  '0 40px 100px rgba(0,0,0,0.85)',
-                  '0 0 0 1px rgba(34,211,238,0.05)',
-                  'inset 0 1px 1px rgba(255,255,255,0.03)',
+                  '0 40px 100px rgba(0,0,0,0.95)',
+                  '0 0 0 1px rgba(249, 115, 22, 0.05)',
+                  'inset 0 1px 1px rgba(255,255,255,0.02)',
                 ].join(', '),
               }}
             >
@@ -320,8 +354,8 @@ export const WorkstationHome: React.FC = () => {
                   <motion.div
                     key={i}
                     className={`absolute ${pos} w-2 h-2 rounded-full z-20`}
-                    style={{ background: color, boxShadow: `0 0 8px ${color}` }}
-                    animate={{ opacity: [1, 0.3, 1] }}
+                    style={{ background: color, boxShadow: `0 0 10px ${color}` }}
+                    animate={{ opacity: [1, 0.2, 1] }}
                     transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.4 }}
                   />
                 ))}
@@ -331,8 +365,8 @@ export const WorkstationHome: React.FC = () => {
                   className="absolute inset-0 rounded-3xl pointer-events-none opacity-20"
                   style={{
                     backgroundImage: `
-                      linear-gradient(rgba(34,211,238,0.07) 1px, transparent 1px),
-                      linear-gradient(90deg, rgba(34,211,238,0.07) 1px, transparent 1px)
+                      linear-gradient(rgba(249, 115, 22, 0.07) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(249, 115, 22, 0.07) 1px, transparent 1px)
                     `,
                     backgroundSize: '24px 24px',
                   }}
@@ -348,6 +382,11 @@ export const WorkstationHome: React.FC = () => {
 
       <CommandPalette isOpen={cmdOpen} onClose={() => setCmdOpen(false)} navigate={navigate} tourKey={getTourKey(firstName)} />
       <OnboardingTour isOpen={tourOpen} onClose={() => setTourOpen(false)} storageKey={getTourKey(firstName)} />
+
+      {/* ── BOTTOM MASTER SCOPE ── */}
+      <div className="fixed bottom-0 left-0 right-0 z-[60] pointer-events-none">
+          <GlobalOscilloscope />
+      </div>
     </div>
   );
 };
