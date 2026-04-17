@@ -474,12 +474,15 @@ export const Module1Root: React.FC = () => {
   const [showHook, setShowHook] = useState(true);
 
   const sections = [
-    { id: 'intro', label: 'Introduction' },
-    { id: 'standard', label: 'Standard Signals' },
-    { id: 'types', label: 'Types of Signals' },
-    { id: 'params', label: 'Signal Parameters' },
-    { id: 'processing', label: 'Digital Processing' },
-    { id: 'compare', label: 'Analog vs Digital' },
+    { id: 'intro', label: 'Signals' },
+    { id: 'representation', label: 'Representation' },
+    { id: 'analog', label: 'Analog Signals' },
+    { id: 'digital', label: 'Digital Signals' },
+    { id: 'compare', label: 'Comparison' },
+    { id: 'bridge', label: 'ADC/DAC' },
+    { id: 'concepts', label: 'Key Concepts' },
+    { id: 'systems', label: 'Applications' },
+    { id: 'verilog', label: 'Verilog Bridge' },
   ];
 
   useEffect(() => {
@@ -491,10 +494,16 @@ export const Module1Root: React.FC = () => {
       threshold: 0
     };
 
+    const subSignals = ['standard', 'types', 'params', 'processing'];
+    
     const observerCallback = (entries: IntersectionObserverEntry[]) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          setActiveSection(entry.target.id);
+          if (subSignals.includes(entry.target.id)) {
+            setActiveSection('intro');
+          } else {
+            setActiveSection(entry.target.id);
+          }
         }
       });
     };
@@ -502,6 +511,10 @@ export const Module1Root: React.FC = () => {
     const observer = new IntersectionObserver(observerCallback, observerOptions);
     sections.forEach(s => {
       const el = document.getElementById(s.id);
+      if (el) observer.observe(el);
+    });
+    subSignals.forEach(id => {
+      const el = document.getElementById(id);
       if (el) observer.observe(el);
     });
 
@@ -588,16 +601,14 @@ export const Module1Root: React.FC = () => {
 
           {/* ── HERO ── */}
           <section id="intro">
-            <div className="text-center mb-16">
-              <p className={`text-[10px] font-mono uppercase tracking-[0.4em] mb-6 ${isDarkMode ? 'text-orange-600' : 'text-orange-700'}`}>Level 01 · Signal Theory</p>
+              <p className={`text-[10px] font-mono uppercase tracking-[0.4em] mb-6 ${isDarkMode ? 'text-orange-600' : 'text-orange-700'}`}>Level 01 · Signals → Analog vs Digital</p>
               <h1 className="text-5xl md:text-6xl font-extrabold mb-8 tracking-tighter leading-none">
-                <span className={isDarkMode ? 'text-orange-500' : 'text-orange-600'}>What</span>{' '}
-                <span className={isDarkMode ? 'text-orange-50' : 'text-gray-900'}>is a Signal?</span>
+                <span className={isDarkMode ? 'text-orange-500' : 'text-orange-600'}>Unified</span>{' '}
+                <span className={isDarkMode ? 'text-orange-50' : 'text-gray-900'}>Foundation</span>
               </h1>
               <p className={`text-lg max-w-2xl mx-auto leading-relaxed ${isDarkMode ? 'text-orange-300/50' : 'text-gray-500'}`}>
-                “A signal is a way to represent change.”
+                From continuous waveforms to discrete binary intelligence.
               </p>
-            </div>
 
             {/* Animated live demo */}
             <div className={`rounded-3xl p-8 border mb-12 shadow-2xl transition-all`} style={{ background: isDarkMode ? '#060401' : '#ffffff', borderColor }}>
@@ -986,51 +997,318 @@ export const Module1Root: React.FC = () => {
             </div>
           </section>
 
+          {/* ── REPRESENTATION ── */}
+          <section id="representation" className="pt-20">
+            <div className="text-center mb-16">
+              <h2 className={`text-4xl font-extrabold mb-6 ${isDarkMode ? 'text-orange-100' : 'text-gray-900'}`}>From Signals to Representation</h2>
+              <p className={`text-xl max-w-2xl mx-auto leading-relaxed ${isDarkMode ? 'text-orange-300/60' : 'text-gray-600'}`}>
+                You now understand what a signal is. The next question is: how do electronic systems actually represent and process these signals?
+              </p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className={`p-8 rounded-3xl border ${isDarkMode ? 'bg-orange-950/10 border-orange-900/30' : 'bg-orange-50 border-orange-100'}`}>
+                <div className="w-12 h-12 rounded-2xl bg-orange-500/20 flex items-center justify-center text-2xl mb-4">🌍</div>
+                <h3 className="text-xl font-bold mb-2">Real World</h3>
+                <p className="text-sm opacity-80">Signals exist in the physical world as continuous changes (sound, light, heat).</p>
+              </div>
+              <div className={`p-8 rounded-3xl border ${isDarkMode ? 'bg-orange-950/10 border-orange-900/30' : 'bg-orange-50 border-orange-100'}`}>
+                <div className="w-12 h-12 rounded-2xl bg-orange-500/20 flex items-center justify-center text-2xl mb-4">⚙️</div>
+                <h3 className="text-xl font-bold mb-2">The Need</h3>
+                <p className="text-sm opacity-80">Systems need a reliable way to store, process, and transmit these signals.</p>
+              </div>
+              <div className={`p-8 rounded-3xl border ${isDarkMode ? 'bg-orange-950/20 border-orange-500' : 'bg-orange-100 border-orange-200'}`}>
+                <div className="w-12 h-12 rounded-2xl bg-orange-500 flex items-center justify-center text-2xl mb-4">⚡</div>
+                <h3 className="text-xl font-bold mb-2">Two Ways</h3>
+                <p className="text-sm opacity-80 font-bold">This leads to two fundamental types: Analog and Digital.</p>
+              </div>
+            </div>
+          </section>
+
+          {/* ── ANALOG SIGNALS ── */}
+          <section id="analog" className="pt-20">
+            <div className="flex flex-col md:flex-row gap-12 items-center mb-16">
+              <div className="flex-1 space-y-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-full bg-cyan-500/20 flex items-center justify-center text-cyan-500">
+                    <Radio size={24} />
+                  </div>
+                  <h2 className="text-3xl font-black">Analog Signals</h2>
+                </div>
+                <p className="text-lg font-medium text-cyan-500">Continuous Representation</p>
+                <p className={`leading-relaxed ${isDarkMode ? 'text-orange-200/70' : 'text-gray-600'}`}>
+                  An analog signal is <strong>continuous</strong> in both time and amplitude. It closely follows real-world physical behavior, having infinite possible values at any instant.
+                </p>
+                <div className={`p-4 rounded-xl font-mono text-center ${isDarkMode ? 'bg-cyan-950/30 text-cyan-400' : 'bg-cyan-50 text-cyan-700'}`}>
+                  x(t) = A sin(2πft + ϕ)
+                </div>
+              </div>
+              <div className={`flex-1 w-full rounded-3xl border p-8 ${isDarkMode ? 'bg-cyan-950/10 border-cyan-500/30' : 'bg-cyan-50/50 border-cyan-200'}`}>
+                <AnalogWave color="#22d3ee" amplitude={30} frequency={0.05} />
+                <div className="mt-8 grid grid-cols-2 gap-4 text-xs font-mono uppercase tracking-widest text-cyan-500/60">
+                  <div className="p-3 rounded-lg border border-cyan-500/20">Smooth Waveform</div>
+                  <div className="p-3 rounded-lg border border-cyan-500/20">Infinite Resolution</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className={`p-8 rounded-3xl border ${isDarkMode ? 'bg-black/40 border-orange-900/20' : 'bg-white shadow-sm border-gray-100'}`}>
+                <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+                  <span className="text-cyan-500">✔</span> Advantages
+                </h3>
+                <ul className="space-y-3 text-sm opacity-80">
+                  <li>• Natural representation of real-world signals</li>
+                  <li>• Simple for basic systems</li>
+                  <li>• Direct representation of physical quantities</li>
+                </ul>
+              </div>
+              <div className={`p-8 rounded-3xl border ${isDarkMode ? 'bg-black/40 border-orange-900/20' : 'bg-white shadow-sm border-gray-100'}`}>
+                <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+                  <span className="text-rose-500">✘</span> Disadvantages
+                </h3>
+                <ul className="space-y-3 text-sm opacity-80">
+                  <li>• Highly sensitive to noise</li>
+                  <li>• Degrades over transmission and copying</li>
+                  <li>• Difficult to store and process</li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="mt-12 flex flex-wrap gap-4">
+               {['Microphone', 'Analog Thermometer', 'Vinyl Records', 'Analog Clock'].map(ex => (
+                 <span key={ex} className={`px-4 py-2 rounded-full text-xs font-bold border ${isDarkMode ? 'bg-cyan-950/20 border-cyan-500/30 text-cyan-400' : 'bg-cyan-50 border-cyan-200 text-cyan-700'}`}>
+                   {ex}
+                 </span>
+               ))}
+            </div>
+          </section>
+
+          {/* ── DIGITAL SIGNALS ── */}
+          <section id="digital" className="pt-20">
+             <div className="flex flex-col md:flex-row-reverse gap-12 items-center mb-16">
+              <div className="flex-1 space-y-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-full bg-violet-500/20 flex items-center justify-center text-violet-500">
+                    <Cpu size={24} />
+                  </div>
+                  <h2 className="text-3xl font-black">Digital Signals</h2>
+                </div>
+                <p className="text-lg font-medium text-violet-500">Discrete Representation</p>
+                <p className={`leading-relaxed ${isDarkMode ? 'text-orange-200/70' : 'text-gray-600'}`}>
+                   A digital signal is <strong>discrete</strong> in time and amplitude. It uses specific values (Binary) to represent information, making it robust and easy to handle.
+                </p>
+                <div className="flex gap-4">
+                   <div className={`flex-1 p-3 rounded-xl text-center border font-mono ${isDarkMode ? 'border-violet-900/50 bg-violet-950/30 text-violet-400' : 'border-violet-200 bg-violet-50 text-violet-700'}`}>
+                      Logic 0: Low
+                   </div>
+                   <div className={`flex-1 p-3 rounded-xl text-center border font-mono ${isDarkMode ? 'border-violet-900/50 bg-violet-950/30 text-violet-400' : 'border-violet-200 bg-violet-50 text-violet-700'}`}>
+                      Logic 1: High
+                   </div>
+                </div>
+              </div>
+              <div className={`flex-1 w-full rounded-3xl border p-8 ${isDarkMode ? 'bg-violet-950/10 border-violet-500/30' : 'bg-violet-50/50 border-violet-200'}`}>
+                <DigitalWave color="#a78bfa" complexity={1} />
+                <div className="mt-8 grid grid-cols-2 gap-4 text-xs font-mono uppercase tracking-widest text-violet-500/60">
+                  <div className="p-3 rounded-lg border border-violet-500/20">Step-like Signal</div>
+                  <div className="p-3 rounded-lg border border-violet-500/20">Finite Values (2ⁿ)</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className={`p-8 rounded-3xl border ${isDarkMode ? 'bg-black/40 border-orange-900/20' : 'bg-white shadow-sm border-gray-100'}`}>
+                <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+                   <span className="text-violet-500">✔</span> Advantages
+                </h3>
+                <ul className="space-y-3 text-sm opacity-80">
+                  <li>• Strong noise immunity (Robust)</li>
+                  <li>• Reliable storage, copying, and transmission</li>
+                  <li>• No cumulative degradation</li>
+                </ul>
+              </div>
+              <div className={`p-8 rounded-3xl border ${isDarkMode ? 'bg-black/40 border-orange-900/20' : 'bg-white shadow-sm border-gray-100'}`}>
+                <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+                   <span className="text-rose-500">✘</span> Disadvantages
+                </h3>
+                <ul className="space-y-3 text-sm opacity-80">
+                  <li>• Information loss during conversion</li>
+                  <li>• Higher system complexity</li>
+                  <li>• Requires precise clocking</li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="mt-12 flex flex-wrap gap-4 justify-end">
+               {['Memory', 'MP3 Files', 'Keyboard Input', 'LED Displays'].map(ex => (
+                 <span key={ex} className={`px-4 py-2 rounded-full text-xs font-bold border ${isDarkMode ? 'bg-violet-950/20 border-violet-500/30 text-violet-400' : 'bg-violet-50 border-violet-200 text-violet-700'}`}>
+                   {ex}
+                 </span>
+               ))}
+            </div>
+          </section>
+
           {/* ── COMPARISON ── */}
-          <section id="compare">
-            <div className={`rounded-[2.5rem] overflow-hidden border shadow-2xl transition-all`} style={{ background: isDarkMode ? '#060401' : '#ffffff', borderColor }}>
+          <section id="compare" className="pt-20">
+             <div className="text-center mb-12">
+               <h2 className="text-3xl font-black mb-4">The Core Comparison</h2>
+               <p className={`opacity-60 ${isDarkMode ? 'text-orange-300' : 'text-gray-600'}`}>Side-by-side technical breakdown</p>
+             </div>
+
+             <div className={`rounded-[2.5rem] overflow-hidden border shadow-2xl transition-all`} style={{ background: isDarkMode ? '#060401' : '#ffffff', borderColor: isDarkMode ? 'rgba(249,115,22,0.1)' : 'rgba(0,0,0,0.1)' }}>
               <table className="w-full text-base text-left border-collapse">
                 <thead>
-                  <tr style={{ background: isDarkMode ? '#0a0502' : '#f3f4f6' }}>
-                    <th className={`p-6 font-black uppercase tracking-widest text-xs border-b ${isDarkMode ? 'text-orange-500 border-orange-900/40' : 'text-gray-500 border-gray-200'}`}>Trait</th>
+                  <tr style={{ background: isDarkMode ? '#0a0502' : '#f8fafc' }}>
+                    <th className={`p-6 font-black uppercase tracking-widest text-xs border-b ${isDarkMode ? 'text-orange-500 border-orange-900/40' : 'text-gray-500 border-gray-200'}`}>Feature</th>
                     <th className={`p-6 font-black uppercase tracking-widest text-xs border-b ${isDarkMode ? 'border-orange-900/40' : 'border-gray-200'}`}>Analog</th>
                     <th className={`p-6 font-black uppercase tracking-widest text-xs border-b ${isDarkMode ? 'border-orange-900/40' : 'border-gray-200'}`}>Digital</th>
                   </tr>
                 </thead>
                 <tbody className={isDarkMode ? 'text-orange-100/80' : 'text-gray-700'}>
                   {[
-                    ['Continuity', 'Continuous', 'Discrete'],
-                    ['Noise', 'Permanent distortion', 'Resistant'],
-                    ['Reproduction', 'Loses quality', 'Perfect copies'],
-                    ['Software', 'Complex circuits', 'Standard chips'],
+                    ['Nature', 'Continuous', 'Discrete'],
+                    ['Values', 'Infinite', 'Finite'],
+                    ['Waveform', 'Smooth', 'Step-like'],
+                    ['Noise Immunity', 'Low', 'High'],
+                    ['Storage', 'Difficult', 'Easy'],
+                    ['Processing', 'Analog Circuits', 'Digital Logic'],
                   ].map(([feature, analog, digital]) => (
                     <tr
                       key={feature}
                       className={`border-b group transition-colors ${isDarkMode ? 'border-orange-900/10 hover:bg-orange-950/20' : 'border-gray-100 hover:bg-gray-50'}`}
                     >
                       <td className={`p-6 font-bold text-sm uppercase tracking-widest ${isDarkMode ? 'text-orange-500' : 'text-orange-600'}`}>{feature}</td>
-                      <td className="p-6">{analog}</td>
-                      <td className="p-6">{digital}</td>
+                      <td className="p-6 font-medium">{analog}</td>
+                      <td className="p-6 font-medium">{digital}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
+          </section>
 
-            <div className={`mt-16 rounded-[2rem] p-10 border text-center`} style={{ background: isDarkMode ? 'rgba(249,115,22,0.05)' : 'rgba(249,115,22,0.05)', borderColor: isDarkMode ? 'rgba(249,115,22,0.3)' : 'rgba(249,115,22,0.4)' }}>
-               <h3 className={`text-2xl font-black mb-6 ${isDarkMode ? 'text-orange-50' : 'text-gray-900'}`}>“A signal must return.”</h3>
-            </div>
+          {/* ── BRIDGING WORLDS ── */}
+          <section id="bridge" className="pt-20">
+            <div className="p-12 rounded-[3rem] border bg-gradient-to-br from-orange-500/5 to-transparent relative overflow-hidden" style={{ borderColor: isDarkMode ? 'rgba(249,115,22,0.2)' : 'rgba(249,115,22,0.1)' }}>
+               <div className="relative z-10">
+                  <div className="flex flex-col md:flex-row gap-12">
+                     <div className="flex-1">
+                        <h2 className="text-3xl font-black mb-6">Bridging Analog and Digital</h2>
+                        <p className={`mb-8 leading-relaxed ${isDarkMode ? 'text-orange-200/70' : 'text-gray-600'}`}>
+                           The real world is analog, but our machines are digital. Conversion enables interaction between these two worlds.
+                        </p>
+                        
+                        <div className="space-y-8">
+                           <div className={`p-6 rounded-2xl border ${isDarkMode ? 'bg-orange-950/20 border-orange-500/30' : 'bg-orange-50 border-orange-200'}`}>
+                              <h4 className="font-bold text-orange-500 mb-2 flex items-center gap-2">
+                                 <Activity size={18} /> ADC (Analog → Digital)
+                              </h4>
+                              <p className="text-sm opacity-80 mb-4">Capturing the real world into binary data.</p>
+                              <div className="grid grid-cols-3 gap-2 text-[10px] font-bold text-center">
+                                 <div className="p-2 rounded bg-orange-500/10 border border-orange-500/20">SAMPLING</div>
+                                 <div className="p-2 rounded bg-orange-500/10 border border-orange-500/20">QUANTIZATION</div>
+                                 <div className="p-2 rounded bg-orange-500/10 border border-orange-500/20">ENCODING</div>
+                              </div>
+                           </div>
 
-            <div className="mt-20 flex flex-col items-center">
-               <button
-                  className={`group relative flex items-center gap-4 px-10 py-5 rounded-2xl font-black text-xl transition-all hover:scale-105 active:scale-95`}
-                  style={{ background: '#f97316', color: '#ffffff', boxShadow: '0 20px 40px -10px rgba(249,115,22,0.5)' }}
-                  onClick={() => window.location.href = '/module/2'}
-                >
-                  Enter Next Level 
-                  <ChevronRight size={28} />
-                </button>
+                           <div className={`p-6 rounded-2xl border ${isDarkMode ? 'bg-cyan-950/20 border-cyan-500/30' : 'bg-cyan-50 border-cyan-200'}`}>
+                              <h4 className="font-bold text-cyan-500 mb-2 flex items-center gap-2">
+                                 <Zap size={18} /> DAC (Digital → Analog)
+                              </h4>
+                              <p className="text-sm opacity-80">Reconstructing data back into physical reality (e.g., sound to speaker).</p>
+                           </div>
+                        </div>
+                     </div>
+
+                     <div className="flex-1 flex flex-col justify-center">
+                        <div className={`p-8 rounded-3xl border text-center ${isDarkMode ? 'bg-black/50 border-orange-500/20' : 'bg-white border-gray-200'}`}>
+                           <p className="text-xs font-mono text-orange-500 uppercase tracking-widest mb-4">The Golden Rule: Nyquist-Shannon</p>
+                           <p className="text-4xl font-mono mb-6">f<sub>s</sub> &gt; 2f<sub>max</sub></p>
+                           <p className="text-sm italic opacity-70">
+                              "To perfectly capture a signal, you must sample it at least twice as fast as its highest frequency component."
+                           </p>
+                        </div>
+                     </div>
+                  </div>
+               </div>
             </div>
+          </section>
+
+          {/* ── KEY CONCEPTS ── */}
+          <section id="concepts" className="pt-20">
+            <h2 className="text-3xl font-black mb-12 text-center">Important Concepts</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+               <div className={`p-8 rounded-3xl border transition-all hover:scale-[1.02] ${isDarkMode ? 'bg-black/30 border-orange-900/20' : 'bg-white shadow-sm border-gray-100'}`}>
+                  <h3 className="text-xl font-bold mb-3 text-rose-500">Aliasing</h3>
+                  <p className="text-sm opacity-70 leading-relaxed">Occurs when sampling rate is too low. High-frequency signals appear as incorrect lower frequencies — like a wagon wheel spinning backward in movies.</p>
+               </div>
+               <div className={`p-8 rounded-3xl border transition-all hover:scale-[1.02] ${isDarkMode ? 'bg-black/30 border-orange-900/20' : 'bg-white shadow-sm border-gray-100'}`}>
+                  <h3 className="text-xl font-bold mb-3 text-emerald-500">Quantization Error</h3>
+                  <p className="text-sm opacity-70 leading-relaxed">The difference between the actual infinite analog value and the rounded digital value. This is the "noise" created by conversion.</p>
+               </div>
+               <div className={`p-8 rounded-3xl border transition-all hover:scale-[1.02] ${isDarkMode ? 'bg-black/30 border-orange-900/20' : 'bg-white shadow-sm border-gray-100'}`}>
+                  <h3 className="text-xl font-bold mb-3 text-violet-500">Bit Depth</h3>
+                  <p className="text-sm opacity-70 leading-relaxed">More bits = more precision. Each additional bit doubles the number of possible values, improving signal quality and reducing error.</p>
+               </div>
+            </div>
+          </section>
+
+          {/* ── REAL WORLD SYSTEMS ── */}
+          <section id="systems" className="pt-20">
+            <h2 className="text-3xl font-black mb-12">Real-World Flow</h2>
+            <div className="space-y-4">
+              {[
+                { name: 'Audio Recording', flow: 'Microphone → ADC → Digital File', icon: '🎙️' },
+                { name: 'Audio Playback', flow: 'Digital File → DAC → Speaker', icon: '🔊' },
+                { name: 'Temperature Sensor', flow: 'Analog Signal → ADC → Digital Display', icon: '🌡️' },
+                { name: 'Mobile Phone', flow: 'Analog RF → Digital Processing', icon: '📱' },
+                { name: 'Automotive Systems', flow: 'Sensor → ADC → Control Unit', icon: '🚗' },
+              ].map((sys, i) => (
+                <div key={i} className={`flex items-center gap-6 p-6 rounded-2xl border transition-all ${isDarkMode ? 'bg-orange-950/5 border-orange-900/20 hover:bg-orange-950/10' : 'bg-gray-50 border-gray-100 hover:bg-gray-100'}`}>
+                   <div className="text-3xl bg-white/10 p-3 rounded-xl">{sys.icon}</div>
+                   <div>
+                      <h4 className="font-bold text-lg">{sys.name}</h4>
+                      <p className={`font-mono text-sm ${isDarkMode ? 'text-orange-500/60' : 'text-orange-600'}`}>{sys.flow}</p>
+                   </div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* ── VERILOG BRIDGE ── */}
+          <section id="verilog" className="pt-20 pb-32">
+             <div className={`p-12 rounded-[3.5rem] border text-center relative overflow-hidden ${isDarkMode ? 'bg-orange-500/5 border-orange-500/30' : 'bg-orange-50 border-orange-300'}`}>
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-orange-500/20 blur-[100px] rounded-full" />
+                
+                <h2 className="text-4xl font-black mb-8">The Bridge to Verilog</h2>
+                
+                <div className="max-w-2xl mx-auto space-y-8">
+                   <p className="text-xl leading-relaxed">
+                      Real-world signals are <strong>analog</strong>, but digital systems operate on <strong>binary</strong> values.
+                   </p>
+                   
+                   <div className={`p-8 rounded-3xl border-2 border-dashed ${isDarkMode ? 'border-orange-500/40 bg-black/40' : 'border-orange-400 bg-white'}`}>
+                      <p className="text-2xl font-bold text-orange-500">
+                         Verilog is used to design how these digital signals behave inside hardware.
+                      </p>
+                   </div>
+
+                   <p className="opacity-60 italic">
+                      You are now ready to begin designing the intelligence that lives inside the silicon.
+                   </p>
+
+                   <div className="pt-12">
+                      <button
+                        className={`group relative flex items-center gap-4 px-12 py-6 rounded-3xl font-black text-2xl transition-all hover:scale-105 active:scale-95 mx-auto`}
+                        style={{ background: '#f97316', color: '#ffffff', boxShadow: '0 20px 40px -10px rgba(249,115,22,0.5)' }}
+                        onClick={() => window.location.href = '/module/2'}
+                      >
+                        Launch Module 02
+                        <ChevronRight size={32} />
+                      </button>
+                   </div>
+                </div>
+             </div>
           </section>
 
         </main>
