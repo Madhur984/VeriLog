@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { GlobalSignalState } from '../../types';
 import { SignalEngine } from '../../SignalEngine';
-import { InteractiveInstrument, EngineeringHUD, KineticText } from '../../components/UltimateComponents';
+import { InteractiveInstrument, EngineeringHUD, KineticText, LogicReadout } from '../../components/UltimateComponents';
 import { Heart, Car, Wifi, ShieldAlert, CheckCircle, Target, Boxes, Zap } from 'lucide-react';
 
 const SCENARIOS = [
@@ -100,10 +100,11 @@ export const P4_SystemConversion: React.FC<{
                      <InteractiveInstrument 
                         state={state} onUpdate={onUpdate} time={time}
                         mapping={{
-                            x: { label: "CONVERSION_SPEED", key: "samplingRate", min: 4, max: 128, unit: "Hz" },
-                            y: { label: "CONVERSION_DEPTH", key: "bitDepth", min: 1, max: 24, unit: "Bits" }
+                            x: { label: "SYSTEM_LATENCY", key: "samplingRate", min: 4, max: 128, unit: "ms" },
+                            y: { label: "QUANTIZATION_ERROR", key: "bitDepth", min: 1, max: 24, unit: "LSB" }
                         }}
                     />
+                    <LogicReadout metrics={metrics} />
                 </div>
             </div>
 

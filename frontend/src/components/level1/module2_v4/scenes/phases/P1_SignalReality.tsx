@@ -32,8 +32,8 @@ export const P1_SignalReality: React.FC<{
                      <InteractiveInstrument 
                         state={state} onUpdate={onUpdate} time={time}
                         mapping={{
-                            x: { label: "TIME_SCALE", key: "frequency", min: 1, max: 8, unit: "Hz" },
-                            y: { label: "AMPLITUDE_RANGE", key: "amplitude", min: 0, max: 100, unit: "%" }
+                            x: { label: "FREQUENCY_TARGET", key: "frequency", min: 1, max: 8, unit: "Hz" },
+                            y: { label: "VOLTAGE_PEAK", key: "amplitude", min: 0, max: 100, unit: "Vpp" }
                         }}
                      />
                      
