@@ -20,7 +20,7 @@ export const S07_Conclusion: React.FC<Props> = ({ isActive, isDarkMode }) => {
                 animate={isActive ? { opacity: 1 } : {}}
                 className={`font-mono text-[10px] tracking-[0.4em] uppercase ${subTextColor} block mb-8`}
             >
-                8. Module 03 Conclusion — Binary Awakened
+                8. Module 03 Conclusion -- Binary Awakened
             </motion.span>
 
             <h2 className={`text-2xl font-black mb-6 ${textColor}`}>What you should be able to do now:</h2>

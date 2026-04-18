@@ -1,6 +1,6 @@
 /**
- * S05_LabActivity.tsx — Binary Awakening (Polished & Smooth)
- * ─────────────────────────────────────────────────────────────
+ * S05_LabActivity.tsx -- Binary Awakening (Polished & Smooth)
+ * 
  * Heavily upgraded: smooth animations, particle effects, keyboard controls,
  * glowing responsive UI, and Pro-mode engineering insights.
  */
@@ -16,9 +16,9 @@ import {
   AnimatePresence,
 } from 'framer-motion';
 
-// ─────────────────────────────────────────────────────────────
+// 
 // TYPES
-// ─────────────────────────────────────────────────────────────
+// 
 
 interface SceneProps {
   isActive: boolean;
@@ -30,9 +30,9 @@ interface SceneProps {
 
 type Mode = 'simple' | 'pro';
 
-// ─────────────────────────────────────────────────────────────
+// 
 // CONSTANTS
-// ─────────────────────────────────────────────────────────────
+// 
 
 const C = {
   bg:        '#050505',
@@ -52,9 +52,9 @@ const C = {
 
 const SLIDE_COUNT = 8;
 
-// ─────────────────────────────────────────────────────────────
+// 
 // WEB AUDIO HOOK (Polished smooth synths)
-// ─────────────────────────────────────────────────────────────
+// 
 
 const useAudio = (muted: boolean) => {
   const ctxRef  = useRef<AudioContext | null>(null);
@@ -113,16 +113,16 @@ const useAudio = (muted: boolean) => {
   return { play, resume };
 };
 
-// ─────────────────────────────────────────────────────────────
+// 
 // HELPERS
-// ─────────────────────────────────────────────────────────────
+// 
 
 const bitsToDecimal = (bits: number[]) =>
   bits.reduce((acc, b, i) => acc + b * Math.pow(2, bits.length - 1 - i), 0);
 
-// ─────────────────────────────────────────────────────────────
+// 
 // SHARED COMPONENTS
-// ─────────────────────────────────────────────────────────────
+// 
 
 const Hud: React.FC<{ children: React.ReactNode; style?: React.CSSProperties; glow?: boolean }> = ({
   children,
@@ -242,9 +242,9 @@ const SceneShell: React.FC<{
   </div>
 );
 
-// ─────────────────────────────────────────────────────────────
+// 
 // SCENE 1 : Analog to Digital Automaton
-// ─────────────────────────────────────────────────────────────
+// 
 
 const Scene1: React.FC<SceneProps> = ({ proMode }) => {
   const [time, setTime] = useState(0);
@@ -299,9 +299,9 @@ const Scene1: React.FC<SceneProps> = ({ proMode }) => {
   );
 };
 
-// ─────────────────────────────────────────────────────────────
+// 
 // SCENE 2 : Noise Margin Exploration
-// ─────────────────────────────────────────────────────────────
+// 
 
 const Scene2: React.FC<SceneProps> = ({ proMode }) => {
   const [levels, setLevels] = useState(8);
@@ -354,9 +354,9 @@ const Scene2: React.FC<SceneProps> = ({ proMode }) => {
   );
 };
 
-// ─────────────────────────────────────────────────────────────
+// 
 // SCENE 3 : Positional Weight Discovery
-// ─────────────────────────────────────────────────────────────
+// 
 
 const Scene3: React.FC<SceneProps> = ({ proMode, onSuccess }) => {
   const [revealed, setRevealed] = useState(1);
@@ -412,9 +412,9 @@ const Scene3: React.FC<SceneProps> = ({ proMode, onSuccess }) => {
   );
 };
 
-// ─────────────────────────────────────────────────────────────
+// 
 // SCENE 4 : The Bit Builder
-// ─────────────────────────────────────────────────────────────
+// 
 
 const BitBlock: React.FC<{ value: number; weight: number; proMode: boolean; onToggle: () => void }> = ({ value, weight, proMode, onToggle }) => (
   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
@@ -468,9 +468,9 @@ const Scene4: React.FC<SceneProps & { bits: number[], onToggle: (i: number) => v
   );
 };
 
-// ─────────────────────────────────────────────────────────────
+// 
 // SCENE 5 : Read Protocol
-// ─────────────────────────────────────────────────────────────
+// 
 
 const Scene5: React.FC<SceneProps & { onSuccess: () => void, onError: () => void }> = ({ proMode, onSuccess, onError }) => {
   const [target, setTarget] = useState<number[]>([1, 0, 1, 1]); // 8+2+1 = 11
@@ -549,9 +549,9 @@ const Scene5: React.FC<SceneProps & { onSuccess: () => void, onError: () => void
   );
 };
 
-// ─────────────────────────────────────────────────────────────
+// 
 // SCENE 6 : Physical Address Map
-// ─────────────────────────────────────────────────────────────
+// 
 
 const Scene6: React.FC<SceneProps & { onAdvance: () => void }> = ({ onAdvance }) => {
     const [switches, setSwitches] = useState([0, 0, 0]);
@@ -588,9 +588,9 @@ const Scene6: React.FC<SceneProps & { onAdvance: () => void }> = ({ onAdvance })
     );
 };
 
-// ─────────────────────────────────────────────────────────────
+// 
 // SCENE 7 : Mastery Challenge
-// ─────────────────────────────────────────────────────────────
+// 
 
 const Scene7: React.FC<SceneProps & { onSuccess: () => void, onAdvance: () => void }> = ({ onSuccess, onAdvance }) => {
     const [bits, setBits] = useState([0, 0, 0, 0, 0]);
@@ -636,9 +636,9 @@ const Scene7: React.FC<SceneProps & { onSuccess: () => void, onAdvance: () => vo
     );
 };
 
-// ─────────────────────────────────────────────────────────────
+// 
 // SCENE 8 : Epilogue
-// ─────────────────────────────────────────────────────────────
+// 
 
 const Scene8: React.FC<SceneProps> = () => (
     <SceneShell title="Binary Awakened" micro="The fabric of logic is now yours.">
@@ -661,9 +661,9 @@ const Scene8: React.FC<SceneProps> = () => (
     </SceneShell>
 );
 
-// ─────────────────────────────────────────────────────────────
+// 
 // MAIN INTEGRATED LABORATORY WRAPPER
-// ─────────────────────────────────────────────────────────────
+// 
 
 export const S05_LabActivity: React.FC<{ isActive: boolean; isDarkMode: boolean }> = ({ isActive }) => {
   const [slideIndex, setSlideIndex] = useState(0);
@@ -734,7 +734,7 @@ export const S05_LabActivity: React.FC<{ isActive: boolean; isDarkMode: boolean 
             </div>
             
             <Hud style={{ color: C.text, background: C.surfaceTop, padding: '8px 16px', borderRadius: 20, border: `1px solid ${C.borderLite}` }}>
-                Step {slideIndex + 1} / {SLIDE_COUNT} <span style={{ color: C.muted, margin: '0 8px' }}>—</span> <span style={{ color: C.cyan }}>{LABELS[slideIndex]}</span>
+                Step {slideIndex + 1} / {SLIDE_COUNT} <span style={{ color: C.muted, margin: '0 8px' }}>--</span> <span style={{ color: C.cyan }}>{LABELS[slideIndex]}</span>
             </Hud>
 
             <div style={{ display: 'flex', gap: 12 }}>
@@ -772,7 +772,7 @@ export const S05_LabActivity: React.FC<{ isActive: boolean; isDarkMode: boolean 
             onClick={() => goTo(slideIndex-1)} disabled={slideIndex===0} 
             style={{ position: 'absolute', left: 24, top: '50%', transform: 'translateY(-50%)', background: 'rgba(0,0,0,0.5)', border: `1px solid ${C.borderLite}`, borderRadius: 16, width: 48, height: 48, display: 'flex', alignItems: 'center', justifyContent: 'center', color: slideIndex===0?'transparent':C.text, zIndex: 20, cursor: slideIndex===0?'default':'pointer', backdropFilter: 'blur(4px)', pointerEvents: slideIndex===0?'none':'auto' }}
         >
-            ←
+            
         </motion.button>
 
         <motion.button 
@@ -780,7 +780,7 @@ export const S05_LabActivity: React.FC<{ isActive: boolean; isDarkMode: boolean 
             onClick={() => goTo(slideIndex+1)} disabled={slideIndex===SLIDE_COUNT-1} 
             style={{ position: 'absolute', right: 24, top: '50%', transform: 'translateY(-50%)', background: 'rgba(0,0,0,0.5)', border: `1px solid ${C.borderLite}`, borderRadius: 16, width: 48, height: 48, display: 'flex', alignItems: 'center', justifyContent: 'center', color: slideIndex===SLIDE_COUNT-1?'transparent':C.text, zIndex: 20, cursor: slideIndex===SLIDE_COUNT-1?'default':'pointer', backdropFilter: 'blur(4px)', pointerEvents: slideIndex===SLIDE_COUNT-1?'none':'auto' }}
         >
-            →
+            
         </motion.button>
         </div>
     </div>

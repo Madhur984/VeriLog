@@ -14,7 +14,7 @@ export const S02_B_PhysicalSwitches: React.FC<Props> = ({ isActive, isDarkMode }
 
     return (
         <div className="max-w-5xl mx-auto space-y-16 py-12">
-            {/* 3. Interaction Gates — Bits as Physical Switches */}
+            {/* 3. Interaction Gates - Bits as Physical Switches */}
             <section className="space-y-8">
                 <div className="text-center space-y-4">
                     <motion.span 
@@ -22,7 +22,7 @@ export const S02_B_PhysicalSwitches: React.FC<Props> = ({ isActive, isDarkMode }
                         animate={isActive ? { opacity: 1 } : {}}
                         className={`font-mono text-[10px] tracking-[0.4em] uppercase ${subTextColor} block mb-4`}
                     >
-                        3. Interaction Gates — Bits as Physical Switches
+                        3. Interaction Gates - Bits as Physical Switches
                     </motion.span>
                     <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>Bits as Physical Switches</h2>
                     <p className={`text-lg max-w-2xl mx-auto opacity-70 ${textColor}`}>
@@ -45,8 +45,8 @@ export const S02_B_PhysicalSwitches: React.FC<Props> = ({ isActive, isDarkMode }
                             Light is ON only if Switch A <strong>AND</strong> Switch B are both ON.
                         </p>
                         <pre className={`font-mono text-[10px] sm:text-[11px] leading-relaxed p-6 rounded-2xl ${isDarkMode ? 'bg-black/40' : 'bg-gray-50'} ${textColor}`}>
-{`A ───[AND]─── Light
-B ───/
+{`A ---[AND]--- Light
+B ---/
 
 Truth Table:
 A | B | Out
@@ -72,8 +72,8 @@ A | B | Out
                             Light is ON if Switch A <strong>OR</strong> Switch B is ON.
                         </p>
                         <pre className={`font-mono text-[10px] sm:text-[11px] leading-relaxed p-6 rounded-2xl ${isDarkMode ? 'bg-black/40' : 'bg-white/50 border border-sky-100'} ${textColor}`}>
-{`A ───[OR]─── Light
-B ───/
+{`A ---[OR]--- Light
+B ---/
 
 Truth Table:
 A | B | Out

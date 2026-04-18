@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { HelpCircle } from 'lucide-react';
 import { useBinaryStore, selectSwitchDecimal } from '../../stores/binaryStore';
 import { useGlobalSensory } from '../../hooks/useGlobalSensory';
+import { playBitTone } from '../../utils/synesthesiaEngine';
 
 const T = {
     bg: '#0A0B10', card: '#0D0F16', surface: '#1A1D24', border: '#1A1D24',
@@ -23,7 +24,8 @@ export const SceneSwitch: React.FC<Props> = ({ onFirstToggle, hasToggled }) => {
         isLogicOverlayVisible,
         labStage, setLabStage, isStageLocked, setStageLocked,
         propagationDelay, setNavigationLocked,
-        nextScene
+        nextScene,
+        systemTemperature
     } = useBinaryStore();
     const decimal = useBinaryStore(selectSwitchDecimal);
     const { triggerHaptic, playSound } = useGlobalSensory();
@@ -43,6 +45,18 @@ export const SceneSwitch: React.FC<Props> = ({ onFirstToggle, hasToggled }) => {
         if (labStage === 'execution' || labStage === 'complete') setNavigationLocked(false);
         else setNavigationLocked(true);
     }, [labStage, setNavigationLocked]);
+    
+    const containerRef = useRef<HTMLDivElement>(null);
+
+    const tracePaths = React.useMemo<TracePath[]>(() => {
+        return pulseHistory.filter(p => p.type === 'carry' && Date.now() - p.timestamp < 1000).map((p, i) => ({
+            id: `counter-trace-${i}`,
+            from: { x: (3 - p.targetIndex) * 92 + 100, y: 100 }, 
+            to: { x: (3 - p.targetIndex - 1) * 92 + 100, y: 100 },
+            active: true,
+            color: '#F59E0B'
+        }));
+    }, [pulseHistory]);
 
     const [idleTime, setIdleTime] = React.useState(0);
     const [showHint, setShowHint] = React.useState(false);
@@ -71,11 +85,19 @@ export const SceneSwitch: React.FC<Props> = ({ onFirstToggle, hasToggled }) => {
         
         await toggleSwitchBit(i);
         recordAction('interactions');
+        playBitTone(3-i, bits[i] === 0 ? 'high' : 'low');
         if (labStage === 'execution') setStageLocked(false);
     };
 
     return (
-        <div style={{ width: '100%', maxWidth: 720, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 48, minHeight: '100vh', paddingTop: 40 }}>
+    const glowColor = systemTemperature > 0.6 ? '245, 158, 11' : '0, 212, 255';
+
+    return (
+        <div style={{ 
+            width: '100%', maxWidth: 720, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 48, minHeight: '100vh', paddingTop: 40,
+            transition: 'filter 1.2s ease',
+            filter: systemTemperature > 0.1 ? `drop-shadow(0 0 ${systemTemperature * 30}px rgba(${glowColor}, 0.25))` : 'none'
+        }}>
             {/* 1. THEORY-FIRST OVERLAY (SEE -> CONNECT -> DO) */}
             <AnimatePresence>
                 {labStage === 'theory' && (
@@ -88,7 +110,7 @@ export const SceneSwitch: React.FC<Props> = ({ onFirstToggle, hasToggled }) => {
                         }}
                     >                        {/* TOP: Concept */}
                         <motion.div initial={{ y: -20 }} animate={{ y: 0 }} style={{ opacity: 1 }}>
-                            <span style={{ fontFamily: T.mono, fontSize: 10, color: T.accent, letterSpacing: '0.3em', textTransform: 'uppercase', opacity: 0.5 }}>MODULE 3.1</span>
+                            <span style={{ fontFamily: T.mono, fontSize: 12, color: T.accent, letterSpacing: '0.3em', textTransform: 'uppercase', opacity: 0.5 }}>MODULE 3.1</span>
                             <h2 style={{ fontSize: 24, fontWeight: 800, marginTop: 8 }}>Voltage is continuous, logic is discrete.</h2>
                         </motion.div>
                         
@@ -114,13 +136,13 @@ export const SceneSwitch: React.FC<Props> = ({ onFirstToggle, hasToggled }) => {
                                     transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
                                 />
                             </svg>
-                            <div style={{ position: 'absolute', top: 5, right: 10, fontSize: 8, fontFamily: T.mono, color: T.accent, opacity: 0.5 }}>THRESHOLD</div>
+                            <div style={{ position: 'absolute', top: 5, right: 10, fontSize: 10, fontFamily: T.mono, color: T.accent, opacity: 0.5 }}>THRESHOLD</div>
                         </div>
 
                         {/* BOTTOM: Insight & mental model */}
                         <motion.div initial={{ y: 20 }} animate={{ y: 0 }} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 32 }}>
                             <div style={{ maxWidth: 450, display: 'flex', flexDirection: 'column', gap: 16 }}>
-                                <p style={{ color: T.text, fontSize: 13, lineHeight: 1.6, opacity: 0.9 }}>
+                                <p style={{ color: T.text, fontSize: 14, lineHeight: 1.6, opacity: 0.9 }}>
                                     Noise makes exact voltage unreliable in the physical world. 
                                     Digital logic ignores small fluctuations to maintain stability.
                                 </p>
@@ -128,14 +150,14 @@ export const SceneSwitch: React.FC<Props> = ({ onFirstToggle, hasToggled }) => {
                                     "Binary is a decision filter, not a simplification."
                                 </p>
                                 <div style={{ height: 1, width: 40, background: T.accent, opacity: 0.2, alignSelf: 'center' }} />
-                                <p style={{ color: T.warning, fontSize: 11, fontWeight: 900, fontFamily: T.mono }}>
+                                <p style={{ color: T.warning, fontSize: 12, fontWeight: 900, fontFamily: T.mono }}>
                                     NOW YOU WILL: CONVERT VOLTAGE INTO STABLE LOGIC STATES.
                                 </p>
                             </div>
                             
                             <button 
                                 onClick={() => { setLabStage('prediction'); triggerHaptic('success'); }}
-                                style={{ padding: '12px 32px', background: T.accent, color: T.bg, border: 'none', borderRadius: 4, fontWeight: 900, fontFamily: T.mono, cursor: 'pointer', fontSize: 11 }}
+                                style={{ padding: '12px 32px', background: T.accent, color: T.bg, border: 'none', borderRadius: 4, fontWeight: 900, fontFamily: T.mono, cursor: 'pointer', fontSize: 13 }}
                             >
                                 INITIALIZE LAB →
                             </button>
@@ -148,7 +170,7 @@ export const SceneSwitch: React.FC<Props> = ({ onFirstToggle, hasToggled }) => {
                 <motion.span 
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    style={{ fontFamily: T.mono, fontSize: 10, letterSpacing: '0.4em', textTransform: 'uppercase', color: T.accent, display: 'block', marginBottom: 12 }}
+                    style={{ fontFamily: T.mono, fontSize: 12, letterSpacing: '0.4em', textTransform: 'uppercase', color: T.accent, display: 'block', marginBottom: 12 }}
                 >
                     3.1 — Voltage to Logic
                 </motion.span>
@@ -158,7 +180,7 @@ export const SceneSwitch: React.FC<Props> = ({ onFirstToggle, hasToggled }) => {
                         {labStage === 'prediction' && (
                             <motion.div key="predict" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>
                                 <p style={{ color: T.text, fontSize: 15, fontWeight: 700 }}>PREDICTION GATE</p>
-                                <p style={{ color: T.muted, fontSize: 13 }}>If the voltage is currently 1.4V, will the machine register 0, 1, or Error?</p>
+                                <p style={{ color: T.muted, fontSize: 14 }}>If the voltage is currently 1.4V, will the machine register 0, 1, or Error?</p>
                                 <div style={{ display: 'flex', gap: 12 }}>
                                     {['0', '1', 'Error'].map(opt => (
                                         <button 
@@ -167,7 +189,7 @@ export const SceneSwitch: React.FC<Props> = ({ onFirstToggle, hasToggled }) => {
                                                 if (opt === 'Error') { playSound('success'); triggerHaptic('success'); setLabStage('execution'); setStageLocked(false); }
                                                 else { playSound('fail'); triggerHaptic('error'); recordAction('incorrectToggles'); }
                                             }}
-                                            style={{ padding: '8px 20px', background: T.surface, border: `1px solid ${T.border}`, color: T.text, borderRadius: 4, cursor: 'pointer', fontFamily: T.mono, fontSize: 12 }}
+                                            style={{ padding: '8px 20px', background: T.surface, border: `1px solid ${T.border}`, color: T.text, borderRadius: 4, cursor: 'pointer', fontFamily: T.mono, fontSize: 13 }}
                                         >
                                             {opt}
                                         </button>
@@ -177,12 +199,12 @@ export const SceneSwitch: React.FC<Props> = ({ onFirstToggle, hasToggled }) => {
                         )}
                         {labStage === 'execution' && (
                             <motion.div key="exec" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                                <p style={{ color: T.accent, fontSize: 14, fontFamily: T.mono, marginBottom: 8 }}>
+                                <p style={{ color: T.accent, fontSize: 15, fontFamily: T.mono, marginBottom: 8 }}>
                                     SYSTEM ACTIVE: Monitoring thresholds...
                                 </p>
                                 <div style={{ display: 'flex', justifyContent: 'center', gap: 16 }}>
-                                    <span style={{ fontSize: 10, color: T.muted, fontFamily: T.mono }}>
-                                        TOTAL COMPUTE DELAY: <span style={{ color: T.warning }}>{propagationDelay}ns</span>
+                                    <span style={{ fontSize: 12, color: T.muted, fontFamily: T.mono }}>
+                                        TOTAL COMPUTE DELAY: <span style={{ color: T.warning, fontSize: 13 }}>{propagationDelay}ns</span>
                                     </span>
                                 </div>
                             </motion.div>
@@ -233,7 +255,7 @@ export const SceneSwitch: React.FC<Props> = ({ onFirstToggle, hasToggled }) => {
                                     }}
                                     style={{ position: 'absolute', bottom: 0, left: 0, right: 0 }}
                                 />
-                                <div style={{ position: 'absolute', top: 6, left: 0, right: 0, textAlign: 'center', fontFamily: T.mono, fontSize: 8, color: isUnstable ? '#EF4444' : T.muted, fontWeight: isUnstable ? 900 : 400 }}>
+                                <div style={{ position: 'absolute', top: 6, left: 0, right: 0, textAlign: 'center', fontFamily: T.mono, fontSize: 10, color: isUnstable ? '#EF4444' : T.muted, fontWeight: isUnstable ? 900 : 400 }}>
                                     {isUnstable ? 'ERR!' : `${voltages[i].toFixed(2)}V`}
                                 </div>
                             </div>
@@ -269,7 +291,7 @@ export const SceneSwitch: React.FC<Props> = ({ onFirstToggle, hasToggled }) => {
                                 {showHint && i === 3 && (
                                     <motion.div 
                                         initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-                                        style={{ position: 'absolute', top: 40, width: 100, left: -20, color: T.accent, fontSize: 9, fontFamily: T.mono, fontWeight: 800 }}
+                                        style={{ position: 'absolute', top: 40, width: 100, left: -20, color: T.accent, fontSize: 11, fontFamily: T.mono, fontWeight: 800 }}
                                     >
                                         TRY TOGGLING THIS
                                     </motion.div>
@@ -301,10 +323,10 @@ export const SceneSwitch: React.FC<Props> = ({ onFirstToggle, hasToggled }) => {
                 style={{ textAlign: 'center', paddingBottom: 60 }}
             >
                 <div style={{ display: 'flex', gap: 24, justifyContent: 'center', marginBottom: 32 }}>
-                    <div style={{ color: T.muted, fontFamily: T.mono, fontSize: 13 }}>
+                    <div style={{ color: T.muted, fontFamily: T.mono, fontSize: 14 }}>
                         BINARY: <span style={{ color: T.text, fontWeight: 700, letterSpacing: '0.2em' }}>{bits.join('')}</span>
                     </div>
-                    <div style={{ color: T.muted, fontFamily: T.mono, fontSize: 13 }}>
+                    <div style={{ color: T.muted, fontFamily: T.mono, fontSize: 14 }}>
                         DECIMAL: <span style={{ color: T.success, fontWeight: 700 }}>{decimal}</span>
                     </div>
                 </div>
@@ -313,7 +335,7 @@ export const SceneSwitch: React.FC<Props> = ({ onFirstToggle, hasToggled }) => {
                 <AnimatePresence>
                     {labStage === 'execution' && !isStageLocked && decimal === 0 && (
                         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} style={{ marginBottom: 20 }}>
-                            <span style={{ fontSize: 10, fontFamily: T.mono, color: T.accent, opacity: 0.7 }}>NOW CONVERT VOLTAGE INTO LOGIC</span>
+                            <span style={{ fontSize: 12, fontFamily: T.mono, color: T.accent, opacity: 0.7 }}>NOW CONVERT VOLTAGE INTO LOGIC</span>
                         </motion.div>
                     )}
                 </AnimatePresence>
@@ -322,9 +344,9 @@ export const SceneSwitch: React.FC<Props> = ({ onFirstToggle, hasToggled }) => {
                     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} style={{ background: 'rgba(245,158,11,0.05)', border: `1px solid ${T.warning}30`, padding: 20, borderRadius: 12, maxWidth: 400, margin: '0 auto' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'center', marginBottom: 12 }}>
                             <HelpCircle size={14} color={T.warning} />
-                            <span style={{ fontFamily: T.mono, fontSize: 10, fontWeight: 800, color: T.warning, textTransform: 'uppercase' }}>Analytic Question</span>
+                            <span style={{ fontFamily: T.mono, fontSize: 12, fontWeight: 800, color: T.warning, textTransform: 'uppercase' }}>Analytic Question</span>
                         </div>
-                        <p style={{ fontSize: 13, color: T.text, marginBottom: 16 }}>If you set all bits to HIGH, what is the maximum value for 4 bits?</p>
+                        <p style={{ fontSize: 14, color: T.text, marginBottom: 16 }}>If you set all bits to HIGH, what is the maximum value for 4 bits?</p>
                         <div style={{ display: 'flex', justifyContent: 'center', gap: 12 }}>
                             {[15, 16, 8].map(ans => (
                                 <button
@@ -340,7 +362,7 @@ export const SceneSwitch: React.FC<Props> = ({ onFirstToggle, hasToggled }) => {
                                             recordAction('incorrectToggles');
                                         }
                                     }}
-                                    style={{ padding: '6px 16px', background: T.surface, border: `1px solid ${T.border}`, color: T.muted, borderRadius: 4, fontFamily: T.mono, fontSize: 11, cursor: 'pointer' }}
+                                    style={{ padding: '6px 16px', background: T.surface, border: `1px solid ${T.border}`, color: T.muted, borderRadius: 4, fontFamily: T.mono, fontSize: 12, cursor: 'pointer' }}
                                 >
                                     {ans}
                                 </button>
@@ -351,10 +373,10 @@ export const SceneSwitch: React.FC<Props> = ({ onFirstToggle, hasToggled }) => {
 
                 {labStage === 'complete' && (
                     <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}>
-                        <p style={{ color: T.success, fontFamily: T.mono, fontSize: 14, fontWeight: 700, marginBottom: 16 }}>
+                        <p style={{ color: T.success, fontFamily: T.mono, fontSize: 15, fontWeight: 700, marginBottom: 16 }}>
                             ✓ Concepts Captured. Reality Digitized.
                         </p>
-                        <div style={{ padding: '12px 32px', border: `1px solid ${T.success}`, borderRadius: 6, fontFamily: T.mono, fontSize: 12, fontWeight: 800, color: T.success, letterSpacing: '0.1em', display: 'inline-block' }}>
+                        <div style={{ padding: '12px 32px', border: `1px solid ${T.success}`, borderRadius: 6, fontFamily: T.mono, fontSize: 14, fontWeight: 800, color: T.success, letterSpacing: '0.1em', display: 'inline-block' }}>
                             LAB INITIALIZED →
                         </div>
                     </motion.div>
@@ -365,7 +387,7 @@ export const SceneSwitch: React.FC<Props> = ({ onFirstToggle, hasToggled }) => {
             {isLogicOverlayVisible && (
                 <motion.div 
                     initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}
-                    style={{ position: 'absolute', right: -120, top: '50%', transform: 'translateY(-50%)', width: 100, color: T.muted, fontSize: 9, fontFamily: T.mono, borderLeft: `1px solid ${T.border}`, paddingLeft: 12 }}
+                    style={{ position: 'absolute', right: -120, top: '50%', transform: 'translateY(-50%)', width: 100, color: T.muted, fontSize: 11, fontFamily: T.mono, borderLeft: `1px solid ${T.border}`, paddingLeft: 12 }}
                 >
                     <div style={{ marginBottom: 12 }}>THRESHOLD</div>
                     <div>{'>'} 2.0V = 1</div>

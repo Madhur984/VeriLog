@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Moon, Sun, Activity, Zap, Radio, Cpu, ChevronRight, ChevronDown, MousePointer2 } from 'lucide-react';
+import { Moon, Sun, Activity, Zap, Radio, Cpu, ChevronRight, ChevronDown, MousePointer2, Scale, BookOpen } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useColorScheme } from '../../../hooks/useColorScheme';
+import { useModule1Audio } from './hooks/useModule1Audio';
 
-// ── Interactive Animated SVG Waveforms ─────────────────────────────────────
+// ── Interactive Animated SVG Waveforms (AXE-OR v7 TACTICAL EDITION) ──────
 
 interface WaveProps {
   color?: string;
@@ -12,6 +13,8 @@ interface WaveProps {
   speed?: number;
   mouseX?: number;
   mouseY?: number;
+  label?: string;
+  unit?: string;
 }
 
 const AnalogWave: React.FC<WaveProps> = ({ 
@@ -20,14 +23,15 @@ const AnalogWave: React.FC<WaveProps> = ({
   frequency = 0.04,
   speed = 0.05,
   mouseX = 0.5,
-  mouseY = 0.5
+  mouseY = 0.5,
+  label = 'EXT_VOLT_FLUX',
+  unit = 'mV'
 }) => {
   const pathRef = useRef<SVGPathElement>(null);
   const rafRef = useRef<number>();
   
-  // Real-time modulation based on mouse
-  const baseAmp = amplitude + (mouseY * 40 - 20); // Y affects Amplitude
-  const baseFreq = frequency + (mouseX * 0.08 - 0.04); // X affects Frequency
+  const baseAmp = amplitude + (mouseY * 40 - 20);
+  const baseFreq = frequency + (mouseX * 0.08 - 0.04);
 
   useEffect(() => {
     let t = 0;
@@ -36,7 +40,6 @@ const AnalogWave: React.FC<WaveProps> = ({
       const w = 400, cy = 50;
       const pts = Array.from({ length: 120 }, (_, i) => {
         const x = (i / 120) * w;
-        // Distort frequency locally near mouse? (Simpler: Global modulation)
         const y = cy + baseAmp * Math.sin(baseFreq * x + t);
         return `${i === 0 ? 'M' : 'L'}${x},${y}`;
       }).join(' ');
@@ -51,19 +54,37 @@ const AnalogWave: React.FC<WaveProps> = ({
   }, [baseAmp, baseFreq, speed]);
 
   return (
-    <svg width="100%" height="100" viewBox="0 0 400 100" preserveAspectRatio="none" style={{ display: 'block' }}>
-      <path ref={pathRef} fill="none" stroke={color} strokeWidth="3" style={{ filter: `drop-shadow(0 0 8px ${color}80)` }} />
-    </svg>
+    <div className="relative w-full group">
+      {/* Tactical HUD Overlay */}
+      <div className="absolute top-4 left-4 z-20 pointer-events-none">
+          <div className="hud-label">{label}</div>
+          <div className="hud-value">{(baseAmp * 2).toFixed(1)}<span className="text-[8px] ml-1 opacity-30">{unit}</span></div>
+      </div>
+      <div className="absolute top-4 right-4 z-20 pointer-events-none text-right">
+          <div className="hud-label">SAMP_FREQ</div>
+          <div className="hud-value">{(baseFreq * 1000).toFixed(0)}<span className="text-[8px] ml-1 opacity-30">Hz</span></div>
+      </div>
+      
+      <svg width="100%" height="100" viewBox="0 0 400 100" preserveAspectRatio="none" className="relative z-10">
+        <path ref={pathRef} fill="none" stroke={color} strokeWidth="2.5" style={{ filter: `drop-shadow(0 0 12px ${color}60)` }} />
+        {/* Mirror glow */}
+        <path ref={pathRef} fill="none" stroke={color} strokeWidth="8" opacity="0.1" style={{ filter: 'blur(8px)' }} />
+      </svg>
+      
+      {/* Background Grid */}
+      <div className="absolute inset-0 opacity-[0.03] grid-bg rounded-xl" />
+    </div>
   );
 };
 
 const DigitalWave: React.FC<WaveProps & { complexity?: number }> = ({ 
   color = '#a78bfa', 
   complexity = 1,
-  mouseX = 0.5
+  mouseX = 0.5,
+  label = 'LOGIC_BUS_01'
 }) => {
   const [phase, setPhase] = useState(0);
-  const modComplexity = complexity + (mouseX * 4); // X affects Complexity
+  const modComplexity = complexity + (mouseX * 4);
 
   useEffect(() => {
     const id = setInterval(() => setPhase(p => (p + 1) % 16), 120);
@@ -71,19 +92,37 @@ const DigitalWave: React.FC<WaveProps & { complexity?: number }> = ({
   }, []);
   
   const steps = 15;
+  const bitSequence = Array.from({ length: steps }).map((_, i) => (Math.sin(i * modComplexity + phase * 0.5) > 0) ? 1 : 0);
+
   return (
-    <svg width="100%" height="100" viewBox="0 0 400 100" preserveAspectRatio="none" style={{ display: 'block' }}>
-      {Array.from({ length: steps }).map((_, i) => {
-        const bit = (Math.sin(i * modComplexity + phase * 0.5) > 0) ? 1 : 0;
-        const x = i * (400 / steps);
-        const y = bit === 1 ? 20 : 70;
-        const w = (400 / steps) - 2;
-        return <g key={i}>
-          <rect x={x} y={y} width={w} height={bit === 1 ? 30 : 10} fill={`${color}12`} rx="2" />
-          <rect x={x} y={y} width={w} height="3" fill={color} rx="1" style={{ filter: `drop-shadow(0 0 6px ${color})` }} />
-        </g>;
-      })}
-    </svg>
+    <div className="relative w-full group">
+       <div className="absolute top-4 left-4 z-20 pointer-events-none">
+          <div className="hud-label">{label}</div>
+          <div className="hud-value">{bitSequence.slice(0, 4).join('')}<span className="text-[8px] ml-1 opacity-30">BIN_HEX</span></div>
+      </div>
+      <div className="absolute top-4 right-4 z-20 pointer-events-none text-right">
+          <div className="hud-label">LOGIC_GATE_SYNC</div>
+          <div className="hud-value">ACTIVE</div>
+      </div>
+
+      <svg width="100%" height="100" viewBox="0 0 400 100" preserveAspectRatio="none" className="relative z-10">
+        {bitSequence.map((bit, i) => {
+          const x = i * (400 / steps);
+          const y = bit === 1 ? 20 : 70;
+          const w = (400 / steps) - 2;
+          return <g key={i}>
+            <rect x={x} y={y} width={w} height={bit === 1 ? 30 : 10} fill={`${color}08`} rx="2" />
+            <motion.rect 
+              initial={false}
+              animate={{ y }}
+              x={x} width={w} height="3" fill={color} rx="1" 
+              style={{ filter: `drop-shadow(0 0 10px ${color})` }} 
+            />
+          </g>;
+        })}
+      </svg>
+      <div className="absolute inset-0 opacity-[0.03] grid-bg rounded-xl" />
+    </div>
   );
 };
 
@@ -142,7 +181,6 @@ const SineWaveSmall: React.FC<{
     };
   }, [speed, mode]);
 
-  // Use a darker color for reference in light mode to improve contrast
   const referenceColor = !isDark && mode === 'phase' ? '#94a3b8' : color;
   const referenceOpacity = !isDark && mode === 'phase' ? 0.6 : 0.4;
 
@@ -274,7 +312,6 @@ const SignalHook: React.FC<{ onComplete: () => void; isDark: boolean }> = ({ onC
       onMouseMove={handleMouseMove}
       onClick={next}
     >
-      {/* Interactive Background Particles/Waves */}
       <div className="absolute inset-0 opacity-10 pointer-events-none">
         <motion.div 
           animate={{ x: mousePos.x * 20 - 10, y: mousePos.y * 20 - 10 }}
@@ -286,8 +323,6 @@ const SignalHook: React.FC<{ onComplete: () => void; isDark: boolean }> = ({ onC
       </div>
 
       <div className="relative z-10 w-full max-w-2xl px-8 flex flex-col items-center text-center">
-        
-        {/* The Core Interactive Waveform */}
         <div className="w-full h-32 flex items-center justify-center mb-16 px-12">
            <AnimatePresence mode="wait">
               {step === 0 && (
@@ -324,7 +359,6 @@ const SignalHook: React.FC<{ onComplete: () => void; isDark: boolean }> = ({ onC
            </AnimatePresence>
         </div>
 
-        {/* Text Sequence */}
         <AnimatePresence mode="wait">
           <motion.div
             key={step}
@@ -343,7 +377,6 @@ const SignalHook: React.FC<{ onComplete: () => void; isDark: boolean }> = ({ onC
           </motion.div>
         </AnimatePresence>
 
-        {/* Interaction Hint */}
         <motion.div 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -373,6 +406,78 @@ const SignalHook: React.FC<{ onComplete: () => void; isDark: boolean }> = ({ onC
   );
 };
 
+// ── ELITE AXE-OR COMPONENTS ───────────────────────────────────────────────
+
+export const KineticText: React.FC<{ text: string; className?: string }> = ({ text, className }) => {
+    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789//_";
+    const [display, setDisplay] = useState(text);
+
+    useEffect(() => {
+        let iterations = 0;
+        const interval = setInterval(() => {
+            setDisplay(text.split("").map((char, index) => {
+                if (index < iterations) return text[index];
+                return letters[Math.floor(Math.random() * letters.length)];
+            }).join(""));
+            if (iterations >= text.length) clearInterval(interval);
+            iterations += 1/4;
+        }, 25);
+        return () => clearInterval(interval);
+    }, [text]);
+
+    return <span className={className}>{display}</span>;
+};
+
+export const InsightPanel: React.FC<{ title: string; content: string; career?: string; isDark: boolean }> = ({ title, content, career, isDark }) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const audio = useModule1Audio();
+
+    return (
+        <div className={`transition-all duration-700 rounded-[2.5rem] overflow-hidden ${isOpen ? (isDark ? 'bg-orange-500/10 border border-orange-500/20 p-8' : 'bg-orange-50 border border-orange-200 p-8') : 'bg-white/5 border border-white/5 p-4'}`}>
+            <button 
+                onClick={() => {
+                  setIsOpen(!isOpen);
+                  audio.playPing(isOpen ? 440 : 880, 0.05);
+                }}
+                className="w-full flex items-center justify-between group"
+            >
+                <div className="flex items-center gap-4">
+                    <div className={`p-3 rounded-xl transition-all ${isOpen ? 'bg-orange-500 text-black shadow-[0_0_15px_#f97316]' : 'bg-white/10 text-white/40'}`}>
+                        <BookOpen size={14} />
+                    </div>
+                    <div className="flex flex-col items-start">
+                        <span className="text-[8px] font-black uppercase tracking-[0.3em] opacity-30">Analytical // Deep_Dive</span>
+                        <span className={`text-[12px] font-black uppercase tracking-tighter transition-colors ${isOpen ? (isDark ? 'text-white' : 'text-gray-900') : 'text-white/40 group-hover:text-white'}`}>{title}</span>
+                    </div>
+                </div>
+                <div className={`transition-transform duration-500 ${isOpen ? 'rotate-90 text-orange-500' : 'text-white/10'}`}>
+                    <ChevronRight size={18} />
+                </div>
+            </button>
+            <AnimatePresence>
+                {isOpen && (
+                    <motion.div 
+                        initial={{ height: 0, opacity: 0 }} 
+                        animate={{ height: 'auto', opacity: 1 }} 
+                        exit={{ height: 0, opacity: 0 }}
+                        className="overflow-hidden"
+                    >
+                        <div className="pt-8 space-y-6">
+                            <p className={`text-sm font-medium leading-relaxed italic ${isDark ? 'text-orange-100/60' : 'text-gray-600'}`}>{content}</p>
+                            {career && (
+                                <div className="flex items-center gap-3 pt-6 border-t border-white/5">
+                                    <div className="px-3 py-1 bg-orange-500/10 rounded-lg text-[8px] font-black text-orange-500 uppercase tracking-widest">Career_Insight</div>
+                                    <span className={`text-[10px] font-bold italic opacity-40 ${isDark ? 'text-white' : 'text-gray-900'}`}>{career}</span>
+                                </div>
+                            )}
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </div>
+    );
+};
+
 // ── Components ─────────────────────────────────────────────────────────────
 
 const ConceptCard: React.FC<{
@@ -385,6 +490,7 @@ const ConceptCard: React.FC<{
   isDark: boolean;
 }> = ({ icon, color, title, layman, technical, example, isDark }) => {
   const [expanded, setExpanded] = useState(false);
+  const audio = useModule1Audio();
   const bgColor = isDark ? '#080503' : '#f9fafb';
   const borderColor = isDark ? 'rgba(180,100,30,0.2)' : 'rgba(0,0,0,0.1)';
   const textColor = isDark ? 'text-orange-50' : 'text-gray-900';
@@ -392,43 +498,56 @@ const ConceptCard: React.FC<{
 
   return (
     <div
-      className="rounded-xl border transition-all duration-300 cursor-pointer"
+      className="rounded-2xl border transition-all duration-500 cursor-pointer overflow-hidden"
       style={{
         background: bgColor,
         borderColor: expanded ? `${color}50` : borderColor,
-        boxShadow: expanded ? `0 0 24px ${color}10` : 'none',
+        boxShadow: expanded ? `0 20px 40px ${color}15` : 'none',
       }}
-      onClick={() => setExpanded(e => !e)}
+      onClick={() => {
+        setExpanded(e => !e);
+        audio.playPing(expanded ? 330 : 660, 0.05);
+      }}
     >
-      <div className="flex items-center gap-4 p-5">
+      <div className="flex items-center gap-4 p-6">
         <div
-          className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
-          style={{ background: `${color}15`, border: `1px solid ${color}30` }}
+          className="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 transition-all duration-500"
+          style={{ 
+            background: expanded ? color : `${color}15`, 
+            color: expanded ? '#000' : color,
+            border: `1px solid ${color}30` 
+          }}
         >
           {icon}
         </div>
         <div className="flex-1 min-w-0">
-          <h3 className={`text-base font-semibold ${textColor}`}>{title}</h3>
-          <p className={`text-sm mt-0.5 line-clamp-2 ${subTextColor}`}>{layman}</p>
+          <h3 className={`text-lg font-bold tracking-tight ${textColor}`}>{title}</h3>
+          <p className={`text-sm mt-0.5 line-clamp-1 ${subTextColor}`}>{layman}</p>
         </div>
-        {expanded ? (
-          <ChevronDown size={18} style={{ color, flexShrink: 0 }} />
-        ) : (
-          <ChevronRight size={18} style={{ color: isDark ? 'rgba(180,100,30,0.4)' : 'rgba(0,0,0,0.2)', flexShrink: 0 }} />
-        )}
+        <div className={`transition-transform duration-500 ${expanded ? 'rotate-90' : ''}`}>
+           <ChevronRight size={18} style={{ color: expanded ? color : (isDark ? 'rgba(180,100,30,0.4)' : 'rgba(0,0,0,0.2)'), flexShrink: 0 }} />
+        </div>
       </div>
-      {expanded && (
-        <div className="px-5 pb-5 flex flex-col gap-3 border-t" style={{ borderColor: `${color}20` }}>
-          <div className="mt-4">
-            <span className="text-xs font-mono uppercase tracking-widest" style={{ color }}>Technical Definition</span>
-            <p className={`text-sm mt-1 leading-relaxed ${isDark ? 'text-orange-200/70' : 'text-gray-600'}`}>{technical}</p>
-          </div>
-          <div className="p-3 rounded-lg" style={{ background: `${color}0a`, border: `1px solid ${color}25` }}>
-            <span className={`text-xs font-mono uppercase tracking-widest ${isDark ? 'text-orange-400/50' : 'text-gray-400'}`}>Real-World Example</span>
-            <p className={`text-sm mt-1 leading-relaxed italic ${isDark ? 'text-orange-100/80' : 'text-gray-700'}`}>"{example}"</p>
-          </div>
-        </div>
-      )}
+      <AnimatePresence>
+        {expanded && (
+          <motion.div 
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="px-6 pb-6 flex flex-col gap-4 border-t overflow-hidden" 
+            style={{ borderColor: `${color}20` }}
+          >
+            <div className="mt-4">
+              <span className="text-[9px] font-mono font-black uppercase tracking-[0.3em] opacity-40" style={{ color }}>Technical Protocol</span>
+              <p className={`text-sm mt-1 leading-relaxed ${isDark ? 'text-orange-200/70' : 'text-gray-600'}`}>{technical}</p>
+            </div>
+            <div className="p-4 rounded-2xl" style={{ background: `${color}0a`, border: `1px solid ${color}25` }}>
+              <span className={`text-[9px] font-mono font-black uppercase tracking-[0.3em] ${isDark ? 'text-orange-400/50' : 'text-gray-400'}`}>Field Application</span>
+              <p className={`text-sm mt-1 leading-relaxed italic ${isDark ? 'text-orange-100/80' : 'text-gray-700'}`}>"{example}"</p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
@@ -465,6 +584,54 @@ const SignalTypeCard: React.FC<{
   </div>
 );
 
+export const ComparisonConsole: React.FC<{ isDark: boolean }> = ({ isDark }) => {
+    const rows = [
+        { feat: "Nature", analog: "Continuous", digital: "Discrete", color: "#f97316" },
+        { feat: "Values", analog: "Infinite", digital: "Finite (2 for Binary)", color: "#00D4FF" },
+        { feat: "Noise", analog: "Poor (Cumulative)", digital: "Excellent (Immune)", color: "#EF4444" },
+        { feat: "Storage", analog: "Waveform (Tape/Vinyl)", digital: "Bits (Memory/SSD)", color: "#A855F7" },
+        { feat: "Processing", analog: "Complex (Op-Amps)", digital: "Simple (Logic Gates)", color: "#22C55E" }
+    ];
+
+    const audio = useModule1Audio();
+
+    return (
+        <div className={`w-full axe-or-glass rounded-[3rem] overflow-hidden p-10 space-y-10 border transition-all duration-500 shadow-2xl ${isDark ? 'border-white/5' : 'border-black/5'}`}>
+            <div className="flex items-center gap-4">
+                <div className="p-3 bg-white/5 rounded-xl text-white/40">
+                    <Scale size={20} />
+                </div>
+                <div className="flex flex-col">
+                    <span className="text-[9px] font-black uppercase tracking-[0.4em] opacity-30">Domain_Arbitrage // Intel</span>
+                    <h3 className={`text-2xl font-black italic uppercase tracking-tighter ${isDark ? 'text-white' : 'text-gray-900'}`}>System Arbitrage</h3>
+                </div>
+            </div>
+
+            <div className="space-y-3">
+                <div className="grid grid-cols-3 px-6 py-2 text-[8px] font-black uppercase tracking-widest opacity-20">
+                    <span>Variable_Id</span>
+                    <span>Analog_Space</span>
+                    <span>Digital_Logic</span>
+                </div>
+                {rows.map((r, i) => (
+                    <motion.div 
+                        initial={{ opacity: 0, x: -10 }} 
+                        whileInView={{ opacity: 1, x: 0 }} 
+                        transition={{ delay: i * 0.05 }}
+                        key={r.feat} 
+                        onMouseEnter={() => audio.playPing(440 + i * 50, 0.02)}
+                        className={`grid grid-cols-3 px-8 py-5 rounded-2xl border transition-all group ${isDark ? 'bg-white/[0.01] border-white/[0.03] hover:border-white/10' : 'bg-black/[0.01] border-black/[0.03] hover:border-black/10'}`}
+                    >
+                        <span className={`text-[10px] font-black uppercase transition-colors ${isDark ? 'text-white/40 group-hover:text-white' : 'text-black/40 group-hover:text-black'}`}>{r.feat}</span>
+                        <span className="text-xs font-bold italic" style={{ color: r.color + '99' }}>{r.analog}</span>
+                        <span className="text-xs font-bold italic" style={{ color: r.color }}>{r.digital}</span>
+                    </motion.div>
+                ))}
+            </div>
+        </div>
+    );
+};
+
 // ── Main Page Layout ───────────────────────────────────────────────────────
 
 export const Module1Root: React.FC = () => {
@@ -474,12 +641,15 @@ export const Module1Root: React.FC = () => {
   const [showHook, setShowHook] = useState(true);
 
   const sections = [
-    { id: 'intro', label: 'Introduction' },
-    { id: 'standard', label: 'Standard Signals' },
-    { id: 'types', label: 'Types of Signals' },
-    { id: 'params', label: 'Signal Parameters' },
-    { id: 'processing', label: 'Digital Processing' },
-    { id: 'compare', label: 'Analog vs Digital' },
+    { id: 'intro', label: 'Signals' },
+    { id: 'representation', label: 'Representation' },
+    { id: 'analog', label: 'Analog Signals' },
+    { id: 'digital', label: 'Digital Signals' },
+    { id: 'compare', label: 'Comparison' },
+    { id: 'bridge', label: 'ADC/DAC' },
+    { id: 'concepts', label: 'Key Concepts' },
+    { id: 'systems', label: 'Applications' },
+    { id: 'verilog', label: 'Verilog Bridge' },
   ];
 
   useEffect(() => {
@@ -491,10 +661,16 @@ export const Module1Root: React.FC = () => {
       threshold: 0
     };
 
+    const subSignals = ['standard', 'types', 'params', 'processing'];
+    
     const observerCallback = (entries: IntersectionObserverEntry[]) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          setActiveSection(entry.target.id);
+          if (subSignals.includes(entry.target.id)) {
+            setActiveSection('intro');
+          } else {
+            setActiveSection(entry.target.id);
+          }
         }
       });
     };
@@ -502,6 +678,10 @@ export const Module1Root: React.FC = () => {
     const observer = new IntersectionObserver(observerCallback, observerOptions);
     sections.forEach(s => {
       const el = document.getElementById(s.id);
+      if (el) observer.observe(el);
+    });
+    subSignals.forEach(id => {
+      const el = document.getElementById(id);
       if (el) observer.observe(el);
     });
 
@@ -567,40 +747,50 @@ export const Module1Root: React.FC = () => {
       </div>
 
       {/* ── Main Content ── */}
-      <div className="flex-1 h-full overflow-y-auto relative scroll-smooth" style={{ background: bgColor }}>
+      <div className="flex-1 h-full overflow-y-auto relative scroll-smooth grid-bg" style={{ background: bgColor }}>
 
         {/* Sticky Nav */}
-        <nav className={`sticky top-0 z-50 px-8 py-5 flex justify-between items-center border-b backdrop-blur-md`} style={{ background: isDarkMode ? 'rgba(3,1,0,0.85)' : 'rgba(255,255,255,0.85)', borderColor }}>
+        <nav className={`sticky top-0 z-50 px-8 py-5 flex justify-between items-center border-b axe-or-glass`} style={{ borderColor }}>
           <div className="flex items-center gap-3">
-            <span className={`font-mono font-semibold ${isDarkMode ? 'text-orange-500' : 'text-orange-600'}`}>M01</span>
+            <span className={`font-mono font-black ${isDarkMode ? 'text-orange-500' : 'text-orange-600'}`}>M01</span>
             <span className={isDarkMode ? 'text-orange-900' : 'text-gray-300'}>·</span>
-            <span className={`text-sm ${isDarkMode ? 'text-orange-300/60' : 'text-gray-500'}`}>Exploring the Language of Electricity</span>
+            <span className={`text-[10px] uppercase font-black tracking-widest ${isDarkMode ? 'text-orange-300/40' : 'text-gray-400'}`}>Signal // Foundation</span>
           </div>
-          <div className="flex items-center gap-4">
-             <div className="h-1 w-32 rounded-full overflow-hidden bg-gray-200 dark:bg-orange-900/20">
-                <div className="h-full bg-orange-500 w-[20%]"></div>
+          <div className="flex items-center gap-6">
+             <div className="flex flex-col items-end gap-1">
+                <span className="text-[8px] font-black uppercase tracking-widest text-orange-500/40">Sync_Progress</span>
+                <div className="h-[2px] w-32 rounded-full overflow-hidden bg-white/5">
+                    <motion.div initial={{ width: 0 }} animate={{ width: '20%' }} className="h-full bg-orange-500 shadow-[0_0_10px_#f97316]"></motion.div>
+                </div>
              </div>
-             <span className={`text-xs font-mono font-bold ${isDarkMode ? 'text-orange-500' : 'text-orange-600'}`}>20% COMPLETED</span>
+             <span className={`text-[10px] font-black font-mono ${isDarkMode ? 'text-orange-500' : 'text-orange-600'}`}>20.00%</span>
           </div>
         </nav>
 
-        <main className={`max-w-4xl mx-auto px-8 py-16 space-y-32 ${isDarkMode ? 'text-orange-100' : 'text-gray-800'}`}>
+        <main className={`max-w-4xl mx-auto px-8 py-16 space-y-48 ${isDarkMode ? 'text-orange-100' : 'text-gray-800'}`}>
 
           {/* ── HERO ── */}
-          <section id="intro">
-            <div className="text-center mb-16">
-              <p className={`text-[10px] font-mono uppercase tracking-[0.4em] mb-6 ${isDarkMode ? 'text-orange-600' : 'text-orange-700'}`}>Level 01 · Signal Theory</p>
-              <h1 className="text-5xl md:text-6xl font-extrabold mb-8 tracking-tighter leading-none">
-                <span className={isDarkMode ? 'text-orange-500' : 'text-orange-600'}>What</span>{' '}
-                <span className={isDarkMode ? 'text-orange-50' : 'text-gray-900'}>is a Signal?</span>
-              </h1>
-              <p className={`text-lg max-w-2xl mx-auto leading-relaxed ${isDarkMode ? 'text-orange-300/50' : 'text-gray-500'}`}>
-                “A signal is a way to represent change.”
-              </p>
-            </div>
+          <section id="intro" className="relative">
+              <div className="flex flex-col gap-2 mb-8">
+                 <span className="mono-tag">Module_Alpha // Level_01</span>
+                 <h1 className="hero-text text-6xl md:text-8xl leading-none">
+                    <KineticText text="UNIFIED" className={isDarkMode ? 'text-orange-500' : 'text-orange-600'} />
+                    <br />
+                    <span className={isDarkMode ? 'text-white' : 'text-gray-900'}>FOUNDATION</span>
+                 </h1>
+              </div>
+              
+              <div className="flex flex-col md:flex-row gap-10 items-start md:items-center">
+                  <div className={`px-6 py-2 rounded-full border border-orange-500/20 bg-orange-500/5 text-[9px] font-black uppercase tracking-[0.3em] text-orange-500`}>
+                      Domain_Sync: Active
+                  </div>
+                  <p className={`text-xl font-medium leading-relaxed max-w-xl italic ${isDarkMode ? 'text-orange-100/40' : 'text-gray-500'}`}>
+                    "The universe speaks in waves. Engineers speak in bits. This is the bridge between them."
+                  </p>
+              </div>
 
             {/* Animated live demo */}
-            <div className={`rounded-3xl p-8 border mb-12 shadow-2xl transition-all`} style={{ background: isDarkMode ? '#060401' : '#ffffff', borderColor }}>
+            <div className={`rounded-3xl p-8 border mb-12 shadow-2xl transition-all mt-16`} style={{ background: isDarkMode ? '#060401' : '#ffffff', borderColor }}>
               <div className="flex items-center gap-3 mb-8">
                 <div className={`w-3 h-3 rounded-full bg-orange-500 shadow-[0_0_10px_#f97316]`} />
                 <span className={`text-xs font-mono uppercase tracking-widest font-bold ${isDarkMode ? 'text-orange-500' : 'text-orange-600'}`}>Live Waveform Interaction</span>
@@ -692,14 +882,6 @@ export const Module1Root: React.FC = () => {
                   className="rounded-2xl p-8 border h-48 flex items-center justify-center relative group overflow-hidden" 
                   style={{ background: isDarkMode ? '#060401' : '#f9fafb', borderColor }}
                 >
-                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                     <div className="absolute inset-0 bg-emerald-500/5 blur-xl" />
-                  </div>
-                  <StepWave 
-                    color="#10b981" 
-                    mouseX={useRef(0.5).current} /* Dummy static if no mouse hook on this div specifically? No, let's use global mouse */
-                  />
-                  {/* We need local mouse tracking for these specifically to feel high-end */}
                   <LocalMouseArea render={(x: number, y: number) => (
                     <StepWave color="#10b981" mouseX={x} mouseY={y} />
                   )} />
@@ -767,6 +949,7 @@ export const Module1Root: React.FC = () => {
               </div>
             </div>
           </section>
+
           <section id="types">
             <h2 className={`text-3xl font-extrabold mb-4 ${isDarkMode ? 'text-orange-100' : 'text-gray-900'}`}>The Two Great Families</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
@@ -813,7 +996,7 @@ export const Module1Root: React.FC = () => {
 
           {/* ── PARAMETERS ── */}
           <section id="params">
-            <h2 className={`text-3xl font-extrabold mb-4 ${isDarkMode ? 'text-orange-100' : 'text-gray-900'}`}>The Language of Waves</h2>
+            <h2 className="hero-text text-3xl mb-8"><KineticText text="WAVE_LITERALS" /></h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
               {[
                 {
@@ -862,16 +1045,25 @@ export const Module1Root: React.FC = () => {
               ))}
             </div>
 
-            <div className={`rounded-3xl p-10 border text-center transition-all`} style={{ background: isDarkMode ? '#000000' : '#f9fafb', borderColor }}>
-              <p className={`text-xs font-mono mb-6 uppercase tracking-[0.3em] ${isDarkMode ? 'text-orange-600' : 'text-orange-700'}`}>The Scientist's View</p>
-              <div className="inline-block p-8 rounded-2xl bg-orange-500/5 border border-orange-500/10 mb-12">
-                <p className="text-4xl font-mono tracking-widest text-orange-500 md:text-5xl">
-                  x(t) = A cos(ωt + θ)
-                </p>
-              </div>
+            <div className="space-y-6">
+              <InsightPanel 
+                isDark={isDarkMode}
+                title="The Mathematical Oscillator"
+                content="Physics is fundamentally periodic. The cosine function isn't just a math trick; it represents the projection of circular motion (rotation) onto a linear axis. In electronics, we use this to describe how voltage oscillates over time."
+                career="DSP Engineer // Analog IC Designer"
+              />
 
-              <div className="mt-12 space-y-8 text-left">
-                <h3 className={`text-2xl font-bold ${isDarkMode ? 'text-orange-400' : 'text-gray-900'}`}>What do these letters actually mean? 🧩</h3>
+              <div className={`axe-or-glass rounded-[3rem] p-12 text-center relative overflow-hidden border shadow-inner ${isDarkMode ? 'border-white/5' : 'border-black/5'}`}>
+                <div className="scan-line absolute inset-0 opacity-10" />
+                <p className="mono-tag mb-8 tracking-[0.5em]">The Scientist's View</p>
+                <div className="inline-block p-10 rounded-3xl bg-orange-500/5 border border-orange-500/10 mb-12">
+                  <p className="text-4xl font-mono tracking-widest text-orange-500 md:text-6xl">
+                    x(t) = A cos(ωt + θ)
+                  </p>
+                </div>
+
+                <div className="space-y-8 text-left max-w-2xl mx-auto">
+                   <h3 className={`hero-text text-2xl ${isDarkMode ? 'text-orange-400' : 'text-gray-900'}`}>Variable Decoding 🧩</h3>
                 <p className={`text-base leading-relaxed ${isDarkMode ? 'text-orange-300/60' : 'text-gray-600'}`}>
                   Think of a <strong className="text-orange-500">Merry-Go-Round</strong> spinning in the dark. 
                   If you shine a flashlight on it from the side, the shadow on the wall moves back and forth in a smooth wave. 
@@ -953,7 +1145,8 @@ export const Module1Root: React.FC = () => {
                 </div>
               </div>
             </div>
-          </section>
+          </div>
+        </section>
 
           {/* ── PROCESSING ── */}
           <section id="processing">
@@ -986,51 +1179,295 @@ export const Module1Root: React.FC = () => {
             </div>
           </section>
 
+          {/* ── REPRESENTATION ── */}
+          <section id="representation" className="pt-20">
+            <div className="text-center mb-16 space-y-4">
+              <h2 className="hero-text text-4xl"><KineticText text="DATA_REPRESENTATION" /></h2>
+              <p className={`text-xl max-w-2xl mx-auto leading-relaxed ${isDarkMode ? 'text-orange-300/60' : 'text-gray-600'}`}>
+                You now understand what a signal is. The next question is: how do electronic systems actually represent and process these signals?
+              </p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className={`p-8 rounded-3xl border ${isDarkMode ? 'bg-orange-950/10 border-orange-900/30' : 'bg-orange-50 border-orange-100'}`}>
+                <div className="w-12 h-12 rounded-2xl bg-orange-500/20 flex items-center justify-center text-2xl mb-4">🌍</div>
+                <h3 className="text-xl font-bold mb-2">Real World</h3>
+                <p className="text-sm opacity-80">Signals exist in the physical world as continuous changes (sound, light, heat).</p>
+              </div>
+              <div className={`p-8 rounded-3xl border ${isDarkMode ? 'bg-orange-950/10 border-orange-900/30' : 'bg-orange-50 border-orange-100'}`}>
+                <div className="w-12 h-12 rounded-2xl bg-orange-500/20 flex items-center justify-center text-2xl mb-4">⚙️</div>
+                <h3 className="text-xl font-bold mb-2">The Need</h3>
+                <p className="text-sm opacity-80">Systems need a reliable way to store, process, and transmit these signals.</p>
+              </div>
+              <div className={`p-8 rounded-3xl border ${isDarkMode ? 'bg-orange-950/10 border-orange-500' : 'bg-orange-100 border-orange-200'}`}>
+                <div className="w-12 h-12 rounded-2xl bg-orange-500 flex items-center justify-center text-2xl mb-4">⚡</div>
+                <h3 className="text-xl font-bold mb-2">Two Ways</h3>
+                <p className="text-sm opacity-80 font-bold">This leads to two fundamental types: Analog and Digital.</p>
+              </div>
+            </div>
+          </section>
+
+          {/* ── ANALOG SIGNALS ── */}
+          <section id="analog" className="pt-20">
+            <div className="flex flex-col md:flex-row gap-12 items-center mb-16">
+              <div className="flex-1 space-y-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-cyan-500/20 flex items-center justify-center text-cyan-500 border border-cyan-500/20">
+                    <Radio size={24} />
+                  </div>
+                  <h2 className="hero-text text-3xl"><KineticText text="ANALOG_DOMAIN" /></h2>
+                </div>
+                <p className="text-lg font-medium text-cyan-500">Continuous Representation</p>
+                <p className={`leading-relaxed ${isDarkMode ? 'text-orange-200/70' : 'text-gray-600'}`}>
+                  An analog signal is <strong>continuous</strong> in both time and amplitude. It closely follows real-world physical behavior, having infinite possible values at any instant.
+                </p>
+                <div className={`p-4 rounded-xl font-mono text-center ${isDarkMode ? 'bg-cyan-950/30 text-cyan-400' : 'bg-cyan-50 text-cyan-700'}`}>
+                  x(t) = A sin(2πft + ϕ)
+                </div>
+              </div>
+              <div className={`flex-1 w-full rounded-3xl border p-8 ${isDarkMode ? 'bg-cyan-950/10 border-cyan-500/30' : 'bg-cyan-50/50 border-cyan-200'}`}>
+                <AnalogWave color="#22d3ee" amplitude={30} frequency={0.05} />
+                <div className="mt-8 grid grid-cols-2 gap-4 text-xs font-mono uppercase tracking-widest text-cyan-500/60">
+                  <div className="p-3 rounded-lg border border-cyan-500/20">Smooth Waveform</div>
+                  <div className="p-3 rounded-lg border border-cyan-500/20">Infinite Resolution</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className={`p-8 rounded-3xl border ${isDarkMode ? 'bg-black/40 border-orange-900/20' : 'bg-white shadow-sm border-gray-100'}`}>
+                <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+                  <span className="text-cyan-500">✔</span> Advantages
+                </h3>
+                <ul className="space-y-3 text-sm opacity-80">
+                  <li>• Natural representation of real-world signals</li>
+                  <li>• Simple for basic systems</li>
+                  <li>• Direct representation of physical quantities</li>
+                </ul>
+              </div>
+              <div className={`p-8 rounded-3xl border ${isDarkMode ? 'bg-black/40 border-orange-900/20' : 'bg-white shadow-sm border-gray-100'}`}>
+                <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+                  <span className="text-rose-500">✘</span> Disadvantages
+                </h3>
+                <ul className="space-y-3 text-sm opacity-80">
+                  <li>• Highly sensitive to noise</li>
+                  <li>• Degrades over transmission and copying</li>
+                  <li>• Difficult to store and process</li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="mt-12 flex flex-wrap gap-4">
+               {['Microphone', 'Analog Thermometer', 'Vinyl Records', 'Analog Clock'].map(ex => (
+                 <span key={ex} className={`px-4 py-2 rounded-full text-xs font-bold border ${isDarkMode ? 'bg-cyan-950/20 border-cyan-500/30 text-cyan-400' : 'bg-cyan-50 border-cyan-200 text-cyan-700'}`}>
+                   {ex}
+                 </span>
+               ))}
+            </div>
+          </section>
+
+          {/* ── DIGITAL SIGNALS ── */}
+          <section id="digital" className="pt-20">
+             <div className="flex flex-col md:flex-row-reverse gap-12 items-center mb-16">
+              <div className="flex-1 space-y-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-violet-500/20 flex items-center justify-center text-violet-500 border border-violet-500/20">
+                    <Cpu size={24} />
+                  </div>
+                  <h2 className="hero-text text-3xl"><KineticText text="DIGITAL_LOGIC" /></h2>
+                </div>
+                <p className="text-lg font-medium text-violet-500">Discrete Representation</p>
+                <p className={`leading-relaxed ${isDarkMode ? 'text-orange-200/70' : 'text-gray-600'}`}>
+                   A digital signal is <strong>discrete</strong> in time and amplitude. It uses specific values (Binary) to represent information, making it robust and easy to handle.
+                </p>
+                <div className="flex gap-4">
+                   <div className={`flex-1 p-3 rounded-xl text-center border font-mono ${isDarkMode ? 'border-violet-900/50 bg-violet-950/30 text-violet-400' : 'border-violet-200 bg-violet-50 text-violet-700'}`}>
+                      Logic 0: Low
+                   </div>
+                   <div className={`flex-1 p-3 rounded-xl text-center border font-mono ${isDarkMode ? 'border-violet-900/50 bg-violet-950/30 text-violet-400' : 'border-violet-200 bg-violet-50 text-violet-700'}`}>
+                      Logic 1: High
+                   </div>
+                </div>
+              </div>
+              <div className={`flex-1 w-full rounded-3xl border p-8 ${isDarkMode ? 'bg-violet-950/10 border-violet-500/30' : 'bg-violet-50/50 border-violet-200'}`}>
+                <DigitalWave color="#a78bfa" complexity={1} />
+                <div className="mt-8 grid grid-cols-2 gap-4 text-xs font-mono uppercase tracking-widest text-violet-500/60">
+                  <div className="p-3 rounded-lg border border-violet-500/20">Step-like Signal</div>
+                  <div className="p-3 rounded-lg border border-violet-500/20">Finite Values (2ⁿ)</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className={`p-8 rounded-3xl border ${isDarkMode ? 'bg-black/40 border-orange-900/20' : 'bg-white shadow-sm border-gray-100'}`}>
+                <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+                   <span className="text-violet-500">✔</span> Advantages
+                </h3>
+                <ul className="space-y-3 text-sm opacity-80">
+                  <li>• Strong noise immunity (Robust)</li>
+                  <li>• Reliable storage, copying, and transmission</li>
+                  <li>• No cumulative degradation</li>
+                </ul>
+              </div>
+              <div className={`p-8 rounded-3xl border ${isDarkMode ? 'bg-black/40 border-orange-900/20' : 'bg-white shadow-sm border-gray-100'}`}>
+                <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+                   <span className="text-rose-500">✘</span> Disadvantages
+                </h3>
+                <ul className="space-y-3 text-sm opacity-80">
+                  <li>• Information loss during conversion</li>
+                  <li>• Higher system complexity</li>
+                  <li>• Requires precise clocking</li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="mt-12 flex flex-wrap gap-4 justify-end">
+               {['Memory', 'MP3 Files', 'Keyboard Input', 'LED Displays'].map(ex => (
+                 <span key={ex} className={`px-4 py-2 rounded-full text-xs font-bold border ${isDarkMode ? 'bg-violet-950/20 border-violet-500/30 text-violet-400' : 'bg-violet-50 border-violet-200 text-violet-700'}`}>
+                   {ex}
+                 </span>
+               ))}
+            </div>
+          </section>
+
           {/* ── COMPARISON ── */}
-          <section id="compare">
-            <div className={`rounded-[2.5rem] overflow-hidden border shadow-2xl transition-all`} style={{ background: isDarkMode ? '#060401' : '#ffffff', borderColor }}>
-              <table className="w-full text-base text-left border-collapse">
-                <thead>
-                  <tr style={{ background: isDarkMode ? '#0a0502' : '#f3f4f6' }}>
-                    <th className={`p-6 font-black uppercase tracking-widest text-xs border-b ${isDarkMode ? 'text-orange-500 border-orange-900/40' : 'text-gray-500 border-gray-200'}`}>Trait</th>
-                    <th className={`p-6 font-black uppercase tracking-widest text-xs border-b ${isDarkMode ? 'border-orange-900/40' : 'border-gray-200'}`}>Analog</th>
-                    <th className={`p-6 font-black uppercase tracking-widest text-xs border-b ${isDarkMode ? 'border-orange-900/40' : 'border-gray-200'}`}>Digital</th>
-                  </tr>
-                </thead>
-                <tbody className={isDarkMode ? 'text-orange-100/80' : 'text-gray-700'}>
-                  {[
-                    ['Continuity', 'Continuous', 'Discrete'],
-                    ['Noise', 'Permanent distortion', 'Resistant'],
-                    ['Reproduction', 'Loses quality', 'Perfect copies'],
-                    ['Software', 'Complex circuits', 'Standard chips'],
-                  ].map(([feature, analog, digital]) => (
-                    <tr
-                      key={feature}
-                      className={`border-b group transition-colors ${isDarkMode ? 'border-orange-900/10 hover:bg-orange-950/20' : 'border-gray-100 hover:bg-gray-50'}`}
-                    >
-                      <td className={`p-6 font-bold text-sm uppercase tracking-widest ${isDarkMode ? 'text-orange-500' : 'text-orange-600'}`}>{feature}</td>
-                      <td className="p-6">{analog}</td>
-                      <td className="p-6">{digital}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+          <section id="compare" className="pt-20">
+             <div className="text-center mb-16 space-y-4">
+               <h2 className="hero-text text-4xl"><KineticText text="DOMAIN_ARBITRAGE" /></h2>
+               <p className={`mono-tag tracking-[0.5em] ${isDarkMode ? 'text-orange-500/40' : 'text-gray-400'}`}>System_Side_By_Side</p>
+             </div>
 
-            <div className={`mt-16 rounded-[2rem] p-10 border text-center`} style={{ background: isDarkMode ? 'rgba(249,115,22,0.05)' : 'rgba(249,115,22,0.05)', borderColor: isDarkMode ? 'rgba(249,115,22,0.3)' : 'rgba(249,115,22,0.4)' }}>
-               <h3 className={`text-2xl font-black mb-6 ${isDarkMode ? 'text-orange-50' : 'text-gray-900'}`}>“A signal must return.”</h3>
-            </div>
+             <ComparisonConsole isDark={isDarkMode} />
+          </section>
 
-            <div className="mt-20 flex flex-col items-center">
-               <button
-                  className={`group relative flex items-center gap-4 px-10 py-5 rounded-2xl font-black text-xl transition-all hover:scale-105 active:scale-95`}
-                  style={{ background: '#f97316', color: '#ffffff', boxShadow: '0 20px 40px -10px rgba(249,115,22,0.5)' }}
-                  onClick={() => window.location.href = '/module/2'}
-                >
-                  Enter Next Level 
-                  <ChevronRight size={28} />
-                </button>
+          {/* ── BRIDGING WORLDS ── */}
+          <section id="bridge" className="pt-20">
+            <div className="axe-or-glass p-12 rounded-[4rem] relative overflow-hidden" style={{ borderColor: isDarkMode ? 'rgba(249,115,22,0.15)' : 'rgba(249,115,22,0.05)' }}>
+               <div className="scan-line absolute inset-0 opacity-10" />
+               <div className="relative z-10">
+                  <div className="flex flex-col md:flex-row gap-12">
+                     <div className="flex-1">
+                        <h2 className="hero-text text-3xl mb-8"><KineticText text="TRANS_WORLD_SYST" /></h2>
+                        <p className={`mb-8 leading-relaxed ${isDarkMode ? 'text-orange-200/70' : 'text-gray-600'}`}>
+                           The real world is analog, but our machines are digital. Conversion enables interaction between these two worlds.
+                        </p>
+                        
+                        <div className="space-y-8">
+                           <div className={`p-6 rounded-2xl border ${isDarkMode ? 'bg-orange-950/20 border-orange-500/30' : 'bg-orange-50 border-orange-200'}`}>
+                              <h4 className="font-bold text-orange-500 mb-2 flex items-center gap-2">
+                                 <Activity size={18} /> ADC (Analog → Digital)
+                              </h4>
+                              <p className="text-sm opacity-80 mb-4">Capturing the real world into binary data.</p>
+                              <div className="grid grid-cols-3 gap-2 text-[10px] font-bold text-center">
+                                 <div className="p-2 rounded bg-orange-500/10 border border-orange-500/20">SAMPLING</div>
+                                 <div className="p-2 rounded bg-orange-500/10 border border-orange-500/20">QUANTIZATION</div>
+                                 <div className="p-2 rounded bg-orange-500/10 border border-orange-500/20">ENCODING</div>
+                              </div>
+                           </div>
+
+                           <div className={`p-6 rounded-2xl border ${isDarkMode ? 'bg-cyan-950/20 border-cyan-500/30' : 'bg-cyan-50 border-cyan-200'}`}>
+                              <h4 className="font-bold text-cyan-500 mb-2 flex items-center gap-2">
+                                 <Zap size={18} /> DAC (Digital → Analog)
+                              </h4>
+                              <p className="text-sm opacity-80">Reconstructing data back into physical reality (e.g., sound to speaker).</p>
+                           </div>
+                        </div>
+                     </div>
+
+                     <div className="flex-1 flex flex-col justify-center">
+                        <div className={`p-8 rounded-3xl border text-center ${isDarkMode ? 'bg-black/50 border-orange-500/20' : 'bg-white border-gray-200'}`}>
+                           <p className="text-xs font-mono text-orange-500 uppercase tracking-widest mb-4">The Golden Rule: Nyquist-Shannon</p>
+                           <p className="text-4xl font-mono mb-6">f<sub>s</sub> &gt; 2f<sub>max</sub></p>
+                           <p className="text-sm italic opacity-70">
+                               "To perfectly capture a signal, you must sample it at least twice as fast as its highest frequency component."
+                           </p>
+                        </div>
+                     </div>
+                  </div>
+               </div>
             </div>
+          </section>
+
+          {/* ── KEY CONCEPTS ── */}
+          <section id="concepts" className="pt-20">
+            <div className="text-center mb-16 space-y-4">
+               <h2 className="hero-text text-4xl"><KineticText text="CRITICAL_CONCEPTS" /></h2>
+               <p className="mono-tag tracking-[0.5em]">Hardware_Logic_Boundaries</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+               <div className={`p-8 rounded-3xl border transition-all hover:scale-[1.02] ${isDarkMode ? 'bg-black/30 border-orange-900/20' : 'bg-white shadow-sm border-gray-100'}`}>
+                  <h3 className="text-xl font-bold mb-3 text-rose-500">Aliasing</h3>
+                  <p className="text-sm opacity-70 leading-relaxed">Occurs when sampling rate is too low. High-frequency signals appear as incorrect lower frequencies — like a wagon wheel spinning backward in movies.</p>
+               </div>
+               <div className={`p-8 rounded-3xl border transition-all hover:scale-[1.02] ${isDarkMode ? 'bg-black/30 border-orange-900/20' : 'bg-white shadow-sm border-gray-100'}`}>
+                  <h3 className="text-xl font-bold mb-3 text-emerald-500">Quantization Error</h3>
+                  <p className="text-sm opacity-70 leading-relaxed">The difference between the actual infinite analog value and the rounded digital value. This is the "noise" created by conversion.</p>
+               </div>
+               <div className={`p-8 rounded-3xl border transition-all hover:scale-[1.02] ${isDarkMode ? 'bg-black/30 border-orange-900/20' : 'bg-white shadow-sm border-gray-100'}`}>
+                  <h3 className="text-xl font-bold mb-3 text-violet-500">Bit Depth</h3>
+                  <p className="text-sm opacity-70 leading-relaxed">More bits = more precision. Each additional bit doubles the number of possible values, improving signal quality and reducing error.</p>
+               </div>
+            </div>
+          </section>
+
+          {/* ── REAL WORLD SYSTEMS ── */}
+          <section id="systems" className="pt-20">
+            <h2 className="hero-text text-3xl mb-12"><KineticText text="DEPLOYED_REALITY" /></h2>
+            <div className="space-y-4">
+              {[
+                { name: 'Audio Recording', flow: 'Microphone → ADC → Digital File', icon: '🎙️' },
+                { name: 'Audio Playback', flow: 'Digital File → DAC → Speaker', icon: '🔊' },
+                { name: 'Temperature Sensor', flow: 'Analog Signal → ADC → Digital Display', icon: '🌡️' },
+                { name: 'Mobile Phone', flow: 'Analog RF → Digital Processing', icon: '📱' },
+                { name: 'Automotive Systems', flow: 'Sensor → ADC → Control Unit', icon: '🚗' },
+              ].map((sys, i) => (
+                <div key={i} className={`flex items-center gap-6 p-6 rounded-2xl border transition-all axe-or-glass ${isDarkMode ? 'border-orange-900/20 hover:bg-orange-950/10' : 'bg-gray-50 border-gray-200 hover:bg-gray-100'}`}>
+                   <div className="text-3xl bg-white/5 p-3 rounded-xl">{sys.icon}</div>
+                   <div>
+                      <h4 className="font-bold text-lg">{sys.name}</h4>
+                      <p className={`font-mono text-sm ${isDarkMode ? 'text-orange-500/60' : 'text-orange-600'}`}>{sys.flow}</p>
+                   </div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* ── VERILOG BRIDGE ── */}
+          <section id="verilog" className="pt-20 pb-48">
+             <div className={`axe-or-glass p-16 rounded-[5rem] text-center relative overflow-hidden border shadow-2xl transition-all duration-1000 ${isDarkMode ? 'border-orange-500/30' : 'border-orange-300'}`}>
+                <div className="grid-bg absolute inset-0 opacity-10" />
+                <div className="scan-line absolute inset-0 opacity-5" />
+                
+                <p className="mono-tag mb-8 tracking-[0.8em]">Final_Phase // Gateway_01</p>
+                <h2 className="hero-text text-6xl md:text-7xl mb-12">
+                   <KineticText text="THE_VERILOG" />
+                   <br />
+                   <span className="text-white">BRIDGE</span>
+                </h2>
+                
+                <div className="max-w-2xl mx-auto space-y-12">
+                   <p className="text-2xl font-medium leading-relaxed italic opacity-60">
+                      "Analog is the pulse. Digital is the mind. Verilog is the blueprint that organizes them."
+                   </p>
+                   
+                   <div className={`p-10 rounded-[3rem] border-2 border-dashed axe-or-glass ${isDarkMode ? 'border-orange-500/20' : 'border-orange-400'}`}>
+                      <p className="text-3xl font-black italic uppercase tracking-tighter text-orange-500">
+                         Design the intelligence.
+                         <br />
+                         Master the hardware.
+                      </p>
+                   </div>
+
+                   <div className="pt-16">
+                      <button
+                        className="axe-btn-primary"
+                        onClick={() => window.location.href = '/module/2'}
+                      >
+                        Launch_Next_Level
+                      </button>
+                   </div>
+                </div>
+             </div>
           </section>
 
         </main>

@@ -33,7 +33,7 @@ export const S04_SiliconPersistence: React.FC<Props> = ({ isActive, isDarkMode }
 
     return (
         <div className="max-w-5xl mx-auto space-y-16 py-12">
-      {/* 5. Silicon Persistence — Memory and Registers */}
+      {/* 5. Silicon Persistence -- Memory and Registers */}
       <section className="space-y-8">
         <div className="text-center space-y-4">
             <motion.span 
@@ -41,11 +41,11 @@ export const S04_SiliconPersistence: React.FC<Props> = ({ isActive, isDarkMode }
                 animate={isActive ? { opacity: 1 } : {}}
                 className={`font-mono text-[10px] tracking-[0.4em] uppercase ${subTextColor} block mb-4`}
             >
-                5. Silicon Persistence — Memory and Registers
+                5. Silicon Persistence -- Memory and Registers
             </motion.span>
             <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>Silicon Persistence</h2>
             <p className={`text-lg max-w-2xl mx-auto opacity-70 ${textColor}`}>
-                Logic gates are instantaneous—they have no memory. To store a bit, we need <strong>Persistence</strong>.
+                Logic gates are instantaneous--they have no memory. To store a bit, we need <strong>Persistence</strong>.
             </p>
         </div>
 
@@ -60,8 +60,8 @@ export const S04_SiliconPersistence: React.FC<Props> = ({ isActive, isDarkMode }
                     This is the atom of memory. It captures the input <strong>D</strong> only at the exact moment the <strong>Clock</strong> clicks (rising edge).
                 </p>
                 <pre className={`font-mono text-[10px] sm:text-[11px] leading-relaxed ${textColor} bg-black/20 p-4 rounded-xl`}>
-{`Clock:  _┌┐_┌┐_┌┐_
-Data:   __████____
+{`Clock:  ____
+Data:   ______
         |
 Capture Moment: Q = 1
 Value stays until next tick.
@@ -98,7 +98,7 @@ Value stays until next tick.
               "1 AM Mentor Take"
           </p>
           <p className={`text-lg md:text-xl font-medium italic ${textColor}`}>
-              "Logic is the lightning; memory is the jar. Without flip-flops, a computer is just a reaction—with them, it becomes a system with a past."
+              "Logic is the lightning; memory is the jar. Without flip-flops, a computer is just a reaction--with them, it becomes a system with a past."
           </p>
       </div>
     </div>

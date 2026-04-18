@@ -50,22 +50,22 @@ import { SignalEngine } from "../SignalEngine";
 
 export const DAILY_GALLERY = [
     {
-        title: "Vinyl Resonation",
-        analog: "Physical grooves carve the air's pressure into plastic. Continuous-amplitude resolution preserving nuance.",
-        digital: "44.1kHz sampling rate (CD Redbook). Discrete-time snapshots that avoid cumulative noise degradation.",
-        icon: <Disc size={20} />,
-        theme: "analog",
-        image: "https://images.unsplash.com/photo-1603048588665-791ca8aea617?auto=format&fit=crop&q=80&w=400",
-        depth: "Vinyl records are mechanical storage. The depth of the groove directly 'analogizes' the volume of the sound. Dust causes physical clicks—this is analog noise."
+        title: "Medical Vitality",
+        analog: "Heart voltage fluxes (ECG) represent the raw potential of cellular life. Analog-pure detection allows for zero-latency capture.",
+        digital: "12-bit medical-grade ADC quantization ensures that micro-volts are mapped to logic levels that portable diagnostics can parse.",
+        icon: <Heart size={20} />,
+        theme: "digital",
+        image: "https://images.unsplash.com/photo-1576091160550-217359f4ecf8?auto=format&fit=crop&q=80&w=400",
+        depth: "In medical ADCs, bits = lives. Lower resolution could miss a subtle arrhythmia. Higher bit-depth captures the slope of the QRS complex with absolute fidelity."
     },
     {
-        title: "Mercury Expansion",
-        analog: "Smooth, unbroken thermal expansion analogous to the original physical phenomenon.",
-        digital: "Quantized 10-bit integer sampling. Noise-resistant representation easily stored in binary logic.",
-        icon: <Thermometer size={20} />,
+        title: "Satellite Uplink",
+        analog: "Electromagnetic radiation traveling through the vacuum of space. Susceptible to solar interference.",
+        digital: "Error-correcting binary protocols ensure that cosmic noise doesn't corrupt the mission-critical packet structure.",
+        icon: <Wifi size={20} />,
         theme: "digital",
-        image: "https://images.unsplash.com/photo-1584036561566-baf8f5f1b144?auto=format&fit=crop&q=80&w=400",
-        depth: "A mercury thermometer has theoretical infinite resolution. However, human eyes are the 'ADC' that quantizes it into 1-degree steps. Electronic sensors remove this human error."
+        image: "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&q=80&w=400",
+        depth: "Deep space communication uses massive ADCs to dig signals out of the noise floor. Without digitization, data would be lost to the inverse-square law."
     },
     {
         title: "Chronos Flow",
@@ -230,10 +230,23 @@ export const InteractiveInstrument: React.FC<{
 
     ctx.clearRect(0, 0, W, H);
     
-    // Grid (Industrial Style)
+    // Grid (Industrial Style with Parallax)
+    const parallaxX = (cursor.x - 0.5) * 40;
+    const parallaxY = (cursor.y - 0.5) * 40;
+    
     ctx.strokeStyle = "rgba(0, 212, 255, 0.05)"; ctx.lineWidth = 1;
-    for (let x = 0; x < W; x += 40) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
-    for (let y = 0; y < H; y += 40) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+    for (let x = -40; x < W + 40; x += 40) { 
+        ctx.beginPath(); 
+        ctx.moveTo(x + parallaxX, 0); 
+        ctx.lineTo(x + parallaxX, H); 
+        ctx.stroke(); 
+    }
+    for (let y = -40; y < H + 40; y += 40) { 
+        ctx.beginPath(); 
+        ctx.moveTo(0, y + parallaxY); 
+        ctx.lineTo(W, y + parallaxY); 
+        ctx.stroke(); 
+    }
 
     // Baseline & Saturation Lines
     ctx.strokeStyle = "rgba(255,255,255,0.05)"; ctx.lineWidth = 1; ctx.setLineDash([5, 5]);
@@ -327,6 +340,40 @@ export const InteractiveInstrument: React.FC<{
     </div>
   );
 };
+
+export const LogicReadout: React.FC<{ metrics: any }> = ({ metrics }) => (
+    <div className="p-10 rounded-[4rem] bg-[#0A0C10] border border-white/5 space-y-6 shadow-2xl relative overflow-hidden group">
+        <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at center, #00D4FF 1px, transparent 1px)', backgroundSize: '12px 12px' }} />
+        <div className="flex justify-between items-center relative z-10">
+            <div className="flex flex-col">
+                <span className="text-[10px] font-black uppercase text-white/30 tracking-[0.4em]">Internal_State // Logic_Stream</span>
+                <span className="text-[9px] font-mono text-[#00D4FF] uppercase tracking-widest">Live_Decomposition</span>
+            </div>
+            <div className="p-3 bg-[#00D4FF]/10 rounded-xl border border-[#00D4FF]/20">
+                <Terminal size={16} className="text-[#00D4FF]" />
+            </div>
+        </div>
+        
+        <div className="flex flex-wrap gap-2 relative z-10">
+            {metrics.binaryState?.split('').map((bit: string, i: number) => (
+                <motion.div 
+                    key={i} 
+                    initial={{ scale: 0.8, opacity: 0 }} 
+                    animate={{ scale: 1, opacity: 1 }}
+                    className={`w-10 h-14 rounded-xl flex items-center justify-center font-mono text-xl font-black transition-all ${bit === '1' ? 'bg-[#00D4FF] text-black shadow-[0_0_20px_rgba(0,212,255,0.4)]' : 'bg-white/5 text-white/20 border border-white/5'}`}
+                >
+                    {bit}
+                </motion.div>
+            ))}
+            {!metrics.binaryState && <span className="text-white/20 font-mono text-xs italic italic">Awaiting sync...</span>}
+        </div>
+        
+        <div className="pt-4 border-t border-white/5 flex justify-between items-center text-[8px] font-mono text-white/20 uppercase tracking-widest relative z-10">
+            <span>Encoding: Offset_Binary</span>
+            <span>Bit_Depth: {metrics.enob || 0}_Bits</span>
+        </div>
+    </div>
+);
 
 export const EngineeringHUD: React.FC<{ metrics: any }> = ({ metrics }) => (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">

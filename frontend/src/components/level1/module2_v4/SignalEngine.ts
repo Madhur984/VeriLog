@@ -146,7 +146,10 @@ export const SignalEngine = (config: SignalConfig, time: number, width: number, 
             fidelity,
             dataLoss,
             aliasing,
-            error: avgError
+            error: avgError,
+            binaryState: samples[samples.length - 1]?.quantizedVal >= 0 
+                ? Math.round((samples[samples.length - 1]?.quantizedVal + 1) * (levels / 2)).toString(2).padStart(bitDepth, '0').slice(-bitDepth)
+                : Math.round((samples[samples.length - 1]?.quantizedVal + 1) * (levels / 2)).toString(2).padStart(bitDepth, '0').slice(-bitDepth)
         }
     };
 };

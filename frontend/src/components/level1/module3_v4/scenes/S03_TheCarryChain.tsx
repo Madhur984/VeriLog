@@ -11,10 +11,10 @@ interface Props {
 
 export const S03_TheCarryChain: React.FC<Props> = ({ isActive, isDarkMode }) => {
     const { triggerHaptic, playSound } = useGlobalSensory();
-    const bits = useBinaryStore(s => s.bits);
-    const increment = useBinaryStore(s => s.increment);
-    const isSystemBusy = useBinaryStore(s => s.isSystemBusy);
-    const isIncrementing = useBinaryStore(s => s.isIncrementing);
+    const bits = useBinaryStore(state => state.bits);
+    const increment = useBinaryStore(state => state.increment);
+    const isSystemBusy = useBinaryStore(state => state.isSystemBusy);
+    const isIncrementing = useBinaryStore(state => state.isIncrementing);
     
     const [prediction, setPrediction] = useState<number[] | null>(null);
     const [predictionStatus, setPredictionStatus] = useState<'idle' | 'correct' | 'wrong'>('idle');
@@ -40,7 +40,7 @@ export const S03_TheCarryChain: React.FC<Props> = ({ isActive, isDarkMode }) => 
 
     return (
         <div className="max-w-5xl mx-auto space-y-16 py-12">
-      {/* 4. The Carry Chain — Binary Counting in Action */}
+      {/* 4. The Carry Chain - Binary Counting in Action */}
       <section className="space-y-8">
         <div className="text-center space-y-4">
             <motion.span 
@@ -48,7 +48,7 @@ export const S03_TheCarryChain: React.FC<Props> = ({ isActive, isDarkMode }) => 
                 animate={isActive ? { opacity: 1 } : {}}
                 className={`font-mono text-[10px] tracking-[0.4em] uppercase ${subTextColor} block mb-4`}
             >
-                4. The Carry Chain — Binary Counting in Action
+                4. The Carry Chain - Binary Counting in Action
             </motion.span>
             <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>Binary Counting</h2>
             <p className={`text-lg max-w-2xl mx-auto opacity-70 ${textColor}`}>
@@ -66,11 +66,11 @@ export const S03_TheCarryChain: React.FC<Props> = ({ isActive, isDarkMode }) => 
                 <ol className={`space-y-4 text-sm ${textColor}`}>
                     <li className="flex gap-4">
                         <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black ${isDarkMode ? 'bg-white/10' : 'bg-sky-100 text-sky-700'}`}>1</span>
-                        <span>Start at bit 0 (LSB). If it's 0, change to 1. <strong>Done</strong>.</span>
+                        <span>Start at bit 0 (LSB). If it is 0, change to 1. <strong>Done</strong>.</span>
                     </li>
                     <li className="flex gap-4">
                         <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black ${isDarkMode ? 'bg-white/10' : 'bg-sky-100 text-sky-700'}`}>2</span>
-                        <span>If it's 1, change to 0 and <strong>carry</strong> 1 to the next bit.</span>
+                        <span>If it is 1, change to 0 and <strong>carry</strong> 1 to the next bit.</span>
                     </li>
                     <li className="flex gap-4">
                         <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black ${isDarkMode ? 'bg-white/10' : 'bg-sky-100 text-sky-700'}`}>3</span>
@@ -84,20 +84,20 @@ export const S03_TheCarryChain: React.FC<Props> = ({ isActive, isDarkMode }) => 
                 animate={isActive ? { opacity: 1, x: 0 } : {}}
                 className={`p-8 rounded-3xl border ${isDarkMode ? 'bg-sky-500/5 border-sky-500/20' : 'bg-sky-50 border-sky-100 shadow-xl'}`}
             >
-                <h3 className={`font-mono text-xs uppercase tracking-widest mb-6 ${subTextColor}`}>The Ripple Effect (7 → 8)</h3>
+                <h3 className={`font-mono text-xs uppercase tracking-widest mb-6 ${subTextColor}`}>The Ripple Effect (7 -{'>'} 8)</h3>
                 <pre className={`font-mono text-[10px] sm:text-[11px] leading-relaxed ${textColor}`}>
 {`  0 1 1 1  (7)
 +        1
 -----------
   1 0 0 0  (8)
 
-Clock ──┬─► bit0: 1 → 0 (Carry 1)
-        │           │
-        └───────────► bit1: 1 → 0 (Carry 1)
-                    │           │
-                    └───────────► bit2: 1 → 0 (Carry 1)
-                                │           │
-                                └───────────► bit3: 0 → 1
+Clock --+-> bit0: 1 -> 0 (Carry 1)
+        |           |
+        +-----------> bit1: 1 -> 0 (Carry 1)
+                    |           |
+                    +-----------> bit2: 1 -> 0 (Carry 1)
+                                |           |
+                                +-----------> bit3: 0 -> 1
 `}
                 </pre>
             </motion.div>
@@ -134,7 +134,7 @@ Result: Overflow flag = 1
                 Each bit flip takes a small amount of time (gate delay). The total ripple time is:
             </p>
             <div className="text-2xl font-mono font-black text-center mb-6">
-                T_total = N × t_gate
+                T_total = N * t_gate
             </div>
             <p className="text-xs opacity-50 italic">
                 This "chain reaction" time is why higher clock speeds require faster physical materials and smaller circuits.
@@ -153,6 +153,12 @@ Result: Overflow flag = 1
           </div>
           <p className="text-xl md:text-2xl font-black leading-tight">
             "Binary counting is a cascade of decisions. One flip can trigger a chain reaction across the entire machine."
+          </p>
+      </motion.div>
+    </div>
+    );
+};
+ can trigger a chain reaction across the entire machine."
           </p>
       </motion.div>
     </div>

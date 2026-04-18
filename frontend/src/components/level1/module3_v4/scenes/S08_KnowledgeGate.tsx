@@ -24,7 +24,7 @@ export const S08_KnowledgeGate: React.FC<Props> = ({ isActive, isDarkMode }) => 
                     animate={isActive ? { opacity: 1 } : {}}
                     className={`font-mono text-[10px] tracking-[0.4em] uppercase ${subTextColor} block mb-4`}
                 >
-                    7. Knowledge Gate — Final Assessment
+                    7. Knowledge Gate -- Final Assessment
                 </motion.span>
                 <h2 className={`text-4xl font-black mb-6 ${textColor}`}>The Knowledge Gate</h2>
                 <div className="max-w-xl mx-auto">
@@ -53,7 +53,7 @@ export const S08_KnowledgeGate: React.FC<Props> = ({ isActive, isDarkMode }) => 
                         <span className="font-mono text-[10px] uppercase tracking-widest font-bold">1 AM Mentor Take</span>
                     </div>
                     <p className="text-sm font-medium leading-relaxed opacity-80">
-                        Binary isn't just about counting — it's about hardware mapping. When you look at a memory address, you're seeing billions of transistors synchronized in a perfect, logical dance.
+                        Binary isn't just about counting -- it's about hardware mapping. When you look at a memory address, you're seeing billions of transistors synchronized in a perfect, logical dance.
                     </p>
                 </motion.div>
             </div>

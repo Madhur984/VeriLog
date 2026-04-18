@@ -13,11 +13,11 @@ export const S02_InteractionGates: React.FC<Props> = ({ isActive, isDarkMode }) 
     const { triggerHaptic, playSound } = useGlobalSensory();
     
     // Using global store for state persistence across scrollytelling
-    const bits = useBinaryStore(s => s.bits);
-    const toggleSwitchBit = useBinaryStore(s => s.toggleSwitchBit);
-    const isSystemBusy = useBinaryStore(s => s.isSystemBusy);
-    const isBitTransitioning = useBinaryStore(s => s.isBitTransitioning);
-    const isLogicOverlayVisible = useBinaryStore(s => s.isLogicOverlayVisible);
+    const bits = useBinaryStore(state => state.bits);
+    const toggleSwitchBit = useBinaryStore(state => state.toggleSwitchBit);
+    const isSystemBusy = useBinaryStore(state => state.isSystemBusy);
+    const isBitTransitioning = useBinaryStore(state => state.isBitTransitioning);
+    const isLogicOverlayVisible = useBinaryStore(state => state.isLogicOverlayVisible);
 
     const handleToggle = async (i: number) => {
         if (isSystemBusy || isBitTransitioning[i]) {
@@ -36,7 +36,7 @@ export const S02_InteractionGates: React.FC<Props> = ({ isActive, isDarkMode }) 
 
     return (
         <div className="max-w-5xl mx-auto space-y-16 py-12">
-      {/* 2. The Engineering Choice — From Voltage to Bit */}
+      {/* 2. The Engineering Choice - From Voltage to Bit */}
       <section className="space-y-8">
         <div className="text-center space-y-4">
             <motion.span 
@@ -44,11 +44,11 @@ export const S02_InteractionGates: React.FC<Props> = ({ isActive, isDarkMode }) 
                 animate={isActive ? { opacity: 1 } : {}}
                 className={`font-mono text-[10px] tracking-[0.4em] uppercase ${subTextColor} block mb-4`}
             >
-                2. The Engineering Choice — From Voltage to Bit
+                2. The Engineering Choice - From Voltage to Bit
             </motion.span>
             <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>From Voltage to Bit</h2>
             <p className={`text-lg max-w-2xl mx-auto opacity-70 ${textColor}`}>
-                Computers are made of silicon and metal. They don't understand "3" or "7". They understand <span className={subTextColor}>High Voltage</span> and <span className={subTextColor}>Low Voltage</span>.
+                Computers are made of silicon and metal. They do not understand "3" or "7". They understand <span className={subTextColor}>High Voltage</span> and <span className={subTextColor}>Low Voltage</span>.
             </p>
         </div>
 
@@ -60,12 +60,13 @@ export const S02_InteractionGates: React.FC<Props> = ({ isActive, isDarkMode }) 
             >
                 <h3 className={`font-mono text-xs uppercase tracking-widest mb-6 ${subTextColor}`}>Comparator Theory</h3>
                 <pre className={`font-mono text-[10px] sm:text-[11px] leading-relaxed ${textColor}`}>
-{`Input voltage ──┬── Comparator ──┬── Output 
-                │                 │
-Reference ──────┘                 │
-                                  ▼
-                          The "noise margin" 
-                          protects the decision.
+{`Input voltage --+-- Comparator --+-- Output 
+                 |                 |
+Reference -------+                 |
+                                   |
+                                   V
+                           The "noise margin" 
+                           protects the decision.
 `}
                 </pre>
             </motion.div>
@@ -78,9 +79,9 @@ Reference ──────┘                 │
                 <h3 className={`font-mono text-xs uppercase tracking-widest mb-6 ${subTextColor}`}>Noise Margin Visual</h3>
                 <pre className={`font-mono text-[10px] sm:text-[11px] leading-relaxed ${textColor}`}>
 {`Logic 1:  V_OH (High)
-            ↑  Noise Margin High
+            ^  Noise Margin High
 Undefined:  V_IH to V_IL (Forbidden)
-            ↓  Noise Margin Low
+            v  Noise Margin Low
 Logic 0:  V_OL (Low)
 `}
                 </pre>

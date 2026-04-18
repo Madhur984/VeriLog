@@ -6,6 +6,8 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useBinaryStore, Bit } from '../../stores/binaryStore';
 import { useGlobalSensory } from '../../hooks/useGlobalSensory';
+import { playBitTone } from '../../utils/synesthesiaEngine';
+import { KineticTraces, TracePath } from './KineticTraces';
 
 const T = {
     bg: '#0A0B10', card: '#0D0F16', surface: '#1A1D24', border: '#2D3139',
@@ -22,7 +24,7 @@ const BitCell: React.FC<{ bit: number | null; highlight?: 'carry' | 'result'; la
     
     return (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
-            {label && <span style={{ fontSize: 8, fontFamily: T.mono, color: T.muted }}>{label}</span>}
+            {label && <span style={{ fontSize: 11, fontFamily: T.mono, color: T.muted }}>{label}</span>}
             <motion.div
                 onClick={onClick}
                 whileTap={onClick ? { scale: 0.95 } : undefined}
@@ -52,9 +54,22 @@ export const SceneArithmetic: React.FC<Props> = ({ onCorrect }) => {
         toggleOperandBit, computeAddition, revealNextStep, resetAdder, recordAction,
         submitArithmeticPrediction, 
         labStage, setLabStage, isStageLocked, setStageLocked, setNavigationLocked,
-        propagationDelay, setPredictionConfidence, nextScene, isLogicOverlayVisible
+        propagationDelay, setPredictionConfidence, nextScene, isLogicOverlayVisible,
+        systemTemperature
     } = useBinaryStore();
     const { triggerHaptic, playSound } = useGlobalSensory();
+    const containerRef = React.useRef<HTMLDivElement>(null);
+
+    const tracePaths = React.useMemo<TracePath[]>(() => {
+        return addSteps.filter(s => s.revealed && s.carry_out === 1).map((s, i) => ({
+            id: `trace-${s.colIndex}`,
+            from: { x: (3 - s.colIndex) * 60 + 200, y: 100 }, // Approximate center logic
+            to: { x: (3 - s.colIndex - 1) * 60 + 200, y: 100 },
+            active: true
+        }));
+    }, [addSteps]);
+
+    const glowColor = systemTemperature > 0.6 ? '245, 158, 11' : '0, 212, 255';
 
     useEffect(() => {
         if (labStage === 'execution' || labStage === 'complete') setNavigationLocked(false);
@@ -75,6 +90,7 @@ export const SceneArithmetic: React.FC<Props> = ({ onCorrect }) => {
         resetAdder();
         recordAction('interactions');
         triggerHaptic('light');
+        playBitTone(3-i, 'high');
     };
 
     const nextStepIdx = addSteps.findIndex(s => !s.revealed);
@@ -144,7 +160,11 @@ export const SceneArithmetic: React.FC<Props> = ({ onCorrect }) => {
     const resultDecimal = addResult.reduce<number>((acc, b, i) => acc | (b << (4 - i)), 0);
 
     return (
-        <div style={{ width: '100%', maxWidth: 720, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 48, minHeight: '100vh', paddingTop: 40 }}>
+        <div style={{ 
+            width: '100%', maxWidth: 720, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 48, minHeight: '100vh', paddingTop: 40,
+            transition: 'filter 1s ease',
+            filter: systemTemperature > 0.1 ? `drop-shadow(0 0 ${systemTemperature * 30}px rgba(${glowColor}, 0.2))` : 'none'
+        }}>
             {/* 1. THEORY-FIRST OVERLAY (SEE -> CONNECT -> DO) */}
             <AnimatePresence>
                 {labStage === 'theory' && (
@@ -158,22 +178,21 @@ export const SceneArithmetic: React.FC<Props> = ({ onCorrect }) => {
                     >
                         {/* TOP: Concept */}
                         <motion.div initial={{ y: -20 }} animate={{ y: 0 }}>
-                            <span style={{ fontFamily: T.mono, fontSize: 10, color: T.accent, letterSpacing: '0.3em', textTransform: 'uppercase', opacity: 0.5 }}>MODULE 3.4</span>
+                            <span style={{ fontFamily: T.mono, fontSize: 12, color: T.accent, letterSpacing: '0.3em', textTransform: 'uppercase', opacity: 0.5 }}>MODULE 3.4</span>
                             <h2 style={{ fontSize: 24, fontWeight: 800, marginTop: 8 }}>Mathematics is manifest logic.</h2>
                         </motion.div>
 
                         {/* CENTER: Visual Explanation (Full Adder) */}
                         <div style={{ width: 320, height: 160, background: T.card, borderRadius: 12, border: `1px solid ${T.border}`, position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 20 }}>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'flex-end' }}>
-                                <motion.div animate={{ opacity: [0, 1, 0] }} transition={{ duration: 2, repeat: Infinity }} style={{ color: T.accent, fontSize: 12, fontFamily: T.mono }}>A: 1</motion.div>
-                                <motion.div animate={{ opacity: [0, 1, 0] }} transition={{ duration: 2, repeat: Infinity, delay: 0.2 }} style={{ color: T.accent, fontSize: 12, fontFamily: T.mono }}>B: 1</motion.div>
+                                <motion.div animate={{ opacity: [0, 1, 0] }} transition={{ duration: 2, repeat: Infinity }} style={{ color: T.accent, fontSize: 13, fontFamily: T.mono }}>A: 1</motion.div>
+                                <motion.div animate={{ opacity: [0, 1, 0] }} transition={{ duration: 2, repeat: Infinity, delay: 0.2 }} style={{ color: T.accent, fontSize: 13, fontFamily: T.mono }}>B: 1</motion.div>
                                 <div style={{ width: 40, height: 1, background: T.border }} />
                                 <motion.div animate={{ opacity: [0, 1, 0] }} transition={{ duration: 2, repeat: Infinity, delay: 1 }} style={{ color: T.success, fontSize: 16, fontWeight: 800, fontFamily: T.mono }}>SUM: 0</motion.div>
                             </div>
-                            <motion.div 
                                 animate={{ x: [0, 40, 40], y: [0, 0, -40], opacity: [0, 1, 0] }}
                                 transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
-                                style={{ position: 'absolute', color: T.warning, fontSize: 10, fontFamily: T.mono, fontWeight: 900 }}
+                                style={{ position: 'absolute', color: T.warning, fontSize: 12, fontFamily: T.mono, fontWeight: 900 }}
                             >
                                 CARRY →
                             </motion.div>
@@ -182,21 +201,21 @@ export const SceneArithmetic: React.FC<Props> = ({ onCorrect }) => {
                         {/* BOTTOM: Deep Theory */}
                         <motion.div initial={{ y: 20 }} animate={{ y: 0 }} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 32 }}>
                             <div style={{ maxWidth: 450, display: 'flex', flexDirection: 'column', gap: 16 }}>
-                                <p style={{ color: T.text, fontSize: 13, lineHeight: 1.6, opacity: 0.9 }}>
+                                <p style={{ color: T.text, fontSize: 14, lineHeight: 1.6, opacity: 0.9 }}>
                                     Addition is not an instant jump, but a sequence of carries. 
                                     Carry propagation delay is the primary bottleneck in calculator speed.
                                 </p>
-                                <p style={{ color: T.accent, fontSize: 14, fontWeight: 700, fontFamily: T.mono, letterSpacing: '-0.02em' }}>
+                                <p style={{ color: T.accent, fontSize: 15, fontWeight: 700, fontFamily: T.mono, letterSpacing: '-0.02em' }}>
                                     "Arithmetic is a chain of logic gates, not an instant sum."
                                 </p>
                                 <div style={{ height: 1, width: 40, background: T.accent, opacity: 0.2, alignSelf: 'center' }} />
-                                <p style={{ color: T.warning, fontSize: 11, fontWeight: 900, fontFamily: T.mono }}>
+                                <p style={{ color: T.warning, fontSize: 12, fontWeight: 900, fontFamily: T.mono }}>
                                     NOW YOU WILL: COMPUTE A 4-BIT SUM BY TRACKING EACH CARRY.
                                 </p>
                             </div>
                             <button 
                                 onClick={() => { setLabStage('execution'); setStageLocked(false); triggerHaptic('success'); }}
-                                style={{ padding: '12px 32px', background: T.accent, color: T.bg, border: 'none', borderRadius: 4, fontWeight: 900, fontFamily: T.mono, cursor: 'pointer', fontSize: 11 }}
+                                style={{ padding: '12px 32px', background: T.accent, color: T.bg, border: 'none', borderRadius: 4, fontWeight: 900, fontFamily: T.mono, cursor: 'pointer', fontSize: 13 }}
                             >
                                 INITIALIZE ALU →
                             </button>
@@ -208,7 +227,7 @@ export const SceneArithmetic: React.FC<Props> = ({ onCorrect }) => {
             <div style={{ textAlign: 'center' }}>
                 <motion.span 
                     initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
-                    style={{ fontFamily: T.mono, fontSize: 10, letterSpacing: '0.4em', textTransform: 'uppercase', color: T.accent, display: 'block', marginBottom: 12 }}
+                    style={{ fontFamily: T.mono, fontSize: 12, letterSpacing: '0.4em', textTransform: 'uppercase', color: T.accent, display: 'block', marginBottom: 12 }}
                 >
                     3.4 — The Logic of Math
                 </motion.span>
@@ -217,11 +236,11 @@ export const SceneArithmetic: React.FC<Props> = ({ onCorrect }) => {
                     <AnimatePresence mode="wait">
                         {labStage === 'execution' && (
                             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-                                <p style={{ color: T.accent, fontSize: 14, fontFamily: T.mono, marginBottom: 4 }}>
+                                <p style={{ color: T.accent, fontSize: 15, fontFamily: T.mono, marginBottom: 4 }}>
                                     {aDecimal} + {bDecimal} = {additionComplete ? resultDecimal : '?'}
                                 </p>
                                 <div style={{ display: 'flex', justifyContent: 'center', gap: 16 }}>
-                                    <span style={{ fontSize: 10, color: T.muted, fontFamily: T.mono }}>
+                                    <span style={{ fontSize: 12, color: T.muted, fontFamily: T.mono }}>
                                         PROPAGATION COST: <span style={{ color: T.warning }}>{propagationDelay}ns</span>
                                     </span>
                                 </div>
@@ -229,15 +248,15 @@ export const SceneArithmetic: React.FC<Props> = ({ onCorrect }) => {
                         )}
                         {labStage === 'prediction' && (
                             <motion.div key="predict" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>
-                                <p style={{ color: T.text, fontSize: 13, fontWeight: 700, fontFamily: T.mono }}>PREDICTION GATE</p>
-                                <p style={{ color: T.muted, fontSize: 11, maxWidth: 300 }}>Predict the outcome of the FIRST COLUMN (Bit 0). What will be the Carry and Sum?</p>
+                                <p style={{ color: T.text, fontSize: 14, fontWeight: 700, fontFamily: T.mono }}>PREDICTION GATE</p>
+                                <p style={{ color: T.muted, fontSize: 13, maxWidth: 300 }}>Predict the outcome of the FIRST COLUMN (Bit 0). What will be the Carry and Sum?</p>
                                 
                                 <div style={{ display: 'flex', gap: 12 }}>
                                     {(['low', 'med', 'high'] as const).map(conf => (
                                         <button 
                                             key={conf}
                                             onClick={() => setPredictionConfidence(conf)}
-                                            style={{ padding: '4px 12px', background: T.surface, border: `1px solid ${useBinaryStore.getState().predictionConfidence === conf ? T.accent : T.border}`, color: T.muted, borderRadius: 4, cursor: 'pointer', fontSize: 8, fontFamily: T.mono }}
+                                            style={{ padding: '4px 12px', background: T.surface, border: `1px solid ${useBinaryStore.getState().predictionConfidence === conf ? T.accent : T.border}`, color: T.muted, borderRadius: 4, cursor: 'pointer', fontSize: 11, fontFamily: T.mono }}
                                         >
                                             {conf.toUpperCase()}
                                         </button>
@@ -246,7 +265,7 @@ export const SceneArithmetic: React.FC<Props> = ({ onCorrect }) => {
                                 
                                 <button 
                                     onClick={() => { setLabStage('execution'); triggerHaptic('light'); }}
-                                    style={{ padding: '8px 24px', background: T.accent, color: T.bg, border: 'none', borderRadius: 6, fontFamily: T.mono, fontSize: 10, fontWeight: 900, cursor: 'pointer' }}
+                                    style={{ padding: '8px 24px', background: T.accent, color: T.bg, border: 'none', borderRadius: 6, fontFamily: T.mono, fontSize: 12, fontWeight: 900, cursor: 'pointer' }}
                                 >
                                     CONFIRM & OBSERVE
                                 </button>
@@ -258,7 +277,8 @@ export const SceneArithmetic: React.FC<Props> = ({ onCorrect }) => {
 
             {/* 2. PRIMARY SYSTEM (Center 70%) */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 32, alignItems: 'center', position: 'relative' }}>
-                <div style={{ width: '100%', background: T.card, border: `1px solid ${T.border}`, borderRadius: 12, padding: 32, position: 'relative', overflow: 'hidden' }}>
+                <div ref={containerRef} style={{ width: '100%', background: T.card, border: `1px solid ${T.border}`, borderRadius: 12, padding: 32, position: 'relative', overflow: 'hidden' }}>
+                    <KineticTraces paths={tracePaths} containerRef={containerRef} />
                     {/* Prediction Overlay (REQ 3 & 6) */}
                     <AnimatePresence>
                         {isAdding && !additionComplete && errorSimStep === null && (
@@ -266,10 +286,10 @@ export const SceneArithmetic: React.FC<Props> = ({ onCorrect }) => {
                                 initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                                 style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 160, background: 'rgba(13, 15, 22, 0.98)', borderTop: `2px solid ${T.accent}`, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16, zIndex: 50 }}
                             >
-                                <span style={{ color: T.text, fontSize: 12, fontWeight: 800, fontFamily: T.mono }}>PREDICT STEP {nextStepIdx + 1}/4</span>
+                                <span style={{ color: T.text, fontSize: 13, fontWeight: 800, fontFamily: T.mono }}>PREDICT STEP {nextStepIdx + 1}/4</span>
                                 <div style={{ display: 'flex', gap: 24, alignItems: 'center' }}>
                                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-                                        <span style={{ fontSize: 9, color: T.muted }}>C_OUT</span>
+                                        <span style={{ fontSize: 11, color: T.muted }}>C_OUT</span>
                                         <button 
                                             onClick={() => setPredCarry(c => (c === 0 ? 1 : 0) as Bit)}
                                             style={{ width: 48, height: 48, background: predCarry ? T.warning : T.surface, border: `2px solid ${T.warning}`, color: predCarry ? T.bg : T.warning, borderRadius: 8, fontFamily: T.mono, fontSize: 20, fontWeight: 900, cursor: 'pointer' }}
@@ -278,7 +298,7 @@ export const SceneArithmetic: React.FC<Props> = ({ onCorrect }) => {
                                         </button>
                                     </div>
                                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-                                        <span style={{ fontSize: 9, color: T.muted }}>SUM</span>
+                                        <span style={{ fontSize: 11, color: T.muted }}>SUM</span>
                                         <button 
                                             onClick={() => setPredSum(s => (s === 0 ? 1 : 0) as Bit)}
                                             style={{ width: 48, height: 48, background: predSum ? T.success : T.surface, border: `2px solid ${T.success}`, color: predSum ? T.bg : T.success, borderRadius: 8, fontFamily: T.mono, fontSize: 20, fontWeight: 900, cursor: 'pointer' }}
@@ -286,7 +306,7 @@ export const SceneArithmetic: React.FC<Props> = ({ onCorrect }) => {
                                             {predSum}
                                         </button>
                                     </div>
-                                    <button onClick={handlePredict} style={{ padding: '12px 32px', background: T.accent, color: T.bg, border: 'none', borderRadius: 8, fontFamily: T.mono, fontSize: 12, fontWeight: 900, cursor: 'pointer', marginLeft: 16 }}>
+                                    <button onClick={handlePredict} style={{ padding: '12px 32px', background: T.accent, color: T.bg, border: 'none', borderRadius: 8, fontFamily: T.mono, fontSize: 13, fontWeight: 900, cursor: 'pointer', marginLeft: 16 }}>
                                         APPLY LOGIC
                                     </button>
                                 </div>
@@ -347,18 +367,18 @@ export const SceneArithmetic: React.FC<Props> = ({ onCorrect }) => {
                                         display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, position: 'relative'
                                     }}
                                 >
-                                    <span style={{ fontSize: 8, fontFamily: T.mono, color: T.muted }}>BIT {i}</span>
-                                    <span style={{ fontSize: 10, color: T.warning, fontFamily: T.mono }}>CIN: {isError ? '?' : step.carry_in}</span>
-                                    <span style={{ fontSize: 12, fontWeight: 800, color: T.text, fontFamily: T.mono }}>{step.a} + {step.b}</span>
+                                    <span style={{ fontSize: 11, fontFamily: T.mono, color: T.muted }}>BIT {i}</span>
+                                    <span style={{ fontSize: 12, color: T.warning, fontFamily: T.mono }}>CIN: {isError ? '?' : step.carry_in}</span>
+                                    <span style={{ fontSize: 13, fontWeight: 800, color: T.text, fontFamily: T.mono }}>{step.a} + {step.b}</span>
                                     
                                     {/* Engineering Overlay: gate logic visualization */}
                                     {isLogicOverlayVisible && (
                                         <div style={{ marginTop: 8, paddingTop: 8, borderTop: `1px dashed ${T.border}`, width: '100%', display: 'flex', flexDirection: 'column', gap: 4, alignItems: 'center' }}>
-                                            <div style={{ fontSize: 7, fontFamily: T.mono, color: T.accent, opacity: 0.7 }}>FULL ADDER GEN</div>
+                                            <div style={{ fontSize: 10, fontFamily: T.mono, color: T.accent, opacity: 0.7 }}>FULL ADDER GEN</div>
                                             <div style={{ display: 'flex', gap: 4 }}>
-                                                <div style={{ padding: '2px 4px', background: T.surface, border: `1px solid ${T.border}`, borderRadius: 2, fontSize: 6, color: T.muted }}>XOR</div>
-                                                <div style={{ padding: '2px 4px', background: T.surface, border: `1px solid ${T.border}`, borderRadius: 2, fontSize: 6, color: T.muted }}>AND</div>
-                                                <div style={{ padding: '2px 4px', background: T.surface, border: `1px solid ${T.border}`, borderRadius: 2, fontSize: 6, color: T.muted }}>OR</div>
+                                                <div style={{ padding: '2px 4px', background: T.surface, border: `1px solid ${T.border}`, borderRadius: 2, fontSize: 10, color: T.muted }}>XOR</div>
+                                                <div style={{ padding: '2px 4px', background: T.surface, border: `1px solid ${T.border}`, borderRadius: 2, fontSize: 10, color: T.muted }}>AND</div>
+                                                <div style={{ padding: '2px 4px', background: T.surface, border: `1px solid ${T.border}`, borderRadius: 2, fontSize: 10, color: T.muted }}>OR</div>
                                             </div>
                                         </div>
                                     )}
@@ -380,7 +400,7 @@ export const SceneArithmetic: React.FC<Props> = ({ onCorrect }) => {
                             whileTap={{ scale: isSystemBusy ? 0.98 : 0.95 }}
                             disabled={isSystemBusy || (labStage === 'theory' && isStageLocked)}
                             style={{
-                                padding: '16px 48px', fontFamily: T.mono, fontSize: 12, fontWeight: 900,
+                                padding: '16px 48px', fontFamily: T.mono, fontSize: 14, fontWeight: 900,
                                 background: isSystemBusy ? T.warning : T.accent, border: 'none', borderRadius: 8, 
                                 color: T.bg, cursor: isSystemBusy ? 'wait' : 'pointer',
                                 opacity: isSystemBusy ? 0.6 : 1
@@ -393,7 +413,7 @@ export const SceneArithmetic: React.FC<Props> = ({ onCorrect }) => {
                             <button
                                 onClick={() => setIsAutoRun(!isAutoRun)}
                                 style={{
-                                    padding: '10px 24px', fontFamily: T.mono, fontSize: 10, fontWeight: 800,
+                                    padding: '10px 24px', fontFamily: T.mono, fontSize: 12, fontWeight: 800,
                                     background: isAutoRun ? T.warning : 'transparent', 
                                     border: `1px solid ${isAutoRun ? T.warning : T.border}`,
                                     color: isAutoRun ? T.bg : T.muted, borderRadius: 8, cursor: 'pointer'
@@ -404,7 +424,7 @@ export const SceneArithmetic: React.FC<Props> = ({ onCorrect }) => {
                             <button
                                 onClick={resetAdder}
                                 style={{
-                                    padding: '16px 32px', fontFamily: T.mono, fontSize: 11,
+                                    padding: '16px 32px', fontFamily: T.mono, fontSize: 13,
                                     background: 'transparent', border: `2px solid ${T.border}`, borderRadius: 8,
                                     color: T.muted, cursor: 'pointer'
                                 }}
@@ -420,7 +440,7 @@ export const SceneArithmetic: React.FC<Props> = ({ onCorrect }) => {
             <div style={{ textAlign: 'center', paddingBottom: 60 }}>
                 {additionComplete && (
                     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} style={{ background: 'rgba(0,212,255,0.03)', border: `1px solid ${T.border}`, padding: 24, borderRadius: 12, maxWidth: 500, margin: '0 auto' }}>
-                        <p style={{ fontSize: 15, color: T.text, marginBottom: 20 }}>
+                        <p style={{ fontSize: 16, color: T.text, marginBottom: 20 }}>
                             "When the ripple reaches the end and the carry overflows, what fundamental property is lost?"
                         </p>
                         <div style={{ display: 'flex', justifyContent: 'center', gap: 12 }}>
@@ -437,7 +457,7 @@ export const SceneArithmetic: React.FC<Props> = ({ onCorrect }) => {
                                             triggerHaptic('error');
                                         }
                                     }}
-                                    style={{ padding: '10px 24px', background: T.surface, border: `1px solid ${T.border}`, color: T.muted, borderRadius: 8, fontFamily: T.mono, fontSize: 11, cursor: 'pointer' }}
+                                    style={{ padding: '10px 24px', background: T.surface, border: `1px solid ${T.border}`, color: T.muted, borderRadius: 8, fontFamily: T.mono, fontSize: 13, cursor: 'pointer' }}
                                 >
                                     {ans}
                                 </button>
@@ -448,10 +468,10 @@ export const SceneArithmetic: React.FC<Props> = ({ onCorrect }) => {
 
                 {labStage === 'complete' && (
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ marginTop: 24 }}>
-                        <p style={{ color: T.success, fontFamily: T.mono, fontSize: 14, fontWeight: 700, marginBottom: 16 }}>
+                        <p style={{ color: T.success, fontFamily: T.mono, fontSize: 15, fontWeight: 700, marginBottom: 16 }}>
                             ✓ Binary Synthesis Complete. Logic has manifest as Mathematics.
                         </p>
-                        <div style={{ padding: '12px 48px', border: `1px solid ${T.success}`, borderRadius: 6, fontFamily: T.mono, fontSize: 12, fontWeight: 900, color: T.success, letterSpacing: '0.1em' }}>
+                        <div style={{ padding: '12px 48px', border: `1px solid ${T.success}`, borderRadius: 6, fontFamily: T.mono, fontSize: 14, fontWeight: 900, color: T.success, letterSpacing: '0.1em' }}>
                             MODULE GRADUATION READY →
                         </div>
                     </motion.div>

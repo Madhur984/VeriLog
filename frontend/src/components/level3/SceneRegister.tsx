@@ -117,7 +117,7 @@ export const SceneRegister: React.FC<SceneRegisterProps> = ({ onStore }) => {
                     >
                         {/* TOP: Concept */}
                         <motion.div initial={{ y: -20 }} animate={{ y: 0 }}>
-                            <span style={{ fontFamily: T.mono, fontSize: 10, color: T.accent, letterSpacing: '0.3em', textTransform: 'uppercase', opacity: 0.5 }}>MODULE 3.3</span>
+                            <span style={{ fontFamily: T.mono, fontSize: 12, color: T.accent, letterSpacing: '0.3em', textTransform: 'uppercase', opacity: 0.5 }}>MODULE 3.3</span>
                             <h2 style={{ fontSize: 24, fontWeight: 800, marginTop: 8 }}>Memory is a cycle, not a state.</h2>
                         </motion.div>
 
@@ -145,21 +145,21 @@ export const SceneRegister: React.FC<SceneRegisterProps> = ({ onStore }) => {
                         {/* BOTTOM: Deep Theory */}
                         <motion.div initial={{ y: 20 }} animate={{ y: 0 }} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 32 }}>
                             <div style={{ maxWidth: 450, display: 'flex', flexDirection: 'column', gap: 16 }}>
-                                <p style={{ color: T.text, fontSize: 13, lineHeight: 1.6, opacity: 0.9 }}>
+                                <p style={{ color: T.text, fontSize: 14, lineHeight: 1.6, opacity: 0.9 }}>
                                     Electrons slowly leak away from silicon gates due to physics. 
                                     DRAM requires periodic "Refresh" cycles to maintain data integrity.
                                 </p>
-                                <p style={{ color: T.accent, fontSize: 14, fontWeight: 700, fontFamily: T.mono, letterSpacing: '-0.02em' }}>
+                                <p style={{ color: T.accent, fontSize: 15, fontWeight: 700, fontFamily: T.mono, letterSpacing: '-0.02em' }}>
                                     "Memory is a persistent decision that physics tries to erase."
                                 </p>
                                 <div style={{ height: 1, width: 40, background: T.accent, opacity: 0.2, alignSelf: 'center' }} />
-                                <p style={{ color: T.warning, fontSize: 11, fontWeight: 900, fontFamily: T.mono }}>
+                                <p style={{ color: T.warning, fontSize: 12, fontWeight: 900, fontFamily: T.mono }}>
                                     NOW YOU WILL: STORE A VALUE AND PREVENT IT FROM DECAYING.
                                 </p>
                             </div>
                             <button 
                                 onClick={() => { setLabStage('execution'); setStageLocked(false); triggerHaptic('success'); }}
-                                style={{ padding: '12px 32px', background: T.accent, color: T.bg, border: 'none', borderRadius: 4, fontWeight: 900, fontFamily: T.mono, cursor: 'pointer', fontSize: 11 }}
+                                style={{ padding: '12px 32px', background: T.accent, color: T.bg, border: 'none', borderRadius: 4, fontWeight: 900, fontFamily: T.mono, cursor: 'pointer', fontSize: 13 }}
                             >
                                 INITIALIZE LAB →
                             </button>
@@ -171,7 +171,7 @@ export const SceneRegister: React.FC<SceneRegisterProps> = ({ onStore }) => {
             <div style={{ textAlign: 'center' }}>
                 <motion.span 
                     initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
-                    style={{ fontFamily: T.mono, fontSize: 10, letterSpacing: '0.4em', textTransform: 'uppercase', color: T.accent, display: 'block', marginBottom: 12 }}
+                    style={{ fontFamily: T.mono, fontSize: 12, letterSpacing: '0.4em', textTransform: 'uppercase', color: T.accent, display: 'block', marginBottom: 12 }}
                 >
                     3.3 — The Volatile Mind
                 </motion.span>
@@ -184,11 +184,11 @@ export const SceneRegister: React.FC<SceneRegisterProps> = ({ onStore }) => {
                                     <div style={{ width: 140, height: 4, background: T.surface, borderRadius: 2, overflow: 'hidden', marginBottom: 6 }}>
                                         <motion.div animate={{ width: `${charge * 100}%`, background: charge < 0.3 ? T.error : T.accent }} style={{ height: '100%' }} />
                                     </div>
-                                    <span style={{ color: T.muted, fontSize: 9, fontFamily: T.mono }}>STABILITY: {Math.round(charge * 100)}%</span>
+                                    <span style={{ color: T.muted, fontSize: 11, fontFamily: T.mono }}>STABILITY: {Math.round(charge * 100)}%</span>
                                 </div>
                                 <div style={{ textAlign: 'center' }}>
-                                    <span style={{ color: T.muted, fontSize: 9, fontFamily: T.mono, display: 'block', marginBottom: 4 }}>PROPAGATION COST</span>
-                                    <span style={{ color: T.warning, fontSize: 12, fontWeight: 800, fontFamily: T.mono }}>{propagationDelay}ns</span>
+                                    <span style={{ color: T.muted, fontSize: 11, fontFamily: T.mono, display: 'block', marginBottom: 4 }}>PROPAGATION COST</span>
+                                    <span style={{ color: T.warning, fontSize: 13, fontWeight: 800, fontFamily: T.mono }}>{propagationDelay}ns</span>
                                 </div>
                             </div>
                         </div>
@@ -196,7 +196,7 @@ export const SceneRegister: React.FC<SceneRegisterProps> = ({ onStore }) => {
                 </div>
 
                 <div style={{ marginTop: 24, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
-                    <span style={{ fontSize: 9, color: T.muted, fontFamily: T.mono, textTransform: 'uppercase' }}>Ambient Temperature (Heat accelerates decay)</span>
+                    <span style={{ fontSize: 11, color: T.muted, fontFamily: T.mono, textTransform: 'uppercase' }}>Ambient Temperature (Heat accelerates decay)</span>
                     <input 
                         type="range" min="0" max="1" step="0.01" 
                         value={systemTemperature}
@@ -219,7 +219,7 @@ export const SceneRegister: React.FC<SceneRegisterProps> = ({ onStore }) => {
                                 <h3 style={{ color: predictionStatus === 'wrong' ? T.error : T.text, fontSize: 18, fontWeight: 800 }}>
                                     {predictionStatus === 'wrong' ? 'VOLTAGE MISMATCH' : 'Capture State'}
                                 </h3>
-                                <p style={{ color: T.muted, fontSize: 12, fontFamily: T.mono, maxWidth: 300, textAlign: 'center' }}>
+                                <p style={{ color: T.muted, fontSize: 13, fontFamily: T.mono, maxWidth: 300, textAlign: 'center' }}>
                                     Before the electrons settle, what is the decimal value of these {registerWidth} bits?
                                 </p>
                                 
@@ -229,7 +229,7 @@ export const SceneRegister: React.FC<SceneRegisterProps> = ({ onStore }) => {
                                         value={predictionValue}
                                         onChange={(e) => setPredictionValue(e.target.value)}
                                         placeholder="VALUE"
-                                        style={{ background: T.surface, border: `2px solid ${T.accent}`, color: T.accent, padding: '12px 24px', borderRadius: 8, textAlign: 'center', fontFamily: T.mono, fontSize: 24, width: 140, outline: 'none' }}
+                                        style={{ background: T.surface, border: `2px solid ${T.accent}`, color: T.accent, padding: '12px 24px', borderRadius: 8, textAlign: 'center', fontFamily: T.mono, fontSize: 26, width: 140, outline: 'none' }}
                                     />
                                     
                                     <div style={{ display: 'flex', gap: 8 }}>
@@ -237,7 +237,7 @@ export const SceneRegister: React.FC<SceneRegisterProps> = ({ onStore }) => {
                                             <button 
                                                 key={conf}
                                                 onClick={() => { setPredictionConfidence(conf); triggerHaptic('light'); }}
-                                                style={{ padding: '4px 12px', background: T.surface, border: `1px solid ${useBinaryStore.getState().predictionConfidence === conf ? T.accent : T.border}`, color: T.muted, borderRadius: 4, cursor: 'pointer', fontSize: 9, fontFamily: T.mono }}
+                                                style={{ padding: '4px 12px', background: T.surface, border: `1px solid ${useBinaryStore.getState().predictionConfidence === conf ? T.accent : T.border}`, color: T.muted, borderRadius: 4, cursor: 'pointer', fontSize: 11, fontFamily: T.mono }}
                                             >
                                                 {conf.toUpperCase()}
                                             </button>
@@ -246,10 +246,10 @@ export const SceneRegister: React.FC<SceneRegisterProps> = ({ onStore }) => {
                                 </div>
 
                                 <div style={{ display: 'flex', gap: 12 }}>
-                                    <button onClick={handleVerify} style={{ padding: '10px 24px', background: T.accent, color: T.bg, border: 'none', borderRadius: 6, fontFamily: T.mono, fontSize: 11, fontWeight: 800, cursor: 'pointer' }}>
+                                    <button onClick={handleVerify} style={{ padding: '10px 24px', background: T.accent, color: T.bg, border: 'none', borderRadius: 6, fontFamily: T.mono, fontSize: 13, fontWeight: 800, cursor: 'pointer' }}>
                                         VALIDATE WRITE
                                     </button>
-                                    <button onClick={() => setLabStage('execution')} style={{ padding: '10px 24px', background: 'transparent', border: `1px solid ${T.muted}`, color: T.muted, borderRadius: 6, fontFamily: T.mono, fontSize: 11, cursor: 'pointer' }}>
+                                    <button onClick={() => setLabStage('execution')} style={{ padding: '10px 24px', background: 'transparent', border: `1px solid ${T.muted}`, color: T.muted, borderRadius: 6, fontFamily: T.mono, fontSize: 13, cursor: 'pointer' }}>
                                         ABORT
                                     </button>
                                 </div>
@@ -263,7 +263,7 @@ export const SceneRegister: React.FC<SceneRegisterProps> = ({ onStore }) => {
                             <button
                                 key={w} onClick={() => setRegisterWidth(w)}
                                 style={{
-                                    padding: '4px 16px', fontFamily: T.mono, fontSize: 9, borderRadius: 4, cursor: 'pointer',
+                                    padding: '4px 16px', fontFamily: T.mono, fontSize: 11, borderRadius: 4, cursor: 'pointer',
                                     background: registerWidth === w ? 'rgba(0,212,255,0.1)' : 'transparent',
                                     border: `1px solid ${registerWidth === w ? T.accent : T.border}`,
                                     color: registerWidth === w ? T.accent : T.muted
@@ -309,7 +309,7 @@ export const SceneRegister: React.FC<SceneRegisterProps> = ({ onStore }) => {
                                 >
                                     {bit}
                                     {isLogicOverlayVisible && (
-                                        <span style={{ position: 'absolute', top: -14, left: 0, right: 0, textAlign: 'center', fontSize: 7, color: T.accent, opacity: 0.6 }}>
+                                        <span style={{ position: 'absolute', top: -14, left: 0, right: 0, textAlign: 'center', fontSize: 10, color: T.accent, opacity: 0.6 }}>
                                             {Math.pow(2, registerWidth - 1 - i)}
                                         </span>
                                     )}
@@ -321,11 +321,11 @@ export const SceneRegister: React.FC<SceneRegisterProps> = ({ onStore }) => {
                     {/* Output Conversion */}
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, borderTop: `1px solid ${T.border}`, paddingTop: 24 }}>
                         <div style={{ textAlign: 'center' }}>
-                            <span style={{ fontFamily: T.mono, fontSize: 9, color: T.muted }}>HEXADECIMAL</span>
+                            <span style={{ fontFamily: T.mono, fontSize: 11, color: T.muted }}>HEXADECIMAL</span>
                             <div style={{ fontFamily: T.mono, fontSize: 24, fontWeight: 800, color: T.accent }}>0x{hex}</div>
                         </div>
                         <div style={{ textAlign: 'center' }}>
-                            <span style={{ fontFamily: T.mono, fontSize: 9, color: T.muted }}>STORED VALUE</span>
+                            <span style={{ fontFamily: T.mono, fontSize: 11, color: T.muted }}>STORED VALUE</span>
                             <div style={{ fontFamily: T.mono, fontSize: 24, fontWeight: 800, color: T.success }}>{decimal ?? '--'}</div>
                         </div>
                     </div>
@@ -336,7 +336,7 @@ export const SceneRegister: React.FC<SceneRegisterProps> = ({ onStore }) => {
                         onClick={handleInitialWrite}
                         disabled={isWriting || (labStage === 'theory' && isStageLocked)}
                         style={{
-                            padding: '16px 32px', fontFamily: T.mono, fontSize: 11, fontWeight: 900,
+                            padding: '16px 32px', fontFamily: T.mono, fontSize: 13, fontWeight: 900,
                             background: (isWriting || isSystemBusy) ? T.warning : T.success, border: 'none', borderRadius: 8,
                             color: T.bg, cursor: (isWriting || isSystemBusy) ? 'wait' : 'pointer', display: 'flex', alignItems: 'center', gap: 8,
                             opacity: (isWriting || isSystemBusy || charge < 0.3) ? 0.4 : 1 // Passive: Dim Write during decay
@@ -355,7 +355,7 @@ export const SceneRegister: React.FC<SceneRegisterProps> = ({ onStore }) => {
                             }}
                             transition={{ duration: 1, repeat: Infinity }}
                             style={{
-                                padding: '10px 24px', fontFamily: T.mono, fontSize: 9, fontWeight: 900,
+                                padding: '10px 24px', fontFamily: T.mono, fontSize: 11, fontWeight: 900,
                                 background: 'transparent', border: `1px solid ${T.accent}`, borderRadius: 6,
                                 color: T.accent, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6
                             }}
@@ -367,15 +367,15 @@ export const SceneRegister: React.FC<SceneRegisterProps> = ({ onStore }) => {
                                 initial={{ opacity: 0 }} animate={{ opacity: 1 }}
                                 style={{ position: 'absolute', bottom: -35, left: 0, right: 0, display: 'flex', flexDirection: 'column', alignItems: 'center' }}
                             >
-                                <span style={{ color: T.warning, fontSize: 8, fontFamily: T.mono, fontWeight: 800 }}>SILICON LEAKING! REFRESH NOW</span>
-                                <span style={{ color: T.muted, fontSize: 7, fontStyle: 'italic', marginTop: 2 }}>"Charge leakage is unavoidable in real circuits"</span>
+                                <span style={{ color: T.warning, fontSize: 10, fontFamily: T.mono, fontWeight: 800 }}>SILICON LEAKING! REFRESH NOW</span>
+                                <span style={{ color: T.muted, fontSize: 10, fontStyle: 'italic', marginTop: 2 }}>"Charge leakage is unavoidable in real circuits"</span>
                             </motion.div>
                         )}
                         <button 
                             onClick={toggleAutoRefresh}
                             style={{ 
                                 background: 'transparent', border: 'none', color: isAutoRefresh ? T.success : T.muted,
-                                fontSize: 8, fontFamily: T.mono, cursor: 'pointer', textAlign: 'center'
+                                fontSize: 10, fontFamily: T.mono, cursor: 'pointer', textAlign: 'center'
                             }}
                         >
                             {isAutoRefresh ? 'REFRESH UNIT: ONLINE' : 'REFRESH UNIT: OFFLINE'}
@@ -388,7 +388,7 @@ export const SceneRegister: React.FC<SceneRegisterProps> = ({ onStore }) => {
             <div style={{ textAlign: 'center', paddingBottom: 60 }}>
                 {labStage === 'execution' && !isStageLocked && (
                     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} style={{ background: 'rgba(0,212,255,0.03)', border: `1px solid ${T.border}`, padding: 24, borderRadius: 12, maxWidth: 500, margin: '0 auto' }}>
-                        <p style={{ fontSize: 15, color: T.text, marginBottom: 20, fontStyle: 'italic' }}>
+                        <p style={{ fontSize: 16, color: T.text, marginBottom: 20, fontStyle: 'italic' }}>
                             "If Silicon memory requires energy to 'remember', what happens to information in the absence of power?"
                         </p>
                         <div style={{ display: 'flex', justifyContent: 'center', gap: 12 }}>
@@ -402,7 +402,7 @@ export const SceneRegister: React.FC<SceneRegisterProps> = ({ onStore }) => {
                                             playSound('fail');
                                         }
                                     }}
-                                    style={{ padding: '10px 24px', background: T.surface, border: `1px solid ${T.border}`, color: T.muted, borderRadius: 8, fontFamily: T.mono, fontSize: 11, cursor: 'pointer' }}
+                                    style={{ padding: '10px 24px', background: T.surface, border: `1px solid ${T.border}`, color: T.muted, borderRadius: 8, fontFamily: T.mono, fontSize: 12, cursor: 'pointer' }}
                                 >
                                     {ans}
                                 </button>
@@ -413,10 +413,10 @@ export const SceneRegister: React.FC<SceneRegisterProps> = ({ onStore }) => {
 
                 {labStage === 'complete' && (
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ marginTop: 24 }}>
-                        <p style={{ color: T.success, fontFamily: T.mono, fontSize: 14, fontWeight: 700, marginBottom: 16 }}>
+                        <p style={{ color: T.success, fontFamily: T.mono, fontSize: 15, fontWeight: 700, marginBottom: 16 }}>
                             ✓ Information is Entropy. Memory is a Cycle, not a State.
                         </p>
-                        <div style={{ padding: '12px 32px', border: `1px solid ${T.success}`, borderRadius: 6, fontFamily: T.mono, fontSize: 12, fontWeight: 800, color: T.success }}>
+                        <div style={{ padding: '12px 32px', border: `1px solid ${T.success}`, borderRadius: 6, fontFamily: T.mono, fontSize: 14, fontWeight: 800, color: T.success }}>
                             READY TO COMPUTE →
                         </div>
                     </motion.div>

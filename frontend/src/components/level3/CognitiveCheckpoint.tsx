@@ -140,14 +140,14 @@ export const CognitiveCheckpoint: React.FC<Props> = ({ scene, onComplete }) => {
                     <Brain size={20} color={T.accent} />
                 </div>
                 <div>
-                    <div style={{ fontFamily: T.mono, fontSize: 10, color: T.accent, textTransform: 'uppercase', letterSpacing: '0.2em' }}>
+                    <div style={{ fontFamily: T.mono, fontSize: 12, color: T.accent, textTransform: 'uppercase', letterSpacing: '0.2em' }}>
                         Cognitive Verification
                     </div>
                     <div style={{ fontSize: 18, fontWeight: 700, color: T.text }}>Engineering Checkpoint</div>
                 </div>
             </div>
 
-            <p style={{ fontSize: 15, color: T.text, lineHeight: 1.6, marginBottom: 24 }}>{q.text}</p>
+            <p style={{ fontSize: 16, color: T.text, lineHeight: 1.6, marginBottom: 24 }}>{q.text}</p>
 
             <AnimatePresence>
                 {metrics.wrongAnswerCount >= 2 && !isSubmitted && (
@@ -162,8 +162,8 @@ export const CognitiveCheckpoint: React.FC<Props> = ({ scene, onComplete }) => {
                     >
                         <Info size={16} color={T.warning} style={{ flexShrink: 0, marginTop: 2 }} />
                         <div>
-                            <div style={{ fontSize: 11, color: T.warning, fontWeight: 700, textTransform: 'uppercase', marginBottom: 4 }}>Engineering Hint</div>
-                            <div style={{ fontSize: 13, color: T.text, opacity: 0.9 }}>{q.hint}</div>
+                            <div style={{ fontSize: 13, color: T.warning, fontWeight: 700, textTransform: 'uppercase', marginBottom: 4 }}>Engineering Hint</div>
+                            <div style={{ fontSize: 14, color: T.text, opacity: 0.9 }}>{q.hint}</div>
                         </div>
                     </motion.div>
                 )}
@@ -199,7 +199,7 @@ export const CognitiveCheckpoint: React.FC<Props> = ({ scene, onComplete }) => {
                             whileHover={!isSubmitted ? { x: 4, background: 'rgba(255,255,255,0.03)' } : {}}
                             style={{
                                 padding: '14px 18px', textAlign: 'left', fontFamily: T.sans,
-                                fontSize: 13, background: bg, border: `1px solid ${border}`,
+                                fontSize: 15, background: bg, border: `1px solid ${border}`,
                                 borderRadius: 8, color: color, cursor: isSubmitted ? 'default' : 'pointer',
                                 display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                                 transition: 'all 0.2s', width: '100%'
@@ -225,10 +225,10 @@ export const CognitiveCheckpoint: React.FC<Props> = ({ scene, onComplete }) => {
                             borderRadius: 8, borderLeft: `3px solid ${selectedIndex === q.correctIndex ? T.success : T.error}` 
                         }}
                     >
-                        <div style={{ fontFamily: T.mono, fontSize: 9, textTransform: 'uppercase', color: T.muted, marginBottom: 6 }}>
+                        <div style={{ fontFamily: T.mono, fontSize: 11, textTransform: 'uppercase', color: T.muted, marginBottom: 6 }}>
                             {selectedIndex === q.correctIndex ? 'Analysis Confirmed' : 'Concept Drift Detected'}
                         </div>
-                        <div style={{ fontSize: 12, color: T.text, lineHeight: 1.5 }}>
+                        <div style={{ fontSize: 14, color: T.text, lineHeight: 1.5 }}>
                             {selectedIndex === q.correctIndex ? q.explanation : "Incorrect interpretation. Re-evaluating physical constraints..."}
                         </div>
                     </motion.div>

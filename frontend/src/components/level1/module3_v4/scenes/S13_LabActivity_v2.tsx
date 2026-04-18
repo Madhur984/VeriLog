@@ -209,53 +209,62 @@ const Slide1: React.FC<{ play: any }> = ({ play }) => {
   );
 };
 
-// ── SLIDE 2: Ripple Carry & Add-One Lab ───────────────────────
+// ── SLIDE 2: Ripple Carry & Adder Lab ───────────────────────
 const Slide2: React.FC<{ play: any }> = ({ play }) => {
   const BITS = 6;
   const [bitsA, setBitsA] = useState([0, 1, 0, 1, 1, 0]);
   const [bitsB, setBitsB] = useState([0, 0, 1, 1, 0, 1]);
-  const [mode, setMode] = useState<'add' | 'addone'>('add');
+  const [mode, setMode] = useState<'add' | 'sub'>('add');
 
-  const effectiveB = mode === 'addone' ? numToBits(1, BITS) : bitsB;
-  const { result, carries } = (() => {
-    const r = new Array(BITS).fill(0);
-    const c = new Array(BITS + 1).fill(0);
-    for (let i = BITS - 1; i >= 0; i--) {
-      const s = bitsA[i] + effectiveB[i] + c[i + 1];
-      r[i] = s % 2;
-      c[i] = Math.floor(s / 2);
+  const { result, carries, effectiveB } = React.useMemo(() => {
+    let targetB = [...bitsB];
+    if (mode === 'sub') {
+      // 2's complement subtraction: A + (~B + 1)
+      const inverted = bitsB.map(b => 1 - b);
+      let carryIn = 1;
+      for (let i = BITS - 1; i >= 0; i--) {
+        const sum = inverted[i] + carryIn;
+        inverted[i] = sum % 2;
+        carryIn = Math.floor(sum / 2);
+      }
+      targetB = inverted;
     }
-    return { result: r, carries: c };
-  })();
+
+    const res = new Array(BITS).fill(0);
+    const crs = new Array(BITS + 1).fill(0);
+    for (let i = BITS - 1; i >= 0; i--) {
+      const sum = bitsA[i] + targetB[i] + crs[i + 1];
+      res[i] = sum % 2;
+      crs[i] = Math.floor(sum / 2);
+    }
+    return { result: res, carries: crs, effectiveB: targetB };
+  }, [bitsA, bitsB, mode]);
 
   const decA = bitsToNum(bitsA);
-  const decB = bitsToNum(effectiveB);
-  const decR = bitsToNum(result) + carries[0] * Math.pow(2, BITS);
+  const decB = bitsToNum(bitsB);
+  const decR = (carries[0] * Math.pow(2, BITS)) + result.reduce((acc, b, i) => acc + b * Math.pow(2, BITS - 1 - i), 0);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 40, maxWidth: 800, width: '100%' }}>
       <div style={{ textAlign: 'center' }}>
         <motion.h2 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} style={{ fontFamily: C.sans, fontSize: 'clamp(32px,5vw,52px)', fontWeight: 900, color: C.text, margin: 0 }}>
-          Ripple Carry Adder
+          Engineering Adder
         </motion.h2>
-        <Hud style={{ marginTop: 8 }}>Click bits to toggle — watch carries ripple</Hud>
+        <Hud style={{ marginTop: 8 }}>Click bits to toggle — observe carry propagation</Hud>
       </div>
 
-      {/* Mode toggle */}
       <div style={{ display: 'flex', gap: 12 }}>
-        {(['add', 'addone'] as const).map(m => (
+        {(['add', 'sub'] as const).map(m => (
           <motion.button key={m} onClick={() => { setMode(m); play('snap'); }}
             animate={{ background: mode === m ? `${C.cyan}22` : C.surfaceTop, borderColor: mode === m ? C.cyan : C.borderLite, color: mode === m ? C.cyan : C.muted }}
             style={{ padding: '10px 20px', border: '2px solid', borderRadius: 30, fontFamily: C.mono, fontSize: 11, fontWeight: 900, cursor: 'pointer', letterSpacing: '0.15em' }}
           >
-            {m === 'add' ? 'A + B' : 'A + 1 (Increment)'}
+            {m === 'add' ? 'A + B (ADD)' : 'A - B (SUB)'}
           </motion.button>
         ))}
       </div>
 
-      {/* Adder Panel */}
       <div style={{ width: '100%', background: C.surface, border: `1px solid ${C.border}`, borderRadius: 24, padding: '32px', overflow: 'auto' }}>
-        {/* Carry row */}
         <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginBottom: 8, paddingRight: 0 }}>
           <Hud style={{ width: 80, textAlign: 'right', paddingRight: 10 }}>Cout</Hud>
           {carries.slice(0, BITS).map((c, i) => (

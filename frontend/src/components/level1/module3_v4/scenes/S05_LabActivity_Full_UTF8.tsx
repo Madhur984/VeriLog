@@ -1,8 +1,8 @@
-﻿/**
- * Module3Root.tsx ΓÇö Binary Awakening
- * ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+/**
+ * Module3Root.tsx  Binary Awakening
+ * 
  * Complete, self-contained implementation of Module 3.
- * 8 slides ┬╖ Horizontal slider ┬╖ Web Audio ┬╖ Pro Mode ┬╖ Skill-tree callback
+ * 8 slides  Horizontal slider  Web Audio  Pro Mode  Skill-tree callback
  *
  * Color system (ECE Signature palette):
  *   #0A0A0B  Matte Obsidian     (background)
@@ -27,9 +27,9 @@ import {
   PanInfo,
 } from 'framer-motion';
 
-// ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+// 
 // TYPES
-// ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+// 
 
 interface Module3Props {
   onUnlockBinary?: () => void;
@@ -40,12 +40,12 @@ type Mode = 'simple' | 'pro';
 interface SceneProps {
   isActive: boolean;
   proMode: boolean;
-  progressOffset: number; // -1 ΓåÆ 0 ΓåÆ 1 (0 = centred)
+  progressOffset: number; // -1  0  1 (0 = centred)
 }
 
-// ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+// 
 // CONSTANTS
-// ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+// 
 
 const C = {
   bg:        '#0A0A0B',
@@ -64,9 +64,9 @@ const SLIDE_COUNT = 8;
 const STORAGE_KEY = 'm3_slide_v2';
 const MUTE_KEY    = 'm3_mute_v1';
 
-// ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+// 
 // WEB AUDIO HOOK
-// ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+// 
 
 const useAudio = (muted: boolean) => {
   const ctxRef  = useRef<AudioContext | null>(null);
@@ -118,9 +118,9 @@ const useAudio = (muted: boolean) => {
   return { play, resume };
 };
 
-// ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
-// DECIMAL Γåö BITS HELPERS
-// ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+// 
+// DECIMAL  BITS HELPERS
+// 
 
 const bitsToDecimal = (bits: number[]) =>
   bits.reduce((acc, b, i) => acc + b * Math.pow(2, bits.length - 1 - i), 0);
@@ -128,9 +128,9 @@ const bitsToDecimal = (bits: number[]) =>
 const decimalToBits = (n: number, len = 4) =>
   Array.from({ length: len }, (_, i) => (n >> (len - 1 - i)) & 1);
 
-// ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+// 
 // SHARED COMPONENTS
-// ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+// 
 
 const Hud: React.FC<{ children: React.ReactNode; style?: React.CSSProperties }> = ({
   children,
@@ -234,12 +234,12 @@ const SceneShell: React.FC<{
   </div>
 );
 
-// ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
-// SCENE 1 ΓÇö Signal ΓåÆ Value
-// ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+// 
+// SCENE 1  Signal  Value
+// 
 
 const Scene1: React.FC<SceneProps> = ({ proMode, progressOffset }) => {
-  // progressOffset: -1 (entry from left) ΓåÆ 0 (active) ΓåÆ 1 (exit right)
+  // progressOffset: -1 (entry from left)  0 (active)  1 (exit right)
   // morph: 0 = smooth analog, 1 = binary blocks
   const morph = Math.max(0, Math.min(1, 0.5 - progressOffset * 0.8));
   const quantLevels = Math.max(1, Math.round(morph * 4) + 1);
@@ -250,7 +250,7 @@ const Scene1: React.FC<SceneProps> = ({ proMode, progressOffset }) => {
     const y   = H / 2 - (morph > 0.7 ? q : raw * morph + raw * (1 - morph)) * H * 0.8;
     return `${x},${y}`;
   }).join(' ');
-  const colour = `hsl(${30 + morph * 168}, 100%, 60%)`; // orange ΓåÆ cyan
+  const colour = `hsl(${30 + morph * 168}, 100%, 60%)`; // orange  cyan
 
   return (
     <SceneShell title="A signal becomes a value." micro="Continuous energy. Discrete decision.">
@@ -277,29 +277,29 @@ const Scene1: React.FC<SceneProps> = ({ proMode, progressOffset }) => {
         </svg>
         <Hud style={{ marginTop: 12, textAlign: 'center' }}>
           {morph < 0.3
-            ? 'ANALOG ΓÇö CONTINUOUS'
+            ? 'ANALOG  CONTINUOUS'
             : morph < 0.7
-            ? 'QUANTIZINGΓÇª'
-            : 'BINARY ΓÇö DISCRETE'}
+            ? 'QUANTIZING'
+            : 'BINARY  DISCRETE'}
         </Hud>
       </div>
 
       <ProPanel visible={proMode}>
         <span style={{ color: C.cyan }}>// Pro Mode</span>
         <br />
-        Threshold Vth = 2.5V ΓÇö signals above = 1, below = 0
+        Threshold Vth = 2.5V  signals above = 1, below = 0
         <br />
-        Quantization levels: {Math.pow(2, quantLevels)} ΓåÆ eventually 2
+        Quantization levels: {Math.pow(2, quantLevels)}  eventually 2
         <br />
-        <span style={{ color: C.text }}>Concept: continuous space ΓåÆ finite decisions</span>
+        <span style={{ color: C.text }}>Concept: continuous space  finite decisions</span>
       </ProPanel>
     </SceneShell>
   );
 };
 
-// ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
-// SCENE 2 ΓÇö Why Only Two States
-// ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+// 
+// SCENE 2  Why Only Two States
+// 
 
 const Scene2: React.FC<SceneProps> = ({ proMode }) => {
   const [levels, setLevels] = useState(8);
@@ -310,10 +310,10 @@ const Scene2: React.FC<SceneProps> = ({ proMode }) => {
     const y    = H / 2 - q * H * 0.85;
     return `${x},${y}`;
   }).join(' ');
-  const stability = 1 - (levels - 2) / 6; // 0 ΓåÆ 1 as levels drop to 2
+  const stability = 1 - (levels - 2) / 6; // 0  1 as levels drop to 2
 
   return (
-    <SceneShell title="Systems keep only what is reliable." micro="Fewer states ΓåÆ less confusion.">
+    <SceneShell title="Systems keep only what is reliable." micro="Fewer states  less confusion.">
       {/* Waveform */}
       <div
         style={{
@@ -342,8 +342,8 @@ const Scene2: React.FC<SceneProps> = ({ proMode }) => {
         </svg>
         {proMode && (
           <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 4 }}>
-            <Hud>VIH min = 2.0V Γåæ</Hud>
-            <Hud>VIL max = 0.8V Γåô</Hud>
+            <Hud>VIH min = 2.0V </Hud>
+            <Hud>VIL max = 0.8V </Hud>
           </div>
         )}
       </div>
@@ -374,17 +374,17 @@ const Scene2: React.FC<SceneProps> = ({ proMode }) => {
       <ProPanel visible={proMode}>
         <span style={{ color: C.cyan }}>// Noise Margin</span>
         <br />
-        NM_H = VOH_min ΓêÆ VIH_min &nbsp;|&nbsp; NM_L = VIL_max ΓêÆ VOL_max
+        NM_H = VOH_min  VIH_min &nbsp;|&nbsp; NM_L = VIL_max  VOL_max
         <br />
-        More states ΓåÆ smaller noise margin ΓåÆ unreliable at scale
+        More states  smaller noise margin  unreliable at scale
       </ProPanel>
     </SceneShell>
   );
 };
 
-// ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
-// SCENE 3 ΓÇö Power of Positions
-// ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+// 
+// SCENE 3  Power of Positions
+// 
 
 const Scene3: React.FC<SceneProps> = ({ proMode }) => {
   const [revealed, setRevealed] = useState(1);
@@ -457,21 +457,21 @@ const Scene3: React.FC<SceneProps> = ({ proMode }) => {
               {v}
             </motion.span>
             {i < 3 && (
-              <span style={{ color: C.muted, fontFamily: C.mono }}>ΓåÆ</span>
+              <span style={{ color: C.muted, fontFamily: C.mono }}></span>
             )}
           </React.Fragment>
         ))}
         <span style={{ fontFamily: C.mono, fontSize: 14, color: C.muted, marginLeft: 8 }}>
-          ├ù2 each step
+          2 each step
         </span>
       </div>
 
       <ProPanel visible={proMode}>
         <span style={{ color: C.cyan }}>// Positional Notation</span>
         <br />
-        Bit value = bit ├ù 2^position
+        Bit value = bit  2^position
         <br />
-        Total = ╬ú bitß╡ó ├ù 2Γü▒ &nbsp;for i = 0 ΓÇª nΓêÆ1
+        Total =  bit  2 &nbsp;for i = 0  n1
         <br />
         <span style={{ color: C.text }}>Max 4-bit value = 8+4+2+1 = 15</span>
       </ProPanel>
@@ -479,9 +479,9 @@ const Scene3: React.FC<SceneProps> = ({ proMode }) => {
   );
 };
 
-// ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
-// SCENE 4 ΓÇö Binary Builder (CORE)
-// ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+// 
+// SCENE 4  Binary Builder (CORE)
+// 
 
 const BitBlock: React.FC<{
   value: number;
@@ -612,16 +612,16 @@ const Scene4: React.FC<SceneProps & { bits: number[]; onToggle: (i: number) => v
         Each active bit contributes its positional weight.
         <br />
         <span style={{ color: C.text }}>
-          {bits.map((b, i) => `${weights[i]}┬╖${b}`).join(' + ')} = {decimal}
+          {bits.map((b, i) => `${weights[i]}${b}`).join(' + ')} = {decimal}
         </span>
       </ProPanel>
     </SceneShell>
   );
 };
 
-// ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
-// SCENE 5 ΓÇö Reading Binary
-// ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+// 
+// SCENE 5  Reading Binary
+// 
 
 const Scene5: React.FC<SceneProps> = ({ proMode }) => {
   const [target, setTarget] = useState<number[]>([1, 0, 1, 0, 1]);
@@ -677,7 +677,7 @@ const Scene5: React.FC<SceneProps> = ({ proMode }) => {
             </div>
             {proMode && (
               <Hud style={{ color: b ? C.cyan : C.border }}>
-                {b ? `+${weights[i]}` : 'ΓÇö'}
+                {b ? `+${weights[i]}` : ''}
               </Hud>
             )}
           </div>
@@ -691,7 +691,7 @@ const Scene5: React.FC<SceneProps> = ({ proMode }) => {
           value={guess}
           onChange={e => { setGuess(e.target.value); setStatus('idle'); }}
           onKeyDown={e => e.key === 'Enter' && check()}
-          placeholder="decimalΓÇª"
+          placeholder="decimal"
           type="number"
           style={{
             width: '100%',
@@ -760,7 +760,7 @@ const Scene5: React.FC<SceneProps> = ({ proMode }) => {
                 textTransform: 'uppercase',
               }}
             >
-              {status === 'correct' ? 'Γ£ô correct' : 'Γ£ù try again'}
+              {status === 'correct' ? ' correct' : ' try again'}
             </motion.div>
           )}
         </AnimatePresence>
@@ -769,15 +769,15 @@ const Scene5: React.FC<SceneProps> = ({ proMode }) => {
       <ProPanel visible={proMode}>
         <span style={{ color: C.cyan }}>// Breakdown</span>
         <br />
-        {target.map((b, i) => `${weights[i]}┬╖${b}`).join(' + ')}{' = '}{correct}
+        {target.map((b, i) => `${weights[i]}${b}`).join(' + ')}{' = '}{correct}
       </ProPanel>
     </SceneShell>
   );
 };
 
-// ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
-// SCENE 6 ΓÇö System View (Switches ΓåÆ Bits)
-// ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+// 
+// SCENE 6  System View (Switches  Bits)
+// 
 
 const Scene6: React.FC<SceneProps> = ({ proMode }) => {
   const [switches, setSwitches] = useState([0, 0, 0, 0]);
@@ -866,7 +866,7 @@ const Scene6: React.FC<SceneProps> = ({ proMode }) => {
                     transition={{ repeat: Infinity, duration: 1.2, delay: i * 0.2 }}
                     style={{ color: C.cyanDim, fontFamily: C.mono }}
                   >
-                    ΓåÆ
+                    
                   </motion.span>
                 )}
               </React.Fragment>
@@ -891,15 +891,15 @@ const Scene6: React.FC<SceneProps> = ({ proMode }) => {
         >
           {decimal}
         </motion.span>
-        <Hud style={{ marginTop: 4 }}>decimal ┬╖ {switches.join('')} binary</Hud>
+        <Hud style={{ marginTop: 4 }}>decimal  {switches.join('')} binary</Hud>
       </div>
     </SceneShell>
   );
 };
 
-// ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
-// SCENE 7 ΓÇö Mastery Challenge
-// ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+// 
+// SCENE 7  Mastery Challenge
+// 
 
 const TARGETS = [13, 7, 11, 5, 14, 9, 6, 3];
 
@@ -935,7 +935,7 @@ const Scene7: React.FC<SceneProps & { onUnlock: () => void }> = ({
       <div style={{ display: 'flex', gap: 16, justifyContent: 'center' }}>
         {bits.map((b, i) => (
           <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-            {/* In simple mode, no weight labels ΓÇö pure mastery */}
+            {/* In simple mode, no weight labels  pure mastery */}
             {proMode && <Hud style={{ color: C.cyanDim }}>{weights[i]}</Hud>}
             <motion.button
               onClick={() => toggle(i)}
@@ -1023,7 +1023,7 @@ const Scene7: React.FC<SceneProps & { onUnlock: () => void }> = ({
                 Locked In
               </div>
               <div style={{ fontFamily: C.sans, fontSize: 28, fontWeight: 800, color: C.text, marginTop: 8 }}>
-                {target} = {decimalToBits(target, 4).join('')} Γ£ô
+                {target} = {decimalToBits(target, 4).join('')} 
               </div>
               <div style={{ fontFamily: C.sans, fontSize: 14, color: C.muted, marginTop: 12 }}>
                 You didn't memorise this. You built it.
@@ -1037,7 +1037,7 @@ const Scene7: React.FC<SceneProps & { onUnlock: () => void }> = ({
       <ProPanel visible={proMode && attempts > 6 && !unlocked}>
         <span style={{ color: C.copper }}>// Hint (Pro Mode)</span>
         <br />
-        {target} = {decimalToBits(target, 4).map((b, i) => `${weights[i]}┬╖${b}`).filter((_, i) => decimalToBits(target, 4)[i]).join(' + ')}
+        {target} = {decimalToBits(target, 4).map((b, i) => `${weights[i]}${b}`).filter((_, i) => decimalToBits(target, 4)[i]).join(' + ')}
         <br />
         Bits: {decimalToBits(target, 4).join(' ')}
       </ProPanel>
@@ -1045,14 +1045,14 @@ const Scene7: React.FC<SceneProps & { onUnlock: () => void }> = ({
   );
 };
 
-// ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
-// SCENE 8 ΓÇö Bridge to Module 4
-// ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+// 
+// SCENE 8  Bridge to Module 4
+// 
 
 const Scene8: React.FC<SceneProps> = ({ proMode }) => (
   <SceneShell
     title="You can represent numbers."
-    micro="Now ΓÇö how are they used?"
+    micro="Now  how are they used?"
   >
     <div style={{ position: 'relative', width: 320, height: 200 }}>
       {/* Flowing bits */}
@@ -1128,9 +1128,9 @@ const Scene8: React.FC<SceneProps> = ({ proMode }) => (
   </SceneShell>
 );
 
-// ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+// 
 // DOT GRID BACKGROUND
-// ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+// 
 
 const DotGrid: React.FC = () => (
   <div
@@ -1148,9 +1148,9 @@ const DotGrid: React.FC = () => (
   />
 );
 
-// ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+// 
 // SLIDE DOTS NAVIGATION
-// ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+// 
 
 const SlideDots: React.FC<{ total: number; current: number; onGo: (i: number) => void }> = ({
   total,
@@ -1191,9 +1191,9 @@ const SlideDots: React.FC<{ total: number; current: number; onGo: (i: number) =>
   </div>
 );
 
-// ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+// 
 // MAIN MODULE3ROOT
-// ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+// 
 
 export const Module3Root: React.FC<Module3Props> = ({ onUnlockBinary }) => {
   // Persistence
@@ -1298,14 +1298,14 @@ export const Module3Root: React.FC<Module3Props> = ({ onUnlockBinary }) => {
   ];
 
   const LABELS = [
-    'Signal ΓåÆ Value',
+    'Signal  Value',
     'Two States',
     'Positions',
     'Builder',
     'Reading',
     'System View',
     'Challenge',
-    'Next ΓåÆ',
+    'Next ',
   ];
 
   return (
@@ -1324,7 +1324,7 @@ export const Module3Root: React.FC<Module3Props> = ({ onUnlockBinary }) => {
     >
       <DotGrid />
 
-      {/* ΓöÇΓöÇ TOP HUD ΓöÇΓöÇ */}
+      {/*  TOP HUD  */}
       <div
         style={{
           position: 'fixed',
@@ -1347,7 +1347,7 @@ export const Module3Root: React.FC<Module3Props> = ({ onUnlockBinary }) => {
 
         {/* Progress */}
         <Hud style={{ color: C.muted }}>
-          {slideIndex + 1} / {SLIDE_COUNT} &nbsp;┬╖&nbsp; {LABELS[slideIndex]}
+          {slideIndex + 1} / {SLIDE_COUNT} &nbsp;&nbsp; {LABELS[slideIndex]}
         </Hud>
 
         {/* Controls */}
@@ -1411,7 +1411,7 @@ export const Module3Root: React.FC<Module3Props> = ({ onUnlockBinary }) => {
         />
       </div>
 
-      {/* ΓöÇΓöÇ SLIDE TRACK ΓöÇΓöÇ */}
+      {/*  SLIDE TRACK  */}
       <motion.div
         drag="x"
         dragConstraints={{ left: 0, right: 0 }}
@@ -1454,7 +1454,7 @@ export const Module3Root: React.FC<Module3Props> = ({ onUnlockBinary }) => {
         })}
       </motion.div>
 
-      {/* ΓöÇΓöÇ ARROW KEYS ΓöÇΓöÇ */}
+      {/*  ARROW KEYS  */}
       <button
         onClick={goPrev}
         disabled={slideIndex === 0}
@@ -1476,7 +1476,7 @@ export const Module3Root: React.FC<Module3Props> = ({ onUnlockBinary }) => {
           transition: 'all 0.2s',
         }}
       >
-        ΓåÉ
+        
       </button>
       <button
         onClick={goNext}
@@ -1499,10 +1499,10 @@ export const Module3Root: React.FC<Module3Props> = ({ onUnlockBinary }) => {
           transition: 'all 0.2s',
         }}
       >
-        ΓåÆ
+        
       </button>
 
-      {/* ΓöÇΓöÇ SLIDE DOTS ΓöÇΓöÇ */}
+      {/*  SLIDE DOTS  */}
       <SlideDots total={SLIDE_COUNT} current={slideIndex} onGo={goTo} />
     </div>
   );

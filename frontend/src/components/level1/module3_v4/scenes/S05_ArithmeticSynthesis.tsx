@@ -19,7 +19,7 @@ export const S05_ArithmeticSynthesis: React.FC<Props> = ({ isActive, isDarkMode 
 
     return (
         <div className="max-w-5xl mx-auto space-y-16 py-12">
-      {/* 6. Arithmetic Synthesis — Logic is Mathematics */}
+      {/* 6. Arithmetic Synthesis -- Logic is Mathematics */}
       <section className="space-y-8">
         <div className="text-center space-y-4">
             <motion.span 
@@ -27,7 +27,7 @@ export const S05_ArithmeticSynthesis: React.FC<Props> = ({ isActive, isDarkMode 
                 animate={isActive ? { opacity: 1 } : {}}
                 className={`font-mono text-[10px] tracking-[0.4em] uppercase ${subTextColor} block mb-4`}
             >
-                6. Arithmetic Synthesis — Logic is Mathematics
+                6. Arithmetic Synthesis -- Logic is Mathematics
             </motion.span>
             <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>The Adder Evolution</h2>
             <p className={`text-lg max-w-2xl mx-auto opacity-70 ${textColor}`}>
@@ -50,14 +50,14 @@ export const S05_ArithmeticSynthesis: React.FC<Props> = ({ isActive, isDarkMode 
                     Adds two bits. Produces a <strong>Sum</strong> and a <strong>Carry</strong>. It cannot handle a carry from a previous stage.
                 </p>
                 <div className={`p-4 rounded-xl font-mono text-[10px] mb-6 ${isDarkMode ? 'bg-black/60 text-sky-400' : 'bg-gray-50 text-sky-600'}`}>
-{`A (1) ──┬──[ XOR ]──── Sum (0)
-        │
-B (1) ──┴──[ AND ]──── Carry (1)
+{`A (1) [ XOR ] Sum (0)
+        
+B (1) [ AND ] Carry (1)
 `}
                 </div>
                 <div className="grid grid-cols-2 gap-4 text-[10px] font-mono opacity-60">
-                    <div>Sum = A ⊕ B</div>
-                    <div>Carry = A · B</div>
+                    <div>Sum = A  B</div>
+                    <div>Carry = A  B</div>
                 </div>
             </motion.div>
 
@@ -75,20 +75,20 @@ B (1) ──┴──[ AND ]──── Carry (1)
                     The fundamental building block. Adds two bits <strong>plus</strong> a carry-in from the previous bit.
                 </p>
                 <div className={`p-4 rounded-xl font-mono text-[10px] mb-6 ${isDarkMode ? 'bg-black/60 text-white' : 'bg-white border border-sky-100 shadow-sm'}`}>
-{`A   ──┐
-B   ──┤ [ 2x Half-Adders ] ── Sum
-Cin ──┘         + OR         ── Cout
+{`A   
+B    [ 2x Half-Adders ]  Sum
+Cin          + OR          Cout
 `}
                 </div>
                 <div className="grid grid-cols-1 gap-1 text-[10px] font-mono font-bold text-sky-500">
-                    <div>Sum = A ⊕ B ⊕ Cin</div>
-                    <div>Cout = (A·B) + (Cin·(A⊕B))</div>
+                    <div>Sum = A  B  Cin</div>
+                    <div>Cout = (AB) + (Cin(AB))</div>
                 </div>
             </motion.div>
         </div>
       </section>
 
-      {/* Logic Equations — The Programmer's View */}
+      {/* Logic Equations -- The Programmer's View */}
       <section className={`p-8 md:p-12 rounded-[2.5rem] border ${isDarkMode ? 'bg-white/5 border-white/10' : 'bg-white border-gray-100 shadow-2xl shadow-sky-500/5'}`}>
           <div className="max-w-3xl mx-auto space-y-8">
             <div className="flex items-center gap-4">
@@ -103,10 +103,10 @@ Cin ──┘         + OR         ── Cout
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 {[
-                    { label: "Identity", eq: "A · 1 = A", desc: "ANDing with 1 preserves state." },
-                    { label: "Null", eq: "A · 0 = 0", desc: "ANDing with 0 destroys state." },
-                    { label: "Inverse", eq: "A + Ā = 1", desc: "ORing with inverse is always true." },
-                    { label: "Double Negation", eq: "̿A = A", desc: "Two NOTs cancel out." }
+                    { label: "Identity", eq: "A  1 = A", desc: "ANDing with 1 preserves state." },
+                    { label: "Null", eq: "A  0 = 0", desc: "ANDing with 0 destroys state." },
+                    { label: "Inverse", eq: "A +  = 1", desc: "ORing with inverse is always true." },
+                    { label: "Double Negation", eq: "A = A", desc: "Two NOTs cancel out." }
                 ].map((item, i) => (
                     <div key={i} className={`p-6 rounded-2xl border ${isDarkMode ? 'bg-black/40 border-white/5' : 'bg-gray-50 border-gray-200'}`}>
                         <div className="text-[10px] font-black uppercase tracking-widest opacity-40 mb-2">{item.label}</div>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 
@@ -214,7 +214,73 @@ const JewelPolyhedron: React.FC = () => (
   </motion.div>
 );
 
-// ─── SUB-NODE ──────────────────────────────────────────────────────────────────
+// ─── MODULE PREVIEWS ──────────────────────────────────────────────────────────
+const ModulePreview: React.FC<{ type: string; color: string }> = ({ type, color }) => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    
+    let t = 0;
+    const animate = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      
+      const w = canvas.width, h = canvas.height, cy = h/2;
+      
+      if (type === 'Signal Return') {
+        for(let x=0; x<w; x++) {
+          const y = cy + 15 * Math.sin(0.1 * x + t);
+          if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+      } else if (type === 'Discrete') {
+        for(let x=0; x<w; x+=10) {
+          const y = cy + 15 * Math.sin(0.1 * x + t);
+          ctx.moveTo(x, cy); ctx.lineTo(x, y);
+          ctx.arc(x, y, 2, 0, Math.PI * 2);
+        }
+      } else {
+        // Binary/Logic
+        for(let x=0; x<w; x+=15) {
+          const val = Math.sin(0.1 * x + t) > 0 ? 1 : 0;
+          const y = cy + (val ? -15 : 15);
+          ctx.rect(x, y, 10, 2);
+        }
+      }
+      ctx.stroke();
+      t += 0.1;
+      requestAnimationFrame(animate);
+    };
+    const raf = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(raf);
+  }, [type, color]);
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.8 }}
+      className="absolute -top-24 left-1/2 -translate-x-1/2 w-32 h-20 rounded-xl overflow-hidden pointer-events-none"
+      style={{ 
+        background: 'rgba(5, 8, 12, 0.9)', 
+        border: `1px solid ${color}40`,
+        backdropFilter: 'blur(10px)',
+        boxShadow: `0 0 20px ${color}20`
+      }}
+    >
+      <canvas ref={canvasRef} width={128} height={80} className="w-full h-full opacity-60" />
+      <div className="absolute top-1 left-2 text-[6px] font-black uppercase text-white/40 tracking-widest">
+        Live_Telemetry // {type.toUpperCase()}
+      </div>
+    </motion.div>
+  );
+};
+
 const SubNodeBadge: React.FC<{ node: SubNode; delay: number }> = ({ node, delay }) => {
   const [hov, setHov] = useState(false);
 
@@ -442,14 +508,17 @@ const RootGem: React.FC<{
 
       {/* Double-click hint */}
       {!isLocked && hov && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="absolute -bottom-5 text-[7px] font-mono"
-          style={{ color: node.glow + '80' }}
-        >
-          click to navigate →
-        </motion.div>
+        <>
+          <ModulePreview type={node.label} color={node.glow} />
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="absolute -bottom-5 text-[7px] font-mono"
+            style={{ color: node.glow + '80' }}
+          >
+            click to navigate →
+          </motion.div>
+        </>
       )}
     </motion.div>
   );

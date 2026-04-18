@@ -8,6 +8,7 @@ import { GateDiscovery } from '../components/level4/GateDiscovery';
 import { GateLab } from '../components/level4/GateLab';
 import { LogicPuzzle } from '../components/level4/LogicPuzzle';
 import { GateTimingLab } from '../components/level4/GateTimingLab';
+import { ALULab } from '../components/level4/ALULab';
 
 interface Page {
   id: string;
@@ -34,6 +35,7 @@ const PAGES: Page[] = [
   { id: 'gatelab', part: 'PART V · TRY IT YOURSELF', partNum: 5, label: 'Gate Characterization', subtitle: '6-Gate Test Lab', accentHex: '#10B981', kind: 'activity', Component: (p: any) => <div className="mt-8"><GateLab onComplete={() => {}} hasCompleted={false} {...p} /></div> },
   { id: 'logicpuzzle', part: 'PART V · TRY IT YOURSELF', partNum: 5, label: 'Logic Puzzles', subtitle: 'Test your knowledge', accentHex: '#EC4899', kind: 'activity', Component: (p: any) => <div className="mt-8"><LogicPuzzle onComplete={() => {}} hasCompleted={false} {...p} /></div> },
   { id: 'timing', part: 'PART VI · ADVANCED TOPICS', partNum: 6, label: 'Waveform Analysis', subtitle: 'Identify gates by timing', accentHex: '#8B5CF6', kind: 'lab', Component: (p: any) => <div className="mt-8"><GateTimingLab onComplete={() => {}} hasCompleted={false} {...p} /></div> },
+  { id: 'alulab', part: 'PART VII · CAPSTONE', partNum: 7, label: 'ALU Laboratory', subtitle: 'The Silicon Heart', accentHex: '#10B981', kind: 'lab', Component: ALULab },
 ];
 
 const KIND_BADGE: Record<string, { label: string; color: string }> = {
