@@ -54,37 +54,58 @@ const getOverlayStyle = (ri: number, ci: number, rows: number, cols: number) => 
 };
 
 // Custom MiniMap with fixed 36px cells
-const MiniMapFixed = ({ label, isBad, items, groupStyles, isDarkMode, caption }: any) => {
+const MiniMapFixed = ({ label, isBad, items, groupStyles, isDarkMode, caption, rowLabels, colLabels, activeMinterm }: any) => {
   return (
-    <div className={`p-4 rounded-[1.5rem] flex flex-col items-center gap-3 border ${isDarkMode ? 'bg-slate-900/50 border-white/5 shadow-inner' : 'bg-slate-50 border-slate-200'}`}>
+    <div className={`p-6 rounded-[2rem] flex flex-col items-center gap-4 border ${isDarkMode ? 'bg-slate-900/50 border-white/5 shadow-inner' : 'bg-slate-50 border-slate-200 shadow-sm'}`}>
       <div className={`text-[10px] font-black uppercase tracking-[0.2em] px-3 py-1 rounded-full ${isBad ? 'bg-rose-500/10 text-rose-500' : 'bg-emerald-500/10 text-emerald-600'}`}>
         {isBad ? '❌ ' : '✅ '}{label}
       </div>
-      <div className="relative inline-block mt-2">
-        <div className="flex flex-col gap-[2px] bg-slate-500/20 p-[2px] rounded-xl">
+      <div className="relative inline-block mt-2 pl-8 pt-6">
+        {/* Column Labels */}
+        {colLabels && (
+          <div className="absolute top-0 left-8 flex gap-[2px]">
+            {colLabels.map((cl: string, i: number) => (
+              <div key={i} className="w-9 h-6 flex items-center justify-center font-mono text-[9px] font-bold text-slate-500">{cl}</div>
+            ))}
+          </div>
+        )}
+        {/* Row Labels */}
+        {rowLabels && (
+          <div className="absolute top-6 left-0 flex flex-col gap-[2px]">
+            {rowLabels.map((rl: string, i: number) => (
+              <div key={i} className="w-8 h-9 flex items-center justify-end pr-2 font-mono text-[9px] font-bold text-slate-500">{rl}</div>
+            ))}
+          </div>
+        )}
+        <div className="flex flex-col gap-[2px] bg-slate-500/20 p-[2px] rounded-xl overflow-hidden">
           {items.map((row: (number | string)[], ri: number) => (
             <div key={ri} className="flex gap-[2px]">
               {row.map((cell, ci) => (
-                <div key={ci} className={`w-9 h-9 rounded-lg flex items-center justify-center font-bold text-sm ${
-                  cell === 1
-                    ? (isDarkMode ? 'bg-slate-800 text-white shadow-sm' : 'bg-white text-slate-800 shadow-sm')
-                    : (isDarkMode ? 'bg-slate-800/40 text-slate-600' : 'bg-white/60 text-slate-400')
-                }`}>
-                  {cell !== '' ? cell : '0'}
+                <div key={ci} className={`w-9 h-9 rounded-lg flex items-center justify-center font-bold text-sm transition-all duration-300 ${
+                  cell === 1 || cell === '1'
+                    ? (isDarkMode ? 'bg-slate-800 text-white shadow-sm shadow-black/50 border border-white/5' : 'bg-white text-slate-800 border border-slate-200')
+                    : (isDarkMode ? 'bg-slate-800/40 text-white/5 border border-white/5' : 'bg-slate-200/40 text-slate-300 border border-slate-100')
+                } ${activeMinterm === cell ? 'ring-2 ring-amber-500 ring-offset-2 ring-offset-slate-900 scale-105 z-10' : ''}`}>
+                  {cell === 1 || cell === '1' ? '1' : (typeof cell === 'string' && cell.startsWith('m')) ? cell : '0'}
                 </div>
               ))}
             </div>
           ))}
         </div>
-        {groupStyles.map((style: any, i: number) => (
+        {groupStyles && groupStyles.map((style: any, i: number) => (
           <div key={i} className={`absolute border-2 pointer-events-none rounded-xl ${
             style.customColors
               ? style.customColors
               : isBad ? 'border-rose-500 bg-rose-500/30' : 'border-emerald-500 bg-emerald-500/30'
-          }`} style={{ ...style.css, transition: 'all 0.3s ease' }} />
+          }`} style={{ 
+            ...style.css, 
+            top: `calc(${style.css.top} + 24px)`, 
+            left: `calc(${style.css.left} + 32px)`,
+            transition: 'all 0.3s ease' 
+          }} />
         ))}
       </div>
-      {caption && <p className={`text-[10px] font-mono text-center max-w-[160px] leading-relaxed ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>{caption}</p>}
+      {caption && <p className={`text-[10px] font-mono text-center max-w-[180px] leading-relaxed ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>{caption}</p>}
     </div>
   );
 };
@@ -595,35 +616,83 @@ export const FourVarTheory: React.FC<Props> = ({ isDarkMode }) => {
       {/* Gotchas & tips */}
       <div className={`p-8 rounded-[2rem] border ${c.cardBg} space-y-5`}>
         <h3 className={`text-lg font-bold ${c.text} flex items-center gap-2`}><Zap size={18} className="text-amber-500" /> 4-Variable Traps To Avoid</h3>
-        {[
-          {
-            bad: 'Placing m12 in row 3 (AB=11), column 1 (CD=00)',
-            good: 'm12 = ABCD = 1100 → AB=11 ✓ and CD=00 ✓. So it IS in row AB=11, column CD=00. Correct!',
-            note: 'The trick is row 3 in the grid is AB=11, fourth row is AB=10. Row index ≠ AB value.',
-          },
-          {
-            bad: 'Using normal 0,1,2,3 order for row/column labels',
-            good: 'Always use Gray Code: 00, 01, 11, 10. Rows 3 and 4 are swapped (AB=11 comes before AB=10).',
-            note: 'This is the most common 4-var mistake. Print the grid and label it before filling it in.',
-          },
-          {
-            bad: 'Forgetting that top and bottom rows are also neighbors (wrap-around)',
-            good: "The AB=00 row (top) wraps to AB=10 row (bottom) — they differ by only A! So top-row cells and bottom-row cells can be grouped.",
-            note: 'Wrap-around works in BOTH directions: left↔right AND top↔bottom.',
-          },
-        ].map((t, i) => (
-          <div key={i} className={`p-5 rounded-2xl border space-y-3 ${isDarkMode?'bg-rose-950/20 border-rose-900/30':'bg-rose-50 border-rose-100'}`}>
-            <div className="flex items-start gap-3">
-              <XCircle size={16} className="text-rose-500 shrink-0 mt-0.5" />
-              <p className={`text-sm font-medium ${isDarkMode?'text-rose-300':'text-rose-800'}`}><strong>Mistake {i+1}:</strong> {t.bad}</p>
+        <div className="grid grid-cols-1 gap-12">
+          {/* Trap 1: Minterm Placement */}
+          <div className={`p-8 rounded-[2.5rem] border ${c.cardBg} space-y-8`}>
+            <div className="flex items-center gap-3">
+              <Zap className="text-amber-500" size={20} />
+              <div className="flex flex-col">
+                <h3 className={`text-xl font-black ${c.text}`}>Trap 1: The Index Confusion</h3>
+                <p className={`text-xs ${c.muted}`}>Row index vs Binary Value</p>
+              </div>
             </div>
-            <div className="flex items-start gap-3">
-              <CheckCircle2 size={16} className="text-emerald-500 shrink-0 mt-0.5" />
-              <p className={`text-sm ${isDarkMode?'text-emerald-300':'text-emerald-800'}`}><strong>Truth:</strong> {t.good}</p>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <MiniMapFixed isBad={true} isDarkMode={isDarkMode} 
+                label="Mistake: Normal Order (0,1,2,3)"
+                caption="Placing m12 in row 4 because you think row 3 is 10 and row 4 is 11."
+                rowLabels={['00','01','10','11']} colLabels={['00','01','11','10']}
+                items={[[0,0,0,0],[0,0,0,0],[0,0,0,0],['m12',0,0,0]]} />
+              <MiniMapFixed isBad={false} isDarkMode={isDarkMode} 
+                label="Truth: Gray Code Order"
+                caption="m12 (1100) MUST be in the AB=11 row. In Gray code, that is row 3!"
+                rowLabels={['00','01','11','10']} colLabels={['00','01','11','10']}
+                items={[[0,0,0,0],[0,0,0,0],['m12',0,0,0],[0,0,0,0]]} />
             </div>
-            <p className={`text-xs font-mono italic pl-6 ${c.muted}`}>→ {t.note}</p>
           </div>
-        ))}
+
+          {/* Trap 2: Axis Labeling */}
+          <div className={`p-8 rounded-[2.5rem] border ${c.cardBg} space-y-8`}>
+            <div className="flex items-center gap-3">
+              <Zap className="text-blue-500" size={20} />
+              <div className="flex flex-col">
+                <h3 className={`text-xl font-black ${c.text}`}>Trap 2: The Binary Axis</h3>
+                <p className={`text-xs ${c.muted}`}>Sequential counting breaks K-Maps</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <MiniMapFixed isBad={true} isDarkMode={isDarkMode} 
+                label="Mistake: 00, 01, 10, 11"
+                caption="Columns differ by 2 bits (01 → 10). Groups won't work!"
+                rowLabels={['00','01','11','10']} colLabels={['00','01','10','11']}
+                items={[[0,1,1,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]]} 
+                groupStyles={[{ css: getOverlayStyle(0,1,1,2) }]} />
+              <MiniMapFixed isBad={false} isDarkMode={isDarkMode} 
+                label="Truth: 00, 01, 11, 10"
+                caption="Only 1 bit changes between every pair. Perfectly adjacent!"
+                rowLabels={['00','01','11','10']} colLabels={['00','01','11','10']}
+                items={[[0,1,1,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]]}
+                groupStyles={[{ css: getOverlayStyle(0,1,1,2), customColors: 'border-emerald-500 bg-emerald-500/30' }]} />
+            </div>
+          </div>
+
+          {/* Trap 3: Pac-Man Wrap */}
+          <div className={`p-8 rounded-[2.5rem] border ${c.cardBg} space-y-8`}>
+            <div className="flex items-center gap-3">
+              <Zap className="text-purple-500" size={20} />
+              <div className="flex flex-col">
+                <h3 className={`text-xl font-black ${c.text}`}>Trap 3: The Edge Isolation</h3>
+                <p className={`text-xs ${c.muted}`}>Forgetting the map is a donut</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <MiniMapFixed isBad={true} isDarkMode={isDarkMode} 
+                label="Mistake: Isolated Groups"
+                caption="Two small terms (A'B'D' + AB'D'). Not fully optimized."
+                rowLabels={['00','01','11','10']} colLabels={['00','01','11','10']}
+                items={[[1,0,0,0],[0,0,0,0],[0,0,0,0],[1,0,0,0]]}
+                groupStyles={[{ css: getOverlayStyle(0,0,1,1) }, { css: getOverlayStyle(3,0,1,1) }]} />
+              <MiniMapFixed isBad={false} isDarkMode={isDarkMode} 
+                label="Truth: Wrap-Around Group"
+                caption="Top-Left (m0) and Bottom-Left (m8) are neighbors! Results in one simpler term (B'C'D')."
+                rowLabels={['00','01','11','10']} colLabels={['00','01','11','10']}
+                items={[[1,0,0,0],[0,0,0,0],[0,0,0,0],[1,0,0,0]]}
+                groupStyles={[
+                  { css: { ...getOverlayStyle(0,0,1,1), borderBottomStyle:'dashed', borderBottomColor:'transparent', borderBottomLeftRadius:0, borderBottomRightRadius:0 }, customColors:'border-emerald-500 bg-emerald-500/30' },
+                  { css: { ...getOverlayStyle(3,0,1,1), borderTopStyle:'dashed', borderTopColor:'transparent', borderTopLeftRadius:0, borderTopRightRadius:0 }, customColors:'border-emerald-500 bg-emerald-500/30' }
+                ]} />
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

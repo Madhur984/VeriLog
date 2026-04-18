@@ -1,12 +1,12 @@
 import React from 'react';
-import { Module2Root } from '../components/level1/module2_v4/Module2Root';
+import { Module3Root } from '../components/level1/module3_v4/Module3Root';
 
 /**
- * ModuleTwo — The secondary educational module for VeriLog (Analog to Digital).
- * Delegates all rendering to Module2Root (Sidebar + Scrollytelling interface).
+ * ModuleTwo — Level 2: Binary Awakening
+ * (This is now the primary second module in the curriculum)
  */
 export const ModuleTwo: React.FC = () => {
   return (
-    <Module2Root />
+    <Module3Root />
   );
 };

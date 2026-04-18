@@ -47,39 +47,21 @@ const ROOT_NODES: RootNode[] = [
   },
   {
     id: 'r2',
-    label: 'Discrete',
-    fullLabel: 'Continuous vs Discrete',
-    pct: 0,
-    icon: '⊞',
-    color: ['#6d28d9', '#a78bfa'],
-    glow: '#a78bfa',
-    route: '/module/2',
-    status: 'done',
-    children: [
-      { id: 'r2c1', label: 'Analog Signals',     pct: 100, color: '#a78bfa', icon: '∿',  locked: false },
-      { id: 'r2c2', label: 'Sampling Theorem',   pct: 85,  color: '#c4b5fd', icon: '≈',  locked: false },
-      { id: 'r2c3', label: 'Quantization',       pct: 70,  color: '#8b5cf6', icon: '◫',  locked: false },
-      { id: 'r2c4', label: 'Nyquist Rate',       pct: 50,  color: '#7c3aed', icon: '∫',  locked: false },
-      { id: 'r2c5', label: 'ADC / DAC',          pct: 30,  color: '#ddd6fe', icon: '⇄',  locked: false },
-    ],
-  },
-  {
-    id: 'r3',
     label: 'Binary',
     fullLabel: 'Binary Awakening',
     pct: 0,
     icon: '⊕',
     color: ['#065f46', '#34d399'],
     glow: '#34d399',
-    route: '/module/3',
+    route: '/module/2',
     status: 'active',
     children: [
-      { id: 'r3c1', label: 'Number Systems',    pct: 100, color: '#34d399', icon: '01',  locked: false },
-      { id: 'r3c2', label: 'Binary Arithmetic', pct: 90,  color: '#6ee7b7', icon: '+',   locked: false },
-      { id: 'r3c3', label: "Two's Complement",  pct: 70,  color: '#10b981', icon: '±',   locked: false },
-      { id: 'r3c4', label: 'Hex & Octal',       pct: 55,  color: '#059669', icon: '0x',  locked: false },
-      { id: 'r3c5', label: 'BCD Encoding',      pct: 20,  color: '#a7f3d0', icon: '◧',   locked: false },
-      { id: 'r3c6', label: 'Gray Code',         pct: 0,   color: '#d1fae5', icon: '≡',   locked: true  },
+      { id: 'r2c1', label: 'Number Systems',    pct: 100, color: '#34d399', icon: '01',  locked: false },
+      { id: 'r2c2', label: 'Binary Arithmetic', pct: 90,  color: '#6ee7b7', icon: '+',   locked: false },
+      { id: 'r2c3', label: "Two's Complement",  pct: 70,  color: '#10b981', icon: '±',   locked: false },
+      { id: 'r2c4', label: 'Hex & Octal',       pct: 55,  color: '#059669', icon: '0x',  locked: false },
+      { id: 'r2c5', label: 'BCD Encoding',      pct: 20,  color: '#a7f3d0', icon: '◧',   locked: false },
+      { id: 'r2c6', label: 'Gray Code',         pct: 0,   color: '#d1fae5', icon: '≡',   locked: true  },
     ],
   },
   {
@@ -88,16 +70,16 @@ const ROOT_NODES: RootNode[] = [
     fullLabel: 'Logic Gates',
     pct: 0,
     icon: '⊃',
-    color: ['#92400e', '#fbbf24'],
-    glow: '#fbbf24',
+    color: ['#1e3a8a', '#60a5fa'],
+    glow: '#60a5fa',
     route: '/module/4',
     status: 'active',
     children: [
-      { id: 'r4c1', label: 'AND / OR / NOT',    pct: 0, color: '#fbbf24', icon: '∧', locked: false },
-      { id: 'r4c2', label: 'NAND / NOR',        pct: 0, color: '#f59e0b', icon: '↑', locked: false },
-      { id: 'r4c3', label: 'XOR / XNOR',        pct: 0, color: '#d97706', icon: '⊕', locked: false },
-      { id: 'r4c4', label: 'Universal Gates',   pct: 0, color: '#fde68a', icon: '⊗', locked: false },
-      { id: 'r4c5', label: 'Gate Minimization', pct: 0, color: '#fef3c7', icon: '▣', locked: false },
+      { id: 'r4c1', label: 'AND / OR / NOT',    pct: 0, color: '#60a5fa', icon: '∧', locked: false },
+      { id: 'r4c2', label: 'NAND / NOR',        pct: 0, color: '#3b82f6', icon: '↑', locked: false },
+      { id: 'r4c3', label: 'XOR / XNOR',        pct: 0, color: '#2563eb', icon: '⊕', locked: false },
+      { id: 'r4c4', label: 'Universal Gates',   pct: 0, color: '#bfdbfe', icon: '⊗', locked: false },
+      { id: 'r4c5', label: 'Gate Minimization', pct: 0, color: '#dbeafe', icon: '▣', locked: false },
     ],
   },
   {
@@ -646,62 +628,6 @@ export const HierarchicalGrindTree: React.FC = () => {
         </div>
       </div>
 
-      {/* ── Bottom Fixed Legend ── */}
-      <div className="flex-shrink-0 flex items-end justify-between py-6 w-full px-10 border-t border-cyan-400/10 z-20" style={{ maxWidth: 1000, background: 'rgba(6,9,15,0.7)', backdropFilter: 'blur(12px)' }}>
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 1, duration: 0.7 }}
-          className="flex flex-col gap-2"
-        >
-          {[
-            { label: 'Nodes Completed', val: '12/36', color: '#22d3ee' },
-            { label: 'Active Pathways', val: '3',     color: '#34d399' },
-            { label: 'XP Earned',       val: '2,480', color: '#fbbf24' },
-            { label: 'Current Streak',  val: '7 days', color: '#fb7185' },
-          ].map(({ label, val, color }) => (
-            <div key={label} className="flex items-center gap-4">
-              <div className="w-2 h-2 rounded-full" style={{ background: color, boxShadow: `0 0 8px ${color}` }} />
-              <div className="text-[11px] font-mono tracking-wider" style={{ color: 'rgba(255,255,255,0.4)' }}>{label}</div>
-              <div className="text-[13px] font-black font-mono" style={{ color }}>{val}</div>
-            </div>
-          ))}
-        </motion.div>
-
-        <div className="flex flex-col items-center">
-          <JewelPolyhedron />
-          <div className="text-[11px] font-black tracking-[0.3em] uppercase mt-2 text-white/40">
-            JEWEL CONSTRUCT Ω
-          </div>
-        </div>
-
-        <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 1.2, duration: 0.7 }}
-          className="flex flex-col gap-3"
-          style={{ width: 180 }}
-        >
-          <div className="rounded-xl p-3" style={{ background: 'rgba(6,9,15,0.8)', border: '1px solid rgba(34,211,238,0.1)' }}>
-            <div className="text-[10px] font-black tracking-[0.3em] uppercase mb-3 px-1" style={{ color: '#22d3ee' }}>
-              DATA PACKETS
-            </div>
-            {Array.from({ length: 5 }).map((_, i) => (
-              <motion.div key={i} className="flex items-center gap-2 mb-1">
-                <motion.div
-                  className="h-1.5 rounded-full flex-1"
-                  style={{ background: `linear-gradient(90deg, ${['#22d3ee','#a78bfa','#34d399','#fbbf24','#fb7185'][i]}40, ${['#22d3ee','#a78bfa','#34d399','#fbbf24','#fb7185'][i]})` }}
-                  animate={{ scaleX: [0.3, 1, 0.3], x: [-10, 0, 10] }}
-                  transition={{ duration: 2.5 + i * 0.4, repeat: Infinity, delay: i * 0.3 }}
-                />
-                <div className="text-[10px] font-mono font-bold w-6 text-right" style={{ color: 'rgba(255,255,255,0.4)' }}>
-                  {['TX','RX','DM','CK','IN'][i]}
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
-      </div>
     </div>
   );
 };

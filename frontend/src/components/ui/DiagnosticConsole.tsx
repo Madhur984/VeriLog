@@ -35,14 +35,14 @@ export const DiagnosticConsole: React.FC<DiagnosticConsoleProps> = ({
   }, []);
 
   const BUTTONS: ConsoleButton[] = [
-    { id: 'globe',      icon: '◉',  label: 'Globe',          color: '#f97316', route: '/' },
-    { id: 'gear',       icon: '⚙',  label: 'Settings',       color: '#ea580c', route: '/settings' },
-    { id: 'code',       icon: '<>', label: 'Code',           color: '#f97316', route: '/verilog' },
-    { id: 'grind',      icon: '⬡',  label: 'Grind Status',   color: '#fbbf24' },
-    { id: 'resources',  icon: '≋',  label: 'Intel',          color: '#f97316', route: '/resources' },
-    { id: 'analytics',  icon: '▦',  label: 'Telemetry',      color: '#fbbf24', route: '/analytics' },
-    { id: 'leaderboard',icon: '⊞',  label: 'Rankings',       color: '#f97316', route: '/community' },
-    { id: 'cmd',        icon: '⌘',  label: 'Command',        color: '#fbbf24', action: onCommandPaletteOpen },
+    { id: 'globe',      icon: '◉',  label: 'Globe',          color: '#3b82f6', route: '/' },
+    { id: 'gear',       icon: '⚙',  label: 'Settings',       color: '#2563eb', route: '/settings' },
+    { id: 'code',       icon: '<>', label: 'Code',           color: '#3b82f6', route: '/verilog' },
+    { id: 'grind',      icon: '⬡',  label: 'Grind Status',   color: '#60a5fa' },
+    { id: 'resources',  icon: '≋',  label: 'Intel',          color: '#3b82f6', route: '/resources' },
+    { id: 'analytics',  icon: '▦',  label: 'Telemetry',      color: '#60a5fa', route: '/analytics' },
+    { id: 'leaderboard',icon: '⊞',  label: 'Rankings',       color: '#3b82f6', route: '/community' },
+    { id: 'cmd',        icon: '⌘',  label: 'Command',        color: '#60a5fa', action: onCommandPaletteOpen },
   ];
 
   const handleBtn = (btn: ConsoleButton) => {
@@ -65,7 +65,7 @@ export const DiagnosticConsole: React.FC<DiagnosticConsoleProps> = ({
         className="relative rounded-2xl overflow-hidden"
         style={{
           background: 'linear-gradient(145deg, #0a0f1a 0%, #05080c 40%, #020408 100%)',
-          border: '1px solid rgba(249, 115, 22, 0.15)',
+          border: '1px solid rgba(59, 130, 246, 0.15)',
           boxShadow: [
             '0 20px 60px rgba(0,0,0,0.9)',
             '0 0 0 1px rgba(255,255,255,0.04)',
@@ -92,18 +92,18 @@ export const DiagnosticConsole: React.FC<DiagnosticConsoleProps> = ({
         <div
           className="flex items-center justify-between px-4 py-2"
           style={{
-            background: 'linear-gradient(90deg, rgba(249, 115, 22, 0.08) 0%, transparent 100%)',
-            borderBottom: '1px solid rgba(249, 115, 22, 0.1)',
+            background: 'linear-gradient(90deg, rgba(59, 130, 246, 0.08) 0%, transparent 100%)',
+            borderBottom: '1px solid rgba(59, 130, 246, 0.1)',
           }}
         >
           <div className="flex items-center gap-2">
             <motion.div
               className="w-2 h-2 rounded-full"
-              style={{ background: '#f97316', boxShadow: '0 0 6px #f97316' }}
+              style={{ background: '#3b82f6', boxShadow: '0 0 6px #3b82f6' }}
               animate={{ opacity: [1, 0.3, 1] }}
               transition={{ duration: 1.2, repeat: Infinity }}
             />
-            <span className="text-[7px] font-black tracking-[0.35em] uppercase" style={{ color: '#f9731680' }}>
+            <span className="text-[7px] font-black tracking-[0.35em] uppercase" style={{ color: '#3b82f680' }}>
               AXE-OR // READY
             </span>
           </div>
@@ -126,8 +126,8 @@ export const DiagnosticConsole: React.FC<DiagnosticConsoleProps> = ({
             className="rounded-lg p-3 relative overflow-hidden"
             style={{
               background: '#020408',
-              border: '1px solid rgba(249, 115, 22, 0.25)',
-              boxShadow: 'inset 0 2px 8px rgba(0,0,0,0.9), 0 0 20px rgba(249, 115, 22, 0.05)',
+              border: '1px solid rgba(59, 130, 246, 0.25)',
+              boxShadow: 'inset 0 2px 8px rgba(0,0,0,0.9), 0 0 20px rgba(59, 130, 246, 0.05)',
             }}
           >
             {/* CRT scanline */}
@@ -136,14 +136,14 @@ export const DiagnosticConsole: React.FC<DiagnosticConsoleProps> = ({
               style={{
                 backgroundImage: `repeating-linear-gradient(
                   0deg,
-                  rgba(249, 115, 22, 0.15) 0px,
-                  rgba(249, 115, 22, 0.15) 1px,
+                  rgba(59, 130, 246, 0.15) 0px,
+                  rgba(59, 130, 246, 0.15) 1px,
                   transparent 1px,
                   transparent 3px
                 )`,
               }}
             />
-            <div className="text-[6px] font-mono tracking-[0.25em] uppercase mb-1" style={{ color: '#f9731640' }}>
+            <div className="text-[6px] font-mono tracking-[0.25em] uppercase mb-1" style={{ color: '#3b82f640' }}>
               MISSION_TELEMETRY
             </div>
             <AnimatePresence mode="wait">
@@ -154,7 +154,7 @@ export const DiagnosticConsole: React.FC<DiagnosticConsoleProps> = ({
                 exit={{ opacity: 0, y: -4 }}
                 transition={{ duration: 0.3 }}
                 className="text-[9px] font-black tracking-[0.2em] font-mono"
-                style={{ color: '#f97316', textShadow: '0 0 10px #f9731680' }}
+                style={{ color: '#3b82f6', textShadow: '0 0 10px #3b82f680' }}
               >
                 {TICKER_MSGS[tickerIdx]}
               </motion.div>
@@ -162,7 +162,7 @@ export const DiagnosticConsole: React.FC<DiagnosticConsoleProps> = ({
             {/* Blinking cursor */}
             <motion.span
               className="inline-block ml-1 text-[9px] font-mono"
-              style={{ color: '#f97316' }}
+              style={{ color: '#3b82f6' }}
               animate={{ opacity: [1, 0, 1] }}
               transition={{ duration: 0.8, repeat: Infinity }}
             >
@@ -280,6 +280,6 @@ export const DiagnosticConsole: React.FC<DiagnosticConsoleProps> = ({
 };
 
 const LED_STRIP_COLORS = [
-  '#f97316', '#ea580c', '#fbbf24', '#7c2d12',
-  '#f97316', '#ca8a04', '#ea580c', '#9a3412',
+  '#3b82f6', '#2563eb', '#60a5fa', '#1e3a8a',
+  '#3b82f6', '#1d4ed8', '#2563eb', '#1e40af',
 ];

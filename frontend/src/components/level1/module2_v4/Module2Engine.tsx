@@ -1,15 +1,15 @@
-import React, { useState, useEffect, useCallback, memo } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Activity, Moon, Sun, ArrowRight, ArrowLeft, Terminal, Shield, Cpu, Gauge } from 'lucide-react';
+import { Activity, Moon, Sun, ArrowRight, ArrowLeft } from 'lucide-react';
 
-// ── All rich phase components (v6 Cursor Editions) ─────────────────
-import { P1_SignalReality }    from './scenes/phases/P1_SignalReality';
-import { P2_TimeControl }       from './scenes/phases/P2_TimeControl';
-import { P3_ValuePrecision }    from './scenes/phases/P3_ValuePrecision';
-import { P4_SystemConversion }  from './scenes/phases/P4_SystemConversion';
-import { P5_MasterLab }         from './scenes/phases/P5_MasterLab';
-import { KineticText } from './components/UltimateComponents';
+// --- Scene Components ---
+import { P1_SignalReality } from './scenes/phases/P1_SignalReality';
+import { P2_TimeControl } from './scenes/phases/P2_TimeControl';
+import { P3_ValuePrecision } from './scenes/phases/P3_ValuePrecision';
+import { P4_SystemConversion } from './scenes/phases/P4_SystemConversion';
+import { P5_MasterLab } from './scenes/phases/P5_MasterLab';
 
+// --- Types ---
 interface Page {
   id: string;
   part: string;
@@ -17,7 +17,6 @@ interface Page {
   label: string;
   subtitle: string;
   accentHex: string;
-  kind: 'theory' | 'activity' | 'lab';
   Component: React.FC<any>;
 }
 
@@ -25,225 +24,188 @@ const PAGES: Page[] = [
   {
     id: 'reality', part: 'PHASE I · ANALOG REALITY', partNum: 1,
     label: 'The Continuous Source',
-    subtitle: 'Exploring the infinite resolution of the physical world',
-    accentHex: '#f97316', kind: 'theory',
+    subtitle: 'Exploring the infinite resolution of the physical world.',
+    accentHex: '#06b6d4',
     Component: P1_SignalReality,
   },
   {
     id: 'time', part: 'PHASE II · THE CLASH', partNum: 2,
     label: 'Temporal Sampling',
-    subtitle: 'Mouse mapping the Nyquist limit & Aliasing ghosting',
-    accentHex: '#EF4444', kind: 'activity',
+    subtitle: 'Mapping the Nyquist limit & Aliasing ghosting.',
+    accentHex: '#0891b2',
     Component: P2_TimeControl,
   },
   {
     id: 'precision', part: 'PHASE III · BIT DEPTH', partNum: 3,
     label: 'Value Quantization',
-    subtitle: 'The cost of turning reality into numbers',
-    accentHex: '#00D4FF', kind: 'activity',
+    subtitle: 'The cost of turning reality into numbers.',
+    accentHex: '#0ea5e9',
     Component: P3_ValuePrecision,
   },
   {
     id: 'conversion', part: 'PHASE IV · THE BRIDGE', partNum: 4,
     label: 'Systemic Conversion',
-    subtitle: 'Solving real-world signal failures via cursor probe',
-    accentHex: '#A855F7', kind: 'activity',
+    subtitle: 'Solving real-world signal failures via cursor probe.',
+    accentHex: '#0284c7',
     Component: P4_SystemConversion,
   },
   {
     id: 'mastery', part: 'PHASE V · THE FORGE', partNum: 5,
     label: 'Engineering Forge',
-    subtitle: 'Ultimate Mastery Audit: Configure the perfect capture',
-    accentHex: '#22C55E', kind: 'lab',
+    subtitle: 'Ultimate Mastery Audit: Configure the perfect capture.',
+    accentHex: '#0369a1',
     Component: P5_MasterLab,
   },
 ];
 
-const PART_COLOR: Record<number, string> = {
-  1: '#f97316',
-  2: '#EF4444',
-  3: '#00D4FF',
-  4: '#A855F7',
-  5: '#22C55E',
-};
+const Sidebar: React.FC<{
+  current: number; isDarkMode: boolean; onChange: (i: number) => void; toggleTheme: () => void;
+}> = ({ current, isDarkMode, onChange, toggleTheme }) => {
+  const textColor = isDarkMode ? 'text-white' : 'text-slate-900';
+  const borderColor = isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
+  const progress = ((current + 1) / PAGES.length) * 100;
 
-const KIND_BADGE: Record<string, { label: string; color: string }> = {
-  theory:   { label: '📖 Origin',    color: '#f97316' },
-  activity: { label: '⚡ Instrument',  color: '#00D4FF' },
-  lab:      { label: '🔬 The Forge',  color: '#22C55E' },
-};
-
-// ── Side Menu ─────────────────────────────────────────────────────
-
-const Sidebar: React.FC<{ current: number; onChange: (i: number) => void }> = ({ current, onChange }) => {
-    return (
-        <div className="w-80 border-r border-white/5 bg-[#050608] flex flex-col z-20 overflow-hidden">
-            <div className="p-12 border-b border-white/5 space-y-2">
-                <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-xl bg-orange-500/10 flex items-center justify-center border border-orange-500/20 shadow-[0_0_15px_rgba(249,115,22,0.1)]">
-                        <Activity className="text-orange-500" size={16} />
-                    </div>
-                    <div className="flex flex-col">
-                        <span className="text-[11px] font-black italic text-white uppercase tracking-tighter">AXE-OR // SYS</span>
-                        <span className="text-[8px] font-mono text-white/20 uppercase tracking-[0.3em]">Module_02</span>
-                    </div>
-                </div>
-            </div>
-
-            <nav className="flex-1 p-8 space-y-4 overflow-y-auto">
-                <div className="text-[9px] font-black text-white/20 uppercase tracking-[0.4em] mb-8">Navigation_Tree</div>
-                {PAGES.map((page, i) => {
-                    const isActive = current === i;
-                    const acc = PART_COLOR[page.partNum];
-                    return (
-                        <button 
-                            key={page.id}
-                            onClick={() => onChange(i)}
-                            className={`group relative w-full p-6 pb-8 rounded-[2rem] border transition-all text-left overflow-hidden ${isActive ? 'bg-white/5 border-white/10' : 'bg-transparent border-transparent hover:bg-white/[0.02]'}`}
-                        >
-                            <div className="flex items-center gap-4 relative z-10">
-                                <span className={`text-[10px] font-black font-mono px-2 py-0.5 rounded border transition-colors ${isActive ? 'bg-white text-black border-white' : 'text-white/20 border-white/10'}`}>{i + 1}</span>
-                                <div className="flex-1">
-                                    <h4 className={`text-[13px] font-black uppercase tracking-tighter transition-colors ${isActive ? 'text-white' : 'text-white/20 group-hover:text-white/40'}`}>{page.label}</h4>
-                                    {isActive && <span className="text-[8px] font-mono text-white/40 uppercase tracking-widest mt-1 block animate-pulse">ACTIVE_SUBSYSTEM</span>}
-                                </div>
-                            </div>
-                            {isActive && (
-                                <motion.div layoutId="nav-glow" className="absolute bottom-0 left-0 right-0 h-1" style={{ backgroundColor: acc, boxShadow: `0 0 20px ${acc}` }} />
-                            )}
-                        </button>
-                    )
-                })}
-            </nav>
-
-            <div className="p-10 border-t border-white/5 space-y-6">
-                 <div className="space-y-4">
-                    <div className="flex justify-between items-center text-[9px] font-mono font-black uppercase text-white/20 tracking-widest">
-                        <span>Initialization</span>
-                        <span>{Math.round(((current + 1) / PAGES.length) * 100)}%</span>
-                    </div>
-                    <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
-                        <motion.div initial={{ width: 0 }} animate={{ width: `${((current + 1) / PAGES.length) * 100}%` }} className="h-full bg-orange-500 shadow-[0_0_10px_rgba(249,115,22,0.4)]" />
-                    </div>
-                 </div>
-                 <div className="flex items-center gap-3 text-[8px] font-mono text-white/10 uppercase tracking-[0.3em]">
-                    <Shield size={10} />
-                    <span>ENCRYPTION_LAYER_ACTIVE</span>
-                 </div>
-            </div>
-        </div>
-    )
-}
-
-// ── Top Bar ───────────────────────────────────────────────────────
-
-const TopBar: React.FC<{ page: Page; isDarkMode: boolean }> = ({ page, isDarkMode }) => {
-  const accent = PART_COLOR[page.partNum];
-  const badge = KIND_BADGE[page.kind];
   return (
-    <div className={`sticky top-0 z-50 border-b backdrop-blur-3xl transition-all p-10 px-16 ${isDarkMode ? 'bg-[#0A0C10]/60 border-white/5' : 'bg-white/70 border-black/5'}`}>
-        <div className="flex items-center justify-between max-w-none mx-auto">
-            <div className="flex items-center gap-10">
-                <div className="flex flex-col">
-                    <span className="text-[10px] font-black font-mono tracking-[0.4em] uppercase" style={{ color: accent }}>{page.part}</span>
-                    <h2 className="text-4xl font-black italic text-white uppercase tracking-tighter tracking-[-0.05em] leading-none mt-2">{page.label}</h2>
-                </div>
-                <div className="h-10 w-px bg-white/5 hidden xl:block" />
-                <div className="hidden xl:flex flex-col">
-                    <span className="text-[10px] font-black font-mono tracking-[0.4em] uppercase text-white/20 whitespace-nowrap">Status_Brief</span>
-                    <span className="text-[11px] font-medium italic text-white/40 mt-1">{page.subtitle}</span>
-                </div>
-            </div>
-            <div className="flex items-center gap-8">
-                 <div className="flex flex-col items-end">
-                    <div className="flex items-center gap-3">
-                        <Terminal size={14} className="text-white/20" />
-                        <span className="text-[10px] font-black font-mono uppercase tracking-widest" style={{ color: badge.color }}>{badge.label}</span>
-                    </div>
-                    <span className="text-[8px] font-mono text-white/20 mt-1 uppercase tracking-widest">INSTRUMENT_SYNC: 100%</span>
-                 </div>
-            </div>
+    <div className={`w-[320px] h-full flex-shrink-0 border-r flex flex-col z-20 transition-all duration-700 ${isDarkMode ? 'bg-[#040200]' : 'bg-slate-50'}`} style={{ borderColor }}>
+      <header className="p-10 border-b" style={{ borderColor }}>
+        <div className="flex items-center gap-4">
+          <div className="w-10 h-10 rounded-2xl bg-cyan-500 flex items-center justify-center text-black">
+            <Activity size={20} />
+          </div>
+          <div>
+            <h2 className={`text-sm font-black tracking-tight ${textColor}`}>Digital Physics</h2>
+            <p className="text-[10px] uppercase font-mono tracking-widest text-cyan-500 font-bold">Module 03</p>
+          </div>
         </div>
+      </header>
+
+      <nav className="p-8 flex-1 overflow-y-auto space-y-3">
+        {PAGES.map((page, idx) => {
+          const isActive = current === idx;
+          const isDone = idx < current;
+          return (
+            <button 
+              key={page.id} 
+              onClick={() => onChange(idx)}
+              className={`group relative w-full text-left p-4 rounded-2xl transition-all duration-500 flex items-start gap-4 ${isActive ? (isDarkMode ? 'bg-cyan-500/10 border-cyan-500/30' : 'bg-white border-slate-200 shadow-lg') : 'hover:bg-black/5 hover:translate-x-1'}`}
+            >
+              <div className={`mt-0.5 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black border transition-all ${isDone ? 'bg-cyan-500 border-cyan-500 text-black' : isActive ? 'bg-cyan-500 border-cyan-500 text-black' : 'bg-transparent border-white/10 opacity-30'}`}>
+                {isDone ? '✓' : idx + 1}
+              </div>
+              <div className="flex-1 min-w-0">
+                <h3 className={`text-[13px] font-bold truncate ${isActive ? 'text-cyan-500' : isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>{page.label}</h3>
+                <div className={`text-[9px] mt-1 font-mono uppercase tracking-widest truncate opacity-30`}>{page.part}</div>
+              </div>
+            </button>
+          );
+        })}
+      </nav>
+
+      <footer className="p-10 border-t space-y-6" style={{ borderColor }}>
+        <div className="space-y-4">
+          <div className="flex justify-between items-end">
+            <span className="text-[10px] font-mono uppercase tracking-[0.2em] opacity-40">Progress</span>
+            <span className="text-sm font-black text-cyan-500">{Math.round(progress)}%</span>
+          </div>
+          <div className="h-1 w-full bg-slate-900 rounded-full overflow-hidden">
+            <motion.div animate={{ width: `${progress}%` }} className="h-full bg-cyan-500 shadow-[0_0_10px_#06b6d4]" />
+          </div>
+        </div>
+
+        <button onClick={toggleTheme} className={`h-12 w-full rounded-2xl border flex items-center justify-center gap-3 text-[10px] font-black uppercase tracking-widest transition-all ${isDarkMode ? 'border-white/10 text-slate-400 hover:bg-white/5' : 'border-slate-200 text-slate-600 hover:bg-slate-100'}`}>
+          {isDarkMode ? <Sun size={14} /> : <Moon size={14} />} {isDarkMode ? 'Light Mode' : 'Dark Mode'}
+        </button>
+      </footer>
     </div>
   );
 };
 
-// ── Main Engine ───────────────────────────────────────────────────
-
-export const Module2Engine: React.FC<{ 
-    isDarkMode: boolean; 
-    onThemeToggle: () => void;
-    state: any;
-    onUpdate: any;
-    time: number;
-}> = ({ isDarkMode, state, onUpdate, time }) => {
+export const Module2Engine: React.FC<{
+  isDarkMode: boolean; 
+  onThemeToggle: () => void;
+  state: any;
+  onUpdate: any;
+  time: number;
+}> = ({ isDarkMode, onThemeToggle, state, onUpdate, time }) => {
   const [current, setCurrent] = useState(0);
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  const go = useCallback((dir: number) => {
+    setCurrent(c => Math.max(0, Math.min(PAGES.length - 1, c + dir)));
+  }, []);
+
+  useEffect(() => {
+    contentRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [current]);
+
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowRight') go(1);
+      if (e.key === 'ArrowLeft') go(-1);
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [go]);
+
   const page = PAGES[current];
   const { Component } = page;
 
-  const navigate = (dir: number) => {
-      setCurrent(c => Math.max(0, Math.min(PAGES.length - 1, c + dir)));
-  };
-
   return (
-    <div className="flex h-screen overflow-hidden bg-[#050608]">
-      {/* Background Decal */}
-      <div className="absolute inset-x-0 bottom-0 top-[20%] pointer-events-none opacity-[0.02]" style={{ backgroundImage: 'radial-gradient(circle at 100% 100%, #00D4FF 0%, transparent 50%), radial-gradient(circle at 0% 0%, #f97316 0%, transparent 50%)' }} />
+    <div className={`flex h-screen overflow-hidden ${isDarkMode ? 'bg-[#020100]' : 'bg-white'}`}>
+      <Sidebar current={current} isDarkMode={isDarkMode} onChange={setCurrent} toggleTheme={onThemeToggle} />
+      
+      <div className="flex-1 flex flex-col h-full overflow-hidden">
+        <header className="h-20 border-b flex items-center justify-between px-12 z-10" style={{ borderColor: isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }}>
+          <div className="flex flex-col">
+            <span className="text-[10px] font-mono uppercase tracking-[0.4em] text-cyan-500 font-bold">{page.part}</span>
+            <h2 className="text-xl font-bold tracking-tight">{page.label}</h2>
+          </div>
+          <div className="hidden md:flex items-center gap-8">
+             <div className="text-right">
+                <div className="text-[8px] font-mono uppercase tracking-widest opacity-30">Analytical // Context</div>
+                <div className="text-[10px] font-mono mt-0.5">{page.subtitle}</div>
+             </div>
+             <div className="text-sm font-mono opacity-20">{current + 1} / {PAGES.length}</div>
+          </div>
+        </header>
 
-      <Sidebar current={current} onChange={setCurrent} />
-
-      <div className="flex-1 flex flex-col min-w-0 relative z-10">
-        <TopBar page={page} isDarkMode={isDarkMode} />
-        
-        <div className="flex-1 overflow-y-auto scroll-smooth">
+        <div ref={contentRef} className="flex-1 overflow-y-auto scroll-smooth">
           <AnimatePresence mode="wait">
             <motion.div
               key={page.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
               transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-              className="p-16 pb-40 max-w-none"
+              className="max-w-5xl mx-auto px-12 py-24"
             >
               <Component state={state} onUpdate={onUpdate} time={time} isDarkMode={isDarkMode} />
             </motion.div>
           </AnimatePresence>
         </div>
 
-        {/* Cinematic Footer Console */}
-        <div className="h-32 border-t border-white/5 backdrop-blur-3xl flex items-center justify-between px-16 px-16">
-            <div className="flex items-center gap-12">
-                <button 
-                    onClick={() => navigate(-1)} disabled={current === 0}
-                    className="flex items-center gap-3 px-8 py-4 rounded-2xl bg-white/5 text-white/40 hover:text-white disabled:opacity-0 transition-all font-black uppercase tracking-widest text-[10px] border border-transparent hover:border-white/10"
-                >
-                    <ArrowLeft size={16} /> Previous
-                </button>
-                <div className="h-8 w-px bg-white/5 hidden md:block" />
-                <div className="hidden md:flex flex-col">
-                    <span className="text-[10px] font-black text-white/20 uppercase tracking-[0.4em] mb-1">System_Mode</span>
-                    <span className="text-xs font-black italic text-white/60 uppercase">Manual_Override_Probe</span>
-                </div>
-            </div>
+        <footer className="h-24 border-t flex items-center justify-between px-12 z-10" style={{ borderColor: isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }}>
+          <button 
+            disabled={current === 0} 
+            onClick={() => go(-1)} 
+            className={`flex items-center gap-2 px-8 py-3 rounded-2xl font-bold transition-all ${current === 0 ? 'opacity-20 cursor-not-allowed' : 'hover:bg-black/5 active:scale-95'}`}
+          >
+            <ArrowLeft size={18} /> Back
+          </button>
+          
+          <div className="hidden sm:block text-center">
+             <span className="text-[10px] font-mono uppercase tracking-widest opacity-30 block mb-1">Up Next</span>
+             <span className="text-sm font-bold opacity-70">{current < PAGES.length - 1 ? PAGES[current + 1].label : 'Finish Module'}</span>
+          </div>
 
-            <div className="flex items-center gap-12">
-                 <div className="hidden lg:flex items-center gap-4 text-right">
-                    <div className="flex flex-col">
-                        <span className="text-[10px] font-black text-white/20 uppercase tracking-[0.4em]">Next_Ph</span>
-                        <span className="text-xs font-black italic text-white/40 uppercase">{PAGES[current + 1]?.label || 'FINAL_AUDIT'}</span>
-                    </div>
-                 </div>
-                <button 
-                    onClick={() => navigate(1)} disabled={current === PAGES.length - 1}
-                    className="relative group flex items-center gap-4 px-12 py-5 rounded-3xl bg-[#00D4FF] text-black transition-all font-black uppercase tracking-[0.2em] text-[11px] shadow-[0_20px_40px_rgba(0,212,255,0.2)]"
-                    style={{ backgroundColor: PART_COLOR[page.partNum+1] || PART_COLOR[page.partNum] }}
-                >
-                    <div className="absolute inset-0 bg-white/20 scale-x-0 group-hover:scale-x-100 transition-transform origin-left rounded-3xl" />
-                    <span className="relative z-10">{current === PAGES.length - 1 ? 'Mastered' : 'Proceed'}</span> 
-                    <ArrowRight size={18} className="relative z-10" />
-                </button>
-            </div>
-        </div>
+          <button 
+            onClick={() => go(1)} 
+            disabled={current === PAGES.length - 1}
+            className={`flex items-center gap-2 px-10 py-3 rounded-2xl font-black text-black transition-all active:scale-95 ${current === PAGES.length - 1 ? 'bg-slate-800 text-slate-500' : 'bg-cyan-500 shadow-xl shadow-cyan-500/20 hover:shadow-cyan-500/40'}`}
+          >
+            {current === PAGES.length - 1 ? 'Complete' : 'Next Step'} <ArrowRight size={18} />
+          </button>
+        </footer>
       </div>
     </div>
   );

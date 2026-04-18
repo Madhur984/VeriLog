@@ -10,7 +10,6 @@ import { KineticText } from '../components/ui/KineticText';
 
 import { DiagnosticConsole } from '../components/ui/DiagnosticConsole';
 import { HierarchicalGrindTree } from '../components/ui/HierarchicalGrindTree';
-import { GlobalStatusHUD, GlobalOscilloscope } from '../components/ui/PortalInstrumentation';
 
 const getTourKey = (n: string | null) => `digi_tour_done_${n ?? 'guest'}`;
 
@@ -34,7 +33,7 @@ const PCBBackground: React.FC = () => {
       <div 
         className="absolute w-[600px] h-[600px] rounded-full pointer-events-none opacity-20"
         style={{
-          background: 'radial-gradient(circle, rgba(249, 115, 22, 0.15) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%)',
           left: mouse.x - 300,
           top: mouse.y - 300,
           filter: 'blur(40px)',
@@ -47,10 +46,10 @@ const PCBBackground: React.FC = () => {
         className="absolute inset-0"
         style={{
           backgroundImage: `
-            linear-gradient(rgba(249, 115, 22, 0.05) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(249, 115, 22, 0.05) 1px, transparent 1px),
-            linear-gradient(rgba(249, 115, 22, 0.02) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(249, 115, 22, 0.02) 1px, transparent 1px)
+            linear-gradient(rgba(59, 130, 246, 0.05) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(59, 130, 246, 0.05) 1px, transparent 1px),
+            linear-gradient(rgba(59, 130, 246, 0.02) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(59, 130, 246, 0.02) 1px, transparent 1px)
           `,
           backgroundSize: '80px 80px, 80px 80px, 16px 16px, 16px 16px',
         }}
@@ -61,14 +60,14 @@ const PCBBackground: React.FC = () => {
         <defs>
           <pattern id="gold-trace" x="0" y="0" width="200" height="200" patternUnits="userSpaceOnUse">
             {/* Gold horizontal traces */}
-            <path d="M0,100 L60,100 L60,60 L100,60 L100,0" stroke="#f97316" strokeWidth="1.5" fill="none" opacity="0.3" />
-            <path d="M200,100 L140,100 L140,140 L100,140 L100,200" stroke="#f97316" strokeWidth="1.5" fill="none" opacity="0.3" />
+            <path d="M0,100 L60,100 L60,60 L100,60 L100,0" stroke="#3b82f6" strokeWidth="1.5" fill="none" opacity="0.3" />
+            <path d="M200,100 L140,100 L140,140 L100,140 L100,200" stroke="#3b82f6" strokeWidth="1.5" fill="none" opacity="0.3" />
             {/* Indigo traces */}
             <path d="M0,50 L30,50 L30,100 L80,100" stroke="#00D4FF" strokeWidth="1" fill="none" opacity="0.2" />
             <path d="M200,150 L170,150 L170,100 L120,100" stroke="#A855F7" strokeWidth="1" fill="none" opacity="0.2" />
             {/* Solder pads */}
-            <circle cx="60" cy="100" r="4" fill="none" stroke="#f97316" strokeWidth="1.5" />
-            <circle cx="140" cy="100" r="4" fill="none" stroke="#f97316" strokeWidth="1.5" />
+            <circle cx="60" cy="100" r="4" fill="none" stroke="#3b82f6" strokeWidth="1.5" />
+            <circle cx="140" cy="100" r="4" fill="none" stroke="#3b82f6" strokeWidth="1.5" />
             <rect x="96" y="56" width="8" height="8" fill="none" stroke="#00D4FF" strokeWidth="1" />
             <rect x="96" y="136" width="8" height="8" fill="none" stroke="#a78bfa" strokeWidth="1" />
           </pattern>
@@ -130,11 +129,11 @@ const ProfileCard: React.FC<{
       className="fixed top-8 right-8 z-50 p-4 rounded-2xl w-60"
       style={{
         background: 'rgba(5, 8, 12, 0.95)',
-        border: '1px solid rgba(249, 115, 22, 0.2)',
+        border: '1px solid rgba(59, 130, 246, 0.2)',
         backdropFilter: 'blur(20px)',
         boxShadow: [
           '0 20px 50px rgba(0,0,0,0.8)',
-          '0 0 0 1px rgba(249, 115, 22, 0.05)',
+          '0 0 0 1px rgba(59, 130, 246, 0.05)',
           'inset 0 1px 1px rgba(255,255,255,0.02)',
         ].join(', '),
       }}
@@ -145,9 +144,9 @@ const ProfileCard: React.FC<{
           <div
             className="w-12 h-12 rounded-xl flex items-center justify-center text-xl font-black relative overflow-hidden group"
             style={{
-              background: 'linear-gradient(135deg, #f97316, #ea580c)',
+              background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
               color: '#000',
-              boxShadow: '0 0 15px rgba(249, 115, 22, 0.3)',
+              boxShadow: '0 0 15px rgba(59, 130, 246, 0.3)',
               fontFamily: 'monospace',
             }}
           >
@@ -164,8 +163,8 @@ const ProfileCard: React.FC<{
               <KineticText text={name} />
             </div>
             <div className="flex items-center gap-1.5 mt-0.5">
-              <div className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse shadow-[0_0_6px_#f97316]" />
-              <span className="text-[9px] font-bold text-orange-500/80 tracking-widest uppercase">
+              <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse shadow-[0_0_6px_#3b82f6]" />
+              <span className="text-[9px] font-bold text-blue-500/80 tracking-widest uppercase">
                 Tactical Session
               </span>
             </div>
@@ -190,7 +189,7 @@ const ProfileCard: React.FC<{
         <div className="h-1.5 w-full bg-black/60 rounded-full overflow-hidden border border-white/5 p-[1px]">
           <motion.div
             className="h-full rounded-full"
-            style={{ background: 'linear-gradient(90deg, #f97316, #fbbf24)' }}
+            style={{ background: 'linear-gradient(90deg, #3b82f6, #60a5fa)' }}
             initial={{ width: 0 }}
             animate={{ width: `${progress}%` }}
             transition={{ delay: 1.8, duration: 1.2 }}
@@ -236,9 +235,9 @@ const ProfileCard: React.FC<{
           </div>
         </div>
         <motion.button
-          whileHover={{ scale: 1.05, background: 'rgba(249,115,22,0.1)' }}
+          whileHover={{ scale: 1.05, background: 'rgba(59, 130, 246, 0.1)' }}
           whileTap={{ scale: 0.95 }}
-          className="px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-widest border border-orange-500/20 text-orange-500 transition-colors"
+          className="px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-widest border border-blue-500/20 text-blue-500 transition-colors"
         >
           Analysis
         </motion.button>
@@ -280,16 +279,7 @@ export const WorkstationHome: React.FC = () => {
   return (
     <div className="h-screen flex overflow-hidden font-sans" style={{ backgroundColor: '#06090f', color: '#cbd5e1' }}>
       {/* ── TOP CENTER HUD ── */}
-      <div className="fixed top-8 left-1/2 -translate-x-1/2 z-[60] pointer-events-none">
-        <motion.div
-           initial={{ opacity: 0, y: -20 }}
-           animate={{ opacity: 1, y: 0 }}
-           transition={{ delay: 1.0, duration: 0.8 }}
-           className="pointer-events-auto"
-        >
-            <GlobalStatusHUD />
-        </motion.div>
-      </div>
+      {/* HUD Removed */}
 
       {/* PCB substrate background with moving data packets */}
       <PCBBackground />
@@ -335,10 +325,10 @@ export const WorkstationHome: React.FC = () => {
               className="flex-1 h-full relative rounded-3xl flex flex-col overflow-hidden"
               style={{
                 background: 'linear-gradient(160deg, rgba(5, 8, 12, 0.95) 0%, rgba(3, 5, 8, 1) 100%)',
-                border: '1px solid rgba(249, 115, 22, 0.1)',
+                border: '1px solid rgba(59, 130, 246, 0.1)',
                 boxShadow: [
                   '0 40px 100px rgba(0,0,0,0.95)',
-                  '0 0 0 1px rgba(249, 115, 22, 0.05)',
+                  '0 0 0 1px rgba(59, 130, 246, 0.05)',
                   'inset 0 1px 1px rgba(255,255,255,0.02)',
                 ].join(', '),
               }}
@@ -365,8 +355,8 @@ export const WorkstationHome: React.FC = () => {
                   className="absolute inset-0 rounded-3xl pointer-events-none opacity-20"
                   style={{
                     backgroundImage: `
-                      linear-gradient(rgba(249, 115, 22, 0.07) 1px, transparent 1px),
-                      linear-gradient(90deg, rgba(249, 115, 22, 0.07) 1px, transparent 1px)
+                      linear-gradient(rgba(59, 130, 246, 0.07) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(59, 130, 246, 0.07) 1px, transparent 1px)
                     `,
                     backgroundSize: '24px 24px',
                   }}
@@ -384,9 +374,7 @@ export const WorkstationHome: React.FC = () => {
       <OnboardingTour isOpen={tourOpen} onClose={() => setTourOpen(false)} storageKey={getTourKey(firstName)} />
 
       {/* ── BOTTOM MASTER SCOPE ── */}
-      <div className="fixed bottom-0 left-0 right-0 z-[60] pointer-events-none">
-          <GlobalOscilloscope />
-      </div>
+      {/* Oscilloscope Removed */}
     </div>
   );
 };

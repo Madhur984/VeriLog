@@ -24,7 +24,7 @@ import { ModuleFour } from './pages/ModuleFour';
 import { ModuleFive } from './pages/ModuleFive';
 
 // Component-based Routes
-import { Module1Root } from './components/level1/module1_v3/Module1Root';
+import { Module1Root } from './components/level1/module1_v4/Module1Root';
 
 // Special default exports
 import Workbench from './pages/Workbench';
@@ -81,7 +81,6 @@ function App() {
           <Route path="/module/1" element={<Module1Root />} />
           <Route path="/module/1/1" element={<ModuleOne />} />
           <Route path="/module/2" element={<ModuleTwo />} />
-          <Route path="/module/3" element={<ModuleThree />} />
           <Route path="/module/4" element={<ModuleFour />} />
           <Route path="/module/5" element={<ModuleFive />} />
         </Route>
