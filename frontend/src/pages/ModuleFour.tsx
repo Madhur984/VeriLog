@@ -38,15 +38,27 @@ const PAGES: Page[] = [
   { id: 'alulab', part: 'PART VII · CAPSTONE', partNum: 7, label: 'ALU Laboratory', subtitle: 'The Silicon Heart: Building a 1-bit ALU.', accentHex: '#06b6d4', Component: ALULab },
 ];
 
+const getPartTheme = (part: string) => {
+  if (part.includes('I ·')) return { primary: '#06b6d4', secondary: '#3b82f6', glow: 'rgba(6, 182, 212, 0.1)' };
+  if (part.includes('II ·')) return { primary: '#10b981', secondary: '#14b8a6', glow: 'rgba(16, 185, 129, 0.1)' };
+  if (part.includes('III ·')) return { primary: '#818cf8', secondary: '#6366f1', glow: 'rgba(129, 140, 248, 0.1)' };
+  if (part.includes('IV ·')) return { primary: '#f43f5e', secondary: '#fb7185', glow: 'rgba(244, 63, 94, 0.1)' };
+  if (part.includes('V ·')) return { primary: '#f59e0b', secondary: '#fbbf24', glow: 'rgba(245, 158, 11, 0.1)' };
+  if (part.includes('VI ·')) return { primary: '#a855f7', secondary: '#9333ea', glow: 'rgba(168, 85, 247, 0.1)' };
+  if (part.includes('VII ·')) return { primary: '#ec4899', secondary: '#db2777', glow: 'rgba(236, 72, 153, 0.1)' };
+  return { primary: '#06b6d4', secondary: '#3b82f6', glow: 'rgba(6, 182, 212, 0.1)' };
+};
+
 const Sidebar: React.FC<{
   current: number; isDarkMode: boolean; onChange: (i: number) => void; toggleTheme: () => void;
-}> = ({ current, isDarkMode, onChange, toggleTheme }) => {
+  theme: { primary: string; secondary: string; glow: string };
+}> = ({ current, isDarkMode, onChange, toggleTheme, theme }) => {
   const textColor = isDarkMode ? 'text-white' : 'text-slate-900';
   const borderColor = isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
   const progress = ((current + 1) / PAGES.length) * 100;
 
   return (
-    <div className={`w-[320px] h-full flex-shrink-0 border-r flex flex-col z-20 transition-all duration-700 ${isDarkMode ? 'bg-[#040200]' : 'bg-slate-50'}`} style={{ borderColor }}>
+    <div className={`w-[320px] h-full flex-shrink-0 border-r flex flex-col z-20 transition-all duration-700 relative ${isDarkMode ? 'bg-[#040200]/40 backdrop-blur-md' : 'bg-slate-50/40 backdrop-blur-md'}`} style={{ borderColor }}>
       <header className="p-10 border-b" style={{ borderColor }}>
         <div className="flex items-center gap-4">
           <div className="w-10 h-10 rounded-2xl bg-cyan-500 flex items-center justify-center text-black">
@@ -54,7 +66,7 @@ const Sidebar: React.FC<{
           </div>
           <div>
             <h2 className={`text-sm font-black tracking-tight ${textColor}`}>Logic Gates</h2>
-            <p className="text-[10px] uppercase font-mono tracking-widest text-cyan-500 font-bold">Module 04</p>
+            <p className="text-[10px] uppercase font-mono tracking-widest font-bold transition-colors duration-500" style={{ color: theme.primary }}>Module 04</p>
           </div>
         </div>
       </header>
@@ -70,22 +82,37 @@ const Sidebar: React.FC<{
               {showHeader && (
                 <div className="pt-8 pb-3 px-4 first:pt-0">
                   <div className="flex items-center gap-3">
-                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-500/60 whitespace-nowrap">
+                    <span className="text-[10px] font-black uppercase tracking-[0.2em] opacity-60 whitespace-nowrap transition-colors duration-500" style={{ color: getPartTheme(page.part).primary }}>
                       {page.part}
                     </span>
-                    <div className="h-[1px] w-full bg-cyan-500/10" />
+                    <div className="h-[1px] w-full opacity-10" style={{ backgroundColor: getPartTheme(page.part).primary }} />
                   </div>
                 </div>
               )}
               <button 
-                onClick={() => onChange(idx)}
-                className={`group relative w-full text-left p-4 rounded-2xl transition-all duration-500 flex items-start gap-4 ${isActive ? (isDarkMode ? 'bg-cyan-500/10 border-cyan-500/30' : 'bg-white border-slate-200 shadow-lg') : 'hover:bg-black/5 hover:translate-x-1'}`}
+                onClick={() => onChange(idx)} 
+                className={`group relative w-full text-left p-4 rounded-2xl transition-all duration-500 flex items-start gap-4 ${isActive ? (isDarkMode ? 'border transition-colors' : 'bg-white border-slate-200 shadow-lg') : 'hover:bg-black/5 hover:translate-x-1'}`}
+                style={{ 
+                  backgroundColor: isActive && isDarkMode ? theme.glow : undefined,
+                  borderColor: isActive && isDarkMode ? `${theme.primary}33` : 'transparent'
+                }}
               >
-                <div className={`mt-0.5 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black border transition-all ${isDone ? 'bg-cyan-500 border-cyan-500 text-black' : isActive ? 'bg-cyan-500 border-cyan-500 text-black' : 'bg-transparent border-white/10 opacity-30'}`}>
+                <div 
+                  className={`mt-0.5 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black border transition-all duration-500 ${isDone || isActive ? 'text-black' : 'bg-transparent border-white/10 opacity-30'}`}
+                  style={{ 
+                    backgroundColor: (isDone || isActive) ? theme.primary : 'transparent',
+                    borderColor: (isDone || isActive) ? theme.primary : undefined
+                  }}
+                >
                   {isDone ? '✓' : idx + 1}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h3 className={`text-[13px] font-bold truncate ${isActive ? 'text-cyan-500' : isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>{page.label}</h3>
+                  <h3 
+                    className={`text-[13px] font-bold truncate transition-colors duration-500 ${isActive ? '' : isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}
+                    style={{ color: isActive ? theme.primary : undefined }}
+                  >
+                    {page.label}
+                  </h3>
                   <p className="text-[9px] mt-0.5 opacity-40 font-medium truncate">{page.subtitle}</p>
                 </div>
               </button>
@@ -98,10 +125,14 @@ const Sidebar: React.FC<{
         <div className="space-y-4">
           <div className="flex justify-between items-end">
             <span className="text-[10px] font-mono uppercase tracking-[0.2em] opacity-40">Progress</span>
-            <span className="text-sm font-black text-cyan-500">{Math.round(progress)}%</span>
+            <span className="text-sm font-black transition-colors duration-500" style={{ color: theme.primary }}>{Math.round(progress)}%</span>
           </div>
           <div className="h-1 w-full bg-slate-900 rounded-full overflow-hidden">
-            <motion.div animate={{ width: `${progress}%` }} className="h-full bg-cyan-500 shadow-[0_0_10px_#06b6d4]" />
+            <motion.div 
+              animate={{ width: `${progress}%`, backgroundColor: theme.primary }} 
+              className="h-full shadow-[0_0_10px_rgba(0,0,0,0.5)]" 
+              style={{ boxShadow: `0 0 10px ${theme.primary}` }}
+            />
           </div>
         </div>
 
@@ -137,16 +168,31 @@ export const ModuleFour: React.FC = () => {
   }, [go]);
 
   const page = PAGES[current];
+  const theme = getPartTheme(page.part);
   const { Component } = page;
 
   return (
-    <div className={`flex h-screen overflow-hidden ${isDarkMode ? 'bg-[#020100]' : 'bg-white'}`}>
-      <Sidebar current={current} isDarkMode={isDarkMode} onChange={setCurrent} toggleTheme={() => setIsDarkMode(!isDarkMode)} />
+    <div className={`flex h-screen overflow-hidden transition-colors duration-700 relative ${isDarkMode ? 'bg-[#020100]' : 'bg-white'}`}>
+      {/* Dynamic Background Gradients */}
+      {isDarkMode && (
+        <div className="absolute inset-0 pointer-events-none opacity-[0.15] overflow-hidden z-0">
+          <motion.div 
+            animate={{ background: `radial-gradient(circle, ${theme.primary} 0%, transparent 70%)` }}
+            className="absolute -top-[10%] -left-[10%] w-[70vw] h-[70vw] rounded-full blur-[120px]" 
+          />
+          <motion.div 
+            animate={{ background: `radial-gradient(circle, ${theme.secondary} 0%, transparent 70%)` }}
+            className="absolute bottom-[0%] -right-[10%] w-[60vw] h-[60vw] rounded-full blur-[100px]" 
+          />
+        </div>
+      )}
+
+      <Sidebar current={current} isDarkMode={isDarkMode} onChange={setCurrent} toggleTheme={() => setIsDarkMode(!isDarkMode)} theme={theme} />
       
-      <div className="flex-1 flex flex-col h-full overflow-hidden">
+      <div className="flex-1 flex flex-col h-full overflow-hidden relative z-10">
         <header className="h-20 border-b flex items-center justify-between px-12 z-10" style={{ borderColor: isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }}>
           <div className="flex flex-col">
-            <span className="text-[10px] font-mono uppercase tracking-[0.4em] text-cyan-500 font-bold">{page.part}</span>
+            <span className="text-[10px] font-mono uppercase tracking-[0.4em] font-bold transition-colors duration-500" style={{ color: theme.primary }}>{page.part}</span>
             <h2 className="text-xl font-bold tracking-tight">{page.label}</h2>
           </div>
           <div className="hidden md:flex items-center gap-8">
@@ -189,8 +235,12 @@ export const ModuleFour: React.FC = () => {
 
           <button 
             onClick={() => go(1)} 
-            disabled={current === PAGES.length - 1}
-            className={`flex items-center gap-2 px-10 py-3 rounded-2xl font-black text-black transition-all active:scale-95 ${current === PAGES.length - 1 ? 'bg-slate-800 text-slate-500' : 'bg-cyan-500 shadow-xl shadow-cyan-500/20 hover:shadow-cyan-500/40'}`}
+            disabled={current === PAGES.length - 1} 
+            className={`flex items-center gap-2 px-10 py-3 rounded-2xl font-black text-black transition-all duration-500 active:scale-95 ${current === PAGES.length - 1 ? 'bg-slate-800 text-slate-500' : 'shadow-xl'}`}
+            style={{ 
+              backgroundColor: current === PAGES.length - 1 ? undefined : theme.primary,
+              boxShadow: current === PAGES.length - 1 ? undefined : `0 10px 30px ${theme.primary}33`
+            }}
           >
             {current === PAGES.length - 1 ? 'Complete' : 'Next Step'} <ArrowRight size={18} />
           </button>
