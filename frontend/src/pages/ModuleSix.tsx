@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { ChapterTransition } from '../components/level6/common/ChapterTransition';
 import { Activity, Moon, Sun, ArrowRight, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -21,6 +22,18 @@ import { S07b_ClockSignal } from '../components/level6/S07b_ClockSignal';
 import { S08_SimulationVsReality } from '../components/level6/S08_SimulationVsReality';
 import { S09_IdentityShift } from '../components/level6/S09_IdentityShift';
 
+// --- NEW Expansion Scenes (V2) ---
+import { S10_ParallelWorld } from '../components/level6/S10_ParallelWorld';
+import { S11_TimelessLogic } from '../components/level6/S11_TimelessLogic';
+import { S12_ScaleCollapse } from '../components/level6/S12_ScaleCollapse';
+import { S13_SynthesisBreakdown } from '../components/level6/S13_SynthesisBreakdown';
+import { S14_FPGAvsASIC } from '../components/level6/S14_FPGAvsASIC';
+import { S15_CostOfBug } from '../components/level6/S15_CostOfBug';
+import { S16_TestbenchLab } from '../components/level6/S16_TestbenchLab';
+import { S17_HierarchyDepth } from '../components/level6/S17_HierarchyDepth';
+import { S18_NotSoftware } from '../components/level6/S18_NotSoftware';
+import { S19_FinalBridge } from '../components/level6/S19_FinalBridge';
+
 // --- Types ---
 interface Page {
   id: string;
@@ -31,22 +44,55 @@ interface Page {
 }
 
 const PAGES: Page[] = [
-  { id: 'breaking-point', part: 'I · LIMITS', label: 'Manual Design', subtitle: 'The complexity wall.', Component: S00_BreakingPoint },
-  { id: 'industry',       part: 'I · LIMITS', label: 'Industry Need', subtitle: 'Financial risk factors.', Component: S01_IndustryProblem },
-  { id: 'adoption-stats', part: 'II · POWER', label: 'Market Power', subtitle: 'Industry adoption.', Component: S01b_AdoptionStats },
-  { id: 'ladder',         part: 'II · POWER', label: 'The Ladder', subtitle: 'Modeling hierarchy.', Component: S02_AbstractionLadder },
-  { id: 'what-is-verilog', part: 'III · LANGUAGE', label: 'What is Verilog?', subtitle: 'Hardware coding.', Component: S03_WhatIsHDL },
-  { id: 'verilog-mandate', part: 'III · LANGUAGE', label: 'Mandate', subtitle: 'Career & Nation.', Component: S03a_VerilogMandate },
-  { id: 'origin-story',   part: 'III · LANGUAGE', label: 'Language Genesis', subtitle: 'Verilog origins.', Component: S03b_OriginStory },
-  { id: 'why-verilog',    part: 'IV · UTILITY', label: 'Why Verilog?', subtitle: 'System synthesis.', Component: S04_WhyVerilog },
-  { id: 'structural',     part: 'IV · UTILITY', label: 'Structural Mirror', subtitle: 'Physical mapping.', Component: S06_FirstVerilog },
-  { id: 'vlsi-pipeline',  part: 'V · VLSI', label: 'VLSI Pipeline', subtitle: 'The path to silicon.', Component: S05_VLSIConnection },
-  { id: 'die-comparison', part: 'V · VLSI', label: 'Code to Silicon', subtitle: 'Physical artifacts.', Component: S05b_DieComparison },
-  { id: 'testbench',      part: 'VI · VERIFY', label: 'The Silent Partner', subtitle: 'Verification testbenches.', Component: S06A_Testbench },
-  { id: 'encapsulation',  part: 'VII · SYSTEMS', label: 'Modules & Ports', subtitle: 'Fractal design.', Component: S07_ModuleThinking },
+  // --- CHAPTER 1: THE WALL ---
+  { id: 'ch1',           part: 'PROLOGUE', label: 'THE WALL', subtitle: 'The limits of manual design.', Component: (props) => <ChapterTransition {...props} chapter="01" title="The Wall" /> },
+  { id: 'start',         part: 'I · LIMITS', label: 'Breaking Point', subtitle: 'Traditional design fails.', Component: S00_BreakingPoint },
+  { id: 'scale',          part: 'I · LIMITS', label: 'Scale Collapse', subtitle: 'Abstraction limits.', Component: S12_ScaleCollapse },
+  { id: 'industry',      part: 'I · LIMITS', label: 'Industry Risk', subtitle: 'The cost of complexity.', Component: S01_IndustryProblem },
+  { id: 'crash',          part: 'I · LIMITS', label: 'Cost of Bug', subtitle: 'Economic failure.', Component: S15_CostOfBug },
+
+  // --- CHAPTER 2: THE ESSENCE ---
+  { id: 'ch2',           part: 'CORE', label: 'THE ESSENCE', subtitle: 'The HDL mental model.', Component: (props) => <ChapterTransition {...props} chapter="02" title="The Essence" /> },
+  { id: 'hdl-def',       part: 'II · CONCEPT', label: 'What is HDL?', subtitle: 'Hardware Description.', Component: S03_WhatIsHDL },
+  { id: 'paradigm',       part: 'II · CONCEPT', label: 'Not Software', subtitle: 'Paradigm shift.', Component: S18_NotSoftware },
+  { id: 'parallel',       part: 'II · CONCEPT', label: 'Parallel World', subtitle: 'Hardware concurrency.', Component: S10_ParallelWorld },
+  { id: 'timeless',       part: 'II · CONCEPT', label: 'Timeless Logic', subtitle: 'Combinational nature.', Component: S11_TimelessLogic },
+
+  // --- CHAPTER 3: THE MANDATE ---
+  { id: 'ch3',           part: 'MISSION', label: 'THE MANDATE', subtitle: 'The national imperative.', Component: (props) => <ChapterTransition {...props} chapter="03" title="The Mandate" /> },
+  { id: 'mandate',       part: 'III · MISSION', label: 'Verilog Mandate', subtitle: 'Why Verilog matters.', Component: S03a_VerilogMandate },
+  { id: 'adoption-stats', part: 'III · MISSION', label: 'Production Power', subtitle: 'Verilog statistics.', Component: S01b_AdoptionStats },
+  { id: 'origin',         part: 'III · MISSION', label: 'Origin Story', subtitle: 'The birth of Verilog.', Component: S03b_OriginStory },
+
+  // --- CHAPTER 4: THE DESCENT ---
+  { id: 'ch4',           part: 'PROCESS', label: 'THE DESCENT', subtitle: 'How code becomes silicon.', Component: (props) => <ChapterTransition {...props} chapter="04" title="The Descent" /> },
+  { id: 'ladder',         part: 'IV · PROCESS', label: 'Ladder', subtitle: 'Abstraction levels.', Component: S02_AbstractionLadder },
+  { id: 'verilog-why',   part: 'IV · PROCESS', label: 'Why Verilog?', subtitle: 'Verilog advantages.', Component: S04_WhyVerilog },
+  { id: 'synthesis-v2',   part: 'IV · PROCESS', label: 'Synthesis Flow', subtitle: 'Intent translation.', Component: S13_SynthesisBreakdown },
+
+  // --- CHAPTER 5: THE FACTORY ---
+  { id: 'ch5',           part: 'FABRICATION', label: 'THE FACTORY', subtitle: 'The VLSI pipeline.', Component: (props) => <ChapterTransition {...props} chapter="05" title="The Factory" /> },
+  { id: 'vlsi-pipeline', part: 'V · FAB', label: 'VLSI Pipeline', subtitle: 'Design to Silicon.', Component: S05_VLSIConnection },
+  { id: 'die-compare',    part: 'V · FAB', label: 'Die Comparison', subtitle: 'Silicon area comparison.', Component: S05b_DieComparison },
+
+  // --- CHAPTER 6: THE GUARDIAN ---
+  { id: 'ch6',           part: 'VIGILANCE', label: 'THE GUARDIAN', subtitle: 'Verification is design.', Component: (props) => <ChapterTransition {...props} chapter="06" title="The Guardian" /> },
+  { id: 'verilog-first', part: 'VI · VERIFY', label: 'First Contact', subtitle: 'Writing code.', Component: S06_FirstVerilog },
+  { id: 'testbench',      part: 'VI · VERIFY', label: 'Testbench', subtitle: 'Verification Basics.', Component: S06A_Testbench },
+  { id: 'lab-sim',        part: 'VI · VERIFY', label: 'Testbench Lab', subtitle: 'Interactive verification.', Component: S16_TestbenchLab },
+
+  // --- CHAPTER 7: THE ARCHITECTURE ---
+  { id: 'ch7',           part: 'STRATA', label: 'THE ARCHITECTURE', subtitle: 'Modular systems.', Component: (props) => <ChapterTransition {...props} chapter="07" title="The Architecture" /> },
+  { id: 'module-think',  part: 'VII · SYSTEMS', label: 'Modulo Thinking', subtitle: 'Encapsulation.', Component: S07_ModuleThinking },
+  { id: 'fractal',        part: 'VII · SYSTEMS', label: 'Hierarchy Depth', subtitle: 'Recursive structure.', Component: S17_HierarchyDepth },
   { id: 'heartbeat',      part: 'VII · SYSTEMS', label: 'The Heartbeat', subtitle: 'Clock & Synchronization.', Component: S07b_ClockSignal },
+
+  // --- CHAPTER 8: THE SHIFT ---
+  { id: 'ch8',           part: 'EPILOGUE', label: 'THE SHIFT', subtitle: 'Becoming an architect.', Component: (props) => <ChapterTransition {...props} chapter="08" title="The Shift" /> },
   { id: 'wild',           part: 'VIII · PATTERNS', label: 'Common Patterns', subtitle: 'Verilog patterns.', Component: S08_SimulationVsReality },
-  { id: 'identity',       part: 'IX · ARCHITECT', label: 'Identity Shift', subtitle: 'Conclusion.', Component: S09_IdentityShift },
+  { id: 'destiny',        part: 'VIII · PATTERNS', label: 'FPGA vs ASIC', subtitle: 'Implementation destiny.', Component: S14_FPGAvsASIC },
+  { id: 'identity',       part: 'VIII · PATTERNS', label: 'Identity Shift', subtitle: 'Conclusion.', Component: S09_IdentityShift },
+  { id: 'bridge',         part: 'VIII · PATTERNS', label: 'Final Bridge', subtitle: 'The industry horizon.', Component: S19_FinalBridge },
 ];
 
 const Sidebar: React.FC<{
@@ -59,7 +105,7 @@ const Sidebar: React.FC<{
   return (
     <div className={`w-[280px] h-full flex-shrink-0 border-r flex flex-col z-20 ${isDarkMode ? 'bg-[#020100] border-white/5' : 'bg-slate-50 border-slate-200'}`}>
       <header className="p-8 border-b border-white/5 flex items-center gap-4">
-          <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-lg">
+          <div className="w-10 h-10 rounded-xl bg-plasma-cyan flex items-center justify-center text-black shadow-cyan-glow">
             <Activity size={20} />
           </div>
           <div>
@@ -102,7 +148,7 @@ const Sidebar: React.FC<{
             <span className="text-xs font-black" style={{ color: primary }}>{Math.round(progress)}%</span>
           </div>
           <div className="h-1 w-full bg-slate-900 rounded-full overflow-hidden">
-            <motion.div animate={{ width: `${progress}%`, backgroundColor: primary }} className="h-full shadow-lg" />
+            <motion.div animate={{ width: `${progress}%`, backgroundColor: '#00D4FF' }} className="h-full shadow-cyan-glow" />
           </div>
         </div>
         <button onClick={toggleTheme} className="h-10 w-full rounded-xl border border-white/10 flex items-center justify-center gap-3 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:bg-white/5 transition-colors">
@@ -128,7 +174,7 @@ export const ModuleSix: React.FC = () => {
   }, [current]);
 
   const page = PAGES[current];
-  const primary = '#6366f1'; // Unified minimalist indigo
+  const primary = '#00D4FF'; // AXE-OR Plasma Cyan
 
   return (
     <div className={`flex h-screen overflow-hidden ${isDarkMode ? 'bg-matte-obsidian text-oscilloscope-trace' : 'bg-slate-50 text-slate-900'} relative`}>
@@ -171,18 +217,27 @@ export const ModuleSix: React.FC = () => {
           <button 
             disabled={current === 0} 
             onClick={() => go(-1)} 
-            className={`flex items-center gap-2 px-6 py-2.5 rounded-xl font-bold transition-all text-xs ${current === 0 ? 'opacity-0' : 'hover:bg-white/5 border border-white/10'}`}
+            className={`flex items-center gap-3 px-8 py-3 rounded-[20px] font-black uppercase tracking-widest text-[10px] transition-all ${current === 0 ? 'opacity-0' : 'hover:bg-white/5 border border-white/10 text-white/40'}`}
           >
-            <ArrowLeft size={16} /> Back
+            <ArrowLeft size={16} /> Previous Node
           </button>
+
+          <div className="hidden md:flex flex-col items-center gap-2">
+              <div className="flex gap-1">
+                {PAGES.map((_, i) => (
+                    <div key={i} className={`h-1 rounded-full transition-all duration-500 ${i === current ? 'w-8 bg-plasma-cyan shadow-cyan-glow' : i < current ? 'w-2 bg-plasma-cyan/40' : 'w-2 bg-white/5'}`} />
+                ))}
+              </div>
+              <div className="text-[8px] font-mono opacity-20 uppercase tracking-[0.5em]">Neural Link Status: Active</div>
+          </div>
           
           <button 
             onClick={() => go(1)} 
             disabled={current === PAGES.length - 1} 
-            className={`flex items-center gap-2 px-8 py-2.5 rounded-xl font-black uppercase tracking-widest text-xs transition-all duration-300 ${current === PAGES.length - 1 ? 'opacity-0' : 'text-black'}`}
+            className={`flex items-center gap-3 px-10 py-3 rounded-[20px] font-black uppercase tracking-[0.4em] text-[10px] transition-all duration-500 ${current === PAGES.length - 1 ? 'opacity-0' : 'text-black shadow-cyan-glow group'}`}
             style={{ backgroundColor: current === PAGES.length - 1 ? 'transparent' : primary }}
           >
-            Next <ArrowRight size={16} />
+            Execute Next <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
           </button>
         </footer>
       </div>
