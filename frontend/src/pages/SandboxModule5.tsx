@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Terminal, Play, RotateCcw, Copy, Check, Save, ArrowLeft, Box, Binary, Cpu } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Terminal, Play, RotateCcw, Copy, Check, ArrowLeft, Box, Binary, Cpu, Zap } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-export const SandboxModule6: React.FC = () => {
+export const SandboxModule5: React.FC = () => {
   const [code, setCode] = useState('assign Y = (A & B) | (~C & D);');
   const [isSimulating, setIsSimulating] = useState(false);
   const [hasRun, setHasRun] = useState(false);
@@ -37,7 +37,7 @@ export const SandboxModule6: React.FC = () => {
         <header className="flex flex-col md:flex-row items-center justify-between mb-16 gap-8">
             <div className="flex items-center gap-6">
                 <button 
-                  onClick={() => navigate('/module/6')}
+                  onClick={() => navigate('/module/5')}
                   className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-all"
                 >
                     <ArrowLeft size={20} />

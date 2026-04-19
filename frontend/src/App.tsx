@@ -22,8 +22,7 @@ import { ModuleTwo } from './pages/ModuleTwo';
 import { ModuleThree } from './pages/ModuleThree';
 import { ModuleFour } from './pages/ModuleFour';
 import { ModuleFive } from './pages/ModuleFive';
-import { ModuleSix } from './pages/ModuleSix';
-import { SandboxModule6 } from './pages/SandboxModule6';
+import { SandboxModule5 } from './pages/SandboxModule5';
 
 // Component-based Routes
 import { Module1Root } from './components/level1/module1_v4/Module1Root';
@@ -83,10 +82,10 @@ function App() {
           <Route path="/module/1" element={<Module1Root />} />
           <Route path="/module/1/1" element={<ModuleOne />} />
           <Route path="/module/2" element={<ModuleTwo />} />
+          <Route path="/module/3" element={<ModuleThree />} />
           <Route path="/module/4" element={<ModuleFour />} />
           <Route path="/module/5" element={<ModuleFive />} />
-          <Route path="/module/6" element={<ModuleSix />} />
-          <Route path="/sandbox/verilog" element={<SandboxModule6 />} />
+          <Route path="/sandbox/verilog" element={<SandboxModule5 />} />
         </Route>
 
         {/* Fallback Redirect to Portal */}

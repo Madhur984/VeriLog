@@ -1,15 +1,9 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Activity, Moon, Sun, ArrowRight, ArrowLeft } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 
 // --- Scene Components ---
-import { GateIntro, GateDetail } from '../components/level4/GateTheory';
-import { GateDiscovery } from '../components/level4/GateDiscovery';
-import { GateLab } from '../components/level4/GateLab';
-import { LogicPuzzle } from '../components/level4/LogicPuzzle';
-import { GateTimingLab } from '../components/level4/GateTimingLab';
-import { ALULab } from '../components/level4/ALULab';
+import { IntroTheory, TwoVarTheory, ThreeVarTheory, FourVarTheory, GroupingRulesTheory, DontCareTheory, POSTheory } from '../components/level5/KMapTheory';
 
 // --- Types ---
 interface Page {
@@ -23,19 +17,14 @@ interface Page {
 }
 
 const PAGES: Page[] = [
-  { id: 'intro', part: 'PART I · INTRODUCTION', partNum: 4, label: 'Logic Gates 101', subtitle: 'Understanding the elementary building blocks.', accentHex: '#06b6d4', Component: GateIntro },
-  { id: 'and', part: 'PART II · BASIC GATES', partNum: 4, label: 'AND Gate', subtitle: 'The logical conjunction — all inputs must be high.', accentHex: '#0891b2', Component: (p: any) => <GateDetail gateId="AND" {...p} /> },
-  { id: 'or', part: 'PART II · BASIC GATES', partNum: 4, label: 'OR Gate', subtitle: 'The logical disjunction — any input can be high.', accentHex: '#0ea5e9', Component: (p: any) => <GateDetail gateId="OR" {...p} /> },
-  { id: 'not', part: 'PART II · BASIC GATES', partNum: 4, label: 'NOT Gate', subtitle: 'The logical inverter — flips the signal polarity.', accentHex: '#0284c7', Component: (p: any) => <GateDetail gateId="NOT" {...p} /> },
-  { id: 'nand', part: 'PART III · UNIVERSAL GATES', partNum: 4, label: 'NAND Gate', subtitle: 'The universal builder of all logic circuits.', accentHex: '#0369a1', Component: (p: any) => <GateDetail gateId="NAND" {...p} /> },
-  { id: 'nor', part: 'PART III · UNIVERSAL GATES', partNum: 4, label: 'NOR Gate', subtitle: 'A universal set combined with an inverter.', accentHex: '#075985', Component: (p: any) => <GateDetail gateId="NOR" {...p} /> },
-  { id: 'xor', part: 'PART IV · EXCLUSIVE GATES', partNum: 4, label: 'XOR Gate', subtitle: 'The exclusive OR — checks for difference.', accentHex: '#06b6d4', Component: (p: any) => <GateDetail gateId="XOR" {...p} /> },
-  { id: 'xnor', part: 'PART IV · EXCLUSIVE GATES', partNum: 4, label: 'XNOR Gate', subtitle: 'The logical equality checker.', accentHex: '#0ea5e9', Component: (p: any) => <GateDetail gateId="XNOR" {...p} /> },
-  { id: 'discovery', part: 'PART V · INTERACTIVE LAB', partNum: 5, label: 'Gate Discovery', subtitle: 'Live truth table characterization lab.', accentHex: '#10b981', Component: (p: any) => <div className="mt-8"><GateDiscovery onComplete={() => {}} hasCompleted={false} {...p} /></div> },
-  { id: 'gatelab', part: 'PART V · INTERACTIVE LAB', partNum: 5, label: 'Logic Simulation', subtitle: 'High-fidelity gate verification systems.', accentHex: '#10b981', Component: (p: any) => <div className="mt-8"><GateLab onComplete={() => {}} hasCompleted={false} {...p} /></div> },
-  { id: 'logicpuzzle', part: 'PART V · INTERACTIVE LAB', partNum: 5, label: 'Signal Puzzles', subtitle: 'Complex logical derivation challenges.', accentHex: '#10b981', Component: (p: any) => <div className="mt-8"><LogicPuzzle onComplete={() => {}} hasCompleted={false} {...p} /></div> },
-  { id: 'timing', part: 'PART VI · TIMING ANALYSIS', partNum: 6, label: 'Waveform Analysis', subtitle: 'Temporal logical propagation analysis.', accentHex: '#8b5cf6', Component: (p: any) => <div className="mt-8"><GateTimingLab onComplete={() => {}} hasCompleted={false} {...p} /></div> },
-  { id: 'alulab', part: 'PART VII · CAPSTONE', partNum: 7, label: 'ALU Laboratory', subtitle: 'The Silicon Heart: Building a 1-bit ALU.', accentHex: '#06b6d4', Component: ALULab },
+  { id: 'intro',       part: 'PART I · INTRODUCTION',         partNum: 4, label: 'Why K-Maps?',        subtitle: 'The Problem of Boolean Simplification.',       accentHex: '#06b6d4', Component: IntroTheory },
+  { id: 'structure-2v',part: 'PART II · MAP CONSTRUCTION',   partNum: 4, label: '2-Variable K-Map',   subtitle: 'Step-by-step grid building & Gray Code.',          accentHex: '#0891b2', Component: TwoVarTheory },
+  { id: 'structure-3v',part: 'PART II · MAP CONSTRUCTION',   partNum: 4, label: '3-Variable K-Map',   subtitle: 'Mapping three variables to an 8-cell grid.',         accentHex: '#0ea5e9', Component: ThreeVarTheory },
+  { id: 'structure-4v',part: 'PART II · MAP CONSTRUCTION',   partNum: 4, label: '4-Variable K-Map',   subtitle: 'The 4×4 Matrix & complex mapping traps.',               accentHex: '#0284c7', Component: FourVarTheory },
+  { id: 'rules',       part: 'PART III · RULES OF GROUPING', partNum: 4, label: 'Grouping Logic', subtitle: 'The 7 Laws of essential prime implicants.',  accentHex: '#0369a1', Component: GroupingRulesTheory },
+  { id: 'dont-cares',  part: 'PART III · RULES OF GROUPING', partNum: 4, label: "Don't Care Cells",    subtitle: 'Using X to maximize simplification efficiency.',       accentHex: '#075985', Component: DontCareTheory },
+  { id: 'pos',         part: 'PART IV · POS SYSTEM',         partNum: 4, label: 'Product of Sums',     subtitle: 'The mirror image: circling logical zeros.',       accentHex: '#0ea5e9', Component: POSTheory },
+  { id: 'lab',         part: 'PART V · INTERACTIVE LAB',     partNum: 4, label: 'K-Map Sandbox',       subtitle: 'Interactive K-Map Optimization Laboratory.',   accentHex: '#10b981',    Component: () => <div className="mt-2 h-[80vh] w-full rounded-2xl overflow-hidden border border-white/10 shadow-[0_0_40px_rgba(0,212,255,0.15)]"><iframe src="http://localhost:3001" className="w-full h-full border-none" title="K-Map Lab" sandbox="allow-scripts allow-same-origin allow-forms" /></div> },
 ];
 
 const getPartTheme = (part: string) => {
@@ -44,8 +33,6 @@ const getPartTheme = (part: string) => {
   if (part.includes('III ·')) return { primary: '#818cf8', secondary: '#6366f1', glow: 'rgba(129, 140, 248, 0.1)' };
   if (part.includes('IV ·')) return { primary: '#f43f5e', secondary: '#fb7185', glow: 'rgba(244, 63, 94, 0.1)' };
   if (part.includes('V ·')) return { primary: '#f59e0b', secondary: '#fbbf24', glow: 'rgba(245, 158, 11, 0.1)' };
-  if (part.includes('VI ·')) return { primary: '#a855f7', secondary: '#9333ea', glow: 'rgba(168, 85, 247, 0.1)' };
-  if (part.includes('VII ·')) return { primary: '#ec4899', secondary: '#db2777', glow: 'rgba(236, 72, 153, 0.1)' };
   return { primary: '#06b6d4', secondary: '#3b82f6', glow: 'rgba(6, 182, 212, 0.1)' };
 };
 
@@ -65,7 +52,7 @@ const Sidebar: React.FC<{
             <Activity size={20} />
           </div>
           <div>
-            <h2 className={`text-sm font-black tracking-tight ${textColor}`}>Logic Gates</h2>
+            <h2 className={`text-sm font-black tracking-tight ${textColor}`}>Karnaugh Maps</h2>
             <p className="text-[10px] uppercase font-mono tracking-widest font-bold transition-colors duration-500" style={{ color: theme.primary }}>Module 04</p>
           </div>
         </div>
@@ -82,7 +69,7 @@ const Sidebar: React.FC<{
               {showHeader && (
                 <div className="pt-8 pb-3 px-4 first:pt-0">
                   <div className="flex items-center gap-3">
-                    <span className="text-[10px] font-black uppercase tracking-[0.2em] opacity-60 whitespace-nowrap transition-colors duration-500" style={{ color: getPartTheme(page.part).primary }}>
+                    <span className="text-[10px] font-black uppercase tracking-[0.2em] transition-colors duration-500 whitespace-nowrap" style={{ color: getPartTheme(page.part).primary }}>
                       {page.part}
                     </span>
                     <div className="h-[1px] w-full opacity-10" style={{ backgroundColor: getPartTheme(page.part).primary }} />
@@ -236,7 +223,7 @@ export const ModuleFour: React.FC = () => {
           <button 
             onClick={() => go(1)} 
             disabled={current === PAGES.length - 1} 
-            className={`flex items-center gap-2 px-10 py-3 rounded-2xl font-black text-black transition-all duration-500 active:scale-95 ${current === PAGES.length - 1 ? 'bg-slate-800 text-slate-500' : 'shadow-xl'}`}
+            className={`flex items-center gap-3 px-10 py-3 rounded-2xl font-black text-black transition-all duration-500 active:scale-95 ${current === PAGES.length - 1 ? 'bg-slate-800 text-slate-500' : 'shadow-xl'}`}
             style={{ 
               backgroundColor: current === PAGES.length - 1 ? undefined : theme.primary,
               boxShadow: current === PAGES.length - 1 ? undefined : `0 10px 30px ${theme.primary}33`

@@ -38,11 +38,11 @@ const ROOT_NODES: RootNode[] = [
     route: '/module/1',
     status: 'done',
     children: [
-      { id: 'r1c1', label: 'Voltage Levels',    pct: 100, color: '#22d3ee', icon: '⚡', locked: false },
-      { id: 'r1c2', label: 'Current Flow',      pct: 100, color: '#38bdf8', icon: '↺',  locked: false },
-      { id: 'r1c3', label: 'Ground Reference',  pct: 100, color: '#0ea5e9', icon: '⏚',  locked: false },
-      { id: 'r1c4', label: 'Signal Integrity',  pct: 80,  color: '#7dd3fc', icon: '≋',  locked: false },
-      { id: 'r1c5', label: 'Probe Techniques',  pct: 60,  color: '#bae6fd', icon: '🔍', locked: false },
+      { id: 'r1c1', label: 'Voltage Levels', pct: 100, color: '#22d3ee', icon: '⚡', locked: false },
+      { id: 'r1c2', label: 'Current Flow', pct: 100, color: '#38bdf8', icon: '↺', locked: false },
+      { id: 'r1c3', label: 'Ground Reference', pct: 100, color: '#0ea5e9', icon: '⏚', locked: false },
+      { id: 'r1c4', label: 'Signal Integrity', pct: 80, color: '#7dd3fc', icon: '≋', locked: false },
+      { id: 'r1c5', label: 'Probe Techniques', pct: 60, color: '#bae6fd', icon: '🔍', locked: false },
     ],
   },
   {
@@ -56,12 +56,12 @@ const ROOT_NODES: RootNode[] = [
     route: '/module/2',
     status: 'active',
     children: [
-      { id: 'r2c1', label: 'Number Systems',    pct: 100, color: '#34d399', icon: '01',  locked: false },
-      { id: 'r2c2', label: 'Binary Arithmetic', pct: 90,  color: '#6ee7b7', icon: '+',   locked: false },
-      { id: 'r2c3', label: "Two's Complement",  pct: 70,  color: '#10b981', icon: '±',   locked: false },
-      { id: 'r2c4', label: 'Hex & Octal',       pct: 55,  color: '#059669', icon: '0x',  locked: false },
-      { id: 'r2c5', label: 'BCD Encoding',      pct: 20,  color: '#a7f3d0', icon: '◧',   locked: false },
-      { id: 'r2c6', label: 'Gray Code',         pct: 0,   color: '#d1fae5', icon: '≡',   locked: true  },
+      { id: 'r2c1', label: 'Number Systems', pct: 100, color: '#34d399', icon: '01', locked: false },
+      { id: 'r2c2', label: 'Binary Arithmetic', pct: 90, color: '#6ee7b7', icon: '+', locked: false },
+      { id: 'r2c3', label: "Two's Complement", pct: 70, color: '#10b981', icon: '±', locked: false },
+      { id: 'r2c4', label: 'Hex & Octal', pct: 55, color: '#059669', icon: '0x', locked: false },
+      { id: 'r2c5', label: 'BCD Encoding', pct: 20, color: '#a7f3d0', icon: '◧', locked: false },
+      { id: 'r2c6', label: 'Gray Code', pct: 0, color: '#d1fae5', icon: '≡', locked: true },
     ],
   },
   {
@@ -75,10 +75,10 @@ const ROOT_NODES: RootNode[] = [
     route: '/module/4',
     status: 'active',
     children: [
-      { id: 'r4c1', label: 'AND / OR / NOT',    pct: 0, color: '#60a5fa', icon: '∧', locked: false },
-      { id: 'r4c2', label: 'NAND / NOR',        pct: 0, color: '#3b82f6', icon: '↑', locked: false },
-      { id: 'r4c3', label: 'XOR / XNOR',        pct: 0, color: '#2563eb', icon: '⊕', locked: false },
-      { id: 'r4c4', label: 'Universal Gates',   pct: 0, color: '#bfdbfe', icon: '⊗', locked: false },
+      { id: 'r4c1', label: 'AND / OR / NOT', pct: 0, color: '#60a5fa', icon: '∧', locked: false },
+      { id: 'r4c2', label: 'NAND / NOR', pct: 0, color: '#3b82f6', icon: '↑', locked: false },
+      { id: 'r4c3', label: 'XOR / XNOR', pct: 0, color: '#2563eb', icon: '⊕', locked: false },
+      { id: 'r4c4', label: 'Universal Gates', pct: 0, color: '#bfdbfe', icon: '⊗', locked: false },
       { id: 'r4c5', label: 'Gate Minimization', pct: 0, color: '#dbeafe', icon: '▣', locked: false },
     ],
   },
@@ -93,11 +93,11 @@ const ROOT_NODES: RootNode[] = [
     route: '/module/5',
     status: 'active',
     children: [
-      { id: 'r5c1', label: '2-Variable Maps',   pct: 0, color: '#fb7185', icon: '▣', locked: false },
-      { id: 'r5c2', label: '3-Variable Maps',   pct: 0, color: '#f43f5e', icon: '▤', locked: false },
-      { id: 'r5c3', label: '4-Variable Maps',   pct: 0, color: '#e11d48', icon: '▥', locked: false },
-      { id: 'r5c4', label: "Don't Care Terms",  pct: 0, color: '#fda4af', icon: '⊘', locked: false },
-      { id: 'r5c5', label: 'SOP / POS Forms',   pct: 0, color: '#fecdd3', icon: 'Σ', locked: false },
+      { id: 'r5c1', label: '2-Variable Maps', pct: 0, color: '#fb7185', icon: '▣', locked: false },
+      { id: 'r5c2', label: '3-Variable Maps', pct: 0, color: '#f43f5e', icon: '▤', locked: false },
+      { id: 'r5c3', label: '4-Variable Maps', pct: 0, color: '#e11d48', icon: '▥', locked: false },
+      { id: 'r5c4', label: "Don't Care Terms", pct: 0, color: '#fda4af', icon: '⊘', locked: false },
+      { id: 'r5c5', label: 'SOP / POS Forms', pct: 0, color: '#fecdd3', icon: 'Σ', locked: false },
     ],
   },
   {
@@ -111,12 +111,12 @@ const ROOT_NODES: RootNode[] = [
     route: '/module/6',
     status: 'active',
     children: [
-      { id: 'r6c1', label: 'Module Syntax',     pct: 0, color: '#c4b5fd', icon: '{', locked: false },
-      { id: 'r6c2', label: 'Wire & Reg',        pct: 0, color: '#a78bfa', icon: '≋', locked: false },
-      { id: 'r6c3', label: 'Always Blocks',     pct: 0, color: '#8b5cf6', icon: '⟳', locked: false },
-      { id: 'r6c4', label: 'Testbenches',       pct: 0, color: '#7c3aed', icon: '⊡', locked: false },
-      { id: 'r6c5', label: 'State Machines',    pct: 0, color: '#ddd6fe', icon: '⬡', locked: false },
-      { id: 'r6c6', label: 'Simulation',        pct: 0, color: '#ede9fe', icon: '▶', locked: false },
+      { id: 'r6c1', label: 'Module Syntax', pct: 0, color: '#c4b5fd', icon: '{', locked: false },
+      { id: 'r6c2', label: 'Wire & Reg', pct: 0, color: '#a78bfa', icon: '≋', locked: false },
+      { id: 'r6c3', label: 'Always Blocks', pct: 0, color: '#8b5cf6', icon: '⟳', locked: false },
+      { id: 'r6c4', label: 'Testbenches', pct: 0, color: '#7c3aed', icon: '⊡', locked: false },
+      { id: 'r6c5', label: 'State Machines', pct: 0, color: '#ddd6fe', icon: '⬡', locked: false },
+      { id: 'r6c6', label: 'Simulation', pct: 0, color: '#ede9fe', icon: '▶', locked: false },
     ],
   },
 ];
@@ -140,13 +140,13 @@ const JewelPolyhedron: React.FC = () => (
     >
       <defs>
         <radialGradient id="jewel-core" cx="40%" cy="35%">
-          <stop offset="0%"   stopColor="#c4b5fd" stopOpacity={0.95} />
-          <stop offset="40%"  stopColor="#7c3aed" stopOpacity={0.85} />
+          <stop offset="0%" stopColor="#c4b5fd" stopOpacity={0.95} />
+          <stop offset="40%" stopColor="#7c3aed" stopOpacity={0.85} />
           <stop offset="100%" stopColor="#fbbf24" stopOpacity={0.9} />
         </radialGradient>
         <filter id="jewel-glow">
           <feGaussianBlur stdDeviation="6" result="blur" />
-          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
         </filter>
       </defs>
 
@@ -171,9 +171,9 @@ const JewelPolyhedron: React.FC = () => (
         <polygon points="48,82 60,92 32,98 20,68" fill="#4c1d95" opacity="0.55" />
 
         {/* Facet edge lines */}
-        <line x1="60" y1="8"  x2="60" y2="92" stroke="#c4b5fd" strokeWidth="0.5" opacity="0.3" />
+        <line x1="60" y1="8" x2="60" y2="92" stroke="#c4b5fd" strokeWidth="0.5" opacity="0.3" />
         <line x1="30" y1="36" x2="100" y2="68" stroke="#c4b5fd" strokeWidth="0.5" opacity="0.25" />
-        <line x1="90" y1="36" x2="20" y2="68"  stroke="#fbbf24" strokeWidth="0.5" opacity="0.25" />
+        <line x1="90" y1="36" x2="20" y2="68" stroke="#fbbf24" strokeWidth="0.5" opacity="0.25" />
 
         {/* Shine flare */}
         <polygon points="60,8 72,22 62,20" fill="#e9d5ff" opacity="0.7" />
@@ -199,36 +199,36 @@ const JewelPolyhedron: React.FC = () => (
 // ─── MODULE PREVIEWS ──────────────────────────────────────────────────────────
 const ModulePreview: React.FC<{ type: string; color: string }> = ({ type, color }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  
+
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-    
+
     let t = 0;
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.strokeStyle = color;
       ctx.lineWidth = 2;
       ctx.beginPath();
-      
-      const w = canvas.width, h = canvas.height, cy = h/2;
-      
+
+      const w = canvas.width, h = canvas.height, cy = h / 2;
+
       if (type === 'Signal Return') {
-        for(let x=0; x<w; x++) {
+        for (let x = 0; x < w; x++) {
           const y = cy + 15 * Math.sin(0.1 * x + t);
           if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
         }
       } else if (type === 'Discrete') {
-        for(let x=0; x<w; x+=10) {
+        for (let x = 0; x < w; x += 10) {
           const y = cy + 15 * Math.sin(0.1 * x + t);
           ctx.moveTo(x, cy); ctx.lineTo(x, y);
           ctx.arc(x, y, 2, 0, Math.PI * 2);
         }
       } else {
         // Binary/Logic
-        for(let x=0; x<w; x+=15) {
+        for (let x = 0; x < w; x += 15) {
           const val = Math.sin(0.1 * x + t) > 0 ? 1 : 0;
           const y = cy + (val ? -15 : 15);
           ctx.rect(x, y, 10, 2);
@@ -243,13 +243,13 @@ const ModulePreview: React.FC<{ type: string; color: string }> = ({ type, color 
   }, [type, color]);
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, scale: 0.8 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.8 }}
       className="absolute -top-24 left-1/2 -translate-x-1/2 w-32 h-20 rounded-xl overflow-hidden pointer-events-none"
-      style={{ 
-        background: 'rgba(5, 8, 12, 0.9)', 
+      style={{
+        background: 'rgba(5, 8, 12, 0.9)',
         border: `1px solid ${color}40`,
         backdropFilter: 'blur(10px)',
         boxShadow: `0 0 20px ${color}20`
@@ -407,13 +407,13 @@ const RootGem: React.FC<{
         <svg width={74} height={84} viewBox="0 0 74 84" style={{ overflow: 'visible' }}>
           <defs>
             <radialGradient id={`rg-${node.id}`} cx="40%" cy="30%">
-              <stop offset="0%"   stopColor={isLocked ? '#1e293b' : c1} stopOpacity={0.95} />
-              <stop offset="55%"  stopColor={isLocked ? '#0f172a' : c0} stopOpacity={0.85} />
-              <stop offset="100%" stopColor={isLocked ? '#080c15' : c0} stopOpacity={1}    />
+              <stop offset="0%" stopColor={isLocked ? '#1e293b' : c1} stopOpacity={0.95} />
+              <stop offset="55%" stopColor={isLocked ? '#0f172a' : c0} stopOpacity={0.85} />
+              <stop offset="100%" stopColor={isLocked ? '#080c15' : c0} stopOpacity={1} />
             </radialGradient>
             <filter id={`gf-${node.id}`}>
               <feGaussianBlur stdDeviation={hov ? 7 : 4} result="blur" />
-              <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+              <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
             </filter>
           </defs>
 
@@ -435,7 +435,7 @@ const RootGem: React.FC<{
             />
             {!isLocked && (
               <>
-                <line x1="37" y1="3"  x2="37" y2="70" stroke={c1} strokeWidth="0.5" opacity="0.22" />
+                <line x1="37" y1="3" x2="37" y2="70" stroke={c1} strokeWidth="0.5" opacity="0.22" />
                 <line x1="11" y1="20" x2="63" y2="54" stroke={c1} strokeWidth="0.5" opacity="0.18" />
                 <line x1="63" y1="20" x2="11" y2="54" stroke={c1} strokeWidth="0.5" opacity="0.18" />
                 <polygon points="37,7 47,18 37,16" fill={c1} opacity="0.35" />
@@ -522,13 +522,13 @@ export const HierarchicalGrindTree: React.FC = () => {
   return (
     <div className="w-full h-full flex flex-col items-center bg-transparent">
       {/* ── Scrollable Modules Area ── */}
-      <div 
+      <div
         className="flex-1 w-full overflow-y-auto px-10 pt-10 pb-20 scrollbar-thin scrollbar-thumb-cyan-500/20 scrollbar-track-transparent"
         style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(34,211,238,0.2) transparent' }}
       >
         <div className="flex flex-col items-center w-full min-h-full">
           {/* Diagnostic console status — top */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="flex items-center gap-2 mb-10 text-[11px] font-mono tracking-widest text-cyan-400/60 uppercase"
