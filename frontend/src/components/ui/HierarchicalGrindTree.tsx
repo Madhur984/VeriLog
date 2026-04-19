@@ -72,7 +72,7 @@ const ROOT_NODES: RootNode[] = [
     icon: '⊃',
     color: ['#1e3a8a', '#60a5fa'],
     glow: '#60a5fa',
-    route: '/module/4',
+    route: '/module/3',
     status: 'active',
     children: [
       { id: 'r4c1', label: 'AND / OR / NOT', pct: 0, color: '#60a5fa', icon: '∧', locked: false },
@@ -90,7 +90,7 @@ const ROOT_NODES: RootNode[] = [
     icon: '▦',
     color: ['#9f1239', '#fb7185'],
     glow: '#fb7185',
-    route: '/module/5',
+    route: '/module/4',
     status: 'active',
     children: [
       { id: 'r5c1', label: '2-Variable Maps', pct: 0, color: '#fb7185', icon: '▣', locked: false },
@@ -108,7 +108,7 @@ const ROOT_NODES: RootNode[] = [
     icon: '≡',
     color: ['#4c1d95', '#c4b5fd'],
     glow: '#c4b5fd',
-    route: '/module/6',
+    route: '/module/5',
     status: 'active',
     children: [
       { id: 'r6c1', label: 'Module Syntax', pct: 0, color: '#c4b5fd', icon: '{', locked: false },
@@ -509,7 +509,7 @@ const RootGem: React.FC<{
 // ─── MAIN TREE COMPONENT ───────────────────────────────────────────────────────
 export const HierarchicalGrindTree: React.FC = () => {
   const navigate = useNavigate();
-  const [expanded, setExpanded] = useState<Set<string>>(new Set(['r1', 'r2', 'r3']));
+  const [expanded, setExpanded] = useState<Set<string>>(new Set(['r1', 'r2', 'r4']));
 
   const toggle = (id: string) => {
     setExpanded(prev => {
