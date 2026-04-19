@@ -213,6 +213,35 @@ export const ModuleSix: React.FC = () => {
           </AnimatePresence>
         </div>
 
+        {/* Tactical HUD Overlay (Floating Right) */}
+        <div className="fixed right-10 top-1/2 -translate-y-1/2 hidden xl:flex flex-col gap-6 pointer-events-none z-30">
+            {[
+                { label: 'LOGIC_UTIL', val: '42.8%', color: 'text-plasma-cyan' },
+                { label: 'THERMAL_PK', val: '54°C', color: 'text-burnished-copper' },
+                { label: 'ENTROPY_LV', val: '0.002', color: 'text-white/20' },
+                { label: 'NEURAL_ST', val: 'LOCKED', color: 'text-plasma-cyan' },
+            ].map((stat, i) => (
+                <motion.div 
+                    key={stat.label}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 1 + (i * 0.1) }}
+                    className="flex flex-col items-end"
+                >
+                    <div className="text-[8px] font-mono opacity-20 uppercase tracking-[0.3em] mb-1">{stat.label}</div>
+                    <div className={`text-sm font-mono font-black italic tracking-tighter ${stat.color}`}>
+                        <motion.span 
+                            animate={{ opacity: [1, 0.4, 1] }} 
+                            transition={{ duration: 0.2, repeat: Infinity, repeatDelay: Math.random() * 5 }}
+                        >
+                            {stat.val}
+                        </motion.span>
+                    </div>
+                </motion.div>
+            ))}
+            <div className="h-32 w-px bg-gradient-to-b from-white/5 via-plasma-cyan/20 to-transparent self-end mr-2" />
+        </div>
+
         <footer className="h-20 border-t border-white/5 flex items-center justify-between px-10 z-10">
           <button 
             disabled={current === 0} 

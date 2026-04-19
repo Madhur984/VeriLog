@@ -41,14 +41,21 @@ export const S19_FinalBridge: React.FC<{ isActive: boolean }> = ({ isActive }) =
                     key={opt.title}
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
+                    whileHover={{ 
+                        scale: 1.05, 
+                        rotateX: -5,
+                        rotateY: 5,
+                        z: 50,
+                        transition: { duration: 0.2 }
+                    }}
                     transition={{ delay: i * 0.1 }}
-                    className="p-8 md:p-10 rounded-[40px] md:rounded-[50px] bg-solder-mask border border-white/5 flex flex-col items-center text-center group hover:border-plasma-cyan/30 transition-all duration-500 hover:bg-plasma-cyan/5"
+                    className="p-8 md:p-10 rounded-[40px] md:rounded-[50px] bg-solder-mask border border-white/5 flex flex-col items-center text-center group hover:border-plasma-cyan/50 transition-all duration-500 hover:bg-plasma-cyan/10 shadow-2xl perspective-1000 cursor-pointer"
                 >
-                    <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl md:rounded-3xl bg-white/[0.03] border border-white/5 flex items-center justify-center mb-8 text-plasma-cyan group-hover:scale-110 transition-transform">
+                    <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl md:rounded-3xl bg-white/[0.03] border border-white/5 flex items-center justify-center mb-8 text-plasma-cyan group-hover:scale-110 group-hover:shadow-cyan-glow transition-transform">
                         {React.createElement(opt.icon, { size: 32 })}
                     </div>
                     <h4 className="text-xl md:text-2xl font-black mb-4 tracking-tight italic uppercase leading-none">{opt.title}</h4>
-                    <p className="text-xs md:text-sm opacity-40 leading-relaxed font-bold italic">{opt.desc}</p>
+                    <p className="text-xs md:text-sm opacity-40 leading-relaxed font-bold italic group-hover:opacity-100 transition-opacity">{opt.desc}</p>
                     
                     <div className="mt-8 opacity-0 group-hover:opacity-100 transition-opacity">
                         <ArrowRight size={24} className="text-plasma-cyan animate-pulse" />

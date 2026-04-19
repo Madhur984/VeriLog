@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Info, TrendingUp, Cpu } from 'lucide-react';
+import { Info, TrendingUp, Cpu, DollarSign, Activity, AlertTriangle, Power } from 'lucide-react';
 
 interface Props {
   isActive: boolean;
@@ -19,6 +19,39 @@ export const S01_IndustryProblem: React.FC<Props> = ({ isActive }) => {
             The <span className="text-plasma-cyan">Risk.</span>
         </h2>
         
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full px-6 mb-16">
+          {[
+            { label: "Tape-out Cost", value: "$5M+", detail: "Per 5nm design attempt", icon: DollarSign, color: "text-burnished-copper" },
+            { label: "Complexity", value: "10B+", detail: "Gates in standard GPU", icon: Activity, color: "text-plasma-cyan" },
+            { label: "Market Risk", value: "$400Cr", detail: "Loss per single logic bug", icon: AlertTriangle, color: "text-red-500" },
+            { label: "Human Limit", value: "ZERO", detail: "Feasibility of manual layout", icon: Power, color: "text-white/20" },
+          ].map((stat, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              whileHover={{ 
+                  scale: 1.05, 
+                  rotateY: 10,
+                  rotateX: -5,
+                  transition: { duration: 0.2 }
+              }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.1 }}
+              className="p-10 rounded-[50px] bg-white/[0.03] border border-white/5 flex flex-col items-center text-center group hover:border-white/20 transition-all shadow-2xl perspective-1000 cursor-help"
+            >
+              <div className={`p-4 rounded-3xl bg-black/40 mb-8 ${stat.color} group-hover:scale-110 group-hover:shadow-lg transition-transform`}>
+                <stat.icon size={28} />
+              </div>
+              <div className="text-4xl font-black italic tracking-tighter mb-2">{stat.value}</div>
+              <div className="text-[10px] font-black uppercase tracking-widest opacity-40 mb-4">{stat.label}</div>
+              <p className="text-[10px] font-bold opacity-30 italic leading-snug group-hover:opacity-100 transition-opacity">
+                {stat.detail}
+              </p>
+            </motion.div>
+          ))}
+        </div>
+
         <div className="max-w-4xl space-y-12 md:space-y-16">
             <p className="text-2xl md:text-5xl font-black tracking-tighter leading-tight italic px-4">
                  Building a chip isn't like writing an App. <br/>

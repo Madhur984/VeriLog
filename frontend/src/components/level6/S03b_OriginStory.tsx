@@ -7,14 +7,7 @@ interface Props {
 }
 
 export const S03b_OriginStory: React.FC<Props> = ({ isActive }) => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const timeline = [
-    { year: '1983', event: 'Phil Moorby designs Verilog for Gateway Design Automation.' },
-    { year: '1990', event: 'Cadence opens the language to the public to drive adoption.' },
-    { year: '1995', event: 'IEEE 1364-1995 standard is released (The turning point).' },
-    { year: '2005', event: 'SystemVerilog introduced, merging HDL with Verification.' },
-  ];
+  const [showDetails, setShowDetails] = useState(false);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] w-full max-w-4xl mx-auto px-6">
@@ -31,6 +24,9 @@ export const S03b_OriginStory: React.FC<Props> = ({ isActive }) => {
           <h2 className="text-4xl font-black italic tracking-tighter mb-4">The Verilog <span className="text-amber-500">Genesis.</span></h2>
           <p className="text-sm opacity-40 font-bold max-w-lg mx-auto italic">
             "Proven in the trenches." Verilog wasn't born in a lab, but in the heat of the 1980s EDA wars.
+          </p>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="relative group">
                 <div className="absolute -inset-4 bg-amber-500/20 blur-[50px] rounded-full opacity-30 group-hover:opacity-100 transition-opacity" />
