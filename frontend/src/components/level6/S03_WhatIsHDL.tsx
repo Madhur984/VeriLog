@@ -8,7 +8,7 @@ interface Props {
 
 export const S03_WhatIsHDL: React.FC<Props> = ({ isActive }) => {
   return (
-    <div className="flex flex-col items-center justify-start w-full max-w-5xl mx-auto px-6 relative overflow-hidden bg-matte-obsidian/40 py-10 rounded-[80px]">
+    <div className="flex flex-col items-center justify-start w-full max-w-5xl mx-auto px-6 relative overflow-hidden bg-black/40 py-10 rounded-[80px] border border-white/5 backdrop-blur-3xl">
       {/* Visual Blueprint Backdrop - Stylized PCB */}
       <div className="absolute inset-0 z-0 opacity-10 pointer-events-none">
         <svg className="w-full h-full" viewBox="0 0 1000 600">
@@ -32,9 +32,9 @@ export const S03_WhatIsHDL: React.FC<Props> = ({ isActive }) => {
         className="w-full relative z-10 text-center"
       >
         <div className="mb-16">
-            <h2 className="text-5xl md:text-7xl font-black mb-4 tracking-tighter italic uppercase text-plasma-cyan leading-none">The <span className="text-white">Blueprint.</span></h2>
-            <p className="text-lg md:text-2xl opacity-60 leading-relaxed font-black italic tracking-tight italic">
-                HDL is not <span className="text-plasma-cyan italic underline decoration-plasma-cyan/20">code</span>. It is <span className="text-plasma-cyan italic">existence</span>.
+            <h2 className="hero-text text-5xl md:text-7xl mb-4 text-plasma-cyan uppercase italic">The <span>Blueprint.</span></h2>
+            <p className="body-text text-lg md:text-2xl opacity-60">
+                HDL is not <span className="text-plasma-cyan italic underline decoration-plasma-cyan/20 px-1">code</span>. It is <span className="text-plasma-cyan italic">existence</span>.
             </p>
         </div>
 
@@ -46,20 +46,20 @@ export const S03_WhatIsHDL: React.FC<Props> = ({ isActive }) => {
             ].map((item, i) => (
                 <div 
                     key={item.title} 
-                    className="p-8 md:p-10 rounded-[40px] md:rounded-[50px] bg-solder-mask border border-white/5 flex flex-col items-center text-center group hover:border-plasma-cyan/30 transition-all duration-500 hover:bg-plasma-cyan/5"
+                    className="p-8 md:p-10 rounded-[40px] md:rounded-[50px] bg-black/40 border border-white/5 flex flex-col items-center text-center group hover:border-plasma-cyan/30 transition-all duration-500 hover:bg-plasma-cyan/5"
                 >
                     <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl md:rounded-3xl bg-white/[0.03] border border-white/5 flex items-center justify-center mb-6 md:mb-8 text-plasma-cyan group-hover:scale-110 transition-transform">
                         {React.createElement(item.icon, { size: 32 })}
                     </div>
-                    <h4 className="text-xl md:text-2xl font-black mb-4 tracking-tight italic uppercase">{item.title}</h4>
-                    <p className="text-xs md:text-sm opacity-40 leading-relaxed font-bold italic">{item.desc}</p>
+                    <h4 className="hero-text text-xl md:text-2xl mb-4 uppercase italic">{item.title}</h4>
+                    <p className="body-text text-xs md:text-sm opacity-40">{item.desc}</p>
                 </div>
             ))}
         </div>
 
-        <div className="mt-16 p-8 md:p-12 rounded-[40px] md:rounded-[50px] border border-plasma-cyan/10 bg-plasma-cyan/[0.02] max-w-3xl mx-auto shadow-2xl backdrop-blur-xl">
-            <p className="text-xl md:text-2xl font-black italic tracking-tighter opacity-40 leading-tight">
-                "Verilog tools don't read code to 'do' things. They read it to map out <span className="text-plasma-cyan italic underline underline-offset-8">what currently exists</span>."
+        <div className="mt-16 p-8 md:p-12 rounded-[40px] md:rounded-[50px] border border-plasma-cyan/10 bg-black/20 max-w-3xl mx-auto shadow-2xl backdrop-blur-xl">
+            <p className="body-text text-xl md:text-2xl opacity-40 leading-tight">
+                "Verilog tools don't read code to 'do' things. They read it to map out <span className="text-plasma-cyan italic underline underline-offset-8 px-1">what currently exists</span>."
             </p>
         </div>
       </motion.div>

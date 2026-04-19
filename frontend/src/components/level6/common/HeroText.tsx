@@ -6,8 +6,8 @@ export const HeroText: React.FC<{ children: React.ReactNode, color?: string, cla
     <motion.h1 
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8 }}
-      className={`text-5xl md:text-7xl lg:text-8xl font-black italic tracking-tighter uppercase leading-none ${color} ${className}`}
+      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+      className={`hero-text text-5xl md:text-7xl lg:text-8xl italic uppercase text-center ${color} ${className}`}
     >
       {children}
     </motion.h1>

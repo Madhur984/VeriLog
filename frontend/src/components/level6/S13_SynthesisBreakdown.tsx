@@ -41,7 +41,7 @@ export const S13_SynthesisBreakdown: React.FC<{ isActive: boolean }> = ({ isActi
   return (
     <BlueprintContainer>
       <HeroText>Synthesis = Translation.</HeroText>
-      <p className="text-xl md:text-2xl opacity-60 font-black italic mt-6 mb-16 text-center max-w-3xl">
+      <p className="body-text text-xl md:text-2xl opacity-60 italic mt-6 mb-16 text-center max-w-3xl">
         Demystifying the magic. See how your text becomes a physical object through the synthesis furnace.
       </p>
 
@@ -54,11 +54,11 @@ export const S13_SynthesisBreakdown: React.FC<{ isActive: boolean }> = ({ isActi
                 <div key={s.id} className="relative z-10 flex flex-col items-center gap-4">
                     <button 
                         onClick={() => setStep(i)}
-                        className={`w-16 h-16 rounded-2xl flex items-center justify-center transition-all duration-500 ${step >= i ? 'bg-plasma-cyan text-black shadow-cyan-glow scale-110' : 'bg-solder-mask border border-white/10 text-white/20'}`}
+                        className={`w-16 h-16 rounded-2xl flex items-center justify-center transition-all duration-500 ${step >= i ? 'bg-plasma-cyan text-black shadow-cyan-glow scale-110' : 'bg-black/40 border border-white/10 text-white/20'}`}
                     >
-                        {React.createElement(s.icon, { size: 28 })}
+                        {React.createElement(s.icon, { size: 28, strokeWidth: 1.5 })}
                     </button>
-                    <span className={`text-[10px] font-black uppercase tracking-widest ${step >= i ? 'text-plasma-cyan' : 'opacity-20'}`}>{s.label}</span>
+                    <span className={`micro-text uppercase ${step >= i ? 'text-plasma-cyan' : 'opacity-20'}`}>{s.label}</span>
                 </div>
             ))}
         </div>
@@ -75,24 +75,24 @@ export const S13_SynthesisBreakdown: React.FC<{ isActive: boolean }> = ({ isActi
                 >
                     <div className="p-12 rounded-[50px] bg-black/60 border border-plasma-cyan/30 backdrop-blur-3xl shadow-2xl relative overflow-hidden group">
                         <div className="absolute top-0 right-0 p-8 opacity-5 text-plasma-cyan">
-                            <span className="text-8xl font-black italic">0{step + 1}</span>
+                            <span className="hero-text text-8xl italic">0{step + 1}</span>
                         </div>
                         <div className="space-y-6">
-                            <div className="text-[10px] font-black uppercase tracking-[0.4em] text-plasma-cyan">Output Fragment</div>
-                            <div className="text-3xl md:text-4xl font-mono font-black italic text-white tracking-tighter">
+                            <div className="micro-text uppercase text-plasma-cyan">Output Fragment</div>
+                            <div className="mono-text text-3xl md:text-4xl italic text-white tracking-tighter">
                                 {STAGES[step].content}
                             </div>
                         </div>
                     </div>
 
                     <div className="space-y-6 text-center md:text-left">
-                        <h3 className="text-4xl font-black italic tracking-tighter uppercase leading-none">{STAGES[step].label}</h3>
-                        <p className="text-xl font-bold opacity-60 italic leading-snug">
+                        <h3 className="hero-text text-4xl italic uppercase leading-none">{STAGES[step].label}</h3>
+                        <p className="body-text text-xl opacity-60 italic leading-snug">
                             "{STAGES[step].desc}"
                         </p>
                         <button 
                             onClick={() => setStep((step + 1) % STAGES.length)}
-                            className="px-8 py-3 rounded-full border border-plasma-cyan text-plasma-cyan font-black uppercase tracking-widest text-[10px] hover:bg-plasma-cyan hover:text-black transition-all flex items-center gap-3 mx-auto md:mx-0"
+                            className="px-8 py-3 rounded-full border border-plasma-cyan text-plasma-cyan micro-text uppercase hover:bg-plasma-cyan hover:text-black transition-all flex items-center gap-3 mx-auto md:mx-0"
                         >
                             Next Transformation <ArrowRight size={14} />
                         </button>
@@ -102,7 +102,7 @@ export const S13_SynthesisBreakdown: React.FC<{ isActive: boolean }> = ({ isActi
         </div>
       </div>
 
-      <div className="mt-16 text-center opacity-40 font-black italic text-lg uppercase tracking-tighter">
+      <div className="mt-16 text-center micro-text opacity-40 uppercase">
         Key Takeaway: Synthesis is a one-way mirror. Intent goes in, structure comes out.
       </div>
     </BlueprintContainer>

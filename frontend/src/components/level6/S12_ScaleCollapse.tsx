@@ -17,7 +17,7 @@ export const S12_ScaleCollapse: React.FC<{ isActive: boolean }> = ({ isActive })
   return (
     <BlueprintContainer>
       <HeroText>Scale Collapse.</HeroText>
-      <p className="text-xl md:text-2xl opacity-60 font-black italic mt-6 mb-16 text-center max-w-3xl">
+      <p className="body-text text-xl md:text-2xl opacity-60 italic mt-6 mb-16 text-center max-w-3xl">
         You cannot design this manually. Zoom into the complexity that forced the birth of HDL.
       </p>
 
@@ -57,7 +57,7 @@ export const S12_ScaleCollapse: React.FC<{ isActive: boolean }> = ({ isActive })
                         <div className="w-24 h-24 rounded-[30px] bg-plasma-cyan/10 border border-plasma-cyan/30 flex items-center justify-center text-plasma-cyan mx-auto shadow-cyan-glow">
                              {scale < 4 ? <Cpu size={48} /> : <Layers size={48} />}
                         </div>
-                        <h3 className="text-4xl font-black italic tracking-tighter uppercase">{getLabel(scale)}</h3>
+                        <h3 className="hero-text text-4xl italic uppercase">{getLabel(scale)}</h3>
                     </motion.div>
                 </AnimatePresence>
             </div>
@@ -68,7 +68,7 @@ export const S12_ScaleCollapse: React.FC<{ isActive: boolean }> = ({ isActive })
                     animate={{ opacity: 1 }}
                     className="absolute inset-0 bg-burnished-copper/10 backdrop-blur-sm flex items-center justify-center border-4 border-burnished-copper/50 animate-pulse pointer-events-none"
                 >
-                    <div className="text-burnished-copper font-black uppercase tracking-[0.5em] flex items-center gap-4">
+                    <div className="micro-text uppercase text-burnished-copper flex items-center gap-4">
                         <AlertTriangle size={32} />
                         Human Perception Limit Reached
                     </div>
@@ -78,7 +78,7 @@ export const S12_ScaleCollapse: React.FC<{ isActive: boolean }> = ({ isActive })
 
         {/* Zoom Control */}
         <div className="p-10 rounded-[40px] bg-white/[0.02] border border-white/5 flex flex-col gap-8 items-center">
-            <div className="flex justify-between w-full text-[10px] font-black uppercase tracking-widest opacity-40">
+            <div className="flex justify-between w-full micro-text uppercase opacity-40">
                 <span>Standard (1970)</span>
                 <span>Bleeding Edge (2025)</span>
             </div>
@@ -94,13 +94,13 @@ export const S12_ScaleCollapse: React.FC<{ isActive: boolean }> = ({ isActive })
                     className="w-full h-8 bg-white/5 rounded-full appearance-none cursor-pointer accent-plasma-cyan"
                 />
             </div>
-            <div className="text-3xl font-black text-plasma-cyan italic tracking-tighter">
+            <div className="hero-text text-3xl text-plasma-cyan italic underline underline-offset-8">
                 Scale: 10<sup>{scale}</sup> Physical Gates
             </div>
         </div>
       </div>
 
-      <div className="mt-16 text-center opacity-40 font-black italic text-lg uppercase tracking-tighter">
+      <div className="mt-16 text-center micro-text opacity-40 uppercase">
         Key Takeaway: Synthesis is the tool that handles what our eyes no longer can.
       </div>
     </BlueprintContainer>

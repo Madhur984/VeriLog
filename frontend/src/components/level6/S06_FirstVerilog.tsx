@@ -32,31 +32,31 @@ export const S06_FirstVerilog: React.FC<Props> = ({ isActive }) => {
   const [active, setActive] = useState(0);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[75vh] w-full max-w-6xl mx-auto px-6">
+    <div className="flex flex-col items-center justify-center min-h-[75vh] w-full max-w-6xl mx-auto px-8 relative text-center bg-black/40 py-20 rounded-[80px] border border-white/5 backdrop-blur-3xl">
       <motion.div
         initial={{ opacity: 0 }}
         animate={isActive ? { opacity: 1 } : {}}
         className="w-full"
       >
-        <div className="text-center mb-16">
-            <h2 className="text-5xl md:text-7xl font-black mb-4 tracking-tighter italic">Structural <span className="text-cyan-500">Syntax.</span></h2>
-            <p className="text-lg opacity-40 font-bold italic tracking-tight underline decoration-cyan-500/10">Code is the mirror of physical matter.</p>
+        <div className="text-center mb-16 px-6">
+            <h2 className="hero-text text-5xl md:text-8xl italic mb-6 uppercase">Structural <span className="text-cyan-500">Syntax.</span></h2>
+            <p className="body-text text-xl md:text-3xl opacity-60 italic underline decoration-cyan-500/20 underline-offset-8">Code is the mirror of physical matter.</p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            <div className="space-y-3">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 px-6">
+            <div className="space-y-4">
                  {COMPARISON_DATA.map((item, i) => (
                      <button
                         key={item.id}
                         onClick={() => setActive(i)}
-                        className={`w-full text-left p-8 rounded-[35px] border transition-all duration-300 flex items-center gap-6 ${active === i ? 'bg-cyan-500/10 border-cyan-500/20 shadow-lg' : 'bg-transparent border-white/5 opacity-40 hover:opacity-100 hover:bg-white/5'}`}
+                        className={`w-full text-left p-10 rounded-[40px] border transition-all duration-500 flex items-center gap-8 ${active === i ? 'bg-cyan-500/10 border-cyan-500/30 shadow-cyan-glow' : 'bg-white/[0.02] border-white/5 opacity-40 hover:opacity-100 hover:bg-white/5'}`}
                      >
-                        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all ${active === i ? 'bg-cyan-500 text-black' : 'bg-white/5 opacity-20'}`}>
-                             {active === i ? <Eye size={24} /> : <Code size={24} />}
+                        <div className={`w-16 h-16 rounded-2xl flex items-center justify-center transition-all ${active === i ? 'bg-cyan-500 text-black shadow-lg' : 'bg-white/5 opacity-20'}`}>
+                             {active === i ? <Eye size={28} /> : <Code size={28} />}
                         </div>
                         <div>
-                            <div className="text-xl font-black uppercase tracking-tight italic">{item.label}</div>
-                            <div className="text-[10px] font-mono opacity-40 tracking-widest font-black italic">PILLAR 0{i + 1}</div>
+                            <div className="hero-text text-xl md:text-2xl italic uppercase tracking-tighter">{item.label}</div>
+                            <div className="micro-text opacity-40 uppercase tracking-[0.3em]">PILLAR 0{i + 1}</div>
                         </div>
                      </button>
                  ))}
@@ -68,19 +68,21 @@ export const S06_FirstVerilog: React.FC<Props> = ({ isActive }) => {
                     initial={{ opacity: 0, scale: 0.98 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 1.02 }}
-                    className="p-12 rounded-[50px] border border-white/5 bg-white/[0.01] flex flex-col justify-center"
+                    className="p-12 rounded-[50px] border border-white/5 bg-black/40 flex flex-col justify-center backdrop-blur-md relative overflow-hidden group"
                 >
-                    <div className="p-8 rounded-[30px] bg-black/60 border border-white/5 font-mono text-cyan-400 text-lg font-bold leading-relaxed mb-8 shadow-inner overflow-hidden">
+                    <div className="p-10 rounded-[35px] bg-[#0A0A0B] border border-white/5 mono-text text-cyan-400 text-lg md:text-xl leading-relaxed mb-10 shadow-inner overflow-hidden relative z-10">
                         {COMPARISON_DATA[active].code.split('\n').map((line, i) => (
-                            <div key={i}>{line}</div>
+                            <div key={i} className="mb-1">{line}</div>
                         ))}
                     </div>
-                    <div className="flex items-center gap-4 text-cyan-500/60 font-black uppercase text-[10px] tracking-[0.4em] italic mb-4">
-                        <Shield size={16} /> Insight
+                    <div className="flex items-center gap-4 text-cyan-500/60 micro-text uppercase mb-4 relative z-10 px-2">
+                        <Shield size={18} /> Protocol Insight
                     </div>
-                    <p className="text-2xl font-black opacity-60 leading-tight italic tracking-tighter">
-                        {COMPARISON_DATA[active].desc}
+                    <p className="body-text text-xl md:text-3xl opacity-80 leading-tight italic relative z-10 px-2">
+                        "{COMPARISON_DATA[active].desc}"
                     </p>
+
+                    <div className="absolute -bottom-20 -right-20 w-60 h-60 bg-cyan-500/5 blur-[100px] rounded-full group-hover:bg-cyan-500/10 transition-colors" />
                 </motion.div>
             </AnimatePresence>
         </div>

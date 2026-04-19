@@ -8,34 +8,34 @@ interface Props {
 
 export const S04_WhyVerilog: React.FC<Props> = ({ isActive }) => {
   return (
-    <div className="flex flex-col items-center justify-center min-h-[70vh] w-full max-w-5xl mx-auto px-6">
+    <div className="flex flex-col items-center justify-center min-h-[70vh] w-full max-w-6xl mx-auto px-8 relative text-center bg-black/40 py-20 rounded-[80px] border border-white/5 backdrop-blur-3xl">
       <motion.div
         initial={{ opacity: 0 }}
         animate={isActive ? { opacity: 1 } : {}}
         className="w-full"
       >
-        <div className="text-center mb-16">
-            <h2 className="text-5xl md:text-7xl font-black mb-6 tracking-tighter italic">Why <span className="text-amber-500">Verilog?</span></h2>
-            <p className="text-xl opacity-40 max-w-2xl mx-auto leading-tight font-black italic tracking-tighter">
-                At 3nm, you cannot <span className="text-white italic underline decoration-amber-500/20">draw</span> a chip. You must <span className="text-white italic">describe</span> it.
+        <div className="text-center mb-20">
+            <h2 className="hero-text text-5xl md:text-8xl mb-8 italic uppercase">Why <span className="text-amber-500">Verilog?</span></h2>
+            <p className="body-text text-xl md:text-3xl opacity-60 max-w-3xl mx-auto leading-tight italic">
+                At 3nm, you cannot <span className="text-white italic underline underline-offset-8 px-1">draw</span> a chip. You must <span className="text-white italic">describe</span> it.
             </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 px-6">
             {[
-                { title: 'Synthesis Link', desc: 'The bridge where code becomes actual gates.', icon: Zap, color: 'amber' },
-                { title: 'Temporal Proof', desc: 'Detecting timing errors in software before fabrication.', icon: Activity, color: 'rose' },
-                { title: 'Massive Scale', desc: 'Organizing designs from 100 to 100 Billion transistors.', icon: Maximize2, color: 'indigo' }
+                { title: 'Synthesis Link', desc: 'The bridge where code becomes actual gates.', icon: Zap, color: 'text-amber-500' },
+                { title: 'Temporal Proof', desc: 'Detecting timing errors in software before fabrication.', icon: Activity, color: 'text-rose-500' },
+                { title: 'Massive Scale', desc: 'Organizing designs from 100 to 100 Billion transistors.', icon: Maximize2, color: 'text-indigo-500' }
             ].map((item, i) => (
                 <div 
                     key={item.title}
-                    className="p-10 rounded-[40px] border border-white/5 bg-white/[0.02]"
+                    className="p-10 rounded-[50px] border border-white/5 bg-white/[0.02] backdrop-blur-3xl group hover:border-white/20 transition-all duration-500"
                 >
-                    <div className="w-14 h-14 rounded-2xl bg-white/5 text-amber-500/80 mb-8 flex items-center justify-center">
-                        {React.createElement(item.icon, { size: 24, strokeWidth: 2.5 })}
+                    <div className={`w-16 h-16 rounded-2xl bg-white/5 ${item.color} mb-10 flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform`}>
+                        {React.createElement(item.icon, { size: 32, strokeWidth: 1.5 })}
                     </div>
-                    <h3 className="text-2xl font-black mb-4 tracking-tighter italic">{item.title}</h3>
-                    <p className="text-sm opacity-40 leading-relaxed font-bold italic tracking-tight">
+                    <h3 className="hero-text text-2xl md:text-3xl mb-4 italic tracking-tighter uppercase">{item.title}</h3>
+                    <p className="body-text text-sm md:text-base opacity-40 leading-relaxed italic">
                         {item.desc}
                     </p>
                 </div>
