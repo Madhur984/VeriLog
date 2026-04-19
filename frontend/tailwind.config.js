@@ -84,6 +84,8 @@ export default {
             },
             backgroundImage: {
                 'dot-grid': `radial-gradient(circle at 1px 1px, #2A2A35 0.5px, transparent 0.5px)`,
+                'blueprint-grid': `linear-gradient(to right, rgba(0, 212, 255, 0.05) 1px, transparent 1px),
+                                  linear-gradient(to bottom, rgba(0, 212, 255, 0.05) 1px, transparent 1px)`,
                 'ghost-traces': `repeating-linear-gradient(90deg, #2A2A35 0px, #2A2A35 1px, transparent 1px, transparent 40px),
                                  repeating-linear-gradient(0deg, #2A2A35 0px, #2A2A35 1px, transparent 1px, transparent 40px)`,
             },
