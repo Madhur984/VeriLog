@@ -103,7 +103,7 @@ const Sidebar: React.FC<{
   const progress = ((current + 1) / PAGES.length) * 100;
 
   return (
-    <div className={`w-[280px] h-full flex-shrink-0 border-r flex flex-col z-20 ${isDarkMode ? 'bg-[#020100] border-white/5' : 'bg-slate-50 border-slate-200'}`}>
+    <div className={`w-[280px] h-full flex-shrink-0 border-r flex flex-col z-20 ${isDarkMode ? 'bg-black/40 backdrop-blur-3xl border-white/10' : 'bg-slate-50/80 backdrop-blur-3xl border-slate-200'}`}>
       <header className="p-8 border-b border-white/5 flex items-center gap-4">
           <div className="w-10 h-10 rounded-xl bg-plasma-cyan flex items-center justify-center text-black shadow-cyan-glow">
             <Activity size={20} />
@@ -188,7 +188,7 @@ export const ModuleSix: React.FC = () => {
       <Sidebar current={current} isDarkMode={isDarkMode} onChange={setCurrent} toggleTheme={() => setIsDarkMode(!isDarkMode)} primary={primary} />
       
       <div className="flex-1 flex flex-col h-full overflow-hidden relative z-10">
-        <header className="h-16 border-b border-white/5 flex items-center justify-between px-10 z-10">
+        <header className="h-16 border-b border-white/10 backdrop-blur-md flex items-center justify-between px-10 z-10 bg-black/20">
           <div>
             <span className="text-[10px] font-black uppercase tracking-[0.3em] opacity-30 italic">{page.part}</span>
             <h2 className="text-lg font-black tracking-tight">{page.label}</h2>
