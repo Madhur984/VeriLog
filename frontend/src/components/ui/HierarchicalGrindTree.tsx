@@ -488,13 +488,13 @@ export const HierarchicalGrindTree: React.FC = () => {
     <div className="w-full h-full flex flex-col bg-transparent overflow-hidden">
       {/* ── Fixed Header Area ── */}
       <div className="flex-shrink-0 w-full pt-6 pb-4 px-4 lg:px-6 border-b border-white/10 bg-gradient-to-r from-black/60 via-black/30 to-black/60 backdrop-blur-xl relative z-30 shadow-[0_10px_30px_rgba(0,0,0,0.5)] flex justify-center">
-        <div className="w-full max-w-[1000px] flex flex-col items-center">
+        <div className="w-full max-w-[850px] flex flex-col items-center">
           <div className="flex items-center gap-2 mb-4 text-[10px] font-mono tracking-widest text-cyan-400/70 uppercase">
             <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_#22d3ee]" />
             Stationary Framework // Level 1-5 Access
           </div>
 
-          <div className="flex items-end justify-center gap-4 lg:gap-8 w-full flex-wrap sm:flex-nowrap">
+          <div className="flex items-end justify-center gap-4 lg:gap-6 w-full flex-wrap sm:flex-nowrap">
             {ROOT_NODES.map(node => (
               <RootGem
                 key={node.id}
@@ -514,9 +514,9 @@ export const HierarchicalGrindTree: React.FC = () => {
       <div
         className="flex-1 w-full overflow-y-auto px-4 lg:px-6 pt-0 pb-24 scrollbar-hide relative z-10 flex justify-center"
       >
-        <div className="w-full max-w-[1000px]">
+        <div className="w-full max-w-[850px]">
           {/* Three Vertical Branches - Circuit Tree Style */}
-          <div className="relative w-full pb-10 px-0">
+          <div className="relative w-full pb-10 px-8 md:px-16">
             {/* Top Entry Trace connecting perfectly to the header */}
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1px] h-20 bg-gradient-to-b from-cyan-400/40 via-white/20 to-white/5" />
 
