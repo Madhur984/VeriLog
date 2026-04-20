@@ -1,68 +1,110 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Layers, Zap, Activity } from 'lucide-react';
+import { Layers, Zap, Activity, Cpu, Binary, HardDrive, Share2, Database, ShieldCheck } from 'lucide-react';
+import { BlueprintContainer } from './common/BlueprintContainer';
+import { HeroText } from './common/HeroText';
 
-interface Props {
-  isActive: boolean;
-}
-
-export const S03_WhatIsHDL: React.FC<Props> = ({ isActive }) => {
+export const S03_WhatIsHDL: React.FC<{ isActive: boolean }> = ({ isActive }) => {
   return (
-    <div className="flex flex-col items-center justify-start w-full max-w-5xl mx-auto px-6 relative overflow-hidden bg-black/40 py-10 rounded-[80px] border border-white/5 backdrop-blur-3xl">
-      {/* Visual Blueprint Backdrop - Stylized PCB */}
-      <div className="absolute inset-0 z-0 opacity-10 pointer-events-none">
-        <svg className="w-full h-full" viewBox="0 0 1000 600">
-           <path d="M0,300 L300,300 L340,340 L660,340 L700,300 L1000,300" stroke="#00D4FF" strokeWidth="2" fill="none" strokeDasharray="1000" strokeDashoffset={isActive ? 0 : 1000} style={{ transition: 'stroke-dashoffset 2s ease-out' }} />
-           <path d="M200,0 L200,200 L180,220 L180,400 L200,420 L200,600" stroke="#00D4FF" strokeWidth="1" fill="none" opacity="0.5" />
-           <circle cx="335" cy="335" r="5" fill="#00D4FF" />
-           <circle cx="665" cy="335" r="5" fill="#00D4FF" />
-           {/* PCB Dot Grid Detail */}
-           <defs>
-             <pattern id="pcb-grid" width="20" height="20" patternUnits="userSpaceOnUse">
-               <circle cx="2" cy="2" r="0.5" fill="#00D4FF" opacity="0.2" />
-             </pattern>
-           </defs>
-           <rect width="100%" height="100%" fill="url(#pcb-grid)" />
-        </svg>
-      </div>
-
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={isActive ? { opacity: 1, scale: 1 } : {}}
-        className="w-full relative z-10 text-center"
-      >
-        <div className="mb-16">
-            <h2 className="hero-text text-5xl md:text-7xl mb-4 text-plasma-cyan uppercase italic">The <span>Blueprint.</span></h2>
-            <p className="body-text text-lg md:text-2xl opacity-60">
-                HDL is not <span className="text-plasma-cyan italic underline decoration-plasma-cyan/20 px-1">code</span>. It is <span className="text-plasma-cyan italic">existence</span>.
+    <BlueprintContainer>
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.4fr] gap-24 items-start w-full">
+        {/* Left Column: Narrative Sidebar */}
+        <div className="space-y-10 sticky top-24">
+          <div className="space-y-4 text-left">
+             <div className="micro-text uppercase tracking-[0.4em] text-plasma-cyan font-black opacity-60 flex items-center gap-2">
+                <HardDrive size={14} /> Semantic Logic Bridge
+             </div>
+             <HeroText className="text-left leading-none" color="text-white">The <br/><span className="text-plasma-cyan uppercase tracking-tighter">Blueprint.</span></HeroText>
+          </div>
+          
+          <div className="space-y-8 max-w-xl text-left">
+            <p className="body-text text-xl text-white/80 leading-relaxed font-light">
+              HDL is not <span className="text-plasma-cyan font-bold italic border-b-2 border-plasma-cyan/30">code.</span> It is a mathematical definition of existence in silicon.
             </p>
+            <p className="body-text text-base text-white/50 leading-relaxed font-light">
+               In traditional programming, you describe a process. In Verilog, you describe a <span className="text-white font-bold underline underline-offset-8 decoration-white/20">physical fact.</span> Every declaration generates a permanent structure of copper and transistors.
+            </p>
+
+            <div className="p-8 rounded-[40px] bg-[#0A0A0B] border border-white/5 border-l-4 border-l-plasma-cyan shadow-xl group">
+                 <div className="flex items-center gap-4 mb-4">
+                    <Binary size={20} className="text-plasma-cyan group-hover:scale-110 transition-transform" />
+                    <span className="micro-text uppercase tracking-widest text-white/60 font-black">Ontological Paradigm</span>
+                 </div>
+                 <p className="body-text text-[11px] text-white/40 leading-relaxed font-light italic">
+                    "Verilog tools don't read code to 'do' things. They read it to map out what currently exists in spatial reality."
+                 </p>
+            </div>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-            {[
-                { title: 'Concurrent Reality', desc: 'Hardware doesn\'t follow a sequence. Everything exists at once.', icon: Activity, color: 'plasma-cyan' },
-                { title: 'Temporal Pulse', desc: 'Clocks act as the biological heartbeat for the silicon body.', icon: Zap, color: 'cyber-amber' },
-                { title: 'Hardware Essence', desc: 'Code becomes physical gates, which become the chips in your pocket.', icon: Layers, color: 'burnished-copper' },
-            ].map((item, i) => (
-                <div 
-                    key={item.title} 
-                    className="p-8 md:p-10 rounded-[40px] md:rounded-[50px] bg-black/40 border border-white/5 flex flex-col items-center text-center group hover:border-plasma-cyan/30 transition-all duration-500 hover:bg-plasma-cyan/5"
-                >
-                    <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl md:rounded-3xl bg-white/[0.03] border border-white/5 flex items-center justify-center mb-6 md:mb-8 text-plasma-cyan group-hover:scale-110 transition-transform">
-                        {React.createElement(item.icon, { size: 32 })}
+        {/* Right Column: Definition Visualization Dashboard */}
+        <div className="relative h-[720px] w-full rounded-[60px] bg-black border border-white/5 overflow-hidden shadow-2xl p-12 flex flex-col">
+            <div className="absolute top-10 left-10 micro-text opacity-40 tracking-[0.3em] font-black uppercase flex items-center gap-3 text-[10px]">
+                <Activity size={14} className="text-plasma-cyan" /> Essence Analyzer // ONTOLOGY_SEC
+            </div>
+
+            <div className="flex-1 space-y-6 mt-12 mb-12">
+                {[
+                    { title: 'Concurrent Reality', desc: 'Hardware doesn\'t follow a sequence. Everything exists at once.', icon: Activity, detail: 'Spatial Parallelism', met: 'SIM_CYCLES: CONCURRENT' },
+                    { title: 'Temporal Pulse', desc: 'Clocks act as the biological heartbeat for the silicon body.', icon: Zap, detail: 'Cycle Accuracy', met: 'TIMING: JITTER_FREE' },
+                    { title: 'Synthetic Essence', desc: 'Code becomes physical gates, the actual bridges of copper.', icon: Layers, detail: 'Netlist Synthesis', met: 'FAB: READY_FOR_MASK' },
+                ].map((item, i) => (
+                    <motion.div
+                        key={i}
+                        initial={{ opacity: 0, x: 10 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        transition={{ delay: i * 0.1 }}
+                        className="p-8 rounded-[45px] bg-[#0A0A0B] border border-white/5 hover:bg-white/[0.02] transition-all flex items-center justify-between group cursor-default relative overflow-hidden"
+                    >
+                        <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-plasma-cyan/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <div className="flex items-center gap-8">
+                            <div className="w-16 h-16 rounded-[25px] bg-black border border-white/10 flex items-center justify-center text-plasma-cyan transition-all group-hover:shadow-cyan-glow">
+                                <item.icon size={28} strokeWidth={1.5} />
+                            </div>
+                            <div className="text-left space-y-1">
+                                <div className="micro-text uppercase text-plasma-cyan/60 tracking-widest font-black text-[9px]">{item.detail}</div>
+                                <h4 className="hero-text text-2xl uppercase text-white tracking-tight leading-none mb-1">{item.title}</h4>
+                                <p className="body-text text-xs text-white/30 max-w-sm leading-relaxed">{item.desc}</p>
+                            </div>
+                        </div>
+                        <div className="text-right hidden md:block">
+                             <div className="micro-text uppercase text-white/20 tracking-tighter font-black text-[8px] mb-2">{item.met}</div>
+                             <div className="h-0.5 w-16 bg-white/5 rounded-full overflow-hidden">
+                                <motion.div 
+                                    initial={{ width: 0 }}
+                                    whileInView={{ width: '100%' }}
+                                    transition={{ duration: 1.5, delay: i * 0.2 }}
+                                    className="h-full bg-plasma-cyan/60"
+                                />
+                             </div>
+                        </div>
+                    </motion.div>
+                ))}
+            </div>
+
+            <div className="p-8 bg-white/[0.02] border border-white/10 rounded-[35px] flex items-center justify-between backdrop-blur-md">
+                <div className="flex items-center gap-6">
+                    <div className="w-10 h-10 rounded-xl bg-plasma-cyan/10 border border-plasma-cyan/30 flex items-center justify-center text-plasma-cyan">
+                        <ShieldCheck size={20} />
                     </div>
-                    <h4 className="hero-text text-xl md:text-2xl mb-4 uppercase italic">{item.title}</h4>
-                    <p className="body-text text-xs md:text-sm opacity-40">{item.desc}</p>
+                    <div>
+                        <div className="micro-text uppercase text-white/40 tracking-widest font-black text-[9px]">Structural Logic Verified</div>
+                        <div className="hero-text text-xs uppercase text-white tracking-[0.2em]">Ontological Existence Pipeline: ACTIVE_SYNTH</div>
+                    </div>
                 </div>
-            ))}
-        </div>
+                <div className="flex gap-1.5 grayscale opacity-20">
+                    <Binary size={14} />
+                    <Database size={14} />
+                    <Share2 size={14} />
+                </div>
+            </div>
 
-        <div className="mt-16 p-8 md:p-12 rounded-[40px] md:rounded-[50px] border border-plasma-cyan/10 bg-black/20 max-w-3xl mx-auto shadow-2xl backdrop-blur-xl">
-            <p className="body-text text-xl md:text-2xl opacity-40 leading-tight">
-                "Verilog tools don't read code to 'do' things. They read it to map out <span className="text-plasma-cyan italic underline underline-offset-8 px-1">what currently exists</span>."
-            </p>
+            {/* Background Texture Overlay */}
+            <div className="absolute inset-0 pointer-events-none opacity-[0.02] mix-blend-overlay">
+                <div className="text-[280px] hero-text uppercase rotate-12 translate-x-10 translate-y-20 select-none">BLUEPRINT</div>
+            </div>
         </div>
-      </motion.div>
-    </div>
+      </div>
+    </BlueprintContainer>
   );
 };

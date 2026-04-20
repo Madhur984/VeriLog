@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { motion } from 'framer-motion';
 
 export const ChapterTransition: React.FC<{ chapter: string, title: string, isActive: boolean }> = ({ chapter, title, isActive }) => {
@@ -13,7 +13,7 @@ export const ChapterTransition: React.FC<{ chapter: string, title: string, isAct
         <div className="inline-block px-4 py-1 rounded-full border border-plasma-cyan/30 bg-plasma-cyan/10 text-[10px] font-black uppercase tracking-[0.4em] text-plasma-cyan mb-4 animate-pulse">
             Establishing Phase: {chapter}
         </div>
-        <h2 className="text-7xl md:text-9xl font-black italic tracking-tighter leading-none uppercase">
+        <h2 className="text-7xl md:text-9xl font-black tracking-tighter leading-none uppercase">
             {title}<span className="text-plasma-cyan">.</span>
         </h2>
         <div className="w-32 h-1 bg-plasma-cyan/30 mx-auto rounded-full overflow-hidden">
@@ -28,3 +28,4 @@ export const ChapterTransition: React.FC<{ chapter: string, title: string, isAct
     </div>
   );
 };
+

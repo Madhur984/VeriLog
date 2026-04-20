@@ -1,59 +1,94 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Boxes, Share2, Binary, ChevronDown, Shield } from 'lucide-react';
+import { Boxes, Share2, Binary, ChevronDown, Shield, Cpu, ChevronRight, Layers } from 'lucide-react';
+import { BlueprintContainer } from './common/BlueprintContainer';
+import { HeroText } from './common/HeroText';
 
-interface Props {
-  isActive: boolean;
-  isDarkMode: boolean;
-}
-
-export const S07_ModuleThinking: React.FC<Props> = ({ isActive }) => {
+export const S07_ModuleThinking: React.FC<{ isActive: boolean }> = ({ isActive }) => {
   const [expanded, setExpanded] = useState(true);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[75vh] w-full max-w-6xl mx-auto px-8 text-center bg-black/40 py-20 rounded-[80px] border border-white/5 backdrop-blur-3xl">
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={isActive ? { opacity: 1 } : {}}
-        className="w-full flex flex-col items-center"
-      >
-        <div className="mb-20 px-6">
-            <h2 className="hero-text text-5xl md:text-8xl italic uppercase mb-8">Modules & <span className="text-indigo-500">Ports.</span></h2>
-            <div className="h-1.5 w-32 bg-indigo-500/20 mx-auto rounded-full shadow-[0_0_15px_rgba(99,102,241,0.2)]" />
+    <BlueprintContainer>
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.4fr] gap-24 items-start w-full">
+        {/* Left Column: Narrative Sidebar */}
+        <div className="space-y-10 sticky top-24">
+          <div className="space-y-4">
+             <div className="micro-text uppercase tracking-[0.4em] text-plasma-cyan font-black opacity-60 flex items-center gap-2">
+                <Layers size={14} /> Modular Hierarchy
+             </div>
+             <HeroText className="text-left leading-none" color="text-white">Modules & <br/><span className="text-plasma-cyan">Ports.</span></HeroText>
+          </div>
+          
+          <div className="space-y-8 max-w-xl">
+            <p className="body-text text-xl text-white/80 leading-relaxed font-light">
+              Digital hardware is hierarchical. Complexity is managed by <span className="text-plasma-cyan font-bold italic underline underline-offset-8 decoration-plasma-cyan/30">encapsulating functionality.</span>
+            </p>
+            <p className="body-text text-base text-white/50 leading-relaxed">
+               Ports define the exact physical contact pins of your architecture. Designing a million-transistor chip starts by perfectly defining a single module and instantiating it recursively until the complexity arises.
+            </p>
+
+            <div className="p-8 rounded-[40px] bg-white/[0.02] border border-white/5 border-l-4 border-l-plasma-cyan group shadow-xl">
+                 <div className="flex items-center gap-4 mb-4">
+                    <Shield size={20} className="text-plasma-cyan group-hover:scale-110 transition-transform" />
+                    <span className="micro-text uppercase tracking-widest text-white/60 font-black">Port Physicality</span>
+                 </div>
+                 <p className="body-text text-sm opacity-50 leading-relaxed font-light italic">
+                    "Ports map directly to the literal metal traces that interconnect disparate sections of silicon reality."
+                 </p>
+            </div>
+          </div>
         </div>
 
-        <div className="w-full grid grid-cols-1 md:grid-cols-12 gap-16 items-start px-6">
-            {/* Minimalist Hierarchy Visual */}
-            <div className="md:col-span-12 lg:col-span-7 p-10 rounded-[50px] border border-white/5 bg-white/[0.01] flex flex-col gap-10 text-left h-full backdrop-blur-md">
+        {/* Right Column: Hierarchy Visualizer Dashboard */}
+        <div className="relative h-[720px] w-full rounded-[60px] bg-black border border-white/5 overflow-hidden shadow-2xl p-12 flex flex-col">
+            <div className="absolute top-10 left-10 micro-text opacity-40 tracking-[0.3em] font-black uppercase flex items-center gap-3">
+                <Boxes size={14} className="text-plasma-cyan" /> Sub-Unit Matrix Inspector
+            </div>
+
+            <div className="flex-1 flex flex-col gap-10 mt-12">
                 <button 
                   onClick={() => setExpanded(!expanded)}
-                  className="p-10 rounded-[40px] bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-between group hover:bg-indigo-500/20 transition-all shadow-xl"
+                  className="p-10 rounded-[40px] bg-plasma-cyan/10 border border-plasma-cyan/20 flex items-center justify-between group hover:bg-plasma-cyan/20 transition-all shadow-xl"
                 >
                     <div className="flex items-center gap-8">
-                        <Boxes size={40} className="text-indigo-400 group-hover:scale-110 transition-transform" />
-                        <span className="hero-text text-2xl md:text-3xl italic uppercase tracking-tighter">4-Bit Adder CORE</span>
+                        <div className="p-5 rounded-2xl bg-black border border-plasma-cyan/30 text-plasma-cyan shadow-cyan-glow group-hover:scale-110 transition-transform">
+                             <Cpu size={40} strokeWidth={1} />
+                        </div>
+                        <div className="text-left">
+                            <div className="micro-text text-plasma-cyan/60 mb-1 uppercase tracking-widest font-black">L1 // Master Instance</div>
+                            <div className="hero-text text-3xl uppercase text-white tracking-widest">4-Bit Adder CORE</div>
+                        </div>
                     </div>
-                    <ChevronDown size={32} className={`transition-transform duration-500 ${expanded ? 'rotate-180' : ''}`} />
+                    <div className={`p-4 rounded-full border border-white/10 text-white/20 transition-all ${expanded ? 'rotate-180 bg-plasma-cyan text-black' : ''}`}>
+                        <ChevronDown size={24} />
+                    </div>
                 </button>
 
-                <AnimatePresence>
+                <AnimatePresence mode="wait">
                     {expanded && (
                         <motion.div
                             initial={{ height: 0, opacity: 0 }}
                             animate={{ height: 'auto', opacity: 1 }}
                             exit={{ height: 0, opacity: 0 }}
-                            className="space-y-4 pl-16 border-l-2 border-indigo-500/20 relative overflow-hidden"
+                            className="space-y-4 pl-12 border-l-2 border-white/5 relative"
                         >
+                            <div className="absolute top-0 left-0 w-8 h-px bg-white/10" />
                             {[0, 1, 2, 3].map(i => (
                                 <motion.div 
                                     key={i} 
                                     initial={{ x: -20, opacity: 0 }}
-                                    animate={{ x: 0, opacity: 1 }}
+                                    whileInView={{ x: 0, opacity: 1 }}
                                     transition={{ delay: i * 0.1 }}
-                                    className="flex items-center gap-8 p-6 rounded-[25px] bg-white/[0.02] border border-white/5 opacity-60 hover:opacity-100 transition-opacity backdrop-blur-sm group"
+                                    className="flex items-center gap-6 p-6 rounded-[30px] bg-white/[0.02] border border-white/5 group hover:bg-white/[0.05] transition-all cursor-default"
                                 >
-                                    <Binary size={24} className="text-indigo-500/50 group-hover:text-indigo-500 transition-colors" />
-                                    <span className="body-text text-lg md:text-xl italic opacity-80 uppercase tracking-widest">Full Adder UNIT_{i}</span>
+                                    <div className="w-10 h-10 rounded-xl bg-black border border-white/10 flex items-center justify-center text-plasma-cyan/40 group-hover:text-plasma-cyan transition-colors">
+                                        <Binary size={18} />
+                                    </div>
+                                    <div className="flex-1">
+                                        <div className="hero-text text-xl uppercase text-white/80 group-hover:text-white transition-colors">Full Adder CELL_{i}</div>
+                                        <div className="micro-text uppercase tracking-widest text-[9px] opacity-20">Instantiated Unit</div>
+                                    </div>
+                                    <div className="micro-text text-plasma-cyan/20 group-hover:text-plasma-cyan transition-colors font-black">LOCAL_PINS: [A, B, CIN]</div>
                                 </motion.div>
                             ))}
                         </motion.div>
@@ -61,26 +96,20 @@ export const S07_ModuleThinking: React.FC<Props> = ({ isActive }) => {
                 </AnimatePresence>
             </div>
 
-            {/* Insight Side */}
-            <div className="md:col-span-12 lg:col-span-5 flex flex-col gap-10 text-left">
-                <div className="p-10 rounded-[50px] border border-white/5 bg-white/[0.02] backdrop-blur-md shadow-inner relative overflow-hidden group">
-                    <div className="flex items-center gap-4 text-indigo-400 micro-text uppercase mb-8 relative z-10">
-                        <Shield size={20} /> Port Physicality
+            <div className="mt-8 flex items-center justify-between p-6 bg-white/[0.02] border border-white/10 rounded-3xl backdrop-blur-md">
+                <div className="flex items-center gap-4">
+                    <Share2 size={20} className="text-plasma-cyan" />
+                    <div>
+                        <div className="micro-text uppercase text-white/60 tracking-widest font-black">Interface Topology</div>
+                        <div className="body-text text-[10px] opacity-30">Mapping 4 instantiation points to master silicon grid.</div>
                     </div>
-                    <p className="body-text text-2xl md:text-3xl leading-tight italic opacity-80 relative z-10 px-2">
-                        "Ports map directly to the literal metal pins that connect your design to the silicon fabric."
-                    </p>
-                    <div className="absolute -top-10 -right-10 w-40 h-40 bg-indigo-500/5 blur-[80px] rounded-full group-hover:bg-indigo-500/10 transition-colors" />
                 </div>
-                
-                <div className="p-10 rounded-[50px] bg-indigo-500/5 border border-indigo-500/10 backdrop-blur-md">
-                    <p className="body-text text-lg md:text-xl italic opacity-40 leading-snug">
-                       "Design a 1-bit component once, and instantiate it a million times across your silicon die."
-                    </p>
+                <div className="px-4 py-1 rounded-full border border-plasma-cyan/30 text-plasma-cyan micro-text text-[9px] uppercase font-black">
+                    Connected
                 </div>
             </div>
         </div>
-      </motion.div>
-    </div>
+      </div>
+    </BlueprintContainer>
   );
 };

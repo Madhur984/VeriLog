@@ -95,12 +95,35 @@ const Sidebar: React.FC<{
             <React.Fragment key={page.id}>
               {showHeader && (
                 <div className="pt-8 pb-3 px-4 first:pt-0">
-                  <div className="flex items-center gap-3">
-                    <span className="text-[10px] font-black uppercase tracking-[0.2em] opacity-60 whitespace-nowrap transition-colors duration-500" style={{ color: getPartTheme(page.part).primary }}>
-                      {page.part}
-                    </span>
-                    <div className="h-[1px] w-full opacity-10" style={{ backgroundColor: getPartTheme(page.part).primary }} />
-                  </div>
+                  {/* Special Verilog Gateway Divider */}
+                  {page.part.includes('IV ·') ? (
+                    <div className="flex flex-col gap-2">
+                      <div className="h-[1px] w-full opacity-20" style={{ background: `linear-gradient(90deg, transparent, ${getPartTheme(page.part).primary}, transparent)` }} />
+                      <div className="flex items-center gap-3">
+                        <span
+                          className="text-[9px] font-mono font-black uppercase tracking-[0.25em] px-2.5 py-1 rounded-md border"
+                          style={{
+                            color: getPartTheme(page.part).primary,
+                            borderColor: `${getPartTheme(page.part).primary}44`,
+                            background: `${getPartTheme(page.part).primary}12`,
+                          }}
+                        >
+                          ◈ GATEWAY
+                        </span>
+                        <div className="h-[1px] flex-1 opacity-20" style={{ backgroundColor: getPartTheme(page.part).primary }} />
+                        <span className="text-[9px] font-mono font-black uppercase tracking-[0.2em] opacity-30 whitespace-nowrap" style={{ color: getPartTheme(page.part).primary }}>
+                          LOGIC_GATE MODULE
+                        </span>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-3">
+                      <span className="text-[10px] font-black uppercase tracking-[0.2em] opacity-60 whitespace-nowrap transition-colors duration-500" style={{ color: getPartTheme(page.part).primary }}>
+                        {page.part}
+                      </span>
+                      <div className="h-[1px] w-full opacity-10" style={{ backgroundColor: getPartTheme(page.part).primary }} />
+                    </div>
+                  )}
                 </div>
               )}
               <button 
@@ -184,19 +207,19 @@ export const Module1Engine: React.FC<{
 
   return (
     <div className={`flex h-screen overflow-hidden transition-colors duration-700 relative ${isDarkMode ? 'bg-[#020100]' : 'bg-white'}`}>
-      {/* Dynamic Background Gradients */}
-      {isDarkMode && (
-        <div className="absolute inset-0 pointer-events-none opacity-[0.15] overflow-hidden z-0">
-          <motion.div 
-            animate={{ background: `radial-gradient(circle, ${theme.primary} 0%, transparent 70%)` }}
-            className="absolute -top-[10%] -left-[10%] w-[70vw] h-[70vw] rounded-full blur-[120px]" 
-          />
-          <motion.div 
-            animate={{ background: `radial-gradient(circle, ${theme.secondary} 0%, transparent 70%)` }}
-            className="absolute bottom-[0%] -right-[10%] w-[60vw] h-[60vw] rounded-full blur-[100px]" 
-          />
-        </div>
-      )}
+      {/* Dynamic Background Gradients — both light and dark */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
+        <motion.div
+          animate={{ background: `radial-gradient(circle, ${theme.primary} 0%, transparent 70%)` }}
+          transition={{ duration: 1.2, ease: 'easeInOut' }}
+          className={`absolute -top-[10%] -left-[10%] w-[70vw] h-[70vw] rounded-full blur-[120px] ${isDarkMode ? 'opacity-[0.15]' : 'opacity-[0.06]'}`}
+        />
+        <motion.div
+          animate={{ background: `radial-gradient(circle, ${theme.secondary} 0%, transparent 70%)` }}
+          transition={{ duration: 1.2, ease: 'easeInOut' }}
+          className={`absolute bottom-[0%] -right-[10%] w-[60vw] h-[60vw] rounded-full blur-[100px] ${isDarkMode ? 'opacity-[0.15]' : 'opacity-[0.05]'}`}
+        />
+      </div>
 
       <Sidebar current={current} isDarkMode={isDarkMode} onChange={setCurrent} toggleTheme={onThemeToggle} theme={theme} />
       

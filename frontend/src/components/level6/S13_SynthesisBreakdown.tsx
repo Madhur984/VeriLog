@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { BlueprintContainer } from "./common/BlueprintContainer";
 import { HeroText } from "./common/HeroText";
-import { ArrowRight, Code, Network, Zap, Factory } from "lucide-react";
+import { ArrowRight, Code, Network, Zap, Factory, Binary, Share2, Activity, Settings2 } from "lucide-react";
 
 const STAGES = [
   { 
@@ -10,28 +10,32 @@ const STAGES = [
     label: "Expression", 
     icon: Code, 
     content: "assign Y = A & B;", 
-    desc: "The engineer describes the intent in high-level code." 
+    desc: "The engineer describes the architectural intent in high-level Register Transfer Level code.",
+    pro: "RTL INTENT"
   },
   { 
     id: "graph", 
     label: "Logic Graph", 
     icon: Network, 
-    content: "AND2 (Net 1, Net 2)", 
-    desc: "The tool recognizes the logical relationships between signals." 
+    content: "G_AND2 (Net_104, Net_202)", 
+    desc: "The synthesis engine decomposes the code into a mathematical directed acyclic graph.",
+    pro: "LOGIC BIND"
   },
   { 
     id: "gates", 
     label: "Gate Netlist", 
     icon: Zap, 
-    content: "TSMC_LP_AND (Cell 0x4F)", 
-    desc: "Abstract logic is mapped to physical cells in a specific foundry library." 
+    content: "foundry_cell_and (0.12um)", 
+    desc: "Abstract logic is mapped to physical semiconductor cells from a specific foundry library.",
+    pro: "CELL MAP"
   },
   { 
     id: "structure", 
     label: "Physical Layout", 
     icon: Factory, 
-    content: "X: 45.2, Y: 112.9 (Layer 4)", 
-    desc: "The gates are placed and routed onto the silicon base." 
+    content: "M4_PIN (X: 112, Y: 432)", 
+    desc: "The netlist is placed and routed onto the silicon base, defining literal metal traces.",
+    pro: "METAL MASK"
   },
 ];
 
@@ -40,70 +44,114 @@ export const S13_SynthesisBreakdown: React.FC<{ isActive: boolean }> = ({ isActi
 
   return (
     <BlueprintContainer>
-      <HeroText>Synthesis = Translation.</HeroText>
-      <p className="body-text text-xl md:text-2xl opacity-60 italic mt-6 mb-16 text-center max-w-3xl">
-        Demystifying the magic. See how your text becomes a physical object through the synthesis furnace.
-      </p>
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.4fr] gap-24 items-start w-full">
+        {/* Left Column: Narrative Sidebar */}
+        <div className="space-y-10 sticky top-24">
+          <div className="space-y-4">
+             <div className="micro-text uppercase tracking-[0.4em] text-plasma-cyan font-black opacity-60 flex items-center gap-2">
+                <Settings2 size={14} /> Industrial Mapping
+             </div>
+             <HeroText className="text-left leading-none" color="text-white">Synthesis <br/><span className="text-plasma-cyan">Furnace.</span></HeroText>
+          </div>
+          
+          <div className="space-y-8 max-w-xl">
+            <p className="body-text text-xl text-white/80 leading-relaxed font-light text-left">
+              Verilog is just intent. Synthesis is the industrial process that transforms your text into <span className="text-plasma-cyan font-bold italic underline underline-offset-8 decoration-plasma-cyan/30">physical silicon architecture.</span>
+            </p>
+            <p className="body-text text-base text-white/50 leading-relaxed text-left">
+               The "Furnace" takes your abstract behavioral descriptions and performs billions of physical mapping optimizations to ensure the final silicon meets timing, area, and power targets.
+            </p>
 
-      <div className="w-full max-w-5xl space-y-16">
-        {/* Step Indicator */}
-        <div className="flex items-center justify-between relative px-10">
-            <div className="absolute top-1/2 left-0 right-0 h-px bg-white/5 -translate-y-1/2" />
-            
-            {STAGES.map((s, i) => (
-                <div key={s.id} className="relative z-10 flex flex-col items-center gap-4">
+            <div className="grid grid-cols-1 gap-3 pt-4">
+                {STAGES.map((s, i) => (
                     <button 
+                        key={s.id}
                         onClick={() => setStep(i)}
-                        className={`w-16 h-16 rounded-2xl flex items-center justify-center transition-all duration-500 ${step >= i ? 'bg-plasma-cyan text-black shadow-cyan-glow scale-110' : 'bg-black/40 border border-white/10 text-white/20'}`}
+                        className={`p-5 rounded-[25px] border flex items-center justify-between transition-all duration-500 group ${step === i ? 'bg-plasma-cyan/10 border-plasma-cyan shadow-lg shadow-plasma-cyan/10' : 'bg-white/[0.02] border-white/5 opacity-40 hover:opacity-100'}`}
                     >
-                        {React.createElement(s.icon, { size: 28, strokeWidth: 1.5 })}
-                    </button>
-                    <span className={`micro-text uppercase ${step >= i ? 'text-plasma-cyan' : 'opacity-20'}`}>{s.label}</span>
-                </div>
-            ))}
-        </div>
-
-        {/* Dynamic Transition Card */}
-        <div className="relative h-[300px] flex items-center justify-center">
-            <AnimatePresence mode="wait">
-                <motion.div 
-                    key={step}
-                    initial={{ opacity: 0, x: -30 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: 30 }}
-                    className="w-full grid grid-cols-1 md:grid-cols-2 gap-12 items-center"
-                >
-                    <div className="p-12 rounded-[50px] bg-black/60 border border-plasma-cyan/30 backdrop-blur-3xl shadow-2xl relative overflow-hidden group">
-                        <div className="absolute top-0 right-0 p-8 opacity-5 text-plasma-cyan">
-                            <span className="hero-text text-8xl italic">0{step + 1}</span>
-                        </div>
-                        <div className="space-y-6">
-                            <div className="micro-text uppercase text-plasma-cyan">Output Fragment</div>
-                            <div className="mono-text text-3xl md:text-4xl italic text-white tracking-tighter">
-                                {STAGES[step].content}
+                        <div className="flex items-center gap-4">
+                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors ${step === i ? 'bg-plasma-cyan text-black' : 'bg-black text-plasma-cyan/40 group-hover:text-plasma-cyan'}`}>
+                                <s.icon size={18} />
+                            </div>
+                            <div className="text-left">
+                                <div className={`micro-text uppercase tracking-widest text-[9px] font-black ${step === i ? 'text-plasma-cyan' : 'text-white/20'}`}>Phase 0{i + 1}</div>
+                                <div className={`hero-text text-lg uppercase ${step === i ? 'text-white' : 'text-white/40'}`}>{s.label}</div>
                             </div>
                         </div>
-                    </div>
-
-                    <div className="space-y-6 text-center md:text-left">
-                        <h3 className="hero-text text-4xl italic uppercase leading-none">{STAGES[step].label}</h3>
-                        <p className="body-text text-xl opacity-60 italic leading-snug">
-                            "{STAGES[step].desc}"
-                        </p>
-                        <button 
-                            onClick={() => setStep((step + 1) % STAGES.length)}
-                            className="px-8 py-3 rounded-full border border-plasma-cyan text-plasma-cyan micro-text uppercase hover:bg-plasma-cyan hover:text-black transition-all flex items-center gap-3 mx-auto md:mx-0"
-                        >
-                            Next Transformation <ArrowRight size={14} />
-                        </button>
-                    </div>
-                </motion.div>
-            </AnimatePresence>
+                        {step === i && <ArrowRight size={16} className="text-plasma-cyan" />}
+                    </button>
+                ))}
+            </div>
+          </div>
         </div>
-      </div>
 
-      <div className="mt-16 text-center micro-text opacity-40 uppercase">
-        Key Takeaway: Synthesis is a one-way mirror. Intent goes in, structure comes out.
+        {/* Right Column: Physical Mapping Monitor Dashboard */}
+        <div className="relative h-[720px] w-full rounded-[60px] bg-black border border-white/5 overflow-hidden shadow-2xl p-12 flex flex-col">
+            <div className="absolute top-10 left-10 micro-text opacity-40 tracking-[0.3em] font-black uppercase flex items-center gap-3">
+                <Binary size={14} className="text-plasma-cyan" /> RTL to Gate Transformation Diagnostic
+            </div>
+
+            <div className="flex-1 flex flex-col justify-center gap-12 relative">
+                <AnimatePresence mode="wait">
+                    <motion.div 
+                        key={step}
+                        initial={{ opacity: 0, x: 20, filter: 'blur(10px)' }}
+                        animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
+                        exit={{ opacity: 0, x: -20, filter: 'blur(10px)' }}
+                        className="space-y-12"
+                    >
+                        <div className="p-10 rounded-[50px] bg-white/[0.01] border border-white/5 backdrop-blur-md relative overflow-hidden group">
+                            <div className="absolute top-0 right-0 p-10 opacity-5 text-plasma-cyan pointer-events-none">
+                                <span className="hero-text text-[140px] leading-none">0{step + 1}</span>
+                            </div>
+                            
+                            <div className="space-y-10 relative z-10">
+                                <div className="space-y-2">
+                                    <div className="micro-text uppercase text-plasma-cyan/40 tracking-[0.3em] font-black text-[10px]">Matrix Output Fragment</div>
+                                    <div className="mono-text text-3xl md:text-5xl text-white font-bold leading-none tracking-tight">
+                                        {STAGES[step].content}
+                                    </div>
+                                </div>
+
+                                <div className="space-y-4 max-w-xl">
+                                    <h3 className="hero-text text-4xl uppercase text-white tracking-widest">{STAGES[step].label} // {STAGES[step].pro}</h3>
+                                    <p className="body-text text-base opacity-40 leading-relaxed font-light">
+                                        {STAGES[step].desc}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-6 w-full">
+                            <div className="p-8 rounded-[40px] bg-[#0A0A0B] border border-white/5 space-y-2">
+                                 <div className="micro-text uppercase opacity-20 tracking-widest text-[9px] font-black">Synthesis Integrity</div>
+                                 <div className="hero-text text-xl text-plasma-cyan">OPTIMIZED</div>
+                            </div>
+                            <div className="p-8 rounded-[40px] bg-[#0A0A0B] border border-white/5 space-y-2">
+                                 <div className="micro-text uppercase opacity-20 tracking-widest text-[9px] font-black">Physical Area</div>
+                                 <div className="hero-text text-xl text-white">4.2um²</div>
+                            </div>
+                        </div>
+                    </motion.div>
+                </AnimatePresence>
+            </div>
+
+            <div className="mt-8 flex items-center justify-between p-8 bg-white/[0.02] border border-white/10 rounded-[40px] backdrop-blur-md">
+                <div className="flex items-center gap-4">
+                    <Share2 size={20} className="text-plasma-cyan" />
+                    <div>
+                        <div className="micro-text uppercase text-white/60 tracking-widest font-black">Industrial Pipeline Status</div>
+                        <div className="body-text text-[10px] opacity-30 italic">Observing deterministic mapping from HL-behavior to physical netlist structure.</div>
+                    </div>
+                </div>
+                <button 
+                  onClick={() => setStep((step + 1) % STAGES.length)}
+                  className="px-6 py-3 rounded-2xl bg-plasma-cyan text-black micro-text text-[10px] font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-lg shadow-plasma-cyan/20"
+                >
+                    Step Pipeline
+                </button>
+            </div>
+        </div>
       </div>
     </BlueprintContainer>
   );

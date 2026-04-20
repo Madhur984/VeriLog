@@ -2,102 +2,128 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { BlueprintContainer } from "./common/BlueprintContainer";
 import { HeroText } from "./common/HeroText";
-import { RefreshCcw, Lock, DollarSign, Zap } from "lucide-react";
+import { RefreshCcw, Lock, DollarSign, Zap, ArrowRight, Cpu, Layers, Share2, Activity, ShieldAlert } from "lucide-react";
 
 export const S14_FPGAvsASIC: React.FC<{ isActive: boolean }> = ({ isActive }) => {
   const [isAsic, setIsAsic] = useState(false);
 
   return (
     <BlueprintContainer>
-      <HeroText>Same Code. Different Destiny.</HeroText>
-      <p className="body-text text-xl md:text-2xl mt-6 mb-16 opacity-60 text-center max-w-3xl italic">
-        Verilog is the source. The hardware target determines if your design lives in a reprogrammable maze or fixed silicon forever.
-      </p>
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.4fr] gap-24 items-start w-full">
+        {/* Left Column: Narrative Sidebar */}
+        <div className="space-y-10 sticky top-24">
+          <div className="space-y-4">
+             <div className="micro-text uppercase tracking-[0.4em] text-plasma-cyan font-black opacity-60 flex items-center gap-2">
+                <Cpu size={14} /> Platform Architecture
+             </div>
+             <HeroText className="text-left leading-none" color="text-white">Silicon <br/><span className={isAsic ? 'text-burnished-copper' : 'text-plasma-cyan'}>Destiny.</span></HeroText>
+          </div>
+          
+          <div className="space-y-8 max-w-xl">
+            <p className="body-text text-xl text-white/80 leading-relaxed font-light text-left">
+                Verilog is the source. The hardware target determines if your design lives in a <span className="text-plasma-cyan font-bold italic underline underline-offset-8 decoration-plasma-cyan/30">reprogrammable maze</span> or <span className="text-burnished-copper font-bold italic underline underline-offset-8 decoration-burnished-copper/30">fixed silicon</span> forever.
+            </p>
+            <p className="body-text text-base text-white/50 leading-relaxed text-left">
+               While HDL remains consistent, the physical implementation differs wildly. An FPGA provides instant flexibility but loses in efficiency. An ASIC offers peak performance but remains immutable once the silicon is struck.
+            </p>
 
-      <div className="w-full max-w-5xl flex flex-col items-center gap-16">
-        {/* Toggle Interaction */}
-        <div className="flex items-center gap-10 bg-black/40 p-4 rounded-full border border-white/5 backdrop-blur-3xl">
-            <button 
-                onClick={() => setIsAsic(false)}
-                className={`px-10 py-4 rounded-full micro-text transition-all ${!isAsic ? 'bg-[#00D4FF] text-black shadow-cyan-glow' : 'opacity-30 hover:opacity-100'}`}
-            >
-                FPGA Path
-            </button>
-            <div className="w-1 h-8 bg-white/10" />
-            <button 
-                onClick={() => setIsAsic(true)}
-                className={`px-10 py-4 rounded-full micro-text transition-all ${isAsic ? 'bg-burnished-copper text-white shadow-lg' : 'opacity-30 hover:opacity-100'}`}
-            >
-                ASIC Path
-            </button>
+            <div className="flex flex-col gap-4 pt-4">
+                <button 
+                    onClick={() => setIsAsic(false)}
+                    className={`group flex items-center justify-between p-6 rounded-[35px] border transition-all duration-500 overflow-hidden relative ${!isAsic ? 'bg-plasma-cyan/10 border-plasma-cyan shadow-lg shadow-plasma-cyan/20' : 'bg-[#0A0A0B] border-white/5 opacity-40 hover:opacity-100'}`}
+                >
+                    <div className="flex items-center gap-5">
+                        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-colors ${!isAsic ? 'bg-plasma-cyan text-black' : 'bg-black text-plasma-cyan/40'}`}>
+                             <RefreshCcw size={20} className={!isAsic ? 'animate-spin-slow' : ''} />
+                        </div>
+                        <div className="text-left">
+                            <div className="micro-text uppercase tracking-widest text-[9px] font-black opacity-40">Prototyping Level</div>
+                            <div className="hero-text text-lg uppercase text-white">FPGA Fabric</div>
+                        </div>
+                    </div>
+                    {!isAsic && <ArrowRight size={18} className="text-plasma-cyan animate-pulse" />}
+                </button>
+
+                <button 
+                    onClick={() => setIsAsic(true)}
+                    className={`group flex items-center justify-between p-6 rounded-[35px] border transition-all duration-500 overflow-hidden relative ${isAsic ? 'bg-burnished-copper/10 border-burnished-copper shadow-lg shadow-burnished-copper/20' : 'bg-[#0A0A0B] border-white/5 opacity-40 hover:opacity-100'}`}
+                >
+                    <div className="flex items-center gap-5">
+                        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-colors ${isAsic ? 'bg-burnished-copper text-black' : 'bg-black text-burnished-copper/40'}`}>
+                             <Lock size={20} />
+                        </div>
+                        <div className="text-left">
+                            <div className="micro-text uppercase tracking-widest text-[9px] font-black opacity-40">Production Level</div>
+                            <div className="hero-text text-lg uppercase text-white">ASIC Silicon</div>
+                        </div>
+                    </div>
+                    {isAsic && <ArrowRight size={18} className="text-burnished-copper animate-pulse" />}
+                </button>
+            </div>
+          </div>
         </div>
 
-        {/* Visual Content */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-20 items-stretch w-full">
-            {/* Left/Main Visual Card */}
-            <div className="relative group text-left">
+        {/* Right Column: Substrate Divergence Matrix Dashboard */}
+        <div className="relative h-[720px] w-full rounded-[60px] bg-black border border-white/5 overflow-hidden shadow-2xl p-12 flex flex-col">
+            <div className="absolute top-10 left-10 micro-text opacity-40 tracking-[0.3em] font-black uppercase flex items-center gap-3">
+                <Layers size={14} className={isAsic ? 'text-burnished-copper' : 'text-plasma-cyan'} /> Substrate Divergence Analyzer
+            </div>
+
+            <div className="flex-1 flex flex-col justify-center gap-12">
                 <AnimatePresence mode="wait">
                     <motion.div 
                         key={isAsic ? 'asic' : 'fpga'}
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.9 }}
-                        className={`h-full p-12 rounded-[60px] border relative overflow-hidden flex flex-col items-center justify-center text-center space-y-8 backdrop-blur-md ${isAsic ? 'bg-burnished-copper/5 border-burnished-copper/30' : 'bg-plasma-cyan/5 border-plasma-cyan/30'}`}
+                        initial={{ opacity: 0, scale: 0.95, filter: 'blur(10px)' }}
+                        animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+                        exit={{ opacity: 0, scale: 1.05, filter: 'blur(10px)' }}
+                        className="grid grid-cols-2 gap-6"
                     >
-                        <div className="relative w-full h-[240px] rounded-3xl overflow-hidden mb-6">
-                            <img src="/assets/module6/silicon.png" alt="Silicon Wafer" className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" />
-                            <div className="absolute inset-0 bg-gradient-to-t from-burnished-copper/40 via-transparent to-transparent" />
-                        </div>
-                        <div className={`w-24 h-24 rounded-[30px] flex items-center justify-center transition-colors ${isAsic ? 'bg-burnished-copper/20 text-burnished-copper' : 'bg-plasma-cyan/20 text-plasma-cyan'}`}>
-                             {isAsic ? <Lock size={48} /> : <RefreshCcw size={48} className="animate-spin-slow" />}
-                        </div>
-                        <h3 className="hero-text text-4xl uppercase italic leading-none">
-                            {isAsic ? "Application Specific" : "Field Programmable"}
-                        </h3>
-                        <p className="body-text text-xl opacity-60 italic leading-snug">
-                            {isAsic 
-                                ? "Fixed into physical silicon at the foundry. Faster, more efficient, but permanent." 
-                                : "A sea of gates connected by software switches. Slower and power-hungry, but infinite."
-                            }
-                        </p>
+                        {[
+                            { label: 'Unit Cost', value: isAsic ? '$2.00' : '$500', sub: isAsic ? '@ 1M Volume' : '@ Low Vol', icon: DollarSign, color: isAsic ? 'burnished-copper' : 'plasma-cyan' },
+                            { label: 'Perf/Watt', value: isAsic ? 'PEAK' : 'MEDIUM', sub: isAsic ? 'Hardwired Efficiency' : 'SRAM Overhead', icon: Zap, color: isAsic ? 'burnished-copper' : 'plasma-cyan' },
+                            { label: 'Configure', value: isAsic ? 'FIXED' : 'INSTANT', sub: isAsic ? 'Silicon Immutability' : 'Soft Re-Mapping', icon: RefreshCcw, color: isAsic ? 'burnished-copper' : 'plasma-cyan' },
+                            { label: 'Market Time', value: isAsic ? '24mo' : '1wk', sub: isAsic ? 'Full Fab Cycle' : 'Compile Cycle', icon: Layers, color: isAsic ? 'burnished-copper' : 'plasma-cyan' }
+                        ].map((stat, idx) => (
+                            <div key={idx} className="bg-[#0A0A0B] border border-white/5 p-8 rounded-[40px] group hover:bg-[#121215] transition-all relative overflow-hidden">
+                                <stat.icon className={`mb-6 ${stat.color === 'plasma-cyan' ? 'text-plasma-cyan' : 'text-burnished-copper'}`} size={28} />
+                                <div className="micro-text uppercase opacity-20 font-black mb-1 tracking-widest text-[9px]">{stat.label}</div>
+                                <div className="hero-text text-3xl text-white mb-2 tracking-widest">{stat.value}</div>
+                                <div className={`micro-text uppercase text-[10px] font-black italic ${stat.color === 'plasma-cyan' ? 'text-plasma-cyan/40' : 'text-burnished-copper/40'}`}>{stat.sub}</div>
+                                <div className="absolute top-0 right-0 p-4 opacity-5">
+                                    <Activity size={40} />
+                                </div>
+                            </div>
+                        ))}
                     </motion.div>
                 </AnimatePresence>
+
+                <div className={`p-8 rounded-[40px] bg-white/[0.02] border border-white/10 flex items-center justify-between backdrop-blur-md`}>
+                    <div className="flex items-center gap-6">
+                        <div className={`w-16 h-16 rounded-[25px] flex items-center justify-center ${isAsic ? 'bg-burnished-copper/20 text-burnished-copper' : 'bg-plasma-cyan/20 text-plasma-cyan shadowed-glow'}`}>
+                             {isAsic ? <ShieldAlert size={32} /> : <Activity size={32} />}
+                        </div>
+                        <div>
+                            <div className="micro-text uppercase text-white/40 tracking-widest font-black text-[10px]">Strategic Decision Variable</div>
+                            <div className="hero-text text-xl text-white uppercase tracking-widest">
+                                {isAsic ? 'Extreme NRE // High Yield' : 'Zero NRE // Low Risk'}
+                            </div>
+                        </div>
+                    </div>
+                    <div className={`px-4 py-1 rounded-full border text-[9px] font-black uppercase tracking-[0.3em] ${isAsic ? 'border-burnished-copper text-burnished-copper' : 'border-plasma-cyan text-plasma-cyan'}`}>
+                        {isAsic ? 'Production Ready' : 'Prototyping'}
+                    </div>
+                </div>
             </div>
 
-            {/* Stats/Metrics Column */}
-            <div className="flex flex-col gap-6 justify-center">
-                {[
-                    { label: "Cost (Unit)", val: isAsic ? "LOW ($)" : "HIGH ($$$)", icon: DollarSign, color: isAsic ? 'text-burnished-copper' : 'text-plasma-cyan' },
-                    { label: "Performance", val: isAsic ? "ULTIMATE" : "MID-RANGE", icon: Zap, color: isAsic ? 'text-burnished-copper' : 'text-plasma-cyan' },
-                    { label: "Flexibility", val: isAsic ? "ZERO" : "INFINITE", icon: RefreshCcw, color: isAsic ? 'text-burnished-copper' : 'text-plasma-cyan' },
-                ].map((stat, i) => (
-                    <div key={i} className="p-8 rounded-[40px] bg-black/20 border border-white/5 flex items-center justify-between group hover:border-white/20 transition-all backdrop-blur-sm">
-                        <div className="flex items-center gap-4">
-                            <div className={`p-3 rounded-xl bg-white/5 ${stat.color}`}>
-                                {React.createElement(stat.icon, { size: 20 })}
-                            </div>
-                            <span className="micro-text opacity-40 uppercase">{stat.label}</span>
-                        </div>
-                        <span className={`hero-text text-xl uppercase italic ${stat.color}`}>{stat.val}</span>
-                    </div>
-                ))}
+            <div className="mt-8 flex items-center justify-between px-2">
+                <div className="flex items-center gap-4">
+                    <Share2 size={18} className="text-plasma-cyan opacity-40" />
+                    <div className="micro-text uppercase text-white/20 tracking-widest font-black text-[9px]">Target Device Topology Analyzer // Locked</div>
+                </div>
+                <div className="micro-text uppercase text-white/10 text-[9px] italic">VeriLog Engineering Core v6.0</div>
             </div>
         </div>
       </div>
-
-      <div className="mt-16 text-center micro-text opacity-40 uppercase">
-        Key Takeaway: The language connects you to both, but the silicon path dictates the economy.
-      </div>
-
-      <style>{`
-        .animate-spin-slow {
-            animation: spin 8s linear infinite;
-        }
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-      `}</style>
     </BlueprintContainer>
   );
 };

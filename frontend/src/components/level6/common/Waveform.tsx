@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { motion } from 'framer-motion';
 
 export interface Signal {
@@ -44,3 +44,4 @@ export const Waveform: React.FC<{ signals: Signal[], className?: string }> = ({ 
     </div>
   );
 };
+

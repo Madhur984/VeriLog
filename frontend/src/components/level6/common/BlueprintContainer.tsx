@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { motion } from 'framer-motion';
 
 export const BlueprintContainer: React.FC<{ children: React.ReactNode, className?: string }> = ({ children, className = "" }) => {
@@ -53,3 +53,4 @@ export const BlueprintContainer: React.FC<{ children: React.ReactNode, className
     </div>
   );
 };
+

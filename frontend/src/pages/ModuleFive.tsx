@@ -107,6 +107,21 @@ const Sidebar: React.FC<{
 
           return (
             <React.Fragment key={page.id}>
+              {/* Special divider before Verilog Mandate */}
+              {page.id === 'mandate' && (
+                <div className="pt-5 pb-2 px-1">
+                  <div className="h-[1px] w-full mb-3" style={{ background: 'linear-gradient(90deg, transparent, #00D4FF55, transparent)' }} />
+                  <div className="flex items-center gap-2">
+                    <span
+                      className="text-[8px] font-mono font-black uppercase tracking-[0.25em] px-2 py-0.5 rounded border"
+                      style={{ color: '#00D4FF', borderColor: '#00D4FF33', background: '#00D4FF0F' }}
+                    >
+                      ◈ VERILOG MANDATE
+                    </span>
+                    <div className="h-[1px] flex-1 opacity-10" style={{ backgroundColor: '#00D4FF' }} />
+                  </div>
+                </div>
+              )}
               <motion.button 
                 whileHover={{ x: 6, backgroundColor: 'rgba(255,255,255,0.03)' }}
                 whileTap={{ scale: 0.98 }}
@@ -127,7 +142,7 @@ const Sidebar: React.FC<{
         <div className="space-y-4">
           <div className="flex justify-between items-end">
             <span className="text-[9px] font-mono uppercase tracking-[0.2em] opacity-40">Sync Progress</span>
-            <span className="text-xs font-black italic" style={{ color: primary }}>{Math.round(progress)}%</span>
+            <span className="text-xs font-black" style={{ color: primary }}>{Math.round(progress)}%</span>
           </div>
           <div className="h-1 w-full bg-slate-900 rounded-full overflow-hidden relative">
             <motion.div 
@@ -207,8 +222,10 @@ export const ModuleFive: React.FC = () => {
             className="absolute inset-0 bg-blueprint-grid bg-[length:70px_70px] opacity-[0.14]" 
           />
           <div className="absolute inset-0 bg-dot-grid opacity-20" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(0,212,255,0.06),transparent_80%)]" />
-          
+          {/* Vivid ambient glow that shifts with page */}
+          <div className="absolute -top-[20%] -left-[10%] w-[70vw] h-[70vw] rounded-full blur-[140px] opacity-[0.12]" style={{ background: 'radial-gradient(circle, #00D4FF 0%, transparent 70%)' }} />
+          <div className="absolute bottom-[-10%] -right-[10%] w-[55vw] h-[55vw] rounded-full blur-[120px] opacity-[0.08]" style={{ background: 'radial-gradient(circle, #FF5F1F 0%, transparent 70%)' }} />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(0,212,255,0.04),transparent_80%)]" />
           <div className="absolute inset-0 pointer-events-none opacity-[0.04] bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.08),rgba(0,255,0,0.02),rgba(0,0,255,0.08))] bg-[length:100%_2px,3px_100%]" />
       </div>
 
@@ -224,7 +241,7 @@ export const ModuleFive: React.FC = () => {
                 key={page.label}
                 initial={{ opacity: 0.5, filter: 'blur(4px)' }}
                 animate={{ opacity: 1, filter: 'blur(0px)' }}
-                className="text-lg font-black tracking-normal uppercase italic text-shadow-glow"
+                className="text-lg font-black tracking-normal uppercase text-shadow-glow"
             >
                 {page.label}
             </motion.h2>

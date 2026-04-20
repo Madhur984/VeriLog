@@ -1,102 +1,139 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Network, Play, Zap, Factory, Binary, Activity, Search, RefreshCcw } from 'lucide-react';
-
-interface Props {
-  isActive: boolean;
-  isDarkMode: boolean;
-}
+import { Network, Play, Zap, Factory, Binary, Activity, Search, RefreshCcw, Cpu, ChevronRight, Layers } from 'lucide-react';
+import { BlueprintContainer } from './common/BlueprintContainer';
+import { HeroText } from './common/HeroText';
 
 const STAGES = [
-    { id: 'spec', label: 'Spec', icon: Search, desc: 'Defining the functionality.' },
-    { id: 'hdl', label: 'HDL', icon: Binary, desc: 'Writing the describing code.' },
-    { id: 'sim', label: 'Sim', icon: Play, desc: 'Functional verification.' },
-    { id: 'synth', label: 'Synth', icon: Zap, desc: 'Code to Netlist (Gates).' },
-    { id: 'pnr', label: 'P&R', icon: Network, desc: 'Physical layout design.' },
-    { id: 'fab', label: 'Fab', icon: Factory, desc: 'Printing onto Silicon.' },
+    { id: 'spec', label: 'Spec', icon: Search, desc: 'Defining mathematical functionality and bounds.', pro: 'Logic Architecture' },
+    { id: 'hdl', label: 'HDL', icon: Binary, desc: 'Synthesizable physical description mapping.', pro: 'RTL Modeling' },
+    { id: 'sim', label: 'Sim', icon: Play, desc: 'Functional verification in temporal space.', pro: 'Verification V6' },
+    { id: 'synth', label: 'Synth', icon: Zap, desc: 'Mapping code to physical logic gates.', pro: 'Netlist Synthesis' },
+    { id: 'pnr', label: 'P&R', icon: Network, desc: 'Physical placement and route layout.', pro: 'P&R Diagnostic' },
+    { id: 'fab', label: 'Fab', icon: Factory, desc: 'Printing atomic circuits onto silicon.', pro: 'Lithography' },
 ];
 
-export const S05_VLSIConnection: React.FC<Props> = ({ isActive }) => {
+export const S05_VLSIConnection: React.FC<{ isActive: boolean }> = ({ isActive }) => {
   const [active, setActive] = useState(0);
 
   return (
-    <div className="flex flex-col items-center justify-start w-full max-w-6xl mx-auto relative bg-black/40 py-10 rounded-[80px] border border-white/5 backdrop-blur-3xl">
-      {/* CAD-like Background Lines */}
-      <div className="absolute inset-0 z-0 opacity-5 pointer-events-none">
-        <div className="absolute top-0 bottom-0 left-1/4 w-px bg-plasma-cyan" />
-        <div className="absolute top-0 bottom-0 left-2/4 w-px bg-plasma-cyan" />
-        <div className="absolute top-0 bottom-0 left-3/4 w-px bg-plasma-cyan" />
-        <div className="absolute left-0 right-0 top-1/4 h-px bg-plasma-cyan" />
-        <div className="absolute left-0 right-0 top-2/4 h-px bg-plasma-cyan" />
-        <div className="absolute left-0 right-0 top-3/4 h-px bg-plasma-cyan" />
-      </div>
+    <BlueprintContainer>
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.4fr] gap-24 items-start w-full">
+        {/* Left Column: Narrative Sidebar */}
+        <div className="space-y-10 sticky top-24">
+          <div className="space-y-4">
+             <div className="micro-text uppercase tracking-[0.4em] text-plasma-cyan font-black opacity-60 flex items-center gap-2">
+                <Layers size={14} /> Industrial Pipeline
+             </div>
+             <HeroText className="text-left leading-none" color="text-white">VLSI <br/> <span className="text-plasma-cyan">Pipeline.</span></HeroText>
+          </div>
+          
+          <div className="space-y-8 max-w-xl">
+            <p className="body-text text-xl text-white/80 leading-relaxed font-light">
+              The industrial path from abstract mathematical code to <span className="text-plasma-cyan font-bold italic underline underline-offset-8 decoration-plasma-cyan/30">physical silicon matter.</span>
+            </p>
+            <p className="body-text text-base text-white/50 leading-relaxed">
+               Chip design is not a single act. It is a multi-billion dollar sequence of verification, synthesis, and lithography. As a Verilog engineer, you sit at the heart of this conduit.
+            </p>
 
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={isActive ? { opacity: 1 } : {}}
-        className="w-full flex flex-col items-center relative z-10"
-      >
-        <div className="text-center mb-16 px-6">
-            <h2 className="hero-text text-6xl md:text-8xl italic uppercase text-plasma-cyan leading-none mb-4">VLSI <span className="text-white">Pipeline.</span></h2>
-            <p className="body-text text-xl md:text-3xl opacity-60 leading-tight italic">The industrial path from code to physical matter.</p>
+            <div className="grid grid-cols-1 gap-3 pt-4">
+                {STAGES.map((s, i) => (
+                    <button 
+                        key={s.id}
+                        onClick={() => setActive(i)}
+                        className={`flex items-center gap-6 p-5 rounded-[24px] border transition-all duration-500 text-left group ${active === i ? 'bg-plasma-cyan/10 border-plasma-cyan/40 scale-[1.02]' : 'bg-white/[0.02] border-white/5 opacity-40 hover:opacity-100 hover:bg-white/[0.05]'}`}
+                    >
+                        <div className={`p-3 rounded-xl border transition-colors ${active === i ? 'bg-plasma-cyan/20 border-plasma-cyan text-plasma-cyan' : 'bg-black border-white/5 text-white/30'}`}>
+                            {React.createElement(s.icon, { size: 18 })}
+                        </div>
+                        <div className="flex-1">
+                            <div className="micro-text uppercase tracking-widest font-black opacity-40">Phase 0{i + 1}</div>
+                            <div className="hero-text text-xl uppercase tracking-tighter text-white">{s.label}</div>
+                        </div>
+                        {active === i && <ChevronRight size={18} className="text-plasma-cyan animate-pulse" />}
+                    </button>
+                ))}
+            </div>
+          </div>
         </div>
 
-        {/* Technical Horizontal Pipeline */}
-        <div className="w-full grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6 mb-20 relative px-6">
-            {STAGES.map((s, i) => (
-                <button
-                    key={s.id}
-                    onClick={() => setActive(i)}
-                    className={`relative p-6 md:p-8 rounded-[30px] md:rounded-[40px] border transition-all duration-500 flex flex-col items-center gap-4 md:gap-6 group overflow-hidden ${active === i ? 'bg-plasma-cyan border-plasma-cyan text-black shadow-2xl scale-105' : 'bg-white/[0.02] border-white/5 opacity-40 hover:opacity-100 hover:bg-plasma-cyan/10'}`}
-                >
-                    <div className="absolute top-0 right-0 p-2 opacity-5 text-black">
-                         <span className="hero-text text-2xl md:text-4xl italic">0{i+1}</span>
+        {/* Right Column: Stage Diagnostic Dashboard */}
+        <div className="relative h-[720px] w-full rounded-[60px] bg-black border border-white/5 overflow-hidden shadow-2xl p-12 flex flex-col">
+            <div className="absolute top-10 left-10 micro-text opacity-40 tracking-[0.3em] font-black uppercase flex items-center gap-3">
+                <Activity size={14} className="text-plasma-cyan" /> Fabrication Flow Monitor
+            </div>
+
+            <div className="flex-1 flex flex-col justify-center items-center">
+                <AnimatePresence mode="wait">
+                    <motion.div 
+                        key={active}
+                        initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -20, scale: 1.05 }}
+                        className="w-full flex flex-col items-center gap-12"
+                    >
+                        <div className="relative">
+                             <div className="w-48 h-48 rounded-[50px] bg-black border-2 border-plasma-cyan shadow-cyan-glow flex items-center justify-center text-plasma-cyan">
+                                {React.createElement(STAGES[active].icon, { size: 80, strokeWidth: 1 })}
+                             </div>
+                             {/* Rotating Ring */}
+                             <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 20, ease: "linear" }} className="absolute -inset-6 border border-white/5 border-dashed rounded-full" />
+                             <div className="absolute -top-4 -right-4 p-4 rounded-2xl bg-plasma-cyan text-black shadow-2xl">
+                                <span className="hero-text text-xl tracking-tighter">PHASE_0{active + 1}</span>
+                             </div>
+                        </div>
+
+                        <div className="text-center space-y-4 max-w-lg">
+                            <div className="space-y-1">
+                                <h3 className="hero-text text-5xl uppercase text-white tracking-widest">
+                                    {STAGES[active].label}
+                                </h3>
+                                <div className="micro-text uppercase text-plasma-cyan font-black tracking-[0.4em]">
+                                    {STAGES[active].pro}
+                                </div>
+                            </div>
+                            
+                            <p className="body-text text-xl text-white/70 italic leading-relaxed font-light">
+                                "{STAGES[active].desc}"
+                            </p>
+                        </div>
+
+                        <div className="flex items-center gap-8 py-6 px-10 rounded-full border border-white/5 bg-white/[0.02]">
+                            <div className="flex flex-col items-center">
+                                <div className="micro-text opacity-30 uppercase tracking-widest text-[9px] mb-1">Stability</div>
+                                <div className="hero-text text-lg text-white">OPTIMAL</div>
+                            </div>
+                            <div className="w-px h-10 bg-white/10" />
+                            <div className="flex flex-col items-center">
+                                <div className="micro-text opacity-30 uppercase tracking-widest text-[9px] mb-1">Feedback</div>
+                                <div className="hero-text text-lg text-white">RELIANT</div>
+                            </div>
+                            <div className="w-px h-10 bg-white/10" />
+                            <div className="flex flex-col items-center">
+                                <div className="micro-text opacity-30 uppercase tracking-widest text-[9px] mb-1">Context</div>
+                                <div className="hero-text text-lg text-white">{active < 3 ? 'DIGITAL' : 'PHYSICAL'}</div>
+                            </div>
+                        </div>
+                    </motion.div>
+                </AnimatePresence>
+            </div>
+
+            <div className="mt-12 p-8 bg-white/[0.03] border border-white/10 rounded-[40px] flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                    <RefreshCcw size={20} className="text-plasma-cyan animate-spin-slow" />
+                    <div>
+                        <div className="micro-text uppercase text-white/60 tracking-widest font-bold">Verification Feedback Loop</div>
+                        <div className="body-text text-[10px] opacity-30">Active monitoring of iterative design cycles.</div>
                     </div>
-                    <div className={`w-10 h-10 md:w-14 md:h-14 rounded-xl md:rounded-2xl flex items-center justify-center transition-all ${active === i ? 'bg-black text-plasma-cyan' : 'bg-white/5'}`}>
-                        {React.createElement(s.icon, { size: 24, strokeWidth: 1.5 })}
-                    </div>
-                    <span className="micro-text uppercase text-center">{s.label}</span>
-                </button>
-            ))}
-            
-            {/* Iterative Technical Loop */}
-            <div className="absolute -top-12 left-[33%] right-[33%] lg:flex hidden items-center justify-center overflow-hidden">
-                 <div className="px-6 py-2 rounded-full border border-plasma-cyan/20 bg-plasma-cyan/5 micro-text uppercase text-plasma-cyan flex items-center gap-3 animate-pulse">
-                    <RefreshCcw size={14} /> Verification Feedback Loop
-                 </div>
+                </div>
+                <div className="flex items-center gap-1">
+                    {STAGES.map((_, i) => (
+                        <div key={i} className={`w-3 h-1 rounded-full transition-all ${i <= active ? 'bg-plasma-cyan' : 'bg-white/10'}`} />
+                    ))}
+                </div>
             </div>
         </div>
-
-        {/* CAD-Style Engineering Card */}
-        <AnimatePresence mode="wait">
-            <motion.div
-                key={active}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                className="w-full max-w-4xl p-8 md:p-12 rounded-[40px] md:rounded-[60px] border border-plasma-cyan/30 bg-black/60 backdrop-blur-3xl relative overflow-hidden group shadow-2xl"
-            >
-                <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12">
-                    <div className="w-24 h-24 md:w-32 md:h-32 rounded-[20px] md:rounded-[30px] bg-plasma-cyan/10 border border-plasma-cyan/20 flex items-center justify-center text-plasma-cyan flex-shrink-0 animate-pulse">
-                        {React.createElement(STAGES[active].icon, { size: 48, strokeWidth: 1.5 })}
-                    </div>
-                    <div className="flex-1 space-y-4 text-center md:text-left">
-                        <div className="inline-block px-4 py-1 rounded-full border border-plasma-cyan/30 bg-plasma-cyan/10 micro-text uppercase text-plasma-cyan">
-                            Phase 0{active + 1} | Protocol {STAGES[active].id.toUpperCase()}
-                        </div>
-                        <h3 className="hero-text text-3xl md:text-5xl italic uppercase leading-none">{STAGES[active].label}</h3>
-                        <p className="body-text text-xl md:text-2xl opacity-60 italic leading-tight max-w-2xl">
-                            "{STAGES[active].desc}"
-                        </p>
-                    </div>
-                </div>
-                {/* Visual Engineering Backdrop Decor */}
-                <div className="absolute bottom-0 right-0 p-8 opacity-5 text-plasma-cyan pointer-events-none">
-                     <Binary size={120} />
-                </div>
-            </motion.div>
-        </AnimatePresence>
-      </motion.div>
-    </div>
+      </div>
+    </BlueprintContainer>
   );
 };
