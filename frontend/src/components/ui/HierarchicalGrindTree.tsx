@@ -522,36 +522,43 @@ export const HierarchicalGrindTree: React.FC = () => {
 
             {/* Three Vertical Branches */}
             {/* Three Vertical Branches - Circuit Tree Style */}
-            <div className="relative w-full py-10 px-4">
+            <div className="relative w-full pb-10 px-4 mt-8">
                 {/* Top Entry Trace */}
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1px] h-20 bg-gradient-to-b from-white/20 to-transparent" />
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1px] h-16 bg-gradient-to-b from-white/20 to-white/5" />
                 
                 {/* Horizontal Distributor Trace */}
-                <div className="absolute top-20 left-1/4 right-1/4 h-[1px] bg-white/5 backdrop-blur-sm" />
+                <div className="absolute top-16 left-[16.66%] right-[16.66%] h-[1px] bg-white/10 backdrop-blur-sm" />
 
                 <div className="flex justify-between gap-0 relative">
                     {branches.map((branch, bIdx) => (
                         <div key={branch.id} className="flex-1 flex flex-col items-center relative">
                             {/* Branch Entry Trace */}
-                            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1px] h-20 bg-white/5 group-hover:bg-cyan-400/20 transition-colors" />
+                            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1px] h-16 bg-white/10 group-hover:bg-cyan-400/30 transition-colors" />
 
-                            <div className="mt-24 mb-16 text-center z-10 px-6">
+                            <div className="mt-20 mb-12 text-center z-10 px-6">
                                 <motion.div 
                                     initial={{ opacity: 0 }}
                                     whileInView={{ opacity: 1 }}
-                                    className="inline-block px-4 py-1 rounded-full border border-white/5 bg-white/5 backdrop-blur-md mb-4"
+                                    className="inline-block px-4 py-1 rounded-full border border-white/10 bg-[#0A0A0B]/80 backdrop-blur-md mb-4 shadow-[0_0_15px_rgba(255,255,255,0.02)]"
                                 >
-                                    <span className="text-[8px] font-mono uppercase tracking-[0.6em] text-white/40" style={{ color: branch.color + 'cc' }}>{branch.subtitle}</span>
+                                    <span className="text-[8px] font-mono uppercase tracking-[0.6em]" style={{ color: branch.color }}>{branch.subtitle}</span>
                                 </motion.div>
-                                <h3 className="text-2xl font-black uppercase tracking-tighter text-white/90 group-hover:text-cyan-400 transition-colors">{branch.title}</h3>
+                                <h3 className="text-xl font-black uppercase tracking-widest text-white/90 group-hover:text-white transition-colors" style={{ textShadow: `0 0 20px ${branch.color}40` }}>{branch.title}</h3>
                             </div>
 
-                            <div className="flex flex-col items-center space-y-24 relative w-full pt-4">
+                            <div className="flex flex-col items-center space-y-24 relative w-full pt-2">
                                 {branch.nodes.map((node, i) => (
                                     <div key={node.id} className="relative group flex items-center justify-center w-full max-w-[200px]">
                                         {/* Vertical Path Trace */}
                                         {i < branch.nodes.length - 1 && (
-                                            <div className="absolute top-full left-1/2 -translate-x-1/2 w-px h-24 bg-white/5" />
+                                            <div className="absolute top-full left-1/2 -translate-x-1/2 w-px h-24 bg-white/10 overflow-hidden">
+                                                <motion.div 
+                                                    className="w-full h-1/3 opacity-50"
+                                                    style={{ backgroundColor: branch.color }}
+                                                    animate={{ y: [-32, 96] }}
+                                                    transition={{ duration: 2, repeat: Infinity, ease: 'linear', delay: i * 0.4 }}
+                                                />
+                                            </div>
                                         )}
 
                                         {/* Circular Tech Node */}
@@ -564,24 +571,24 @@ export const HierarchicalGrindTree: React.FC = () => {
                                             className="relative z-10 cursor-pointer"
                                         >
                                             {/* Glow Aura */}
-                                            <div className="absolute inset-[-20px] rounded-full bg-cyan-400/0 group-hover:bg-cyan-400/5 blur-2xl transition-all duration-700" />
+                                            <div className="absolute inset-[-20px] rounded-full opacity-0 group-hover:opacity-20 blur-2xl transition-all duration-700" style={{ backgroundColor: branch.color }} />
                                             
                                             {/* Outer Ring */}
-                                            <div className="w-20 h-20 rounded-full border border-white/5 group-hover:border-white/20 flex items-center justify-center bg-[#07090C] transition-all duration-500 relative">
+                                            <div className="w-16 h-16 rounded-full border border-white/10 group-hover:border-white/30 flex items-center justify-center bg-[#07090C] transition-all duration-500 relative shadow-lg">
                                                 {/* Inner Tech Pattern */}
-                                                <div className="absolute inset-1 rounded-full border border-dashed border-white/5 group-hover:border-white/10 animate-spin-slow" />
+                                                <div className="absolute inset-1 rounded-full border border-dashed border-white/20 group-hover:border-white/40 animate-spin-slow" />
                                                 
                                                 {/* Core Pip */}
-                                                <div className="w-4 h-4 rounded-full relative z-20" style={{ backgroundColor: branch.color, boxShadow: `0 0 20px ${branch.color}` }}>
-                                                    <div className="absolute inset-0 rounded-full animate-ping opacity-40" style={{ backgroundColor: branch.color }} />
+                                                <div className="w-2.5 h-2.5 rounded-full relative z-20" style={{ backgroundColor: branch.color, boxShadow: `0 0 15px ${branch.color}` }}>
+                                                    <div className="absolute inset-0 rounded-full animate-ping opacity-60" style={{ backgroundColor: branch.color }} />
                                                 </div>
 
-                                                {/* Floating Side Info Panel */}
-                                                <div className="absolute left-24 w-40 opacity-40 group-hover:opacity-100 group-hover:translate-x-2 transition-all duration-500 text-left pointer-events-none">
-                                                    <div className="text-[10px] font-black uppercase tracking-widest text-white leading-tight mb-1">{node.label}</div>
-                                                    <div className="flex items-center gap-2">
-                                                        <span className="text-[6px] font-mono text-white/50 uppercase tracking-[0.2em]">{node.subtitle}</span>
-                                                        <div className="h-px flex-1 bg-white/10" />
+                                                {/* Floating Side Info Panel (Alternates based on branch) */}
+                                                <div className={`absolute ${bIdx === 2 ? 'right-20 text-right' : 'left-20 text-left'} w-44 opacity-50 group-hover:opacity-100 ${bIdx === 2 ? 'group-hover:-translate-x-2' : 'group-hover:translate-x-2'} transition-all duration-500 pointer-events-none`}>
+                                                    <div className="text-[11px] font-black uppercase tracking-widest text-white leading-tight mb-1" style={{ textShadow: `0 0 10px ${branch.color}40` }}>{node.label}</div>
+                                                    <div className={`flex items-center gap-2 ${bIdx === 2 ? 'flex-row-reverse' : ''}`}>
+                                                        <span className="text-[7px] font-mono uppercase tracking-[0.2em]" style={{ color: branch.color }}>{node.subtitle}</span>
+                                                        <div className="h-px w-12 bg-gradient-to-r" style={{ backgroundImage: bIdx === 2 ? `linear-gradient(to left, ${branch.color}80, transparent)` : `linear-gradient(to right, ${branch.color}80, transparent)` }} />
                                                     </div>
                                                 </div>
                                             </div>
@@ -589,8 +596,9 @@ export const HierarchicalGrindTree: React.FC = () => {
                                             {/* Scan Overlay */}
                                             <div className="absolute inset-0 rounded-full overflow-hidden pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
                                                 <motion.div 
-                                                    className="w-full h-1/2 bg-gradient-to-b from-transparent via-cyan-400/20 to-transparent"
-                                                    animate={{ y: [-40, 80] }}
+                                                    className="w-full h-1/2 opacity-30"
+                                                    style={{ background: `linear-gradient(to bottom, transparent, ${branch.color}, transparent)` }}
+                                                    animate={{ y: [-32, 64] }}
                                                     transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
                                                 />
                                             </div>
