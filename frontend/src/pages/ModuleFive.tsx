@@ -44,21 +44,59 @@ interface Page {
 
 // ─── MEMOIZED SUB-COMPONENTS ─────────────────────────────────────────────
 
-const DataFlux = React.memo(() => (
-    <div className="absolute inset-0 overflow-hidden opacity-[0.03] pointer-events-none">
-        {[...Array(6)].map((_, i) => (
-            <motion.div
-                key={i}
-                initial={{ y: -100, x: (10 + (i * 15)) + '%' }}
-                animate={{ y: '110vh' }}
-                transition={{ duration: 15 + (i * 2), repeat: Infinity, ease: "linear", delay: i * 2 }}
-                className="absolute text-[8px] font-mono whitespace-pre text-plasma-cyan leading-none"
-            >
-                {Array.from({ length: 40 }).map(() => (Math.random() > 0.5 ? '1' : '0')).join('\n')}
-            </motion.div>
-        ))}
-    </div>
-));
+const DataFlux = React.memo(() => {
+    const canvasRef = useRef<HTMLCanvasElement>(null);
+
+    useEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        let animationFrameId: number;
+        let columns: number[];
+        const fontSize = 8;
+
+        const resize = () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            columns = Array.from({ length: Math.floor(canvas.width / 20) }, () => Math.random() * canvas.height);
+        };
+
+        const draw = () => {
+            ctx.fillStyle = 'rgba(2, 1, 0, 0.1)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#00D4FF';
+            ctx.font = `${fontSize}px monospace`;
+
+            columns.forEach((y, i) => {
+                const text = Math.random() > 0.5 ? '1' : '0';
+                const x = i * 20;
+                ctx.globalAlpha = 0.05;
+                ctx.fillText(text, x, y);
+
+                if (y > canvas.height && Math.random() > 0.975) {
+                    columns[i] = 0;
+                } else {
+                    columns[i] = y + fontSize;
+                }
+            });
+
+            animationFrameId = requestAnimationFrame(draw);
+        };
+
+        window.addEventListener('resize', resize);
+        resize();
+        draw();
+
+        return () => {
+            cancelAnimationFrame(animationFrameId);
+            window.removeEventListener('resize', resize);
+        };
+    }, []);
+
+    return <canvas ref={canvasRef} className="absolute inset-0 pointer-events-none z-0" />;
+});
 
 const TelemetryItem = React.memo(({ label, value, color }: { label: string, value: string, color: string }) => (
     <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="flex flex-col items-end">

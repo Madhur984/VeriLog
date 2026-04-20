@@ -10,9 +10,9 @@
  *   - Electron flow animation (stroke-dashoffset, velocity ∝ current)
  */
 
-import { useEffect, useRef, useState, useCallback, memo } from 'react';
-import { motion } from 'framer-motion';
-import { ShieldCheck, AlertTriangle } from 'lucide-react';
+import { useEffect, useRef, useState, useCallback, memo, useMemo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ShieldCheck, AlertTriangle, Play, Zap, Activity } from 'lucide-react';
 import { useMagneticDrag } from '../../hooks/useMagneticDrag';
 import './level1.css';
 
@@ -82,14 +82,33 @@ const LampSymbol = memo(({ x, y, color, active }: { x: number; y: number; color:
 LampSymbol.displayName = 'LampSymbol';
 
 // ── Spark Burst ───────────────────────────────────────────────────────────────
-const MicroSpark = memo(({ x, y }: { x: number; y: number }) => (
-    <g transform={`translate(${x},${y})`} aria-hidden="true">
-        {[1, 2, 3, 4].map(i => (
-            <circle key={i} className="vl-spark" r="2" fill="#0EA5E9" />
-        ))}
-    </g>
-));
-MicroSpark.displayName = 'MicroSpark';
+// ── Oscilloscope Telemetry ──────────────────────────────────────────────────
+const OscilloscopeTelemetry = memo(({ active }: { active: boolean }) => {
+    const canvasRef = useRef<HTMLCanvasElement>(null);
+    useEffect(() => {
+        const canvas = canvasRef.current; if (!canvas) return;
+        const ctx = canvas.getContext('2d'); if (!ctx) return;
+        let t = 0; let frame: number;
+        const draw = () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = active ? '#00D4FF' : '#ffffff20';
+            ctx.lineWidth = 1.5; ctx.beginPath();
+            for (let x = 0; x < canvas.width; x++) {
+                const amp = active ? 10 : 2;
+                const y = (canvas.height/2) + amp * Math.sin(x * 0.1 + t) + (active ? 4 * Math.sin(x * 0.25 - t*2) : 0);
+                if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+            }
+            ctx.stroke(); t += active ? 0.15 : 0.05; frame = requestAnimationFrame(draw);
+        };
+        draw(); return () => cancelAnimationFrame(frame);
+    }, [active]);
+    return (
+        <div className="relative h-16 w-32 bg-black/40 rounded-xl border border-white/5 overflow-hidden shadow-inner">
+            <canvas ref={canvasRef} width={128} height={64} className="absolute inset-0 opacity-60" />
+            <div className="absolute top-1 left-2 text-[6px] font-mono text-cyan-400 opacity-40 uppercase tracking-widest">Live_Signal</div>
+        </div>
+    );
+});
 
 // ── Main Component ────────────────────────────────────────────────────────────
 export const SocketSystem = memo(({ onComplete }: SocketSystemProps) => {
@@ -171,82 +190,88 @@ export const SocketSystem = memo(({ onComplete }: SocketSystemProps) => {
     };
 
     return (
-        <div className="w-full flex flex-col items-center gap-8 font-mono">
+        <div className="w-full flex flex-col items-center gap-10 font-sans bg-[#06090f] p-12 rounded-[3.5rem] border border-white/10 relative overflow-hidden">
+            
+            {/* Ambient Background Grid */}
+            <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: `radial-gradient(#00D4FF 1px, transparent 1px)`, backgroundSize: '32px 32px' }} />
 
-            {/* ── Status Banner ─────────────────────────────────────────── */}
-            <div className={cn(
-                "flex items-center gap-3 px-5 py-2.5 rounded-2xl border transition-all duration-500 shadow-xl",
-                shortCircuit ? "bg-rose-50 border-rose-100 shadow-rose-50" : snapped ? "bg-emerald-50 border-emerald-100 shadow-emerald-50" : "bg-sky-50 border-sky-100 shadow-sky-50"
-            )}>
-                <span className={cn(
-                    "w-2 h-2 rounded-full flex-shrink-0 animate-pulse",
-                    shortCircuit ? "bg-rose-500" : snapped ? "bg-emerald-500" : "bg-sky-500"
-                )} />
-                <span className={cn(
-                    "text-[10px] uppercase font-black tracking-widest italic",
-                    shortCircuit ? "text-rose-600" : snapped ? "text-emerald-600" : "text-sky-600"
-                )}>
-                    {shortCircuit
-                        ? 'FAULT — SHORT CIRCUIT DETECTED'
-                        : snapped
-                            ? 'LOOP INTEGRITY VERIFIED'
-                            : 'CONNECT PATH TO CLOSE CIRCUIT'}
-                </span>
+            {/* ── Status HUD ─────────────────────────────────────────── */}
+            <div className="w-full max-w-2xl flex justify-between items-center z-10">
+                <div className="flex flex-col gap-1">
+                    <div className="flex items-center gap-3">
+                        <div className={`w-2 h-2 rounded-full ${snapped ? 'bg-cyan-400 shadow-[0_0_10px_#00D4FF]' : 'bg-white/20'} animate-pulse`} />
+                        <span className="text-[10px] font-black uppercase tracking-[0.4em] text-white/40">Lab_Session // S-01.1</span>
+                    </div>
+                    <h2 className="text-xl font-black text-white tracking-widest uppercase">
+                        {snapped ? 'Signal_Path_Verified' : 'Establish_Integrity'}
+                    </h2>
+                </div>
+                
+                <div className="flex gap-4">
+                    <OscilloscopeTelemetry active={snapped} />
+                    <div className="flex flex-col justify-center items-end bg-black/40 px-6 rounded-xl border border-white/5">
+                        <span className="text-[7px] font-mono text-cyan-400/40 uppercase tracking-widest mb-1">Amperage_Total</span>
+                        <span className={`text-lg font-black italic tabular-nums ${snapped ? 'text-cyan-400 text-shadow-glow' : 'text-white/10'}`}>
+                            {snapped ? '0.158A' : '0.000A'}
+                        </span>
+                    </div>
+                </div>
             </div>
 
             {/* ── Overlay Toggle Bar & Current Meter ──────────────────────── */}
-            <div className="flex w-full max-w-2xl justify-between items-end">
-                <div className="flex gap-3">
+            <div className="flex w-full max-w-2xl justify-between items-center z-10 px-2">
+                <div className="flex gap-4">
                     {[
-                        { label: 'V', title: 'Voltage labels' },
-                        { label: '→', title: 'Current direction' },
-                        { label: '∮', title: 'Loop highlight' },
+                        { label: 'V', title: 'Voltage labels', icon: Activity },
+                        { label: '→', title: 'Current direction', icon: Zap },
+                        { label: '∮', title: 'Loop highlight', icon: ShieldCheck },
                     ].map((o, i) => (
-                        <button
+                        <motion.button
                             key={i}
-                            title={o.title}
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
                             onClick={() => toggleOverlay(i)}
-                            className={cn(
-                                "p-3 rounded-xl border transition-all duration-300 font-bold text-xs uppercase shadow-sm",
-                                overlays[i] ? "bg-sky-50 border-sky-200 text-sky-600 shadow-sky-100" : "bg-white border-slate-100 text-slate-400 hover:border-slate-200"
-                            )}
+                            className={`p-3 w-12 h-12 flex items-center justify-center rounded-2xl border transition-all duration-300 relative ${
+                                overlays[i] ? "bg-cyan-400 border-cyan-400 text-black shadow-[0_0_15px_#00D4FF]" : "bg-black/40 border-white/5 text-white/30 hover:border-white/20"
+                            }`}
                         >
-                            {o.label}
-                        </button>
+                            <o.icon size={16} />
+                            {overlays[i] && (
+                                <span className="absolute -top-1 -right-1 w-2 h-2 bg-white rounded-full animate-ping" />
+                            )}
+                        </motion.button>
                     ))}
-                    <button
-                        title="Scan circuit integrity"
-                        onClick={handleScan}
-                        disabled={!snapped || scanning}
-                        className={cn(
-                            "px-5 py-3 ml-2 rounded-xl border transition-all duration-300 font-black text-[10px] uppercase tracking-widest",
-                            scanning ? "bg-sky-500 text-white border-sky-600 shadow-lg shadow-sky-100" : (snapped ? "bg-white border-sky-100 text-sky-600 hover:border-sky-200" : "bg-slate-50 border-slate-100 text-slate-300 cursor-not-allowed")
-                        )}
-                    >
-                        SCAN INTEGRITY
-                    </button>
                 </div>
 
-                {/* Simulated Current Meter */}
-                <div className={cn(
-                    "font-black text-xl italic px-8 py-3 rounded-2xl border transition-all duration-500 shadow-inner bg-slate-50",
-                    shortCircuit ? "text-rose-500 border-rose-100" : snapped ? "text-sky-500 border-sky-100" : "text-slate-300 border-slate-100"
-                )}>
-                    <span className="text-[10px] font-black uppercase tracking-tighter mr-3 opacity-40 not-italic">Node_Current</span>
-                    {shortCircuit ? 'ERR' : snapped ? '0.15A' : '0.00A'}
-                </div>
+                <motion.button
+                    whileHover={{ scale: 1.02, x: 5 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={handleScan}
+                    disabled={!snapped || scanning}
+                    className={`px-8 py-3 rounded-2xl font-black text-[10px] uppercase tracking-[0.4em] border flex items-center gap-3 transition-all ${
+                        scanning ? "bg-cyan-400 text-black border-cyan-400" : (snapped ? "bg-white/5 border-white/10 text-white hover:bg-white/10" : "bg-white/[0.02] border-white/[0.02] text-white/10 cursor-not-allowed")
+                    }`}
+                >
+                    <Play size={12} fill={scanning ? "currentColor" : "none"} />
+                    {scanning ? 'Analyzing_Signal...' : 'Execute_Scan'}
+                </motion.button>
             </div>
 
             {/* ── SVG Circuit ───────────────────────────────────────────── */}
-            <div className="relative w-full max-w-2xl bg-white border border-slate-200 rounded-[48px] overflow-hidden shadow-2xl">
-                {!snapped && !shortCircuit && (
-                    <motion.div 
-                        initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                        className="absolute top-12 left-1/2 -translate-x-1/2 bg-sky-50 border border-sky-100 px-6 py-3 rounded-full text-[10px] font-black uppercase tracking-widest text-sky-600 shadow-lg shadow-sky-50 pointer-events-none z-10"
-                    >
-                        "Drag Terminal Node to Complete Path"
-                    </motion.div>
-                )}
+            <div className="relative w-full max-w-2xl bg-[#0A0A0B] border border-white/10 rounded-[3rem] overflow-hidden shadow-[0_40px_80px_rgba(0,0,0,0.8)] p-1">
+                <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-transparent opacity-50" />
+                <AnimatePresence>
+                    {!snapped && (
+                        <motion.div 
+                            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}
+                            className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none"
+                        >
+                            <div className="px-10 py-4 rounded-full bg-cyan-400/10 border border-cyan-400/20 backdrop-blur-xl text-cyan-400 text-[10px] font-black uppercase tracking-[0.5em] shadow-[0_0_40px_rgba(34,211,238,0.1)]">
+                                Establish_Continuity_Protocol
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
 
                 <svg
                     ref={svgRef}
@@ -315,37 +340,26 @@ export const SocketSystem = memo(({ onComplete }: SocketSystemProps) => {
             </div>
 
             {/* AI Insight */}
-            <div className="w-full max-w-2xl flex flex-col gap-4">
-                {shortCircuit && (
-                    <div className="bg-rose-50 border border-rose-100 rounded-[32px] p-8 shadow-xl">
-                        <div className="flex items-center gap-3 mb-4">
-                            <AlertTriangle size={24} className="text-rose-600" />
-                            <span className="text-[10px] font-black uppercase tracking-widest text-rose-600 italic">Critical Fault Analysis</span>
-                        </div>
-                        <p className="text-sm font-bold text-slate-600 leading-relaxed italic">
-                            <strong className="text-rose-600">OBSERVATION:</strong> Zero-resistance path established.
-                            Current bypasses the load completely. V_load = 0. I_circuit → ∞.
-                            Remove the short path and route current through the resistive load.
-                        </p>
-                    </div>
-                )}
-
-                {snapped && (
-                    <motion.div 
-                        initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-                        className="bg-white border border-slate-200 rounded-[32px] p-8 shadow-xl flex gap-6 items-start border-l-4 border-l-emerald-500"
-                    >
-                        <div className="p-3 bg-emerald-50 rounded-2xl text-emerald-600">
-                            <ShieldCheck size={24} />
-                        </div>
-                        <div>
-                            <div className="text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-2">Loop Continuity Diagnostic</div>
-                            <p className="text-sm font-bold text-slate-600 italic">
-                                "Continuity validated. Current loop holds from <strong className="text-slate-900">+12V Source</strong> through <strong className="text-slate-900">R_LOAD</strong> to <strong className="text-slate-900">-GND</strong>. Logic Invariant Satisfied."
-                            </p>
-                        </div>
-                    </motion.div>
-                )}
+            <div className="w-full max-w-2xl flex flex-col gap-6 z-10">
+                <AnimatePresence>
+                    {snapped && (
+                        <motion.div 
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            className="bg-white/[0.03] backdrop-blur-3xl border border-white/10 rounded-[2.5rem] p-8 shadow-[0_20px_40px_rgba(0,0,0,0.4)] flex gap-8 items-start border-l-4 border-l-cyan-400"
+                        >
+                            <div className="p-4 bg-cyan-400 rounded-2xl text-black shadow-[0_0_20px_rgba(34,211,238,0.4)]">
+                                <ShieldCheck size={28} />
+                            </div>
+                            <div className="flex-1">
+                                <div className="text-[10px] font-black text-cyan-400 uppercase tracking-[0.4em] mb-3">Integrity_Analyst // Protocol_X7</div>
+                                <p className="text-sm font-bold text-white/70 leading-relaxed italic">
+                                    "Continuity re-established. Current is flowing through <strong className="text-white">R_LOAD</strong> at a stable rate. Circuit invariants are nominal. You are ready for Signal Modulation nodes."
+                                </p>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </div>
         </div>
     );
