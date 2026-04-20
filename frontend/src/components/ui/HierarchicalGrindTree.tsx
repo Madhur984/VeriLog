@@ -121,80 +121,7 @@ const ROOT_NODES: RootNode[] = [
   },
 ];
 
-// ─── JEWEL POLYHEDRON ──────────────────────────────────────────────────────────
-const JewelPolyhedron: React.FC = () => (
-  <motion.div
-    initial={{ opacity: 0, scale: 0.5, rotate: -30 }}
-    animate={{ opacity: 1, scale: 1, rotate: 0 }}
-    transition={{ delay: 1.8, duration: 1.2, type: 'spring', stiffness: 80 }}
-    className="relative flex items-center justify-center"
-    style={{ width: 120, height: 120 }}
-  >
-    <motion.svg
-      width={120}
-      height={120}
-      viewBox="0 0 120 120"
-      style={{ overflow: 'visible' }}
-      animate={{ rotate: 360 }}
-      transition={{ duration: 24, repeat: Infinity, ease: 'linear' }}
-    >
-      <defs>
-        <radialGradient id="jewel-core" cx="40%" cy="35%">
-          <stop offset="0%" stopColor="#c4b5fd" stopOpacity={0.95} />
-          <stop offset="40%" stopColor="#7c3aed" stopOpacity={0.85} />
-          <stop offset="100%" stopColor="#fbbf24" stopOpacity={0.9} />
-        </radialGradient>
-        <filter id="jewel-glow">
-          <feGaussianBlur stdDeviation="6" result="blur" />
-          <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-        </filter>
-      </defs>
 
-      {/* Outer glow halo */}
-      <ellipse cx="60" cy="100" rx="35" ry="8" fill="#7c3aed" opacity="0.2">
-        <animate attributeName="opacity" values="0.12;0.28;0.12" dur="3s" repeatCount="indefinite" />
-      </ellipse>
-
-      {/* Main gem body — icosahedron approximation */}
-      <g filter="url(#jewel-glow)">
-        {/* Top face */}
-        <polygon points="60,8 90,36 60,46 30,36" fill="url(#jewel-core)" opacity="0.95" />
-        {/* Mid-right face */}
-        <polygon points="90,36 100,68 72,82 60,46" fill="#7c3aed" opacity="0.8" />
-        {/* Mid-left face */}
-        <polygon points="30,36 60,46 48,82 20,68" fill="#6d28d9" opacity="0.7" />
-        {/* Bottom face */}
-        <polygon points="60,46 72,82 60,92 48,82" fill="#4c1d95" opacity="0.85" />
-        {/* Bottom-right foot */}
-        <polygon points="72,82 100,68 88,98 60,92" fill="#5b21b6" opacity="0.6" />
-        {/* Bottom-left foot */}
-        <polygon points="48,82 60,92 32,98 20,68" fill="#4c1d95" opacity="0.55" />
-
-        {/* Facet edge lines */}
-        <line x1="60" y1="8" x2="60" y2="92" stroke="#c4b5fd" strokeWidth="0.5" opacity="0.3" />
-        <line x1="30" y1="36" x2="100" y2="68" stroke="#c4b5fd" strokeWidth="0.5" opacity="0.25" />
-        <line x1="90" y1="36" x2="20" y2="68" stroke="#fbbf24" strokeWidth="0.5" opacity="0.25" />
-
-        {/* Shine flare */}
-        <polygon points="60,8 72,22 62,20" fill="#e9d5ff" opacity="0.7" />
-        <polygon points="90,36 100,44 96,38" fill="#fde68a" opacity="0.5" />
-      </g>
-
-      {/* Top apex LED */}
-      <circle cx="60" cy="8" r="3" fill="#c4b5fd">
-        <animate attributeName="opacity" values="1;0.3;1" dur="1.8s" repeatCount="indefinite" />
-      </circle>
-    </motion.svg>
-
-    {/* Label */}
-    <div
-      className="absolute -bottom-6 text-center text-[7px] font-black tracking-[0.25em] uppercase"
-      style={{ color: '#c4b5fd60', width: 140, left: '-10px' }}
-    >
-      JEWEL CONSTRUCT Ω
-    </div>
-  </motion.div>
-);
 
 // ─── MODULE PREVIEWS ──────────────────────────────────────────────────────────
 const ModulePreview: React.FC<{ type: string; color: string }> = ({ type, color }) => {
@@ -380,9 +307,14 @@ const RootGem: React.FC<{
     <motion.div
       className="relative flex flex-col items-center"
       style={{ width: 110, cursor: isLocked ? 'not-allowed' : 'pointer' }}
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: ROOT_NODES.indexOf(node) * 0.1, duration: 0.6, type: 'spring' }}
+      initial={{ opacity: 0, scale: 0.8, y: 20 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      transition={{ 
+        delay: ROOT_NODES.indexOf(node) * 0.15 + 0.8, 
+        type: 'spring', 
+        stiffness: 70, 
+        damping: 15 
+      }}
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
       onClick={() => { if (!isLocked) onClick(); }}
@@ -415,7 +347,32 @@ const RootGem: React.FC<{
               <feGaussianBlur stdDeviation={hov ? 7 : 4} result="blur" />
               <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
             </filter>
+            
+            {/* Liquid Fill Mask */}
+            <clipPath id={`cp-${node.id}`}>
+               <polygon points="37,3 63,20 63,54 37,70 11,54 11,20" />
+            </clipPath>
           </defs>
+
+          {/* Liquid Fill Group */}
+          <g clipPath={`url(#cp-${node.id})`}>
+              <polygon points="37,3 63,20 63,54 37,70 11,54 11,20" fill={isLocked ? '#0f172a' : `${c0}40`} />
+              
+              {/* Liquid Rect */}
+              {!isLocked && (
+                <motion.rect 
+                    x="0" 
+                    y={70 - (node.pct / 100) * 67}
+                    width="74"
+                    height="70"
+                    fill={c1}
+                    initial={{ y: 70 }}
+                    animate={{ y: 70 - (node.pct / 100) * 67 }}
+                    transition={{ duration: 1.5, delay: 0.5, ease: "easeOut" }}
+                    opacity="0.3"
+                />
+              )}
+          </g>
 
           {/* Glow halo */}
           {!isLocked && (
@@ -425,13 +382,12 @@ const RootGem: React.FC<{
           )}
 
           {/* Gem body */}
-          <g filter={`url(#gf-${node.id})`}>
+          <g filter={`url(#gf-${node.id})`} opacity={isLocked ? 0.3 : 1}>
             <polygon
               points="37,3 63,20 63,54 37,70 11,54 11,20"
               fill={`url(#rg-${node.id})`}
               stroke={isLocked ? '#1e293b' : c1}
               strokeWidth={isActive ? 2 : 1.5}
-              opacity={isLocked ? 0.35 : 1}
             />
             {!isLocked && (
               <>
@@ -568,7 +524,28 @@ export const HierarchicalGrindTree: React.FC = () => {
                 Stationary Framework // Level 1-5 Access
             </div>
             
-            <div className="flex items-end justify-center gap-6 w-full">
+            <div className="flex items-end justify-center gap-6 w-full relative">
+                {/* Dependency Arrows */}
+                <svg className="absolute inset-x-0 top-1/2 -translate-y-1/2 w-full h-4 z-0 pointer-events-none opacity-30" preserveAspectRatio="none">
+                    <defs>
+                        <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="3" markerHeight="3" orient="auto-start-reverse">
+                            <path d="M 0 0 L 10 5 L 0 10 z" fill="#22d3ee" />
+                        </marker>
+                    </defs>
+                    {[0, 1, 2, 3].map(i => (
+                        <motion.path 
+                            key={i} 
+                            d={`M ${110/2 + i * (110+24)} 0 L ${110/2 + (i+1) * (110+24)} 0`} 
+                            stroke="#22d3ee" 
+                            strokeWidth="1.5" 
+                            strokeDasharray="6 6" 
+                            animate={{ strokeDashoffset: [0, -36] }}
+                            transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                            className="translate-x-[150px] translate-y-2"
+                        />
+                    ))}
+                </svg>
+
                 {ROOT_NODES.map(node => (
                 <RootGem
                     key={node.id}
@@ -589,10 +566,22 @@ export const HierarchicalGrindTree: React.FC = () => {
         className="flex-1 w-full overflow-y-auto px-10 pt-10 pb-24 scrollbar-hide relative z-10"
       >
         <div className="max-w-[1400px] mx-auto">
-            {/* Connection Hub Visualization */}
-            <div className="flex justify-center mb-16 relative">
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-px h-16 bg-gradient-to-b from-white/10 to-transparent" />
-                <JewelPolyhedron />
+            {/* Connection Hub Visualization — Industrial Diagnostic */}
+            <div className="flex justify-center mb-12 relative h-16">
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-px h-full bg-gradient-to-b from-white/20 via-cyan-400/20 to-transparent" />
+                <div className="relative z-10 flex flex-col items-center justify-center translate-y-4">
+                    <div className="micro-text text-[7px] text-cyan-400 font-black tracking-[0.5em] uppercase mb-1">Central_Hub_Active</div>
+                    <div className="flex gap-1.5">
+                        {[...Array(4)].map((_, i) => (
+                            <motion.div 
+                                key={i}
+                                animate={{ opacity: [1, 0.4, 1] }}
+                                transition={{ duration: 1, repeat: Infinity, delay: i * 0.2 }}
+                                className="w-1 h-3 bg-cyan-400/40 rounded-full" 
+                            />
+                        ))}
+                    </div>
+                </div>
             </div>
 
             {/* Three Vertical Branches */}
@@ -601,11 +590,19 @@ export const HierarchicalGrindTree: React.FC = () => {
                     <div key={branch.id} className="flex flex-col items-center space-y-12 relative">
                         {/* Branch Header */}
                         <div className="text-center space-y-2 mb-8">
-                            <div className="micro-text uppercase tracking-[0.5em] font-black opacity-30 text-[9px]" style={{ color: branch.color }}>
+                             <div className="micro-text uppercase tracking-[0.5em] font-black opacity-30 text-[9px]" style={{ color: branch.color }}>
                                 {branch.subtitle}
                             </div>
                             <h3 className="hero-text text-xl uppercase tracking-widest text-white">{branch.title}</h3>
-                            <div className="h-0.5 w-12 mx-auto rounded-full mt-2" style={{ backgroundColor: branch.color, boxShadow: `0 0 10px ${branch.color}` }} />
+                            <div className="flex flex-col items-center gap-2 mt-2">
+                                <div className="text-[7px] font-mono text-white/40 uppercase">Est: 12.5 Hours</div>
+                                <div className="h-0.5 w-24 bg-white/5 rounded-full overflow-hidden">
+                                     <div className="h-full bg-cyan-400 w-1/4 shadow-[0_0_8px_#22d3ee]" style={{ backgroundColor: branch.color }} />
+                                </div>
+                                {branch.id === 'branch-electronics' && (
+                                    <div className="px-2 py-0.5 rounded bg-cyan-400/10 border border-cyan-400/20 text-[6px] font-black text-cyan-400 uppercase tracking-widest mt-1">Current_Focus</div>
+                                )}
+                            </div>
                         </div>
 
                         {/* Node List */}
@@ -613,9 +610,15 @@ export const HierarchicalGrindTree: React.FC = () => {
                             {branch.nodes.map((node, i) => (
                                 <motion.div
                                     key={node.id}
-                                    initial={{ opacity: 0, scale: 0.9 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    transition={{ delay: 0.2 + i * 0.1 }}
+                                    initial={{ opacity: 0, y: 30, scale: 0.9 }}
+                                    whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                                    viewport={{ once: true }}
+                                    transition={{ 
+                                        delay: 0.1 + i * 0.1, 
+                                        type: 'spring', 
+                                        stiffness: 80, 
+                                        damping: 12 
+                                    }}
                                     className="relative group cursor-pointer"
                                     onClick={() => navigate(node.route)}
                                 >
@@ -636,9 +639,14 @@ export const HierarchicalGrindTree: React.FC = () => {
                                         {/* Status LED */}
                                         <div className="w-1.5 h-1.5 rounded-full mb-4 shadow-lg animate-pulse" style={{ backgroundColor: branch.color, boxShadow: `0 0 8px ${branch.color}` }} />
                                         
-                                        <div className="text-center">
+                                        <div className="text-center w-full">
                                             <div className="micro-text uppercase text-white/20 tracking-widest text-[8px] font-black mb-1">{node.subtitle}</div>
-                                            <div className="text-[11px] font-black text-white uppercase tracking-wider">{node.label}</div>
+                                            <div className="text-[11px] font-black text-white uppercase tracking-wider mb-3">{node.label}</div>
+                                            
+                                            {/* Progress Bar for node */}
+                                            <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden">
+                                                <div className="h-full bg-cyan-400/40 w-1/2" />
+                                            </div>
                                         </div>
 
                                         {/* Interaction Hint */}

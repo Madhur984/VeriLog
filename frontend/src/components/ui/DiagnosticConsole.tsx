@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 
@@ -15,6 +15,56 @@ interface DiagnosticConsoleProps {
   onCommandPaletteOpen?: () => void;
 }
 
+const OscilloscopeCanvas: React.FC = () => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let t = 0;
+    let animationId: number;
+
+    const draw = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.strokeStyle = '#3b82f6';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+
+      const w = canvas.width;
+      const h = canvas.height;
+      const mid = h / 2;
+
+      for (let x = 0; x < w; x++) {
+        // Mix of two sine waves for more technical look
+        const y = mid + 
+                 10 * Math.sin(x * 0.1 + t) + 
+                 5 * Math.sin(x * 0.25 - t * 2);
+        if (x === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+
+      ctx.stroke();
+      t += 0.05;
+      animationId = requestAnimationFrame(draw);
+    };
+
+    draw();
+    return () => cancelAnimationFrame(animationId);
+  }, []);
+
+  return (
+    <canvas 
+      ref={canvasRef}
+      className="absolute inset-0 opacity-30 pointer-events-none"
+      width={240}
+      height={96}
+    />
+  );
+};
+
 export const DiagnosticConsole: React.FC<DiagnosticConsoleProps> = ({
   onCommandPaletteOpen,
 }) => {
@@ -29,20 +79,20 @@ export const DiagnosticConsole: React.FC<DiagnosticConsoleProps> = ({
     'NEURAL_MAP: SYNC_READY',
   ];
 
-  React.useEffect(() => {
+  useEffect(() => {
     const t = setInterval(() => setTickerIdx(i => (i + 1) % TICKER_MSGS.length), 4000);
     return () => clearInterval(t);
   }, []);
 
   const BUTTONS: ConsoleButton[] = [
-    { id: 'globe',      icon: '◉',  label: 'Globe',          color: '#3b82f6', route: '/' },
+    { id: 'globe',      icon: '◉',  label: 'CAREER_MAP',     color: '#3b82f6', route: '/' },
     { id: 'gear',       icon: '⚙',  label: 'Settings',       color: '#2563eb', route: '/settings' },
     { id: 'code',       icon: '<>', label: 'Code',           color: '#3b82f6', route: '/verilog' },
-    { id: 'grind',      icon: '⬡',  label: 'Grind Status',   color: '#60a5fa' },
-    { id: 'resources',  icon: '≋',  label: 'Intel',          color: '#3b82f6', route: '/resources' },
-    { id: 'analytics',  icon: '▦',  label: 'Telemetry',      color: '#60a5fa', route: '/analytics' },
-    { id: 'leaderboard',icon: '⊞',  label: 'Rankings',       color: '#3b82f6', route: '/community' },
-    { id: 'cmd',        icon: '⌘',  label: 'Command',        color: '#60a5fa', action: onCommandPaletteOpen },
+    { id: 'grind',      icon: '⬡',  label: 'PROGRESS_CORE',  color: '#60a5fa' },
+    { id: 'resources',  icon: '≋',  label: 'MY_STATS',       color: '#3b82f6', route: '/resources' },
+    { id: 'analytics',  icon: '▦',  label: 'SESSION_LOG',    color: '#60a5fa', route: '/analytics' },
+    { id: 'leaderboard',icon: '⊞',  label: 'LEADERBOARD',    color: '#3b82f6', route: '/community' },
+    { id: 'cmd',        icon: '⌘',  label: 'COMMAND',        color: '#60a5fa', action: onCommandPaletteOpen },
   ];
 
   const handleBtn = (btn: ConsoleButton) => {
@@ -120,54 +170,51 @@ export const DiagnosticConsole: React.FC<DiagnosticConsoleProps> = ({
           </div>
         </div>
 
-        {/* Main display */}
+        {/* Main display — Oscilloscope + Ticker */}
         <div className="px-4 py-3">
           <div
-            className="rounded-lg p-3 relative overflow-hidden"
+            className="rounded-lg p-3 relative overflow-hidden h-24 flex flex-col justify-between"
             style={{
               background: '#020408',
               border: '1px solid rgba(59, 130, 246, 0.25)',
               boxShadow: 'inset 0 2px 8px rgba(0,0,0,0.9), 0 0 20px rgba(59, 130, 246, 0.05)',
             }}
           >
-            {/* CRT scanline */}
-            <div
-              className="absolute inset-0 pointer-events-none opacity-10"
-              style={{
-                backgroundImage: `repeating-linear-gradient(
-                  0deg,
-                  rgba(59, 130, 246, 0.15) 0px,
-                  rgba(59, 130, 246, 0.15) 1px,
-                  transparent 1px,
-                  transparent 3px
-                )`,
-              }}
-            />
-            <div className="text-[6px] font-mono tracking-[0.25em] uppercase mb-1" style={{ color: '#3b82f640' }}>
-              MISSION_TELEMETRY
-            </div>
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={tickerIdx}
-                initial={{ opacity: 0, y: 4 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -4 }}
-                transition={{ duration: 0.3 }}
-                className="text-[9px] font-black tracking-[0.2em] font-mono"
-                style={{ color: '#3b82f6', textShadow: '0 0 10px #3b82f680' }}
+            {/* Live Oscilloscope Component */}
+            <OscilloscopeCanvas />
+
+            <div className="relative z-10">
+              <div className="text-[6px] font-mono tracking-[0.25em] uppercase mb-1" style={{ color: '#3b82f640' }}>
+                MISSION_TELEMETRY
+              </div>
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={tickerIdx}
+                  initial={{ opacity: 0, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -4 }}
+                  transition={{ duration: 0.3 }}
+                  className="text-[9px] font-black tracking-[0.2em] font-mono"
+                  style={{ color: '#3b82f6', textShadow: '0 0 10px #3b82f680' }}
+                >
+                  {TICKER_MSGS[tickerIdx]}
+                </motion.div>
+              </AnimatePresence>
+              <motion.span
+                className="inline-block ml-1 text-[9px] font-mono"
+                style={{ color: '#3b82f6' }}
+                animate={{ opacity: [1, 0, 1] }}
+                transition={{ duration: 0.8, repeat: Infinity }}
               >
-                {TICKER_MSGS[tickerIdx]}
-              </motion.div>
-            </AnimatePresence>
-            {/* Blinking cursor */}
-            <motion.span
-              className="inline-block ml-1 text-[9px] font-mono"
-              style={{ color: '#3b82f6' }}
-              animate={{ opacity: [1, 0, 1] }}
-              transition={{ duration: 0.8, repeat: Infinity }}
-            >
-              █
-            </motion.span>
+                █
+              </motion.span>
+            </div>
+
+            {/* Bottom mini-metrics */}
+            <div className="relative z-10 flex justify-between items-end border-t border-white/5 pt-1 mt-1">
+               <div className="text-[5px] font-mono text-cyan-400/40">FRQ: 44.1kHz</div>
+               <div className="text-[5px] font-mono text-cyan-400/40">AMP: 1.25V</div>
+            </div>
           </div>
         </div>
 
