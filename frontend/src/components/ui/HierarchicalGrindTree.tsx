@@ -515,7 +515,11 @@ export const HierarchicalGrindTree: React.FC = () => {
   ];
 
   return (
-    <div className="w-full h-full flex flex-col bg-transparent overflow-hidden">
+    <motion.div 
+        animate={{ opacity: [0.95, 1, 0.95], scale: [0.998, 1, 0.998] }}
+        transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+        className="w-full h-full flex flex-col bg-transparent overflow-hidden"
+    >
       {/* ── Fixed Header Area ── */}
       <div className="flex-shrink-0 w-full pt-6 pb-2 px-10 border-b border-white/5 bg-black/20 backdrop-blur-md relative z-30">
         <div className="flex flex-col items-center">
@@ -666,6 +670,6 @@ export const HierarchicalGrindTree: React.FC = () => {
             </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
