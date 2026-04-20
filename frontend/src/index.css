@@ -125,10 +125,13 @@
     color: var(--text-dim); 
   }
 
-  /* Scrollbar */
+  /* Flow Scrollbar */
   ::-webkit-scrollbar       { width: 4px; }
   ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--bg-elev); border-radius: 2px; }
+  ::-webkit-scrollbar-thumb { 
+    background: linear-gradient(to bottom, #22d3ee, transparent); 
+    border-radius: 10px; 
+  }
 }
 
 @layer utilities {
