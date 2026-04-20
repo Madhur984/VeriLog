@@ -519,115 +519,145 @@ export const HierarchicalGrindTree: React.FC = () => {
     });
   };
 
+  const branches = [
+    {
+      id: 'branch-electronics',
+      title: 'Basic Electronics',
+      subtitle: 'FUNDAMENTAL_PHYSICS',
+      color: '#22d3ee',
+      nodes: [
+        { id: 's00', label: 'Breaking Point', subtitle: 'L6.S00', route: '/module/6/0' },
+        { id: 's01', label: 'Industry Problem', subtitle: 'L6.S01', route: '/module/6/2' },
+        { id: 's03', label: 'What is HDL?', subtitle: 'L6.S03', route: '/module/6/4' },
+        { id: 's03a', label: 'Verilog Mandate', subtitle: 'L6.S03a', route: '/module/6/8' },
+      ]
+    },
+    {
+      id: 'branch-design',
+      title: 'Digital System Design',
+      subtitle: 'ARCH_SYNTHESIS',
+      color: '#34d399',
+      nodes: [
+        { id: 's02', label: 'Abstraction Ladder', subtitle: 'L6.S02', route: '/module/6/11' },
+        { id: 's05', label: 'VLSI Connection', subtitle: 'L6.S05', route: '/module/6/14' },
+        { id: 's13', label: 'Synthesis Flow', subtitle: 'L6.S13', route: '/module/6/13' },
+        { id: 's14', label: 'FPGA vs ASIC', subtitle: 'L6.S14', route: '/module/6/23' },
+      ]
+    },
+    {
+      id: 'branch-verilog',
+      title: 'Verilog Expertise',
+      subtitle: 'RTL_VERIFICATION',
+      color: '#a78bfa',
+      nodes: [
+        { id: 's06', label: 'First Verilog', subtitle: 'L6.S06', route: '/module/6/16' },
+        { id: 's06a', label: 'Testbench Mirror', subtitle: 'L6.S06a', route: '/module/6/17' },
+        { id: 's20', label: 'AI Hardware', subtitle: 'L6.S20', route: '/module/6/24' },
+        { id: 's21', label: 'Power Design', subtitle: 'L6.S21', route: '/module/6/25' },
+      ]
+    }
+  ];
+
   return (
-    <div className="w-full h-full flex flex-col items-center bg-transparent">
-      {/* ── Scrollable Modules Area ── */}
-      <div
-        className="flex-1 w-full overflow-y-auto px-10 pt-10 pb-20 scrollbar-thin scrollbar-thumb-cyan-500/20 scrollbar-track-transparent"
-        style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(34,211,238,0.2) transparent' }}
-      >
-        <div className="flex flex-col items-center w-full min-h-full">
-          {/* Diagnostic console status — top */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="flex items-center gap-2 mb-10 text-[11px] font-mono tracking-widest text-cyan-400/60 uppercase"
-          >
-            <div className="w-1 h-1 rounded-full bg-cyan-400 animate-pulse" />
-            Active Module Recognition System Online
-          </motion.div>
-
-          {/* ── Root nodes row ── */}
-          <div className="relative flex items-end justify-center gap-4 z-10 w-full">
-            {ROOT_NODES.map(node => (
-              <RootGem
-                key={node.id}
-                node={node}
-                expanded={expanded.has(node.id)}
-                onClick={() => {
-                  toggle(node.id);
-                  if (node.route && node.status !== 'locked') navigate(node.route);
-                }}
-              />
-            ))}
-          </div>
-
-          {/* ── Children rows ── */}
-          <div className="relative mt-6 w-full" style={{ maxWidth: 1000 }}>
-            {ROOT_NODES.map((node) => (
-              <AnimatePresence key={node.id}>
-                {expanded.has(node.id) && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0, y: -10 }}
-                    animate={{ opacity: 1, height: 'auto', y: 0 }}
-                    exit={{ opacity: 0, height: 0, y: -10 }}
-                    transition={{ duration: 0.45, ease: 'easeOut' }}
-                    className="overflow-hidden"
-                  >
-                    <div className="w-full flex justify-center mb-2">
-                      <motion.div
-                        initial={{ scaleY: 0 }}
-                        animate={{ scaleY: 1 }}
-                        transition={{ duration: 0.3 }}
-                        style={{
-                          width: 2,
-                          height: 20,
-                          background: `linear-gradient(to bottom, ${node.glow}, ${node.glow}40)`,
-                          boxShadow: `0 0 6px ${node.glow}60`,
-                          transformOrigin: 'top',
-                        }}
-                      />
-                    </div>
-
-                    <div className="w-full flex justify-center mb-3">
-                      <motion.div
-                        initial={{ scaleX: 0 }}
-                        animate={{ scaleX: 1 }}
-                        transition={{ duration: 0.4, delay: 0.15 }}
-                        style={{
-                          width: Math.min(node.children.length * 84, 520),
-                          height: 2,
-                          background: `linear-gradient(90deg, transparent, ${node.glow}80, ${node.glow}, ${node.glow}80, transparent)`,
-                          boxShadow: `0 0 8px ${node.glow}60`,
-                          transformOrigin: 'center',
-                        }}
-                      />
-                    </div>
-
-                    <div className="flex justify-center gap-3 flex-wrap px-4">
-                      {node.children.map((child, ci) => (
-                        <div key={child.id} className="flex flex-col items-center">
-                          <motion.div
-                            initial={{ scaleY: 0 }}
-                            animate={{ scaleY: 1 }}
-                            transition={{ duration: 0.25, delay: 0.25 + ci * 0.05 }}
-                            style={{
-                              width: 1.5,
-                              height: 16,
-                              background: child.locked ? '#1e293b' : `${child.color}80`,
-                              boxShadow: child.locked ? 'none' : `0 0 4px ${child.color}60`,
-                              transformOrigin: 'top',
-                              marginBottom: 4,
-                            }}
-                          />
-                          <SubNodeBadge node={child} delay={0.3 + ci * 0.07} />
-                        </div>
-                      ))}
-                    </div>
-
-                    <div className="flex justify-center mt-4 gap-2" style={{ opacity: 0.4 }}>
-                      {node.children.map((_, ci) => (
-                        <div key={ci} className="rounded-sm" style={{ width: 44, height: 4, background: `linear-gradient(90deg, transparent, ${node.glow}40, transparent)` }} />
-                      ))}
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            ))}
-          </div>
+    <div className="w-full h-full flex flex-col bg-transparent overflow-hidden">
+      {/* ── Fixed Header Area ── */}
+      <div className="flex-shrink-0 w-full pt-6 pb-2 px-10 border-b border-white/5 bg-black/20 backdrop-blur-md relative z-30">
+        <div className="flex flex-col items-center">
+            <div className="flex items-center gap-1.5 mb-6 text-[9px] font-mono tracking-[0.4em] text-cyan-400/40 uppercase">
+                <div className="w-1 h-1 rounded-full bg-cyan-400 animate-pulse" />
+                Stationary Framework // Level 1-5 Access
+            </div>
+            
+            <div className="flex items-end justify-center gap-6 w-full">
+                {ROOT_NODES.map(node => (
+                <RootGem
+                    key={node.id}
+                    node={node}
+                    expanded={expanded.has(node.id)}
+                    onClick={() => {
+                        toggle(node.id);
+                        if (node.route && node.status !== 'locked') navigate(node.route);
+                    }}
+                />
+                ))}
+            </div>
         </div>
       </div>
 
+      {/* ── Scrollable Branches Area ── */}
+      <div
+        className="flex-1 w-full overflow-y-auto px-10 pt-10 pb-24 scrollbar-hide relative z-10"
+      >
+        <div className="max-w-[1400px] mx-auto">
+            {/* Connection Hub Visualization */}
+            <div className="flex justify-center mb-16 relative">
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-px h-16 bg-gradient-to-b from-white/10 to-transparent" />
+                <JewelPolyhedron />
+            </div>
+
+            {/* Three Vertical Branches */}
+            <div className="grid grid-cols-3 gap-8">
+                {branches.map(branch => (
+                    <div key={branch.id} className="flex flex-col items-center space-y-12 relative">
+                        {/* Branch Header */}
+                        <div className="text-center space-y-2 mb-8">
+                            <div className="micro-text uppercase tracking-[0.5em] font-black opacity-30 text-[9px]" style={{ color: branch.color }}>
+                                {branch.subtitle}
+                            </div>
+                            <h3 className="hero-text text-xl uppercase tracking-widest text-white">{branch.title}</h3>
+                            <div className="h-0.5 w-12 mx-auto rounded-full mt-2" style={{ backgroundColor: branch.color, boxShadow: `0 0 10px ${branch.color}` }} />
+                        </div>
+
+                        {/* Node List */}
+                        <div className="space-y-10 w-full flex flex-col items-center">
+                            {branch.nodes.map((node, i) => (
+                                <motion.div
+                                    key={node.id}
+                                    initial={{ opacity: 0, scale: 0.9 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    transition={{ delay: 0.2 + i * 0.1 }}
+                                    className="relative group cursor-pointer"
+                                    onClick={() => navigate(node.route)}
+                                >
+                                    {/* Connectivity Trace */}
+                                    {i < branch.nodes.length - 1 && (
+                                        <div 
+                                            className="absolute top-full left-1/2 -translate-x-1/2 w-0.5 h-10 opacity-20"
+                                            style={{ background: `linear-gradient(to bottom, ${branch.color}, transparent)` }}
+                                        />
+                                    )}
+
+                                    {/* Tactile Node Card */}
+                                    <div className="w-56 p-6 rounded-[32px] bg-[#0A0A0B] border border-white/5 group-hover:border-white/20 transition-all duration-500 relative overflow-hidden flex flex-col items-center">
+                                        <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-20 transition-opacity">
+                                            <div className="w-20 h-20 rounded-full border border-white" />
+                                        </div>
+
+                                        {/* Status LED */}
+                                        <div className="w-1.5 h-1.5 rounded-full mb-4 shadow-lg animate-pulse" style={{ backgroundColor: branch.color, boxShadow: `0 0 8px ${branch.color}` }} />
+                                        
+                                        <div className="text-center">
+                                            <div className="micro-text uppercase text-white/20 tracking-widest text-[8px] font-black mb-1">{node.subtitle}</div>
+                                            <div className="text-[11px] font-black text-white uppercase tracking-wider">{node.label}</div>
+                                        </div>
+
+                                        {/* Interaction Hint */}
+                                        <motion.div 
+                                            className="absolute bottom-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                                            animate={{ y: [0, -2, 0] }}
+                                            transition={{ repeat: Infinity, duration: 2 }}
+                                        >
+                                            <div className="text-[6px] font-mono text-white/30 uppercase tracking-[0.3em]">Neural Link: Ready</div>
+                                        </motion.div>
+                                    </div>
+                                </motion.div>
+                            ))}
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+      </div>
     </div>
   );
 };

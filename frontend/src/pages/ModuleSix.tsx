@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Activity, Moon, Sun, ArrowRight, ArrowLeft } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 // --- Scene Components ---
 import { S00_BreakingPoint } from '../components/level6/S00_BreakingPoint';
@@ -32,6 +32,8 @@ import { S16_TestbenchLab } from '../components/level6/S16_TestbenchLab';
 import { S17_HierarchyDepth } from '../components/level6/S17_HierarchyDepth';
 import { S18_NotSoftware } from '../components/level6/S18_NotSoftware';
 import { S19_FinalBridge } from '../components/level6/S19_FinalBridge';
+import { S20_AIHardware } from '../components/level6/S20_AIHardware';
+import { S21_PowerDesign } from '../components/level6/S21_PowerDesign';
 
 // --- Types ---
 interface Page {
@@ -73,6 +75,8 @@ const PAGES: Page[] = [
 
   { id: 'wild',           label: 'Common Patterns', subtitle: 'Verilog patterns.', Component: S08_SimulationVsReality },
   { id: 'destiny',        label: 'FPGA vs ASIC', subtitle: 'Implementation destiny.', Component: S14_FPGAvsASIC },
+  { id: 'ai-gen',         label: 'AI Hardware', subtitle: 'Matrix Engines.', Component: S20_AIHardware },
+  { id: 'power-ppa',      label: 'Power Design', subtitle: 'Thermal Envelopes.', Component: S21_PowerDesign },
   { id: 'identity',       label: 'Identity Shift', subtitle: 'Conclusion.', Component: S09_IdentityShift },
   { id: 'bridge',         label: 'Final Bridge', subtitle: 'The industry horizon.', Component: S19_FinalBridge },
 ];
@@ -136,14 +140,25 @@ const Sidebar: React.FC<{
 };
 
 export const ModuleSix: React.FC = () => {
-  const [current, setCurrent] = useState(0);
+  const { index } = useParams();
+  const [current, setCurrent] = useState(index ? parseInt(index) : 0);
   const [isDarkMode, setIsDarkMode] = useState(true);
   const contentRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (index !== undefined) {
+      const idx = parseInt(index);
+      if (!isNaN(idx) && idx >= 0 && idx < PAGES.length) {
+        setCurrent(idx);
+      }
+    }
+  }, [index]);
+
   const go = useCallback((dir: number) => {
-    setCurrent(c => Math.max(0, Math.min(PAGES.length - 1, c + dir)));
-  }, []);
+    const next = Math.max(0, Math.min(PAGES.length - 1, current + dir));
+    navigate(`/module/6/${next}`);
+  }, [current, navigate]);
 
   useEffect(() => {
     contentRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
@@ -161,7 +176,13 @@ export const ModuleSix: React.FC = () => {
          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(0,212,255,0.03),transparent_70%)]" />
       </div>
       
-      <Sidebar current={current} isDarkMode={isDarkMode} onChange={setCurrent} toggleTheme={() => setIsDarkMode(!isDarkMode)} primary={primary} />
+      <Sidebar 
+        current={current} 
+        isDarkMode={isDarkMode} 
+        onChange={(i) => navigate(`/module/6/${i}`)} 
+        toggleTheme={() => setIsDarkMode(!isDarkMode)} 
+        primary={primary} 
+      />
       
       <div className="flex-1 flex flex-col h-full overflow-hidden relative z-10">
         <header className="h-16 border-b border-white/10 backdrop-blur-md flex items-center justify-between px-10 z-10 bg-black/20">
