@@ -43,7 +43,7 @@ export const S18_NotSoftware: React.FC<{ isActive: boolean }> = ({ isActive }) =
         {/* Right Column: Execution Paradigm Dashboard */}
         <div className="relative w-full space-y-8">
             {/* Software Comparison Block */}
-            <div className="p-10 rounded-[50px] bg-white/[0.01] border border-white/5 opacity-40 grayscale blur-[1px] group hover:blur-0 hover:grayscale-0 hover:opacity-100 transition-all duration-700 backdrop-blur-md relative overflow-hidden">
+            <div className="p-10 rounded-[50px] bg-white/[0.01] border border-white/5 opacity-40 grayscale group hover:grayscale-0 hover:opacity-100 transition-all duration-700 backdrop-blur-sm relative overflow-hidden">
                 <div className="absolute top-10 right-10 micro-text text-[9px] font-black uppercase text-white/20 tracking-[0.2em] flex items-center gap-2">
                     <Database size={12} /> Temporal Buffer Mode
                 </div>
@@ -78,7 +78,7 @@ export const S18_NotSoftware: React.FC<{ isActive: boolean }> = ({ isActive }) =
             </div>
 
             {/* Hardware Reality Block */}
-            <div className="p-10 rounded-[50px] bg-plasma-cyan/5 border border-plasma-cyan/20 shadow-2xl relative overflow-hidden backdrop-blur-3xl group">
+            <div className="p-10 rounded-[50px] bg-plasma-cyan/5 border border-plasma-cyan/20 shadow-2xl relative overflow-hidden backdrop-blur-xl group">
                 <div className="absolute top-10 right-10 micro-text text-[9px] font-black uppercase text-plasma-cyan/40 tracking-[0.2em] flex items-center gap-2">
                     <Share2 size={12} /> Concurrent Logic Fabric
                 </div>

@@ -58,7 +58,7 @@ export const S05_VLSIConnection: React.FC<{ isActive: boolean }> = ({ isActive }
         </div>
 
         {/* Right Column: Stage Diagnostic Dashboard */}
-        <div className="relative h-[720px] w-full rounded-[60px] bg-black border border-white/5 overflow-hidden shadow-2xl p-12 flex flex-col">
+        <div className="relative min-h-[720px] w-full rounded-[60px] bg-black border border-white/5 overflow-hidden shadow-2xl p-10 md:p-12 lg:p-16 flex flex-col">
             <div className="absolute top-10 left-10 micro-text opacity-40 tracking-[0.3em] font-black uppercase flex items-center gap-3 text-[10px]">
                 <Activity size={14} className="text-plasma-cyan" /> Fabrication Flow Monitor // GDSII_SYNTH
             </div>
@@ -112,6 +112,19 @@ export const S05_VLSIConnection: React.FC<{ isActive: boolean }> = ({ isActive }
                         </div>
                     </motion.div>
                 </AnimatePresence>
+            </div>
+
+            <div className="mt-8 p-1 bg-gradient-to-br from-white/20 via-white/5 to-transparent rounded-[45px] shadow-2xl relative overflow-hidden group">
+                <img 
+                    src="/assets/module5/wafer.png" 
+                    alt="Silicon Wafer Fabrication" 
+                    className="w-full h-32 object-cover rounded-[44px] opacity-40 group-hover:opacity-80 transition-all duration-1000 grayscale group-hover:grayscale-0 scale-110 group-hover:scale-100" 
+                />
+                <div className="absolute inset-0 bg-black/40 group-hover:bg-transparent transition-colors duration-1000" />
+                <div className="absolute left-10 top-1/2 -translate-y-1/2">
+                    <div className="micro-text text-[9px] text-white/40 group-hover:text-plasma-cyan font-black tracking-widest mb-1 transition-colors">Surface_Scanning // Fab_Active</div>
+                    <div className="hero-text text-sm uppercase text-white/60 group-hover:text-white tracking-widest transition-colors">Micro-Photostatic View</div>
+                </div>
             </div>
 
             <div className="mt-8 p-8 bg-white/[0.02] border border-white/10 rounded-[35px] flex items-center justify-between backdrop-blur-md">

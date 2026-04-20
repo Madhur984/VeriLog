@@ -86,7 +86,7 @@ export const S13_SynthesisBreakdown: React.FC<{ isActive: boolean }> = ({ isActi
         </div>
 
         {/* Right Column: Physical Mapping Monitor Dashboard */}
-        <div className="relative h-[720px] w-full rounded-[60px] bg-black border border-white/5 overflow-hidden shadow-2xl p-12 flex flex-col">
+        <div className="relative min-h-[720px] w-full rounded-[60px] bg-black border border-white/5 overflow-hidden shadow-2xl p-10 md:p-12 lg:p-16 flex flex-col">
             <div className="absolute top-10 left-10 micro-text opacity-40 tracking-[0.3em] font-black uppercase flex items-center gap-3">
                 <Binary size={14} className="text-plasma-cyan" /> RTL to Gate Transformation Diagnostic
             </div>
@@ -100,7 +100,14 @@ export const S13_SynthesisBreakdown: React.FC<{ isActive: boolean }> = ({ isActi
                         exit={{ opacity: 0, x: -20, filter: 'blur(10px)' }}
                         className="space-y-12"
                     >
-                        <div className="p-10 rounded-[50px] bg-white/[0.01] border border-white/5 backdrop-blur-md relative overflow-hidden group">
+                        <div className="p-10 rounded-[50px] bg-white/[0.01] border border-white/5 backdrop-blur-md relative overflow-hidden group min-h-[380px] flex flex-col justify-end">
+                            <img 
+                                src="/assets/module5/synthesis.png" 
+                                alt="Synthesis Map" 
+                                className="absolute inset-0 w-full h-full object-cover opacity-[0.08] group-hover:opacity-[0.15] transition-opacity duration-1000 grayscale group-hover:grayscale-0" 
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80" />
+                            
                             <div className="absolute top-0 right-0 p-10 opacity-5 text-plasma-cyan pointer-events-none">
                                 <span className="hero-text text-[140px] leading-none">0{step + 1}</span>
                             </div>
@@ -112,8 +119,8 @@ export const S13_SynthesisBreakdown: React.FC<{ isActive: boolean }> = ({ isActi
                                         {STAGES[step].content}
                                     </div>
                                 </div>
-
-                                <div className="space-y-4 max-w-xl">
+ 
+                                <div className="space-y-4 max-w-xl pb-4">
                                     <h3 className="hero-text text-4xl uppercase text-white tracking-widest">{STAGES[step].label} // {STAGES[step].pro}</h3>
                                     <p className="body-text text-base opacity-40 leading-relaxed font-light">
                                         {STAGES[step].desc}

@@ -1,9 +1,9 @@
-﻿import React from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 
 export const BlueprintContainer: React.FC<{ children: React.ReactNode, className?: string }> = ({ children, className = "" }) => {
   return (
-    <div className={`relative w-full min-h-[60vh] flex flex-col items-center justify-center p-8 md:p-12 overflow-hidden bg-white/[0.03] backdrop-blur-[40px] rounded-[60px] md:rounded-[80px] border border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.8)] ${className}`}>
+    <div className={`relative w-full min-h-[60vh] flex flex-col items-center justify-center p-8 md:p-12 overflow-hidden bg-white/[0.03] backdrop-blur-[20px] rounded-[60px] md:rounded-[80px] border border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.8)] ${className}`}>
       {/* Specular Highlights (Apple Liquid Glass Style) */}
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none" />
       <div className="absolute inset-y-0 left-0 w-px bg-gradient-to-b from-transparent via-white/10 to-transparent pointer-events-none" />
@@ -18,7 +18,7 @@ export const BlueprintContainer: React.FC<{ children: React.ReactNode, className
                 y: [0, -20, 0]
             }}
             transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-            className="absolute -top-1/2 -left-1/2 w-[200%] h-[200%] bg-[radial-gradient(circle_at_30%_30%,rgba(0,212,255,0.05),transparent_40%),radial-gradient(circle_at_70%_70%,rgba(255,165,0,0.02),transparent_40%)] blur-[100px]" 
+            className="absolute -top-1/2 -left-1/2 w-[200%] h-[200%] bg-[radial-gradient(circle_at_30%_30%,rgba(0,212,255,0.05),transparent_40%),radial-gradient(circle_at_70%_70%,rgba(255,165,0,0.02),transparent_40%)] blur-[60px]" 
          />
          
          <div className="absolute inset-0 bg-dot-grid opacity-20 contrast-125" />

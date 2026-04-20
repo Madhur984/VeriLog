@@ -63,7 +63,7 @@ export const S17_HierarchyDepth: React.FC<{ isActive: boolean }> = ({ isActive }
                         className="flex flex-col items-center gap-10 relative z-10 w-full"
                     >
                         {/* Current Hierarchy Node */}
-                        <div className="p-12 rounded-[50px] bg-white/[0.01] border border-white/10 flex flex-col items-center gap-8 shadow-2xl backdrop-blur-3xl group/node min-w-[320px]">
+                        <div className="p-12 rounded-[50px] bg-white/[0.01] border border-white/10 flex flex-col items-center gap-8 shadow-2xl backdrop-blur-xl group/node min-w-[320px]">
                              <div className="w-24 h-24 rounded-[35px] bg-black border border-plasma-cyan/30 flex items-center justify-center text-plasma-cyan shadow-cyan-glow relative overflow-hidden">
                                 {depth === 0 ? <Cpu size={48} strokeWidth={1.5} /> : depth === 1 ? <HardDrive size={48} strokeWidth={1.5} /> : <Binary size={48} strokeWidth={1.5} />}
                              </div>
@@ -94,7 +94,7 @@ export const S17_HierarchyDepth: React.FC<{ isActive: boolean }> = ({ isActive }
                         <div className="relative w-px h-16 bg-gradient-to-b from-plasma-cyan to-transparent animate-pulse" />
 
                         {/* Child Preview Nodes */}
-                        <div className="flex gap-8 opacity-40 grayscale blur-[1px]">
+                        <div className="flex gap-8 opacity-40 grayscale">
                             {[1, 2].map((i) => (
                                 <div key={i} className="px-6 py-4 rounded-[25px] border border-white/5 bg-white/[0.02] flex items-center gap-3">
                                     <Layers size={14} className="text-plasma-cyan" />

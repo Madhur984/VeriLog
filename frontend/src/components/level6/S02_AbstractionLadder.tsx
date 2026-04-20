@@ -56,7 +56,7 @@ export const S02_AbstractionLadder: React.FC<{ isActive: boolean }> = ({ isActiv
         </div>
 
         {/* Right Column: Depth Visualization Dashboard */}
-        <div className="relative h-[720px] w-full rounded-[60px] bg-black border border-white/5 overflow-hidden shadow-2xl p-12 flex flex-col">
+        <div className="relative min-h-[720px] w-full rounded-[60px] bg-black border border-white/5 overflow-hidden shadow-2xl p-10 md:p-12 lg:p-16 flex flex-col">
             <div className="absolute top-10 left-10 micro-text opacity-40 tracking-[0.3em] font-black uppercase flex items-center gap-3 text-[10px]">
                 <Activity size={14} className="text-plasma-cyan" /> Abstraction Depth Probe // DEPTH_STATION
             </div>

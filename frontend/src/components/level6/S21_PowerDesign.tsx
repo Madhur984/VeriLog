@@ -47,7 +47,7 @@ export const S21_PowerDesign: React.FC<{ isActive: boolean }> = ({ isActive }) =
         </div>
 
         {/* Right Column: Thermal Logic Furnace Dashboard */}
-        <div className="relative h-[720px] w-full rounded-[60px] bg-black border border-white/5 overflow-hidden shadow-2xl p-12 flex flex-col items-center">
+        <div className="relative min-h-[720px] w-full rounded-[60px] bg-black border border-white/5 overflow-hidden shadow-2xl p-10 md:p-12 lg:p-16 flex flex-col items-center">
             <div className="absolute top-10 left-10 micro-text opacity-40 tracking-[0.3em] font-black uppercase flex items-center gap-3">
                 <Thermometer size={14} className="text-burnished-copper" /> Die Thermal Anatomy // PPA_METRIC
             </div>
@@ -84,7 +84,7 @@ export const S21_PowerDesign: React.FC<{ isActive: boolean }> = ({ isActive }) =
                                         backgroundColor: isCoreActive ? 'rgba(184, 115, 51, 0.05)' : 'transparent',
                                         scale: isCoreActive ? 1.05 : 1
                                     }}
-                                    className="w-full aspect-square rounded-[22px] border flex flex-col items-center justify-center relative group/core overflow-hidden backdrop-blur-md"
+                                    className="w-full aspect-square rounded-[22px] border flex flex-col items-center justify-center relative group/core overflow-hidden backdrop-blur-sm"
                                 >
                                     <div className={`w-2 h-2 rounded-full transition-all duration-[1000ms] ${isCoreActive ? 'bg-burnished-copper shadow-[0_0_10px_rgba(184,115,51,0.8)]' : 'bg-white/5 opacity-20'}`} />
                                     {isCoreActive && (
@@ -107,7 +107,7 @@ export const S21_PowerDesign: React.FC<{ isActive: boolean }> = ({ isActive }) =
                 </div>
 
                 {/* Tactical Metrics Footer Block */}
-                <div className="p-8 rounded-[45px] bg-white/[0.02] border border-white/5 grid grid-cols-2 gap-10 items-center relative z-10 backdrop-blur-2xl">
+                <div className="p-8 rounded-[45px] bg-white/[0.02] border border-white/5 grid grid-cols-2 gap-10 items-center relative z-10 backdrop-blur-xl">
                     <div className="space-y-4">
                         <div className="flex justify-between items-end">
                             <div className="flex items-center gap-2">

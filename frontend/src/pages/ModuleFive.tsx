@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useMotionValue, useSpring } from 'framer-motion';
 import { ChapterTransition } from '../components/level6/common/ChapterTransition';
 import { Activity, Moon, Sun, ArrowRight, ArrowLeft } from 'lucide-react';
 
@@ -41,6 +41,38 @@ interface Page {
   Component: React.FC<any>;
   props?: any;
 }
+
+// ─── MEMOIZED SUB-COMPONENTS ─────────────────────────────────────────────
+
+const DataFlux = React.memo(() => (
+    <div className="absolute inset-0 overflow-hidden opacity-[0.03] pointer-events-none">
+        {[...Array(6)].map((_, i) => (
+            <motion.div
+                key={i}
+                initial={{ y: -100, x: (10 + (i * 15)) + '%' }}
+                animate={{ y: '110vh' }}
+                transition={{ duration: 15 + (i * 2), repeat: Infinity, ease: "linear", delay: i * 2 }}
+                className="absolute text-[8px] font-mono whitespace-pre text-plasma-cyan leading-none"
+            >
+                {Array.from({ length: 40 }).map(() => (Math.random() > 0.5 ? '1' : '0')).join('\n')}
+            </motion.div>
+        ))}
+    </div>
+));
+
+const TelemetryItem = React.memo(({ label, value, color }: { label: string, value: string, color: string }) => (
+    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="flex flex-col items-end">
+        <div className="text-[7px] font-mono opacity-20 uppercase tracking-[0.5em] mb-1.5">{label}</div>
+        <div className={`text-xs font-mono font-black italic tracking-tighter ${color}`}>
+            <motion.span 
+              animate={{ opacity: [1, 0.5, 1], scale: [1, 1.05, 1] }} 
+              transition={{ duration: 2, repeat: Infinity, repeatDelay: 1 }}
+            >
+              {value}
+            </motion.span>
+        </div>
+    </motion.div>
+));
 
 const PAGES: Page[] = [
   { id: 'start', label: 'Breaking Point', subtitle: 'Traditional design fails.', Component: S00_BreakingPoint },
@@ -165,7 +197,10 @@ export const ModuleFive: React.FC = () => {
   const [current, setCurrent] = useState(0);
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  const springX = useSpring(mouseX, { stiffness: 40, damping: 25 });
+  const springY = useSpring(mouseY, { stiffness: 40, damping: 25 });
   const contentRef = useRef<HTMLDivElement>(null);
 
   const go = useCallback((dir: number) => {
@@ -190,11 +225,12 @@ export const ModuleFive: React.FC = () => {
 
   useEffect(() => {
     const handleMouse = (e: MouseEvent) => {
-      setMousePos({ x: (e.clientX / window.innerWidth - 0.5) * 30, y: (e.clientY / window.innerHeight - 0.5) * 30 });
+      mouseX.set((e.clientX / window.innerWidth - 0.5) * 30);
+      mouseY.set((e.clientY / window.innerHeight - 0.5) * 30);
     };
     window.addEventListener('mousemove', handleMouse);
     return () => window.removeEventListener('mousemove', handleMouse);
-  }, []);
+  }, [mouseX, mouseY]);
 
   const page = PAGES[current];
   const primary = '#00D4FF'; 
@@ -203,30 +239,40 @@ export const ModuleFive: React.FC = () => {
 
   return (
     <div className={`flex h-screen overflow-hidden ${isDarkMode ? 'bg-matte-obsidian text-oscilloscope-trace' : 'bg-slate-50 text-slate-900'} relative`}>
-      {/* HUD Transition Flash */}
+      {/* HUD Transition Flash & Glitch */}
       <AnimatePresence>
           {isTransitioning && (
               <motion.div 
                 initial={{ opacity: 0 }}
-                animate={{ opacity: 0.15 }}
+                animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="fixed inset-0 bg-white z-[100] pointer-events-none"
-              />
+                className="fixed inset-0 z-[100] pointer-events-none flex items-center justify-center"
+              >
+                  <div className="absolute inset-0 bg-white/5 backdrop-blur-sm" />
+                  <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.4)_50%),linear-gradient(90deg,rgba(255,0,0,0.1),rgba(0,255,0,0.05),rgba(0,0,255,0.1))] bg-[length:100%_4px,6px_100%] opacity-20" />
+                  <div className="relative flex flex-col items-center gap-4">
+                      <div className="h-px w-64 bg-plasma-cyan animate-pulse" />
+                      <span className="micro-text text-plasma-cyan font-black tracking-[1em] animate-pulse">SIGNAL_REACQUIRING</span>
+                      <div className="h-px w-64 bg-plasma-cyan animate-pulse" />
+                  </div>
+              </motion.div>
           )}
       </AnimatePresence>
 
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
           <motion.div 
-            animate={{ x: mousePos.x, y: mousePos.y }}
-            transition={{ type: "spring", stiffness: 40, damping: 25 }}
-            className="absolute inset-0 bg-blueprint-grid bg-[length:70px_70px] opacity-[0.14]" 
+            style={{ x: springX, y: springY }}
+            className="absolute inset-0 bg-blueprint-grid bg-[length:70px_70px] opacity-[0.12]" 
           />
-          <div className="absolute inset-0 bg-dot-grid opacity-20" />
+          <div className="absolute inset-0 bg-dot-grid opacity-15" />
+          
+          <DataFlux />
+
           {/* Vivid ambient glow that shifts with page */}
-          <div className="absolute -top-[20%] -left-[10%] w-[70vw] h-[70vw] rounded-full blur-[140px] opacity-[0.12]" style={{ background: 'radial-gradient(circle, #00D4FF 0%, transparent 70%)' }} />
-          <div className="absolute bottom-[-10%] -right-[10%] w-[55vw] h-[55vw] rounded-full blur-[120px] opacity-[0.08]" style={{ background: 'radial-gradient(circle, #FF5F1F 0%, transparent 70%)' }} />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(0,212,255,0.04),transparent_80%)]" />
-          <div className="absolute inset-0 pointer-events-none opacity-[0.04] bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.08),rgba(0,255,0,0.02),rgba(0,0,255,0.08))] bg-[length:100%_2px,3px_100%]" />
+          <div className="absolute -top-[20%] -left-[10%] w-[70vw] h-[70vw] rounded-full blur-[80px] opacity-[0.08]" style={{ background: 'radial-gradient(circle, #00D4FF 0%, transparent 70%)' }} />
+          <div className="absolute bottom-[-10%] -right-[10%] w-[55vw] h-[55vw] rounded-full blur-[60px] opacity-[0.05]" style={{ background: 'radial-gradient(circle, #FF5F1F 0%, transparent 70%)' }} />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(0,212,255,0.03),transparent_80%)]" />
+          <div className="absolute inset-0 pointer-events-none opacity-[0.02] bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.08),rgba(0,255,0,0.02),rgba(0,0,255,0.08))] bg-[length:100%_2px,3px_100%]" />
       </div>
 
       <Sidebar current={current} isDarkMode={isDarkMode} onChange={changeNode} toggleTheme={() => setIsDarkMode(!isDarkMode)} primary={primary} />
@@ -239,8 +285,8 @@ export const ModuleFive: React.FC = () => {
           <div className="flex items-center gap-6">
             <motion.h2 
                 key={page.label}
-                initial={{ opacity: 0.5, filter: 'blur(4px)' }}
-                animate={{ opacity: 1, filter: 'blur(0px)' }}
+                initial={{ opacity: 0.5, filter: 'blur(4px)', x: -10 }}
+                animate={{ opacity: 1, filter: 'blur(0px)', x: 0 }}
                 className="text-lg font-black tracking-normal uppercase text-shadow-glow"
             >
                 {page.label}
@@ -252,53 +298,58 @@ export const ModuleFive: React.FC = () => {
             </div>
           </div>
           <div className="hidden md:flex items-center gap-10">
-             <div className="text-right border-r pr-8 border-white/5">
+             <div className="text-right border-r pr-8 border-white/5 space-y-1">
                 <div className="text-[7px] font-mono uppercase tracking-[0.4em] opacity-30 italic">Curriculum_Standard // V4.2_AI_SPEC</div>
+                <div className="flex items-center justify-end gap-2">
+                   <div className="h-0.5 w-8 bg-white/5 overflow-hidden rounded-full">
+                      <motion.div animate={{ x: ['-100%', '100%'] }} transition={{ duration: 1.5, repeat: Infinity }} className="h-full w-full bg-plasma-cyan" />
+                   </div>
+                   <span className="text-[6px] font-mono uppercase text-plasma-cyan opacity-40">System_Syncing</span>
+                </div>
              </div>
-             <div className="text-[10px] font-mono opacity-40 tabular-nums bg-white/5 px-3 py-1 rounded-md border border-white/5">
-                ADDR: <span className="text-plasma-cyan font-bold italic">0x{current.toString(16).padStart(2, '0').toUpperCase()}</span>
+             <div className="text-[10px] font-mono opacity-40 tabular-nums bg-white/5 px-3 py-1 rounded-md border border-white/5 flex items-center gap-2">
+                <span className="opacity-40">ADDR:</span>
+                <span className="text-plasma-cyan font-bold italic">0x{current.toString(16).padStart(2, '0').toUpperCase()}</span>
              </div>
           </div>
         </header>
 
-        <div ref={contentRef} className="flex-1 overflow-y-auto scroll-smooth py-8 px-6 md:px-12 lg:px-20 scrollbar-hide">
+        <div ref={contentRef} className="flex-1 overflow-y-auto scrollbar-hide">
           <AnimatePresence mode="wait">
             <motion.div 
               key={page.id} 
-              initial={{ opacity: 0, x: 40, filter: "blur(20px)", scale: 0.98 }} 
-              animate={{ opacity: 1, x: 0, filter: "blur(0px)", scale: 1 }} 
-              exit={{ opacity: 0, x: -40, filter: "blur(20px)", scale: 0.98 }} 
-              transition={{ duration: 0.5, ease: [0.19, 1, 0.22, 1] }} 
-              className="max-w-6xl mx-auto min-h-[calc(100vh-12rem)] flex items-center justify-center py-12"
+              initial={{ opacity: 0, x: 30, scale: 0.99 }} 
+              animate={{ opacity: 1, x: 0, scale: 1 }} 
+              exit={{ opacity: 0, x: -30, scale: 0.99 }} 
+              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }} 
+              className="max-w-[1400px] mx-auto min-h-[calc(100vh-10rem)] flex items-center justify-center p-8 md:p-16 lg:p-24"
             >
               <Component isActive={true} isDarkMode={isDarkMode} {...props} />
             </motion.div>
           </AnimatePresence>
         </div>
 
-        <div className="fixed right-10 top-1/2 -translate-y-1/2 hidden xl:flex flex-col gap-8 pointer-events-none z-30">
-            {[
-                { label: 'NODE_LOAD', val: `${(50 + Math.random() * 30).toFixed(1)}%`, color: 'text-plasma-cyan' },
-                { label: 'THRM_CORE', val: `${(38 + (current * 1.5)).toFixed(0)}°C`, color: current > 18 ? 'text-amber-500' : 'text-plasma-cyan' },
-                { label: 'SYNC_ST', val: 'LOCKED', color: 'text-white/20' },
-                { label: 'BUS_CYCLE', val: '0.2ps', color: 'text-plasma-cyan' },
-            ].map((stat, i) => (
-                <motion.div key={stat.label} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 1 + (i * 0.1) }} className="flex flex-col items-end">
-                    <div className="text-[7px] font-mono opacity-20 uppercase tracking-[0.5em] mb-1.5">{stat.label}</div>
-                    <div className={`text-xs font-mono font-black italic tracking-tighter ${stat.color}`}>
-                        <motion.span 
-                          animate={{ opacity: [1, 0.5, 1], scale: [1, 1.05, 1] }} 
-                          transition={{ duration: 0.15, repeat: Infinity, repeatDelay: Math.random() * 8 }}
-                        >
-                          {stat.val}
-                        </motion.span>
-                    </div>
-                </motion.div>
-            ))}
-            <div className="h-40 w-px bg-gradient-to-b from-white/5 via-plasma-cyan/30 to-transparent self-end mr-3 opacity-30" />
+        <div className="fixed right-10 top-1/2 -translate-y-1/2 hidden xl:flex flex-col gap-10 pointer-events-none z-30">
+            <TelemetryItem label="NODE_LOAD" value="72.4%" color="text-plasma-cyan" />
+            <TelemetryItem label="THRM_CORE" value={`${(42 + (current * 0.8)).toFixed(0)}°C`} color={current > 20 ? 'text-orange-500' : 'text-plasma-cyan'} />
+            <TelemetryItem label="SYNC_ST" value="LOCKED" color="text-white/20" />
+            <TelemetryItem label="LINK_RATE" value="2.4 Gb/s" color="text-plasma-cyan" />
+            <div className="h-32 w-px bg-gradient-to-b from-white/5 via-plasma-cyan/20 to-transparent self-end mr-3 opacity-30" />
         </div>
 
-        <footer className="h-20 border-t border-white/10 flex items-center justify-between px-10 z-10 bg-black/60 backdrop-blur-2xl">
+        <footer className="h-20 border-t border-white/10 flex flex-col justify-center px-10 z-10 bg-black/60 backdrop-blur-2xl relative overflow-hidden group">
+          <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-plasma-cyan/20 to-transparent" />
+          
+          {/* Terminal Sub-line */}
+          <div className="absolute top-1 left-10 flex items-center gap-4 text-[7px] font-mono uppercase tracking-[0.3em] opacity-40 transition-opacity">
+            <span className="text-plasma-cyan flex items-center gap-1"><div className="w-1 h-1 bg-plasma-cyan shadow-[0_0_4px_#00D4FF]" /> TERMINAL_LINK_0{current}: READY</span>
+            <span>::</span>
+            <span>PKT_RECV: 842.1</span>
+            <span>::</span>
+            <span className="italic">Uptime: 00:12:45</span>
+          </div>
+
+          <div className="flex items-center justify-between w-full mt-2">
           <motion.button 
             whileHover={{ x: -4, backgroundColor: 'rgba(255,255,255,0.05)' }}
             whileTap={{ scale: 0.95 }}
@@ -339,6 +390,7 @@ export const ModuleFive: React.FC = () => {
           >
             Execute Next <ArrowRight size={18} className="group-hover:translate-x-1.5 transition-transform" />
           </motion.button>
+          </div>
         </footer>
       </motion.div>
     </div>
