@@ -30,11 +30,12 @@ import { S16_TestbenchLab } from '../components/level6/S16_TestbenchLab';
 import { S17_HierarchyDepth } from '../components/level6/S17_HierarchyDepth';
 import { S18_NotSoftware } from '../components/level6/S18_NotSoftware';
 import { S19_FinalBridge } from '../components/level6/S19_FinalBridge';
+import { S20_AIHardware } from '../components/level6/S20_AIHardware';
+import { S21_PowerDesign } from '../components/level6/S21_PowerDesign';
 
 // --- Types ---
 interface Page {
   id: string;
-  part: string;
   label: string;
   subtitle: string;
   Component: React.FC<any>;
@@ -42,126 +43,103 @@ interface Page {
 }
 
 const PAGES: Page[] = [
-  { id: 'ch1', part: 'PART I · THE WALL', label: 'THE WALL', subtitle: 'The limits of manual design.', Component: ChapterTransition, props: { chapter: "01", title: "The Wall" } },
-  { id: 'start', part: 'PART I · THE WALL', label: 'Breaking Point', subtitle: 'Traditional design fails.', Component: S00_BreakingPoint },
-  { id: 'scale', part: 'PART I · THE WALL', label: 'Scale Collapse', subtitle: 'Abstraction limits.', Component: S12_ScaleCollapse },
-  { id: 'industry', part: 'PART I · THE WALL', label: 'Industry Risk', subtitle: 'The cost of complexity.', Component: S01_IndustryProblem },
-  { id: 'crash', part: 'PART I · THE WALL', label: 'Cost of Bug', subtitle: 'Economic failure.', Component: S15_CostOfBug },
+  { id: 'start', label: 'Breaking Point', subtitle: 'Traditional design fails.', Component: S00_BreakingPoint },
+  { id: 'industry', label: 'Industry Risk', subtitle: 'The cost of complexity.', Component: S01_IndustryProblem },
+  { id: 'crash', label: 'Cost of Bug', subtitle: 'Economic failure.', Component: S15_CostOfBug },
 
-  { id: 'ch2', part: 'PART II · CORE', label: 'THE ESSENCE', subtitle: 'The HDL mental model.', Component: ChapterTransition, props: { chapter: "02", title: "The Essence" } },
-  { id: 'hdl-def', part: 'PART II · CORE', label: 'What is HDL?', subtitle: 'Hardware Description.', Component: S03_WhatIsHDL },
-  { id: 'paradigm', part: 'PART II · CORE', label: 'Not Software', subtitle: 'Paradigm shift.', Component: S18_NotSoftware },
-  { id: 'parallel', part: 'PART II · CORE', label: 'Parallel World', subtitle: 'Hardware concurrency.', Component: S10_ParallelWorld },
-  { id: 'timeless', part: 'PART II · CORE', label: 'Timeless Logic', subtitle: 'Combinational nature.', Component: S11_TimelessLogic },
+  { id: 'hdl-def', label: 'What is HDL?', subtitle: 'Hardware Description.', Component: S03_WhatIsHDL },
+  { id: 'paradigm', label: 'Not Software', subtitle: 'Paradigm shift.', Component: S18_NotSoftware },
+  { id: 'parallel', label: 'Parallel World', subtitle: 'Hardware concurrency.', Component: S10_ParallelWorld },
+  { id: 'timeless', label: 'Timeless Logic', subtitle: 'Combinational nature.', Component: S11_TimelessLogic },
 
-  { id: 'ch3', part: 'PART III · MISSION', label: 'THE MANDATE', subtitle: 'The national imperative.', Component: ChapterTransition, props: { chapter: "03", title: "The Mandate" } },
-  { id: 'mandate', part: 'PART III · MISSION', label: 'Verilog Mandate', subtitle: 'Why Verilog matters.', Component: S03a_VerilogMandate },
-  { id: 'adoption-stats', part: 'PART III · MISSION', label: 'Production Power', subtitle: 'Verilog statistics.', Component: S01b_AdoptionStats },
-  { id: 'origin', part: 'PART III · MISSION', label: 'Origin Story', subtitle: 'The birth of Verilog.', Component: S03b_OriginStory },
+  { id: 'mandate', label: 'Verilog Mandate', subtitle: 'Why Verilog matters.', Component: S03a_VerilogMandate },
+  { id: 'origin', label: 'Origin Story', subtitle: 'The birth of Verilog.', Component: S03b_OriginStory },
 
-  { id: 'ch4', part: 'PART IV · PROCESS', label: 'THE DESCENT', subtitle: 'How code becomes silicon.', Component: ChapterTransition, props: { chapter: "04", title: "The Descent" } },
-  { id: 'ladder', part: 'PART IV · PROCESS', label: 'Ladder', subtitle: 'Abstraction levels.', Component: S02_AbstractionLadder },
-  { id: 'verilog-why', part: 'PART IV · PROCESS', label: 'Why Verilog?', subtitle: 'Verilog advantages.', Component: S04_WhyVerilog },
-  { id: 'synthesis-v2', part: 'PART IV · PROCESS', label: 'Synthesis Flow', subtitle: 'Intent translation.', Component: S13_SynthesisBreakdown },
+  { id: 'ladder', label: 'Ladder', subtitle: 'Abstraction levels.', Component: S02_AbstractionLadder },
+  { id: 'verilog-why', label: 'Why Verilog?', subtitle: 'Verilog advantages.', Component: S04_WhyVerilog },
+  { id: 'synthesis-v2', label: 'Synthesis Flow', subtitle: 'Intent translation.', Component: S13_SynthesisBreakdown },
+  { id: 'ai-hardware', label: 'AI Hardware', subtitle: 'Modern Tensor Logic.', Component: S20_AIHardware },
 
-  { id: 'ch5', part: 'PART V · FAB', label: 'THE FACTORY', subtitle: 'The VLSI pipeline.', Component: ChapterTransition, props: { chapter: "05", title: "The Factory" } },
-  { id: 'vlsi-pipeline', part: 'PART V · FAB', label: 'VLSI Pipeline', subtitle: 'Design to Silicon.', Component: S05_VLSIConnection },
-  { id: 'die-compare', part: 'PART V · FAB', label: 'Die Comparison', subtitle: 'Silicon area comparison.', Component: S05b_DieComparison },
+  { id: 'vlsi-pipeline', label: 'VLSI Pipeline', subtitle: 'Design to Silicon.', Component: S05_VLSIConnection },
 
-  { id: 'ch6', part: 'PART VI · VIGILANCE', label: 'THE GUARDIAN', subtitle: 'Verification is design.', Component: ChapterTransition, props: { chapter: "06", title: "The Guardian" } },
-  { id: 'verilog-first', part: 'PART VI · VIGILANCE', label: 'First Contact', subtitle: 'Writing code.', Component: S06_FirstVerilog },
-  { id: 'testbench', part: 'PART VI · VIGILANCE', label: 'Testbench', subtitle: 'Verification Basics.', Component: S06A_Testbench },
-  { id: 'lab-sim', part: 'PART VI · VIGILANCE', label: 'Testbench Lab', subtitle: 'Interactive verification.', Component: S16_TestbenchLab },
+  { id: 'verilog-first', label: 'First Contact', subtitle: 'Writing code.', Component: S06_FirstVerilog },
+  { id: 'testbench', label: 'Testbench', subtitle: 'Verification Basics.', Component: S06A_Testbench },
+  { id: 'lab-sim', label: 'Testbench Lab', subtitle: 'Interactive verification.', Component: S16_TestbenchLab },
 
-  { id: 'ch7', part: 'PART VII · STRATA', label: 'THE ARCHITECTURE', subtitle: 'Modular systems.', Component: ChapterTransition, props: { chapter: "07", title: "The Architecture" } },
-  { id: 'module-think', part: 'PART VII · STRATA', label: 'Modulo Thinking', subtitle: 'Encapsulation.', Component: S07_ModuleThinking },
-  { id: 'fractal', part: 'PART VII · STRATA', label: 'Hierarchy Depth', subtitle: 'Recursive structure.', Component: S17_HierarchyDepth },
-  { id: 'heartbeat', part: 'PART VII · STRATA', label: 'The Heartbeat', subtitle: 'Clock & Synchronization.', Component: S07b_ClockSignal },
+  { id: 'module-think', label: 'Modulo Thinking', subtitle: 'Encapsulation.', Component: S07_ModuleThinking },
+  { id: 'fractal', label: 'Hierarchy Depth', subtitle: 'Recursive structure.', Component: S17_HierarchyDepth },
+  { id: 'heartbeat', label: 'The Heartbeat', subtitle: 'Clock & Synchronization.', Component: S07b_ClockSignal },
 
-  { id: 'ch8', part: 'PART VIII · EPILOGUE', label: 'THE SHIFT', subtitle: 'Becoming an architect.', Component: ChapterTransition, props: { chapter: "08", title: "The Shift" } },
-  { id: 'wild', part: 'PART VIII · EPILOGUE', label: 'Common Patterns', subtitle: 'Verilog patterns.', Component: S08_SimulationVsReality },
-  { id: 'destiny', part: 'PART VIII · EPILOGUE', label: 'FPGA vs ASIC', subtitle: 'Implementation destiny.', Component: S14_FPGAvsASIC },
-  { id: 'identity', part: 'PART VIII · EPILOGUE', label: 'Identity Shift', subtitle: 'Conclusion.', Component: S09_IdentityShift },
-  { id: 'bridge', part: 'PART VIII · EPILOGUE', label: 'Final Bridge', subtitle: 'The industry horizon.', Component: S19_FinalBridge },
+  { id: 'wild', label: 'Common Patterns', subtitle: 'Verilog patterns.', Component: S08_SimulationVsReality },
+  { id: 'power-design', label: 'Green Silicon', subtitle: 'Power & Gating logic.', Component: S21_PowerDesign },
+  { id: 'destiny', label: 'FPGA vs ASIC', subtitle: 'Implementation destiny.', Component: S14_FPGAvsASIC },
+  { id: 'identity', label: 'Identity Shift', subtitle: 'Conclusion.', Component: S09_IdentityShift },
+  { id: 'bridge', label: 'Final Bridge', subtitle: 'The industry horizon.', Component: S19_FinalBridge },
 ];
-
-const getPartTheme = (part: string) => {
-  if (part.includes('I ·')) return { primary: '#00D4FF', secondary: '#0055FF', glow: 'rgba(0, 212, 255, 0.1)' };
-  if (part.includes('II ·')) return { primary: '#10b981', secondary: '#059669', glow: 'rgba(16, 185, 129, 0.1)' };
-  if (part.includes('III ·')) return { primary: '#8b5cf6', secondary: '#7c3aed', glow: 'rgba(139, 92, 246, 0.1)' };
-  if (part.includes('IV ·')) return { primary: '#06b6d4', secondary: '#0891b2', glow: 'rgba(6, 182, 212, 0.1)' };
-  if (part.includes('V ·')) return { primary: '#f43f5e', secondary: '#e11d48', glow: 'rgba(244, 63, 94, 0.1)' };
-  if (part.includes('VI ·')) return { primary: '#14b8a6', secondary: '#0d9488', glow: 'rgba(20, 184, 166, 0.1)' };
-  if (part.includes('VII ·')) return { primary: '#6366f1', secondary: '#4f46e5', glow: 'rgba(99, 102, 241, 0.1)' };
-  return { primary: '#00D4FF', secondary: '#0055FF', glow: 'rgba(0, 212, 255, 0.1)' };
-};
 
 const Sidebar: React.FC<{
   current: number; isDarkMode: boolean; onChange: (i: number) => void; toggleTheme: () => void;
-  theme: { primary: string; secondary: string; glow: string };
-}> = ({ current, isDarkMode, onChange, toggleTheme, theme }) => {
+  primary: string;
+}> = ({ current, isDarkMode, onChange, toggleTheme, primary }) => {
   const textColor = isDarkMode ? 'text-white' : 'text-slate-900';
-  const borderColor = isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
   const progress = ((current + 1) / PAGES.length) * 100;
 
   return (
-    <div className={`w-[320px] h-full flex-shrink-0 border-r flex flex-col z-20 transition-all duration-700 relative ${isDarkMode ? 'bg-[#040200]/40 backdrop-blur-md' : 'bg-slate-50/40 backdrop-blur-md'}`} style={{ borderColor }}>
-      <header className="p-10 border-b" style={{ borderColor }}>
-        <div className="flex items-center gap-4">
-          <div className="w-10 h-10 rounded-2xl bg-plasma-cyan flex items-center justify-center text-black shadow-cyan-glow">
+    <div className={`w-[280px] h-full flex-shrink-0 border-r flex flex-col z-20 ${isDarkMode ? 'bg-black/40 backdrop-blur-3xl border-white/10' : 'bg-slate-50/80 backdrop-blur-3xl border-slate-200'}`}>
+      <header className="p-8 border-b border-white/5 flex items-center gap-4">
+          <motion.div 
+            whileHover={{ rotate: 180, scale: 1.1 }}
+            transition={{ type: 'spring', stiffness: 300 }}
+            className="w-10 h-10 rounded-xl bg-plasma-cyan flex items-center justify-center text-black shadow-cyan-glow cursor-pointer"
+          >
             <Activity size={20} />
-          </div>
+          </motion.div>
           <div>
             <h2 className={`text-sm font-black tracking-tight ${textColor}`}>SILICON_BLUE</h2>
-            <p className="text-[10px] uppercase font-mono tracking-widest font-bold transition-colors duration-500" style={{ color: theme.primary }}>Module 05</p>
+            <p className="text-[10px] uppercase font-mono tracking-widest opacity-40">Module 05</p>
           </div>
-        </div>
       </header>
-      <nav className="p-8 flex-1 overflow-y-auto space-y-1">
+
+      <nav className="p-6 flex-1 overflow-y-auto space-y-1 scrollbar-hide">
         {PAGES.map((page, idx) => {
           const isActive = current === idx;
           const isDone = idx < current;
-          const showHeader = idx === 0 || PAGES[idx - 1].part !== page.part;
+
           return (
             <React.Fragment key={page.id}>
-              {showHeader && (
-                <div className="pt-8 pb-3 px-4 first:pt-0">
-                  <div className="flex items-center gap-3">
-                    <span className="text-[10px] font-black uppercase tracking-[0.2em] transition-colors duration-500 whitespace-nowrap" style={{ color: theme.primary }}>
-                      {page.part}
-                    </span>
-                    <div className="h-[1px] w-full opacity-10" style={{ backgroundColor: theme.primary }} />
-                  </div>
-                </div>
-              )}
-              <button onClick={() => onChange(idx)} 
-                className={`group relative w-full text-left p-4 rounded-2xl transition-all duration-500 flex items-start gap-4 ${isActive ? (isDarkMode ? 'border transition-colors' : 'bg-white border-slate-200 shadow-lg') : 'hover:bg-black/5 hover:translate-x-1'}`}
-                style={{ backgroundColor: isActive && isDarkMode ? theme.glow : undefined, borderColor: isActive && isDarkMode ? `${theme.primary}33` : 'transparent' }}>
-                <div className={`mt-0.5 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black border transition-all duration-500 ${isDone || isActive ? 'text-black' : 'bg-transparent border-white/10 opacity-30'}`}
-                  style={{ backgroundColor: (isDone || isActive) ? theme.primary : 'transparent', borderColor: (isDone || isActive) ? theme.primary : undefined }}>
+              <motion.button 
+                whileHover={{ x: 6, backgroundColor: 'rgba(255,255,255,0.03)' }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => onChange(idx)} 
+                className={`w-full text-left p-3.5 rounded-2xl transition-all duration-300 flex items-center gap-4 border ${isActive ? 'bg-white/5 border-white/20 shadow-[0_0_20px_rgba(0,212,255,0.1)]' : 'border-transparent opacity-30 hover:opacity-100'}`}
+              >
+                <div className={`w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center text-[9px] font-black border transition-all ${isDone || isActive ? 'text-black' : 'opacity-20'}`} style={{ backgroundColor: (isDone || isActive) ? primary : 'transparent', borderColor: (isDone || isActive) ? primary : undefined }}>
                   {isDone ? '✓' : idx + 1}
                 </div>
-                <div className="flex-1 min-w-0">
-                  <h3 className={`text-[13px] font-bold truncate transition-colors duration-500 ${isActive ? '' : isDarkMode ? 'text-slate-400' : 'text-slate-600'}`} style={{ color: isActive ? theme.primary : undefined }}>{page.label}</h3>
-                  <p className="text-[9px] mt-0.5 opacity-40 font-medium truncate">{page.subtitle}</p>
-                </div>
-              </button>
+                <h3 className={`text-[11px] font-bold truncate ${isActive ? 'text-white' : 'text-slate-400'}`}>{page.label}</h3>
+              </motion.button>
             </React.Fragment>
           );
         })}
       </nav>
-      <footer className="p-10 border-t space-y-6" style={{ borderColor }}>
+
+      <footer className="p-8 border-t border-white/5 space-y-6 bg-black/5">
         <div className="space-y-4">
           <div className="flex justify-between items-end">
-            <span className="text-[10px] font-mono uppercase tracking-[0.2em] opacity-40">Progress</span>
-            <span className="text-sm font-black transition-colors duration-500" style={{ color: theme.primary }}>{Math.round(progress)}%</span>
+            <span className="text-[9px] font-mono uppercase tracking-[0.2em] opacity-40">Sync Progress</span>
+            <span className="text-xs font-black italic" style={{ color: primary }}>{Math.round(progress)}%</span>
           </div>
-          <div className="h-1 w-full bg-slate-900 rounded-full overflow-hidden">
-            <motion.div animate={{ width: `${progress}%`, backgroundColor: theme.primary }} className="h-full shadow-cyan-glow" />
+          <div className="h-1 w-full bg-slate-900 rounded-full overflow-hidden relative">
+            <motion.div 
+               layoutId="progress-bar"
+               animate={{ width: `${progress}%`, backgroundColor: primary }} 
+               className="h-full shadow-cyan-glow relative z-10" 
+            />
+            <div className="absolute inset-0 bg-white/5" />
           </div>
         </div>
-        <button onClick={toggleTheme} className={`h-12 w-full rounded-2xl border flex items-center justify-center gap-3 text-[10px] font-black uppercase tracking-widest transition-all ${isDarkMode ? 'border-white/10 text-slate-400 hover:bg-white/5' : 'border-slate-200 text-slate-600 hover:bg-slate-100'}`}>
-          {isDarkMode ? <Sun size={14} /> : <Moon size={14} />} {isDarkMode ? 'Solar' : 'Lunar'}
+        <button onClick={toggleTheme} className="h-10 w-full rounded-xl border border-white/10 flex items-center justify-center gap-3 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:bg-white/5 transition-colors group">
+          {isDarkMode ? <Sun size={14} className="group-hover:rotate-45 transition-transform" /> : <Moon size={14} />} {isDarkMode ? 'Interface Mode' : 'Interface Mode'}
         </button>
       </footer>
     </div>
@@ -171,98 +149,181 @@ const Sidebar: React.FC<{
 export const ModuleFive: React.FC = () => {
   const [current, setCurrent] = useState(0);
   const [isDarkMode, setIsDarkMode] = useState(true);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const contentRef = useRef<HTMLDivElement>(null);
 
   const go = useCallback((dir: number) => {
-    setCurrent(c => Math.max(0, Math.min(PAGES.length - 1, c + dir)));
+    setIsTransitioning(true);
+    setTimeout(() => {
+        setCurrent(c => Math.max(0, Math.min(PAGES.length - 1, c + dir)));
+        setIsTransitioning(false);
+    }, 150);
   }, []);
+
+  const changeNode = (i: number) => {
+    setIsTransitioning(true);
+    setTimeout(() => {
+        setCurrent(i);
+        setIsTransitioning(false);
+    }, 150);
+  }
 
   useEffect(() => {
     contentRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
   }, [current]);
 
   useEffect(() => {
-    const handleKey = (e: KeyboardEvent) => {
-      if (document.activeElement?.tagName === 'INPUT') return;
-      if (e.key === 'ArrowRight') go(1);
-      if (e.key === 'ArrowLeft') go(-1);
+    const handleMouse = (e: MouseEvent) => {
+      setMousePos({ x: (e.clientX / window.innerWidth - 0.5) * 30, y: (e.clientY / window.innerHeight - 0.5) * 30 });
     };
-    window.addEventListener('keydown', handleKey);
-    return () => window.removeEventListener('keydown', handleKey);
-  }, [go]);
+    window.addEventListener('mousemove', handleMouse);
+    return () => window.removeEventListener('mousemove', handleMouse);
+  }, []);
 
   const page = PAGES[current];
-  const theme = getPartTheme(page.part);
+  const primary = '#00D4FF'; 
   const Component = page.Component;
   const props = page.props || {};
 
   return (
-    <div className={`flex h-screen overflow-hidden transition-colors duration-700 relative ${isDarkMode ? 'bg-[#020100]' : 'bg-white'}`}>
-      {isDarkMode && (
-        <div className="absolute inset-0 pointer-events-none opacity-[0.15] overflow-hidden z-0">
-          <motion.div animate={{ background: `radial-gradient(circle, ${theme.primary} 0%, transparent 70%)` }} className="absolute -top-[10%] -left-[10%] w-[70vw] h-[70vw] rounded-full blur-[120px]" />
-          <motion.div animate={{ background: `radial-gradient(circle, ${theme.secondary} 0%, transparent 70%)` }} className="absolute bottom-[0%] -right-[10%] w-[60vw] h-[60vw] rounded-full blur-[100px]" />
-        </div>
-      )}
-      <Sidebar current={current} isDarkMode={isDarkMode} onChange={setCurrent} toggleTheme={() => setIsDarkMode(!isDarkMode)} theme={theme} />
-      <div className="flex-1 flex flex-col h-full overflow-hidden relative z-10">
-        <header className="h-20 border-b flex items-center justify-between px-12 z-10" style={{ borderColor: isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }}>
-          <div className="flex flex-col">
-            <span className="text-[10px] font-mono uppercase tracking-[0.4em] font-bold transition-colors duration-500" style={{ color: theme.primary }}>{page.part}</span>
-            <h2 className="text-xl font-bold tracking-tight">{page.label}</h2>
+    <div className={`flex h-screen overflow-hidden ${isDarkMode ? 'bg-matte-obsidian text-oscilloscope-trace' : 'bg-slate-50 text-slate-900'} relative`}>
+      {/* HUD Transition Flash */}
+      <AnimatePresence>
+          {isTransitioning && (
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 0.15 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 bg-white z-[100] pointer-events-none"
+              />
+          )}
+      </AnimatePresence>
+
+      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+          <motion.div 
+            animate={{ x: mousePos.x, y: mousePos.y }}
+            transition={{ type: "spring", stiffness: 40, damping: 25 }}
+            className="absolute inset-0 bg-blueprint-grid bg-[length:70px_70px] opacity-[0.14]" 
+          />
+          <div className="absolute inset-0 bg-dot-grid opacity-20" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(0,212,255,0.06),transparent_80%)]" />
+          
+          <div className="absolute inset-0 pointer-events-none opacity-[0.04] bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.08),rgba(0,255,0,0.02),rgba(0,0,255,0.08))] bg-[length:100%_2px,3px_100%]" />
+      </div>
+
+      <Sidebar current={current} isDarkMode={isDarkMode} onChange={changeNode} toggleTheme={() => setIsDarkMode(!isDarkMode)} primary={primary} />
+      
+      <motion.div 
+        animate={isTransitioning ? { x: [0, -2, 2, -2, 0], scale: [1, 0.99, 1] } : {}}
+        className="flex-1 flex flex-col h-full overflow-hidden relative z-10"
+      >
+        <header className="h-16 border-b border-white/10 backdrop-blur-xl flex items-center justify-between px-10 z-10 bg-black/40">
+          <div className="flex items-center gap-6">
+            <motion.h2 
+                key={page.label}
+                initial={{ opacity: 0.5, filter: 'blur(4px)' }}
+                animate={{ opacity: 1, filter: 'blur(0px)' }}
+                className="text-lg font-black tracking-normal uppercase italic text-shadow-glow"
+            >
+                {page.label}
+            </motion.h2>
+            <div className="h-4 w-px bg-white/10 hidden sm:block" />
+            <div className="hidden sm:flex items-center gap-3">
+                <div className="w-1.5 h-1.5 rounded-full bg-plasma-cyan animate-pulse shadow-[0_0_8px_rgba(0,212,255,0.8)]" />
+                <span className="micro-text uppercase tracking-[0.4em] opacity-30">Active_Node // 0{current + 1}</span>
+            </div>
           </div>
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden md:flex items-center gap-10">
              <div className="text-right border-r pr-8 border-white/5">
-                <div className="text-[8px] font-mono uppercase tracking-widest opacity-30">Verilog // Engine</div>
-                <div className="text-[10px] font-mono mt-0.5">{page.subtitle}</div>
+                <div className="text-[7px] font-mono uppercase tracking-[0.4em] opacity-30 italic">Curriculum_Standard // V4.2_AI_SPEC</div>
              </div>
-             <div className="text-sm font-mono opacity-20">{current + 1} / {PAGES.length}</div>
+             <div className="text-[10px] font-mono opacity-40 tabular-nums bg-white/5 px-3 py-1 rounded-md border border-white/5">
+                ADDR: <span className="text-plasma-cyan font-bold italic">0x{current.toString(16).padStart(2, '0').toUpperCase()}</span>
+             </div>
           </div>
         </header>
 
-        <div ref={contentRef} className="flex-1 overflow-y-auto scroll-smooth py-8 px-6 md:px-12 lg:px-20">
+        <div ref={contentRef} className="flex-1 overflow-y-auto scroll-smooth py-8 px-6 md:px-12 lg:px-20 scrollbar-hide">
           <AnimatePresence mode="wait">
-            <motion.div key={page.id} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }} className="max-w-7xl mx-auto min-h-[calc(100vh-12rem)] flex items-center justify-center">
+            <motion.div 
+              key={page.id} 
+              initial={{ opacity: 0, x: 40, filter: "blur(20px)", scale: 0.98 }} 
+              animate={{ opacity: 1, x: 0, filter: "blur(0px)", scale: 1 }} 
+              exit={{ opacity: 0, x: -40, filter: "blur(20px)", scale: 0.98 }} 
+              transition={{ duration: 0.5, ease: [0.19, 1, 0.22, 1] }} 
+              className="max-w-6xl mx-auto min-h-[calc(100vh-12rem)] flex items-center justify-center py-12"
+            >
               <Component isActive={true} isDarkMode={isDarkMode} {...props} />
             </motion.div>
           </AnimatePresence>
         </div>
 
-        <div className="fixed right-10 top-1/2 -translate-y-1/2 hidden xl:flex flex-col gap-6 pointer-events-none z-30">
+        <div className="fixed right-10 top-1/2 -translate-y-1/2 hidden xl:flex flex-col gap-8 pointer-events-none z-30">
             {[
-                { label: 'LOGIC_UTIL', val: '42.8%', color: theme.primary },
-                { label: 'THERMAL_PK', val: '54°C', color: '#B45309' },
-                { label: 'ENTROPY_LV', val: '0.002', color: 'text-white/20' },
-                { label: 'NEURAL_ST', val: 'LOCKED', color: theme.primary },
+                { label: 'NODE_LOAD', val: `${(50 + Math.random() * 30).toFixed(1)}%`, color: 'text-plasma-cyan' },
+                { label: 'THRM_CORE', val: `${(38 + (current * 1.5)).toFixed(0)}°C`, color: current > 18 ? 'text-amber-500' : 'text-plasma-cyan' },
+                { label: 'SYNC_ST', val: 'LOCKED', color: 'text-white/20' },
+                { label: 'BUS_CYCLE', val: '0.2ps', color: 'text-plasma-cyan' },
             ].map((stat, i) => (
                 <motion.div key={stat.label} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 1 + (i * 0.1) }} className="flex flex-col items-end">
-                    <div className="text-[8px] font-mono opacity-20 uppercase tracking-[0.3em] mb-1">{stat.label}</div>
-                    <div className="text-sm font-mono font-black tracking-tighter" style={{ color: stat.color }}>
-                        <motion.span animate={{ opacity: [1, 0.4, 1] }} transition={{ duration: 0.2, repeat: Infinity, repeatDelay: Math.random() * 5 }}>{stat.val}</motion.span>
+                    <div className="text-[7px] font-mono opacity-20 uppercase tracking-[0.5em] mb-1.5">{stat.label}</div>
+                    <div className={`text-xs font-mono font-black italic tracking-tighter ${stat.color}`}>
+                        <motion.span 
+                          animate={{ opacity: [1, 0.5, 1], scale: [1, 1.05, 1] }} 
+                          transition={{ duration: 0.15, repeat: Infinity, repeatDelay: Math.random() * 8 }}
+                        >
+                          {stat.val}
+                        </motion.span>
                     </div>
                 </motion.div>
             ))}
-            <div className="h-32 w-px bg-gradient-to-b from-white/5 via-plasma-cyan/20 to-transparent self-end mr-2" />
+            <div className="h-40 w-px bg-gradient-to-b from-white/5 via-plasma-cyan/30 to-transparent self-end mr-3 opacity-30" />
         </div>
 
-        <footer className="h-24 border-t flex items-center justify-between px-12 z-10" style={{ borderColor: isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }}>
-          <button disabled={current === 0} onClick={() => go(-1)} className={`flex items-center gap-2 px-8 py-3 rounded-2xl font-bold transition-all ${current === 0 ? 'opacity-20 cursor-not-allowed' : 'hover:bg-black/5 active:scale-95'}`}>
-            <ArrowLeft size={18} /> Previous Node
-          </button>
-          <div className="hidden sm:block text-center flex-1">
-             <div className="flex gap-1 justify-center mb-2">
+        <footer className="h-20 border-t border-white/10 flex items-center justify-between px-10 z-10 bg-black/60 backdrop-blur-2xl">
+          <motion.button 
+            whileHover={{ x: -4, backgroundColor: 'rgba(255,255,255,0.05)' }}
+            whileTap={{ scale: 0.95 }}
+            disabled={current === 0} 
+            onClick={() => go(-1)} 
+            className={`flex items-center gap-3 px-8 py-3 rounded-[20px] font-black uppercase tracking-widest text-[9px] transition-all border border-white/10 ${current === 0 ? 'opacity-0' : 'text-white/40 hover:text-white hover:border-white/20'}`}
+          >
+            <ArrowLeft size={16} /> Previous Node
+          </motion.button>
+          
+          <div className="hidden md:flex flex-col items-center gap-3">
+              <div className="flex gap-2 items-center">
                 {PAGES.map((_, i) => (
-                    <div key={i} className={`h-1 rounded-full transition-all duration-500 ${i === current ? 'w-8 shadow-cyan-glow' : i < current ? 'w-2 opacity-40' : 'w-2 opacity-10'}`} style={{ backgroundColor: theme.primary }} />
+                    <motion.div 
+                      key={i} 
+                      animate={{ 
+                        scale: i === current ? 1.4 : 1,
+                        opacity: i === current ? 1 : i < current ? 0.5 : 0.1
+                      }}
+                      className={`h-1.5 rounded-full transition-all duration-300 ${i === current ? 'w-12 bg-plasma-cyan shadow-[0_0_12px_rgba(0,212,255,1)]' : 'w-2 bg-plasma-cyan'}`} 
+                    />
                 ))}
-             </div>
-             <span className="text-[10px] font-mono uppercase tracking-[0.3em] font-black opacity-30">Gate Synthesis Engine</span>
+              </div>
+              <div className="flex items-center gap-6 text-[7px] font-mono uppercase tracking-[0.6em] opacity-40">
+                  <span className="flex items-center gap-2"><div className="w-1 h-1 rounded-full bg-green-500 animate-pulse" />Link_Stable</span>
+                  <span>|</span>
+                  <span className="flex items-center gap-2"><div className="w-1 h-1 rounded-full bg-plasma-cyan animate-pulse" />Sync_Active</span>
+              </div>
           </div>
-          <button onClick={() => go(1)} disabled={current === PAGES.length - 1} className={`flex items-center gap-3 px-10 py-3 rounded-2xl font-black text-black transition-all duration-500 active:scale-95 ${current === PAGES.length - 1 ? 'opacity-0' : 'shadow-xl group'}`}
-            style={{ backgroundColor: current === PAGES.length - 1 ? undefined : theme.primary, boxShadow: current === PAGES.length - 1 ? undefined : `0 10px 30px ${theme.primary}33` }}>
-            Execute Next <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-          </button>
+
+          <motion.button 
+            whileHover={{ scale: 1.05, filter: "brightness(1.2)" }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => go(1)} 
+            disabled={current === PAGES.length - 1} 
+            className={`flex items-center gap-4 px-12 py-3 rounded-[25px] font-black uppercase tracking-[0.5em] text-[10px] transition-all duration-500 ${current === PAGES.length - 1 ? 'opacity-0' : 'text-black shadow-[0_0_30px_rgba(0,212,255,0.4)] group'}`}
+            style={{ backgroundColor: primary }}
+          >
+            Execute Next <ArrowRight size={18} className="group-hover:translate-x-1.5 transition-transform" />
+          </motion.button>
         </footer>
-      </div>
+      </motion.div>
     </div>
   );
 };

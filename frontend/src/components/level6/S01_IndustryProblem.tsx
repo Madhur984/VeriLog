@@ -9,14 +9,14 @@ interface Props {
 
 export const S01_IndustryProblem: React.FC<Props> = ({ isActive }) => {
   return (
-    <div className="flex flex-col items-center justify-start w-full max-w-6xl mx-auto px-8 relative text-center bg-matte-obsidian/40 py-10 rounded-[80px]">
+    <div className="flex flex-col items-center justify-start w-full max-w-6xl mx-auto px-8 relative text-center bg-black/40 py-10 rounded-[80px] border border-white/5 backdrop-blur-3xl">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={isActive ? { opacity: 1, y: 0 } : {}}
         className="w-full flex flex-col items-center"
       >
-        <h2 className="text-6xl md:text-[100px] font-black italic tracking-tighter leading-[0.8] uppercase mb-12">
-            The <span className="text-plasma-cyan">Risk.</span>
+        <h2 className="hero-text text-6xl md:text-[100px] leading-[0.8] text-plasma-cyan uppercase italic mb-12">
+            The Risk.
         </h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full px-6 mb-16">
@@ -43,9 +43,9 @@ export const S01_IndustryProblem: React.FC<Props> = ({ isActive }) => {
               <div className={`p-4 rounded-3xl bg-black/40 mb-8 ${stat.color} group-hover:scale-110 group-hover:shadow-lg transition-transform`}>
                 <stat.icon size={28} />
               </div>
-              <div className="text-4xl font-black italic tracking-tighter mb-2">{stat.value}</div>
-              <div className="text-[10px] font-black uppercase tracking-widest opacity-40 mb-4">{stat.label}</div>
-              <p className="text-[10px] font-bold opacity-30 italic leading-snug group-hover:opacity-100 transition-opacity">
+              <div className="hero-text text-4xl uppercase italic mb-2 tracking-tighter">{stat.value}</div>
+              <div className="micro-text opacity-40 mb-4">{stat.label}</div>
+              <p className="body-text text-[10px] opacity-30 group-hover:opacity-100 transition-opacity">
                 {stat.detail}
               </p>
             </motion.div>
@@ -53,18 +53,18 @@ export const S01_IndustryProblem: React.FC<Props> = ({ isActive }) => {
         </div>
 
         <div className="max-w-4xl space-y-12 md:space-y-16">
-            <p className="text-2xl md:text-5xl font-black tracking-tighter leading-tight italic px-4">
+            <p className="hero-text text-2xl md:text-5xl leading-tight text-white uppercase italic px-4">
                  Building a chip isn't like writing an App. <br/>
                  One bug = <span className="text-burnished-copper">$50 Million</span> loss.
             </p>
             
-            <div className="p-8 md:p-12 rounded-[40px] md:rounded-[60px] bg-solder-mask border border-plasma-cyan/30 shadow-cyan-glow backdrop-blur-xl relative overflow-hidden group transition-all duration-700">
+            <div className="p-8 md:p-12 rounded-[40px] md:rounded-[60px] bg-black/40 border border-plasma-cyan/30 shadow-cyan-glow backdrop-blur-xl relative overflow-hidden group transition-all duration-700">
                  <div className="absolute top-0 left-0 w-2 h-2 bg-plasma-cyan" />
                  <div className="absolute top-0 right-0 w-2 h-2 bg-plasma-cyan" />
                  <div className="absolute bottom-0 left-0 w-2 h-2 bg-plasma-cyan" />
                  <div className="absolute bottom-0 right-0 w-2 h-2 bg-plasma-cyan" />
                  
-                 <p className="text-lg md:text-2xl font-black opacity-60 leading-relaxed italic">
+                 <p className="body-text text-lg md:text-2xl opacity-60">
                     With billions of gates, a single human typo is fatal. 
                     Hardware Description Languages (HDL) are the <span className="text-white italic underline underline-offset-8">only bridge</span> to surviving this complexity.
                  </p>

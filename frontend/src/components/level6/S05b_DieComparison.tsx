@@ -8,15 +8,15 @@ interface Props {
 
 export const S05b_DieComparison: React.FC<Props> = ({ isActive }) => {
   return (
-    <div className="flex flex-col items-center justify-center min-h-[70vh] w-full max-w-6xl mx-auto px-8 relative">
+    <div className="flex flex-col items-center justify-center min-h-[70vh] w-full max-w-6xl mx-auto px-8 relative bg-black/40 py-12 rounded-[60px] border border-white/5 backdrop-blur-3xl">
       <motion.div
         initial={{ opacity: 0 }}
         animate={isActive ? { opacity: 1 } : {}}
         className="w-full"
       >
         <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-6xl font-black mb-4 tracking-tighter italic uppercase">Code to <span className="text-rose-500">Silicon.</span></h2>
-            <p className="text-lg opacity-40 font-bold italic tracking-tight italic">Tangible proof of the digital-to-physical transition.</p>
+            <h2 className="hero-text text-4xl md:text-6xl italic uppercase mb-4">Code to <span className="text-rose-500">Silicon.</span></h2>
+            <p className="body-text text-lg opacity-40 leading-tight italic">Tangible proof of the digital-to-physical transition.</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
@@ -26,9 +26,9 @@ export const S05b_DieComparison: React.FC<Props> = ({ isActive }) => {
                 <div className="p-2 rounded-lg bg-rose-500/10 text-rose-500">
                     <Code size={18} />
                 </div>
-                <span className="text-[10px] font-mono uppercase tracking-widest opacity-40">Verilog RTL</span>
+                <span className="micro-text uppercase">Verilog RTL</span>
             </div>
-            <pre className="text-sm font-mono text-rose-400 leading-relaxed font-bold">
+            <pre className="mono-text text-sm text-rose-400 leading-relaxed font-bold">
 {`module adder(
   input [3:0] a, b,
   output [4:0] sum
@@ -36,7 +36,7 @@ export const S05b_DieComparison: React.FC<Props> = ({ isActive }) => {
   assign sum = a + b;
 endmodule`}
             </pre>
-            <div className="mt-8 pt-6 border-t border-white/5 text-[10px] font-mono opacity-20 uppercase tracking-widest italic">
+            <div className="mt-8 pt-6 border-t border-white/5 micro-text uppercase text-white/20 italic">
                 Logic Definition
             </div>
             
@@ -63,12 +63,12 @@ endmodule`}
                  <div className="relative z-10 flex flex-col items-center gap-6">
                     <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-rose-500 to-amber-500 flex items-center justify-center p-0.5 shadow-2xl shadow-rose-500/20">
                         <div className="w-full h-full bg-[#020100] rounded-[22px] flex items-center justify-center">
-                            <span className="text-[10px] font-mono text-white/20 uppercase tracking-tighter">DIE_X04</span>
+                            <span className="mono-text text-[10px] text-white/20 uppercase">DIE_X04</span>
                         </div>
                     </div>
                     <div className="text-center">
-                        <div className="text-xl font-black italic tracking-wide uppercase">Physical Silicon</div>
-                        <div className="text-[10px] font-mono opacity-40 uppercase tracking-[0.3em] mt-1">Foundry Output</div>
+                        <div className="hero-text text-xl italic uppercase">Physical Silicon</div>
+                        <div className="micro-text opacity-40 uppercase mt-1">Foundry Output</div>
                     </div>
                  </div>
             </div>
@@ -83,7 +83,7 @@ endmodule`}
         </div>
 
         <div className="mt-12 text-center">
-            <div className="inline-flex items-center gap-3 px-6 py-3 rounded-2xl bg-white/[0.03] border border-white/5 text-[11px] font-black uppercase tracking-widest text-white/40">
+            <div className="inline-flex items-center gap-3 px-6 py-3 rounded-2xl bg-white/[0.03] border border-white/5 micro-text uppercase text-white/40">
                 <Rocket size={14} className="text-rose-500" /> This Verilog code becomes this silicon die.
             </div>
         </div>

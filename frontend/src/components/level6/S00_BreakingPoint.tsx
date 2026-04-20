@@ -18,7 +18,7 @@ export const S00_BreakingPoint: React.FC<Props> = ({ isActive }) => {
   }));
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[70vh] w-full max-w-6xl mx-auto relative px-8 text-center bg-matte-obsidian py-20 rounded-[80px]">
+    <div className="flex flex-col items-center justify-center min-h-[85vh] w-full max-w-6xl mx-auto relative px-8 text-center bg-black/40 py-20 rounded-[80px] border border-white/5 backdrop-blur-3xl">
       
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
@@ -27,11 +27,11 @@ export const S00_BreakingPoint: React.FC<Props> = ({ isActive }) => {
         className="mb-20"
       >
         <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-        <div className="space-y-8">
-            <h1 className="text-6xl md:text-8xl font-black italic tracking-tighter leading-[0.8] uppercase">
-                The <span className="text-plasma-cyan shadow-cyan-glow">Wall.</span>
+        <div className="space-y-8 text-left">
+            <h1 className="hero-text text-6xl md:text-8xl leading-[0.8] text-plasma-cyan shadow-cyan-glow uppercase italic">
+                The Wall.
             </h1>
-            <p className="text-xl md:text-2xl opacity-60 font-black italic leading-tight">
+            <p className="body-text text-xl md:text-2xl">
                 Once, we designed by hand. One gate at a time. One wire at a time. But as chips grew from 100 to 100,000,000,000 transistors, the human mind hit a hard limit.
             </p>
         </div>
@@ -45,8 +45,8 @@ export const S00_BreakingPoint: React.FC<Props> = ({ isActive }) => {
                 <img src="/assets/module6/chaos.png" alt="Circuit Chaos" className="w-full h-[400px] object-cover grayscale group-hover:grayscale-0 transition-all duration-700" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
                 <div className="absolute bottom-10 left-10">
-                    <div className="text-[10px] font-black uppercase tracking-[0.4em] text-white/40 mb-2">Diagnostic Scan</div>
-                    <div className="text-2xl font-black italic text-burnished-copper tracking-tighter">UNMANAGEABLE COMPLEXITY</div>
+                    <div className="micro-text text-white/40 mb-2">Diagnostic Scan</div>
+                    <div className="hero-text text-2xl text-burnished-copper uppercase italic">UNMANAGEABLE COMPLEXITY</div>
                 </div>
             </motion.div>
         </div>
@@ -82,11 +82,11 @@ export const S00_BreakingPoint: React.FC<Props> = ({ isActive }) => {
             initial={{ opacity: 0, y: 20 }}
             animate={isActive ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: 0.5 }}
-            className="z-20 p-12 rounded-[50px] bg-solder-mask border border-white/5 backdrop-blur-xl shadow-2xl"
+            className="z-20 p-12 rounded-[50px] bg-black/40 border border-white/5 backdrop-blur-xl shadow-2xl"
           >
-             <p className="text-3xl md:text-5xl font-black tracking-tighter leading-tight max-w-2xl">
+             <p className="hero-text text-3xl md:text-5xl leading-tight max-w-2xl text-white uppercase italic text-center">
                 One billion gates. <br/>
-                <span className="text-burnished-copper italic">One human brain.</span> <br/>
+                <span className="text-burnished-copper">One human brain.</span> <br/>
                 The math has stopped working.
              </p>
           </motion.div>

@@ -18,7 +18,7 @@ export const S10_ParallelWorld: React.FC<{ isActive: boolean }> = ({ isActive })
   return (
     <BlueprintContainer>
       <HeroText>Everything happens at once.</HeroText>
-      <p className="text-xl md:text-2xl opacity-60 font-black italic mt-6 mb-12 text-center max-w-3xl">
+      <p className="body-text text-xl md:text-2xl opacity-60 italic mt-6 mb-12 text-center max-w-3xl">
         Break the sequential mindset. In Verilog, assignments don't wait for each other. They exist in <span className="text-plasma-cyan italic">parallel harmony</span>.
       </p>
 
@@ -26,18 +26,18 @@ export const S10_ParallelWorld: React.FC<{ isActive: boolean }> = ({ isActive })
         <div className={`p-8 rounded-[40px] bg-black/40 border transition-all duration-500 ${running ? "border-plasma-cyan shadow-cyan-glow" : "border-white/5"}`}>
           <div className="flex items-center gap-3 text-plasma-cyan mb-6">
             <Zap size={20} />
-            <span className="text-xs font-black uppercase tracking-widest">Concurrent Assignment 1</span>
+            <span className="micro-text uppercase">Concurrent Assignment 1</span>
           </div>
-          <code className="text-xl md:text-2xl font-mono font-black text-white italic">
+          <code className="mono-text text-xl md:text-2xl text-white italic">
             assign Y = A & B;
           </code>
         </div>
         <div className={`p-8 rounded-[40px] bg-black/40 border transition-all duration-500 ${running ? "border-plasma-cyan shadow-cyan-glow" : "border-white/5"}`}>
           <div className="flex items-center gap-3 text-plasma-cyan mb-6">
             <Zap size={20} />
-            <span className="text-xs font-black uppercase tracking-widest">Concurrent Assignment 2</span>
+            <span className="micro-text uppercase">Concurrent Assignment 2</span>
           </div>
-          <code className="text-xl md:text-2xl font-mono font-black text-white italic">
+          <code className="mono-text text-xl md:text-2xl text-white italic">
             assign Z = A | B;
           </code>
         </div>
@@ -54,7 +54,7 @@ export const S10_ParallelWorld: React.FC<{ isActive: boolean }> = ({ isActive })
             
             <button 
                 onClick={() => setRunning(!running)}
-                className="group relative px-12 py-5 bg-plasma-cyan text-black font-black uppercase tracking-widest rounded-full overflow-hidden transition-all hover:scale-110 active:scale-95 flex items-center gap-4"
+                className="group relative px-12 py-5 bg-plasma-cyan text-black micro-text uppercase rounded-full overflow-hidden transition-all hover:scale-110 active:scale-95 flex items-center gap-4"
             >
                 <Play size={24} fill="currentColor" />
                 {running ? "Reset System" : "Trigger Execution"}
@@ -64,7 +64,7 @@ export const S10_ParallelWorld: React.FC<{ isActive: boolean }> = ({ isActive })
         )}
       </AnimatePresence>
 
-      <div className="mt-12 text-center opacity-40 font-black italic text-lg uppercase tracking-tighter">
+      <div className="mt-12 text-center micro-text opacity-40 uppercase">
         Key Takeaway: You describe structure, not step-by-step instructions.
       </div>
     </BlueprintContainer>
