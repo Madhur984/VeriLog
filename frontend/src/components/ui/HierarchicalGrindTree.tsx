@@ -121,61 +121,6 @@ const ROOT_NODES: RootNode[] = [
   },
 ];
 
-          <stop offset="0%" stopColor="#c4b5fd" stopOpacity={0.95} />
-          <stop offset="40%" stopColor="#7c3aed" stopOpacity={0.85} />
-          <stop offset="100%" stopColor="#fbbf24" stopOpacity={0.9} />
-        </radialGradient>
-        <filter id="jewel-glow">
-          <feGaussianBlur stdDeviation="6" result="blur" />
-          <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-        </filter>
-      </defs>
-
-      {/* Outer glow halo */}
-      <ellipse cx="60" cy="100" rx="35" ry="8" fill="#7c3aed" opacity="0.2">
-        <animate attributeName="opacity" values="0.12;0.28;0.12" dur="3s" repeatCount="indefinite" />
-      </ellipse>
-
-      {/* Main gem body — icosahedron approximation */}
-      <g filter="url(#jewel-glow)">
-        {/* Top face */}
-        <polygon points="60,8 90,36 60,46 30,36" fill="url(#jewel-core)" opacity="0.95" />
-        {/* Mid-right face */}
-        <polygon points="90,36 100,68 72,82 60,46" fill="#7c3aed" opacity="0.8" />
-        {/* Mid-left face */}
-        <polygon points="30,36 60,46 48,82 20,68" fill="#6d28d9" opacity="0.7" />
-        {/* Bottom face */}
-        <polygon points="60,46 72,82 60,92 48,82" fill="#4c1d95" opacity="0.85" />
-        {/* Bottom-right foot */}
-        <polygon points="72,82 100,68 88,98 60,92" fill="#5b21b6" opacity="0.6" />
-        {/* Bottom-left foot */}
-        <polygon points="48,82 60,92 32,98 20,68" fill="#4c1d95" opacity="0.55" />
-
-        {/* Facet edge lines */}
-        <line x1="60" y1="8" x2="60" y2="92" stroke="#c4b5fd" strokeWidth="0.5" opacity="0.3" />
-        <line x1="30" y1="36" x2="100" y2="68" stroke="#c4b5fd" strokeWidth="0.5" opacity="0.25" />
-        <line x1="90" y1="36" x2="20" y2="68" stroke="#fbbf24" strokeWidth="0.5" opacity="0.25" />
-
-        {/* Shine flare */}
-        <polygon points="60,8 72,22 62,20" fill="#e9d5ff" opacity="0.7" />
-        <polygon points="90,36 100,44 96,38" fill="#fde68a" opacity="0.5" />
-      </g>
-
-      {/* Top apex LED */}
-      <circle cx="60" cy="8" r="3" fill="#c4b5fd">
-        <animate attributeName="opacity" values="1;0.3;1" dur="1.8s" repeatCount="indefinite" />
-      </circle>
-    </motion.svg>
-
-    {/* Label */}
-    <div
-      className="absolute -bottom-6 text-center text-[7px] font-black tracking-[0.25em] uppercase"
-      style={{ color: '#c4b5fd60', width: 140, left: '-10px' }}
-    >
-      JEWEL CONSTRUCT Ω
-    </div>
-  </motion.div>
-);
 
 // ─── MODULE PREVIEWS ──────────────────────────────────────────────────────────
 const ModulePreview: React.FC<{ type: string; color: string }> = ({ type, color }) => {
