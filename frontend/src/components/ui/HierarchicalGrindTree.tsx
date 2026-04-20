@@ -521,59 +521,93 @@ export const HierarchicalGrindTree: React.FC = () => {
             </div>
 
             {/* Three Vertical Branches */}
-            <div className="grid grid-cols-3 gap-8">
+            <div className="grid grid-cols-3 gap-24 w-full">
                 {branches.map(branch => (
-                    <div key={branch.id} className="flex flex-col items-center space-y-12 relative">
+                    <div key={branch.id} className="flex flex-col items-center space-y-16 relative">
                         {/* Branch Header */}
-                        <div className="text-center space-y-2 mb-8">
-                            <div className="micro-text uppercase tracking-[0.5em] font-black opacity-30 text-[9px]" style={{ color: branch.color }}>
+                        <div className="text-center space-y-2 mb-4">
+                            <div className="text-[10px] uppercase tracking-[0.5em] font-black opacity-40 mb-1" style={{ color: branch.color }}>
                                 {branch.subtitle}
                             </div>
-                            <h3 className="hero-text text-xl uppercase tracking-widest text-white">{branch.title}</h3>
-                            <div className="h-0.5 w-12 mx-auto rounded-full mt-2" style={{ backgroundColor: branch.color, boxShadow: `0 0 10px ${branch.color}` }} />
+                            <h3 className="text-3xl font-black uppercase tracking-tighter text-white">{branch.title}</h3>
+                            <div className="h-1 w-24 mx-auto rounded-full mt-4" style={{ backgroundColor: branch.color, boxShadow: `0 0 20px ${branch.color}` }} />
                         </div>
 
                         {/* Node List */}
-                        <div className="space-y-10 w-full flex flex-col items-center">
+                        <div className="space-y-12 w-full flex flex-col items-center">
                             {branch.nodes.map((node, i) => (
                                 <motion.div
                                     key={node.id}
-                                    initial={{ opacity: 0, scale: 0.9 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    transition={{ delay: 0.2 + i * 0.1 }}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true }}
+                                    transition={{ delay: i * 0.1 }}
                                     className="relative group cursor-pointer"
                                     onClick={() => navigate(node.route)}
                                 >
-                                    {/* Connectivity Trace */}
+                                    {/* Connectivity Trace (Flowing Energy) */}
                                     {i < branch.nodes.length - 1 && (
                                         <div 
-                                            className="absolute top-full left-1/2 -translate-x-1/2 w-0.5 h-10 opacity-20"
-                                            style={{ background: `linear-gradient(to bottom, ${branch.color}, transparent)` }}
-                                        />
+                                            className="absolute top-full left-1/2 -translate-x-1/2 w-[2px] h-12 overflow-hidden z-0"
+                                        >
+                                            <div className="w-full h-full bg-white/5" />
+                                            <motion.div 
+                                                className="absolute top-0 left-0 w-full h-full opacity-50"
+                                                style={{ background: `linear-gradient(to bottom, transparent, ${branch.color}, transparent)` }}
+                                                animate={{ y: [-48, 48] }}
+                                                transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                                            />
+                                        </div>
                                     )}
 
-                                    {/* Tactile Node Card */}
-                                    <div className="w-56 p-6 rounded-[32px] bg-[#0A0A0B] border border-white/5 group-hover:border-white/20 transition-all duration-500 relative overflow-hidden flex flex-col items-center">
-                                        <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-20 transition-opacity">
-                                            <div className="w-20 h-20 rounded-full border border-white" />
-                                        </div>
-
-                                        {/* Status LED */}
-                                        <div className="w-1.5 h-1.5 rounded-full mb-4 shadow-lg animate-pulse" style={{ backgroundColor: branch.color, boxShadow: `0 0 8px ${branch.color}` }} />
-                                        
-                                        <div className="text-center">
-                                            <div className="micro-text uppercase text-white/20 tracking-widest text-[8px] font-black mb-1">{node.subtitle}</div>
-                                            <div className="text-[11px] font-black text-white uppercase tracking-wider">{node.label}</div>
-                                        </div>
-
-                                        {/* Interaction Hint */}
+                                    {/* Premium Redesigned Node Card */}
+                                    <div className="w-80 h-44 bg-[#0A0C10]/80 backdrop-blur-2xl rounded-[40px] border border-white/5 relative overflow-hidden group transition-all duration-700 hover:border-white/20 shadow-[0_30px_80px_rgba(0,0,0,0.6)]">
+                                        {/* Animated Scanning Line */}
                                         <motion.div 
-                                            className="absolute bottom-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                                            animate={{ y: [0, -2, 0] }}
-                                            transition={{ repeat: Infinity, duration: 2 }}
-                                        >
-                                            <div className="text-[6px] font-mono text-white/30 uppercase tracking-[0.3em]">Neural Link: Ready</div>
-                                        </motion.div>
+                                            className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-cyan-400/40 to-transparent z-20"
+                                            animate={{ y: [0, 176, 0] }}
+                                            transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+                                        />
+
+                                        {/* Background Grid Pattern */}
+                                        <div className="absolute inset-0 opacity-[0.03] pointer-events-none" 
+                                             style={{ backgroundImage: `radial-gradient(circle at 1.5px 1.5px, white 1px, transparent 0)`, backgroundSize: '16px 16px' }} />
+
+                                        {/* Right Decorative Die Element */}
+                                        <div className="absolute right-[-30px] top-1/2 -translate-y-1/2 w-56 h-56 rounded-full border border-white/[0.03] flex items-center justify-center group-hover:border-white/[0.08] transition-all duration-700">
+                                            <div className="w-40 h-40 rounded-full border border-white/[0.01]" />
+                                            <motion.div 
+                                                className="absolute inset-6 rounded-full border-t border-white/[0.05]"
+                                                animate={{ rotate: 360 }}
+                                                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                                            />
+                                        </div>
+
+                                        {/* Status Header */}
+                                        <div className="absolute top-8 left-10 z-10">
+                                            <div className="flex items-center gap-2 mb-3">
+                                                <div className="w-2 h-2 rounded-full relative" style={{ backgroundColor: branch.color, boxShadow: `0 0 15px ${branch.color}` }}>
+                                                    <div className="absolute inset-0 rounded-full animate-ping" style={{ backgroundColor: branch.color }} />
+                                                </div>
+                                                <div className="text-[8px] font-mono text-white/30 uppercase tracking-[0.6em]">{node.subtitle}</div>
+                                            </div>
+                                        </div>
+
+                                        {/* Module Title */}
+                                        <div className="absolute left-10 bottom-10 z-10 w-3/5">
+                                            <h4 className="text-xl font-black text-white/90 uppercase tracking-tight leading-tight group-hover:text-cyan-400 transition-colors duration-500">
+                                                {node.label}
+                                            </h4>
+                                            <div className="mt-3 flex items-center gap-2">
+                                                <div className="h-px w-6 bg-white/10 group-hover:bg-cyan-400/50 transition-all duration-500" />
+                                                <span className="text-[7px] font-mono text-white/10 group-hover:text-cyan-400/40 uppercase tracking-[0.4em] transition-all duration-500">
+                                                    LogicGate_Pro // V2.1
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        {/* Dynamic Hover Background */}
+                                        <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                                     </div>
                                 </motion.div>
                             ))}
