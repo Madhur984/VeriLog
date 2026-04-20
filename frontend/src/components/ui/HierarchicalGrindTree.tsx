@@ -121,25 +121,6 @@ const ROOT_NODES: RootNode[] = [
   },
 ];
 
-// ─── JEWEL POLYHEDRON ──────────────────────────────────────────────────────────
-const JewelPolyhedron: React.FC = () => (
-  <motion.div
-    initial={{ opacity: 0, scale: 0.5, rotate: -30 }}
-    animate={{ opacity: 1, scale: 1, rotate: 0 }}
-    transition={{ delay: 1.8, duration: 1.2, type: 'spring', stiffness: 80 }}
-    className="relative flex items-center justify-center"
-    style={{ width: 120, height: 120 }}
-  >
-    <motion.svg
-      width={120}
-      height={120}
-      viewBox="0 0 120 120"
-      style={{ overflow: 'visible' }}
-      animate={{ rotate: 360 }}
-      transition={{ duration: 24, repeat: Infinity, ease: 'linear' }}
-    >
-      <defs>
-        <radialGradient id="jewel-core" cx="40%" cy="35%">
           <stop offset="0%" stopColor="#c4b5fd" stopOpacity={0.95} />
           <stop offset="40%" stopColor="#7c3aed" stopOpacity={0.85} />
           <stop offset="100%" stopColor="#fbbf24" stopOpacity={0.9} />
@@ -592,7 +573,6 @@ export const HierarchicalGrindTree: React.FC = () => {
             {/* Connection Hub Visualization */}
             <div className="flex justify-center mb-16 relative">
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-px h-16 bg-gradient-to-b from-white/10 to-transparent" />
-                <JewelPolyhedron />
             </div>
 
             {/* Three Vertical Branches */}
