@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import SceneWrapper from '../components/SceneWrapper';
 import PhaseLabel from '../components/PhaseLabel';
@@ -23,6 +23,28 @@ const A3_Maxterms: React.FC<A3Props> = ({
   const allMaxterms = getMaxterms(tableRows, VARS);
   const totalMaxterms = allMaxterms.length;
 
+  // Micro-quiz state (IMP-B1)
+  const initialQuizRow = tableRows.findIndex(r => r.output === false);
+  const [quizRow, setQuizRow] = useState<number | null>(initialQuizRow >= 0 ? initialQuizRow : null);
+  const [quizStep, setQuizStep] = useState<'IDLE' | 'CHALLENGE' | 'PASSED'>(initialQuizRow >= 0 ? 'CHALLENGE' : 'IDLE');
+  const [shake, setShake] = useState(false);
+
+  const handleQuizAnswer = (answer: string) => {
+    if (quizRow === null || quizRow === -1) return;
+    const m = allMaxterms.find(m => m.index === quizRow);
+    if (!m) return;
+    const correct = maxtermToSumTerm(m);
+    if (answer === correct) {
+      setQuizStep('PASSED');
+      onToggleMaxterm(quizRow);
+    } else {
+      setShake(true);
+      setTimeout(() => setShake(false), 500);
+    }
+  };
+
+  const currentQuizMaxterm = (quizRow !== null && quizRow !== -1) ? allMaxterms.find(m => m.index === quizRow) : null;
+
   return (
     <SceneWrapper sceneIndex={sceneIndex} currentScene={currentScene} phaseColor={PHASE_COLOR}>
       <PhaseLabel phase="A" name="MAXTERM EXTRACTION" color={PHASE_COLOR} />
@@ -41,36 +63,92 @@ const A3_Maxterms: React.FC<A3Props> = ({
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 w-full">
+        {/* Micro-Quiz Challenge (IMP-B1) */}
+        <AnimatePresence>
+          {quizStep === 'CHALLENGE' && isActive && currentQuizMaxterm && (
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 1.1, opacity: 0 }}
+              className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md p-6"
+            >
+              <motion.div 
+                animate={shake ? { x: [-10, 10, -10, 10, 0] } : {}}
+                className="w-full max-w-md bg-[#0A0A0E] border-2 border-rose-500/40 rounded-[40px] p-10 shadow-[0_0_100px_rgba(244,63,94,0.2)] flex flex-col gap-8 text-center"
+              >
+                <div>
+                  <div className="text-[10px] font-mono text-rose-500 uppercase tracking-widest mb-4 italic">Pedagogical_Challenge // Duality_Verification</div>
+                  <h3 className="text-2xl font-mono font-black italic text-white uppercase leading-none mb-3">Identify the Sum</h3>
+                  <p className="text-xs font-mono font-black italic text-white/40 uppercase tracking-widest leading-relaxed">
+                    Row {currentQuizMaxterm.index} has inputs:
+                    <br />
+                    <span className="text-white">
+                      A={currentQuizMaxterm.inputs?.[0] ?? '?'} 
+                      B={currentQuizMaxterm.inputs?.[1] ?? '?'} 
+                      C={currentQuizMaxterm.inputs?.[2] ?? '?'}
+                    </span>
+                    <br />
+                    Which expression correctly represents this state?
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 gap-3">
+                  {[
+                    maxtermToSumTerm(currentQuizMaxterm),
+                    VARS.map((v, i) => currentQuizMaxterm.inputs?.[i] ? `${v}'` : v).join(''),
+                    `(${VARS.map((v, i) => currentQuizMaxterm.inputs?.[i] ? v : `${v}'`).join('+')})`,
+                  ].sort(() => Math.random() - 0.5).map((opt, i) => (
+                    <button
+                      key={i}
+                      onClick={() => handleQuizAnswer(opt)}
+                      className="w-full py-4 rounded-2xl bg-white/5 border border-white/10 hover:border-rose-400 hover:bg-rose-400/5 text-sm font-mono font-black italic text-white/60 hover:text-rose-400 transition-all uppercase tracking-widest"
+                    >
+                      {opt}
+                    </button>
+                  ))}
+                </div>
+                
+                <div className="text-[10px] font-mono text-white/10 uppercase tracking-widest">
+                  Hint: Maxterm '1' = Complement, '0' = True
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 w-full">
             {/* Table Selection */}
             <motion.div 
                 initial={{ opacity: 0, x: -30 }} 
                 animate={isActive ? { opacity: 1, x: 0 } : {}}
-                className="bg-[#06060A] rounded-[48px] p-8 border-2 border-rose-500/20 shadow-2xl overflow-hidden"
+                className="lg:col-span-6 bg-black/40 backdrop-blur-md rounded-[48px] p-8 border-2 border-rose-500/10 shadow-2xl overflow-hidden"
             >
                 <div className="flex justify-between items-center mb-6 px-4">
-                    <span className="text-[10px] font-mono font-black italic text-rose-500 uppercase tracking-widest">OFF_STATE_SELECTOR</span>
+                    <span className="text-[10px] font-mono font-black italic text-rose-500 uppercase tracking-widest flex items-center gap-2">
+                       <div className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
+                       OFF_STATE_SELECTOR
+                    </span>
                     <span className="text-[10px] font-mono font-black italic text-white/20 uppercase">TARGET row[F=0]</span>
                 </div>
                 
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-2 max-h-[400px] overflow-y-auto scrollbar-hide pr-2">
                     {tableRows.filter(r => r.output === false).map(row => (
                         <button
                             key={row.index}
                             onClick={() => onToggleMaxterm(row.index)}
-                            className={`flex items-center justify-between p-4 rounded-2xl transition-all border-2 ${selectedMaxterms.has(row.index) ? 'bg-rose-500/20 border-rose-500 shadow-lg' : 'bg-white/5 border-transparent hover:bg-white/10'}`}
+                            className={`flex items-center justify-between p-5 rounded-2xl transition-all border-2 ${selectedMaxterms.has(row.index) ? 'bg-rose-500/20 border-rose-500 shadow-lg' : 'bg-white/5 border-transparent hover:bg-white/10'}`}
                         >
                             <div className="flex gap-4 items-center">
                                 <span className="text-[10px] font-mono font-black text-white/20 uppercase tracking-tighter">ROW_{row.index}</span>
                                 <div className="flex gap-2">
                                     {row.inputs.map((bit, bi) => (
-                                        <div key={bi} className="px-2 py-1 rounded-lg bg-black/40 text-xs font-mono font-black text-white/80">{bit ? '1' : '0'}</div>
+                                        <div key={bi} className={`px-2 py-1 rounded-lg text-xs font-mono font-black ${bit ? 'bg-rose-500/40 text-white' : 'bg-black/40 text-white/40'}`}>{bit ? '1' : '0'}</div>
                                     ))}
                                 </div>
                             </div>
                             <div className="flex items-center gap-4">
-                                <span className="text-sm font-mono font-black italic text-rose-500">F=0</span>
-                                <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${selectedMaxterms.has(row.index) ? 'bg-rose-500 border-rose-500' : 'border-white/10'}`}>
+                                <span className="text-sm font-mono font-black italic text-rose-500">0</span>
+                                <div className={`w-8 h-8 rounded-xl border-2 flex items-center justify-center transition-all ${selectedMaxterms.has(row.index) ? 'bg-rose-500 border-rose-500 text-black' : 'border-white/10'}`}>
                                     {selectedMaxterms.has(row.index) && <span className="text-[10px]">✔</span>}
                                 </div>
                             </div>
@@ -83,21 +161,22 @@ const A3_Maxterms: React.FC<A3Props> = ({
             <motion.div 
                 initial={{ opacity: 0, x: 30 }} 
                 animate={isActive ? { opacity: 1, x: 0 } : {}}
-                className="flex flex-col gap-8 justify-center"
+                className="lg:col-span-6 flex flex-col gap-8 justify-center"
             >
-                <div className="text-center p-10 rounded-[48px] bg-white/5 border-2 border-white/5 shadow-2xl relative">
-                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-6 py-2 rounded-full bg-rose-500 text-black text-[10px] font-mono font-black italic uppercase tracking-widest shadow-xl">
-                       POS_EQUATION_LOG
+                <div className="text-center p-12 rounded-[56px] bg-black/40 backdrop-blur-md border border-white/5 shadow-2xl relative min-h-[220px] flex items-center justify-center">
+                    <div className="absolute top-8 left-12 flex items-center gap-3">
+                         <div className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
+                         <span className="text-[10px] font-mono font-black italic text-rose-500/60 uppercase tracking-widest">POS_SYNTHESIS_ENGINE</span>
                     </div>
                     <AnimatePresence mode="popLayout">
                         {selectedMaxterms.size === 0 ? (
-                            <motion.div key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-sm font-mono font-black italic text-white/10 uppercase tracking-widest h-32 flex items-center justify-center">
-                               Select signals from table
+                            <motion.div key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-sm font-mono font-black italic text-white/10 uppercase tracking-widest flex items-center justify-center">
+                               Waiting for extraction...
                             </motion.div>
                         ) : (
-                            <motion.div key="content" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col gap-6 h-32 justify-center">
-                                <div className="text-2xl font-mono font-black italic text-[#A0FFA0] tracking-tighter md:text-3xl">
-                                    F = {Array.from(selectedMaxterms).map((idx, i) => (
+                            <motion.div key="content" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="flex flex-col gap-6 items-center">
+                                <div className="text-2xl font-mono font-black italic text-white tracking-tighter md:text-3xl text-center">
+                                    F = {Array.from(selectedMaxterms).sort((a,b)=>a-b).map((idx, i) => (
                                         <span key={idx}>
                                             {i > 0 && <span className="text-rose-500 mx-2">·</span>}
                                             {maxtermToSumTerm(allMaxterms.find(m => m.index === idx)!)}
@@ -105,17 +184,19 @@ const A3_Maxterms: React.FC<A3Props> = ({
                                     ))}
                                 </div>
                                 {selectedMaxterms.size === totalMaxterms && (
-                                    <div className="text-[10px] font-mono font-black italic text-rose-500 uppercase tracking-[0.4em]">ALL_MAXTERMS_ACCOUNTED_FOR</div>
+                                    <div className="px-4 py-1 rounded-full bg-rose-500 text-black text-[10px] font-mono font-black italic uppercase tracking-widest">
+                                      VALIDATION: ALL_MAXTERMS_ACCOUNTED_FOR
+                                    </div>
                                 )}
                             </motion.div>
                         )}
                     </AnimatePresence>
                 </div>
 
-                <div className="p-8 rounded-[32px] bg-black/40 border border-white/10 flex flex-col gap-4">
-                    <div className="text-[10px] font-mono font-black italic text-white/30 uppercase tracking-widest">DUALITY_RULE</div>
+                <div className="p-8 rounded-[40px] bg-white/[0.03] border border-white/10 flex flex-col gap-4">
+                    <div className="text-[10px] font-mono font-black italic text-white/30 uppercase tracking-widest leading-none">Logic_Law // Duality_Principle</div>
                     <p className="text-sm font-mono font-black italic text-white/60 leading-relaxed uppercase">
-                        For MAXTERMS, the rule flips: a '1' means we use the <span className="text-rose-500 underline">COMPLEMENT</span> (e.g. A′). A '0' means we use the <span className="text-rose-500 underline">TRUE</span> variable (e.g. A).
+                        For MAXTERMS, the rule flips: a <span className="text-cyan-400">'1'</span> means use the <span className="text-rose-500 underline">COMPLEMENT</span> (e.g. A′), while a <span className="text-rose-500">'0'</span> means use the <span className="text-rose-500 underline">TRUE</span> variable (e.g. A).
                     </p>
                 </div>
             </motion.div>

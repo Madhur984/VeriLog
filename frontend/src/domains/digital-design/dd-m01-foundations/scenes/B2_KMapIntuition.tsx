@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import SceneWrapper from '../components/SceneWrapper';
 import PhaseLabel from '../components/PhaseLabel';
@@ -10,23 +10,55 @@ interface B2Props { sceneIndex: number; currentScene: number; cells: boolean[]; 
 
 type PresetKey = 'ex1' | 'ex2' | 'ex3';
 const PRESETS: Record<PresetKey, { cells: boolean[]; label: string; result: string; groupPositions: number[] }> = {
-  ex1: { cells: [false, true, false, true], label: 'AB + AB\'', result: 'A', groupPositions: [1, 3] }, // Indices check
-  ex2: { cells: [false, false, true, true], label: 'A\'B + AB', result: 'B', groupPositions: [2, 3] },
-  ex3: { cells: [true, false, true, false], label: 'A\'B\' + AB\'', result: 'B\'', groupPositions: [0, 2] },
+  ex1: { cells: [false, true, false, true], label: 'AB + AB\'', result: 'A', groupPositions: [1, 3] },
+  ex2: { cells: [false, false, true, true], label: "A'B + AB", result: 'B', groupPositions: [2, 3] },
+  ex3: { cells: [true, false, true, false], label: "A'B' + AB'", result: "B'", groupPositions: [0, 2] },
 };
 
 const B2_KMapIntuition: React.FC<B2Props> = ({ sceneIndex, currentScene, cells, onCellsChange }) => {
   const isActive = currentScene === sceneIndex;
-  const [grouped, setGrouped] = useState<number[] | null>(null);
-  const [simplifiedTerm, setSimplifiedTerm] = useState<string | null>(null);
+  const [selection, setSelection] = useState<Set<number>>(new Set());
+  const [manualGroups, setManualGroups] = useState<number[][]>([]);
   const [activePreset, setActivePreset] = useState<PresetKey | null>(null);
 
   const loadPreset = (key: PresetKey) => {
     const p = PRESETS[key];
     onCellsChange(p.cells);
-    setGrouped(p.groupPositions);
-    setSimplifiedTerm(p.result);
+    setManualGroups([p.groupPositions]);
     setActivePreset(key);
+    setSelection(new Set());
+  };
+
+  const isAdjacent = (group: number[]) => {
+    if (group.length === 1) return true;
+    if (group.length === 2) {
+      const [a, b] = group;
+      // Adjacencies in 2x2: 0-1, 2-3, 0-2, 1-3
+      const adj = [[0,1],[1,0],[2,3],[3,2],[0,2],[2,0],[1,3],[3,1]];
+      return adj.some(([m, n]) => m === a && n === b);
+    }
+    if (group.length === 4) return true;
+    return false;
+  };
+
+  const handleGroup = () => {
+    const selectedIndices = Array.from(selection);
+    if (selectedIndices.length === 0) return;
+    
+    // Check if all selected cells are '1'
+    const allOnes = selectedIndices.every(idx => cells[idx]);
+    if (!allOnes) return;
+
+    if (isAdjacent(selectedIndices)) {
+      setManualGroups([...manualGroups, selectedIndices]);
+      setSelection(new Set());
+    }
+  };
+
+  const clearGroups = () => {
+    setManualGroups([]);
+    setSelection(new Set());
+    setActivePreset(null);
   };
 
   return (
@@ -49,55 +81,87 @@ const B2_KMapIntuition: React.FC<B2Props> = ({ sceneIndex, currentScene, cells, 
         </motion.div>
 
         {/* Focused Laboratory */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 w-full items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 w-full items-center">
             {/* Controls */}
             <motion.div 
                 initial={{ opacity: 0, x: -30 }} 
                 animate={isActive ? { opacity: 1, x: 0 } : {}}
-                className="flex flex-col gap-8"
+                className="lg:col-span-4 flex flex-col gap-6"
             >
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-2">
+                    <div className="text-[10px] font-mono font-black italic text-blue-500/60 uppercase tracking-widest mb-2">Preset_Scenarios</div>
                     {(Object.keys(PRESETS) as PresetKey[]).map((key, i) => (
                         <button
                             key={key}
                             onClick={() => loadPreset(key)}
-                            className={`p-6 rounded-2xl border-2 transition-all flex justify-between items-center ${activePreset === key ? 'bg-blue-500 border-blue-500 text-black' : 'bg-white/5 border-transparent text-white/40 hover:bg-white/10'}`}
+                            className={`p-5 rounded-2xl border-2 transition-all flex justify-between items-center ${activePreset === key ? 'bg-blue-500 border-blue-500 text-black' : 'bg-white/5 border-transparent text-white/40 hover:bg-white/10'}`}
                         >
-                            <span className="text-[10px] font-mono font-black italic uppercase tracking-widest">EXAMPLE_0{i+1}</span>
-                            <span className="text-sm font-mono font-black italic uppercase">{PRESETS[key].label}</span>
+                            <span className="text-[10px] font-mono font-black italic uppercase tracking-widest">MAP_0{i+1}</span>
+                            <span className="text-xs font-mono font-black italic uppercase">{PRESETS[key].label}</span>
                         </button>
                     ))}
                 </div>
 
-                <AnimatePresence mode="wait">
-                    {simplifiedTerm && (
-                        <motion.div
-                            key={simplifiedTerm}
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            className="p-8 rounded-[32px] bg-blue-500/10 border-2 border-blue-500/20 text-center relative overflow-hidden"
+                <div className="p-6 rounded-[32px] bg-white/[0.03] border border-white/10 flex flex-col gap-4">
+                    <div className="text-[10px] font-mono font-black italic text-white/20 uppercase tracking-widest leading-none">Manual_Grouping_Tool</div>
+                    
+                    <div className="flex flex-col gap-2">
+                        <button
+                            onClick={handleGroup}
+                            disabled={selection.size === 0}
+                            className={`w-full py-4 rounded-xl text-xs font-black italic tracking-[0.2em] transition-all ${selection.size > 0 ? 'bg-cyan-400 text-black shadow-[0_0_20px_rgba(6,182,212,0.3)]' : 'bg-white/5 text-white/10'}`}
                         >
-                            <div className="text-[10px] font-mono font-black italic text-blue-500/60 uppercase tracking-widest mb-2">REDUCED_RESULT</div>
-                            <div className="text-5xl font-mono font-black italic text-white tracking-widest">{simplifiedTerm}</div>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
+                            {selection.size > 0 ? `GROUP_${selection.size}_CELLS` : 'SELECT_CELLS'}
+                        </button>
+                        <button
+                            onClick={clearGroups}
+                            className="w-full py-3 rounded-xl text-[10px] font-mono font-black italic text-white/20 hover:text-rose-500 transition-colors uppercase tracking-widest"
+                        >
+                            Reset_Topology
+                        </button>
+                    </div>
+                </div>
             </motion.div>
 
             {/* K-MAP */}
             <motion.div 
                 initial={{ opacity: 0, scale: 0.95 }} 
                 animate={isActive ? { opacity: 1, scale: 1 } : {}}
-                className="bg-[#06060A] rounded-[48px] border-2 border-blue-500/20 p-16 shadow-2xl relative flex items-center justify-center min-h-[400px]"
+                className="lg:col-span-8 bg-black/40 backdrop-blur-md rounded-[56px] border-2 border-blue-500/10 p-20 shadow-2xl relative flex items-center justify-center min-h-[500px]"
             >
-                <div className="absolute top-8 left-10 text-[10px] font-mono font-black italic text-blue-500/40 uppercase tracking-widest">VISUAL_EXTRACTION</div>
-                <div className="scale-150">
+                <div className="absolute top-10 left-12 flex items-center gap-3">
+                    <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+                    <span className="text-[10px] font-mono font-black italic text-blue-500/60 uppercase tracking-widest">Spatial_Processor // ACTIVE</span>
+                </div>
+                
+                <div className="scale-[1.8] md:scale-[2.2]">
                     <KMapGrid2Var
                         cells={cells}
                         onChange={onCellsChange}
                         accentColor={PHASE_COLOR}
-                        highlightGroup={grouped ?? undefined}
+                        highlightGroup={manualGroups.flat()}
+                        selection={selection}
+                        onSelectionChange={setSelection}
                     />
+                </div>
+
+                {/* Validation HUD */}
+                <div className="absolute bottom-10 right-12 text-right">
+                    <div className="text-[10px] font-mono text-white/20 uppercase tracking-widest mb-1 italic">Extracted_Groups</div>
+                    <div className="flex flex-col gap-1">
+                        <AnimatePresence>
+                            {manualGroups.map((g, idx) => (
+                                <motion.div 
+                                    key={idx}
+                                    initial={{ x: 20, opacity: 0 }}
+                                    animate={{ x: 0, opacity: 1 }}
+                                    className="text-xs font-mono font-black italic text-cyan-400 uppercase"
+                                >
+                                    Group_{idx+1}: {g.length} cells
+                                </motion.div>
+                            ))}
+                        </AnimatePresence>
+                    </div>
                 </div>
             </motion.div>
         </div>

@@ -34,32 +34,40 @@ const TruthTableBuilder: React.FC<TruthTableBuilderProps> = ({
   compact = false,
 }) => {
   const playClick = useCallback((freq: number = 800) => {
-    const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    
-    osc.type = 'square';
-    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(1, audioCtx.currentTime + 0.05);
-    
-    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
-    
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
-    
-    osc.start();
-    osc.stop(audioCtx.currentTime + 0.05);
+    try {
+      const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(1, audioCtx.currentTime + 0.05);
+      
+      gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+      
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.05);
+    } catch (e) {
+      // Audio context might be blocked
+    }
   }, []);
 
   const cycleOutput = useCallback((index: number) => {
     if (locked) return;
-    playClick(rows[index].output === null ? 1200 : rows[index].output === true ? 800 : 600);
     const next = [...rows];
     const cur = next[index].output;
-    if (cur === null) next[index] = { ...next[index], output: true };
-    else if (cur === true) next[index] = { ...next[index], output: false };
-    else next[index] = { ...next[index], output: null };
+    
+    let nextVal: boolean | null = null;
+    if (cur === null) nextVal = true;
+    else if (cur === true) nextVal = false;
+    else nextVal = null;
+    
+    playClick(nextVal === null ? 1200 : nextVal === true ? 800 : 600);
+    next[index] = { ...next[index], output: nextVal };
     onRowsChange(next);
   }, [locked, rows, onRowsChange, playClick]);
 
@@ -70,7 +78,8 @@ const TruthTableBuilder: React.FC<TruthTableBuilderProps> = ({
       output: Math.random() > 0.5,
     }));
     onRowsChange(next);
-  }, [locked, rows, onRowsChange]);
+    playClick(2000);
+  }, [locked, rows, onRowsChange, playClick]);
 
   const ones = rows.filter(r => r.output === true).length;
   const zeros = rows.filter(r => r.output === false).length;
@@ -79,150 +88,171 @@ const TruthTableBuilder: React.FC<TruthTableBuilderProps> = ({
   const cellH = compact ? 36 : 48;
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2 w-full">
       {/* Controls */}
       {!locked && (
         <div className="flex items-center justify-between mb-1">
-          <span className="text-[10px] font-mono tracking-[0.12em] text-[#7A7A8C] uppercase">
-            Truth Table
+          <span className="text-[10px] font-mono tracking-[0.12em] text-[#7A7A8C] uppercase flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+            Truth Table Live Stream
           </span>
           <button
             onClick={randomize}
-            className="text-[10px] font-mono text-[#7A7A8C] hover:text-[#E8E8F0] transition-colors px-2 py-1 border border-white/5 rounded hover:border-white/20"
+            className="text-[10px] font-mono text-[#7A7A8C] hover:text-cyan-400 transition-colors px-2 py-1 border border-white/5 rounded hover:border-cyan-400/20 bg-white/[0.02]"
           >
-            ⟳ RANDOMIZE
+            ⟳ RANDOMIZE_NOISE
           </button>
         </div>
       )}
 
       {/* Table */}
       <div
-        className="rounded-xl overflow-hidden border"
-        style={{ borderColor: locked ? accentColor + '66' : '#FFFFFF0F' }}
+        className="rounded-2xl overflow-hidden border-2 transition-colors duration-500"
+        style={{ 
+          borderColor: locked ? accentColor + '44' : '#FFFFFF1A',
+          background: 'rgba(10,10,15,0.8)',
+          boxShadow: locked ? `0 0 40px ${accentColor}11` : 'none'
+        }}
         role="table"
         aria-label="Truth table"
       >
         {/* Header */}
         <div
-          className="grid border-b border-white/5"
-          style={{ gridTemplateColumns: `repeat(${variables.length + 2}, 1fr)` }}
+          className="grid border-b border-white/10"
+          style={{ gridTemplateColumns: `0.8fr repeat(${variables.length}, 1fr) 1.25fr` }}
           role="row"
         >
-          <div className="px-2 py-3 text-center text-xs font-mono text-[#7A7A8C] bg-[#1A1A1F]" role="columnheader">
+          <div className="px-2 py-4 text-center text-[10px] font-mono text-[#7A7A8C] bg-white/[0.03] uppercase tracking-widest border-r border-white/5" role="columnheader">
             idx
           </div>
-          {variables.map(v => (
-            <div key={v} className="px-2 py-3 text-center text-xs font-mono text-[#7A7A8C] bg-[#1A1A1F]" role="columnheader">
+          {variables.map((v, idx) => (
+            <div 
+              key={v} 
+              className={`px-2 py-4 text-center text-xs font-mono text-[#7A7A8C] bg-white/[0.03] uppercase border-r border-white/5 ${idx === variables.length - 1 ? '' : ''}`} 
+              role="columnheader"
+            >
               {v}
             </div>
           ))}
-          <div className="px-2 py-3 text-center text-xs font-mono bg-[#1A1A1F]" style={{ color: accentColor }} role="columnheader">
-            F
+          <div className="px-2 py-4 text-center text-xs font-mono font-black border-l-2 border-white/10" style={{ color: accentColor, background: `${accentColor}11` }} role="columnheader">
+            F(out)
           </div>
         </div>
 
         {/* Rows */}
-        {rows.map((row, i) => {
-          const isMinterm = row.output === true;
-          const isMaxterm = row.output === false;
-          const isActive = activeRowIndex === i;
+        <div className="max-h-[400px] overflow-y-auto scrollbar-hide">
+          {rows.map((row, i) => {
+            const isMinterm = row.output === true;
+            const isMaxterm = row.output === false;
+            const isActive = activeRowIndex === i;
 
-          const rowBg = isActive
-            ? `rgba(${parseInt(accentColor.slice(1,3),16)},${parseInt(accentColor.slice(3,5),16)},${parseInt(accentColor.slice(5,7),16)},0.15)`
-            : highlightMinterms && isMinterm
-              ? 'rgba(0,255,136,0.06)'
-              : highlightMaxterms && isMaxterm
-                ? 'rgba(255,51,102,0.06)'
-                : 'transparent';
+            const rowBg = isActive
+              ? `rgba(${parseInt(accentColor.slice(1,3),16)},${parseInt(accentColor.slice(3,5),16)},${parseInt(accentColor.slice(5,7),16)},0.15)`
+              : highlightMinterms && isMinterm
+                ? 'rgba(0,255,136,0.06)'
+                : highlightMaxterms && isMaxterm
+                  ? 'rgba(255,51,102,0.06)'
+                  : 'transparent';
 
-          const borderLeft = isActive
-            ? `3px solid ${accentColor}`
-            : highlightMinterms && isMinterm
-              ? '3px solid #00FF88'
-              : highlightMaxterms && isMaxterm
-                ? '3px solid #FF3366'
-                : '3px solid transparent';
+            const borderLeft = isActive
+              ? `4px solid ${accentColor}`
+              : highlightMinterms && isMinterm
+                ? '4px solid #00FF88'
+                : highlightMaxterms && isMaxterm
+                  ? '4px solid #FF3366'
+                  : '4px solid transparent';
 
-          return (
-            <motion.div
-              key={row.index}
-              custom={i}
-              initial="hidden"
-              animate="visible"
-              variants={cellVariants}
-              className="grid border-b border-white/[0.04] transition-all duration-100"
-              style={{
-                gridTemplateColumns: `repeat(${variables.length + 2}, 1fr)`,
-                background: rowBg,
-                borderLeft,
-                minHeight: cellH + 8,
-              }}
-              role="row"
-            >
-              {/* Index */}
-              <div className="flex items-center justify-center text-xs font-mono text-[#7A7A8C]" role="cell">
-                {row.index}
-              </div>
-
-              {/* Input bits */}
-              {row.inputs.map((bit, bi) => (
-                <div
-                  key={bi}
-                  className="flex items-center justify-center text-sm font-mono font-semibold"
-                  style={{ color: bit ? '#E8E8F0' : '#7A7A8C' }}
-                  role="cell"
-                >
-                  {bit ? '1' : '0'}
+            return (
+              <motion.div
+                key={row.index}
+                custom={i}
+                initial="hidden"
+                animate="visible"
+                variants={cellVariants}
+                className={`grid border-b border-white/[0.04] transition-all duration-100 items-center ${isActive ? 'z-10' : 'z-0'}`}
+                style={{
+                  gridTemplateColumns: `0.8fr repeat(${variables.length}, 1fr) 1.25fr`,
+                  background: rowBg,
+                  borderLeft,
+                  minHeight: cellH,
+                }}
+                role="row"
+              >
+                {/* Index */}
+                <div className="flex items-center justify-center text-[10px] font-mono text-[#7A7A8C] border-r border-white/5 h-full" role="cell">
+                  {row.index}
                 </div>
-              ))}
 
-              {/* Output toggle */}
-              <div className="flex items-center justify-center" role="cell">
-                {locked ? (
-                  <span
-                    className="text-base font-mono font-semibold"
-                    style={{
-                      color: row.output === true
-                        ? '#00FF88'
-                        : row.output === false
-                          ? '#FF3366'
-                          : '#7A7A8C',
-                    }}
+                {/* Input bits */}
+                {row.inputs.map((bit, bi) => (
+                  <div
+                    key={bi}
+                    className="flex items-center justify-center text-sm font-mono font-semibold h-full border-r border-white/5"
+                    style={{ color: bit ? '#FFF' : '#FFFFFF44' }}
+                    role="cell"
                   >
-                    {row.output === true ? '1' : row.output === false ? '0' : '·'}
-                  </span>
-                ) : (
-                  <button
-                    onClick={() => cycleOutput(i)}
-                    className="w-10 h-10 rounded flex items-center justify-center text-base font-mono font-semibold transition-all duration-150 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-[#00D4FF]"
-                    style={{
-                      color: row.output === true
-                        ? '#00FF88'
-                        : row.output === false
-                          ? '#FF3366'
-                          : '#7A7A8C',
-                      background: row.output === true
-                        ? 'rgba(0,255,136,0.1)'
-                        : row.output === false
-                          ? 'rgba(255,51,102,0.1)'
-                          : 'transparent',
-                    }}
-                    aria-label={`Row ${row.index} output: ${row.output === true ? '1' : row.output === false ? '0' : 'unspecified'}. Click to cycle.`}
-                  >
-                    {row.output === true ? '1' : row.output === false ? '0' : '·'}
-                  </button>
-                )}
-              </div>
-            </motion.div>
-          );
-        })}
+                    {bit ? '1' : '0'}
+                  </div>
+                ))}
+
+                {/* Output toggle */}
+                <div className="flex items-center justify-center h-full bg-black/20" role="cell">
+                  {locked ? (
+                    <motion.span
+                      initial={{ scale: 0.8 }}
+                      animate={{ scale: 1 }}
+                      className="text-base font-mono font-black italic"
+                      style={{
+                        color: row.output === true
+                          ? '#00FF88'
+                          : row.output === false
+                            ? '#FF3366'
+                            : '#7A7A8C',
+                      }}
+                    >
+                      {row.output === true ? '1' : row.output === false ? '0' : '·'}
+                    </motion.span>
+                  ) : (
+                    <button
+                      onClick={() => cycleOutput(i)}
+                      className="w-full h-full flex items-center justify-center text-base font-mono font-black italic transition-all duration-150 hover:bg-white/[0.05] focus:outline-none"
+                      style={{
+                        color: row.output === true
+                          ? '#00FF88'
+                          : row.output === false
+                            ? '#FF3366'
+                            : '#7A7A8C',
+                      }}
+                      aria-label={`Row ${row.index} output: ${row.output === true ? '1' : row.output === false ? '0' : 'unspecified'}. Click to cycle.`}
+                    >
+                      {row.output === true ? '1' : row.output === false ? '0' : '·'}
+                    </button>
+                  )}
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
       </div>
 
       {/* Live counter */}
-      <div className="flex items-center gap-4 text-xs font-mono mt-2">
-        <span style={{ color: '#00FF88' }}>■ ONES: {ones}</span>
-        <span style={{ color: '#FF3366' }}>■ ZEROS: {zeros}</span>
-        <span style={{ color: '#7A7A8C' }}>■ UNSPECIFIED: {unspecified}</span>
+      <div className="flex items-center justify-between mt-2 px-2">
+        <div className="flex items-center gap-6">
+          <div className="flex items-center gap-2">
+            <div className="w-1.5 h-1.5 rounded-full bg-[#00FF88]" />
+            <span className="text-[10px] font-mono text-[#7A7A8C] uppercase">Ones: <span className="text-white">{ones}</span></span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-1.5 h-1.5 rounded-full bg-[#FF3366]" />
+            <span className="text-[10px] font-mono text-[#7A7A8C] uppercase">Zeros: <span className="text-white">{zeros}</span></span>
+          </div>
+        </div>
+        {unspecified > 0 && (
+          <div className="text-[10px] font-mono text-amber-500 uppercase flex items-center gap-2 animate-pulse">
+            <span className="w-1 h-1 rounded-full bg-amber-500" />
+            {unspecified} Unspecified
+          </div>
+        )}
       </div>
     </div>
   );

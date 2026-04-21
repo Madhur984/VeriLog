@@ -1,5 +1,5 @@
 // ─── Module DD-M01 Types ─────────────────────────────────────────────────────
-import type { TruthTableRow, Minterm, Maxterm, CircuitForm } from '../../../../shared/utils/booleanEngine';
+import type { TruthTableRow, Minterm, Maxterm, CircuitForm } from '../../../shared/utils/booleanEngine';
 
 export type { TruthTableRow, Minterm, Maxterm, CircuitForm };
 
@@ -19,6 +19,8 @@ export interface PhaseAState {
   tableVars: string[];
   tableRows: TruthTableRow[];
   tableLocked: boolean;
+  tableUnlocked: boolean; // IMP-A1
+  tableLockAttempted: boolean; // IMP-A1
   selectedMinterms: Set<number>;
   selectedMaxterms: Set<number>;
   sopBuilt: boolean;
@@ -77,14 +79,23 @@ export interface ModuleD1State {
   // Global
   sipTotal: number;
   finalAssignmentOpen: boolean;
+  sessionToRestore: any;
+
+  // Gamification (IMP-D1, IMP-D2)
+  checkpointStreak: number;
+  comboMultiplier: number;
+  lastCheckpointCorrect: boolean | null;
+  earnedAchievements: Set<string>;
 
   // Actions
   setCurrentScene: (scene: number) => void;
   completeScene: (scene: number) => void;
-  awardSIP: (amount: number) => void;
+  awardSIP: (amount: number, isCheckpoint?: boolean) => void;
 
   setPhaseATableRows: (rows: TruthTableRow[]) => void;
   lockPhaseATable: () => void;
+  unlockPhaseATable: () => void; // IMP-A1
+  resetPhaseATable: () => void; // IMP-A1
   toggleMinterm: (index: number) => void;
   toggleMaxterm: (index: number) => void;
 
@@ -107,8 +118,11 @@ export interface ModuleD1State {
   closeCheckpoint: (id: 1 | 2 | 3 | 4) => void;
   setCheckpointAnswer: (id: 1 | 2 | 3 | 4, key: string, value: string) => void;
   setCheckpointResult: (id: 1 | 2 | 3 | 4, key: string, result: boolean) => void;
-  earnCheckpointSIP: (id: 1 | 2 | 3 | 4) => void;
+  earnCheckpointSIP: (id: 1 | 2 | 3 | 4, firstTry: boolean) => void;
 
   setFinalAssignmentOpen: (open: boolean) => void;
   setRecapNodeActive: (node: string | null) => void;
+  awardAchievement: (achievementId: string) => void;
+  restoreSession: () => void;
+  clearSession: () => void;
 }

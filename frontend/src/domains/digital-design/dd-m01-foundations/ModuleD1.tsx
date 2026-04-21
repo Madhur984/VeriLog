@@ -1,5 +1,5 @@
 import React, { useRef, useCallback, useState, useId } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 
 import { useModuleD1State } from './useModuleD1State';
@@ -180,20 +180,27 @@ const ModuleD1: React.FC = () => {
   }, [state.currentScene, scrollToScene]);
 
   // Checkpoint SIP handler
-  const handleEarnSIP = useCallback((checkpointId: 1 | 2 | 3 | 4) => {
-    const amounts: Record<1 | 2 | 3 | 4, number> = { 1: 75, 2: 80, 3: 100, 4: 125 };
+  const handleEarnSIP = useCallback((checkpointId: 1 | 2 | 3 | 4, firstTry: boolean) => {
     const labels: Record<1 | 2 | 3 | 4, string> = {
       1: 'Checkpoint A passed', 2: 'Checkpoint B passed',
       3: 'Checkpoint C passed', 4: 'Boss defeated',
     };
-    state.earnCheckpointSIP(checkpointId);
-    addToast(amounts[checkpointId], labels[checkpointId]); // Use addToast here because earnCheckpointSIP already awarded the SIP
+    state.earnCheckpointSIP(checkpointId, firstTry);
+    
+    // Calculate final SIP for toast
+    const baseAmounts: Record<1 | 2 | 3 | 4, number> = { 1: 75, 2: 80, 3: 100, 4: 125 };
+    const finalAmount = Math.floor(baseAmounts[checkpointId] * (firstTry ? state.comboMultiplier : 1));
+    const reason = firstTry && state.checkpointStreak > 0 
+      ? `${labels[checkpointId]} // ${state.checkpointStreak + 1}X STREAK!`
+      : labels[checkpointId];
+      
+    addToast(finalAmount, reason);
   }, [state, addToast]);
 
   const current = state.currentScene;
   const phaseNames = ['SIGNAL_PROC', 'FORMULATION', 'MINIMISATION', 'REALISATION', 'EVALUATION', 'FINAL_OP'];
   const currentPhaseName = phaseNames[Math.floor(current / 4)] || 'FINAL_OP';
-  const systemStatus = state.phaseA.tableLocked ? 'LOGIC_SYNCED' : 'UNSTABLE_INPUT';
+  
   return (
     <main className="relative w-full h-screen overflow-hidden" style={{ background: '#06060A' }}>
       <h1 className="sr-only">Digital Design Fundamentals: Module D1</h1>
@@ -201,11 +208,76 @@ const ModuleD1: React.FC = () => {
       {/* Cinematic Background Orchestrator */}
       <BackgroundOrchestrator currentScene={current} />
 
+      {/* Persistence Restore Prompt (IMP-E1) */}
+      <AnimatePresence>
+        {state.sessionToRestore && current === 0 && (
+          <motion.div
+            initial={{ y: 50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: -50, opacity: 0 }}
+            className="fixed inset-x-8 top-32 z-[150] p-6 rounded-2xl bg-black/80 border border-cyan-500/30 backdrop-blur-xl flex flex-col gap-4 shadow-[0_0_40px_rgba(6,182,212,0.1)]"
+          >
+            <div>
+              <div className="text-[10px] font-mono text-cyan-400/60 uppercase tracking-[0.2em] mb-1">
+                Persistent Data Found // AXE-OR_RECOVERY_PROTOCOL
+              </div>
+              <h3 className="text-lg font-black italic text-white uppercase tracking-tighter">
+                Restore previous session?
+              </h3>
+              <p className="text-xs font-medium text-white/50">
+                Scene {state.sessionToRestore.currentScene} // {state.sessionToRestore.sipTotal} SIP total
+              </p>
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={state.restoreSession}
+                className="flex-1 px-4 py-2.5 rounded-xl bg-cyan-400 text-black text-xs font-black italic tracking-widest hover:bg-cyan-300 transition-colors"
+              >
+                RESTORE SESSION
+              </button>
+              <button
+                onClick={state.clearSession}
+                className="px-4 py-2.5 rounded-xl bg-white/5 text-white/40 text-xs font-black italic tracking-widest hover:bg-white/10 transition-colors"
+              >
+                START FRESH
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Kinetic Flowchart Progression */}
       <KineticFlowchart currentScene={current} />
 
       {/* Progress bar */}
       <ProgressBar current={current} total={22} />
+
+      {/* Achievement / Streak HUD (IMP-D1) */}
+      <div className="fixed top-8 left-8 z-[110] flex flex-col gap-2 pointer-events-none">
+        <AnimatePresence mode="popLayout">
+          {state.checkpointStreak > 0 && (
+            <motion.div
+              key="streak-badge"
+              initial={{ x: -20, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: -20, opacity: 0 }}
+              className="flex items-center gap-3 px-4 py-2 rounded-xl bg-amber-400/10 border border-amber-400/30 backdrop-blur-md"
+            >
+              <div className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+              <div className="flex flex-col">
+                <span className="text-[10px] font-mono text-amber-400/60 uppercase tracking-widest leading-none">Streak</span>
+                <span className="text-sm font-black italic text-amber-400 leading-none">{state.checkpointStreak}X</span>
+              </div>
+              {state.comboMultiplier > 1 && (
+                <div className="ml-2 pl-3 border-l border-amber-400/20">
+                  <span className="text-[10px] font-mono text-amber-400/60 uppercase tracking-widest leading-none">Bonus</span>
+                  <div className="text-xs font-black italic text-amber-400 leading-none">{state.comboMultiplier}X</div>
+                </div>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
 
       {/* Back button (Tactical Style) */}
       <button
@@ -236,8 +308,12 @@ const ModuleD1: React.FC = () => {
           currentScene={current}
           tableRows={state.phaseA.tableRows}
           tableLocked={state.phaseA.tableLocked}
+          tableUnlocked={state.phaseA.tableUnlocked}
+          tableLockAttempted={state.phaseA.tableLockAttempted}
           onRowsChange={state.setPhaseATableRows}
           onLock={() => { state.lockPhaseATable(); awardSIPWithToast(25, 'Truth table locked'); }}
+          onUnlock={state.unlockPhaseATable}
+          onReset={state.resetPhaseATable}
         />
 
         {/* ── A2 Minterms ── */}
@@ -257,9 +333,6 @@ const ModuleD1: React.FC = () => {
           selectedMaxterms={state.phaseA.selectedMaxterms}
           onToggleMaxterm={state.toggleMaxterm}
         />
-
-        {/* ── CHECKPOINT  1 (after scene 4) — trigger button in scene 4 */}
-        {/* Checkpoint 1 appears as overlay when student reaches scene 5 */}
 
         {/* ── A4 Canonical SOP ── */}
         <A4_CanonicalSOP sceneIndex={5} currentScene={current} tableRows={state.phaseA.tableRows} />
@@ -287,8 +360,10 @@ const ModuleD1: React.FC = () => {
           currentScene={current}
           expressionInput={state.phaseC.expressionInput}
           circuitMode={state.phaseC.circuitMode}
+          signalTrace={state.phaseC.signalTrace}
           onExpressionChange={state.setExpressionInput}
           onCircuitModeChange={state.setCPhasecircuitMode}
+          onSignalTraceChange={state.setSignalTrace}
         />
 
         {/* ── C2 NAND Universality ── */}
@@ -415,7 +490,7 @@ const ModuleD1: React.FC = () => {
         sipReward={75}
         sipEarned={state.checkpoint[1].sip_earned}
         onClose={() => state.closeCheckpoint(1)}
-        onEarnSIP={() => handleEarnSIP(1)}
+        onEarnSIP={(firstTry) => handleEarnSIP(1, firstTry)}
       />
       <CheckpointModal
         id={2}
@@ -427,7 +502,7 @@ const ModuleD1: React.FC = () => {
         sipReward={80}
         sipEarned={state.checkpoint[2].sip_earned}
         onClose={() => state.closeCheckpoint(2)}
-        onEarnSIP={() => handleEarnSIP(2)}
+        onEarnSIP={(firstTry) => handleEarnSIP(2, firstTry)}
       />
       <CheckpointModal
         id={3}
@@ -439,7 +514,7 @@ const ModuleD1: React.FC = () => {
         sipReward={100}
         sipEarned={state.checkpoint[3].sip_earned}
         onClose={() => state.closeCheckpoint(3)}
-        onEarnSIP={() => handleEarnSIP(3)}
+        onEarnSIP={(firstTry) => handleEarnSIP(3, firstTry)}
       />
       <CheckpointModal
         id={4}
@@ -451,7 +526,7 @@ const ModuleD1: React.FC = () => {
         sipReward={125}
         sipEarned={state.checkpoint[4].sip_earned}
         onClose={() => state.closeCheckpoint(4)}
-        onEarnSIP={() => handleEarnSIP(4)}
+        onEarnSIP={(firstTry) => handleEarnSIP(4, firstTry)}
       />
 
       {/* ─── Toast system ─── */}

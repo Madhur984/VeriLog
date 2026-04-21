@@ -1,5 +1,6 @@
-import React, { useState, useCallback, lazy } from 'react';
+import React, { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { normalizeExpression } from '../../../../shared/utils/booleanEngine';
 
 export interface CheckpointQuestion {
   id: string;
@@ -21,11 +22,15 @@ interface CheckpointModalProps {
   sipReward: number;
   sipEarned: boolean;
   onClose: () => void;
-  onEarnSIP: () => void;
+  onEarnSIP: (firstTry: boolean) => void; // IMP-D1
 }
 
 function normalizeAnswer(ans: string): string {
-  return ans.toLowerCase().replace(/\s+/g, '').replace(/f\s*=\s*/gi, '');
+  // Try canonical normalization first for boolean expressions
+  const canonical = normalizeExpression(ans);
+  if (canonical) return canonical;
+  // Fallback for non-boolean text
+  return ans.toLowerCase().replace(/\s+/g, '');
 }
 
 function checkAnswer(q: CheckpointQuestion, userAnswer: string | string[]): boolean {
@@ -64,22 +69,31 @@ const CheckpointModal: React.FC<CheckpointModalProps> = ({
   const [results, setResults] = useState<Record<string, boolean | null>>({});
   const [showHints, setShowHints] = useState<Record<string, boolean>>({});
   const [submitted, setSubmitted] = useState(false);
+  const [firstAttempt, setFirstAttempt] = useState(true); // IMP-D1
 
   const handleSubmit = useCallback(() => {
     const newResults: Record<string, boolean | null> = {};
-    let correct = 0;
+    let correctCount = 0;
     for (const q of questions) {
       const ans = answers[q.id] ?? '';
       const ok = checkAnswer(q, ans);
       newResults[q.id] = ok;
-      if (ok) correct++;
+      if (ok) correctCount++;
     }
     setResults(newResults);
     setSubmitted(true);
-    if (correct / questions.length >= 0.75 && !sipEarned) {
-      onEarnSIP();
+    
+    // Check if passed (75%)
+    const passed = correctCount / questions.length >= 0.75;
+    
+    if (passed && !sipEarned) {
+      onEarnSIP(firstAttempt);
     }
-  }, [answers, questions, sipEarned, onEarnSIP]);
+    
+    if (!passed) {
+      setFirstAttempt(false); // Subsequent attempts aren't the first try
+    }
+  }, [answers, questions, sipEarned, onEarnSIP, firstAttempt]);
 
   const handleReset = () => {
     setAnswers({});
