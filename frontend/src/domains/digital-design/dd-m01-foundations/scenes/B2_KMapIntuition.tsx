@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import SceneWrapper from '../components/SceneWrapper';
 import PhaseLabel from '../components/PhaseLabel';
 import KMapGrid2Var from '../components/KMapGrid2Var';
-import ModuleRef from '../components/ModuleRef';
 
 const PHASE_COLOR = '#3B82F6';
 
@@ -11,8 +10,8 @@ interface B2Props { sceneIndex: number; currentScene: number; cells: boolean[]; 
 
 type PresetKey = 'ex1' | 'ex2' | 'ex3';
 const PRESETS: Record<PresetKey, { cells: boolean[]; label: string; result: string; groupPositions: number[] }> = {
-  ex1: { cells: [false, true, false, true], label: 'AB + AB\'', result: 'A', groupPositions: [2, 3] },
-  ex2: { cells: [false, false, true, true], label: 'A\'B + AB', result: 'B', groupPositions: [1, 3] },
+  ex1: { cells: [false, true, false, true], label: 'AB + AB\'', result: 'A', groupPositions: [1, 3] }, // Indices check
+  ex2: { cells: [false, false, true, true], label: 'A\'B + AB', result: 'B', groupPositions: [2, 3] },
   ex3: { cells: [true, false, true, false], label: 'A\'B\' + AB\'', result: 'B\'', groupPositions: [0, 2] },
 };
 
@@ -21,21 +20,6 @@ const B2_KMapIntuition: React.FC<B2Props> = ({ sceneIndex, currentScene, cells, 
   const [grouped, setGrouped] = useState<number[] | null>(null);
   const [simplifiedTerm, setSimplifiedTerm] = useState<string | null>(null);
   const [activePreset, setActivePreset] = useState<PresetKey | null>(null);
-
-  const onesCount = cells.filter(Boolean).length;
-  const ADJACENT_PAIRS: [number, number][] = [[0,1],[2,3],[0,2],[1,3]];
-  const hasAdjacency = ADJACENT_PAIRS.some(([a, b]) => cells[a] && cells[b]);
-
-  const handleGroup = () => {
-    for (const [a, b] of ADJACENT_PAIRS) {
-      if (cells[a] && cells[b]) {
-        setGrouped([a, b]);
-        const terms = ['A\'B\'','A\'B','AB\'','AB'];
-        setSimplifiedTerm(`${a===0||a===2?'A\'':'A'}${b===1||b===3?'B':'B\''}`);
-        return;
-      }
-    }
-  };
 
   const loadPreset = (key: PresetKey) => {
     const p = PRESETS[key];
@@ -49,84 +33,74 @@ const B2_KMapIntuition: React.FC<B2Props> = ({ sceneIndex, currentScene, cells, 
     <SceneWrapper sceneIndex={sceneIndex} currentScene={currentScene} phaseColor={PHASE_COLOR}>
       <PhaseLabel phase="B" name="K-MAP INTUITION" color={PHASE_COLOR} />
 
-      {/* Warning card — always visible */}
-      <div
-        className="absolute top-14 right-4 z-20 rounded-xl p-4 text-[10px] font-mono"
-        style={{ background: '#111114', border: `2px solid #FFC107`, maxWidth: 240 }}
-      >
-        <div style={{ color: '#FFC107', fontWeight: 700, marginBottom: 4 }}>⚠ THIS IS JUST THE INTUITION</div>
-        <ModuleRef label="FULL K-MAP → DD-M03" color="amber" />
-        <div style={{ color: '#7A7A8C', marginTop: 8, lineHeight: 1.5 }}>
-          3-var, 4-var, don't cares, hazards — all in Module 3.
-        </div>
-      </div>
-
-      <div className="flex flex-col items-center flex-1 pt-16 pb-10 px-6 gap-8">
-        {/* K-Map */}
+      <div className="flex flex-col items-center justify-center flex-1 w-full max-w-6xl mx-auto px-6 py-20 gap-16">
+        {/* Header */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={isActive ? { opacity: 1, scale: 1 } : {}}
-          transition={{ duration: 0.4 }}
+           initial={{ opacity: 0, y: 20 }}
+           animate={isActive ? { opacity: 1, y: 0 } : {}}
+           className="text-center flex flex-col gap-4"
         >
-          <KMapGrid2Var
-            cells={cells}
-            onChange={c => { onCellsChange(c); setGrouped(null); setSimplifiedTerm(null); setActivePreset(null); }}
-            accentColor={PHASE_COLOR}
-            highlightGroup={grouped ?? undefined}
-          />
+          <h2 className="text-4xl font-mono font-black italic text-white uppercase tracking-tighter">
+            Geometric <span className="text-blue-500">Adjacency</span>.
+          </h2>
+          <p className="text-sm font-mono font-black italic text-white/40 uppercase tracking-widest max-w-xl mx-auto">
+            Instead of algebra, we use patterns. Adjacent cells in a K-Map differ by only one variable—allowing the eye to find the redundancy instantly.
+          </p>
         </motion.div>
 
-        {/* Group button */}
-        {hasAdjacency && !grouped && (
-          <motion.button
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            onClick={handleGroup}
-            className="px-5 py-2 rounded-full text-[12px] font-mono font-semibold"
-            style={{ background: PHASE_COLOR, color: '#000' }}
-          >
-            GROUP ADJACENT 1s →
-          </motion.button>
-        )}
-
-        {/* Grouping result */}
-        <AnimatePresence>
-          {grouped && simplifiedTerm && (
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              className="rounded-xl p-4 flex flex-col gap-2 text-[12px] font-mono max-w-sm w-full"
-              style={{ background: '#111114', border: `1px solid ${PHASE_COLOR}44` }}
+        {/* Focused Laboratory */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 w-full items-center">
+            {/* Controls */}
+            <motion.div 
+                initial={{ opacity: 0, x: -30 }} 
+                animate={isActive ? { opacity: 1, x: 0 } : {}}
+                className="flex flex-col gap-8"
             >
-              <div style={{ color: PHASE_COLOR }}>Grouped cells differ by ONE variable — it disappears:</div>
-              <div style={{ color: '#A0FFA0', fontSize: 16 }}>→ Term = <strong>{simplifiedTerm}</strong></div>
+                <div className="flex flex-col gap-3">
+                    {(Object.keys(PRESETS) as PresetKey[]).map((key, i) => (
+                        <button
+                            key={key}
+                            onClick={() => loadPreset(key)}
+                            className={`p-6 rounded-2xl border-2 transition-all flex justify-between items-center ${activePreset === key ? 'bg-blue-500 border-blue-500 text-black' : 'bg-white/5 border-transparent text-white/40 hover:bg-white/10'}`}
+                        >
+                            <span className="text-[10px] font-mono font-black italic uppercase tracking-widest">EXAMPLE_0{i+1}</span>
+                            <span className="text-sm font-mono font-black italic uppercase">{PRESETS[key].label}</span>
+                        </button>
+                    ))}
+                </div>
+
+                <AnimatePresence mode="wait">
+                    {simplifiedTerm && (
+                        <motion.div
+                            key={simplifiedTerm}
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            className="p-8 rounded-[32px] bg-blue-500/10 border-2 border-blue-500/20 text-center relative overflow-hidden"
+                        >
+                            <div className="text-[10px] font-mono font-black italic text-blue-500/60 uppercase tracking-widest mb-2">REDUCED_RESULT</div>
+                            <div className="text-5xl font-mono font-black italic text-white tracking-widest">{simplifiedTerm}</div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </motion.div>
-          )}
-        </AnimatePresence>
 
-        {/* Presets */}
-        <div className="flex gap-3 flex-wrap justify-center">
-          {(Object.keys(PRESETS) as PresetKey[]).map((key, i) => (
-            <button
-              key={key}
-              onClick={() => loadPreset(key)}
-              className="px-3 py-1.5 rounded text-[10px] font-mono transition-all"
-              style={{
-                border: `1px solid ${activePreset === key ? PHASE_COLOR : '#FFFFFF0F'}`,
-                color: activePreset === key ? PHASE_COLOR : '#7A7A8C',
-                background: activePreset === key ? `${PHASE_COLOR}12` : '#111114',
-              }}
+            {/* K-MAP */}
+            <motion.div 
+                initial={{ opacity: 0, scale: 0.95 }} 
+                animate={isActive ? { opacity: 1, scale: 1 } : {}}
+                className="bg-[#06060A] rounded-[48px] border-2 border-blue-500/20 p-16 shadow-2xl relative flex items-center justify-center min-h-[400px]"
             >
-              EXAMPLE {i + 1}: {PRESETS[key].label}
-            </button>
-          ))}
+                <div className="absolute top-8 left-10 text-[10px] font-mono font-black italic text-blue-500/40 uppercase tracking-widest">VISUAL_EXTRACTION</div>
+                <div className="scale-150">
+                    <KMapGrid2Var
+                        cells={cells}
+                        onChange={onCellsChange}
+                        accentColor={PHASE_COLOR}
+                        highlightGroup={grouped ?? undefined}
+                    />
+                </div>
+            </motion.div>
         </div>
-      </div>
-
-      <div className="px-6 pb-4 text-center flex flex-col gap-1">
-        <p className="text-[12px]" style={{ color: '#7A7A8C' }}>Adjacent cells that differ by ONE variable — that variable disappears.</p>
-        <p className="text-[12px]" style={{ color: '#7A7A8C' }}>This is the intuition. The full technique for larger functions is in Module DD-M03 →</p>
       </div>
     </SceneWrapper>
   );

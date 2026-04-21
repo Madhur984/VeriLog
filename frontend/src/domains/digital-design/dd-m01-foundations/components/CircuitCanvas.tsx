@@ -124,12 +124,13 @@ const CircuitCanvas: React.FC<CircuitCanvasProps> = ({
               return (
                 <React.Fragment key={inp.index}>
                   <text
-                    x={INPUT_X - 6}
-                    y={inpY + 3}
-                    fontSize={9}
+                    x={INPUT_X - 8}
+                    y={inpY + 4}
+                    fontSize={12}
                     fill={literalActive ? "#00D4FF" : "#7A7A8C"}
                     fontFamily="IBM Plex Mono, monospace"
                     textAnchor="end"
+                    className="font-black italic"
                   >
                     {inp.label}
                   </text>
@@ -139,7 +140,7 @@ const CircuitCanvas: React.FC<CircuitCanvasProps> = ({
                     x2={L1_X}
                     y2={inpY}
                     stroke={literalActive ? "#00D4FF" : "#3A3A4A"}
-                    strokeWidth={1.5}
+                    strokeWidth={2}
                   />
                 </React.Fragment>
               );
@@ -165,13 +166,13 @@ const CircuitCanvas: React.FC<CircuitCanvasProps> = ({
             <path
               d={`M${L1_X + GATE_W},${termY + GATE_H / 2} C${L1_X + GATE_W + 20},${termY + GATE_H / 2} ${L2_X - 20},${l2CenterY} ${L2_X},${l2CenterY}`}
               stroke={isActive ? '#00D4FF' : '#3A3A4A'}
-              strokeWidth={1.5}
+              strokeWidth={2}
               fill="none"
             />
 
             {/* Traveling signal dot */}
             {isActive && (
-              <circle r={2.5} fill="#00D4FF" filter="url(#glow-cyan)">
+              <circle r={3} fill="#00D4FF" filter="url(#glow-cyan)">
                 <animateMotion
                   dur="1.2s"
                   repeatCount="indefinite"
@@ -201,14 +202,15 @@ const CircuitCanvas: React.FC<CircuitCanvasProps> = ({
             x2={L2_X + GATE_W + 30}
             y2={l2CenterY}
             stroke={inputValues && activeTermIndex >= 0 ? '#00FF88' : '#3A3A4A'}
-            strokeWidth={2}
+            strokeWidth={2.5}
           />
           <text
-            x={L2_X + GATE_W + 38}
-            y={l2CenterY + 4}
-            fontSize={11}
+            x={L2_X + GATE_W + 42}
+            y={l2CenterY + 5}
+            fontSize={14}
             fill={inputValues && activeTermIndex >= 0 ? '#00FF88' : '#7A7A8C'}
             fontFamily="IBM Plex Mono, monospace"
+            className="font-black italic"
           >
             F
           </text>
@@ -224,15 +226,15 @@ const CircuitCanvas: React.FC<CircuitCanvasProps> = ({
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
-            className="fixed pointer-events-none z-[200] ml-4 -mt-4 px-2 py-1 rounded bg-[#0A0A0C] border border-cyan-500/50 flex flex-col gap-0.5 backdrop-blur-md"
+            className="fixed pointer-events-none z-[200] ml-6 -mt-6 px-3 py-2 rounded-lg bg-[#0A0A0C]/90 border border-cyan-500/50 flex flex-col gap-1 backdrop-blur-xl shadow-2xl"
           >
-            <div className="flex items-center gap-2">
-              <span className="text-[8px] font-mono text-cyan-400/60 uppercase">Probe_A1</span>
-              <div className={`w-1.5 h-1.5 rounded-full ${inputValues && activeTermIndex >= 0 ? 'bg-cyan-400 shadow-[0_0_8px_#22d3ee]' : 'bg-white/10'}`} />
+            <div className="flex items-center gap-3">
+              <span className="text-[10px] font-mono font-black text-cyan-400/80 uppercase tracking-widest">Probe_A1</span>
+              <div className={`w-2 h-2 rounded-full ${inputValues && activeTermIndex >= 0 ? 'bg-cyan-400 shadow-[0_0_12px_#22d3ee]' : 'bg-white/10'}`} />
             </div>
-            <div className="flex items-center justify-between gap-4">
-              <span className="text-[10px] font-mono text-white/40 italic">LEVEL</span>
-              <span className={`text-[10px] font-mono font-bold ${inputValues && activeTermIndex >= 0 ? 'text-cyan-400' : 'text-rose-500'}`}>
+            <div className="flex items-center justify-between gap-6">
+              <span className="text-xs font-mono font-black text-white/40 italic uppercase">LEVEL</span>
+              <span className={`text-xs font-mono font-black italic ${inputValues && activeTermIndex >= 0 ? 'text-cyan-400' : 'text-rose-500'}`}>
                 {inputValues && activeTermIndex >= 0 ? 'HIGH' : 'LOW'}
               </span>
             </div>

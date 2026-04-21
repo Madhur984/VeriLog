@@ -65,7 +65,7 @@ const sizeMap = {
 
 const ExpressionDisplay: React.FC<ExpressionDisplayProps> = ({
   expression,
-  accentColor = '#A855F7',
+  accentColor = '#06B6D4',
   size = 'md',
   label,
   highlightTermIndex,
@@ -128,3 +128,4 @@ const ExpressionDisplay: React.FC<ExpressionDisplayProps> = ({
 };
 
 export default ExpressionDisplay;
+

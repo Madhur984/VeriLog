@@ -8,7 +8,7 @@ interface ProgressBarProps {
 
 const PHASE_STOPS: Array<{ pct: number; color: string }> = [
   { pct: 0,    color: '#00D4FF' },
-  { pct: 0.15, color: '#A855F7' },
+  { pct: 0.15, color: '#06B6D4' },
   { pct: 0.35, color: '#3B82F6' },
   { pct: 0.50, color: '#22C55E' },
   { pct: 0.70, color: '#FFC107' },
@@ -56,3 +56,4 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ current, total }) => {
 };
 
 export default ProgressBar;
+

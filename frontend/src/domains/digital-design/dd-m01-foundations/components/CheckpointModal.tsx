@@ -136,18 +136,18 @@ const CheckpointModal: React.FC<CheckpointModalProps> = ({
                 <motion.div 
                   animate={{ opacity: [1, 0.5, 1] }} 
                   transition={{ duration: 0.2, repeat: 3 }}
-                  className="text-[10px] font-mono tracking-[0.3em] mb-1" 
+                  className="text-xs font-mono tracking-[0.3em] mb-2" 
                   style={{ color: phaseColor }}
                 >
                   SYSTEM_INTEGRITY_CHECK // 0{id}
                 </motion.div>
-                <h2 className="text-xl font-black italic tracking-tighter uppercase" style={{ color: '#E8E8F0' }}>
+                <h2 className="text-2xl font-black italic tracking-tighter uppercase" style={{ color: '#E8E8F0' }}>
                   {title}
                 </h2>
               </div>
               <button
                 onClick={onClose}
-                className="text-[#7A7A8C] hover:text-[#E8E8F0] transition-colors text-xl leading-none focus:outline-none focus:ring-2 focus:ring-[#00D4FF] rounded"
+                className="text-[#7A7A8C] hover:text-[#E8E8F0] transition-colors text-2xl leading-none focus:outline-none focus:ring-2 focus:ring-[#00D4FF] rounded"
                 aria-label="Close checkpoint"
               >
                 ✕
@@ -155,12 +155,12 @@ const CheckpointModal: React.FC<CheckpointModalProps> = ({
             </div>
 
             {/* Questions */}
-            <div className="relative z-30 px-8 py-6 flex-1 overflow-y-auto flex flex-col gap-6 scrollbar-hide">
+            <div className="relative z-30 px-10 py-8 flex-1 overflow-y-auto flex flex-col gap-8 scrollbar-hide">
               {questions.map((q, qi) => (
-                <div key={q.id} className="flex flex-col gap-3">
-                  <div className="flex items-start gap-3">
+                <div key={q.id} className="flex flex-col gap-4">
+                  <div className="flex items-start gap-4">
                     <span
-                      className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-mono font-bold"
+                      className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-xs font-mono font-bold"
                       style={{
                         background:
                           results[q.id] === true
@@ -176,7 +176,7 @@ const CheckpointModal: React.FC<CheckpointModalProps> = ({
                     >
                       {results[q.id] === true ? '✓' : results[q.id] === false ? '✗' : qi + 1}
                     </span>
-                    <p className="text-[14px] leading-relaxed" style={{ color: '#E8E8F0', fontFamily: 'Inter, system-ui' }}>
+                    <p className="text-base leading-relaxed font-semibold italic tracking-tight" style={{ color: '#E8E8F0', fontFamily: 'Inter, system-ui' }}>
                       {q.question}
                     </p>
                   </div>
@@ -189,13 +189,13 @@ const CheckpointModal: React.FC<CheckpointModalProps> = ({
                       onChange={e => setAnswers(prev => ({ ...prev, [q.id]: e.target.value }))}
                       disabled={submitted}
                       placeholder={q.type === 'number' ? '0' : 'Your answer...'}
-                      className="ml-9 px-4 py-2 rounded-lg text-[13px] font-mono focus:outline-none focus:ring-2"
+                      className="ml-12 px-5 py-3 rounded-xl text-sm font-mono focus:outline-none focus:ring-2"
                       style={{
                         background: '#1A1A1F',
-                        border: `1px solid ${results[q.id] === true ? '#00FF88' : results[q.id] === false ? '#FF3366' : '#FFFFFF0F'}`,
+                        border: `2px solid ${results[q.id] === true ? '#00FF88' : results[q.id] === false ? '#FF3366' : '#FFFFFF1A'}`,
                         color: '#A0FFA0',
                         fontFamily: 'IBM Plex Mono, monospace',
-                        maxWidth: 360,
+                        maxWidth: 400,
                         focusRingColor: phaseColor,
                       }}
                       aria-label={`Answer for question ${qi + 1}`}
@@ -203,23 +203,23 @@ const CheckpointModal: React.FC<CheckpointModalProps> = ({
                   )}
 
                   {q.type === 'mcq' && q.options && (
-                    <div className="ml-9 flex flex-wrap gap-2">
+                    <div className="ml-12 flex flex-wrap gap-3">
                       {q.options.map(opt => (
                         <button
                           key={opt}
                           onClick={() => !submitted && setAnswers(prev => ({ ...prev, [q.id]: opt }))}
                           disabled={submitted}
-                          className="px-4 py-2 rounded-lg text-[12px] font-mono transition-all"
+                          className="px-5 py-2.5 rounded-xl text-xs font-mono font-black italic transition-all"
                           style={{
                             background:
                               answers[q.id] === opt
                                 ? submitted && results[q.id] === false
                                   ? 'rgba(255,51,102,0.2)'
-                                  : `rgba(${parseInt(phaseColor.slice(1,3),16)},${parseInt(phaseColor.slice(3,5),16)},${parseInt(phaseColor.slice(5,7),16)},0.2)`
+                                  : `rgba(${parseInt(phaseColor.slice(1,3),16)},${parseInt(phaseColor.slice(3,5),16)},${parseInt(phaseColor.slice(5,7),16)},0.3)`
                                 : submitted && opt === q.correct
                                   ? 'rgba(0,255,136,0.15)'
                                   : '#1A1A1F',
-                            border: `1px solid ${answers[q.id] === opt ? phaseColor : '#FFFFFF0F'}`,
+                            border: `2px solid ${answers[q.id] === opt ? phaseColor : 'transparent'}`,
                             color: answers[q.id] === opt ? phaseColor : '#7A7A8C',
                           }}
                           aria-pressed={answers[q.id] === opt}
@@ -231,11 +231,11 @@ const CheckpointModal: React.FC<CheckpointModalProps> = ({
                   )}
 
                   {q.type === 'multiselect' && q.options && (
-                    <div className="ml-9 flex flex-col gap-2">
+                    <div className="ml-12 flex flex-col gap-3">
                       {q.options.map(opt => {
                         const selected = ((answers[q.id] as string[]) ?? []).includes(opt);
                         return (
-                          <label key={opt} className="flex items-center gap-3 cursor-pointer">
+                          <label key={opt} className="flex items-center gap-4 cursor-pointer">
                             <input
                               type="checkbox"
                               checked={selected}
@@ -246,9 +246,9 @@ const CheckpointModal: React.FC<CheckpointModalProps> = ({
                                 const next = selected ? cur.filter(x => x !== opt) : [...cur, opt];
                                 setAnswers(prev => ({ ...prev, [q.id]: next }));
                               }}
-                              className="w-4 h-4 rounded accent-[#A855F7]"
+                              className="w-5 h-5 rounded-md accent-[#06B6D4]"
                             />
-                            <span className="text-[13px]" style={{ color: '#E8E8F0' }}>{opt}</span>
+                            <span className="text-sm font-bold" style={{ color: '#E8E8F0' }}>{opt}</span>
                           </label>
                         );
                       })}
@@ -260,8 +260,8 @@ const CheckpointModal: React.FC<CheckpointModalProps> = ({
                     <motion.div
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: 'auto', opacity: 1 }}
-                      className="ml-9 px-3 py-2 rounded-lg text-[12px]"
-                      style={{ background: 'rgba(255,51,102,0.08)', border: '1px solid rgba(255,51,102,0.2)', color: '#E8E8F0' }}
+                      className="ml-12 px-4 py-3 rounded-xl text-sm"
+                      style={{ background: 'rgba(255,51,102,0.12)', border: '1px solid rgba(255,51,102,0.3)', color: '#FFD1D1' }}
                     >
                       {q.explanation}
                     </motion.div>
@@ -271,7 +271,7 @@ const CheckpointModal: React.FC<CheckpointModalProps> = ({
                   {!submitted && q.hint && (
                     <button
                       onClick={() => setShowHints(prev => ({ ...prev, [q.id]: true }))}
-                      className="ml-9 text-[11px] font-mono text-[#7A7A8C] hover:text-[#FFC107] transition-colors text-left"
+                      className="ml-12 text-xs font-mono font-black italic text-[#7A7A8C] hover:text-[#FFC107] transition-colors text-left"
                     >
                       {showHints[q.id] ? `💡 ${q.hint}` : 'HINT (free)'}
                     </button>
@@ -282,21 +282,21 @@ const CheckpointModal: React.FC<CheckpointModalProps> = ({
 
             {/* Footer */}
             <div
-              className="sticky bottom-0 px-8 py-5 flex items-center justify-between"
+              className="sticky bottom-0 px-10 py-6 flex items-center justify-between"
               style={{ background: '#111114', borderTop: `1px solid #FFFFFF0F` }}
             >
-              <div className="flex items-center gap-2 text-[12px] font-mono" style={{ color: '#7A7A8C' }}>
+              <div className="flex items-center gap-2 text-sm font-mono font-black italic" style={{ color: '#7A7A8C' }}>
                 <span>REWARD:</span>
                 <span style={{ color: '#FFC107' }}>+{sipReward} SIP</span>
                 {sipEarned && (
                   <span className="ml-2" style={{ color: '#00FF88' }}>✓ EARNED</span>
                 )}
               </div>
-              <div className="flex gap-3">
+              <div className="flex gap-4">
                 {submitted && (
                   <button
                     onClick={handleReset}
-                    className="px-4 py-2 rounded-lg text-[12px] font-mono border border-white/10 text-[#7A7A8C] hover:text-[#E8E8F0] transition-colors"
+                    className="px-6 py-2.5 rounded-xl text-xs font-mono font-black border border-white/10 text-[#7A7A8C] hover:text-[#E8E8F0] transition-colors"
                   >
                     RETRY
                   </button>
@@ -304,7 +304,7 @@ const CheckpointModal: React.FC<CheckpointModalProps> = ({
                 {!submitted ? (
                   <button
                     onClick={handleSubmit}
-                    className="px-5 py-2 rounded-lg text-[13px] font-mono font-semibold transition-all hover:scale-102"
+                    className="px-8 py-3 rounded-xl text-sm font-mono font-black italic tracking-widest transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(34,197,94,0.1)]"
                     style={{
                       background: phaseColor,
                       color: '#000',
@@ -315,7 +315,7 @@ const CheckpointModal: React.FC<CheckpointModalProps> = ({
                 ) : (
                   <button
                     onClick={onClose}
-                    className="px-5 py-2 rounded-lg text-[13px] font-mono font-semibold"
+                    className="px-8 py-3 rounded-xl text-sm font-mono font-black italic tracking-widest shadow-[0_0_20px_rgba(34,197,94,0.2)]"
                     style={{ background: '#22C55E', color: '#000' }}
                   >
                     CONTINUE →
@@ -331,3 +331,4 @@ const CheckpointModal: React.FC<CheckpointModalProps> = ({
 };
 
 export default CheckpointModal;
+

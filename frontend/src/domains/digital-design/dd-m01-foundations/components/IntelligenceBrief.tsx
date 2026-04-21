@@ -44,16 +44,16 @@ const IntelligenceBrief: React.FC<IntelligenceBriefProps> = ({
 
       <div className="space-y-4">
         <div>
-          <h4 className="text-[10px] font-mono tracking-[0.4em] uppercase opacity-50 mb-1">{type}_INTEL_BRIEFING</h4>
-          <h3 className="text-sm font-black tracking-widest text-white uppercase">{title}</h3>
+          <h4 className="text-xs font-mono tracking-[0.4em] uppercase opacity-50 mb-2">{type}_INTEL_BRIEFING</h4>
+          <h3 className="text-base font-black tracking-[0.1em] text-white uppercase">{title}</h3>
         </div>
         
-        <p className="text-xs text-white/70 leading-relaxed font-medium">
+        <p className="text-sm text-white/80 leading-relaxed font-medium">
           {description}
         </p>
 
         <div className="pt-4 border-t border-inherit opacity-40">
-          <p className="text-[10px] italic leading-relaxed">
+          <p className="text-xs italic leading-relaxed">
             {details}
           </p>
         </div>

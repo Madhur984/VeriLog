@@ -1,226 +1,54 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
 import SceneWrapper from '../components/SceneWrapper';
 import PhaseLabel from '../components/PhaseLabel';
 
-interface S00Props {
-  sceneIndex: number;
-  currentScene: number;
-  onBegin: () => void;
-}
-
-const JOURNEY_PILLS = [
-  { label: 'TRUTH TABLE', phase: '#00D4FF' },
-  { label: 'MINTERM', phase: '#A855F7' },
-  { label: 'MAXTERM', phase: '#A855F7' },
-  { label: 'CANONICAL SOP', phase: '#A855F7' },
-  { label: 'CANONICAL POS', phase: '#A855F7' },
-  { label: 'MINIMISE', phase: '#3B82F6' },
-  { label: 'GATES', phase: '#22C55E' },
-];
-
-const CHALLENGE_CARDS = ['LOCK', 'ALARM', 'PRIME'];
-
-const heroVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: (i: number) => ({
-    opacity: 1, y: 0,
-    transition: { delay: i * 0.35, duration: 0.6, ease: 'easeOut' },
-  }),
-};
+interface S00Props { sceneIndex: number; currentScene: number; onBegin: () => void; }
 
 const S00_SignalProblem: React.FC<S00Props> = ({ sceneIndex, currentScene, onBegin }) => {
   const isActive = currentScene === sceneIndex;
 
   return (
     <SceneWrapper sceneIndex={sceneIndex} currentScene={currentScene} phaseColor="#00D4FF">
-      <PhaseLabel phase="0" name="HOOK" color="#00D4FF" />
+      <PhaseLabel phase="0" name="THE SPECIFICATION" color="#00D4FF" />
 
-      {/* Ambient binary heartbeat (bottom-left) */}
-      <div
-        className="absolute bottom-8 left-6 z-20 pointer-events-none"
-        style={{ width: 180, height: 120, overflow: 'hidden' }}
-        aria-hidden="true"
-      >
-        <div className="relative w-full h-full rounded-lg border border-cyan-500/10 bg-black/40 backdrop-blur-sm overflow-hidden">
-          <div
-            className="absolute inset-0 font-mono text-[10px] leading-[16px] text-cyan-400/30"
-            style={{ animation: 'scrollUp 8s linear infinite', whiteSpace: 'pre-wrap', userSelect: 'none' }}
-          >
-            {Array.from({ length: 40 }, () =>
-              Array.from({ length: 16 }, () => (Math.random() > 0.5 ? '1' : '0')).join(' ')
-            ).join('\n')}
-          </div>
-          <div className="absolute bottom-2 left-2 right-2 text-[9px] font-mono text-cyan-400/70 leading-tight z-10">
-            Every one of these is a decision.
-          </div>
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-        </div>
-      </div>
-
-      {/* Main content */}
-      <div className="flex flex-col items-center justify-center flex-1 px-6 gap-10">
-        {/* Hero text */}
-        <div className="flex flex-col items-center gap-3">
-          <motion.h1
-            custom={0}
-            initial="hidden"
-            animate={isActive ? 'visible' : 'hidden'}
-            variants={heroVariants}
-            className="text-center font-extrabold tracking-tight"
-            style={{
-              fontSize: 'clamp(2.5rem, 6vw, 4.5rem)',
-              color: '#00D4FF',
-              letterSpacing: '-0.03em',
-              lineHeight: 1.1,
-              fontFamily: 'Inter, system-ui',
-            }}
-          >
-            You know gates.
-          </motion.h1>
-          <motion.h1
-            custom={1}
-            initial="hidden"
-            animate={isActive ? 'visible' : 'hidden'}
-            variants={heroVariants}
-            className="text-center font-extrabold tracking-tight"
-            style={{
-              fontSize: 'clamp(2.5rem, 6vw, 4.5rem)',
-              color: '#E8E8F0',
-              letterSpacing: '-0.03em',
-              lineHeight: 1.1,
-              fontFamily: 'Inter, system-ui',
-            }}
-          >
-            Can you build anything?
-          </motion.h1>
-          <motion.div
-            custom={2}
-            initial="hidden"
-            animate={isActive ? 'visible' : 'hidden'}
-            variants={heroVariants}
-            className="flex items-center gap-1"
-          >
-            <span
-              className="text-xl font-mono"
-              style={{ color: '#7A7A8C', fontFamily: 'IBM Plex Mono, monospace' }}
-            >
-              Start here
-            </span>
-            <span
-              className="text-xl font-mono"
-              style={{
-                color: '#7A7A8C',
-                animation: 'blink 1s step-end infinite',
-              }}
-            >
-              |
-            </span>
-          </motion.div>
-
-          {/* Microcopy */}
-          <motion.p
-            custom={3}
-            initial="hidden"
-            animate={isActive ? 'visible' : 'hidden'}
-            variants={heroVariants}
-            className="text-center mt-2"
-            style={{
-              color: '#7A7A8C',
-              fontSize: 16,
-              maxWidth: 480,
-              lineHeight: 1.6,
-              fontFamily: 'Inter, system-ui',
-            }}
-          >
-            Every digital system starts as behavior described in words.
-            By the end of this module, you'll translate words directly into gates.
-          </motion.p>
-        </div>
-
-        {/* Challenge cards */}
+      <div className="flex flex-col items-center justify-center flex-1 w-full max-w-6xl mx-auto px-6 py-20 gap-16">
+        {/* Cinematic SEO Heading */}
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={isActive ? { opacity: 1 } : { opacity: 0 }}
-          transition={{ delay: 1.4, duration: 0.5 }}
-          className="flex gap-4 items-center flex-wrap justify-center"
+           initial={{ opacity: 0, scale: 0.9 }}
+           animate={isActive ? { opacity: 1, scale: 1 } : {}}
+           className="text-center flex flex-col gap-6"
         >
-          {CHALLENGE_CARDS.map((card, i) => (
-            <motion.div
-              key={card}
-              animate={{ opacity: [1, 0.5, 1] }}
-              transition={{ duration: 2, delay: i * 0.4, repeat: Infinity, ease: 'easeInOut' }}
-              className="flex items-center justify-center rounded-lg"
-              style={{
-                width: 120,
-                height: 80,
-                border: '1px solid #FFFFFF0F',
-                background: '#111114',
-              }}
-              aria-label={`Challenge card: ${card}`}
-            >
-              <span style={{ color: '#00D4FF', fontFamily: 'IBM Plex Mono, monospace', fontSize: 28 }}>?</span>
-            </motion.div>
-          ))}
+          <h1 className="text-7xl md:text-9xl font-mono font-black italic text-white uppercase tracking-tighter leading-[0.8] drop-shadow-2xl">
+            LOGIC <span className="text-cyan-500">MAPPING</span>.
+          </h1>
+          <p className="text-sm md:text-base font-mono font-black italic text-white/40 uppercase tracking-[0.4em] max-w-2xl mx-auto">
+            From human specification to deterministic silicon. Initialize the digital design pipeline.
+          </p>
         </motion.div>
 
-        {/* Journey pills */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
-          transition={{ delay: 1.8, duration: 0.5 }}
-          className="flex flex-wrap items-center justify-center gap-2"
-        >
-          {JOURNEY_PILLS.map((pill, i) => (
-            <React.Fragment key={pill.label}>
-              <motion.span
-                initial={{ opacity: 0, x: -8 }}
-                animate={isActive ? { opacity: 1, x: 0 } : {}}
-                transition={{ delay: 1.8 + i * 0.08 }}
-                className="px-2 py-1 rounded text-[10px] font-mono cursor-default"
-                style={{
-                  border: '1px solid #FFFFFF0F',
-                  background: '#111114',
-                  color: pill.phase,
-                  letterSpacing: '0.06em',
-                }}
-              >
-                {pill.label}
-              </motion.span>
-              {i < JOURNEY_PILLS.length - 1 && (
-                <span style={{ color: '#7A7A8C', fontSize: 10 }}>→</span>
-              )}
-            </React.Fragment>
-          ))}
-        </motion.div>
+        {/* Tactical Teaser */}
+        <div className="grid grid-cols-3 gap-6 w-full max-w-4xl opacity-20">
+            {Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className="aspect-video rounded-3xl border-2 border-white/20 flex items-center justify-center text-4xl font-mono font-black italic text-white/10 italic">?</div>
+            ))}
+        </div>
 
-        {/* CTA */}
+        {/* Action Button */}
         <motion.button
-          initial={{ opacity: 0 }}
-          animate={isActive ? { opacity: 1 } : { opacity: 0 }}
-          transition={{ delay: 2.4, duration: 0.4 }}
-          whileHover={{ scale: 1.02, background: 'rgba(0,212,255,0.12)' }}
-          whileTap={{ scale: 0.98 }}
-          onClick={onBegin}
-          className="px-8 py-3 rounded-full font-mono text-[14px] font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-[#00D4FF]"
-          style={{
-            border: '1px solid #00D4FF',
-            color: '#00D4FF',
-            background: 'transparent',
-            letterSpacing: '0.08em',
-            fontFamily: 'IBM Plex Mono, monospace',
-          }}
-          aria-label="Begin the module journey"
+            initial={{ opacity: 0, y: 20 }}
+            animate={isActive ? { opacity: 1, y: 0 } : {}}
+            transition={{ delay: 0.5 }}
+            onClick={onBegin}
+            className="px-24 py-8 rounded-[32px] bg-cyan-500 text-black font-mono font-black italic text-xl tracking-[0.3em] uppercase hover:scale-105 active:scale-95 transition-all shadow-[0_0_80px_rgba(6,182,212,0.3)]"
         >
-          BEGIN JOURNEY →
+            BEGIN_INIT →
         </motion.button>
-      </div>
 
-      <style>{`
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-        @keyframes scrollUp { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
-      `}</style>
+        <p className="text-[10px] font-mono font-black italic text-white/10 uppercase tracking-[0.5em] mt-auto">
+           Module DD-M01 :: VeriLog Engineering Suite :: AXE-OR Platform
+        </p>
+      </div>
     </SceneWrapper>
   );
 };

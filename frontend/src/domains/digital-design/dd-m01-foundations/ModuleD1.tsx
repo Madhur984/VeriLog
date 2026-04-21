@@ -10,10 +10,12 @@ import ProgressBar from './components/ProgressBar';
 import { SIPToastSystem } from './components/SIPToast';
 import CheckpointModal from './components/CheckpointModal';
 import type { CheckpointQuestion } from './components/CheckpointModal';
-import TacticalHUD from './components/TacticalHUD';
+import KineticFlowchart from './components/KineticFlowchart';
+import BackgroundOrchestrator from './components/BackgroundOrchestrator';
 
 // ─── Scenes ───────────────────────────────────────────────────────────────────
 import S00_SignalProblem from './scenes/S00_SignalProblem';
+import S01_ComplexityBasics from './scenes/S01_ComplexityBasics';
 import A1_TruthTableContract from './scenes/A1_TruthTableContract';
 import A2_Minterms from './scenes/A2_Minterms';
 import A3_Maxterms from './scenes/A3_Maxterms';
@@ -148,7 +150,7 @@ const ModuleD1: React.FC = () => {
 
   // Scroll detection
   const { setContainer } = useScrollScene({
-    totalScenes: 20,
+    totalScenes: 21,
     onSceneChange: (idx) => {
       state.setCurrentScene(idx);
       // Auto-complete previous scenes
@@ -167,7 +169,7 @@ const ModuleD1: React.FC = () => {
   React.useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === 'ArrowDown' || e.key === 'PageDown') {
-        scrollToScene(Math.min(state.currentScene + 1, 20));
+        scrollToScene(Math.min(state.currentScene + 1, 21));
       }
       if (e.key === 'ArrowUp' || e.key === 'PageUp') {
         scrollToScene(Math.max(state.currentScene - 1, 0));
@@ -192,48 +194,45 @@ const ModuleD1: React.FC = () => {
   const phaseNames = ['SIGNAL_PROC', 'FORMULATION', 'MINIMISATION', 'REALISATION', 'EVALUATION', 'FINAL_OP'];
   const currentPhaseName = phaseNames[Math.floor(current / 4)] || 'FINAL_OP';
   const systemStatus = state.phaseA.tableLocked ? 'LOGIC_SYNCED' : 'UNSTABLE_INPUT';
-
   return (
-    <div className="relative" style={{ background: '#06060A', overflowX: 'hidden' }}>
-      {/* Tactical HUD */}
-      <TacticalHUD 
-        phase={currentPhaseName} 
-        sip={state.sipTotal} 
-        status={systemStatus} 
-        logicValue={current >= 14 && current <= 19} // Active tracing signal if in late phases
-      />
+    <main className="relative w-full h-screen overflow-hidden" style={{ background: '#06060A' }}>
+      <h1 className="sr-only">Digital Design Fundamentals: Module D1</h1>
+      
+      {/* Cinematic Background Orchestrator */}
+      <BackgroundOrchestrator currentScene={current} />
+
+      {/* Kinetic Flowchart Progression */}
+      <KineticFlowchart currentScene={current} />
 
       {/* Progress bar */}
-      <ProgressBar current={current} total={20} />
+      <ProgressBar current={current} total={22} />
 
       {/* Back button (Tactical Style) */}
       <button
         onClick={() => navigate('/portal')}
-        className="fixed top-24 left-4 z-[110] w-12 h-12 flex items-center justify-center rounded-xl bg-black/40 border border-white/10 text-white/40 hover:text-cyan-400 hover:border-cyan-400/50 transition-all backdrop-blur-md"
+        className="fixed top-24 left-4 z-[110] w-14 h-14 flex items-center justify-center rounded-2xl bg-black/40 border border-white/10 text-white/40 hover:text-cyan-400 hover:border-cyan-400/50 transition-all backdrop-blur-md"
         aria-label="Return to portal"
       >
-        <span className="text-[10px] font-mono">BACK</span>
+        <span className="text-xs font-black italic">BACK</span>
       </button>
 
       {/* Scroll container */}
       <div
         ref={el => { containerRef.current = el; setContainer(el); }}
-        className="w-full"
+        className="w-full relative z-20"
         style={{
           height: '100dvh',
           overflowY: 'scroll',
           scrollSnapType: 'y mandatory',
           scrollBehavior: 'smooth',
         }}
-        role="main"
-        aria-label="Module DD-M01: Digital Design Foundations"
       >
         {/* ── S00 Hook ── */}
         <S00_SignalProblem sceneIndex={0} currentScene={current} onBegin={onBegin} />
 
-        {/* ── A1 Truth Table ── */}
+        <S01_ComplexityBasics sceneIndex={1} currentScene={current} />
         <A1_TruthTableContract
-          sceneIndex={1}
+          sceneIndex={2}
           currentScene={current}
           tableRows={state.phaseA.tableRows}
           tableLocked={state.phaseA.tableLocked}
@@ -243,7 +242,7 @@ const ModuleD1: React.FC = () => {
 
         {/* ── A2 Minterms ── */}
         <A2_Minterms
-          sceneIndex={2}
+          sceneIndex={3}
           currentScene={current}
           tableRows={state.phaseA.tableRows}
           selectedMinterms={state.phaseA.selectedMinterms}
@@ -252,39 +251,39 @@ const ModuleD1: React.FC = () => {
 
         {/* ── A3 Maxterms ── */}
         <A3_Maxterms
-          sceneIndex={3}
+          sceneIndex={4}
           currentScene={current}
           tableRows={state.phaseA.tableRows}
           selectedMaxterms={state.phaseA.selectedMaxterms}
           onToggleMaxterm={state.toggleMaxterm}
         />
 
-        {/* ── CHECKPOINT  1 (after scene 3) — trigger button in scene 3 */}
-        {/* Checkpoint 1 appears as overlay when student reaches scene 4 */}
+        {/* ── CHECKPOINT  1 (after scene 4) — trigger button in scene 4 */}
+        {/* Checkpoint 1 appears as overlay when student reaches scene 5 */}
 
         {/* ── A4 Canonical SOP ── */}
-        <A4_CanonicalSOP sceneIndex={4} currentScene={current} tableRows={state.phaseA.tableRows} />
+        <A4_CanonicalSOP sceneIndex={5} currentScene={current} tableRows={state.phaseA.tableRows} />
 
         {/* ── A5 Canonical POS ── */}
-        <A5_CanonicalPOS sceneIndex={5} currentScene={current} tableRows={state.phaseA.tableRows} />
+        <A5_CanonicalPOS sceneIndex={6} currentScene={current} tableRows={state.phaseA.tableRows} />
 
         {/* ── B1 Cost ── */}
-        <B1_CostOfCanonical sceneIndex={6} currentScene={current} />
+        <B1_CostOfCanonical sceneIndex={7} currentScene={current} />
 
         {/* ── B2 K-Map ── */}
         <B2_KMapIntuition
-          sceneIndex={7}
+          sceneIndex={8}
           currentScene={current}
           cells={state.phaseB.kmap2x2}
           onCellsChange={state.setKmap2x2}
         />
 
         {/* ── B3 K-Map Limits ── */}
-        <B3_KMapLimits sceneIndex={8} currentScene={current} />
+        <B3_KMapLimits sceneIndex={9} currentScene={current} />
 
         {/* ── C1 Two-Level Realisation ── */}
         <C1_TwoLevelRealisation
-          sceneIndex={9}
+          sceneIndex={10}
           currentScene={current}
           expressionInput={state.phaseC.expressionInput}
           circuitMode={state.phaseC.circuitMode}
@@ -293,14 +292,14 @@ const ModuleD1: React.FC = () => {
         />
 
         {/* ── C2 NAND Universality ── */}
-        <C2_NANDUniversality sceneIndex={10} currentScene={current} />
+        <C2_NANDUniversality sceneIndex={11} currentScene={current} />
 
         {/* ── C3 NOR Universality ── */}
-        <C3_NORUniversality sceneIndex={11} currentScene={current} />
+        <C3_NORUniversality sceneIndex={12} currentScene={current} />
 
         {/* ── C4 NAND-NAND ── */}
         <C4_NANDNANDConversion
-          sceneIndex={12}
+          sceneIndex={13}
           currentScene={current}
           step={state.phaseC.nandConversionStep}
           onStepChange={state.setNandConversionStep}
@@ -308,21 +307,21 @@ const ModuleD1: React.FC = () => {
 
         {/* ── C5 NOR-NOR ── */}
         <C5_NORNORConversion
-          sceneIndex={13}
+          sceneIndex={14}
           currentScene={current}
           step={state.phaseC.norConversionStep}
           onStepChange={state.setNorConversionStep}
         />
 
         {/* ── D1 High Path ── */}
-        <D1_HighPath sceneIndex={14} currentScene={current} tableRows={state.phaseA.tableRows} />
+        <D1_HighPath sceneIndex={15} currentScene={current} tableRows={state.phaseA.tableRows} />
 
         {/* ── D2 Low Path ── */}
-        <D2_LowPath sceneIndex={15} currentScene={current} tableRows={state.phaseA.tableRows} />
+        <D2_LowPath sceneIndex={16} currentScene={current} tableRows={state.phaseA.tableRows} />
 
         {/* ── D3 Side-by-Side ── */}
         <D3_SideBySideComparison
-          sceneIndex={16}
+          sceneIndex={17}
           currentScene={current}
           tableRows={state.phaseA.tableRows}
           focusPath={state.phaseD.focusPath}
@@ -331,7 +330,7 @@ const ModuleD1: React.FC = () => {
 
         {/* ── D4 Decision Engine ── */}
         <D4_DecisionEngine
-          sceneIndex={17}
+          sceneIndex={18}
           currentScene={current}
           slider={state.phaseD.decisionSlider}
           winner={state.phaseD.winner}
@@ -340,7 +339,7 @@ const ModuleD1: React.FC = () => {
 
         {/* ── E1 Recap ── */}
         <E1_FullPipelineRecap
-          sceneIndex={18}
+          sceneIndex={19}
           currentScene={current}
           recapNodeActive={state.phaseE.recapNodeActive}
           onNodeClick={state.setRecapNodeActive}
@@ -348,7 +347,7 @@ const ModuleD1: React.FC = () => {
 
         {/* ── E2 Boss ── */}
         <E2_BossChallenge
-          sceneIndex={19}
+          sceneIndex={20}
           currentScene={current}
           bossStep={state.phaseE.bossStep}
           onBossStepChange={state.setBossStep}
@@ -356,12 +355,12 @@ const ModuleD1: React.FC = () => {
       </div>
 
       {/* ─── Checkpoint Trigger Button (fixed, phase-aware) ─── */}
-      {current >= 3 && current <= 6 && (
+      {current >= 2 && current <= 6 && (
         <motion.button
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="fixed bottom-6 right-6 z-50 px-4 py-2.5 rounded-full text-[12px] font-mono font-semibold focus:outline-none focus:ring-2"
-          style={{ background: '#A855F7', color: '#000', zIndex: 100 }}
+          className="fixed bottom-6 right-6 z-50 px-6 py-3 rounded-2xl text-sm font-mono font-black italic tracking-widest focus:outline-none focus:ring-2"
+          style={{ background: '#06B6D4', color: '#000', zIndex: 100 }}
           onClick={() => state.openCheckpoint(1)}
           aria-label="Open Phase A checkpoint"
         >
@@ -372,7 +371,7 @@ const ModuleD1: React.FC = () => {
         <motion.button
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="fixed bottom-6 right-6 z-50 px-4 py-2.5 rounded-full text-[12px] font-mono font-semibold"
+          className="fixed bottom-6 right-6 z-50 px-6 py-3 rounded-2xl text-sm font-mono font-black italic tracking-widest"
           style={{ background: '#3B82F6', color: '#000', zIndex: 100 }}
           onClick={() => state.openCheckpoint(2)}
           aria-label="Open Phase B checkpoint"
@@ -384,7 +383,7 @@ const ModuleD1: React.FC = () => {
         <motion.button
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="fixed bottom-6 right-6 z-50 px-4 py-2.5 rounded-full text-[12px] font-mono font-semibold"
+          className="fixed bottom-6 right-6 z-50 px-6 py-3 rounded-2xl text-sm font-mono font-black italic tracking-widest"
           style={{ background: '#22C55E', color: '#000', zIndex: 100 }}
           onClick={() => state.openCheckpoint(3)}
           aria-label="Open Phase C checkpoint"
@@ -396,7 +395,7 @@ const ModuleD1: React.FC = () => {
         <motion.button
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="fixed bottom-6 right-6 z-50 px-4 py-2.5 rounded-full text-[12px] font-mono font-semibold"
+          className="fixed bottom-6 right-6 z-50 px-6 py-3 rounded-2xl text-sm font-mono font-black italic tracking-widest"
           style={{ background: '#FFC107', color: '#000', zIndex: 100 }}
           onClick={() => state.openCheckpoint(4)}
           aria-label="Open Phase D checkpoint"
@@ -411,7 +410,7 @@ const ModuleD1: React.FC = () => {
         open={state.checkpoint[1].open}
         title="Canonical Forms Assessment"
         phase="A"
-        phaseColor="#A855F7"
+        phaseColor="#06B6D4"
         questions={CP1_QUESTIONS}
         sipReward={75}
         sipEarned={state.checkpoint[1].sip_earned}
@@ -457,7 +456,7 @@ const ModuleD1: React.FC = () => {
 
       {/* ─── Toast system ─── */}
       <SIPToastSystem toasts={toasts} onDismiss={dismissToast} />
-    </div>
+    </main>
   );
 };
 

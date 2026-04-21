@@ -9,119 +9,73 @@ interface D4Props { sceneIndex: number; currentScene: number; slider: number; wi
 
 const D4_DecisionEngine: React.FC<D4Props> = ({ sceneIndex, currentScene, slider, winner, onSliderChange }) => {
   const isActive = currentScene === sceneIndex;
-  const zeros = 8 - slider;
   const ones = slider;
+  const zeros = 8 - slider;
 
   return (
     <SceneWrapper sceneIndex={sceneIndex} currentScene={currentScene} phaseColor={PHASE_COLOR}>
       <PhaseLabel phase="D" name="DECISION ENGINE" color={PHASE_COLOR} />
 
-      <div className="flex flex-col flex-1 items-center justify-center pt-14 pb-6 px-6 gap-8">
+      <div className="flex flex-col items-center justify-center flex-1 w-full max-w-6xl mx-auto px-6 py-20 gap-16">
+        {/* Header */}
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={isActive ? { opacity: 1 } : {}}
-          className="text-center"
+           initial={{ opacity: 0, y: 20 }}
+           animate={isActive ? { opacity: 1, y: 0 } : {}}
+           className="text-center flex flex-col gap-4"
         >
-          <div style={{ fontFamily: 'IBM Plex Mono', fontSize: 20, color: PHASE_COLOR, fontWeight: 800 }}>
-            COUNT 1s vs 0s. CHOOSE YOUR PATH.
-          </div>
+          <h2 className="text-4xl font-mono font-black italic text-white uppercase tracking-tighter">
+            Economic <span className="text-amber-500">Pivot</span>.
+          </h2>
+          <p className="text-sm font-mono font-black italic text-white/40 uppercase tracking-widest max-w-xl mx-auto">
+            The decision is mechanical. As the distribution of 1s and 0s shifts, the cost differential between SOP and POS reveals the mathematically superior path.
+          </p>
         </motion.div>
 
-        {/* Slider */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={isActive ? { opacity: 1, y: 0 } : {}}
-          transition={{ delay: 0.3 }}
-          className="flex flex-col gap-4 w-full max-w-md"
-        >
-          <div className="flex justify-between text-[11px] font-mono">
-            <span style={{ color: '#FF5F1F' }}>← More 0s (POS wins)</span>
-            <span style={{ color: '#FFC107' }}>More 1s (SOP wins) →</span>
-          </div>
-          <input
-            type="range"
-            min={0}
-            max={8}
-            value={slider}
-            onChange={e => onSliderChange(Number(e.target.value))}
-            className="w-full h-2 rounded cursor-pointer"
-            style={{ accentColor: PHASE_COLOR }}
-            aria-label="Adjust number of ones in truth table (0-8)"
-          />
-          <div className="flex justify-between text-[10px] font-mono">
-            {Array.from({ length: 9 }, (_, i) => (
-              <span key={i} style={{ color: slider === i ? PHASE_COLOR : '#7A7A8C' }}>{i}</span>
-            ))}
-          </div>
-
-          {/* Counters */}
-          <div className="grid grid-cols-2 gap-4">
-            <div className="rounded-xl p-4 text-center" style={{ background: '#111114', border: '1px solid #00FF8844' }}>
-              <div className="text-[10px] font-mono" style={{ color: '#7A7A8C' }}>F=1 ROWS</div>
-              <motion.div key={ones} initial={{ scale: 0.5 }} animate={{ scale: 1 }} className="text-3xl font-mono font-bold" style={{ color: '#00FF88' }}>
-                {ones}
-              </motion.div>
-              <div className="text-[10px] font-mono" style={{ color: '#7A7A8C' }}>minterms → SOP</div>
+        {/* Focused Decision Tool */}
+        <div className="flex flex-col gap-12 w-full max-w-4xl">
+            {/* Slider */}
+            <div className="relative py-10">
+                <input
+                    id="decision-range"
+                    type="range"
+                    min={0}
+                    max={8}
+                    value={slider}
+                    onChange={e => onSliderChange(Number(e.target.value))}
+                    className="w-full h-4 rounded-full cursor-pointer appearance-none bg-white/5 border border-white/10"
+                    style={{ accentColor: PHASE_COLOR }}
+                />
+                <div className="flex justify-between mt-6 text-[10px] font-mono font-black italic text-white/20 uppercase tracking-[0.3em]">
+                    <label htmlFor="decision-range" style={{ color: '#FF5F1F' }}>LOW_PATH_DOMAINS (POS)</label>
+                    <span style={{ color: '#FFC107' }}>HIGH_PATH_DOMAINS (SOP)</span>
+                </div>
             </div>
-            <div className="rounded-xl p-4 text-center" style={{ background: '#111114', border: '1px solid rgba(255,51,102,0.25)' }}>
-              <div className="text-[10px] font-mono" style={{ color: '#7A7A8C' }}>F=0 ROWS</div>
-              <motion.div key={zeros} initial={{ scale: 0.5 }} animate={{ scale: 1 }} className="text-3xl font-mono font-bold" style={{ color: '#FF3366' }}>
-                {zeros}
-              </motion.div>
-              <div className="text-[10px] font-mono" style={{ color: '#7A7A8C' }}>maxterms → POS</div>
-            </div>
-          </div>
-        </motion.div>
 
-        {/* Decision display */}
+            {/* Path Counters */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className={`p-10 rounded-[48px] bg-[#06060A] border-2 transition-all ${winner === 'SOP' ? 'border-amber-500 shadow-[0_0_50px_rgba(255,193,7,0.1)]' : 'border-white/5 opacity-40'}`}>
+                    <div className="text-[10px] font-mono font-black italic text-amber-500 uppercase tracking-widest mb-4">MINTERMS (F=1)</div>
+                    <div className="text-6xl font-mono font-black italic text-white">{ones}</div>
+                    <div className="mt-4 text-[10px] font-mono font-black italic text-white/20 uppercase tracking-widest">SOP_REDUCTION_LOAD</div>
+                </div>
+                <div className={`p-10 rounded-[48px] bg-[#06060A] border-2 transition-all ${winner === 'POS' ? 'border-orange-500 shadow-[0_0_50px_rgba(255,95,31,0.1)]' : 'border-white/5 opacity-40'}`}>
+                    <div className="text-[10px] font-mono font-black italic text-orange-500 uppercase tracking-widest mb-4">MAXTERMS (F=0)</div>
+                    <div className="text-6xl font-mono font-black italic text-white">{zeros}</div>
+                    <div className="mt-4 text-[10px] font-mono font-black italic text-white/20 uppercase tracking-widest">POS_REDUCTION_LOAD</div>
+                </div>
+            </div>
+        </div>
+
         <AnimatePresence mode="wait">
-          <motion.div
-            key={winner}
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            transition={{ duration: 0.25 }}
-            className="rounded-2xl px-8 py-6 text-center"
-            style={{
-              background: '#111114',
-              border: `2px solid ${winner === 'EQUAL' ? '#FFFFFF22' : winner === 'SOP' ? '#FFC10744' : 'rgba(255,95,31,0.4)'}`,
-            }}
-          >
-            <div className="text-[11px] font-mono mb-2" style={{ color: '#7A7A8C' }}>RECOMMENDED PATH</div>
-            <div
-              className="text-xl font-mono font-bold"
-              style={{
-                color: winner === 'EQUAL' ? '#00FF88' : winner === 'SOP' ? '#FFC107' : '#FF5F1F',
-              }}
+            <motion.div 
+                key={winner}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="px-12 py-4 rounded-2xl bg-white/5 border border-white/10 text-[10px] font-mono font-black italic text-blue-500 uppercase tracking-[0.4em]"
             >
-              {winner === 'EQUAL' && '⚖ EQUAL — Either path works'}
-              {winner === 'SOP' && `▲ HIGH PATH — SOP / NAND-NAND (${ones} gates)`}
-              {winner === 'POS' && `▼ LOW PATH — POS / NOR-NOR (${zeros} gates)`}
-            </div>
-            <div className="text-[11px] font-mono mt-2" style={{ color: '#7A7A8C' }}>
-              {winner === 'EQUAL' && 'Same gate count from both directions.'}
-              {winner === 'SOP' && `${zeros - ones} fewer gates than POS path`}
-              {winner === 'POS' && `${ones - zeros} fewer gates than SOP path`}
-            </div>
-          </motion.div>
+                {winner === 'EQUAL' ? 'COST_EQUITY_MAINTAINED' : `WINNING_PATH::${winner}_REALISATION`}
+            </motion.div>
         </AnimatePresence>
-
-        {/* Decision rule */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={isActive ? { opacity: 1 } : {}}
-          transition={{ delay: 1 }}
-          className="rounded-xl px-5 py-4 text-[11px] font-mono leading-relaxed text-center max-w-lg"
-          style={{ background: '#111114', border: '1px solid #FFFFFF0F', color: '#E8E8F0' }}
-        >
-          <span style={{ color: PHASE_COLOR }}>RULE: </span>
-          Fewer 1s? → SOP wins. Fewer 0s? → POS wins. Equal? → Both identical.
-        </motion.div>
-      </div>
-
-      <div className="px-6 pb-4 text-center flex flex-col gap-1">
-        <p className="text-[12px]" style={{ color: '#7A7A8C' }}>Slide to simulate your truth table's distribution.</p>
-        <p className="text-[12px]" style={{ color: '#7A7A8C' }}>Real engineers count before committing to a design direction.</p>
       </div>
     </SceneWrapper>
   );

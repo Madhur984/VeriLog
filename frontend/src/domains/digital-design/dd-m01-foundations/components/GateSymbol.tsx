@@ -159,12 +159,12 @@ const GateSymbol: React.FC<GateSymbolProps> = ({
             exit={{ opacity: 0, y: -5 }}
           >
             <rect 
-              x={-10} y={-35} width={80} height={30} rx={4} 
-              fill="rgba(10,10,12,0.95)" stroke={strokeColor} strokeWidth={1} 
+              x={-15} y={-45} width={100} height={40} rx={6} 
+              fill="rgba(10,10,12,0.98)" stroke={strokeColor} strokeWidth={1.5} 
             />
-            <text x={0} y={-23} fontSize={6} fill={strokeColor} fontFamily="IBM Plex Mono">t_pd: 1.25ns</text>
-            <text x={0} y={-14} fontSize={6} fill="#E8E8F0" fontFamily="IBM Plex Mono">P_dyn: 0.12mW</text>
-            <text x={45} y={-18} fontSize={8} fill={strokeColor} fontWeight="bold" fontFamily="IBM Plex Mono">{type}</text>
+            <text x={-5} y={-30} fontSize={8} fill={strokeColor} fontWeight="black" fontFamily="IBM Plex Mono">t_pd: 1.25ns</text>
+            <text x={-5} y={-18} fontSize={8} fill="#E8E8F0" fontWeight="bold" fontFamily="IBM Plex Mono">P_dyn: 0.12mW</text>
+            <text x={55} y={-23} fontSize={11} fill={strokeColor} fontWeight="black" fontFamily="IBM Plex Mono">{type}</text>
           </motion.g>
         )}
       </AnimatePresence>

@@ -3,13 +3,10 @@ import { motion } from 'framer-motion';
 import SceneWrapper from '../components/SceneWrapper';
 import PhaseLabel from '../components/PhaseLabel';
 import CircuitCanvas from '../components/CircuitCanvas';
-import ExpressionDisplay from '../components/ExpressionDisplay';
-import ModuleRef from '../components/ModuleRef';
-import IntelligenceBrief from '../components/IntelligenceBrief';
 import type { TruthTableRow } from '../ModuleD1.types';
-import { getMinterms, mintermToProductTerm, sigmaMNotation } from '../../../../shared/utils/booleanEngine';
+import { getMinterms, mintermToProductTerm } from '../../../../shared/utils/booleanEngine';
 
-const PHASE_COLOR = '#A855F7';
+const PHASE_COLOR = '#06B6D4';
 const VARS = ['A', 'B', 'C'];
 
 interface A4Props {
@@ -22,7 +19,6 @@ const A4_CanonicalSOP: React.FC<A4Props> = ({ sceneIndex, currentScene, tableRow
   const isActive = currentScene === sceneIndex;
   const [inputValues, setInputValues] = useState<boolean[]>([false, false, false]);
   const [tracing, setTracing] = useState(false);
-  const [highlightTerm, setHighlightTerm] = useState<number | null>(null);
 
   const minterms = getMinterms(tableRows, VARS);
   const expression = minterms.length > 0
@@ -39,163 +35,67 @@ const A4_CanonicalSOP: React.FC<A4Props> = ({ sceneIndex, currentScene, tableRow
 
   return (
     <SceneWrapper sceneIndex={sceneIndex} currentScene={currentScene} phaseColor={PHASE_COLOR}>
-      <PhaseLabel phase="A" name="CANONICAL SOP" color={PHASE_COLOR} />
+      <PhaseLabel phase="A" name="THE COMPLETE SOP PLAN" color={PHASE_COLOR} />
 
-      <div className="flex flex-col md:flex-row flex-1 gap-6 pt-16 pb-6 px-6 md:px-10 overflow-hidden">
-        {/* LEFT: Expression */}
+      <div className="flex flex-col items-center justify-center flex-1 w-full max-w-6xl mx-auto px-6 py-12 gap-10">
         <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={isActive ? { opacity: 1, x: 0 } : {}}
-          transition={{ duration: 0.5 }}
-          className="flex flex-col gap-4 flex-shrink-0"
-          style={{ minWidth: 260 }}
+           initial={{ opacity: 0, y: 20 }}
+           animate={isActive ? { opacity: 1, y: 0 } : {}}
+           className="text-center flex flex-col gap-4"
         >
-          <div style={{ color: PHASE_COLOR, fontFamily: 'IBM Plex Mono', fontSize: 13, fontWeight: 700, letterSpacing: '0.06em' }}>
-            CANONICAL SOP
+          <h2 className="text-4xl font-mono font-black italic text-white uppercase tracking-tighter">
+            Mathematical <span className="text-cyan-500">Completeness</span>.
+          </h2>
+          <div className="p-4 rounded-2xl bg-white/5 border border-white/10 text-xl font-mono font-black italic text-[#A0FFA0] tracking-tighter shadow-xl">
+             F = {expression}
           </div>
-
-          <ExpressionDisplay
-            expression={`F = ${expression}`}
-            accentColor={PHASE_COLOR}
-            size="md"
-            highlightTermIndex={highlightTerm ?? undefined}
-          />
-
-          {/* Sigma notation */}
-          {minterms.length > 0 && (
-            <div
-              className="px-4 py-3 rounded-lg text-[13px] font-mono"
-              style={{ background: '#06060A', border: '1px solid #00D4FF22', color: PHASE_COLOR }}
-            >
-              F = {sigmaMNotation(minterms)}
-            </div>
-          )}
-
-          {/* ModuleRef for minimisation */}
-          <div className="flex flex-col gap-2">
-            <div className="text-[10px] font-mono" style={{ color: '#7A7A8C' }}>Optional step:</div>
-            <ModuleRef label="K-MAP MINIMISATION → MODULE DD-M03" color="amber" />
-          </div>
-
-            <div className="flex flex-col gap-2">
-              <div className="text-[10px] font-mono tracking-[0.08em]" style={{ color: '#7A7A8C' }}>MINTERMS (hover to highlight gate)</div>
-              <div className="flex flex-wrap gap-2">
-                {minterms.map((m, i) => (
-                  <motion.span
-                    key={m.index}
-                    onHoverStart={() => setHighlightTerm(i)}
-                    onHoverEnd={() => setHighlightTerm(null)}
-                    className="px-2 py-1 rounded text-[11px] font-mono cursor-default"
-                    style={{
-                      background: `${PHASE_COLOR}1A`,
-                      border: `1px solid ${PHASE_COLOR}44`,
-                      color: PHASE_COLOR,
-                    }}
-                  >
-                    {mintermToProductTerm(m)}<sub style={{ fontSize: '0.65em', opacity: 0.6 }}>m{m.index}</sub>
-                  </motion.span>
-                ))}
-              </div>
-            </div>
-
-            <IntelligenceBrief 
-                type="theory"
-                title="Level_Delay"
-                description="Canonical SOP always results in a strict 2-level logic structure (AND-OR)."
-                details="Because signals only pass through two gates, this provides a predictable, low-latency propagation delay regardless of function complexity."
-            />
-          </motion.div>
-
-        {/* RIGHT: Circuit */}
-        <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={isActive ? { opacity: 1, x: 0 } : {}}
-          transition={{ duration: 0.5, delay: 0.15 }}
-          className="flex flex-col gap-4 flex-1 min-w-0"
-        >
-          <div style={{ color: PHASE_COLOR, fontFamily: 'IBM Plex Mono', fontSize: 13, fontWeight: 700, letterSpacing: '0.06em' }}>
-            AND-OR CIRCUIT
-          </div>
-
-          <div className="rounded-xl overflow-hidden" style={{ background: '#06060A', border: '1px solid #FFFFFF0F', padding: 16 }}>
-            <CircuitCanvas
-              form="AND-OR"
-              minterms={minterms}
-              variables={VARS}
-              inputValues={tracing ? inputValues : undefined}
-              width={380}
-              height={Math.max(180, minterms.length * 56)}
-            />
-          </div>
-
-          {/* Gate count */}
-          <div className="flex items-center gap-4 text-[11px] font-mono">
-            <span style={{ color: '#7A7A8C' }}>Level 1:</span>
-            <span style={{ color: '#E8E8F0' }}>{minterms.length} AND gates</span>
-            <span style={{ color: '#7A7A8C' }}>│</span>
-            <span style={{ color: '#7A7A8C' }}>Level 2:</span>
-            <span style={{ color: '#E8E8F0' }}>1 OR gate</span>
-            <span style={{ color: '#7A7A8C' }}>│</span>
-            <span style={{ color: PHASE_COLOR, fontWeight: 700 }}>Total: {minterms.length + 1}</span>
-          </div>
-
-          {/* Signal trace */}
-          {!tracing ? (
-            <button
-              onClick={() => setTracing(true)}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg text-[12px] font-mono self-start transition-all hover:scale-102 focus:outline-none focus:ring-2 focus:ring-[#00D4FF]"
-              style={{ border: '1px solid #00D4FF44', color: '#00D4FF', background: 'rgba(0,212,255,0.06)' }}
-            >
-              ▶ TRACE SIGNAL
-            </button>
-          ) : (
-            <div className="flex flex-col gap-3">
-              <div className="flex items-center gap-4">
-                {VARS.map((v, i) => (
-                  <button
-                    key={v}
-                    onClick={() => toggleBit(i)}
-                    className="flex items-center gap-2 px-3 py-1.5 rounded text-[12px] font-mono transition-all"
-                    style={{
-                      background: inputValues[i] ? 'rgba(0,212,255,0.15)' : '#1A1A1F',
-                      border: `1px solid ${inputValues[i] ? '#00D4FF66' : '#FFFFFF0F'}`,
-                      color: inputValues[i] ? '#00D4FF' : '#7A7A8C',
-                    }}
-                    aria-pressed={inputValues[i]}
-                  >
-                    {v} = {inputValues[i] ? '1' : '0'}
-                  </button>
-                ))}
-                <button onClick={() => setTracing(false)} className="text-[10px] font-mono text-[#7A7A8C] hover:text-[#FF3366] ml-2">✕</button>
-              </div>
-              <div className="text-[11px] font-mono" style={{ color: '#7A7A8C' }}>
-                For {VARS.join('')}={inputValues.map(b => b?'1':'0').join('')}:
-                <span style={{ color: '#00D4FF' }}>
-                  {' '}F = {minterms.some(m => m.complements.every((c,i)=>(c ? !inputValues[i] : inputValues[i]))) ? '1' : '0'}
-                </span>
-              </div>
-            </div>
-          )}
+          <p className="text-sm font-mono font-black italic text-white/40 uppercase tracking-widest max-w-2xl mx-auto mt-2">
+            This Sum-of-Products (SOP) circuit is the literal translation of your Truth Table. It is mathematically unique and exhaustive.
+          </p>
         </motion.div>
-      </div>
 
-      {/* Intelligence Briefing - Phase Bottom */}
-      <div className="w-full max-w-5xl px-10 pb-12 grid grid-cols-1 md:grid-cols-2 gap-6">
-          <IntelligenceBrief 
-            type="industry"
-            title="Programmable Array Logic"
-            description="The AND-OR structure is the fundamental architecture of PAL and CPLD devices."
-            details="By manufacturing an array of AND gates feeding a wide OR gate, any function can be 'programmed' by simply blowing fuses in the AND array."
-          />
-          <IntelligenceBrief 
-            type="hardware"
-            title="Fan-In Constraints"
-            description="In physical chips, a single OR gate cannot have unlimited inputs (Fan-In)."
-            details="If your truth table has 128 minterms, a real-world design would need to cascade multiple smaller OR gates, slightly increasing delay."
-          />
+        {/* Focused Circuit Render */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={isActive ? { opacity: 1, scale: 1 } : {}}
+          className="w-full bg-[#06060A] rounded-[48px] border-2 border-cyan-500/20 shadow-[0_0_100px_rgba(168,85,247,0.1)] p-12 relative flex items-center justify-center min-h-[400px]"
+        >
+             <div className="absolute top-6 left-10 text-[10px] font-mono font-black italic text-cyan-500/40 tracking-[0.4em]">CANONICAL_AND_OR_REALIZATION</div>
+             
+             <div className="scale-110 md:scale-125 transition-transform">
+                <CircuitCanvas
+                    form="AND-OR"
+                    minterms={minterms}
+                    variables={VARS}
+                    width={500}
+                    height={Math.max(300, minterms.length * 60)}
+                />
+             </div>
+        </motion.div>
+
+        {/* Simple Trace Control */}
+        <div className="flex flex-col items-center gap-6">
+            {!tracing ? (
+                <button onClick={() => setTracing(true)} className="px-10 py-4 rounded-2xl bg-cyan-500 text-black font-mono font-black italic text-xs tracking-[0.3em] uppercase hover:scale-105 active:scale-95 transition-all shadow-[0_0_40px_rgba(0,212,255,0.3)]">
+                   BEGIN_SIGNAL_TRACE ▶
+                </button>
+            ) : (
+                <div className="flex flex-col items-center gap-4">
+                    <div className="flex gap-4">
+                        {VARS.map((v, i) => (
+                            <button key={v} onClick={() => toggleBit(i)} className={`px-8 py-3 rounded-xl font-mono font-black italic text-xs transition-all border-2 ${inputValues[i] ? 'bg-cyan-500/20 border-cyan-500 text-cyan-400' : 'bg-black/40 border-white/5 text-white/20'}`}>
+                                {v}={inputValues[i]?'1':'0'}
+                            </button>
+                        ))}
+                    </div>
+                    <button onClick={() => setTracing(false)} className="text-[10px] font-mono font-black text-white/20 hover:text-red-500 uppercase tracking-widest mt-2">CLOSE_TRACER</button>
+                </div>
+            )}
+        </div>
       </div>
     </SceneWrapper>
   );
 };
 
 export default A4_CanonicalSOP;
+

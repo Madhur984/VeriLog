@@ -4,33 +4,16 @@ import SceneWrapper from '../components/SceneWrapper';
 import PhaseLabel from '../components/PhaseLabel';
 import TruthTableBuilder from '../components/TruthTableBuilder';
 import CircuitCanvas from '../components/CircuitCanvas';
-import IntelligenceBrief from '../components/IntelligenceBrief';
 import type { TruthTableRow, CircuitForm } from '../ModuleD1.types';
-import { buildTruthTableRows, getMinterms, getMaxterms, mintermToProductTerm, sigmaMNotation, recommendPath } from '../../../../shared/utils/booleanEngine';
+import { buildTruthTableRows, getMinterms, getMaxterms, recommendPath } from '../../../../shared/utils/booleanEngine';
 
-const PHASE_COLOR = '#FF5F1F';
+const PHASE_COLOR = '#FF5F1F'; // High path orange
 const BOSS_VARS = ['A', 'B', 'C'];
-
-// Boss specification: 3-bit majority voter (F=1 when 2+ inputs are 1)
-const MAJORITY_ROWS_ANSWER = new Set([3, 5, 6, 7]); // correct F=1 rows for majority
+const MAJORITY_ROWS_ANSWER = new Set([3, 5, 6, 7]);
 
 type BossStep = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
-interface E2Props {
-  sceneIndex: number;
-  currentScene: number;
-  bossStep: BossStep;
-  onBossStepChange: (s: BossStep) => void;
-}
-
-const STEPS = [
-  { label: 'READ SPECIFICATION', icon: '01' },
-  { label: 'BUILD TRUTH TABLE', icon: '⊟' },
-  { label: 'EXTRACT MINTERMS', icon: '∑' },
-  { label: 'EXTRACT MAXTERMS', icon: 'Π' },
-  { label: 'CHOOSE PATH', icon: '⚖' },
-  { label: 'FINAL CIRCUIT', icon: '⊃' },
-];
+interface E2Props { sceneIndex: number; currentScene: number; bossStep: BossStep; onBossStepChange: (s: BossStep) => void; }
 
 const E2_BossChallenge: React.FC<E2Props> = ({ sceneIndex, currentScene, bossStep, onBossStepChange }) => {
   const isActive = currentScene === sceneIndex;
@@ -53,236 +36,92 @@ const E2_BossChallenge: React.FC<E2Props> = ({ sceneIndex, currentScene, bossSte
     }
   }, [rows, onBossStepChange]);
 
-  const playVictory = useCallback(() => {
-    const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
-    const notes = [440, 554.37, 659.25, 880]; // A4, C#5, E5, A5
-    notes.forEach((freq, i) => {
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.type = 'square';
-      osc.frequency.setValueAtTime(freq, audioCtx.currentTime + i * 0.15);
-      gain.gain.setValueAtTime(0.1, audioCtx.currentTime + i * 0.15);
-      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + i * 0.15 + 0.5);
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      osc.start(audioCtx.currentTime + i * 0.15);
-      osc.stop(audioCtx.currentTime + i * 0.15 + 0.5);
-    });
-  }, []);
-
   const advance = () => {
-    if (bossStep === 5) playVictory();
     if (bossStep < 6) onBossStepChange((bossStep + 1) as BossStep);
   };
 
   return (
     <SceneWrapper sceneIndex={sceneIndex} currentScene={currentScene} phaseColor={PHASE_COLOR}>
-      <PhaseLabel phase="E" name="BOSS CHALLENGE — MAJORITY VOTER" color={PHASE_COLOR} />
+      <PhaseLabel phase="E" name="FINAL ASSESSMENT" color={PHASE_COLOR} />
 
-      {/* Step tracker */}
-      <div className="fixed bottom-4 left-0 right-0 z-50 flex items-center justify-center gap-1 pointer-events-none">
-        {STEPS.map((s, si) => (
-          <div
-            key={si}
-            className="flex items-center gap-1 px-2 py-1 rounded text-[9px] font-mono"
-            style={{
-              background: bossStep === si ? PHASE_COLOR : bossStep > si ? '#111114' : 'transparent',
-              border: `1px solid ${bossStep >= si ? PHASE_COLOR : '#FFFFFF0F'}`,
-              color: bossStep === si ? '#000' : bossStep > si ? '#00FF88' : '#7A7A8C',
-              fontWeight: bossStep === si ? 700 : 400,
-            }}
-          >
-            {bossStep > si ? '✓' : s.icon}
-          </div>
-        ))}
-      </div>
-
-      <div className="flex flex-col flex-1 pt-14 pb-16 px-6 gap-5 overflow-y-auto">
-        {/* Step 0: Specification */}
-        {bossStep === 0 && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="flex flex-col gap-6"
-          >
-            <IntelligenceBrief 
-               type="theory"
-               title="Mission_Protocol"
-               description="The Majority Voter is the safety-critical core of redundant computer systems (like in aircraft flight controllers)."
-               details="When three computers perform the same calculation, the Majority Voter ensures the system accepts the result only if at least two machines agree."
-            />
-            <div className="rounded-2xl p-6 flex flex-col gap-4 bg-[#111114] border-2 border-[#FF5F1F] shadow-[0_0_30px_rgba(255,95,31,0.1)]">
-                <h3 className="text-xl font-black italic tracking-tighter text-[#E8E8F0]">DESIGN_SPEC: 3-BIT VOTER</h3>
-                <p className="text-sm font-medium text-white/70 leading-relaxed uppercase tracking-wider">INPUTS (A, B, C) // OUTPUT F=1 IF Σ(A,B,C) ≥ 2</p>
-                <button onClick={advance} className="self-start px-8 py-3 rounded-xl text-[12px] font-black tracking-[0.2em] bg-[#FF5F1F] text-black transition-transform hover:scale-105 active:scale-95">
-                  INITIALIZE_SCHEMA →
-                </button>
-            </div>
-          </motion.div>
-        )}
-
-        {/* Step 1: Truth table */}
-        {bossStep === 1 && (
-          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col gap-3">
-            <div className="text-[11px] font-mono font-bold" style={{ color: PHASE_COLOR }}>STEP 2 — FILL TRUTH TABLE</div>
-            <TruthTableBuilder
-              variables={BOSS_VARS}
-              rows={rows}
-              locked={locked}
-              onRowsChange={setRows}
-              accentColor={PHASE_COLOR}
-              compact
-            />
-
-            {tableCorrect === false && (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-[11px] font-mono px-3 py-2 rounded text-center" style={{ background: 'rgba(255,51,102,0.1)', border: '1px solid rgba(255,51,102,0.3)', color: '#FF3366' }}>
-                ✗ Incorrect — F=1 only when 2 or 3 inputs are high.
-              </motion.div>
+      <div className="flex flex-col items-center justify-center flex-1 w-full max-w-6xl mx-auto px-6 py-20 gap-16">
+        <AnimatePresence mode="wait">
+            {bossStep === 0 && (
+                <motion.div key="s0" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="text-center flex flex-col gap-8">
+                     <h2 className="text-4xl font-mono font-black italic text-white uppercase tracking-tighter">Mission: <span className="text-orange-500">The Majority Voter</span>.</h2>
+                     <p className="text-sm font-mono font-black italic text-white/40 uppercase tracking-widest max-w-xl mx-auto">
+                        In high-reliability flight systems, we use 3 compute nodes. Your task: Design the 2-of-3 voter logic. If 2 or more inputs are HIGH, the function MUST fire.
+                     </p>
+                     <button onClick={advance} className="px-16 py-6 rounded-2xl bg-orange-500 text-black font-mono font-black italic text-sm tracking-[0.4em] uppercase self-center hover:scale-105 active:scale-95 transition-all">INITIALIZE_CHALLENGE →</button>
+                </motion.div>
             )}
 
-            {!locked && rows.every(r => r.output !== null) && (
-              <button onClick={checkTable} className="self-center px-6 py-2 rounded-lg text-[13px] font-bold font-mono shadow-xl" style={{ background: PHASE_COLOR, color: '#000' }}>
-                VERIFY LOGIC →
-              </button>
+            {bossStep === 1 && (
+                <motion.div key="s1" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="flex flex-col gap-10 items-center">
+                    <div className="text-[10px] font-mono font-black italic text-orange-500 uppercase tracking-[0.4em]">PHASE_01 :: LOGIC_SPECIFICATION</div>
+                    <div className="bg-[#06060A] p-10 rounded-[48px] border-2 border-orange-500/20 shadow-2xl">
+                        <TruthTableBuilder variables={BOSS_VARS} rows={rows} locked={locked} onRowsChange={setRows} accentColor={PHASE_COLOR} compact />
+                    </div>
+                    {tableCorrect === false && <span className="text-red-500 font-mono font-black italic text-[10px] uppercase">✗ ERROR_DETECTED :: CHECK_MAJORITY_RULE</span>}
+                    <button onClick={checkTable} className="px-12 py-5 rounded-2xl bg-white/5 border border-white/10 text-white font-mono font-black italic text-xs tracking-widest uppercase hover:bg-white/10 active:scale-95">VERIFY_SPEC</button>
+                </motion.div>
             )}
-          </motion.div>
-        )}
 
-        {/* Step 2: Minterms */}
-        {bossStep === 2 && locked && (
-          <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} className="flex flex-col gap-4">
-            <div className="text-[11px] font-mono font-bold" style={{ color: PHASE_COLOR }}>STEP 3 — MINTERMS (Σm)</div>
-            <div className="flex flex-wrap gap-2">
-              {minterms.map(m => (
-                <span key={m.index} className="px-3 py-1.5 rounded text-[11px] font-mono" style={{ background: 'rgba(0,212,255,0.05)', border: '1px solid rgba(0,212,255,0.2)', color: '#00D4FF' }}>
-                  {mintermToProductTerm(m)} [m{m.index}]
-                </span>
-              ))}
-            </div>
-            <div className="text-[13px] font-mono p-4 rounded-xl" style={{ background: '#000', border: '1px solid #1A1A1F', color: '#A0FFA0' }}>
-              Canonical SOP: {sigmaMNotation(minterms)}
-            </div>
-            <button onClick={advance} className="self-start px-4 py-2 rounded text-[12px] font-bold font-mono mt-2" style={{ background: PHASE_COLOR, color: '#000' }}>NEXT: MAXTERMS →</button>
-          </motion.div>
-        )}
+            {(bossStep >= 2 && bossStep <= 5) && (
+                <motion.div key="s2-5" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="grid grid-cols-1 md:grid-cols-2 gap-12 w-full items-center">
+                    <div className="flex flex-col gap-8">
+                        <div className="text-[10px] font-mono font-black italic text-orange-500 uppercase tracking-widest">PHASE_0{bossStep} :: HARDWARE_SYNTHESIS</div>
+                        <div className="flex flex-col gap-4">
+                            <div className="p-8 rounded-[32px] bg-white/5 border border-white/10">
+                                <span className="text-[10px] font-mono font-black italic text-white/20 uppercase block mb-2">EXTRACTION_RESULTS</span>
+                                <div className="flex justify-between items-center text-xs font-mono font-black italic text-white/60">
+                                    <span>MINTERMS (1s)</span>
+                                    <span className="text-blue-500">{minterms.length}</span>
+                                </div>
+                                <div className="flex justify-between items-center text-xs font-mono font-black italic text-white/60 mt-2">
+                                    <span>MAXTERMS (0s)</span>
+                                    <span className="text-orange-500">{maxterms.length}</span>
+                                </div>
+                            </div>
+                            <div className="p-8 rounded-[32px] bg-orange-500/10 border border-orange-500/20">
+                                <span className="text-[10px] font-mono font-black italic text-orange-500 uppercase block mb-2">ARCHITECTURAL_RECOMMENDATION</span>
+                                <span className="text-xs font-mono font-black italic text-white uppercase">{path === 'EQUAL' ? 'COST_BALANCED' : `USE_${path}_PATH`}</span>
+                            </div>
+                        </div>
+                        <button onClick={advance} className="px-10 py-5 rounded-2xl bg-orange-500 text-black font-mono font-black italic text-[10px] tracking-widest uppercase self-start">{bossStep === 5 ? 'COMPLETE_DESIGN' : 'NEXT_PHASE →'}</button>
+                    </div>
 
-        {/* Step 3: Maxterms */}
-        {bossStep === 3 && locked && (
-          <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} className="flex flex-col gap-4">
-            <div className="text-[11px] font-mono font-bold" style={{ color: PHASE_COLOR }}>STEP 4 — MAXTERMS (ΠM)</div>
-            <div className="flex flex-wrap gap-2">
-              {maxterms.map(M => (
-                <span key={M.index} className="px-3 py-1.5 rounded text-[11px] font-mono" style={{ background: 'rgba(255,51,102,0.05)', border: '1px solid rgba(255,51,102,0.2)', color: '#FF3366' }}>
-                  {M.term} [M{M.index}]
-                </span>
-              ))}
-            </div>
-            <div className="text-[13px] font-mono p-4 rounded-xl" style={{ background: '#000', border: '1px solid #1A1A1F', color: '#A0FFA0' }}>
-              Canonical POS: {getMaxterms(rows, BOSS_VARS).map(m => m.term).join('·')}
-            </div>
-            <button onClick={advance} className="self-start px-4 py-2 rounded text-[12px] font-bold font-mono mt-2" style={{ background: PHASE_COLOR, color: '#000' }}>NEXT: CHOOSE PATH →</button>
-          </motion.div>
-        )}
+                    <div className="bg-[#06060A] rounded-[48px] border-2 border-orange-500/20 p-12 shadow-2xl relative min-h-[400px] flex items-center justify-center overflow-hidden">
+                        <div className="absolute top-6 left-10 text-[10px] font-mono font-black italic text-orange-500/40 uppercase tracking-widest">REALTIME_NETLIST</div>
+                        <div className="scale-110">
+                            <CircuitCanvas
+                                form={circuitMode}
+                                minterms={minterms}
+                                maxterms={maxterms}
+                                variables={BOSS_VARS}
+                                width={400}
+                                height={320}
+                            />
+                        </div>
+                    </div>
+                </motion.div>
+            )}
 
-        {/* Step 4: Comparison & Decision */}
-        {bossStep === 4 && (
-          <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} className="flex flex-col gap-4">
-            <div className="text-[11px] font-mono font-bold" style={{ color: PHASE_COLOR }}>STEP 5 — CHOOSE PATH</div>
-            <div className="p-5 rounded-2xl flex flex-col gap-5 shadow-2xl" style={{ background: '#09090B', border: '1px solid #1A1A1F' }}>
-              <div className="flex items-center justify-between text-[13px] font-mono px-2">
-                <div style={{ color: '#00D4FF' }}>SOP: {minterms.length} AND + 1 OR</div>
-                <div style={{ color: '#FF3366' }}>POS: {maxterms.length} OR + 1 AND</div>
-              </div>
-              <div className="h-3 w-full bg-black rounded-full overflow-hidden flex border border-[#FFFFFF08]">
-                 <div style={{ width: `${(minterms.length / 8) * 100}%`, background: '#00D4FF', boxShadow: '0 0 15px #00D4FF44' }} />
-                 <div style={{ width: `${(maxterms.length / 8) * 100}%`, background: '#FF3366', boxShadow: '0 0 15px #FF336644' }} />
-              </div>
-              <div className="text-[14px] font-bold text-center py-3 rounded-lg" style={{ background: 'rgba(0,255,136,0.05)', border: '1px solid rgba(0,255,136,0.1)', color: '#00FF88' }}>
-                 RECOMMENDATION: {path === 'EQUAL' ? 'EITHER PATH' : `${path} PATH WINS`}
-              </div>
-            </div>
-            <button onClick={advance} className="self-start px-4 py-2 rounded text-[12px] font-bold font-mono mt-2" style={{ background: PHASE_COLOR, color: '#000' }}>BUILD FINAL CIRCUIT →</button>
-          </motion.div>
-        )}
+            {bossStep === 6 && (
+                <motion.div key="s6" initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className="text-center flex flex-col gap-10">
+                    <div className="text-9xl mb-4">🏆</div>
+                    <div className="flex flex-col gap-4">
+                        <h1 className="text-6xl font-mono font-black italic text-white uppercase tracking-tighter">MISSION_COMPLETE</h1>
+                        <p className="text-sm font-mono font-black italic text-orange-500 uppercase tracking-[0.4em]">SYSTEM_STABILIZED :: LOGIC_VERIFIED</p>
+                    </div>
+                    <button onClick={() => window.location.href = '/portal'} className="px-24 py-8 rounded-[32px] border-4 border-orange-500 text-orange-500 font-mono font-black italic text-xl tracking-[0.3em] uppercase hover:bg-orange-500 hover:text-black transition-all">RETURN_TO_COMMAND</button>
+                </motion.div>
+            )}
+        </AnimatePresence>
 
-        {/* Step 5: Final Circuit */}
-        {bossStep === 5 && (
-          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col gap-5">
-            <div className="text-[11px] font-mono font-bold" style={{ color: PHASE_COLOR }}>STEP 6 — FINAL CIRCUIT</div>
-            <div className="flex gap-2 flex-wrap">
-              {(['AND-OR', 'NAND-NAND', 'OR-AND', 'NOR-NOR'] as CircuitForm[]).map(mode => (
-                <button
-                  key={mode}
-                  onClick={() => setCircuitMode(mode)}
-                  className={`px-4 py-1.5 rounded-full text-[10px] font-mono transition-all focus:outline-none focus:ring-2 ${circuitMode === mode ? 'bg-[#FF5F1F] text-black shadow-lg' : 'border border-[#FF5F1F33] text-slate-500'}`}
-                >
-                  {mode}
-                </button>
-              ))}
-            </div>
-            <div className="rounded-2xl overflow-hidden shadow-2xl relative" style={{ background: '#06060A', border: `2px solid ${PHASE_COLOR}22`, padding: 24 }}>
-              <CircuitCanvas 
-                form={circuitMode} 
-                minterms={circuitMode.includes('AND') ? minterms : undefined} 
-                maxterms={!circuitMode.includes('AND') ? maxterms : undefined} 
-                variables={BOSS_VARS} 
-                width={380} 
-                height={Math.max(220, (circuitMode.includes('AND') ? minterms.length : maxterms.length) * 44 + 80)} 
-              />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <IntelligenceBrief 
-                type="industry"
-                title="TMR Systems"
-                description="This pattern is called Triple Modular Redundancy (TMR)."
-                details="It is the standard architecture for radiation-hardened satellite electronics where Cosmic Rays might flip a bit on one processor."
-              />
-              <IntelligenceBrief 
-                type="hardware"
-                title="Efficiency Check"
-                description="Notice that for this specific truth table, SOP and POS have identical gate counts (4+1)."
-                details="In more lopsided functions (e.g. 1 minterm vs 7 maxterms), the difference in hardware footprint becomes massive."
-              />
-            </div>
-
-            <button onClick={advance} className="self-center px-12 py-4 rounded-2xl text-[16px] font-black italic tracking-widest mt-4 shadow-2xl transition-transform hover:scale-105 active:scale-95 bg-[#00FF88] text-black" style={{ boxShadow: '0 10px 40px rgba(0,255,136,0.3)' }}>
-              DEPLOY TO SILICON ✓
-            </button>
-          </motion.div>
-        )}
-
-        {/* Completion card */}
-        {bossStep === 6 && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="rounded-2xl px-6 py-10 text-center flex flex-col gap-5 my-10 shadow-2xl"
-            style={{ background: 'rgba(0,255,136,0.03)', border: '2px solid rgba(0,255,136,0.3)', boxShadow: '0 0 40px rgba(0,255,136,0.05)' }}
-          >
-            <div className="text-6xl">🏆</div>
-            <div className="text-3xl font-bold font-mono" style={{ color: '#00FF88', letterSpacing: '0.1em' }}>MASTERED</div>
-            <div className="text-[14px] leading-relaxed max-w-sm mx-auto" style={{ color: '#E8E8F0' }}>
-              You successfully designed a fault-tolerant 3-bit majority voter. 
-              The journey from specification to silicon is complete.
-            </div>
-            <div className="flex flex-col gap-3 mt-4 items-center">
-               <div className="text-[11px] font-mono text-[#00D4FF]">DD-M01 PROFICIENCY: ELITE</div>
-               <div className="h-1.5 w-64 bg-slate-950 rounded-full overflow-hidden border border-[#FFFFFF08]">
-                  <motion.div 
-                    initial={{ width: 0 }}
-                    animate={{ width: '100%' }}
-                    transition={{ duration: 1.5, ease: 'easeOut' }}
-                    className="h-full bg-[#00D4FF]"
-                    style={{ boxShadow: '0 0 10px #00D4FFCC' }}
-                  />
-               </div>
-            </div>
-            <button onClick={() => window.location.href='/portal'} className="mt-8 px-8 py-2.5 rounded-full text-[13px] font-bold font-mono border-2 border-[#00D4FF55] text-[#00D4FF] hover:bg-[#00D4FF11] transition-all bg-black hover:scale-105 active:scale-95 shadow-xl">
-               RETURN TO COMMAND CENTER
-            </button>
-          </motion.div>
-        )}
+        <p className="text-[10px] font-mono font-black italic text-white/10 uppercase tracking-[0.3em] mt-auto">
+            Design Verification Completion Protocol :: DD-M01 FINAL
+        </p>
       </div>
     </SceneWrapper>
   );

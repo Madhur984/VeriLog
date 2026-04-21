@@ -30,7 +30,7 @@ const TruthTableBuilder: React.FC<TruthTableBuilderProps> = ({
   highlightMinterms = false,
   highlightMaxterms = false,
   activeRowIndex,
-  accentColor = '#A855F7',
+  accentColor = '#06B6D4',
   compact = false,
 }) => {
   const playClick = useCallback((freq: number = 800) => {
@@ -108,15 +108,15 @@ const TruthTableBuilder: React.FC<TruthTableBuilderProps> = ({
           style={{ gridTemplateColumns: `repeat(${variables.length + 2}, 1fr)` }}
           role="row"
         >
-          <div className="px-2 py-2 text-center text-[11px] font-mono text-[#7A7A8C] bg-[#1A1A1F]" role="columnheader">
+          <div className="px-2 py-3 text-center text-xs font-mono text-[#7A7A8C] bg-[#1A1A1F]" role="columnheader">
             idx
           </div>
           {variables.map(v => (
-            <div key={v} className="px-2 py-2 text-center text-[11px] font-mono text-[#7A7A8C] bg-[#1A1A1F]" role="columnheader">
+            <div key={v} className="px-2 py-3 text-center text-xs font-mono text-[#7A7A8C] bg-[#1A1A1F]" role="columnheader">
               {v}
             </div>
           ))}
-          <div className="px-2 py-2 text-center text-[11px] font-mono bg-[#1A1A1F]" style={{ color: accentColor }} role="columnheader">
+          <div className="px-2 py-3 text-center text-xs font-mono bg-[#1A1A1F]" style={{ color: accentColor }} role="columnheader">
             F
           </div>
         </div>
@@ -155,12 +155,12 @@ const TruthTableBuilder: React.FC<TruthTableBuilderProps> = ({
                 gridTemplateColumns: `repeat(${variables.length + 2}, 1fr)`,
                 background: rowBg,
                 borderLeft,
-                minHeight: cellH,
+                minHeight: cellH + 8,
               }}
               role="row"
             >
               {/* Index */}
-              <div className="flex items-center justify-center text-[11px] font-mono text-[#7A7A8C]" role="cell">
+              <div className="flex items-center justify-center text-xs font-mono text-[#7A7A8C]" role="cell">
                 {row.index}
               </div>
 
@@ -168,7 +168,7 @@ const TruthTableBuilder: React.FC<TruthTableBuilderProps> = ({
               {row.inputs.map((bit, bi) => (
                 <div
                   key={bi}
-                  className="flex items-center justify-center text-[13px] font-mono font-semibold"
+                  className="flex items-center justify-center text-sm font-mono font-semibold"
                   style={{ color: bit ? '#E8E8F0' : '#7A7A8C' }}
                   role="cell"
                 >
@@ -180,7 +180,7 @@ const TruthTableBuilder: React.FC<TruthTableBuilderProps> = ({
               <div className="flex items-center justify-center" role="cell">
                 {locked ? (
                   <span
-                    className="text-[14px] font-mono font-semibold"
+                    className="text-base font-mono font-semibold"
                     style={{
                       color: row.output === true
                         ? '#00FF88'
@@ -194,7 +194,7 @@ const TruthTableBuilder: React.FC<TruthTableBuilderProps> = ({
                 ) : (
                   <button
                     onClick={() => cycleOutput(i)}
-                    className="w-8 h-8 rounded flex items-center justify-center text-[14px] font-mono font-semibold transition-all duration-150 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-[#00D4FF]"
+                    className="w-10 h-10 rounded flex items-center justify-center text-base font-mono font-semibold transition-all duration-150 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-[#00D4FF]"
                     style={{
                       color: row.output === true
                         ? '#00FF88'
@@ -219,7 +219,7 @@ const TruthTableBuilder: React.FC<TruthTableBuilderProps> = ({
       </div>
 
       {/* Live counter */}
-      <div className="flex items-center gap-4 text-[11px] font-mono mt-1">
+      <div className="flex items-center gap-4 text-xs font-mono mt-2">
         <span style={{ color: '#00FF88' }}>■ ONES: {ones}</span>
         <span style={{ color: '#FF3366' }}>■ ZEROS: {zeros}</span>
         <span style={{ color: '#7A7A8C' }}>■ UNSPECIFIED: {unspecified}</span>
@@ -229,3 +229,4 @@ const TruthTableBuilder: React.FC<TruthTableBuilderProps> = ({
 };
 
 export default TruthTableBuilder;
+
