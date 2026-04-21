@@ -1,5 +1,5 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import SceneWrapper from '../components/SceneWrapper';
 import PhaseLabel from '../components/PhaseLabel';
 
@@ -7,6 +7,14 @@ interface S00Props { sceneIndex: number; currentScene: number; onBegin: () => vo
 
 const S00_SignalProblem: React.FC<S00Props> = ({ sceneIndex, currentScene, onBegin }) => {
   const isActive = currentScene === sceneIndex;
+  const [showGuide, setShowGuide] = React.useState(true);
+
+  useEffect(() => {
+    if (isActive) {
+      const timer = setTimeout(() => setShowGuide(false), 8000);
+      return () => clearTimeout(timer);
+    }
+  }, [isActive]);
 
   return (
     <SceneWrapper sceneIndex={sceneIndex} currentScene={currentScene} phaseColor="#00D4FF">
@@ -25,6 +33,19 @@ const S00_SignalProblem: React.FC<S00Props> = ({ sceneIndex, currentScene, onBeg
           <p className="text-sm md:text-base font-mono font-black italic text-white/40 uppercase tracking-[0.4em] max-w-2xl mx-auto">
             From human specification to deterministic silicon. Initialize the digital design pipeline.
           </p>
+          
+          <AnimatePresence>
+            {showGuide && isActive && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                className="mt-4 p-4 rounded-xl border border-cyan-500/20 bg-cyan-500/5 text-[10px] font-mono text-cyan-400 uppercase tracking-widest leading-relaxed max-w-xs mx-auto"
+              >
+                ■ USE THE MOUSE WHEEL OR TRACKPAD TO SCROLL DOWN AND PROGRESS THROUGH THE PHASES.
+              </motion.div>
+            )}
+          </AnimatePresence>
         </motion.div>
 
         {/* Tactical Teaser */}
@@ -48,8 +69,9 @@ const S00_SignalProblem: React.FC<S00Props> = ({ sceneIndex, currentScene, onBeg
             animate={isActive ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: 0.5 }}
             onClick={onBegin}
-            className="px-24 py-8 rounded-[32px] bg-cyan-500 text-black font-mono font-black italic text-xl tracking-[0.3em] uppercase hover:scale-105 active:scale-95 transition-all shadow-[0_0_80px_rgba(6,182,212,0.3)]"
+            className="group relative px-24 py-8 rounded-[32px] bg-cyan-500 text-black font-mono font-black italic text-xl tracking-[0.3em] uppercase hover:scale-105 active:scale-95 transition-all shadow-[0_0_80px_rgba(6,182,212,0.3)]"
         >
+            <div className="absolute inset-0 rounded-[32px] border-2 border-cyan-400 animate-ping opacity-20 pointer-events-none" />
             BEGIN_INIT →
         </motion.button>
 

@@ -43,6 +43,24 @@ const A1_TruthTableContract: React.FC<A1Props> = ({
           <p className="text-sm font-mono font-black italic text-white/40 uppercase tracking-widest max-w-xl mx-auto">
             The Truth Table is the final law. It defines what your circuit MUST do for every possible input combination.
           </p>
+
+          <div className="flex justify-center gap-4">
+             {[
+               { id: 'can', label: 'CANONICAL', def: 'The "uncompressed" form where every circuit path uses every variable.' },
+               { id: 'sop', label: 'SOP', def: 'Sum of Products. An OR combination of AND results.' },
+               { id: 'pos', label: 'POS', def: 'Product of Sums. An AND combination of OR results.' },
+             ].map(g => (
+               <div key={g.id} className="group relative">
+                  <button className="px-3 py-1.5 rounded-lg border border-white/5 bg-white/[0.02] text-[9px] font-mono font-black italic text-white/30 hover:text-cyan-400 transition-all uppercase tracking-widest">
+                    {g.label}
+                  </button>
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-48 p-4 rounded-xl bg-black/90 backdrop-blur-xl border border-cyan-500/20 text-[10px] font-mono italic text-white/60 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-[100]">
+                    <div className="text-cyan-500 mb-1">■ CORE_DEFINITION</div>
+                    {g.def}
+                  </div>
+               </div>
+             ))}
+          </div>
         </motion.div>
 
         <motion.div

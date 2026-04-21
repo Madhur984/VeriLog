@@ -130,13 +130,18 @@ export const SignalDefinition: React.FC<ScreenProps> = ({
 
       <SignalAudioEngine signal={signal} enabled={audioEnabled} />
 
-      {/* Theory Overlay */}
-      <div className="w-full max-w-lg mt-8">
+      <div className="w-full max-w-2xl mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
           <KnowledgeCard 
-            title="Voltage over Time"
-            description="In electronics, a signal is a time-varying voltage or current that conveys information."
-            details="Whether it's the music from your speakers or the data in your CPU, everything is represented as changes in electromagnetic energy over time. These changes are defined by parameters like Amplitude (Strength) and Frequency (Speed)."
+            title="The Natural World"
+            description="Environment-driven signals (Sound, Light, Pressure) are almost exclusively continuous."
+            details="CMOS Image Sensors capture light wavelengths, and Microphones convert mechanical sound waves into continuous analog voltages. This is how the physical world speaks to our machines."
             icon={Activity}
+          />
+          <KnowledgeCard 
+            title="Digital Abstraction"
+            description="In electronics, we deliberately restrict continuous voltages into discrete 'Logic States'."
+            details="Why? Because distinguishng between 0V and 5V is vastly more robust than trying to separate 10 different voltage levels. This abstraction gives us resilience against noise and the power of programmability."
+            icon={BrainCircuit}
           />
       </div>
     </div>

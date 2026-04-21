@@ -135,8 +135,8 @@ export const S20_AIHardware: React.FC<{ isActive: boolean }> = ({ isActive }) =>
                  </div>
                  <div className="flex-1">
                     <div className="micro-text uppercase text-white/40 tracking-widest font-black mb-1">Architecture Note</div>
-                    <p className="body-text text-[11px] opacity-30 italic leading-relaxed font-light">
-                        "The architecture of intelligence is massively parallel. Every MAC unit responds to input stimuli in a single clock cycle, eliminating sequential bottlenecks."
+                    <p className="body-text text-[11px] opacity-40 italic leading-relaxed font-light mt-2 border-l-2 border-plasma-cyan/30 pl-4">
+                        "The architecture of intelligence is massively parallel. Rather than fetching data sequentially like a CPU, high-bandwidth <strong className="text-plasma-cyan">Multiplexers (MUXs) and Decoders</strong> act as the central data routers. They blast tensor weights and activations directly into thousands of MAC units in a single clock cycle, eliminating the von Neumann bottleneck entirely."
                     </p>
                  </div>
             </div>

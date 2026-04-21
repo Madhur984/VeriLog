@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Activity, Moon, Sun, ArrowRight, ArrowLeft } from 'lucide-react';
 
 // --- Scene Components ---
-import { IntroTheory, TwoVarTheory, ThreeVarTheory, FourVarTheory, GroupingRulesTheory, DontCareTheory, POSTheory } from '../components/level5/KMapTheory';
+import { IntroTheory, VisualMasterclass, TwoVarTheory, ThreeVarTheory, FourVarTheory, GroupingRulesTheory, DontCareTheory, POSTheory } from '../components/level5/KMapTheory';
 
 // --- Types ---
 interface Page {
@@ -18,6 +18,7 @@ interface Page {
 
 const PAGES: Page[] = [
   { id: 'intro',       part: 'PART I · INTRODUCTION',         partNum: 4, label: 'Why K-Maps?',        subtitle: 'The Problem of Boolean Simplification.',       accentHex: '#06b6d4', Component: IntroTheory },
+  { id: 'masterclass', part: 'PART I · INTRODUCTION',         partNum: 4, label: 'Visual Masterclass', subtitle: 'Advanced Visualization & Industrial Optimization.', accentHex: '#22d3ee', Component: VisualMasterclass },
   { id: 'structure-2v',part: 'PART II · MAP CONSTRUCTION',   partNum: 4, label: '2-Variable K-Map',   subtitle: 'Step-by-step grid building & Gray Code.',          accentHex: '#0891b2', Component: TwoVarTheory },
   { id: 'structure-3v',part: 'PART II · MAP CONSTRUCTION',   partNum: 4, label: '3-Variable K-Map',   subtitle: 'Mapping three variables to an 8-cell grid.',         accentHex: '#0ea5e9', Component: ThreeVarTheory },
   { id: 'structure-4v',part: 'PART II · MAP CONSTRUCTION',   partNum: 4, label: '4-Variable K-Map',   subtitle: 'The 4×4 Matrix & complex mapping traps.',               accentHex: '#0284c7', Component: FourVarTheory },

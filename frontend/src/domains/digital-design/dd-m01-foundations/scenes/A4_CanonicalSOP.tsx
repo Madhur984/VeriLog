@@ -67,6 +67,7 @@ const A4_CanonicalSOP: React.FC<A4Props> = ({ sceneIndex, currentScene, tableRow
                     form="AND-OR"
                     minterms={minterms}
                     variables={VARS}
+                    inputValues={tracing ? inputValues : undefined}
                     width={500}
                     height={Math.max(300, minterms.length * 60)}
                 />

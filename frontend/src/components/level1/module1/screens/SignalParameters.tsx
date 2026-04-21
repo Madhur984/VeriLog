@@ -57,6 +57,16 @@ const QUESTIONS: Question[] = [
       { label: "Distorts the signal", value: "B", isCorrect: true },
       { label: "Removes original message", value: "C", isCorrect: false }
     ]
+  },
+  {
+    id: 'noise_margins',
+    category: 'RESILIENCE',
+    text: "How do digital systems tolerate minor voltage fluctuations?",
+    options: [
+      { label: "By amplifying noise", value: "A", isCorrect: false },
+      { label: "Using Noise Margins", value: "B", isCorrect: true },
+      { label: "Ignoring the signal", value: "C", isCorrect: false }
+    ]
   }
 ];
 
@@ -112,6 +122,11 @@ export const SignalParameters: React.FC<ScreenProps & {
       title: "INTERFERENCE",
       content: "Real signals get corrupted. Noise adds chaos to the transmission.",
       icon: <ShieldAlert className="text-[var(--error)]" />
+    },
+    {
+      title: "DIGITAL ABSTRACTION",
+      content: "We ignore small noise by defining 'Noise Margins'. As long as the voltage stays within valid ranges, the digital state remains perfect.",
+      icon: <Activity className="text-sky-500" />
     }
   ];
 

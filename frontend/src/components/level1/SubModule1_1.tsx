@@ -22,6 +22,7 @@ import { SignalAssignment } from './module1/screens/SignalAssignment';
 import { SignalPropagation } from './module1/screens/SignalPropagation';
 import { EmbeddedCircuitLab } from './module1/screens/EmbeddedCircuitLab';
 import { ModuleTransition } from './module1/screens/ModuleTransition';
+import { NumberSystemIntro } from './module1/screens/NumberSystemIntro';
 import ModuleContainer from './module1/ModuleContainer';
 
 // Explicit screen order to ensure stable rendering across all browsers
@@ -37,6 +38,7 @@ const SCREEN_ORDER = [
   'basic_signals',
   'signal_transform',
   'signal_meaning',
+  'number_system_intro',
   'signal_processing',
   'final_insight',
   'insight_lock',
@@ -59,6 +61,7 @@ const SCREENS: Record<string, React.FC<any>> = {
   signal_transform: SignalTransform,
   signal_meaning: SignalMeaning,
   signal_processing: SignalProcessing,
+  number_system_intro: NumberSystemIntro,
   final_insight: FinalInsight,
   insight_lock: InsightLock,
   signal_assignment: SignalAssignment,

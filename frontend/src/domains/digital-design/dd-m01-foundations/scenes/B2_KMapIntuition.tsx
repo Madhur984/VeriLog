@@ -127,43 +127,71 @@ const B2_KMapIntuition: React.FC<B2Props> = ({ sceneIndex, currentScene, cells, 
             <motion.div 
                 initial={{ opacity: 0, scale: 0.95 }} 
                 animate={isActive ? { opacity: 1, scale: 1 } : {}}
-                className="lg:col-span-8 bg-black/40 backdrop-blur-md rounded-[56px] border-2 border-blue-500/10 p-20 shadow-2xl relative flex items-center justify-center min-h-[500px]"
+                className="lg:col-span-8 space-y-6"
             >
-                <div className="absolute top-10 left-12 flex items-center gap-3">
-                    <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-                    <span className="text-[10px] font-mono font-black italic text-blue-500/60 uppercase tracking-widest">Spatial_Processor // ACTIVE</span>
-                </div>
-                
-                <div className="scale-[1.8] md:scale-[2.2]">
-                    <KMapGrid2Var
-                        cells={cells}
-                        onChange={onCellsChange}
-                        accentColor={PHASE_COLOR}
-                        highlightGroup={manualGroups.flat()}
-                        selection={selection}
-                        onSelectionChange={setSelection}
-                    />
-                </div>
+                <div className="bg-black/40 backdrop-blur-md rounded-[56px] border-2 border-blue-500/10 p-20 shadow-2xl relative flex items-center justify-center min-h-[500px]">
+                    <div className="absolute top-10 left-12 flex items-center gap-3">
+                        <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+                        <span className="text-[10px] font-mono font-black italic text-blue-500/60 uppercase tracking-widest">Spatial_Processor // ACTIVE</span>
+                    </div>
 
-                {/* Validation HUD */}
-                <div className="absolute bottom-10 right-12 text-right">
-                    <div className="text-[10px] font-mono text-white/20 uppercase tracking-widest mb-1 italic">Extracted_Groups</div>
-                    <div className="flex flex-col gap-1">
-                        <AnimatePresence>
-                            {manualGroups.map((g, idx) => (
-                                <motion.div 
-                                    key={idx}
-                                    initial={{ x: 20, opacity: 0 }}
-                                    animate={{ x: 0, opacity: 1 }}
-                                    className="text-xs font-mono font-black italic text-cyan-400 uppercase"
-                                >
-                                    Group_{idx+1}: {g.length} cells
-                                </motion.div>
-                            ))}
-                        </AnimatePresence>
+                    <div className="scale-[1.8] md:scale-[2.2]">
+                        <KMapGrid2Var
+                            cells={cells}
+                            onChange={onCellsChange}
+                            accentColor={PHASE_COLOR}
+                            highlightGroup={manualGroups.flat()}
+                            selection={selection}
+                            onSelectionChange={setSelection}
+                        />
+                    </div>
+
+                    {/* Validation HUD */}
+                    <div className="absolute bottom-10 right-12 text-right">
+                        <div className="text-[10px] font-mono text-white/20 uppercase tracking-widest mb-1 italic">Extracted_Groups</div>
+                        <div className="flex flex-col gap-1">
+                            <AnimatePresence>
+                                {manualGroups.map((g, idx) => (
+                                    <motion.div 
+                                        key={idx}
+                                        initial={{ x: 20, opacity: 0 }}
+                                        animate={{ x: 0, opacity: 1 }}
+                                        className="text-xs font-mono font-black italic text-cyan-400 uppercase"
+                                    >
+                                        Group_{idx+1}: {g.length} cells
+                                    </motion.div>
+                                ))}
+                            </AnimatePresence>
+                        </div>
                     </div>
                 </div>
+
+                {/* Industrial Insight & Video Resource */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="p-8 rounded-[32px] bg-white/5 border border-white/10 flex flex-col gap-4">
+                        <div className="text-[10px] font-mono font-black italic text-blue-500 uppercase tracking-widest">Why K-Maps?</div>
+                        <p className="text-[11px] font-mono font-medium text-white/60 leading-relaxed italic">
+                            Algebra relies on "cut-and-try" procedures—there are no strict rules to guarantee an optimal result. K-Maps leverage <span className="text-white">Visual Pattern Recognition</span>, transforming complex algebra into an intuitive puzzle.
+                        </p>
+                    </div>
+
+                    <a 
+                        href="https://www.youtube.com/watch?v=p8S-y2M2g60"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group p-8 rounded-[32px] bg-blue-500/10 border border-blue-500/30 flex items-center gap-6 hover:bg-blue-500/20 transition-all cursor-pointer"
+                    >
+                        <div className="w-14 h-14 rounded-full bg-blue-500 flex items-center justify-center text-black group-hover:scale-110 transition-transform shadow-[0_0_20px_rgba(59,130,246,0.4)]">
+                           <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                        </div>
+                        <div className="flex flex-col">
+                            <span className="text-[10px] font-mono font-black italic text-blue-400 uppercase tracking-widest mb-1">Video_Lecture</span>
+                            <span className="text-xs font-bold text-white uppercase italic tracking-tighter group-hover:text-cyan-400">Mastering 4-Var K-Maps // Neso Academy</span>
+                        </div>
+                    </a>
+                </div>
             </motion.div>
+
         </div>
       </div>
     </SceneWrapper>

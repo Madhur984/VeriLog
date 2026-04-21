@@ -67,13 +67,16 @@ const A3_Maxterms: React.FC<A3Props> = ({
         <AnimatePresence>
           {quizStep === 'CHALLENGE' && isActive && currentQuizMaxterm && (
             <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 1.1, opacity: 0 }}
-              className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md p-6"
+              key="quiz-overlay"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/80 backdrop-blur-md p-6"
             >
               <motion.div 
-                animate={shake ? { x: [-10, 10, -10, 10, 0] } : {}}
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 1.1, opacity: 0 }}
                 className="w-full max-w-md bg-[#0A0A0E] border-2 border-rose-500/40 rounded-[40px] p-10 shadow-[0_0_100px_rgba(244,63,94,0.2)] flex flex-col gap-8 text-center"
               >
                 <div>
@@ -116,7 +119,12 @@ const A3_Maxterms: React.FC<A3Props> = ({
           )}
         </AnimatePresence>
 
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 w-full">
+        <div className="w-full flex-1 flex flex-col items-center gap-8 min-h-0">
+          <div className="flex flex-col items-center gap-2">
+             <div className="text-[10px] font-mono font-black italic text-rose-500 uppercase tracking-widest animate-pulse">■ OBJECTIVE: SELECT ALL ROWS WHERE F=0 IN THE TABLE BELOW</div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-12 w-full">
             {/* Table Selection */}
             <motion.div 
                 initial={{ opacity: 0, x: -30 }} 
@@ -202,8 +210,9 @@ const A3_Maxterms: React.FC<A3Props> = ({
             </motion.div>
         </div>
       </div>
-    </SceneWrapper>
-  );
+    </div>
+  </SceneWrapper>
+);
 };
 
 export default A3_Maxterms;

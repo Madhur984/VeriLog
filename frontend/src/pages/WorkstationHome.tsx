@@ -125,7 +125,7 @@ const PCBBackground: React.FC = () => (
         transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
         className="absolute inset-0"
       />
-      <div className="absolute inset-0 opacity-[0.02] mix-blend-overlay" style={{ backgroundImage: `url("https://grainy-gradients.vercel.app/noise.svg")` }} />
+      <div className="absolute inset-0 opacity-[0.02] mix-blend-overlay" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }} />
       <CircuitFlow />
     </div>
 );
@@ -134,7 +134,7 @@ const PCBBackground: React.FC = () => (
 const ProfileCard: React.FC<{ name: string; xp: any; level: number; streak: number; gems: number; hearts: number; }> = ({ name, xp, level, streak, gems, hearts }) => {
   const progress = ((xp.total - Math.pow(level-1, 2)*100) / (Math.pow(level, 2)*100 - Math.pow(level-1, 2)*100)) * 100;
   return (
-    <motion.div initial={{ opacity: 0, x: 50, filter: 'blur(10px)' }} animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }} transition={{ delay: 0.8, type: "spring", stiffness: 40 }}
+    <motion.div initial={{ opacity: 0, x: 50, filter: 'blur(10px)' }} animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }} transition={{ delay: 0.8, duration: 1.2, ease: "easeOut" }}
       className="fixed top-12 right-8 z-50 p-6 rounded-[2.5rem] w-[300px] bg-white/[0.03] backdrop-blur-3xl border border-white/10 shadow-[0_40px_80px_rgba(0,0,0,0.6)] group"
     >
       <div className="flex items-center gap-4 mb-6">
@@ -206,7 +206,7 @@ export const WorkstationHome: React.FC = () => {
             <motion.div 
                initial={{ opacity: 0, scale: 0.98, filter: 'blur(20px)' }} 
                animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }} 
-               transition={{ delay: 0.7, type: "spring", stiffness: 30 }}
+               transition={{ delay: 0.7, duration: 1.5, ease: "easeOut" }}
                className="flex-1 h-full w-full relative rounded-[3rem] overflow-hidden bg-black/40 backdrop-blur-md border border-white/10 p-4 md:p-10"
             >
                <HierarchicalGrindTree />

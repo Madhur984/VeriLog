@@ -205,7 +205,10 @@ export const SceneArithmetic: React.FC<Props> = ({ onCorrect }) => {
                                     Addition is not an instant jump, but a sequence of carries. 
                                     Carry propagation delay is the primary bottleneck in calculator speed.
                                 </p>
-                                <p style={{ color: T.accent, fontSize: 15, fontWeight: 700, fontFamily: T.mono, letterSpacing: '-0.02em' }}>
+                                <p style={{ color: T.muted, fontSize: 13, lineHeight: 1.5, opacity: 0.8, background: 'rgba(255,255,255,0.02)', padding: 12, borderRadius: 8 }}>
+                                    <strong style={{ color: T.warning }}>Industrial Note:</strong> Modern ALUs use <em>2's complement</em> math for its massive hardware efficiency. Why build separate subtractor circuits when you can just add by rolling backward? Just like a mechanical car odometer naturally wraps backward from `0000` to `9999`, subtracting 1 rolls a binary register down to `1111`.
+                                </p>
+                                <p style={{ color: T.accent, fontSize: 15, fontWeight: 700, fontFamily: T.mono, letterSpacing: '-0.02em', marginTop: 8 }}>
                                     "Arithmetic is a chain of logic gates, not an instant sum."
                                 </p>
                                 <div style={{ height: 1, width: 40, background: T.accent, opacity: 0.2, alignSelf: 'center' }} />

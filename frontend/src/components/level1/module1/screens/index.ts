@@ -16,3 +16,4 @@ export * from './ModuleTransition';
 export * from './EmbeddedCircuitLab';
 export * from './InsightLock';
 export * from './SignalPropagation';
+export * from './NumberSystemIntro';

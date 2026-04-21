@@ -67,6 +67,7 @@ const A5_CanonicalPOS: React.FC<A5Props> = ({ sceneIndex, currentScene, tableRow
                     form="OR-AND"
                     maxterms={maxterms}
                     variables={VARS}
+                    inputValues={tracing ? inputValues : undefined}
                     width={500}
                     height={Math.max(300, maxterms.length * 60)}
                 />

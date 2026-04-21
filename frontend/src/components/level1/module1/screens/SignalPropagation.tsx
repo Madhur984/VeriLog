@@ -147,13 +147,20 @@ export const SignalPropagation: React.FC<ScreenProps> = ({
         </span>
       </div>
 
-      <div className="w-full max-w-lg mt-8 pb-12 text-left">
+      <div className="w-full max-w-2xl mt-8 pb-12 grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
           <KnowledgeCard 
             title="Medium & Velocity"
             description="Signals travel at different speeds depending on the physical medium."
-            details="In a vacuum, light travels at approx. 300,000 km/s. In Copper or Fiber, it's slower (Velocity Factor). Attenuation is the loss of signal strength over distance, which is why we need repeaters in long-distance cables!"
+            details="In Copper or Fiber, it's slower than light in a vacuum. Attenuation is the loss of signal strength over distance, which is why we need repeaters in long-distance cables!"
             icon={Share2}
             className="bg-white border-slate-200 shadow-sm"
+          />
+          <KnowledgeCard 
+            title="Timing & Capture"
+            description="Capturing a signal is like photographing a jumping frog."
+            details="If you snap the camera *during* the jump, the image is a blur (Metastability). Digital elements require a specific 'aperture time' (Setup & Hold) to capture a clear signal."
+            icon={Zap}
+            className="bg-sky-50 border-sky-100 shadow-sm"
           />
       </div>
     </div>

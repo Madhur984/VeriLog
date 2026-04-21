@@ -1,6 +1,94 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Zap, Puzzle, LayoutGrid, ArrowRight, Info, CheckCircle2, XCircle, BookOpen, Target, Layers } from 'lucide-react';
+import { Zap, Puzzle, LayoutGrid, ArrowRight, Info, CheckCircle2, XCircle, BookOpen, Target, Layers, PlayCircle, ExternalLink } from 'lucide-react';
+
+export const VisualMasterclass: React.FC<Props> = ({ isActive, isDarkMode }) => {
+  const c = getColors(isDarkMode, 'cyan');
+  return (
+    <div className="max-w-4xl mx-auto space-y-12 py-8">
+      <section className="text-center space-y-4">
+        <motion.span initial={{ opacity: 0 }} animate={isActive ? { opacity: 1 } : {}} className={`font-mono text-[10px] tracking-[0.4em] uppercase ${c.sub} block mb-4 font-bold`}>
+            Industrial Masterclass
+        </motion.span>
+        <h2 className={`text-3xl md:text-5xl font-black ${c.text}`}>Visual Logic Optimization</h2>
+        <p className={`text-lg max-w-2xl mx-auto opacity-80 ${c.muted}`}>
+            Why do we use K-Maps? Because human brains excel at pattern recognition, while algebraic manipulation is prone to "trial-and-error" fatigue.
+        </p>
+      </section>
+
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={isActive ? { opacity: 1, y: 0 } : {}} className={`p-1 rounded-[2.5rem] bg-gradient-to-br from-cyan-500/20 to-blue-600/20 border border-white/10 overflow-hidden shadow-2xl`}>
+        <div className={`p-8 rounded-[2.4rem] ${isDarkMode ? 'bg-[#0B0F14]/80 backdrop-blur-xl' : 'bg-white/90'} space-y-8`}>
+            <div className="aspect-video w-full rounded-2xl overflow-hidden bg-black relative group">
+                <iframe 
+                    className="w-full h-full border-none shadow-2xl"
+                    src="https://www.youtube.com/embed/p8S-y2M2g60"
+                    title="K-Map Video Masterclass"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                ></iframe>
+                <div className="absolute inset-x-0 bottom-0 p-6 bg-gradient-to-t from-black to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex justify-between items-center">
+                    <div className="flex items-center gap-3">
+                        <PlayCircle className="text-cyan-400" size={20} />
+                        <span className="text-[10px] font-mono font-black italic text-white uppercase tracking-widest">K-Map Minimization // 4-Variable Masterclass</span>
+                    </div>
+                </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <CalloutBox icon="🎯" color="emerald" title="Algebraic Weakness" isDarkMode={isDarkMode}>
+                    Algebraic simplification often relies on a <span className="text-white">"cut-and-try"</span> procedure where there are no strict rules to guarantee you've reached the most optimal form.
+                </CalloutBox>
+                <CalloutBox icon="⚡" color="amber" title="K-Map Strength" isDarkMode={isDarkMode}>
+                    K-Maps translate logical redundancies into <span className="text-white">Geometric Adjacency</span>. If two cells are neighbors, they can be merged. It's systematic, visual, and fast.
+                </CalloutBox>
+            </div>
+
+            <div className={`p-6 rounded-2xl border ${isDarkMode ? 'bg-cyan-500/5 border-cyan-500/20' : 'bg-cyan-50 border-cyan-200'}`}>
+                <h4 className={`text-sm font-black uppercase tracking-widest mb-4 flex items-center gap-2 ${isDarkMode ? 'text-cyan-400' : 'text-cyan-700'}`}>
+                    <Info size={16} /> Technical Context (from Notebook)
+                </h4>
+                <ul className="space-y-3">
+                    {[
+                        "Humans are significantly faster at spotting Prime Implicants visually than algebraically.",
+                        "K-Maps minimize the human error factor in multi-variable logic reductions.",
+                        "Standard in early-stage logic design before moving to algorithmic CAD (Quine-McCluskey).",
+                    ].map((item, idx) => (
+                        <li key={idx} className="flex gap-3 items-start text-xs leading-relaxed opacity-70">
+                            <ArrowRight size={14} className="shrink-0 mt-0.5 text-cyan-500" />
+                            <span>{item}</span>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+
+            {/* NotebookLM Video Overview Callout */}
+            <motion.div 
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.5 }}
+                className={`p-6 rounded-2xl border flex flex-col md:flex-row items-center gap-6 justify-between ${isDarkMode ? 'bg-indigo-500/10 border-indigo-500/30' : 'bg-indigo-50 border-indigo-200'} shadow-lg`}
+            >
+                <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-full bg-indigo-500 flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(99,102,241,0.5)]">
+                        <PlayCircle className="text-white" size={24} />
+                    </div>
+                    <div className="flex flex-col gap-1">
+                        <span className="text-[10px] font-mono font-black italic uppercase tracking-widest text-indigo-400">NotebookLM AI Generation</span>
+                        <h4 className={`text-sm font-black ${isDarkMode ? 'text-white' : 'text-indigo-900'}`}>Demystifying Karnaugh Maps</h4>
+                        <p className={`text-xs font-mono opacity-70 ${isDarkMode ? 'text-white' : 'text-indigo-800'}`}>Custom Video Overview generated in your workspace.</p>
+                    </div>
+                </div>
+                <button className="px-6 py-3 rounded-xl bg-indigo-500 text-white text-[10px] font-mono font-black italic uppercase tracking-widest hover:bg-indigo-400 transition-colors flex items-center gap-2 shadow-lg shrink-0">
+                    Access Notebook <ExternalLink size={14} />
+                </button>
+            </motion.div>
+        </div>
+      </motion.div>
+
+    </div>
+  );
+};
+
 
 interface Props {
   isActive: boolean;
@@ -991,14 +1079,14 @@ export const DontCareTheory: React.FC<Props> = ({ isDarkMode }) => {
         </div>
         <div className={`p-6 rounded-2xl mb-5 ${isDarkMode?'bg-rose-500/10 border border-rose-500/20':'bg-rose-50 border border-rose-100'}`}>
           <p className={`text-base leading-relaxed font-medium ${isDarkMode?'text-rose-200':'text-rose-900'}`}>
-            Imagine a vending machine with 4 buttons (A, B, C, D). But only 10 combinations are valid — the other 6 physically can't happen because you can't press those buttons simultaneously. For those impossible inputs, it doesn't matter what the machine does — so we mark the output with an <strong className="font-black text-rose-400">"X"</strong>. We can then treat each X as either 0 or 1, whichever helps us form BIGGER groups and get a simpler expression!
+            Imagine designing the digital control system for an elevator in a 10-story building using a 4-bit binary system. A 4-bit system provides 16 unique combinations (0 through 15). <strong>Mathematically and physically, combinations representing floors 11 through 15 can never occur because those floors simply do not exist in the building!</strong> If you were wiring the motor logic, you wouldn't waste extra gates to explicitly instruct the system to "do nothing" if Floor 14 is pressed. Instead, you treat Floor 14 as a <strong className="font-black text-rose-400">"Don't Care" (X)</strong>. By allowing the circuit to pretend Floor 14 acts like a '1' if it helps form a bigger K-Map group, the resulting control board is cheaper, faster, and simpler to manufacture.
           </p>
         </div>
         <div className={`p-5 rounded-2xl ${c.cardInner}`}>
           <p className={`text-xs font-black uppercase tracking-widest text-amber-500 mb-3`}>Where Do Don't Cares Come From?</p>
           <ul className={`space-y-2 text-sm ${c.muted}`}>
             {[
-              ['BCD Inputs', 'BCD uses codes 0–9 only. Codes 1010–1111 (10–15) never appear → 6 don\'t-care cells!'],
+              ['BCD/Elevator Inputs', 'A 10-story elevator uses codes 0–9 only. Codes 1010–1111 (10–15) never appear → 6 don\'t-care cells!'],
               ['Physical constraints', 'Some button combos on a physical panel can\'t be pressed simultaneously.'],
               ['Unused FSM states', 'A 3-bit counter cycling through only 5 states leaves 3 states unused.'],
               ['Design choice', 'Designer says: "I don\'t care about this edge case — optimise the common path."'],

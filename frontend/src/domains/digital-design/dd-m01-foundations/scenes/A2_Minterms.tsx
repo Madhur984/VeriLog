@@ -67,10 +67,11 @@ const A2_Minterms: React.FC<A2Props> = ({
         <AnimatePresence>
           {quizStep === 'CHALLENGE' && isActive && currentQuizMinterm && (
             <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 1.1, opacity: 0 }}
-              className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md p-6"
+              key="quiz-overlay"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/80 backdrop-blur-md p-6"
             >
               <motion.div 
                 animate={shake ? { x: [-10, 10, -10, 10, 0] } : {}}
@@ -116,7 +117,12 @@ const A2_Minterms: React.FC<A2Props> = ({
           )}
         </AnimatePresence>
 
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 w-full">
+        <div className="w-full flex-1 flex flex-col items-center gap-8 min-h-0">
+          <div className="flex flex-col items-center gap-2">
+             <div className="text-[10px] font-mono font-black italic text-cyan-500 uppercase tracking-widest animate-pulse">■ OBJECTIVE: SELECT ALL ROWS WHERE F=1 IN THE TABLE BELOW</div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-12 w-full">
             {/* Table Selection */}
             <motion.div 
                 initial={{ opacity: 0, x: -30 }} 
@@ -203,8 +209,9 @@ const A2_Minterms: React.FC<A2Props> = ({
             </motion.div>
         </div>
       </div>
-    </SceneWrapper>
-  );
+    </div>
+  </SceneWrapper>
+);
 };
 
 export default A2_Minterms;

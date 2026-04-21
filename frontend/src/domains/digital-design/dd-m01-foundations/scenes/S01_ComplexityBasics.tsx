@@ -57,6 +57,23 @@ const S01_ComplexityBasics: React.FC<{ sceneIndex: number; currentScene: number 
              A single bit has 2 states. Two bits have 4. <br/>
              This exponential growth is why we cannot design by hand.
           </p>
+
+          <div className="flex justify-center gap-4 mt-4">
+             {[
+               { id: 'tt', label: 'TRUTH_TABLE', def: 'The complete mapping of 2ⁿ input states to outputs.' },
+               { id: 'min', label: 'MINTERM', def: 'A product term (AND gate) representing exactly one ON state.' },
+             ].map(g => (
+               <div key={g.id} className="group relative">
+                  <button className="px-4 py-2 rounded-full border border-white/10 text-[10px] font-mono font-black italic text-white/20 hover:text-cyan-400 hover:border-cyan-400/40 transition-all uppercase tracking-widest">
+                    {g.label} ?
+                  </button>
+                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-4 rounded-xl bg-black border border-white/10 text-[10px] font-mono italic text-white/60 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50">
+                    <div className="text-cyan-500 mb-1">■ INTEL_LOG</div>
+                    {g.def}
+                  </div>
+               </div>
+             ))}
+          </div>
         </motion.div>
 
         <motion.div

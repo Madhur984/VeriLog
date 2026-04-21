@@ -53,18 +53,37 @@ const CircuitCanvas: React.FC<CircuitCanvasProps> = ({
   const totalH = Math.max(height, count * (GATE_H + GAP) + GAP);
   const startY = (totalH - count * (GATE_H + GAP)) / 2;
 
-  const activeTermIndex = useMemo(() => {
-    if (!inputValues) return -1;
-    return items.findIndex((item) => {
-      // Check if all present variables in this term match input values
+  const activeIndices = useMemo(() => {
+    if (!inputValues) return new Set<number>();
+    const indices = new Set<number>();
+    items.forEach((item, idx) => {
+      let match = true;
       for (let i = 0; i < variables.length; i++) {
         if (item.present && !item.present[i]) continue;
         const expected = item.complements[i] ? false : true;
-        if (inputValues[i] !== expected) return false;
+        if (inputValues[i] !== expected) {
+          match = false;
+          break;
+        }
       }
-      return true;
+      if (match) indices.add(idx);
     });
+    return indices;
   }, [inputValues, items, variables]);
+
+  const outputActive = useMemo(() => {
+    if (activeIndices.size === 0 && isSOP) return false;
+    if (isSOP) return activeIndices.size > 0;
+    // For POS: Output is 0 if any Maxterm is 0. 
+    // Wait, the logic in booleanEngine for Maxterms already returns 0/false for the specific row.
+    // In POS (OR-AND), the OR gates output 0 only for their specific row.
+    // If any OR gate outputs 0, the final AND is 0.
+    // However, our `items` for POS are Maxterms.
+    // A Maxterm is 0 ONLY when inputs match its definition.
+    // So if any index is "active" (meaning inputs match the Maxterm), the output of that OR gate is 0.
+    // Which makes the final AND output 0.
+    return activeIndices.size === 0; 
+  }, [activeIndices, isSOP]);
 
   const l2Y = totalH / 2 - GATE_H / 2;
   const l2CenterY = l2Y + GATE_H / 2;
@@ -72,14 +91,28 @@ const CircuitCanvas: React.FC<CircuitCanvasProps> = ({
   const { mouseX, mouseY, smoothMouseX, smoothMouseY } = useCursorGravity();
   const svgRef = useRef<SVGSVGElement>(null);
   const [isNear, setIsNear] = React.useState(false);
+  const [activeTermIndex, setActiveTermIndex] = React.useState(-1);
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!svgRef.current) return;
     const rect = svgRef.current.getBoundingClientRect();
     const nx = e.clientX - rect.left;
     const ny = e.clientY - rect.top;
-    // Simple proximity: if within SVG bounds
-    setIsNear(nx > 0 && nx < width && ny > 0 && ny < totalH);
+    
+    const near = nx > 0 && nx < width && ny > 0 && ny < totalH;
+    setIsNear(near);
+
+    if (near) {
+      const relativeY = ny - startY;
+      const index = Math.floor((relativeY + (GATE_H + GAP) / 2) / (GATE_H + GAP));
+      if (index >= 0 && index < count) {
+        setActiveTermIndex(index);
+      } else {
+        setActiveTermIndex(-1);
+      }
+    } else {
+      setActiveTermIndex(-1);
+    }
   };
 
   return (
@@ -103,7 +136,9 @@ const CircuitCanvas: React.FC<CircuitCanvasProps> = ({
       {/* Level 1 gates */}
       {items.map((item, idx) => {
         const termY = startY + idx * (GATE_H + GAP);
-        const isActive = inputValues ? idx === activeTermIndex : false;
+        const isActive = activeIndices.has(idx);
+        // For POS, an "active" Maxterm means the OR gate output is 0.
+        const gateOutput = isSOP ? isActive : !isActive;
         
         // Filter input labels to only show those present in the term
         const termInputs = variables
@@ -158,21 +193,35 @@ const CircuitCanvas: React.FC<CircuitCanvasProps> = ({
                 const val = inputValues[inp.index];
                 return item.complements[inp.index] ? !val : val;
               })}
-              outputState={isActive}
+              outputState={gateOutput}
               label={item.present?.every(p => p) ? `m${item.index}` : `T${idx}`}
             />
+
+            {/* Intermediate Output State Label */}
+            <motion.text
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              x={L1_X + GATE_W + 4}
+              y={termY + GATE_H / 2 - 4}
+              fontSize={10}
+              fill={gateOutput ? (isSOP ? "#00D4FF" : "#22C55E") : "#3A3A4A"}
+              fontFamily="IBM Plex Mono, monospace"
+              className="font-black italic"
+            >
+              out: {gateOutput ? '1' : '0'}
+            </motion.text>
 
             {/* Wire from L1 to L2 */}
             <path
               d={`M${L1_X + GATE_W},${termY + GATE_H / 2} C${L1_X + GATE_W + 20},${termY + GATE_H / 2} ${L2_X - 20},${l2CenterY} ${L2_X},${l2CenterY}`}
-              stroke={isActive ? '#00D4FF' : '#3A3A4A'}
+              stroke={gateOutput ? (isSOP ? '#00D4FF' : '#22C55E') : '#3A3A4A'}
               strokeWidth={2}
               fill="none"
             />
 
             {/* Traveling signal dot */}
-            {isActive && (
-              <circle r={3} fill="#00D4FF" filter="url(#glow-cyan)">
+            {gateOutput && (
+              <circle r={3} fill={isSOP ? "#00D4FF" : "#22C55E"} filter="url(#glow-cyan)">
                 <animateMotion
                   dur="1.2s"
                   repeatCount="indefinite"
@@ -192,27 +241,47 @@ const CircuitCanvas: React.FC<CircuitCanvasProps> = ({
             x={L2_X}
             y={l2Y}
             scale={SCALE}
-            active={inputValues ? activeTermIndex >= 0 : false}
-            outputState={inputValues ? activeTermIndex >= 0 : false}
+            active={outputActive}
+            outputState={outputActive}
           />
+          {/* L2 Input Signals indicators */}
+          <g>
+             {items.map((_, idx) => {
+                const termY = startY + idx * (GATE_H + GAP);
+                const isActive = idx === activeTermIndex;
+                return (
+                  <text
+                    key={idx}
+                    x={L2_X - 18}
+                    y={termY + GATE_H / 2 + 3}
+                    fontSize={8}
+                    fill={isSOP ? (activeIndices.has(idx) ? "#00D4FF" : "#3A3A4A") : (!activeIndices.has(idx) ? "#22C55E" : "#3A3A4A")}
+                    fontFamily="IBM Plex Mono, monospace"
+                    className="font-black"
+                  >
+                    {isSOP ? (activeIndices.has(idx) ? '1' : '0') : (!activeIndices.has(idx) ? '1' : '0')}
+                  </text>
+                );
+             })}
+          </g>
           {/* Output wire */}
           <line
             x1={L2_X + GATE_W}
             y1={l2CenterY}
             x2={L2_X + GATE_W + 30}
             y2={l2CenterY}
-            stroke={inputValues && activeTermIndex >= 0 ? '#00FF88' : '#3A3A4A'}
+            stroke={outputActive ? (isSOP ? '#00FF88' : '#22C55E') : '#3A3A4A'}
             strokeWidth={2.5}
           />
           <text
             x={L2_X + GATE_W + 42}
             y={l2CenterY + 5}
             fontSize={14}
-            fill={inputValues && activeTermIndex >= 0 ? '#00FF88' : '#7A7A8C'}
+            fill={outputActive ? (isSOP ? '#00FF88' : '#22C55E') : '#7A7A8C'}
             fontFamily="IBM Plex Mono, monospace"
             className="font-black italic"
           >
-            F
+            F = {outputActive ? '1' : '0'}
           </text>
         </>
       )}

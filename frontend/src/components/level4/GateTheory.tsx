@@ -335,6 +335,9 @@ export const GateDetail: React.FC<{ gateId: string, isActive: boolean, isDarkMod
                         <p className={`text-xs opacity-70 leading-relaxed font-mono ${textColor}`}>
                             {gate.cmosNote}
                         </p>
+                        <p className={`text-xs mt-3 opacity-90 leading-relaxed font-mono`} style={{ color: isDarkMode ? '#F59E0B' : '#D97706' }}>
+                            ► PPA Impact: Every physical gate adds propagation delay and area to the silicon Bill of Materials (BOM). Minimizing gate count directly accelerates CPU clock speeds.
+                        </p>
                     </div>
                 </div>
             </div>

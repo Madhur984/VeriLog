@@ -88,9 +88,12 @@ const C2_NANDUniversality: React.FC<C2Props> = ({ sceneIndex, currentScene }) =>
                     <h2 className="text-4xl font-mono font-black italic text-white uppercase tracking-tighter leading-none">
                         The <span className="text-green-500">Industry</span> Standard.
                     </h2>
-                    <p className="text-sm font-mono font-black italic text-white/40 uppercase tracking-widest leading-relaxed">
-                        Silicon factories optimize for one gate: <span className="text-green-500">NAND</span>. It's cheaper, denser, and functionally complete.
+                    <p className="text-sm font-mono font-bold italic text-white/50 uppercase tracking-widest leading-relaxed">
+                        Silicon factories optimize for one universal building block: <span className="text-green-500 font-black tracking-tighter">NAND</span>. 
                     </p>
+                    <div className="p-4 rounded-xl bg-green-500/10 border-l-4 border-green-500 text-xs font-mono text-green-100/70 leading-relaxed">
+                        <strong className="text-green-400 font-black uppercase">Manufacturing Economy:</strong> Think of logic families as interchangeable Lego blocks or the assembly line of the digital revolution. An unconfigured silicon chip is essentially a <strong className="text-white italic">"Sea of NAND gates"</strong>—a blank, programmable canvas because NAND is inherently easier and cheaper to fabricate at the transistor level than AND/OR.
+                    </div>
                 </div>
 
                 {/* Stimulus Injection */}

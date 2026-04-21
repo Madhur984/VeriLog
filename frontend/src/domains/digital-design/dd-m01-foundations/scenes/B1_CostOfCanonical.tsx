@@ -32,7 +32,7 @@ const B1_CostOfCanonical: React.FC<B1Props> = ({ sceneIndex, currentScene }) => 
         </motion.div>
 
         {/* Audit Dashboard */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 w-full">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 w-full relative z-10">
             {/* CANONICAL */}
             <motion.div 
                 initial={{ opacity: 0, x: -30 }} 
@@ -47,7 +47,7 @@ const B1_CostOfCanonical: React.FC<B1Props> = ({ sceneIndex, currentScene }) => 
                 <div className="flex flex-col gap-6">
                     <div className="flex justify-between items-baseline">
                         <span className="text-4xl font-mono font-black italic text-white/80">{CANONICAL_COST.gates}</span>
-                        <span className="text-[10px] font-mono text-white/20 uppercase">GATES</span>
+                        <span className="text-[10px] font-mono text-white/20 uppercase">GATES / BOM</span>
                     </div>
                     <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
                         <motion.div initial={{ width: 0 }} animate={isActive ? { width: '100%' } : {}} className="h-full bg-red-500/40" transition={{ duration: 1 }} />
@@ -73,7 +73,7 @@ const B1_CostOfCanonical: React.FC<B1Props> = ({ sceneIndex, currentScene }) => 
                 <div className="flex flex-col gap-6">
                     <div className="flex justify-between items-baseline">
                         <span className="text-4xl font-mono font-black italic text-blue-500">{MINIMAL_COST.gates}</span>
-                        <span className="text-[10px] font-mono text-blue-500/40 uppercase">GATES</span>
+                        <span className="text-[10px] font-mono text-blue-500/40 uppercase">GATES / BOM</span>
                     </div>
                     <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
                         <motion.div initial={{ width: 0 }} animate={isActive ? { width: '27%' } : {}} className="h-full bg-blue-500" transition={{ duration: 1, delay: 0.5 }} />
@@ -95,12 +95,27 @@ const B1_CostOfCanonical: React.FC<B1Props> = ({ sceneIndex, currentScene }) => 
             </motion.div>
         </div>
 
-        <p className="text-[10px] font-mono font-black italic text-white/20 uppercase tracking-[0.3em] mt-auto">
-           Smaller die area = lower fabrication cost = higher clock frequency.
-        </p>
+        {/* Industrial BOM Context */}
+        <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={isActive ? { opacity: 1, y: 0 } : {}}
+            transition={{ delay: 0.8 }}
+            className="w-full max-w-4xl p-6 rounded-3xl bg-blue-500/10 border border-blue-500/20 flex flex-col md:flex-row items-center gap-6 shadow-[0_0_40px_rgba(59,130,246,0.15)]"
+        >
+            <div className="w-12 h-12 rounded-2xl bg-blue-500 flex items-center justify-center shrink-0">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            </div>
+            <div className="flex flex-col gap-2">
+                <h4 className="text-sm font-black italic uppercase tracking-widest text-blue-400">The Power, Performance, Area (PPA) Triad</h4>
+                <p className="text-xs font-mono text-white/60 leading-relaxed">
+                    Simplifying an expression is exactly like trimming a manufacturing <strong className="text-blue-400 font-black">Bill of Materials (BOM)</strong>. Every algebraic term translates to a costly physical logic gate, and every variable (literal) translates to an input wire. Using the Identity Theorem, you literally replace an active gate with a passive wire.
+                </p>
+            </div>
+        </motion.div>
       </div>
     </SceneWrapper>
   );
 };
+
 
 export default B1_CostOfCanonical;

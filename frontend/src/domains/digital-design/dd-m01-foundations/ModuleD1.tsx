@@ -174,7 +174,7 @@ const ModuleD1: React.FC = () => {
   const onBegin = useCallback(() => scrollToScene(1), [scrollToScene]);
 
   // Keyboard navigation
-  React.useEffect(() => {
+  useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === 'ArrowDown' || e.key === 'PageDown') {
         scrollToScene(Math.min(state.currentScene + 1, 21));
@@ -209,6 +209,17 @@ const ModuleD1: React.FC = () => {
   const phaseNames = ['SIGNAL_PROC', 'FORMULATION', 'MINIMISATION', 'REALISATION', 'EVALUATION', 'FINAL_OP'];
   const currentPhaseName = phaseNames[Math.floor(current / 4)] || 'FINAL_OP';
   
+  const isAnyCheckpointOpen = Object.values(state.checkpoint).some(cp => cp.open);
+
+  useEffect(() => {
+    if (isAnyCheckpointOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+    return () => { document.body.style.overflow = 'auto'; };
+  }, [isAnyCheckpointOpen]);
+
   return (
     <main className="relative w-full h-screen overflow-hidden select-none" style={{ background: '#06060A' }}>
       <h1 className="sr-only">Digital Design Fundamentals: Module D1</h1>
@@ -216,8 +227,11 @@ const ModuleD1: React.FC = () => {
       {/* ─── Cinematic Layers ─── */}
       <BackgroundOrchestrator currentScene={current} />
       
-      {/* Global Texture Overlay */}
-      <div className="fixed inset-0 z-[10] pointer-events-none opacity-[0.03] mix-blend-overlay bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+      {/* Global Texture Overlay (Inline SVG noise to avoid 404) */}
+      <div 
+        className="fixed inset-0 z-[10] pointer-events-none opacity-[0.03] mix-blend-overlay" 
+        style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }}
+      />
       <div className="fixed inset-0 z-[11] pointer-events-none bg-gradient-to-b from-black/20 via-transparent to-black/20" />
 
       {/* Boot Sequence (IMP-H1) */}

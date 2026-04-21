@@ -7,10 +7,10 @@ interface BackgroundOrchestratorProps {
 
 const PHASE_BACKGROUNDS: Record<string, string | null> = {
   hook: null,
-  canonical: '/artifacts/silicon_logic_blueprint_1776790480201.png',
-  minimisation: '/artifacts/silicon_logic_topography_1776782325768.png', 
-  universality: '/artifacts/universal_nand_forge_1776790502037.png',
-  selection: '/artifacts/boss_core_terminal_1776790526880.png',
+  canonical: '/assets/dd-m01/silicon_logic_blueprint_1776790480201.png',
+  minimisation: '/assets/dd-m01/silicon_logic_topography_1776782325768.png', 
+  universality: '/assets/dd-m01/universal_nand_forge_1776790502037.png',
+  selection: '/assets/dd-m01/boss_core_terminal_1776790526880.png',
 };
 
 const BackgroundOrchestrator: React.FC<BackgroundOrchestratorProps> = ({ currentScene }) => {

@@ -192,13 +192,13 @@ export const AnalogDigital: React.FC<ScreenProps> = ({
         </div>
 
         {/* Theory Section */}
-        <div className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-1 gap-4">
             <KnowledgeCard 
                 title="Sampling Theory"
                 description="To perfectly recreate an analog signal, you must sample at least TWICE the highest frequency."
                 details="If your sampling rate is too low, you get 'Aliasing'—false patterns that didn't exist in the original signal. Try lowering the Sampling Rate while increasing the Frequency to see this in action!"
                 icon={Activity}
-                className="bg-white border-slate-200 shadow-sm"
+                className="bg-white border-slate-200 shadow-sm transition-all hover:border-sky-300"
             />
             
             <KnowledgeCard 
@@ -206,7 +206,15 @@ export const AnalogDigital: React.FC<ScreenProps> = ({
                 description="Converting smooth voltage into bits creates 'rounding errors' that sound like noise."
                 details="Higher Bit-Depth (like 8-bit) reduces this error. Lower it to 1-Bit or 2-Bit to see the 'Staircase' effect of quantization."
                 icon={Database}
-                className="bg-white border-slate-200 shadow-sm"
+                className="bg-sky-50 border-sky-100 shadow-sm"
+            />
+
+            <KnowledgeCard 
+                title="Industrial Resilience"
+                description="Why Digital? Because noise can't flip a well-defined '1' or '0'."
+                details="Analog signals are easily distorted by temperature or humidity. A digital system representing 0-5V with a 10-bit value provides 5mV precision—minor noise won't corrupt the data. Contrast this with Babbage's 25-gear mechanical computer: gears jam and wear out, just like continuous signals degrade. Binary hardware switches are simply more reliable."
+                icon={BrainCircuit}
+                className="bg-slate-900 !text-white border-slate-800 shadow-lg"
             />
         </div>
       </div>
