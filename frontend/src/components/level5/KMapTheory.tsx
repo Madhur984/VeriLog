@@ -18,18 +18,34 @@ export const VisualMasterclass: React.FC<Props> = ({ isActive, isDarkMode }) => 
 
       <motion.div initial={{ opacity: 0, y: 20 }} animate={isActive ? { opacity: 1, y: 0 } : {}} className={`p-1 rounded-[2.5rem] bg-gradient-to-br from-cyan-500/20 to-blue-600/20 border border-white/10 overflow-hidden shadow-2xl`}>
         <div className={`p-8 rounded-[2.4rem] ${isDarkMode ? 'bg-[#0B0F14]/80 backdrop-blur-xl' : 'bg-white/90'} space-y-8`}>
-            <div className="aspect-video w-full rounded-2xl overflow-hidden bg-black relative group">
-                <iframe 
-                    className="w-full h-full border-none shadow-2xl"
-                    src="https://www.youtube.com/embed/p8S-y2M2g60"
-                    title="K-Map Video Masterclass"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                ></iframe>
-                <div className="absolute inset-x-0 bottom-0 p-6 bg-gradient-to-t from-black to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex justify-between items-center">
-                    <div className="flex items-center gap-3">
-                        <PlayCircle className="text-cyan-400" size={20} />
-                        <span className="text-[10px] font-mono font-black italic text-white uppercase tracking-widest">K-Map Minimization // 4-Variable Masterclass</span>
+            {/* NotebookLM Custom Visualizer Player */}
+            <div className="aspect-video w-full rounded-2xl overflow-hidden bg-black relative group border border-white/10 shadow-[0_0_50px_rgba(99,102,241,0.15)] flex flex-col items-center justify-center">
+                <video 
+                    controls
+                    className="w-full h-full object-cover z-10 relative"
+                    poster="/assets/module5/npu.png"
+                    src="/assets/module5/lm_generated_video.mp4"
+                >
+                    <source src="/assets/module5/lm_generated_video.mp4" type="video/mp4" />
+                    Your browser does not support the video tag.
+                </video>
+                
+                {/* Fallback & Loading Visuals (Behind Video) */}
+                <div className="absolute inset-0 z-0 flex flex-col items-center justify-center">
+                    <div className="absolute top-0 right-0 w-full h-[1px] bg-gradient-to-r from-transparent via-indigo-500/50 to-transparent shadow-[0_0_20px_rgba(99,102,241,0.8)] animate-pulse" />
+                    <div className="w-full h-full opacity-30 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.5)_50%),linear-gradient(90deg,rgba(99,102,241,0.1),rgba(139,92,246,0.05),rgba(236,72,153,0.1))] bg-[length:100%_4px,6px_100%]" />
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(99,102,241,0.1),transparent_70%)]" />
+                    
+                    <div className="text-center space-y-2 opacity-50">
+                        <span className="text-[10px] font-mono font-black italic uppercase tracking-[0.4em] text-indigo-400 block drop-shadow-[0_0_10px_rgba(99,102,241,0.5)]">
+                            NotebookLM AI Workspace
+                        </span>
+                        <h3 className={`text-xl font-black ${isDarkMode ? 'text-white' : 'text-white'}`}>
+                            Waiting for Video Stream...
+                        </h3>
+                        <p className="text-[10px] font-mono uppercase tracking-widest text-white/50">
+                            Please place the generated video at `/public/assets/module5/lm_generated_video.mp4`
+                        </p>
                     </div>
                 </div>
             </div>
@@ -60,28 +76,6 @@ export const VisualMasterclass: React.FC<Props> = ({ isActive, isDarkMode }) => 
                     ))}
                 </ul>
             </div>
-
-            {/* NotebookLM Video Overview Callout */}
-            <motion.div 
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.5 }}
-                className={`p-6 rounded-2xl border flex flex-col md:flex-row items-center gap-6 justify-between ${isDarkMode ? 'bg-indigo-500/10 border-indigo-500/30' : 'bg-indigo-50 border-indigo-200'} shadow-lg`}
-            >
-                <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-full bg-indigo-500 flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(99,102,241,0.5)]">
-                        <PlayCircle className="text-white" size={24} />
-                    </div>
-                    <div className="flex flex-col gap-1">
-                        <span className="text-[10px] font-mono font-black italic uppercase tracking-widest text-indigo-400">NotebookLM AI Generation</span>
-                        <h4 className={`text-sm font-black ${isDarkMode ? 'text-white' : 'text-indigo-900'}`}>Demystifying Karnaugh Maps</h4>
-                        <p className={`text-xs font-mono opacity-70 ${isDarkMode ? 'text-white' : 'text-indigo-800'}`}>Custom Video Overview generated in your workspace.</p>
-                    </div>
-                </div>
-                <button className="px-6 py-3 rounded-xl bg-indigo-500 text-white text-[10px] font-mono font-black italic uppercase tracking-widest hover:bg-indigo-400 transition-colors flex items-center gap-2 shadow-lg shrink-0">
-                    Access Notebook <ExternalLink size={14} />
-                </button>
-            </motion.div>
         </div>
       </motion.div>
 
