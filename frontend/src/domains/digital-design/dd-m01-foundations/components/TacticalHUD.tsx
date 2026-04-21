@@ -6,9 +6,16 @@ interface TacticalHUDProps {
   phase: string;
   sip: number;
   status?: string;
+  logicValue?: boolean;
 }
 
-const TacticalHUD: React.FC<TacticalHUDProps> = ({ phase, sip, status = 'SYSTEM_READY' }) => {
+const TacticalHUD: React.FC<TacticalHUDProps> = ({ phase, sip, status = 'SYSTEM_READY', logicValue = false }) => {
+  const [history, setHistory] = React.useState<number[]>(new Array(40).fill(0));
+
+  React.useEffect(() => {
+    setHistory(prev => [...prev.slice(1), logicValue ? 1 : 0]);
+  }, [logicValue]);
+
   return (
     <div className="fixed inset-0 pointer-events-none z-[100] font-mono overflow-hidden">
       {/* Corner Brackets */}
@@ -31,6 +38,23 @@ const TacticalHUD: React.FC<TacticalHUDProps> = ({ phase, sip, status = 'SYSTEM_
           <Zap size={14} className="text-amber-400" />
           <span className="text-[10px] tracking-[0.3em] text-white/60">S.I.P: {sip.toString().padStart(4, '0')}</span>
         </div>
+      </div>
+
+      {/* Logic Oscilloscope (Bottom-Right) */}
+      <div className="absolute bottom-10 right-32 flex flex-col items-end gap-2 px-4 py-2 rounded-lg bg-black/40 border border-white/5 backdrop-blur-sm">
+        <div className="flex items-center gap-2">
+            <span className="text-[8px] tracking-widest text-cyan-400/50 uppercase">Oscilloscope_V7</span>
+            <div className={`w-1.5 h-1.5 rounded-full ${logicValue ? 'bg-cyan-400 shadow-[0_0_8px_#22d3ee]' : 'bg-white/10'}`} />
+        </div>
+        <svg width="120" height="30" className="opacity-80">
+          <path
+            d={history.map((val, i) => `${i === 0 ? 'M' : 'L'}${i * 3},${25 - val * 20}`).join(' ')}
+            fill="none"
+            stroke={logicValue ? "#22d3ee" : "#444"}
+            strokeWidth="1.5"
+            strokeLinejoin="round"
+          />
+        </svg>
       </div>
 
       {/* Side Alerts */}

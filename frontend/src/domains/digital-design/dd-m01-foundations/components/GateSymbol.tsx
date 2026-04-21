@@ -1,4 +1,5 @@
 import React, { memo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export type GateType = 'AND' | 'OR' | 'NOT' | 'NAND' | 'NOR' | 'XOR' | 'XNOR' | 'BUFFER';
 
@@ -33,6 +34,7 @@ const GateSymbol: React.FC<GateSymbolProps> = ({
   label,
   showBubbles = true,
 }) => {
+  const [isHovered, setIsHovered] = React.useState(false);
   const w = 60 * scale;
   const h = 40 * scale;
   const glow = active
@@ -76,7 +78,15 @@ const GateSymbol: React.FC<GateSymbolProps> = ({
   const outputX = type === 'NOT' ? 44 * scale : type === 'OR' || type === 'NOR' ? 45 * scale : 55 * scale;
 
   return (
-    <g transform={`translate(${x},${y})`} filter={glow} role="img" aria-label={`${type} gate`}>
+    <g 
+      transform={`translate(${x},${y})`} 
+      filter={glow} 
+      role="img" 
+      aria-label={`${type} gate`}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className="cursor-crosshair"
+    >
       {/* Input wires */}
       {type !== 'NOT' && type !== 'BUFFER' && (
         <>
@@ -139,6 +149,25 @@ const GateSymbol: React.FC<GateSymbolProps> = ({
           {label}
         </text>
       )}
+
+      {/* Diagnostic Tooltip */}
+      <AnimatePresence>
+        {isHovered && (
+          <motion.g
+            initial={{ opacity: 0, y: -5 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -5 }}
+          >
+            <rect 
+              x={-10} y={-35} width={80} height={30} rx={4} 
+              fill="rgba(10,10,12,0.95)" stroke={strokeColor} strokeWidth={1} 
+            />
+            <text x={0} y={-23} fontSize={6} fill={strokeColor} fontFamily="IBM Plex Mono">t_pd: 1.25ns</text>
+            <text x={0} y={-14} fontSize={6} fill="#E8E8F0" fontFamily="IBM Plex Mono">P_dyn: 0.12mW</text>
+            <text x={45} y={-18} fontSize={8} fill={strokeColor} fontWeight="bold" fontFamily="IBM Plex Mono">{type}</text>
+          </motion.g>
+        )}
+      </AnimatePresence>
     </g>
   );
 };

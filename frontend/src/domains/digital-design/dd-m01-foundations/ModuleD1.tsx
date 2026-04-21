@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { useModuleD1State } from './useModuleD1State';
 import { useScrollScene } from '../../../shared/hooks/useScrollScene';
+import { useGlobalSensory } from '../../../hooks/useGlobalSensory';
 
 import ProgressBar from './components/ProgressBar';
 import { SIPToastSystem } from './components/SIPToast';
@@ -138,6 +139,13 @@ const ModuleD1: React.FC = () => {
     setToasts(prev => prev.filter(t => t.id !== id));
   }, []);
 
+  const { playAmbient, stopAmbient, playSound } = useGlobalSensory();
+
+  React.useEffect(() => {
+    playAmbient();
+    return () => stopAmbient();
+  }, [playAmbient, stopAmbient]);
+
   // Scroll detection
   const { setContainer } = useScrollScene({
     totalScenes: 20,
@@ -188,7 +196,12 @@ const ModuleD1: React.FC = () => {
   return (
     <div className="relative" style={{ background: '#06060A', overflowX: 'hidden' }}>
       {/* Tactical HUD */}
-      <TacticalHUD phase={currentPhaseName} sip={state.sipTotal} status={systemStatus} />
+      <TacticalHUD 
+        phase={currentPhaseName} 
+        sip={state.sipTotal} 
+        status={systemStatus} 
+        logicValue={current >= 14 && current <= 19} // Active tracing signal if in late phases
+      />
 
       {/* Progress bar */}
       <ProgressBar current={current} total={20} />

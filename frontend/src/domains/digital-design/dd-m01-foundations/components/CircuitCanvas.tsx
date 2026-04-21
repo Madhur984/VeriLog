@@ -1,7 +1,9 @@
-import React, { memo, useMemo } from 'react';
+import React, { memo, useMemo, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import GateSymbol from './GateSymbol';
 import type { CircuitForm } from '../ModuleD1.types';
 import type { Minterm, Maxterm } from '../../../../shared/utils/booleanEngine';
+import { useCursorGravity } from '../../../../hooks/useCursorGravity';
 
 interface CircuitCanvasProps {
   form: CircuitForm;
@@ -67,15 +69,30 @@ const CircuitCanvas: React.FC<CircuitCanvasProps> = ({
   const l2Y = totalH / 2 - GATE_H / 2;
   const l2CenterY = l2Y + GATE_H / 2;
 
+  const { mouseX, mouseY, smoothMouseX, smoothMouseY } = useCursorGravity();
+  const svgRef = useRef<SVGSVGElement>(null);
+  const [isNear, setIsNear] = React.useState(false);
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!svgRef.current) return;
+    const rect = svgRef.current.getBoundingClientRect();
+    const nx = e.clientX - rect.left;
+    const ny = e.clientY - rect.top;
+    // Simple proximity: if within SVG bounds
+    setIsNear(nx > 0 && nx < width && ny > 0 && ny < totalH);
+  };
+
   return (
-    <svg
-      width={width}
-      height={totalH}
-      viewBox={`0 0 ${width} ${totalH}`}
-      role="img"
-      aria-label={`${form} logic circuit with ${count} level-1 gates`}
-      className="overflow-visible"
-    >
+    <div className="relative group/canvas" onMouseMove={handleMouseMove} onMouseLeave={() => setIsNear(false)}>
+      <svg
+        ref={svgRef}
+        width={width}
+        height={totalH}
+        viewBox={`0 0 ${width} ${totalH}`}
+        role="img"
+        aria-label={`${form} logic circuit with ${count} level-1 gates`}
+        className="overflow-visible"
+      >
       <defs>
         <filter id="glow-cyan">
           <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur" />
@@ -197,7 +214,32 @@ const CircuitCanvas: React.FC<CircuitCanvasProps> = ({
           </text>
         </>
       )}
-    </svg>
+      </svg>
+      
+      {/* Logic Probe Instrument */}
+      <AnimatePresence>
+        {isNear && (
+          <motion.div
+            style={{ x: smoothMouseX, y: smoothMouseY }}
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            className="fixed pointer-events-none z-[200] ml-4 -mt-4 px-2 py-1 rounded bg-[#0A0A0C] border border-cyan-500/50 flex flex-col gap-0.5 backdrop-blur-md"
+          >
+            <div className="flex items-center gap-2">
+              <span className="text-[8px] font-mono text-cyan-400/60 uppercase">Probe_A1</span>
+              <div className={`w-1.5 h-1.5 rounded-full ${inputValues && activeTermIndex >= 0 ? 'bg-cyan-400 shadow-[0_0_8px_#22d3ee]' : 'bg-white/10'}`} />
+            </div>
+            <div className="flex items-center justify-between gap-4">
+              <span className="text-[10px] font-mono text-white/40 italic">LEVEL</span>
+              <span className={`text-[10px] font-mono font-bold ${inputValues && activeTermIndex >= 0 ? 'text-cyan-400' : 'text-rose-500'}`}>
+                {inputValues && activeTermIndex >= 0 ? 'HIGH' : 'LOW'}
+              </span>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 };
 
