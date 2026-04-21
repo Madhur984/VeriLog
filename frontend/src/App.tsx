@@ -27,6 +27,7 @@ import { SandboxModule5 } from './pages/SandboxModule5';
 
 // Component-based Routes
 import { Module1Root } from './components/level1/module1_v4/Module1Root';
+import { ModuleD1 } from './domains/digital-design';
 
 // Special default exports
 import Workbench from './pages/Workbench';
@@ -82,6 +83,7 @@ function App() {
           {/* Core Modules Hierarchy */}
           <Route path="/module/1" element={<Module1Root />} />
           <Route path="/module/1/1" element={<ModuleOne />} />
+          <Route path="/module/digital-design/1" element={<ModuleD1 />} />
           <Route path="/module/2" element={<ModuleTwo />} />
           <Route path="/module/3" element={<ModuleThree />} />
           <Route path="/module/4" element={<ModuleFour />} />

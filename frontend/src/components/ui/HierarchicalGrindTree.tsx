@@ -119,6 +119,25 @@ const ROOT_NODES: RootNode[] = [
       { id: 'r6c6', label: 'Simulation', pct: 0, color: '#ede9fe', icon: '▶', locked: false },
     ],
   },
+  {
+    id: 'r7',
+    label: 'Digital Design',
+    fullLabel: 'DD-M01: Foundations',
+    pct: 0,
+    icon: '⊟',
+    color: ['#0f2942', '#00D4FF'],
+    glow: '#00D4FF',
+    route: '/module/digital-design/1',
+    status: 'active',
+    children: [
+      { id: 'r7c1', label: 'Truth Tables', pct: 0, color: '#00D4FF', icon: '⊟', locked: false },
+      { id: 'r7c2', label: 'Minterms / Maxterms', pct: 0, color: '#A855F7', icon: 'Σ', locked: false },
+      { id: 'r7c3', label: 'Canonical SOP/POS', pct: 0, color: '#A855F7', icon: '+', locked: false },
+      { id: 'r7c4', label: 'K-Map Intuition', pct: 0, color: '#3B82F6', icon: '▦', locked: false },
+      { id: 'r7c5', label: 'Gate Realisation', pct: 0, color: '#22C55E', icon: '⊃', locked: false },
+      { id: 'r7c6', label: 'Dual Path Logic', pct: 0, color: '#FFC107', icon: '⚖', locked: false },
+    ],
+  },
 ];
 
 
@@ -494,10 +513,10 @@ export const HierarchicalGrindTree: React.FC = () => {
       subtitle: 'ARCH_SYNTHESIS',
       color: '#34d399',
       nodes: [
+        { id: 'dd-m01', label: 'DD-M01 Foundations', subtitle: 'TRUTH→GATES', route: '/module/digital-design/1' },
         { id: 's02', label: 'Abstraction Ladder', subtitle: 'L6.S02', route: '/module/6/11' },
         { id: 's05', label: 'VLSI Connection', subtitle: 'L6.S05', route: '/module/6/14' },
         { id: 's13', label: 'Synthesis Flow', subtitle: 'L6.S13', route: '/module/6/13' },
-        { id: 's14', label: 'FPGA vs ASIC', subtitle: 'L6.S14', route: '/module/6/23' },
       ]
     },
     {
@@ -567,7 +586,7 @@ export const HierarchicalGrindTree: React.FC = () => {
 
       {/* ── Scrollable Branches Area ── */}
       <div
-        className="flex-1 w-full overflow-y-auto px-10 pt-10 pb-24 scrollbar-hide relative z-10"
+        className="flex-1 w-full overflow-y-auto px-4 lg:px-6 pt-0 pb-24 scrollbar-hide relative z-10 flex justify-center"
       >
         <div className="max-w-[1400px] mx-auto">
             {/* Connection Hub Visualization — Industrial Diagnostic */}
