@@ -100,23 +100,48 @@ const CheckpointModal: React.FC<CheckpointModalProps> = ({
           onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
         >
           <motion.div
-            initial={{ scale: 0.92, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.92, opacity: 0 }}
-            transition={{ duration: 0.25 }}
-            className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl"
-            style={{ background: '#111114', border: `1px solid ${phaseColor}44` }}
+            initial={{ scale: 0.9, opacity: 0, rotateX: 20 }}
+            animate={{ scale: 1, opacity: 1, rotateX: 0 }}
+            exit={{ scale: 0.95, opacity: 0, rotateX: -10 }}
+            transition={{ type: 'spring', damping: 20, stiffness: 100 }}
+            className="relative w-full max-w-2xl max-h-[90vh] overflow-hidden rounded-2xl flex flex-col shadow-[0_0_50px_rgba(0,0,0,0.5)]"
+            style={{ background: '#070709', border: `1px solid ${phaseColor}55` }}
           >
+            {/* Binary Rain Background */}
+            <div className="absolute inset-0 opacity-[0.03] pointer-events-none font-mono text-[8px] leading-none overflow-hidden select-none">
+              {[...Array(20)].map((_, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ y: -100 }}
+                  animate={{ y: 800 }}
+                  transition={{ duration: 10 + Math.random() * 10, repeat: Infinity, ease: 'linear', delay: i * 0.5 }}
+                  className="absolute"
+                  style={{ left: `${i * 5}%`, color: phaseColor }}
+                >
+                  {Math.random() > 0.5 ? '10101100101' : '00110101010'}
+                  <br />{Math.random() > 0.5 ? '11001010101' : '10101010111'}
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Scanlines layer */}
+            <div className="absolute inset-0 bg-scanlines opacity-[0.05] pointer-events-none z-20" />
+
             {/* Header */}
             <div
-              className="sticky top-0 z-10 px-8 py-5 flex items-center justify-between"
-              style={{ background: '#111114', borderBottom: `1px solid ${phaseColor}22` }}
+              className="relative z-30 px-8 py-6 flex items-center justify-between"
+              style={{ background: 'rgba(17,17,20,0.8)', borderBottom: `1px solid ${phaseColor}33`, backdropFilter: 'blur(4px)' }}
             >
               <div>
-                <div className="text-[10px] font-mono tracking-[0.15em] mb-1" style={{ color: phaseColor }}>
-                  PHASE_{phase} // CHECKPOINT_0{id}
-                </div>
-                <h2 className="text-lg font-bold" style={{ color: '#E8E8F0', fontFamily: 'Inter, system-ui' }}>
+                <motion.div 
+                  animate={{ opacity: [1, 0.5, 1] }} 
+                  transition={{ duration: 0.2, repeat: 3 }}
+                  className="text-[10px] font-mono tracking-[0.3em] mb-1" 
+                  style={{ color: phaseColor }}
+                >
+                  SYSTEM_INTEGRITY_CHECK // 0{id}
+                </motion.div>
+                <h2 className="text-xl font-black italic tracking-tighter uppercase" style={{ color: '#E8E8F0' }}>
                   {title}
                 </h2>
               </div>
@@ -130,7 +155,7 @@ const CheckpointModal: React.FC<CheckpointModalProps> = ({
             </div>
 
             {/* Questions */}
-            <div className="px-8 py-6 flex flex-col gap-6">
+            <div className="relative z-30 px-8 py-6 flex-1 overflow-y-auto flex flex-col gap-6 scrollbar-hide">
               {questions.map((q, qi) => (
                 <div key={q.id} className="flex flex-col gap-3">
                   <div className="flex items-start gap-3">

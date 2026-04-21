@@ -5,6 +5,7 @@ import PhaseLabel from '../components/PhaseLabel';
 import CircuitCanvas from '../components/CircuitCanvas';
 import ExpressionDisplay from '../components/ExpressionDisplay';
 import ModuleRef from '../components/ModuleRef';
+import IntelligenceBrief from '../components/IntelligenceBrief';
 import type { TruthTableRow } from '../ModuleD1.types';
 import { getMinterms, mintermToProductTerm, sigmaMNotation } from '../../../../shared/utils/booleanEngine';
 
@@ -76,28 +77,34 @@ const A4_CanonicalSOP: React.FC<A4Props> = ({ sceneIndex, currentScene, tableRow
             <ModuleRef label="K-MAP MINIMISATION → MODULE DD-M03" color="amber" />
           </div>
 
-          {/* Minterm pills */}
-          <div className="flex flex-col gap-2">
-            <div className="text-[10px] font-mono tracking-[0.08em]" style={{ color: '#7A7A8C' }}>MINTERMS (hover to highlight gate)</div>
-            <div className="flex flex-wrap gap-2">
-              {minterms.map((m, i) => (
-                <motion.span
-                  key={m.index}
-                  onHoverStart={() => setHighlightTerm(i)}
-                  onHoverEnd={() => setHighlightTerm(null)}
-                  className="px-2 py-1 rounded text-[11px] font-mono cursor-default"
-                  style={{
-                    background: `${PHASE_COLOR}1A`,
-                    border: `1px solid ${PHASE_COLOR}44`,
-                    color: PHASE_COLOR,
-                  }}
-                >
-                  {mintermToProductTerm(m)}<sub style={{ fontSize: '0.65em', opacity: 0.6 }}>m{m.index}</sub>
-                </motion.span>
-              ))}
+            <div className="flex flex-col gap-2">
+              <div className="text-[10px] font-mono tracking-[0.08em]" style={{ color: '#7A7A8C' }}>MINTERMS (hover to highlight gate)</div>
+              <div className="flex flex-wrap gap-2">
+                {minterms.map((m, i) => (
+                  <motion.span
+                    key={m.index}
+                    onHoverStart={() => setHighlightTerm(i)}
+                    onHoverEnd={() => setHighlightTerm(null)}
+                    className="px-2 py-1 rounded text-[11px] font-mono cursor-default"
+                    style={{
+                      background: `${PHASE_COLOR}1A`,
+                      border: `1px solid ${PHASE_COLOR}44`,
+                      color: PHASE_COLOR,
+                    }}
+                  >
+                    {mintermToProductTerm(m)}<sub style={{ fontSize: '0.65em', opacity: 0.6 }}>m{m.index}</sub>
+                  </motion.span>
+                ))}
+              </div>
             </div>
-          </div>
-        </motion.div>
+
+            <IntelligenceBrief 
+                type="theory"
+                title="Level_Delay"
+                description="Canonical SOP always results in a strict 2-level logic structure (AND-OR)."
+                details="Because signals only pass through two gates, this provides a predictable, low-latency propagation delay regardless of function complexity."
+            />
+          </motion.div>
 
         {/* RIGHT: Circuit */}
         <motion.div
@@ -172,10 +179,20 @@ const A4_CanonicalSOP: React.FC<A4Props> = ({ sceneIndex, currentScene, tableRow
         </motion.div>
       </div>
 
-      {/* Microcopy */}
-      <div className="px-6 pb-4 text-center flex flex-col gap-1">
-        <p className="text-[12px]" style={{ color: '#7A7A8C' }}>Every minterm becomes one AND gate. All AND outputs feed one OR gate.</p>
-        <p className="text-[12px]" style={{ color: '#7A7A8C' }}>This is the canonical AND-OR structure — a complete circuit for every possible SOP.</p>
+      {/* Intelligence Briefing - Phase Bottom */}
+      <div className="w-full max-w-5xl px-10 pb-12 grid grid-cols-1 md:grid-cols-2 gap-6">
+          <IntelligenceBrief 
+            type="industry"
+            title="Programmable Array Logic"
+            description="The AND-OR structure is the fundamental architecture of PAL and CPLD devices."
+            details="By manufacturing an array of AND gates feeding a wide OR gate, any function can be 'programmed' by simply blowing fuses in the AND array."
+          />
+          <IntelligenceBrief 
+            type="hardware"
+            title="Fan-In Constraints"
+            description="In physical chips, a single OR gate cannot have unlimited inputs (Fan-In)."
+            details="If your truth table has 128 minterms, a real-world design would need to cascade multiple smaller OR gates, slightly increasing delay."
+          />
       </div>
     </SceneWrapper>
   );

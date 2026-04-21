@@ -4,6 +4,7 @@ import SceneWrapper from '../components/SceneWrapper';
 import PhaseLabel from '../components/PhaseLabel';
 import TruthTableBuilder from '../components/TruthTableBuilder';
 import CircuitCanvas from '../components/CircuitCanvas';
+import IntelligenceBrief from '../components/IntelligenceBrief';
 import type { TruthTableRow, CircuitForm } from '../ModuleD1.types';
 import { buildTruthTableRows, getMinterms, getMaxterms, mintermToProductTerm, sigmaMNotation, recommendPath } from '../../../../shared/utils/booleanEngine';
 
@@ -52,7 +53,25 @@ const E2_BossChallenge: React.FC<E2Props> = ({ sceneIndex, currentScene, bossSte
     }
   }, [rows, onBossStepChange]);
 
+  const playVictory = useCallback(() => {
+    const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const notes = [440, 554.37, 659.25, 880]; // A4, C#5, E5, A5
+    notes.forEach((freq, i) => {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(freq, audioCtx.currentTime + i * 0.15);
+      gain.gain.setValueAtTime(0.1, audioCtx.currentTime + i * 0.15);
+      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + i * 0.15 + 0.5);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(audioCtx.currentTime + i * 0.15);
+      osc.stop(audioCtx.currentTime + i * 0.15 + 0.5);
+    });
+  }, []);
+
   const advance = () => {
+    if (bossStep === 5) playVictory();
     if (bossStep < 6) onBossStepChange((bossStep + 1) as BossStep);
   };
 
@@ -82,23 +101,23 @@ const E2_BossChallenge: React.FC<E2Props> = ({ sceneIndex, currentScene, bossSte
         {/* Step 0: Specification */}
         {bossStep === 0 && (
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="rounded-2xl p-5 flex flex-col gap-3"
-            style={{ background: '#111114', border: `2px solid ${PHASE_COLOR}`, boxShadow: `0 0 20px ${PHASE_COLOR}11` }}
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="flex flex-col gap-6"
           >
-            <div className="text-[11px] font-mono font-bold" style={{ color: PHASE_COLOR }}>
-              STEP 1 — SPECIFICATION (3-BIT MAJORITY VOTER)
+            <IntelligenceBrief 
+               type="theory"
+               title="Mission_Protocol"
+               description="The Majority Voter is the safety-critical core of redundant computer systems (like in aircraft flight controllers)."
+               details="When three computers perform the same calculation, the Majority Voter ensures the system accepts the result only if at least two machines agree."
+            />
+            <div className="rounded-2xl p-6 flex flex-col gap-4 bg-[#111114] border-2 border-[#FF5F1F] shadow-[0_0_30px_rgba(255,95,31,0.1)]">
+                <h3 className="text-xl font-black italic tracking-tighter text-[#E8E8F0]">DESIGN_SPEC: 3-BIT VOTER</h3>
+                <p className="text-sm font-medium text-white/70 leading-relaxed uppercase tracking-wider">INPUTS (A, B, C) // OUTPUT F=1 IF Σ(A,B,C) ≥ 2</p>
+                <button onClick={advance} className="self-start px-8 py-3 rounded-xl text-[12px] font-black tracking-[0.2em] bg-[#FF5F1F] text-black transition-transform hover:scale-105 active:scale-95">
+                  INITIALIZE_SCHEMA →
+                </button>
             </div>
-            <div className="text-[16px] leading-relaxed" style={{ color: '#E8E8F0', fontFamily: 'Inter, system-ui' }}>
-              Design a circuit with 3 inputs (A, B, C) where the output F=1 if and only if 2 or more inputs are 1.
-            </div>
-            <div className="flex flex-col gap-1 text-[11px] font-mono" style={{ color: '#7A7A8C' }}>
-              <div>Examples: ABC=011 → F=1 (two 1s). ABC=001 → F=0 (only one 1).</div>
-            </div>
-            <button onClick={advance} className="self-start px-4 py-2 rounded text-[12px] font-bold font-mono mt-2" style={{ background: PHASE_COLOR, color: '#000' }}>
-              BUILD TRUTH TABLE →
-            </button>
           </motion.div>
         )}
 
@@ -211,8 +230,24 @@ const E2_BossChallenge: React.FC<E2Props> = ({ sceneIndex, currentScene, bossSte
                 height={Math.max(220, (circuitMode.includes('AND') ? minterms.length : maxterms.length) * 44 + 80)} 
               />
             </div>
-            <button onClick={advance} className="self-center px-8 py-3 rounded-xl text-[14px] font-bold font-mono mt-4 shadow-2xl transition-transform hover:scale-105 active:scale-95" style={{ background: '#00FF88', color: '#000', boxShadow: '0 10px 30px rgba(0,255,136,0.2)' }}>
-              COMPLETE MODULE ✓
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <IntelligenceBrief 
+                type="industry"
+                title="TMR Systems"
+                description="This pattern is called Triple Modular Redundancy (TMR)."
+                details="It is the standard architecture for radiation-hardened satellite electronics where Cosmic Rays might flip a bit on one processor."
+              />
+              <IntelligenceBrief 
+                type="hardware"
+                title="Efficiency Check"
+                description="Notice that for this specific truth table, SOP and POS have identical gate counts (4+1)."
+                details="In more lopsided functions (e.g. 1 minterm vs 7 maxterms), the difference in hardware footprint becomes massive."
+              />
+            </div>
+
+            <button onClick={advance} className="self-center px-12 py-4 rounded-2xl text-[16px] font-black italic tracking-widest mt-4 shadow-2xl transition-transform hover:scale-105 active:scale-95 bg-[#00FF88] text-black" style={{ boxShadow: '0 10px 40px rgba(0,255,136,0.3)' }}>
+              DEPLOY TO SILICON ✓
             </button>
           </motion.div>
         )}

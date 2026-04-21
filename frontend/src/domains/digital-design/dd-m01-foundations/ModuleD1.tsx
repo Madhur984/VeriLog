@@ -9,6 +9,7 @@ import ProgressBar from './components/ProgressBar';
 import { SIPToastSystem } from './components/SIPToast';
 import CheckpointModal from './components/CheckpointModal';
 import type { CheckpointQuestion } from './components/CheckpointModal';
+import TacticalHUD from './components/TacticalHUD';
 
 // ─── Scenes ───────────────────────────────────────────────────────────────────
 import S00_SignalProblem from './scenes/S00_SignalProblem';
@@ -180,28 +181,25 @@ const ModuleD1: React.FC = () => {
   }, [state, addToast]);
 
   const current = state.currentScene;
+  const phaseNames = ['SIGNAL_PROC', 'FORMULATION', 'MINIMISATION', 'REALISATION', 'EVALUATION', 'FINAL_OP'];
+  const currentPhaseName = phaseNames[Math.floor(current / 4)] || 'FINAL_OP';
+  const systemStatus = state.phaseA.tableLocked ? 'LOGIC_SYNCED' : 'UNSTABLE_INPUT';
 
   return (
     <div className="relative" style={{ background: '#06060A', overflowX: 'hidden' }}>
+      {/* Tactical HUD */}
+      <TacticalHUD phase={currentPhaseName} sip={state.sipTotal} status={systemStatus} />
+
       {/* Progress bar */}
       <ProgressBar current={current} total={20} />
 
-      {/* SIP counter (top-left) */}
-      <div
-        className="fixed top-3 left-4 z-50 flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-mono"
-        style={{ background: '#111114', border: '1px solid #FFC10744', color: '#FFC107' }}
-      >
-        ◆ {state.sipTotal} SIP
-      </div>
-
-      {/* Back button */}
+      {/* Back button (Tactical Style) */}
       <button
         onClick={() => navigate('/portal')}
-        className="fixed top-3 left-24 z-50 px-3 py-1.5 rounded-full text-[11px] font-mono transition-colors hover:text-[#E8E8F0] focus:outline-none focus:ring-2 focus:ring-[#00D4FF]"
-        style={{ border: '1px solid #FFFFFF0F', color: '#7A7A8C', background: '#111114' }}
+        className="fixed top-24 left-4 z-[110] w-12 h-12 flex items-center justify-center rounded-xl bg-black/40 border border-white/10 text-white/40 hover:text-cyan-400 hover:border-cyan-400/50 transition-all backdrop-blur-md"
         aria-label="Return to portal"
       >
-        ← PORTAL
+        <span className="text-[10px] font-mono">BACK</span>
       </button>
 
       {/* Scroll container */}

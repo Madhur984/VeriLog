@@ -154,11 +154,11 @@ const CircuitCanvas: React.FC<CircuitCanvasProps> = ({
 
             {/* Traveling signal dot */}
             {isActive && (
-              <circle r={3} fill="#00D4FF">
+              <circle r={2.5} fill="#00D4FF" filter="url(#glow-cyan)">
                 <animateMotion
-                  dur="0.8s"
+                  dur="1.2s"
                   repeatCount="indefinite"
-                  path={`M${L1_X + GATE_W},${centY} C${L1_X + GATE_W + 20},${centY} ${L2_X - 20},${l2CenterY} ${L2_X},${l2CenterY}`}
+                  path={`M${L1_X + GATE_W},${termY + GATE_H / 2} C${L1_X + GATE_W + 20},${termY + GATE_H / 2} ${L2_X - 20},${l2CenterY} ${L2_X},${l2CenterY}`}
                 />
               </circle>
             )}

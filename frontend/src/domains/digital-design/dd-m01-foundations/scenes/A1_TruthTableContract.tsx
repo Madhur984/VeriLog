@@ -4,6 +4,7 @@ import SceneWrapper from '../components/SceneWrapper';
 import PhaseLabel from '../components/PhaseLabel';
 import TruthTableBuilder from '../components/TruthTableBuilder';
 import type { TruthTableRow } from '../ModuleD1.types';
+import IntelligenceBrief from '../components/IntelligenceBrief';
 
 const PHASE_COLOR = '#A855F7';
 
@@ -83,13 +84,13 @@ const A1_TruthTableContract: React.FC<A1Props> = ({
             2ⁿ INPUT COMBINATIONS
           </div>
           <BinaryTree />
-          <div className="flex flex-col gap-2 text-[11px] font-mono" style={{ color: '#7A7A8C' }}>
-            {[['n=1 variable', '2 rows'], ['n=2 variables', '4 rows'], ['n=3 variables', '8 rows']].map(([v, r]) => (
-              <div key={v} className="flex items-center gap-3">
-                <span style={{ color: '#E8E8F0' }}>{v}</span>
-                <span style={{ color: PHASE_COLOR }}>→ {r}</span>
-              </div>
-            ))}
+          <div className="flex flex-col gap-4">
+            <IntelligenceBrief 
+               type="theory"
+               title="2ⁿ Complexity"
+               description="Every input variable doubles the number of rows. 3 variables = 8 rows. 4 variables = 16 rows."
+               details="This exponential growth is why we need K-Maps and Logic Minimization—to handle high-complexity systems without bloated circuitry."
+            />
           </div>
 
           {/* Parity bonus */}
@@ -187,14 +188,20 @@ const A1_TruthTableContract: React.FC<A1Props> = ({
         </motion.div>
       </div>
 
-      {/* Microcopy */}
-      <div className="px-6 pb-6 text-center flex flex-col gap-1">
-        <p className="text-[13px]" style={{ color: '#7A7A8C', fontFamily: 'Inter, system-ui' }}>
-          A truth table is a complete specification — it leaves nothing undefined.
-        </p>
-        <p className="text-[13px]" style={{ color: '#7A7A8C', fontFamily: 'Inter, system-ui' }}>
-          Fill every row. Design begins with knowing exactly what you want.
-        </p>
+      {/* Intelligence Briefing - Phase Bottom */}
+      <div className="w-full max-w-5xl px-10 pb-12 grid grid-cols-1 md:grid-cols-2 gap-6">
+          <IntelligenceBrief 
+            type="industry"
+            title="Design Verification"
+            description="In professional silicon design, the Truth Table is the source of truth for formal verification."
+            details="Engineers use 'Equivalence Checkers' to prove that their final high-performance Verilog code matches this exact logical contract."
+          />
+          <IntelligenceBrief 
+            type="hardware"
+            title="ROM Implementation"
+            description="A Truth Table can be directly burned into a ROM chip as a memory address lookup."
+            details="Address bits A, B, C become the input pins, and the stored data at that address is the output F."
+          />
       </div>
     </SceneWrapper>
   );

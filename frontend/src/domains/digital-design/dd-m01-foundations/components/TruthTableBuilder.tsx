@@ -33,15 +33,35 @@ const TruthTableBuilder: React.FC<TruthTableBuilderProps> = ({
   accentColor = '#A855F7',
   compact = false,
 }) => {
+  const playClick = useCallback((freq: number = 800) => {
+    const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(1, audioCtx.currentTime + 0.05);
+    
+    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
+    
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.05);
+  }, []);
+
   const cycleOutput = useCallback((index: number) => {
     if (locked) return;
+    playClick(rows[index].output === null ? 1200 : rows[index].output === true ? 800 : 600);
     const next = [...rows];
     const cur = next[index].output;
     if (cur === null) next[index] = { ...next[index], output: true };
     else if (cur === true) next[index] = { ...next[index], output: false };
     else next[index] = { ...next[index], output: null };
     onRowsChange(next);
-  }, [locked, rows, onRowsChange]);
+  }, [locked, rows, onRowsChange, playClick]);
 
   const randomize = useCallback(() => {
     if (locked) return;
