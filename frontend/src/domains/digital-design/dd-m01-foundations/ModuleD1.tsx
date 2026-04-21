@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, useState, useId } from 'react';
+import React, { useRef, useCallback, useState, useId, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 
@@ -148,6 +148,14 @@ const ModuleD1: React.FC = () => {
     return () => stopAmbient();
   }, [playAmbient, stopAmbient]);
 
+  const [isBooting, setIsBooting] = useState(true);
+  const [showTelemetry, setShowTelemetry] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsBooting(false), 2400);
+    return () => clearTimeout(timer);
+  }, []);
+
   // Scroll detection
   const { setContainer } = useScrollScene({
     totalScenes: 21,
@@ -202,11 +210,55 @@ const ModuleD1: React.FC = () => {
   const currentPhaseName = phaseNames[Math.floor(current / 4)] || 'FINAL_OP';
   
   return (
-    <main className="relative w-full h-screen overflow-hidden" style={{ background: '#06060A' }}>
+    <main className="relative w-full h-screen overflow-hidden select-none" style={{ background: '#06060A' }}>
       <h1 className="sr-only">Digital Design Fundamentals: Module D1</h1>
       
-      {/* Cinematic Background Orchestrator */}
+      {/* ─── Cinematic Layers ─── */}
       <BackgroundOrchestrator currentScene={current} />
+      
+      {/* Global Texture Overlay */}
+      <div className="fixed inset-0 z-[10] pointer-events-none opacity-[0.03] mix-blend-overlay bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+      <div className="fixed inset-0 z-[11] pointer-events-none bg-gradient-to-b from-black/20 via-transparent to-black/20" />
+
+      {/* Boot Sequence (IMP-H1) */}
+      <AnimatePresence>
+        {isBooting && (
+          <motion.div
+            key="boot"
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.8, ease: "circIn" }}
+            className="fixed inset-0 z-[1000] bg-[#06060A] flex flex-col items-center justify-center gap-6"
+          >
+             <motion.div 
+               animate={{ opacity: [0.2, 1, 0.2] }} 
+               transition={{ duration: 1.5, repeat: Infinity }}
+               className="w-16 h-16 rounded-full border-2 border-cyan-500/20 flex items-center justify-center"
+             >
+                <div className="w-8 h-8 rounded-full border-b-2 border-cyan-400 animate-spin" />
+             </motion.div>
+             <div className="flex flex-col items-center gap-2">
+                <div className="text-[10px] font-mono font-black italic text-cyan-400 uppercase tracking-[0.4em]">Initialising_Tactical_Core</div>
+                <div className="w-48 h-[1px] bg-white/5 relative overflow-hidden">
+                   <motion.div 
+                     initial={{ x: '-100%' }}
+                     animate={{ x: '100%' }}
+                     transition={{ duration: 2, ease: "easeInOut" }}
+                     className="absolute inset-0 bg-cyan-400"
+                   />
+                </div>
+             </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Persistent Telemetry Toggle */}
+      <button
+        onClick={() => setShowTelemetry(!showTelemetry)}
+        className="fixed left-8 bottom-8 z-[200] w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-all group"
+      >
+        <div className={`w-1.5 h-1.5 rounded-full ${showTelemetry ? 'bg-cyan-400 shadow-[0_0_10px_#22D3EE]' : 'bg-white/20'} transition-all`} />
+      </button>
 
       {/* Persistence Restore Prompt (IMP-E1) */}
       <AnimatePresence>
@@ -246,7 +298,50 @@ const ModuleD1: React.FC = () => {
         )}
       </AnimatePresence>
 
-      {/* Kinetic Flowchart Progression */}
+      {/* ─── Telemetry HUD Sidebar ─── */}
+      <AnimatePresence>
+        {showTelemetry && (
+          <motion.aside
+            initial={{ x: -300, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: -300, opacity: 0 }}
+            className="fixed left-8 top-32 bottom-24 w-64 z-[180] hidden lg:flex flex-col gap-6"
+          >
+             <div className="flex-1 rounded-3xl bg-black/40 border border-white/5 backdrop-blur-md p-8 flex flex-col gap-8">
+                <div className="space-y-1">
+                   <div className="text-[10px] font-mono font-black italic text-white/20 uppercase tracking-widest">Session_Stats</div>
+                   <div className="text-2xl font-mono font-black italic text-white leading-none">{state.sipTotal} <span className="text-[10px] text-amber-500">SIP</span></div>
+                </div>
+
+                <div className="space-y-4">
+                   <div className="text-[10px] font-mono font-black italic text-white/20 uppercase tracking-widest">Signal_Metrology</div>
+                   <div className="space-y-3">
+                      {[
+                        { label: 'Packet_Loss', val: '0.0001%', color: 'text-green-500' },
+                        { label: 'Jitter_RMS', val: '1.2ps', color: 'text-cyan-500' },
+                        { label: 'Core_Temp', val: '42°C', color: 'text-amber-500' },
+                        { label: 'Logical_Leak', val: 'None', color: 'text-rose-500' },
+                      ].map(m => (
+                        <div key={m.label} className="flex justify-between items-center text-[10px] font-mono font-black italic">
+                           <span className="text-white/30 uppercase">{m.label}</span>
+                           <span className={m.color}>{m.val}</span>
+                        </div>
+                      ))}
+                   </div>
+                </div>
+
+                <div className="mt-auto space-y-4">
+                   <div className="text-[10px] font-mono font-black italic text-white/20 uppercase tracking-widest">Active_Protocol</div>
+                   <div className="p-4 rounded-xl bg-cyan-500/5 border border-cyan-500/10 text-[10px] font-mono font-medium text-cyan-400 leading-relaxed italic">
+                      "Design is not just what it looks like and feels like. Design is how it works."
+                      <br />— Steve Jobs
+                   </div>
+                </div>
+             </div>
+          </motion.aside>
+        )}
+      </AnimatePresence>
+
       <KineticFlowchart currentScene={current} />
 
       {/* Progress bar */}

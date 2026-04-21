@@ -28,9 +28,17 @@ const S00_SignalProblem: React.FC<S00Props> = ({ sceneIndex, currentScene, onBeg
         </motion.div>
 
         {/* Tactical Teaser */}
-        <div className="grid grid-cols-3 gap-6 w-full max-w-4xl opacity-20">
-            {Array.from({ length: 3 }).map((_, i) => (
-                <div key={i} className="aspect-video rounded-3xl border-2 border-white/20 flex items-center justify-center text-4xl font-mono font-black italic text-white/10 italic">?</div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-4xl">
+            {[
+                { label: 'TRUTH_TABLES', val: '0100' },
+                { label: 'K-MAP_OPTIM', val: '2-D' },
+                { label: 'NAND_LOGIC', val: 'UNIV' }
+            ].map((d, i) => (
+                <div key={i} className="group relative aspect-video rounded-3xl border border-white/5 bg-white/[0.02] flex flex-col items-center justify-center gap-2 overflow-hidden transition-all hover:bg-cyan-500/5 hover:border-cyan-500/20">
+                    <div className="absolute inset-0 bg-gradient-to-tr from-cyan-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <span className="text-[8px] font-mono font-black italic text-white/20 uppercase tracking-widest">{d.label}</span>
+                    <span className="text-3xl font-mono font-black italic text-white/10 group-hover:text-cyan-500/40 transition-colors uppercase">{d.val}</span>
+                </div>
             ))}
         </div>
 

@@ -6,11 +6,11 @@ interface BackgroundOrchestratorProps {
 }
 
 const PHASE_BACKGROUNDS: Record<string, string | null> = {
-  hook: null, // Scene 0
-  canonical: '/artifacts/silicon_logic_topography_1776782325768.png', // We'll use the generated image if available, else fallback
-  minimisation: null,
-  universality: null,
-  selection: null,
+  hook: null,
+  canonical: '/artifacts/silicon_logic_blueprint_1776790480201.png',
+  minimisation: '/artifacts/silicon_logic_topography_1776782325768.png', 
+  universality: '/artifacts/universal_nand_forge_1776790502037.png',
+  selection: '/artifacts/boss_core_terminal_1776790526880.png',
 };
 
 const BackgroundOrchestrator: React.FC<BackgroundOrchestratorProps> = ({ currentScene }) => {
@@ -39,8 +39,23 @@ const BackgroundOrchestrator: React.FC<BackgroundOrchestratorProps> = ({ current
            exit={{ opacity: 0, scale: 0.95 }}
            transition={{ duration: 1.2, ease: "circOut" }}
            className="absolute inset-0"
-           style={{ background: gradients[activePhase] }}
         >
+           {/* Base Layer: High-Fidelity Asset */}
+           {PHASE_BACKGROUNDS[activePhase] && (
+             <motion.div 
+               className="absolute inset-0 bg-cover bg-center grayscale contrast-125 brightness-[0.4] mix-blend-screen"
+               style={{ backgroundImage: `url(${PHASE_BACKGROUNDS[activePhase]})` }}
+               initial={{ opacity: 0 }}
+               animate={{ opacity: 1 }}
+               transition={{ duration: 2 }}
+             />
+           )}
+
+           {/* Middle Layer: Thematic Gradient Overlay */}
+           <div 
+             className="absolute inset-0 transition-all duration-1000"
+             style={{ background: gradients[activePhase] }} 
+           />
            {activePhase === 'canonical' && (
              <div className="absolute inset-0 opacity-20 contrast-125 brightness-75 grayscale mix-blend-overlay">
                 {/* Visual texture/grid */}
