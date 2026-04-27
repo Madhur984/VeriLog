@@ -39,7 +39,9 @@ import {
   BookOpen,
   Scale,
   ChevronRight,
-  Info
+  Info,
+  ShieldAlert,
+  CheckCircle2
 } from "lucide-react";
 import { GlobalSignalState } from "../types";
 import { SignalEngine } from "../SignalEngine";
@@ -592,6 +594,211 @@ export const SpectrumAnalyzer: React.FC<{ state: GlobalSignalState }> = ({ state
                     <span className="text-[8px] font-mono text-white/20">20 Hz</span>
                     <div className="w-px h-2 bg-white/20 mt-1" />
                  </div>
+            </div>
+        </div>
+    );
+};
+
+// ----------------------------------------------------------------------
+// DATA: MASTERY VERIFICATION (v4 ELITE)
+// ----------------------------------------------------------------------
+
+interface Question {
+    id: number;
+    text: string;
+    options: string[];
+    correct: number;
+    insight: string;
+}
+
+const QUESTIONS: Question[] = [
+    {
+        id: 1,
+        text: "You sample a 10 kHz sine wave at 16 kHz. What do you see after reconstruction?",
+        options: [
+            "A perfect 10 kHz reproduction", 
+            "Absolute silence (infinite error)", 
+            "A 6 kHz alias 'ghost' frequency", 
+            "A 26 kHz harmonic product"
+        ],
+        correct: 2,
+        insight: "f_alias = |f_in - kFs|. Here, |10 - 16| = 6 kHz. Because 16 kHz is below the Nyquist rate (20 kHz), the 10 kHz signal 'folds' into the baseband."
+    },
+    {
+        id: 2,
+        text: "Adding one extra bit to your system resolution increases the theoretical SNR by approximately how many dB?",
+        options: [
+            "1.76 dB", 
+            "3.01 dB", 
+            "6.02 dB", 
+            "20.0 dB"
+        ],
+        correct: 2,
+        insight: "The 6 dB per bit rule: Each bit doubles the possible levels (2^N), which halves the quantization error, leading to a 6.02 dB improvement in dynamic range."
+    },
+    {
+        id: 3,
+        text: "Why is TPDF Dither used in professional audio mastering when reducing bit depth?",
+        options: [
+            "To increase the speed of the DSP processor", 
+            "To remove quantization's harmonic distortion", 
+            "To filter out frequencies above 20 kHz", 
+            "To prevent the signal from clipping at 0 dBFS"
+        ],
+        correct: 1,
+        insight: "Dither decorrelates the error from the signal, replacing harsh harmonic distortion with a benign, constant noise floor. It linearizes the 'staircase'."
+    }
+];
+
+// ----------------------------------------------------------------------
+// COMPONENT: INTERACTIVE QUIZ (v4 ELITE)
+// ----------------------------------------------------------------------
+
+export const InteractiveQuiz: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
+    const [currentIdx, setCurrentIdx] = useState(0);
+    const [selected, setSelected] = useState<number | null>(null);
+    const [showResult, setShowResult] = useState(false);
+    const [finished, setFinished] = useState(false);
+
+    const textColor = isDarkMode ? 'text-white' : 'text-gray-900';
+    const accentColor = isDarkMode ? 'text-orange-500' : 'text-orange-600';
+    const cardBg = isDarkMode ? 'bg-black/40 border-white/10' : 'bg-gray-50 border-gray-200';
+    const buttonBg = isDarkMode ? 'bg-white/5 border-white/10 hover:bg-white/10 shadow-inner' : 'bg-white border-gray-200 hover:bg-gray-100 shadow-sm';
+
+    const handleNext = () => {
+        if (currentIdx < QUESTIONS.length - 1) {
+            setCurrentIdx(prev => prev + 1);
+            setSelected(null);
+            setShowResult(false);
+        } else {
+            setFinished(true);
+        }
+    };
+
+    const handleCheck = (idx: number) => {
+        if (showResult) return;
+        setSelected(idx);
+        setShowResult(true);
+    };
+
+    if (finished) {
+        return (
+            <motion.div 
+                initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
+                className={`p-16 rounded-[4rem] border text-center space-y-10 ${cardBg}`}
+            >
+                <div className="w-24 h-24 rounded-full bg-green-500/20 border border-green-500/40 flex items-center justify-center mx-auto">
+                    <CheckCircle2 className="text-green-500" size={40} />
+                </div>
+                <div className="space-y-4">
+                    <h3 className={`text-4xl font-black italic tracking-tighter ${textColor}`}>Mastery Attained</h3>
+                    <p className="text-white/40 text-lg font-medium italic">
+                        You have successfully navigated the Digital Bridge. All core concepts are synchronized.
+                    </p>
+                </div>
+                <div className="pt-8 border-t border-white/5">
+                    <div className="flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-[0.5em] text-[#00D4FF]">
+                        Clearance Level: Elite Engineering
+                    </div>
+                </div>
+            </motion.div>
+        );
+    }
+
+    const q = QUESTIONS[currentIdx];
+
+    return (
+        <div className="flex flex-col gap-12 max-w-6xl mx-auto py-6 text-left">
+            <header className="flex items-center gap-8 px-4">
+                <div className={`p-5 rounded-3xl border shadow-xl transition-all duration-500 ${isDarkMode ? 'bg-orange-500/10 border-orange-500/20 shadow-orange-500/5' : 'bg-orange-50 border-orange-100'}`}>
+                    <ShieldAlert className={accentColor} size={28} />
+                </div>
+                <div className="space-y-2">
+                    <h2 className={`text-5xl font-black italic tracking-tighter ${textColor}`}>Challenge <span className={accentColor}>0{currentIdx + 1}</span></h2>
+                    <p className={`text-[11px] font-mono uppercase tracking-[0.4em] font-black opacity-30 ${textColor}`}>Mastery Gate Verification</p>
+                </div>
+            </header>
+
+            <div className={`p-10 md:p-14 rounded-[4rem] border space-y-12 shadow-2xl relative overflow-hidden transition-all duration-700 ${cardBg}`}>
+                <div className="absolute top-0 right-0 p-12 select-none pointer-events-none">
+                    <span className={`text-[80px] font-black italic ${isDarkMode ? 'text-white/[0.03]' : 'text-black/[0.03]'}`}>
+                        {currentIdx + 1}
+                    </span>
+                </div>
+
+                <div className="space-y-12 relative z-10">
+                    <p className={`text-3xl font-black leading-tight pr-14 ${textColor}`}>{q.text}</p>
+                    
+                    <div className="grid grid-cols-1 gap-6">
+                        {q.options.map((opt, i) => {
+                            const isCorrect = i === q.correct;
+                            const isSelected = i === selected;
+                            
+                            return (
+                                <button 
+                                    key={i} disabled={showResult} onClick={() => handleCheck(i)}
+                                    className={`
+                                        w-full p-8 rounded-[3rem] border text-left transition-all duration-500 flex justify-between items-center group
+                                        ${showResult && isCorrect 
+                                            ? (isDarkMode ? 'bg-green-500/10 border-green-500 text-white shadow-[0_0_40px_rgba(34,197,94,0.2)]' : 'bg-green-50 border-green-500 text-green-900') 
+                                            : showResult && isSelected 
+                                            ? (isDarkMode ? 'bg-red-500/10 border-red-500 text-white shadow-[0_0_40px_rgba(239,68,68,0.2)]' : 'bg-red-50 border-red-500 text-red-900') 
+                                            : buttonBg}
+                                    `}
+                                >
+                                    <div className="flex flex-col">
+                                        <span className={`text-lg font-black tracking-tight ${showResult && !isCorrect && !isSelected ? 'opacity-30' : ''}`}>{opt}</span>
+                                        {showResult && isSelected && (
+                                            <motion.span 
+                                                initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }}
+                                                className={`text-[9px] font-black uppercase tracking-widest mt-2 ${isCorrect ? 'text-green-500' : 'text-red-500'}`}
+                                            >
+                                                {isCorrect ? 'VERIFIED: CORRECT' : 'AUDIT FAILED: INCORRECT'}
+                                            </motion.span>
+                                        )}
+                                    </div>
+                                    {showResult && isCorrect && <CheckCircle2 className="text-green-500" size={24} />}
+                                    {showResult && isSelected && !isCorrect && <XCircle className="text-red-500" size={24} />}
+                                    {!showResult && <ChevronRight className="opacity-0 group-hover:opacity-100 group-hover:translate-x-2 transition-all text-orange-500" size={20} />}
+                                </button>
+                            );
+                        })}
+                    </div>
+
+                    <AnimatePresence>
+                        {showResult && (
+                            <motion.div 
+                                initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }}
+                                className={`p-12 rounded-[3.5rem] border space-y-6 shadow-inner relative overflow-hidden ${isDarkMode ? 'bg-white/5 border-white/5' : 'bg-white border-gray-200'}`}
+                            >
+                                <div className={`p-3 rounded-xl inline-flex border ${isDarkMode ? 'bg-white/5 border-white/10' : 'bg-gray-100 border-gray-200'}`}>
+                                    <Cpu size={14} className={accentColor} />
+                                </div>
+                                <div className="space-y-4">
+                                    <span className={`text-[10px] font-mono uppercase tracking-[0.3em] font-black ${accentColor}`}>Engineer's Logic Audit</span>
+                                    <p className={`text-lg leading-relaxed font-medium italic opacity-70 ${textColor}`}>
+                                        <motion.span 
+                                            initial={{ opacity: 0 }} 
+                                            animate={{ opacity: 1 }}
+                                            transition={{ duration: 0.5 }}
+                                        >
+                                            "{q.insight}"
+                                        </motion.span>
+                                    </p>
+                                </div>
+                                
+                                <div className="flex justify-end pt-6">
+                                    <button 
+                                        onClick={handleNext}
+                                        className={`flex items-center gap-6 px-12 py-6 rounded-full font-black uppercase tracking-[0.3em] text-[11px] active:scale-95 transition-all duration-500 shadow-2xl ${isDarkMode ? 'bg-white text-black hover:bg-gray-200' : 'bg-gray-900 text-white hover:bg-black shadow-black/20'}`}
+                                    >
+                                        {currentIdx < QUESTIONS.length - 1 ? 'Next Validation' : 'Secure Mastery'} <ChevronRight size={18} />
+                                    </button>
+                                </div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                </div>
             </div>
         </div>
     );
