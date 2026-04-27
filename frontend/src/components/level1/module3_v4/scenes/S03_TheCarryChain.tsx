@@ -158,10 +158,3 @@ Result: Overflow flag = 1
     </div>
     );
 };
- can trigger a chain reaction across the entire machine."
-          </p>
-      </motion.div>
-    </div>
-    );
-
-};

@@ -45,18 +45,7 @@ export const SceneSwitch: React.FC<Props> = ({ onFirstToggle, hasToggled }) => {
         if (labStage === 'execution' || labStage === 'complete') setNavigationLocked(false);
         else setNavigationLocked(true);
     }, [labStage, setNavigationLocked]);
-    
-    const containerRef = useRef<HTMLDivElement>(null);
 
-    const tracePaths = React.useMemo<TracePath[]>(() => {
-        return pulseHistory.filter(p => p.type === 'carry' && Date.now() - p.timestamp < 1000).map((p, i) => ({
-            id: `counter-trace-${i}`,
-            from: { x: (3 - p.targetIndex) * 92 + 100, y: 100 }, 
-            to: { x: (3 - p.targetIndex - 1) * 92 + 100, y: 100 },
-            active: true,
-            color: '#F59E0B'
-        }));
-    }, [pulseHistory]);
 
     const [idleTime, setIdleTime] = React.useState(0);
     const [showHint, setShowHint] = React.useState(false);
@@ -89,7 +78,6 @@ export const SceneSwitch: React.FC<Props> = ({ onFirstToggle, hasToggled }) => {
         if (labStage === 'execution') setStageLocked(false);
     };
 
-    return (
     const glowColor = systemTemperature > 0.6 ? '245, 158, 11' : '0, 212, 255';
 
     return (

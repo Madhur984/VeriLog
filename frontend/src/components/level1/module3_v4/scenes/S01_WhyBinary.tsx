@@ -213,9 +213,3 @@ export const S01_WhyBinary: React.FC<Props> = ({ isActive, isDarkMode }) => {
     </div>
     );
 };
-ng all possible values -- its about representing enough values with <span className={subTextColor}>certainty</span>."
-          </p>
-      </motion.div>
-    </div>
-    );
-};
