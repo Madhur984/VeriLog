@@ -190,6 +190,7 @@ export const SceneArithmetic: React.FC<Props> = ({ onCorrect }) => {
                                 <div style={{ width: 40, height: 1, background: T.border }} />
                                 <motion.div animate={{ opacity: [0, 1, 0] }} transition={{ duration: 2, repeat: Infinity, delay: 1 }} style={{ color: T.success, fontSize: 16, fontWeight: 800, fontFamily: T.mono }}>SUM: 0</motion.div>
                             </div>
+                            <motion.div
                                 animate={{ x: [0, 40, 40], y: [0, 0, -40], opacity: [0, 1, 0] }}
                                 transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
                                 style={{ position: 'absolute', color: T.warning, fontSize: 12, fontFamily: T.mono, fontWeight: 900 }}
