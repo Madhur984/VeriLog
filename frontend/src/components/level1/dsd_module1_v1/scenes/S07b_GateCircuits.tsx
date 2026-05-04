@@ -1,330 +1,362 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Cpu, Zap, ToggleRight } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Cpu, Zap, Activity, Info, BrainCircuit, Network, Microscope } from 'lucide-react';
 
 interface Props { isActive: boolean; isDarkMode: boolean; }
 
-// Ben's picnic logic: F = 1 iff at most one bad condition
-const benRule = (R: number, A: number, W: number) => (R + A + W) <= 1 ? 1 : 0;
-
-// Helper colors for wire signals
-const wireColor = (v: number) => v ? '#10b981' : '#475569';
-const wireGlow  = (v: number) => v ? 'drop-shadow(0 0 4px #10b98199)' : 'none';
-
-// AND gate SVG (D-shape with flat back and rounded front)
-const AndGate: React.FC<{ x: number; y: number; out: number; label?: string }> = ({ x, y, out, label }) => (
-  <g transform={`translate(${x} ${y})`}>
-    <path
-      d="M 0 0 L 18 0 A 18 18 0 0 1 18 36 L 0 36 Z"
-      fill="rgba(16,185,129,0.08)"
-      stroke={wireColor(out)}
-      strokeWidth="1.6"
-      style={{ filter: wireGlow(out) }}
+const Wire = ({ d, active, color }: { d: string; active: boolean; color: string }) => (
+  <g>
+    <path d={d} fill="none" stroke={color} strokeWidth="2" opacity="0.1" />
+    <motion.path
+      d={d} fill="none" stroke={color} strokeWidth="2"
+      initial={{ pathLength: 0 }}
+      animate={{ pathLength: active ? 1 : 0 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
     />
-    {label && <text x="9" y="22" fontSize="10" fontFamily="monospace" fontWeight="bold" textAnchor="middle" fill={wireColor(out)}>&amp;</text>}
+    {active && (
+      <motion.path
+        d={d} fill="none" stroke={color} strokeWidth="4" strokeLinecap="round"
+        initial={{ pathLength: 0, opacity: 0 }}
+        animate={{ 
+          pathLength: [0, 1], 
+          opacity: [0, 0.8, 0],
+          strokeDasharray: ["1, 10", "10, 1"]
+        }}
+        transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+      />
+    )}
   </g>
 );
 
-// OR gate SVG (curved back, pointed front)
-const OrGate: React.FC<{ x: number; y: number; out: number }> = ({ x, y, out }) => (
-  <g transform={`translate(${x} ${y})`}>
-    <path
-      d="M 0 0 Q 8 18 0 36 Q 14 36 30 26 Q 36 18 30 10 Q 14 0 0 0 Z"
-      fill="rgba(245,158,11,0.08)"
-      stroke={wireColor(out)}
-      strokeWidth="1.6"
-      style={{ filter: wireGlow(out) }}
-    />
-    <text x="14" y="22" fontSize="10" fontFamily="monospace" fontWeight="bold" textAnchor="middle" fill={wireColor(out)}>≥1</text>
-  </g>
+const AndGate = ({ x, y, active, label, onClick }: { x: number; y: number; active: boolean; label: string; onClick?: () => void }) => (
+  <motion.g 
+    initial={{ opacity: 0, scale: 0.8 }}
+    animate={{ opacity: 1, scale: 1 }}
+    className="cursor-pointer"
+    onClick={onClick}
+    whileHover={{ scale: 1.05 }}
+  >
+    <rect x={x} y={y} width="40" height="40" rx="4" fill={active ? "#10b98122" : "#334155"} stroke={active ? "#10b981" : "#475569"} strokeWidth="2" />
+    <text x={x + 20} y={y + 25} textAnchor="middle" fill={active ? "#10b981" : "#94a3b8"} fontSize="10" fontWeight="bold" fontFamily="monospace">&</text>
+    <text x={x + 20} y={y - 8} textAnchor="middle" fill={active ? "#10b981" : "#64748b"} fontSize="8" fontWeight="black" fontFamily="monospace" className="uppercase tracking-tighter">{label}</text>
+  </motion.g>
 );
 
-// NOT bubble (inverter circle on a wire)
-const Bubble: React.FC<{ cx: number; cy: number; on: number }> = ({ cx, cy, on }) => (
-  <circle cx={cx} cy={cy} r="3.5" fill={wireColor(on)} stroke="#fff2" strokeWidth="0.6" />
-);
-
-const Wire: React.FC<{ d: string; on: number }> = ({ d, on }) => (
-  <path d={d} stroke={wireColor(on)} strokeWidth="1.4" fill="none" style={{ filter: wireGlow(on) }} />
+const OrGate = ({ x, y, active, label, onClick }: { x: number; y: number; active: boolean; label: string; onClick?: () => void }) => (
+  <motion.g 
+    initial={{ opacity: 0, scale: 0.8 }}
+    animate={{ opacity: 1, scale: 1 }}
+    className="cursor-pointer"
+    onClick={onClick}
+    whileHover={{ scale: 1.05 }}
+  >
+    <rect x={x} y={y} width="40" height="40" rx="20" fill={active ? "#38bdf822" : "#334155"} stroke={active ? "#38bdf8" : "#475569"} strokeWidth="2" />
+    <text x={x + 20} y={y + 25} textAnchor="middle" fill={active ? "#38bdf8" : "#94a3b8"} fontSize="10" fontWeight="bold" fontFamily="monospace">≥</text>
+    <text x={x + 20} y={y - 8} textAnchor="middle" fill={active ? "#38bdf8" : "#64748b"} fontSize="8" fontWeight="black" fontFamily="monospace" className="uppercase tracking-tighter">{label}</text>
+  </motion.g>
 );
 
 export const S07b_GateCircuits: React.FC<Props> = ({ isActive, isDarkMode }) => {
-  const [R, setR] = useState(0);
-  const [A, setA] = useState(0);
-  const [W, setW] = useState(1);
+  const [inputs, setInputs] = useState({ R: true, A: true, W: true });
+  const [selectedGate, setSelectedGate] = useState<string | null>(null);
 
-  const Rn = 1 - R, An = 1 - A, Wn = 1 - W;
-  // SOP minterm outputs (m0, m1, m2, m4 — happy rows)
-  const m0 = Rn & An & Wn; // 000
-  const m1 = Rn & An & W;  // 001
-  const m2 = Rn & A  & Wn; // 010
-  const m4 = R  & An & Wn; // 100
-  const sopOut = m0 | m1 | m2 | m4;
-
-  // POS maxterm outputs — each fires 0 only at its disaster row
-  const M3 = R  | An | Wn;       // (R + A' + W')
-  const M5 = Rn | A  | Wn;       // (R' + A + W')
-  const M6 = Rn | An | W;        // (R' + A' + W)
-  const M7 = Rn | An | Wn;       // (R' + A' + W')
-  const posOut = M3 & M5 & M6 & M7;
-
-  const truth = benRule(R, A, W);
+  const { R, A, W } = inputs;
+  const s0 = R && A && W;      // m7
+  const s1 = R && A && !W;     // m6
+  const s2 = R && !A && W;     // m5
+  const s3 = !R && A && W;     // m3
+  const outSOP = s0 || s1 || s2 || s3;
 
   const textColor = isDarkMode ? 'text-white' : 'text-slate-900';
   const subText = isDarkMode ? 'text-slate-300' : 'text-slate-600';
   const cardBg = isDarkMode ? 'bg-white/5 border-white/10' : 'bg-white border-slate-200 shadow-xl';
 
+  const toggle = (key: keyof typeof inputs) => setInputs(prev => ({ ...prev, [key]: !prev[key] }));
+
   return (
     <div className="max-w-6xl mx-auto space-y-12 py-4">
       <section className="space-y-3">
-        <div className="font-mono text-[10px] tracking-[0.4em] uppercase text-cyan-400">
-          Chapter 07.5 · Hardware Translation
+        <div className="flex items-center gap-2 font-mono text-[10px] tracking-[0.4em] uppercase text-cyan-400">
+          <BrainCircuit size={14} />
+          Chapter 07b · The Physical Blueprint
         </div>
         <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>
-          From Algebra to Silicon
+          Inside Ben's Decision Neurons
         </h2>
         <p className={`text-base max-w-3xl ${subText}`}>
-          Both canonical forms become two-level networks of logic gates. SOP wires AND-gates into a
-          big OR-gate; POS wires OR-gates into a big AND-gate. Toggle the inputs below and watch
-          green signals propagate through identical-output circuits.
+          A Boolean equation isn't just math—it's a physical path. 
+          In the <strong>SOP</strong> architecture, we build "neurons" for every reason to go. 
+          If any neuron fires, the consensus engine grants approval.
         </p>
+
+        {/* BOM Impact Note */}
+        <motion.div 
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className={`mt-4 p-4 rounded-2xl flex items-start gap-3 ${
+            isDarkMode ? 'bg-white/5 border border-white/10' : 'bg-slate-50 border border-slate-200'
+          }`}
+        >
+          <Info size={18} className="text-cyan-400 mt-0.5 shrink-0" />
+          <p className={`text-xs leading-relaxed ${subText}`}>
+            <strong>BOM Impact:</strong> Every gate consumes physical area and power. 
+            While SOP/POS are equivalent mathematically, the <strong>gate count</strong> 
+            determines manufacturing cost. Architects always simplify before synthesis.
+          </p>
+        </motion.div>
       </section>
 
-      {/* Input toggles */}
-      <div className={`p-6 rounded-3xl border ${cardBg}`}>
-        <div className="flex items-center gap-2 mb-5">
-          <ToggleRight size={14} className="text-cyan-400" />
-          <span className="font-mono text-[10px] uppercase tracking-widest text-cyan-400">
-            Inputs · click any to flip
-          </span>
-        </div>
-        <div className="flex flex-wrap items-center gap-6">
-          {[
-            { name: 'R', val: R, set: setR, color: '#38bdf8' },
-            { name: 'A', val: A, set: setA, color: '#a78bfa' },
-            { name: 'W', val: W, set: setW, color: '#34d399' },
-          ].map(v => (
-            <div key={v.name} className="flex items-center gap-3">
-              <span className="font-mono text-base font-black" style={{ color: v.color }}>{v.name}</span>
-              <button
-                onClick={() => v.set(1 - v.val)}
-                className="w-12 h-12 rounded-xl font-mono text-2xl font-black border-2 transition-all"
-                style={{
-                  background: v.val ? `${v.color}33` : 'transparent',
-                  borderColor: v.val ? v.color : '#475569',
-                  color: v.val ? v.color : '#475569',
-                }}
-              >
-                {v.val}
-              </button>
-            </div>
-          ))}
-          <div className="ml-auto flex items-center gap-3">
-            <span className={`font-mono text-[10px] uppercase tracking-widest ${subText}`}>truth-table answer</span>
-            <span
-              className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl font-black border-2"
-              style={{
-                background: truth ? '#10b98133' : '#f43f5e33',
-                borderColor: truth ? '#10b981' : '#f43f5e',
-                color: truth ? '#10b981' : '#f43f5e',
-              }}
-            >
-              {truth}
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* SOP circuit */}
-      <motion.div
-        initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
-        className={`p-6 rounded-3xl border ${cardBg}`}
-      >
-        <div className="flex items-center gap-2 mb-5">
-          <Zap size={14} className="text-emerald-400" />
-          <span className="font-mono text-[10px] uppercase tracking-widest text-emerald-400">
-            SOP · AND → OR network · Σm(0, 1, 2, 4)
-          </span>
-        </div>
-        <div className="overflow-x-auto">
-          <svg viewBox="0 0 560 360" className="w-full max-w-3xl mx-auto" style={{ minWidth: 420 }}>
-            {/* Input rails */}
-            <text x="14" y="40"  fontSize="11" fontFamily="monospace" fill="#38bdf8" fontWeight="bold">R={R}</text>
-            <text x="14" y="180" fontSize="11" fontFamily="monospace" fill="#a78bfa" fontWeight="bold">A={A}</text>
-            <text x="14" y="320" fontSize="11" fontFamily="monospace" fill="#34d399" fontWeight="bold">W={W}</text>
-
-            {/* Vertical input rails */}
-            <Wire d="M 50 40 L 50 340" on={1} />
-            <Wire d="M 80 40 L 80 340" on={1} />
-            <Wire d="M 110 40 L 110 340" on={1} />
-
-            {/* m0 = R'·A'·W' (top) — branch off rails with bubbles */}
-            <Wire d="M 50 60 L 130 60"  on={Rn} /><Bubble cx={120} cy={60} on={Rn} />
-            <Wire d="M 80 75 L 130 75"  on={An} /><Bubble cx={120} cy={75} on={An} />
-            <Wire d="M 110 90 L 130 90" on={Wn} /><Bubble cx={120} cy={90} on={Wn} />
-            <AndGate x={130} y={56} out={m0} label="&" />
-            <Wire d="M 167 74 L 380 74" on={m0} />
-            <text x={170} y={68} fontSize="9" fontFamily="monospace" fill={wireColor(m0)}>m0</text>
-
-            {/* m1 = R'·A'·W */}
-            <Wire d="M 50 130 L 130 130"  on={Rn} /><Bubble cx={120} cy={130} on={Rn} />
-            <Wire d="M 80 145 L 130 145"  on={An} /><Bubble cx={120} cy={145} on={An} />
-            <Wire d="M 110 160 L 130 160" on={W}  />
-            <AndGate x={130} y={126} out={m1} />
-            <Wire d="M 167 144 L 380 144" on={m1} />
-            <text x={170} y={138} fontSize="9" fontFamily="monospace" fill={wireColor(m1)}>m1</text>
-
-            {/* m2 = R'·A·W' */}
-            <Wire d="M 50 200 L 130 200"  on={Rn} /><Bubble cx={120} cy={200} on={Rn} />
-            <Wire d="M 80 215 L 130 215"  on={A}  />
-            <Wire d="M 110 230 L 130 230" on={Wn} /><Bubble cx={120} cy={230} on={Wn} />
-            <AndGate x={130} y={196} out={m2} />
-            <Wire d="M 167 214 L 380 214" on={m2} />
-            <text x={170} y={208} fontSize="9" fontFamily="monospace" fill={wireColor(m2)}>m2</text>
-
-            {/* m4 = R·A'·W' */}
-            <Wire d="M 50 270 L 130 270"  on={R}  />
-            <Wire d="M 80 285 L 130 285"  on={An} /><Bubble cx={120} cy={285} on={An} />
-            <Wire d="M 110 300 L 130 300" on={Wn} /><Bubble cx={120} cy={300} on={Wn} />
-            <AndGate x={130} y={266} out={m4} />
-            <Wire d="M 167 284 L 380 284" on={m4} />
-            <text x={170} y={278} fontSize="9" fontFamily="monospace" fill={wireColor(m4)}>m4</text>
-
-            {/* Big OR gate collecting all minterms */}
-            <OrGate x={395} y={160} out={sopOut} />
-            <Wire d="M 380 74  L 395 168" on={m0} />
-            <Wire d="M 380 144 L 395 178" on={m1} />
-            <Wire d="M 380 214 L 395 188" on={m2} />
-            <Wire d="M 380 284 L 395 196" on={m4} />
-
-            {/* Output */}
-            <Wire d="M 425 178 L 510 178" on={sopOut} />
-            <text x="478" y="170" fontSize="10" fontFamily="monospace" fill={wireColor(sopOut)} fontWeight="bold">F</text>
-            <rect x="510" y="160" width="36" height="36" rx="6" fill={sopOut ? '#10b98144' : '#33415544'} stroke={wireColor(sopOut)} strokeWidth="1.5" />
-            <text x="528" y="183" fontSize="16" fontFamily="monospace" fontWeight="bold" textAnchor="middle" fill={wireColor(sopOut)}>{sopOut}</text>
-          </svg>
-        </div>
-        <p className={`text-xs text-center mt-4 font-mono ${subText}`}>
-          4 AND-gates (one per minterm) feed a single 4-input OR. Bubbles = inverters where the variable is 0 in that row.
-        </p>
-      </motion.div>
-
-      {/* POS circuit */}
-      <motion.div
-        initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
-        className={`p-6 rounded-3xl border ${cardBg}`}
-      >
-        <div className="flex items-center gap-2 mb-5">
-          <Zap size={14} className="text-amber-400" />
-          <span className="font-mono text-[10px] uppercase tracking-widest text-amber-400">
-            POS · OR → AND network · ΠM(3, 5, 6, 7)
-          </span>
-        </div>
-        <div className="overflow-x-auto">
-          <svg viewBox="0 0 560 360" className="w-full max-w-3xl mx-auto" style={{ minWidth: 420 }}>
-            <text x="14" y="40"  fontSize="11" fontFamily="monospace" fill="#38bdf8" fontWeight="bold">R={R}</text>
-            <text x="14" y="180" fontSize="11" fontFamily="monospace" fill="#a78bfa" fontWeight="bold">A={A}</text>
-            <text x="14" y="320" fontSize="11" fontFamily="monospace" fill="#34d399" fontWeight="bold">W={W}</text>
-
-            <Wire d="M 50 40 L 50 340" on={1} />
-            <Wire d="M 80 40 L 80 340" on={1} />
-            <Wire d="M 110 40 L 110 340" on={1} />
-
-            {/* M3 = R + A' + W' */}
-            <Wire d="M 50 60 L 130 60"  on={R} />
-            <Wire d="M 80 75 L 130 75"  on={An} /><Bubble cx={120} cy={75} on={An} />
-            <Wire d="M 110 90 L 130 90" on={Wn} /><Bubble cx={120} cy={90} on={Wn} />
-            <OrGate x={130} y={56} out={M3} />
-            <Wire d="M 165 74 L 380 74" on={M3} />
-            <text x={170} y={68} fontSize="9" fontFamily="monospace" fill={wireColor(M3)}>M3</text>
-
-            {/* M5 = R' + A + W' */}
-            <Wire d="M 50 130 L 130 130"  on={Rn} /><Bubble cx={120} cy={130} on={Rn} />
-            <Wire d="M 80 145 L 130 145"  on={A} />
-            <Wire d="M 110 160 L 130 160" on={Wn} /><Bubble cx={120} cy={160} on={Wn} />
-            <OrGate x={130} y={126} out={M5} />
-            <Wire d="M 165 144 L 380 144" on={M5} />
-            <text x={170} y={138} fontSize="9" fontFamily="monospace" fill={wireColor(M5)}>M5</text>
-
-            {/* M6 = R' + A' + W */}
-            <Wire d="M 50 200 L 130 200"  on={Rn} /><Bubble cx={120} cy={200} on={Rn} />
-            <Wire d="M 80 215 L 130 215"  on={An} /><Bubble cx={120} cy={215} on={An} />
-            <Wire d="M 110 230 L 130 230" on={W} />
-            <OrGate x={130} y={196} out={M6} />
-            <Wire d="M 165 214 L 380 214" on={M6} />
-            <text x={170} y={208} fontSize="9" fontFamily="monospace" fill={wireColor(M6)}>M6</text>
-
-            {/* M7 = R' + A' + W' */}
-            <Wire d="M 50 270 L 130 270"  on={Rn} /><Bubble cx={120} cy={270} on={Rn} />
-            <Wire d="M 80 285 L 130 285"  on={An} /><Bubble cx={120} cy={285} on={An} />
-            <Wire d="M 110 300 L 130 300" on={Wn} /><Bubble cx={120} cy={300} on={Wn} />
-            <OrGate x={130} y={266} out={M7} />
-            <Wire d="M 165 284 L 380 284" on={M7} />
-            <text x={170} y={278} fontSize="9" fontFamily="monospace" fill={wireColor(M7)}>M7</text>
-
-            {/* Big AND gate collecting all maxterms */}
-            <AndGate x={395} y={160} out={posOut} />
-            <Wire d="M 380 74  L 395 168" on={M3} />
-            <Wire d="M 380 144 L 395 178" on={M5} />
-            <Wire d="M 380 214 L 395 188" on={M6} />
-            <Wire d="M 380 284 L 395 196" on={M7} />
-
-            <Wire d="M 432 178 L 510 178" on={posOut} />
-            <text x="478" y="170" fontSize="10" fontFamily="monospace" fill={wireColor(posOut)} fontWeight="bold">F</text>
-            <rect x="510" y="160" width="36" height="36" rx="6" fill={posOut ? '#10b98144' : '#33415544'} stroke={wireColor(posOut)} strokeWidth="1.5" />
-            <text x="528" y="183" fontSize="16" fontFamily="monospace" fontWeight="bold" textAnchor="middle" fill={wireColor(posOut)}>{posOut}</text>
-          </svg>
-        </div>
-        <p className={`text-xs text-center mt-4 font-mono ${subText}`}>
-          4 OR-gates (one per maxterm) feed a single 4-input AND. Bubbles = inverters where the variable is 1 in that disaster row.
-        </p>
-      </motion.div>
-
-      {/* Side-by-side numeric verification */}
-      <div className="grid md:grid-cols-3 gap-5">
-        <div className={`p-5 rounded-3xl border ${
-          isDarkMode ? 'bg-emerald-500/5 border-emerald-500/30' : 'bg-emerald-50 border-emerald-300'
-        }`}>
-          <div className="font-mono text-[10px] uppercase tracking-widest text-emerald-400 mb-2">SOP output</div>
-          <div className="text-4xl font-black text-emerald-400">{sopOut}</div>
-        </div>
-        <div className={`p-5 rounded-3xl border ${cardBg} flex items-center justify-center`}>
-          <div className={`text-center ${textColor}`}>
-            <div className="font-mono text-[10px] uppercase tracking-widest opacity-50 mb-2">all match?</div>
-            <div className={`text-2xl font-black ${
-              sopOut === posOut && posOut === truth ? 'text-emerald-400' : 'text-rose-400'
+      {/* Controller */}
+      <div className={`p-6 rounded-3xl border ${cardBg} flex flex-wrap gap-8 items-center justify-center`}>
+        {Object.entries(inputs).map(([k, v]) => (
+          <button
+            key={k} onClick={() => toggle(k as any)}
+            className="flex flex-col items-center gap-3 group"
+          >
+            <div className={`w-14 h-14 rounded-2xl border-2 flex items-center justify-center transition-all duration-300 ${
+              v ? 'bg-cyan-500/20 border-cyan-400 shadow-lg shadow-cyan-500/20 scale-105' : 'bg-slate-500/10 border-slate-700 opacity-60'
             }`}>
-              {sopOut === posOut && posOut === truth ? '✓ verified' : 'mismatch'}
+              <Zap size={24} className={v ? 'text-cyan-400 fill-cyan-400/20' : 'text-slate-600'} />
             </div>
-            <div className={`text-xs mt-1 ${subText}`}>truth = {truth}</div>
-          </div>
-        </div>
-        <div className={`p-5 rounded-3xl border ${
-          isDarkMode ? 'bg-amber-500/5 border-amber-500/30' : 'bg-amber-50 border-amber-300'
-        }`}>
-          <div className="font-mono text-[10px] uppercase tracking-widest text-amber-400 mb-2">POS output</div>
-          <div className="text-4xl font-black text-amber-400">{posOut}</div>
+            <div className="text-center">
+              <div className={`text-xs font-black uppercase tracking-widest ${v ? 'text-cyan-400' : 'text-slate-500'}`}>{k === 'R' ? 'Rain' : k === 'A' ? 'Alert' : 'Wind'}</div>
+              <div className="font-mono text-[10px] opacity-40 uppercase">{v ? 'Active (1)' : 'Idle (0)'}</div>
+            </div>
+          </button>
+        ))}
+        
+        <div className="h-10 w-px bg-white/10 hidden md:block" />
+
+        <div className="flex flex-col items-center gap-2">
+           <div className={`w-20 h-10 rounded-xl border flex items-center justify-center font-black transition-all duration-500 ${
+             outSOP ? 'bg-emerald-500/20 border-emerald-400 text-emerald-400' : 'bg-rose-500/20 border-rose-400 text-rose-400'
+           }`}>
+             {outSOP ? 'GO (1)' : 'STAY (0)'}
+           </div>
+           <div className="font-mono text-[9px] uppercase tracking-tighter opacity-40">System Output</div>
         </div>
       </div>
 
-      {/* Hardware notes */}
-      <motion.div
-        initial={{ opacity: 0 }} animate={isActive ? { opacity: 1 } : {}}
-        transition={{ delay: 0.4 }}
-        className={`p-6 rounded-3xl border ${cardBg}`}
-      >
-        <div className="flex items-center gap-2 mb-3">
-          <Cpu size={14} className="text-cyan-400" />
-          <span className="font-mono text-[10px] uppercase tracking-widest text-cyan-400">
-            Hardware notes
-          </span>
+      <div className="grid lg:grid-cols-2 gap-8 items-start">
+        {/* SOP Visualization */}
+        <div className={`p-6 rounded-3xl border ${cardBg} relative overflow-hidden group`}>
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center gap-2">
+              <Network size={14} className="text-emerald-400" />
+              <span className="font-mono text-[10px] uppercase tracking-widest text-emerald-400 font-black">Ben's Brain (SOP)</span>
+            </div>
+            <div className="text-[9px] font-mono opacity-40 uppercase tracking-tighter">Architecture: AND → OR</div>
+          </div>
+
+          <svg viewBox="0 0 400 320" className="w-full drop-shadow-2xl">
+            {/* Input Rails */}
+            <line x1="20" y1="40" x2="20" y2="280" stroke={R ? "#10b981" : "#334155"} strokeWidth="2" strokeDasharray="4 4" opacity="0.3" />
+            <line x1="40" y1="40" x2="40" y2="280" stroke={A ? "#10b981" : "#334155"} strokeWidth="2" strokeDasharray="4 4" opacity="0.3" />
+            <line x1="60" y1="40" x2="60" y2="280" stroke={W ? "#10b981" : "#334155"} strokeWidth="2" strokeDasharray="4 4" opacity="0.3" />
+
+            {/* Signal Wires to AND gates */}
+            <Wire d="M 20 60 L 100 60" active={R} color="#10b981" />
+            <Wire d="M 40 70 L 100 70" active={A} color="#10b981" />
+            <Wire d="M 60 80 L 100 80" active={W} color="#10b981" />
+
+            <Wire d="M 20 120 L 100 120" active={R} color="#10b981" />
+            <Wire d="M 40 130 L 100 130" active={A} color="#10b981" />
+            <Wire d="M 60 140 L 100 140" active={!W} color="#10b981" />
+
+            <Wire d="M 20 180 L 100 180" active={R} color="#10b981" />
+            <Wire d="M 40 190 L 100 190" active={!A} color="#10b981" />
+            <Wire d="M 60 200 L 100 200" active={W} color="#10b981" />
+
+            <Wire d="M 20 240 L 100 240" active={!R} color="#10b981" />
+            <Wire d="M 40 250 L 100 250" active={A} color="#10b981" />
+            <Wire d="M 60 260 L 100 260" active={W} color="#10b981" />
+
+            {/* AND Gates (Neurons) */}
+            <AndGate x={100} y={50} active={s0} label="Neuron 0" onClick={() => setSelectedGate('m7')} />
+            <AndGate x={100} y={110} active={s1} label="Neuron 1" onClick={() => setSelectedGate('m6')} />
+            <AndGate x={100} y={170} active={s2} label="Neuron 2" onClick={() => setSelectedGate('m5')} />
+            <AndGate x={100} y={230} active={s3} label="Neuron 3" onClick={() => setSelectedGate('m3')} />
+
+            {/* OR Logic (Consensus) */}
+            <Wire d="M 140 70 L 260 140" active={s0} color="#38bdf8" />
+            <Wire d="M 140 130 L 260 150" active={s1} color="#38bdf8" />
+            <Wire d="M 140 190 L 260 160" active={s2} color="#38bdf8" />
+            <Wire d="M 140 250 L 260 170" active={s3} color="#38bdf8" />
+
+            <OrGate x={260} y={135} active={outSOP} label="Consensus" onClick={() => setSelectedGate('consensus')} />
+            <Wire d="M 300 155 L 360 155" active={outSOP} color="#38bdf8" />
+            
+            <circle cx="365" cy="155" r="5" fill={outSOP ? "#10b981" : "#334155"} className="animate-pulse" />
+          </svg>
+
+          {/* Micro-ticker */}
+          <div className="absolute bottom-4 left-6 right-6 flex items-center justify-between border-t border-white/5 pt-3">
+             <div className="flex items-center gap-2">
+                <div className={`w-1.5 h-1.5 rounded-full ${outSOP ? 'bg-emerald-500 animate-ping' : 'bg-slate-700'}`} />
+                <span className="font-mono text-[9px] uppercase tracking-widest opacity-40">Signal status: {outSOP ? 'NOMINAL' : 'WAIT'}</span>
+             </div>
+             <span className="font-mono text-[9px] uppercase tracking-widest text-emerald-500/50">Decisions firing...</span>
+          </div>
         </div>
-        <ul className={`space-y-2 text-sm leading-relaxed ${subText}`}>
-          <li>• Both circuits are <strong>two-level</strong> — every signal traverses at most two gates between input and output. This bounds the propagation delay.</li>
-          <li>• A NAND-only or NOR-only realisation is always possible by inserting bubble pairs (DeMorgan in silicon). NAND chips are the cheapest building blocks on a real PCB.</li>
-          <li>• Identical truth tables, different gate counts: pick whichever form yields the smaller bill of materials. K-Map minimisation in the next module shrinks both further.</li>
-        </ul>
-      </motion.div>
+
+        {/* Info / Microscope Panel */}
+        <div className="space-y-6">
+          <AnimatePresence mode="wait">
+            {selectedGate ? (
+              <motion.div
+                key={selectedGate}
+                initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
+                className={`p-6 rounded-3xl border-2 ${isDarkMode ? 'bg-cyan-500/5 border-cyan-500/30' : 'bg-cyan-50 border-cyan-200 shadow-xl'}`}
+              >
+                <div className="flex items-center gap-2 mb-4">
+                  <Microscope size={16} className="text-cyan-400" />
+                  <span className="font-mono text-[10px] uppercase tracking-widest text-cyan-400 font-black">Gate Inspection</span>
+                </div>
+                
+                {selectedGate === 'consensus' ? (
+                  <div className="space-y-4">
+                    <h3 className={`text-xl font-black ${textColor}`}>Consensus Engine (OR)</h3>
+                    <p className={`text-sm ${subText}`}>This gate represents Ben's final decision. If <strong>any</strong> of the active neurons fire, he goes to the picnic.</p>
+                    <div className="p-4 rounded-2xl bg-black/20 font-mono text-xs space-y-2">
+                      <div className="flex justify-between"><span>Inputs Active:</span> <span className="text-emerald-400">{( [s0,s1,s2,s3].filter(Boolean).length )}</span></div>
+                      <div className="flex justify-between"><span>Status:</span> <span className={outSOP ? 'text-emerald-400' : 'text-rose-400'}>{outSOP ? 'PASSED' : 'BLOCKED'}</span></div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <h3 className={`text-xl font-black ${textColor}`}>Decision Neuron {selectedGate.replace('m','')}</h3>
+                    <p className={`text-sm ${subText}`}>This neuron is programmed to fire <strong>only</strong> when a specific scenario occurs (a minterm). All conditions must be met simultaneously.</p>
+                    <div className="p-4 rounded-2xl bg-black/20 font-mono text-xs space-y-2">
+                      <div className="flex justify-between"><span>Rain Sensor:</span> <span className="text-cyan-400">{R ? '1' : '0'}</span></div>
+                      <div className="flex justify-between"><span>Alert System:</span> <span className="text-cyan-400">{A ? '1' : '0'}</span></div>
+                      <div className="flex justify-between"><span>Wind Sensor:</span> <span className="text-cyan-400">{W ? '1' : '0'}</span></div>
+                      <div className="h-px bg-white/5 my-2" />
+                      <div className="flex justify-between font-black"><span>Result:</span> <span className={selectedGate === 'm7' && s0 ? 'text-emerald-400' : 'text-rose-400'}>FIRE</span></div>
+                    </div>
+                  </div>
+                )}
+                
+                <button 
+                  onClick={() => setSelectedGate(null)}
+                  className="mt-6 w-full py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 font-mono text-[10px] uppercase tracking-widest transition-colors"
+                >
+                  Close Inspection
+                </button>
+              </motion.div>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                className={`p-8 rounded-3xl border border-dashed border-white/10 flex flex-col items-center justify-center text-center space-y-4 min-h-[300px]`}
+              >
+                <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center text-white/20">
+                  <Activity size={32} />
+                </div>
+                <div>
+                  <h4 className={`font-black ${textColor}`}>Microscope Idle</h4>
+                  <p className={`text-xs ${subText} max-w-[200px] mt-1`}>Click any gate in the circuit to see exactly how Ben evaluates the logic.</p>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <div className={`p-6 rounded-3xl border ${cardBg}`}>
+            <div className="flex items-center gap-2 mb-4">
+              <Info size={14} className="text-fuchsia-400" />
+              <span className="font-mono text-[10px] uppercase tracking-widest text-fuchsia-400 font-black">Hardware Reality</span>
+            </div>
+            <ul className="space-y-4">
+              {[
+                { t: 'Propagation Delay', v: '~12ns', d: 'Time taken for signals to traverse the neurons.' },
+                { t: 'Transistor Count', v: '22 Gates', d: 'Estimated silicon area for this picnic decision.' },
+                { t: 'Voltage Threshold', v: '0.8V VDD', d: 'Standard operating level for this CMOS design.' },
+              ].map((item, i) => (
+                <li key={i} className="flex gap-4">
+                  <div className="w-1 h-10 rounded-full bg-fuchsia-500/20 shrink-0" />
+                  <div>
+                    <div className="flex items-center justify-between">
+                      <span className={`text-[11px] font-black uppercase tracking-widest ${textColor}`}>{item.t}</span>
+                      <span className="font-mono text-[11px] text-fuchsia-400">{item.v}</span>
+                    </div>
+                    <p className="text-[10px] opacity-40 font-mono leading-tight">{item.d}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+      {/* Gate Archetype Library */}
+      <section className="space-y-6 pt-12 border-t border-white/5">
+        <div className="flex items-center gap-2">
+          <Microscope size={18} className="text-cyan-400" />
+          <h3 className={`text-xl font-bold ${textColor}`}>Gate Archetype Library</h3>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[
+            { 
+              name: 'AND (Product)', 
+              symbol: '&', 
+              role: 'Consensus Builder', 
+              desc: 'Outputs 1 only if ALL inputs are 1. The backbone of minterms.',
+              color: 'emerald'
+            },
+            { 
+              name: 'OR (Sum)', 
+              symbol: '≥1', 
+              role: 'Opportunity Gatherer', 
+              desc: 'Outputs 1 if ANY input is 1. The final collector in SOP.',
+              color: 'sky'
+            },
+            { 
+              name: 'NAND (Inverted AND)', 
+              symbol: '&', 
+              role: 'Universal Building Block', 
+              desc: 'The most efficient gate in CMOS manufacturing. Can build any logic.',
+              color: 'rose'
+            },
+            { 
+              name: 'NOR (Inverted OR)', 
+              symbol: '≥1', 
+              role: 'Disaster Filter', 
+              desc: 'Highly efficient for negative logic and fail-safe designs.',
+              color: 'amber'
+            },
+            { 
+              name: 'XOR (Difference)', 
+              symbol: '=1', 
+              role: 'Inequality Detector', 
+              desc: 'The heart of arithmetic. Fires when inputs disagree.',
+              color: 'fuchsia'
+            },
+            { 
+              name: 'NOT (Inverter)', 
+              symbol: '1', 
+              role: 'Perspective Flipper', 
+              desc: 'Simple but vital. Bridges "Joy" and "Caution" universes.',
+              color: 'indigo'
+            }
+          ].map((gate, i) => (
+            <motion.div
+              key={gate.name}
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.05 }}
+              className={`p-6 rounded-3xl border ${cardBg} group hover:border-cyan-500/50 transition-all`}
+            >
+              <div className="flex items-center justify-between mb-4">
+                <div className={`w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center font-mono font-bold text-cyan-400`}>
+                  {gate.symbol}
+                </div>
+                <span className={`text-[10px] font-mono font-bold opacity-40 uppercase tracking-widest`}>{gate.role}</span>
+              </div>
+              <h4 className={`text-sm font-black mb-2 ${textColor}`}>{gate.name}</h4>
+              <p className={`text-xs ${subText} leading-relaxed opacity-70`}>{gate.desc}</p>
+            </motion.div>
+          ))}
+        </div>
+      </section>
     </div>
   );
 };

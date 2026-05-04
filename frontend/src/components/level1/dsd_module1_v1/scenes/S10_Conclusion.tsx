@@ -1,237 +1,213 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Award, CheckCircle2, XCircle, ArrowRight, BookOpen } from 'lucide-react';
+import { Trophy, CheckCircle2, Layout, ArrowRight, ShieldCheck, Lock, Unlock, Cpu, Zap, Binary, BookOpen, Activity } from 'lucide-react';
 
 interface Props { isActive: boolean; isDarkMode: boolean; }
 
-interface Q {
-  q: string;
-  options: string[];
-  correct: number;
-  why: string;
-}
-
-const QUESTIONS: Q[] = [
-  {
-    q: 'A 3-input function outputs 1 only at rows 0 and 5. Its canonical SOP is …',
-    options: ['Σm(0, 5)', 'ΠM(0, 5)', 'Σm(1, 2, 3, 4, 6, 7)', 'ΠM(1, 2, 3, 4, 6, 7)'],
-    correct: 0,
-    why: 'SOP collects the rows where the function is 1. Rows 0 and 5 → Σm(0, 5).',
-  },
-  {
-    q: 'For the same function above, the canonical POS is …',
-    options: ['Σm(0, 5)', 'ΠM(0, 5)', 'Σm(1, 2, 3, 4, 6, 7)', 'ΠM(1, 2, 3, 4, 6, 7)'],
-    correct: 3,
-    why: 'POS collects the zero rows. Everything except 0 and 5 → ΠM(1, 2, 3, 4, 6, 7).',
-  },
-  {
-    q: 'In a minterm, a variable that was 0 in its truth-table row is written …',
-    options: ['as itself (X)', 'complemented (X′)', 'omitted', 'twice'],
-    correct: 1,
-    why: 'Minterm rule: 0 → X′, 1 → X. The complement enforces "must be 0".',
-  },
-  {
-    q: 'In a maxterm, a variable that was 1 in its truth-table row is written …',
-    options: ['as itself (X)', 'complemented (X′)', 'omitted', 'as a constant'],
-    correct: 1,
-    why: 'Maxterm rule flips: 1 → X′, 0 → X. The complement makes 1 the dangerous escape route.',
-  },
-];
-
 export const S10_Conclusion: React.FC<Props> = ({ isActive, isDarkMode }) => {
-  const [answers, setAnswers] = useState<(number | null)[]>(QUESTIONS.map(() => null));
-  const [revealed, setRevealed] = useState<boolean[]>(QUESTIONS.map(() => false));
+  const [testInputs, setTestInputs] = useState({ R: false, A: false, W: false });
+  const [showCard, setShowCard] = useState(false);
 
-  const score = answers.reduce<number>((acc, a, i) => acc + (a === QUESTIONS[i].correct ? 1 : 0), 0);
-  const total = QUESTIONS.length;
+  const { R, A, W } = testInputs;
+  // F(R,A,W) = Σm(3, 5, 6, 7) from previous scenes
+  const isUnlocked = (!R && A && W) || (R && !A && W) || (R && A && !W) || (R && A && W);
 
   const textColor = isDarkMode ? 'text-white' : 'text-slate-900';
   const subText = isDarkMode ? 'text-slate-300' : 'text-slate-600';
   const cardBg = isDarkMode ? 'bg-white/5 border-white/10' : 'bg-white border-slate-200 shadow-xl';
 
   return (
-    <div className="max-w-6xl mx-auto space-y-12 py-4">
-      {/* Hero */}
-      <section className="text-center space-y-4">
+    <div className="max-w-4xl mx-auto space-y-12 py-8">
+      <section className="text-center space-y-6">
         <motion.div
-          initial={{ scale: 0.8, opacity: 0 }} animate={isActive ? { scale: 1, opacity: 1 } : {}}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-400/40"
+          initial={{ scale: 0 }} animate={{ scale: 1 }}
+          transition={{ type: "spring", damping: 12 }}
+          className="w-20 h-20 bg-emerald-500 rounded-full flex items-center justify-center mx-auto shadow-lg shadow-emerald-500/20"
         >
-          <Award size={16} className="text-amber-400" />
-          <span className="font-mono text-[10px] uppercase tracking-widest text-amber-400 font-black">
-            Chapter 10 · The Architecture of Logic
-          </span>
+          <Trophy size={40} className="text-white" />
         </motion.div>
-        <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>
-          Choose the form that<br />makes your design easiest.
-        </h2>
-        <p className={`text-base max-w-2xl mx-auto ${subText}`}>
-          SOP and POS are not arbitrary mathematical inverses — they are two distinct philosophies
-          for human problem-solving. Boolean logic guarantees both routes arrive at the same truth.
-        </p>
+        
+        <div className="space-y-2">
+          <h2 className={`text-4xl md:text-6xl font-black ${textColor}`}>
+            Mission Accomplished
+          </h2>
+          <p className={`text-lg font-mono uppercase tracking-[0.3em] text-emerald-400`}>
+            Boolean Architect · Level 01
+          </p>
+        </div>
       </section>
 
-      {/* Final sketchbook page */}
+      {/* Real World Bridge: The Greenhouse Lock */}
       <motion.div
         initial={{ opacity: 0, y: 20 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
-        transition={{ delay: 0.2 }}
-        className="rounded-3xl overflow-hidden border border-white/10 mx-auto max-w-3xl"
-        style={{ background: '#fef9f0' }}
+        className={`p-8 rounded-3xl border ${cardBg} relative overflow-hidden`}
       >
-        <img src="/images/sketchbook/p12.png" alt="The Architecture of Logic — final page" className="w-full block" />
+        <div className="flex items-center gap-3 mb-6">
+          <ShieldCheck className="text-cyan-400" />
+          <span className="font-mono text-[10px] uppercase tracking-widest text-cyan-400 font-black">Final Deployment Simulation</span>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-8 items-center">
+          <div className="space-y-4">
+            <h3 className={`text-2xl font-black ${textColor}`}>Greenhouse Door Lock</h3>
+            <p className={`text-sm ${subText}`}>
+              You thought you were helping Ben with a picnic. But in engineering, 
+              <strong> abstract logic is universal</strong>. The same SOP/POS equations 
+              you built are currently powering this automated greenhouse lock.
+            </p>
+            
+            <div className="flex flex-wrap gap-3 pt-4">
+              {['R', 'A', 'W'].map(k => (
+                <button
+                  key={k}
+                  onClick={() => setTestInputs(p => ({ ...p, [k]: !p[k as keyof typeof p] }))}
+                  className={`px-4 py-2 rounded-xl font-mono text-xs font-bold transition-all border ${
+                    testInputs[k as keyof typeof testInputs] 
+                      ? 'bg-cyan-500 text-white border-cyan-400 shadow-lg shadow-cyan-500/20' 
+                      : 'bg-white/5 border-white/10 opacity-60'
+                  }`}
+                >
+                  {k === 'R' ? 'Rain' : k === 'A' ? 'Alert' : 'Wind'} Sensor: {testInputs[k as keyof typeof testInputs] ? '1' : '0'}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className={`aspect-video rounded-2xl flex flex-col items-center justify-center border-2 transition-all duration-500 ${
+            isUnlocked ? 'bg-emerald-500/10 border-emerald-400/50' : 'bg-rose-500/10 border-rose-400/50'
+          }`}>
+             <motion.div
+               animate={isUnlocked ? { rotateY: 0 } : { rotateY: 180 }}
+               className="mb-4"
+             >
+               {isUnlocked ? <Unlock size={64} className="text-emerald-400" /> : <Lock size={64} className="text-rose-400" />}
+             </motion.div>
+             <div className={`font-mono text-xs font-black uppercase tracking-widest ${isUnlocked ? 'text-emerald-400' : 'text-rose-400'}`}>
+               System Status: {isUnlocked ? 'ACCESS GRANTED' : 'LOCKED'}
+             </div>
+             <div className="text-[10px] opacity-40 font-mono mt-2 uppercase tracking-tighter">
+               F(R,A,W) = Σm(3,5,6,7) Active
+             </div>
+          </div>
+        </div>
       </motion.div>
 
-      {/* Three-rule recap */}
-      <div className="grid md:grid-cols-3 gap-5">
-        {[
-          { n: '01', t: 'SOP and POS are dual blueprints', d: 'For every function, both forms exist. They are mathematically interchangeable through DeMorgan.' },
-          { n: '02', t: 'Use the lens that fits the problem', d: 'A function with few 1s? Paint the ones. A function with few 0s? Brick the zeros.' },
-          { n: '03', t: 'Minimisation comes next', d: 'Canonical forms are the starting point. K-maps, Quine–McCluskey and tools then strip redundant literals.' },
-        ].map((r, i) => (
-          <motion.div
-            key={r.n}
-            initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
-            transition={{ delay: 0.1 + i * 0.1 }}
-            className={`p-6 rounded-3xl border ${cardBg}`}
-          >
-            <div className="font-mono text-3xl font-black text-amber-400/60 mb-2">{r.n}</div>
-            <h4 className={`font-black mb-2 ${textColor}`}>{r.t}</h4>
-            <p className={`text-xs leading-relaxed ${subText}`}>{r.d}</p>
-          </motion.div>
-        ))}
+      {/* Mental Compression Card */}
+      <div className="text-center">
+        <button
+          onClick={() => setShowCard(!showCard)}
+          className={`group flex items-center gap-3 mx-auto px-8 py-4 rounded-full font-black uppercase tracking-widest transition-all ${
+            showCard ? 'bg-fuchsia-500 text-white' : 'bg-white/5 border border-white/10 hover:border-fuchsia-500/50'
+          }`}
+        >
+          <BookOpen size={18} />
+          {showCard ? 'Close Mental Compression' : 'Open Mental Compression Card'}
+          <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+        </button>
       </div>
 
-      {/* Knowledge gate */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
-        transition={{ delay: 0.4 }}
-        className={`p-8 rounded-3xl border ${cardBg}`}
-      >
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <div className="font-mono text-[10px] uppercase tracking-widest opacity-50 mb-1">Knowledge Gate</div>
-            <h3 className={`text-xl font-black ${textColor}`}>Prove the picnic stuck</h3>
-          </div>
-          <div className="text-right">
-            <div className="font-mono text-[10px] uppercase tracking-widest opacity-50">Score</div>
-            <div className={`text-3xl font-black ${score === total ? 'text-emerald-400' : 'text-amber-400'}`}>
-              {score}/{total}
+      <AnimatePresence>
+        {showCard && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className={`p-8 rounded-[2rem] border-4 border-fuchsia-500/30 ${isDarkMode ? 'bg-black' : 'bg-white shadow-2xl'} shadow-[0_0_50px_rgba(217,70,239,0.1)]`}
+          >
+            <div className="grid md:grid-cols-2 gap-12">
+              <div className="space-y-6">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-mono text-[10px] uppercase font-black">
+                  Rule 01 · SOP Architecture
+                </div>
+                <h4 className={`text-3xl font-black ${textColor}`}>The 1-Tracker</h4>
+                <p className={`text-sm leading-relaxed ${subText}`}>
+                  Focus on the <strong>ON</strong> rows. Every row that produces a <strong>1</strong> becomes a 3-input AND gate. We then OR them all together.
+                </p>
+                <div className="p-4 rounded-2xl bg-white/5 border border-white/10 font-mono text-xs">
+                  <span className="text-fuchsia-400 italic">// Strategy Tip:</span><br/>
+                  Use SOP when the truth table is <strong>Sparse</strong> (mostly 0s).
+                </div>
+              </div>
+
+              <div className="space-y-6">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-400 font-mono text-[10px] uppercase font-black">
+                  Rule 02 · POS Architecture
+                </div>
+                <h4 className={`text-3xl font-black ${textColor}`}>The 0-Blocker</h4>
+                <p className={`text-sm leading-relaxed ${subText}`}>
+                  Focus on the <strong>OFF</strong> rows. Every row that produces a <strong>0</strong> becomes a 3-input OR gate (inverted inputs). We then AND them all together.
+                </p>
+                <div className="p-4 rounded-2xl bg-white/5 border border-white/10 font-mono text-xs">
+                  <span className="text-fuchsia-400 italic">// Strategy Tip:</span><br/>
+                  Use POS when the truth table is <strong>Dense</strong> (mostly 1s).
+                </div>
+              </div>
             </div>
-          </div>
+
+            <div className="mt-12 pt-8 border-t border-white/5 grid grid-cols-2 sm:grid-cols-4 gap-4">
+               {[
+                 { l: 'Gate Cost', v: 'Min is Win', i: <Cpu size={14}/> },
+                 { l: 'Area Budget', v: '5 Gates Max', i: <Zap size={14}/> },
+                 { l: 'Prop Delay', v: '2-Level Fix', i: <Activity size={14}/> },
+                 { l: 'Language', v: 'Verilog Next', i: <Binary size={14}/> },
+               ].map((d, i) => (
+                 <div key={i} className="text-center p-3 rounded-xl bg-white/5">
+                    <div className="flex justify-center mb-1 text-fuchsia-400 opacity-60">{d.i}</div>
+                    <div className="text-[9px] uppercase tracking-widest opacity-40 font-mono">{d.l}</div>
+                    <div className={`text-[10px] font-black uppercase tracking-widest ${textColor}`}>{d.v}</div>
+                 </div>
+               ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Silicon Impact Summary */}
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1 }}
+        className={`p-10 rounded-[40px] border-2 border-emerald-500/30 bg-emerald-500/5 text-center relative overflow-hidden mt-12`}
+      >
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-emerald-500 to-transparent animate-pulse" />
+        <h4 className="text-emerald-400 font-mono text-[10px] uppercase tracking-[0.5em] mb-4 font-black">Performance Audit // Final</h4>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
+           <div className="space-y-1">
+              <div className="text-3xl font-black font-mono text-white">$12,500</div>
+              <div className="text-[9px] opacity-40 uppercase tracking-widest font-mono">Estimated BOM Savings</div>
+           </div>
+           <div className="space-y-1">
+              <div className="text-3xl font-black font-mono text-white">Top 2%</div>
+              <div className="text-[9px] opacity-40 uppercase tracking-widest font-mono">Global Architect Tier</div>
+           </div>
+           <div className="hidden md:block space-y-1">
+              <div className="text-3xl font-black font-mono text-white">0 ERRORS</div>
+              <div className="text-[9px] opacity-40 uppercase tracking-widest font-mono">Logic Integrity Verified</div>
+           </div>
         </div>
 
-        <div className="space-y-6">
-          {QUESTIONS.map((q, qi) => (
-            <div key={qi} className={`p-5 rounded-2xl border ${
-              isDarkMode ? 'bg-black/30 border-white/10' : 'bg-slate-50 border-slate-200'
-            }`}>
-              <div className={`font-bold mb-4 ${textColor}`}>
-                <span className="font-mono text-xs opacity-50 mr-2">Q{qi + 1}.</span>
-                {q.q}
-              </div>
-              <div className="grid sm:grid-cols-2 gap-2 mb-3">
-                {q.options.map((opt, oi) => {
-                  const picked = answers[qi] === oi;
-                  const correct = q.correct === oi;
-                  const show = revealed[qi];
-                  return (
-                    <button
-                      key={oi}
-                      onClick={() => {
-                        setAnswers(a => a.map((v, j) => j === qi ? oi : v));
-                        setRevealed(r => r.map((v, j) => j === qi ? true : v));
-                      }}
-                      className={`text-left px-4 py-3 rounded-xl font-mono text-[13px] border-2 transition-all ${
-                        show && correct
-                          ? 'bg-emerald-500/15 border-emerald-400 text-emerald-300'
-                          : show && picked && !correct
-                            ? 'bg-rose-500/15 border-rose-400 text-rose-300'
-                            : picked
-                              ? 'bg-cyan-500/15 border-cyan-400 text-cyan-300'
-                              : isDarkMode
-                                ? 'bg-white/5 border-white/10 text-slate-300 hover:border-cyan-400'
-                                : 'bg-white border-slate-200 text-slate-700 hover:border-cyan-400'
-                      }`}
-                    >
-                      <span className="opacity-50 mr-2">{String.fromCharCode(65 + oi)}.</span>
-                      {opt}
-                      {show && correct && <CheckCircle2 size={14} className="inline ml-2" />}
-                      {show && picked && !correct && <XCircle size={14} className="inline ml-2" />}
-                    </button>
-                  );
-                })}
-              </div>
-              <AnimatePresence>
-                {revealed[qi] && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }}
-                    className={`text-xs leading-relaxed font-mono ${subText} pl-1`}
-                  >
-                    <span className="opacity-60">why → </span>{q.why}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          ))}
+        {/* Floating Particles Simulation (CSS-based) */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+           {[...Array(20)].map((_, i) => (
+             <motion.div 
+               key={i}
+               initial={{ y: 200, x: Math.random() * 400, opacity: 0 }}
+               animate={{ y: -100, opacity: [0, 1, 0] }}
+               transition={{ duration: 2 + Math.random() * 2, repeat: Infinity, delay: Math.random() * 2 }}
+               className="absolute w-1 h-1 bg-emerald-400 rounded-full"
+             />
+           ))}
         </div>
       </motion.div>
 
-      {/* Glossary */}
-      <motion.div
-        initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
-        transition={{ delay: 0.55 }}
-        className={`p-8 rounded-3xl border ${cardBg}`}
-      >
-        <div className="flex items-center gap-2 mb-6">
-          <BookOpen size={14} className="text-cyan-400" />
-          <span className="font-mono text-[10px] uppercase tracking-widest text-cyan-400">
-            Glossary · everything you should walk away knowing
-          </span>
+      <div className={`flex flex-col md:flex-row items-center justify-between p-8 rounded-3xl border-2 border-dashed border-white/10 ${isDarkMode ? 'bg-white/5' : 'bg-slate-50'} mt-12`}>
+        <div className="space-y-2 mb-6 md:mb-0">
+          <h3 className={`text-2xl font-black ${textColor}`}>Continue Your Journey</h3>
+          <p className={`text-sm ${subText}`}>You've mastered canonical forms. Next: <strong>Logic Minimization</strong>.</p>
         </div>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
-          {[
-            { term: 'Literal',          color: '#06b6d4', def: 'A variable or its complement (X or X′). The atomic unit of a Boolean expression.' },
-            { term: 'Minterm (mᵢ)',     color: '#10b981', def: 'A product of every variable, each in normal or complemented form. Fires for exactly one truth-table row.' },
-            { term: 'Maxterm (Mᵢ)',     color: '#f43f5e', def: 'A sum of every variable, each in normal or complemented form. Outputs 0 for exactly one row.' },
-            { term: 'Canonical SOP',    color: '#10b981', def: 'OR of all minterms where F = 1. Written F = Σm(...). Unique for each function.' },
-            { term: 'Canonical POS',    color: '#f59e0b', def: 'AND of all maxterms where F = 0. Written F = ΠM(...). Also unique for each function.' },
-            { term: 'Σm  (Sigma-m)',    color: '#10b981', def: 'Shorthand: list the row indices where F = 1. F = Σm(0, 1, 2, 4) means the function is 1 at those rows.' },
-            { term: 'ΠM  (Pi-M)',       color: '#f59e0b', def: 'Shorthand: list the row indices where F = 0.' },
-            { term: 'Complement (X′)',  color: '#a78bfa', def: "The opposite Boolean value. 1 becomes 0, 0 becomes 1. Also written X̄ or NOT X." },
-            { term: "DeMorgan's Theorem",color: '#e879f9',def: '(X + Y)′ = X′ · Y′ and (X · Y)′ = X′ + Y′. Bridges SOP and POS.' },
-            { term: 'Two-level circuit', color: '#22d3ee',def: 'Any signal traverses at most two gates from input to output. Both canonical forms are two-level.' },
-            { term: 'Truth Table',      color: '#0ea5e9', def: 'Tabular enumeration of every input combination paired with the function output.' },
-            { term: 'Karnaugh Map',     color: '#ec4899', def: 'Re-arrangement of the truth table into a 2D grid where adjacent cells differ in one variable. Foundation of the next module.' },
-          ].map(g => (
-            <div key={g.term} className={`p-4 rounded-2xl border ${
-              isDarkMode ? 'bg-black/30 border-white/10' : 'bg-slate-50 border-slate-200'
-            }`}>
-              <div className="font-mono text-sm font-black mb-2" style={{ color: g.color }}>
-                {g.term}
-              </div>
-              <div className={`text-[12px] leading-relaxed ${subText}`}>{g.def}</div>
-            </div>
-          ))}
-        </div>
-      </motion.div>
-
-      {/* Outro */}
-      <motion.div
-        initial={{ opacity: 0 }} animate={isActive ? { opacity: 1 } : {}}
-        transition={{ delay: 0.7 }}
-        className={`p-8 rounded-3xl border-2 text-center ${
-          isDarkMode ? 'bg-amber-500/5 border-amber-400/40' : 'bg-amber-50 border-amber-300'
-        }`}
-      >
-        <p className={`text-lg font-medium leading-relaxed ${textColor}`}>
-          You now hold both lenses. In the next module we move from <em>canonical</em> forms to{' '}
-          <strong>minimised</strong> ones — Karnaugh maps, prime implicants, and the art of removing
-          redundant literals without losing truth.
-        </p>
-        <div className="mt-4 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-amber-400">
-          Up next: K-Map Lab <ArrowRight size={12} />
-        </div>
-      </motion.div>
+        <button className="px-10 py-4 bg-emerald-500 hover:bg-emerald-600 text-white rounded-full font-black uppercase tracking-[0.2em] shadow-xl shadow-emerald-500/20 transition-all hover:scale-105 active:scale-95 flex items-center gap-3">
+          Initialize Module 02
+          <ArrowRight size={20} />
+        </button>
+      </div>
     </div>
   );
 };

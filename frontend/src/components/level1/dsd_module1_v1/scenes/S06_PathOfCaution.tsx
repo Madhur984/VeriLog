@@ -36,6 +36,16 @@ export const S06_PathOfCaution: React.FC<Props> = ({ isDarkMode }) => {
           complemented (X&apos;), 0 stays normal (X)</strong>. Why the inversion? Because{' '}
           <strong>1</strong> is the dangerous state we are escaping.
         </p>
+
+        {/* Industrial Insight Tag */}
+        <motion.div 
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-rose-500/10 border border-rose-500/20"
+        >
+          <div className="w-1.5 h-1.5 rounded-full bg-rose-400 animate-pulse" />
+          <span className="text-[10px] font-mono font-bold text-rose-400 tracking-wider uppercase">Industrial Insight: Fail-Safe Design</span>
+        </motion.div>
       </section>
 
       {/* Side-by-side sketchbook reference */}

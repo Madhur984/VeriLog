@@ -36,6 +36,16 @@ export const S04_PathOfJoy: React.FC<Props> = ({ isActive, isDarkMode }) => {
           (<em>X&apos;</em>), every <strong>1</strong> input stays as <em>X</em>. AND them
           together and you have captured exactly that universe — and no other.
         </p>
+
+        {/* Industrial Insight Tag */}
+        <motion.div 
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-sky-500/10 border border-sky-500/20"
+        >
+          <div className="w-1.5 h-1.5 rounded-full bg-sky-400 animate-pulse" />
+          <span className="text-[10px] font-mono font-bold text-sky-400 tracking-wider uppercase">Industrial Insight: PPA Optimization</span>
+        </motion.div>
       </section>
 
       {/* Side-by-side sketchbook reference */}

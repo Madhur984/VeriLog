@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 
@@ -181,6 +181,25 @@ const HudTooltip: React.FC<{ text: string; color: string; visible: boolean; alig
   );
 };
 
+// ─── BATTERY METER ─────────────────────────────────────────────────────────────
+const BatteryMeter: React.FC<{ total: number; filled: number; color: string }> = ({ total, filled, color }) => (
+  <div className="flex items-center gap-1.5">
+    <div className="flex items-center gap-[3px]">
+      {Array.from({ length: total }).map((_, i) => (
+        <motion.div key={i} className="rounded-[2px]"
+          style={{ width: 14, height: 6,
+            backgroundColor: i < filled ? color : 'transparent',
+            border: `1px solid ${i < filled ? color : `${color}44`}`,
+            boxShadow: i < filled ? `0 0 4px ${color}88` : 'none',
+          }}
+          initial={{ scaleX: 0 }} animate={{ scaleX: 1 }}
+          transition={{ delay: i * 0.06, duration: 0.25 }} />
+      ))}
+    </div>
+    <span className="text-[8px] font-mono tabular-nums" style={{ color: `${color}99` }}>{filled}/{total}</span>
+  </div>
+);
+
 // ─── ANIMATED PATHWAY PULSE ────────────────────────────────────────────────────
 const PathwayPulse: React.FC<{ color: string; vertical?: boolean; length?: number }> = ({
   color, vertical = false, length = 48,
@@ -211,6 +230,9 @@ interface GateProps {
 const AnimatedPin: React.FC<{ x1: number; y1: number; x2: number; y2: number; color: string; delay?: number }> = ({
   x1, y1, x2, y2, color, delay = 0,
 }) => {
+  // Pulse dot travels along the pin line
+  const dx = x2 - x1;
+  const dy = y2 - y1;
   return (
     <>
       <line x1={x1} y1={y1} x2={x2} y2={y2} stroke={`${color}55`} strokeWidth="1" />
@@ -390,6 +412,44 @@ const LogicGateShape: React.FC<GateProps> = ({ type, accent, isLocked, hovered, 
   return null;
 };
 
+// ─── BUFFER TRIANGLE (L6 leaf chip) ───────────────────────────────────────────
+const BufferChip: React.FC<{
+  index: number; color: string; route: string; label: string;
+  subtitle: string; desc: string; navigate: (r: string) => void;
+}> = ({ index, color, route, label, subtitle, desc, navigate }) => {
+  const [hovered, setHovered] = useState(false);
+  return (
+    <div className="relative" onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}>
+      <HudTooltip text={`${subtitle} — ${desc}`} color={color} visible={hovered} />
+      <button onClick={() => navigate(route)} className="relative cursor-pointer outline-none"
+        aria-label={label} style={{ width: 52, height: 56 }}>
+        <svg width={52} height={56} viewBox="0 0 52 56"
+          style={{ filter: hovered ? `drop-shadow(0 0 7px ${color}bb)` : 'none', transition: 'filter 0.25s' }}>
+          {/* Outer buffer ring */}
+          <motion.polygon points="4,4 48,28 4,52"
+            fill="transparent" stroke={`${color}44`} strokeWidth="0.7"
+            animate={hovered ? { scale: 1.1, opacity: 1 } : { scale: 1, opacity: 0.5 }}
+            style={{ transformOrigin: '26px 28px' }} transition={{ duration: 0.4 }} />
+          {/* Core triangle */}
+          <polygon points="8,8 44,28 8,48"
+            fill="#090B10" stroke={hovered ? color : `${color}88`} strokeWidth={hovered ? 1.4 : 1}
+            style={{ transition: 'stroke 0.2s, stroke-width 0.2s' }} />
+          {/* Input pin */}
+          <AnimatedPin x1={2} y1={28} x2={8} y2={28} color={color} delay={0} />
+          {/* Output pin */}
+          <AnimatedPin x1={44} y1={28} x2={50} y2={28} color={color} delay={0.6} />
+          {/* Number label */}
+          <text x="22" y="32" textAnchor="middle" fontFamily="monospace" fontSize="11"
+            fontWeight="700" fill={hovered ? color : `${color}cc`}
+            style={{ transition: 'fill 0.2s' }}>
+            {String(index + 1).padStart(2, '0')}
+          </text>
+        </svg>
+      </button>
+    </div>
+  );
+};
+
 // ─── ROOT MODULE GEM — LOGIC GATE EDITION ─────────────────────────────────────
 const RootGem: React.FC<{ node: RootNode; index: number; onClick: () => void }> = ({
   node, index, onClick,
@@ -480,275 +540,104 @@ const RootGem: React.FC<{ node: RootNode; index: number; onClick: () => void }> 
   );
 };
 
-
-// ─── L6 PATH HIERARCHY (PATH → MODULES → SUBMODULES) ───────────────────────────
-interface SubmoduleOption { id: string; label: string; route: string }
-interface ModuleOption    { id: string; label: string; subtitle: string; route: string; submodules: SubmoduleOption[] }
-interface PathOption      { id: string; label: string; subtitle: string; color: string; modules: ModuleOption[] }
-
-const L6_PATHS: PathOption[] = [
-  {
-    id: 'basic-electronics', label: 'Basic Electronics', subtitle: 'SIGNALS · WAVES · ADC', color: '#22d3ee',
-    modules: [
-      {
-        id: 'm1', label: 'Signals & Waves', subtitle: 'L1 · WAVE FOUNDATION', route: '/module/1',
-        submodules: [
-          { id: 'm1s1', label: 'Standard Signals', route: '/module/1' },
-          { id: 'm1s2', label: 'Analog vs Digital', route: '/module/1' },
-          { id: 'm1s3', label: 'Wave Parameters', route: '/module/1' },
-          { id: 'm1s4', label: 'Verilog Bridge', route: '/module/1/1' },
-        ],
-      },
-      {
-        id: 'm2', label: 'Sampling & ADC', subtitle: 'L2 · SAMPLING THEORY', route: '/module/2',
-        submodules: [
-          { id: 'm2s1', label: 'Sampling', route: '/module/2' },
-          { id: 'm2s2', label: 'Aliasing & Nyquist', route: '/module/2' },
-          { id: 'm2s3', label: 'Quantization', route: '/module/2' },
-          { id: 'm2s4', label: 'Reconstruction', route: '/module/2' },
-          { id: 'm2s5', label: 'ADC Architecture', route: '/module/2' },
-        ],
-      },
-    ],
-  },
-  {
-    id: 'dsd', label: 'DSD', subtitle: 'BOOLEAN · K-MAPS', color: '#34d399',
-    modules: [
-      {
-        id: 'm3', label: 'Binary & Logic', subtitle: 'L3 · BOOLEAN LOGIC', route: '/dsd/1',
-        submodules: [
-          { id: 'm3s1', label: 'Picnic Physics',  route: '/dsd/1/physics' },
-          { id: 'm3s2', label: 'Truth Multiverse', route: '/dsd/1/multi'   },
-          { id: 'm3s3', label: 'Minterms / SOP',   route: '/dsd/1/minterm' },
-          { id: 'm3s4', label: 'Maxterms / POS',   route: '/dsd/1/maxterm' },
-          { id: 'm3s5', label: 'Live Lab',         route: '/dsd/1/lab'     },
-        ],
-      },
-      {
-        id: 'm4', label: 'K-Maps', subtitle: 'L4 · MAP REDUCTION', route: '/module/4',
-        submodules: [
-          { id: 'm4s1', label: '2-Variable Maps', route: '/module/4' },
-          { id: 'm4s2', label: '3-Variable Maps', route: '/module/4' },
-          { id: 'm4s3', label: '4-Variable Maps', route: '/module/4' },
-          { id: 'm4s4', label: "Don't Care Terms", route: '/module/4' },
-          { id: 'm4s5', label: 'SOP / POS Forms', route: '/module/4' },
-        ],
-      },
-    ],
-  },
-  {
-    id: 'verilog', label: 'Verilog', subtitle: 'HDL · SYNTHESIS', color: '#a78bfa',
-    modules: [
-      {
-        id: 'm5', label: 'Verilog Core', subtitle: 'L5 · HDL GATEWAY', route: '/module/5',
-        submodules: [
-          { id: 'm5s1', label: 'First Verilog', route: '/module/5' },
-          { id: 'm5s2', label: 'Modules', route: '/module/5' },
-          { id: 'm5s3', label: 'Testbenches', route: '/module/5' },
-          { id: 'm5s4', label: 'Clock Signal', route: '/module/5' },
-          { id: 'm5s5', label: 'Hierarchy', route: '/module/5' },
-        ],
-      },
-      {
-        id: 'm6', label: 'HDL Mastery', subtitle: 'L6 · SYNTHESIS LAYER', route: '/module/6',
-        submodules: [
-          { id: 'm6s1', label: 'Breaking Point', route: '/module/6/0' },
-          { id: 'm6s2', label: 'Industry Risk', route: '/module/6/2' },
-          { id: 'm6s3', label: 'What is HDL?', route: '/module/6/4' },
-          { id: 'm6s4', label: 'Abstraction Ladder', route: '/module/6/11' },
-          { id: 'm6s5', label: 'Synthesis Flow', route: '/module/6/13' },
-          { id: 'm6s6', label: 'First Contact', route: '/module/6/16' },
-          { id: 'm6s7', label: 'Testbench', route: '/module/6/17' },
-          { id: 'm6s8', label: 'AI Hardware', route: '/module/6/24' },
-        ],
-      },
-    ],
-  },
-];
-
-// ─── PATH SELECTOR + ACCORDION MODULE LIST ─────────────────────────────────────
-const L6PathDropdown: React.FC<{ onPick: (route: string) => void }> = ({ onPick }) => {
-  const [pathOpen, setPathOpen] = useState(false);
-  const [pathSel, setPathSel] = useState<PathOption>(L6_PATHS[0]);
-  const [expandedId, setExpandedId] = useState<string | null>(null);
-  const pathRef = useRef<HTMLDivElement>(null);
-
+// ─── KINETIC BRANCH TITLE ──────────────────────────────────────────────────────
+const KineticBranchTitle: React.FC<{ title: string }> = ({ title }) => {
+  const [triggered, setTriggered] = useState(false);
+  const display = useDecodeText(title, triggered);
+  const ref = useRef<HTMLHeadingElement>(null);
   useEffect(() => {
-    const onDoc = (e: MouseEvent) => {
-      if (pathRef.current && !pathRef.current.contains(e.target as Node)) setPathOpen(false);
-    };
-    document.addEventListener('mousedown', onDoc);
-    return () => document.removeEventListener('mousedown', onDoc);
+    const el = ref.current;
+    if (!el) return;
+    const ob = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setTriggered(true); ob.disconnect(); } }, { threshold: 0.5 });
+    ob.observe(el);
+    return () => ob.disconnect();
   }, []);
-
-  const accent = pathSel.color;
-
   return (
-    <div className="w-full max-w-[760px] flex flex-col items-stretch gap-5">
-      {/* Path picker */}
-      <div ref={pathRef} className="relative self-center w-full max-w-[420px]">
-        <button
-          type="button"
-          onClick={() => setPathOpen(o => !o)}
-          className="w-full flex items-center justify-between px-4 py-3 rounded-sm border bg-[#0A0B0F] outline-none transition-all"
-          style={{
-            borderColor: pathOpen ? accent : `${accent}55`,
-            boxShadow: pathOpen ? `0 0 14px ${accent}33` : 'none',
-          }}
-        >
-          <div className="flex items-center gap-3 text-left">
-            <motion.span className="w-1.5 h-1.5 rounded-full"
-              style={{ backgroundColor: accent, boxShadow: `0 0 6px ${accent}` }}
-              animate={{ opacity: [0.5, 1, 0.5] }} transition={{ duration: 2, repeat: Infinity }} />
-            <div>
-              <div className="text-[12px] font-mono font-semibold text-white/90">{pathSel.label}</div>
-              <div className="text-[8.5px] font-mono tracking-[0.22em] uppercase" style={{ color: `${accent}aa` }}>
-                {pathSel.subtitle} · {pathSel.modules.length} modules
-              </div>
-            </div>
-          </div>
-          <motion.span animate={{ rotate: pathOpen ? 180 : 0 }} transition={{ duration: 0.2 }}
-            className="text-[10px] font-mono" style={{ color: accent }}>▾</motion.span>
-        </button>
-
-        <AnimatePresence>
-          {pathOpen && (
-            <motion.ul
-              initial={{ opacity: 0, y: -4 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -4 }}
-              transition={{ duration: 0.16 }}
-              className="absolute left-0 right-0 mt-2 rounded-sm border bg-[#0A0B0F]/97 backdrop-blur-md overflow-hidden z-40"
-              style={{ borderColor: 'rgba(255,255,255,0.08)' }}
-            >
-              {L6_PATHS.map(opt => {
-                const isActive = opt.id === pathSel.id;
-                return (
-                  <li key={opt.id}>
-                    <button type="button"
-                      onClick={() => { setPathSel(opt); setExpandedId(null); setPathOpen(false); }}
-                      className="w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors hover:bg-white/[0.04]"
-                      style={{
-                        backgroundColor: isActive ? `${opt.color}14` : 'transparent',
-                        borderLeft: `2px solid ${isActive ? opt.color : 'transparent'}`,
-                      }}>
-                      <span className="w-1 h-1 rounded-full" style={{ backgroundColor: opt.color, boxShadow: `0 0 5px ${opt.color}` }} />
-                      <div className="flex-1">
-                        <div className="text-[12px] font-mono font-semibold text-white/90">{opt.label}</div>
-                        <div className="text-[8.5px] font-mono tracking-[0.22em] uppercase" style={{ color: `${opt.color}aa` }}>
-                          {opt.subtitle} · {opt.modules.length} modules
-                        </div>
-                      </div>
-                      {isActive && <span className="text-[10px] font-mono" style={{ color: opt.color }}>●</span>}
-                    </button>
-                  </li>
-                );
-              })}
-            </motion.ul>
-          )}
-        </AnimatePresence>
-      </div>
-
-      {/* Module accordion list */}
-      <ul className="w-full flex flex-col gap-3">
-        {pathSel.modules.map((mod, idx) => {
-          const isOpen = expandedId === mod.id;
-          return (
-            <motion.li key={mod.id}
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.05, duration: 0.25 }}
-              className="rounded-md border overflow-hidden"
-              style={{
-                borderColor: isOpen ? `${accent}66` : 'rgba(255,255,255,0.08)',
-                backgroundColor: 'rgba(10,11,15,0.6)',
-                boxShadow: isOpen ? `0 0 18px ${accent}1f` : 'none',
-                transition: 'border-color 0.2s, box-shadow 0.2s',
-              }}>
-              <button type="button"
-                onClick={() => setExpandedId(isOpen ? null : mod.id)}
-                className="w-full flex items-center gap-4 px-4 py-3.5 text-left hover:bg-white/[0.02] transition-colors">
-                {/* Number badge */}
-                <div className="flex-shrink-0 w-9 h-9 rounded-md flex items-center justify-center font-mono font-bold text-[14px]"
-                  style={{
-                    backgroundColor: `${accent}1a`,
-                    border: `1px solid ${accent}33`,
-                    color: accent,
-                  }}>
-                  {idx + 1}
-                </div>
-
-                {/* Title block */}
-                <div className="flex-1 min-w-0">
-                  <div className="text-[14px] font-semibold text-white/95 truncate">{mod.label}</div>
-                  <div className="text-[9px] font-mono tracking-[0.2em] uppercase mt-0.5" style={{ color: `${accent}aa` }}>
-                    {mod.subtitle}
-                  </div>
-                </div>
-
-                {/* Topics count + chevron */}
-                <div className="flex items-center gap-3 flex-shrink-0">
-                  <span className="text-[11px] font-mono text-white/45">
-                    {mod.submodules.length} Topics
-                  </span>
-                  <motion.div
-                    animate={{ rotate: isOpen ? 180 : 0 }}
-                    transition={{ duration: 0.2 }}
-                    className="w-7 h-7 rounded-full flex items-center justify-center"
-                    style={{
-                      backgroundColor: 'rgba(255,255,255,0.04)',
-                      border: '1px solid rgba(255,255,255,0.08)',
-                    }}>
-                    <span className="text-[10px] text-white/60">▾</span>
-                  </motion.div>
-                </div>
-              </button>
-
-              {/* Expandable submodule list */}
-              <AnimatePresence initial={false}>
-                {isOpen && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: 'auto', opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.22, ease: 'easeInOut' }}
-                    className="overflow-hidden"
-                    style={{ borderTop: `1px solid ${accent}22` }}>
-                    <ul className="flex flex-col">
-                      {mod.submodules.map((sub, i) => (
-                        <li key={sub.id}>
-                          <button type="button"
-                            onClick={() => onPick(sub.route)}
-                            className="w-full flex items-center gap-4 px-4 py-2.5 text-left transition-colors hover:bg-white/[0.03] border-l-2"
-                            style={{ borderLeftColor: 'transparent' }}
-                            onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.borderLeftColor = accent; }}
-                            onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.borderLeftColor = 'transparent'; }}>
-                            <span className="flex-shrink-0 w-9 text-center text-[10px] font-mono tabular-nums" style={{ color: `${accent}88` }}>
-                              {idx + 1}.{String(i + 1).padStart(2, '0')}
-                            </span>
-                            <span className="flex-1 text-[12.5px] text-white/80">{sub.label}</span>
-                            <span className="text-[11px] font-mono" style={{ color: `${accent}aa` }}>→</span>
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.li>
-          );
-        })}
-      </ul>
-    </div>
+    <h3 ref={ref} className="text-base lg:text-[17px] font-semibold tracking-tight leading-snug font-mono"
+      style={{ color: '#E5E7EB' }}>
+      {display}
+    </h3>
   );
 };
+
+// ─── PARALLAX GRID ─────────────────────────────────────────────────────────────
+const ParallaxGrid: React.FC<{ scrollY: number }> = ({ scrollY }) => (
+  <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 0 }}>
+    <div style={{
+      position: 'absolute', inset: '-40px',
+      backgroundImage: `linear-gradient(rgba(34,211,238,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(34,211,238,0.04) 1px, transparent 1px)`,
+      backgroundSize: '32px 32px',
+      transform: `translateY(${scrollY * 0.25}px)`,
+      transition: 'transform 0.05s linear',
+      maskImage: 'radial-gradient(ellipse 80% 60% at 50% 40%, black 30%, transparent 100%)',
+      WebkitMaskImage: 'radial-gradient(ellipse 80% 60% at 50% 40%, black 30%, transparent 100%)',
+    }} />
+    <div style={{ position: 'absolute', inset: 0,
+      background: 'radial-gradient(ellipse 70% 50% at 50% 0%, rgba(34,211,238,0.03) 0%, transparent 70%)' }} />
+  </div>
+);
+
+// ─── SCROLL PROGRESS BAR ───────────────────────────────────────────────────────
+const ScrollProgressBar: React.FC<{ progress: number }> = ({ progress }) => (
+  <div className="fixed right-0 top-0 bottom-0 pointer-events-none" style={{ width: 2, zIndex: 100 }}>
+    <div className="absolute inset-0" style={{ backgroundColor: 'rgba(255,255,255,0.04)' }} />
+    <motion.div className="absolute left-0 right-0 top-0"
+      style={{ height: `${progress * 100}%`, background: 'linear-gradient(to bottom, #22d3ee, #a78bfa)', boxShadow: '0 0 6px rgba(34,211,238,0.5)' }} />
+    <motion.div className="absolute left-1/2 -translate-x-1/2 w-2 h-2 rounded-full"
+      style={{ top: `calc(${progress * 100}% - 4px)`, background: progress > 0.5 ? '#a78bfa' : '#22d3ee',
+        boxShadow: `0 0 8px ${progress > 0.5 ? '#a78bfa' : '#22d3ee'}` }} />
+  </div>
+);
 
 // ─── MAIN TREE COMPONENT ───────────────────────────────────────────────────────
 export const HierarchicalGrindTree: React.FC = () => {
   const navigate = useNavigate();
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [scrollY, setScrollY] = useState(0);
+
+  const handleScroll = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const { scrollTop, scrollHeight, clientHeight } = el;
+    setScrollProgress(scrollHeight > clientHeight ? scrollTop / (scrollHeight - clientHeight) : 0);
+    setScrollY(scrollTop);
+  }, []);
+
+  const branches = [
+    {
+      id: 'branch-electronics', title: 'HDL Foundations', subtitle: 'CRISIS_AND_PARADIGM', color: '#22d3ee',
+      nodes: [
+        { id: 's00', label: 'Breaking Point', subtitle: 'L6 · 01', desc: 'Why traditional design fails at scale.', route: '/module/6/0' },
+        { id: 's01', label: 'Industry Risk', subtitle: 'L6 · 03', desc: 'The economic cost of complexity.', route: '/module/6/2' },
+        { id: 's03', label: 'What is HDL?', subtitle: 'L6 · 05', desc: 'Hardware description as language.', route: '/module/6/4' },
+        { id: 's03a', label: 'Verilog Mandate', subtitle: 'L6 · 09', desc: 'Why Verilog became the standard.', route: '/module/6/8' },
+      ],
+    },
+    {
+      id: 'branch-design', title: 'System Architecture', subtitle: 'ARCH_SYNTHESIS', color: '#34d399',
+      nodes: [
+        { id: 's02', label: 'Abstraction Ladder', subtitle: 'L6 · 12', desc: 'Climbing from gates to behaviour.', route: '/module/6/11' },
+        { id: 's13', label: 'Synthesis Flow', subtitle: 'L6 · 14', desc: 'Translating intent to netlists.', route: '/module/6/13' },
+        { id: 's05', label: 'VLSI Pipeline', subtitle: 'L6 · 15', desc: 'From RTL to silicon die.', route: '/module/6/14' },
+        { id: 's14', label: 'FPGA vs ASIC', subtitle: 'L6 · 24', desc: 'Choosing your implementation destiny.', route: '/module/6/23' },
+      ],
+    },
+    {
+      id: 'branch-verilog', title: 'Verilog Mastery', subtitle: 'RTL_VERIFICATION', color: '#a78bfa',
+      nodes: [
+        { id: 's06', label: 'First Contact', subtitle: 'L6 · 17', desc: 'Writing your first Verilog module.', route: '/module/6/16' },
+        { id: 's06a', label: 'Testbench', subtitle: 'L6 · 18', desc: 'Verification fundamentals.', route: '/module/6/17' },
+        { id: 's20', label: 'AI Hardware', subtitle: 'L6 · 25', desc: 'Matrix engines and modern accelerators.', route: '/module/6/24' },
+        { id: 's21', label: 'Power Design', subtitle: 'L6 · 26', desc: 'PPA and thermal envelopes.', route: '/module/6/25' },
+      ],
+    },
+  ];
 
   return (
     <div className="w-full h-full flex flex-col bg-transparent overflow-hidden relative">
+      <ScrollProgressBar progress={scrollProgress} />
+
       {/* ── Header: L1-L5 Root Module Row ── */}
       <div className="flex-shrink-0 w-full pt-6 pb-5 px-4 lg:px-6 border-b border-white/10 bg-[#0A0B0F]/95 backdrop-blur-md relative z-30 flex justify-center">
         <div className="w-full max-w-[900px] flex flex-col items-center">
@@ -776,14 +665,141 @@ export const HierarchicalGrindTree: React.FC = () => {
         </div>
       </div>
 
-      {/* ── L6 Path Selector ── */}
-      <div className="flex-1 w-full px-4 lg:px-6 pt-10 pb-12 flex flex-col items-center relative z-10 overflow-y-auto scrollbar-hide">
-        <div className="flex items-center gap-2 text-[10px] font-mono tracking-[0.2em] text-white/55 mb-4">
-          <motion.span className="w-1 h-1 rounded-full bg-cyan-400/70"
-            animate={{ opacity: [0.4, 1, 0.4] }} transition={{ duration: 2, repeat: Infinity }} />
-          Choose your path
+      {/* ── Scrollable L6 Branches ── */}
+      <div ref={scrollRef} onScroll={handleScroll}
+        className="flex-1 w-full overflow-y-auto px-4 lg:px-6 pt-0 pb-24 scrollbar-hide relative z-10 flex justify-center">
+        <ParallaxGrid scrollY={scrollY} />
+
+        <div className="w-full max-w-[850px] relative z-10">
+          <div className="relative w-full pb-10 px-4 md:px-8">
+            {/* Entry trace */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2" style={{ zIndex: 5 }}>
+              <PathwayPulse color="#22d3ee" vertical length={56} />
+            </div>
+
+            {/* L6 badge */}
+            <div className="absolute top-8 left-1/2 -translate-x-1/2 z-30">
+              <motion.div className="px-2.5 py-0.5 rounded-sm border bg-[#0A0B0F] relative overflow-hidden"
+                style={{ borderColor: 'rgba(34,211,238,0.25)' }}
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>
+                <span className="text-[9px] font-mono tracking-[0.2em] text-white/70">L6 · Synthesis Layer</span>
+                <motion.div className="absolute inset-0 pointer-events-none"
+                  style={{ background: 'linear-gradient(90deg, transparent 0%, rgba(34,211,238,0.12) 50%, transparent 100%)' }}
+                  animate={{ x: ['-100%', '200%'] }}
+                  transition={{ duration: 2.5, repeat: Infinity, repeatDelay: 3 }} />
+              </motion.div>
+            </div>
+
+            {/* Junction node */}
+            <motion.div className="absolute top-[58px] left-1/2 -translate-x-1/2 z-20 rounded-full"
+              style={{ width: 6, height: 6, backgroundColor: '#22d3ee' }}
+              animate={{ boxShadow: ['0 0 0px rgba(34,211,238,0)', '0 0 7px rgba(34,211,238,0.7)', '0 0 0px rgba(34,211,238,0)'] }}
+              transition={{ duration: 2.5, repeat: Infinity }} />
+
+            {/* Distributor trace */}
+            <div className="absolute left-[16.66%] right-[16.66%]" style={{ top: 62, zIndex: 4 }}>
+              <PathwayPulse color="#22d3ee" length={600} />
+            </div>
+
+            <div className="flex justify-between gap-0 relative">
+              {branches.map((branch, branchIdx) => (
+                <div key={branch.id} className="flex-1 flex flex-col items-center relative min-w-0">
+                  {/* Branch entry vertical */}
+                  <div className="absolute left-1/2 -translate-x-1/2" style={{ top: 62, zIndex: 4 }}>
+                    <PathwayPulse color={branch.color} vertical length={56} />
+                  </div>
+
+                  {/* Branch title */}
+                  <motion.div className="mt-[106px] mb-6 text-center z-10 px-2 w-full flex flex-col items-center justify-end"
+                    style={{ minHeight: 150 }}
+                    initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: '-60px' }}
+                    transition={{ delay: branchIdx * 0.1, duration: 0.5 }}>
+                    <span className="text-[8.5px] font-mono tracking-[0.22em] mb-2 uppercase"
+                      style={{ color: `${branch.color}cc` }}>
+                      {branch.subtitle.replace(/_/g, ' ').toLowerCase()}
+                    </span>
+                    <KineticBranchTitle title={branch.title} />
+                    <div className="mt-3">
+                      <BatteryMeter total={branch.nodes.length} filled={0} color={branch.color} />
+                    </div>
+                  </motion.div>
+
+                  {/* Branch body */}
+                  <div className="relative w-full flex flex-col items-center pt-2">
+                    {/* Animated vertical trunk */}
+                    <div className="absolute top-0 bottom-12 left-1/2 -translate-x-1/2" style={{ zIndex: 1 }}>
+                      <div className="relative w-[1px] h-full overflow-hidden">
+                        <div className="absolute inset-0" style={{ backgroundColor: `${branch.color}38` }} />
+                        <motion.div className="absolute left-0 right-0"
+                          style={{ height: 32, background: `linear-gradient(to bottom, transparent, ${branch.color}aa, transparent)` }}
+                          animate={{ y: ['-32px', '100%'] }}
+                          transition={{ duration: 2.5, repeat: Infinity, ease: 'linear', repeatDelay: 0.8, delay: branchIdx * 0.6 }} />
+                      </div>
+                    </div>
+
+                    {branch.nodes.map((node, i) => {
+                      const onLeft = i % 2 === 0;
+
+                      const chip = (
+                        <BufferChip index={i} color={branch.color} route={node.route}
+                          label={node.label} subtitle={node.subtitle} desc={node.desc} navigate={navigate} />
+                      );
+
+                      const labelBlock = (align: 'left' | 'right') => (
+                        <div className={`max-w-full ${align === 'right' ? 'text-right pr-1' : 'text-left pl-1'}`}>
+                          <div className="text-[11.5px] font-semibold leading-tight text-white/90 mb-0.5 font-mono">
+                            {node.label}
+                          </div>
+                          <span className="text-[8px] font-mono tracking-[0.15em]"
+                            style={{ color: `${branch.color}cc` }}>
+                            {node.subtitle}
+                          </span>
+                        </div>
+                      );
+
+                      return (
+                        <motion.div key={node.id}
+                          initial={{ opacity: 0, x: onLeft ? -10 : 10 }}
+                          whileInView={{ opacity: 1, x: 0 }}
+                          viewport={{ once: true, margin: '-40px' }}
+                          transition={{ delay: i * 0.07, duration: 0.35, ease: 'easeOut' }}
+                          className="relative w-full flex items-center mb-9 last:mb-2 z-10"
+                          style={{ minHeight: 64 }}>
+                          <div className="flex-1 flex justify-end items-center pr-3">
+                            {onLeft ? chip : labelBlock('right')}
+                          </div>
+
+                          <div className="relative w-0 flex-shrink-0 h-full flex items-center justify-center" style={{ minHeight: 64 }}>
+                            <div className="absolute top-1/2 -translate-y-1/2 h-[1px]"
+                              style={{ width: 22, left: onLeft ? -22 : 0, backgroundColor: `${branch.color}77` }} />
+                            <motion.div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 rounded-full"
+                              style={{ left: 0, width: 6, height: 6, backgroundColor: branch.color }}
+                              animate={{ boxShadow: [`0 0 0px ${branch.color}00`, `0 0 6px ${branch.color}cc`, `0 0 0px ${branch.color}00`] }}
+                              transition={{ duration: 2, repeat: Infinity, delay: i * 0.4 + branchIdx * 0.5 }} />
+                          </div>
+
+                          <div className="flex-1 flex justify-start items-center pl-3">
+                            {!onLeft ? chip : labelBlock('left')}
+                          </div>
+                        </motion.div>
+                      );
+                    })}
+
+                    {/* Terminator */}
+                    <div className="relative mt-2 flex flex-col items-center">
+                      <div className="w-8 h-[2px]" style={{ backgroundColor: `${branch.color}55` }} />
+                      <div className="mt-2 text-[7px] font-mono tracking-[0.22em]"
+                        style={{ color: `${branch.color}55` }}>
+                        END · BRANCH
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
-        <L6PathDropdown onPick={(route) => navigate(route)} />
       </div>
     </div>
   );

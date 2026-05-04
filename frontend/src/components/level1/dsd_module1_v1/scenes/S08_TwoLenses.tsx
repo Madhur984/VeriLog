@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Eye, ArrowLeftRight, CheckCircle2 } from 'lucide-react';
+import { Eye, ArrowLeftRight, CheckCircle2, Activity } from 'lucide-react';
 
 interface Props { isActive: boolean; isDarkMode: boolean; }
 
@@ -221,6 +221,80 @@ export const S08_TwoLenses: React.FC<Props> = ({ isActive, isDarkMode }) => {
           </p>
         </div>
       </motion.div>
+      {/* PPA Scorecard */}
+      <section className="space-y-6 pt-12 border-t border-white/5">
+        <div className="flex items-center gap-2">
+          <Activity size={18} className="text-fuchsia-400" />
+          <h3 className={`text-xl font-bold ${textColor}`}>PPA Scorecard: SOP vs POS</h3>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* SOP Card */}
+          <div className={`p-8 rounded-3xl border ${cardBg} relative overflow-hidden`}>
+            <div className="absolute top-0 right-0 p-4 opacity-5">
+              <span className="text-8xl font-black">Σ</span>
+            </div>
+            <h4 className="text-emerald-400 font-mono text-[10px] uppercase tracking-widest font-black mb-4">SOP Architecture (AND-OR)</h4>
+            <ul className="space-y-4">
+              {[
+                { label: 'Power', score: 85, desc: 'Efficient when 1s are rare; fewer gates switching.' },
+                { label: 'Performance', score: 90, desc: '2-level depth ensures consistent propagation delay.' },
+                { label: 'Area', score: 75, desc: 'Can balloon if the truth table is dominated by 1s.' },
+              ].map(item => (
+                <li key={item.label} className="space-y-2">
+                  <div className="flex justify-between items-center text-[11px]">
+                    <span className={`font-bold ${textColor}`}>{item.label}</span>
+                    <span className="text-emerald-400 font-mono">{item.score}% Efficiency</span>
+                  </div>
+                  <div className="h-1 w-full bg-emerald-500/10 rounded-full overflow-hidden">
+                    <motion.div initial={{ width: 0 }} whileInView={{ width: `${item.score}%` }} className="h-full bg-emerald-500" />
+                  </div>
+                  <p className={`text-[10px] ${subText} opacity-50`}>{item.desc}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* POS Card */}
+          <div className={`p-8 rounded-3xl border ${cardBg} relative overflow-hidden`}>
+            <div className="absolute top-0 right-0 p-4 opacity-5">
+              <span className="text-8xl font-black">Π</span>
+            </div>
+            <h4 className="text-amber-400 font-mono text-[10px] uppercase tracking-widest font-black mb-4">POS Architecture (OR-AND)</h4>
+            <ul className="space-y-4">
+              {[
+                { label: 'Power', score: 80, desc: 'Preferred for error-masking; keeps output 0 by default.' },
+                { label: 'Performance', score: 90, desc: 'Identical delay to SOP; balanced 2-level synthesis.' },
+                { label: 'Area', score: 85, desc: 'Massive area savings when the function is mostly 1s.' },
+              ].map(item => (
+                <li key={item.label} className="space-y-2">
+                  <div className="flex justify-between items-center text-[11px]">
+                    <span className={`font-bold ${textColor}`}>{item.label}</span>
+                    <span className="text-amber-400 font-mono">{item.score}% Efficiency</span>
+                  </div>
+                  <div className="h-1 w-full bg-amber-500/10 rounded-full overflow-hidden">
+                    <motion.div initial={{ width: 0 }} whileInView={{ width: `${item.score}%` }} className="h-full bg-amber-500" />
+                  </div>
+                  <p className={`text-[10px] ${subText} opacity-50`}>{item.desc}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        <div className={`p-6 rounded-2xl border ${isDarkMode ? 'bg-fuchsia-500/5 border-fuchsia-500/20' : 'bg-fuchsia-50 border-fuchsia-200'}`}>
+          <div className="flex items-center gap-3 mb-3">
+             <CheckCircle2 size={16} className="text-fuchsia-400" />
+             <span className={`text-[11px] font-black uppercase tracking-widest ${textColor}`}>The Architect's Verdict</span>
+          </div>
+          <p className={`text-xs leading-relaxed ${subText}`}>
+            Choose <strong>SOP</strong> if the number of ON states (minterms) is less than half. 
+            Choose <strong>POS</strong> if the number of OFF states (maxterms) is less than half. 
+            In the case of Ben's Picnic, SOP uses 4 terms while POS uses 4—it's a <strong>Tie</strong>. 
+            The architect would then look at the number of literals per term to break the tie.
+          </p>
+        </div>
+      </section>
     </div>
   );
 };
