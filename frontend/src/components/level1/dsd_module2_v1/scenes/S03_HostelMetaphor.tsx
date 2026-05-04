@@ -2,6 +2,66 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, Building2, Crown, DoorClosed, Wrench, Layers3 } from 'lucide-react';
 
+// Illustrated Madhur the Hostel Warden — SVG character (clipboard, glasses, suit)
+const MadhurSVG: React.FC<{ size?: number }> = ({ size = 220 }) => (
+  <svg viewBox="0 0 220 280" width={size} height={size * (280 / 220)} aria-label="Madhur the Hostel Warden">
+    <defs>
+      <linearGradient id="suit" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stopColor="#475569" />
+        <stop offset="100%" stopColor="#1e293b" />
+      </linearGradient>
+      <linearGradient id="skin" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stopColor="#d4a373" />
+        <stop offset="100%" stopColor="#a07752" />
+      </linearGradient>
+      <linearGradient id="clip" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stopColor="#fcd34d" />
+        <stop offset="100%" stopColor="#f59e0b" />
+      </linearGradient>
+      <radialGradient id="halo" cx="0.5" cy="0.3" r="0.6">
+        <stop offset="0%" stopColor="rgba(252,211,77,0.35)" />
+        <stop offset="100%" stopColor="rgba(252,211,77,0)" />
+      </radialGradient>
+    </defs>
+    {/* Halo */}
+    <ellipse cx="110" cy="80" rx="100" ry="60" fill="url(#halo)" />
+    {/* Body / suit */}
+    <path d="M50 280 Q50 200 80 175 L140 175 Q170 200 170 280 Z" fill="url(#suit)" />
+    {/* Lapels */}
+    <path d="M85 180 L110 215 L135 180 L130 175 L110 200 L90 175 Z" fill="#0f172a" />
+    {/* Tie */}
+    <polygon points="108,180 112,180 116,260 104,260" fill="#fcd34d" />
+    {/* Neck */}
+    <rect x="100" y="155" width="20" height="22" fill="url(#skin)" />
+    {/* Head */}
+    <ellipse cx="110" cy="125" rx="36" ry="40" fill="url(#skin)" />
+    {/* Hair */}
+    <path d="M76 105 Q80 80 110 78 Q140 80 144 105 L144 90 Q138 70 110 68 Q82 70 76 90 Z" fill="#1f2937" />
+    {/* Eyebrows */}
+    <rect x="88" y="118" width="14" height="3" rx="1.5" fill="#0f172a" />
+    <rect x="118" y="118" width="14" height="3" rx="1.5" fill="#0f172a" />
+    {/* Glasses */}
+    <circle cx="95" cy="128" r="9" fill="none" stroke="#0f172a" strokeWidth="2" />
+    <circle cx="125" cy="128" r="9" fill="none" stroke="#0f172a" strokeWidth="2" />
+    <line x1="104" y1="128" x2="116" y2="128" stroke="#0f172a" strokeWidth="2" />
+    {/* Eyes */}
+    <circle cx="95" cy="128" r="2.4" fill="#0f172a" />
+    <circle cx="125" cy="128" r="2.4" fill="#0f172a" />
+    {/* Smile */}
+    <path d="M97 148 Q110 156 123 148" stroke="#0f172a" strokeWidth="2.2" fill="none" strokeLinecap="round" />
+    {/* Right arm + clipboard */}
+    <path d="M150 200 Q170 220 175 250" stroke="url(#suit)" strokeWidth="22" fill="none" strokeLinecap="round" />
+    <rect x="155" y="222" width="46" height="58" rx="3" fill="url(#clip)" stroke="#92400e" strokeWidth="1.5" />
+    <rect x="167" y="220" width="22" height="6" rx="2" fill="#92400e" />
+    {/* Lines on the clipboard */}
+    {[0, 1, 2, 3, 4].map((i) => (
+      <line key={i} x1="160" y1={235 + i * 8} x2="195" y2={235 + i * 8} stroke="#92400e" strokeWidth="1" opacity="0.6" />
+    ))}
+    {/* Left arm */}
+    <path d="M70 200 Q55 230 65 270" stroke="url(#suit)" strokeWidth="22" fill="none" strokeLinecap="round" />
+  </svg>
+);
+
 interface Props { isActive: boolean; isDarkMode: boolean; }
 
 interface Row {
@@ -88,36 +148,49 @@ export const S03_HostelMetaphor: React.FC<Props> = ({ isActive, isDarkMode }) =>
             Clipboard in hand, blueprint unfurled. He doesn&apos;t see a 16-row table — he sees a building.
             By folding combinations into a 4×4 plan, abstract algebra becomes a <strong>spatial puzzle</strong>.
           </p>
-          {/* Mini blueprint */}
-          <div
-            className="aspect-[16/10] rounded-2xl border relative overflow-hidden"
-            style={{ background: 'linear-gradient(135deg, #0c1a2e 0%, #102a4c 60%, #0a1628 100%)', borderColor: '#7daae6' }}
-          >
+
+          {/* Illustrated character + animated mini blueprint */}
+          <div className="grid grid-cols-[auto_1fr] gap-4 items-end">
+            <motion.div
+              animate={{ y: [0, -4, 0] }}
+              transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+              className="flex-shrink-0"
+            >
+              <MadhurSVG size={150} />
+            </motion.div>
             <div
-              className="absolute inset-0 opacity-40"
-              style={{
-                backgroundImage:
-                  'linear-gradient(rgba(125,170,230,0.55) 1px, transparent 1px), linear-gradient(90deg, rgba(125,170,230,0.55) 1px, transparent 1px)',
-                backgroundSize: '24px 24px',
-              }}
-            />
-            <div className="absolute inset-3 grid grid-cols-4 grid-rows-4 gap-1.5">
-              {[0, 1, 3, 2, 4, 5, 7, 6, 12, 13, 15, 14, 8, 9, 11, 10].map((m) => (
-                <div
-                  key={m}
-                  className="rounded-sm flex items-center justify-center text-[9px] font-mono font-bold"
-                  style={{
-                    background: 'rgba(252,211,77,0.10)',
-                    color: '#fde68a',
-                    border: '1px solid rgba(252,211,77,0.35)',
-                  }}
-                >
-                  {m}
-                </div>
-              ))}
+              className="aspect-[5/4] rounded-2xl border relative overflow-hidden"
+              style={{ background: 'linear-gradient(135deg, #0c1a2e 0%, #102a4c 60%, #0a1628 100%)', borderColor: '#7daae6' }}
+            >
+              <div
+                className="absolute inset-0 opacity-40"
+                style={{
+                  backgroundImage:
+                    'linear-gradient(rgba(125,170,230,0.55) 1px, transparent 1px), linear-gradient(90deg, rgba(125,170,230,0.55) 1px, transparent 1px)',
+                  backgroundSize: '20px 20px',
+                }}
+              />
+              <div className="absolute inset-2 grid grid-cols-4 grid-rows-4 gap-1">
+                {[0, 1, 3, 2, 4, 5, 7, 6, 12, 13, 15, 14, 8, 9, 11, 10].map((m, i) => (
+                  <motion.div
+                    key={m}
+                    initial={{ opacity: 0, scale: 0.6 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.4 + i * 0.05, type: 'spring', stiffness: 300, damping: 18 }}
+                    className="rounded-sm flex items-center justify-center text-[9px] font-mono font-bold"
+                    style={{
+                      background: 'rgba(252,211,77,0.10)',
+                      color: '#fde68a',
+                      border: '1px solid rgba(252,211,77,0.35)',
+                    }}
+                  >
+                    {m}
+                  </motion.div>
+                ))}
+              </div>
             </div>
           </div>
-          <div className="font-mono text-[9px] uppercase tracking-widest text-amber-200/60 mt-3">
+          <div className="font-mono text-[9px] uppercase tracking-widest text-amber-200/60 mt-4 text-center">
             16 minterms · 16 rooms · One blueprint
           </div>
         </motion.div>

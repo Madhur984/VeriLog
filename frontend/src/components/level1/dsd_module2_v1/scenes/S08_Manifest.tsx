@@ -117,9 +117,21 @@ export const S08_Manifest: React.FC<Props> = ({ isActive, isDarkMode }) => {
                         boxShadow: isPicked && isPremium ? '0 0 18px rgba(252,211,77,0.4)' : undefined,
                       }}
                     >
-                      <span className={`text-2xl ${isPicked && isPremium ? 'text-amber-300' : isDarkMode ? 'text-slate-200' : 'text-slate-700'}`}>
-                        {isPicked && isPremium ? '1' : m}
-                      </span>
+                      {isPicked && isPremium ? (
+                        <motion.span
+                          key={`crown-${m}`}
+                          initial={{ scale: 0, rotate: -30 }}
+                          animate={{ scale: 1, rotate: 0 }}
+                          transition={{ type: 'spring', stiffness: 320, damping: 16 }}
+                          className="text-2xl text-amber-300"
+                        >
+                          ★
+                        </motion.span>
+                      ) : (
+                        <span className={`text-2xl ${isDarkMode ? 'text-slate-200' : 'text-slate-700'}`}>
+                          {m}
+                        </span>
+                      )}
                       <span className="text-[9px] opacity-50">{m.toString(2).padStart(4, '0')}</span>
                     </button>
                   );

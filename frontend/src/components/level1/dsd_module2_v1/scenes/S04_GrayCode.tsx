@@ -134,6 +134,76 @@ export const S04_GrayCode: React.FC<Props> = ({ isActive, isDarkMode }) => {
           <RoomBox label={active.to} lit isDarkMode={isDarkMode} />
         </div>
 
+        {/* Bit-by-bit diff visualization */}
+        <div className="flex items-center justify-center gap-6 mb-6">
+          {(['from', 'to'] as const).map((side) => {
+            const label = side === 'from' ? active.from : active.to;
+            const otherLabel = side === 'from' ? active.to : active.from;
+            return (
+              <div key={side} className="text-center">
+                <div className={`font-mono text-[10px] uppercase tracking-widest mb-2 ${subText}`}>{side === 'from' ? 'Room A' : 'Room B'}</div>
+                <div className="flex gap-2">
+                  {label.split('').map((bit, i) => {
+                    const flipped = bit !== otherLabel[i];
+                    return (
+                      <motion.div
+                        key={i}
+                        animate={flipped ? { scale: [1, 1.15, 1] } : { scale: 1 }}
+                        transition={flipped ? { duration: 1, repeat: Infinity } : {}}
+                        className="w-10 h-10 rounded-lg flex items-center justify-center font-mono font-black text-xl border-2"
+                        style={{
+                          background: flipped
+                            ? active.flips > 1 ? 'rgba(244,63,94,0.18)' : 'rgba(16,185,129,0.18)'
+                            : isDarkMode ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)',
+                          borderColor: flipped
+                            ? active.flips > 1 ? '#f43f5e' : '#10b981'
+                            : isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
+                          color: flipped
+                            ? active.flips > 1 ? '#fda4af' : '#6ee7b7'
+                            : isDarkMode ? '#cbd5e1' : '#475569',
+                          boxShadow: flipped ? `0 0 14px ${active.flips > 1 ? 'rgba(244,63,94,0.45)' : 'rgba(16,185,129,0.45)'}` : undefined,
+                        }}
+                      >
+                        {bit}
+                      </motion.div>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* XOR diff strip */}
+        <div className="text-center mb-6">
+          <div className={`font-mono text-[10px] uppercase tracking-widest mb-2 ${subText}`}>XOR diff (which bits flipped)</div>
+          <div className="flex gap-2 justify-center">
+            {active.from.split('').map((b, i) => {
+              const x = (parseInt(b) ^ parseInt(active.to[i])).toString();
+              const flipped = x === '1';
+              return (
+                <div
+                  key={i}
+                  className="w-10 h-10 rounded-lg flex items-center justify-center font-mono font-black text-xl border-2"
+                  style={{
+                    background: flipped
+                      ? active.flips > 1 ? 'rgba(244,63,94,0.20)' : 'rgba(16,185,129,0.20)'
+                      : isDarkMode ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)',
+                    borderColor: flipped
+                      ? active.flips > 1 ? '#f43f5e' : '#10b981'
+                      : isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
+                    color: flipped
+                      ? active.flips > 1 ? '#fda4af' : '#6ee7b7'
+                      : isDarkMode ? '#475569' : '#94a3b8',
+                  }}
+                >
+                  {x}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
         <div className="flex items-center justify-center gap-3">
           {active.flips === 1 ? (
             <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/40 text-sm font-bold">

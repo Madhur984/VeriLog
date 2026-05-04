@@ -488,8 +488,26 @@ interface PathOption      { id: string; label: string; subtitle: string; color: 
 
 const L6_PATHS: PathOption[] = [
   {
-    id: 'basic-electronics', label: 'Basic Electronics', subtitle: 'SIGNALS · WAVES · ADC', color: '#22d3ee',
+    id: 'basic-electronics', label: 'Basic Electronics', subtitle: 'PHYSICS · SIGNALS · ADC', color: '#22d3ee',
     modules: [
+      {
+        id: 'be1', label: 'Physics of Control', subtitle: 'L0 · ATOMS · BANDS', route: '/basic-electronics/1/cover',
+        submodules: [
+          { id: 'be1s0',  label: 'Start · Overture',          route: '/basic-electronics/1/cover'     },
+          { id: 'be1s1',  label: 'Video Lecture',             route: '/basic-electronics/1/video'     },
+          { id: 'be1s2',  label: 'Quest for Control',         route: '/basic-electronics/1/quest'     },
+          { id: 'be1s3',  label: 'Starting Lineup',           route: '/basic-electronics/1/lineup'    },
+          { id: 'be1s4',  label: 'Silicon Franchise',         route: '/basic-electronics/1/franchise' },
+          { id: 'be1s5',  label: 'Tetravalent · Magic 4',     route: '/basic-electronics/1/tetra'     },
+          { id: 'be1s6',  label: 'Garba Matrix',              route: '/basic-electronics/1/garba'     },
+          { id: 'be1s7',  label: 'When the Dhol Drops',       route: '/basic-electronics/1/dhol'      },
+          { id: 'be1s8',  label: 'Electrons & Holes',         route: '/basic-electronics/1/dance'     },
+          { id: 'be1s9',  label: 'The 3-Tier City',           route: '/basic-electronics/1/bands'     },
+          { id: 'be1s10', label: 'Paying the Toll · eV',      route: '/basic-electronics/1/toll'      },
+          { id: 'be1s11', label: 'Master Blueprint',          route: '/basic-electronics/1/blueprint' },
+          { id: 'be1s12', label: 'Practice Arena',            route: '/basic-electronics/1/practice'  },
+        ],
+      },
       {
         id: 'm1', label: 'Signals & Waves', subtitle: 'L1 · WAVE FOUNDATION', route: '/module/1',
         submodules: [
