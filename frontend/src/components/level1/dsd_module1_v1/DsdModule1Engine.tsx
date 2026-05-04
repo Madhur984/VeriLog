@@ -209,6 +209,9 @@ export const DsdModule1Engine: React.FC<{
     if (initialChapter) {
       const idx = PAGES.findIndex(p => p.id === initialChapter);
       if (idx >= 0 && idx !== current) setCurrent(idx);
+    } else {
+      // No chapter param → user explicitly wants /dsd/1, start from cover
+      if (current !== 0) setCurrent(0);
     }
   }, [initialChapter]); // eslint-disable-line react-hooks/exhaustive-deps
 

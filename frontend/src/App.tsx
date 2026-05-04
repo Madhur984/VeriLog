@@ -28,6 +28,7 @@ import { SandboxModule5 } from './pages/SandboxModule5';
 import { Module1Root } from './components/level1/module1_v4/Module1Root';
 import { Module5Root } from './components/level1/module5_v4/Module5Root';
 import { DsdModule1Root } from './components/level1/dsd_module1_v1/DsdModule1Root';
+import { DsdModule2Root } from './components/level1/dsd_module2_v1/DsdModule2Root';
 
 // Special default exports
 import Workbench from './pages/Workbench';
@@ -87,6 +88,8 @@ function App() {
           <Route path="/module/3" element={<ModuleThree />} />
           <Route path="/dsd/1" element={<DsdModule1Root />} />
           <Route path="/dsd/1/:chapter" element={<DsdModule1Root />} />
+          <Route path="/dsd/2" element={<DsdModule2Root />} />
+          <Route path="/dsd/2/:chapter" element={<DsdModule2Root />} />
           <Route path="/module/4" element={<ModuleFour />} />
           <Route path="/module/5" element={<Module5Root />} />
           <Route path="/module/6" element={<ModuleSix />} />
