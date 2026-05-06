@@ -39,10 +39,10 @@ const CONCEPT_QUIZ: MCQ[] = [
     explain: '~1.5 × 10¹⁰ /cm³ — that\'s why we dope. (Copper ≈ 10²² /cm³ which is why it\'s metallic.)',
   },
   {
-    prompt: 'Conventional current direction in a circuit follows:',
-    options: ['Electron flow', 'Hole flow', 'Whichever is faster', 'Always left to right'],
+    prompt: 'Conventional current direction in a circuit is:',
+    options: ['Same as electron flow', 'Opposite to electron flow', 'Whichever is faster', 'Always left to right'],
     correctIndex: 1,
-    explain: 'Conventional current = positive charge flow = apparent hole movement (high → low potential).',
+    explain: 'Conventional current = direction positive charges would move = OPPOSITE to electron flow (set by Franklin before electrons were known).',
   },
   {
     prompt: 'A doped N-Type semiconductor is electrically:',
@@ -59,21 +59,45 @@ const CONCEPT_QUIZ: MCQ[] = [
 ];
 
 // Drill 02 — Carrier Sandbox (already non-junction, keep)
-// Drill 03 — Speed Round
+// Drill 03 — Speed Round (large pool — sprint shuffles + never repeats inside one run)
 const SPEED_QS: MCQ[] = [
-  { prompt: 'Si valence electrons',         options: ['2', '3', '4', '5'],     correctIndex: 2, explain: '' },
-  { prompt: 'Group V dopants are',          options: ['Donors', 'Acceptors', 'Neutral', 'Carriers'], correctIndex: 0, explain: '' },
-  { prompt: 'Group III dopants are',        options: ['Donors', 'Acceptors', 'Neutral', 'Carriers'], correctIndex: 1, explain: '' },
-  { prompt: 'N-Type majority carrier',      options: ['Hole', 'Electron', 'Ion', 'Photon'], correctIndex: 1, explain: '' },
-  { prompt: 'P-Type majority carrier',      options: ['Hole', 'Electron', 'Ion', 'Photon'], correctIndex: 0, explain: '' },
-  { prompt: 'Si energy gap E_g',            options: ['0.7 eV', '1.1 eV', '2.5 eV', '5.5 eV'], correctIndex: 1, explain: '' },
-  { prompt: 'Ge energy gap E_g',            options: ['0.3 eV', '0.67 eV', '1.1 eV', '2.5 eV'], correctIndex: 1, explain: '' },
-  { prompt: 'Temp coefficient of Si',       options: ['Positive', 'Negative', 'Zero', 'Linear'], correctIndex: 1, explain: '' },
-  { prompt: 'Temp coefficient of metals',   options: ['Positive', 'Negative', 'Zero', 'Linear'], correctIndex: 0, explain: '' },
-  { prompt: 'Phosphorus is',                options: ['Trivalent', 'Tetravalent', 'Pentavalent', 'Hexavalent'], correctIndex: 2, explain: '' },
-  { prompt: 'Boron is',                     options: ['Trivalent', 'Tetravalent', 'Pentavalent', 'Hexavalent'], correctIndex: 0, explain: '' },
-  { prompt: 'Conventional current follows', options: ['Electrons', 'Holes', 'Both', 'Neither'], correctIndex: 1, explain: '' },
+  { prompt: 'Si valence electrons',          options: ['2', '3', '4', '5'],                                  correctIndex: 2, explain: '' },
+  { prompt: 'Ge valence electrons',          options: ['2', '3', '4', '5'],                                  correctIndex: 2, explain: '' },
+  { prompt: 'Group V dopants are',           options: ['Donors', 'Acceptors', 'Neutral', 'Carriers'],         correctIndex: 0, explain: '' },
+  { prompt: 'Group III dopants are',         options: ['Donors', 'Acceptors', 'Neutral', 'Carriers'],         correctIndex: 1, explain: '' },
+  { prompt: 'N-Type majority carrier',       options: ['Hole', 'Electron', 'Ion', 'Photon'],                  correctIndex: 1, explain: '' },
+  { prompt: 'P-Type majority carrier',       options: ['Hole', 'Electron', 'Ion', 'Photon'],                  correctIndex: 0, explain: '' },
+  { prompt: 'N-Type minority carrier',       options: ['Hole', 'Electron', 'Ion', 'Photon'],                  correctIndex: 0, explain: '' },
+  { prompt: 'P-Type minority carrier',       options: ['Hole', 'Electron', 'Ion', 'Photon'],                  correctIndex: 1, explain: '' },
+  { prompt: 'Si energy gap E_g',             options: ['0.3 eV', '0.7 eV', '1.1 eV', '5.5 eV'],               correctIndex: 2, explain: '' },
+  { prompt: 'Ge energy gap E_g',             options: ['0.3 eV', '0.67 eV', '1.1 eV', '2.5 eV'],              correctIndex: 1, explain: '' },
+  { prompt: 'Diamond energy gap E_g',        options: ['0.7 eV', '1.1 eV', '2.5 eV', '5.5 eV'],               correctIndex: 3, explain: '' },
+  { prompt: 'Temp coefficient of Si',        options: ['Positive', 'Negative', 'Zero', 'Linear'],             correctIndex: 1, explain: '' },
+  { prompt: 'Temp coefficient of copper',    options: ['Positive', 'Negative', 'Zero', 'Linear'],             correctIndex: 0, explain: '' },
+  { prompt: 'Phosphorus is',                 options: ['Trivalent', 'Tetravalent', 'Pentavalent', 'Hexavalent'], correctIndex: 2, explain: '' },
+  { prompt: 'Boron is',                      options: ['Trivalent', 'Tetravalent', 'Pentavalent', 'Hexavalent'], correctIndex: 0, explain: '' },
+  { prompt: 'Arsenic is a',                  options: ['Donor', 'Acceptor', 'Carrier', 'Insulator'],          correctIndex: 0, explain: '' },
+  { prompt: 'Gallium is a',                  options: ['Donor', 'Acceptor', 'Carrier', 'Insulator'],          correctIndex: 1, explain: '' },
+  { prompt: 'Conventional current vs e⁻',    options: ['Same direction', 'Opposite direction', 'Faster', 'Slower'], correctIndex: 1, explain: '' },
+  { prompt: 'Intrinsic Si carriers / cm³',   options: ['~10²²', '~10¹⁶', '~10¹⁰', '0'],                      correctIndex: 2, explain: '' },
+  { prompt: 'Doped Si net charge is',        options: ['Negative', 'Positive', 'Neutral', 'Depends on T'],    correctIndex: 2, explain: '' },
+  { prompt: 'Heating Si gives',              options: ['Fewer carriers', 'More carriers', 'No change', 'Pure insulator'], correctIndex: 1, explain: '' },
+  { prompt: 'Si forms covalent bonds with',  options: ['1 neighbor', '2 neighbors', '4 neighbors', '8 neighbors'], correctIndex: 2, explain: '' },
+  { prompt: 'A "hole" is',                   options: ['A free proton', 'A missing electron', 'A photon', 'A dopant ion'], correctIndex: 1, explain: '' },
+  { prompt: 'Donor ion left behind is',      options: ['Negative', 'Positive', 'Neutral', 'Mobile'],          correctIndex: 1, explain: '' },
+  { prompt: 'Acceptor ion left behind is',   options: ['Negative', 'Positive', 'Neutral', 'Mobile'],          correctIndex: 0, explain: '' },
+  { prompt: 'Antimony (Sb) is',              options: ['Trivalent', 'Tetravalent', 'Pentavalent', 'Hexavalent'], correctIndex: 2, explain: '' },
+  { prompt: 'Indium (In) is',                options: ['Trivalent', 'Tetravalent', 'Pentavalent', 'Hexavalent'], correctIndex: 0, explain: '' },
 ];
+
+const shuffle = <T,>(arr: T[]): T[] => {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+};
 
 export const S11_PracticeArena: React.FC<Props> = ({ isActive, isDarkMode }) => {
   const textColor = isDarkMode ? 'text-white' : 'text-slate-900';
@@ -105,13 +129,14 @@ export const S11_PracticeArena: React.FC<Props> = ({ isActive, isDarkMode }) => 
     return { electrons: 2, holes: 22, ions: 4, label: 'P-Type — holes dominate' };
   }, [doping]);
 
-  // ─── Drill 3 — Speed Round ───
+  // ─── Drill 3 — Speed Round (shuffle on start, no repeats inside a run) ───
   const [running, setRunning] = useState(false);
   const [sIdx, setSIdx] = useState(0);
   const [sScore, setSScore] = useState(0);
   const [sTime, setSTime] = useState(45);
   const [sDone, setSDone] = useState(false);
   const [flash, setFlash] = useState<'right' | 'wrong' | null>(null);
+  const [sQueue, setSQueue] = useState<MCQ[]>(() => shuffle(SPEED_QS));
 
   useEffect(() => {
     if (!running) return;
@@ -120,16 +145,29 @@ export const S11_PracticeArena: React.FC<Props> = ({ isActive, isDarkMode }) => 
     return () => clearTimeout(t);
   }, [running, sTime]);
 
-  const sQ = SPEED_QS[sIdx % SPEED_QS.length];
+  const sQ = sQueue[sIdx];
 
-  const sStart = () => { setRunning(true); setSDone(false); setSIdx(0); setSScore(0); setSTime(45); setFlash(null); };
+  const sStart = () => {
+    setSQueue(shuffle(SPEED_QS));
+    setRunning(true);
+    setSDone(false);
+    setSIdx(0);
+    setSScore(0);
+    setSTime(45);
+    setFlash(null);
+  };
   const sAnswer = (i: number) => {
-    if (!running) return;
+    if (!running || !sQ) return;
     const right = i === sQ.correctIndex;
     if (right) setSScore((s) => s + 1);
     setFlash(right ? 'right' : 'wrong');
-    setSIdx((idx) => idx + 1);
     setTimeout(() => setFlash(null), 180);
+    if (sIdx + 1 >= sQueue.length) {
+      setRunning(false);
+      setSDone(true);
+    } else {
+      setSIdx((idx) => idx + 1);
+    }
   };
 
   return (
@@ -385,7 +423,7 @@ export const S11_PracticeArena: React.FC<Props> = ({ isActive, isDarkMode }) => 
         {!running && !sDone && (
           <div className="text-center py-10 relative z-10">
             <p className={`text-sm ${subText} mb-5 max-w-md mx-auto`}>
-              Twelve fundamentals · forty-five seconds. Test your reflexes.
+              {SPEED_QS.length} fundamentals, shuffled · forty-five seconds. No question repeats inside a run.
             </p>
             <button
               onClick={sStart}
@@ -428,9 +466,9 @@ export const S11_PracticeArena: React.FC<Props> = ({ isActive, isDarkMode }) => 
             <Trophy size={48} className="mx-auto text-amber-300" />
             <h3 className={`text-3xl font-black ${textColor}`}>{sScore} correct in 45s</h3>
             <p className={`text-sm ${subText}`}>
-              {sScore >= 16 ? 'Madhur-level. Move to Module 3 · the P-N junction.'
-                : sScore >= 10 ? 'Strong sprint — solid grasp.'
-                  : sScore >= 5 ? 'Good baseline — re-read chapters 6–8.'
+              {sScore >= 18 ? 'Madhur-level. Move to Module 3 · the P-N junction.'
+                : sScore >= 12 ? 'Strong sprint — solid grasp.'
+                  : sScore >= 6 ? 'Good baseline — re-read chapters 6–8.'
                     : 'Re-watch the lecture and try again.'}
             </p>
             <button

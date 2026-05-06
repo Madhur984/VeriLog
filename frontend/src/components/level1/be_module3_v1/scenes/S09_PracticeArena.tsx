@@ -41,7 +41,7 @@ const CONCEPT_QUIZ: MCQ[] = [
     prompt: 'Avalanche breakdown is most associated with:',
     options: ['Heavily doped, thin junctions', 'Lightly doped, wide junctions', 'Pure intrinsic Si', 'Forward-biased diodes'],
     correctIndex: 1,
-    explain: 'Wide depletion lets minority carriers gain enough energy to ionise. Zener is the OPPOSITE (heavily doped, thin).',
+    explain: 'Wide depletion + high reverse V lets minority carriers accelerate enough to ionise lattice atoms (chain reaction). Zener is the OPPOSITE: heavily doped, thin junction, low V_BV.',
   },
   {
     prompt: 'In a P-N junction symbol, the triangle points from:',
@@ -51,40 +51,68 @@ const CONCEPT_QUIZ: MCQ[] = [
   },
 ];
 
-interface BiasQ { vd: string; expected: 'No' | 'Forward' | 'Reverse' | 'Breakdown'; }
+interface BiasQ { vd: string; expected: 'No' | 'Forward' | 'Reverse' | 'Breakdown'; note?: string; }
 const BIAS_DRILL: BiasQ[] = [
-  { vd: '0.0 V',  expected: 'No' },
-  { vd: '+0.8 V', expected: 'Forward' },
-  { vd: '-3.0 V', expected: 'Reverse' },
-  { vd: '+0.2 V', expected: 'Reverse' },
-  { vd: '-V_BV',  expected: 'Breakdown' },
-  { vd: '+1.2 V', expected: 'Forward' },
-  { vd: '-0.3 V', expected: 'Reverse' },
+  { vd: '0.0 V',                expected: 'No' },
+  { vd: '+0.8 V',               expected: 'Forward' },
+  { vd: '-3.0 V',               expected: 'Reverse' },
+  { vd: '+0.2 V',               expected: 'Forward', note: 'Forward bias, but below the Si knee (~0.7 V) — current is small but nonzero.' },
+  { vd: '-V_BV',                expected: 'Breakdown' },
+  { vd: '+1.2 V',               expected: 'Forward' },
+  { vd: '-0.3 V',               expected: 'Reverse' },
+  { vd: '+0.7 V',               expected: 'Forward', note: 'At the Si knee — current starts to rise sharply.' },
+  { vd: '-15 V (V_BV = -10 V)', expected: 'Breakdown', note: '|V_D| > |V_BV| → avalanche/Zener region.' },
+  { vd: '+2.0 V',               expected: 'Forward' },
+  { vd: '-0.001 V',             expected: 'Reverse', note: 'Even tiny negative bias counts as reverse — the depletion widens slightly.' },
 ];
 
 const BIAS_OPTIONS: BiasQ['expected'][] = ['No', 'Forward', 'Reverse', 'Breakdown'];
 
 const BIAS_EXPLAIN: Record<BiasQ['expected'], string> = {
-  No: 'V_D = 0 ⇒ equilibrium, no net current.',
-  Forward: 'V_D > 0 (above knee for Si ≈ 0.7 V) ⇒ doors open, current rises.',
-  Reverse: 'V_D < 0 ⇒ depletion widens; only the tiny I_S leaks.',
-  Breakdown: 'V_D = -V_BV ⇒ avalanche; reverse current explodes.',
+  No: 'V_D = 0 ⇒ equilibrium. Drift cancels diffusion. Net current = 0.',
+  Forward: 'V_D > 0 ⇒ forward bias. Depletion narrows. Significant current only above the knee (~0.7 V Si, ~0.3 V Ge).',
+  Reverse: 'V_D < 0 (and |V_D| < |V_BV|) ⇒ depletion widens. Only the tiny I_S leakage flows.',
+  Breakdown: '|V_D| ≥ |V_BV| in reverse ⇒ avalanche or Zener; reverse current explodes.',
 };
 
+// Sprint pool — large + shuffled so questions never repeat inside a single run.
 const SPEED_QS: MCQ[] = [
-  { prompt: 'Si knee voltage',         options: ['0.2 V', '0.3 V', '0.7 V', '1.4 V'], correctIndex: 2, explain: '' },
-  { prompt: 'Ge knee voltage',         options: ['0.2 V', '0.3 V', '0.7 V', '1.4 V'], correctIndex: 1, explain: '' },
-  { prompt: 'V_T at room temp',        options: ['1 mV', '26 mV', '100 mV', '1 V'], correctIndex: 1, explain: '' },
-  { prompt: 'Reverse saturation symbol',options: ['I_D', 'I_S', 'I_R', 'I_F'], correctIndex: 1, explain: '' },
-  { prompt: 'Forward bias = ?',        options: ['+ to N', '+ to P', '0 V', 'AC'], correctIndex: 1, explain: '' },
-  { prompt: 'Reverse bias = ?',        options: ['+ to N', '+ to P', '0 V', 'AC'], correctIndex: 0, explain: '' },
-  { prompt: 'Depletion in reverse bias',options: ['Narrows', 'Widens', 'Stays same', 'Disappears'], correctIndex: 1, explain: '' },
-  { prompt: 'Depletion in forward bias',options: ['Narrows', 'Widens', 'Stays same', 'Disappears'], correctIndex: 0, explain: '' },
-  { prompt: 'Avalanche needs',         options: ['Forward bias', 'Heavy reverse', 'No bias', 'AC'], correctIndex: 1, explain: '' },
-  { prompt: 'Zener vs Avalanche',      options: ['Same thing', 'Zener = thin junction', 'Zener = thick', 'Zener = forward'], correctIndex: 1, explain: '' },
-  { prompt: 'Anode connects to',       options: ['N-side', 'P-side', 'Ground', 'V_BV'], correctIndex: 1, explain: '' },
-  { prompt: 'Cathode connects to',     options: ['N-side', 'P-side', 'Ground', 'V_BV'], correctIndex: 0, explain: '' },
+  { prompt: 'Si knee voltage',                 options: ['0.2 V', '0.3 V', '0.7 V', '1.4 V'],            correctIndex: 2, explain: '' },
+  { prompt: 'Ge knee voltage',                 options: ['0.2 V', '0.3 V', '0.7 V', '1.4 V'],            correctIndex: 1, explain: '' },
+  { prompt: 'V_T at 300 K',                    options: ['1 mV', '26 mV', '100 mV', '1 V'],              correctIndex: 1, explain: '' },
+  { prompt: 'Reverse saturation symbol',       options: ['I_D', 'I_S', 'I_R', 'I_F'],                    correctIndex: 1, explain: '' },
+  { prompt: 'Forward bias: + terminal to',     options: ['N-side', 'P-side', 'Both', 'Neither'],         correctIndex: 1, explain: '' },
+  { prompt: 'Reverse bias: + terminal to',     options: ['N-side', 'P-side', 'Both', 'Neither'],         correctIndex: 0, explain: '' },
+  { prompt: 'Depletion under reverse bias',    options: ['Narrows', 'Widens', 'Same', 'Disappears'],     correctIndex: 1, explain: '' },
+  { prompt: 'Depletion under forward bias',    options: ['Narrows', 'Widens', 'Same', 'Disappears'],     correctIndex: 0, explain: '' },
+  { prompt: 'Avalanche occurs at',             options: ['Forward bias', 'Heavy reverse', 'V_D = 0', 'Knee'], correctIndex: 1, explain: '' },
+  { prompt: 'Zener junctions are',             options: ['Lightly doped', 'Heavily doped', 'Intrinsic', 'Undoped'], correctIndex: 1, explain: '' },
+  { prompt: 'Anode is the',                    options: ['N-side', 'P-side', 'Ground pin', 'Either side'], correctIndex: 1, explain: '' },
+  { prompt: 'Cathode is the',                  options: ['N-side', 'P-side', 'Ground pin', 'Either side'], correctIndex: 0, explain: '' },
+  { prompt: 'I_S roughly doubles every',       options: ['1 °C', '~10 °C', '100 °C', 'Never'],           correctIndex: 1, explain: '' },
+  { prompt: 'Built-in voltage symbol',         options: ['V_T', 'V_bi', 'V_D', 'V_BV'],                  correctIndex: 1, explain: '' },
+  { prompt: 'Diode symbol triangle points',    options: ['P → N', 'N → P', 'Either way', 'Up'],         correctIndex: 0, explain: '' },
+  { prompt: 'At V_D = 0, current is',          options: ['I_S', 'Large', 'Exactly 0', 'V_bi/R'],         correctIndex: 2, explain: '' },
+  { prompt: 'Breakdown < ~6 V is usually',     options: ['Avalanche', 'Zener', 'Forward', 'No bias'],    correctIndex: 1, explain: '' },
+  { prompt: 'Breakdown > ~6 V is usually',     options: ['Avalanche', 'Zener', 'Forward', 'No bias'],    correctIndex: 0, explain: '' },
+  { prompt: 'Shockley I-V is',                 options: ['Linear', 'Exponential', 'Quadratic', 'Constant'], correctIndex: 1, explain: '' },
+  { prompt: 'A diode behaves like a',          options: ['1-way valve', 'Resistor', 'Capacitor', 'Inductor'], correctIndex: 0, explain: '' },
+  { prompt: 'Reverse current is carried by',   options: ['Majority diffusion', 'Minority drift', 'V_bi', 'Photons'], correctIndex: 1, explain: '' },
+  { prompt: 'Heavier doping → depletion is',   options: ['Wider', 'Narrower', 'Same', 'Zero'],           correctIndex: 1, explain: '' },
+  { prompt: 'At V_D = -V_BV the diode',        options: ['Off', 'Knee', 'Breaks down', 'Forward'],       correctIndex: 2, explain: '' },
+  { prompt: 'V_T = kT/q at 300 K is',          options: ['~2.6 mV', '~26 mV', '~260 mV', '~2.6 V'],      correctIndex: 1, explain: '' },
+  { prompt: 'Si V_bi typically about',         options: ['~0.07 V', '~0.7 V', '~7 V', '~70 V'],          correctIndex: 1, explain: '' },
+  { prompt: 'Forward current rises',           options: ['Linearly with V', 'Exponentially with V', 'As 1/V', 'Constant'], correctIndex: 1, explain: '' },
 ];
+
+const shuffle = <T,>(arr: T[]): T[] => {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+};
 
 export const S09_PracticeArena: React.FC<Props> = ({ isActive, isDarkMode }) => {
   const textColor = isDarkMode ? 'text-white' : 'text-slate-900';
@@ -107,11 +135,20 @@ export const S09_PracticeArena: React.FC<Props> = ({ isActive, isDarkMode }) => 
   };
   const restart = () => { setQIdx(0); setPicked(null); setScore(0); setDone(false); };
 
+  const [bQueue, setBQueue] = useState<BiasQ[]>(() => shuffle(BIAS_DRILL));
   const [bIdx, setBIdx] = useState(0);
   const [bPicked, setBPicked] = useState<BiasQ['expected'] | null>(null);
-  const bQ = BIAS_DRILL[bIdx];
+  const bQ = bQueue[bIdx];
   const bChoose = (val: BiasQ['expected']) => { if (bPicked === null) setBPicked(val); };
-  const bNext = () => { setBIdx((i) => (i + 1) % BIAS_DRILL.length); setBPicked(null); };
+  const bNext = () => {
+    if (bIdx + 1 >= bQueue.length) {
+      setBQueue(shuffle(BIAS_DRILL));
+      setBIdx(0);
+    } else {
+      setBIdx((i) => i + 1);
+    }
+    setBPicked(null);
+  };
 
   const [running, setRunning] = useState(false);
   const [sIdx, setSIdx] = useState(0);
@@ -119,6 +156,7 @@ export const S09_PracticeArena: React.FC<Props> = ({ isActive, isDarkMode }) => 
   const [sTime, setSTime] = useState(45);
   const [sDone, setSDone] = useState(false);
   const [flash, setFlash] = useState<'right' | 'wrong' | null>(null);
+  const [sQueue, setSQueue] = useState<MCQ[]>(() => shuffle(SPEED_QS));
 
   useEffect(() => {
     if (!running) return;
@@ -127,15 +165,28 @@ export const S09_PracticeArena: React.FC<Props> = ({ isActive, isDarkMode }) => 
     return () => clearTimeout(t);
   }, [running, sTime]);
 
-  const sQ = SPEED_QS[sIdx % SPEED_QS.length];
-  const sStart = () => { setRunning(true); setSDone(false); setSIdx(0); setSScore(0); setSTime(45); setFlash(null); };
+  const sQ = sQueue[sIdx];
+  const sStart = () => {
+    setSQueue(shuffle(SPEED_QS));
+    setRunning(true);
+    setSDone(false);
+    setSIdx(0);
+    setSScore(0);
+    setSTime(45);
+    setFlash(null);
+  };
   const sAnswer = (i: number) => {
-    if (!running) return;
+    if (!running || !sQ) return;
     const right = i === sQ.correctIndex;
     if (right) setSScore((s) => s + 1);
     setFlash(right ? 'right' : 'wrong');
-    setSIdx((idx) => idx + 1);
     setTimeout(() => setFlash(null), 180);
+    if (sIdx + 1 >= sQueue.length) {
+      setRunning(false);
+      setSDone(true);
+    } else {
+      setSIdx((idx) => idx + 1);
+    }
   };
 
   return (
@@ -255,7 +306,7 @@ export const S09_PracticeArena: React.FC<Props> = ({ isActive, isDarkMode }) => 
             <h3 className={`text-xl font-black ${textColor}`}>Match V_D to the operating region</h3>
           </div>
           <div className={`px-3 py-1 rounded-lg border ${isDarkMode ? 'bg-black/40 border-white/10' : 'bg-slate-100 border-slate-200'} font-mono text-xs`}>
-            Round {bIdx + 1} / {BIAS_DRILL.length}
+            Round {bIdx + 1} / {bQueue.length}
           </div>
         </div>
 
@@ -302,6 +353,7 @@ export const S09_PracticeArena: React.FC<Props> = ({ isActive, isDarkMode }) => 
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-3 pt-2">
                 <p className={`text-xs ${subText} flex-1`}>
                   <strong className="text-rose-300">Why: </strong>{BIAS_EXPLAIN[bQ.expected]}
+                  {bQ.note && <span className="block mt-1 italic opacity-90">{bQ.note}</span>}
                 </p>
                 <button onClick={bNext} className="px-4 py-2 rounded-xl bg-rose-400 text-black font-bold text-xs">
                   Next →
@@ -346,7 +398,7 @@ export const S09_PracticeArena: React.FC<Props> = ({ isActive, isDarkMode }) => 
         {!running && !sDone && (
           <div className="text-center py-10 relative z-10">
             <p className={`text-sm ${subText} mb-5 max-w-md mx-auto`}>
-              Twelve junction fundamentals · forty-five seconds. Test your reflexes.
+              {SPEED_QS.length} junction fundamentals, shuffled · forty-five seconds. No question repeats inside a run.
             </p>
             <button
               onClick={sStart}
@@ -389,9 +441,9 @@ export const S09_PracticeArena: React.FC<Props> = ({ isActive, isDarkMode }) => 
             <Trophy size={48} className="mx-auto text-amber-300" />
             <h3 className={`text-3xl font-black ${textColor}`}>{sScore} correct in 45s</h3>
             <p className={`text-sm ${subText}`}>
-              {sScore >= 16 ? 'Junction guru. Diodes have no secrets left.'
-                : sScore >= 10 ? 'Strong sprint — solid grasp.'
-                  : sScore >= 5 ? 'Good baseline — re-read chapters 5-8.'
+              {sScore >= 18 ? 'Junction guru. Diodes have no secrets left.'
+                : sScore >= 12 ? 'Strong sprint — solid grasp.'
+                  : sScore >= 6 ? 'Good baseline — re-read chapters 5-8.'
                     : 'Re-watch the lecture and try again.'}
             </p>
             <button
