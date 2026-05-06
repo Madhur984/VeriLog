@@ -3,8 +3,8 @@ import { Outlet } from 'react-router-dom';
 
 export const PortalLayout = () => {
     return (
-        <div className="min-h-screen bg-white">
-            <main className="w-full h-full">
+        <div className="w-full bg-[#07080A]">
+            <main className="w-full">
                 <Outlet />
             </main>
         </div>

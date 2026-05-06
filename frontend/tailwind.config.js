@@ -15,26 +15,27 @@ export default {
         },
         extend: {
             colors: {
-                // ════ FINAL MASTER COLOR SYSTEM ════
-                // Background (90% of UI — neutral only)
+                // ... existing colors ...
                 'bg-void': '#0E1116',
                 'bg-base': '#141922',
                 'bg-elev': '#1C2430',
-
-                // Text (strict neutrals)
                 'text-main': '#E6EDF3',
                 'text-sub':  '#9AA4B2',
                 'text-dim':  '#6B7280',
-
-                // Signal → waveform ONLY (8% of visual surface)
                 'signal-core':    '#7DD3FC',
                 'signal-bright':  '#BAE6FD',
                 'signal-dim':     '#38BDF8',
-                'signal-primary': '#7DD3FC', // alias
-
-                // Accent → rare active/success states (2%)
+                'signal-primary': '#7DD3FC',
                 'accent-orange': '#F97316',
                 'accent-soft':   '#FB923C',
+                
+                // ════ SILICON OBSERVATORY v3.1 TOKENS ════
+                'observatory-bg': '#07080A',
+                'observatory-surface': '#0D0F12',
+                'observatory-surface-alt': '#131619',
+                'cyan-muted': 'rgba(34,211,238,0.09)',
+                'ghost-border': 'rgba(148,163,184,0.08)',
+                'ghost-border-active': 'rgba(34,211,238,0.25)',
 
                 // Legacy shadcn tokens
                 border:     'hsl(var(--border))',
@@ -91,7 +92,27 @@ export default {
             },
             boxShadow: {
                 'cyan-glow': '0 0 6px #00D4FF, 0 0 2px #00D4FF inset',
+                'observatory-glow': '0 0 24px rgba(34,211,238,0.35)',
             },
+            transitionTimingFunction: {
+                'expo-out': 'cubic-bezier(0.16, 1, 0.3, 1)',
+                'expo-in': 'cubic-bezier(0.7, 0, 0.84, 0)',
+            },
+            animation: {
+                'laser-sweep': 'laser-sweep 1.6s linear infinite',
+                'gentle-pulse': 'gentle-pulse 2s ease-in-out infinite',
+            },
+            keyframes: {
+                'laser-sweep': {
+                    '0%': { top: '0%', opacity: '0' },
+                    '50%': { opacity: '1' },
+                    '100%': { top: '100%', opacity: '0' },
+                },
+                'gentle-pulse': {
+                    '0%, 100%': { opacity: '0.4' },
+                    '50%': { opacity: '1' },
+                }
+            }
         },
     },
     plugins: [require("tailwindcss-animate")],

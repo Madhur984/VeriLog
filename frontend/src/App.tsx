@@ -48,7 +48,7 @@ import { CommunityPage } from './pages/CommunityPage';
 import { AssessmentPage } from './pages/AssessmentPage';
 import { DebugMissionPage } from './pages/DebugMissionPage';
 import { GatekeeperGame } from './pages/GatekeeperGame';
-import PortalPage from './pages/PortalPage';
+import CareerRoadmapPage from './pages/career-roadmap/index';
 
 function App() {
   return (
@@ -63,7 +63,7 @@ function App() {
         {/* Portal Layout Wrapper — Shared UI and Navigation Context */}
         <Route element={<PortalLayout />}>
           <Route path="/portal" element={<WorkstationHome />} />
-          <Route path="/career-roadmap" element={<PortalPage />} />
+          <Route path="/career-roadmap" element={<CareerRoadmapPage />} />
           <Route path="/portfolio" element={<EngineeringPortfolio />} />
           <Route path="/workbench" element={<Workbench />} />
           <Route path="/kmap-lab" element={<KMapLabPage />} />

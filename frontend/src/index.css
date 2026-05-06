@@ -64,7 +64,6 @@
     );
     color:      var(--text-main);
     font-family: 'Inter', system-ui, sans-serif;
-    overflow:   hidden;
     -webkit-font-smoothing:  antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
@@ -126,9 +125,10 @@
   }
 
   /* Scrollbar */
-  ::-webkit-scrollbar       { width: 4px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--bg-elev); border-radius: 2px; }
+  ::-webkit-scrollbar       { width: 6px; }
+  ::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
+  ::-webkit-scrollbar-thumb { background: rgba(34, 211, 238, 0.2); border-radius: 10px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(34, 211, 238, 0.4); }
 }
 
 @layer utilities {

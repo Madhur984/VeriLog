@@ -1,0 +1,100 @@
+import React, { useState, useCallback, useMemo } from 'react';
+import { motion } from 'framer-motion';
+import { SkillGraph } from '../components/SkillGraph';
+import { SkillGapSummary } from '../../../components/SkillGapSummary';
+import { SectionWrapper } from '../../../components/SectionWrapper';
+import { Search, Info, Globe, Layers } from 'lucide-react';
+
+export const SkillTopology: React.FC = () => {
+  const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
+  const [masteredNodes] = useState<Set<string>>(new Set(['digital-logic', 'verilog', 'boolean-algebra'])); // Mock data
+
+  const handleLaunchModule = (nodeId: string) => {
+    console.log(`Launching module for node: ${nodeId}`);
+    // Navigation logic handled here
+  };
+
+  return (
+    <SectionWrapper id="skill-graph" className="bg-observatory-bg">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex flex-col md:flex-row justify-between items-end gap-8 mb-12">
+          <div className="space-y-4">
+            <h2 className="text-4xl md:text-5xl font-bold text-white tracking-tight">SKILL TOPOLOGY</h2>
+            <p className="text-slate-400 font-mono text-xs uppercase tracking-widest max-w-xl">
+              Analyzing the interconnected prerequisites of the modern silicon stack. 
+              Switch to Target Company mode to reveal neural skill gaps.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <div className="flex items-center bg-observatory-surface border border-white/5 rounded-full px-4 py-2">
+              <Search size={14} className="text-slate-500 mr-3" />
+              <input 
+                type="text" 
+                placeholder="SEARCH NODE..." 
+                className="bg-transparent border-none outline-none text-[11px] font-mono text-white placeholder-slate-600 w-48"
+              />
+            </div>
+            <div className="flex gap-1 p-1 bg-observatory-surface border border-white/5 rounded-full">
+              {['2D', '3D'].map(mode => (
+                <button
+                  key={mode}
+                  className={`px-4 py-1.5 rounded-full text-[10px] font-mono uppercase tracking-widest transition-all ${mode === '2D' ? 'bg-cyan-400 text-black' : 'text-slate-500 hover:text-white'}`}
+                >
+                  {mode}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Target Company Selector */}
+        <div className="flex flex-wrap gap-3 mb-8">
+          <div className="text-[10px] font-mono text-slate-500 uppercase tracking-widest flex items-center mr-4">
+            Target Company Mode:
+          </div>
+          {['nvidia', 'qualcomm', 'intel', 'isro', 'samsung-semi', 'texas-instruments'].map(company => (
+            <button
+              key={company}
+              onClick={() => setSelectedCompany(selectedCompany === company ? null : company)}
+              className={`
+                px-4 py-2 rounded-full border text-[10px] font-mono uppercase tracking-widest transition-all
+                ${selectedCompany === company 
+                  ? 'bg-amber-400 border-amber-400 text-black shadow-[0_0_15px_rgba(245,158,11,0.3)]' 
+                  : 'bg-observatory-surface border-white/5 text-slate-500 hover:border-white/20'
+                }
+              `}
+            >
+              {company}
+            </button>
+          ))}
+          {selectedCompany && (
+            <button 
+              onClick={() => setSelectedCompany(null)}
+              className="text-[10px] font-mono text-red-400 underline uppercase tracking-widest ml-4"
+            >
+              Clear Mode
+            </button>
+          )}
+        </div>
+
+        {/* The Graph Container */}
+        <div className="relative group">
+          <SkillGraph 
+            selectedCompany={selectedCompany} 
+            masteredNodes={masteredNodes}
+          />
+        </div>
+
+        {/* Neural Skill Gap Analysis */}
+        {selectedCompany && (
+          <SkillGapSummary 
+            company={selectedCompany} 
+            masteredNodes={masteredNodes}
+            onLaunchModule={handleLaunchModule}
+          />
+        )}
+      </div>
+    </SectionWrapper>
+  );
+};

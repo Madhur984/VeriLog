@@ -1,0 +1,140 @@
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { storyTree, StoryNode } from '../data/storyTree';
+import { DataTerminal } from './DataTerminal';
+
+interface TrajectorySimulatorModalProps {
+  onClose: () => void;
+}
+
+export const TrajectorySimulatorModal: React.FC<TrajectorySimulatorModalProps> = ({ onClose }) => {
+  const [currentNodeId, setCurrentNodeId] = useState('start');
+  const currentNode = storyTree.find(n => n.id === currentNodeId)!;
+
+  const handleOptionClick = (nextId: string) => {
+    setCurrentNodeId(nextId);
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-matte-obsidian/90 backdrop-blur-md">
+      <motion.div 
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="w-full max-w-4xl"
+      >
+        <DataTerminal 
+          title="TRAJECTORY SIMULATOR v3.0"
+          subtitle={currentNode.outcome ? "Simulation Finalized" : "Decision Matrix Active"}
+          className="h-[600px]"
+        >
+          <div className="flex h-full">
+            {/* Left Column: Narrative */}
+            <div className="flex-1 p-12 border-r border-ghost-trace flex flex-col justify-center">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentNodeId}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }}
+                  className="space-y-8"
+                >
+                  <div className="text-plasma-cyan font-mono text-[10px] tracking-[0.3em] uppercase">
+                    Status: {currentNode.outcome ? "Outcome Reached" : "Pending Input"}
+                  </div>
+                  <h2 className="text-3xl font-mono text-text-main leading-tight tracking-tighter">
+                    {currentNode.outcome ? currentNode.outcome.title : currentNode.text}
+                  </h2>
+                  
+                  {!currentNode.outcome && (
+                    <div className="grid grid-cols-1 gap-4 pt-4">
+                      {currentNode.options?.map((opt, i) => (
+                        <button
+                          key={i}
+                          onClick={() => handleOptionClick(opt.nextId)}
+                          className="group flex items-center gap-4 p-5 border border-ghost-trace hover:border-plasma-cyan hover:bg-plasma-cyan/5 transition-all text-left"
+                        >
+                          <div className="w-8 h-8 rounded-full border border-ghost-trace group-hover:border-plasma-cyan flex items-center justify-center font-mono text-xs text-text-dim group-hover:text-plasma-cyan">
+                            {i + 1}
+                          </div>
+                          <span className="text-text-sub font-mono text-sm group-hover:text-text-main">
+                            {opt.text}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+
+                  {currentNode.outcome && (
+                    <div className="space-y-6">
+                      <div className="grid grid-cols-2 gap-8 py-6 border-y border-ghost-trace/30">
+                        <div>
+                          <label className="text-[10px] font-mono text-text-dim uppercase tracking-widest">Starting Role</label>
+                          <div className="text-text-main font-mono mt-1">{currentNode.outcome.role}</div>
+                        </div>
+                        <div>
+                          <label className="text-[10px] font-mono text-text-dim uppercase tracking-widest">Entry Package</label>
+                          <div className="text-plasma-cyan font-mono mt-1 font-bold">{currentNode.outcome.package}</div>
+                        </div>
+                      </div>
+                      <p className="text-text-sub font-mono text-sm leading-relaxed italic">
+                        "{currentNode.outcome.assessment}"
+                      </p>
+                      <button 
+                        onClick={onClose}
+                        className="px-8 py-3 bg-white text-matte-obsidian font-mono text-xs font-bold uppercase tracking-widest hover:bg-plasma-cyan transition-colors"
+                      >
+                        Reset Simulator
+                      </button>
+                    </div>
+                  )}
+                </motion.div>
+              </AnimatePresence>
+            </div>
+
+            {/* Right Column: Data Visualization (Only for outcomes) */}
+            <div className="w-80 bg-black/30 p-8 flex flex-col">
+              {currentNode.outcome ? (
+                <div className="space-y-8">
+                  <div>
+                    <h4 className="text-[10px] font-mono text-plasma-cyan uppercase tracking-widest mb-4">Lifestyle Factors</h4>
+                    <div className="space-y-2">
+                      {currentNode.outcome.lifestyle.map((tag, i) => (
+                        <div key={i} className="flex items-center gap-2 text-[11px] font-mono text-text-sub">
+                          <div className="w-1 h-1 bg-plasma-cyan rounded-full"></div>
+                          {tag}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 className="text-[10px] font-mono text-plasma-cyan uppercase tracking-widest mb-4">Success Requirements</h4>
+                    <ul className="space-y-3">
+                      {currentNode.outcome.whatItTakes.map((req, i) => (
+                        <li key={i} className="text-[11px] font-mono text-text-dim leading-snug">
+                          {req}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="mt-auto pt-6 border-t border-ghost-trace/30">
+                    <div className="text-[10px] font-mono text-text-dim uppercase mb-2">5-Year Target</div>
+                    <div className="text-xl font-mono text-text-main">{currentNode.outcome.year5}</div>
+                  </div>
+                </div>
+              ) : (
+                <div className="h-full flex flex-col items-center justify-center text-center space-y-4 opacity-30">
+                  <div className="w-12 h-12 border-2 border-dashed border-ghost-trace rounded-full animate-spin-slow"></div>
+                  <div className="text-[10px] font-mono text-text-dim uppercase tracking-widest">
+                    Analyzing Decision Paths...
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </DataTerminal>
+      </motion.div>
+    </div>
+  );
+};
