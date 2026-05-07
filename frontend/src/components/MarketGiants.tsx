@@ -2,8 +2,10 @@ import React from 'react';
 import { ExternalLink, Search, MapPin, DollarSign, Briefcase } from 'lucide-react';
 import { MARKET_GIANTS } from '../data/marketGiants';
 import { cn } from '../utils/cn';
+import { useSkillGap } from '../pages/career-roadmap/hooks/useSkillGap';
 
 export const MarketGiants: React.FC = () => {
+  const { matches } = useSkillGap();
   return (
     <section id="market-giants" className="py-24 px-6 sm:px-12 bg-[#020408]">
       <div className="max-w-7xl mx-auto space-y-12">
@@ -53,8 +55,20 @@ export const MarketGiants: React.FC = () => {
                            <Briefcase size={16} className="text-slate-400 group-hover:text-cyan-400" />
                         </div>
                         <div>
-                          <h4 className="text-white font-bold text-sm uppercase tracking-tight">{company.name}</h4>
-                          <span className="text-[10px] font-mono text-slate-500 uppercase">{company.focus}</span>
+                          <div className="flex items-center gap-2">
+                            <h4 className="text-white font-bold text-sm uppercase tracking-tight">{company.name}</h4>
+                            {matches.find(m => m.name === company.name) && (
+                              <span className="px-1.5 py-0.5 rounded bg-cyan-400/10 text-cyan-400 text-[10px] font-mono border border-cyan-400/20 font-bold">
+                                {matches.find(m => m.name === company.name)?.matchScore}% MATCH
+                              </span>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-2 mt-1">
+                            <span className="text-[10px] font-mono text-slate-500 uppercase">{company.focus}</span>
+                            <span className="text-[9px] font-mono text-slate-600 border border-slate-700/50 px-1 rounded">
+                               {matches.find(m => m.name === company.name)?.wfh || 'Unknown WFH'}
+                            </span>
+                          </div>
                         </div>
                       </div>
                     </td>
@@ -62,6 +76,12 @@ export const MarketGiants: React.FC = () => {
                       <div className="flex items-center gap-2 text-slate-400 text-xs">
                         <MapPin size={12} className="text-slate-600" />
                         {company.location}
+                      </div>
+                      <div className="mt-1 flex items-center gap-1 text-[9px] font-mono text-slate-500 uppercase">
+                         <span>Visa:</span>
+                         <span className={matches.find(m => m.name === company.name)?.visa.includes('High') ? 'text-green-400' : 'text-slate-400'}>
+                           {matches.find(m => m.name === company.name)?.visa || 'Unknown'}
+                         </span>
                       </div>
                     </td>
                     <td className="px-6 py-6">

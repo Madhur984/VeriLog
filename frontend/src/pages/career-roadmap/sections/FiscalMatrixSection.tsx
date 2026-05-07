@@ -48,7 +48,7 @@ export const FiscalMatrixSection: React.FC<FiscalMatrixSectionProps> = ({
               Fiscal <span className="text-plasma-cyan">Matrix</span>
             </h2>
             <p className="text-text-dim font-mono text-xs uppercase tracking-widest">
-              Global Mobility & Unit-Corrected Compensation
+              Worldwide salary and cost of living comparisons.
             </p>
           </div>
 

@@ -23,8 +23,7 @@ export const TrajectorySimulatorModal: React.FC<TrajectorySimulatorModalProps> =
         className="w-full max-w-4xl"
       >
         <DataTerminal 
-          title="TRAJECTORY SIMULATOR v3.0"
-          subtitle={currentNode.outcome ? "Simulation Finalized" : "Decision Matrix Active"}
+          title="TRAJECTORY SIMULATOR"
           className="h-[600px]"
         >
           <div className="flex h-full">
@@ -38,9 +37,7 @@ export const TrajectorySimulatorModal: React.FC<TrajectorySimulatorModalProps> =
                   exit={{ opacity: 0, x: 20 }}
                   className="space-y-8"
                 >
-                  <div className="text-plasma-cyan font-mono text-[10px] tracking-[0.3em] uppercase">
-                    Status: {currentNode.outcome ? "Outcome Reached" : "Pending Input"}
-                  </div>
+
                   <h2 className="text-3xl font-mono text-text-main leading-tight tracking-tighter">
                     {currentNode.outcome ? currentNode.outcome.title : currentNode.text}
                   </h2>
@@ -127,7 +124,7 @@ export const TrajectorySimulatorModal: React.FC<TrajectorySimulatorModalProps> =
                 <div className="h-full flex flex-col items-center justify-center text-center space-y-4 opacity-30">
                   <div className="w-12 h-12 border-2 border-dashed border-ghost-trace rounded-full animate-spin-slow"></div>
                   <div className="text-[10px] font-mono text-text-dim uppercase tracking-widest">
-                    Analyzing Decision Paths...
+                    Loading...
                   </div>
                 </div>
               )}

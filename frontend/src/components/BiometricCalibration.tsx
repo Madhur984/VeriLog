@@ -42,8 +42,7 @@ const IdleState = () => (
       </svg>
     </div>
     <div className="text-center">
-      <span className="text-[11px] font-mono text-slate-400 uppercase tracking-widest block">Tap to Begin Neural Sync</span>
-      <span className="text-[9px] font-mono text-slate-600 uppercase mt-1 block">Biometric Authorization Required</span>
+      <span className="text-[11px] font-mono text-slate-400 uppercase tracking-widest block">Begin Calibration</span>
     </div>
   </motion.div>
 );
