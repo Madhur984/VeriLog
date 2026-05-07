@@ -1,19 +1,26 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { motion, useScroll, useSpring } from 'framer-motion';
+import React, { useState, useEffect } from 'react';
+import { AnimatePresence } from 'framer-motion';
 
 // Layout & Foundation
 import { FloatingCommandBar } from '../../components/FloatingCommandBar';
 import { ScrollProgress } from '../../components/ScrollProgress';
 import { SiliconTicker } from './components/SiliconTicker';
 
-// Sections
+// Existing Sections
 import { HeroSection } from './sections/HeroSection';
 import { SkillTopology } from './sections/SkillTopology';
 import { FiscalMatrix } from './sections/FiscalMatrix';
 import { TrajectorySimulator } from './sections/TrajectorySimulator';
-import { IntelHub } from './sections/IntelHub';
 
-// Components
+// New Integrated Components
+import { SiliconCompass } from '../../components/SiliconCompass';
+import { DomainExplorer } from '../../components/DomainExplorer';
+import { MarketGiants } from '../../components/MarketGiants';
+import { ExecutionTimeline } from '../../components/ExecutionTimeline';
+import { ExpertSignal } from '../../components/ExpertSignal';
+import { ComparisonBench } from '../../components/ComparisonBench';
+
+// UI & Data
 import { BadgeUnlockOverlay } from '../../components/BadgeUnlockOverlay';
 import { SiliconCabinet } from '../../components/SiliconCabinet';
 import { SectionWrapper } from '../../components/SectionWrapper';
@@ -22,14 +29,17 @@ import { generateBadgeSVG } from '../../utils/BadgeEngine';
 
 // Hooks
 import { useAmbientAudio } from '../../hooks/useAmbientAudio';
+import { useCompass } from '../../hooks/useCompass';
+import { useComparison } from '../../hooks/useComparison';
 
 const CareerRoadmapPage: React.FC = () => {
   const [activeSection, setActiveSection] = useState('hero');
   const [audioStarted, setAudioStarted] = useState(false);
   const { start: startAudio } = useAmbientAudio();
+  const { completed: compassCompleted } = useCompass();
+  const { comparingIds, clearAll: clearComparison, isBenchOpen, setIsBenchOpen } = useComparison();
 
   // Mastery & Badge State
-  const [masteredNodes, setMasteredNodes] = useState<Set<string>>(new Set(['digital-logic', 'verilog']));
   const [unlockedBadgeIds, setUnlockedBadgeIds] = useState<string[]>(['digital-foundation']);
   const [newBadge, setNewBadge] = useState<{ id: string; name: string; description: string; svgContent: string } | null>(null);
 
@@ -43,7 +53,7 @@ const CareerRoadmapPage: React.FC = () => {
           }
         });
       },
-      { threshold: 0.2, rootMargin: '-10% 0px -10% 0px' }
+      { threshold: 0.1, rootMargin: '-10% 0px -10% 0px' }
     );
 
     const sections = document.querySelectorAll('section[id]');
@@ -59,42 +69,46 @@ const CareerRoadmapPage: React.FC = () => {
     }
   };
 
-  const handleUnlockBadge = (badgeId: string) => {
-    if (unlockedBadgeIds.includes(badgeId)) return;
-    
-    const badge = BADGE_DEFINITIONS.find(b => b.id === badgeId);
-    if (badge) {
-      const svg = generateBadgeSVG(badge, 'USER_ID_MOCK');
-      setNewBadge({
-        id: badge.id,
-        name: badge.name,
-        description: badge.description,
-        svgContent: svg
-      });
-      setUnlockedBadgeIds([...unlockedBadgeIds, badgeId]);
-    }
-  };
-
   return (
     <div 
-      className="min-h-screen bg-observatory-bg selection:bg-cyan-400 selection:text-black"
+      className="min-h-screen bg-observatory-bg selection:bg-cyan-400 selection:text-black scroll-smooth"
       onClick={handleStartInteraction}
     >
       <ScrollProgress />
       <FloatingCommandBar activeSection={activeSection} />
+
+      {/* High Priority Overlays */}
+      <AnimatePresence>
+        {!compassCompleted && (
+          <SiliconCompass onComplete={() => window.scrollTo({ top: 0, behavior: 'smooth' })} />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {comparingIds.length === 2 && (
+          <ComparisonBench 
+            comparingIds={comparingIds} 
+            onClose={clearComparison} 
+          />
+        )}
+      </AnimatePresence>
 
       <BadgeUnlockOverlay 
         badge={newBadge} 
         onClose={() => setNewBadge(null)} 
       />
 
-      {/* Main Flow */}
+      {/* Main Industrial Flow */}
       <main className="relative z-10">
         <HeroSection 
-          onCalibrate={() => document.getElementById('skill-graph')?.scrollIntoView({ behavior: 'smooth' })} 
-          onExplore={() => document.getElementById('intel')?.scrollIntoView({ behavior: 'smooth' })}
+          onCalibrate={() => document.getElementById('domain-explorer')?.scrollIntoView({ behavior: 'smooth' })} 
+          onExplore={() => document.getElementById('market-giants')?.scrollIntoView({ behavior: 'smooth' })}
         />
         
+        {/* New Hub: Domain Explorer */}
+        <DomainExplorer />
+
+        {/* Existing Technical Deep-Dives */}
         <div className="relative z-10 border-t border-white/[0.03]">
           <SkillTopology />
         </div>
@@ -107,7 +121,16 @@ const CareerRoadmapPage: React.FC = () => {
           <TrajectorySimulator />
         </div>
 
-        <SectionWrapper id="cabinet" className="bg-observatory-bg border-t border-white/[0.03]">
+        {/* New Logistics: Timeline & Giants */}
+        <ExecutionTimeline />
+        
+        <MarketGiants />
+
+        {/* New Signal: Expert Stories */}
+        <ExpertSignal />
+
+        {/* Final Station: Silicon Cabinet */}
+        <SectionWrapper id="cabinet" className="bg-observatory-bg border-t border-white/[0.03] pb-32">
           <div className="max-w-7xl mx-auto">
             <div className="mb-12">
               <h2 className="text-4xl font-bold text-white tracking-tight uppercase">Silicon Cabinet</h2>
@@ -119,10 +142,6 @@ const CareerRoadmapPage: React.FC = () => {
             />
           </div>
         </SectionWrapper>
-
-        <div className="relative z-10 border-t border-white/[0.03]">
-          <IntelHub />
-        </div>
       </main>
 
       {/* Persistent Ticker Overlay */}
