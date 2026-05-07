@@ -222,9 +222,9 @@ const PROBLEMS: BossProblem[] = [
   {
     id: 'b1',
     Icon: Hash,
-    title: "Boss 1 · 7-Segment Decoder · segment 'a'",
+    title: "Boss 1 · 7-Segment Display · top bar",
     scenario:
-      'You are designing one segment of a 7-segment display driver. Input is a 4-bit BCD digit (A=MSB, D=LSB) representing 0–9. Output is segment "a" (the top horizontal stroke). Segment a is LIT for digits 0, 2, 3, 5, 6, 7, 8, 9 — every digit EXCEPT 1 and 4. Codes 10–15 never occur in BCD, so they are don\'t-cares.',
+      'You\'re designing the top bar of a 7-segment display (the kind on a calculator). Input is a 4-bit number for digits 0–9 (A is the highest bit, D is the lowest). The top bar should LIGHT UP for digits 0, 2, 3, 5, 6, 7, 8, 9 — every digit EXCEPT 1 and 4. Codes 10–15 never happen in BCD, so they are don\'t-cares (treat them as 0 or 1, whichever helps).',
     inputs: [
       { sym: 'A', meaning: 'BCD bit 3 (MSB)', accent: '#0ea5e9' },
       { sym: 'B', meaning: 'BCD bit 2',       accent: '#22d3ee' },
@@ -241,16 +241,16 @@ const PROBLEMS: BossProblem[] = [
       { cells: [0, 2, 8, 10],                   color: '#22c55e', term: "B'D'", label: 'Four corners · B=0 ∧ D=0 (wrap-around)' },
     ],
     questions: [
-      { q: 'What digits make segment "a" light up? Which DON\'T?',
-        a: 'Lit: 0, 2, 3, 5, 6, 7, 8, 9. Dark: 1, 4. (1 = no top stroke; 4 has only middle/right strokes.)' },
-      { q: 'How do you exploit the don\'t-cares m10..m15?',
-        a: 'Treat them as 1 wherever they help form a larger group. Here they extend the A and C groups from 4 cells to 8 cells — each saves 2 literals.' },
-      { q: 'Final minimised SOP?',
-        a: "a = A + C + BD + B'D'  · 4 product terms · 6 literals." },
-      { q: 'Hardware footprint?',
-        a: "6 gates · 2 NOTs (B', D'), 2 ANDs (BD and B'D'), 1 four-input OR. The single literals A and C feed the OR directly." },
+      { q: 'Which digits make the top bar light up? Which ones leave it dark?',
+        a: 'Lit: 0, 2, 3, 5, 6, 7, 8, 9. Dark: 1 and 4. (Digit 1 has no top bar; digit 4 has only middle and right bars.)' },
+      { q: 'How can you use the don\'t-cares (m10–m15) to shrink the equation?',
+        a: 'Pretend they are 1 wherever it helps you make a bigger group. Here they extend the A group and C group from 4 cells to 8 cells each — saving 2 letters per group.' },
+      { q: 'What is the shortest equation?',
+        a: "a = A + C + BD + B'D'  · 4 terms · 6 letters total." },
+      { q: 'How many gates total?',
+        a: "6 gates · 2 NOTs (for B' and D'), 2 ANDs (BD and B'D'), 1 OR with 4 inputs. A and C go straight into the OR with no AND needed." },
     ],
-    unsimplified: '8 minterms × 4 literals = 32 literals',
+    unsimplified: '8 rows × 4 letters each = 32 letters',
     minimised: "a = A + C + BD + B'D'",
     literalsBefore: 32,
     literalsAfter: 6,
@@ -266,7 +266,7 @@ const PROBLEMS: BossProblem[] = [
     Icon: Car,
     title: 'Boss 2 · Smart Garage Door',
     scenario:
-      'A smart garage door has 4 inputs: A (operator radio idle, ignored), B (resident keyfob present), C (motion sensor at gate), D (commands enabled by master switch). The door OPENS when a valid trigger arrives AND the master switch is on — specifically: F = 1 iff D=1 AND (B=1 OR C=1). Build the truth table, K-Map, minimised SOP, and the schematic.',
+      'A smart garage door has 4 inputs: A (radio noise — ignored), B (keyfob in pocket), C (motion sensor at gate), D (master ON switch). The door OPENS when D is on AND at least one of B or C is on. So: open = D AND (B OR C). Build the truth table, K-Map, shortest equation, and the schematic.',
     inputs: [
       { sym: 'A', meaning: 'Operator radio (irrelevant)', accent: '#475569' },
       { sym: 'B', meaning: 'Keyfob present',  accent: '#22d3ee' },
@@ -281,16 +281,16 @@ const PROBLEMS: BossProblem[] = [
       { cells: [3, 7, 11, 15], color: '#a78bfa', term: 'CD', label: 'CD=11 column · C=1 ∧ D=1' },
     ],
     questions: [
-      { q: 'Translate the spec ("D=1 AND (B=1 OR C=1)") into the active minterm list.',
-        a: 'Σm(3, 5, 7, 11, 13, 15) — every row where D=1 and at least one of B, C is 1.' },
-      { q: 'On the 4-var K-Map, find two 4-cell loops.',
-        a: 'BD (centre 2×2) covers {m5, m7, m13, m15}; CD (CD=11 column) covers {m3, m7, m11, m15}. They overlap on m7 and m15.' },
-      { q: 'Final minimised SOP?',
-        a: 'F = BD + CD (also factors as F = D(B + C), which matches the spec exactly).' },
-      { q: 'Does input A appear in the optimised circuit?',
-        a: 'No — A is irrelevant. The K-Map proves it: A varies inside both groups, so it cancels. Two A wires never touch a gate.' },
+      { q: 'Take the rule "D AND (B OR C)" and list the rows where the door opens.',
+        a: 'Σm(3, 5, 7, 11, 13, 15) — every row where D = 1 AND at least one of B, C is 1.' },
+      { q: 'Find two 4-cell groups on the K-Map.',
+        a: 'BD (centre 2×2) covers {m5, m7, m13, m15}. CD (CD=11 column) covers {m3, m7, m11, m15}. They overlap on m7 and m15.' },
+      { q: 'What is the shortest equation?',
+        a: 'F = BD + CD (you can also factor it as D(B + C) — same thing).' },
+      { q: 'Does input A end up in the final circuit?',
+        a: 'No — A is irrelevant. The K-Map proves it: A changes inside both groups, so it cancels. The A wire never touches any gate.' },
     ],
-    unsimplified: '6 minterms × 4 literals = 24 literals',
+    unsimplified: '6 rows × 4 letters each = 24 letters',
     minimised: 'F = BD + CD = D(B + C)',
     literalsBefore: 24,
     literalsAfter: 4,
@@ -510,9 +510,9 @@ export const S04_Boss: React.FC<Props> = ({ isActive, isDarkMode }) => {
           Two heavyweight problems. No shortcuts.
         </h2>
         <p className={`text-base max-w-3xl ${subText}`}>
-          Real engineering scenarios with don't-cares, irrelevant inputs, and 4-cell loops you
-          MUST find. Each problem ships with K-Map, live schematic, and 4 sub-questions. Don't
-          skip the truth-table mapping step — boss-level problems punish hand-waving.
+          Real engineering problems with don't-cares, useless inputs, and 4-cell groups you
+          have to find. Each one comes with a K-Map, a live circuit you can play with, and 4
+          sub-questions. Map out the truth table carefully — these problems punish guessing.
         </p>
       </motion.section>
 
@@ -523,9 +523,9 @@ export const S04_Boss: React.FC<Props> = ({ isActive, isDarkMode }) => {
         <Lightbulb className="text-amber-300 mt-0.5 shrink-0" size={18} />
         <div className={`text-sm ${subText}`}>
           <strong className="text-amber-300">Boss tip:</strong> on a 4-variable K-Map, the four
-          corners (m0, m2, m8, m10) wrap around to form a single 4-cell group. Same applies to
-          the four corners of any column or row. If you only see 2-cell loops, you have probably
-          missed a wrap-around quad.
+          corner cells (m0, m2, m8, m10) wrap around and count as a single 4-cell group. Same
+          for any row or column corners. If you only spot 2-cell groups, you probably missed a
+          wrap-around group.
         </div>
       </motion.div>
 

@@ -155,7 +155,7 @@ const KMap: React.FC<{
 const PROBLEMS: OptProblem[] = [
   {
     id: 'o1',
-    title: 'O1 · Cover everything except one cell',
+    title: 'O1 · Almost every row is 1',
     difficulty: 'Easy',
     spec: 'F(A,B,C) = Σm(0, 1, 2, 4, 5, 6, 7)',
     vars: 3,
@@ -167,25 +167,25 @@ const PROBLEMS: OptProblem[] = [
       { cells: [0, 2, 4, 6], color: '#fb923c', term: "C'", label: 'BC=00 ∪ BC=10 columns · C=0 stays' },
     ],
     questions: [
-      { q: 'Only one minterm is missing — which one is it?',
-        a: 'm3 (A=0, B=1, C=1). Everything else is 1.' },
-      { q: 'What is the minimised SOP?',
-        a: "F = A + B' + C'  · three single-literal terms. Three 4-cell quads cover the K-Map." },
-      { q: 'How many gates total?',
-        a: '3 gates · 2 NOTs (B′, C′) and 1 three-input OR. No ANDs needed since each term is a single literal!' },
-      { q: 'Why is this so much smaller than the canonical 7-term SOP?',
-        a: 'The missing cell (m3) means F = (A′BC)′. By DeMorgan, F = A + B′ + C′ — exactly what the K-Map yields.' },
+      { q: 'Only one row is missing from the list. Which one?',
+        a: 'm3 (A=0, B=1, C=1). Every other row is 1.' },
+      { q: 'What is the shortest equation?',
+        a: "F = A + B' + C'  · 3 single-letter terms. Three 4-cell groups cover the whole K-Map." },
+      { q: 'How many gates do you need in total?',
+        a: '3 gates · 2 NOTs (for B′ and C′) and 1 OR with 3 inputs. No ANDs needed because each term is just one letter!' },
+      { q: 'Why is this so much smaller than the 7-term equation?',
+        a: 'The only row that is 0 is m3. Using DeMorgan: F = (A′BC)′ = A + B′ + C′. Exactly what the K-Map gives you.' },
     ],
-    unsimplified: "F = A'B'C' + A'B'C + A'BC' + AB'C' + AB'C + ABC' + ABC  (7 terms · 21 literals)",
+    unsimplified: "F = A'B'C' + A'B'C + A'BC' + AB'C' + AB'C + ABC' + ABC  (7 terms · 21 letters)",
     minimised: "F = A + B' + C'",
     literalsBefore: 21,
     literalsAfter: 3,
-    insight: 'When F has exactly ONE zero in the truth table, the minimised form is always the OR of complements of that single minterm\'s variables. DeMorgan magic.',
+    insight: 'When only ONE row is 0 in the truth table, the shortest form is always the OR of the missing row\'s variables (flipped). DeMorgan magic.',
   },
 
   {
     id: 'o2',
-    title: 'O2 · Three essential prime implicants',
+    title: "O2 · Three groups you can't avoid",
     difficulty: 'Medium',
     spec: 'F(A,B,C,D) = Σm(2, 3, 4, 5, 6, 7, 11, 15)',
     vars: 4,
@@ -198,24 +198,24 @@ const PROBLEMS: OptProblem[] = [
     ],
     questions: [
       { q: 'How many 4-cell groups can you find on the K-Map?',
-        a: 'Three: A′B (AB=01 row), CD (CD=11 column), and A′C (a 2×2 in the upper half).' },
-      { q: 'Are all three groups needed in the cover?',
-        a: 'Yes — each group has at least one cell that no other group covers. m4,m5 only fit in A′B; m11 only fits in CD; m2 only fits in A′C. All three are essential prime implicants.' },
-      { q: 'Final minimised SOP?',
-        a: "F = A'B + CD + A'C · 3 product terms · 6 literals." },
-      { q: 'Hardware footprint?',
-        a: '6 gates · 2 NOTs (only A and C inverted), 3 ANDs (2-input each), 1 OR (3-input).' },
+        a: 'Three: A′B (AB=01 row), CD (CD=11 column), and A′C (a 2×2 in the top half).' },
+      { q: 'Do you need all 3 groups, or can you skip one?',
+        a: 'You need all 3. Each one covers at least one cell that no other group can reach. m4 and m5 only fit in A′B; m11 only fits in CD; m2 only fits in A′C.' },
+      { q: 'What is the final shortest equation?',
+        a: "F = A'B + CD + A'C · 3 AND terms · 6 letters total." },
+      { q: 'How many gates total?',
+        a: '6 gates · 2 NOTs (for A and C), 3 ANDs, 1 OR with 3 inputs.' },
     ],
-    unsimplified: '8 minterms × 4 literals = 32 literals',
+    unsimplified: '8 rows × 4 letters each = 32 letters',
     minimised: "F = A'B + CD + A'C",
     literalsBefore: 32,
     literalsAfter: 6,
-    insight: 'When two 4-cell groups overlap, their shared cells appear in both terms — this overlap is FREE in hardware. The OR doesn\'t care if both ANDs fire on the same row.',
+    insight: 'When two 4-cell groups overlap, the shared cells show up in both terms. That is FREE in hardware — the OR gate does not mind if 2 ANDs fire at the same time.',
   },
 
   {
     id: 'o3',
-    title: "O3 · Don't-cares collapse the function",
+    title: "O3 · Don't-cares shrink the answer to one letter",
     difficulty: 'Harder',
     spec: 'F(A,B,C,D) = Σm(1, 3, 5, 7, 9) + d(10, 11, 12, 13, 14, 15)',
     vars: 4,
@@ -225,20 +225,20 @@ const PROBLEMS: OptProblem[] = [
       { cells: [1, 3, 5, 7, 9, 11, 13, 15], color: '#0ea5e9', term: 'D', label: 'CD=01 ∪ CD=11 columns · D=1 stays · 8-cell octet' },
     ],
     questions: [
-      { q: 'BCD only uses values 0–9. What does that imply for m10–m15?',
-        a: 'They are "don\'t-care" cells — the input combination never occurs in valid BCD, so we are free to assign 0 OR 1 for whichever simplifies F.' },
-      { q: 'Treating the don\'t-cares as 1, can you find an 8-cell loop?',
-        a: 'Yes! The CD=01 and CD=11 columns together = 8 cells. All "real" 1s plus the don\'t-cares m11, m13, m15 fall on D=1. Set the rest to 0.' },
-      { q: 'What is the simplest possible minimised SOP?',
-        a: 'F = D · the LSB. A single wire, no gates needed!' },
-      { q: 'Without exploiting don\'t-cares, what would the SOP look like?',
-        a: 'You would need at least F = A′D + AB′C′D (2 terms, 6 literals), or worse. Don\'t cares dropped 5 literals down to 1.' },
+      { q: 'BCD only uses 0–9 (rows m0 to m9). So what about m10 to m15?',
+        a: 'Those rows are "don\'t cares" — those input combos never happen in real BCD. We can pretend they are 0 OR 1, whichever helps shrink F.' },
+      { q: 'If you treat the don\'t-cares as 1 when helpful, can you find an 8-cell group?',
+        a: 'Yes! The CD=01 and CD=11 columns together = 8 cells. All the real 1s (m1, m3, m5, m7, m9) plus the don\'t-cares m11, m13, m15 all fall in D=1. Set the rest to 0.' },
+      { q: 'What is the shortest equation?',
+        a: 'F = D · just one letter. Literally a single wire, no gates needed!' },
+      { q: 'Without using don\'t-cares, how big would the equation be?',
+        a: 'You\'d need at least F = A′D + AB′C′D (2 terms, 6 letters), or worse. Don\'t-cares cut 6 letters down to 1.' },
     ],
-    unsimplified: 'Without DCs · F = A′D + AB′C′D (6 literals)',
+    unsimplified: 'Without don\'t-cares · F = A′D + AB′C′D (6 letters)',
     minimised: 'F = D',
     literalsBefore: 6,
     literalsAfter: 1,
-    insight: 'BCD odd-detector. By exploiting the unused codes 10–15 as don\'t-cares, the K-Map collapses 5 distinct minterms into a single column of 8 cells — F is just the LSB.',
+    insight: 'BCD odd-number detector. By using the unused codes 10–15 as wildcards, the K-Map combines 5 separate rows into one big 8-cell column — F is just the last bit.',
   },
 ];
 
@@ -439,13 +439,12 @@ export const S03_Optimise: React.FC<Props> = ({ isActive, isDarkMode }) => {
           <Grid3x3 size={14} /> Drill Set 03 · Pure K-Map Optimisation
         </div>
         <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>
-          Three minimisation drills · grouping intuition under pressure.
+          Three K-Map drills · just shrink the equation.
         </h2>
         <p className={`text-base max-w-3xl ${subText}`}>
-          No scenario, no gate-level circuit — just a list of minterms and a K-Map. Find the
-          smallest legal cover. Click <strong className="text-violet-300">Show groups</strong> to
-          peek if you are stuck. Each problem ends with the literal-count delta and a strategy
-          insight.
+          No story, no schematic — just a list of rows where F = 1, and a K-Map. Find the smallest
+          equation that covers them all. Click <strong className="text-violet-300">Show groups</strong>{' '}
+          if you get stuck. Each problem ends with a "before vs after" comparison.
         </p>
       </motion.section>
 
@@ -455,9 +454,9 @@ export const S03_Optimise: React.FC<Props> = ({ isActive, isDarkMode }) => {
       >
         <Lightbulb className="text-amber-300 mt-0.5 shrink-0" size={18} />
         <div className={`text-sm ${subText}`}>
-          <strong className="text-amber-300">Recipe:</strong> spot every prime implicant first
-          (largest possible loops). Identify the ESSENTIAL ones (those covering a cell no other
-          loop reaches). Drop in non-essential primes only if a residual cell is still uncovered.
+          <strong className="text-amber-300">Recipe:</strong> spot every group first (the bigger,
+          the better). Then pick the ones that cover cells no other group can. Add a smaller
+          group only if some cell is still left uncovered.
         </div>
       </motion.div>
 

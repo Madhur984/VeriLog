@@ -613,9 +613,9 @@ const PROBLEMS: ProblemConfig[] = [
     difficulty: 'Easy',
     scenario: {
       accent: '#22c55e',
-      headline: 'Pump dispenses water when…',
-      story: 'A pour-over kitchen appliance must run its pump under two conditions. Either the customer is making a normal cup (a vessel is on the tray AND the brew button is pressed), or the device is in its self-cleaning cycle while no button is pressed.',
-      rule: 'F = 1 when (Cup AND Button), OR when (NO Button AND Auto-clean).',
+      headline: 'When does the pump turn on?',
+      story: 'A coffee machine has 3 sensors: a cup, a button, and an auto-clean switch. The pump should run in two cases — when someone is making coffee (cup is there AND button is pressed), OR when auto-clean is running and no button is pressed.',
+      rule: 'Pump = 1 when (Cup AND Button) OR when (NO Button AND Auto-clean).',
     },
     inputs: Q1.inputs,
     output: { sym: 'F', meaning: 'Pump on' },
@@ -633,10 +633,10 @@ const PROBLEMS: ProblemConfig[] = [
     minimisedSOP: 'F = AB + B′C',
     hardware: { not: 1, and: '2 × (2-input)', or: '1 × (2-input)', total: 4 },
     questions: [
-      { q: 'How many active states (F=1) does the pump have?',                 answer: '4 states · m1, m5, m6, m7' },
-      { q: 'What is the canonical SOP (the bloated, brute-force form)?',       answer: "F = A′B′C + AB′C + ABC′ + ABC · 4 product terms · 12 literals" },
-      { q: 'After K-Map minimisation, what is the simplified SOP?',            answer: 'F = AB + B′C · 2 product terms · 4 literals' },
-      { q: 'How many gates does the optimised circuit need?',                  answer: '4 gates · 1 NOT (B), 2 ANDs (2-in), 1 OR (2-in)' },
+      { q: 'How many input combinations turn the pump ON?',                    answer: '4 combinations · m1, m5, m6, m7.' },
+      { q: 'Write the long equation — one AND term for each ON row.',          answer: "F = A′B′C + AB′C + ABC′ + ABC · 4 terms · 12 letters total." },
+      { q: 'Use the K-Map to find the shortest equation.',                     answer: 'F = AB + B′C · only 2 terms · only 4 letters.' },
+      { q: 'How many gates does the smaller circuit need?',                    answer: '4 gates · 1 NOT (for B′), 2 ANDs, 1 OR.' },
     ],
     schematic: Q1,
   },
@@ -649,9 +649,9 @@ const PROBLEMS: ProblemConfig[] = [
     difficulty: 'Medium',
     scenario: {
       accent: '#fbbf24',
-      headline: 'Motor controller arms when…',
-      story: 'A delivery drone has two distinct flight modes. In manual mode (no GPS lock yet) the pilot can fly only via the stick. In autonomous mode (GPS lock acquired) flight commands come from the autopilot, with stick inputs ignored for safety.',
-      rule: 'F = 1 when (NO GPS lock AND stick deflection), OR when (GPS lock AND autopilot enabled).',
+      headline: 'When do the motors arm?',
+      story: 'A drone has two flight modes. Manual mode: no GPS yet, so the pilot uses the stick. Auto mode: GPS is locked, so the autopilot takes over. The motors should turn on in either of those modes.',
+      rule: 'Motors = 1 when (NO GPS AND stick) OR when (GPS AND autopilot).',
     },
     inputs: Q2.inputs,
     output: { sym: 'F', meaning: 'Motors armed' },
@@ -669,10 +669,10 @@ const PROBLEMS: ProblemConfig[] = [
     minimisedSOP: 'F = A′B + AC',
     hardware: { not: 1, and: '2 × (2-input)', or: '1 × (2-input)', total: 4 },
     questions: [
-      { q: 'List the active minterms (where motors should arm).',           answer: 'Σm(2, 3, 5, 7) — manual fallback (m2,m3) + auto branch (m5,m7).' },
-      { q: 'What is the simplified equation?',                              answer: 'F = A′B + AC' },
-      { q: 'How does the K-Map prove these two terms cover everything?',    answer: 'Loop {m2,m3} eliminates C → A′B · Loop {m5,m7} eliminates B → AC. Together they tile every active cell.' },
-      { q: 'Final hardware?',                                                answer: '4 gates · 1 NOT (A), 2 ANDs (2-in), 1 OR (2-in)' },
+      { q: 'List the rows where the motors should turn ON.',                answer: 'Σm(2, 3, 5, 7) — m2, m3 are the manual rows; m5, m7 are the auto rows.' },
+      { q: 'What is the shortest equation?',                                answer: 'F = A′B + AC' },
+      { q: 'How does the K-Map get from 4 rows down to 2 terms?',           answer: 'Group {m2, m3} drops C → leaves A′B. Group {m5, m7} drops B → leaves AC. Two groups cover all 4 rows.' },
+      { q: 'How many gates does the final circuit need?',                   answer: '4 gates · 1 NOT (for A′), 2 ANDs, 1 OR.' },
     ],
     schematic: Q2,
   },
@@ -685,9 +685,9 @@ const PROBLEMS: ProblemConfig[] = [
     difficulty: 'Medium',
     scenario: {
       accent: '#a78bfa',
-      headline: 'Tamper alarm fires when…',
-      story: 'A high-security vault uses two redundant authentication channels: a voice biometric (B) and a PIN entry (D). Camera (A) and card (C) feed unrelated subsystems and are wired into the alarm only as decoys. The vault\'s tamper-alarm should fire on EXACTLY ONE channel match — a sign of attempted spoofing.',
-      rule: 'F = 1 when EXACTLY ONE of (Voice, PIN) is engaged · the other must be silent.',
+      headline: 'When does the tamper alarm fire?',
+      story: 'A vault has 4 sensors: camera (A), voice (B), card (C), PIN (D). The alarm should fire when EXACTLY ONE of voice or PIN matches — that usually means someone is faking. The camera and card are also wired in but might not matter.',
+      rule: 'Alarm = 1 when EXACTLY ONE of voice or PIN is on (not both, not neither).',
     },
     inputs: Q3.inputs,
     output: { sym: 'F', meaning: 'Tamper alarm' },
@@ -705,13 +705,13 @@ const PROBLEMS: ProblemConfig[] = [
     minimisedSOP: 'F = B′D + BD′  ≡  B ⊕ D',
     hardware: { not: 2, and: '2 × (2-input)', or: '1 × (2-input)', total: 5 },
     questions: [
-      { q: 'Which two of the four inputs (A, B, C, D) actually matter?',     answer: 'Only B and D · A and C drop out completely. The K-Map proves they vary inside every group → cancelled.' },
-      { q: 'What is the minimised SOP?',                                     answer: 'F = B′D + BD′ — equivalent to the XOR of B and D.' },
-      { q: 'How many gates after optimisation?',                             answer: '5 gates · 2 NOTs (B, D), 2 ANDs (2-in), 1 OR (2-in) · or one XNOR cell.' },
-      { q: 'If a vendor offered a 1-cell "XOR" macro, would that beat your gate-level build?', answer: 'Yes — a single XOR cell replaces all 5 of the discrete gates. Same logic, smaller silicon area.' },
+      { q: 'Which 2 of the 4 inputs actually change the answer?',           answer: 'Only B and D matter · A and C drop out. The K-Map shows they change inside every group → they get cancelled.' },
+      { q: 'What is the shortest equation?',                                 answer: 'F = B′D + BD′ — this is the XOR of B and D.' },
+      { q: 'How many gates does the final circuit need?',                   answer: '5 gates · 2 NOTs, 2 ANDs, 1 OR · or just 1 XOR chip if you have one.' },
+      { q: 'If you had a single XOR chip, could you replace this whole circuit with one part?', answer: 'Yes — one XOR chip = 5 small gates here. Same logic, smaller circuit board.' },
     ],
     schematic: Q3,
-    redundantNote: 'A and C do NOT appear in the optimised circuit — they contribute zero to the alarm logic.',
+    redundantNote: 'A and C do NOT show up in the final circuit — they don\'t change the alarm at all.',
   },
 
   // Q4 — Conveyor safety
@@ -722,9 +722,9 @@ const PROBLEMS: ProblemConfig[] = [
     difficulty: 'Harder',
     scenario: {
       accent: '#fb7185',
-      headline: 'Belt is allowed to advance when…',
-      story: 'On a packing line, the conveyor must be in one of two safe states. Either the belt is idle with no box on it (idle/empty — safe to power up), or the belt is running with a box that has just passed quality control (running/cleared — safe to keep moving). Operator presence (A) is logged but does not gate the belt.',
-      rule: 'F = 1 when (Belt IDLE AND box NOT present), OR when (Belt RUNNING AND QA passed).',
+      headline: 'When is the belt safe to move?',
+      story: 'A factory belt is safe to move in two cases: when it is OFF and there is NO box on it, OR when it is ON and a box just passed inspection. The operator sensor (A) is also wired in, but does it actually matter?',
+      rule: 'Move = 1 when (Belt OFF AND no box) OR when (Belt ON AND inspection passed).',
     },
     inputs: Q4.inputs,
     output: { sym: 'F', meaning: 'Belt advance' },
@@ -742,17 +742,17 @@ const PROBLEMS: ProblemConfig[] = [
     minimisedSOP: 'F = B′C′ + BD',
     hardware: { not: 1, and: '2 × (2-input)', or: '1 × (2-input)', total: 4 },
     questions: [
-      { q: 'Operator presence (A) is wired in. Does it appear in the minimised circuit?',
-        answer: 'No. A varies across both groups → it is dropped entirely. The optimiser proves the operator signal has no effect on belt advance.' },
-      { q: 'How many literals does canonical SOP need vs minimised?',
-        answer: '32 literals canonical · 4 literals optimised — an 87% reduction.' },
-      { q: 'Spell out the K-Map adjacency that beats canonical.',
-        answer: 'Two 4-cell groups: a wrap-around top+bottom (rows AB=00 ↔ AB=10 share an edge) gives B′C′, and a centre 2×2 gives BD.' },
-      { q: 'Final gate count?',
-        answer: '4 gates · 1 NOT (only B), 2 ANDs (2-input), 1 OR (2-input). C′ is built by inverting C inside the AND for B′C′ — wait, that would be 2 NOTs. Recount?' },
+      { q: 'The operator sensor (A) is connected. Does it actually change the answer?',
+        answer: 'No. A changes inside both groups → it gets dropped completely. The K-Map proves the operator sensor has zero effect.' },
+      { q: 'How many letters does the long equation use vs. the shortest one?',
+        answer: '32 letters in the long one · only 4 letters in the short one — that is 87% smaller.' },
+      { q: 'Which K-Map groups beat the long form?',
+        answer: 'Two 4-cell groups. Top + bottom edges wrap around to give B′C′. The centre 2×2 box gives BD.' },
+      { q: 'How many gates does the final circuit need?',
+        answer: '5 gates · 2 NOTs (for B′ and C′), 2 ANDs, 1 OR.' },
     ],
     schematic: Q4,
-    redundantNote: 'A is irrelevant — it never reaches a gate in the optimised schematic.',
+    redundantNote: 'A is irrelevant — it never even reaches a gate in the final circuit.',
   },
 ];
 
@@ -1141,13 +1141,13 @@ export const S01_Forward: React.FC<Props> = ({ isActive, isDarkMode }) => {
           <Target size={14} /> Drill Set 01 · Forward Synthesis
         </div>
         <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>
-          Spec → Schematic. Four products to wire from scratch.
+          Story → Circuit. Four products to design from scratch.
         </h2>
         <p className={`text-base max-w-3xl ${subText}`}>
-          You are given a real-world scenario and a list of active states. Your job is to derive
-          the minimum-gate circuit. Read the scenario, study the canonical SOP teaser, then click{' '}
-          <strong className="text-rose-300">Solve it</strong> to walk through an animated 5-step
-          solution: minterm extraction → K-Map plot → group → minimise → live schematic.
+          You get a short story and the rows where the output is 1. Your job: build the smallest
+          circuit that does it. Read the story, then click <strong className="text-rose-300">Solve it</strong> to
+          walk through 5 animated steps: write down the minterms → plot them on the K-Map →
+          group them → simplify → live circuit you can play with.
         </p>
       </motion.section>
 

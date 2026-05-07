@@ -211,7 +211,7 @@ const PROBLEMS: ReverseProblem[] = [
     Icon: Droplets,
     title: 'R1 · Pipeline Voter',
     scenario:
-      'A high-pressure water pipeline has three independent pressure sensors A, B, C. To prevent false-positive shutdowns from a single failed sensor, the safety relay only triggers when AT LEAST TWO of the three sensors agree. The hardware team has built the circuit shown below — your job is to verify it does the right thing.',
+      'A water pipe has 3 pressure sensors (A, B, C). To avoid shutting down because of one bad sensor, the alarm should only fire when AT LEAST 2 of the 3 sensors agree. Look at the circuit below and check if it does the right thing.',
     inputs: [
       { sym: 'A', meaning: 'Sensor 1', accent: '#0ea5e9' },
       { sym: 'B', meaning: 'Sensor 2', accent: '#22d3ee' },
@@ -221,25 +221,25 @@ const PROBLEMS: ReverseProblem[] = [
     drawCircuit: (v, isDark) => drawCircuitR1(v[0], v[1], v[2], isDark),
     tt: buildTT(3, ([a, b, c]) => (((a && b) || (b && c) || (a && c)) ? 1 : 0) as Bit),
     questions: [
-      { q: 'Read each AND output (P1, P2, P3) and the final OR. Write Y as a Boolean equation.',
-        a: 'Y = AB + BC + AC · the canonical "majority" function — at least two of three must be 1.' },
-      { q: 'Toggle the inputs. For how many of the 8 input combinations is Y = 1?',
+      { q: 'Look at each AND output, then the final OR. What is Y as a Boolean equation?',
+        a: 'Y = AB + BC + AC · this is the "majority" function — at least 2 of 3 must be 1.' },
+      { q: 'Toggle the inputs. How many of the 8 input combinations give Y = 1?',
         a: '4 combinations · m3 (011), m5 (101), m6 (110), m7 (111). Y = Σm(3, 5, 6, 7).' },
-      { q: 'Can the equation be simplified further with a K-Map?',
-        a: 'No. Y = AB + BC + AC is already minimum-cost SOP. Each pair is a 2-cell K-Map loop; no 4-cell loop exists. This is the classic "unminimisable" majority pattern.' },
-      { q: 'What single 3-input gate could replace the entire circuit if it existed?',
-        a: 'A "majority-of-3" cell (also called a 2-of-3 voter). Some chip libraries provide it; if not, the 3-AND/1-OR build above is the standard implementation.' },
+      { q: 'Can the K-Map make this any shorter?',
+        a: 'No, this is already as short as it gets. Each pair makes a 2-cell group, and no 4-cell group exists. Classic case where you can\'t shrink it.' },
+      { q: 'If a single chip did the whole job, what would you call it?',
+        a: 'A "majority of 3" chip (also called a 2-of-3 voter). Some chip kits have one; if not, you build it from 3 ANDs + 1 OR like this.' },
     ],
     unsimplified: 'Y = AB + BC + AC',
-    simplified: 'Y = AB + BC + AC  (already minimal · majority function)',
-    insight: 'This is a classic case where canonical = minimised. The K-Map shows three 2-cell loops with NO 4-cell loop available, so all three product terms survive.',
+    simplified: 'Y = AB + BC + AC  (already shortest · majority function)',
+    insight: 'This is a case where the long form IS the shortest form. The K-Map only finds 2-cell groups — no 4-cell group is possible — so all three terms stay.',
   },
   {
     id: 'r2',
     Icon: Thermometer,
     title: 'R2 · Office Climate Override',
     scenario:
-      'An office HVAC system uses four sensors: A (occupied), B (after-hours mode), C (CO₂ high), D (humidity high). The fan engages under two distinct conditions wired into the circuit below. Decode it.',
+      'An office air system has 4 sensors: A (room is in use), B (after-hours mode), C (high CO₂), D (high humidity). The fan turns on under 2 conditions wired in the circuit below. What are they?',
     inputs: [
       { sym: 'A', meaning: 'Occupied',   accent: '#0ea5e9' },
       { sym: 'B', meaning: 'After-hours', accent: '#22d3ee' },
@@ -250,25 +250,25 @@ const PROBLEMS: ReverseProblem[] = [
     drawCircuit: (v, isDark) => drawCircuitR2(v[0], v[1], v[2], v[3], isDark),
     tt: buildTT(4, ([a, b, c, d]) => ((((!a) && c) || (b && d)) ? 1 : 0) as Bit),
     questions: [
-      { q: 'Trace the circuit and write Y as the OR of two product terms.',
-        a: 'Y = A′C + BD · Path 1 says CO₂ is high while the room is unoccupied; Path 2 says after-hours mode AND humidity high.' },
-      { q: 'How many minterms make Y = 1?',
-        a: '6 minterms · Σm(2, 3, 5, 7, 11, 15). (m2,m3 from A′C alone; m5 from BD alone; m7,m11,m15 satisfy both branches.)' },
-      { q: 'Is the circuit already minimised, or could a K-Map shrink it further?',
-        a: 'Already minimised. The two product terms cover six minterms with two 2-cell loops; no larger loop exists.' },
-      { q: 'Translate the equation back to plain English.',
-        a: '"Engage the fan if the room is empty AND CO₂ is high, OR if it is after-hours AND humidity is high." Both branches are independent override paths.' },
+      { q: 'Trace the circuit. Write Y as the OR of two AND terms.',
+        a: 'Y = A′C + BD · First term: CO₂ is high while the room is empty. Second term: after-hours AND high humidity.' },
+      { q: 'How many input rows give Y = 1?',
+        a: '6 rows · Σm(2, 3, 5, 7, 11, 15).' },
+      { q: 'Is this circuit already as small as possible, or can the K-Map shrink it?',
+        a: 'Already as small as possible. The 2 AND terms cover 6 rows with two 2-cell groups; no bigger group exists.' },
+      { q: 'Say the equation in plain English.',
+        a: '"Turn on the fan if the room is empty AND CO₂ is high, OR if it is after-hours AND humidity is high." Two separate triggers.' },
     ],
     unsimplified: 'Y = A′C + BD',
-    simplified: 'Y = A′C + BD  (already minimal)',
-    insight: 'Two independent override paths. A and C interact in one branch, B and D in the other — no shared minterms beyond the corners m7 & m15, which the OR gate handles for free.',
+    simplified: 'Y = A′C + BD  (already shortest)',
+    insight: 'Two independent triggers. A pairs with C in one branch, B pairs with D in the other. No overlap, so the OR gate just combines them.',
   },
   {
     id: 'r3',
     Icon: Bell,
     title: 'R3 · Burglar Alarm Logic',
     scenario:
-      'A small-business alarm panel has 3 inputs: D (door open), W (window open), M (authorised motion — staff is moving inside). The alarm should sound only when an entry point is breached AND there is no authorised activity. Decode the circuit.',
+      'A shop alarm has 3 inputs: D (door open), W (window open), M (staff moving inside — counts as approved). The alarm should ring ONLY when a door or window opens AND no staff is moving. Read the circuit below.',
     inputs: [
       { sym: 'D', meaning: 'Door',          accent: '#0ea5e9' },
       { sym: 'W', meaning: 'Window',        accent: '#22d3ee' },
@@ -278,18 +278,18 @@ const PROBLEMS: ReverseProblem[] = [
     drawCircuit: (v, isDark) => drawCircuitR3(v[0], v[1], v[2], isDark),
     tt: buildTT(3, ([d, w, m]) => (((d || w) && (m === 0)) ? 1 : 0) as Bit),
     questions: [
-      { q: 'Write Y in factored form (a sum inside an AND).',
-        a: 'Y = (D + W) · M′ — entry point breached, AND no authorised motion.' },
-      { q: 'Expand the equation into SOP form.',
-        a: 'Y = DM′ + WM′ — distribute the AND across the OR.' },
-      { q: 'Which minterms make Y = 1?',
-        a: 'Σm(2, 4, 6) · all rows where M = 0 and at least one of D, W is 1.' },
-      { q: 'If the spec changed to "alarm if door OR window is open, regardless of motion", how many gates would the circuit shrink to?',
-        a: 'Just the OR gate. Y would simplify to D + W — a single 2-input OR. Removing the M-gating drops 2 gates (NOT and AND).' },
+      { q: 'Write Y in this form: (something) · (something else).',
+        a: 'Y = (D + W) · M′ — "door or window open" AND "no staff moving".' },
+      { q: 'Now write the same thing as a sum of ANDs.',
+        a: 'Y = DM′ + WM′ — multiply the AND through the OR.' },
+      { q: 'Which input rows make Y = 1?',
+        a: 'Σm(2, 4, 6) · all rows where M = 0 AND at least one of D, W is 1.' },
+      { q: 'If the rule changed to "ring if door OR window opens (ignore staff)", how many gates would you need?',
+        a: 'Just 1 gate · a single OR. Removing the staff-check drops 2 gates (the NOT and the AND).' },
     ],
     unsimplified: 'Y = (D + W) · M′',
-    simplified: 'Y = DM′ + WM′  (SOP form)',
-    insight: 'The factored form (D+W)·M′ is more compact algebraically, but the SOP form maps directly onto AND-OR hardware. Both are valid; pick the form that matches your gate library.',
+    simplified: 'Y = DM′ + WM′  (sum-of-ANDs form)',
+    insight: 'The factored form (D+W)·M′ looks shorter on paper, but the sum-of-ANDs form maps directly onto AND-OR gates. Both are correct — pick the form that matches the gates you have.',
   },
 ];
 
@@ -490,12 +490,12 @@ export const S02_Reverse: React.FC<Props> = ({ isActive, isDarkMode }) => {
           <Search size={14} /> Drill Set 02 · Reverse Engineering
         </div>
         <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>
-          Circuit → Equation. Decode the schematic.
+          Circuit → Equation. Read the schematic.
         </h2>
         <p className={`text-base max-w-3xl ${subText}`}>
-          Each problem hands you a finished circuit. Toggle the inputs, watch the wires light up,
-          trace each gate's output, and reconstruct the Boolean equation. Then verify against the
-          revealed truth table.
+          Each problem gives you a finished circuit. Click the inputs to flip them, watch the
+          wires light up, trace what each gate outputs, and figure out the Boolean equation.
+          Then check your answer against the truth table when you reveal the solution.
         </p>
       </motion.section>
 
@@ -505,10 +505,9 @@ export const S02_Reverse: React.FC<Props> = ({ isActive, isDarkMode }) => {
       >
         <Cpu className="text-cyan-300 mt-0.5 shrink-0" size={18} />
         <div className={`text-sm ${subText}`}>
-          <strong className="text-cyan-300">How to attack:</strong> name every wire after each
-          gate (P1, P2, …) in terms of the inputs above. Once you reach the OR, write the final Y
-          as a sum of those product terms. K-Map only matters if the circuit is already
-          unsimplified canonical SOP — many of these are not.
+          <strong className="text-cyan-300">How to attack:</strong> name each wire after every
+          gate (P1, P2, …). Once you reach the OR, write Y as the sum of those AND terms.
+          K-Map only helps if the circuit is in long form — many of these are already short.
         </div>
       </motion.div>
 
