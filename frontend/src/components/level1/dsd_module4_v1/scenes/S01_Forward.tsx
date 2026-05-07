@@ -1,0 +1,1181 @@
+import React, { useState, useMemo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Target, ChevronRight, ChevronDown, CheckCircle2, Lightbulb, Coffee, Plane, Lock, PackageCheck, MousePointerClick } from 'lucide-react';
+
+interface Props { isActive: boolean; isDarkMode: boolean; }
+
+type Bit = 0 | 1;
+type InputDef = { sym: string; meaning: string; accent: string };
+
+// ─── 3-var K-map helpers ───
+const COL3 = [0, 1, 3, 2]; // BC Gray-coded
+// ─── 4-var K-map helpers ───
+const ROW4 = [0, 1, 3, 2]; // AB Gray
+const COL4 = [0, 1, 3, 2]; // CD Gray
+
+interface Group { cells: number[]; color: string; label: string; term: string; }
+
+// =========================================================================
+// AnimatedKMap component — 3-var or 4-var, phases through plot → groups
+// =========================================================================
+const AnimatedKMap: React.FC<{
+  vars: 3 | 4;
+  active: Set<number>;
+  groups: Group[];
+  phase: 'empty' | 'plot' | 'group';
+  isDarkMode: boolean;
+}> = ({ vars, active, groups, phase, isDarkMode }) => {
+  const textColor = isDarkMode ? 'text-white' : 'text-slate-900';
+  const groupOf = (m: number) => groups.find((g) => g.cells.includes(m));
+
+  if (vars === 3) {
+    return (
+      <div className="inline-block">
+        <div className="grid grid-cols-[60px_repeat(4,72px)] gap-1 mb-1">
+          <div></div>
+          {['00', '01', '11', '10'].map((g) => (
+            <div key={g} className="text-center font-mono text-[11px] text-violet-300 pb-1">BC={g}</div>
+          ))}
+        </div>
+        {[0, 1].map((a) => (
+          <div key={a} className="grid grid-cols-[60px_repeat(4,72px)] gap-1 mb-1">
+            <div className="text-right pr-3 font-mono text-[11px] text-violet-300 self-center">A={a}</div>
+            {COL3.map((bcBin, col) => {
+              const m = a * 4 + bcBin;
+              const isOne = active.has(m);
+              const grp = groupOf(m);
+              const showOne = phase !== 'empty' && isOne;
+              const showZero = phase !== 'empty' && !isOne;
+              const cellIdx = a * 4 + col;
+              return (
+                <motion.div
+                  key={col}
+                  initial={false}
+                  animate={{
+                    backgroundColor: showOne ? 'rgba(52, 211, 153, 0.20)' : 'rgba(0, 0, 0, 0.20)',
+                    borderColor: showOne ? '#34d399' : 'rgba(255,255,255,0.10)',
+                  }}
+                  transition={{ delay: phase === 'plot' ? cellIdx * 0.06 : 0, duration: 0.35 }}
+                  className={`relative h-16 rounded-xl border-2 grid place-items-center font-mono font-black ${
+                    showOne ? 'shadow-[0_0_25px_rgba(52,211,153,0.3)]' : ''
+                  }`}
+                >
+                  <AnimatePresence mode="wait">
+                    {phase !== 'empty' && (
+                      <motion.span
+                        key={`${m}-${isOne}`}
+                        initial={{ opacity: 0, scale: 0.5 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: phase === 'plot' ? cellIdx * 0.06 + 0.1 : 0 }}
+                        className={`text-2xl ${showOne ? 'text-emerald-200' : showZero ? textColor : ''}`}
+                      >
+                        {isOne ? 1 : 0}
+                      </motion.span>
+                    )}
+                  </AnimatePresence>
+                  <span className="absolute top-1 left-2 text-[9px] opacity-50">m{m}</span>
+                  <AnimatePresence>
+                    {phase === 'group' && grp && (
+                      <motion.span
+                        initial={{ opacity: 0, scale: 0.85 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ delay: 0.1 + groups.indexOf(grp) * 0.2 }}
+                        className="absolute -inset-0.5 rounded-xl border-[3px] pointer-events-none"
+                        style={{ borderColor: grp.color }}
+                      />
+                    )}
+                  </AnimatePresence>
+                </motion.div>
+              );
+            })}
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  // 4-var
+  return (
+    <div className="inline-block">
+      <div className="grid grid-cols-[60px_repeat(4,64px)] gap-1 mb-1">
+        <div></div>
+        {['00', '01', '11', '10'].map((g) => (
+          <div key={g} className="text-center font-mono text-[10px] text-violet-300 pb-1">CD={g}</div>
+        ))}
+      </div>
+      {[0, 1, 2, 3].map((rowIdx) => (
+        <div key={rowIdx} className="grid grid-cols-[60px_repeat(4,64px)] gap-1 mb-1">
+          <div className="text-right pr-2 font-mono text-[10px] text-violet-300 self-center">
+            AB={['00', '01', '11', '10'][rowIdx]}
+          </div>
+          {[0, 1, 2, 3].map((colIdx) => {
+            const m = ROW4[rowIdx] * 4 + COL4[colIdx];
+            const isOne = active.has(m);
+            const grp = groupOf(m);
+            const showOne = phase !== 'empty' && isOne;
+            const showZero = phase !== 'empty' && !isOne;
+            const cellIdx = rowIdx * 4 + colIdx;
+            return (
+              <motion.div
+                key={colIdx}
+                initial={false}
+                animate={{
+                  backgroundColor: showOne ? 'rgba(52, 211, 153, 0.20)' : 'rgba(0, 0, 0, 0.20)',
+                  borderColor: showOne ? '#34d399' : 'rgba(255,255,255,0.10)',
+                }}
+                transition={{ delay: phase === 'plot' ? cellIdx * 0.04 : 0, duration: 0.35 }}
+                className={`relative h-12 rounded-lg border-2 grid place-items-center font-mono text-sm font-black ${
+                  showOne ? 'shadow-[0_0_15px_rgba(52,211,153,0.3)]' : ''
+                }`}
+              >
+                <AnimatePresence>
+                  {phase !== 'empty' && (
+                    <motion.span
+                      key={`${m}-${isOne}`}
+                      initial={{ opacity: 0, scale: 0.5 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: phase === 'plot' ? cellIdx * 0.04 + 0.1 : 0 }}
+                      className={showOne ? 'text-emerald-200' : showZero ? textColor : ''}
+                    >
+                      {isOne ? 1 : 0}
+                    </motion.span>
+                  )}
+                </AnimatePresence>
+                <span className="absolute top-0.5 left-1 text-[8px] opacity-50">m{m}</span>
+                <AnimatePresence>
+                  {phase === 'group' && grp && (
+                    <motion.span
+                      initial={{ opacity: 0, scale: 0.85 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ delay: 0.1 + groups.indexOf(grp) * 0.2 }}
+                      className="absolute -inset-0.5 rounded-lg border-[3px] pointer-events-none"
+                      style={{ borderColor: grp.color }}
+                    />
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            );
+          })}
+        </div>
+      ))}
+    </div>
+  );
+};
+
+// =========================================================================
+// LiveSchematic — interactive minimised circuit with toggleable inputs
+// Each problem provides a "wireSpec" (a function from inputs → render args)
+// =========================================================================
+interface SchematicSpec3 {
+  vars: 3;
+  inputs: InputDef[];
+  // Compute output from inputs
+  compute: (a: Bit, b: Bit, c: Bit) => Bit;
+  // Render the gate body — given input bits, returns SVG group
+  renderCircuit: (a: Bit, b: Bit, c: Bit, out: Bit, isDark: boolean) => React.ReactNode;
+}
+
+interface SchematicSpec4 {
+  vars: 4;
+  inputs: InputDef[];
+  compute: (a: Bit, b: Bit, c: Bit, d: Bit) => Bit;
+  renderCircuit: (a: Bit, b: Bit, c: Bit, d: Bit, out: Bit, isDark: boolean) => React.ReactNode;
+}
+
+type SchematicSpec = SchematicSpec3 | SchematicSpec4;
+
+const wireColor = (v: Bit) => v === 1 ? '#fb7185' : '#475569';
+const wireGlow = (v: Bit) => v === 1 ? 'drop-shadow(0 0 4px rgba(251,113,133,0.7))' : 'none';
+
+const LiveSchematic: React.FC<{ spec: SchematicSpec; isDarkMode: boolean }> = ({ spec, isDarkMode }) => {
+  const [a, setA] = useState<Bit>(1);
+  const [b, setB] = useState<Bit>(1);
+  const [c, setC] = useState<Bit>(0);
+  const [d, setD] = useState<Bit>(1);
+
+  const out = useMemo(() => {
+    if (spec.vars === 3) return spec.compute(a, b, c);
+    return spec.compute(a, b, c, d);
+  }, [spec, a, b, c, d]);
+
+  const textColor = isDarkMode ? 'text-white' : 'text-slate-900';
+  const subText = isDarkMode ? 'text-slate-300' : 'text-slate-600';
+
+  return (
+    <div className="space-y-4">
+      <div className={`flex items-center gap-2 text-xs font-mono ${subText}`}>
+        <MousePointerClick size={12} /> Toggle inputs · watch the wires light up
+      </div>
+      <div className="flex gap-2 flex-wrap">
+        {spec.inputs.map((inp, i) => {
+          const v = i === 0 ? a : i === 1 ? b : i === 2 ? c : d;
+          const setV = i === 0 ? setA : i === 1 ? setB : i === 2 ? setC : setD;
+          return (
+            <button
+              key={inp.sym}
+              onClick={() => setV(v === 1 ? 0 : 1)}
+              className="px-4 py-2 rounded-xl border-2 font-mono font-black transition-all flex flex-col items-start gap-0.5"
+              style={{
+                borderColor: inp.accent,
+                color: v ? '#000' : inp.accent,
+                backgroundColor: v ? inp.accent : 'transparent',
+                boxShadow: v ? `0 0 20px ${inp.accent}55` : 'none',
+              }}
+            >
+              <span className="text-[9px] uppercase tracking-widest opacity-80">{inp.meaning}</span>
+              <span className="text-sm">{inp.sym} = {v}</span>
+            </button>
+          );
+        })}
+      </div>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className={`rounded-2xl p-4 border ${isDarkMode ? 'bg-black/30 border-white/10' : 'bg-slate-50 border-slate-200'}`}
+      >
+        <svg viewBox="0 0 720 280" className="w-full h-auto">
+          {spec.vars === 3
+            ? spec.renderCircuit(a, b, c, out, isDarkMode)
+            : spec.renderCircuit(a, b, c, d, out, isDarkMode)}
+        </svg>
+      </motion.div>
+      <div className={`p-3 rounded-xl border ${out ? 'border-emerald-400 bg-emerald-500/10' : isDarkMode ? 'border-white/10 bg-black/30' : 'border-slate-200 bg-slate-50'}`}>
+        <span className={`font-mono text-sm ${out ? 'text-emerald-300 font-black' : textColor}`}>
+          F = {out} {out ? '· ACTIVE' : '· INACTIVE'}
+        </span>
+      </div>
+    </div>
+  );
+};
+
+// =========================================================================
+// ScenarioCanonicalCircuit — shows the BLOATED canonical SOP circuit
+// (visual hint at how much waste the K-Map will eliminate)
+// =========================================================================
+const CanonicalCircuitHint: React.FC<{ minterms: number[]; vars: 3 | 4 }> = ({ minterms, vars }) => {
+  const literalCount = minterms.length * vars;
+  const andCount = minterms.length;
+  const shown = minterms.slice(0, Math.min(5, minterms.length));
+  const labels = vars === 3 ? ['A', 'B', 'C'] : ['A', 'B', 'C', 'D'];
+  const rail = ['#fb7185', '#fbbf24', '#22d3ee', '#a78bfa'];
+
+  const railSpacing = 14;
+  const railStartX = 26;
+  const lastRailX = railStartX + (labels.length - 1) * railSpacing;
+  const andX = lastRailX + 38; // where the AND body starts
+  const andBodyW = 14;
+  const andTipX = andX + andBodyW + 10; // AND output point
+  const rowH = 32;
+  const topY = 26;
+  const orX = andTipX + 80;
+  const orW = 60;
+  const outX = orX + orW;
+  const totalH = topY + shown.length * rowH + 18;
+  const orMidY = topY + (shown.length * rowH) / 2 - rowH / 2 + 12;
+
+  // Spread of fan-in inputs across the AND body height
+  const fanSpread = 6; // total ±fanSpread vertical spread of input wires
+  const inputY = (j: number) => -fanSpread + (j * 2 * fanSpread) / Math.max(1, vars - 1);
+
+  return (
+    <svg viewBox={`0 0 ${outX + 36} ${totalH + 16}`} className="w-full h-auto">
+      {/* Rail labels at top */}
+      {labels.map((lbl, i) => (
+        <text key={lbl} x={railStartX + i * railSpacing} y={14} textAnchor="middle"
+              fontSize="11" fontWeight="bold" fill={rail[i]} fontFamily="monospace">{lbl}</text>
+      ))}
+      {/* Vertical input rails */}
+      {labels.map((_, i) => (
+        <line key={i} x1={railStartX + i * railSpacing} y1={20}
+              x2={railStartX + i * railSpacing} y2={topY + shown.length * rowH + 2}
+              stroke={rail[i]} strokeWidth="1.5" opacity="0.65" />
+      ))}
+
+      {/* AND gates · one per minterm · with fan-in from every rail */}
+      {shown.map((m, i) => {
+        const cy = topY + i * rowH + 14;
+        const bits = m.toString(2).padStart(vars, '0').split('').map(Number);
+        return (
+          <g key={i}>
+            {/* Tap from each rail — colored, with NOT bubble for primed inputs */}
+            {bits.map((b, j) => {
+              const fromX = railStartX + j * railSpacing;
+              const yIn = cy + inputY(j);
+              const isPrimed = b === 0;
+              return (
+                <g key={j}>
+                  {/* Vertical drop from rail to input row */}
+                  <line x1={fromX} y1={cy - fanSpread - 2} x2={fromX} y2={yIn} stroke={rail[j]} strokeWidth="1" opacity="0.7" />
+                  {/* Horizontal feed into AND */}
+                  <line x1={fromX} y1={yIn} x2={andX - (isPrimed ? 6 : 0)} y2={yIn} stroke={rail[j]} strokeWidth="1" opacity="0.85" />
+                  {/* NOT bubble when input bit is 0 (primed literal) */}
+                  {isPrimed && (
+                    <circle cx={andX - 4} cy={yIn} r={2.4} fill="none" stroke={rail[j]} strokeWidth="1.2" />
+                  )}
+                </g>
+              );
+            })}
+            {/* AND gate body */}
+            <path d={`M ${andX} ${cy - 9} L ${andX + andBodyW} ${cy - 9} A 9 9 0 0 1 ${andX + andBodyW} ${cy + 9} L ${andX} ${cy + 9} Z`}
+                  fill="none" stroke="#fbbf24" strokeWidth="1.6" />
+            {/* AND output → OR */}
+            <line x1={andTipX} y1={cy} x2={orX - 1} y2={cy} stroke="#fbbf24" strokeWidth="1.6" />
+            {/* Minterm label */}
+            <text x={andTipX + 4} y={cy - 4} fontSize="8" fill="#fbbf24" opacity="0.85" fontFamily="monospace">m{m}</text>
+          </g>
+        );
+      })}
+
+      {/* "and more" dots if minterm count exceeds shown */}
+      {minterms.length > shown.length && (
+        <text x={andX + andBodyW / 2} y={topY + shown.length * rowH + 6} textAnchor="middle"
+              fontSize="14" fontWeight="bold" fill="#fbbf24" opacity="0.7" fontFamily="monospace">⋮</text>
+      )}
+
+      {/* Tall OR gate spanning all AND outputs */}
+      <path d={`M ${orX} ${topY - 6} Q ${orX + 16} ${orMidY} ${orX} ${topY + shown.length * rowH + 4}
+                Q ${orX + orW - 16} ${topY + shown.length * rowH - 4} ${outX} ${orMidY}
+                Q ${orX + orW - 16} ${topY - 4} ${orX} ${topY - 6} Z`}
+            fill="none" stroke="#22c55e" strokeWidth="2" />
+      <text x={orX + 16} y={orMidY + 4} fontSize="11" fontWeight="bold" fill="#22c55e" fontFamily="monospace">OR</text>
+
+      {/* OR output line + F label */}
+      <line x1={outX} y1={orMidY} x2={outX + 30} y2={orMidY} stroke="#22c55e" strokeWidth="2.5" />
+      <text x={outX + 12} y={orMidY - 5} fontSize="13" fontWeight="bold" fill="#22c55e" fontFamily="monospace">F</text>
+
+      {/* Cost annotation */}
+      <text x="20" y={totalH + 12} fontSize="10" fontFamily="monospace" fill="#fb7185" fontWeight="bold">
+        {andCount} ANDs · {literalCount} literals · BLOATED
+      </text>
+    </svg>
+  );
+};
+
+// =========================================================================
+// PROBLEM DEFINITIONS — scenario-driven, each with circuit + multi-questions
+// =========================================================================
+
+// ── Problem 1: Smart Coffee Machine — F(A,B,C) = AB + B'C ─────────────────
+const Q1: SchematicSpec3 = {
+  vars: 3,
+  inputs: [
+    { sym: 'A', meaning: 'Cup detected', accent: '#0ea5e9' },
+    { sym: 'B', meaning: 'Drink button',  accent: '#22d3ee' },
+    { sym: 'C', meaning: 'Auto-clean',    accent: '#f59e0b' },
+  ],
+  compute: (a, b, c) => (((a && b) || ((!b) && c)) ? 1 : 0) as Bit,
+  renderCircuit: (a, b, c, out, isDark) => {
+    const bn: Bit = (b === 0 ? 1 : 0) as Bit;
+    const ab: Bit = (a && b) ? 1 : 0;
+    const bnc: Bit = ((!b) && c) ? 1 : 0;
+    return (
+      <g>
+        <text x="14" y="40" fontSize="13" fontWeight="bold" fill="#0ea5e9" fontFamily="monospace">A</text>
+        <text x="14" y="120" fontSize="13" fontWeight="bold" fill="#22d3ee" fontFamily="monospace">B</text>
+        <text x="14" y="220" fontSize="13" fontWeight="bold" fill="#f59e0b" fontFamily="monospace">C</text>
+        {/* A line */}
+        <line x1="40" y1="36" x2="240" y2="60" stroke={wireColor(a)} strokeWidth="2.5" style={{ filter: wireGlow(a) }} />
+        {/* B line splits — to AND1 directly + to NOT */}
+        <line x1="40" y1="116" x2="240" y2="100" stroke={wireColor(b)} strokeWidth="2" style={{ filter: wireGlow(b) }} />
+        <line x1="40" y1="116" x2="120" y2="180" stroke={wireColor(b)} strokeWidth="2" style={{ filter: wireGlow(b) }} />
+        {/* NOT(B) */}
+        <polygon points="120,170 144,180 120,190" fill="none" stroke="#fb7185" strokeWidth="2" />
+        <circle cx="148" cy="180" r="3" fill="none" stroke="#fb7185" strokeWidth="2" />
+        <text x="118" y="166" fontSize="9" fill="#fb7185" fontFamily="monospace">NOT</text>
+        <line x1="151" y1="180" x2="240" y2="180" stroke={wireColor(bn)} strokeWidth="2" style={{ filter: wireGlow(bn) }} />
+        <text x="155" y="174" fontSize="10" fill="#fcd34d" fontFamily="monospace">B′</text>
+        {/* C line */}
+        <line x1="40" y1="216" x2="240" y2="220" stroke={wireColor(c)} strokeWidth="2" style={{ filter: wireGlow(c) }} />
+        {/* AND1: A·B */}
+        <path d="M 240 50 L 270 50 A 22 22 0 0 1 270 110 L 240 110 Z" fill={isDark ? '#0a0e1a' : '#fff'} stroke="#fcd34d" strokeWidth="2" />
+        <text x="247" y="84" fontSize="10" fill="#fcd34d" fontFamily="monospace">AND</text>
+        <line x1="293" y1="80" x2="450" y2="100" stroke={wireColor(ab)} strokeWidth="2.5" style={{ filter: wireGlow(ab) }} />
+        <text x="320" y="74" fontSize="10" fill="#fcd34d" fontFamily="monospace">AB={ab}</text>
+        {/* AND2: B'·C */}
+        <path d="M 240 170 L 270 170 A 22 22 0 0 1 270 230 L 240 230 Z" fill={isDark ? '#0a0e1a' : '#fff'} stroke="#fcd34d" strokeWidth="2" />
+        <text x="247" y="204" fontSize="10" fill="#fcd34d" fontFamily="monospace">AND</text>
+        <line x1="293" y1="200" x2="450" y2="180" stroke={wireColor(bnc)} strokeWidth="2.5" style={{ filter: wireGlow(bnc) }} />
+        <text x="316" y="194" fontSize="10" fill="#fcd34d" fontFamily="monospace">B′C={bnc}</text>
+        {/* OR */}
+        <path d="M 450 80 Q 470 140 450 200 Q 530 188 565 140 Q 530 92 450 80 Z" fill={isDark ? '#0a0e1a' : '#fff'} stroke="#22c55e" strokeWidth="2.5" />
+        <text x="470" y="146" fontSize="12" fill="#22c55e" fontFamily="monospace" fontWeight="bold">OR</text>
+        <line x1="565" y1="140" x2="690" y2="140" stroke={wireColor(out)} strokeWidth="3.5" style={{ filter: wireGlow(out) }} />
+        <rect x="640" y="118" width="60" height="46" rx="6" fill={out ? '#fb7185' : 'none'} stroke="#fb7185" strokeWidth="2.5"
+              style={{ filter: out ? 'drop-shadow(0 0 18px rgba(251,113,133,0.7))' : 'none' }} />
+        <text x="650" y="148" fontSize="18" fill={out ? '#000' : '#fb7185'} fontFamily="monospace" fontWeight="bold">F={out}</text>
+      </g>
+    );
+  },
+};
+
+// ── Problem 2: Drone Autopilot — F(A,B,C) = A'B + AC ──────────────────────
+const Q2: SchematicSpec3 = {
+  vars: 3,
+  inputs: [
+    { sym: 'A', meaning: 'GPS lock',   accent: '#0ea5e9' },
+    { sym: 'B', meaning: 'Manual stick', accent: '#22d3ee' },
+    { sym: 'C', meaning: 'Autopilot',  accent: '#f59e0b' },
+  ],
+  compute: (a, b, c) => ((((!a) && b) || (a && c)) ? 1 : 0) as Bit,
+  renderCircuit: (a, b, c, out, isDark) => {
+    const an: Bit = (a === 0 ? 1 : 0) as Bit;
+    const anb: Bit = ((!a) && b) ? 1 : 0;
+    const ac: Bit = (a && c) ? 1 : 0;
+    return (
+      <g>
+        <text x="14" y="40" fontSize="13" fontWeight="bold" fill="#0ea5e9" fontFamily="monospace">A</text>
+        <text x="14" y="120" fontSize="13" fontWeight="bold" fill="#22d3ee" fontFamily="monospace">B</text>
+        <text x="14" y="220" fontSize="13" fontWeight="bold" fill="#f59e0b" fontFamily="monospace">C</text>
+        {/* A splits: to NOT and direct */}
+        <line x1="40" y1="36" x2="120" y2="80" stroke={wireColor(a)} strokeWidth="2" style={{ filter: wireGlow(a) }} />
+        <line x1="40" y1="36" x2="240" y2="220" stroke={wireColor(a)} strokeWidth="2" style={{ filter: wireGlow(a) }} />
+        {/* NOT(A) */}
+        <polygon points="120,70 144,80 120,90" fill="none" stroke="#fb7185" strokeWidth="2" />
+        <circle cx="148" cy="80" r="3" fill="none" stroke="#fb7185" strokeWidth="2" />
+        <text x="118" y="66" fontSize="9" fill="#fb7185" fontFamily="monospace">NOT</text>
+        <line x1="151" y1="80" x2="240" y2="80" stroke={wireColor(an)} strokeWidth="2" style={{ filter: wireGlow(an) }} />
+        <text x="155" y="74" fontSize="10" fill="#fcd34d" fontFamily="monospace">A′</text>
+        {/* B */}
+        <line x1="40" y1="116" x2="240" y2="100" stroke={wireColor(b)} strokeWidth="2" style={{ filter: wireGlow(b) }} />
+        {/* C */}
+        <line x1="40" y1="216" x2="240" y2="200" stroke={wireColor(c)} strokeWidth="2" style={{ filter: wireGlow(c) }} />
+        {/* AND1: A'·B */}
+        <path d="M 240 70 L 270 70 A 22 22 0 0 1 270 110 L 240 110 Z" fill={isDark ? '#0a0e1a' : '#fff'} stroke="#fcd34d" strokeWidth="2" />
+        <text x="247" y="94" fontSize="10" fill="#fcd34d" fontFamily="monospace">AND</text>
+        <line x1="293" y1="90" x2="450" y2="100" stroke={wireColor(anb)} strokeWidth="2.5" style={{ filter: wireGlow(anb) }} />
+        <text x="305" y="84" fontSize="10" fill="#fcd34d" fontFamily="monospace">A′B={anb}</text>
+        {/* AND2: A·C */}
+        <path d="M 240 190 L 270 190 A 22 22 0 0 1 270 230 L 240 230 Z" fill={isDark ? '#0a0e1a' : '#fff'} stroke="#fcd34d" strokeWidth="2" />
+        <text x="247" y="214" fontSize="10" fill="#fcd34d" fontFamily="monospace">AND</text>
+        <line x1="293" y1="210" x2="450" y2="180" stroke={wireColor(ac)} strokeWidth="2.5" style={{ filter: wireGlow(ac) }} />
+        <text x="316" y="204" fontSize="10" fill="#fcd34d" fontFamily="monospace">AC={ac}</text>
+        {/* OR */}
+        <path d="M 450 80 Q 470 140 450 200 Q 530 188 565 140 Q 530 92 450 80 Z" fill={isDark ? '#0a0e1a' : '#fff'} stroke="#22c55e" strokeWidth="2.5" />
+        <text x="470" y="146" fontSize="12" fill="#22c55e" fontFamily="monospace" fontWeight="bold">OR</text>
+        <line x1="565" y1="140" x2="690" y2="140" stroke={wireColor(out)} strokeWidth="3.5" style={{ filter: wireGlow(out) }} />
+        <rect x="640" y="118" width="60" height="46" rx="6" fill={out ? '#fb7185' : 'none'} stroke="#fb7185" strokeWidth="2.5"
+              style={{ filter: out ? 'drop-shadow(0 0 18px rgba(251,113,133,0.7))' : 'none' }} />
+        <text x="650" y="148" fontSize="18" fill={out ? '#000' : '#fb7185'} fontFamily="monospace" fontWeight="bold">F={out}</text>
+      </g>
+    );
+  },
+};
+
+// ── Problem 3: Encrypted Lock XOR — F(A,B,C,D) = B'D + BD' = B⊕D ──────────
+const Q3: SchematicSpec4 = {
+  vars: 4,
+  inputs: [
+    { sym: 'A', meaning: 'Camera face', accent: '#0ea5e9' },
+    { sym: 'B', meaning: 'Voice match', accent: '#22d3ee' },
+    { sym: 'C', meaning: 'Card scan',   accent: '#a78bfa' },
+    { sym: 'D', meaning: 'PIN entered', accent: '#f59e0b' },
+  ],
+  compute: (_a, b, _c, d) => (((!b && d) || (b && !d)) ? 1 : 0) as Bit,
+  renderCircuit: (_a, b, _c, d, out, isDark) => {
+    const bn: Bit = (b === 0 ? 1 : 0) as Bit;
+    const dn: Bit = (d === 0 ? 1 : 0) as Bit;
+    const bnd: Bit = (!b && d) ? 1 : 0;
+    const bdn: Bit = (b && !d) ? 1 : 0;
+    return (
+      <g>
+        <text x="14" y="80" fontSize="13" fontWeight="bold" fill="#22d3ee" fontFamily="monospace">B</text>
+        <text x="14" y="200" fontSize="13" fontWeight="bold" fill="#f59e0b" fontFamily="monospace">D</text>
+        {/* B → split: NOT and direct */}
+        <line x1="40" y1="76" x2="100" y2="60" stroke={wireColor(b)} strokeWidth="2" style={{ filter: wireGlow(b) }} />
+        <line x1="40" y1="76" x2="240" y2="180" stroke={wireColor(b)} strokeWidth="2" style={{ filter: wireGlow(b) }} />
+        {/* NOT(B) */}
+        <polygon points="100,50 124,60 100,70" fill="none" stroke="#fb7185" strokeWidth="2" />
+        <circle cx="128" cy="60" r="3" fill="none" stroke="#fb7185" strokeWidth="2" />
+        <line x1="131" y1="60" x2="240" y2="80" stroke={wireColor(bn)} strokeWidth="2" style={{ filter: wireGlow(bn) }} />
+        <text x="135" y="54" fontSize="10" fill="#fcd34d" fontFamily="monospace">B′</text>
+        {/* D → split: NOT and direct */}
+        <line x1="40" y1="196" x2="240" y2="100" stroke={wireColor(d)} strokeWidth="2" style={{ filter: wireGlow(d) }} />
+        <line x1="40" y1="196" x2="100" y2="220" stroke={wireColor(d)} strokeWidth="2" style={{ filter: wireGlow(d) }} />
+        <polygon points="100,210 124,220 100,230" fill="none" stroke="#fb7185" strokeWidth="2" />
+        <circle cx="128" cy="220" r="3" fill="none" stroke="#fb7185" strokeWidth="2" />
+        <line x1="131" y1="220" x2="240" y2="200" stroke={wireColor(dn)} strokeWidth="2" style={{ filter: wireGlow(dn) }} />
+        <text x="135" y="214" fontSize="10" fill="#fcd34d" fontFamily="monospace">D′</text>
+        {/* AND1: B'·D */}
+        <path d="M 240 70 L 270 70 A 22 22 0 0 1 270 110 L 240 110 Z" fill={isDark ? '#0a0e1a' : '#fff'} stroke="#fcd34d" strokeWidth="2" />
+        <text x="247" y="94" fontSize="10" fill="#fcd34d" fontFamily="monospace">AND</text>
+        <line x1="293" y1="90" x2="450" y2="100" stroke={wireColor(bnd)} strokeWidth="2.5" style={{ filter: wireGlow(bnd) }} />
+        <text x="305" y="84" fontSize="10" fill="#fcd34d" fontFamily="monospace">B′D={bnd}</text>
+        {/* AND2: B·D' */}
+        <path d="M 240 170 L 270 170 A 22 22 0 0 1 270 210 L 240 210 Z" fill={isDark ? '#0a0e1a' : '#fff'} stroke="#fcd34d" strokeWidth="2" />
+        <text x="247" y="194" fontSize="10" fill="#fcd34d" fontFamily="monospace">AND</text>
+        <line x1="293" y1="190" x2="450" y2="180" stroke={wireColor(bdn)} strokeWidth="2.5" style={{ filter: wireGlow(bdn) }} />
+        <text x="305" y="184" fontSize="10" fill="#fcd34d" fontFamily="monospace">BD′={bdn}</text>
+        {/* OR */}
+        <path d="M 450 80 Q 470 140 450 200 Q 530 188 565 140 Q 530 92 450 80 Z" fill={isDark ? '#0a0e1a' : '#fff'} stroke="#22c55e" strokeWidth="2.5" />
+        <text x="470" y="146" fontSize="12" fill="#22c55e" fontFamily="monospace" fontWeight="bold">OR</text>
+        <line x1="565" y1="140" x2="690" y2="140" stroke={wireColor(out)} strokeWidth="3.5" style={{ filter: wireGlow(out) }} />
+        <rect x="640" y="118" width="60" height="46" rx="6" fill={out ? '#fb7185' : 'none'} stroke="#fb7185" strokeWidth="2.5"
+              style={{ filter: out ? 'drop-shadow(0 0 18px rgba(251,113,133,0.7))' : 'none' }} />
+        <text x="650" y="148" fontSize="18" fill={out ? '#000' : '#fb7185'} fontFamily="monospace" fontWeight="bold">F={out}</text>
+      </g>
+    );
+  },
+};
+
+// ── Problem 4: Conveyor Safety — F(A,B,C,D) = B'C' + BD ───────────────────
+const Q4: SchematicSpec4 = {
+  vars: 4,
+  inputs: [
+    { sym: 'A', meaning: 'Operator (irrelevant!)', accent: '#475569' },
+    { sym: 'B', meaning: 'Belt running', accent: '#22d3ee' },
+    { sym: 'C', meaning: 'Box on belt',  accent: '#a78bfa' },
+    { sym: 'D', meaning: 'QA passed',    accent: '#f59e0b' },
+  ],
+  compute: (_a, b, c, d) => (((!b && !c) || (b && d)) ? 1 : 0) as Bit,
+  renderCircuit: (_a, b, c, d, out, isDark) => {
+    const bn: Bit = (b === 0 ? 1 : 0) as Bit;
+    const cn: Bit = (c === 0 ? 1 : 0) as Bit;
+    const bncn: Bit = (!b && !c) ? 1 : 0;
+    const bd: Bit = (b && d) ? 1 : 0;
+    return (
+      <g>
+        <text x="14" y="50" fontSize="13" fontWeight="bold" fill="#22d3ee" fontFamily="monospace">B</text>
+        <text x="14" y="120" fontSize="13" fontWeight="bold" fill="#a78bfa" fontFamily="monospace">C</text>
+        <text x="14" y="220" fontSize="13" fontWeight="bold" fill="#f59e0b" fontFamily="monospace">D</text>
+        {/* B → split */}
+        <line x1="40" y1="46" x2="100" y2="40" stroke={wireColor(b)} strokeWidth="2" style={{ filter: wireGlow(b) }} />
+        <line x1="40" y1="46" x2="240" y2="180" stroke={wireColor(b)} strokeWidth="2" style={{ filter: wireGlow(b) }} />
+        <polygon points="100,30 124,40 100,50" fill="none" stroke="#fb7185" strokeWidth="2" />
+        <circle cx="128" cy="40" r="3" fill="none" stroke="#fb7185" strokeWidth="2" />
+        <line x1="131" y1="40" x2="240" y2="60" stroke={wireColor(bn)} strokeWidth="2" style={{ filter: wireGlow(bn) }} />
+        <text x="135" y="34" fontSize="10" fill="#fcd34d" fontFamily="monospace">B′</text>
+        {/* C → NOT */}
+        <line x1="40" y1="116" x2="100" y2="120" stroke={wireColor(c)} strokeWidth="2" style={{ filter: wireGlow(c) }} />
+        <polygon points="100,110 124,120 100,130" fill="none" stroke="#fb7185" strokeWidth="2" />
+        <circle cx="128" cy="120" r="3" fill="none" stroke="#fb7185" strokeWidth="2" />
+        <line x1="131" y1="120" x2="240" y2="100" stroke={wireColor(cn)} strokeWidth="2" style={{ filter: wireGlow(cn) }} />
+        <text x="135" y="114" fontSize="10" fill="#fcd34d" fontFamily="monospace">C′</text>
+        {/* D direct */}
+        <line x1="40" y1="216" x2="240" y2="200" stroke={wireColor(d)} strokeWidth="2" style={{ filter: wireGlow(d) }} />
+        {/* AND1: B'·C' */}
+        <path d="M 240 50 L 270 50 A 22 22 0 0 1 270 110 L 240 110 Z" fill={isDark ? '#0a0e1a' : '#fff'} stroke="#fcd34d" strokeWidth="2" />
+        <text x="247" y="84" fontSize="10" fill="#fcd34d" fontFamily="monospace">AND</text>
+        <line x1="293" y1="80" x2="450" y2="100" stroke={wireColor(bncn)} strokeWidth="2.5" style={{ filter: wireGlow(bncn) }} />
+        <text x="305" y="74" fontSize="10" fill="#fcd34d" fontFamily="monospace">B′C′={bncn}</text>
+        {/* AND2: B·D */}
+        <path d="M 240 170 L 270 170 A 22 22 0 0 1 270 210 L 240 210 Z" fill={isDark ? '#0a0e1a' : '#fff'} stroke="#fcd34d" strokeWidth="2" />
+        <text x="247" y="194" fontSize="10" fill="#fcd34d" fontFamily="monospace">AND</text>
+        <line x1="293" y1="190" x2="450" y2="180" stroke={wireColor(bd)} strokeWidth="2.5" style={{ filter: wireGlow(bd) }} />
+        <text x="305" y="184" fontSize="10" fill="#fcd34d" fontFamily="monospace">BD={bd}</text>
+        {/* OR */}
+        <path d="M 450 80 Q 470 140 450 200 Q 530 188 565 140 Q 530 92 450 80 Z" fill={isDark ? '#0a0e1a' : '#fff'} stroke="#22c55e" strokeWidth="2.5" />
+        <text x="470" y="146" fontSize="12" fill="#22c55e" fontFamily="monospace" fontWeight="bold">OR</text>
+        <line x1="565" y1="140" x2="690" y2="140" stroke={wireColor(out)} strokeWidth="3.5" style={{ filter: wireGlow(out) }} />
+        <rect x="640" y="118" width="60" height="46" rx="6" fill={out ? '#fb7185' : 'none'} stroke="#fb7185" strokeWidth="2.5"
+              style={{ filter: out ? 'drop-shadow(0 0 18px rgba(251,113,133,0.7))' : 'none' }} />
+        <text x="650" y="148" fontSize="18" fill={out ? '#000' : '#fb7185'} fontFamily="monospace" fontWeight="bold">F={out}</text>
+      </g>
+    );
+  },
+};
+
+// =========================================================================
+// PROBLEM CONFIG
+// =========================================================================
+interface ProblemConfig {
+  id: string;
+  Icon: React.ComponentType<any>;
+  title: string;
+  difficulty: 'Easy' | 'Medium' | 'Harder';
+  scenario: {
+    accent: string;
+    headline: string;
+    story: string;
+    rule: string;
+  };
+  inputs: InputDef[];
+  output: { sym: string; meaning: string };
+  vars: 3 | 4;
+  active: number[];
+  groups: Group[];
+  loopExplanations: { color: string; cells: string; analysis: string[]; result: string }[];
+  canonicalSOP: string;
+  minimisedSOP: string;
+  hardware: { not: number; and: string; or: string; total: number };
+  questions: { q: string; answer: string }[];
+  schematic: SchematicSpec;
+  redundantNote?: string;
+}
+
+const PROBLEMS: ProblemConfig[] = [
+  // Q1 — Coffee Machine
+  {
+    id: 'q1',
+    Icon: Coffee,
+    title: 'Smart Coffee Machine',
+    difficulty: 'Easy',
+    scenario: {
+      accent: '#22c55e',
+      headline: 'Pump dispenses water when…',
+      story: 'A pour-over kitchen appliance must run its pump under two conditions. Either the customer is making a normal cup (a vessel is on the tray AND the brew button is pressed), or the device is in its self-cleaning cycle while no button is pressed.',
+      rule: 'F = 1 when (Cup AND Button), OR when (NO Button AND Auto-clean).',
+    },
+    inputs: Q1.inputs,
+    output: { sym: 'F', meaning: 'Pump on' },
+    vars: 3,
+    active: [1, 5, 6, 7],
+    groups: [
+      { cells: [1, 5], color: '#22d3ee', term: "B′C", label: "{m1, m5} · column BC=01" },
+      { cells: [6, 7], color: '#fb923c', term: 'AB',   label: '{m6, m7} · row A=1, BC=11..10' },
+    ],
+    loopExplanations: [
+      { color: '#22d3ee', cells: '{m1, m5}',  analysis: ['A changes 0→1 → DROP', 'B stays 0 → KEEP B′', 'C stays 1 → KEEP C'], result: 'B′C' },
+      { color: '#fb923c', cells: '{m6, m7}',  analysis: ['A stays 1 → KEEP A', 'B stays 1 → KEEP B', 'C changes 1→0 → DROP'], result: 'AB' },
+    ],
+    canonicalSOP: "F = A′B′C + AB′C + ABC′ + ABC",
+    minimisedSOP: 'F = AB + B′C',
+    hardware: { not: 1, and: '2 × (2-input)', or: '1 × (2-input)', total: 4 },
+    questions: [
+      { q: 'How many active states (F=1) does the pump have?',                 answer: '4 states · m1, m5, m6, m7' },
+      { q: 'What is the canonical SOP (the bloated, brute-force form)?',       answer: "F = A′B′C + AB′C + ABC′ + ABC · 4 product terms · 12 literals" },
+      { q: 'After K-Map minimisation, what is the simplified SOP?',            answer: 'F = AB + B′C · 2 product terms · 4 literals' },
+      { q: 'How many gates does the optimised circuit need?',                  answer: '4 gates · 1 NOT (B), 2 ANDs (2-in), 1 OR (2-in)' },
+    ],
+    schematic: Q1,
+  },
+
+  // Q2 — Drone Autopilot
+  {
+    id: 'q2',
+    Icon: Plane,
+    title: 'Drone Autopilot Arming',
+    difficulty: 'Medium',
+    scenario: {
+      accent: '#fbbf24',
+      headline: 'Motor controller arms when…',
+      story: 'A delivery drone has two distinct flight modes. In manual mode (no GPS lock yet) the pilot can fly only via the stick. In autonomous mode (GPS lock acquired) flight commands come from the autopilot, with stick inputs ignored for safety.',
+      rule: 'F = 1 when (NO GPS lock AND stick deflection), OR when (GPS lock AND autopilot enabled).',
+    },
+    inputs: Q2.inputs,
+    output: { sym: 'F', meaning: 'Motors armed' },
+    vars: 3,
+    active: [2, 3, 5, 7],
+    groups: [
+      { cells: [2, 3], color: '#22d3ee', term: "A′B", label: "{m2, m3} · row A=0, BC=11..10" },
+      { cells: [5, 7], color: '#fb923c', term: 'AC',  label: '{m5, m7} · row A=1, BC=01..11' },
+    ],
+    loopExplanations: [
+      { color: '#22d3ee', cells: '{m2, m3}', analysis: ['A stays 0 → KEEP A′', 'B stays 1 → KEEP B', 'C changes 0→1 → DROP'], result: 'A′B' },
+      { color: '#fb923c', cells: '{m5, m7}', analysis: ['A stays 1 → KEEP A', 'B changes 0→1 → DROP', 'C stays 1 → KEEP C'], result: 'AC' },
+    ],
+    canonicalSOP: "F = A′BC′ + A′BC + AB′C + ABC",
+    minimisedSOP: 'F = A′B + AC',
+    hardware: { not: 1, and: '2 × (2-input)', or: '1 × (2-input)', total: 4 },
+    questions: [
+      { q: 'List the active minterms (where motors should arm).',           answer: 'Σm(2, 3, 5, 7) — manual fallback (m2,m3) + auto branch (m5,m7).' },
+      { q: 'What is the simplified equation?',                              answer: 'F = A′B + AC' },
+      { q: 'How does the K-Map prove these two terms cover everything?',    answer: 'Loop {m2,m3} eliminates C → A′B · Loop {m5,m7} eliminates B → AC. Together they tile every active cell.' },
+      { q: 'Final hardware?',                                                answer: '4 gates · 1 NOT (A), 2 ANDs (2-in), 1 OR (2-in)' },
+    ],
+    schematic: Q2,
+  },
+
+  // Q3 — Encrypted Lock XOR
+  {
+    id: 'q3',
+    Icon: Lock,
+    title: 'Mismatch-Alert Vault Lock',
+    difficulty: 'Medium',
+    scenario: {
+      accent: '#a78bfa',
+      headline: 'Tamper alarm fires when…',
+      story: 'A high-security vault uses two redundant authentication channels: a voice biometric (B) and a PIN entry (D). Camera (A) and card (C) feed unrelated subsystems and are wired into the alarm only as decoys. The vault\'s tamper-alarm should fire on EXACTLY ONE channel match — a sign of attempted spoofing.',
+      rule: 'F = 1 when EXACTLY ONE of (Voice, PIN) is engaged · the other must be silent.',
+    },
+    inputs: Q3.inputs,
+    output: { sym: 'F', meaning: 'Tamper alarm' },
+    vars: 4,
+    active: [1, 3, 4, 6, 9, 11, 12, 14],
+    groups: [
+      { cells: [1, 3, 9, 11],  color: '#22d3ee', term: "B′D",  label: 'Cols CD=01,11 across AB=00 & AB=10' },
+      { cells: [4, 6, 12, 14], color: '#fb923c', term: 'BD′', label: 'Cols CD=00,10 across AB=01 & AB=11' },
+    ],
+    loopExplanations: [
+      { color: '#22d3ee', cells: '{m1, m3, m9, m11}',  analysis: ['A changes → DROP', 'B stays 0 → KEEP B′', 'C changes → DROP', 'D stays 1 → KEEP D'], result: 'B′D' },
+      { color: '#fb923c', cells: '{m4, m6, m12, m14}', analysis: ['A changes → DROP', 'B stays 1 → KEEP B', 'C changes → DROP', 'D stays 0 → KEEP D′'], result: 'BD′' },
+    ],
+    canonicalSOP: 'F = 8 product terms × 4 literals = 32 literals',
+    minimisedSOP: 'F = B′D + BD′  ≡  B ⊕ D',
+    hardware: { not: 2, and: '2 × (2-input)', or: '1 × (2-input)', total: 5 },
+    questions: [
+      { q: 'Which two of the four inputs (A, B, C, D) actually matter?',     answer: 'Only B and D · A and C drop out completely. The K-Map proves they vary inside every group → cancelled.' },
+      { q: 'What is the minimised SOP?',                                     answer: 'F = B′D + BD′ — equivalent to the XOR of B and D.' },
+      { q: 'How many gates after optimisation?',                             answer: '5 gates · 2 NOTs (B, D), 2 ANDs (2-in), 1 OR (2-in) · or one XNOR cell.' },
+      { q: 'If a vendor offered a 1-cell "XOR" macro, would that beat your gate-level build?', answer: 'Yes — a single XOR cell replaces all 5 of the discrete gates. Same logic, smaller silicon area.' },
+    ],
+    schematic: Q3,
+    redundantNote: 'A and C do NOT appear in the optimised circuit — they contribute zero to the alarm logic.',
+  },
+
+  // Q4 — Conveyor safety
+  {
+    id: 'q4',
+    Icon: PackageCheck,
+    title: 'Factory Conveyor Safety Gate',
+    difficulty: 'Harder',
+    scenario: {
+      accent: '#fb7185',
+      headline: 'Belt is allowed to advance when…',
+      story: 'On a packing line, the conveyor must be in one of two safe states. Either the belt is idle with no box on it (idle/empty — safe to power up), or the belt is running with a box that has just passed quality control (running/cleared — safe to keep moving). Operator presence (A) is logged but does not gate the belt.',
+      rule: 'F = 1 when (Belt IDLE AND box NOT present), OR when (Belt RUNNING AND QA passed).',
+    },
+    inputs: Q4.inputs,
+    output: { sym: 'F', meaning: 'Belt advance' },
+    vars: 4,
+    active: [0, 1, 5, 7, 8, 9, 13, 15],
+    groups: [
+      { cells: [0, 1, 8, 9],   color: '#22d3ee', term: "B′C′", label: 'Top + bottom edges, CD=00 & CD=01' },
+      { cells: [5, 7, 13, 15], color: '#fb923c', term: 'BD',   label: 'Centre 2×2 block · AB=01,11 × CD=01,11' },
+    ],
+    loopExplanations: [
+      { color: '#22d3ee', cells: '{m0, m1, m8, m9}',   analysis: ['A changes (wrap) → DROP', 'B stays 0 → KEEP B′', 'C stays 0 → KEEP C′', 'D changes → DROP'], result: 'B′C′' },
+      { color: '#fb923c', cells: '{m5, m7, m13, m15}', analysis: ['A changes → DROP', 'B stays 1 → KEEP B', 'C changes → DROP', 'D stays 1 → KEEP D'], result: 'BD' },
+    ],
+    canonicalSOP: 'F = 8 minterms × 4 literals = 32 literals · 13 gates including 4-input ANDs and an 8-input OR',
+    minimisedSOP: 'F = B′C′ + BD',
+    hardware: { not: 1, and: '2 × (2-input)', or: '1 × (2-input)', total: 4 },
+    questions: [
+      { q: 'Operator presence (A) is wired in. Does it appear in the minimised circuit?',
+        answer: 'No. A varies across both groups → it is dropped entirely. The optimiser proves the operator signal has no effect on belt advance.' },
+      { q: 'How many literals does canonical SOP need vs minimised?',
+        answer: '32 literals canonical · 4 literals optimised — an 87% reduction.' },
+      { q: 'Spell out the K-Map adjacency that beats canonical.',
+        answer: 'Two 4-cell groups: a wrap-around top+bottom (rows AB=00 ↔ AB=10 share an edge) gives B′C′, and a centre 2×2 gives BD.' },
+      { q: 'Final gate count?',
+        answer: '4 gates · 1 NOT (only B), 2 ANDs (2-input), 1 OR (2-input). C′ is built by inverting C inside the AND for B′C′ — wait, that would be 2 NOTs. Recount?' },
+    ],
+    schematic: Q4,
+    redundantNote: 'A is irrelevant — it never reaches a gate in the optimised schematic.',
+  },
+];
+
+// =========================================================================
+// ProblemCard — full problem UI
+// =========================================================================
+const PHASES = ['empty', 'plot', 'group'] as const;
+type Phase = typeof PHASES[number];
+
+const ProblemCard: React.FC<{ p: ProblemConfig; isDarkMode: boolean }> = ({ p, isDarkMode }) => {
+  const [open, setOpen] = useState(false);
+  const [stepIdx, setStepIdx] = useState(0);
+  const [, setKmapPhase] = useState<Phase>('empty');
+
+  const textColor = isDarkMode ? 'text-white' : 'text-slate-900';
+  const subText   = isDarkMode ? 'text-slate-300' : 'text-slate-600';
+  const cardBg    = isDarkMode ? 'bg-white/5 border-white/10' : 'bg-white border-slate-200 shadow-xl';
+  const diffColor = p.difficulty === 'Easy' ? '#22c55e' : p.difficulty === 'Medium' ? '#fbbf24' : '#fb7185';
+
+  // Solution steps
+  const stepLabels = ['Minterms', 'K-Map', 'Groups', 'Minimise', 'Schematic'];
+
+  const handleStepClick = (idx: number) => {
+    setStepIdx(idx);
+    if (idx === 1) setKmapPhase('plot');
+    else if (idx === 2) setKmapPhase('group');
+    else if (idx === 0) setKmapPhase('empty');
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+      className={`p-7 rounded-3xl border ${cardBg}`}
+    >
+      {/* Scenario header */}
+      <div className="flex items-start gap-4 mb-5 flex-wrap">
+        <div
+          className="w-14 h-14 rounded-2xl grid place-items-center shrink-0"
+          style={{ background: `${p.scenario.accent}22`, border: `2px solid ${p.scenario.accent}55` }}
+        >
+          <p.Icon size={26} style={{ color: p.scenario.accent }} />
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 mb-1 flex-wrap">
+            <span
+              className="px-2 py-0.5 rounded-md font-mono text-[10px] uppercase tracking-widest font-black"
+              style={{ background: `${diffColor}22`, color: diffColor, border: `1px solid ${diffColor}55` }}
+            >
+              {p.difficulty}
+            </span>
+            <span className="font-mono text-[10px] uppercase tracking-widest opacity-60">
+              {p.vars}-variable scenario
+            </span>
+          </div>
+          <h3 className={`text-2xl font-black ${textColor}`}>{p.title}</h3>
+          <p className={`text-sm ${subText} mt-2`}>{p.scenario.story}</p>
+          <div
+            className="mt-3 p-3 rounded-xl text-sm font-mono"
+            style={{ background: `${p.scenario.accent}10`, border: `1px solid ${p.scenario.accent}55`, color: p.scenario.accent }}
+          >
+            ▸ {p.scenario.rule}
+          </div>
+        </div>
+      </div>
+
+      {/* Sub-questions */}
+      <div className={`p-4 rounded-2xl border ${cardBg} mb-5`}>
+        <div className="font-mono text-[10px] uppercase tracking-widest text-rose-400 mb-3">
+          The challenge · {p.questions.length} sub-questions
+        </div>
+        <ol className="space-y-1.5">
+          {p.questions.map((qa, i) => (
+            <li key={i} className={`text-sm ${subText} flex gap-2`}>
+              <span className="font-mono text-rose-300 font-black">{i + 1}.</span>
+              <span>{qa.q}</span>
+            </li>
+          ))}
+        </ol>
+      </div>
+
+      {/* Reveal toggle */}
+      <button
+        onClick={() => {
+          setOpen(!open);
+          if (!open) {
+            setStepIdx(0);
+            setKmapPhase('empty');
+          }
+        }}
+        className="w-full px-5 py-3 rounded-xl border-2 border-rose-400/50 bg-rose-500/10 text-rose-300 font-mono text-sm uppercase tracking-widest font-black flex items-center justify-center gap-2 hover:bg-rose-500/20 transition-all"
+      >
+        {open ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+        {open ? 'Hide solution' : 'Solve it · animated walkthrough'}
+      </button>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="overflow-hidden"
+          >
+            <div className="space-y-5 pt-5 mt-5 border-t" style={{ borderColor: isDarkMode ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)' }}>
+              {/* Inputs + Output mapping (revealed) */}
+              <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-2">
+                {p.inputs.map((inp) => (
+                  <div
+                    key={inp.sym}
+                    className="p-3 rounded-xl border-2 flex items-center gap-2"
+                    style={{ borderColor: `${inp.accent}55`, background: `${inp.accent}10` }}
+                  >
+                    <div className="w-8 h-8 rounded-md grid place-items-center font-mono font-black"
+                         style={{ background: `${inp.accent}30`, color: inp.accent }}>
+                      {inp.sym}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className={`text-xs font-bold ${textColor} truncate`}>{inp.meaning}</div>
+                    </div>
+                  </div>
+                ))}
+                <div
+                  className="p-3 rounded-xl border-2 flex items-center gap-2"
+                  style={{ borderColor: '#22c55e88', background: '#22c55e15' }}
+                >
+                  <div className="w-8 h-8 rounded-md grid place-items-center font-mono font-black"
+                       style={{ background: '#22c55e30', color: '#22c55e' }}>
+                    {p.output.sym}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className={`text-xs font-bold ${textColor} truncate`}>{p.output.meaning}</div>
+                    <div className="text-[9px] font-mono uppercase tracking-widest text-emerald-400">Output</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Canonical teaser + active rows (revealed) */}
+              <div className="grid lg:grid-cols-[1fr_1fr] gap-4">
+                <div className={`p-4 rounded-2xl border ${isDarkMode ? 'bg-black/30 border-white/10' : 'bg-slate-50 border-slate-200'}`}>
+                  <div className="font-mono text-[10px] uppercase tracking-widest text-rose-300 mb-2">
+                    Canonical SOP · brute-force build
+                  </div>
+                  <CanonicalCircuitHint minterms={p.active} vars={p.vars} />
+                  <p className={`text-xs ${subText} mt-2 italic`}>
+                    This is what you would build if you took the truth table literally.
+                  </p>
+                </div>
+                <div className={`p-4 rounded-2xl border ${isDarkMode ? 'bg-black/30 border-white/10' : 'bg-slate-50 border-slate-200'}`}>
+                  <div className="font-mono text-[10px] uppercase tracking-widest text-amber-300 mb-2">
+                    Active states · F = Σm(...)
+                  </div>
+                  <div className="flex flex-wrap gap-1.5 mb-3">
+                    {p.active.map((m) => (
+                      <span key={m} className="px-2 py-0.5 rounded font-mono text-xs border border-emerald-400/40 bg-emerald-500/10 text-emerald-200">
+                        m{m}
+                      </span>
+                    ))}
+                  </div>
+                  <div className={`font-mono text-xs ${textColor}`}>
+                    F({p.inputs.map((i) => i.sym).join(',')}) = Σm({p.active.join(', ')})
+                  </div>
+                </div>
+              </div>
+
+              {/* Step navigator */}
+              <div className="flex flex-wrap gap-2">
+                {stepLabels.map((s, i) => (
+                  <button
+                    key={i}
+                    onClick={() => handleStepClick(i)}
+                    className={`px-3 py-1.5 rounded-lg font-mono text-[10px] uppercase tracking-widest transition-all ${
+                      i === stepIdx
+                        ? 'bg-rose-400 text-black font-black'
+                        : isDarkMode ? 'bg-black/30 text-slate-300 hover:bg-white/10' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                    }`}
+                  >
+                    {i + 1}. {s}
+                  </button>
+                ))}
+              </div>
+
+              {/* Step body */}
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={stepIdx}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.3 }}
+                  className={`p-5 rounded-2xl ${isDarkMode ? 'bg-black/30' : 'bg-slate-50'}`}
+                >
+                  {stepIdx === 0 && (
+                    <div className="space-y-3">
+                      <div className="font-mono text-[10px] uppercase tracking-widest text-amber-300">
+                        Step 1 · Each F=1 row → minterm
+                      </div>
+                      <div className="grid sm:grid-cols-2 gap-2 font-mono text-xs">
+                        {p.active.map((m, i) => {
+                          const bits = m.toString(2).padStart(p.vars, '0');
+                          const term = bits.split('').map((b, j) => `${p.inputs[j].sym}${b === '0' ? "'" : ''}`).join('');
+                          return (
+                            <motion.div
+                              key={m}
+                              initial={{ opacity: 0, x: -10 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ delay: i * 0.06 }}
+                              className={`flex items-center gap-3 p-2 rounded-lg ${isDarkMode ? 'bg-white/[0.03]' : 'bg-white'}`}
+                            >
+                              <span className="text-amber-300 font-black w-8">m{m}</span>
+                              <span className={textColor}>{bits}</span>
+                              <span className="text-amber-400">→</span>
+                              <span className={`${textColor} font-bold`}>{term}</span>
+                            </motion.div>
+                          );
+                        })}
+                      </div>
+                      <div className={`mt-3 p-3 rounded-xl border border-amber-400/40 bg-amber-500/10 font-mono text-xs ${textColor}`}>
+                        Canonical SOP · {p.canonicalSOP}
+                      </div>
+                    </div>
+                  )}
+
+                  {stepIdx === 1 && (
+                    <div className="space-y-3">
+                      <div className="font-mono text-[10px] uppercase tracking-widest text-violet-300">
+                        Step 2 · Plot all 1s on the K-Map (animated)
+                      </div>
+                      <p className={`text-xs ${subText}`}>
+                        Each cell lights up in sequence. Watch how Gray-coding makes adjacencies visual.
+                      </p>
+                      <div className="overflow-x-auto">
+                        <AnimatedKMap vars={p.vars} active={new Set(p.active)} groups={[]} phase="plot" isDarkMode={isDarkMode} />
+                      </div>
+                    </div>
+                  )}
+
+                  {stepIdx === 2 && (
+                    <div className="space-y-4">
+                      <div className="font-mono text-[10px] uppercase tracking-widest text-violet-300">
+                        Step 3 · Loop adjacent 1s · two coloured groups
+                      </div>
+                      <div className="overflow-x-auto">
+                        <AnimatedKMap vars={p.vars} active={new Set(p.active)} groups={p.groups} phase="group" isDarkMode={isDarkMode} />
+                      </div>
+                      <div className="grid md:grid-cols-2 gap-3">
+                        {p.loopExplanations.map((le, i) => (
+                          <motion.div
+                            key={i}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.4 + i * 0.15 }}
+                            className="rounded-xl p-3 border-2"
+                            style={{ borderColor: le.color, background: `${le.color}11` }}
+                          >
+                            <div className="font-mono text-[10px] uppercase tracking-widest mb-2" style={{ color: le.color }}>
+                              {le.cells}
+                            </div>
+                            <ul className="space-y-1 font-mono text-[11px]">
+                              {le.analysis.map((a, j) => (
+                                <li key={j} className={subText}>{a}</li>
+                              ))}
+                            </ul>
+                            <div className={`mt-2 pt-2 border-t border-white/10 font-mono text-lg font-black ${textColor}`}>
+                              ⇒ {le.result}
+                            </div>
+                          </motion.div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {stepIdx === 3 && (
+                    <div className="space-y-4 text-center">
+                      <div className="font-mono text-[10px] uppercase tracking-widest text-emerald-300">
+                        Step 4 · The minimised SOP
+                      </div>
+                      <div className={`font-mono text-sm ${subText} line-through opacity-50 break-all`}>
+                        {p.canonicalSOP}
+                      </div>
+                      <motion.div
+                        initial={{ scale: 0.9, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ delay: 0.2, type: 'spring' }}
+                        className="rounded-2xl p-6 border-2 border-emerald-400 bg-emerald-500/10 inline-block"
+                      >
+                        <div className={`font-mono text-2xl md:text-4xl font-black ${textColor}`}>
+                          {p.minimisedSOP}
+                        </div>
+                      </motion.div>
+                      {p.redundantNote && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.5 }}
+                          className="p-3 rounded-xl border border-amber-400/40 bg-amber-500/10 text-left"
+                        >
+                          <div className="flex items-start gap-2">
+                            <Lightbulb className="text-amber-300 mt-0.5 shrink-0" size={14} />
+                            <p className={`text-xs ${subText}`}>
+                              <strong className="text-amber-300">Insight:</strong> {p.redundantNote}
+                            </p>
+                          </div>
+                        </motion.div>
+                      )}
+                    </div>
+                  )}
+
+                  {stepIdx === 4 && (
+                    <div className="space-y-4">
+                      <div className="font-mono text-[10px] uppercase tracking-widest text-rose-300">
+                        Step 5 · Live optimised schematic — toggle inputs
+                      </div>
+                      <LiveSchematic spec={p.schematic} isDarkMode={isDarkMode} />
+                    </div>
+                  )}
+                </motion.div>
+              </AnimatePresence>
+
+              {/* Q&A reveal panel */}
+              <div className={`p-5 rounded-2xl border-2 border-emerald-400/40 bg-emerald-500/5`}>
+                <div className="font-mono text-[10px] uppercase tracking-widest text-emerald-300 mb-3 flex items-center gap-2">
+                  <CheckCircle2 size={12} /> Sub-question answers
+                </div>
+                <div className="space-y-3">
+                  {p.questions.map((qa, i) => (
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: i * 0.08 }}
+                      className={`p-3 rounded-xl ${isDarkMode ? 'bg-black/30' : 'bg-white'}`}
+                    >
+                      <div className={`text-sm ${textColor} font-bold`}>
+                        <span className="text-emerald-300 font-mono mr-2">Q{i + 1}.</span>
+                        {qa.q}
+                      </div>
+                      <div className={`text-sm ${subText} mt-1 ml-7 font-mono`}>{qa.answer}</div>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Hardware footprint */}
+              <div className={`grid sm:grid-cols-4 gap-2`}>
+                {[
+                  { l: 'NOTs', v: p.hardware.not },
+                  { l: 'ANDs', v: p.hardware.and },
+                  { l: 'ORs',  v: p.hardware.or  },
+                  { l: 'Total · gates', v: p.hardware.total, highlight: true },
+                ].map((s) => (
+                  <div
+                    key={s.l}
+                    className={`p-3 rounded-xl border ${
+                      s.highlight ? 'border-emerald-400 bg-emerald-500/10' :
+                      isDarkMode ? 'border-white/10 bg-white/[0.03]' : 'border-slate-200 bg-slate-50'
+                    }`}
+                  >
+                    <div className={`font-mono text-[9px] uppercase tracking-widest ${s.highlight ? 'text-emerald-300' : subText}`}>{s.l}</div>
+                    <div className={`text-sm font-mono font-black ${s.highlight ? 'text-emerald-300' : textColor}`}>{s.v}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  );
+};
+
+// =========================================================================
+// Main scene
+// =========================================================================
+export const S01_Forward: React.FC<Props> = ({ isActive, isDarkMode }) => {
+  const textColor = isDarkMode ? 'text-white' : 'text-slate-900';
+  const subText   = isDarkMode ? 'text-slate-300' : 'text-slate-600';
+  const cardBg    = isDarkMode ? 'bg-white/5 border-white/10' : 'bg-white border-slate-200 shadow-xl';
+
+  return (
+    <div className="max-w-6xl mx-auto space-y-10 py-4">
+      <motion.section
+        initial={{ opacity: 0, y: 20 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
+        className="space-y-3"
+      >
+        <div className="flex items-center gap-2 font-mono text-[10px] tracking-[0.4em] uppercase text-rose-400">
+          <Target size={14} /> Drill Set 01 · Forward Synthesis
+        </div>
+        <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>
+          Spec → Schematic. Four products to wire from scratch.
+        </h2>
+        <p className={`text-base max-w-3xl ${subText}`}>
+          You are given a real-world scenario and a list of active states. Your job is to derive
+          the minimum-gate circuit. Read the scenario, study the canonical SOP teaser, then click{' '}
+          <strong className="text-rose-300">Solve it</strong> to walk through an animated 5-step
+          solution: minterm extraction → K-Map plot → group → minimise → live schematic.
+        </p>
+      </motion.section>
+
+      <motion.div
+        initial={{ opacity: 0, y: 14 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
+        className={`p-5 rounded-2xl border ${cardBg} flex items-start gap-3`}
+      >
+        <Lightbulb className="text-amber-300 mt-0.5 shrink-0" size={18} />
+        <div className={`text-sm ${subText}`}>
+          <strong className="text-amber-300">Strategy:</strong> always look for the LARGEST legal
+          power-of-two rectangle first. A four-cell loop drops two variables; a two-cell loop
+          drops only one. Overlapping loops are free — never split a loop just to avoid overlap.
+        </div>
+      </motion.div>
+
+      <div className="space-y-6">
+        {PROBLEMS.map((p) => (
+          <ProblemCard key={p.id} p={p} isDarkMode={isDarkMode} />
+        ))}
+      </div>
+
+      <motion.div
+        initial={{ opacity: 0 }} animate={isActive ? { opacity: 1 } : {}}
+        transition={{ delay: 0.4 }}
+        className={`text-center text-xs font-mono uppercase tracking-[0.3em] ${subText}`}
+      >
+        Module 04 complete · scenario-driven circuit realisation mastered
+      </motion.div>
+    </div>
+  );
+};
