@@ -35,7 +35,7 @@ export const IntelHub: React.FC = () => {
           <div className="space-y-4">
             <h2 className="text-4xl md:text-5xl font-bold text-white tracking-tight uppercase">Intel Hub</h2>
             <p className="text-slate-400 font-mono text-xs uppercase tracking-widest max-w-xl">
-              Real-time monitoring of policy shifts, industrial intake, and global R&D movements.
+              Government schemes, fellowships, and internship opportunities.
             </p>
           </div>
           <button className="px-8 py-3 bg-white/5 border border-white/10 rounded-full text-[10px] font-mono text-slate-400 uppercase tracking-widest hover:text-white hover:border-white/20 transition-all">
@@ -68,8 +68,7 @@ export const IntelHub: React.FC = () => {
                 {item.desc}
               </p>
 
-              <div className="pt-4 border-t border-white/5 flex items-center justify-between">
-                <span className="text-[9px] font-mono text-slate-600 uppercase">Live monitoring</span>
+              <div className="pt-4 border-t border-white/5 flex items-center justify-end">
                 <span className="text-[10px] font-mono text-cyan-400 uppercase font-bold opacity-0 group-hover:opacity-100 transition-opacity">
                   View Detail →
                 </span>

@@ -23,7 +23,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onCalibrate, onExplore
   ];
 
   return (
-    <section id="hero" className="relative min-h-screen flex flex-col items-center justify-center pt-32 pb-24 overflow-hidden bg-observatory-bg">
+    <section id="hero" className="relative min-h-screen flex flex-col items-center justify-center pt-20 pb-24 overflow-hidden bg-observatory-bg">
       {/* Silicon Parallax Layers */}
       <motion.div 
         style={{ x: x * 4, y: y * 4 }}
@@ -44,18 +44,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onCalibrate, onExplore
 
       {/* Hero Content */}
       <div className="relative z-10 max-w-4xl mx-auto text-center px-6">
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="flex items-center justify-center gap-3 mb-8"
-        >
-          <div className="w-2 h-2 bg-cyan-400 rounded-full animate-gentle-pulse shadow-[0_0_8px_rgba(34,211,238,0.8)]" />
-          <span className="text-[11px] font-mono text-slate-500 uppercase tracking-[0.4em]">
-            System Status: Career Engine Active
-          </span>
-        </motion.div>
-
         <motion.h1
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}

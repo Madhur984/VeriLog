@@ -10,7 +10,7 @@ export const TimelineSection: React.FC = () => {
           UNDERGRADUATE <span className="text-plasma-cyan">TRAJECTORY</span>
         </h2>
         <p className="text-text-dim font-mono text-xs uppercase tracking-widest">
-          Chronological Optimization for the Silicon Workforce
+          Career milestones from Year 1 to Senior level.
         </p>
       </div>
 

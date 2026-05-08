@@ -11,7 +11,7 @@ export const SimulatorRightPanel: React.FC<SimulatorRightPanelProps> = ({ histor
   return (
     <div className="h-full flex flex-col gap-8 p-8">
       <div>
-        <div className="text-[10px] font-mono text-slate-500 uppercase tracking-widest mb-4">Neural Decision Path</div>
+        <div className="text-[10px] font-mono text-slate-500 uppercase tracking-widest mb-4">Decision History</div>
         <div className="space-y-4">
           {history.map((step, i) => (
             <motion.div 

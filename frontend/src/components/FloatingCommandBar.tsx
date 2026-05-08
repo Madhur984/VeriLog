@@ -37,11 +37,11 @@ export const FloatingCommandBar: React.FC<{ activeSection: string }> = ({ active
 
   const navItems = [
     { label: 'MISSION', href: '#hero', id: 'hero' },
-    { label: 'TOPOLOGY', href: '#skill-graph', id: 'skill-graph' },
-    { label: 'FISCAL', href: '#fiscal', id: 'fiscal' },
-    { label: 'SIMULATOR', href: '#sim', id: 'sim' },
+    { label: 'TOPOLOGY', href: '#topology', id: 'topology' },
+    { label: 'SKILL GAP', href: '#skill-gap', id: 'skill-gap' },
+    { label: 'FISCAL', href: '#fiscal-matrix', id: 'fiscal-matrix' },
+    { label: 'HEATMAP', href: '#global-heatmap', id: 'global-heatmap' },
     { label: 'CABINET', href: '#cabinet', id: 'cabinet' },
-    { label: 'INTEL', href: '#intel', id: 'intel' },
   ];
 
   return (

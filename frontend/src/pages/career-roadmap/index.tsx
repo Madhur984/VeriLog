@@ -4,7 +4,7 @@ import { AnimatePresence } from 'framer-motion';
 // Layout & Foundation
 import { FloatingCommandBar } from '../../components/FloatingCommandBar';
 import { ScrollProgress } from '../../components/ScrollProgress';
-import { SiliconTicker } from './components/SiliconTicker';
+import { SiliconBriefing } from './components/SiliconBriefing';
 
 // Existing Sections
 import { HeroSection } from './sections/HeroSection';
@@ -19,6 +19,14 @@ import { MarketGiants } from '../../components/MarketGiants';
 import { ExecutionTimeline } from '../../components/ExecutionTimeline';
 import { ExpertSignal } from '../../components/ExpertSignal';
 import { ComparisonBench } from '../../components/ComparisonBench';
+
+// Phase 1 & 2 Components
+import { SkillGapRadar } from './components/SkillGapRadar';
+import { ResumePreview } from './components/ResumePreview';
+import { TechnicalTerminal } from './components/TechnicalTerminal';
+import { GlobalSalaryHeatmap } from './components/GlobalSalaryHeatmap';
+import { SiliconNetwork } from './components/SiliconNetwork';
+import { SiliconPipeline } from './components/SiliconPipeline';
 
 // UI & Data
 import { BadgeUnlockOverlay } from '../../components/BadgeUnlockOverlay';
@@ -109,15 +117,27 @@ const CareerRoadmapPage: React.FC = () => {
         <DomainExplorer />
 
         {/* Existing Technical Deep-Dives */}
-        <div className="relative z-10 border-t border-white/[0.03]">
+        <div id="topology" className="relative z-10 border-t border-white/[0.03]">
           <SkillTopology />
         </div>
+        
+        <SectionWrapper id="skill-gap" className="bg-observatory-bg border-t border-white/[0.03]">
+          <div className="max-w-7xl mx-auto py-12 px-6">
+            <SkillGapRadar />
+          </div>
+        </SectionWrapper>
 
-        <div className="relative z-10 border-y border-white/[0.03]">
+        <div id="fiscal-matrix" className="relative z-10 border-y border-white/[0.03]">
           <FiscalMatrix />
         </div>
 
-        <div className="relative z-10">
+        <SectionWrapper id="global-heatmap" className="bg-observatory-bg border-t border-white/[0.03]">
+          <div className="max-w-7xl mx-auto py-12 px-6">
+            <GlobalSalaryHeatmap />
+          </div>
+        </SectionWrapper>
+
+        <div id="simulator" className="relative z-10">
           <TrajectorySimulator />
         </div>
 
@@ -129,12 +149,37 @@ const CareerRoadmapPage: React.FC = () => {
         {/* New Signal: Expert Stories */}
         <ExpertSignal />
 
+        {/* Phase 2: Tactical Execution */}
+        <SectionWrapper id="tactical" className="bg-observatory-bg border-t border-white/[0.03]">
+          <div className="max-w-7xl mx-auto space-y-12 py-12">
+            <div className="mb-12">
+              <h2 className="text-4xl font-bold text-white tracking-tight uppercase">Tactical Execution</h2>
+              <p className="text-slate-500 font-mono text-xs uppercase tracking-widest mt-2">Generate Artifacts & Simulate Pressure</p>
+            </div>
+            <ResumePreview />
+            <TechnicalTerminal />
+          </div>
+        </SectionWrapper>
+
+        {/* Phase 4: Network & Flow Intelligence */}
+        <SectionWrapper id="network" className="bg-observatory-bg border-t border-white/[0.03]">
+          <div className="max-w-7xl mx-auto space-y-12 py-12">
+            <div className="mb-12">
+              <h2 className="text-4xl font-bold text-white tracking-tight uppercase">Network & Flow</h2>
+              <p className="text-slate-500 font-mono text-xs uppercase tracking-widest mt-2">Global Talent Pipeline & Peer Synchronization</p>
+            </div>
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+               <SiliconPipeline />
+               <SiliconNetwork />
+            </div>
+          </div>
+        </SectionWrapper>
+
         {/* Final Station: Silicon Cabinet */}
         <SectionWrapper id="cabinet" className="bg-observatory-bg border-t border-white/[0.03] pb-32">
           <div className="max-w-7xl mx-auto">
             <div className="mb-12">
               <h2 className="text-4xl font-bold text-white tracking-tight uppercase">Silicon Cabinet</h2>
-              <p className="text-slate-500 font-mono text-xs uppercase tracking-widest mt-2">Verified Professional Certifications & Artifacts</p>
             </div>
             <SiliconCabinet 
               unlockedBadgeIds={unlockedBadgeIds} 
@@ -144,9 +189,9 @@ const CareerRoadmapPage: React.FC = () => {
         </SectionWrapper>
       </main>
 
-      {/* Persistent Ticker Overlay */}
+      {/* Persistent Briefing Overlay */}
       <div className="fixed bottom-0 left-0 w-full z-[100]">
-        <SiliconTicker />
+        <SiliconBriefing />
       </div>
 
       {/* Noise Grain Overlay */}
