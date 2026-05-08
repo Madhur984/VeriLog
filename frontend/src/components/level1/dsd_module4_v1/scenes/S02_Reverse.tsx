@@ -1,182 +1,19 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, ChevronRight, ChevronDown, CheckCircle2, MousePointerClick, Cpu, Droplets, Thermometer, Bell } from 'lucide-react';
+import { CleanCircuit, PosCircuit, lit, not, term, type Bit, type Term, type CleanInput, type Lit } from './_CleanCircuit';
 
 interface Props { isActive: boolean; isDarkMode: boolean; }
-type Bit = 0 | 1;
-
-const wireColor = (v: Bit) => v === 1 ? '#fb7185' : '#475569';
-const wireGlow = (v: Bit) => v === 1 ? 'drop-shadow(0 0 4px rgba(251,113,133,0.7))' : 'none';
 
 interface InputDef { sym: string; meaning: string; accent: string; }
 
 // ─────────────────────────────────────────────────────────────────────────
-// R1 · Pipeline Voter — Majority function (3 ANDs feeding OR)
-// Y = AB + BC + AC
+// Reverse problem definition · uses CleanCircuit
 // ─────────────────────────────────────────────────────────────────────────
-const drawCircuitR1 = (a: Bit, b: Bit, c: Bit, isDark: boolean) => {
-  const ab: Bit = (a && b) ? 1 : 0;
-  const bc: Bit = (b && c) ? 1 : 0;
-  const ac: Bit = (a && c) ? 1 : 0;
-  const y: Bit = (ab || bc || ac) ? 1 : 0;
-  const fill = isDark ? '#0a0e1a' : '#fff';
-  return { y, render: (
-    <g>
-      <text x="14" y="40" fontSize="13" fontWeight="bold" fill="#0ea5e9" fontFamily="monospace">A = {a}</text>
-      <text x="14" y="140" fontSize="13" fontWeight="bold" fill="#22d3ee" fontFamily="monospace">B = {b}</text>
-      <text x="14" y="240" fontSize="13" fontWeight="bold" fill="#f59e0b" fontFamily="monospace">C = {c}</text>
-      {/* A rail */}
-      <line x1="40" y1="50" x2="40" y2="260" stroke={wireColor(a)} strokeWidth="2.5" style={{ filter: wireGlow(a) }} />
-      {/* B rail */}
-      <line x1="76" y1="50" x2="76" y2="260" stroke={wireColor(b)} strokeWidth="2.5" style={{ filter: wireGlow(b) }} />
-      {/* C rail */}
-      <line x1="112" y1="50" x2="112" y2="260" stroke={wireColor(c)} strokeWidth="2.5" style={{ filter: wireGlow(c) }} />
+type CircuitRender =
+  | { kind: 'sop'; topic: string; terms: Term[] }
+  | { kind: 'pos'; topic: string; orGroup: Lit[]; secondLit: Lit };
 
-      {/* AND1: A·B */}
-      <line x1="40" y1="80" x2="240" y2="65" stroke={wireColor(a)} strokeWidth="2" style={{ filter: wireGlow(a) }} />
-      <line x1="76" y1="100" x2="240" y2="85" stroke={wireColor(b)} strokeWidth="2" style={{ filter: wireGlow(b) }} />
-      <path d="M 240 55 L 270 55 A 22 22 0 0 1 270 95 L 240 95 Z" fill={fill} stroke="#fcd34d" strokeWidth="2" />
-      <text x="247" y="80" fontSize="10" fill="#fcd34d" fontFamily="monospace">AND</text>
-      <line x1="293" y1="75" x2="450" y2="100" stroke={wireColor(ab)} strokeWidth="2.5" style={{ filter: wireGlow(ab) }} />
-      <text x="305" y="68" fontSize="10" fill="#fcd34d" fontFamily="monospace">P1=AB={ab}</text>
-
-      {/* AND2: B·C */}
-      <line x1="76" y1="160" x2="240" y2="160" stroke={wireColor(b)} strokeWidth="2" style={{ filter: wireGlow(b) }} />
-      <line x1="112" y1="180" x2="240" y2="180" stroke={wireColor(c)} strokeWidth="2" style={{ filter: wireGlow(c) }} />
-      <path d="M 240 150 L 270 150 A 22 22 0 0 1 270 190 L 240 190 Z" fill={fill} stroke="#fcd34d" strokeWidth="2" />
-      <text x="247" y="175" fontSize="10" fill="#fcd34d" fontFamily="monospace">AND</text>
-      <line x1="293" y1="170" x2="450" y2="160" stroke={wireColor(bc)} strokeWidth="2.5" style={{ filter: wireGlow(bc) }} />
-      <text x="305" y="153" fontSize="10" fill="#fcd34d" fontFamily="monospace">P2=BC={bc}</text>
-
-      {/* AND3: A·C */}
-      <line x1="40" y1="220" x2="240" y2="225" stroke={wireColor(a)} strokeWidth="2" style={{ filter: wireGlow(a) }} />
-      <line x1="112" y1="245" x2="240" y2="245" stroke={wireColor(c)} strokeWidth="2" style={{ filter: wireGlow(c) }} />
-      <path d="M 240 215 L 270 215 A 22 22 0 0 1 270 255 L 240 255 Z" fill={fill} stroke="#fcd34d" strokeWidth="2" />
-      <text x="247" y="240" fontSize="10" fill="#fcd34d" fontFamily="monospace">AND</text>
-      <line x1="293" y1="235" x2="450" y2="220" stroke={wireColor(ac)} strokeWidth="2.5" style={{ filter: wireGlow(ac) }} />
-      <text x="305" y="218" fontSize="10" fill="#fcd34d" fontFamily="monospace">P3=AC={ac}</text>
-
-      {/* OR with 3 inputs */}
-      <path d="M 450 90 Q 470 160 450 230 Q 540 215 575 160 Q 540 105 450 90 Z" fill={fill} stroke="#22c55e" strokeWidth="2.5" />
-      <text x="470" y="166" fontSize="13" fill="#22c55e" fontFamily="monospace" fontWeight="bold">OR</text>
-
-      {/* Output */}
-      <line x1="575" y1="160" x2="690" y2="160" stroke={wireColor(y)} strokeWidth="3.5" style={{ filter: wireGlow(y) }} />
-      <rect x="640" y="138" width="50" height="44" rx="6" fill={y ? '#fb7185' : 'none'} stroke="#fb7185" strokeWidth="2.5"
-            style={{ filter: y ? 'drop-shadow(0 0 18px rgba(251,113,133,0.7))' : 'none' }} />
-      <text x="650" y="166" fontSize="16" fill={y ? '#000' : '#fb7185'} fontFamily="monospace" fontWeight="bold">Y={y}</text>
-    </g>
-  )};
-};
-
-// ─────────────────────────────────────────────────────────────────────────
-// R2 · Office Climate Control (4-var · two parallel ANDs)
-// Y = A'C + BD
-// ─────────────────────────────────────────────────────────────────────────
-const drawCircuitR2 = (a: Bit, b: Bit, c: Bit, d: Bit, isDark: boolean) => {
-  const an: Bit = (a === 0 ? 1 : 0) as Bit;
-  const anc: Bit = (an && c) ? 1 : 0;
-  const bd: Bit = (b && d) ? 1 : 0;
-  const y: Bit = (anc || bd) ? 1 : 0;
-  const fill = isDark ? '#0a0e1a' : '#fff';
-  return { y, render: (
-    <g>
-      <text x="14" y="40" fontSize="13" fontWeight="bold" fill="#0ea5e9" fontFamily="monospace">A = {a}</text>
-      <text x="14" y="105" fontSize="13" fontWeight="bold" fill="#22d3ee" fontFamily="monospace">B = {b}</text>
-      <text x="14" y="170" fontSize="13" fontWeight="bold" fill="#a78bfa" fontFamily="monospace">C = {c}</text>
-      <text x="14" y="240" fontSize="13" fontWeight="bold" fill="#f59e0b" fontFamily="monospace">D = {d}</text>
-      {/* Rails */}
-      <line x1="40" y1="50" x2="40" y2="260" stroke={wireColor(a)} strokeWidth="2.5" style={{ filter: wireGlow(a) }} />
-      <line x1="76" y1="50" x2="76" y2="260" stroke={wireColor(b)} strokeWidth="2.5" style={{ filter: wireGlow(b) }} />
-      <line x1="112" y1="50" x2="112" y2="260" stroke={wireColor(c)} strokeWidth="2.5" style={{ filter: wireGlow(c) }} />
-      <line x1="148" y1="50" x2="148" y2="260" stroke={wireColor(d)} strokeWidth="2.5" style={{ filter: wireGlow(d) }} />
-
-      {/* NOT(A) */}
-      <line x1="40" y1="80" x2="170" y2="80" stroke={wireColor(a)} strokeWidth="2" style={{ filter: wireGlow(a) }} />
-      <polygon points="170,68 200,80 170,92" fill={fill} stroke="#fb7185" strokeWidth="2" />
-      <circle cx="204" cy="80" r="3" fill={fill} stroke="#fb7185" strokeWidth="2" />
-      <line x1="208" y1="80" x2="270" y2="80" stroke={wireColor(an)} strokeWidth="2" style={{ filter: wireGlow(an) }} />
-      <text x="220" y="74" fontSize="9" fill="#fcd34d" fontFamily="monospace">A′</text>
-
-      {/* AND1: A'·C */}
-      <line x1="112" y1="120" x2="270" y2="100" stroke={wireColor(c)} strokeWidth="2" style={{ filter: wireGlow(c) }} />
-      <path d="M 270 70 L 300 70 A 22 22 0 0 1 300 110 L 270 110 Z" fill={fill} stroke="#fcd34d" strokeWidth="2" />
-      <text x="277" y="95" fontSize="10" fill="#fcd34d" fontFamily="monospace">AND</text>
-      <line x1="323" y1="90" x2="460" y2="110" stroke={wireColor(anc)} strokeWidth="2.5" style={{ filter: wireGlow(anc) }} />
-      <text x="335" y="82" fontSize="10" fill="#fcd34d" fontFamily="monospace">P1=A′C={anc}</text>
-
-      {/* AND2: B·D */}
-      <line x1="76" y1="200" x2="270" y2="195" stroke={wireColor(b)} strokeWidth="2" style={{ filter: wireGlow(b) }} />
-      <line x1="148" y1="220" x2="270" y2="215" stroke={wireColor(d)} strokeWidth="2" style={{ filter: wireGlow(d) }} />
-      <path d="M 270 185 L 300 185 A 22 22 0 0 1 300 225 L 270 225 Z" fill={fill} stroke="#fcd34d" strokeWidth="2" />
-      <text x="277" y="210" fontSize="10" fill="#fcd34d" fontFamily="monospace">AND</text>
-      <line x1="323" y1="205" x2="460" y2="180" stroke={wireColor(bd)} strokeWidth="2.5" style={{ filter: wireGlow(bd) }} />
-      <text x="340" y="200" fontSize="10" fill="#fcd34d" fontFamily="monospace">P2=BD={bd}</text>
-
-      {/* OR */}
-      <path d="M 460 100 Q 480 145 460 190 Q 535 178 565 145 Q 535 112 460 100 Z" fill={fill} stroke="#22c55e" strokeWidth="2.5" />
-      <text x="478" y="151" fontSize="12" fill="#22c55e" fontFamily="monospace" fontWeight="bold">OR</text>
-
-      {/* Output */}
-      <line x1="565" y1="145" x2="690" y2="145" stroke={wireColor(y)} strokeWidth="3.5" style={{ filter: wireGlow(y) }} />
-      <rect x="640" y="123" width="50" height="44" rx="6" fill={y ? '#fb7185' : 'none'} stroke="#fb7185" strokeWidth="2.5"
-            style={{ filter: y ? 'drop-shadow(0 0 18px rgba(251,113,133,0.7))' : 'none' }} />
-      <text x="650" y="151" fontSize="16" fill={y ? '#000' : '#fb7185'} fontFamily="monospace" fontWeight="bold">Y={y}</text>
-    </g>
-  )};
-};
-
-// ─────────────────────────────────────────────────────────────────────────
-// R3 · Burglar Alarm (OR feeding AND with NOT)
-// Y = (D + W) · M' = DM' + WM'
-// ─────────────────────────────────────────────────────────────────────────
-const drawCircuitR3 = (door: Bit, win: Bit, mot: Bit, isDark: boolean) => {
-  const dw: Bit = (door || win) ? 1 : 0;
-  const mn: Bit = (mot === 0 ? 1 : 0) as Bit;
-  const y: Bit = (dw && mn) ? 1 : 0;
-  const fill = isDark ? '#0a0e1a' : '#fff';
-  return { y, render: (
-    <g>
-      <text x="10" y="40" fontSize="13" fontWeight="bold" fill="#0ea5e9" fontFamily="monospace">D = {door}</text>
-      <text x="10" y="120" fontSize="13" fontWeight="bold" fill="#22d3ee" fontFamily="monospace">W = {win}</text>
-      <text x="10" y="220" fontSize="13" fontWeight="bold" fill="#f59e0b" fontFamily="monospace">M = {mot}</text>
-      {/* Rails */}
-      <line x1="50" y1="50" x2="50" y2="240" stroke={wireColor(door)} strokeWidth="2.5" style={{ filter: wireGlow(door) }} />
-      <line x1="86" y1="50" x2="86" y2="240" stroke={wireColor(win)} strokeWidth="2.5" style={{ filter: wireGlow(win) }} />
-      <line x1="122" y1="50" x2="122" y2="240" stroke={wireColor(mot)} strokeWidth="2.5" style={{ filter: wireGlow(mot) }} />
-
-      {/* OR(D, W) */}
-      <line x1="50" y1="80" x2="220" y2="100" stroke={wireColor(door)} strokeWidth="2" style={{ filter: wireGlow(door) }} />
-      <line x1="86" y1="150" x2="220" y2="140" stroke={wireColor(win)} strokeWidth="2" style={{ filter: wireGlow(win) }} />
-      <path d="M 220 90 Q 235 120 220 150 Q 280 142 305 120 Q 280 98 220 90 Z" fill={fill} stroke="#22c55e" strokeWidth="2" />
-      <text x="235" y="125" fontSize="11" fill="#22c55e" fontFamily="monospace" fontWeight="bold">OR</text>
-      <line x1="305" y1="120" x2="430" y2="120" stroke={wireColor(dw)} strokeWidth="2.5" style={{ filter: wireGlow(dw) }} />
-      <text x="320" y="112" fontSize="10" fill="#22c55e" fontFamily="monospace">P=(D+W)={dw}</text>
-
-      {/* NOT(M) */}
-      <line x1="122" y1="220" x2="350" y2="220" stroke={wireColor(mot)} strokeWidth="2" style={{ filter: wireGlow(mot) }} />
-      <polygon points="350,208 380,220 350,232" fill={fill} stroke="#fb7185" strokeWidth="2" />
-      <circle cx="384" cy="220" r="3" fill={fill} stroke="#fb7185" strokeWidth="2" />
-      <line x1="388" y1="220" x2="430" y2="180" stroke={wireColor(mn)} strokeWidth="2" style={{ filter: wireGlow(mn) }} />
-      <text x="358" y="247" fontSize="9" fill="#fb7185" fontFamily="monospace">NOT</text>
-      <text x="395" y="200" fontSize="10" fill="#fcd34d" fontFamily="monospace">M′</text>
-
-      {/* AND */}
-      <path d="M 430 110 L 460 110 A 25 25 0 0 1 460 170 L 430 170 Z" fill={fill} stroke="#fcd34d" strokeWidth="2.5" />
-      <text x="438" y="145" fontSize="11" fill="#fcd34d" fontFamily="monospace">AND</text>
-
-      {/* Output */}
-      <line x1="485" y1="140" x2="630" y2="140" stroke={wireColor(y)} strokeWidth="3.5" style={{ filter: wireGlow(y) }} />
-      <rect x="580" y="118" width="60" height="44" rx="6" fill={y ? '#fb7185' : 'none'} stroke="#fb7185" strokeWidth="2.5"
-            style={{ filter: y ? 'drop-shadow(0 0 18px rgba(251,113,133,0.7))' : 'none' }} />
-      <text x="590" y="146" fontSize="16" fill={y ? '#000' : '#fb7185'} fontFamily="monospace" fontWeight="bold">Y={y}</text>
-    </g>
-  )};
-};
-
-// ─────────────────────────────────────────────────────────────────────────
-// Reverse Problem definition + card
-// ─────────────────────────────────────────────────────────────────────────
 interface ReverseProblem {
   id: string;
   Icon: React.ComponentType<any>;
@@ -184,12 +21,10 @@ interface ReverseProblem {
   scenario: string;
   inputs: InputDef[];
   vars: 3 | 4;
-  // Render circuit and compute output
-  drawCircuit: (vals: Bit[], isDark: boolean) => { y: Bit; render: React.ReactNode };
-  // Truth table for all 2^n rows
+  circuit: CircuitRender;
+  compute: (vals: Bit[]) => Bit;
   tt: { idx: number; bits: string; y: Bit }[];
   questions: { q: string; a: string }[];
-  // Final answer
   unsimplified: string;
   simplified: string;
   insight: string;
@@ -209,7 +44,7 @@ const PROBLEMS: ReverseProblem[] = [
   {
     id: 'r1',
     Icon: Droplets,
-    title: 'R1 · Pipeline Voter',
+    title: 'R1 · Pipeline Voter (Majority of 3)',
     scenario:
       'A water pipe has 3 pressure sensors (A, B, C). To avoid shutting down because of one bad sensor, the alarm should only fire when AT LEAST 2 of the 3 sensors agree. Look at the circuit below and check if it does the right thing.',
     inputs: [
@@ -218,7 +53,16 @@ const PROBLEMS: ReverseProblem[] = [
       { sym: 'C', meaning: 'Sensor 3', accent: '#f59e0b' },
     ],
     vars: 3,
-    drawCircuit: (v, isDark) => drawCircuitR1(v[0], v[1], v[2], isDark),
+    circuit: {
+      kind: 'sop',
+      topic: 'Majority Voter · Y = AB + BC + AC',
+      terms: [
+        term([lit('A'), lit('B')], '#fb923c'),
+        term([lit('B'), lit('C')], '#22d3ee'),
+        term([lit('A'), lit('C')], '#a78bfa'),
+      ],
+    },
+    compute: ([a, b, c]) => (((a && b) || (b && c) || (a && c)) ? 1 : 0) as Bit,
     tt: buildTT(3, ([a, b, c]) => (((a && b) || (b && c) || (a && c)) ? 1 : 0) as Bit),
     questions: [
       { q: 'Look at each AND output, then the final OR. What is Y as a Boolean equation?',
@@ -226,7 +70,7 @@ const PROBLEMS: ReverseProblem[] = [
       { q: 'Toggle the inputs. How many of the 8 input combinations give Y = 1?',
         a: '4 combinations · m3 (011), m5 (101), m6 (110), m7 (111). Y = Σm(3, 5, 6, 7).' },
       { q: 'Can the K-Map make this any shorter?',
-        a: 'No, this is already as short as it gets. Each pair makes a 2-cell group, and no 4-cell group exists. Classic case where you can\'t shrink it.' },
+        a: "No, this is already as short as it gets. Each pair makes a 2-cell group, and no 4-cell group exists. Classic case where you can't shrink it." },
       { q: 'If a single chip did the whole job, what would you call it?',
         a: 'A "majority of 3" chip (also called a 2-of-3 voter). Some chip kits have one; if not, you build it from 3 ANDs + 1 OR like this.' },
     ],
@@ -247,7 +91,15 @@ const PROBLEMS: ReverseProblem[] = [
       { sym: 'D', meaning: 'Humidity',   accent: '#f59e0b' },
     ],
     vars: 4,
-    drawCircuit: (v, isDark) => drawCircuitR2(v[0], v[1], v[2], v[3], isDark),
+    circuit: {
+      kind: 'sop',
+      topic: 'SOP · Y = A′C + BD',
+      terms: [
+        term([not('A'), lit('C')], '#22d3ee'),
+        term([lit('B'), lit('D')], '#fb923c'),
+      ],
+    },
+    compute: ([a, b, c, d]) => ((((!a) && c) || (b && d)) ? 1 : 0) as Bit,
     tt: buildTT(4, ([a, b, c, d]) => ((((!a) && c) || (b && d)) ? 1 : 0) as Bit),
     questions: [
       { q: 'Trace the circuit. Write Y as the OR of two AND terms.',
@@ -266,16 +118,22 @@ const PROBLEMS: ReverseProblem[] = [
   {
     id: 'r3',
     Icon: Bell,
-    title: 'R3 · Burglar Alarm Logic',
+    title: "R3 · Burglar Alarm Logic (factored form)",
     scenario:
-      'A shop alarm has 3 inputs: D (door open), W (window open), M (staff moving inside — counts as approved). The alarm should ring ONLY when a door or window opens AND no staff is moving. Read the circuit below.',
+      'A shop alarm has 3 inputs: D (door open), W (window open), M (staff moving inside — counts as approved). The alarm should ring ONLY when a door or window opens AND no staff is moving. Read the circuit below — note the OR feeds into an AND with M inverted.',
     inputs: [
       { sym: 'D', meaning: 'Door',          accent: '#0ea5e9' },
       { sym: 'W', meaning: 'Window',        accent: '#22d3ee' },
       { sym: 'M', meaning: 'Auth. motion',  accent: '#f59e0b' },
     ],
     vars: 3,
-    drawCircuit: (v, isDark) => drawCircuitR3(v[0], v[1], v[2], isDark),
+    circuit: {
+      kind: 'pos',
+      topic: 'Factored · Y = (D + W) · M′',
+      orGroup: [lit('D'), lit('W')],
+      secondLit: not('M'),
+    },
+    compute: ([d, w, m]) => (((d || w) && (m === 0)) ? 1 : 0) as Bit,
     tt: buildTT(3, ([d, w, m]) => (((d || w) && (m === 0)) ? 1 : 0) as Bit),
     questions: [
       { q: 'Write Y in this form: (something) · (something else).',
@@ -304,7 +162,14 @@ const ReverseCard: React.FC<{ p: ReverseProblem; isDarkMode: boolean }> = ({ p, 
   const subText   = isDarkMode ? 'text-slate-300' : 'text-slate-600';
   const cardBg    = isDarkMode ? 'bg-white/5 border-white/10' : 'bg-white border-slate-200 shadow-xl';
 
-  const { y, render } = useMemo(() => p.drawCircuit(vals, isDarkMode), [p, vals, isDarkMode]);
+  const cleanInputs: CleanInput[] = p.inputs.map((inp, i) => ({
+    sym: inp.sym,
+    meaning: inp.meaning,
+    accent: inp.accent,
+    value: vals[i],
+  }));
+
+  const y = p.compute(vals);
   const setBit = (i: number, b: Bit) => {
     setVals((arr) => {
       const copy = arr.slice() as Bit[];
@@ -323,6 +188,12 @@ const ReverseCard: React.FC<{ p: ReverseProblem; isDarkMode: boolean }> = ({ p, 
           <p.Icon size={26} className="text-cyan-300" />
         </div>
         <div className="flex-1 min-w-0">
+          <span
+            className="font-mono text-[10px] uppercase tracking-widest font-black px-2 py-0.5 rounded inline-block mb-2"
+            style={{ background: '#a78bfa22', color: '#a78bfa', border: '1px solid #a78bfa55' }}
+          >
+            Topic · {p.circuit.topic.replace(/^[^·]+·\s*/, '')}
+          </span>
           <h3 className={`text-2xl font-black ${textColor}`}>{p.title}</h3>
           <p className={`text-sm ${subText} mt-2`}>{p.scenario}</p>
         </div>
@@ -383,7 +254,24 @@ const ReverseCard: React.FC<{ p: ReverseProblem; isDarkMode: boolean }> = ({ p, 
                     </button>
                   ))}
                 </div>
-                <svg viewBox="0 0 720 280" className="w-full h-auto">{render}</svg>
+                {p.circuit.kind === 'sop' ? (
+                  <CleanCircuit
+                    topic={p.circuit.topic}
+                    inputs={cleanInputs}
+                    terms={p.circuit.terms}
+                    isDark={isDarkMode}
+                    outputSym="Y"
+                  />
+                ) : (
+                  <PosCircuit
+                    topic={p.circuit.topic}
+                    inputs={cleanInputs}
+                    orGroup={p.circuit.orGroup}
+                    secondLit={p.circuit.secondLit}
+                    isDark={isDarkMode}
+                    outputSym="Y"
+                  />
+                )}
                 <div className={`mt-3 p-3 rounded-xl border ${y ? 'border-rose-400 bg-rose-500/10' : isDarkMode ? 'border-white/10 bg-white/[0.02]' : 'border-slate-200 bg-white'}`}>
                   <span className={`font-mono text-sm ${y ? 'text-rose-300 font-black' : textColor}`}>
                     Y = {y} {y ? '· active' : '· inactive'}
@@ -493,9 +381,11 @@ export const S02_Reverse: React.FC<Props> = ({ isActive, isDarkMode }) => {
           Circuit → Equation. Read the schematic.
         </h2>
         <p className={`text-base max-w-3xl ${subText}`}>
-          Each problem gives you a finished circuit. Click the inputs to flip them, watch the
-          wires light up, trace what each gate outputs, and figure out the Boolean equation.
-          Then check your answer against the truth table when you reveal the solution.
+          Each problem gives you a finished circuit drawn in the same clean grid layout — input
+          rails on the left, NOT bubbles inline, AND gates stacked, OR on the right, output box
+          on the far right. Click the inputs to flip them, watch the wires light up, trace what
+          each gate outputs, and figure out the Boolean equation. Then check your answer against
+          the truth table when you reveal the solution.
         </p>
       </motion.section>
 

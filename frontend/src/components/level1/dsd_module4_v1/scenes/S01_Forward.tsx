@@ -1,10 +1,10 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Target, ChevronRight, ChevronDown, CheckCircle2, Lightbulb, Coffee, Plane, Lock, PackageCheck, MousePointerClick } from 'lucide-react';
+import { CleanCircuit, lit, not, term, type Bit, type Term, type CleanInput } from './_CleanCircuit';
 
 interface Props { isActive: boolean; isDarkMode: boolean; }
 
-type Bit = 0 | 1;
 type InputDef = { sym: string; meaning: string; accent: string };
 
 // ─── 3-var K-map helpers ───
@@ -165,53 +165,35 @@ const AnimatedKMap: React.FC<{
 };
 
 // =========================================================================
-// LiveSchematic — interactive minimised circuit with toggleable inputs
-// Each problem provides a "wireSpec" (a function from inputs → render args)
+// LiveSchematic — interactive minimised circuit using CleanCircuit
 // =========================================================================
-interface SchematicSpec3 {
-  vars: 3;
+interface LiveCircuitDef {
+  topic: string;
   inputs: InputDef[];
-  // Compute output from inputs
-  compute: (a: Bit, b: Bit, c: Bit) => Bit;
-  // Render the gate body — given input bits, returns SVG group
-  renderCircuit: (a: Bit, b: Bit, c: Bit, out: Bit, isDark: boolean) => React.ReactNode;
+  terms: Term[];
 }
 
-interface SchematicSpec4 {
-  vars: 4;
-  inputs: InputDef[];
-  compute: (a: Bit, b: Bit, c: Bit, d: Bit) => Bit;
-  renderCircuit: (a: Bit, b: Bit, c: Bit, d: Bit, out: Bit, isDark: boolean) => React.ReactNode;
-}
+const LiveSchematic: React.FC<{ circuit: LiveCircuitDef; isDarkMode: boolean }> = ({ circuit, isDarkMode }) => {
+  const [bits, setBits] = useState<Bit[]>(() => circuit.inputs.map((_, i) => (i < 2 ? 1 : 0) as Bit));
 
-type SchematicSpec = SchematicSpec3 | SchematicSpec4;
-
-const wireColor = (v: Bit) => v === 1 ? '#fb7185' : '#475569';
-const wireGlow = (v: Bit) => v === 1 ? 'drop-shadow(0 0 4px rgba(251,113,133,0.7))' : 'none';
-
-const LiveSchematic: React.FC<{ spec: SchematicSpec; isDarkMode: boolean }> = ({ spec, isDarkMode }) => {
-  const [a, setA] = useState<Bit>(1);
-  const [b, setB] = useState<Bit>(1);
-  const [c, setC] = useState<Bit>(0);
-  const [d, setD] = useState<Bit>(1);
-
-  const out = useMemo(() => {
-    if (spec.vars === 3) return spec.compute(a, b, c);
-    return spec.compute(a, b, c, d);
-  }, [spec, a, b, c, d]);
-
-  const textColor = isDarkMode ? 'text-white' : 'text-slate-900';
   const subText = isDarkMode ? 'text-slate-300' : 'text-slate-600';
+
+  const cleanInputs: CleanInput[] = circuit.inputs.map((inp, i) => ({
+    sym: inp.sym,
+    meaning: inp.meaning,
+    accent: inp.accent,
+    value: bits[i],
+  }));
 
   return (
     <div className="space-y-4">
       <div className={`flex items-center gap-2 text-xs font-mono ${subText}`}>
-        <MousePointerClick size={12} /> Toggle inputs · watch the wires light up
+        <MousePointerClick size={12} /> Toggle inputs · watch the wires light up · gate values update live
       </div>
       <div className="flex gap-2 flex-wrap">
-        {spec.inputs.map((inp, i) => {
-          const v = i === 0 ? a : i === 1 ? b : i === 2 ? c : d;
-          const setV = i === 0 ? setA : i === 1 ? setB : i === 2 ? setC : setD;
+        {circuit.inputs.map((inp, i) => {
+          const v = bits[i];
+          const setV = (next: Bit) => setBits((arr) => arr.map((b, j) => (j === i ? next : b)) as Bit[]);
           return (
             <button
               key={inp.sym}
@@ -235,24 +217,19 @@ const LiveSchematic: React.FC<{ spec: SchematicSpec; isDarkMode: boolean }> = ({
         animate={{ opacity: 1 }}
         className={`rounded-2xl p-4 border ${isDarkMode ? 'bg-black/30 border-white/10' : 'bg-slate-50 border-slate-200'}`}
       >
-        <svg viewBox="0 0 720 280" className="w-full h-auto">
-          {spec.vars === 3
-            ? spec.renderCircuit(a, b, c, out, isDarkMode)
-            : spec.renderCircuit(a, b, c, d, out, isDarkMode)}
-        </svg>
+        <CleanCircuit
+          topic={circuit.topic}
+          inputs={cleanInputs}
+          terms={circuit.terms}
+          isDark={isDarkMode}
+        />
       </motion.div>
-      <div className={`p-3 rounded-xl border ${out ? 'border-emerald-400 bg-emerald-500/10' : isDarkMode ? 'border-white/10 bg-black/30' : 'border-slate-200 bg-slate-50'}`}>
-        <span className={`font-mono text-sm ${out ? 'text-emerald-300 font-black' : textColor}`}>
-          F = {out} {out ? '· ACTIVE' : '· INACTIVE'}
-        </span>
-      </div>
     </div>
   );
 };
 
 // =========================================================================
-// ScenarioCanonicalCircuit — shows the BLOATED canonical SOP circuit
-// (visual hint at how much waste the K-Map will eliminate)
+// CanonicalCircuitHint — bloated sum-of-minterms preview
 // =========================================================================
 const CanonicalCircuitHint: React.FC<{ minterms: number[]; vars: 3 | 4 }> = ({ minterms, vars }) => {
   const literalCount = minterms.length * vars;
@@ -264,9 +241,9 @@ const CanonicalCircuitHint: React.FC<{ minterms: number[]; vars: 3 | 4 }> = ({ m
   const railSpacing = 14;
   const railStartX = 26;
   const lastRailX = railStartX + (labels.length - 1) * railSpacing;
-  const andX = lastRailX + 38; // where the AND body starts
+  const andX = lastRailX + 38;
   const andBodyW = 14;
-  const andTipX = andX + andBodyW + 10; // AND output point
+  const andTipX = andX + andBodyW + 10;
   const rowH = 32;
   const topY = 26;
   const orX = andTipX + 80;
@@ -275,305 +252,67 @@ const CanonicalCircuitHint: React.FC<{ minterms: number[]; vars: 3 | 4 }> = ({ m
   const totalH = topY + shown.length * rowH + 18;
   const orMidY = topY + (shown.length * rowH) / 2 - rowH / 2 + 12;
 
-  // Spread of fan-in inputs across the AND body height
-  const fanSpread = 6; // total ±fanSpread vertical spread of input wires
+  const fanSpread = 6;
   const inputY = (j: number) => -fanSpread + (j * 2 * fanSpread) / Math.max(1, vars - 1);
 
   return (
     <svg viewBox={`0 0 ${outX + 36} ${totalH + 16}`} className="w-full h-auto">
-      {/* Rail labels at top */}
       {labels.map((lbl, i) => (
         <text key={lbl} x={railStartX + i * railSpacing} y={14} textAnchor="middle"
               fontSize="11" fontWeight="bold" fill={rail[i]} fontFamily="monospace">{lbl}</text>
       ))}
-      {/* Vertical input rails */}
       {labels.map((_, i) => (
         <line key={i} x1={railStartX + i * railSpacing} y1={20}
               x2={railStartX + i * railSpacing} y2={topY + shown.length * rowH + 2}
               stroke={rail[i]} strokeWidth="1.5" opacity="0.65" />
       ))}
 
-      {/* AND gates · one per minterm · with fan-in from every rail */}
       {shown.map((m, i) => {
         const cy = topY + i * rowH + 14;
         const bits = m.toString(2).padStart(vars, '0').split('').map(Number);
         return (
           <g key={i}>
-            {/* Tap from each rail — colored, with NOT bubble for primed inputs */}
             {bits.map((b, j) => {
               const fromX = railStartX + j * railSpacing;
               const yIn = cy + inputY(j);
               const isPrimed = b === 0;
               return (
                 <g key={j}>
-                  {/* Vertical drop from rail to input row */}
                   <line x1={fromX} y1={cy - fanSpread - 2} x2={fromX} y2={yIn} stroke={rail[j]} strokeWidth="1" opacity="0.7" />
-                  {/* Horizontal feed into AND */}
                   <line x1={fromX} y1={yIn} x2={andX - (isPrimed ? 6 : 0)} y2={yIn} stroke={rail[j]} strokeWidth="1" opacity="0.85" />
-                  {/* NOT bubble when input bit is 0 (primed literal) */}
                   {isPrimed && (
                     <circle cx={andX - 4} cy={yIn} r={2.4} fill="none" stroke={rail[j]} strokeWidth="1.2" />
                   )}
                 </g>
               );
             })}
-            {/* AND gate body */}
             <path d={`M ${andX} ${cy - 9} L ${andX + andBodyW} ${cy - 9} A 9 9 0 0 1 ${andX + andBodyW} ${cy + 9} L ${andX} ${cy + 9} Z`}
                   fill="none" stroke="#fbbf24" strokeWidth="1.6" />
-            {/* AND output → OR */}
             <line x1={andTipX} y1={cy} x2={orX - 1} y2={cy} stroke="#fbbf24" strokeWidth="1.6" />
-            {/* Minterm label */}
             <text x={andTipX + 4} y={cy - 4} fontSize="8" fill="#fbbf24" opacity="0.85" fontFamily="monospace">m{m}</text>
           </g>
         );
       })}
 
-      {/* "and more" dots if minterm count exceeds shown */}
       {minterms.length > shown.length && (
         <text x={andX + andBodyW / 2} y={topY + shown.length * rowH + 6} textAnchor="middle"
               fontSize="14" fontWeight="bold" fill="#fbbf24" opacity="0.7" fontFamily="monospace">⋮</text>
       )}
 
-      {/* Tall OR gate spanning all AND outputs */}
       <path d={`M ${orX} ${topY - 6} Q ${orX + 16} ${orMidY} ${orX} ${topY + shown.length * rowH + 4}
                 Q ${orX + orW - 16} ${topY + shown.length * rowH - 4} ${outX} ${orMidY}
                 Q ${orX + orW - 16} ${topY - 4} ${orX} ${topY - 6} Z`}
             fill="none" stroke="#22c55e" strokeWidth="2" />
       <text x={orX + 16} y={orMidY + 4} fontSize="11" fontWeight="bold" fill="#22c55e" fontFamily="monospace">OR</text>
 
-      {/* OR output line + F label */}
       <line x1={outX} y1={orMidY} x2={outX + 30} y2={orMidY} stroke="#22c55e" strokeWidth="2.5" />
       <text x={outX + 12} y={orMidY - 5} fontSize="13" fontWeight="bold" fill="#22c55e" fontFamily="monospace">F</text>
 
-      {/* Cost annotation */}
       <text x="20" y={totalH + 12} fontSize="10" fontFamily="monospace" fill="#fb7185" fontWeight="bold">
         {andCount} ANDs · {literalCount} literals · BLOATED
       </text>
     </svg>
   );
-};
-
-// =========================================================================
-// PROBLEM DEFINITIONS — scenario-driven, each with circuit + multi-questions
-// =========================================================================
-
-// ── Problem 1: Smart Coffee Machine — F(A,B,C) = AB + B'C ─────────────────
-const Q1: SchematicSpec3 = {
-  vars: 3,
-  inputs: [
-    { sym: 'A', meaning: 'Cup detected', accent: '#0ea5e9' },
-    { sym: 'B', meaning: 'Drink button',  accent: '#22d3ee' },
-    { sym: 'C', meaning: 'Auto-clean',    accent: '#f59e0b' },
-  ],
-  compute: (a, b, c) => (((a && b) || ((!b) && c)) ? 1 : 0) as Bit,
-  renderCircuit: (a, b, c, out, isDark) => {
-    const bn: Bit = (b === 0 ? 1 : 0) as Bit;
-    const ab: Bit = (a && b) ? 1 : 0;
-    const bnc: Bit = ((!b) && c) ? 1 : 0;
-    return (
-      <g>
-        <text x="14" y="40" fontSize="13" fontWeight="bold" fill="#0ea5e9" fontFamily="monospace">A</text>
-        <text x="14" y="120" fontSize="13" fontWeight="bold" fill="#22d3ee" fontFamily="monospace">B</text>
-        <text x="14" y="220" fontSize="13" fontWeight="bold" fill="#f59e0b" fontFamily="monospace">C</text>
-        {/* A line */}
-        <line x1="40" y1="36" x2="240" y2="60" stroke={wireColor(a)} strokeWidth="2.5" style={{ filter: wireGlow(a) }} />
-        {/* B line splits — to AND1 directly + to NOT */}
-        <line x1="40" y1="116" x2="240" y2="100" stroke={wireColor(b)} strokeWidth="2" style={{ filter: wireGlow(b) }} />
-        <line x1="40" y1="116" x2="120" y2="180" stroke={wireColor(b)} strokeWidth="2" style={{ filter: wireGlow(b) }} />
-        {/* NOT(B) */}
-        <polygon points="120,170 144,180 120,190" fill="none" stroke="#fb7185" strokeWidth="2" />
-        <circle cx="148" cy="180" r="3" fill="none" stroke="#fb7185" strokeWidth="2" />
-        <text x="118" y="166" fontSize="9" fill="#fb7185" fontFamily="monospace">NOT</text>
-        <line x1="151" y1="180" x2="240" y2="180" stroke={wireColor(bn)} strokeWidth="2" style={{ filter: wireGlow(bn) }} />
-        <text x="155" y="174" fontSize="10" fill="#fcd34d" fontFamily="monospace">B′</text>
-        {/* C line */}
-        <line x1="40" y1="216" x2="240" y2="220" stroke={wireColor(c)} strokeWidth="2" style={{ filter: wireGlow(c) }} />
-        {/* AND1: A·B */}
-        <path d="M 240 50 L 270 50 A 22 22 0 0 1 270 110 L 240 110 Z" fill={isDark ? '#0a0e1a' : '#fff'} stroke="#fcd34d" strokeWidth="2" />
-        <text x="247" y="84" fontSize="10" fill="#fcd34d" fontFamily="monospace">AND</text>
-        <line x1="293" y1="80" x2="450" y2="100" stroke={wireColor(ab)} strokeWidth="2.5" style={{ filter: wireGlow(ab) }} />
-        <text x="320" y="74" fontSize="10" fill="#fcd34d" fontFamily="monospace">AB={ab}</text>
-        {/* AND2: B'·C */}
-        <path d="M 240 170 L 270 170 A 22 22 0 0 1 270 230 L 240 230 Z" fill={isDark ? '#0a0e1a' : '#fff'} stroke="#fcd34d" strokeWidth="2" />
-        <text x="247" y="204" fontSize="10" fill="#fcd34d" fontFamily="monospace">AND</text>
-        <line x1="293" y1="200" x2="450" y2="180" stroke={wireColor(bnc)} strokeWidth="2.5" style={{ filter: wireGlow(bnc) }} />
-        <text x="316" y="194" fontSize="10" fill="#fcd34d" fontFamily="monospace">B′C={bnc}</text>
-        {/* OR */}
-        <path d="M 450 80 Q 470 140 450 200 Q 530 188 565 140 Q 530 92 450 80 Z" fill={isDark ? '#0a0e1a' : '#fff'} stroke="#22c55e" strokeWidth="2.5" />
-        <text x="470" y="146" fontSize="12" fill="#22c55e" fontFamily="monospace" fontWeight="bold">OR</text>
-        <line x1="565" y1="140" x2="690" y2="140" stroke={wireColor(out)} strokeWidth="3.5" style={{ filter: wireGlow(out) }} />
-        <rect x="640" y="118" width="60" height="46" rx="6" fill={out ? '#fb7185' : 'none'} stroke="#fb7185" strokeWidth="2.5"
-              style={{ filter: out ? 'drop-shadow(0 0 18px rgba(251,113,133,0.7))' : 'none' }} />
-        <text x="650" y="148" fontSize="18" fill={out ? '#000' : '#fb7185'} fontFamily="monospace" fontWeight="bold">F={out}</text>
-      </g>
-    );
-  },
-};
-
-// ── Problem 2: Drone Autopilot — F(A,B,C) = A'B + AC ──────────────────────
-const Q2: SchematicSpec3 = {
-  vars: 3,
-  inputs: [
-    { sym: 'A', meaning: 'GPS lock',   accent: '#0ea5e9' },
-    { sym: 'B', meaning: 'Manual stick', accent: '#22d3ee' },
-    { sym: 'C', meaning: 'Autopilot',  accent: '#f59e0b' },
-  ],
-  compute: (a, b, c) => ((((!a) && b) || (a && c)) ? 1 : 0) as Bit,
-  renderCircuit: (a, b, c, out, isDark) => {
-    const an: Bit = (a === 0 ? 1 : 0) as Bit;
-    const anb: Bit = ((!a) && b) ? 1 : 0;
-    const ac: Bit = (a && c) ? 1 : 0;
-    return (
-      <g>
-        <text x="14" y="40" fontSize="13" fontWeight="bold" fill="#0ea5e9" fontFamily="monospace">A</text>
-        <text x="14" y="120" fontSize="13" fontWeight="bold" fill="#22d3ee" fontFamily="monospace">B</text>
-        <text x="14" y="220" fontSize="13" fontWeight="bold" fill="#f59e0b" fontFamily="monospace">C</text>
-        {/* A splits: to NOT and direct */}
-        <line x1="40" y1="36" x2="120" y2="80" stroke={wireColor(a)} strokeWidth="2" style={{ filter: wireGlow(a) }} />
-        <line x1="40" y1="36" x2="240" y2="220" stroke={wireColor(a)} strokeWidth="2" style={{ filter: wireGlow(a) }} />
-        {/* NOT(A) */}
-        <polygon points="120,70 144,80 120,90" fill="none" stroke="#fb7185" strokeWidth="2" />
-        <circle cx="148" cy="80" r="3" fill="none" stroke="#fb7185" strokeWidth="2" />
-        <text x="118" y="66" fontSize="9" fill="#fb7185" fontFamily="monospace">NOT</text>
-        <line x1="151" y1="80" x2="240" y2="80" stroke={wireColor(an)} strokeWidth="2" style={{ filter: wireGlow(an) }} />
-        <text x="155" y="74" fontSize="10" fill="#fcd34d" fontFamily="monospace">A′</text>
-        {/* B */}
-        <line x1="40" y1="116" x2="240" y2="100" stroke={wireColor(b)} strokeWidth="2" style={{ filter: wireGlow(b) }} />
-        {/* C */}
-        <line x1="40" y1="216" x2="240" y2="200" stroke={wireColor(c)} strokeWidth="2" style={{ filter: wireGlow(c) }} />
-        {/* AND1: A'·B */}
-        <path d="M 240 70 L 270 70 A 22 22 0 0 1 270 110 L 240 110 Z" fill={isDark ? '#0a0e1a' : '#fff'} stroke="#fcd34d" strokeWidth="2" />
-        <text x="247" y="94" fontSize="10" fill="#fcd34d" fontFamily="monospace">AND</text>
-        <line x1="293" y1="90" x2="450" y2="100" stroke={wireColor(anb)} strokeWidth="2.5" style={{ filter: wireGlow(anb) }} />
-        <text x="305" y="84" fontSize="10" fill="#fcd34d" fontFamily="monospace">A′B={anb}</text>
-        {/* AND2: A·C */}
-        <path d="M 240 190 L 270 190 A 22 22 0 0 1 270 230 L 240 230 Z" fill={isDark ? '#0a0e1a' : '#fff'} stroke="#fcd34d" strokeWidth="2" />
-        <text x="247" y="214" fontSize="10" fill="#fcd34d" fontFamily="monospace">AND</text>
-        <line x1="293" y1="210" x2="450" y2="180" stroke={wireColor(ac)} strokeWidth="2.5" style={{ filter: wireGlow(ac) }} />
-        <text x="316" y="204" fontSize="10" fill="#fcd34d" fontFamily="monospace">AC={ac}</text>
-        {/* OR */}
-        <path d="M 450 80 Q 470 140 450 200 Q 530 188 565 140 Q 530 92 450 80 Z" fill={isDark ? '#0a0e1a' : '#fff'} stroke="#22c55e" strokeWidth="2.5" />
-        <text x="470" y="146" fontSize="12" fill="#22c55e" fontFamily="monospace" fontWeight="bold">OR</text>
-        <line x1="565" y1="140" x2="690" y2="140" stroke={wireColor(out)} strokeWidth="3.5" style={{ filter: wireGlow(out) }} />
-        <rect x="640" y="118" width="60" height="46" rx="6" fill={out ? '#fb7185' : 'none'} stroke="#fb7185" strokeWidth="2.5"
-              style={{ filter: out ? 'drop-shadow(0 0 18px rgba(251,113,133,0.7))' : 'none' }} />
-        <text x="650" y="148" fontSize="18" fill={out ? '#000' : '#fb7185'} fontFamily="monospace" fontWeight="bold">F={out}</text>
-      </g>
-    );
-  },
-};
-
-// ── Problem 3: Encrypted Lock XOR — F(A,B,C,D) = B'D + BD' = B⊕D ──────────
-const Q3: SchematicSpec4 = {
-  vars: 4,
-  inputs: [
-    { sym: 'A', meaning: 'Camera face', accent: '#0ea5e9' },
-    { sym: 'B', meaning: 'Voice match', accent: '#22d3ee' },
-    { sym: 'C', meaning: 'Card scan',   accent: '#a78bfa' },
-    { sym: 'D', meaning: 'PIN entered', accent: '#f59e0b' },
-  ],
-  compute: (_a, b, _c, d) => (((!b && d) || (b && !d)) ? 1 : 0) as Bit,
-  renderCircuit: (_a, b, _c, d, out, isDark) => {
-    const bn: Bit = (b === 0 ? 1 : 0) as Bit;
-    const dn: Bit = (d === 0 ? 1 : 0) as Bit;
-    const bnd: Bit = (!b && d) ? 1 : 0;
-    const bdn: Bit = (b && !d) ? 1 : 0;
-    return (
-      <g>
-        <text x="14" y="80" fontSize="13" fontWeight="bold" fill="#22d3ee" fontFamily="monospace">B</text>
-        <text x="14" y="200" fontSize="13" fontWeight="bold" fill="#f59e0b" fontFamily="monospace">D</text>
-        {/* B → split: NOT and direct */}
-        <line x1="40" y1="76" x2="100" y2="60" stroke={wireColor(b)} strokeWidth="2" style={{ filter: wireGlow(b) }} />
-        <line x1="40" y1="76" x2="240" y2="180" stroke={wireColor(b)} strokeWidth="2" style={{ filter: wireGlow(b) }} />
-        {/* NOT(B) */}
-        <polygon points="100,50 124,60 100,70" fill="none" stroke="#fb7185" strokeWidth="2" />
-        <circle cx="128" cy="60" r="3" fill="none" stroke="#fb7185" strokeWidth="2" />
-        <line x1="131" y1="60" x2="240" y2="80" stroke={wireColor(bn)} strokeWidth="2" style={{ filter: wireGlow(bn) }} />
-        <text x="135" y="54" fontSize="10" fill="#fcd34d" fontFamily="monospace">B′</text>
-        {/* D → split: NOT and direct */}
-        <line x1="40" y1="196" x2="240" y2="100" stroke={wireColor(d)} strokeWidth="2" style={{ filter: wireGlow(d) }} />
-        <line x1="40" y1="196" x2="100" y2="220" stroke={wireColor(d)} strokeWidth="2" style={{ filter: wireGlow(d) }} />
-        <polygon points="100,210 124,220 100,230" fill="none" stroke="#fb7185" strokeWidth="2" />
-        <circle cx="128" cy="220" r="3" fill="none" stroke="#fb7185" strokeWidth="2" />
-        <line x1="131" y1="220" x2="240" y2="200" stroke={wireColor(dn)} strokeWidth="2" style={{ filter: wireGlow(dn) }} />
-        <text x="135" y="214" fontSize="10" fill="#fcd34d" fontFamily="monospace">D′</text>
-        {/* AND1: B'·D */}
-        <path d="M 240 70 L 270 70 A 22 22 0 0 1 270 110 L 240 110 Z" fill={isDark ? '#0a0e1a' : '#fff'} stroke="#fcd34d" strokeWidth="2" />
-        <text x="247" y="94" fontSize="10" fill="#fcd34d" fontFamily="monospace">AND</text>
-        <line x1="293" y1="90" x2="450" y2="100" stroke={wireColor(bnd)} strokeWidth="2.5" style={{ filter: wireGlow(bnd) }} />
-        <text x="305" y="84" fontSize="10" fill="#fcd34d" fontFamily="monospace">B′D={bnd}</text>
-        {/* AND2: B·D' */}
-        <path d="M 240 170 L 270 170 A 22 22 0 0 1 270 210 L 240 210 Z" fill={isDark ? '#0a0e1a' : '#fff'} stroke="#fcd34d" strokeWidth="2" />
-        <text x="247" y="194" fontSize="10" fill="#fcd34d" fontFamily="monospace">AND</text>
-        <line x1="293" y1="190" x2="450" y2="180" stroke={wireColor(bdn)} strokeWidth="2.5" style={{ filter: wireGlow(bdn) }} />
-        <text x="305" y="184" fontSize="10" fill="#fcd34d" fontFamily="monospace">BD′={bdn}</text>
-        {/* OR */}
-        <path d="M 450 80 Q 470 140 450 200 Q 530 188 565 140 Q 530 92 450 80 Z" fill={isDark ? '#0a0e1a' : '#fff'} stroke="#22c55e" strokeWidth="2.5" />
-        <text x="470" y="146" fontSize="12" fill="#22c55e" fontFamily="monospace" fontWeight="bold">OR</text>
-        <line x1="565" y1="140" x2="690" y2="140" stroke={wireColor(out)} strokeWidth="3.5" style={{ filter: wireGlow(out) }} />
-        <rect x="640" y="118" width="60" height="46" rx="6" fill={out ? '#fb7185' : 'none'} stroke="#fb7185" strokeWidth="2.5"
-              style={{ filter: out ? 'drop-shadow(0 0 18px rgba(251,113,133,0.7))' : 'none' }} />
-        <text x="650" y="148" fontSize="18" fill={out ? '#000' : '#fb7185'} fontFamily="monospace" fontWeight="bold">F={out}</text>
-      </g>
-    );
-  },
-};
-
-// ── Problem 4: Conveyor Safety — F(A,B,C,D) = B'C' + BD ───────────────────
-const Q4: SchematicSpec4 = {
-  vars: 4,
-  inputs: [
-    { sym: 'A', meaning: 'Operator (irrelevant!)', accent: '#475569' },
-    { sym: 'B', meaning: 'Belt running', accent: '#22d3ee' },
-    { sym: 'C', meaning: 'Box on belt',  accent: '#a78bfa' },
-    { sym: 'D', meaning: 'QA passed',    accent: '#f59e0b' },
-  ],
-  compute: (_a, b, c, d) => (((!b && !c) || (b && d)) ? 1 : 0) as Bit,
-  renderCircuit: (_a, b, c, d, out, isDark) => {
-    const bn: Bit = (b === 0 ? 1 : 0) as Bit;
-    const cn: Bit = (c === 0 ? 1 : 0) as Bit;
-    const bncn: Bit = (!b && !c) ? 1 : 0;
-    const bd: Bit = (b && d) ? 1 : 0;
-    return (
-      <g>
-        <text x="14" y="50" fontSize="13" fontWeight="bold" fill="#22d3ee" fontFamily="monospace">B</text>
-        <text x="14" y="120" fontSize="13" fontWeight="bold" fill="#a78bfa" fontFamily="monospace">C</text>
-        <text x="14" y="220" fontSize="13" fontWeight="bold" fill="#f59e0b" fontFamily="monospace">D</text>
-        {/* B → split */}
-        <line x1="40" y1="46" x2="100" y2="40" stroke={wireColor(b)} strokeWidth="2" style={{ filter: wireGlow(b) }} />
-        <line x1="40" y1="46" x2="240" y2="180" stroke={wireColor(b)} strokeWidth="2" style={{ filter: wireGlow(b) }} />
-        <polygon points="100,30 124,40 100,50" fill="none" stroke="#fb7185" strokeWidth="2" />
-        <circle cx="128" cy="40" r="3" fill="none" stroke="#fb7185" strokeWidth="2" />
-        <line x1="131" y1="40" x2="240" y2="60" stroke={wireColor(bn)} strokeWidth="2" style={{ filter: wireGlow(bn) }} />
-        <text x="135" y="34" fontSize="10" fill="#fcd34d" fontFamily="monospace">B′</text>
-        {/* C → NOT */}
-        <line x1="40" y1="116" x2="100" y2="120" stroke={wireColor(c)} strokeWidth="2" style={{ filter: wireGlow(c) }} />
-        <polygon points="100,110 124,120 100,130" fill="none" stroke="#fb7185" strokeWidth="2" />
-        <circle cx="128" cy="120" r="3" fill="none" stroke="#fb7185" strokeWidth="2" />
-        <line x1="131" y1="120" x2="240" y2="100" stroke={wireColor(cn)} strokeWidth="2" style={{ filter: wireGlow(cn) }} />
-        <text x="135" y="114" fontSize="10" fill="#fcd34d" fontFamily="monospace">C′</text>
-        {/* D direct */}
-        <line x1="40" y1="216" x2="240" y2="200" stroke={wireColor(d)} strokeWidth="2" style={{ filter: wireGlow(d) }} />
-        {/* AND1: B'·C' */}
-        <path d="M 240 50 L 270 50 A 22 22 0 0 1 270 110 L 240 110 Z" fill={isDark ? '#0a0e1a' : '#fff'} stroke="#fcd34d" strokeWidth="2" />
-        <text x="247" y="84" fontSize="10" fill="#fcd34d" fontFamily="monospace">AND</text>
-        <line x1="293" y1="80" x2="450" y2="100" stroke={wireColor(bncn)} strokeWidth="2.5" style={{ filter: wireGlow(bncn) }} />
-        <text x="305" y="74" fontSize="10" fill="#fcd34d" fontFamily="monospace">B′C′={bncn}</text>
-        {/* AND2: B·D */}
-        <path d="M 240 170 L 270 170 A 22 22 0 0 1 270 210 L 240 210 Z" fill={isDark ? '#0a0e1a' : '#fff'} stroke="#fcd34d" strokeWidth="2" />
-        <text x="247" y="194" fontSize="10" fill="#fcd34d" fontFamily="monospace">AND</text>
-        <line x1="293" y1="190" x2="450" y2="180" stroke={wireColor(bd)} strokeWidth="2.5" style={{ filter: wireGlow(bd) }} />
-        <text x="305" y="184" fontSize="10" fill="#fcd34d" fontFamily="monospace">BD={bd}</text>
-        {/* OR */}
-        <path d="M 450 80 Q 470 140 450 200 Q 530 188 565 140 Q 530 92 450 80 Z" fill={isDark ? '#0a0e1a' : '#fff'} stroke="#22c55e" strokeWidth="2.5" />
-        <text x="470" y="146" fontSize="12" fill="#22c55e" fontFamily="monospace" fontWeight="bold">OR</text>
-        <line x1="565" y1="140" x2="690" y2="140" stroke={wireColor(out)} strokeWidth="3.5" style={{ filter: wireGlow(out) }} />
-        <rect x="640" y="118" width="60" height="46" rx="6" fill={out ? '#fb7185' : 'none'} stroke="#fb7185" strokeWidth="2.5"
-              style={{ filter: out ? 'drop-shadow(0 0 18px rgba(251,113,133,0.7))' : 'none' }} />
-        <text x="650" y="148" fontSize="18" fill={out ? '#000' : '#fb7185'} fontFamily="monospace" fontWeight="bold">F={out}</text>
-      </g>
-    );
-  },
 };
 
 // =========================================================================
@@ -600,9 +339,33 @@ interface ProblemConfig {
   minimisedSOP: string;
   hardware: { not: number; and: string; or: string; total: number };
   questions: { q: string; answer: string }[];
-  schematic: SchematicSpec;
+  circuit: LiveCircuitDef;
   redundantNote?: string;
 }
+
+// Q1 inputs
+const Q1_INPUTS: InputDef[] = [
+  { sym: 'A', meaning: 'Cup detected', accent: '#0ea5e9' },
+  { sym: 'B', meaning: 'Drink button',  accent: '#22d3ee' },
+  { sym: 'C', meaning: 'Auto-clean',    accent: '#f59e0b' },
+];
+const Q2_INPUTS: InputDef[] = [
+  { sym: 'A', meaning: 'GPS lock',     accent: '#0ea5e9' },
+  { sym: 'B', meaning: 'Manual stick', accent: '#22d3ee' },
+  { sym: 'C', meaning: 'Autopilot',    accent: '#f59e0b' },
+];
+const Q3_INPUTS: InputDef[] = [
+  { sym: 'A', meaning: 'Camera face', accent: '#0ea5e9' },
+  { sym: 'B', meaning: 'Voice match', accent: '#22d3ee' },
+  { sym: 'C', meaning: 'Card scan',   accent: '#a78bfa' },
+  { sym: 'D', meaning: 'PIN entered', accent: '#f59e0b' },
+];
+const Q4_INPUTS: InputDef[] = [
+  { sym: 'A', meaning: 'Operator (irrelevant)', accent: '#475569' },
+  { sym: 'B', meaning: 'Belt running',          accent: '#22d3ee' },
+  { sym: 'C', meaning: 'Box on belt',           accent: '#a78bfa' },
+  { sym: 'D', meaning: 'QA passed',             accent: '#f59e0b' },
+];
 
 const PROBLEMS: ProblemConfig[] = [
   // Q1 — Coffee Machine
@@ -617,7 +380,7 @@ const PROBLEMS: ProblemConfig[] = [
       story: 'A coffee machine has 3 sensors: a cup, a button, and an auto-clean switch. The pump should run in two cases — when someone is making coffee (cup is there AND button is pressed), OR when auto-clean is running and no button is pressed.',
       rule: 'Pump = 1 when (Cup AND Button) OR when (NO Button AND Auto-clean).',
     },
-    inputs: Q1.inputs,
+    inputs: Q1_INPUTS,
     output: { sym: 'F', meaning: 'Pump on' },
     vars: 3,
     active: [1, 5, 6, 7],
@@ -638,10 +401,17 @@ const PROBLEMS: ProblemConfig[] = [
       { q: 'Use the K-Map to find the shortest equation.',                     answer: 'F = AB + B′C · only 2 terms · only 4 letters.' },
       { q: 'How many gates does the smaller circuit need?',                    answer: '4 gates · 1 NOT (for B′), 2 ANDs, 1 OR.' },
     ],
-    schematic: Q1,
+    circuit: {
+      topic: 'Sum-of-Products · F = AB + B′C',
+      inputs: Q1_INPUTS,
+      terms: [
+        term([lit('A'), lit('B')], '#fb923c'),
+        term([not('B'), lit('C')], '#22d3ee'),
+      ],
+    },
   },
 
-  // Q2 — Drone Autopilot
+  // Q2 — Drone
   {
     id: 'q2',
     Icon: Plane,
@@ -653,7 +423,7 @@ const PROBLEMS: ProblemConfig[] = [
       story: 'A drone has two flight modes. Manual mode: no GPS yet, so the pilot uses the stick. Auto mode: GPS is locked, so the autopilot takes over. The motors should turn on in either of those modes.',
       rule: 'Motors = 1 when (NO GPS AND stick) OR when (GPS AND autopilot).',
     },
-    inputs: Q2.inputs,
+    inputs: Q2_INPUTS,
     output: { sym: 'F', meaning: 'Motors armed' },
     vars: 3,
     active: [2, 3, 5, 7],
@@ -674,10 +444,17 @@ const PROBLEMS: ProblemConfig[] = [
       { q: 'How does the K-Map get from 4 rows down to 2 terms?',           answer: 'Group {m2, m3} drops C → leaves A′B. Group {m5, m7} drops B → leaves AC. Two groups cover all 4 rows.' },
       { q: 'How many gates does the final circuit need?',                   answer: '4 gates · 1 NOT (for A′), 2 ANDs, 1 OR.' },
     ],
-    schematic: Q2,
+    circuit: {
+      topic: 'Sum-of-Products · F = A′B + AC',
+      inputs: Q2_INPUTS,
+      terms: [
+        term([not('A'), lit('B')], '#22d3ee'),
+        term([lit('A'), lit('C')], '#fb923c'),
+      ],
+    },
   },
 
-  // Q3 — Encrypted Lock XOR
+  // Q3 — XOR Lock
   {
     id: 'q3',
     Icon: Lock,
@@ -689,7 +466,7 @@ const PROBLEMS: ProblemConfig[] = [
       story: 'A vault has 4 sensors: camera (A), voice (B), card (C), PIN (D). The alarm should fire when EXACTLY ONE of voice or PIN matches — that usually means someone is faking. The camera and card are also wired in but might not matter.',
       rule: 'Alarm = 1 when EXACTLY ONE of voice or PIN is on (not both, not neither).',
     },
-    inputs: Q3.inputs,
+    inputs: Q3_INPUTS,
     output: { sym: 'F', meaning: 'Tamper alarm' },
     vars: 4,
     active: [1, 3, 4, 6, 9, 11, 12, 14],
@@ -710,11 +487,18 @@ const PROBLEMS: ProblemConfig[] = [
       { q: 'How many gates does the final circuit need?',                   answer: '5 gates · 2 NOTs, 2 ANDs, 1 OR · or just 1 XOR chip if you have one.' },
       { q: 'If you had a single XOR chip, could you replace this whole circuit with one part?', answer: 'Yes — one XOR chip = 5 small gates here. Same logic, smaller circuit board.' },
     ],
-    schematic: Q3,
+    circuit: {
+      topic: 'XOR · F = B′D + BD′  ≡  B ⊕ D  (A & C unused)',
+      inputs: Q3_INPUTS,
+      terms: [
+        term([not('B'), lit('D')], '#22d3ee'),
+        term([lit('B'), not('D')], '#fb923c'),
+      ],
+    },
     redundantNote: 'A and C do NOT show up in the final circuit — they don\'t change the alarm at all.',
   },
 
-  // Q4 — Conveyor safety
+  // Q4 — Conveyor
   {
     id: 'q4',
     Icon: PackageCheck,
@@ -726,7 +510,7 @@ const PROBLEMS: ProblemConfig[] = [
       story: 'A factory belt is safe to move in two cases: when it is OFF and there is NO box on it, OR when it is ON and a box just passed inspection. The operator sensor (A) is also wired in, but does it actually matter?',
       rule: 'Move = 1 when (Belt OFF AND no box) OR when (Belt ON AND inspection passed).',
     },
-    inputs: Q4.inputs,
+    inputs: Q4_INPUTS,
     output: { sym: 'F', meaning: 'Belt advance' },
     vars: 4,
     active: [0, 1, 5, 7, 8, 9, 13, 15],
@@ -751,7 +535,14 @@ const PROBLEMS: ProblemConfig[] = [
       { q: 'How many gates does the final circuit need?',
         answer: '5 gates · 2 NOTs (for B′ and C′), 2 ANDs, 1 OR.' },
     ],
-    schematic: Q4,
+    circuit: {
+      topic: 'SOP · F = B′C′ + BD  (operator sensor A is a dead wire)',
+      inputs: Q4_INPUTS,
+      terms: [
+        term([not('B'), not('C')], '#22d3ee'),
+        term([lit('B'), lit('D')], '#fb923c'),
+      ],
+    },
     redundantNote: 'A is irrelevant — it never even reaches a gate in the final circuit.',
   },
 ];
@@ -805,6 +596,12 @@ const ProblemCard: React.FC<{ p: ProblemConfig; isDarkMode: boolean }> = ({ p, i
             </span>
             <span className="font-mono text-[10px] uppercase tracking-widest opacity-60">
               {p.vars}-variable scenario
+            </span>
+            <span
+              className="font-mono text-[10px] uppercase tracking-widest font-black px-2 py-0.5 rounded"
+              style={{ background: '#a78bfa22', color: '#a78bfa', border: '1px solid #a78bfa55' }}
+            >
+              Topic · {p.circuit.topic.replace(/^[^·]+·\s*/, '')}
             </span>
           </div>
           <h3 className={`text-2xl font-black ${textColor}`}>{p.title}</h3>
@@ -1065,7 +862,7 @@ const ProblemCard: React.FC<{ p: ProblemConfig; isDarkMode: boolean }> = ({ p, i
                       <div className="font-mono text-[10px] uppercase tracking-widest text-rose-300">
                         Step 5 · Live optimised schematic — toggle inputs
                       </div>
-                      <LiveSchematic spec={p.schematic} isDarkMode={isDarkMode} />
+                      <LiveSchematic circuit={p.circuit} isDarkMode={isDarkMode} />
                     </div>
                   )}
                 </motion.div>
@@ -1147,7 +944,8 @@ export const S01_Forward: React.FC<Props> = ({ isActive, isDarkMode }) => {
           You get a short story and the rows where the output is 1. Your job: build the smallest
           circuit that does it. Read the story, then click <strong className="text-rose-300">Solve it</strong> to
           walk through 5 animated steps: write down the minterms → plot them on the K-Map →
-          group them → simplify → live circuit you can play with.
+          group them → simplify → live circuit you can play with. Every schematic uses the same
+          clean grid layout: <span className="text-rose-300 font-mono">rails on the left · NOTs inline · ANDs stacked · OR on the right · output box on the far right.</span>
         </p>
       </motion.section>
 
@@ -1174,7 +972,7 @@ export const S01_Forward: React.FC<Props> = ({ isActive, isDarkMode }) => {
         transition={{ delay: 0.4 }}
         className={`text-center text-xs font-mono uppercase tracking-[0.3em] ${subText}`}
       >
-        Module 04 complete · scenario-driven circuit realisation mastered
+        Drill Set 01 complete · onward to reverse engineering
       </motion.div>
     </div>
   );

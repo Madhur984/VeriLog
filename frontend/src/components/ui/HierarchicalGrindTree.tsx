@@ -541,6 +541,21 @@ const L6_PATHS: PathOption[] = [
         ],
       },
       {
+        id: 'be4', label: 'Rectifiers & Filters', subtitle: 'L3 · RECTIFIERS · FILTERS', route: '/basic-electronics/4/cover',
+        submodules: [
+          { id: 'be4s0', label: 'Cover · Rectifiers & Filters',         route: '/basic-electronics/4/cover'      },
+          { id: 'be4s1', label: 'Video · EN + HI transcript',           route: '/basic-electronics/4/video'      },
+          { id: 'be4s2', label: 'Step 1 · Why We Rectify · AC vs DC',   route: '/basic-electronics/4/challenge'  },
+          { id: 'be4s3', label: 'Step 2 · The Plumbing Analogy',        route: '/basic-electronics/4/analogy'    },
+          { id: 'be4s4', label: 'Step 3 · The Diode · One-Way Valve',   route: '/basic-electronics/4/diode'      },
+          { id: 'be4s5', label: 'Step 4 · Half-Wave Rectifier',         route: '/basic-electronics/4/halfwave'   },
+          { id: 'be4s6', label: 'Step 5 · Vdc & Ripple math',           route: '/basic-electronics/4/halfmath'   },
+          { id: 'be4s7', label: 'Step 6 · Bridge Rectifier · 4 Diodes', route: '/basic-electronics/4/fullwave'   },
+          { id: 'be4s8', label: 'Step 7 · Capacitor Filter',            route: '/basic-electronics/4/filter'     },
+          { id: 'be4s9', label: 'Closing · Rectifier + Filter Recap',   route: '/basic-electronics/4/showdown'   },
+        ],
+      },
+      {
         id: 'm1', label: 'Signals & Waves', subtitle: 'L1 · WAVE FOUNDATION', route: '/module/1',
         submodules: [
           { id: 'm1s1', label: 'Standard Signals', route: '/module/1' },

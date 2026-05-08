@@ -35,6 +35,7 @@ import { DsdModule5Root } from './components/level1/dsd_module5_v1/DsdModule5Roo
 import { BeModule1Root } from './components/level1/be_module1_v1/BeModule1Root';
 import { BeModule2Root } from './components/level1/be_module2_v1/BeModule2Root';
 import { BeModule3Root } from './components/level1/be_module3_v1/BeModule3Root';
+import { BeModule4Root } from './components/level1/be_module4_v1/BeModule4Root';
 
 // Special default exports
 import Workbench from './pages/Workbench';
@@ -108,6 +109,8 @@ function App() {
           <Route path="/basic-electronics/2/:chapter" element={<BeModule2Root />} />
           <Route path="/basic-electronics/3" element={<BeModule3Root />} />
           <Route path="/basic-electronics/3/:chapter" element={<BeModule3Root />} />
+          <Route path="/basic-electronics/4" element={<BeModule4Root />} />
+          <Route path="/basic-electronics/4/:chapter" element={<BeModule4Root />} />
           <Route path="/module/4" element={<ModuleFour />} />
           <Route path="/module/5" element={<Module5Root />} />
           <Route path="/module/6" element={<ModuleSix />} />

@@ -1,14 +1,12 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Trophy, ChevronRight, ChevronDown, CheckCircle2, Lightbulb, Hash, Car, MousePointerClick } from 'lucide-react';
+import { CleanCircuit, lit, not, term, type Bit, type Term, type CleanInput } from './_CleanCircuit';
 
 interface Props { isActive: boolean; isDarkMode: boolean; }
-type Bit = 0 | 1;
 
 const ROW4 = [0, 1, 3, 2];
 const COL4 = [0, 1, 3, 2];
-const wireColor = (v: Bit) => v === 1 ? '#fb7185' : '#475569';
-const wireGlow = (v: Bit) => v === 1 ? 'drop-shadow(0 0 4px rgba(251,113,133,0.7))' : 'none';
 
 interface Group { cells: number[]; color: string; term: string; label: string; }
 
@@ -27,10 +25,8 @@ interface BossProblem {
   minimised: string;
   literalsBefore: number;
   literalsAfter: number;
-  // Computes Y given input bits
   compute: (bits: Bit[]) => Bit;
-  // Renders the optimised live schematic
-  renderCircuit: (bits: Bit[], y: Bit, isDark: boolean) => React.ReactNode;
+  circuit: { topic: string; terms: Term[]; outputSym: string };
 }
 
 // ─────────────────────────────────────────────────────────────────────────
@@ -100,123 +96,6 @@ const KMap4: React.FC<{
   );
 };
 
-// ─────────────────────────────────────────────────────────────────────────
-// Boss Problem 1 · BCD 7-segment, segment 'a'
-// Active for digits 0,2,3,5,6,7,8,9 → m{0,2,3,5,6,7,8,9}
-// DC for non-BCD: m{10,11,12,13,14,15}
-// Minimised: a = A + C + BD + B'D'
-// ─────────────────────────────────────────────────────────────────────────
-const renderSegA = (bits: Bit[], y: Bit, isDark: boolean) => {
-  const [a3, a2, a1, a0] = bits; // BCD A=MSB
-  const fill = isDark ? '#0a0e1a' : '#fff';
-  const aLine: Bit = a3;
-  const cLine: Bit = a1;
-  const bd: Bit = (a2 && a0) ? 1 : 0;
-  const bn: Bit = (a2 === 0 ? 1 : 0) as Bit;
-  const dn: Bit = (a0 === 0 ? 1 : 0) as Bit;
-  const bndn: Bit = (bn && dn) ? 1 : 0;
-  return (
-    <g>
-      <text x="14" y="40" fontSize="13" fontWeight="bold" fill="#0ea5e9" fontFamily="monospace">A = {a3}</text>
-      <text x="14" y="100" fontSize="13" fontWeight="bold" fill="#22d3ee" fontFamily="monospace">B = {a2}</text>
-      <text x="14" y="160" fontSize="13" fontWeight="bold" fill="#a78bfa" fontFamily="monospace">C = {a1}</text>
-      <text x="14" y="240" fontSize="13" fontWeight="bold" fill="#f59e0b" fontFamily="monospace">D = {a0}</text>
-      <line x1="40" y1="50" x2="40" y2="280" stroke={wireColor(a3)} strokeWidth="2.5" style={{ filter: wireGlow(a3) }} />
-      <line x1="76" y1="50" x2="76" y2="280" stroke={wireColor(a2)} strokeWidth="2.5" style={{ filter: wireGlow(a2) }} />
-      <line x1="112" y1="50" x2="112" y2="280" stroke={wireColor(a1)} strokeWidth="2.5" style={{ filter: wireGlow(a1) }} />
-      <line x1="148" y1="50" x2="148" y2="280" stroke={wireColor(a0)} strokeWidth="2.5" style={{ filter: wireGlow(a0) }} />
-
-      {/* Direct A (single literal) */}
-      <line x1="40" y1="80" x2="430" y2="60" stroke={wireColor(aLine)} strokeWidth="2" style={{ filter: wireGlow(aLine) }} />
-      <text x="320" y="56" fontSize="10" fill="#fcd34d" fontFamily="monospace">A = {aLine}</text>
-
-      {/* Direct C (single literal) */}
-      <line x1="112" y1="120" x2="430" y2="115" stroke={wireColor(cLine)} strokeWidth="2" style={{ filter: wireGlow(cLine) }} />
-      <text x="320" y="106" fontSize="10" fill="#fcd34d" fontFamily="monospace">C = {cLine}</text>
-
-      {/* AND BD */}
-      <line x1="76" y1="170" x2="280" y2="160" stroke={wireColor(a2)} strokeWidth="2" style={{ filter: wireGlow(a2) }} />
-      <line x1="148" y1="200" x2="280" y2="190" stroke={wireColor(a0)} strokeWidth="2" style={{ filter: wireGlow(a0) }} />
-      <path d="M 280 150 L 310 150 A 22 22 0 0 1 310 200 L 280 200 Z" fill={fill} stroke="#fcd34d" strokeWidth="2" />
-      <text x="287" y="180" fontSize="10" fill="#fcd34d" fontFamily="monospace">AND</text>
-      <line x1="333" y1="175" x2="430" y2="170" stroke={wireColor(bd)} strokeWidth="2.5" style={{ filter: wireGlow(bd) }} />
-      <text x="345" y="162" fontSize="10" fill="#fcd34d" fontFamily="monospace">BD={bd}</text>
-
-      {/* NOT(B), NOT(D), AND B'D' */}
-      <line x1="76" y1="250" x2="180" y2="250" stroke={wireColor(a2)} strokeWidth="1.5" style={{ filter: wireGlow(a2) }} />
-      <polygon points="180,242 200,250 180,258" fill={fill} stroke="#fb7185" strokeWidth="1.5" />
-      <circle cx="203" cy="250" r="2.5" fill={fill} stroke="#fb7185" strokeWidth="1.5" />
-      <line x1="206" y1="250" x2="280" y2="240" stroke={wireColor(bn)} strokeWidth="1.5" style={{ filter: wireGlow(bn) }} />
-      <line x1="148" y1="270" x2="200" y2="270" stroke={wireColor(a0)} strokeWidth="1.5" style={{ filter: wireGlow(a0) }} />
-      <polygon points="200,262 220,270 200,278" fill={fill} stroke="#fb7185" strokeWidth="1.5" />
-      <circle cx="223" cy="270" r="2.5" fill={fill} stroke="#fb7185" strokeWidth="1.5" />
-      <line x1="226" y1="270" x2="280" y2="260" stroke={wireColor(dn)} strokeWidth="1.5" style={{ filter: wireGlow(dn) }} />
-      <path d="M 280 230 L 310 230 A 18 18 0 0 1 310 270 L 280 270 Z" fill={fill} stroke="#fcd34d" strokeWidth="2" />
-      <text x="284" y="255" fontSize="9" fill="#fcd34d" fontFamily="monospace">AND</text>
-      <line x1="328" y1="250" x2="430" y2="225" stroke={wireColor(bndn)} strokeWidth="2.5" style={{ filter: wireGlow(bndn) }} />
-      <text x="345" y="232" fontSize="10" fill="#fcd34d" fontFamily="monospace">B′D′={bndn}</text>
-
-      {/* OR (4-input) */}
-      <path d="M 430 50 Q 450 145 430 230 Q 530 215 565 145 Q 530 70 430 50 Z" fill={fill} stroke="#22c55e" strokeWidth="2.5" />
-      <text x="450" y="151" fontSize="13" fill="#22c55e" fontFamily="monospace" fontWeight="bold">OR</text>
-
-      {/* Output */}
-      <line x1="565" y1="145" x2="690" y2="145" stroke={wireColor(y)} strokeWidth="3.5" style={{ filter: wireGlow(y) }} />
-      <rect x="640" y="123" width="50" height="44" rx="6" fill={y ? '#fb7185' : 'none'} stroke="#fb7185" strokeWidth="2.5"
-            style={{ filter: y ? 'drop-shadow(0 0 18px rgba(251,113,133,0.7))' : 'none' }} />
-      <text x="650" y="151" fontSize="14" fill={y ? '#000' : '#fb7185'} fontFamily="monospace" fontWeight="bold">a={y}</text>
-    </g>
-  );
-};
-
-// ─────────────────────────────────────────────────────────────────────────
-// Boss Problem 2 · Smart Garage Door
-// F = D(B+C) = BD + CD
-// ─────────────────────────────────────────────────────────────────────────
-const renderGarage = (bits: Bit[], y: Bit, isDark: boolean) => {
-  const [_a, b, c, d] = bits;
-  const bd: Bit = (b && d) ? 1 : 0;
-  const cd: Bit = (c && d) ? 1 : 0;
-  const fill = isDark ? '#0a0e1a' : '#fff';
-  return (
-    <g>
-      <text x="14" y="40" fontSize="13" fontWeight="bold" fill="#475569" fontFamily="monospace">A · ignored</text>
-      <text x="14" y="100" fontSize="13" fontWeight="bold" fill="#22d3ee" fontFamily="monospace">B = {b}</text>
-      <text x="14" y="170" fontSize="13" fontWeight="bold" fill="#a78bfa" fontFamily="monospace">C = {c}</text>
-      <text x="14" y="240" fontSize="13" fontWeight="bold" fill="#f59e0b" fontFamily="monospace">D = {d}</text>
-      <line x1="40" y1="50" x2="40" y2="60" stroke="#475569" strokeWidth="2" />
-      <line x1="76" y1="50" x2="76" y2="260" stroke={wireColor(b)} strokeWidth="2.5" style={{ filter: wireGlow(b) }} />
-      <line x1="112" y1="50" x2="112" y2="260" stroke={wireColor(c)} strokeWidth="2.5" style={{ filter: wireGlow(c) }} />
-      <line x1="148" y1="50" x2="148" y2="260" stroke={wireColor(d)} strokeWidth="2.5" style={{ filter: wireGlow(d) }} />
-
-      {/* BD */}
-      <line x1="76" y1="120" x2="280" y2="100" stroke={wireColor(b)} strokeWidth="2" style={{ filter: wireGlow(b) }} />
-      <line x1="148" y1="140" x2="280" y2="120" stroke={wireColor(d)} strokeWidth="2" style={{ filter: wireGlow(d) }} />
-      <path d="M 280 90 L 310 90 A 22 22 0 0 1 310 130 L 280 130 Z" fill={fill} stroke="#fcd34d" strokeWidth="2" />
-      <text x="287" y="115" fontSize="10" fill="#fcd34d" fontFamily="monospace">AND</text>
-      <line x1="333" y1="110" x2="450" y2="120" stroke={wireColor(bd)} strokeWidth="2.5" style={{ filter: wireGlow(bd) }} />
-      <text x="345" y="103" fontSize="10" fill="#fcd34d" fontFamily="monospace">BD={bd}</text>
-
-      {/* CD */}
-      <line x1="112" y1="200" x2="280" y2="200" stroke={wireColor(c)} strokeWidth="2" style={{ filter: wireGlow(c) }} />
-      <line x1="148" y1="220" x2="280" y2="220" stroke={wireColor(d)} strokeWidth="2" style={{ filter: wireGlow(d) }} />
-      <path d="M 280 190 L 310 190 A 22 22 0 0 1 310 230 L 280 230 Z" fill={fill} stroke="#fcd34d" strokeWidth="2" />
-      <text x="287" y="215" fontSize="10" fill="#fcd34d" fontFamily="monospace">AND</text>
-      <line x1="333" y1="210" x2="450" y2="195" stroke={wireColor(cd)} strokeWidth="2.5" style={{ filter: wireGlow(cd) }} />
-      <text x="345" y="203" fontSize="10" fill="#fcd34d" fontFamily="monospace">CD={cd}</text>
-
-      {/* OR */}
-      <path d="M 450 100 Q 470 158 450 215 Q 535 200 570 158 Q 535 115 450 100 Z" fill={fill} stroke="#22c55e" strokeWidth="2.5" />
-      <text x="470" y="163" fontSize="13" fill="#22c55e" fontFamily="monospace" fontWeight="bold">OR</text>
-
-      <line x1="570" y1="158" x2="690" y2="158" stroke={wireColor(y)} strokeWidth="3.5" style={{ filter: wireGlow(y) }} />
-      <rect x="640" y="136" width="50" height="44" rx="6" fill={y ? '#fb7185' : 'none'} stroke="#fb7185" strokeWidth="2.5"
-            style={{ filter: y ? 'drop-shadow(0 0 18px rgba(251,113,133,0.7))' : 'none' }} />
-      <text x="650" y="164" fontSize="16" fill={y ? '#000' : '#fb7185'} fontFamily="monospace" fontWeight="bold">F={y}</text>
-    </g>
-  );
-};
-
 const PROBLEMS: BossProblem[] = [
   // Boss 1: BCD 7-segment, segment 'a'
   {
@@ -224,7 +103,7 @@ const PROBLEMS: BossProblem[] = [
     Icon: Hash,
     title: "Boss 1 · 7-Segment Display · top bar",
     scenario:
-      'You\'re designing the top bar of a 7-segment display (the kind on a calculator). Input is a 4-bit number for digits 0–9 (A is the highest bit, D is the lowest). The top bar should LIGHT UP for digits 0, 2, 3, 5, 6, 7, 8, 9 — every digit EXCEPT 1 and 4. Codes 10–15 never happen in BCD, so they are don\'t-cares (treat them as 0 or 1, whichever helps).',
+      "You're designing the top bar of a 7-segment display (the kind on a calculator). Input is a 4-bit number for digits 0–9 (A is the highest bit, D is the lowest). The top bar should LIGHT UP for digits 0, 2, 3, 5, 6, 7, 8, 9 — every digit EXCEPT 1 and 4. Codes 10–15 never happen in BCD, so they are don't-cares (treat them as 0 or 1, whichever helps).",
     inputs: [
       { sym: 'A', meaning: 'BCD bit 3 (MSB)', accent: '#0ea5e9' },
       { sym: 'B', meaning: 'BCD bit 2',       accent: '#22d3ee' },
@@ -243,7 +122,7 @@ const PROBLEMS: BossProblem[] = [
     questions: [
       { q: 'Which digits make the top bar light up? Which ones leave it dark?',
         a: 'Lit: 0, 2, 3, 5, 6, 7, 8, 9. Dark: 1 and 4. (Digit 1 has no top bar; digit 4 has only middle and right bars.)' },
-      { q: 'How can you use the don\'t-cares (m10–m15) to shrink the equation?',
+      { q: "How can you use the don't-cares (m10–m15) to shrink the equation?",
         a: 'Pretend they are 1 wherever it helps you make a bigger group. Here they extend the A group and C group from 4 cells to 8 cells each — saving 2 letters per group.' },
       { q: 'What is the shortest equation?',
         a: "a = A + C + BD + B'D'  · 4 terms · 6 letters total." },
@@ -258,7 +137,16 @@ const PROBLEMS: BossProblem[] = [
       const m = bits[0] * 8 + bits[1] * 4 + bits[2] * 2 + bits[3];
       return ([0, 2, 3, 5, 6, 7, 8, 9].includes(m) ? 1 : 0) as Bit;
     },
-    renderCircuit: renderSegA,
+    circuit: {
+      topic: "BCD seg-a · F = A + C + BD + B′D′",
+      outputSym: 'a',
+      terms: [
+        term([lit('A')], '#0ea5e9'),
+        term([lit('C')], '#a78bfa'),
+        term([lit('B'), lit('D')], '#fbbf24'),
+        term([not('B'), not('D')], '#22c55e'),
+      ],
+    },
   },
   // Boss 2: Smart Garage Door
   {
@@ -295,7 +183,14 @@ const PROBLEMS: BossProblem[] = [
     literalsBefore: 24,
     literalsAfter: 4,
     compute: (bits) => ((bits[3] && (bits[1] || bits[2])) ? 1 : 0) as Bit,
-    renderCircuit: renderGarage,
+    circuit: {
+      topic: 'SOP · F = BD + CD  (operator A is dead wire)',
+      outputSym: 'F',
+      terms: [
+        term([lit('B'), lit('D')], '#fbbf24'),
+        term([lit('C'), lit('D')], '#a78bfa'),
+      ],
+    },
   },
 ];
 
@@ -311,7 +206,13 @@ const BossCard: React.FC<{ p: BossProblem; isDarkMode: boolean }> = ({ p, isDark
   const subText   = isDarkMode ? 'text-slate-300' : 'text-slate-600';
   const cardBg    = isDarkMode ? 'bg-white/5 border-white/10' : 'bg-white border-slate-200 shadow-xl';
 
-  const y = useMemo(() => p.compute(bits), [p, bits]);
+  const cleanInputs: CleanInput[] = p.inputs.map((inp, i) => ({
+    sym: inp.sym,
+    meaning: inp.meaning,
+    accent: inp.accent,
+    value: bits[i],
+  }));
+
   const setBit = (i: number, b: Bit) => setBits((arr) => {
     const copy = arr.slice() as Bit[];
     copy[i] = b;
@@ -328,9 +229,17 @@ const BossCard: React.FC<{ p: BossProblem; isDarkMode: boolean }> = ({ p, isDark
           <p.Icon size={26} className="text-rose-300" />
         </div>
         <div className="flex-1 min-w-0">
-          <span className="px-2 py-0.5 rounded-md font-mono text-[10px] uppercase tracking-widest font-black bg-rose-500/22 text-rose-300 border border-rose-400/55 inline-block mb-2">
-            BOSS
-          </span>
+          <div className="flex flex-wrap gap-2 mb-2">
+            <span className="px-2 py-0.5 rounded-md font-mono text-[10px] uppercase tracking-widest font-black bg-rose-500/22 text-rose-300 border border-rose-400/55 inline-block">
+              BOSS
+            </span>
+            <span
+              className="font-mono text-[10px] uppercase tracking-widest font-black px-2 py-0.5 rounded inline-block"
+              style={{ background: '#a78bfa22', color: '#a78bfa', border: '1px solid #a78bfa55' }}
+            >
+              Topic · {p.circuit.topic.replace(/^[^·]+·\s*/, '')}
+            </span>
+          </div>
           <h3 className={`text-2xl font-black ${textColor}`}>{p.title}</h3>
           <p className={`text-sm ${subText} mt-2`}>{p.scenario}</p>
         </div>
@@ -427,7 +336,7 @@ const BossCard: React.FC<{ p: BossProblem; isDarkMode: boolean }> = ({ p, isDark
               {/* Live optimised schematic (revealed) */}
               <div className={`p-5 rounded-2xl border ${isDarkMode ? 'bg-black/30 border-white/10' : 'bg-slate-50 border-slate-200'}`}>
                 <div className={`flex items-center gap-2 text-xs font-mono ${subText} mb-3`}>
-                  <MousePointerClick size={12} /> Live optimised schematic · toggle inputs
+                  <MousePointerClick size={12} /> Live optimised schematic · toggle inputs · single-literal terms bypass the AND and feed the OR directly
                 </div>
                 <div className="flex gap-2 mb-3 flex-wrap">
                   {p.inputs.map((inp, i) => (
@@ -447,7 +356,13 @@ const BossCard: React.FC<{ p: BossProblem; isDarkMode: boolean }> = ({ p, isDark
                     </button>
                   ))}
                 </div>
-                <svg viewBox="0 0 720 300" className="w-full h-auto">{p.renderCircuit(bits, y, isDarkMode)}</svg>
+                <CleanCircuit
+                  topic={p.circuit.topic}
+                  inputs={cleanInputs}
+                  terms={p.circuit.terms}
+                  outputSym={p.circuit.outputSym}
+                  isDark={isDarkMode}
+                />
               </div>
 
               <div className="rounded-2xl p-5 border-2 border-emerald-400/40 bg-emerald-500/5">
@@ -511,8 +426,9 @@ export const S04_Boss: React.FC<Props> = ({ isActive, isDarkMode }) => {
         </h2>
         <p className={`text-base max-w-3xl ${subText}`}>
           Real engineering problems with don't-cares, useless inputs, and 4-cell groups you
-          have to find. Each one comes with a K-Map, a live circuit you can play with, and 4
-          sub-questions. Map out the truth table carefully — these problems punish guessing.
+          have to find. Each one comes with a K-Map, a live circuit (drawn in the same clean
+          rails-then-gates layout used everywhere else in this module), and 4 sub-questions.
+          Map out the truth table carefully — these problems punish guessing.
         </p>
       </motion.section>
 
