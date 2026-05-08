@@ -1,0 +1,20 @@
+import React, { useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { DsdModule5Engine } from './DsdModule5Engine';
+
+export const DsdModule5Root: React.FC = () => {
+  const [isDarkMode, setIsDarkMode] = useState(true);
+  const { chapter } = useParams<{ chapter?: string }>();
+
+  return (
+    <div className={isDarkMode ? 'dark text-white' : 'light text-slate-900'}>
+      <DsdModule5Engine
+        isDarkMode={isDarkMode}
+        onThemeToggle={() => setIsDarkMode(!isDarkMode)}
+        initialChapter={chapter}
+      />
+    </div>
+  );
+};
+
+export default DsdModule5Root;

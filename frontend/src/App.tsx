@@ -31,6 +31,7 @@ import { DsdModule1Root } from './components/level1/dsd_module1_v1/DsdModule1Roo
 import { DsdModule2Root } from './components/level1/dsd_module2_v1/DsdModule2Root';
 import { DsdModule3Root } from './components/level1/dsd_module3_v1/DsdModule3Root';
 import { DsdModule4Root } from './components/level1/dsd_module4_v1/DsdModule4Root';
+import { DsdModule5Root } from './components/level1/dsd_module5_v1/DsdModule5Root';
 import { BeModule1Root } from './components/level1/be_module1_v1/BeModule1Root';
 import { BeModule2Root } from './components/level1/be_module2_v1/BeModule2Root';
 import { BeModule3Root } from './components/level1/be_module3_v1/BeModule3Root';
@@ -99,6 +100,8 @@ function App() {
           <Route path="/dsd/3/:chapter" element={<DsdModule3Root />} />
           <Route path="/dsd/4" element={<DsdModule4Root />} />
           <Route path="/dsd/4/:chapter" element={<DsdModule4Root />} />
+          <Route path="/dsd/5" element={<DsdModule5Root />} />
+          <Route path="/dsd/5/:chapter" element={<DsdModule5Root />} />
           <Route path="/basic-electronics/1" element={<BeModule1Root />} />
           <Route path="/basic-electronics/1/:chapter" element={<BeModule1Root />} />
           <Route path="/basic-electronics/2" element={<BeModule2Root />} />

@@ -623,6 +623,19 @@ const L6_PATHS: PathOption[] = [
           { id: 'm6dsd5', label: 'Cheatsheet · One-page reference',    route: '/dsd/4/cheatsheet' },
         ],
       },
+      {
+        id: 'm7dsd', label: 'Universal Gates · Module 05', subtitle: 'L5 · NAND / NOR · 8 STAGES', route: '/dsd/5/cover',
+        submodules: [
+          { id: 'm7dsd0', label: 'Cover · The Universal Gate',         route: '/dsd/5/cover'     },
+          { id: 'm7dsd1', label: 'Lecture · Universality Video',       route: '/dsd/5/video'     },
+          { id: 'm7dsd2', label: 'Step 1 · The Atom',                  route: '/dsd/5/atom'      },
+          { id: 'm7dsd3', label: "Step 2 · De Morgan's Bridge",        route: '/dsd/5/demorgan'  },
+          { id: 'm7dsd4', label: 'Level 1 · NOT in 1 gate',            route: '/dsd/5/not'       },
+          { id: 'm7dsd5', label: 'Level 2 · AND & OR',                 route: '/dsd/5/or-and'    },
+          { id: 'm7dsd6', label: 'Levels 3-4 · Dual + XOR/XNOR',       route: '/dsd/5/dual-xor'  },
+          { id: 'm7dsd7', label: 'Master Blueprint',                    route: '/dsd/5/blueprint' },
+        ],
+      },
     ],
   },
   {
