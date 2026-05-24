@@ -5,14 +5,559 @@
     <meta charset="UTF-8" />
     <link rel="icon" href="/circuitverse/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CircuitVerse Simulator</title>
-    <!-- Styles to hide the original CircuitVerse branding -->
+    <title>Workbench</title>
+
+    <!--
+      Workbench studio theme — every visible surface re-skinned through the host's CSS
+      custom-property theme system (canvas, wires, nodes, mini-map, gates, panels)
+      plus Vuetify / Bootstrap / jQuery UI fallbacks. No behavioural changes.
+    -->
     <style>
-        .navbar, .header, .Logo_logo__2w_eC, a[href="/"], .Logo_logo__3XWlG {
+        /* ───────── Workbench palette ───────── */
+        :root,
+        html, body, #app,
+        .v-application, .v-application__wrap,
+        [class*="v-theme--"],
+        [class*="theme--"] {
+            /* Canvas & circuit drawing */
+            --canvas-fill:            #01040c;                /* main canvas bg — dark navy */
+            --canvas-stroke:          rgba(34, 211, 238, 0.10);/* grid dots — faint cyan */
+
+            /* Wires (state colours) */
+            --wire-norm:              #475569;                /* logic 0 — slate */
+            --wire-pow:               #22c55e;                /* logic 1 — emerald */
+            --wire-cnt:               #fbbf24;                /* connecting — amber */
+            --wire-draw:              #94a3b8;                /* being drawn */
+            --wire-lose:              #f43f5e;                /* error/short */
+            --wire-sel:               #22d3ee;                /* selected — cyan */
+
+            /* Nodes (gate pins / I-O dots) */
+            --node:                   #22d3ee;
+            --node-norm:              #fbbf24;
+
+            /* Gate body */
+            --fill:                   #0f1626;
+            --stroke:                 #22d3ee;
+            --hover-and-sel:          rgba(251, 191, 36, 0.35);
+            --output-rect:            #22d3ee;
+            --secondary-stroke:       #f43f5e;
+
+            /* Panel & chrome backgrounds */
+            --primary:                #0a0f1d;
+            --bg-circuit:             #0a0f1d;
+            --bg-navbar:              #01040c;
+            --bg-tabs:                #0f1626;
+            --bg-secondary:           #131c2e;
+            --bg-text:                #0a0f1d;
+            --bg-icons:               #0f1626;
+            --bg-toggle-btn-primary:  #22d3ee;
+            --bg-primary-chr:         rgba(10, 15, 29, 0.88);
+            --bg-primary-moz:         rgba(10, 15, 29, 0.92);
+
+            /* Borders */
+            --br-circuit:             rgba(255, 255, 255, 0.10);
+            --br-circuit-cur:         #22d3ee;
+            --br-primary:             rgba(255, 255, 255, 0.08);
+            --br-secondary:           rgba(255, 255, 255, 0.06);
+
+            /* Text */
+            --text:                   #e2e8f0;
+            --text-circuit:           #e2e8f0;
+            --text-dark:              #e2e8f0;
+            --text-lite:              #01040c;
+            --text-panel:             #94a3b8;
+            --text-navbar--alt:       #e2e8f0;
+            --input-text:             #22d3ee;
+            --context-text:           #e2e8f0;
+            --context-text-hov:       #22d3ee;
+
+            /* Buttons & states */
+            --btn-danger:             #f43f5e;
+            --btn-danger-darken:      #e11d48;
+            --primary-btn-hov:        #06b6d4;
+            --cus-btn-hov--bg:        #22d3ee;
+            --cus-btn-hov-text:       #01040c;
+
+            /* Mini-map */
+            --mini-map:               rgba(34, 211, 238, 0.18);
+            --mini-map-stroke:        #22d3ee;
+
+            /* Misc */
+            --disable:                #475569;
+            --splitter:               rgba(255, 255, 255, 0.10);
+            --table-head-dark:        #0f1626;
+            --qp-br-rd:               #0f1626;
+            --qp-br-tl:               #0a0f1d;
+
+            /* Vuetify theme tokens (used by panels/dialogs/inputs) */
+            --v-theme-background:        1, 4, 12;
+            --v-theme-on-background:     226, 232, 240;
+            --v-theme-surface:           10, 15, 29;
+            --v-theme-surface-light:     15, 22, 38;
+            --v-theme-surface-variant:   19, 28, 46;
+            --v-theme-on-surface:        226, 232, 240;
+            --v-theme-on-surface-light:  226, 232, 240;
+            --v-theme-on-surface-variant: 148, 163, 184;
+            --v-theme-primary:           34, 211, 238;
+            --v-theme-on-primary:        1, 4, 12;
+            --v-theme-secondary:         251, 146, 60;
+            --v-theme-on-secondary:      1, 4, 12;
+            --v-theme-error:             244, 63, 94;
+            --v-theme-on-error:          255, 255, 255;
+            --v-theme-success:           34, 197, 94;
+            --v-theme-on-success:        1, 4, 12;
+            --v-theme-warning:           251, 191, 36;
+            --v-theme-info:              34, 211, 238;
+        }
+
+        /* ───────── Local-only shortcuts ───────── */
+        :root {
+            --wb-bg:        #01040c;
+            --wb-panel:     #0a0f1d;
+            --wb-panel-2:   #0f1626;
+            --wb-elev:      #131c2e;
+            --wb-border:    rgba(255, 255, 255, 0.07);
+            --wb-border-2:  rgba(255, 255, 255, 0.12);
+            --wb-text:      #e2e8f0;
+            --wb-text-dim:  #94a3b8;
+            --wb-text-mute: #64748b;
+            --wb-accent:    #22d3ee;
+            --wb-accent-2:  #06b6d4;
+            --wb-success:   #22c55e;
+            --wb-danger:    #f43f5e;
+            --wb-warn:      #fbbf24;
+            --wb-shadow:    0 10px 30px rgba(0, 0, 0, 0.6);
+            --wb-glow:      0 0 18px rgba(34, 211, 238, 0.35);
+            --wb-radius:    14px;
+            --wb-radius-sm: 10px;
+        }
+
+        /* ───────── Reset ───────── */
+        html, body, #app {
+            background: var(--wb-bg) !important;
+            color: var(--wb-text) !important;
+            margin: 0; padding: 0; overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        /* Hide remaining native CircuitVerse chrome */
+        .navbar, .header,
+        a[href="/"],
+        .Logo_logo__2w_eC, .Logo_logo__3XWlG,
+        .home-anchor,
+        .v-app-bar.navbar,
+        [class*="Logo_"], [id*="cv-logo"], [id*="circuit-verse"],
+        [class*="CircuitVerse"],
+        a[href*="circuitverse"],
+        img[src*="logo"][src*="cv"],
+        .footer, footer.footer {
             display: none !important;
         }
-        body { margin: 0; padding: 0; overflow: hidden; }
+
+        /* ───────── Scrollbars ───────── */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(34, 211, 238, 0.25);
+            border-radius: 8px;
+        }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(34, 211, 238, 0.5); }
+
+        /* ───────── Canvas area & grid ───────── */
+        #canvasArea, .canvasArea {
+            background: var(--wb-bg) !important;
+        }
+        /* The actual <canvas> elements that CV draws into */
+        #canvasArea canvas, canvas {
+            background: transparent !important;
+        }
+        /* Add our own subtle dot grid overlay so the canvas reads as "ours" even before CV draws */
+        #canvasArea::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background-image: radial-gradient(rgba(34, 211, 238, 0.08) 1px, transparent 1px);
+            background-size: 24px 24px;
+            opacity: 0.55;
+            z-index: 0;
+        }
+        /* Ambient corner glows on the canvas */
+        #canvasArea::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background:
+                radial-gradient(circle at 0% 0%,   rgba(34, 211, 238, 0.06), transparent 40%),
+                radial-gradient(circle at 100% 100%, rgba(251, 146, 60, 0.05), transparent 45%);
+            z-index: 0;
+        }
+
+        /* ───────── Vuetify cards / sheets / lists ───────── */
+        .v-card, .v-sheet, .v-list, .v-navigation-drawer, .v-toolbar, .v-app-bar {
+            background: var(--wb-panel) !important;
+            color: var(--wb-text) !important;
+            border-color: var(--wb-border) !important;
+            box-shadow: var(--wb-shadow) !important;
+        }
+        .v-card { border-radius: var(--wb-radius) !important; }
+        .v-card-title, .v-card__title {
+            font-family: ui-monospace, "SFMono-Regular", Menlo, monospace !important;
+            font-size: 11px !important;
+            letter-spacing: 0.25em !important;
+            text-transform: uppercase !important;
+            color: var(--wb-text-dim) !important;
+            font-weight: 800 !important;
+            padding: 14px 16px !important;
+            border-bottom: 1px solid var(--wb-border);
+        }
+        .v-card-subtitle, .v-card__subtitle {
+            color: var(--wb-text-mute) !important;
+            font-family: ui-monospace, monospace !important;
+            font-size: 10px !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.25em !important;
+            font-weight: 800 !important;
+        }
+
+        /* ───────── Expansion panels ───────── */
+        .v-expansion-panel,
+        .v-expansion-panel-title,
+        .v-expansion-panel-text,
+        .v-expansion-panel__shadow {
+            background: transparent !important;
+            color: var(--wb-text) !important;
+            box-shadow: none !important;
+        }
+        .v-expansion-panel-title {
+            border-bottom: 1px solid var(--wb-border) !important;
+            min-height: 44px !important;
+            font-weight: 700 !important;
+            font-size: 13px !important;
+            color: var(--wb-text) !important;
+        }
+        .v-expansion-panel-title:hover { background: rgba(34, 211, 238, 0.04) !important; }
+        .v-expansion-panel-title__icon { color: var(--wb-accent) !important; }
+        .v-expansion-panel-title--active { color: var(--wb-accent) !important; }
+
+        /* ───────── Buttons ───────── */
+        .v-btn {
+            border-radius: var(--wb-radius-sm) !important;
+            text-transform: none !important;
+            letter-spacing: 0 !important;
+            font-weight: 700 !important;
+        }
+        .v-btn--variant-elevated,
+        .v-btn--variant-flat {
+            background: var(--wb-accent) !important;
+            color: #001018 !important;
+            box-shadow: 0 6px 18px rgba(34, 211, 238, 0.25) !important;
+        }
+        .v-btn--variant-elevated:hover,
+        .v-btn--variant-flat:hover { background: var(--wb-accent-2) !important; }
+        .v-btn--variant-outlined,
+        .v-btn--variant-text,
+        .v-btn--variant-tonal {
+            color: var(--wb-text) !important;
+            border-color: var(--wb-border-2) !important;
+            background: rgba(255, 255, 255, 0.03) !important;
+        }
+        .v-btn.bg-success, .v-btn.text-success, .v-btn--variant-elevated.bg-success {
+            background: var(--wb-success) !important;
+            color: #001a08 !important;
+            box-shadow: 0 6px 18px rgba(34, 197, 94, 0.25) !important;
+        }
+        .v-btn.bg-error, .v-btn.bg-red, .v-btn.text-error,
+        .v-btn--variant-elevated.bg-error, .v-btn--variant-elevated.bg-red {
+            background: var(--wb-danger) !important;
+            color: #1e0612 !important;
+            box-shadow: 0 6px 18px rgba(244, 63, 94, 0.25) !important;
+        }
+        button.v-btn--icon, .v-btn--icon {
+            background: rgba(34, 211, 238, 0.08) !important;
+            color: var(--wb-accent) !important;
+            border-radius: var(--wb-radius-sm) !important;
+        }
+        button.v-btn--icon:hover, .v-btn--icon:hover {
+            background: rgba(34, 211, 238, 0.18) !important;
+        }
+        .v-btn .v-icon, .v-icon { color: inherit !important; }
+
+        /* ───────── Inputs / fields ───────── */
+        .v-field,
+        .v-field__overlay,
+        .v-text-field .v-input__control,
+        .v-text-field .v-field {
+            background: var(--wb-elev) !important;
+            border-radius: var(--wb-radius-sm) !important;
+            color: var(--wb-text) !important;
+        }
+        .v-field__outline__start,
+        .v-field__outline__end,
+        .v-field__outline__notch::before,
+        .v-field__outline__notch::after {
+            border-color: var(--wb-border-2) !important;
+        }
+        .v-field--focused .v-field__outline { color: var(--wb-accent) !important; }
+        .v-field input, .v-field textarea {
+            color: var(--wb-text) !important;
+            font-family: ui-monospace, monospace !important;
+        }
+        .v-label, .v-field-label {
+            color: var(--wb-text-dim) !important;
+            font-weight: 600 !important;
+        }
+        input[type="text"], input[type="search"], input[type="number"], input:not([type]) {
+            background: var(--wb-elev) !important;
+            border: 1px solid var(--wb-border-2) !important;
+            color: var(--wb-text) !important;
+            border-radius: var(--wb-radius-sm) !important;
+            font-family: ui-monospace, monospace !important;
+        }
+        input[type="text"]:focus, input[type="search"]:focus, input[type="number"]:focus {
+            outline: none !important;
+            border-color: var(--wb-accent) !important;
+            box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.18) !important;
+        }
+        select {
+            background: var(--wb-elev) !important;
+            color: var(--wb-text) !important;
+            border: 1px solid var(--wb-border-2) !important;
+            border-radius: var(--wb-radius-sm) !important;
+        }
+
+        /* ───────── Switches / toggles ───────── */
+        .v-switch__track {
+            background: rgba(255, 255, 255, 0.12) !important;
+            opacity: 1 !important;
+        }
+        .v-switch--inset .v-switch__thumb { background: #cbd5e1 !important; }
+        .v-switch.v-input--is-active .v-switch__track,
+        .v-switch.text-success .v-switch__track,
+        .v-selection-control--dirty .v-switch__track {
+            background: var(--wb-accent) !important;
+            box-shadow: var(--wb-glow);
+        }
+        .v-selection-control--dirty .v-switch__thumb { background: #fff !important; }
+
+        /* ───────── Lists / menus ───────── */
+        .v-list-item {
+            color: var(--wb-text) !important;
+            border-radius: var(--wb-radius-sm) !important;
+            margin: 2px 6px !important;
+        }
+        .v-list-item:hover { background: rgba(34, 211, 238, 0.08) !important; }
+        .v-list-item--active {
+            background: rgba(34, 211, 238, 0.12) !important;
+            color: var(--wb-accent) !important;
+        }
+        .v-list-item__overlay { display: none !important; }
+
+        /* ───────── Tabs (Main / +) ───────── */
+        .v-tab, .v-tabs, .v-slide-group {
+            background: transparent !important;
+            color: var(--wb-text-dim) !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.2em !important;
+            font-family: ui-monospace, monospace !important;
+            font-size: 11px !important;
+            font-weight: 800 !important;
+        }
+        .v-tab--selected, .v-tab[aria-selected="true"] {
+            color: var(--wb-accent) !important;
+            background: rgba(34, 211, 238, 0.08) !important;
+            border-radius: var(--wb-radius-sm) var(--wb-radius-sm) 0 0 !important;
+        }
+        .v-tabs-bar { border-bottom: 1px solid var(--wb-border) !important; background: var(--wb-panel) !important; }
+        .v-tab__slider, .v-tabs-slider { background: var(--wb-accent) !important; box-shadow: var(--wb-glow); }
+
+        /* ───────── Sliders (zoom) ───────── */
+        .v-slider-track__background { background: rgba(255, 255, 255, 0.08) !important; }
+        .v-slider-track__fill { background: var(--wb-accent) !important; box-shadow: var(--wb-glow); }
+        .v-slider-thumb__surface { background: var(--wb-accent) !important; box-shadow: var(--wb-glow); }
+
+        /* ───────── Dialogs / overlays ───────── */
+        .v-overlay__scrim { background: rgba(1, 4, 12, 0.85) !important; backdrop-filter: blur(6px); }
+        .v-dialog .v-card,
+        .v-dialog .v-overlay__content > .v-card {
+            background: var(--wb-panel) !important;
+            border: 1px solid var(--wb-border-2) !important;
+            border-radius: var(--wb-radius) !important;
+        }
+        .modal-content, .modal-header, .modal-body, .modal-footer {
+            background: var(--wb-panel) !important;
+            color: var(--wb-text) !important;
+            border-color: var(--wb-border) !important;
+        }
+        .modal-header { border-bottom: 1px solid var(--wb-border) !important; }
+        .modal-footer { border-top: 1px solid var(--wb-border) !important; }
+        .modal-content { border-radius: var(--wb-radius) !important; box-shadow: var(--wb-shadow); }
+
+        /* ───────── Popovers / tooltips ───────── */
+        .popover, .popover-body {
+            background: var(--wb-panel) !important;
+            color: var(--wb-text) !important;
+            border: 1px solid var(--wb-border-2) !important;
+            border-radius: var(--wb-radius-sm) !important;
+            box-shadow: var(--wb-shadow);
+        }
+        .popover-header {
+            background: var(--wb-panel-2) !important;
+            color: var(--wb-accent) !important;
+            border-bottom: 1px solid var(--wb-border) !important;
+            font-family: ui-monospace, monospace !important;
+            font-size: 11px !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.2em !important;
+        }
+        .tooltip-inner {
+            background: var(--wb-elev) !important;
+            color: var(--wb-text) !important;
+            border: 1px solid var(--wb-accent) !important;
+            border-radius: var(--wb-radius-sm) !important;
+            font-family: ui-monospace, monospace !important;
+            font-size: 11px !important;
+        }
+
+        /* ───────── Context menus ───────── */
+        #contextMenu,
+        .context-menu, .ui-menu {
+            background: var(--wb-panel) !important;
+            color: var(--wb-text) !important;
+            border: 1px solid var(--wb-border-2) !important;
+            border-radius: var(--wb-radius-sm) !important;
+            box-shadow: var(--wb-shadow) !important;
+            font-family: -apple-system, "Segoe UI", sans-serif !important;
+        }
+        #contextMenu li, .ui-menu .ui-menu-item {
+            color: var(--wb-text) !important;
+            border: none !important;
+        }
+        #contextMenu li:hover, .ui-menu .ui-menu-item:hover {
+            background: rgba(34, 211, 238, 0.12) !important;
+            color: var(--wb-accent) !important;
+        }
+
+        /* ───────── jQuery UI ───────── */
+        .ui-widget, .ui-widget-content, .ui-widget-header,
+        .ui-dialog, .ui-dialog-titlebar {
+            background: var(--wb-panel) !important;
+            color: var(--wb-text) !important;
+            border-color: var(--wb-border-2) !important;
+            font-family: -apple-system, "Segoe UI", sans-serif !important;
+        }
+        .ui-dialog { border-radius: var(--wb-radius) !important; box-shadow: var(--wb-shadow) !important; }
+        .ui-dialog-titlebar {
+            background: var(--wb-panel-2) !important;
+            color: var(--wb-accent) !important;
+            border-bottom: 1px solid var(--wb-border) !important;
+            font-family: ui-monospace, monospace !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.2em !important;
+            font-size: 11px !important;
+            font-weight: 800 !important;
+        }
+        .ui-button {
+            background: var(--wb-accent) !important;
+            color: #001018 !important;
+            border: none !important;
+            border-radius: var(--wb-radius-sm) !important;
+            font-weight: 700 !important;
+        }
+        .ui-button:hover { background: var(--wb-accent-2) !important; }
+
+        /* ───────── Top floating toolbar (drag, save, etc.) ───────── */
+        .panel-drag,
+        .ui-widget-header .ui-icon-gripsmall-diagonal-se,
+        [class*="dragHandle"] {
+            background: rgba(255, 255, 255, 0.10) !important;
+            border-radius: 99px !important;
+        }
+        /* Toolbar icons — usually dark glyphs; invert so they read on dark bg */
+        #SimulationActions, .simulator-toolbar,
+        [id*="Toolbar"], [class*="Toolbar"] {
+            background: var(--wb-panel) !important;
+            border: 1px solid var(--wb-border-2) !important;
+            border-radius: var(--wb-radius) !important;
+            box-shadow: var(--wb-shadow);
+        }
+        /* Icon images inside toolbars (CV uses raster icons in some places) */
+        .simulator-toolbar img,
+        [id*="Toolbar"] img,
+        [class*="Toolbar"] img {
+            filter: brightness(0) saturate(100%) invert(86%) sepia(36%) saturate(2400%) hue-rotate(140deg) !important;
+        }
+
+        /* ───────── Chips (TIMING DIAGRAM / TESTBENCH labels) ───────── */
+        .v-chip {
+            background: var(--wb-panel) !important;
+            color: var(--wb-text) !important;
+            border: 1px solid var(--wb-border-2) !important;
+            border-radius: var(--wb-radius-sm) !important;
+            font-family: ui-monospace, monospace !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.2em !important;
+            font-weight: 800 !important;
+            font-size: 11px !important;
+        }
+        .v-chip--variant-elevated, .v-chip__overlay { background: var(--wb-panel-2) !important; }
+        .v-chip.text-primary, .v-chip.bg-primary {
+            background: var(--wb-accent) !important;
+            color: #001018 !important;
+        }
+
+        /* ───────── Mini-map ───────── */
+        #miniMap, [id*="iniMap"] {
+            background: var(--wb-panel) !important;
+            border: 1px solid var(--wb-accent) !important;
+            border-radius: var(--wb-radius-sm) !important;
+            box-shadow: var(--wb-glow);
+        }
+
+        /* ───────── CodeMirror (Verilog editor) ───────── */
+        .CodeMirror, .cm-editor {
+            background: var(--wb-bg) !important;
+            color: var(--wb-text) !important;
+            font-family: ui-monospace, "SFMono-Regular", Menlo, monospace !important;
+        }
+        .CodeMirror-gutters, .cm-gutters {
+            background: var(--wb-panel) !important;
+            border-right: 1px solid var(--wb-border) !important;
+            color: var(--wb-text-mute) !important;
+        }
+        .CodeMirror-linenumber, .cm-lineNumbers { color: var(--wb-text-mute) !important; }
+        .CodeMirror-cursor, .cm-cursor { border-left-color: var(--wb-accent) !important; }
+        .CodeMirror-selected, .cm-selectionBackground {
+            background: rgba(34, 211, 238, 0.18) !important;
+        }
+
+        /* ───────── Help / accessibility floating button ───────── */
+        .accessibility-button, #HelpButton,
+        [class*="accessibility"], [id*="accessibility"] {
+            background: var(--wb-panel) !important;
+            border: 1px solid var(--wb-accent) !important;
+            border-radius: 99px !important;
+            box-shadow: var(--wb-glow) !important;
+        }
+        .accessibility-button img, #HelpButton img {
+            filter: brightness(0) saturate(100%) invert(86%) sepia(36%) saturate(2400%) hue-rotate(140deg);
+        }
+
+        /* ───────── Dividers ───────── */
+        .v-divider, hr {
+            border-color: var(--wb-border) !important;
+            opacity: 1 !important;
+        }
+
+        /* ───────── Focus ring ───────── */
+        *:focus-visible {
+            outline: 2px solid var(--wb-accent) !important;
+            outline-offset: 2px !important;
+            border-radius: var(--wb-radius-sm);
+        }
     </style>
+
     <!-- Critical global variables for the standalone simulator build -->
     <script>
       window.userSignedIn = false;
@@ -26,14 +571,116 @@
       window.DPR = window.devicePixelRatio || 1;
       window.lightMode = false;
     </script>
+
+    <!--
+      Theme booster — the host bundle injects its own theme stylesheet at runtime
+      that re-sets every `--*` token on document.documentElement, which would otherwise
+      win over our <style> block above. We re-apply our values on a MutationObserver
+      so any later change is immediately overwritten back to our palette.
+    -->
+    <script>
+      (function applyWorkbenchTheme() {
+        var WB = {
+          '--canvas-fill':           '#01040c',
+          '--canvas-stroke':         'rgba(34, 211, 238, 0.10)',
+          '--wire-norm':             '#475569',
+          '--wire-pow':              '#22c55e',
+          '--wire-cnt':              '#fbbf24',
+          '--wire-draw':             '#94a3b8',
+          '--wire-lose':             '#f43f5e',
+          '--wire-sel':              '#22d3ee',
+          '--node':                  '#22d3ee',
+          '--node-norm':             '#fbbf24',
+          '--fill':                  '#0f1626',
+          '--stroke':                '#22d3ee',
+          '--hover-and-sel':         'rgba(251, 191, 36, 0.35)',
+          '--output-rect':           '#22d3ee',
+          '--secondary-stroke':      '#f43f5e',
+          '--primary':               '#0a0f1d',
+          '--bg-circuit':            '#0a0f1d',
+          '--bg-navbar':             '#01040c',
+          '--bg-tabs':               '#0f1626',
+          '--bg-secondary':          '#131c2e',
+          '--bg-text':               '#0a0f1d',
+          '--bg-icons':              '#0f1626',
+          '--bg-toggle-btn-primary': '#22d3ee',
+          '--bg-primary-chr':        'rgba(10, 15, 29, 0.88)',
+          '--bg-primary-moz':        'rgba(10, 15, 29, 0.92)',
+          '--br-circuit':            'rgba(255, 255, 255, 0.10)',
+          '--br-circuit-cur':        '#22d3ee',
+          '--br-primary':            'rgba(255, 255, 255, 0.08)',
+          '--br-secondary':          'rgba(255, 255, 255, 0.06)',
+          '--text':                  '#e2e8f0',
+          '--text-circuit':          '#e2e8f0',
+          '--text-dark':             '#e2e8f0',
+          '--text-lite':             '#01040c',
+          '--text-panel':            '#94a3b8',
+          '--text-navbar--alt':      '#e2e8f0',
+          '--input-text':            '#22d3ee',
+          '--context-text':          '#e2e8f0',
+          '--context-text-hov':      '#22d3ee',
+          '--btn-danger':            '#f43f5e',
+          '--btn-danger-darken':     '#e11d48',
+          '--primary-btn-hov':       '#06b6d4',
+          '--cus-btn-hov--bg':       '#22d3ee',
+          '--cus-btn-hov-text':      '#01040c',
+          '--mini-map':              'rgba(34, 211, 238, 0.18)',
+          '--mini-map-stroke':       '#22d3ee',
+          '--disable':               '#475569',
+          '--splitter':              'rgba(255, 255, 255, 0.10)',
+          '--table-head-dark':       '#0f1626',
+          '--qp-br-rd':              '#0f1626',
+          '--qp-br-tl':              '#0a0f1d'
+        };
+
+        function paint() {
+          var root = document.documentElement;
+          Object.keys(WB).forEach(function (k) {
+            root.style.setProperty(k, WB[k], 'important');
+          });
+        }
+
+        // Paint immediately, after DOM ready, after load, and whenever the host
+        // app mutates the root element's style attribute (their theme switcher).
+        paint();
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', paint);
+        }
+        window.addEventListener('load', function () {
+          paint();
+          // Keep re-applying for the first ~6 seconds while the bundle boots,
+          // because the host injects its theme stylesheet asynchronously.
+          var ticks = 0;
+          var iv = setInterval(function () {
+            paint();
+            if (++ticks > 30) clearInterval(iv);
+          }, 200);
+
+          // Long-term safety: observe the <html> style attribute and the <head>
+          // for new <style> elements (their theme switcher inserts one), and re-paint.
+          try {
+            new MutationObserver(paint).observe(document.documentElement, {
+              attributes: true, attributeFilter: ['style', 'class']
+            });
+            new MutationObserver(function (muts) {
+              for (var i = 0; i < muts.length; i++) {
+                if (muts[i].addedNodes && muts[i].addedNodes.length) {
+                  paint();
+                  break;
+                }
+              }
+            }).observe(document.head, { childList: true });
+          } catch (_) {}
+        });
+      })();
+    </script>
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script type="module" crossorigin src="/circuitverse/simulator-v0.js"></script>
-  
 </head>
 
 <body>
     <div id="app"></div>
-    
 </body>
 
 </html>
