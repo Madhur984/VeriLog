@@ -556,6 +556,22 @@ const L6_PATHS: PathOption[] = [
         ],
       },
       {
+        id: 'be5', label: 'Special-Purpose Diodes', subtitle: 'L4 · ZENER · LED · PHOTODIODE', route: '/basic-electronics/5/cover',
+        submodules: [
+          { id: 'be5s0', label: 'Cover · The Neon Diode Gala',             route: '/basic-electronics/5/cover'      },
+          { id: 'be5s1', label: 'Video · EN + HI commentary',              route: '/basic-electronics/5/video'      },
+          { id: 'be5s2', label: 'Step 1 · Baseline vs Specialists',        route: '/basic-electronics/5/baseline'   },
+          { id: 'be5s3', label: 'Zener · 1 · V-I & Breakdown',             route: '/basic-electronics/5/zener-vi'   },
+          { id: 'be5s4', label: 'Zener · 2 · Voltage Regulator',           route: '/basic-electronics/5/zener-reg'  },
+          { id: 'be5s5', label: 'LED · 1 · Electroluminescence',           route: '/basic-electronics/5/led-el'     },
+          { id: 'be5s6', label: 'LED · 2 · Spectrum & Material',           route: '/basic-electronics/5/led-spec'   },
+          { id: 'be5s7', label: 'Photo · 1 · Reverse-Bias Photodiode',     route: '/basic-electronics/5/photo-ckt'  },
+          { id: 'be5s8', label: 'Photo · 2 · I-V vs Illumination',         route: '/basic-electronics/5/photo-resp' },
+          { id: 'be5s9', label: 'Summary · Diagnostic Matrix',             route: '/basic-electronics/5/matrix'     },
+          { id: 'be5s10',label: 'Final · Self-Check Quiz',                 route: '/basic-electronics/5/quiz'       },
+        ],
+      },
+      {
         id: 'm1', label: 'Signals & Waves', subtitle: 'L1 · WAVE FOUNDATION', route: '/module/1',
         submodules: [
           { id: 'm1s1', label: 'Standard Signals', route: '/module/1' },
