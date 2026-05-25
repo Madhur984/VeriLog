@@ -9,7 +9,7 @@ export const ActivityPage = () => {
 
     useEffect(() => {
         // Fetch from backend (fallback to local if fails for Phase 1 demo)
-        axios.get(`http://localhost:3000/api/activities/${id}`)
+        axios.get(`/api/activities/${id}`)
             .then(res => setActivity(res.data))
             .catch(err => console.warn("Using local fallback", err));
     }, [id]);
