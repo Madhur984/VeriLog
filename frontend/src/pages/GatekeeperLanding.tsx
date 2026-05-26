@@ -2,10 +2,10 @@ import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence, useSpring, useMotionValue } from "framer-motion";
 import { ArrowRight, Terminal, Activity, Zap, Cpu } from "lucide-react";
-import './AxeOrGateway.css';
+import './BfbGateway.css';
 
 /**
- * AXE-OR SYSTEM INITIALIZATION EXPERIENCE
+ * BitforBytes SYSTEM INITIALIZATION EXPERIENCE
  * "The system awakens."
  */
 
@@ -126,13 +126,13 @@ const useSystemAudio = () => {
 // 2. BOOT TERMINAL (Char-by-Char)
 // ----------------------------------------------------------------------
 const BOOT_LOGS = [
-  "AXE-OR BOOT SEQUENCE INITIATED...",
+  "BitforBytes BOOT SEQUENCE INITIATED...",
   "CHECKING CORE SYSTEMS...",
   "MEMORY: [ OK ] 64GB ALLOCATED",
   "SIGNAL ENGINE: [ ONLINE ]",
   "INPUT STREAM: [ DETECTED ]",
   "NEURAL_MAP: [ SYNCED ]",
-  "AXE-OR READY"
+  "BitforBytes READY"
 ];
 
 const BootTerminal: React.FC<{ onComplete: () => void; playClick: () => void }> = ({ onComplete, playClick }) => {
@@ -227,7 +227,7 @@ export const GatekeeperLanding: React.FC = () => {
 
   // Phase Controller
   useEffect(() => {
-    document.title = "AXE-OR | System Wake";
+    document.title = "BitforBytes | Learn Digital Design";
     const t1 = setTimeout(() => setPhase("booting"), 800); // Phase 1 -> 2
     return () => clearTimeout(t1);
   }, []);
@@ -257,7 +257,7 @@ export const GatekeeperLanding: React.FC = () => {
   };
 
   return (
-    <div className="axe-gateway-container" onClick={init}>
+    <div className="bfb-gateway-container" onClick={init}>
       
       {/* 🎬 CROSSHAIR */}
       {systemReady && <CustomCrosshair />}
@@ -270,7 +270,7 @@ export const GatekeeperLanding: React.FC = () => {
         transition={{ duration: 3 }}
       >
         <video autoPlay muted loop playsInline className="video-bg">
-          <source src="/videos/axe-or-bg.mp4" type="video/mp4" />
+          <source src="/videos/bfb-bg.mp4" type="video/mp4" />
         </video>
         <div className="video-overlay" />
         <div className="static-noise-overlay" />
@@ -331,7 +331,7 @@ export const GatekeeperLanding: React.FC = () => {
         >
           {/* TOP NAV */}
           <header className="flex justify-between items-start">
-            <div className="system-tag-large">[ AXE-OR SYSTEM ]</div>
+            <div className="system-tag-large">[ BitforBytes SYSTEM ]</div>
             <div className="flex gap-10">
               <div className="radar-scope hidden md:block" />
               <div className="text-xs font-mono text-white/40 hover:text-white cursor-pointer tracking-widest transition-colors" onClick={() => navigate('/login')}>
@@ -346,7 +346,7 @@ export const GatekeeperLanding: React.FC = () => {
               className={`flex flex-col items-center ${glitch ? 'glitch-text' : ''}`}
             >
               <h1 className="hero-title-v2">
-                <span className="signal-gradient">AXE-OR</span>
+                <span className="signal-gradient">BitforBytes</span>
               </h1>
               <div className="hero-punchline">
                 Master the Signal.<br />
@@ -364,7 +364,7 @@ export const GatekeeperLanding: React.FC = () => {
               whileTap={{ scale: 0.98 }}
             >
               <span className="relative z-10 flex items-center gap-4">
-                {"> "} ENTER AXE-OR <ArrowRight className="group-hover:translate-x-2 transition-transform" />
+                {"> "} ENTER BitforBytes <ArrowRight className="group-hover:translate-x-2 transition-transform" />
               </span>
             </motion.button>
           </main>

@@ -42,7 +42,7 @@ export const SiliconTicker: React.FC = () => {
     >
       <div className="flex items-center h-full px-4 border-r border-ghost-trace bg-solder-mask z-10">
         <span className="text-[10px] font-mono text-plasma-cyan uppercase tracking-widest whitespace-nowrap">
-          Silicon Intel // Live
+          BFB INTEL // LIVE
         </span>
       </div>
       

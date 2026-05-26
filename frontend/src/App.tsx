@@ -1,6 +1,8 @@
+import { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { TransitionProvider } from './hooks/useTransitionController';
 import { TransitionOverlay } from './components/TransitionOverlay';
+import { migrateStorage } from './utils/storageMigration';
 
 // Layout
 import { PortalLayout } from './layouts/PortalLayout';
@@ -55,6 +57,10 @@ import { GatekeeperGame } from './pages/GatekeeperGame';
 import CareerRoadmapPage from './pages/career-roadmap/index';
 
 function App() {
+  useEffect(() => {
+    migrateStorage();
+  }, []);
+
   return (
     <TransitionProvider>
       <TransitionOverlay />

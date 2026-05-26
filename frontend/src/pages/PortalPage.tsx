@@ -466,8 +466,8 @@ const challenges = [
   { question: "Who holds the process patent for MOSFET?", answer: "Bell Labs", pts: 5 }
 ];
 const DailyChallenge = () => {
-  const [points, setPoints] = useState(() => parseInt(localStorage.getItem("daily_points") || "0"));
-  const [streak, setStreak] = useState(() => parseInt(localStorage.getItem("daily_streak") || "0"));
+  const [points, setPoints] = useState(() => parseInt(localStorage.getItem("bfb_daily_points") || "0"));
+  const [streak, setStreak] = useState(() => parseInt(localStorage.getItem("bfb_daily_streak") || "0"));
   const [ans, setAns] = useState("");
   const [msg, setMsg] = useState("");
   const today = new Date().toDateString();
@@ -475,13 +475,13 @@ const DailyChallenge = () => {
   const curr = challenges[challengeIdx];
 
   const submit = () => {
-    if (localStorage.getItem("last_challenge") === today) return setMsg("MISSION_ACCOMPLISHED_TODAY");
+    if (localStorage.getItem("bfb_last_challenge") === today) return setMsg("MISSION_ACCOMPLISHED_TODAY");
     if (ans.toLowerCase().includes(curr.answer.toLowerCase())) {
       const p = points + curr.pts; const s = streak + 1;
       setPoints(p); setStreak(s); setMsg("CALIBRATION_SUCCESSFUL");
-      localStorage.setItem("daily_points", p.toString());
-      localStorage.setItem("daily_streak", s.toString());
-      localStorage.setItem("last_challenge", today);
+      localStorage.setItem("bfb_daily_points", p.toString());
+      localStorage.setItem("bfb_daily_streak", s.toString());
+      localStorage.setItem("bfb_last_challenge", today);
     } else setMsg("CALIBRATION_FAILURE");
   };
 
@@ -977,21 +977,21 @@ export const PortalPage: React.FC = () => {
   // 📌 Bookmark & Compare States
   const [bookmarks, setBookmarks] = useState<string[]>(() => {
     try {
-      const saved = localStorage.getItem("ece_bookmarks");
+      const saved = localStorage.getItem("bfb_ece_bookmarks");
       return saved ? JSON.parse(saved) : [];
     } catch { return []; }
   });
 
   const [compareIds, setCompareIds] = useState<string[]>([]);
   const [salaryCalc, setSalaryCalc] = useState({ base: 12, country: "India", experience: "Fresher" });
-  const [viewedDomainIds, setViewedDomainIds] = useState<string[]>(() => JSON.parse(localStorage.getItem("ece_viewed_ids") || "[]"));
+  const [viewedDomainIds, setViewedDomainIds] = useState<string[]>(() => JSON.parse(localStorage.getItem("bfb_ece_viewed_ids") || "[]"));
   const [dragCount, setDragCount] = useState(0);
-  const [viewedCount, setViewedCount] = useState(() => JSON.parse(localStorage.getItem("ece_viewed_count") || "0"));
-  const [badges, setBadges] = useState<string[]>(() => JSON.parse(localStorage.getItem("ece_badges") || "[]"));
+  const [viewedCount, setViewedCount] = useState(() => JSON.parse(localStorage.getItem("bfb_ece_viewed_count") || "0"));
+  const [badges, setBadges] = useState<string[]>(() => JSON.parse(localStorage.getItem("bfb_ece_badges") || "[]"));
   const [quizSubmitted] = useState(false);
   const [dismissedRecs, setDismissedRecs] = useState<string[]>(() => {
     try {
-      const saved = localStorage.getItem("ece_dismissed_recs");
+      const saved = localStorage.getItem("bfb_ece_dismissed_recs");
       return saved ? JSON.parse(saved) : [];
     } catch { return []; }
   });
@@ -1002,14 +1002,14 @@ export const PortalPage: React.FC = () => {
     const earned = badgeDefinitions.filter(b => b.condition(s)).map(b => b.id);
     if (earned.length > badges.length) {
       setBadges(earned);
-      localStorage.setItem("ece_badges", JSON.stringify(earned));
+      localStorage.setItem("bfb_ece_badges", JSON.stringify(earned));
     }
   }, [viewedCount, quizSubmitted, dragCount, salaryCalc, badges]);
 
   const toggleBookmark = (id: string) => {
     const next = bookmarks.includes(id) ? bookmarks.filter(b => b !== id) : [...bookmarks, id];
     setBookmarks(next);
-    localStorage.setItem("ece_bookmarks", JSON.stringify(next));
+    localStorage.setItem("bfb_ece_bookmarks", JSON.stringify(next));
   };
 
   const toggleCompare = (id: string) => {
@@ -1020,12 +1020,12 @@ export const PortalPage: React.FC = () => {
     setSelectedDomain(domain);
     const nextViewedCount = viewedCount + 1;
     setViewedCount(nextViewedCount);
-    localStorage.setItem("ece_viewed_count", JSON.stringify(nextViewedCount));
+    localStorage.setItem("bfb_ece_viewed_count", JSON.stringify(nextViewedCount));
     
     if (!viewedDomainIds.includes(domain.id)) {
       const nextIds = [...viewedDomainIds, domain.id];
       setViewedDomainIds(nextIds);
-      localStorage.setItem("ece_viewed_ids", JSON.stringify(nextIds));
+      localStorage.setItem("bfb_ece_viewed_ids", JSON.stringify(nextIds));
     }
   };
 
@@ -1199,7 +1199,7 @@ export const PortalPage: React.FC = () => {
               onDismiss={(id) => {
                 const updated = [...dismissedRecs, id];
                 setDismissedRecs(updated);
-                localStorage.setItem("ece_dismissed_recs", JSON.stringify(updated));
+                localStorage.setItem("bfb_ece_dismissed_recs", JSON.stringify(updated));
               }}
            />
         </section>

@@ -32,7 +32,7 @@ export const TheDifference: React.FC = () => {
             </thead>
             <tbody>
               {COMPARISONS.map((row, idx) => {
-                const isAxeOr = row.platform === 'BitforBytes';
+                const isBfb = row.platform === 'BitforBytes';
 
                 return (
                   <motion.tr
@@ -47,9 +47,9 @@ export const TheDifference: React.FC = () => {
                     }}
                     className={`
                       border-b border-white/[0.04] transition-colors hover:bg-[#131619]/50
-                      ${isAxeOr ? 'bg-cyan-400/[0.03]' : ''}
+                      ${isBfb ? 'bg-cyan-400/[0.03]' : ''}
                     `}
-                    style={isAxeOr ? {
+                    style={isBfb ? {
                       borderLeft: '4px solid #22D3EE',
                     } : {}}
                   >
