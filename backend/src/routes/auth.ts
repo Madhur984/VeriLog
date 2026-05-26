@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { supabase } from '../lib/supabase';
+import { requireAuth } from '../middleware/requireAuth';
 
 const router = Router();
 
@@ -91,6 +92,13 @@ router.post('/logout', async (req: Request, res: Response) => {
     } catch (error: any) {
         res.status(400).json({ error: error.message });
     }
+});
+
+// Token verification — returns the current session's user.
+// Works for both Supabase JWTs and "guest_<id>" pseudo-tokens.
+router.get('/me', requireAuth, (req: Request, res: Response) => {
+    // requireAuth has populated req.user.
+    res.status(200).json({ user: req.user });
 });
 
 export default router;

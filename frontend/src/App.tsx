@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { TransitionProvider } from './hooks/useTransitionController';
 import { TransitionOverlay } from './components/TransitionOverlay';
 import { migrateStorage } from './utils/storageMigration';
+import { RequireAuth } from './components/RequireAuth';
 
 // Layout
 import { PortalLayout } from './layouts/PortalLayout';
@@ -65,13 +66,15 @@ function App() {
     <TransitionProvider>
       <TransitionOverlay />
       <Routes>
-        {/* Landing / Auth / Entry */}
+        {/* Landing / Auth / Entry — public */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/hero" element={<HeroExperience />} />
 
-        {/* Portal Layout Wrapper — Shared UI and Navigation Context */}
-        <Route element={<PortalLayout />}>
+        {/* Post-login hero — requires auth (real OR guest) */}
+        <Route path="/hero" element={<RequireAuth><HeroExperience /></RequireAuth>} />
+
+        {/* Portal Layout Wrapper — gated by RequireAuth so /portal etc. need login */}
+        <Route element={<RequireAuth><PortalLayout /></RequireAuth>}>
           <Route path="/portal" element={<WorkstationHome />} />
           <Route path="/career-roadmap" element={<CareerRoadmapPage />} />
           <Route path="/portfolio" element={<EngineeringPortfolio />} />
@@ -127,8 +130,8 @@ function App() {
           <Route path="/sandbox/verilog" element={<SandboxModule5 />} />
         </Route>
 
-        {/* Fallback Redirect to Portal */}
-        <Route path="*" element={<Navigate to="/portal" replace />} />
+        {/* Fallback: unknown path → login (RequireAuth on /portal would loop). */}
+        <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </TransitionProvider>
   );

@@ -17,9 +17,12 @@ app.get('/health', (req: Request, res: Response) => {
 
 import activityRoutes from './routes/activities';
 import authRoutes from './routes/auth';
+import { requireAuth } from './middleware/requireAuth';
 
-app.use('/api/activities', activityRoutes);
+// Auth routes are public (they ARE the auth flow).
 app.use('/api/auth', authRoutes);
+// Everything else requires a valid session (Supabase JWT or guest token).
+app.use('/api/activities', requireAuth, activityRoutes);
 
 // Global Error Handler
 app.use((err: any, req: Request, res: Response, next: any) => {

@@ -1,17 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
+import { startGuestSession } from '../lib/auth';
 import { AndGate, Switch } from '../components/Gates/CircuitComponents';
-import { ShieldCheck, Zap, Cpu, Fingerprint, User } from 'lucide-react';
+import { ShieldCheck, Zap, Cpu, Fingerprint, User, UserCircle2 } from 'lucide-react';
 import { useGamificationStore } from '../stores/gamificationStore';
 import { ElectricParticleField } from '../components/backgrounds/ElectricParticleField';
 import './LoginPage.css';
 
 export const LoginPage: React.FC = () => {
     const navigate = useNavigate();
+    const location = useLocation();
     const setFirstName = useGamificationStore((state) => state.setFirstName);
     const setHasSeenGreeting = useGamificationStore((state) => state.setHasSeenGreeting);
+
+    // Post-login destination — RequireAuth puts the original URL in state.from.
+    const redirectTo = (location.state as { from?: string } | null)?.from || '/hero';
 
     // Auth State
     const [isSignUp, setIsSignUp] = useState(false);
@@ -20,6 +25,14 @@ export const LoginPage: React.FC = () => {
     const [fullName, setFullName] = useState('');
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
+
+    const handleGuestLogin = () => {
+        const guestName = `Guest-${Math.floor(Math.random() * 9000 + 1000)}`;
+        startGuestSession(guestName);
+        setFirstName('Guest');
+        setHasSeenGreeting(false);
+        navigate(redirectTo, { replace: true });
+    };
 
     const [isEmailValid, setIsEmailValid] = useState(false);
     const [isPasswordValid, setIsPasswordValid] = useState(false);
@@ -57,7 +70,7 @@ export const LoginPage: React.FC = () => {
                     if (data.session?.access_token) {
                         localStorage.setItem('supabase_token', data.session.access_token);
                     }
-                    setTimeout(() => navigate('/hero'), 1000);
+                    setTimeout(() => navigate(redirectTo, { replace: true }), 1000);
                 } else {
                     const { data, error: signInError } = await supabase.auth.signInWithPassword({
                         email,
@@ -73,7 +86,7 @@ export const LoginPage: React.FC = () => {
                     if (data.session?.access_token) {
                         localStorage.setItem('supabase_token', data.session.access_token);
                     }
-                    setTimeout(() => navigate('/hero'), 1000);
+                    setTimeout(() => navigate(redirectTo, { replace: true }), 1000);
                 }
             } catch (err: any) {
                 console.error('Auth Error details:', err);
@@ -170,6 +183,24 @@ export const LoginPage: React.FC = () => {
                         <button className="mode-toggle" onClick={() => { setIsSignUp(!isSignUp); setError(null); }}>
                             {isSignUp ? 'Already have access? LOG_IN' : 'New user? REQUEST_ACCESS'}
                         </button>
+
+                        {/* Guest entry — bypasses Supabase entirely. No persistence beyond localStorage. */}
+                        <div className="guest-divider">
+                            <span>OR</span>
+                        </div>
+                        <button
+                            type="button"
+                            className="guest-button"
+                            onClick={handleGuestLogin}
+                            disabled={isLoading}
+                            title="Skip auth and explore as a guest. Progress saved locally only."
+                        >
+                            <UserCircle2 size={18} />
+                            <span>BYPASS_AUTH // GUEST_MODE</span>
+                        </button>
+                        <p className="guest-hint">
+                            Guest progress lives in this browser only.
+                        </p>
                     </div>
                 </motion.div>
 
