@@ -33,3 +33,13 @@ lerna-debug.log*
 
 # Study Materials
 study_material/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.venv/
+venv/
+ENV/

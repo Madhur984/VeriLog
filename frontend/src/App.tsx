@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { TransitionProvider } from './hooks/useTransitionController';
 import { TransitionOverlay } from './components/TransitionOverlay';
+import { ChatWidget } from './components/chat/ChatWidget';
 
 // Layout
 import { PortalLayout } from './layouts/PortalLayout';
@@ -124,6 +125,7 @@ function App() {
         {/* Fallback Redirect to Portal */}
         <Route path="*" element={<Navigate to="/portal" replace />} />
       </Routes>
+      <ChatWidget />
     </TransitionProvider>
   );
 }
