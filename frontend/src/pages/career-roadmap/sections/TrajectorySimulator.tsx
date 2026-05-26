@@ -55,7 +55,7 @@ export const TrajectorySimulator: React.FC = () => {
   } : null;
 
   return (
-    <SectionWrapper id="sim" className="bg-observatory-bg">
+    <SectionWrapper id="sim" className="bg-observatory-bg" aria-label="Trajectory Simulator">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row gap-12 items-stretch min-h-[600px]">
           <div className="flex-1 space-y-8 flex flex-col justify-center">

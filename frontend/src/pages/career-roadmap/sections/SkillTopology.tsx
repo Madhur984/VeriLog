@@ -1,18 +1,12 @@
-import React, { useState, useCallback, useMemo } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState } from 'react';
 import { SkillGraph } from '../components/SkillGraph';
 import { SkillGapSummary } from '../../../components/SkillGapSummary';
 import { SectionWrapper } from '../../../components/SectionWrapper';
-import { Search, Info, Globe, Layers } from 'lucide-react';
+import { Search } from 'lucide-react';
 
 export const SkillTopology: React.FC = () => {
   const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
   const [masteredNodes] = useState<Set<string>>(new Set(['digital-logic', 'verilog', 'boolean-algebra'])); // Mock data
-
-  const handleLaunchModule = (nodeId: string) => {
-    console.log(`Launching module for node: ${nodeId}`);
-    // Navigation logic handled here
-  };
 
   return (
     <SectionWrapper id="skill-graph" className="bg-observatory-bg">
@@ -29,7 +23,9 @@ export const SkillTopology: React.FC = () => {
           <div className="flex items-center gap-4">
             <div className="flex items-center bg-observatory-surface border border-white/5 rounded-full px-4 py-2">
               <Search size={14} className="text-slate-500 mr-3" />
+              <label htmlFor="topology-search" className="sr-only">Search topology nodes</label>
               <input 
+                id="topology-search"
                 type="text" 
                 placeholder="SEARCH NODE..." 
                 className="bg-transparent border-none outline-none text-[11px] font-mono text-white placeholder-slate-600 w-48"
@@ -91,7 +87,6 @@ export const SkillTopology: React.FC = () => {
           <SkillGapSummary 
             company={selectedCompany} 
             masteredNodes={masteredNodes}
-            onLaunchModule={handleLaunchModule}
           />
         )}
       </div>
