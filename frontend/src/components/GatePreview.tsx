@@ -16,6 +16,26 @@ export const GatePreview = () => {
   const [b, setB] = useState(false);
   const output = GATES[gate](a, b);
 
+  const playToggleTone = (isHigh: boolean) => {
+    try {
+      const AudioCtx = window.AudioContext || (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(isHigh ? 700 : 350, ctx.currentTime);
+      gain.gain.setValueAtTime(0.015, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.06);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.06);
+    } catch {
+      // Browser autoplay policy
+    }
+  };
+
   return (
     <div
       className="rounded-2xl p-6 h-full font-mono flex flex-col justify-between"
@@ -33,7 +53,10 @@ export const GatePreview = () => {
           {(Object.keys(GATES) as GateType[]).map(g => (
             <button
               key={g}
-              onClick={() => setGate(g)}
+              onClick={() => {
+                playToggleTone(true);
+                setGate(g);
+              }}
               className="px-3 py-1 rounded text-[10px] font-mono transition-all duration-150 cursor-pointer"
               style={{
                 background: gate === g ? '#22D3EE' : 'transparent',
@@ -47,7 +70,7 @@ export const GatePreview = () => {
             </button>
           ))}
         </div>
-
+ 
         {/* Main circuit area */}
         <div className="flex items-center justify-between mb-6">
           {/* Inputs */}
@@ -59,7 +82,10 @@ export const GatePreview = () => {
               <div key={label} className="flex items-center gap-3">
                 <span className="text-xs font-mono w-4" style={{ color: '#94A3B8' }}>{label}</span>
                 <button
-                  onClick={() => set(v => !v)}
+                  onClick={() => {
+                    playToggleTone(!val);
+                    set(v => !v);
+                  }}
                   className="w-12 h-6 rounded-full relative transition-all duration-200 flex items-center cursor-pointer"
                   style={{
                     background: val
