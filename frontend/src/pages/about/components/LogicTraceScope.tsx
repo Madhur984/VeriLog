@@ -130,7 +130,7 @@ export const LogicTraceScope: React.FC = () => {
     // Timing parameter
     let t = 0;
 
-    const animate = (timestamp: number) => {
+    const animate = (_timestamp: number) => {
       t += 0.04 * simulationSpeedRef.current;
       timeRef.current = t;
 
@@ -351,7 +351,6 @@ export const LogicTraceScope: React.FC = () => {
           } else {
             // Draw clean vertical transitions for digital logic waveforms
             const prevVal = data[index - 1];
-            const prevX = startX + index - 1;
             let prevY = yCenter - (prevVal * amplitude - amplitude / 2);
             if (isGlitchQ) {
               prevY += (Math.random() - 0.5) * 8;

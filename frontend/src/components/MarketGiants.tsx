@@ -1,7 +1,6 @@
 import React from 'react';
-import { ExternalLink, Search, MapPin, DollarSign, Briefcase } from 'lucide-react';
+import { ExternalLink, MapPin, Briefcase } from 'lucide-react';
 import { MARKET_GIANTS } from '../data/marketGiants';
-import { cn } from '../utils/cn';
 import { useSkillGap } from '../pages/career-roadmap/hooks/useSkillGap';
 
 export const MarketGiants: React.FC = () => {

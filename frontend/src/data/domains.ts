@@ -1,4 +1,3 @@
-import { Cpu, Microchip, Radio, Activity, Zap, Settings, Laptop, Car, Stethoscope, Lightbulb, Factory, Shield, BarChart3 } from 'lucide-react';
 
 export interface RoadmapMilestone {
   phase: string;

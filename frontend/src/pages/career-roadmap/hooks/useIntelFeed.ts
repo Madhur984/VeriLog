@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { tickerData, TickerItem } from '../data/ticker';
 
 export function useIntelFeed() {
-  const [activeItems, setActiveItems] = useState<TickerItem[]>(tickerData);
+  const [activeItems] = useState<TickerItem[]>(tickerData);
   const [isPaused, setIsPaused] = useState(false);
 
   // In a real app, this could poll an API

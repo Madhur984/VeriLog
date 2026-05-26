@@ -22,7 +22,7 @@ import { ComparisonBench } from '../../components/ComparisonBench';
 
 // Phase 1 & 2 Components
 import { SkillGapRadar } from './components/SkillGapRadar';
-import { ResumePreview } from './components/ResumePreview';
+import { SiliconResume } from './components/SiliconResume';
 import { TechnicalTerminal } from './components/TechnicalTerminal';
 import { GlobalSalaryHeatmap } from './components/GlobalSalaryHeatmap';
 import { SiliconNetwork } from './components/SiliconNetwork';
@@ -207,7 +207,7 @@ const CareerRoadmapPage: React.FC = () => {
               </div>
 
               <div className="border-t border-white/[0.03] pt-12">
-                <ResumePreview />
+                <SiliconResume />
               </div>
 
               <div className="border-t border-white/[0.03] pt-12 pb-24">

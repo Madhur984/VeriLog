@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Edit2, X, CheckCircle2 } from 'lucide-react';
+import { Edit2, X } from 'lucide-react';
 import { useCountdown } from '../hooks/useCountdown';
 import { useMultiClock, MissionClockData } from '../hooks/useMultiClock';
 

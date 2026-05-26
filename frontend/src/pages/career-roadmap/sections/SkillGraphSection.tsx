@@ -17,12 +17,13 @@ interface SkillGraphSectionProps {
 export const SkillGraphSection: React.FC<SkillGraphSectionProps> = ({
   unlockedNodes,
   quizScores,
-  onUnlockNode,
+  onUnlockNode: _onUnlockNode,
   onUpdateScore
 }) => {
   const [activeDomain, setActiveDomain] = useState(domains[0]);
   const [showQuiz, setShowQuiz] = useState(false);
   const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<'list' | 'graph'>('list');
 
   const unlockedNodesSet = useMemo(() => new Set(unlockedNodes), [unlockedNodes]);
 

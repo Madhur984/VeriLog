@@ -1,109 +1,324 @@
-import React from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { useSkillGap } from '../hooks/useSkillGap';
-import { DataTerminal } from './DataTerminal';
+import { ShieldAlert, Zap, CheckCircle2 } from 'lucide-react';
 
-export const SkillGapRadar: React.FC = () => {
-  const { matches, masteredNodes } = useSkillGap();
+interface RadarAxis {
+  label: string;
+  userValue: number;
+  reqValue: number;
+}
+
+const computeUserSkills = (masteredNodes: string[]) => {
+  const masteredSet = new Set(masteredNodes.map(s => s.toLowerCase().trim()));
   
-  // Hardcoded for demo - usually derived from data
-  const domains = [
-    { label: 'Digital Design', value: 80 },
-    { label: 'Architecture', value: 40 },
-    { label: 'Verification', value: 60 },
-    { label: 'Analog', value: 20 },
-    { label: 'Layout/Physical', value: 30 },
-    { label: 'Programming', value: 90 },
-  ];
+  // Calculate dynamic score for each axis from 0 to 100
+  // Each axis has a baseline value (e.g. 15 or 20) and grows based on specific nodes mastered.
+  
+  // 1. Digital Foundations (Max 100)
+  // Nodes: digital-foundation, digital-logic, boolean-algebra, k-map-master, digital-design
+  let digitalVal = 20;
+  if (masteredSet.has('digital-foundation') || masteredSet.has('digital-logic') || masteredSet.has('digital-design')) digitalVal += 35;
+  if (masteredSet.has('boolean-algebra')) digitalVal += 25;
+  if (masteredSet.has('k-map-master') || masteredSet.has('k-map')) digitalVal += 20;
+  
+  // 2. Verilog/SV
+  // Nodes: verilog-hdl, verilog, systemverilog
+  let verilogVal = 20;
+  if (masteredSet.has('verilog-hdl') || masteredSet.has('verilog')) verilogVal += 45;
+  if (masteredSet.has('systemverilog') || masteredSet.has('sv-basics')) verilogVal += 35;
+  
+  // 3. STA & Timing
+  // Nodes: timing-analysis, setup-hold, clock-domain-crossing
+  let staVal = 10;
+  if (masteredSet.has('timing-analysis') || masteredSet.has('sta-timing')) staVal += 40;
+  if (masteredSet.has('setup-hold') || masteredSet.has('setup-hold-checks')) staVal += 25;
+  if (masteredSet.has('clock-domain-crossing') || masteredSet.has('cdc')) staVal += 25;
+  
+  // 4. Computer Arch
+  // Nodes: computer-architecture, cpu-architecture, gpu-architecture, risc-v
+  let archVal = 20;
+  if (masteredSet.has('computer-architecture') || masteredSet.has('cpu-architecture') || masteredSet.has('architecture-basics')) archVal += 30;
+  if (masteredSet.has('gpu-architecture') || masteredSet.has('gpu-basics')) archVal += 25;
+  if (masteredSet.has('risc-v') || masteredSet.has('riscv-core')) archVal += 25;
+  
+  // 5. UVM/DV
+  // Nodes: uvm-basics, verification, systemverilog-assertions
+  let uvmVal = 10;
+  if (masteredSet.has('uvm-basics') || masteredSet.has('uvm-verification') || masteredSet.has('verification-methodology')) uvmVal += 40;
+  if (masteredSet.has('verification') || masteredSet.has('dv-basics')) uvmVal += 30;
+  if (masteredSet.has('systemverilog-assertions') || masteredSet.has('sva')) uvmVal += 20;
+  
+  // 6. Scripting (Tcl/Py)
+  // Nodes: scripting-tcl, python-scripting, tcl-scripting, scripting-basics
+  let scriptingVal = 20;
+  if (masteredSet.has('scripting-tcl') || masteredSet.has('tcl-scripting')) scriptingVal += 40;
+  if (masteredSet.has('python-scripting') || masteredSet.has('python')) scriptingVal += 40;
+  
+  return {
+    digital: Math.min(100, digitalVal),
+    verilog: Math.min(100, verilogVal),
+    sta: Math.min(100, staVal),
+    arch: Math.min(100, archVal),
+    uvm: Math.min(100, uvmVal),
+    scripting: Math.min(100, scriptingVal)
+  };
+};
+
+export const SkillGapRadar = () => {
+  const [activeCompany, setActiveCompany] = useState('nvidia');
+  const [studyHours, setStudyHours] = useState(2);
+  const [masteredNodes, setMasteredNodes] = useState<string[]>([]);
+  
+  useEffect(() => {
+    const handleStorageChange = () => {
+      try {
+        const stored = localStorage.getItem('axe_mastered_nodes');
+        if (stored) {
+          setMasteredNodes(JSON.parse(stored));
+        } else {
+          // Default nodes for visual preview
+          setMasteredNodes(['digital-foundation', 'verilog-hdl']);
+        }
+      } catch (e) {
+        console.error('Error parsing mastered nodes from storage:', e);
+      }
+    };
+
+    // Load initial
+    handleStorageChange();
+
+    // Listen to local custom storage events if any
+    window.addEventListener('storage', handleStorageChange);
+    // Custom event dispatch for same-tab updates if trigger is present
+    window.addEventListener('axe_nodes_updated', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('axe_nodes_updated', handleStorageChange);
+    };
+  }, []);
+
+  const userScores = computeUserSkills(masteredNodes);
+
+  const COMPANY_PRESETS: Record<string, { name: string; target: string; axes: RadarAxis[] }> = {
+    nvidia: {
+      name: 'NVIDIA',
+      target: 'ASIC/RTL Design Engineer',
+      axes: [
+        { label: 'Verilog/SV', userValue: userScores.verilog, reqValue: 95 },
+        { label: 'STA & Timing', userValue: userScores.sta, reqValue: 85 },
+        { label: 'Computer Arch', userValue: userScores.arch, reqValue: 90 },
+        { label: 'UVM/DV', userValue: userScores.uvm, reqValue: 80 },
+        { label: 'Digital Foundations', userValue: userScores.digital, reqValue: 95 },
+        { label: 'Scripting (Tcl/Py)', userValue: userScores.scripting, reqValue: 75 }
+      ]
+    },
+    qualcomm: {
+      name: 'Qualcomm',
+      target: 'Design Verification (DV) Engineer',
+      axes: [
+        { label: 'Verilog/SV', userValue: userScores.verilog, reqValue: 90 },
+        { label: 'STA & Timing', userValue: userScores.sta, reqValue: 75 },
+        { label: 'Computer Arch', userValue: userScores.arch, reqValue: 85 },
+        { label: 'UVM/DV', userValue: userScores.uvm, reqValue: 95 },
+        { label: 'Digital Foundations', userValue: userScores.digital, reqValue: 90 },
+        { label: 'Scripting (Tcl/Py)', userValue: userScores.scripting, reqValue: 80 }
+      ]
+    }
+  };
+
+  const currentPreset = COMPANY_PRESETS[activeCompany];
+  const size = 300;
+  const center = size / 2;
+  const radius = (size / 2) * 0.7;
+  const totalAxes = currentPreset.axes.length;
+
+  const getCoordinates = (index: number, value: number) => {
+    const angle = (index * 2 * Math.PI) / totalAxes - Math.PI / 2;
+    const r = (value / 100) * radius;
+    return {
+      x: center + r * Math.cos(angle),
+      y: center + r * Math.sin(angle)
+    };
+  };
+
+  // Generate SVG paths
+  const userPoints = currentPreset.axes.map((axis, i) => getCoordinates(i, axis.userValue));
+  const reqPoints = currentPreset.axes.map((axis, i) => getCoordinates(i, axis.reqValue));
+  
+  const userPath = userPoints.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ') + ' Z';
+  const reqPath = reqPoints.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ') + ' Z';
+
+  // Calculate Overall Match %
+  const matchPercentage = Math.round(
+    (currentPreset.axes.reduce((acc, axis) => acc + Math.min(axis.userValue / axis.reqValue, 1), 0) / totalAxes) * 100
+  );
+
+  // Calculate total missing percentage points
+  const totalGapPoints = currentPreset.axes.reduce((acc, axis) => acc + Math.max(0, axis.reqValue - axis.userValue), 0);
+  // Weekly rate mapping based on study hours (more hours = faster closing)
+  // Base rate of learning: 3 gap points closed per hour of study per week.
+  const pointsPerWeek = studyHours * 3;
+  const weeksToParity = totalGapPoints > 0 ? Math.ceil(totalGapPoints / pointsPerWeek) : 0;
 
   return (
-    <DataTerminal title="SKILL GAP RADAR" subtitle="Current Mastery vs. Market Demand" className="h-[400px]">
-      <div className="flex h-full p-6 gap-8">
-        {/* Radar Visualization Area */}
-        <div className="flex-1 relative flex items-center justify-center">
-           {/* SVG Radar Chart implementation */}
-           <svg viewBox="-120 -120 240 240" className="w-full h-full max-w-[240px] max-h-[240px]">
-             {/* Background Web */}
-             {[0.2, 0.4, 0.6, 0.8, 1].map((scale) => (
-               <polygon 
-                 key={scale}
-                 points={domains.length > 0 ? domains.map((_, i) => {
-                   const angle = (Math.PI * 2 * i) / domains.length - Math.PI / 2;
-                   return `${Math.cos(angle) * 100 * scale},${Math.sin(angle) * 100 * scale}`;
-                 }).join(' ') : ''}
-                 fill="none"
-                 stroke="rgba(255,255,255,0.1)"
-                 strokeWidth="1"
-               />
-             ))}
-             {/* Axes */}
-             {domains.map((d, i) => {
-               const angle = (Math.PI * 2 * i) / domains.length - Math.PI / 2;
-               return (
-                 <g key={i}>
-                   <line 
-                     x1="0" y1="0" 
-                     x2={Math.cos(angle) * 100} y2={Math.sin(angle) * 100} 
-                     stroke="rgba(255,255,255,0.1)" strokeWidth="1"
-                   />
-                   <text 
-                     x={Math.cos(angle) * 120} y={Math.sin(angle) * 120} 
-                     fill="#94a3b8" fontSize="8" fontFamily="monospace" textAnchor="middle" dominantBaseline="middle"
-                   >
-                     {d.label}
-                   </text>
-                 </g>
-               );
-             })}
-             
-             {/* Data Polygon */}
-             <motion.polygon 
-                initial={{ opacity: 0, scale: 0 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 1 }}
-                points={domains.map((d, i) => {
-                  const angle = (Math.PI * 2 * i) / domains.length - Math.PI / 2;
-                  return `${Math.cos(angle) * d.value},${Math.sin(angle) * d.value}`;
-                }).join(' ')}
-                fill="rgba(34,211,238,0.2)"
-                stroke="#22d3ee"
-                strokeWidth="2"
-             />
-           </svg>
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-6xl mx-auto px-6 py-12 bg-[#07080A] text-white border border-white/5 rounded-xl">
+      {/* Left: Interactive Telemetry Matrix */}
+      <div className="bg-[#0D0F12] border border-white/5 rounded-xl p-6 flex flex-col items-center relative">
+        <div className="w-full flex justify-between items-center mb-6 border-b border-white/5 pb-4">
+          <span className="text-xs font-mono text-slate-500 tracking-wider">SKILL QUANTIZATION SPECTRUM</span>
+          <div className="flex gap-2">
+            {Object.keys(COMPANY_PRESETS).map((key) => (
+              <button
+                key={key}
+                onClick={() => setActiveCompany(key)}
+                className={`px-3 py-1 text-xs font-mono rounded border transition-all ${
+                  activeCompany === key 
+                    ? 'border-[#22D3EE] bg-[#22D3EE]/10 text-[#22D3EE]' 
+                    : 'border-white/10 text-slate-400 hover:border-white/20'
+                }`}
+              >
+                {COMPANY_PRESETS[key].name}
+              </button>
+            ))}
+          </div>
         </div>
 
-        {/* Technical Sidebar */}
-        <div className="w-64 border-l border-white/10 pl-6 flex flex-col justify-center">
-          <h4 className="text-[10px] font-mono text-cyan-400 uppercase tracking-widest mb-4">Critical Missing Nodes</h4>
-          <div className="space-y-3">
-             {matches[0]?.missingSkills.slice(0, 4).map((skill, idx) => (
-               <button 
-                 key={idx} 
-                 onClick={() => {
-                   alert(`Navigating to curriculum module for: ${skill.replace(/-/g, ' ').toUpperCase()}`);
-                   // In production: window.location.href = `/curriculum?node=${skill}`;
-                 }}
-                 className="flex items-start gap-2 w-full text-left group/node"
-               >
-                 <div className="w-1.5 h-1.5 bg-red-400 rounded-full mt-1.5 shrink-0 animate-pulse group-hover/node:bg-cyan-400 transition-colors" />
-                 <span className="text-xs font-mono text-slate-300 capitalize group-hover/node:text-cyan-400 transition-colors">
-                   {skill.replace(/-/g, ' ')}
-                 </span>
-                 <span className="text-[8px] font-mono text-slate-600 opacity-0 group-hover/node:opacity-100 transition-opacity ml-auto uppercase">Jump to Module ↗</span>
-               </button>
-             ))}
-             {matches[0]?.missingSkills.length === 0 && (
-               <div className="text-xs font-mono text-green-400">All Top Tier Nodes Mastered</div>
-             )}
+        {/* Pure SVG Radar Engine */}
+        <svg width={size} height={size} className="overflow-visible my-4">
+          {/* Concentric Grid Rings */}
+          {[25, 50, 75, 100].map((pct) => {
+            const ringPoints = currentPreset.axes.map((_, i) => getCoordinates(i, pct));
+            const ringPath = ringPoints.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ') + ' Z';
+            return <path key={pct} d={ringPath} fill="none" stroke="rgba(148,163,184,0.05)" strokeWidth="1" />;
+          })}
+
+          {/* Grid Spokes */}
+          {currentPreset.axes.map((_, i) => {
+            const edge = getCoordinates(i, 100);
+            return <line key={i} x1={center} y1={center} x2={edge.x} y2={edge.y} stroke="rgba(148,163,184,0.08)" strokeWidth="1" />;
+          })}
+
+          {/* Target Profile Boundary */}
+          <motion.path 
+            key={`${activeCompany}-req`}
+            initial={{ pathLength: 0 }}
+            animate={{ pathLength: 1 }}
+            transition={{ duration: 0.8 }}
+            d={reqPath} 
+            fill="rgba(245,158,11,0.02)" 
+            stroke="#F59E0B" 
+            strokeWidth="1.5" 
+            strokeDasharray="4 3" 
+          />
+
+          {/* User Profile Polygon */}
+          <motion.path 
+            key={`${activeCompany}-user-${masteredNodes.length}`}
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: 'spring', damping: 15 }}
+            d={userPath} 
+            fill="rgba(34,211,238,0.12)" 
+            stroke="#22D3EE" 
+            strokeWidth="2" 
+          />
+
+          {/* Axis Labels */}
+          {currentPreset.axes.map((axis, i) => {
+            const angle = (i * 2 * Math.PI) / totalAxes - Math.PI / 2;
+            const labelRadius = radius + 24;
+            const lx = center + labelRadius * Math.cos(angle);
+            const ly = center + labelRadius * Math.sin(angle);
+            const isMet = axis.userValue >= axis.reqValue;
+
+            return (
+              <text
+                key={i} x={lx} y={ly}
+                textAnchor="middle" dominantBaseline="middle"
+                className="text-[10px] font-mono font-medium"
+                fill={isMet ? '#22D3EE' : '#F59E0B'}
+              >
+                {axis.label}
+              </text>
+            );
+          })}
+        </svg>
+
+        <div className="mt-6 flex gap-6 text-xs font-mono border-t border-white/5 pt-4 w-full justify-center">
+          <div className="flex items-center gap-2"><div className="w-2 h-2 bg-[#22D3EE] rounded-full" /> YOUR GRAPH</div>
+          <div className="flex items-center gap-2"><div className="w-2 h-2 bg-[#F59E0B] rounded-full border border-dashed" /> REQUIRED</div>
+        </div>
+      </div>
+
+      {/* Right: Architectural Gap Diagnostics */}
+      <div className="flex flex-col justify-between">
+        <div>
+          <div className="mb-6">
+            <span className="text-[10px] font-mono tracking-[0.2em] text-[#F59E0B]">TARGET: {currentPreset.target.toUpperCase()}</span>
+            <h3 className="text-4xl font-bold font-mono text-white mt-1">{matchPercentage}% MATCH</h3>
           </div>
-          
-          <div className="mt-8 pt-6 border-t border-white/10">
-            <div className="text-[10px] font-mono text-slate-500 uppercase tracking-widest mb-1">Top Match</div>
-            <div className="text-xl font-mono text-white font-bold">{matches[0]?.name || 'N/A'}</div>
-            <div className="text-xs font-mono text-cyan-400 mt-1">{matches[0]?.matchScore || 0}% ALIGNMENT</div>
+
+          <div className="space-y-3">
+            {currentPreset.axes.map((axis) => {
+              const gap = axis.reqValue - axis.userValue;
+              if (gap <= 0) {
+                return (
+                  <div key={axis.label} className="p-4 bg-[#0D0F12] border border-green-500/10 rounded-lg flex items-start gap-3">
+                    <CheckCircle2 className="text-[#22D3EE] shrink-0 mt-0.5" size={16} />
+                    <div className="w-full">
+                      <div className="flex justify-between text-xs font-mono">
+                        <span className="text-white font-semibold">{axis.label}</span>
+                        <span className="text-[#22D3EE]">MET</span>
+                      </div>
+                      <div className="w-full bg-slate-800 h-1 mt-2 rounded-full overflow-hidden">
+                        <div className="bg-[#22D3EE] h-full" style={{ width: `${axis.userValue}%` }} />
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+
+              return (
+                <div key={axis.label} className="p-4 bg-[#0D0F12] border border-orange-500/10 rounded-lg flex items-start gap-3">
+                  <ShieldAlert className="text-[#F59E0B] shrink-0 mt-0.5" size={16} />
+                  <div className="w-full">
+                    <div className="flex justify-between text-xs font-mono">
+                      <span className="text-white font-semibold">{axis.label}</span>
+                      <span className="text-[#F59E0B]">GAP: -{gap}%</span>
+                    </div>
+                    <div className="w-full bg-slate-800 h-1 mt-2 rounded-full overflow-hidden">
+                      <div className="bg-[#22D3EE] h-full" style={{ width: `${axis.userValue}%` }} />
+                      <div className="bg-[#F59E0B] h-full" style={{ width: `${gap}%`, marginLeft: `${axis.userValue}%` }} />
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Direct Adaptive Execution Estimator */}
+        <div className="bg-[#0D0F12] border border-white/5 rounded-xl p-5 mt-6">
+          <div className="flex justify-between items-center text-xs font-mono text-slate-400 mb-3">
+            <span>INTENSITY ADJUSTER</span>
+            <span className="text-[#22D3EE] font-bold">{studyHours} HRS/DAY</span>
+          </div>
+          <input
+            type="range" min="1" max="5" value={studyHours}
+            onChange={(e) => setStudyHours(Number(e.target.value))}
+            className="w-full accent-[#22D3EE] h-1 bg-slate-800 rounded-lg cursor-pointer"
+          />
+          <div className="flex items-center gap-3 mt-4 text-xs font-mono text-slate-400">
+            <Zap size={14} className="text-[#22D3EE]" />
+            {weeksToParity > 0 ? (
+              <span>Time to 100% Industry Parity: <strong className="text-white">{weeksToParity} Weeks</strong></span>
+            ) : (
+              <span>All target metrics successfully met! <strong className="text-[#22D3EE]">Ready for Interview Subsystem.</strong></span>
+            )}
           </div>
         </div>
       </div>
-    </DataTerminal>
+    </div>
   );
 };

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { storyTree, StoryNode } from '../data/storyTree';
+import { storyTree, StoryChoice } from '../data/storyTree';
 import { DataTerminal } from './DataTerminal';
 
 interface TrajectorySimulatorModalProps {
@@ -13,6 +13,22 @@ export const TrajectorySimulatorModal: React.FC<TrajectorySimulatorModalProps> =
 
   const handleOptionClick = (nextId: string) => {
     setCurrentNodeId(nextId);
+  };
+
+  const isOutcome = currentNode.type === 'outcome';
+
+  // Fallback mocks for UI fields not present in simple static storyTree
+  const mockOutcomeData = {
+    role: currentNode.role || 'ASIC Design Specialist',
+    package: '18 - 25 LPA',
+    assessment: `Path verified for entry level domain integration at ${currentNode.company || 'Silicon Giants'}. Core timing closure competencies required.`,
+    lifestyle: ['Hybrid Work Model', 'Subsidized Hardware Lab Access', 'Relocation Package'],
+    whatItTakes: [
+      'Comprehensive Logic optimization competence',
+      'Verilog/SystemVerilog RTL proficiency',
+      'FSM Design and Clock Domain CDC verification'
+    ],
+    year5: 'Lead Architect / Principal Engineer SC'
   };
 
   return (
@@ -37,14 +53,13 @@ export const TrajectorySimulatorModal: React.FC<TrajectorySimulatorModalProps> =
                   exit={{ opacity: 0, x: 20 }}
                   className="space-y-8"
                 >
-
                   <h2 className="text-3xl font-mono text-text-main leading-tight tracking-tighter">
-                    {currentNode.outcome ? currentNode.outcome.title : currentNode.text}
+                    {isOutcome ? `Outcome: ${currentNode.role} at ${currentNode.company}` : currentNode.question}
                   </h2>
                   
-                  {!currentNode.outcome && (
+                  {!isOutcome && (
                     <div className="grid grid-cols-1 gap-4 pt-4">
-                      {currentNode.options?.map((opt, i) => (
+                      {currentNode.choices?.map((opt: StoryChoice, i: number) => (
                         <button
                           key={i}
                           onClick={() => handleOptionClick(opt.nextId)}
@@ -54,27 +69,27 @@ export const TrajectorySimulatorModal: React.FC<TrajectorySimulatorModalProps> =
                             {i + 1}
                           </div>
                           <span className="text-text-sub font-mono text-sm group-hover:text-text-main">
-                            {opt.text}
+                            {opt.label} - <span className="text-text-dim">{opt.description}</span>
                           </span>
                         </button>
                       ))}
                     </div>
                   )}
 
-                  {currentNode.outcome && (
+                  {isOutcome && (
                     <div className="space-y-6">
                       <div className="grid grid-cols-2 gap-8 py-6 border-y border-ghost-trace/30">
                         <div>
                           <label className="text-[10px] font-mono text-text-dim uppercase tracking-widest">Starting Role</label>
-                          <div className="text-text-main font-mono mt-1">{currentNode.outcome.role}</div>
+                          <div className="text-text-main font-mono mt-1">{mockOutcomeData.role}</div>
                         </div>
                         <div>
                           <label className="text-[10px] font-mono text-text-dim uppercase tracking-widest">Entry Package</label>
-                          <div className="text-plasma-cyan font-mono mt-1 font-bold">{currentNode.outcome.package}</div>
+                          <div className="text-plasma-cyan font-mono mt-1 font-bold">{mockOutcomeData.package}</div>
                         </div>
                       </div>
                       <p className="text-text-sub font-mono text-sm leading-relaxed italic">
-                        "{currentNode.outcome.assessment}"
+                        "{mockOutcomeData.assessment}"
                       </p>
                       <button 
                         onClick={onClose}
@@ -90,12 +105,12 @@ export const TrajectorySimulatorModal: React.FC<TrajectorySimulatorModalProps> =
 
             {/* Right Column: Data Visualization (Only for outcomes) */}
             <div className="w-80 bg-black/30 p-8 flex flex-col">
-              {currentNode.outcome ? (
+              {isOutcome ? (
                 <div className="space-y-8">
                   <div>
                     <h4 className="text-[10px] font-mono text-plasma-cyan uppercase tracking-widest mb-4">Lifestyle Factors</h4>
                     <div className="space-y-2">
-                      {currentNode.outcome.lifestyle.map((tag, i) => (
+                      {mockOutcomeData.lifestyle.map((tag: string, i: number) => (
                         <div key={i} className="flex items-center gap-2 text-[11px] font-mono text-text-sub">
                           <div className="w-1 h-1 bg-plasma-cyan rounded-full"></div>
                           {tag}
@@ -107,7 +122,7 @@ export const TrajectorySimulatorModal: React.FC<TrajectorySimulatorModalProps> =
                   <div>
                     <h4 className="text-[10px] font-mono text-plasma-cyan uppercase tracking-widest mb-4">Success Requirements</h4>
                     <ul className="space-y-3">
-                      {currentNode.outcome.whatItTakes.map((req, i) => (
+                      {mockOutcomeData.whatItTakes.map((req: string, i: number) => (
                         <li key={i} className="text-[11px] font-mono text-text-dim leading-snug">
                           {req}
                         </li>
@@ -117,14 +132,14 @@ export const TrajectorySimulatorModal: React.FC<TrajectorySimulatorModalProps> =
 
                   <div className="mt-auto pt-6 border-t border-ghost-trace/30">
                     <div className="text-[10px] font-mono text-text-dim uppercase mb-2">5-Year Target</div>
-                    <div className="text-xl font-mono text-text-main">{currentNode.outcome.year5}</div>
+                    <div className="text-xl font-mono text-text-main">{mockOutcomeData.year5}</div>
                   </div>
                 </div>
               ) : (
                 <div className="h-full flex flex-col items-center justify-center text-center space-y-4 opacity-30">
                   <div className="w-12 h-12 border-2 border-dashed border-ghost-trace rounded-full animate-spin-slow"></div>
                   <div className="text-[10px] font-mono text-text-dim uppercase tracking-widest">
-                    Loading...
+                    Decision Pending...
                   </div>
                 </div>
               )}
