@@ -19,10 +19,11 @@ export const LogicTraceScope: React.FC = () => {
   const [isResetActive, setIsResetActive] = useState<boolean>(false);
   const [simulationSpeed, setSimulationSpeed] = useState<number>(1); // 1x, 2x, 0.5x
   const [autoToggle, setAutoToggle] = useState<boolean>(true); // Drifting Auto Pattern mode
+  const [glitchActive, setGlitchActive] = useState<boolean>(false); // Metastability glitch state
 
   // Scope measurement metrics
   const [lastTpd, setLastTpd] = useState<number>(45); // ps
-  const [setupCheck, setSetupCheck] = useState<'PASS' | 'VIOLATION'>('PASS');
+  const [setupCheck, setSetupCheck] = useState<'PASS' | 'VIOLATION' | 'METASTABLE'>('PASS');
   const [violationCount, setViolationCount] = useState<number>(0);
 
   // Internal states for animation loop
@@ -57,8 +58,12 @@ export const LogicTraceScope: React.FC = () => {
   const simulationSpeedRef = useRef<number>(simulationSpeed);
   const autoToggleRef = useRef<boolean>(autoToggle);
 
+  // Glitch tracking refs
+  const lastToggleTimes = useRef<number[]>([]);
+  const glitchTimeRef = useRef<number>(0);
+
   // Metrics tracking refs to prevent re-renders restarting the animation loop
-  const lastSetupCheckState = useRef<'PASS' | 'VIOLATION'>('PASS');
+  const lastSetupCheckState = useRef<'PASS' | 'VIOLATION' | 'METASTABLE'>('PASS');
   const lastTpdState = useRef<number>(45);
   const violationCountRef = useRef<number>(0);
   const maxDataPointsRef = useRef<number>(600);
@@ -72,12 +77,31 @@ export const LogicTraceScope: React.FC = () => {
   useEffect(() => { simulationSpeedRef.current = simulationSpeed; }, [simulationSpeed]);
   useEffect(() => { autoToggleRef.current = autoToggle; }, [autoToggle]);
 
+  // Handle manual D input button click with rapid toggle detection (glitch trigger)
+  const handleManualToggle = (bit: number) => {
+    if (bit === inputBit) return;
+    setInputBit(bit);
+
+    const now = Date.now();
+    // Keep only toggles within the last 1 second
+    lastToggleTimes.current = lastToggleTimes.current.filter(t => now - t < 1000);
+    lastToggleTimes.current.push(now);
+
+    // If toggled more than 3 times in 1 second, trigger a metastable glitch state!
+    if (lastToggleTimes.current.length >= 3) {
+      glitchTimeRef.current = 90; // active for 90 frames (~1.5s of unstable oscillation)
+      setGlitchActive(true);
+    }
+  };
+
   // Trigger manual reset
   const handleReset = () => {
     setIsResetActive(true);
     triggerPulseTime.current = 10; // flash effect timer
     violationCountRef.current = 0;
     setViolationCount(0);
+    glitchTimeRef.current = 0;
+    setGlitchActive(false);
     setTimeout(() => setIsResetActive(false), 200);
   };
 
@@ -87,16 +111,21 @@ export const LogicTraceScope: React.FC = () => {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Handle high DPI screens and dynamic width calculation
-    const resizeCanvas = () => {
-      const rect = canvas.getBoundingClientRect();
-      canvas.width = rect.width * window.devicePixelRatio;
-      canvas.height = rect.height * window.devicePixelRatio;
-      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
-      maxDataPointsRef.current = Math.ceil(rect.width);
-    };
-    resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
+    const parent = canvas.parentElement;
+    if (!parent) return;
+
+    // Use ResizeObserver for responsive canvas rendering without layout stretch or blurriness
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (let entry of entries) {
+        const { width, height } = entry.contentRect;
+        canvas.width = width * window.devicePixelRatio;
+        canvas.height = height * window.devicePixelRatio;
+        ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+        maxDataPointsRef.current = Math.ceil(width);
+      }
+    });
+
+    resizeObserver.observe(parent);
 
     // Timing parameter
     let t = 0;
@@ -107,6 +136,14 @@ export const LogicTraceScope: React.FC = () => {
 
       const width = canvas.width / window.devicePixelRatio;
       const height = canvas.height / window.devicePixelRatio;
+
+      // Handle active glitch countdown
+      if (glitchTimeRef.current > 0) {
+        glitchTimeRef.current -= 1;
+        if (glitchTimeRef.current === 0) {
+          setGlitchActive(false);
+        }
+      }
 
       // Drifting Auto-Pattern mode or manual signal input injection
       let currentInputBit = inputBitRef.current;
@@ -167,6 +204,15 @@ export const LogicTraceScope: React.FC = () => {
           lastSetupCheckState.current = 'PASS';
           setSetupCheck('PASS');
         }
+      } else if (glitchTimeRef.current > 0) {
+        // Metastable state: output Q oscillates dynamically and randomly
+        if (Math.random() < 0.25) {
+          nextQ = Math.random() > 0.5 ? 1 : 0;
+        }
+        if (lastSetupCheckState.current !== 'METASTABLE') {
+          lastSetupCheckState.current = 'METASTABLE';
+          setSetupCheck('METASTABLE');
+        }
       } else {
         const edgeDetected = triggerEdgeRef.current === 'rising'
           ? (clkWithJitter === 1 && lastClkVal.current === 0)
@@ -177,7 +223,7 @@ export const LogicTraceScope: React.FC = () => {
           const setupWindow = 0.35; // time units
           const timeSinceDChange = t - lastDChangeTime.current;
           
-          let newSetupCheck: 'PASS' | 'VIOLATION' = 'PASS';
+          let newSetupCheck: 'PASS' | 'VIOLATION' | 'METASTABLE' = 'PASS';
           let newTpd = lastTpdState.current;
 
           if (timeSinceDChange < setupWindow) {
@@ -268,31 +314,48 @@ export const LogicTraceScope: React.FC = () => {
         yCenter: number, 
         amplitude: number, 
         color: string, 
-        glowColor: string
+        glowColor: string,
+        isQTrace?: boolean
       ) => {
         if (data.length < 2) return;
-        ctx.strokeStyle = color;
+        
+        const isGlitchQ = isQTrace && glitchTimeRef.current > 0;
+
+        if (isGlitchQ) {
+          ctx.strokeStyle = '#F59E0B'; // metastable orange
+          ctx.shadowColor = 'rgba(245, 158, 11, 0.8)';
+          ctx.shadowBlur = 15 + Math.random() * 8;
+        } else {
+          ctx.strokeStyle = color;
+          ctx.shadowColor = glowColor;
+          ctx.shadowBlur = 10;
+        }
+        
         ctx.lineWidth = 2.5;
         ctx.lineCap = 'round';
         ctx.lineJoin = 'miter';
-
-        // Outer glow path for oscilloscope phosphor effect
-        ctx.shadowColor = glowColor;
-        ctx.shadowBlur = 10;
 
         ctx.beginPath();
         const startX = width - data.length;
         data.forEach((val, index) => {
           const x = startX + index;
-          const y = yCenter - (val * amplitude - amplitude / 2);
+          let y = yCenter - (val * amplitude - amplitude / 2);
           
+          if (isGlitchQ) {
+            // Apply high frequency physical noise coordinates
+            y += (Math.random() - 0.5) * 8;
+          }
+
           if (index === 0) {
             ctx.moveTo(x, y);
           } else {
             // Draw clean vertical transitions for digital logic waveforms
             const prevVal = data[index - 1];
             const prevX = startX + index - 1;
-            const prevY = yCenter - (prevVal * amplitude - amplitude / 2);
+            let prevY = yCenter - (prevVal * amplitude - amplitude / 2);
+            if (isGlitchQ) {
+              prevY += (Math.random() - 0.5) * 8;
+            }
             if (prevVal !== val) {
               ctx.lineTo(x, prevY); // Vertical step edge
             }
@@ -307,7 +370,7 @@ export const LogicTraceScope: React.FC = () => {
       const sectionHeight = height / 4;
       drawSignalTrace(traceData.current.clk, sectionHeight * 0.8, 30, '#22D3EE', 'rgba(34, 211, 238, 0.5)');
       drawSignalTrace(traceData.current.din, sectionHeight * 1.8, 30, '#F59E0B', 'rgba(245, 158, 11, 0.5)');
-      drawSignalTrace(traceData.current.q, sectionHeight * 2.8, 30, '#10B981', 'rgba(16, 185, 129, 0.5)');
+      drawSignalTrace(traceData.current.q, sectionHeight * 2.8, 30, '#10B981', 'rgba(16, 185, 129, 0.5)', true);
       drawSignalTrace(traceData.current.rst, sectionHeight * 3.8, 20, '#EF4444', 'rgba(239, 68, 68, 0.5)');
 
       // Signal Label Decals on the Left Margin
@@ -331,7 +394,7 @@ export const LogicTraceScope: React.FC = () => {
 
     return () => {
       cancelAnimationFrame(requestRef.current);
-      window.removeEventListener('resize', resizeCanvas);
+      resizeObserver.disconnect();
     };
   }, []);
 
@@ -357,7 +420,13 @@ export const LogicTraceScope: React.FC = () => {
 
           <div className="flex flex-col items-end">
             <span className="text-[8px] text-slate-500 uppercase tracking-widest">Setup Status</span>
-            <span className={`font-bold tracking-tight text-sm ${setupCheck === 'PASS' ? 'text-emerald-400' : 'text-rose-500 animate-pulse'}`}>
+            <span className={`font-bold tracking-tight text-sm ${
+              setupCheck === 'PASS' 
+                ? 'text-emerald-400' 
+                : setupCheck === 'METASTABLE' 
+                ? 'text-amber-500 animate-pulse'
+                : 'text-rose-500 animate-pulse'
+            }`}>
               {setupCheck}
             </span>
           </div>
@@ -407,7 +476,7 @@ export const LogicTraceScope: React.FC = () => {
             {!autoToggle ? (
               <div className="grid grid-cols-2 gap-3">
                 <button
-                  onClick={() => setInputBit(1)}
+                  onClick={() => handleManualToggle(1)}
                   className={`py-3 px-4 text-center font-bold transition-all relative border cursor-pointer hover:bg-white/[0.03] ${
                     inputBit === 1 
                       ? 'border-amber-500/50 bg-amber-500/10 text-amber-400' 
@@ -417,7 +486,7 @@ export const LogicTraceScope: React.FC = () => {
                   INPUT HIGH (1)
                 </button>
                 <button
-                  onClick={() => setInputBit(0)}
+                  onClick={() => handleManualToggle(0)}
                   className={`py-3 px-4 text-center font-bold transition-all relative border cursor-pointer hover:bg-white/[0.03] ${
                     inputBit === 0 
                       ? 'border-amber-500/50 bg-amber-500/10 text-amber-400' 
@@ -543,12 +612,14 @@ export const LogicTraceScope: React.FC = () => {
           <div className="relative flex-1 min-h-[360px] border border-white/[0.08]">
             <canvas ref={canvasRef} className="absolute inset-0 w-full h-full block" />
             
-            {/* Warning Alert Banner overlay for high-jitter */}
-            {jitter > 0.45 && (
-              <div className="absolute top-4 left-4 right-4 bg-rose-500/10 border border-rose-500/30 p-3 flex items-center gap-3 backdrop-blur-md">
+            {/* Warning Alert Banner overlay for high-jitter or metastability glitch */}
+            {(jitter > 0.45 || glitchActive) && (
+              <div className="absolute top-4 left-4 right-4 bg-rose-500/10 border border-rose-500/30 p-3 flex items-center gap-3 backdrop-blur-md z-30">
                 <AlertCircle className="text-rose-500 animate-pulse flex-shrink-0" size={16} />
                 <span className="text-[10px] text-rose-400 uppercase tracking-wide leading-tight">
-                  High clock jitter detected. Setup/hold times may be compromised, causing metastabilities.
+                  {glitchActive 
+                    ? "Input bounce overload! Flip-Flop entered meta-stable state (unstable oscillations)."
+                    : "High clock jitter detected. Setup/hold times may be compromised, causing metastabilities."}
                 </span>
               </div>
             )}

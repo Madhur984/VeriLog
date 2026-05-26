@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useSectionReveal } from '../../../hooks/useSectionReveal';
+import { TerminalTextReveal } from '../../../components/TerminalTextReveal';
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
@@ -78,7 +79,7 @@ export const AboutHero: React.FC = () => {
               className="block"
               style={{ color: line.color }}
             >
-              {line.text}
+              <TerminalTextReveal text={line.text} delay={line.delay * 1000 + 200} />
             </motion.span>
           ))}
         </h1>

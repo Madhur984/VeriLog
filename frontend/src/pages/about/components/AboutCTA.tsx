@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { BookOpen, Users, Github } from 'lucide-react';
+import { MagneticButton } from '../../../components/MagneticButton';
 
 export const AboutCTA: React.FC = () => {
   return (
@@ -47,12 +48,14 @@ export const AboutCTA: React.FC = () => {
               </p>
             </div>
             <div className="pt-8">
-              <Link
-                to="/portal"
-                className="w-full text-center py-3 bg-cyan-400 text-black font-mono text-xs font-bold uppercase tracking-wider rounded-full hover:bg-white transition-all inline-block"
-              >
-                OPEN FIRST MODULE →
-              </Link>
+              <MagneticButton className="w-full">
+                <Link
+                  to="/portal"
+                  className="w-full text-center py-3 bg-cyan-400 text-black font-mono text-xs font-bold uppercase tracking-wider rounded-full hover:bg-white transition-all inline-block"
+                >
+                  OPEN FIRST MODULE →
+                </Link>
+              </MagneticButton>
             </div>
           </motion.div>
 
@@ -76,12 +79,14 @@ export const AboutCTA: React.FC = () => {
               </p>
             </div>
             <div className="pt-8">
-              <a
-                href="mailto:mentor@axe-or.org?subject=AXE-OR Mentor Waitlist"
-                className="w-full text-center py-3 border border-amber-400 text-amber-400 font-mono text-xs font-bold uppercase tracking-wider rounded-full hover:bg-amber-400/10 transition-all inline-block"
-              >
-                JOIN MENTOR WAITLIST →
-              </a>
+              <MagneticButton className="w-full">
+                <a
+                  href="mailto:mentor@axe-or.org?subject=AXE-OR Mentor Waitlist"
+                  className="w-full text-center py-3 border border-amber-400 text-amber-400 font-mono text-xs font-bold uppercase tracking-wider rounded-full hover:bg-amber-400/10 transition-all inline-block"
+                >
+                  JOIN MENTOR WAITLIST →
+                </a>
+              </MagneticButton>
             </div>
           </motion.div>
 
@@ -105,14 +110,16 @@ export const AboutCTA: React.FC = () => {
               </p>
             </div>
             <div className="pt-8">
-              <a
-                href="https://github.com/kriten370/VeriLog_k1"
-                target="_blank"
-                rel="noreferrer"
-                className="w-full text-center py-3 border border-white/20 text-slate-300 font-mono text-xs font-bold uppercase tracking-wider rounded-full hover:bg-white/5 transition-all inline-block"
-              >
-                VIEW ON GITHUB →
-              </a>
+              <MagneticButton className="w-full">
+                <a
+                  href="https://github.com/kriten370/VeriLog_k1"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="w-full text-center py-3 border border-white/20 text-slate-300 font-mono text-xs font-bold uppercase tracking-wider rounded-full hover:bg-white/5 transition-all inline-block"
+                >
+                  VIEW ON GITHUB →
+                </a>
+              </MagneticButton>
             </div>
           </motion.div>
         </div>

@@ -59,6 +59,8 @@ const StatCounter: React.FC<{ value: string; color: string }> = ({ value, color 
   );
 };
 
+import { TerminalTextReveal } from '../../../components/TerminalTextReveal';
+
 export const TheProblem: React.FC = () => {
   return (
     <SectionWrapper id="the-problem" className="bg-[#07080A] border-y border-white/[0.03]">
@@ -69,7 +71,10 @@ export const TheProblem: React.FC = () => {
             THE GAP
           </span>
           <h2 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight uppercase leading-[1.1] max-w-3xl">
-            1.5 million ECE graduates. <span className="text-cyan-400">&lt; 8% in core roles.</span>
+            <TerminalTextReveal text="1.5 million ECE graduates." />{' '}
+            <span className="text-cyan-400">
+              <TerminalTextReveal text="< 8% in core roles." delay={300} />
+            </span>
           </h2>
         </div>
 

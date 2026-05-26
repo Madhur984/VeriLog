@@ -139,4 +139,53 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+
+  .pcb-trace-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 0.75rem; /* 12px */
+  }
+
+  .pcb-trace-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: conic-gradient(
+      from 90deg at 50% 50%,
+      transparent 0%,
+      transparent 70%,
+      rgba(34, 211, 238, 0.8) 100%
+    );
+    animation: pcb-trace-spin 3s linear infinite;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 0;
+  }
+
+  .pcb-trace-card:hover::before {
+    opacity: 1;
+  }
+
+  .pcb-trace-card::after {
+    content: '';
+    position: absolute;
+    inset: 1px; /* Trace thickness */
+    background: #0D0F12; /* Match surface color */
+    border-radius: inherit;
+    z-index: 1;
+  }
+
+  /* Ensure content sits above the trace */
+  .pcb-trace-card > * {
+    position: relative;
+    z-index: 2;
+  }
+
+  @keyframes pcb-trace-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
 }
