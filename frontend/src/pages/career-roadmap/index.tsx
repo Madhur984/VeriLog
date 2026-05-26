@@ -33,6 +33,7 @@ import { AboutHero } from '../about/components/AboutHero';
 import { LogicTraceScope } from '../about/components/LogicTraceScope';
 import { TheProblem } from '../about/components/TheProblem';
 import { FounderStory } from '../about/components/FounderStory';
+import { TeamSection } from '../about/components/TeamSection';
 import { TheMission } from '../about/components/TheMission';
 import { WhatWeBuilt } from '../about/components/WhatWeBuilt';
 import { WhoThisIsFor } from '../about/components/WhoThisIsFor';
@@ -243,19 +244,12 @@ const CareerRoadmapPage: React.FC = () => {
                 
                 {/* Interactive Hardware Scope Section */}
                 <div className="max-w-7xl mx-auto px-6 py-16 border-t border-white/[0.04] relative">
-                  <div className="space-y-2 mb-8 text-center md:text-left">
-                    <h2 className="text-3xl font-mono font-bold text-white tracking-tighter uppercase">
-                      Interactive <span className="text-cyan-400">Calibration Scope</span>
-                    </h2>
-                    <p className="text-slate-500 font-mono text-xs uppercase tracking-widest">
-                      Real-time D Flip-Flop Metastability & Signal Analysis
-                    </p>
-                  </div>
                   <LogicTraceScope />
                 </div>
 
                 <TheProblem />
                 <FounderStory />
+                <TeamSection />
                 <TheMission />
                 <WhatWeBuilt />
                 <WhoThisIsFor />

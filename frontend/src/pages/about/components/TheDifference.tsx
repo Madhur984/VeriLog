@@ -35,12 +35,23 @@ export const TheDifference: React.FC = () => {
                 const isAxeOr = row.platform === 'AXE-OR';
 
                 return (
-                  <tr
+                  <motion.tr
                     key={row.platform}
+                    initial={{ opacity: 0, x: -12 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true, amount: 0.5 }}
+                    transition={{
+                      duration: 0.45,
+                      delay: idx * 0.07,
+                      ease: [0.16, 1, 0.3, 1],
+                    }}
                     className={`
                       border-b border-white/[0.04] transition-colors hover:bg-[#131619]/50
-                      ${isAxeOr ? 'bg-cyan-400/[0.03] border-l-4 border-l-cyan-400' : ''}
+                      ${isAxeOr ? 'bg-cyan-400/[0.03]' : ''}
                     `}
+                    style={isAxeOr ? {
+                      borderLeft: '4px solid #22D3EE',
+                    } : {}}
                   >
                     <td className="py-5 px-6 font-sans text-sm font-bold text-white">
                       {row.platform}
@@ -60,12 +71,18 @@ export const TheDifference: React.FC = () => {
                         </span>
                       )}
                       {row.verdict === 'solution' && (
-                        <span className="inline-block px-2.5 py-1 rounded bg-cyan-400/10 border border-cyan-400/20 text-cyan-400 font-mono text-[9px] font-bold uppercase tracking-wider">
+                        <motion.span
+                          initial={{ scale: 0.85, opacity: 0 }}
+                          whileInView={{ scale: 1, opacity: 1 }}
+                          viewport={{ once: true }}
+                          transition={{ duration: 0.4, delay: idx * 0.07 + 0.2 }}
+                          className="inline-block px-2.5 py-1 rounded bg-cyan-400/10 border border-cyan-400/20 text-cyan-400 font-mono text-[9px] font-bold uppercase tracking-wider"
+                        >
                           ✓ AXE-OR
-                        </span>
+                        </motion.span>
                       )}
                     </td>
-                  </tr>
+                  </motion.tr>
                 );
               })}
             </tbody>

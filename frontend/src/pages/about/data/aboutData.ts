@@ -93,16 +93,6 @@ export const COMMITMENTS: CommitmentCard[] = [
   },
 ];
 
-export const BUILDING_TASKS: BuildingTask[] = [
-  { done: true,  text: "Career Roadmap v5.0 with peer network" },
-  { done: true,  text: "Skill Gap Radar with company overlay" },
-  { done: false, text: "Verilog HDL module (VL-M01)" },
-  { done: false, text: "Advanced Digital Design module (DD-M02)" },
-  { done: false, text: "Silicon Resume generator" },
-  { done: false, text: "Interview Terminal with domain question banks" },
-  { done: false, text: "GitHub and LinkedIn integration" },
-  { done: false, text: "College verification + peer connections" },
-];
 
 export const USER_TYPES: UserTypeCard[] = [
   {
@@ -122,12 +112,20 @@ export const USER_TYPES: UserTypeCard[] = [
     ctaLink: "/career-roadmap",
   },
   {
-    label: "THE DETERMINED ONE",
-    color: "#10B981",
-    opening: "You actually want to design chips.",
+    label: 'THE DETERMINED ONE',
+    color: '#10B981',
+    opening: 'You actually want to design chips.',
     detail: "You found VLSI on your own. You know it's the right path. You just need someone to show you how to get from your tier-3 college to Qualcomm or Intel. The modules are built exactly for that journey.",
-    cta: "START LEARNING →",
-    ctaLink: "/portal",
+    cta: 'START LEARNING →',
+    ctaLink: '/portal',
+  },
+  {
+    label: 'THE NATION BUILDER',
+    color: '#EA580C',
+    opening: 'You want to do something that matters for India.',
+    detail: "You see what China did with semiconductors in 20 years. You see India's ISM. You want to be part of it — not as a spectator but as an engineer. This platform is built with exactly that intent.",
+    cta: "EXPLORE INDIA'S SILICON MISSION →",
+    ctaLink: '/career-roadmap',
   },
 ];
 

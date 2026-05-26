@@ -19,7 +19,7 @@ export const WhoThisIsFor: React.FC = () => {
         </div>
 
         {/* User Types Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6">
           {USER_TYPES.map((card, idx) => (
             <motion.div
               key={card.label}

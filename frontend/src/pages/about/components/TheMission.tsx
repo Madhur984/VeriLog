@@ -61,6 +61,33 @@ export const TheMission: React.FC = () => {
             );
           })}
         </div>
+
+        {/* National Statement */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.4 }}
+          className="text-center"
+          style={{
+            background: 'rgba(34,211,238,0.03)',
+            border: '1px solid rgba(34,211,238,0.10)',
+            padding: '20px 32px',
+            borderRadius: '12px',
+          }}
+        >
+          <p
+            className="font-sans font-medium"
+            style={{
+              color: '#F1F5F9',
+              fontSize: '16px',
+              lineHeight: 1.6,
+            }}
+          >
+            What engineers do best — we build. This is our contribution
+            to India's semiconductor decade.
+          </p>
+        </motion.div>
       </div>
     </SectionWrapper>
   );

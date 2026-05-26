@@ -1,8 +1,19 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { BUILDING_TASKS } from '../data/aboutData';
 import { SectionWrapper } from '../../../components/SectionWrapper';
-import { CheckCircle2, Circle, Flag } from 'lucide-react';
+import { CheckCircle2, Circle } from 'lucide-react';
+
+const PHASE2_TASKS = [
+  { done: true,  text: 'Career Roadmap v5.0 with tabbed dashboard' },
+  { done: true,  text: 'Skill Gap Radar with company overlay mode' },
+  { done: true,  text: 'About tab merged as first experience' },
+  { done: false, text: 'Verilog HDL module (VL-M01)' },
+  { done: false, text: 'Advanced Digital Design (DD-M02)' },
+  { done: false, text: 'Silicon Resume generator' },
+  { done: false, text: 'Interview Terminal — domain question banks' },
+  { done: false, text: 'College verification + peer connections' },
+  { done: false, text: 'VoltMonkey AI hint system (Adarsh)' },
+];
 
 export const WhatWeBuilt: React.FC = () => {
   return (
@@ -129,7 +140,7 @@ export const WhatWeBuilt: React.FC = () => {
             <div className="space-y-4">
               <span className="text-[9px] font-mono text-slate-500 uppercase tracking-widest block">Feature Backlog Status</span>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {BUILDING_TASKS.map((task, index) => (
+                {PHASE2_TASKS.map((task, index) => (
                   <div key={index} className="flex items-center gap-3">
                     {task.done ? (
                       <CheckCircle2 size={14} className="text-emerald-400 flex-shrink-0" />
@@ -169,9 +180,15 @@ export const WhatWeBuilt: React.FC = () => {
             <div className="space-y-4 max-w-3xl">
               <span className="text-[9px] font-mono text-slate-500 uppercase tracking-widest block">Project Destination</span>
               <p className="text-slate-400 text-xs md:text-sm leading-relaxed font-sans">
-                A complete 4-year ECE guide — from "I don't know what my degree means" to "I have my first chip design offer." 
-                We are building comprehensive modules covering all 13 ECE domains, peer-to-peer mentorship pipelines, 
-                and direct recruiting integrations. All core learning materials will remain 100% free.
+                A complete 4-year ECE companion — from "I don't know what
+                my degree means" to "I have my first chip design offer."
+              </p>
+              <p className="text-slate-400 text-xs md:text-sm leading-relaxed font-sans">
+                All 13 ECE domain modules. Peer-to-peer mentorship.
+                Direct connections to companies.
+              </p>
+              <p className="font-mono text-xs font-semibold" style={{ color: '#22D3EE' }}>
+                Still free.
               </p>
             </div>
           </motion.div>

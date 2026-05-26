@@ -7,7 +7,7 @@ import { SectionWrapper } from '../../../components/SectionWrapper';
 const StatCounter: React.FC<{ value: string; color: string }> = ({ value, color }) => {
   const ref = useRef<HTMLSpanElement>(null);
   const isInView = useInView(ref, { once: true });
-  const [displayVal, setDisplayVal] = useState('0');
+  const [displayVal, setDisplayVal] = useState(value);
 
   useEffect(() => {
     if (!isInView) return;
@@ -84,7 +84,7 @@ export const TheProblem: React.FC = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: idx * 0.1 }}
-                className="bg-[#0D0F12] border border-white/[0.08] rounded-xl p-6 flex flex-col justify-between min-h-[160px] hover:border-slate-800 transition-colors"
+                className="bg-[#0D0F12] border border-white/[0.08] rounded-xl p-6 flex flex-col justify-between min-h-[160px] hover:border-slate-600 hover:bg-[#131619] transition-all duration-200"
               >
                 <div className="font-mono text-3xl md:text-4xl font-bold">
                   <StatCounter value={stat.value} color={stat.color} />

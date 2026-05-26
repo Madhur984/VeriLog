@@ -18,10 +18,12 @@ export const LogicTraceScope: React.FC = () => {
   const [inputBit, setInputBit] = useState<number>(1);
   const [isResetActive, setIsResetActive] = useState<boolean>(false);
   const [simulationSpeed, setSimulationSpeed] = useState<number>(1); // 1x, 2x, 0.5x
+  const [autoToggle, setAutoToggle] = useState<boolean>(true); // Drifting Auto Pattern mode
 
   // Scope measurement metrics
   const [lastTpd, setLastTpd] = useState<number>(45); // ps
   const [setupCheck, setSetupCheck] = useState<'PASS' | 'VIOLATION'>('PASS');
+  const [violationCount, setViolationCount] = useState<number>(0);
 
   // Internal states for animation loop
   const requestRef = useRef<number>(0);
@@ -46,10 +48,36 @@ export const LogicTraceScope: React.FC = () => {
   const risingJitterOffset = useRef<number>(0);
   const fallingJitterOffset = useRef<number>(0);
 
+  // Refs to sync control state for the animation loop
+  const frequencyRef = useRef<number>(frequency);
+  const jitterRef = useRef<number>(jitter);
+  const triggerEdgeRef = useRef<'rising' | 'falling'>(triggerEdge);
+  const inputBitRef = useRef<number>(inputBit);
+  const isResetActiveRef = useRef<boolean>(isResetActive);
+  const simulationSpeedRef = useRef<number>(simulationSpeed);
+  const autoToggleRef = useRef<boolean>(autoToggle);
+
+  // Metrics tracking refs to prevent re-renders restarting the animation loop
+  const lastSetupCheckState = useRef<'PASS' | 'VIOLATION'>('PASS');
+  const lastTpdState = useRef<number>(45);
+  const violationCountRef = useRef<number>(0);
+  const maxDataPointsRef = useRef<number>(600);
+
+  // Sync refs when states change:
+  useEffect(() => { frequencyRef.current = frequency; }, [frequency]);
+  useEffect(() => { jitterRef.current = jitter; }, [jitter]);
+  useEffect(() => { triggerEdgeRef.current = triggerEdge; }, [triggerEdge]);
+  useEffect(() => { inputBitRef.current = inputBit; }, [inputBit]);
+  useEffect(() => { isResetActiveRef.current = isResetActive; }, [isResetActive]);
+  useEffect(() => { simulationSpeedRef.current = simulationSpeed; }, [simulationSpeed]);
+  useEffect(() => { autoToggleRef.current = autoToggle; }, [autoToggle]);
+
   // Trigger manual reset
   const handleReset = () => {
     setIsResetActive(true);
     triggerPulseTime.current = 10; // flash effect timer
+    violationCountRef.current = 0;
+    setViolationCount(0);
     setTimeout(() => setIsResetActive(false), 200);
   };
 
@@ -59,36 +87,45 @@ export const LogicTraceScope: React.FC = () => {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Handle high DPI screens
+    // Handle high DPI screens and dynamic width calculation
     const resizeCanvas = () => {
       const rect = canvas.getBoundingClientRect();
       canvas.width = rect.width * window.devicePixelRatio;
       canvas.height = rect.height * window.devicePixelRatio;
       ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+      maxDataPointsRef.current = Math.ceil(rect.width);
     };
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
 
-    // Timing parameters
+    // Timing parameter
     let t = 0;
-    const maxDataPoints = 600;
 
     const animate = (timestamp: number) => {
-      t += 0.04 * simulationSpeed;
+      t += 0.04 * simulationSpeedRef.current;
       timeRef.current = t;
 
       const width = canvas.width / window.devicePixelRatio;
       const height = canvas.height / window.devicePixelRatio;
 
+      // Drifting Auto-Pattern mode or manual signal input injection
+      let currentInputBit = inputBitRef.current;
+      if (autoToggleRef.current) {
+        // Toggle DIN at a slightly offset frequency to create drifting setup/hold relative to clock
+        const clkPeriod = (2 * Math.PI) / (frequencyRef.current * 0.4);
+        const dinPeriod = clkPeriod * 2.13; // slightly offset from 2x clock period to drift
+        const dinPhase = t % dinPeriod;
+        currentInputBit = dinPhase < dinPeriod / 2 ? 1 : 0;
+      }
+
       // Track if D input changed on this frame
-      if (inputBit !== lastInputBit.current) {
+      if (currentInputBit !== lastInputBit.current) {
         lastDChangeTime.current = t;
-        lastInputBit.current = inputBit;
+        lastInputBit.current = currentInputBit;
       }
 
       // Base Frequency Period Calculations
-      // At frequency = 5, period = 2 * PI / (5 * 0.4) = 3.14 time units
-      const clkPeriod = (2 * Math.PI) / (frequency * 0.4);
+      const clkPeriod = (2 * Math.PI) / (frequencyRef.current * 0.4);
       const currentPhase = t % clkPeriod;
       const halfPeriod = clkPeriod / 2;
 
@@ -97,7 +134,7 @@ export const LogicTraceScope: React.FC = () => {
       lastPhase.current = currentPhase;
 
       // Jitter range based on frequency period
-      const jitterFactor = jitter * halfPeriod * 0.5;
+      const jitterFactor = jitterRef.current * halfPeriod * 0.5;
 
       if (currentPhase < prevPhase) {
         // Wrapped around: calculate rising edge jitter for next transition
@@ -120,15 +157,18 @@ export const LogicTraceScope: React.FC = () => {
       }
 
       // Reset logic
-      const rstVal = isResetActive ? 1 : 0;
+      const rstVal = isResetActiveRef.current ? 1 : 0;
 
       // Latch output Q on active clock edge (Sequential logic D Flip-Flop simulation)
       let nextQ = lastQVal.current;
       if (rstVal === 1) {
         nextQ = 0;
-        setSetupCheck('PASS');
+        if (lastSetupCheckState.current !== 'PASS') {
+          lastSetupCheckState.current = 'PASS';
+          setSetupCheck('PASS');
+        }
       } else {
-        const edgeDetected = triggerEdge === 'rising'
+        const edgeDetected = triggerEdgeRef.current === 'rising'
           ? (clkWithJitter === 1 && lastClkVal.current === 0)
           : (clkWithJitter === 0 && lastClkVal.current === 1);
 
@@ -137,15 +177,31 @@ export const LogicTraceScope: React.FC = () => {
           const setupWindow = 0.35; // time units
           const timeSinceDChange = t - lastDChangeTime.current;
           
+          let newSetupCheck: 'PASS' | 'VIOLATION' = 'PASS';
+          let newTpd = lastTpdState.current;
+
           if (timeSinceDChange < setupWindow) {
-            setSetupCheck('VIOLATION');
-            setLastTpd(Math.floor(140 + Math.random() * 110)); // Metamorphic longer delay
+            newSetupCheck = 'VIOLATION';
+            newTpd = Math.floor(140 + Math.random() * 110); // Metamorphic longer delay
             // Latch metadata or enter unstable state (random latch in metastability)
             nextQ = Math.random() >= 0.5 ? 1 : 0;
+
+            // Increment violation counter
+            violationCountRef.current += 1;
+            setViolationCount(violationCountRef.current);
           } else {
-            setSetupCheck('PASS');
-            setLastTpd(Math.floor(35 + Math.random() * 15)); // Fast clean delay
-            nextQ = inputBit;
+            newSetupCheck = 'PASS';
+            newTpd = Math.floor(35 + Math.random() * 15); // Fast clean delay
+            nextQ = currentInputBit;
+          }
+
+          if (newSetupCheck !== lastSetupCheckState.current) {
+            lastSetupCheckState.current = newSetupCheck;
+            setSetupCheck(newSetupCheck);
+          }
+          if (newTpd !== lastTpdState.current) {
+            lastTpdState.current = newTpd;
+            setLastTpd(newTpd);
           }
         }
       }
@@ -155,12 +211,13 @@ export const LogicTraceScope: React.FC = () => {
 
       // Push history
       traceData.current.clk.push(clkWithJitter);
-      traceData.current.din.push(inputBit);
+      traceData.current.din.push(currentInputBit);
       traceData.current.q.push(nextQ);
       traceData.current.rst.push(rstVal);
 
       // Keep trace window bounded
-      if (traceData.current.clk.length > maxDataPoints) {
+      const limit = maxDataPointsRef.current;
+      while (traceData.current.clk.length > limit) {
         traceData.current.clk.shift();
         traceData.current.din.shift();
         traceData.current.q.shift();
@@ -263,9 +320,9 @@ export const LogicTraceScope: React.FC = () => {
       // Trigger status HUD
       ctx.font = '8px monospace';
       ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
-      ctx.fillText(`CH1 Freq: ${frequency.toFixed(1)} Hz`, width - 110, sectionHeight * 0.8 - 20);
-      ctx.fillText(`Setup Slack: ${setupCheck === 'PASS' ? '+180 ps' : '-45 ps'}`, width - 110, sectionHeight * 1.8 - 20);
-      ctx.fillText(`Jitter: ${(jitter * 100).toFixed(0)}%`, width - 110, sectionHeight * 2.8 - 20);
+      ctx.fillText(`CH1 Freq: ${frequencyRef.current.toFixed(1)} Hz`, width - 110, sectionHeight * 0.8 - 20);
+      ctx.fillText(`Setup Slack: ${lastSetupCheckState.current === 'PASS' ? '+180 ps' : '-45 ps'}`, width - 110, sectionHeight * 1.8 - 20);
+      ctx.fillText(`Jitter: ${(jitterRef.current * 100).toFixed(0)}%`, width - 110, sectionHeight * 2.8 - 20);
 
       requestRef.current = requestAnimationFrame(animate);
     };
@@ -276,7 +333,7 @@ export const LogicTraceScope: React.FC = () => {
       cancelAnimationFrame(requestRef.current);
       window.removeEventListener('resize', resizeCanvas);
     };
-  }, [frequency, jitter, triggerEdge, inputBit, isResetActive, simulationSpeed, setupCheck]);
+  }, []);
 
   return (
     <div className="w-full bg-[#090A0D] border border-white/[0.08] p-6 font-mono text-xs text-slate-400 select-none shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
@@ -304,6 +361,13 @@ export const LogicTraceScope: React.FC = () => {
               {setupCheck}
             </span>
           </div>
+
+          <div className="flex flex-col items-end">
+            <span className="text-[8px] text-slate-500 uppercase tracking-widest">Violations</span>
+            <span className={`font-bold tracking-tight text-sm ${violationCount > 0 ? 'text-rose-400 animate-pulse' : 'text-slate-400'}`}>
+              {violationCount}
+            </span>
+          </div>
         </div>
       </div>
 
@@ -319,29 +383,56 @@ export const LogicTraceScope: React.FC = () => {
               <Cpu size={14} className="text-cyan-400" />
               <span className="text-white font-bold text-[10px] uppercase tracking-wider">Signal Injection</span>
             </div>
-            
-            <div className="grid grid-cols-2 gap-3">
+
+            {/* Pattern Mode Toggle */}
+            <div className="grid grid-cols-2 p-1 bg-white/[0.02] border border-white/[0.08]">
               <button
-                onClick={() => setInputBit(1)}
-                className={`py-3 px-4 text-center font-bold transition-all relative border cursor-pointer hover:bg-white/[0.03] ${
-                  inputBit === 1 
-                    ? 'border-amber-500/50 bg-amber-500/10 text-amber-400' 
-                    : 'border-white/[0.08] text-slate-500'
+                onClick={() => setAutoToggle(false)}
+                className={`py-1.5 text-[9px] font-bold uppercase transition-all cursor-pointer ${
+                  !autoToggle ? 'bg-amber-400 text-black' : 'text-slate-500 hover:text-slate-300'
                 }`}
               >
-                INPUT HIGH (1)
+                Manual
               </button>
               <button
-                onClick={() => setInputBit(0)}
-                className={`py-3 px-4 text-center font-bold transition-all relative border cursor-pointer hover:bg-white/[0.03] ${
-                  inputBit === 0 
-                    ? 'border-amber-500/50 bg-amber-500/10 text-amber-400' 
-                    : 'border-white/[0.08] text-slate-500'
+                onClick={() => setAutoToggle(true)}
+                className={`py-1.5 text-[9px] font-bold uppercase transition-all cursor-pointer ${
+                  autoToggle ? 'bg-amber-400 text-black' : 'text-slate-500 hover:text-slate-300'
                 }`}
               >
-                INPUT LOW (0)
+                Auto Drift
               </button>
             </div>
+            
+            {!autoToggle ? (
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  onClick={() => setInputBit(1)}
+                  className={`py-3 px-4 text-center font-bold transition-all relative border cursor-pointer hover:bg-white/[0.03] ${
+                    inputBit === 1 
+                      ? 'border-amber-500/50 bg-amber-500/10 text-amber-400' 
+                      : 'border-white/[0.08] text-slate-500'
+                  }`}
+                >
+                  INPUT HIGH (1)
+                </button>
+                <button
+                  onClick={() => setInputBit(0)}
+                  className={`py-3 px-4 text-center font-bold transition-all relative border cursor-pointer hover:bg-white/[0.03] ${
+                    inputBit === 0 
+                      ? 'border-amber-500/50 bg-amber-500/10 text-amber-400' 
+                      : 'border-white/[0.08] text-slate-500'
+                  }`}
+                >
+                  INPUT LOW (0)
+                </button>
+              </div>
+            ) : (
+              <div className="py-3 px-4 text-center border border-amber-500/20 bg-amber-500/5 text-amber-400/80 text-[10px] uppercase font-bold tracking-wider leading-relaxed">
+                Auto signal active<br />
+                <span className="text-[8px] text-slate-500 lowercase normal-case">drifting phase relative to clock</span>
+              </div>
+            )}
 
             <button
               onClick={handleReset}

@@ -14,12 +14,15 @@ export const AboutCTA: React.FC = () => {
         <div className="text-center space-y-4 max-w-2xl mx-auto">
           <h2 className="text-4xl md:text-5xl font-extrabold tracking-tighter uppercase leading-[0.95] text-white">
             This is still early.<br />
-            <span className="text-slate-400">We're building as we go.</span>
+            <span className="text-cyan-400">What engineers do — we build.</span>
           </h2>
           <p className="text-slate-400 font-sans text-xs md:text-sm leading-relaxed max-w-xl mx-auto pt-4">
-            AXE-OR is built by one ECE student, for all ECE students. It is not perfect. 
-            It is growing. Every piece of feedback makes the next module better. 
-            Every student who learns here makes the case that this gap is real and worth closing.
+            AXE‑OR is built by four students — one idea, one execution,
+            and two people who showed up and gave everything they had.
+            It is not perfect. It is growing. Every student who learns
+            here makes the case that this gap is real and worth closing.
+            Every line of feedback builds the next module.
+            We are doing what engineers do. We are building.
           </p>
         </div>
 
@@ -117,7 +120,7 @@ export const AboutCTA: React.FC = () => {
         {/* Final Line */}
         <div className="text-center pt-8 border-t border-white/[0.04] mt-12">
           <span className="font-mono text-[10px] text-slate-600 uppercase tracking-widest">
-            Made with intent, not investment.
+            Made with intent, not investment. Four students. One gap. No plan B.
           </span>
         </div>
       </div>

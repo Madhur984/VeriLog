@@ -1,76 +1,147 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { useSectionReveal } from '../../../hooks/useSectionReveal';
 import { SectionWrapper } from '../../../components/SectionWrapper';
 
+const ease = [0.16, 1, 0.3, 1] as const;
+
+const PARAGRAPHS = [
+  {
+    id: 'reality',
+    text: `I'm Kriten. I'm pursuing BTech ECE from a tier‑3 college.
+I didn't choose this branch — I ended up here after missing the CS cutoff.
+Most of my classmates had the same story. In the first semester,
+half the class was already planning to "switch to IT" after graduation.
+Nobody was talking about what ECE could become. Nobody was showing us.`,
+  },
+  {
+    id: 'discovery',
+    text: `In my third year, I accidentally came across the term "VLSI Design."
+I looked it up. I kept reading for three hours.
+I had no idea that the chips inside every phone, every laptop, every EV —
+they are designed by ECE engineers. By people with degrees exactly like mine.
+My degree could do this. Nobody had told me. For two years, nobody had told me.`,
+  },
+  {
+    id: 'frustration',
+    text: `I started looking for resources. The good ones were paywalled.
+The free ones were either made for US grad students or shot on a webcam in 2014.
+Nothing was built for someone at my college, with my constraints,
+trying to figure this out from scratch.
+I spent months piecing together PDFs, IEEE papers, and YouTube videos
+that were never meant to fit together.`,
+  },
+  {
+    id: 'decision',
+    text: `I told Madhur. He saw the same gap I did.
+He took my rough ideas — a scribbled notebook, some broken HTML files —
+and built them into something real. From scratch. No boilerplate.
+No templates. Just code and intent.
+Kartik was in the loop from day one, keeping us together when the project
+felt too big and our code felt too broken.`,
+  },
+  {
+    id: 'mission',
+    text: `We tried. We failed. We rebuilt. We tried again.
+That is what engineers do. We build.
+This platform isn't just a learning tool — it's our answer to the question
+nobody asked us: what would you have needed when you were lost?
+And it's our small contribution to something bigger:
+building India's semiconductor talent, indigenously, from the inside.`,
+  },
+  {
+    id: 'now',
+    text: `AXE‑OR is still early. Some modules are done.
+Many more are being built. But the promise is already live:
+if you're an ECE student anywhere in India, you can start
+learning VLSI fundamentals today — for free — without a lab,
+without expensive software, without a well-connected college.
+That gap is what we're closing. One module at a time.`,
+  },
+];
+
 export const FounderStory: React.FC = () => {
+  const { ref, isInView } = useSectionReveal(0.1);
+
   return (
     <SectionWrapper id="founder-story" className="bg-[#07080A]">
-      <div className="max-w-2xl mx-auto space-y-12">
-        {/* Section Label */}
-        <div className="text-center">
-          <span className="font-mono text-[10px] text-slate-500 uppercase tracking-widest block mb-8">
-            THE STORY
-          </span>
-        </div>
+      <div ref={ref} className="max-w-2xl mx-auto space-y-12">
+        {/* Section label */}
+        <motion.span
+          initial={{ opacity: 0 }}
+          animate={isInView ? { opacity: 1 } : {}}
+          transition={{ duration: 0.5, ease }}
+          className="block text-center text-[10px] font-mono tracking-[0.2em] mb-10"
+          style={{ color: '#475569' }}
+        >
+          THE STORY
+        </motion.span>
 
-        {/* Pull Quote */}
-        <div className="flex flex-col items-center py-6 gap-4">
-          <div className="w-12 h-[2px] bg-cyan-400" />
-          <blockquote className="text-xl md:text-2xl font-extrabold text-white text-center font-sans tracking-tight max-w-lg">
-            "I didn't choose ECE. ECE chose me by default."
-          </blockquote>
-          <div className="w-12 h-[2px] bg-cyan-400" />
-        </div>
-
-        {/* Story Text */}
-        <div className="space-y-6 text-slate-400 font-sans text-sm md:text-base leading-relaxed">
-          <p>
-            I'm Kriten, a BTech ECE student from a tier-3 college. Like most of my classmates, 
-            I didn't willingly sign up for electronics. In my first semester, half the class 
-            was already planning to 'switch to IT' after graduation. No one talked about what 
-            ECE could actually lead to, other than passing examinations and gate cutoffs.
-          </p>
-
-          <p>
-            In my third year, I stumbled across the term 'VLSI Design.' Out of curiosity, I Googled 
-            it, and ended up reading for three hours straight. I was stunned to discover that the 
-            chips inside every smartphone, laptop, electric vehicle, and spacecraft are designed 
-            by ECE engineers. By people holding degrees exactly like mine. My degree was meant for 
-            this. But nobody had told me.
-          </p>
-
-          <p>
-            I started looking for learning resources. The high-quality courses were locked behind 
-            massive paywalls, costing thousands of rupees. The free resources were either too basic 
-            or built for PhD students at Stanford, assuming expensive lab software and deep prior 
-            knowledge. Nothing existed for someone at my college, with my budget, trying to figure 
-            this out from absolute scratch.
-          </p>
-
-          <p>
-            So, I made a choice: if no one has built this for students like me, I will. Not someday 
-            after landing a corporate job, but now. AXE-OR began as a structured set of notes I compiled 
-            for my own reference. Soon, classmates asked for copies. Then, I decided to scale it into 
-            a proper interactive platform. The goal remains simple: free, structured, and honest 
-            semiconductor education, built for the student who needs it most.
-          </p>
-
-          <p>
-            This is still early. The platform is growing, and we are adding more modules every week. 
-            But the promise is live today: if you're an ECE student in India, you can learn VLSI 
-            fundamentals for free, right in your browser, without needing expensive college labs 
-            or corporate connections. That is the gap we are closing, one gate at a time.
-          </p>
-        </div>
-
-        {/* Founder Signature Block */}
-        <div className="pt-8 border-t border-white/[0.04] mt-12 flex justify-start">
-          <div className="font-mono text-left space-y-1.5 text-slate-500 text-[11px] uppercase tracking-wider">
-            <span className="text-white font-bold block text-sm">— KRITEN</span>
-            <span>BTech ECE Student  ·  Founder, AXE-OR</span>
-            <span className="text-[10px] text-slate-600 block lowercase italic">building what I needed and couldn't find.</span>
+        {/* Pull quote */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.65, delay: 0.1, ease }}
+          className="mb-12 text-center"
+        >
+          <div
+            className="inline-block"
+            style={{
+              borderTop: '2px solid #22D3EE',
+              borderBottom: '2px solid #22D3EE',
+              padding: '16px 0',
+            }}
+          >
+            <blockquote
+              className="font-bold text-center"
+              style={{
+                fontSize: 'clamp(22px, 3.5vw, 32px)',
+                color: '#F1F5F9',
+                lineHeight: 1.3,
+                maxWidth: '520px',
+              }}
+            >
+              "I didn't choose ECE.
+              <br />ECE chose me by default."
+            </blockquote>
           </div>
+        </motion.div>
+
+        {/* Story paragraphs */}
+        <div className="space-y-7">
+          {PARAGRAPHS.map((para, i) => (
+            <motion.p
+              key={para.id}
+              initial={{ opacity: 0, y: 16 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, delay: 0.18 + i * 0.09, ease }}
+              className="text-base leading-[1.85] whitespace-pre-line"
+              style={{ color: '#94A3B8' }}
+            >
+              {para.text}
+            </motion.p>
+          ))}
         </div>
+
+        {/* Signature */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={isInView ? { opacity: 1 } : {}}
+          transition={{ duration: 0.5, delay: 0.8, ease }}
+          className="mt-12 pt-8"
+          style={{ borderTop: '1px solid rgba(148,163,184,0.08)' }}
+        >
+          <div
+            className="text-sm font-mono space-y-1"
+            style={{ color: '#475569' }}
+          >
+            <div style={{ color: '#F1F5F9', fontWeight: 600 }}>— KRITEN</div>
+            <div>Founder, AXE‑OR</div>
+            <div className="text-xs italic" style={{ color: '#475569' }}>
+              Building what I needed and couldn't find.
+            </div>
+          </div>
+        </motion.div>
       </div>
     </SectionWrapper>
   );
