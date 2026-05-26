@@ -1,4 +1,4 @@
-/* AXE-OR GATEWAY - SYSTEM CSS v2.0 (Cinematic Boot Edition) */
+/* BitforBytes GATEWAY - SYSTEM CSS v2.0 (Cinematic Boot Edition) */
 
 :root {
   --bg-deep: #05080c; 
@@ -11,7 +11,7 @@
   --system-border: rgba(51, 255, 51, 0.15); /* Green-tinted borders */
 }
 
-.axe-gateway-container {
+.bfb-gateway-container {
   position: relative;
   width: 100vw;
   height: 100vh;

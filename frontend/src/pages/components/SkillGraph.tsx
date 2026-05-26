@@ -69,7 +69,7 @@ interface SkillGraphProps {
 
 export const SkillGraph: React.FC<SkillGraphProps> = ({ onNodeClick, unlockedNodes: _unlockedNodes = new Set(), onDragCount }) => {
   const [nodes, setNodes] = useState<GraphNode[]>(() => {
-    const saved = localStorage.getItem("skill_graph_mixed_positions_v2");
+    const saved = localStorage.getItem("bfb_skill_graph_positions_v2");
     const positions = saved ? JSON.parse(saved) : defaultPositions;
     return defaultNodesRaw.map(n => ({
       ...n,
@@ -125,7 +125,7 @@ export const SkillGraph: React.FC<SkillGraphProps> = ({ onNodeClick, unlockedNod
   useEffect(() => {
     const positions: Record<string, { x: number; y: number }> = {};
     nodes.forEach(n => { positions[n.id] = { x: n.x, y: n.y }; });
-    localStorage.setItem("skill_graph_mixed_positions_v2", JSON.stringify(positions));
+    localStorage.setItem("bfb_skill_graph_positions_v2", JSON.stringify(positions));
   }, [nodes]);
 
   const updateNodePosition = (id: string, x: number, y: number) => {

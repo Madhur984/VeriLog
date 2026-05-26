@@ -1,22 +1,35 @@
-import React from 'react';
-
+// src/components/LogoWordmark.tsx
 interface LogoWordmarkProps {
-  size?: 'sm' | 'md' | 'lg' | 'hero';
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'hero'
+  className?: string
 }
 
-export const LogoWordmark: React.FC<LogoWordmarkProps> = ({ size = 'md' }) => {
-  const sizeClasses = {
-    sm: 'text-[18px]',
-    md: 'text-2xl',
-    lg: 'text-4xl',
-    hero: 'text-[56px] md:text-[96px] leading-none'
-  };
+const SIZE_MAP = {
+  xs:   { fontSize: '14px', letterSpacing: '-0.02em' },
+  sm:   { fontSize: '18px', letterSpacing: '-0.025em' },
+  md:   { fontSize: '24px', letterSpacing: '-0.03em' },
+  lg:   { fontSize: '36px', letterSpacing: '-0.035em' },
+  hero: { fontSize: 'clamp(56px, 9vw, 96px)', letterSpacing: '-0.04em' },
+}
 
+export const LogoWordmark = ({
+  size = 'md',
+  className = ''
+}: LogoWordmarkProps) => {
+  const style = SIZE_MAP[size]
   return (
-    <span className={`font-bold tracking-tight font-sans inline-block ${sizeClasses[size]}`}>
+    <span
+      className={`font-bold select-none ${className}`}
+      style={{
+        fontFamily: 'Inter, sans-serif',
+        lineHeight: 1,
+        ...style,
+      }}
+      aria-label="BitforBytes"
+    >
       <span style={{ color: '#F1F5F9' }}>Bit</span>
       <span style={{ color: '#475569', fontWeight: 400 }}>for</span>
       <span style={{ color: '#22D3EE' }}>Bytes</span>
     </span>
-  );
-};
+  )
+}
