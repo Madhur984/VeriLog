@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 /**
- * AXE-OR KINETIC TYPOGRAPHY
+ * BitforBytes KINETIC TYPOGRAPHY
  * "The mechanical scramble."
  */
 export const KineticText: React.FC<{ text: string; className?: string }> = ({ text, className }) => {

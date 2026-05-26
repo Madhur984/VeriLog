@@ -10,7 +10,7 @@ import {
   Github, Mail, DollarSign, Target, Users, FileText, Sparkles, Globe,
   MapPin, Clock, Calendar, Download, Trophy, Landmark, Search, Heart,
   Brain, ChevronRight, Info, X, Calculator, Share2, Bookmark, Star,
-  Columns, ExternalLink, Layers, GraduationHat, Lightbulb, CheckCircle,
+  Columns, ExternalLink, Layers, Lightbulb, CheckCircle,
   Copy, TrendingDown, CalendarDays, Gamepad2, Coffee, GitBranch, RefreshCw,
   Maximize2, Minimize2,
   BarChart, Settings
@@ -988,14 +988,14 @@ export const PortalPage: React.FC = () => {
   const [dragCount, setDragCount] = useState(0);
   const [viewedCount, setViewedCount] = useState(() => JSON.parse(localStorage.getItem("ece_viewed_count") || "0"));
   const [badges, setBadges] = useState<string[]>(() => JSON.parse(localStorage.getItem("ece_badges") || "[]"));
-  const [quizSubmitted, setQuizSubmitted] = useState(false);
+  const [quizSubmitted] = useState(false);
   const [dismissedRecs, setDismissedRecs] = useState<string[]>(() => {
     try {
       const saved = localStorage.getItem("ece_dismissed_recs");
       return saved ? JSON.parse(saved) : [];
     } catch { return []; }
   });
-  const [unlockedNodes, setUnlockedNodes] = useState<string[]>(domains.map(d => d.id));
+  const [unlockedNodes] = useState<Set<string>>(() => new Set(domains.map(d => d.id)));
 
   useEffect(() => {
     const s = { viewed: viewedCount, quiz: quizSubmitted ? 1 : 0, dragCount, calcUsed: salaryCalc.base !== 12 };

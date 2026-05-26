@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
 
 // Layout & Foundation
@@ -22,53 +22,62 @@ import { ComparisonBench } from '../../components/ComparisonBench';
 
 // Phase 1 & 2 Components
 import { SkillGapRadar } from './components/SkillGapRadar';
-import { ResumePreview } from './components/ResumePreview';
+import { SiliconResume } from './components/SiliconResume';
 import { TechnicalTerminal } from './components/TechnicalTerminal';
 import { GlobalSalaryHeatmap } from './components/GlobalSalaryHeatmap';
 import { SiliconNetwork } from './components/SiliconNetwork';
 import { SiliconPipeline } from './components/SiliconPipeline';
 
+// About Components
+import { AboutHero } from '../about/components/AboutHero';
+import { LogicTraceScope } from '../about/components/LogicTraceScope';
+import { TheProblem } from '../about/components/TheProblem';
+import { FounderStory } from '../about/components/FounderStory';
+import { TeamSection } from '../about/components/TeamSection';
+import { TheMission } from '../about/components/TheMission';
+import { WhatWeBuilt } from '../about/components/WhatWeBuilt';
+import { WhoThisIsFor } from '../about/components/WhoThisIsFor';
+import { TheDifference } from '../about/components/TheDifference';
+import { AboutCTA } from '../about/components/AboutCTA';
+
 // UI & Data
 import { BadgeUnlockOverlay } from '../../components/BadgeUnlockOverlay';
 import { SiliconCabinet } from '../../components/SiliconCabinet';
-import { SectionWrapper } from '../../components/SectionWrapper';
 import { BADGE_DEFINITIONS } from '../../data/badgeDefinitions';
-import { generateBadgeSVG } from '../../utils/BadgeEngine';
 
 // Hooks
 import { useAmbientAudio } from '../../hooks/useAmbientAudio';
 import { useCompass } from '../../hooks/useCompass';
 import { useComparison } from '../../hooks/useComparison';
+import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
+import { motion } from 'framer-motion';
 
 const CareerRoadmapPage: React.FC = () => {
-  const [activeSection, setActiveSection] = useState('hero');
+  const [activeTab, setActiveTab] = useState('about');
   const [audioStarted, setAudioStarted] = useState(false);
   const { start: startAudio } = useAmbientAudio();
   const { completed: compassCompleted } = useCompass();
-  const { comparingIds, clearAll: clearComparison, isBenchOpen, setIsBenchOpen } = useComparison();
+  const { comparingIds, clearAll: clearComparison } = useComparison();
 
   // Mastery & Badge State
-  const [unlockedBadgeIds, setUnlockedBadgeIds] = useState<string[]>(['digital-foundation']);
+  const [unlockedBadgeIds] = useState<string[]>(['digital-foundation']);
   const [newBadge, setNewBadge] = useState<{ id: string; name: string; description: string; svgContent: string } | null>(null);
 
-  // Scroll Spy Logic
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setActiveSection(entry.target.id);
-          }
-        });
-      },
-      { threshold: 0.1, rootMargin: '-10% 0px -10% 0px' }
-    );
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+    window.scrollTo(0, 0);
+  };
 
-    const sections = document.querySelectorAll('section[id]');
-    sections.forEach((s) => observer.observe(s));
-
-    return () => observer.disconnect();
-  }, []);
+  useKeyboardShortcuts([
+    { key: 'e', action: () => handleTabChange('explore'), description: 'Switch to Explore Tab' },
+    { key: 'h', action: () => handleTabChange('explore'), description: 'Switch to Explore Tab' },
+    { key: 's', action: () => handleTabChange('skills'), description: 'Switch to Skills Tab' },
+    { key: 't', action: () => handleTabChange('skills'), description: 'Switch to Skills Tab' },
+    { key: 'f', action: () => handleTabChange('financials'), description: 'Switch to Financials Tab' },
+    { key: 'p', action: () => handleTabChange('portfolio'), description: 'Switch to Portfolio Tab' },
+    { key: 'c', action: () => handleTabChange('portfolio'), description: 'Switch to Portfolio Tab' },
+    { key: 'a', action: () => handleTabChange('about'), description: 'Switch to About Tab' },
+  ]);
 
   const handleStartInteraction = () => {
     if (!audioStarted) {
@@ -83,7 +92,7 @@ const CareerRoadmapPage: React.FC = () => {
       onClick={handleStartInteraction}
     >
       <ScrollProgress />
-      <FloatingCommandBar activeSection={activeSection} />
+      <FloatingCommandBar activeTab={activeTab} onTabChange={handleTabChange} />
 
       {/* High Priority Overlays */}
       <AnimatePresence>
@@ -107,86 +116,149 @@ const CareerRoadmapPage: React.FC = () => {
       />
 
       {/* Main Industrial Flow */}
-      <main className="relative z-10">
-        <HeroSection 
-          onCalibrate={() => document.getElementById('domain-explorer')?.scrollIntoView({ behavior: 'smooth' })} 
-          onExplore={() => document.getElementById('market-giants')?.scrollIntoView({ behavior: 'smooth' })}
-        />
-        
-        {/* New Hub: Domain Explorer */}
-        <DomainExplorer />
+      <main className="relative z-10 pt-28">
+        <AnimatePresence mode="wait">
+          {activeTab === 'explore' && (
+            <motion.div
+              key="explore"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ duration: 0.25 }}
+              className="space-y-6"
+            >
+              <HeroSection 
+                onCalibrate={() => handleTabChange('skills')} 
+                onExplore={() => {
+                  const el = document.getElementById('domain-explorer');
+                  if (el) el.scrollIntoView({ behavior: 'smooth' });
+                }}
+              />
+              <DomainExplorer />
+              <MarketGiants />
+              <ExpertSignal />
+            </motion.div>
+          )}
 
-        {/* Existing Technical Deep-Dives */}
-        <div id="topology" className="relative z-10 border-t border-white/[0.03]">
-          <SkillTopology />
-        </div>
-        
-        <SectionWrapper id="skill-gap" className="bg-observatory-bg border-t border-white/[0.03]">
-          <div className="max-w-7xl mx-auto py-12 px-6">
-            <SkillGapRadar />
-          </div>
-        </SectionWrapper>
+          {activeTab === 'skills' && (
+            <motion.div
+              key="skills"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ duration: 0.25 }}
+              className="space-y-12 py-12 max-w-7xl mx-auto px-6"
+            >
+              <div>
+                <h1 className="text-4xl font-extrabold text-white tracking-tighter uppercase mb-6">Skill Topology & Gap Analysis</h1>
+                <SkillTopology />
+              </div>
+              
+              <div className="border-t border-white/[0.03] pt-12">
+                <SkillGapRadar />
+              </div>
 
-        <div id="fiscal-matrix" className="relative z-10 border-y border-white/[0.03]">
-          <FiscalMatrix />
-        </div>
+              <div className="border-t border-white/[0.03] pt-12">
+                <TechnicalTerminal />
+              </div>
+            </motion.div>
+          )}
 
-        <SectionWrapper id="global-heatmap" className="bg-observatory-bg border-t border-white/[0.03]">
-          <div className="max-w-7xl mx-auto py-12 px-6">
-            <GlobalSalaryHeatmap />
-          </div>
-        </SectionWrapper>
+          {activeTab === 'financials' && (
+            <motion.div
+              key="financials"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ duration: 0.25 }}
+              className="space-y-12 py-12 max-w-7xl mx-auto px-6"
+            >
+              <div>
+                <h1 className="text-4xl font-extrabold text-white tracking-tighter uppercase mb-6">Financial Yield & Trajectory</h1>
+                <FiscalMatrix />
+              </div>
 
-        <div id="simulator" className="relative z-10">
-          <TrajectorySimulator />
-        </div>
+              <div className="border-t border-white/[0.03] pt-12">
+                <GlobalSalaryHeatmap />
+              </div>
 
-        {/* New Logistics: Timeline & Giants */}
-        <ExecutionTimeline />
-        
-        <MarketGiants />
+              <div className="border-t border-white/[0.03] pt-12">
+                <TrajectorySimulator />
+              </div>
 
-        {/* New Signal: Expert Stories */}
-        <ExpertSignal />
+              <div className="border-t border-white/[0.03] pt-12">
+                <ExecutionTimeline />
+              </div>
+            </motion.div>
+          )}
 
-        {/* Phase 2: Tactical Execution */}
-        <SectionWrapper id="tactical" className="bg-observatory-bg border-t border-white/[0.03]">
-          <div className="max-w-7xl mx-auto space-y-12 py-12">
-            <div className="mb-12">
-              <h2 className="text-4xl font-bold text-white tracking-tight uppercase">Tactical Execution</h2>
-              <p className="text-slate-500 font-mono text-xs uppercase tracking-widest mt-2">Generate Artifacts & Simulate Pressure</p>
-            </div>
-            <ResumePreview />
-            <TechnicalTerminal />
-          </div>
-        </SectionWrapper>
+          {activeTab === 'portfolio' && (
+            <motion.div
+              key="portfolio"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ duration: 0.25 }}
+              className="space-y-12 py-12 max-w-7xl mx-auto px-6"
+            >
+              <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+                 <SiliconPipeline />
+                 <SiliconNetwork />
+              </div>
 
-        {/* Phase 4: Network & Flow Intelligence */}
-        <SectionWrapper id="network" className="bg-observatory-bg border-t border-white/[0.03]">
-          <div className="max-w-7xl mx-auto space-y-12 py-12">
-            <div className="mb-12">
-              <h2 className="text-4xl font-bold text-white tracking-tight uppercase">Network & Flow</h2>
-              <p className="text-slate-500 font-mono text-xs uppercase tracking-widest mt-2">Global Talent Pipeline & Peer Synchronization</p>
-            </div>
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-               <SiliconPipeline />
-               <SiliconNetwork />
-            </div>
-          </div>
-        </SectionWrapper>
+              <div className="border-t border-white/[0.03] pt-12">
+                <SiliconResume />
+              </div>
 
-        {/* Final Station: Silicon Cabinet */}
-        <SectionWrapper id="cabinet" className="bg-observatory-bg border-t border-white/[0.03] pb-32">
-          <div className="max-w-7xl mx-auto">
-            <div className="mb-12">
-              <h2 className="text-4xl font-bold text-white tracking-tight uppercase">Silicon Cabinet</h2>
-            </div>
-            <SiliconCabinet 
-              unlockedBadgeIds={unlockedBadgeIds} 
-              allBadges={BADGE_DEFINITIONS} 
-            />
-          </div>
-        </SectionWrapper>
+              <div className="border-t border-white/[0.03] pt-12 pb-24">
+                <div className="mb-8">
+                  <h2 className="text-4xl font-bold text-white tracking-tight uppercase">Silicon Cabinet</h2>
+                </div>
+                <SiliconCabinet 
+                  unlockedBadgeIds={unlockedBadgeIds} 
+                  allBadges={BADGE_DEFINITIONS} 
+                />
+              </div>
+            </motion.div>
+          )}
+
+          {activeTab === 'about' && (
+            <motion.div
+              key="about"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ duration: 0.25 }}
+              className="space-y-0"
+            >
+              {/* About Background Grids */}
+              <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+                <div className="absolute inset-0 bg-blueprint-grid opacity-[0.03] scale-150" />
+                <div className="absolute inset-0 opacity-[0.02] bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-cyan-400/10 blur-[120px] rounded-full" />
+                <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-amber-500/5 opacity-40 blur-[120px] rounded-full" />
+              </div>
+
+              <div className="relative z-10">
+                <AboutHero />
+                
+                {/* Interactive Hardware Scope Section */}
+                <div className="max-w-7xl mx-auto px-6 py-16 border-t border-white/[0.04] relative">
+                  <LogicTraceScope />
+                </div>
+
+                <TheProblem />
+                <FounderStory />
+                <TeamSection />
+                <TheMission />
+                <WhatWeBuilt />
+                <WhoThisIsFor />
+                <TheDifference />
+                <AboutCTA />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </main>
 
       {/* Persistent Briefing Overlay */}

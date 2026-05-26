@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { domainQuizzes } from '../data/quizQuestions';
 import { DataTerminal } from './DataTerminal';
 
@@ -52,9 +52,17 @@ export const MasteryQuizModal: React.FC<MasteryQuizModalProps> = ({
           <div className="p-8">
             {!showResult ? (
               <div className="space-y-8">
-                <h2 className="text-xl font-mono text-text-main leading-relaxed">
-                  {questions[currentIdx]?.q}
-                </h2>
+                <div className="flex justify-between items-start gap-4">
+                  <h2 className="text-xl font-mono text-text-main leading-relaxed flex-1">
+                    {questions[currentIdx]?.q}
+                  </h2>
+                  <button 
+                    onClick={onClose}
+                    className="text-text-dim hover:text-text-main font-mono text-xs uppercase px-2 py-1 border border-ghost-trace hover:border-white/20 transition-all"
+                  >
+                    Abort [ESC]
+                  </button>
+                </div>
                 <div className="grid grid-cols-1 gap-4">
                   {questions[currentIdx]?.options.map((opt, i) => (
                     <button
@@ -100,6 +108,12 @@ export const MasteryQuizModal: React.FC<MasteryQuizModalProps> = ({
                     className="px-8 py-3 bg-plasma-cyan text-matte-obsidian font-mono text-sm font-bold uppercase tracking-widest hover:bg-white transition-colors"
                   >
                     Sync Results
+                  </button>
+                  <button 
+                    onClick={onClose}
+                    className="px-8 py-3 bg-white/5 border border-white/10 text-white font-mono text-sm font-bold uppercase tracking-widest hover:bg-white/10 transition-colors"
+                  >
+                    Close
                   </button>
                 </div>
               </div>

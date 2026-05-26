@@ -17,7 +17,7 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
   {
     id: 'digital-foundation',
     name: 'DIGITAL FOUNDATION',
-    subtitle: 'AXE-OR VERIFIED // SERIES-01',
+    subtitle: 'BitforBytes VERIFIED // SERIES-01',
     trigger: 'complete_subtree',
     subtreeIds: ['digital-logic', 'boolean-algebra', 'kmaps', 'sequential-logic'],
     tier: 'BRONZE',
@@ -27,7 +27,7 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
   {
     id: 'rtl-architect',
     name: 'RTL ARCHITECT',
-    subtitle: 'AXE-OR VERIFIED // SERIES-02',
+    subtitle: 'BitforBytes VERIFIED // SERIES-02',
     trigger: 'complete_subtree',
     subtreeIds: ['verilog', 'rtl-synthesis', 'timing-analysis', 'formal-verify'],
     tier: 'SILVER',
@@ -37,7 +37,7 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
   {
     id: 'silicon-master',
     name: 'SILICON MASTER',
-    subtitle: 'AXE-OR VERIFIED // SERIES-03',
+    subtitle: 'BitforBytes VERIFIED // SERIES-03',
     trigger: 'complete_mastery_quiz',
     domain: 'vlsi-design',
     score: 5,
@@ -48,7 +48,7 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
   {
     id: 'fiscal-navigator',
     name: 'FISCAL NAVIGATOR',
-    subtitle: 'AXE-OR VERIFIED // UTILITY',
+    subtitle: 'BitforBytes VERIFIED // UTILITY',
     trigger: 'use_feature',
     feature: 'fiscal_matrix',
     tier: 'UTILITY',

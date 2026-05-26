@@ -15,8 +15,8 @@ export const useCompass = () => {
   const [result, setResult] = useState<CompassResult | null>(null);
 
   useEffect(() => {
-    const isCompleted = localStorage.getItem('axe_compass_completed') === 'true';
-    const savedResult = localStorage.getItem('axe_compass_result');
+    const isCompleted = localStorage.getItem('bfb_compass_completed') === 'true';
+    const savedResult = localStorage.getItem('bfb_compass_result');
 
     setCompleted(isCompleted);
     if (savedResult) {
@@ -35,8 +35,8 @@ export const useCompass = () => {
       completedAt: new Date().toISOString(),
     };
 
-    localStorage.setItem('axe_compass_result', JSON.stringify(newResult));
-    localStorage.setItem('axe_compass_completed', 'true');
+    localStorage.setItem('bfb_compass_result', JSON.stringify(newResult));
+    localStorage.setItem('bfb_compass_completed', 'true');
     
     setResult(newResult);
     setCompleted(true);
@@ -46,14 +46,14 @@ export const useCompass = () => {
   };
 
   const recalibrate = () => {
-    localStorage.removeItem('axe_compass_completed');
-    localStorage.removeItem('axe_compass_result');
+    localStorage.removeItem('bfb_compass_completed');
+    localStorage.removeItem('bfb_compass_result');
     setCompleted(false);
     setResult(null);
   };
 
   const skipCompass = () => {
-    localStorage.setItem('axe_compass_completed', 'true');
+    localStorage.setItem('bfb_compass_completed', 'true');
     setCompleted(true);
   };
 

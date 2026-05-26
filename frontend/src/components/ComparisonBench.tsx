@@ -42,7 +42,7 @@ const COMPARISON_ROWS = [
         domain.difficulty === 'Hard' ? 'border-red-400/30 text-red-400 bg-red-400/5' : 'border-purple-400/30 text-purple-400 bg-purple-400/5'
       )}>{domain.difficulty}</span>
     ),
-    winner: null // lower difficulty isn't necessarily better in AXE-OR context
+    winner: null // lower difficulty isn't necessarily better in BitforBytes context
   },
   {
     label: 'YoY GROWTH',

@@ -4,15 +4,15 @@ import { Zap, Share2, FileText } from 'lucide-react';
 
 interface NavItemProps {
   label: string;
-  href: string;
   isActive: boolean;
+  onClick: () => void;
 }
 
-const NavItem: React.FC<NavItemProps> = ({ label, href, isActive }) => (
-  <a
-    href={href}
+const NavItem: React.FC<NavItemProps> = ({ label, isActive, onClick }) => (
+  <button
+    onClick={onClick}
     className={`
-      px-4 py-1.5 text-[11px] font-mono transition-colors relative group
+      px-4 py-1.5 text-[11px] font-mono transition-colors relative group cursor-pointer
       ${isActive ? 'text-cyan-400' : 'text-slate-500 hover:text-white'}
     `}
   >
@@ -23,10 +23,10 @@ const NavItem: React.FC<NavItemProps> = ({ label, href, isActive }) => (
         className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-cyan-400 rounded-full"
       />
     )}
-  </a>
+  </button>
 );
 
-export const FloatingCommandBar: React.FC<{ activeSection: string }> = ({ activeSection }) => {
+export const FloatingCommandBar: React.FC<{ activeTab: string; onTabChange: (tab: string) => void }> = ({ activeTab, onTabChange }) => {
   const [hidden, setHidden] = useState(false);
   const { scrollY } = useScroll();
 
@@ -36,13 +36,16 @@ export const FloatingCommandBar: React.FC<{ activeSection: string }> = ({ active
   });
 
   const navItems = [
-    { label: 'MISSION', href: '#hero', id: 'hero' },
-    { label: 'TOPOLOGY', href: '#topology', id: 'topology' },
-    { label: 'SKILL GAP', href: '#skill-gap', id: 'skill-gap' },
-    { label: 'FISCAL', href: '#fiscal-matrix', id: 'fiscal-matrix' },
-    { label: 'HEATMAP', href: '#global-heatmap', id: 'global-heatmap' },
-    { label: 'CABINET', href: '#cabinet', id: 'cabinet' },
+    { label: 'ABOUT', id: 'about' },
+    { label: 'EXPLORE', id: 'explore' },
+    { label: 'SKILLS', id: 'skills' },
+    { label: 'FINANCIALS', id: 'financials' },
+    { label: 'PORTFOLIO', id: 'portfolio' },
   ];
+
+  const handleItemClick = (item: typeof navItems[number]) => {
+    onTabChange(item.id);
+  };
 
   return (
     <motion.nav
@@ -64,18 +67,18 @@ export const FloatingCommandBar: React.FC<{ activeSection: string }> = ({ active
         <NavItem 
           key={item.id} 
           label={item.label} 
-          href={item.href} 
-          isActive={activeSection === item.id} 
+          onClick={() => handleItemClick(item)} 
+          isActive={activeTab === item.id} 
         />
       ))}
 
       <div className="w-px h-4 bg-white/10 mx-2" />
       
       <div className="flex gap-2">
-        <button className="p-2 text-slate-400 hover:text-white transition-colors">
+        <button className="p-2 text-slate-400 hover:text-white transition-colors cursor-pointer">
           <FileText size={14} />
         </button>
-        <button className="p-2 text-slate-400 hover:text-white transition-colors">
+        <button className="p-2 text-slate-400 hover:text-white transition-colors cursor-pointer">
           <Share2 size={14} />
         </button>
       </div>

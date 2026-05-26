@@ -149,6 +149,7 @@ interface BinaryState {
 
     // Cognition Tracking
     metrics: CognitionMetrics;
+    initThermalEngine: () => void;
     resetWrongAnswerCount: () => void;
     recordAction: (type: keyof CognitionMetrics, value?: number) => void;
     updateHesitation: () => void;

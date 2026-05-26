@@ -273,7 +273,7 @@ export const WorkstationHome: React.FC = () => {
     return () => window.removeEventListener('keydown', onKey);
   }, []);
 
-  const name = firstName ?? 'Madhur';
+  const name = firstName ?? 'Kriten';
 
 
   return (

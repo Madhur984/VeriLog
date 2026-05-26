@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Radio, Newspaper, TrendingUp, AlertTriangle } from 'lucide-react';
+import { Radio } from 'lucide-react';
 
 const HEADLINES = [
   { id: 1, tag: 'FOUNDRY', title: 'TSMC 2nm mass production schedule confirmed for late 2026.', impact: 'High' },

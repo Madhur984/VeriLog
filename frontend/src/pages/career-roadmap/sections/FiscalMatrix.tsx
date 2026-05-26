@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { SectionWrapper } from '../../../components/SectionWrapper';
-import { Wallet, TrendingUp, ShieldCheck, PieChart } from 'lucide-react';
+import { TrendingUp, ShieldCheck } from 'lucide-react';
 
 export const FiscalMatrix: React.FC = () => {
   const [savingsRate, setSavingsRate] = useState(30);
@@ -78,7 +78,9 @@ export const FiscalMatrix: React.FC = () => {
                     <span>Savings Rate</span>
                     <span className="text-white">{savingsRate}%</span>
                   </div>
+                  <label htmlFor="savings-slider" className="sr-only">Savings rate percentage</label>
                   <input 
+                    id="savings-slider"
                     type="range" 
                     min="10" 
                     max="70" 

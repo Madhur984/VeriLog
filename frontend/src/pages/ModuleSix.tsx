@@ -165,7 +165,7 @@ export const ModuleSix: React.FC = () => {
   }, [current]);
 
   const page = PAGES[current];
-  const primary = '#00D4FF'; // AXE-OR Plasma Cyan
+  const primary = '#00D4FF'; // BitforBytes Plasma Cyan
 
   return (
     <div className={`flex h-screen overflow-hidden ${isDarkMode ? 'bg-matte-obsidian text-oscilloscope-trace' : 'bg-slate-50 text-slate-900'} relative`}>

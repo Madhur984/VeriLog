@@ -72,7 +72,9 @@ export const DomainExplorer: React.FC = () => {
           {/* Search */}
           <div className="relative w-full lg:w-[280px]">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={14} />
+            <label htmlFor="domain-search" className="sr-only">Search domains</label>
             <input 
+              id="domain-search"
               type="text" 
               placeholder="SEARCH DOMAINS..."
               value={searchQuery}
@@ -103,7 +105,9 @@ export const DomainExplorer: React.FC = () => {
           <div className="flex items-center gap-4 w-full lg:w-auto border-t lg:border-t-0 border-white/5 pt-4 lg:pt-0">
             <div className="flex items-center gap-2 text-slate-500 hover:text-white transition-colors cursor-pointer group">
               <ArrowUpDown size={14} />
+              <label htmlFor="domain-sort" className="sr-only">Sort domains by</label>
               <select 
+                id="domain-sort"
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as any)}
                 className="bg-transparent text-[10px] font-mono font-bold uppercase tracking-widest outline-none cursor-pointer"

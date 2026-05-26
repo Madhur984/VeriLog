@@ -18,12 +18,12 @@ const DEFAULT_CLOCK: MissionClockData = {
 
 export const useMultiClock = () => {
   const [clocks, setClocks] = useState<MissionClockData[]>(() => {
-    const saved = localStorage.getItem('axe_mission_clocks');
+    const saved = localStorage.getItem('bfb_mission_clocks');
     return saved ? JSON.parse(saved) : [DEFAULT_CLOCK];
   });
 
   useEffect(() => {
-    localStorage.setItem('axe_mission_clocks', JSON.stringify(clocks));
+    localStorage.setItem('bfb_mission_clocks', JSON.stringify(clocks));
   }, [clocks]);
 
   const addClock = (data: Omit<MissionClockData, 'id'>) => {

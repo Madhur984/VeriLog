@@ -32,12 +32,12 @@ const DEFAULT_STATE: CareerState = {
 
 export function useCareerState() {
   const [state, setState] = useState<CareerState>(() => {
-    const saved = localStorage.getItem('axe_career_v3_state');
+    const saved = localStorage.getItem('bfb_career_v3_state');
     return saved ? JSON.parse(saved) : DEFAULT_STATE;
   });
 
   useEffect(() => {
-    localStorage.setItem('axe_career_v3_state', JSON.stringify(state));
+    localStorage.setItem('bfb_career_v3_state', JSON.stringify(state));
   }, [state]);
 
   const unlockNode = (nodeId: string) => {

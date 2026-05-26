@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Cpu, Signal, Layout, Globe, Rocket, Shield, Activity, X, Radio, Laptop } from 'lucide-react';
+import { Cpu, Signal, Layout, Globe, Rocket, Shield, Activity, Radio, Laptop } from 'lucide-react';
 import { COMPASS_QUESTIONS } from '../data/compassQuestions';
 import { computeCompassResult } from '../utils/compassEngine';
 import { useCompass } from '../hooks/useCompass';
 import { DOMAINS } from '../data/domains';
-import { cn } from '../utils/cn';
 
 const iconMap: Record<string, any> = {
   cpu: Cpu,

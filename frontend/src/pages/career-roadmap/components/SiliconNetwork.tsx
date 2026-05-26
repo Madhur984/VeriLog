@@ -4,10 +4,10 @@ import { Users, Globe, Award, MessageSquare } from 'lucide-react';
 import { DataTerminal } from './DataTerminal';
 
 const PEERS = [
-  { id: 1, name: 'AXE_USER_99', archetype: 'Architect', domain: 'VLSI', progress: 85, location: 'Bengaluru' },
-  { id: 2, name: 'AXE_USER_42', archetype: 'Signal Analyst', domain: 'RF', progress: 62, location: 'Austin' },
-  { id: 3, name: 'AXE_USER_101', archetype: 'Firmware Eng', domain: 'Embedded', progress: 94, location: 'Munich' },
-  { id: 4, name: 'AXE_USER_07', archetype: 'Logic Ninja', domain: 'Digital', progress: 77, location: 'Hsinchu' },
+  { id: 1, name: 'BFB_USER_99', archetype: 'Architect', domain: 'VLSI', progress: 85, location: 'Bengaluru' },
+  { id: 2, name: 'BFB_USER_42', archetype: 'Signal Analyst', domain: 'RF', progress: 62, location: 'Austin' },
+  { id: 3, name: 'BFB_USER_101', archetype: 'Firmware Eng', domain: 'Embedded', progress: 94, location: 'Munich' },
+  { id: 4, name: 'BFB_USER_07', archetype: 'Logic Ninja', domain: 'Digital', progress: 77, location: 'Hsinchu' },
 ];
 
 export const SiliconNetwork: React.FC = () => {

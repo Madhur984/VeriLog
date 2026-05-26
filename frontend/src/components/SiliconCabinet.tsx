@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { BadgeDefinition } from '../data/badgeDefinitions';
 import { generateBadgeSVG, downloadBadge } from '../utils/BadgeEngine';
 import { Lock, Download, ShieldCheck, Activity } from 'lucide-react';
-import { useCursorGravity } from '../hooks/useCursorGravity';
 
 interface SiliconCabinetProps {
   unlockedBadgeIds: string[];
@@ -12,8 +11,6 @@ interface SiliconCabinetProps {
 
 export const SiliconCabinet: React.FC<SiliconCabinetProps> = ({ unlockedBadgeIds, allBadges }) => {
   const [hoveredBadge, setHoveredBadge] = useState<string | null>(null);
-  const { mouseX, mouseY } = useCursorGravity({ magneticRadius: 100, pullStrength: 0.1 });
-  const containerRef = React.useRef<HTMLDivElement>(null);
 
   const unlockedCount = allBadges.filter(b => unlockedBadgeIds.includes(b.id)).length;
   const progressPercentage = (unlockedCount / allBadges.length) * 100;
@@ -54,7 +51,7 @@ export const SiliconCabinet: React.FC<SiliconCabinetProps> = ({ unlockedBadgeIds
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {allBadges.map((badge, index) => {
           const isUnlocked = unlockedBadgeIds.includes(badge.id);
-          const svgContent = generateBadgeSVG(badge, 'AXE-OR-5091');
+          const svgContent = generateBadgeSVG(badge, 'BFB-5091');
           const isHovered = hoveredBadge === badge.id;
 
           return (

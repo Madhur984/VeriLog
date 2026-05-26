@@ -117,7 +117,7 @@ export const SkillGraph: React.FC<SkillGraphProps> = ({ selectedCompany, mastere
             const groupColors: any = {
               foundation: '#F59E0B',
               core: '#22D3EE',
-              spec: '#A78BFA'
+              spec: '#14B8A6'
             };
 
             const isActive = !selectedCompany || isRequired || isPreferred;

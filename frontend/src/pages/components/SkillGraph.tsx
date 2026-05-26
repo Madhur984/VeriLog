@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useCallback, useRef, useMemo } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import dagre from "dagre";
 import {
   CircuitBoard, Cpu, Wifi, Radio, Zap, Move3d, Shield, Eye, TrendingUp,
-  Lock, Unlock, RefreshCw, Maximize2, Minimize2, Download, Upload, Search,
-  GitBranch, Layout, Sparkles, Activity, Share2, Target, Info
+  Lock, Unlock, RefreshCw, Maximize2, Minimize2, Search,
+  Layout, Sparkles, Activity
 } from "lucide-react";
 
 // ---------- Types ----------
@@ -67,7 +67,7 @@ interface SkillGraphProps {
   onDragCount?: (count: number) => void; 
 }
 
-export const SkillGraph: React.FC<SkillGraphProps> = ({ onNodeClick, unlockedNodes = new Set(), onDragCount }) => {
+export const SkillGraph: React.FC<SkillGraphProps> = ({ onNodeClick, unlockedNodes: _unlockedNodes = new Set(), onDragCount }) => {
   const [nodes, setNodes] = useState<GraphNode[]>(() => {
     const saved = localStorage.getItem("skill_graph_mixed_positions_v2");
     const positions = saved ? JSON.parse(saved) : defaultPositions;
@@ -83,7 +83,7 @@ export const SkillGraph: React.FC<SkillGraphProps> = ({ onNodeClick, unlockedNod
   const dragCountRef = useRef(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [showMinimap, setShowMinimap] = useState(true);
+  const [showMinimap] = useState(true);
   const [physicsOn, setPhysicsOn] = useState(true);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -209,7 +209,7 @@ export const SkillGraph: React.FC<SkillGraphProps> = ({ onNodeClick, unlockedNod
         panning={{ disabled: draggingId !== null }}
         wheel={{ step: 0.15 }}
       >
-        {({ zoomIn, zoomOut, resetTransform, state }) => (
+        {({ state }) => (
           <>
             <TransformComponent wrapperStyle={{ width: "100%", height: "100%" }} contentStyle={{ width: "100%", height: "100%" }}>
               <div className="relative" style={{ width: 4000, height: 3000 }}>

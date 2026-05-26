@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { SectionWrapper } from '../../../components/SectionWrapper';
-import { GraduationCap, Briefcase, Rocket, Globe } from 'lucide-react';
+import { Globe } from 'lucide-react';
 
 export const IntelHub: React.FC = () => {
   const initiatives = [
@@ -44,7 +44,7 @@ export const IntelHub: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {initiatives.map((item, i) => (
+          {initiatives.map((item) => (
             <motion.div
               key={item.title}
               whileHover={{ y: -8 }}

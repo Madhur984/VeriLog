@@ -17,7 +17,7 @@ export interface M2ScreenProps {
   updateSignal?: (updates: Partial<M2Signal>) => void;
 }
 
-/** Design token constants shared across all M2 screens - ULTIMATE AXE-OR EDITION */
+/** Design token constants shared across all M2 screens - ULTIMATE BITFORBYTES EDITION */
 export const T = {
   bg: '#0A0A0B',        // matte-obsidian
   card: '#121215',      // solder-mask
