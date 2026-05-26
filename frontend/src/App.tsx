@@ -6,7 +6,7 @@ import { TransitionOverlay } from './components/TransitionOverlay';
 import { PortalLayout } from './layouts/PortalLayout';
 
 // Core Pages
-import { GatekeeperLanding } from './pages/GatekeeperLanding';
+import LandingPage from './pages/landing';
 import { LoginPage } from './pages/LoginPage';
 import { HeroExperience } from './pages/HeroExperience';
 import { WorkstationHome } from './pages/WorkstationHome';
@@ -60,7 +60,7 @@ function App() {
       <TransitionOverlay />
       <Routes>
         {/* Landing / Auth / Entry */}
-        <Route path="/" element={<GatekeeperLanding />} />
+        <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/hero" element={<HeroExperience />} />
 

@@ -46,19 +46,19 @@ input[type="range"]::-webkit-slider-thumb:hover {
 }
 
 /* ─── INDUSTRIAL GLASS & MATERIAL ─── */
-.axe-or-glass {
+.bfb-glass {
   background: var(--glass-bg);
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
   border: 1px solid rgba(255,255,255,0.08);
 }
 
-.axe-or-card {
+.bfb-card {
   background: rgba(255,255,255,0.02);
   border: 1px solid rgba(255,255,255,0.05);
   transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.axe-or-card:hover {
+.bfb-card:hover {
   background: rgba(255,255,255,0.04);
   border-color: rgba(255,255,255,0.1);
   transform: translateY(-2px);

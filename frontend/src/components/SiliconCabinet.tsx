@@ -51,7 +51,7 @@ export const SiliconCabinet: React.FC<SiliconCabinetProps> = ({ unlockedBadgeIds
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {allBadges.map((badge, index) => {
           const isUnlocked = unlockedBadgeIds.includes(badge.id);
-          const svgContent = generateBadgeSVG(badge, 'AXE-OR-5091');
+          const svgContent = generateBadgeSVG(badge, 'BFB-5091');
           const isHovered = hoveredBadge === badge.id;
 
           return (

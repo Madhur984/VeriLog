@@ -404,7 +404,7 @@ export const LogicTraceScope: React.FC = () => {
         <div className="flex items-center gap-3">
           <div className="w-2.5 h-2.5 bg-cyan-500 rounded-full animate-ping" />
           <span className="text-white font-bold tracking-wider uppercase text-[10px]">
-            AXE-OR // Logic Scope Probe V1.0
+            BitforBytes // Logic Scope Probe V1.0
           </span>
         </div>
         

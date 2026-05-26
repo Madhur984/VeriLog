@@ -55,7 +55,7 @@ export const PROBLEM_STATS: StatCard[] = [
   {
     value: "₹0",
     label: "cost of quality free Verilog courses in Indian context",
-    context: "Before AXE-OR. This was the gap.",
+    context: "Before BitforBytes. This was the gap.",
     color: "text-emerald-400",
   },
 ];
@@ -151,7 +151,7 @@ export const COMPARISONS: ComparisonRow[] = [
     verdict: "partial",
   },
   {
-    platform: "AXE-OR",
+    platform: "BitforBytes",
     issue: "Free. Interactive. India-first. Career-connected.",
     verdict: "solution",
   },

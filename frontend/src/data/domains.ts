@@ -46,7 +46,7 @@ export const DOMAINS: Domain[] = [
     companies: ['nvidia', 'intel', 'qualcomm', 'apple', 'samsung-semi', 'cadence', 'synopsys'],
     roadmap: [
       { phase: 'Month 1–3', tasks: ['Digital Logic Fundamentals', 'Boolean Algebra', 'K-Maps'] },
-      { phase: 'Month 4–6', tasks: ['Verilog HDL', 'FPGA design', 'First AXE-OR module'] },
+      { phase: 'Month 4–6', tasks: ['Verilog HDL', 'FPGA design', 'First BitforBytes module'] },
       { phase: 'Month 7–12', tasks: ['RTL Synthesis', 'Timing Analysis', 'UVM Verification'] },
       { phase: 'Year 2–3', tasks: ['Physical Design', 'Tapeout project', 'VSD/NPTEL certification'] },
       { phase: 'Year 3+', tasks: ['Target: Qualcomm/Intel fresher role', 'GATE for IIT M.Tech'] },

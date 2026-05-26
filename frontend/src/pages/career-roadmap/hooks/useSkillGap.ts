@@ -15,7 +15,7 @@ export const useSkillGap = () => {
 
   useEffect(() => {
     try {
-      const stored = localStorage.getItem('axe_mastered_nodes');
+      const stored = localStorage.getItem('bfb_mastered_nodes');
       const userSkills = stored ? JSON.parse(stored) : ['digital-foundation', 'verilog-hdl'];
       setMasteredNodes(userSkills);
 

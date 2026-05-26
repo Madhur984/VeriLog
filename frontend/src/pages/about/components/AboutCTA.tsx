@@ -18,7 +18,7 @@ export const AboutCTA: React.FC = () => {
             <span className="text-cyan-400">What engineers do — we build.</span>
           </h2>
           <p className="text-slate-400 font-sans text-xs md:text-sm leading-relaxed max-w-xl mx-auto pt-4">
-            AXE‑OR is built by four students — one idea, one execution,
+            BitforBytes is built by four students — one idea, one execution,
             and two people who showed up and gave everything they had.
             It is not perfect. It is growing. Every student who learns
             here makes the case that this gap is real and worth closing.
@@ -81,7 +81,7 @@ export const AboutCTA: React.FC = () => {
             <div className="pt-8">
               <MagneticButton className="w-full">
                 <a
-                  href="mailto:mentor@axe-or.org?subject=AXE-OR Mentor Waitlist"
+                  href="mailto:mentor@bitforbytes.org?subject=BitforBytes Mentor Waitlist"
                   className="w-full text-center py-3 border border-amber-400 text-amber-400 font-mono text-xs font-bold uppercase tracking-wider rounded-full hover:bg-amber-400/10 transition-all inline-block"
                 >
                   JOIN MENTOR WAITLIST →

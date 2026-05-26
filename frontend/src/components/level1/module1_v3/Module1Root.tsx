@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useColorScheme } from '../../../hooks/useColorScheme';
 import { useModule1Audio } from './hooks/useModule1Audio';
 
-// ── Interactive Animated SVG Waveforms (AXE-OR v7 TACTICAL EDITION) ──────
+// ── Interactive Animated SVG Waveforms (BitforBytes v7 TACTICAL EDITION) ──────
 
 interface WaveProps {
   color?: string;
@@ -406,7 +406,7 @@ const SignalHook: React.FC<{ onComplete: () => void; isDark: boolean }> = ({ onC
   );
 };
 
-// ── ELITE AXE-OR COMPONENTS ───────────────────────────────────────────────
+// ── ELITE BitforBytes COMPONENTS ───────────────────────────────────────────────
 
 export const KineticText: React.FC<{ text: string; className?: string }> = ({ text, className }) => {
     const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789//_";
@@ -596,7 +596,7 @@ export const ComparisonConsole: React.FC<{ isDark: boolean }> = ({ isDark }) => 
     const audio = useModule1Audio();
 
     return (
-        <div className={`w-full axe-or-glass rounded-[3rem] overflow-hidden p-10 space-y-10 border transition-all duration-500 shadow-2xl ${isDark ? 'border-white/5' : 'border-black/5'}`}>
+        <div className={`w-full bfb-glass rounded-[3rem] overflow-hidden p-10 space-y-10 border transition-all duration-500 shadow-2xl ${isDark ? 'border-white/5' : 'border-black/5'}`}>
             <div className="flex items-center gap-4">
                 <div className="p-3 bg-white/5 rounded-xl text-white/40">
                     <Scale size={20} />
@@ -750,7 +750,7 @@ export const Module1Root: React.FC = () => {
       <div className="flex-1 h-full overflow-y-auto relative scroll-smooth grid-bg" style={{ background: bgColor }}>
 
         {/* Sticky Nav */}
-        <nav className={`sticky top-0 z-50 px-8 py-5 flex justify-between items-center border-b axe-or-glass`} style={{ borderColor }}>
+        <nav className={`sticky top-0 z-50 px-8 py-5 flex justify-between items-center border-b bfb-glass`} style={{ borderColor }}>
           <div className="flex items-center gap-3">
             <span className={`font-mono font-black ${isDarkMode ? 'text-orange-500' : 'text-orange-600'}`}>M01</span>
             <span className={isDarkMode ? 'text-orange-900' : 'text-gray-300'}>·</span>
@@ -1053,7 +1053,7 @@ export const Module1Root: React.FC = () => {
                 career="DSP Engineer // Analog IC Designer"
               />
 
-              <div className={`axe-or-glass rounded-[3rem] p-12 text-center relative overflow-hidden border shadow-inner ${isDarkMode ? 'border-white/5' : 'border-black/5'}`}>
+              <div className={`bfb-glass rounded-[3rem] p-12 text-center relative overflow-hidden border shadow-inner ${isDarkMode ? 'border-white/5' : 'border-black/5'}`}>
                 <div className="scan-line absolute inset-0 opacity-10" />
                 <p className="mono-tag mb-8 tracking-[0.5em]">The Scientist's View</p>
                 <div className="inline-block p-10 rounded-3xl bg-orange-500/5 border border-orange-500/10 mb-12">
@@ -1342,7 +1342,7 @@ export const Module1Root: React.FC = () => {
 
           {/* ── BRIDGING WORLDS ── */}
           <section id="bridge" className="pt-20">
-            <div className="axe-or-glass p-12 rounded-[4rem] relative overflow-hidden" style={{ borderColor: isDarkMode ? 'rgba(249,115,22,0.15)' : 'rgba(249,115,22,0.05)' }}>
+            <div className="bfb-glass p-12 rounded-[4rem] relative overflow-hidden" style={{ borderColor: isDarkMode ? 'rgba(249,115,22,0.15)' : 'rgba(249,115,22,0.05)' }}>
                <div className="scan-line absolute inset-0 opacity-10" />
                <div className="relative z-10">
                   <div className="flex flex-col md:flex-row gap-12">
@@ -1421,7 +1421,7 @@ export const Module1Root: React.FC = () => {
                 { name: 'Mobile Phone', flow: 'Analog RF → Digital Processing', icon: '📱' },
                 { name: 'Automotive Systems', flow: 'Sensor → ADC → Control Unit', icon: '🚗' },
               ].map((sys, i) => (
-                <div key={i} className={`flex items-center gap-6 p-6 rounded-2xl border transition-all axe-or-glass ${isDarkMode ? 'border-orange-900/20 hover:bg-orange-950/10' : 'bg-gray-50 border-gray-200 hover:bg-gray-100'}`}>
+                <div key={i} className={`flex items-center gap-6 p-6 rounded-2xl border transition-all bfb-glass ${isDarkMode ? 'border-orange-900/20 hover:bg-orange-950/10' : 'bg-gray-50 border-gray-200 hover:bg-gray-100'}`}>
                    <div className="text-3xl bg-white/5 p-3 rounded-xl">{sys.icon}</div>
                    <div>
                       <h4 className="font-bold text-lg">{sys.name}</h4>
@@ -1434,7 +1434,7 @@ export const Module1Root: React.FC = () => {
 
           {/* ── VERILOG BRIDGE ── */}
           <section id="verilog" className="pt-20 pb-48">
-             <div className={`axe-or-glass p-16 rounded-[5rem] text-center relative overflow-hidden border shadow-2xl transition-all duration-1000 ${isDarkMode ? 'border-orange-500/30' : 'border-orange-300'}`}>
+             <div className={`bfb-glass p-16 rounded-[5rem] text-center relative overflow-hidden border shadow-2xl transition-all duration-1000 ${isDarkMode ? 'border-orange-500/30' : 'border-orange-300'}`}>
                 <div className="grid-bg absolute inset-0 opacity-10" />
                 <div className="scan-line absolute inset-0 opacity-5" />
                 
@@ -1450,7 +1450,7 @@ export const Module1Root: React.FC = () => {
                       "Analog is the pulse. Digital is the mind. Verilog is the blueprint that organizes them."
                    </p>
                    
-                   <div className={`p-10 rounded-[3rem] border-2 border-dashed axe-or-glass ${isDarkMode ? 'border-orange-500/20' : 'border-orange-400'}`}>
+                   <div className={`p-10 rounded-[3rem] border-2 border-dashed bfb-glass ${isDarkMode ? 'border-orange-500/20' : 'border-orange-400'}`}>
                       <p className="text-3xl font-black italic uppercase tracking-tighter text-orange-500">
                          Design the intelligence.
                          <br />

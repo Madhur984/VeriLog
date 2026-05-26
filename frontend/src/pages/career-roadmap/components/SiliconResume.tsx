@@ -8,7 +8,7 @@ export const SiliconResume = () => {
   
   useEffect(() => {
     try {
-      const stored = localStorage.getItem('axe_mastered_nodes');
+      const stored = localStorage.getItem('bfb_mastered_nodes');
       if (stored) {
         setMasteredNodes(JSON.parse(stored));
       } else {
@@ -35,13 +35,13 @@ export const SiliconResume = () => {
 
   const resumeData = {
     name: "KRITEN SINGHAL",
-    contact: "k.singhal@axe-or.in | +91 XXXXXXXXXX | Ghaziabad, UP",
+    contact: "k.singhal@bitforbytes.in | +91 XXXXXXXXXX | Ghaziabad, UP",
     links: "github.com/kriten | linkedin.com/in/kriten",
     summary: "ECE 3rd-year student focusing on logic optimization, RTL architecture, and hardware synthesis. Winner and Team Lead of Smart India Hackathon 2025 (Hardware Edition). Dedicated to building highly structured architecture prototypes.",
     skills: skillsList,
     badges: ["Digital Design Foundations", "Binary Arithmetic Pioneer", "Timing Compliance Specialist"],
     projects: [
-      { name: "AXE-OR Core Scrollytelling Simulator", desc: "Engineered browser-native 60fps structural clock domain simulator and physics-accurate transmission line trace graph components from absolute scratch using React & TypeScript layout arrays." },
+      { name: "BitforBytes Core Scrollytelling Simulator", desc: "Engineered browser-native 60fps structural clock domain simulator and physics-accurate transmission line trace graph components from absolute scratch using React & TypeScript layout arrays." },
       { name: "Smart India Hackathon 2025 Winning Hardware Node", desc: "Designed and fabricated an on-edge indigenous firmware hardware subsystem block. Managed structural validation schemas and timing analysis profiles under extreme stress limits." }
     ]
   };
@@ -100,7 +100,7 @@ export const SiliconResume = () => {
     // 3. VERIFIED CERTIFICATIONS
     doc.setFont(fontHeader, 'bold');
     doc.setFontSize(10);
-    doc.text("VERIFIED CERTIFICATIONS (AXE-OR PLATFORM)", 40, y);
+    doc.text("VERIFIED CERTIFICATIONS (BITFORBYTES PLATFORM)", 40, y);
     doc.line(40, y + 3, 555, y + 3);
     
     y += 18;
@@ -235,7 +235,7 @@ export const SiliconResume = () => {
 
           {/* Verified Achievements Platform Assertions */}
           <div className="mt-4">
-            <h3 className="text-xs font-bold font-mono tracking-wider text-slate-900 border-b border-slate-200 pb-0.5 mb-1">VERIFIED CERTIFICATIONS (AXE-OR PLATFORM)</h3>
+            <h3 className="text-xs font-bold font-mono tracking-wider text-slate-900 border-b border-slate-200 pb-0.5 mb-1">VERIFIED CERTIFICATIONS (BITFORBYTES PLATFORM)</h3>
             <ul className="list-disc pl-4 text-xs text-slate-700 space-y-0.5">
               {resumeData.badges.map((badge, i) => (
                 <li key={i}><strong>{badge} Tag:</strong> Cryptographically verified structural core logic compliance token mapping.</li>

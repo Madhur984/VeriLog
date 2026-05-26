@@ -32,7 +32,7 @@ export const TheDifference: React.FC = () => {
             </thead>
             <tbody>
               {COMPARISONS.map((row, idx) => {
-                const isAxeOr = row.platform === 'AXE-OR';
+                const isAxeOr = row.platform === 'BitforBytes';
 
                 return (
                   <motion.tr
@@ -72,13 +72,13 @@ export const TheDifference: React.FC = () => {
                       )}
                       {row.verdict === 'solution' && (
                         <motion.span
-                          initial={{ scale: 0.85, opacity: 0 }}
-                          whileInView={{ scale: 1, opacity: 1 }}
-                          viewport={{ once: true }}
-                          transition={{ duration: 0.4, delay: idx * 0.07 + 0.2 }}
-                          className="inline-block px-2.5 py-1 rounded bg-cyan-400/10 border border-cyan-400/20 text-cyan-400 font-mono text-[9px] font-bold uppercase tracking-wider"
+                           initial={{ scale: 0.85, opacity: 0 }}
+                           whileInView={{ scale: 1, opacity: 1 }}
+                           viewport={{ once: true }}
+                           transition={{ duration: 0.4, delay: idx * 0.07 + 0.2 }}
+                           className="inline-block px-2.5 py-1 rounded bg-cyan-400/10 border border-cyan-400/20 text-cyan-400 font-mono text-[9px] font-bold uppercase tracking-wider"
                         >
-                          ✓ AXE-OR
+                          ✓ BitforBytes
                         </motion.span>
                       )}
                     </td>

@@ -23,7 +23,7 @@ export const DiagnosticConsole: React.FC<DiagnosticConsoleProps> = ({
   const [tickerIdx, setTickerIdx] = useState(0);
 
   const TICKER_MSGS = [
-    'AXE-OR // CORE_STABILITY: NOMINAL',
+    'BitforBytes // CORE_STABILITY: NOMINAL',
     'CAPTURE_FIDELITY: 99.8%',
     'SIGNAL_ENGINE: LOCKED',
     'NEURAL_MAP: SYNC_READY',
@@ -104,7 +104,7 @@ export const DiagnosticConsole: React.FC<DiagnosticConsoleProps> = ({
               transition={{ duration: 1.2, repeat: Infinity }}
             />
             <span className="text-[7px] font-black tracking-[0.35em] uppercase" style={{ color: '#3b82f680' }}>
-              AXE-OR // READY
+              BitforBytes // READY
             </span>
           </div>
           <div className="flex gap-1.5">

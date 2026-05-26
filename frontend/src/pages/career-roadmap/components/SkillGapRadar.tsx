@@ -72,7 +72,7 @@ export const SkillGapRadar = () => {
   useEffect(() => {
     const handleStorageChange = () => {
       try {
-        const stored = localStorage.getItem('axe_mastered_nodes');
+        const stored = localStorage.getItem('bfb_mastered_nodes');
         if (stored) {
           setMasteredNodes(JSON.parse(stored));
         } else {
@@ -90,11 +90,11 @@ export const SkillGapRadar = () => {
     // Listen to local custom storage events if any
     window.addEventListener('storage', handleStorageChange);
     // Custom event dispatch for same-tab updates if trigger is present
-    window.addEventListener('axe_nodes_updated', handleStorageChange);
+    window.addEventListener('bfb_nodes_updated', handleStorageChange);
     
     return () => {
       window.removeEventListener('storage', handleStorageChange);
-      window.removeEventListener('axe_nodes_updated', handleStorageChange);
+      window.removeEventListener('bfb_nodes_updated', handleStorageChange);
     };
   }, []);
 

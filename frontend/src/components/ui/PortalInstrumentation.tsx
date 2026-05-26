@@ -1,16 +1,14 @@
-import React, { useRef, useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useRef, useEffect } from 'react';
 import { Activity, Zap, Cpu, ShieldCheck } from 'lucide-react';
 
 const AMBER = '#f97316';
-const INDIGO = '#05080c';
 
 // ── GLOBAL STATUS HUD ────────────────────────────────────────────────────────
 export const GlobalStatusHUD: React.FC = () => {
     return (
         <div className="flex gap-12 items-center px-8 py-3 bg-black/40 border border-orange-500/10 rounded-2xl backdrop-blur-xl">
             <div className="flex flex-col">
-                <span className="text-[7px] font-black uppercase tracking-[0.3em] text-orange-500/40 mb-1">AXE-OR // CORE_STABILITY</span>
+                <span className="text-[7px] font-black uppercase tracking-[0.3em] text-orange-500/40 mb-1">BitforBytes // CORE_STABILITY</span>
                 <div className="flex items-center gap-3">
                     <Activity size={12} className="text-orange-500" />
                     <span className="text-[14px] font-mono font-black text-orange-500">99.98%</span>
