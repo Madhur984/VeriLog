@@ -54,7 +54,7 @@ export const S21_PowerDesign: React.FC<{ isActive: boolean }> = ({ isActive }) =
 
             <div className="flex-1 flex flex-col justify-center gap-12 w-full relative">
                 {/* Background Heat Gradient */}
-                <div className={`absolute inset-0 transition-opacity duration-[2000ms] ${gatingEnabled ? 'opacity-10' : 'opacity-60'}`}>
+                <div className={`absolute inset-0 transition-opacity [transition-duration:2000ms] ${gatingEnabled ? 'opacity-10' : 'opacity-60'}`}>
                     <div className="absolute inset-0 bg-gradient-to-br from-red-600/40 via-orange-900/20 to-transparent blur-[120px]" />
                 </div>
 
@@ -86,7 +86,7 @@ export const S21_PowerDesign: React.FC<{ isActive: boolean }> = ({ isActive }) =
                                     }}
                                     className="w-full aspect-square rounded-[22px] border flex flex-col items-center justify-center relative group/core overflow-hidden backdrop-blur-sm"
                                 >
-                                    <div className={`w-2 h-2 rounded-full transition-all duration-[1000ms] ${isCoreActive ? 'bg-burnished-copper shadow-[0_0_10px_rgba(184,115,51,0.8)]' : 'bg-white/5 opacity-20'}`} />
+                                    <div className={`w-2 h-2 rounded-full transition-all [transition-duration:1000ms] ${isCoreActive ? 'bg-burnished-copper shadow-[0_0_10px_rgba(184,115,51,0.8)]' : 'bg-white/5 opacity-20'}`} />
                                     {isCoreActive && (
                                         <motion.div 
                                             animate={{ scale: [1, 1.3, 1], opacity: [0.1, 0.4, 0.1] }}

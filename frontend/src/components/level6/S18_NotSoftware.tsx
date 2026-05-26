@@ -111,9 +111,9 @@ export const S18_NotSoftware: React.FC<{ isActive: boolean }> = ({ isActive }) =
 
                 <div className="flex flex-col items-center gap-6 py-6 border-t border-white/5 relative z-10">
                     <div className="flex gap-10">
-                       <Repeat size={36} strokeWidth={1} className="text-plasma-cyan animate-spin duration-[10s]" />
-                       <Repeat size={36} strokeWidth={1} className="text-plasma-cyan rotate-180 animate-spin duration-[10s]" />
-                       <Repeat size={36} strokeWidth={1} className="text-plasma-cyan animate-spin duration-[10s]" />
+                       <Repeat size={36} strokeWidth={1} className="text-plasma-cyan animate-spin [animation-duration:10s]" />
+                       <Repeat size={36} strokeWidth={1} className="text-plasma-cyan rotate-180 animate-spin [animation-duration:10s]" />
+                       <Repeat size={36} strokeWidth={1} className="text-plasma-cyan animate-spin [animation-duration:10s]" />
                     </div>
                     <span className="micro-text uppercase tracking-[0.5em] font-bold text-white/30 text-[9px]">Spatial Parallel Reality</span>
                 </div>
