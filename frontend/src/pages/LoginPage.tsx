@@ -23,13 +23,21 @@ export const LoginPage: React.FC = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [fullName, setFullName] = useState('');
+    const [guestName, setGuestName] = useState('');
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
 
+    const guestNameTrimmed = guestName.trim();
+    const isGuestNameValid = guestNameTrimmed.length >= 2 && guestNameTrimmed.length <= 32;
+
     const handleGuestLogin = () => {
-        const guestName = `Guest-${Math.floor(Math.random() * 9000 + 1000)}`;
-        startGuestSession(guestName);
-        setFirstName('Guest');
+        if (!isGuestNameValid) {
+            setError('Guest username is required (2–32 characters)');
+            return;
+        }
+        setError(null);
+        startGuestSession(guestNameTrimmed);
+        setFirstName(guestNameTrimmed.split(' ')[0]);
         setHasSeenGreeting(false);
         navigate(redirectTo, { replace: true });
     };
@@ -188,12 +196,31 @@ export const LoginPage: React.FC = () => {
                         <div className="guest-divider">
                             <span>OR</span>
                         </div>
+                        <div className="guest-name-row">
+                            <UserCircle2 size={16} className="guest-name-icon" />
+                            <input
+                                type="text"
+                                placeholder="GUEST_USERNAME (required)"
+                                value={guestName}
+                                onChange={(e) => setGuestName(e.target.value)}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter' && isGuestNameValid) handleGuestLogin();
+                                }}
+                                className="guest-name-input"
+                                maxLength={32}
+                                autoComplete="nickname"
+                            />
+                        </div>
                         <button
                             type="button"
                             className="guest-button"
                             onClick={handleGuestLogin}
-                            disabled={isLoading}
-                            title="Skip auth and explore as a guest. Progress saved locally only."
+                            disabled={isLoading || !isGuestNameValid}
+                            title={
+                                isGuestNameValid
+                                    ? 'Continue as guest. Progress saved locally only.'
+                                    : 'Enter a guest username (2–32 chars) to continue'
+                            }
                         >
                             <UserCircle2 size={18} />
                             <span>BYPASS_AUTH // GUEST_MODE</span>

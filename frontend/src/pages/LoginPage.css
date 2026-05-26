@@ -288,6 +288,45 @@
     background: #e2e8f0;
 }
 
+.guest-name-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    background: #ffffff;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.guest-name-row:focus-within {
+    border-color: #0f172a;
+    box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.08);
+}
+
+.guest-name-icon {
+    color: #94a3b8;
+    flex: none;
+}
+
+.guest-name-input {
+    flex: 1;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    font-family: 'Roboto Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 1px;
+    color: #0f172a;
+    text-transform: uppercase;
+}
+
+.guest-name-input::placeholder {
+    color: #94a3b8;
+    letter-spacing: 1.5px;
+}
+
 .guest-button {
     width: 100%;
     display: inline-flex;
