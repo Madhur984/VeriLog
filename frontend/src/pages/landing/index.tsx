@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { LandingNav } from './LandingNav';
 import { HeroSection } from './HeroSection';
 import { BinaryStrip } from '../../components/BinaryStrip';
@@ -11,6 +12,51 @@ import { FinalCTA } from './FinalCTA';
 import { LandingFooter } from './LandingFooter';
 
 const LandingPage = () => {
+  const [isBooting, setIsBooting] = useState(true);
+  const [bootText, setBootText] = useState('SYSTEM_INIT');
+
+  useEffect(() => {
+    const sequences = [
+      { text: 'CORE_STABILITY: CALIBRATING...', delay: 150 },
+      { text: 'SIGNAL_FIDELITY: UNLOCKED [FS:192k]', delay: 300 },
+      { text: 'METAMORPHIC_ROUTING: CONNECTING...', delay: 450 },
+      { text: 'BITFORBYTES v5.0: ACTIVE', delay: 650 },
+      { text: 'BOOT_COMPLETE', delay: 800 }
+    ];
+
+    sequences.forEach(seq => {
+      const timer = setTimeout(() => {
+        setBootText(seq.text);
+        if (seq.text === 'BOOT_COMPLETE') {
+          setIsBooting(false);
+        }
+      }, seq.delay);
+      return () => clearTimeout(timer);
+    });
+  }, []);
+
+  if (isBooting) {
+    return (
+      <div className="min-h-screen w-full bg-[#07080A] flex flex-col items-center justify-center font-mono text-[10px] tracking-widest text-[#22D3EE] select-none">
+        <div className="space-y-3 text-center">
+          <div>[ {bootText} ]</div>
+          <div className="w-32 h-[1px] bg-white/5 mx-auto overflow-hidden relative">
+            <div className="absolute top-0 bottom-0 left-0 bg-[#22D3EE] w-12 animate-loading-bar" />
+          </div>
+        </div>
+        <style>{`
+          @keyframes loading-bar {
+            0% { transform: translateX(-50px); }
+            100% { transform: translateX(130px); }
+          }
+          .animate-loading-bar {
+            animation: loading-bar 1.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+          }
+        `}</style>
+      </div>
+    );
+  }
+
   return (
     <div
       className="min-h-screen w-full flex flex-col items-center bg-[#07080A] text-white selection:bg-[#22D3EE]/20 selection:text-[#22D3EE] overflow-x-hidden relative"

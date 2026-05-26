@@ -22,6 +22,26 @@ export const PlatformPreview = () => {
     [1, 1, 1, 1], // m7
   ];
 
+  const playToggleTone = (isHigh: boolean) => {
+    try {
+      const AudioCtx = window.AudioContext || (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(isHigh ? 700 : 350, ctx.currentTime);
+      gain.gain.setValueAtTime(0.015, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.06);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.06);
+    } catch {
+      // Browser autoplay policy
+    }
+  };
+
   return (
     <div className="max-w-4xl mx-auto px-6 py-20 w-full select-none">
       {/* Section Header */}
@@ -113,7 +133,10 @@ export const PlatformPreview = () => {
                 ].map(input => (
                   <button
                     key={input.name}
-                    onClick={() => input.setter(input.val === 0 ? 1 : 0)}
+                    onClick={() => {
+                      playToggleTone(input.val === 0);
+                      input.setter(input.val === 0 ? 1 : 0);
+                    }}
                     className="w-full flex items-center justify-between p-3.5 rounded-xl border font-mono transition-all duration-150 cursor-pointer active:scale-98"
                     style={{
                       background: input.val === 1 ? 'rgba(34,211,238,0.03)' : '#0D0F12',
