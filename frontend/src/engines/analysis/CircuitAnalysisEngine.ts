@@ -1,5 +1,5 @@
 /**
- * CircuitAnalysisEngine.ts — Static analysis for circuit validation
+ * CircuitAnalysisEngine.ts - Static analysis for circuit validation
  *
  * Detects common circuit problems:
  * - Floating inputs (unconnected input ports)
@@ -119,7 +119,7 @@ export class CircuitAnalysisEngine {
                     severity: 'error',
                     category: 'short_circuit',
                     nodeId: nodeId as NodeId,
-                    message: `Port ${key} is driven by ${drivers.length} outputs — potential short circuit`,
+                    message: `Port ${key} is driven by ${drivers.length} outputs - potential short circuit`,
                     suggestion: 'Use a MUX or remove conflicting connections',
                 });
             }

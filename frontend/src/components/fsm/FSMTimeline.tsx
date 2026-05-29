@@ -118,7 +118,7 @@ export function FSMTimeline({ inputs, trace, currentStep, onSeek }: FSMTimelineP
                             cursor: 'pointer',
                         }}
                     >
-                        {step.toState || '—'}
+                        {step.toState || '-'}
                     </div>
                 ))}
             </div>
@@ -141,7 +141,7 @@ export function FSMTimeline({ inputs, trace, currentStep, onSeek }: FSMTimelineP
                                 color: step.output ? T.success : T.muted,
                             }}
                         >
-                            {step.output || '—'}
+                            {step.output || '-'}
                         </div>
                     ))}
                 </div>

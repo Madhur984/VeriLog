@@ -1,5 +1,5 @@
 /**
- * useCircuitDebugger.ts — Debugger state machine for circuit simulation
+ * useCircuitDebugger.ts - Debugger state machine for circuit simulation
  *
  * States: idle → running → paused → stepping → breakpoint_hit
  * Manages breakpoints, watch signals, and step-through execution.

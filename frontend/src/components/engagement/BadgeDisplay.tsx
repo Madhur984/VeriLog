@@ -1,5 +1,5 @@
 /**
- * BadgeDisplay.tsx — Grid view of all badges
+ * BadgeDisplay.tsx - Grid view of all badges
  */
 
 import { BADGE_CATALOG, useGamificationStore } from '../../stores/gamificationStore';

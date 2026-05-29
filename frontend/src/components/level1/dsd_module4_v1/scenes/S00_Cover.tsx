@@ -23,7 +23,7 @@ const DRILL_SETS = [
     Icon: Grid3x3,
     title: 'K-Map Optimisation',
     count: '3 problems',
-    desc: 'Just shrinking. The long equation is given — find the shortest version.',
+    desc: 'Just shrinking. The long equation is given - find the shortest version.',
     accent: '#a78bfa',
   },
   {
@@ -62,7 +62,7 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
         </h1>
         <p className={`text-lg max-w-3xl ${subText}`}>
           You learnt the pipeline in <strong className="text-cyan-300">dsd/3</strong>. Now it's
-          time to practice. <strong className="text-rose-300">12 problems across 4 drill sets</strong> —
+          time to practice. <strong className="text-rose-300">12 problems across 4 drill sets</strong> -
           each one has a story, a circuit, a few questions, and a step-by-step solution to peek
           at when you're stuck.
         </p>
@@ -99,8 +99,8 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
         <div className="font-mono text-[10px] uppercase tracking-widest text-rose-300">How to use</div>
         <ul className={`text-sm ${subText} space-y-2`}>
           <li>▸ Try each problem on paper FIRST, then click <strong className="text-rose-300">Solve it</strong>.</li>
-          <li>▸ All circuits are clickable — toggle the inputs and watch the wires light up.</li>
-          <li>▸ Each problem has 3–4 small questions. Check your answers after the reveal.</li>
+          <li>▸ All circuits are clickable - toggle the inputs and watch the wires light up.</li>
+          <li>▸ Each problem has 3-4 small questions. Check your answers after the reveal.</li>
           <li>▸ Stuck? The cheatsheet (last page) has everything you need on one page.</li>
         </ul>
       </motion.div>

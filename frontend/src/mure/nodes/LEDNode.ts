@@ -1,5 +1,5 @@
 /**
- * mure/nodes/LEDNode.ts — Light-Emitting Diode
+ * mure/nodes/LEDNode.ts - Light-Emitting Diode
  *
  * Threshold model: voltage > vForward → ON.
  * Brightness = proportional to current above threshold.

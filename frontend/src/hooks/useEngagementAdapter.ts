@@ -1,5 +1,5 @@
 /**
- * useEngagementAdapter.ts — Drop-in replacement for useXPSystem
+ * useEngagementAdapter.ts - Drop-in replacement for useXPSystem
  *
  * Bridges the old useXPSystem API to the new engagementStore,
  * so consumers (ModuleOne, ModuleTwo, XPCounter) can migrate

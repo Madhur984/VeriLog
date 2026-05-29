@@ -1,5 +1,5 @@
 /**
- * designTokens.ts — Standardized Micro-Timings & Interaction Physics
+ * designTokens.ts - Standardized Micro-Timings & Interaction Physics
  * 
  * Defines the "feel" of the application based on the 2026 Micro-Interaction Philosophy.
  */

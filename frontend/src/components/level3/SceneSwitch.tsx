@@ -1,5 +1,5 @@
 /**
- * SceneSwitch.tsx — Module 3.1: Discovering Binary
+ * SceneSwitch.tsx - Module 3.1: Discovering Binary
  * Toggle switches to produce binary digits and see voltage visualization.
  */
 import React from 'react';
@@ -160,7 +160,7 @@ export const SceneSwitch: React.FC<Props> = ({ onFirstToggle, hasToggled }) => {
                     animate={{ opacity: 1, y: 0 }}
                     style={{ fontFamily: T.mono, fontSize: 12, letterSpacing: '0.4em', textTransform: 'uppercase', color: T.accent, display: 'block', marginBottom: 12 }}
                 >
-                    3.1 — Voltage to Logic
+                    3.1 - Voltage to Logic
                 </motion.span>
                 <h2 style={{ fontSize: 32, fontWeight: 800, color: T.text, marginBottom: 12 }}>Physical State Transition</h2>
                 <div style={{ maxWidth: 500, margin: '0 auto', position: 'relative' }}>

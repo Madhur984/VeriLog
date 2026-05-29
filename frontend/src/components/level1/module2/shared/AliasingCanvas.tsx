@@ -2,9 +2,9 @@
  * AliasingCanvas.tsx
  * Physics-accurate 3-layer aliasing visualization.
  *
- * Layer 1 — True Signal (faint sky-blue): Ground truth high-frequency sine
- * Layer 2 — Sample Points (orange dots): Discrete samples at fs
- * Layer 3 — Reconstructed Signal (bold sky-blue): Linear interp from samples
+ * Layer 1 - True Signal (faint sky-blue): Ground truth high-frequency sine
+ * Layer 2 - Sample Points (orange dots): Discrete samples at fs
+ * Layer 3 - Reconstructed Signal (bold sky-blue): Linear interp from samples
  * Pink tint overlay: appears when fs < 2f (aliasing condition)
  *
  * Alias freq math: f_alias = |f - round(f/fs) * fs|

@@ -26,8 +26,8 @@ const DEFAULT_STEPS: TourStep[] = [
     },
     {
         targetId: 'tour-header-search',
-        title: '⌘K — Command Palette',
-        body: 'Press ⌘K (or Ctrl+K) anytime to instantly search modules, navigate pages, or trigger actions — like a power user.',
+        title: '⌘K - Command Palette',
+        body: 'Press ⌘K (or Ctrl+K) anytime to instantly search modules, navigate pages, or trigger actions - like a power user.',
         placement: 'bottom',
         accent: '#a78bfa',
     },
@@ -41,7 +41,7 @@ const DEFAULT_STEPS: TourStep[] = [
     {
         targetId: 'tour-module-node',
         title: 'Module Nodes',
-        body: 'Hover over any glowing bubble to reveal its module card — showing your progress, lesson count, and a Start button. Green means done. Blue means in-progress.',
+        body: 'Hover over any glowing bubble to reveal its module card - showing your progress, lesson count, and a Start button. Green means done. Blue means in-progress.',
         placement: 'top',
         accent: '#10B981',
     },

@@ -60,7 +60,7 @@ export const S09_Matrix: React.FC<Props> = ({ isActive, isDarkMode }) => {
         </h2>
         <p className={`text-base max-w-3xl ${subText}`}>
           Click any row to expand the specialist&apos;s working-region card. Bias direction,
-          energy conversion, and defining mechanism — all in one glance.
+          energy conversion, and defining mechanism - all in one glance.
         </p>
       </motion.section>
 

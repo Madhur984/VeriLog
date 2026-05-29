@@ -8,8 +8,11 @@ import { ModuleGate } from './components/ModuleGate';
 import { RouteFallback } from './components/RouteFallback';
 import { AppErrorBoundary } from './components/AppErrorBoundary';
 import { loadChunk } from './utils/loadChunk';
+import { TourProvider } from './components/tour/TourProvider';
+import { TourOverlay } from './components/tour/TourOverlay';
+import { TourLauncher } from './components/tour/TourLauncher';
 
-// Layout (eager — tiny, wraps every portal route)
+// Layout (eager - tiny, wraps every portal route)
 import { PortalLayout } from './layouts/PortalLayout';
 
 /**
@@ -43,7 +46,7 @@ const CommunityPage = named(() => import('./pages/CommunityPage'), 'CommunityPag
 const DebugMissionPage = named(() => import('./pages/DebugMissionPage'), 'DebugMissionPage');
 const GatekeeperGame = named(() => import('./pages/GatekeeperGame'), 'GatekeeperGame');
 
-// Modules (the heaviest chunks — three.js / monaco / scene graphs live here)
+// Modules (the heaviest chunks - three.js / monaco / scene graphs live here)
 const ModuleOne = named(() => import('./pages/ModuleOne'), 'ModuleOne');
 const ModuleTwo = named(() => import('./pages/ModuleTwo'), 'ModuleTwo');
 const ModuleThree = named(() => import('./pages/ModuleThree'), 'ModuleThree');
@@ -72,9 +75,10 @@ function App() {
     <TransitionProvider>
       <TransitionOverlay />
       <AppErrorBoundary>
+      <TourProvider>
       <Suspense fallback={<RouteFallback />}>
         <Routes>
-          {/* Landing / Auth — public */}
+          {/* Landing / Auth - public */}
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />
 
@@ -84,7 +88,7 @@ function App() {
             <Route path="/career-roadmap" element={<CareerRoadmapPage />} />
           </Route>
 
-          {/* Course modules — first 5 free for anyone; 6th requires login */}
+          {/* Course modules - first 5 free for anyone; 6th requires login */}
           <Route element={<ModuleGate><PortalLayout /></ModuleGate>}>
             <Route path="/module/1" element={<Module1Root />} />
             <Route path="/module/1/1" element={<ModuleOne />} />
@@ -117,7 +121,7 @@ function App() {
             <Route path="/sandbox/verilog" element={<SandboxModule5 />} />
           </Route>
 
-          {/* App tools & social — require a session (real or guest) */}
+          {/* App tools & social - require a session (real or guest) */}
           <Route element={<RequireAuth><PortalLayout /></RequireAuth>}>
             <Route path="/portfolio" element={<EngineeringPortfolio />} />
             <Route path="/workbench" element={<Workbench />} />
@@ -140,6 +144,9 @@ function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Suspense>
+      <TourOverlay />
+      <TourLauncher />
+      </TourProvider>
       </AppErrorBoundary>
     </TransitionProvider>
   );

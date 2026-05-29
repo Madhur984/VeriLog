@@ -8,7 +8,7 @@ import { GateShape, getOutputPort, getInputPorts } from './circuit/GateShape';
 import { Wire, WireGlowFilter } from './circuit/Wire';
 
 // ----------------------------------------------------------------
-// CircuitRenderer — full SVG logic circuit diagram
+// CircuitRenderer - full SVG logic circuit diagram
 // ----------------------------------------------------------------
 
 export const CircuitRenderer: React.FC = () => {
@@ -68,7 +68,7 @@ export const CircuitRenderer: React.FC = () => {
           <div>
             <h3 className="text-xl font-bold text-white tracking-tight">Circuit Diagram</h3>
             <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mt-0.5">
-              {solType} · <span className="text-orange-400 font-mono">{expression || '—'}</span>
+              {solType} · <span className="text-orange-400 font-mono">{expression || '-'}</span>
             </p>
           </div>
         </div>
@@ -105,7 +105,7 @@ export const CircuitRenderer: React.FC = () => {
               <span className="text-2xl font-bold font-mono text-orange-400">{expression}</span>
             </div>
             <p className="text-sm font-semibold text-gray-500">
-              {expression === '1' ? 'Tautology — always ON' : 'Contradiction — always OFF'}
+              {expression === '1' ? 'Tautology - always ON' : 'Contradiction - always OFF'}
             </p>
             <p className="text-xs text-gray-700 font-mono uppercase tracking-widest">No gates needed</p>
           </div>
@@ -130,7 +130,7 @@ export const CircuitRenderer: React.FC = () => {
           >
             <WireGlowFilter />
 
-            {/* Wires — drawn first so they're under the gates */}
+            {/* Wires - drawn first so they're under the gates */}
             {circuit.wires.map((wire, i) => {
               const fromNode = circuit.nodes.find(n => n.id === wire.fromId);
               const toNode = circuit.nodes.find(n => n.id === wire.toId);

@@ -17,14 +17,14 @@ const BUFFER_SIZE = 256;
 export type NoiseType = 'gaussian' | 'burst' | 'drift' | 'emi';
 
 export interface AnalogSignalState {
-    /** 0–100 potentiometer percentage */
+    /** 0-100 potentiometer percentage */
     sliderValue: number;
     setSlider: (v: number) => void;
-    /** Circular waveform buffer for oscilloscope (0–1 normalized) */
+    /** Circular waveform buffer for oscilloscope (0-1 normalized) */
     waveformSamples: Float32Array;
-    /** Voltage in volts (0–5V mapped from 0–100) */
+    /** Voltage in volts (0-5V mapped from 0-100) */
     voltageV: number;
-    /** LED brightness 0–1 */
+    /** LED brightness 0-1 */
     brightness: number;
 }
 
@@ -49,7 +49,7 @@ export function useAnalogSignal(noiseAmp = 0, noiseType: NoiseType = 'gaussian')
         function tick() {
             const target = sliderValue / 100;
             const prev = prevSliderRef.current / 100;
-            // Interpolate towards target — creates ramp effect
+            // Interpolate towards target - creates ramp effect
             const interp = prev + (target - prev) * 0.08;
             prevSliderRef.current = interp * 100;
 

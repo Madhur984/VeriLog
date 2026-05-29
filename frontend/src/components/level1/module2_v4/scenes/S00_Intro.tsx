@@ -162,7 +162,7 @@ export const S00_Intro: React.FC<{ time: number; isDarkMode: boolean }> = ({ tim
                     </div>
                     <p className={`text-xl leading-relaxed font-medium ${subTextColor}`}>
                       Every sound, light, or voltage is an unbroken stream of values.
-                      An analog signal is like a real rainbow – endless shades blending into each other.
+                      An analog signal is like a real rainbow - endless shades blending into each other.
                     </p>
                     <p className={`text-lg font-black italic ${accentColor}`}>
                       But computers can't store infinity. They need to turn the rainbow into a box of crayons.
@@ -482,14 +482,14 @@ export const S00_Intro: React.FC<{ time: number; isDarkMode: boolean }> = ({ tim
             isDarkMode={isDarkMode}
             showFullView={true}
             specs={{
-                concept: "The Big Idea: Analog signals exist everywhere – sound, light, temperature, pressure. They are continuous waves flowing without any breaks or steps.",
-                physical: "Infinite Detail: Between any two points on an analog wave, there are infinitely more points. This infinite precision is what makes analog signals rich – and also what makes them impossible for computers to store directly.",
+                concept: "The Big Idea: Analog signals exist everywhere - sound, light, temperature, pressure. They are continuous waves flowing without any breaks or steps.",
+                physical: "Infinite Detail: Between any two points on an analog wave, there are infinitely more points. This infinite precision is what makes analog signals rich - and also what makes them impossible for computers to store directly.",
                 formal: "Continuity: A continuous-time signal x(t) is defined for every real t. It has infinite degrees of freedom. Digital systems, by contrast, have finite memory and must reduce infinity to discrete numbers.",
-                insight: "The Rainbow Metaphor: Think of analog as a real rainbow with endless shades blending together. Digital is like a box of crayons – you have to pick from a fixed set of options to represent that beauty.",
+                insight: "The Rainbow Metaphor: Think of analog as a real rainbow with endless shades blending together. Digital is like a box of crayons - you have to pick from a fixed set of options to represent that beauty.",
                 advanced: [
                     {
                         title: "Thermodynamic Reality",
-                        content: "Even in 'pure' analog systems, nature adds its own noise – thermal agitation of electrons. No signal is truly infinite in resolution; we are always fighting the entropy of the universe."
+                        content: "Even in 'pure' analog systems, nature adds its own noise - thermal agitation of electrons. No signal is truly infinite in resolution; we are always fighting the entropy of the universe."
                     },
                     {
                         title: "Information Theory",

@@ -23,8 +23,8 @@ export const M2_S01_SmoothVsStepped: React.FC<M2ScreenProps> = ({ triggerHaptic 
           One flows. <span className="text-[#FF5F1F]">One jumps.</span>
         </h2>
         <p className="font-mono text-sm text-[#8A8A99] max-w-2xl mx-auto">
-          The natural world is <span className="text-[#00D4FF]">Analog</span>—a smooth, unbroken stream.
-          Information machines are <span className="text-[#FF5F1F]">Digital</span>—captured in discrete steps.
+          The natural world is <span className="text-[#00D4FF]">Analog</span>-a smooth, unbroken stream.
+          Information machines are <span className="text-[#FF5F1F]">Digital</span>-captured in discrete steps.
         </p>
       </div>
 

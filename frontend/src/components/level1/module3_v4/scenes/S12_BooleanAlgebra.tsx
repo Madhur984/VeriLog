@@ -92,11 +92,11 @@ export const S12_BooleanAlgebra: React.FC<Props> = ({ isActive, isDarkMode }) =>
           initial={{ opacity: 0 }} animate={isActive ? { opacity: 1 } : {}}
           className={`font-mono text-[10px] tracking-[0.4em] uppercase block mb-4 ${isDarkMode ? 'text-sky-400' : 'text-sky-600'}`}
         >
-          Boolean Algebra — Chapter 4
+          Boolean Algebra - Chapter 4
         </motion.span>
         <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>Boolean Algebra</h2>
         <p className={`text-lg max-w-2xl mx-auto opacity-70 ${textColor}`}>
-          The mathematics of logic — every digital circuit obeys these laws.
+          The mathematics of logic - every digital circuit obeys these laws.
         </p>
       </section>
 
@@ -168,7 +168,7 @@ export const S12_BooleanAlgebra: React.FC<Props> = ({ isActive, isDarkMode }) =>
 
             {/* DeMorgan Highlight */}
             <div className={`p-8 rounded-3xl border ${isDarkMode ? 'bg-orange-500/5 border-orange-500/20' : 'bg-orange-50 border-orange-200'}`}>
-              <h3 className={`font-black text-lg mb-4 ${isDarkMode ? 'text-orange-400' : 'text-orange-700'}`}>DeMorgan's Theorems — Most Important!</h3>
+              <h3 className={`font-black text-lg mb-4 ${isDarkMode ? 'text-orange-400' : 'text-orange-700'}`}>DeMorgan's Theorems - Most Important!</h3>
               <div className="grid md:grid-cols-2 gap-6">
                 {[
                   { title: 'NOT(A OR B) = NOT_A AND NOT_B', desc: 'A+B with a bubble = separate bubbles with AND', ex: '(x+y)̄ = x̄·ȳ' },
@@ -266,17 +266,17 @@ export const S12_BooleanAlgebra: React.FC<Props> = ({ isActive, isDarkMode }) =>
                 <div className={`mt-6 p-4 rounded-2xl text-xs leading-relaxed font-mono ${isDarkMode ? 'bg-white/5' : 'bg-gray-50 border border-gray-100'} opacity-70 ${textColor}`}>
                   {selectedGate === 'AND' ? 'Output is 1 ONLY when ALL inputs are 1.' :
                    selectedGate === 'OR'  ? 'Output is 1 when ANY input is 1.' :
-                   selectedGate === 'NAND' ? 'NOT AND — output is 0 only when ALL are 1.' :
-                   selectedGate === 'NOR'  ? 'NOT OR — output is 1 only when ALL are 0.' :
-                   selectedGate === 'XOR'  ? 'Exclusive OR — output is 1 when inputs DIFFER.' :
-                                             'Exclusive NOR — output is 1 when inputs are SAME.'}
+                   selectedGate === 'NAND' ? 'NOT AND - output is 0 only when ALL are 1.' :
+                   selectedGate === 'NOR'  ? 'NOT OR - output is 1 only when ALL are 0.' :
+                   selectedGate === 'XOR'  ? 'Exclusive OR - output is 1 when inputs DIFFER.' :
+                                             'Exclusive NOR - output is 1 when inputs are SAME.'}
                 </div>
               </div>
             </div>
 
             {/* All Gates Quick Reference */}
             <div className={`p-6 rounded-3xl border ${cardBg}`}>
-              <div className={`font-mono text-xs uppercase tracking-widest opacity-40 mb-6 ${textColor}`}>Quick Reference — All Gates</div>
+              <div className={`font-mono text-xs uppercase tracking-widest opacity-40 mb-6 ${textColor}`}>Quick Reference - All Gates</div>
               <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
                 {GATES.map(g => (
                   <div key={g} className="text-center p-3 rounded-2xl" style={{ background: `${GATE_COLOR[g]}11`, border: `1px solid ${GATE_COLOR[g]}33` }}>
@@ -359,7 +359,7 @@ export const S12_BooleanAlgebra: React.FC<Props> = ({ isActive, isDarkMode }) =>
                           <td className="px-6 py-4 text-center">
                             <span className={`font-black text-lg ${row.y ? 'text-sky-400' : (isDarkMode ? 'text-white/20' : 'text-gray-300')}`}>{row.y}</span>
                           </td>
-                          <td className={`px-6 py-4 text-center font-mono text-xs ${row.y ? 'text-sky-400' : 'opacity-20'}`}>{row.y ? minterm : '—'}</td>
+                          <td className={`px-6 py-4 text-center font-mono text-xs ${row.y ? 'text-sky-400' : 'opacity-20'}`}>{row.y ? minterm : '-'}</td>
                         </tr>
                       );
                     })}

@@ -51,7 +51,7 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
           className={`text-lg md:text-xl max-w-2xl mx-auto ${subText}`}
         >
           B.Tech logic, tapri analogies, and a Mumbai Local. Pure silicon, doping{' '}
-          <em>jugaad</em>, depletion regions and the diode V-I curve — all explained the way
+          <em>jugaad</em>, depletion regions and the diode V-I curve - all explained the way
           <strong className="text-orange-300"> Madhur</strong> teaches it.
         </motion.p>
       </section>

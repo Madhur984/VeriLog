@@ -6,12 +6,12 @@ import { M2ScreenProps, T } from '../types';
 const QUESTION = {
   text: 'Your signal is 8kHz. Your sampling rate is 12kHz. What happens?',
   options: [
-    { id: 'a', text: 'Perfect reconstruction — 12kHz is enough', correct: false,
+    { id: 'a', text: 'Perfect reconstruction - 12kHz is enough', correct: false,
       explanation: 'Wrong. Nyquist requires fs ≥ 2f = 16kHz. 12kHz < 16kHz means aliasing occurs.' },
-    { id: 'b', text: 'Aliasing — the reconstructed signal will be corrupted', correct: true,
+    { id: 'b', text: 'Aliasing - the reconstructed signal will be corrupted', correct: true,
       explanation: '✓ Correct! fs=12kHz < 2×8kHz=16kHz. The Nyquist condition is violated.' },
     { id: 'c', text: 'The signal is simply lost / silent', correct: false,
-      explanation: 'Not quite. You still get a signal — but it\'s wrong. A phantom alias frequency appears.' },
+      explanation: 'Not quite. You still get a signal - but it\'s wrong. A phantom alias frequency appears.' },
   ]
 };
 

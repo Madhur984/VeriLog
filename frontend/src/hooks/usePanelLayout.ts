@@ -1,5 +1,5 @@
 /**
- * usePanelLayout.ts — Persistent resizable panel layout manager
+ * usePanelLayout.ts - Persistent resizable panel layout manager
  *
  * Manages panel sizes, visibility, and order. Persists to localStorage.
  * Supports horizontal and vertical split arrangements.

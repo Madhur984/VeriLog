@@ -68,7 +68,7 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
         </h1>
         <p className={`text-xl ${subText} max-w-3xl`}>
           One Boolean specification. Four stages. A working schematic at the end. We will design
-          a Server Vault unlock circuit from scratch — no shortcuts, every choice visible.
+          a Server Vault unlock circuit from scratch - no shortcuts, every choice visible.
         </p>
       </motion.section>
 
@@ -146,7 +146,7 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
         </div>
       </motion.div>
 
-      {/* Pipeline strip — animated */}
+      {/* Pipeline strip - animated */}
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.3 }}

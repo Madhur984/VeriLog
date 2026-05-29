@@ -54,7 +54,7 @@ export const SceneWhatIsHDL: React.FC<SceneProps> = ({ accent }) => (
     title="What is a Hardware Description Language?"
     lead="Code that describes circuits. A synthesis tool turns it into physical gates."
   >
-    <Figure caption="From source text to silicon — watch the dot flow through the pipeline">
+    <Figure caption="From source text to silicon - watch the dot flow through the pipeline">
       <AnimatedHDLPipeline accent={accent} />
     </Figure>
 
@@ -63,7 +63,7 @@ export const SceneWhatIsHDL: React.FC<SceneProps> = ({ accent }) => (
       points={[
         'Two industry HDLs: Verilog (and SystemVerilog) and VHDL.',
         'Same source simulates in software and synthesises into silicon.',
-        'Tooling (lint, formal, equivalence) operates on the text — schematic capture cannot scale.',
+        'Tooling (lint, formal, equivalence) operates on the text - schematic capture cannot scale.',
       ]}
     />
   </StudyScene>
@@ -119,7 +119,7 @@ export const SceneFirstVerilog: React.FC<SceneProps> = ({ accent }) => (
     title="Your First Verilog Module"
     lead="A module is the basic unit of design. Below: a half-adder, eight lines of code, two gates."
   >
-    <Figure caption="Try it — toggle a and b, watch the wires light up and the outputs update">
+    <Figure caption="Try it - toggle a and b, watch the wires light up and the outputs update">
       <InteractiveHalfAdder accent={accent} />
     </Figure>
 
@@ -145,7 +145,7 @@ export const SceneModuleThinking: React.FC<SceneProps> = ({ accent }) => (
     title="Module Thinking"
     lead="A module is a black box: ports in, ports out, internal wiring hidden."
   >
-    <Figure caption="The black-box principle — callers depend only on the ports">
+    <Figure caption="The black-box principle - callers depend only on the ports">
       <ModuleBox accent={accent} name="full_adder" inputs={['a', 'b', 'cin']} outputs={['sum', 'cout']} />
     </Figure>
 
@@ -159,7 +159,7 @@ export const SceneModuleThinking: React.FC<SceneProps> = ({ accent }) => (
     <KeyPoints
       accent={accent}
       points={[
-        'Always use named connections (`.a(x)`) — never positional.',
+        'Always use named connections (`.a(x)`) - never positional.',
         'Instance names should describe role (`fa_low`), not type.',
       ]}
     />
@@ -180,8 +180,8 @@ export const SceneHierarchy: React.FC<SceneProps> = ({ accent }) => (
     <KeyPoints
       accent={accent}
       points={[
-        'Reuse — one full_adder, used four times here, four hundred times elsewhere.',
-        'Verification — test each level in isolation before composing.',
+        'Reuse - one full_adder, used four times here, four hundred times elsewhere.',
+        'Verification - test each level in isolation before composing.',
         'Synthesis tools usually preserve the hierarchy as physical floorplan blocks.',
       ]}
     />
@@ -199,7 +199,7 @@ export const SceneParallel: React.FC<SceneProps> = ({ accent }) => (
     title="Parallel Execution"
     lead="Every always block is independent silicon. They all fire at the same instant."
   >
-    <Figure caption="No ordering between always blocks — order in the file is irrelevant">
+    <Figure caption="No ordering between always blocks - order in the file is irrelevant">
       <ConcurrentBlocks accent={accent} />
     </Figure>
 
@@ -217,7 +217,7 @@ export const SceneCombinational: React.FC<SceneProps> = ({ accent }) => (
     title="Combinational Logic"
     lead="No memory. Output is a pure function of the current inputs."
   >
-    <Figure caption="Toggle a, b, and sel — the active path lights up, y updates instantly">
+    <Figure caption="Toggle a, b, and sel - the active path lights up, y updates instantly">
       <InteractiveMux accent={accent} />
     </Figure>
 
@@ -236,7 +236,7 @@ end`}
     <KeyPoints
       accent={accent}
       points={[
-        'Inside `always @(*)`, assign every output on every path — or you infer a latch.',
+        'Inside `always @(*)`, assign every output on every path - or you infer a latch.',
         'Use blocking `=` for combinational, never non-blocking `<=`.',
       ]}
     />
@@ -249,19 +249,19 @@ export const SceneWhatIsClock: React.FC<SceneProps> = ({ accent }) => (
     accent={accent}
     eyebrow="Part III · 03"
     title="What is a Clock?"
-    lead="A periodic square wave that paces every flip-flop on the chip — the heartbeat of digital design."
+    lead="A periodic square wave that paces every flip-flop on the chip - the heartbeat of digital design."
   >
-    <Figure caption="Live clock — drag the slider to change period, watch frequency update">
+    <Figure caption="Live clock - drag the slider to change period, watch frequency update">
       <AnimatedClock accent={accent} />
     </Figure>
 
     <KeyPoints
       accent={accent}
       points={[
-        'Period (T) — time of one full cycle. Frequency f = 1/T (Hz).',
-        'Duty cycle — fraction of the period spent HIGH; 50% is the digital default.',
+        'Period (T) - time of one full cycle. Frequency f = 1/T (Hz).',
+        'Duty cycle - fraction of the period spent HIGH; 50% is the digital default.',
         'Two edges per period: rising (low → high) and falling (high → low). Most designs trigger only one.',
-        'Practical numbers: a 100 MHz clock has T = 10 ns; a modern CPU runs at 3–5 GHz (T ≈ 0.2–0.3 ns).',
+        'Practical numbers: a 100 MHz clock has T = 10 ns; a modern CPU runs at 3-5 GHz (T ≈ 0.2-0.3 ns).',
       ]}
     />
   </StudyScene>
@@ -273,19 +273,19 @@ export const SceneEdgeVsLevel: React.FC<SceneProps> = ({ accent }) => (
     accent={accent}
     eyebrow="Part III · 04"
     title="Edge-Triggered vs Level-Triggered"
-    lead="Two ways a storage element can listen to its control signal — the difference between a latch and a flip-flop."
+    lead="Two ways a storage element can listen to its control signal - the difference between a latch and a flip-flop."
   >
-    <Figure caption="Auto-playing — shaded windows show when the latch is transparent; dots mark flip-flop sampling">
+    <Figure caption="Auto-playing - shaded windows show when the latch is transparent; dots mark flip-flop sampling">
       <AnimatedLevelVsEdge accent={accent} />
     </Figure>
 
     <KeyPoints
       accent={accent}
       points={[
-        'Latch (level-triggered) — q follows d as long as the enable is asserted; opaque otherwise.',
-        'Flip-flop (edge-triggered) — q updates only at one instant (the chosen clock edge), then holds.',
+        'Latch (level-triggered) - q follows d as long as the enable is asserted; opaque otherwise.',
+        'Flip-flop (edge-triggered) - q updates only at one instant (the chosen clock edge), then holds.',
         'Synchronous design uses flip-flops almost exclusively. Latches are dangerous: they can be transparent for arbitrary windows and create timing loops.',
-        'A combinational `always` block missing an output assignment infers a latch — this is a common bug, not a feature.',
+        'A combinational `always` block missing an output assignment infers a latch - this is a common bug, not a feature.',
       ]}
     />
   </StudyScene>
@@ -299,7 +299,7 @@ export const ScenePosedge: React.FC<SceneProps> = ({ accent }) => (
     title="Positive Edge Triggering"
     lead="`always @(posedge clk)` says: sample d on the low → high transition of clk, ignore everything else."
   >
-    <Figure caption="Cursor sweeps live — a flash highlights each sampling instant on q">
+    <Figure caption="Cursor sweeps live - a flash highlights each sampling instant on q">
       <AnimatedPosedge accent={accent} />
     </Figure>
 
@@ -309,7 +309,7 @@ export const ScenePosedge: React.FC<SceneProps> = ({ accent }) => (
         code={`// rising-edge triggered D flip-flop
 always @(posedge clk) q <= d;
 
-// falling-edge variant — used by some serial protocols
+// falling-edge variant - used by some serial protocols
 always @(negedge clk) q <= d;`}
       />
     </Section>
@@ -329,15 +329,15 @@ export const SceneFlipFlopParts: React.FC<SceneProps> = ({ accent }) => (
     title="Anatomy of a D Flip-Flop"
     lead="A rising-edge D-FF is two latches in series: a master that captures while clk is low, a slave that releases while clk is high."
   >
-    <Figure caption="Master-slave construction — only one latch is transparent at a time">
+    <Figure caption="Master-slave construction - only one latch is transparent at a time">
       <FlipFlopParts accent={accent} />
     </Figure>
 
     <KeyPoints
       accent={accent}
       points={[
-        'When clk is LOW — master is transparent (samples D), slave holds (Q stable).',
-        'When clk is HIGH — master holds, slave releases the captured value to Q.',
+        'When clk is LOW - master is transparent (samples D), slave holds (Q stable).',
+        'When clk is HIGH - master holds, slave releases the captured value to Q.',
         'The transition LOW → HIGH (rising edge) is the moment the captured value reaches Q. That is "posedge."',
         'Setup time: D must be stable BEFORE the rising edge. Hold time: D must remain stable AFTER it.',
       ]}
@@ -351,9 +351,9 @@ export const SceneResetPreset: React.FC<SceneProps> = ({ accent }) => (
     accent={accent}
     eyebrow="Part III · 07"
     title="Reset · Clear · Preset"
-    lead="Control inputs that force a flip-flop into a known state regardless of D and CLK — essential for power-up and recovery."
+    lead="Control inputs that force a flip-flop into a known state regardless of D and CLK - essential for power-up and recovery."
   >
-    <Figure caption="Try it — toggle D, click CLK to advance, then PRE / CLR (asynchronous)">
+    <Figure caption="Try it - toggle D, click CLK to advance, then PRE / CLR (asynchronous)">
       <InteractiveFlipFlop accent={accent} />
     </Figure>
 
@@ -361,10 +361,10 @@ export const SceneResetPreset: React.FC<SceneProps> = ({ accent }) => (
       <KeyPoints
         accent={accent}
         points={[
-          'CLR / RST (Clear / Reset) — forces Q = 0. Most common on registers and counters.',
-          'PRE / SET (Preset / Set) — forces Q = 1. Used where the resting state is logical-1 (e.g. enable pins).',
-          'Synchronous (sampled by clk) — clean timing, but needs the clock to be running. Recommended for FPGAs.',
-          'Asynchronous (acts immediately) — required at power-up before the clock is stable; harder to verify.',
+          'CLR / RST (Clear / Reset) - forces Q = 0. Most common on registers and counters.',
+          'PRE / SET (Preset / Set) - forces Q = 1. Used where the resting state is logical-1 (e.g. enable pins).',
+          'Synchronous (sampled by clk) - clean timing, but needs the clock to be running. Recommended for FPGAs.',
+          'Asynchronous (acts immediately) - required at power-up before the clock is stable; harder to verify.',
         ]}
       />
     </Section>
@@ -384,7 +384,7 @@ always @(posedge clk or negedge rst_n) begin
   else        q <= d;
 end
 
-// Preset (set to 1) — same shape, different reset value
+// Preset (set to 1) - same shape, different reset value
 always @(posedge clk or negedge pre_n) begin
   if (!pre_n) q <= 1'b1;
   else        q <= d;
@@ -440,7 +440,7 @@ export const SceneTestbenchLab: React.FC<SceneProps> = ({ accent }) => (
   <StudyScene
     accent={accent}
     eyebrow="Part IV · 02"
-    title="Testbench Lab — The Tool Flow"
+    title="Testbench Lab - The Tool Flow"
     lead="Two free, cross-platform toolchains take you from textbook Verilog to running waveforms."
   >
     <Figure caption="Compile → run → dump VCD → view in GTKWave">
@@ -469,7 +469,7 @@ export const SceneSimVsReal: React.FC<SceneProps> = ({ accent }) => (
     accent={accent}
     eyebrow="Part IV · 03"
     title="Simulation vs Reality"
-    lead="The simulator is a model. Silicon is physics. They agree on intent — and disagree on glitches."
+    lead="The simulator is a model. Silicon is physics. They agree on intent - and disagree on glitches."
   >
     <Figure caption="Same logical function, two different waveforms">
       <SimVsRealWave accent={accent} />
@@ -506,7 +506,7 @@ export const SceneSynthesis: React.FC<SceneProps> = ({ accent }) => (
       points={[
         'Open-source: Yosys (often paired with nextpnr for FPGAs).',
         'Industry: Synopsys Design Compiler, Cadence Genus.',
-        'Constraints (clock period, I/O delay) are required input — without them the tool cannot judge timing.',
+        'Constraints (clock period, I/O delay) are required input - without them the tool cannot judge timing.',
       ]}
     />
   </StudyScene>
@@ -524,7 +524,7 @@ export const SceneIdentity: React.FC<SceneProps> = ({ accent }) => (
     </Figure>
 
     <Callout accent={accent} label="What's next">
-      Module 6 (L6 · Synthesis Layer) — abstraction levels, VLSI flow, FPGA vs ASIC, modern accelerators. You now have
+      Module 6 (L6 · Synthesis Layer) - abstraction levels, VLSI flow, FPGA vs ASIC, modern accelerators. You now have
       the language; the next module shows you the system.
     </Callout>
   </StudyScene>

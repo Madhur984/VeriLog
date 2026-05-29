@@ -4,7 +4,7 @@ import { Info, Zap, ArrowRight, RotateCcw, Lightbulb, MousePointer2 } from 'luci
 import { cn } from '../lib/utils';
 
 // ═══════════════════════════════════════════════════════════════
-// CIRCUIT LAB v4.1 — Interactive Closed-Loop Demonstrator
+// CIRCUIT LAB v4.1 - Interactive Closed-Loop Demonstrator
 // ═══════════════════════════════════════════════════════════════
 
 const W = 900;

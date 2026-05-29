@@ -1,5 +1,5 @@
 /**
- * ChallengePanel.tsx — Hardware LeetCode challenge interface
+ * ChallengePanel.tsx - Hardware LeetCode challenge interface
  *
  * Shows challenge details, truth table, timer, and submission results.
  * Provides a LeetCode-style split view with problem on left, workspace on right.
@@ -86,7 +86,7 @@ export const ChallengePanel = memo(({ challenge, onSubmit, onBack }: ChallengePa
                 </span>
             </div>
 
-            {/* Content — stacks vertically on mobile, side-by-side on lg+ */}
+            {/* Content - stacks vertically on mobile, side-by-side on lg+ */}
             <div className="flex flex-col lg:flex-row" style={{ flex: 1, overflow: 'auto' }}>
                 {/* Problem Panel */}
                 <div className="lg:w-1/2 overflow-y-auto" style={{

@@ -1,5 +1,5 @@
 /**
- * engagementStore.test.ts — Unit tests for the unified engagement store
+ * engagementStore.test.ts - Unit tests for the unified engagement store
  */
 
 import { describe, it, expect } from 'vitest';

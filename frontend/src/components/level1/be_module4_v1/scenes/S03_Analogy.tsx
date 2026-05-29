@@ -97,7 +97,7 @@ export const S03_Analogy: React.FC<Props> = ({ isActive, isDarkMode }) => {
         <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>Translate fluid → electrical.</h2>
         <p className={`text-base max-w-3xl ${subText}`}>
           Lock this mapping into your head. Whenever the math gets dense, fall back to the
-          plumbing intuition — voltage is just pressure, current is just flow rate, and every
+          plumbing intuition - voltage is just pressure, current is just flow rate, and every
           component in a rectifier or filter is a piece of plumbing.
         </p>
       </section>

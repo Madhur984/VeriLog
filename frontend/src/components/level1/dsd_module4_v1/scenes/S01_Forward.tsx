@@ -16,7 +16,7 @@ const COL4 = [0, 1, 3, 2]; // CD Gray
 interface Group { cells: number[]; color: string; label: string; term: string; }
 
 // =========================================================================
-// AnimatedKMap component — 3-var or 4-var, phases through plot → groups
+// AnimatedKMap component - 3-var or 4-var, phases through plot → groups
 // =========================================================================
 const AnimatedKMap: React.FC<{
   vars: 3 | 4;
@@ -165,7 +165,7 @@ const AnimatedKMap: React.FC<{
 };
 
 // =========================================================================
-// LiveSchematic — interactive minimised circuit using CleanCircuit
+// LiveSchematic - interactive minimised circuit using CleanCircuit
 // =========================================================================
 interface LiveCircuitDef {
   topic: string;
@@ -229,7 +229,7 @@ const LiveSchematic: React.FC<{ circuit: LiveCircuitDef; isDarkMode: boolean }> 
 };
 
 // =========================================================================
-// CanonicalCircuitHint — bloated sum-of-minterms preview
+// CanonicalCircuitHint - bloated sum-of-minterms preview
 // =========================================================================
 const CanonicalCircuitHint: React.FC<{ minterms: number[]; vars: 3 | 4 }> = ({ minterms, vars }) => {
   const literalCount = minterms.length * vars;
@@ -368,7 +368,7 @@ const Q4_INPUTS: InputDef[] = [
 ];
 
 const PROBLEMS: ProblemConfig[] = [
-  // Q1 — Coffee Machine
+  // Q1 - Coffee Machine
   {
     id: 'q1',
     Icon: Coffee,
@@ -377,7 +377,7 @@ const PROBLEMS: ProblemConfig[] = [
     scenario: {
       accent: '#22c55e',
       headline: 'When does the pump turn on?',
-      story: 'A coffee machine has 3 sensors: a cup, a button, and an auto-clean switch. The pump should run in two cases — when someone is making coffee (cup is there AND button is pressed), OR when auto-clean is running and no button is pressed.',
+      story: 'A coffee machine has 3 sensors: a cup, a button, and an auto-clean switch. The pump should run in two cases - when someone is making coffee (cup is there AND button is pressed), OR when auto-clean is running and no button is pressed.',
       rule: 'Pump = 1 when (Cup AND Button) OR when (NO Button AND Auto-clean).',
     },
     inputs: Q1_INPUTS,
@@ -397,7 +397,7 @@ const PROBLEMS: ProblemConfig[] = [
     hardware: { not: 1, and: '2 × (2-input)', or: '1 × (2-input)', total: 4 },
     questions: [
       { q: 'How many input combinations turn the pump ON?',                    answer: '4 combinations · m1, m5, m6, m7.' },
-      { q: 'Write the long equation — one AND term for each ON row.',          answer: "F = A′B′C + AB′C + ABC′ + ABC · 4 terms · 12 letters total." },
+      { q: 'Write the long equation - one AND term for each ON row.',          answer: "F = A′B′C + AB′C + ABC′ + ABC · 4 terms · 12 letters total." },
       { q: 'Use the K-Map to find the shortest equation.',                     answer: 'F = AB + B′C · only 2 terms · only 4 letters.' },
       { q: 'How many gates does the smaller circuit need?',                    answer: '4 gates · 1 NOT (for B′), 2 ANDs, 1 OR.' },
     ],
@@ -411,7 +411,7 @@ const PROBLEMS: ProblemConfig[] = [
     },
   },
 
-  // Q2 — Drone
+  // Q2 - Drone
   {
     id: 'q2',
     Icon: Plane,
@@ -439,7 +439,7 @@ const PROBLEMS: ProblemConfig[] = [
     minimisedSOP: 'F = A′B + AC',
     hardware: { not: 1, and: '2 × (2-input)', or: '1 × (2-input)', total: 4 },
     questions: [
-      { q: 'List the rows where the motors should turn ON.',                answer: 'Σm(2, 3, 5, 7) — m2, m3 are the manual rows; m5, m7 are the auto rows.' },
+      { q: 'List the rows where the motors should turn ON.',                answer: 'Σm(2, 3, 5, 7) - m2, m3 are the manual rows; m5, m7 are the auto rows.' },
       { q: 'What is the shortest equation?',                                answer: 'F = A′B + AC' },
       { q: 'How does the K-Map get from 4 rows down to 2 terms?',           answer: 'Group {m2, m3} drops C → leaves A′B. Group {m5, m7} drops B → leaves AC. Two groups cover all 4 rows.' },
       { q: 'How many gates does the final circuit need?',                   answer: '4 gates · 1 NOT (for A′), 2 ANDs, 1 OR.' },
@@ -454,7 +454,7 @@ const PROBLEMS: ProblemConfig[] = [
     },
   },
 
-  // Q3 — XOR Lock
+  // Q3 - XOR Lock
   {
     id: 'q3',
     Icon: Lock,
@@ -463,7 +463,7 @@ const PROBLEMS: ProblemConfig[] = [
     scenario: {
       accent: '#a78bfa',
       headline: 'When does the tamper alarm fire?',
-      story: 'A vault has 4 sensors: camera (A), voice (B), card (C), PIN (D). The alarm should fire when EXACTLY ONE of voice or PIN matches — that usually means someone is faking. The camera and card are also wired in but might not matter.',
+      story: 'A vault has 4 sensors: camera (A), voice (B), card (C), PIN (D). The alarm should fire when EXACTLY ONE of voice or PIN matches - that usually means someone is faking. The camera and card are also wired in but might not matter.',
       rule: 'Alarm = 1 when EXACTLY ONE of voice or PIN is on (not both, not neither).',
     },
     inputs: Q3_INPUTS,
@@ -483,9 +483,9 @@ const PROBLEMS: ProblemConfig[] = [
     hardware: { not: 2, and: '2 × (2-input)', or: '1 × (2-input)', total: 5 },
     questions: [
       { q: 'Which 2 of the 4 inputs actually change the answer?',           answer: 'Only B and D matter · A and C drop out. The K-Map shows they change inside every group → they get cancelled.' },
-      { q: 'What is the shortest equation?',                                 answer: 'F = B′D + BD′ — this is the XOR of B and D.' },
+      { q: 'What is the shortest equation?',                                 answer: 'F = B′D + BD′ - this is the XOR of B and D.' },
       { q: 'How many gates does the final circuit need?',                   answer: '5 gates · 2 NOTs, 2 ANDs, 1 OR · or just 1 XOR chip if you have one.' },
-      { q: 'If you had a single XOR chip, could you replace this whole circuit with one part?', answer: 'Yes — one XOR chip = 5 small gates here. Same logic, smaller circuit board.' },
+      { q: 'If you had a single XOR chip, could you replace this whole circuit with one part?', answer: 'Yes - one XOR chip = 5 small gates here. Same logic, smaller circuit board.' },
     ],
     circuit: {
       topic: 'XOR · F = B′D + BD′  ≡  B ⊕ D  (A & C unused)',
@@ -495,10 +495,10 @@ const PROBLEMS: ProblemConfig[] = [
         term([lit('B'), not('D')], '#fb923c'),
       ],
     },
-    redundantNote: 'A and C do NOT show up in the final circuit — they don\'t change the alarm at all.',
+    redundantNote: 'A and C do NOT show up in the final circuit - they don\'t change the alarm at all.',
   },
 
-  // Q4 — Conveyor
+  // Q4 - Conveyor
   {
     id: 'q4',
     Icon: PackageCheck,
@@ -529,7 +529,7 @@ const PROBLEMS: ProblemConfig[] = [
       { q: 'The operator sensor (A) is connected. Does it actually change the answer?',
         answer: 'No. A changes inside both groups → it gets dropped completely. The K-Map proves the operator sensor has zero effect.' },
       { q: 'How many letters does the long equation use vs. the shortest one?',
-        answer: '32 letters in the long one · only 4 letters in the short one — that is 87% smaller.' },
+        answer: '32 letters in the long one · only 4 letters in the short one - that is 87% smaller.' },
       { q: 'Which K-Map groups beat the long form?',
         answer: 'Two 4-cell groups. Top + bottom edges wrap around to give B′C′. The centre 2×2 box gives BD.' },
       { q: 'How many gates does the final circuit need?',
@@ -543,12 +543,12 @@ const PROBLEMS: ProblemConfig[] = [
         term([lit('B'), lit('D')], '#fb923c'),
       ],
     },
-    redundantNote: 'A is irrelevant — it never even reaches a gate in the final circuit.',
+    redundantNote: 'A is irrelevant - it never even reaches a gate in the final circuit.',
   },
 ];
 
 // =========================================================================
-// ProblemCard — full problem UI
+// ProblemCard - full problem UI
 // =========================================================================
 const PHASES = ['empty', 'plot', 'group'] as const;
 type Phase = typeof PHASES[number];
@@ -860,7 +860,7 @@ const ProblemCard: React.FC<{ p: ProblemConfig; isDarkMode: boolean }> = ({ p, i
                   {stepIdx === 4 && (
                     <div className="space-y-4">
                       <div className="font-mono text-[10px] uppercase tracking-widest text-rose-300">
-                        Step 5 · Live optimised schematic — toggle inputs
+                        Step 5 · Live optimised schematic - toggle inputs
                       </div>
                       <LiveSchematic circuit={p.circuit} isDarkMode={isDarkMode} />
                     </div>
@@ -957,7 +957,7 @@ export const S01_Forward: React.FC<Props> = ({ isActive, isDarkMode }) => {
         <div className={`text-sm ${subText}`}>
           <strong className="text-amber-300">Strategy:</strong> always look for the LARGEST legal
           power-of-two rectangle first. A four-cell loop drops two variables; a two-cell loop
-          drops only one. Overlapping loops are free — never split a loop just to avoid overlap.
+          drops only one. Overlapping loops are free - never split a loop just to avoid overlap.
         </div>
       </motion.div>
 

@@ -4,7 +4,7 @@ import { Sparkles, Atom, Droplet, Castle, Gauge } from 'lucide-react';
 
 interface Props { isActive: boolean; isDarkMode: boolean; }
 
-// Mandala / circuit hybrid SVG — central hero artwork.
+// Mandala / circuit hybrid SVG - central hero artwork.
 const MandalaCircuit: React.FC<{ size?: number }> = ({ size = 280 }) => (
   <svg viewBox="0 0 360 360" width={size} height={size} aria-label="Mandala / circuit hero">
     <defs>
@@ -153,7 +153,7 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
           transition={{ delay: 0.2 }}
           className={`text-lg md:text-xl max-w-2xl mx-auto ${subText}`}
         >
-          A visual story-walk through atomic structure, covalent bonding and band theory — told as a{' '}
+          A visual story-walk through atomic structure, covalent bonding and band theory - told as a{' '}
           <strong className="text-orange-300">Garba dance</strong>, a sports franchise, and a 3-tier city.
         </motion.p>
       </section>
@@ -236,7 +236,7 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
             { Icon: Atom, n: '01', t: 'Meet the players',
               d: 'Silicon, Germanium and Gallium Arsenide step on the field. We open up Si\'s atomic shell and find the four star players on the boundary.' },
             { Icon: Sparkles, n: '02', t: 'Watch the dance',
-              d: 'Four valence electrons join hands in a Garba — perfect bonds. The dhol drops, heat enters, electrons break free, and holes appear.' },
+              d: 'Four valence electrons join hands in a Garba - perfect bonds. The dhol drops, heat enters, electrons break free, and holes appear.' },
             { Icon: Gauge, n: '03', t: 'Climb the city',
               d: 'Energy is plotted as a 3-tier city. Cross the toll booth (Eg) in electron-volts to ride the conduction expressway. Si, Ge, GaAs each have a different price.' },
           ].map((s) => (
@@ -270,7 +270,7 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
           {[
             { tag: 'Atomic shells', desc: 'Recognise Silicon\'s 14 electrons split into nucleus, inner shells & 4 valence electrons.' },
             { tag: 'Covalent lattice', desc: 'Explain how four neighbours each share an electron pair to form a crystal.' },
-            { tag: 'Holes', desc: 'Describe how thermal energy creates electron–hole pairs and why heat lowers resistance.' },
+            { tag: 'Holes', desc: 'Describe how thermal energy creates electron-hole pairs and why heat lowers resistance.' },
             { tag: 'Band theory', desc: 'Compare insulator, conductor and semiconductor by their forbidden-gap energy in eV.' },
           ].map((cap) => (
             <div

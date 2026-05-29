@@ -132,7 +132,7 @@ export const S06_LedSpectrum: React.FC<Props> = ({ isActive, isDarkMode }) => {
               <text x={xToPx(nm)} y={H + 16} textAnchor="middle" fontSize="11" fontFamily="monospace" fill={isDarkMode ? '#94a3b8' : '#64748b'}>{nm}</text>
             </g>
           ))}
-          <text x={W / 2} y={H + 38} textAnchor="middle" fontSize="11" fontFamily="monospace" fill={isDarkMode ? '#cbd5e1' : '#475569'}>Wavelength — nm</text>
+          <text x={W / 2} y={H + 38} textAnchor="middle" fontSize="11" fontFamily="monospace" fill={isDarkMode ? '#cbd5e1' : '#475569'}>Wavelength - nm</text>
           {/* Y labels */}
           {[0, 0.5, 1.0].map((i) => (
             <g key={i}>
@@ -204,7 +204,7 @@ export const S06_LedSpectrum: React.FC<Props> = ({ isActive, isDarkMode }) => {
       >
         <strong className="text-orange-300">Material Dependency:</strong> compound semiconductors
         determine the luminous efficacy and the specific wavelength of the emission. Pure silicon
-        cannot emit visible light — its band gap is too small. We need direct-gap compounds.
+        cannot emit visible light - its band gap is too small. We need direct-gap compounds.
       </motion.div>
 
       {/* Plain English + a "design choice" callout */}
@@ -217,7 +217,7 @@ export const S06_LedSpectrum: React.FC<Props> = ({ isActive, isDarkMode }) => {
           <div className="font-mono text-[10px] uppercase tracking-widest text-orange-300 mb-2">Plain English</div>
           <div className={`text-sm ${subText}`}>
             The LED chooses its colour by picking a different cookie cutter for the crystal. You
-            cannot make a silicon LED — silicon&apos;s gap is too narrow and the geometry of its
+            cannot make a silicon LED - silicon&apos;s gap is too narrow and the geometry of its
             band structure doesn&apos;t favour photon emission. So engineers use III-V compounds
             like GaN, GaP, GaAsP.
           </div>
@@ -229,8 +229,8 @@ export const S06_LedSpectrum: React.FC<Props> = ({ isActive, isDarkMode }) => {
         >
           <div className="font-mono text-[10px] uppercase tracking-widest text-amber-300 mb-2">Why this changed history</div>
           <div className={`text-sm ${subText}`}>
-            The blue LED wasn&apos;t available until the 1990s (Nakamura, Akasaki, Amano — 2014
-            Nobel Prize). Once we had blue, white LEDs became possible — and modern LED lighting
+            The blue LED wasn&apos;t available until the 1990s (Nakamura, Akasaki, Amano - 2014
+            Nobel Prize). Once we had blue, white LEDs became possible - and modern LED lighting
             replaced incandescent bulbs.
           </div>
         </motion.div>

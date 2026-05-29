@@ -19,7 +19,7 @@ export const FiscalMatrixSection: React.FC<FiscalMatrixSectionProps> = ({
 
   // Mock calculation logic for fiscal breakdown
   const getBreakdown = () => {
-    const baseStr = currentData.fresher.split('–')[0];
+    const baseStr = currentData.fresher.split('-')[0];
     const base = parseFloat(baseStr);
     const multiplier = 1 + (expYears * 0.25);
     const gross = base * multiplier;

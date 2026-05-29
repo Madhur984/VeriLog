@@ -8,7 +8,7 @@ interface Props { isActive: boolean; isDarkMode: boolean; }
  * Build the V-I curve of a Zener diode.
  *  Forward bias  (V > 0)   :  exponential conduction above ~0.7 V
  *  Reverse small (-Vz < V) :  near-zero leakage
- *  Breakdown    (V <= -Vz) :  vertical wall — V locked at -Vz
+ *  Breakdown    (V <= -Vz) :  vertical wall - V locked at -Vz
  */
 function buildCurve(vz: number, width = 360, height = 220) {
   const xMin = -8, xMax = 1.5;       // volts
@@ -73,8 +73,8 @@ export const S03_ZenerVI: React.FC<Props> = ({ isActive, isDarkMode }) => {
         </div>
         <p className={`text-sm ${subText} leading-relaxed`}>
           The Zener is a <strong>strict bouncer</strong> at a kids party. Every Zener has its own
-          favorite height — say 5 feet. You can push ten kids, twenty kids, a hundred kids into
-          the line — the line will <em>never</em> grow taller than 5 feet, because the bouncer
+          favorite height - say 5 feet. You can push ten kids, twenty kids, a hundred kids into
+          the line - the line will <em>never</em> grow taller than 5 feet, because the bouncer
           just lets the extra kids through the back door. The slider lets you pick the bouncer&apos;s
           favorite height. Watch the red &ldquo;wall&rdquo; on the chart move.
         </p>
@@ -162,7 +162,7 @@ export const S03_ZenerVI: React.FC<Props> = ({ isActive, isDarkMode }) => {
             <div className="flex items-center gap-2 text-violet-300 font-mono text-[10px] uppercase tracking-widest">
               <Zap size={12} /> Avalanche breakdown
             </div>
-            <p>High-velocity minority carriers collide with lattice atoms and knock loose new carriers — chain reaction. Dominates above 5 V.</p>
+            <p>High-velocity minority carriers collide with lattice atoms and knock loose new carriers - chain reaction. Dominates above 5 V.</p>
           </div>
         </div>
       </motion.div>
@@ -174,7 +174,7 @@ export const S03_ZenerVI: React.FC<Props> = ({ isActive, isDarkMode }) => {
       >
         <strong className="text-rose-300">Why this matters:</strong> the vertical wall in reverse
         breakdown means current can change by orders of magnitude while voltage stays at V_Z.
-        That is the entire foundation of voltage regulation — coming up next.
+        That is the entire foundation of voltage regulation - coming up next.
       </motion.div>
 
       {/* Plain English + Where you'll meet this */}
@@ -187,7 +187,7 @@ export const S03_ZenerVI: React.FC<Props> = ({ isActive, isDarkMode }) => {
           <div className="font-mono text-[10px] uppercase tracking-widest text-rose-300 mb-2">Plain English</div>
           <div className={`text-sm ${subText}`}>
             Normal diodes in reverse bias just leak. The Zener is engineered to{' '}
-            <em>fail gracefully at a specific voltage</em>. Above that voltage it acts like a wall —
+            <em>fail gracefully at a specific voltage</em>. Above that voltage it acts like a wall -
             voltage refuses to climb further, no matter how much current you push.
           </div>
         </motion.div>
@@ -212,9 +212,9 @@ export const S03_ZenerVI: React.FC<Props> = ({ isActive, isDarkMode }) => {
       >
         <div className="font-mono text-[10px] uppercase tracking-widest text-rose-300">Cheat-sheet · key terms</div>
         <div className={`grid md:grid-cols-3 gap-3 text-sm ${textColor}`}>
-          <div><span className="font-mono text-rose-300">V_Z</span> — nominal Zener voltage, set by doping during manufacture.</div>
-          <div><span className="font-mono text-rose-300">I_ZM</span> — maximum reverse current before the diode burns out from heat.</div>
-          <div><span className="font-mono text-rose-300">P_D = V_Z · I_Z</span> — power dissipated; pick a diode whose rating exceeds worst-case P_D.</div>
+          <div><span className="font-mono text-rose-300">V_Z</span> - nominal Zener voltage, set by doping during manufacture.</div>
+          <div><span className="font-mono text-rose-300">I_ZM</span> - maximum reverse current before the diode burns out from heat.</div>
+          <div><span className="font-mono text-rose-300">P_D = V_Z · I_Z</span> - power dissipated; pick a diode whose rating exceeds worst-case P_D.</div>
         </div>
       </motion.div>
     </div>

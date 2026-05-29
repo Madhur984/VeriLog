@@ -1,5 +1,5 @@
 /**
- * useKeyboardShortcuts.ts — Global keyboard shortcut handler
+ * useKeyboardShortcuts.ts - Global keyboard shortcut handler
  *
  * Listens for key events and dispatches commands.
  * Ignores shortcuts when user is typing in inputs / textareas.

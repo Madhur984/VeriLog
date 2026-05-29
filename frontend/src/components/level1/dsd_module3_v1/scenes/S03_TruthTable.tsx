@@ -38,7 +38,7 @@ export const S03_TruthTable: React.FC<Props> = ({ isActive, isDarkMode }) => {
         <p className={`text-base max-w-3xl ${subText}`}>
           Three inputs ⇒ <strong>2³ = 8 scenarios</strong>. Test each one against the rule
           (<em>A alone, or B and C together</em>) and write 1 if the vault should open. Click a
-          row OR toggle the input pads — the table and the live trace stay in sync.
+          row OR toggle the input pads - the table and the live trace stay in sync.
         </p>
       </section>
 
@@ -257,7 +257,7 @@ export const S03_TruthTable: React.FC<Props> = ({ isActive, isDarkMode }) => {
           </span>
         </div>
         <p className={`text-sm ${subText} mb-4`}>
-          Five glowing rows. Each one is a <strong className="text-emerald-300">minterm</strong> —
+          Five glowing rows. Each one is a <strong className="text-emerald-300">minterm</strong> -
           a singular input combination that opens the vault.
         </p>
         <div className="flex items-center gap-3 flex-wrap">

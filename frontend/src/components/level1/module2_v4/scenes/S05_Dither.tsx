@@ -243,7 +243,7 @@ export const S05_Dither: React.FC<{ time: number; isDarkMode: boolean }> = ({ ti
                     <h4 className={`text-[10px] font-black uppercase tracking-widest ${accentColor}`}>Aha! Moment</h4>
                  </div>
                  <p className={`text-sm italic leading-relaxed font-bold ${isDarkMode ? 'text-white/40' : 'text-gray-600'}`}>
-                    "Dither is like adding a little white noise to 'shake the bits free' – the result is a smooth hiss instead of harsh crackles."
+                    "Dither is like adding a little white noise to 'shake the bits free' - the result is a smooth hiss instead of harsh crackles."
                  </p>
            </div>
       </footer>
@@ -253,7 +253,7 @@ export const S05_Dither: React.FC<{ time: number; isDarkMode: boolean }> = ({ ti
           showFullView={true}
           specs={{
               concept: "The Noise Cure: Low-bit signals sound harsh because the rounding creates harmonic distortion (correlated noise). Dither decorrelates that distortion, turning it into a benign, linear noise floor.",
-              physical: "Shaking the Bits: Dither doesn’t reduce the total noise – it actually increases it slightly. But it makes the noise sound much more pleasant and natural, effectively 'linearizing' the quantization steps.",
+              physical: "Shaking the Bits: Dither doesn’t reduce the total noise - it actually increases it slightly. But it makes the noise sound much more pleasant and natural, effectively 'linearizing' the quantization steps.",
               formal: "Optimal Dither: In professional audio, TPDF (Triangular Probability Density Function) dither is the gold standard. It ensures the first and second moments of the quantization error are independent of the signal.",
               insight: "Grainy Truth: Dither turns a 'jagged lie' into a 'grainy truth'. It is mandatory whenever you reduce bit depth (e.g., from 32-bit float to 24-bit PCM) to maintain signal transparency.",
               advanced: [

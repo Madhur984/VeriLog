@@ -1,5 +1,5 @@
 /**
- * GateDiscovery.tsx — Level 4, Scene 4.1
+ * GateDiscovery.tsx - Level 4, Scene 4.1
  *
  * Truth table explorer with animated SVG signal propagation.
  * When inputs toggle, a glowing pulse travels from input → gate → output.
@@ -99,7 +99,7 @@ export const GateDiscovery: React.FC<Props> = ({ onComplete, hasCompleted, isDar
             {/* Header */}
             <div style={{ textAlign: 'center', marginBottom: 36 }}>
                 <span style={{ fontFamily: T.mono, fontSize: 9, letterSpacing: '0.25em', textTransform: 'uppercase', color: '#00D4FF', display: 'block', marginBottom: 8 }}>
-                    Scene 4.1 — Gate Discovery
+                    Scene 4.1 - Gate Discovery
                 </span>
                 <h2 style={{ fontSize: 26, fontWeight: 700, color: T.text, marginBottom: 8 }}>Logic Gate Explorer</h2>
                 <p style={{ color: T.muted, fontSize: 14 }}>
@@ -142,7 +142,7 @@ export const GateDiscovery: React.FC<Props> = ({ onComplete, hasCompleted, isDar
                                 {meta.humanRule}
                             </div>
                             <div style={{ fontFamily: T.mono, fontSize: 10, color: T.muted }}>
-                                {meta.label} — {meta.equation}
+                                {meta.label} - {meta.equation}
                             </div>
                         </div>
                         <div style={{ padding: '4px 10px', background: `${meta.color}15`, borderRadius: 4, border: `1px solid ${meta.color}30`, fontFamily: T.mono, fontSize: 9, color: meta.color }}>
@@ -150,7 +150,7 @@ export const GateDiscovery: React.FC<Props> = ({ onComplete, hasCompleted, isDar
                         </div>
                     </div>
 
-                    {/* Gate diagram: Inputs — Gate — Output */}
+                    {/* Gate diagram: Inputs - Gate - Output */}
                     <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: 32, justifyContent: 'center', marginBottom: 32, height: 160 }}>
 
                         {/* Inputs */}
@@ -265,7 +265,7 @@ export const GateDiscovery: React.FC<Props> = ({ onComplete, hasCompleted, isDar
                 {/* Right: Truth Table */}
                 <div style={{ padding: 24, background: T.card, border: `1px solid ${T.border}`, borderRadius: 12 }}>
                     <div style={{ fontFamily: T.mono, fontSize: 9, color: T.muted, textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: 16 }}>
-                        Truth Table — Live
+                        Truth Table - Live
                     </div>
                     {/* Header */}
                     <div style={{ display: 'grid', gridTemplateColumns: meta.inputs === 1 ? '1fr 1fr' : '1fr 1fr 1fr', gap: 8, marginBottom: 8, borderBottom: `1px solid ${T.border}`, paddingBottom: 8 }}>

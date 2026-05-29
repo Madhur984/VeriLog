@@ -138,7 +138,7 @@ export const GateTimingLab: React.FC<Props> = ({ onComplete, hasCompleted, isDar
         <div style={{ width: '100%', maxWidth: 900, margin: '0 auto' }}>
             <div style={{ textAlign: 'center', marginBottom: 32 }}>
                 <span style={{ fontFamily: T.mono, fontSize: 9, letterSpacing: '0.25em', textTransform: 'uppercase', color: T.accent, display: 'block', marginBottom: 8 }}>
-                    Scene 4.5 — Timing Diagram Analyst
+                    Scene 4.5 - Timing Diagram Analyst
                 </span>
                 <h2 style={{ fontSize: 26, fontWeight: 700, color: T.text, marginBottom: 8 }}>Waveform Forensics</h2>
                 <p style={{ color: T.muted, fontSize: 14 }}>

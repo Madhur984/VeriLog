@@ -104,11 +104,11 @@ describe('SimulationKernel', () => {
         // Schedule an event to arrive at time 100ns
         kernel.scheduleDelayed('led1', 0, 100, 5.0, true);
 
-        // Tick to time 50ns — event not yet fired
+        // Tick to time 50ns - event not yet fired
         kernel.tick(50);
         expect(led.inputs[0].voltage).toBe(0);
 
-        // Tick to time 100ns — event fires
+        // Tick to time 100ns - event fires
         kernel.tick(50);
         expect(led.inputs[0].voltage).toBe(5.0);
         expect(led.inputs[0].logic).toBe(true);

@@ -17,7 +17,7 @@ export const S02_GoodBoyHostel: React.FC<Props> = ({ isActive, isDarkMode }) => 
         </div>
         <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>The Good Boy Hostel</h2>
         <p className={`text-base max-w-3xl ${subText}`}>
-          Intrinsic silicon. 14 electrons per atom — but only the outer 4 (the valence shell)
+          Intrinsic silicon. 14 electrons per atom - but only the outer 4 (the valence shell)
           matter for chemistry. Each atom shares its 4 valence electrons with 4 neighbours,
           forming covalent bonds. <strong className="text-orange-300">Net current = 0.</strong>{' '}
           <em>Ekdum pure, no milawat.</em>
@@ -30,7 +30,7 @@ export const S02_GoodBoyHostel: React.FC<Props> = ({ isActive, isDarkMode }) => 
       >
         <img
           src="/images/semi/p02.webp"
-          alt="Pure silicon — the good boy hostel"
+          alt="Pure silicon - the good boy hostel"
           className="w-full block aspect-[16/9] object-cover"
         />
         <div className="absolute bottom-3 right-4 font-mono text-[9px] uppercase tracking-widest text-orange-200/80">
@@ -40,7 +40,7 @@ export const S02_GoodBoyHostel: React.FC<Props> = ({ isActive, isDarkMode }) => 
 
       <div className="grid md:grid-cols-3 gap-4">
         {[
-          { Icon: Atom,  title: 'The Physics',     d: 'Si is tetravalent — 4 valence electrons. Each pairs with a neighbour to form a stable covalent bond.', accent: 'text-orange-300', bg: 'bg-orange-500/10', border: 'border-orange-400/40' },
+          { Icon: Atom,  title: 'The Physics',     d: 'Si is tetravalent - 4 valence electrons. Each pairs with a neighbour to form a stable covalent bond.', accent: 'text-orange-300', bg: 'bg-orange-500/10', border: 'border-orange-400/40' },
           { Icon: Users, title: 'The Translation', d: 'A strict 4-seater hostel room. Every electron has its assigned bed; nobody wanders in the corridor.', accent: 'text-amber-300',  bg: 'bg-amber-500/10',  border: 'border-amber-400/40' },
           { Icon: Lock,  title: 'The Problem',     d: 'No movement = no current. At absolute zero, intrinsic Si is a perfect insulator.',                       accent: 'text-rose-300',   bg: 'bg-rose-500/10',   border: 'border-rose-400/40' },
         ].map((c) => (

@@ -103,7 +103,7 @@ const PROBLEMS: BossProblem[] = [
     Icon: Hash,
     title: "Boss 1 · 7-Segment Display · top bar",
     scenario:
-      "You're designing the top bar of a 7-segment display (the kind on a calculator). Input is a 4-bit number for digits 0–9 (A is the highest bit, D is the lowest). The top bar should LIGHT UP for digits 0, 2, 3, 5, 6, 7, 8, 9 — every digit EXCEPT 1 and 4. Codes 10–15 never happen in BCD, so they are don't-cares (treat them as 0 or 1, whichever helps).",
+      "You're designing the top bar of a 7-segment display (the kind on a calculator). Input is a 4-bit number for digits 0-9 (A is the highest bit, D is the lowest). The top bar should LIGHT UP for digits 0, 2, 3, 5, 6, 7, 8, 9 - every digit EXCEPT 1 and 4. Codes 10-15 never happen in BCD, so they are don't-cares (treat them as 0 or 1, whichever helps).",
     inputs: [
       { sym: 'A', meaning: 'BCD bit 3 (MSB)', accent: '#0ea5e9' },
       { sym: 'B', meaning: 'BCD bit 2',       accent: '#22d3ee' },
@@ -122,8 +122,8 @@ const PROBLEMS: BossProblem[] = [
     questions: [
       { q: 'Which digits make the top bar light up? Which ones leave it dark?',
         a: 'Lit: 0, 2, 3, 5, 6, 7, 8, 9. Dark: 1 and 4. (Digit 1 has no top bar; digit 4 has only middle and right bars.)' },
-      { q: "How can you use the don't-cares (m10–m15) to shrink the equation?",
-        a: 'Pretend they are 1 wherever it helps you make a bigger group. Here they extend the A group and C group from 4 cells to 8 cells each — saving 2 letters per group.' },
+      { q: "How can you use the don't-cares (m10-m15) to shrink the equation?",
+        a: 'Pretend they are 1 wherever it helps you make a bigger group. Here they extend the A group and C group from 4 cells to 8 cells each - saving 2 letters per group.' },
       { q: 'What is the shortest equation?',
         a: "a = A + C + BD + B'D'  · 4 terms · 6 letters total." },
       { q: 'How many gates total?',
@@ -154,7 +154,7 @@ const PROBLEMS: BossProblem[] = [
     Icon: Car,
     title: 'Boss 2 · Smart Garage Door',
     scenario:
-      'A smart garage door has 4 inputs: A (radio noise — ignored), B (keyfob in pocket), C (motion sensor at gate), D (master ON switch). The door OPENS when D is on AND at least one of B or C is on. So: open = D AND (B OR C). Build the truth table, K-Map, shortest equation, and the schematic.',
+      'A smart garage door has 4 inputs: A (radio noise - ignored), B (keyfob in pocket), C (motion sensor at gate), D (master ON switch). The door OPENS when D is on AND at least one of B or C is on. So: open = D AND (B OR C). Build the truth table, K-Map, shortest equation, and the schematic.',
     inputs: [
       { sym: 'A', meaning: 'Operator radio (irrelevant)', accent: '#475569' },
       { sym: 'B', meaning: 'Keyfob present',  accent: '#22d3ee' },
@@ -170,13 +170,13 @@ const PROBLEMS: BossProblem[] = [
     ],
     questions: [
       { q: 'Take the rule "D AND (B OR C)" and list the rows where the door opens.',
-        a: 'Σm(3, 5, 7, 11, 13, 15) — every row where D = 1 AND at least one of B, C is 1.' },
+        a: 'Σm(3, 5, 7, 11, 13, 15) - every row where D = 1 AND at least one of B, C is 1.' },
       { q: 'Find two 4-cell groups on the K-Map.',
         a: 'BD (centre 2×2) covers {m5, m7, m13, m15}. CD (CD=11 column) covers {m3, m7, m11, m15}. They overlap on m7 and m15.' },
       { q: 'What is the shortest equation?',
-        a: 'F = BD + CD (you can also factor it as D(B + C) — same thing).' },
+        a: 'F = BD + CD (you can also factor it as D(B + C) - same thing).' },
       { q: 'Does input A end up in the final circuit?',
-        a: 'No — A is irrelevant. The K-Map proves it: A changes inside both groups, so it cancels. The A wire never touches any gate.' },
+        a: 'No - A is irrelevant. The K-Map proves it: A changes inside both groups, so it cancels. The A wire never touches any gate.' },
     ],
     unsimplified: '6 rows × 4 letters each = 24 letters',
     minimised: 'F = BD + CD = D(B + C)',
@@ -428,7 +428,7 @@ export const S04_Boss: React.FC<Props> = ({ isActive, isDarkMode }) => {
           Real engineering problems with don't-cares, useless inputs, and 4-cell groups you
           have to find. Each one comes with a K-Map, a live circuit (drawn in the same clean
           rails-then-gates layout used everywhere else in this module), and 4 sub-questions.
-          Map out the truth table carefully — these problems punish guessing.
+          Map out the truth table carefully - these problems punish guessing.
         </p>
       </motion.section>
 

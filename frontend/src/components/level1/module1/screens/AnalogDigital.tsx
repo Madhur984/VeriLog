@@ -196,7 +196,7 @@ export const AnalogDigital: React.FC<ScreenProps> = ({
             <KnowledgeCard 
                 title="Sampling Theory"
                 description="To perfectly recreate an analog signal, you must sample at least TWICE the highest frequency."
-                details="If your sampling rate is too low, you get 'Aliasing'—false patterns that didn't exist in the original signal. Try lowering the Sampling Rate while increasing the Frequency to see this in action!"
+                details="If your sampling rate is too low, you get 'Aliasing'-false patterns that didn't exist in the original signal. Try lowering the Sampling Rate while increasing the Frequency to see this in action!"
                 icon={Activity}
                 className="bg-white border-slate-200 shadow-sm"
             />

@@ -156,7 +156,7 @@ export const TheoryOverlay: React.FC = () => {
                     System Verification // 3 Checks
                   </div>
 
-                  {/* Q1 — CHOICE */}
+                  {/* Q1 - CHOICE */}
                   <div className="bg-white/[0.03] border border-white/[0.07] p-8 space-y-5">
                     <div className="micro-text opacity-50">{QUESTIONS[0].label}</div>
                     <p className="hero-text text-xl">{QUESTIONS[0].question}</p>
@@ -179,7 +179,7 @@ export const TheoryOverlay: React.FC = () => {
                     )}
                   </div>
 
-                  {/* Q2 — FREQ INTERACTION */}
+                  {/* Q2 - FREQ INTERACTION */}
                   <div className="bg-white/[0.03] border border-white/[0.07] p-8 space-y-4">
                     <div className="micro-text opacity-50">{QUESTIONS[1].label}</div>
                     <p className="hero-text text-xl">{QUESTIONS[1].question}</p>
@@ -196,7 +196,7 @@ export const TheoryOverlay: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* Q3 — NOISE INTERACTION */}
+                  {/* Q3 - NOISE INTERACTION */}
                   <div className="bg-white/[0.03] border border-white/[0.07] p-8 space-y-4">
                     <div className="micro-text opacity-50">{QUESTIONS[2].label}</div>
                     <p className="hero-text text-xl">{QUESTIONS[2].question}</p>
@@ -220,7 +220,7 @@ export const TheoryOverlay: React.FC = () => {
                       animate={{ opacity: 1, y: 0 }}
                       className="flex flex-col items-center gap-6 pt-8"
                     >
-                      {/* Pink micro-pulse — 1% accent, only on final success */}
+                      {/* Pink micro-pulse - 1% accent, only on final success */}
                       <motion.div
                         animate={{ opacity: [0, 1, 0] }}
                         transition={{ duration: 0.15, repeat: 2 }}

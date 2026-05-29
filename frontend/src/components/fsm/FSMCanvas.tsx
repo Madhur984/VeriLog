@@ -1,5 +1,5 @@
 /**
- * components/fsm/FSMCanvas.tsx — Interactive SVG State Diagram
+ * components/fsm/FSMCanvas.tsx - Interactive SVG State Diagram
  *
  * Renders an FSM as an SVG directed graph:
  *   - States as circles (double ring for final states)

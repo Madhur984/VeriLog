@@ -30,9 +30,9 @@ export const LEVEL1_KNOWLEDGE_NODES: Record<string, KnowledgeNodeData> = {
         practicalExample:
             'A severed diagnostic cable stops all data flow immediately, regardless of source voltage.',
         misconception:
-            'Engineers often assume: "If only one end is disconnected, some current still flows." This is wrong. Current is binary in a simple loop — either the loop is closed and current flows, or it is open and current is zero.',
+            'Engineers often assume: "If only one end is disconnected, some current still flows." This is wrong. Current is binary in a simple loop - either the loop is closed and current flows, or it is open and current is zero.',
         designInsight:
-            "A 'Return Path' isn't just a wire—it's half of your antenna. Poor return paths in high-speed digital designs cause EMI failures because the energy will find its own path back, usually through space as radiation."
+            "A 'Return Path' isn't just a wire-it's half of your antenna. Poor return paths in high-speed digital designs cause EMI failures because the energy will find its own path back, usually through space as radiation."
     },
 
     'ohms-law': {

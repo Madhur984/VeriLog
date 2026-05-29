@@ -27,7 +27,7 @@ const ROLES: RoleInfo[] = [
     details: [
       '14 positively charged protons',
       '14 neutral neutrons (typical Si-28 isotope)',
-      'Anchors the entire atom — every electron orbits because of them',
+      'Anchors the entire atom - every electron orbits because of them',
     ],
   },
   {
@@ -40,7 +40,7 @@ const ROLES: RoleInfo[] = [
     details: [
       '2 in shell K (closest to nucleus)',
       '8 in shell L',
-      'Total binding energy is huge — these electrons cannot be displaced under normal conditions',
+      'Total binding energy is huge - these electrons cannot be displaced under normal conditions',
     ],
   },
   {

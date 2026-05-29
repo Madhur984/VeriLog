@@ -4,7 +4,7 @@ import { ArrowLeft } from 'lucide-react';
 import { ActivityLevel1 } from '../activities/ActivityLevel1';
 
 /**
- * Module1Activity — Fullscreen dedicated page for the interactive circuit lab.
+ * Module1Activity - Fullscreen dedicated page for the interactive circuit lab.
  * Flow: User lands here first → completes activity → navigates to /module/1/theory
  */
 export const Module1Activity: React.FC = () => {

@@ -83,7 +83,7 @@ const CareerRoadmapPage: React.FC = () => {
   const [newBadge, setNewBadge] = useState<{ id: string; name: string; description: string; svgContent: string } | null>(null);
 
   // Keep the active tab in sync with the URL so deep links (and back/forward)
-  // open the right view — e.g. /career-roadmap?tab=about lands on About,
+  // open the right view - e.g. /career-roadmap?tab=about lands on About,
   // bare /career-roadmap lands on Explore.
   useEffect(() => {
     setActiveTab(resolveTab(searchParams.get('tab')));

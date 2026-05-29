@@ -21,7 +21,7 @@ export interface CircuitComponentProps {
 
 const Node: React.FC<{ cx: number; cy: number; active?: boolean; isSnapTarget?: boolean }> = ({ cx, cy, active, isSnapTarget }) => (
     <g>
-        {/* Magnetic attraction ring — shown when a component is nearby */}
+        {/* Magnetic attraction ring - shown when a component is nearby */}
         {isSnapTarget && (
             <>
                 <motion.circle

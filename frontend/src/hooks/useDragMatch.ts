@@ -50,7 +50,7 @@ export function useDragMatch(chips: DragChip[], onMatch?: () => void) {
     const [isDragging, setIsDragging] = useState(false);
     const [shakingChip, setShaking] = useState<number | null>(null);
 
-    // Live drag state (not React — written directly to DOM)
+    // Live drag state (not React - written directly to DOM)
     const dragRef = useRef<{
         chipId: number;
         el: HTMLElement;
@@ -174,7 +174,7 @@ export function useDragMatch(chips: DragChip[], onMatch?: () => void) {
             setLocked(prev => new Set([...prev, d.chipId]));
             onMatch?.();
         } else if (isInRange && !isCorrect) {
-            // Wrong zone — shake then return
+            // Wrong zone - shake then return
             d.el.style.cssText += `--chip-dx:${d.currentX}px;--chip-dy:${d.currentY}px;`;
             d.el.classList.add('vl-chip--shake');
             d.el.classList.remove('vl-chip--dragging');
@@ -197,7 +197,7 @@ export function useDragMatch(chips: DragChip[], onMatch?: () => void) {
             setShaking(d.chipId);
             setTimeout(() => setShaking(null), 600);
         } else {
-            // Dropped nowhere — return to origin
+            // Dropped nowhere - return to origin
             d.el.classList.add('vl-chip--return');
             d.el.classList.remove('vl-chip--dragging');
 

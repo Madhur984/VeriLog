@@ -1,5 +1,5 @@
 /**
- * mure/core/EventQueue.ts — Min-Heap Priority Queue for Timed Simulation Events
+ * mure/core/EventQueue.ts - Min-Heap Priority Queue for Timed Simulation Events
  *
  * Used by SimulationKernel to schedule gate propagation delays.
  * Events fire at a specific simulated nanosecond timestamp.

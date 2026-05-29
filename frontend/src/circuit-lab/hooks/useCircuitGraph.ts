@@ -31,7 +31,7 @@ function buildGraph(
     return adj;
 }
 
-/** Wire-only adjacency — used for short circuit detection */
+/** Wire-only adjacency - used for short circuit detection */
 function buildWireOnlyGraph(
     wires: WireSegment[]
 ): Map<string, { anchorId: string; wireId: string }[]> {
@@ -97,7 +97,7 @@ export function analyzeCircuit(
     if (wires.length > 0) {
         const wireAdj = buildWireOnlyGraph(wires);
 
-        // All load component anchor IDs — traversal stops at these
+        // All load component anchor IDs - traversal stops at these
         const loadAnchorIds = new Set<string>();
         for (const comp of components) {
             if (comp.type === 'resistor' || comp.type === 'bulb' || comp.type === 'switch') {

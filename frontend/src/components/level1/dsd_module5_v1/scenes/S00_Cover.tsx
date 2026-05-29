@@ -73,7 +73,7 @@ export const S00_Cover: React.FC<SceneProps> = ({ isActive, isDarkMode, mode }) 
         <p className={`text-xl ${subText} max-w-3xl`}>{subheading}</p>
       </motion.section>
 
-      {/* Hero — animated gate symbol */}
+      {/* Hero - animated gate symbol */}
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }} animate={isActive ? { opacity: 1, scale: 1 } : {}}
         transition={{ delay: 0.15 }}
@@ -140,7 +140,7 @@ export const S00_Cover: React.FC<SceneProps> = ({ isActive, isDarkMode, mode }) 
         {[
           { Icon: Zap,    t: 'Single atom',          d: `Manufacture only one cell type. Stamp millions of identical ${mode.toUpperCase()} gates onto silicon.` },
           { Icon: Cpu,    t: 'Mathematically proven', d: `De Morgan's laws guarantee every Boolean function reduces to ${mode.toUpperCase()}-only.` },
-          { Icon: Layers, t: 'You will see',         d: 'NOT, AND, OR, the dual gate, XOR and XNOR — all built from this one shape, step by step.' },
+          { Icon: Layers, t: 'You will see',         d: 'NOT, AND, OR, the dual gate, XOR and XNOR - all built from this one shape, step by step.' },
         ].map((c, i) => (
           <motion.div
             key={c.t}

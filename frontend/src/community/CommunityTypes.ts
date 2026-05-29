@@ -1,5 +1,5 @@
 /**
- * CommunityTypes.ts — Type definitions for Community Platform
+ * CommunityTypes.ts - Type definitions for Community Platform
  *
  * Defines shared circuits, user profiles, comments, ratings,
  * and community feed structures.

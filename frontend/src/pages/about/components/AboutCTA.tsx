@@ -15,10 +15,10 @@ export const AboutCTA: React.FC = () => {
         <div className="text-center space-y-4 max-w-2xl mx-auto">
           <h2 className="text-4xl md:text-5xl font-extrabold tracking-tighter uppercase leading-[0.95] text-white">
             This is still early.<br />
-            <span className="text-cyan-400">What engineers do — we build.</span>
+            <span className="text-cyan-400">What engineers do - we build.</span>
           </h2>
           <p className="text-slate-400 font-sans text-xs md:text-sm leading-relaxed max-w-xl mx-auto pt-4">
-            BitforBytes is built by four students — one idea, one execution,
+            BitforBytes is built by four students - one idea, one execution,
             and two people who showed up and gave everything they had.
             It is not perfect. It is growing. Every student who learns
             here makes the case that this gap is real and worth closing.
@@ -106,7 +106,7 @@ export const AboutCTA: React.FC = () => {
                 Help Build This
               </h3>
               <p className="text-slate-400 text-xs md:text-sm leading-relaxed font-sans">
-                Open source. Every single contribution — code, content, or industry data — is credited.
+                Open source. Every single contribution - code, content, or industry data - is credited.
               </p>
             </div>
             <div className="pt-8">

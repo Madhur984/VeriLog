@@ -43,7 +43,7 @@ export const S09b_KMapPreview: React.FC<Props> = ({ isActive, isDarkMode }) => {
         <p className={`text-base max-w-3xl ${subText}`}>
           The same eight rows of Ben&apos;s function can be re-arranged into a 2×4 grid where{' '}
           <strong>physically adjacent cells differ in exactly one variable</strong>. That property
-          turns visual grouping into algebraic simplification — which is the entire next module.
+          turns visual grouping into algebraic simplification - which is the entire next module.
         </p>
       </section>
 
@@ -147,7 +147,7 @@ export const S09b_KMapPreview: React.FC<Props> = ({ isActive, isDarkMode }) => {
           </span>
         </div>
         <p className={`text-sm leading-relaxed mb-4 ${textColor}`}>
-          Notice the column ordering — <span className="font-mono">00 → 01 → 11 → 10</span>{' '}
+          Notice the column ordering - <span className="font-mono">00 → 01 → 11 → 10</span>{' '}
           (not <span className="font-mono">00 → 01 → 10 → 11</span>). This is{' '}
           <strong>Gray code</strong>: adjacent columns differ in exactly one bit. That means{' '}
           <strong>any pair of horizontally or vertically adjacent cells</strong> differs in
@@ -155,7 +155,7 @@ export const S09b_KMapPreview: React.FC<Props> = ({ isActive, isDarkMode }) => {
         </p>
         <p className={`text-sm leading-relaxed ${textColor}`}>
           When two adjacent cells both contain 1, the variable that changes between them must
-          drop out of the simplified expression — it is irrelevant to the function. This visual
+          drop out of the simplified expression - it is irrelevant to the function. This visual
           shortcut replaces algebraic theorem-chasing in the next module.
         </p>
       </motion.div>
@@ -200,8 +200,8 @@ export const S09b_KMapPreview: React.FC<Props> = ({ isActive, isDarkMode }) => {
       >
         <p className={`text-sm leading-relaxed ${textColor}`}>
           <strong className="text-fuchsia-400">Looking ahead:</strong> the next module spends its
-          entire time on K-Map mechanics — implicants, prime implicants, essential prime
-          implicants, the don&apos;t-care state — and how the same approach extends to 4 and 5
+          entire time on K-Map mechanics - implicants, prime implicants, essential prime
+          implicants, the don&apos;t-care state - and how the same approach extends to 4 and 5
           variables. For now, internalise this single fact:{' '}
           <em>canonical forms are correct; minimised forms are correct AND cheap</em>.
         </p>

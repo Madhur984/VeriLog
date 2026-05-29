@@ -15,7 +15,7 @@ export const domains: Domain[] = [
   {
     id: "vlsi",
     name: "VLSI & Digital Design",
-    salary: "₹12–35 LPA",
+    salary: "₹12-35 LPA",
     growth: "+22% YoY",
     difficulty: 5,
     tags: ["RTL", "Verilog", "ASIC", "FPGA"],
@@ -31,7 +31,7 @@ export const domains: Domain[] = [
   {
     id: "embedded",
     name: "Embedded Systems",
-    salary: "₹6–22 LPA",
+    salary: "₹6-22 LPA",
     growth: "+18% YoY",
     difficulty: 4,
     tags: ["C/C++", "RTOS", "Firmware", "IoT"],
@@ -47,7 +47,7 @@ export const domains: Domain[] = [
   {
     id: "wireless",
     name: "Wireless & 5G/6G",
-    salary: "₹10–28 LPA",
+    salary: "₹10-28 LPA",
     growth: "+25% YoY",
     difficulty: 4,
     tags: ["5G", "RF", "DSP", "Modems"],
@@ -63,7 +63,7 @@ export const domains: Domain[] = [
   {
     id: "analog",
     name: "Analog & Mixed-Signal",
-    salary: "₹14–40 LPA",
+    salary: "₹14-40 LPA",
     growth: "+15% YoY",
     difficulty: 5,
     tags: ["Op-Amps", "ADC/DAC", "PLL", "SPICE"],
@@ -79,7 +79,7 @@ export const domains: Domain[] = [
   {
     id: "power",
     name: "Power Electronics",
-    salary: "₹8–25 LPA",
+    salary: "₹8-25 LPA",
     growth: "+30% YoY",
     difficulty: 4,
     tags: ["EV", "SiC/GaN", "Inverters", "BMS"],

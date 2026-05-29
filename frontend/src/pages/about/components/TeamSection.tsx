@@ -17,7 +17,7 @@ const TEAM = [
     branch: '3rd Year BTech ECE',
     color: '#F59E0B',
     icon: Code2,
-    quote: "I build the system so you can learn without lag – and without your browser crashing.",
+    quote: "I build the system so you can learn without lag - and without your browser crashing.",
     detail: "The engine room. Refactored Kriten's fragile prototype into a scalable, production-ready React architecture. Handles the scrollytelling engine and 60fps performance optimization.",
   },
   {
@@ -35,8 +35,8 @@ const TEAM = [
     branch: '3rd Year BT IT',
     color: '#10B981',
     icon: Bot,
-    quote: "When you are confused, my code will be there to guide you – without giving away the answer.",
-    detail: "The IT guy among ECEs. Building VoltMonkey — an intelligent, non-judgmental hint system. It watches interactions and gives contextual nudges to make learning adaptive.",
+    quote: "When you are confused, my code will be there to guide you - without giving away the answer.",
+    detail: "The IT guy among ECEs. Building VoltMonkey - an intelligent, non-judgmental hint system. It watches interactions and gives contextual nudges to make learning adaptive.",
   }
 ];
 

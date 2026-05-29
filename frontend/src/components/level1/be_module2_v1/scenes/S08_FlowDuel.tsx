@@ -18,7 +18,7 @@ export const S08_FlowDuel: React.FC<Props> = ({ isActive, isDarkMode }) => {
         <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>Electron vs Hole Flow</h2>
         <p className={`text-base max-w-3xl ${subText}`}>
           Two viewpoints, one phenomenon. Physically only the electrons move. The hole &quot;flow&quot;
-          is the chain reaction of vacancies being filled — it points the opposite way.
+          is the chain reaction of vacancies being filled - it points the opposite way.
           Conventional current always follows the apparent <strong className="text-amber-300">hole
           flow (positive → negative)</strong>.
         </p>
@@ -95,7 +95,7 @@ export const S08_FlowDuel: React.FC<Props> = ({ isActive, isDarkMode }) => {
             <p className={`text-base font-bold ${textColor}`}>
               Conventional current direction <strong className="text-amber-300">always follows the
               hole flow</strong> (positive to negative). When you draw an arrow on a circuit, you
-              are drawing the direction holes appear to move — opposite to actual electron motion.
+              are drawing the direction holes appear to move - opposite to actual electron motion.
             </p>
           </div>
         </div>

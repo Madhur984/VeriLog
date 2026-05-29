@@ -75,7 +75,7 @@ export const S07_FullWave: React.FC<Props> = ({ isActive, isDarkMode }) => {
         </span>
       </motion.div>
 
-      {/* BRIDGE CIRCUIT — clean, animated current path */}
+      {/* BRIDGE CIRCUIT - clean, animated current path */}
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         className={`p-8 rounded-3xl border ${cardBg}`}
@@ -111,13 +111,13 @@ export const S07_FullWave: React.FC<Props> = ({ isActive, isDarkMode }) => {
           <text x="305" y="316" fontSize="11" fontFamily="monospace" fill={cyan} fontWeight="bold">C (AC−)</text>
 
           {/* The four bridge diodes (diamond):
-                A (300, 80)  — top
-                P (480,190) — right (load +)
-                C (300,300) — bottom
-                N (180,190) — left (load −)
+                A (300, 80)  - top
+                P (480,190) - right (load +)
+                C (300,300) - bottom
+                N (180,190) - left (load −)
               D1: A→P  | D2: N→C  | D3: C→P  | D4: N→A   */}
 
-          {/* D1 — top right · A→P */}
+          {/* D1 - top right · A→P */}
           <line x1="300" y1="80"  x2="370" y2="135" stroke={dColor(D1on)} strokeWidth="2.5" style={{ filter: dGlow(D1on) }} />
           <polygon points="370,123 370,147 395,135"
                    fill={D1on ? onColor : 'none'} fillOpacity="0.5"
@@ -127,7 +127,7 @@ export const S07_FullWave: React.FC<Props> = ({ isActive, isDarkMode }) => {
           <line x1="395" y1="135" x2="480" y2="190" stroke={dColor(D1on)} strokeWidth="2.5" style={{ filter: dGlow(D1on) }} />
           <text x="338" y="106" fontSize="11" fontFamily="monospace" fill={dColor(D1on)} fontWeight="bold">D1</text>
 
-          {/* D4 — top left · N→A · arrow points UP from N to A so cathode is up */}
+          {/* D4 - top left · N→A · arrow points UP from N to A so cathode is up */}
           <line x1="180" y1="190" x2="205" y2="135" stroke={dColor(D4on)} strokeWidth="2.5" style={{ filter: dGlow(D4on) }} />
           <polygon points="218,147 195,147 207,123"
                    fill={D4on ? onColor : 'none'} fillOpacity="0.5"
@@ -137,7 +137,7 @@ export const S07_FullWave: React.FC<Props> = ({ isActive, isDarkMode }) => {
           <line x1="207" y1="123" x2="300" y2="80" stroke={dColor(D4on)} strokeWidth="2.5" style={{ filter: dGlow(D4on) }} />
           <text x="232" y="106" fontSize="11" fontFamily="monospace" fill={dColor(D4on)} fontWeight="bold">D4</text>
 
-          {/* D2 — bottom left · N→C · arrow points DOWN to C */}
+          {/* D2 - bottom left · N→C · arrow points DOWN to C */}
           <line x1="180" y1="190" x2="205" y2="245" stroke={dColor(D2on)} strokeWidth="2.5" style={{ filter: dGlow(D2on) }} />
           <polygon points="195,233 218,233 207,257"
                    fill={D2on ? onColor : 'none'} fillOpacity="0.5"
@@ -147,7 +147,7 @@ export const S07_FullWave: React.FC<Props> = ({ isActive, isDarkMode }) => {
           <line x1="207" y1="257" x2="300" y2="300" stroke={dColor(D2on)} strokeWidth="2.5" style={{ filter: dGlow(D2on) }} />
           <text x="232" y="280" fontSize="11" fontFamily="monospace" fill={dColor(D2on)} fontWeight="bold">D2</text>
 
-          {/* D3 — bottom right · C→P · arrow points UP to P */}
+          {/* D3 - bottom right · C→P · arrow points UP to P */}
           <line x1="300" y1="300" x2="370" y2="245" stroke={dColor(D3on)} strokeWidth="2.5" style={{ filter: dGlow(D3on) }} />
           <polygon points="395,257 370,257 383,233"
                    fill={D3on ? onColor : 'none'} fillOpacity="0.5"
@@ -218,7 +218,7 @@ export const S07_FullWave: React.FC<Props> = ({ isActive, isDarkMode }) => {
               <div className={`font-mono text-[11px] mt-2 ${subText}`}>{p.flow}</div>
               <div className={`text-[10px] font-mono mt-2 ${subText} italic`}>
                 Note: regardless of which pair conducts, current always leaves the bridge through P
-                and returns through N — that's the trick.
+                and returns through N - that's the trick.
               </div>
             </div>
           ))}
@@ -296,7 +296,7 @@ export const S07_FullWave: React.FC<Props> = ({ isActive, isDarkMode }) => {
           <div className="rounded-2xl p-5 border-2 border-emerald-400 bg-emerald-500/15">
             <div className="font-mono text-[10px] uppercase tracking-widest text-emerald-300 mb-2">Ripple factor</div>
             <div className={`font-mono text-2xl font-black ${textColor}`}>r = 0.48 (48%)</div>
-            <div className={`text-xs ${subText} mt-2`}>Down from 121% (half-wave) — but still pulsing. We need the filter.</div>
+            <div className={`text-xs ${subText} mt-2`}>Down from 121% (half-wave) - but still pulsing. We need the filter.</div>
           </div>
         </div>
 
@@ -322,7 +322,7 @@ export const S07_FullWave: React.FC<Props> = ({ isActive, isDarkMode }) => {
         <div className={`mt-4 p-3 rounded-xl border border-violet-400/40 bg-violet-500/10 text-sm ${textColor}`}>
           <strong className="text-violet-300">Next:</strong> the output is twice as good but still pulses
           to zero 100×/sec. A capacitor filter (next page) parks excess charge on the peaks and
-          releases it during the dips — turning these humps into a near-flat line.
+          releases it during the dips - turning these humps into a near-flat line.
         </div>
       </motion.div>
     </div>

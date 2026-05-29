@@ -1,5 +1,5 @@
 /**
- * mure/nodes/ConstantNode.ts — Constant Logic Level
+ * mure/nodes/ConstantNode.ts - Constant Logic Level
  *
  * Outputs a fixed logic level: 0 (0V) or 1 (5V).
  */

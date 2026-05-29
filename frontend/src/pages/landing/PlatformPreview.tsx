@@ -42,7 +42,7 @@ export const PlatformPreview = () => {
             Try it right here.
           </h2>
           <p className="mt-4 text-[15px] leading-relaxed" style={{ color: '#475569' }}>
-            Flip the inputs — watch the truth table and the minterm equation solve live. This is a real
+            Flip the inputs - watch the truth table and the minterm equation solve live. This is a real
             slice of the platform, running in your browser.
           </p>
         </div>

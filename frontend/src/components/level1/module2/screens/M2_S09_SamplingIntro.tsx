@@ -42,7 +42,7 @@ export const M2_S09_SamplingIntro: React.FC<M2ScreenProps> = ({ triggerHaptic })
         {[
           { step: '01', title: 'Sample', desc: 'Measure voltage at T intervals' },
           { step: '02', title: 'Quantize', desc: 'Round to nearest of 2^n levels' },
-          { step: '03', title: 'Encode', desc: "Store as binary — computer's language" },
+          { step: '03', title: 'Encode', desc: "Store as binary - computer's language" },
         ].map(item => (
           <motion.div
             key={item.step}

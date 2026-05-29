@@ -1,5 +1,5 @@
 /**
- * mure/tracing/SignalTrace.ts — Ring-Buffer Signal Trace Recorder
+ * mure/tracing/SignalTrace.ts - Ring-Buffer Signal Trace Recorder
  *
  * Records (time, voltage) pairs for oscilloscope rendering.
  * Ring-buffer design prevents unbounded memory growth.

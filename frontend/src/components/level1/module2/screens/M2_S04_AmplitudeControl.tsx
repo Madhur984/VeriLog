@@ -32,7 +32,7 @@ export const M2_S04_AmplitudeControl: React.FC<M2ScreenProps> = ({ triggerHaptic
       {/* Wave display */}
       <div style={{ width: '100%', border: `1px solid ${T.border}`, borderRadius: 2, overflow: 'hidden' }}>
         <div style={{ padding: '12px 20px', borderBottom: `1px solid ${T.border}`, display: 'flex', justifyContent: 'space-between' }}>
-          <span style={{ fontFamily: T.mono, fontSize: 8, letterSpacing: '0.3em', textTransform: 'uppercase', color: T.muted }}>CH1 — Analog Signal</span>
+          <span style={{ fontFamily: T.mono, fontSize: 8, letterSpacing: '0.3em', textTransform: 'uppercase', color: T.muted }}>CH1 - Analog Signal</span>
           <span style={{ fontFamily: T.mono, fontSize: 11, color: T.signal }}>
             A = {(amplitude * 5).toFixed(2)} V
           </span>
@@ -74,7 +74,7 @@ export const M2_S04_AmplitudeControl: React.FC<M2ScreenProps> = ({ triggerHaptic
         }}
       >
         <p style={{ fontFamily: T.mono, fontSize: 10, color: T.signal, margin: 0, letterSpacing: '0.1em' }}>
-          {amplitude < 0.2 ? '⚠ Low amplitude — signal approaching noise floor' : 'ℹ High amplitude — approaching ADC clipping range'}
+          {amplitude < 0.2 ? '⚠ Low amplitude - signal approaching noise floor' : 'ℹ High amplitude - approaching ADC clipping range'}
         </p>
       </motion.div>
     </div>

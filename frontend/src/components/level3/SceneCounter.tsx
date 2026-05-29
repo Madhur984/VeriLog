@@ -1,5 +1,5 @@
 /**
- * SceneCounter.tsx — Module 3.2: Binary Counting Machine
+ * SceneCounter.tsx - Module 3.2: Binary Counting Machine
  * A 4-bit counter that animates carry propagation on each increment.
  */
 import React, { useEffect, useRef, useState } from 'react';
@@ -236,7 +236,7 @@ export const SceneCounter: React.FC<Props> = ({ onCarry, onReach8, hasReached8 }
                     initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
                     style={{ fontFamily: T.mono, fontSize: 12, letterSpacing: '0.4em', textTransform: 'uppercase', color: T.accent, display: 'block', marginBottom: 12 }}
                 >
-                    3.2 — The Carry Chain
+                    3.2 - The Carry Chain
                 </motion.span>
                 <h2 style={{ fontSize: 32, fontWeight: 800, color: T.text, marginBottom: 12 }}>Sequential Logic</h2>
                 <div style={{ maxWidth: 500, margin: '0 auto' }}>

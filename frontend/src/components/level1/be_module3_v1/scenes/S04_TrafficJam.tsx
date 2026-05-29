@@ -130,7 +130,7 @@ export const S04_TrafficJam: React.FC<Props> = ({ isActive, isDarkMode }) => {
           The built-in voltage across the depletion region is the <em>barrier height</em> a
           carrier must overcome before flowing forward. It depends on doping concentrations and
           the material&apos;s energy gap. <strong className="text-amber-300">Memorise 0.7 V for
-          Si</strong> — it&apos;s the most-used number in this entire module.
+          Si</strong> - it&apos;s the most-used number in this entire module.
         </p>
       </motion.div>
 
@@ -142,7 +142,7 @@ export const S04_TrafficJam: React.FC<Props> = ({ isActive, isDarkMode }) => {
         <Anchor className="text-amber-300 flex-shrink-0 mt-0.5" size={16} />
         <p className={`text-xs ${subText}`}>
           <strong className="text-amber-300">Note:</strong> the depletion region is <em>not</em>{' '}
-          empty. It contains immobile ionised dopants — but no <em>mobile</em> carriers. That&apos;s
+          empty. It contains immobile ionised dopants - but no <em>mobile</em> carriers. That&apos;s
           why no current flows through it without external help.
         </p>
       </motion.div>

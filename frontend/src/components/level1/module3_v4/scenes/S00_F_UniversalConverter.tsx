@@ -4,7 +4,7 @@
  *   - Live Dec ↔ Bin ↔ Oct ↔ Hex (type in any box, all update)
  *   - Step-by-step working for whichever input changed
  *   - Visual bit groups (nibble view for Hex, triplet view for Oct)
- *   - Master reference table 0–255
+ *   - Master reference table 0-255
  */
 import React, { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -228,7 +228,7 @@ const BitGroups: React.FC<{ binStr: string; dec: number; isDarkMode: boolean }> 
     <div className={`p-6 rounded-3xl border ${isDarkMode ? 'bg-white/5 border-white/10' : 'bg-white border-gray-200 shadow-xl'}`}>
       <div className="mb-4">
         <div className={`font-mono text-[10px] uppercase tracking-widest mb-2 ${isDarkMode ? 'text-white/30' : 'text-gray-400'}`}>
-          Visual grouping — same number, different lenses
+          Visual grouping - same number, different lenses
         </div>
         <p className={`text-xs opacity-70 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
           Because 16 is exactly 2<sup>4</sup>, a single Hex digit perfectly represents 4 Binary bits! Similarly, because 8 is exactly 2<sup>3</sup>, a single Octal digit perfectly represents 3 Binary bits.
@@ -237,7 +237,7 @@ const BitGroups: React.FC<{ binStr: string; dec: number; isDarkMode: boolean }> 
       {/* Nibbles for hex */}
       <div className="mb-5">
         <div className="font-mono text-[9px] text-violet-400 tracking-widest uppercase mb-2">
-          Hex view — 4 bits per nibble
+          Hex view - 4 bits per nibble
         </div>
         <div className="flex gap-3 flex-wrap">
           {nibbles.map((nib, i) => {
@@ -276,7 +276,7 @@ const BitGroups: React.FC<{ binStr: string; dec: number; isDarkMode: boolean }> 
       {/* Triplets for octal */}
       <div>
         <div className="font-mono text-[9px] text-emerald-400 tracking-widest uppercase mb-2">
-          Octal view — 3 bits per group
+          Octal view - 3 bits per group
         </div>
         <div className="flex gap-3 flex-wrap">
           {triplets.map((tri, i) => {
@@ -314,12 +314,12 @@ const BitGroups: React.FC<{ binStr: string; dec: number; isDarkMode: boolean }> 
   );
 };
 
-// ── Reference Table 0–31 ─────────────────────────────────────────
+// ── Reference Table 0-31 ─────────────────────────────────────────
 const RefTable: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => (
   <div className={`rounded-3xl border overflow-hidden ${isDarkMode ? 'bg-white/5 border-white/10' : 'bg-white border-gray-200 shadow-xl'}`}>
     <div className={`px-6 py-4 border-b ${isDarkMode ? 'border-white/5' : 'border-gray-100'}`}>
       <div className={`font-mono text-[10px] uppercase tracking-widest ${isDarkMode ? 'text-white/40' : 'text-gray-400'}`}>
-        Master Reference Table — Decimal 0 to 31
+        Master Reference Table - Decimal 0 to 31
       </div>
     </div>
     <div className="overflow-x-auto">
@@ -405,11 +405,11 @@ export const S00_F_UniversalConverter: React.FC<Props> = ({ isActive, isDarkMode
           initial={{ opacity: 0 }} animate={isActive ? { opacity: 1 } : {}}
           className={`font-mono text-[10px] tracking-[0.4em] uppercase ${isDarkMode ? 'text-sky-400' : 'text-sky-600'} block mb-4`}
         >
-          Number Systems — Live Converter
+          Number Systems - Live Converter
         </motion.span>
         <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>Universal Converter</h2>
         <p className={`text-lg max-w-2xl mx-auto opacity-70 ${textColor}`}>
-          Type in <strong>any box</strong> — all others update instantly. See full step-by-step
+          Type in <strong>any box</strong> - all others update instantly. See full step-by-step
           working for <strong>both</strong> the remainder method and weight method.
         </p>
       </section>
@@ -419,22 +419,22 @@ export const S00_F_UniversalConverter: React.FC<Props> = ({ isActive, isDarkMode
         initial={{ opacity: 0, y: 20 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         className="grid grid-cols-1 md:grid-cols-2 gap-6"
       >
-        <InputBox label="Decimal" sub="Base 10 — digits 0–9" value={dec}
+        <InputBox label="Decimal" sub="Base 10 - digits 0-9" value={dec}
           onChange={v => handleChange('dec', v)} valid={decValid}
           color={ACCENT.dec.tw} bg={ACCENT.dec.bg} border={ACCENT.dec.border}
           isDarkMode={isDarkMode}
         />
-        <InputBox label="Binary" sub="Base 2 — digits 0, 1" value={bin}
+        <InputBox label="Binary" sub="Base 2 - digits 0, 1" value={bin}
           onChange={v => handleChange('bin', v)} valid={binValid}
           color={ACCENT.bin.tw} bg={ACCENT.bin.bg} border={ACCENT.bin.border}
           isDarkMode={isDarkMode}
         />
-        <InputBox label="Octal" sub="Base 8 — digits 0–7" value={oct}
+        <InputBox label="Octal" sub="Base 8 - digits 0-7" value={oct}
           onChange={v => handleChange('oct', v)} valid={octValid}
           color={ACCENT.oct.tw} bg={ACCENT.oct.bg} border={ACCENT.oct.border}
           isDarkMode={isDarkMode}
         />
-        <InputBox label="Hexadecimal" sub="Base 16 — 0–9, A–F" value={hex}
+        <InputBox label="Hexadecimal" sub="Base 16 - 0-9, A-F" value={hex}
           onChange={v => handleChange('hex', v)} valid={hexValid}
           color={ACCENT.hex0.tw} bg={ACCENT.hex0.bg} border={ACCENT.hex0.border}
           isDarkMode={isDarkMode}
@@ -462,10 +462,10 @@ export const S00_F_UniversalConverter: React.FC<Props> = ({ isActive, isDarkMode
       {/* Bit-group visual */}
       <BitGroups binStr={decToBin(currentDec)} dec={currentDec} isDarkMode={isDarkMode} />
 
-      {/* Step-by-step working — FROM DECIMAL */}
+      {/* Step-by-step working - FROM DECIMAL */}
       <div className="space-y-6">
         <div className={`font-mono text-[10px] uppercase tracking-widest opacity-50 ${textColor}`}>
-          Method A — Remainder (Successive Division): Decimal → Other Bases
+          Method A - Remainder (Successive Division): Decimal → Other Bases
         </div>
         <div className={`text-sm opacity-80 leading-relaxed max-w-4xl ${textColor}`}>
           <p className="mb-2"><strong>How it works:</strong> To convert from Decimal (Base 10) to any target base (like 2, 8, or 16), you repeatedly divide the number by the target base.</p>
@@ -482,10 +482,10 @@ export const S00_F_UniversalConverter: React.FC<Props> = ({ isActive, isDarkMode
         </div>
       </div>
 
-      {/* Step-by-step working — TO DECIMAL */}
+      {/* Step-by-step working - TO DECIMAL */}
       <div className="space-y-6">
         <div className={`font-mono text-[10px] uppercase tracking-widest opacity-50 ${textColor}`}>
-          Method B — Weight (Positional): Other Bases → Decimal
+          Method B - Weight (Positional): Other Bases → Decimal
         </div>
         <div className={`text-sm opacity-80 leading-relaxed max-w-4xl flex flex-col gap-2 ${textColor}`}>
           <p><strong>How it works:</strong> To convert a number back to Decimal, you use "place values" or weights.</p>
@@ -511,7 +511,7 @@ export const S00_F_UniversalConverter: React.FC<Props> = ({ isActive, isDarkMode
       {/* Quick cross-conversion rules */}
       <div className={`p-8 rounded-[2rem] border ${isDarkMode ? 'bg-white/5 border-white/10' : 'bg-gray-50 border-gray-200'}`}>
         <h3 className={`font-mono text-xs uppercase tracking-widest mb-8 ${isDarkMode ? 'text-sky-400' : 'text-sky-600'}`}>
-          Shortcut Rules — Direct Conversions Without Going Through Decimal
+          Shortcut Rules - Direct Conversions Without Going Through Decimal
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {[
@@ -570,7 +570,7 @@ export const S00_F_UniversalConverter: React.FC<Props> = ({ isActive, isDarkMode
           className={`w-full p-5 rounded-3xl border font-mono text-sm font-black uppercase tracking-widest text-left flex justify-between items-center transition-all
             ${isDarkMode ? 'bg-white/5 border-white/10 text-white/60 hover:border-sky-500 hover:text-sky-400' : 'bg-gray-50 border-gray-200 text-gray-500 hover:border-sky-400 hover:text-sky-600'}`}
         >
-          <span>📊 Master Reference Table (0–31)</span>
+          <span>📊 Master Reference Table (0-31)</span>
           <span>{showTable ? '▲ Hide' : '▼ Show'}</span>
         </button>
         <AnimatePresence>

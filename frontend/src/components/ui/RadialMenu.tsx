@@ -193,7 +193,7 @@ export const RadialMenu: React.FC = () => {
 
   return (
     // Top-most container setting up the physical 3d perspective environment
-    <div className="fixed bottom-4 left-4 z-50 pointer-events-none flex justify-center items-center w-[360px] h-[360px]" style={{ perspective: '1400px' }}>
+    <div data-tour="portal-radial" className="fixed bottom-4 left-4 z-50 pointer-events-none flex justify-center items-center w-[360px] h-[360px]" style={{ perspective: '1400px' }}>
        {/* Ambient Bloom Area */}
        <div className="absolute inset-0 bg-sky-500/10 rounded-full blur-[80px] scale-150" />
        

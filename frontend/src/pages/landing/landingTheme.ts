@@ -1,7 +1,7 @@
 /**
  * Shared design tokens for the redesigned landing page.
  *
- * Direction: "Duotone Split" — the page alternates LIGHT and DARK section bands
+ * Direction: "Duotone Split" - the page alternates LIGHT and DARK section bands
  * down the scroll, keeping the BitforBytes cyan as the through-line accent.
  * Simple, visual, GenZ-native; one signature motif (SignalWave) is retained.
  */
@@ -14,7 +14,7 @@ export const LANDING_THEME = {
     body: '#334155',    // slate-700 body text
     muted: '#64748B',   // slate-500
     faint: '#94A3B8',   // slate-400 / labels
-    accent: '#0891B2',  // cyan-600 — readable on light
+    accent: '#0891B2',  // cyan-600 - readable on light
   },
   dark: {
     bg: '#0B1220',      // ink band
@@ -25,7 +25,7 @@ export const LANDING_THEME = {
     body: '#CBD5E1',    // slate-300
     muted: '#94A3B8',   // slate-400
     faint: '#64748B',
-    accent: '#22D3EE',  // cyan-400 — pops on dark
+    accent: '#22D3EE',  // cyan-400 - pops on dark
   },
   /** Brand + categorical accents (shared across bands). */
   brand: '#06B6D4',

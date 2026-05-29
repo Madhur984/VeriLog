@@ -2,7 +2,7 @@
  * TransitionOverlay.tsx
  *
  * System-level route transition overlay for VeriLog.
- * Mounted ONCE at App root — never unmounts.
+ * Mounted ONCE at App root - never unmounts.
  *
  * 5-layer visual architecture:
  *   L1  #0B0F14 matte (solid, no gradient)
@@ -13,7 +13,7 @@
  *
  * Zero per-frame React state.
  * CSS class toggles drive all animation timing.
- * Message read from context via ref — zero re-renders.
+ * Message read from context via ref - zero re-renders.
  */
 
 import { memo } from 'react';
@@ -37,7 +37,7 @@ const LEVELS = [
  *
  * Reads `isTransitioning` and `messageRef` from TransitionContext.
  * Only re-renders when isTransitioning toggles (2x per navigation).
- * Message is read inline from ref — no prop drilling, no state.
+ * Message is read inline from ref - no prop drilling, no state.
  */
 export const TransitionOverlay = memo(() => {
     const { isTransitioning, messageRef } = useTransitionContext();
@@ -57,7 +57,7 @@ export const TransitionOverlay = memo(() => {
             {/* ── Content Stack: L3 + L4 + L5 ── */}
             <div className="vl-overlay__content">
 
-                {/* L5: Level markers — rendered above text for visual hierarchy */}
+                {/* L5: Level markers - rendered above text for visual hierarchy */}
                 <div className="vl-overlay__levels" aria-hidden="true">
                     {LEVELS.map((level, i) => {
                         const isActive = level.id === msg.level;
@@ -69,7 +69,7 @@ export const TransitionOverlay = memo(() => {
                                         }`}
                                 >
                                     <div className="vl-level-marker__dot" />
-                                    <span>{level.code} — {level.label}</span>
+                                    <span>{level.code} - {level.label}</span>
                                 </div>
                                 {i < LEVELS.length - 1 && (
                                     <div className="vl-level-separator" aria-hidden="true" />
@@ -79,7 +79,7 @@ export const TransitionOverlay = memo(() => {
                     })}
                 </div>
 
-                {/* L3: Signal line — between level markers and text */}
+                {/* L3: Signal line - between level markers and text */}
                 <div className="vl-overlay__signal-wrap" aria-hidden="true">
                     <div className="vl-overlay__signal-line" />
                 </div>

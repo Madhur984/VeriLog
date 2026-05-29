@@ -1,5 +1,5 @@
 /**
- * voltMonkeyEngine.ts — VoltMonkey AI Hint Engine
+ * voltMonkeyEngine.ts - VoltMonkey AI Hint Engine
  *
  * Context-aware hint generator with a playful personality.
  * VoltMonkey is the lab companion that observes user actions
@@ -70,7 +70,7 @@ const MISSION_HINTS: Record<string, HintTree> = {
             "I've seen this before. Something's not quite complete here.",
         ],
         1: [
-            "Current needs to flow in a complete loop — like a race track. 🏎️",
+            "Current needs to flow in a complete loop - like a race track. 🏎️",
             "Check both sides of the LED. Does it have a way back home?",
         ],
         2: [
@@ -125,7 +125,7 @@ const GENERIC_HINTS: HintTree = {
         "Hmm, I'm sensing a disturbance in the circuit force.",
     ],
     1: [
-        "Check your connections — are all ports wired correctly?",
+        "Check your connections - are all ports wired correctly?",
         "Sometimes the simplest explanation is the right one. Missing a wire?",
     ],
     2: [

@@ -141,7 +141,7 @@ export const GateShape: React.FC<GateShapeProps> = ({ type, x, y, label }) => {
   );
 };
 
-// Port offset helpers — where to connect wires
+// Port offset helpers - where to connect wires
 export function getOutputPort(type: GateType, x: number, y: number): { x: number; y: number } {
   if (type === 'INPUT') return { x: x + 22, y };
   if (type === 'OUTPUT') return { x: x - 18, y };

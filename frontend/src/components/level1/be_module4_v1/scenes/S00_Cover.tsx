@@ -78,7 +78,7 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
         </h1>
         <p className={`text-xl ${subText} max-w-3xl`}>
           The journey from a violent AC sine wave at the wall socket to the smooth DC line that powers
-          every chip in your phone. Two pieces of hardware do all the work — a <strong className="text-cyan-300">rectifier</strong> made of
+          every chip in your phone. Two pieces of hardware do all the work - a <strong className="text-cyan-300">rectifier</strong> made of
           diodes, and a <strong className="text-amber-300">filter</strong> made of a capacitor. Master both and you can build any
           power supply.
         </p>

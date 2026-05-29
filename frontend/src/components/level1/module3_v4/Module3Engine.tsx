@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Activity, Moon, Sun, ArrowRight, ArrowLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { DrawerShell, HamburgerButton } from '../_shared/MobileDrawer';
 
 // --- Scene Components ---
 import { S00_A_DecimalSystem } from './scenes/S00_A_DecimalSystem';
@@ -31,28 +33,28 @@ const PAGES: Page[] = [
   {
     id: 'decimal', part: 'PART I · NUMBER SYSTEMS', partNum: 1,
     label: 'The Decimal System',
-    subtitle: 'Base 10 — positional notation & place-value explorer.',
+    subtitle: 'Base 10 - positional notation & place-value explorer.',
     accentHex: '#06b6d4',
     Component: S00_A_DecimalSystem,
   },
   {
     id: 'binary', part: 'PART I · NUMBER SYSTEMS', partNum: 1,
     label: 'The Binary System',
-    subtitle: 'Base 2 — bit weights, toggle converter & fractional binary.',
+    subtitle: 'Base 2 - bit weights, toggle converter & fractional binary.',
     accentHex: '#0891b2',
     Component: S00_B_BinarySystem,
   },
   {
     id: 'octal', part: 'PART I · NUMBER SYSTEMS', partNum: 1,
     label: 'The Octal System',
-    subtitle: 'Base 8 — successive division & live converter.',
+    subtitle: 'Base 8 - successive division & live converter.',
     accentHex: '#0ea5e9',
     Component: S00_C_OctalSystem,
   },
   {
     id: 'hex', part: 'PART I · NUMBER SYSTEMS', partNum: 1,
     label: 'Hexadecimal',
-    subtitle: 'Base 16 — symbols, worked example & dual converter.',
+    subtitle: 'Base 16 - symbols, worked example & dual converter.',
     accentHex: '#0284c7',
     Component: S00_D_HexSystem,
   },
@@ -80,7 +82,7 @@ const PAGES: Page[] = [
   {
     id: 'complements', part: "PART III · COMPLEMENTS", partNum: 3,
     label: "Complements",
-    subtitle: "1's, 2's, 9's, 10's — interactive calculator & signed table.",
+    subtitle: "1's, 2's, 9's, 10's - interactive calculator & signed table.",
     accentHex: '#10b981',
     Component: S11_Complements,
   },
@@ -210,7 +212,7 @@ const Sidebar: React.FC<{
           </div>
         </div>
 
-        <button onClick={toggleTheme} className={`h-12 w-full rounded-2xl border flex items-center justify-center gap-3 text-[10px] font-black uppercase tracking-widest transition-all ${isDarkMode ? 'border-white/10 text-slate-400 hover:bg-white/5' : 'border-slate-200 text-slate-600 hover:bg-slate-100'}`}>
+        <button onClick={toggleTheme} className={`hidden h-12 w-full rounded-2xl border flex items-center justify-center gap-3 text-[10px] font-black uppercase tracking-widest transition-all ${isDarkMode ? 'border-white/10 text-slate-400 hover:bg-white/5' : 'border-slate-200 text-slate-600 hover:bg-slate-100'}`}>
           {isDarkMode ? <Sun size={14} /> : <Moon size={14} />} {isDarkMode ? 'Light Mode' : 'Dark Mode'}
         </button>
       </footer>
@@ -219,10 +221,12 @@ const Sidebar: React.FC<{
 };
 
 export const Module3Engine: React.FC<{
-  isDarkMode: boolean; 
+  isDarkMode: boolean;
   onThemeToggle: () => void;
 }> = ({ isDarkMode, onThemeToggle }) => {
+  const navigate = useNavigate();
   const [current, setCurrent] = useState(0);
+  const [navOpen, setNavOpen] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
 
   const go = useCallback((dir: number) => {
@@ -263,13 +267,18 @@ export const Module3Engine: React.FC<{
         </div>
       )}
 
-      <Sidebar current={current} isDarkMode={isDarkMode} onChange={setCurrent} toggleTheme={onThemeToggle} theme={theme} />
+      <DrawerShell open={navOpen} onClose={() => setNavOpen(false)}>
+        <Sidebar current={current} isDarkMode={isDarkMode} onChange={(i) => { setCurrent(i); setNavOpen(false); }} toggleTheme={onThemeToggle} theme={theme} />
+      </DrawerShell>
       
       <div className="flex-1 flex flex-col h-full overflow-hidden relative z-10">
-        <header className="h-20 border-b flex items-center justify-between px-12 z-10" style={{ borderColor: isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }}>
-          <div className="flex flex-col">
-            <span className="text-[10px] font-mono uppercase tracking-[0.4em] font-bold transition-colors duration-500" style={{ color: theme.primary }}>{page.part}</span>
-            <h2 className="text-xl font-bold tracking-tight">{page.label}</h2>
+        <header className="h-16 lg:h-20 border-b flex items-center justify-between px-4 lg:px-12 z-10 gap-3" style={{ borderColor: isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }}>
+          <div className="flex items-center gap-3 min-w-0">
+            <HamburgerButton isDarkMode={isDarkMode} onClick={() => setNavOpen(true)} />
+            <div className="flex flex-col min-w-0">
+              <span className="text-[10px] font-mono uppercase tracking-[0.4em] font-bold transition-colors duration-500" style={{ color: theme.primary }}>{page.part}</span>
+              <h2 className="text-base lg:text-xl font-bold tracking-tight truncate">{page.label}</h2>
+            </div>
           </div>
           <div className="hidden md:flex items-center gap-8">
              <div className="text-right">
@@ -288,34 +297,32 @@ export const Module3Engine: React.FC<{
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
               transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-              className="max-w-7xl mx-auto px-12 py-24"
+              className="max-w-7xl mx-auto px-4 py-10 lg:px-12 lg:py-24"
             >
               <Component isActive={true} isDarkMode={isDarkMode} />
             </motion.div>
           </AnimatePresence>
         </div>
 
-        <footer className="h-24 border-t flex items-center justify-between px-12 z-10" style={{ borderColor: isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }}>
-          <button 
-            disabled={current === 0} 
-            onClick={() => go(-1)} 
-            className={`flex items-center gap-2 px-8 py-3 rounded-2xl font-bold transition-all ${current === 0 ? 'opacity-20 cursor-not-allowed' : 'hover:bg-black/5 active:scale-95'}`}
+        <footer className="h-20 lg:h-24 border-t flex items-center justify-between px-4 lg:px-12 z-10 gap-3" style={{ borderColor: isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }}>
+          <button
+            onClick={() => { if (current === 0) { navigate('/portal'); } else { go(-1); } }}
+            className="flex items-center gap-2 px-4 lg:px-8 py-3 rounded-2xl font-bold transition-all hover:bg-black/5 active:scale-95"
           >
             <ArrowLeft size={18} /> Back
           </button>
-          
+
           <div className="hidden sm:block text-center">
              <span className="text-[10px] font-mono uppercase tracking-widest opacity-30 block mb-1">Up Next</span>
              <span className="text-sm font-bold opacity-70">{current < PAGES.length - 1 ? PAGES[current + 1].label : 'Finish Module'}</span>
           </div>
 
-          <button 
-            onClick={() => go(1)} 
-            disabled={current === PAGES.length - 1} 
-            className={`flex items-center gap-2 px-10 py-3 rounded-2xl font-black text-black transition-all duration-500 active:scale-95 ${current === PAGES.length - 1 ? 'bg-slate-800 text-slate-500' : 'shadow-xl'}`}
-            style={{ 
-              backgroundColor: current === PAGES.length - 1 ? undefined : theme.primary,
-              boxShadow: current === PAGES.length - 1 ? undefined : `0 10px 30px ${theme.primary}33`
+          <button
+            onClick={() => { if (current === PAGES.length - 1) { navigate('/portal'); } else { go(1); } }}
+            className="flex items-center gap-2 px-5 lg:px-10 py-3 rounded-2xl font-black text-black transition-all duration-500 active:scale-95 shadow-xl"
+            style={{
+              backgroundColor: theme.primary,
+              boxShadow: `0 10px 30px ${theme.primary}33`
             }}
           >
             {current === PAGES.length - 1 ? 'Complete' : 'Next Step'} <ArrowRight size={18} />

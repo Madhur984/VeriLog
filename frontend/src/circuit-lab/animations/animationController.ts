@@ -2,7 +2,7 @@
  * animationController.ts
  *
  * Central RAF orchestrator + event bus for all circuit-lab animations.
- * Zero React involvement — pure imperative SVG mutation.
+ * Zero React involvement - pure imperative SVG mutation.
  */
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -102,5 +102,5 @@ class AnimationController {
     }
 }
 
-/** Shared singleton — import this everywhere */
+/** Shared singleton - import this everywhere */
 export const animController = new AnimationController();

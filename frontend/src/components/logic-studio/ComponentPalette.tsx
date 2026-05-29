@@ -1,5 +1,5 @@
 /**
- * ComponentPalette.tsx — Categorized drag-to-add component list
+ * ComponentPalette.tsx - Categorized drag-to-add component list
  */
 
 import { NodeType } from '../../mure/core/SignalNode';

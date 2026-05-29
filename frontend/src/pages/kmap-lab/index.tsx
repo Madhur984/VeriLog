@@ -10,7 +10,7 @@ import { QuickActions } from './components/QuickActions';
 import './kmap-lab.css';
 
 /**
- * KMapLab — formerly the standalone Next.js k-map app, now an in-frontend route.
+ * KMapLab - formerly the standalone Next.js k-map app, now an in-frontend route.
  * Mounted at `/kmap-lab` (KMapLabPage wraps this) and inside ModuleFour's Lab section.
  */
 export const KMapLab: React.FC = () => {

@@ -4,8 +4,8 @@
  * Models a SPST switch and digital voltage threshold classifier.
  *
  * Features:
- *   - switchOn / toggle — binary ON/OFF
- *   - inputVoltage (0–5V) — for threshold demo slider
+ *   - switchOn / toggle - binary ON/OFF
+ *   - inputVoltage (0-5V) - for threshold demo slider
  *   - voltageClass: 'LOW' | 'HIGH' | 'UNDEFINED'
  *   - Square wave buffer for oscilloscope
  *   - Noise immunity: digital output stays stable if noise < margin

@@ -1,5 +1,5 @@
 /**
- * VoltMonkeyPanel.tsx — Floating hint panel with conversational UI
+ * VoltMonkeyPanel.tsx - Floating hint panel with conversational UI
  */
 
 import { useState, useCallback, useEffect } from 'react';

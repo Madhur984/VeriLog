@@ -417,7 +417,7 @@ const ModuleContent: React.FC<ModuleContentProps> = ({ activeSection }) => {
                             <div className="relative z-10 max-w-xl">
                                 <p className="text-sky-600 font-mono text-[10px] uppercase tracking-[0.3em] mb-4 font-black">Core Invariant</p>
                                 <p className="text-2xl font-bold text-slate-800 leading-normal">
-                                    "Did you know? In high-speed digital design, return paths are not just wires—they are electromagnetic wave-guides. Master the loop, master the system."
+                                    "Did you know? In high-speed digital design, return paths are not just wires-they are electromagnetic wave-guides. Master the loop, master the system."
                                 </p>
                             </div>
                         </div>

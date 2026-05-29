@@ -25,7 +25,7 @@ export const AboutHero: React.FC = () => {
         }}
       />
 
-      {/* Ambient glow — very subtle */}
+      {/* Ambient glow - very subtle */}
       <div
         className="absolute top-1/2 left-1/2 -translate-x-1/2
                    -translate-y-1/2 w-[600px] h-[600px]
@@ -35,7 +35,7 @@ export const AboutHero: React.FC = () => {
         }}
       />
 
-      {/* Oscilloscope scan line — slow horizontal sweep, ties to LogicTraceScope below */}
+      {/* Oscilloscope scan line - slow horizontal sweep, ties to LogicTraceScope below */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <motion.div
           className="absolute left-0 right-0 h-px"
@@ -62,7 +62,7 @@ export const AboutHero: React.FC = () => {
           </span>
         </motion.div>
 
-        {/* Main headline — 3 lines, staggered */}
+        {/* Main headline - 3 lines, staggered */}
         <h1 className="block font-bold leading-[0.95] tracking-[-0.04em]"
           style={{ fontSize: 'clamp(48px, 8vw, 80px)' }}
         >
@@ -96,7 +96,7 @@ export const AboutHero: React.FC = () => {
             style={{ color: '#94A3B8' }}
           >
             Most ECE students in India are here because CS cutoffs were
-            too high — or a branch change didn't go as planned.
+            too high - or a branch change didn't go as planned.
           </p>
           <p
             className="text-lg leading-relaxed max-w-xl mx-auto"

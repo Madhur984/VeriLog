@@ -1,5 +1,5 @@
 /**
- * useTransitionController.tsx  (TSX — contains JSX in TransitionProvider)
+ * useTransitionController.tsx  (TSX - contains JSX in TransitionProvider)
  *
  * Listens to React Router location changes.
  * Drives TransitionOverlay visibility via a shared TransitionContext.
@@ -7,7 +7,7 @@
  * Architecture:
  *   - 2 total React renders per transition (boolean on + boolean off)
  *   - Message passed via ref (zero re-renders for message change)
- *   - Overlay CSS handles all timing — no RAF, no setTimeout chains
+ *   - Overlay CSS handles all timing - no RAF, no setTimeout chains
  *   - Route-to-message map is fully extensible per level/module
  */
 
@@ -67,7 +67,7 @@ interface TransitionProviderProps {
 
 /**
  * Must be rendered inside <BrowserRouter> to access useLocation().
- * Wraps the entire route tree — mounted once, never unmounts.
+ * Wraps the entire route tree - mounted once, never unmounts.
  */
 export function TransitionProvider({ children }: TransitionProviderProps) {
     const location = useLocation();
@@ -89,7 +89,7 @@ export function TransitionProvider({ children }: TransitionProviderProps) {
         if (prevPath.current === location.pathname) return;
         prevPath.current = location.pathname;
 
-        // Update message via ref — zero re-renders
+        // Update message via ref - zero re-renders
         messageRef.current = getMessageForRoute(location.pathname);
 
         // Clear any pending timer (handles rapid navigation)

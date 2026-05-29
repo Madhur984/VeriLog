@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 
 /**
  * The landing page's single signature motif: a seamless, slowly-scrolling
- * digital clock waveform ("one bit at a time"). Lightweight — one looping
+ * digital clock waveform ("one bit at a time"). Lightweight - one looping
  * transform, no per-frame JS. Themeable so it works on both light and dark bands.
  */
 export const SignalWave = ({

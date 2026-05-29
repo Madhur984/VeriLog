@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 
 /**
- * ElectricParticleField.tsx — 60FPS Cursor-Reactive Background
+ * ElectricParticleField.tsx - 60FPS Cursor-Reactive Background
  * 
  * Features:
  * - High-performance HTML5 Canvas rendering

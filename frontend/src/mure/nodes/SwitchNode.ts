@@ -1,5 +1,5 @@
 /**
- * mure/nodes/SwitchNode.ts — Toggle Switch
+ * mure/nodes/SwitchNode.ts - Toggle Switch
  *
  * ON: passes input to output.
  * OFF: outputs 0V / LOW.

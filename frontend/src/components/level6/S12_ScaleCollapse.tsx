@@ -31,7 +31,7 @@ export const S12_ScaleCollapse: React.FC<{ isActive: boolean }> = ({ isActive })
               Complexity has surpassed human perception. Zoom into the density that forced the birth of <span className="text-plasma-cyan font-bold italic underline underline-offset-8 decoration-plasma-cyan/30">Hardware Description Languages.</span>
             </p>
             <p className="body-text text-base text-white/50 leading-relaxed text-left">
-               As we transitioned from the 1970s to the 2020s, the number of transistors on a single chip grew by ten orders of magnitude. Drawing individual gates is no longer an option—it is a physical impossibility. We now describe abstract behavior and let synthesis engines build the metal.
+               As we transitioned from the 1970s to the 2020s, the number of transistors on a single chip grew by ten orders of magnitude. Drawing individual gates is no longer an option-it is a physical impossibility. We now describe abstract behavior and let synthesis engines build the metal.
             </p>
 
             <div className="p-10 rounded-[40px] bg-white/[0.02] border border-white/5 flex flex-col gap-8 items-start shadow-xl">

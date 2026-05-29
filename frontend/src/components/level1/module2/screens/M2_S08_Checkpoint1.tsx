@@ -6,7 +6,7 @@ import { WaveCanvas } from '../shared/WaveCanvas';
 
 const OPTIONS = [
   { id: 'a', label: 'Signal A', correct: true, hint: 'This is the smooth analog (continuous) signal.' },
-  { id: 'b', label: 'Signal B', correct: false, hint: 'Signal B is digital — it uses discrete steps.' },
+  { id: 'b', label: 'Signal B', correct: false, hint: 'Signal B is digital - it uses discrete steps.' },
 ];
 
 export const M2_S08_Checkpoint1: React.FC<M2ScreenProps> = ({ triggerHaptic, onNext }) => {

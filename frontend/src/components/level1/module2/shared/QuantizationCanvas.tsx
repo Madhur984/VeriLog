@@ -2,9 +2,9 @@
  * QuantizationCanvas.tsx
  * Physics-accurate 3-layer quantization visualization.
  *
- * Layer 1 — Original Signal (faint): Smooth sinusoidal ground truth
- * Layer 2 — Quantized Signal (bold sky-blue): Stepped approximation at 2^bits levels
- * Layer 3 — Error Bars (orange): Vertical lines showing quantization error
+ * Layer 1 - Original Signal (faint): Smooth sinusoidal ground truth
+ * Layer 2 - Quantized Signal (bold sky-blue): Stepped approximation at 2^bits levels
+ * Layer 3 - Error Bars (orange): Vertical lines showing quantization error
  *
  * Quantization math:
  *   levels = 2^bits
@@ -15,7 +15,7 @@ import { useRef, useEffect, memo } from 'react';
 import { T } from '../types';
 
 interface QuantizationCanvasProps {
-  bits: number;        // Bit depth 1–8
+  bits: number;        // Bit depth 1-8
   frequency?: number;  // Signal frequency
   height?: number;
   showErrorBars?: boolean;

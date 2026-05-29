@@ -1,12 +1,12 @@
 /**
  * components/oscilloscope/OscilloscopeV2.tsx
  *
- * Upgraded oscilloscope — 4-channel, trigger detection, dual cursors.
+ * Upgraded oscilloscope - 4-channel, trigger detection, dual cursors.
  *
  * Architecture:
  *   - Props pass raw Float32Array voltages (from SignalRecorder)
  *   - Renders via 2D canvas (WebGL upgrade path noted in comments)
- *   - requestAnimationFrame loop — never tied to React re-renders
+ *   - requestAnimationFrame loop - never tied to React re-renders
  *   - Cursor measurements: delta-T and delta-V readouts
  */
 

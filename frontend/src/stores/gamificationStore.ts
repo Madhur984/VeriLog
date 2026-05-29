@@ -1,5 +1,5 @@
 /**
- * gamificationStore.ts — Unified Progression & Rewards Engine (v2)
+ * gamificationStore.ts - Unified Progression & Rewards Engine (v2)
  * 
  * Consolidates user identity, XP (SIP), streaks, economy, and skill tree progress.
  * Acts as the single source of truth for the platform's gamification layer.

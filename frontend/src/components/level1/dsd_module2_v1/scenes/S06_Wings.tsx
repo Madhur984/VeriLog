@@ -64,7 +64,7 @@ export const S06_Wings: React.FC<Props> = ({ isActive, isDarkMode }) => {
         <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>The Wings · Powers of Two</h2>
         <p className={`text-base max-w-3xl ${subText}`}>
           Madhur upgrades premium guests by grouping rooms into <strong>Wings</strong>. But his HVAC system only
-          comes in standard capacities — strictly integer <em>powers of two</em>. Bigger wings eliminate more
+          comes in standard capacities - strictly integer <em>powers of two</em>. Bigger wings eliminate more
           variables, so the goal is always <span className="text-emerald-300 font-bold">go as large as possible</span>.
         </p>
       </section>
@@ -146,7 +146,7 @@ export const S06_Wings: React.FC<Props> = ({ isActive, isDarkMode }) => {
           </div>
           <p className={`text-[11px] mt-5 ${subText}`}>
             L-shapes don&apos;t share enough walls. Diagonals share none. Zig-zags break adjacency.
-            And groups of 3, 5, 6 etc. aren&apos;t powers of two — HVAC won&apos;t install them.
+            And groups of 3, 5, 6 etc. aren&apos;t powers of two - HVAC won&apos;t install them.
           </p>
         </motion.div>
       </div>

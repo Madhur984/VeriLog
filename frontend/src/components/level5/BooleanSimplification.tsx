@@ -74,7 +74,7 @@ export const BooleanSimplification: React.FC<Props> = ({ variables, groups, onCo
         <div className="flex flex-col gap-8 px-10 max-w-4xl mx-auto font-mono w-full">
             <div className="text-center mb-4">
                 <span className="font-mono text-[9px] tracking-[0.25em] uppercase text-cyan-500 font-black mb-2 block">
-                    Scene 5.5 — Simplification
+                    Scene 5.5 - Simplification
                 </span>
                 <h2 className={`text-3xl font-black ${isDarkMode ? 'text-white' : 'text-slate-900'} mb-2`}>
                     Deriving the Expression

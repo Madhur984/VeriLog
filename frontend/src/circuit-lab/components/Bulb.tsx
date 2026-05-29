@@ -51,7 +51,7 @@ export function Bulb({ component, isLive, onPointerDown, isDragging,
                 filter={isLive ? 'url(#bulbGlow)' : undefined}
             />
 
-            {/* Bulb glass dome — teardrop shape */}
+            {/* Bulb glass dome - teardrop shape */}
             <path
                 d="M 0 -48 C -22 -48 -26 -28 -24 -12 C -22 2 -14 8 0 10 C 14 8 22 2 24 -12 C 26 -28 22 -48 0 -48 Z"
                 fill={isLive ? 'rgba(255,200,87,0.85)' : '#0e2336'}

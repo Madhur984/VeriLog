@@ -1,5 +1,5 @@
 /**
- * canvasState — mutable object read directly by the RAF loop.
+ * canvasState - mutable object read directly by the RAF loop.
  * Updated without triggering React re-renders for high-freq data.
  */
 export const canvasState = {

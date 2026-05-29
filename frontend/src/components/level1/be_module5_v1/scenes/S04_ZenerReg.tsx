@@ -17,7 +17,7 @@ export const S04_ZenerReg: React.FC<Props> = ({ isActive, isDarkMode }) => {
   const [rl, setRl] = useState(1000);          // load resistor (Ω)
 
   const computed = useMemo(() => {
-    // If V_source < V_Z, Zener doesn't conduct — output = source · divider (just R_L)
+    // If V_source < V_Z, Zener doesn't conduct - output = source · divider (just R_L)
     if (vsource < VZ) {
       const vOut = vsource * (rl / (rl + rs));
       return { vOut, iL: vOut / rl * 1000, iZ: 0, regulated: false };
@@ -66,7 +66,7 @@ export const S04_ZenerReg: React.FC<Props> = ({ isActive, isDarkMode }) => {
         <p className={`text-sm ${subText} leading-relaxed`}>
           Picture a <strong>bucket with a small hole on the side</strong>. You pour water from the
           top. The water rises… until it reaches the hole. After that, no matter how fast you pour,
-          the water level stays at the hole — extra water just spills out the side.
+          the water level stays at the hole - extra water just spills out the side.
         </p>
         <ul className={`mt-3 text-sm ${subText} space-y-1 pl-5 list-disc`}>
           <li><span className="font-mono text-amber-300">V_in</span> = how fast you pour.</li>
@@ -129,7 +129,7 @@ export const S04_ZenerReg: React.FC<Props> = ({ isActive, isDarkMode }) => {
             {/* Node */}
             <circle cx="340" cy="70" r="3" fill="#22c55e" />
 
-            {/* Zener branch — vertical Zener, cathode at top (connects to +V), anode at bottom (ground) */}
+            {/* Zener branch - vertical Zener, cathode at top (connects to +V), anode at bottom (ground) */}
             <line x1="340" y1="70" x2="340" y2="118" stroke={regulated ? '#ef4444' : '#475569'} strokeWidth="2" />
             <g transform="translate(340, 140)">
               {(() => {
@@ -137,9 +137,9 @@ export const S04_ZenerReg: React.FC<Props> = ({ isActive, isDarkMode }) => {
                 const fill = regulated ? 'rgba(239,68,68,0.22)' : 'rgba(100,116,139,0.10)';
                 return (
                   <>
-                    {/* Triangle pointing UP — apex (cathode) at top, base (anode) at bottom */}
+                    {/* Triangle pointing UP - apex (cathode) at top, base (anode) at bottom */}
                     <polygon points="-13,12 13,12 0,-10" fill={fill} stroke={c} strokeWidth="2" strokeLinejoin="round" />
-                    {/* Z-shaped cathode bar: horizontal stroke at y=-12 with bent ends — left bends DOWN, right bends UP */}
+                    {/* Z-shaped cathode bar: horizontal stroke at y=-12 with bent ends - left bends DOWN, right bends UP */}
                     <path d="M -16 -6 L -16 -12 L 16 -12 L 16 -18"
                           stroke={c} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
                     <text x="-22" y="4" fontSize="10" fontFamily="monospace" fill="#ef4444" fontWeight="bold">Z</text>
@@ -245,7 +245,7 @@ export const S04_ZenerReg: React.FC<Props> = ({ isActive, isDarkMode }) => {
             }}
           >
             <Gauge size={14} />
-            {regulated ? 'V_in ≥ V_Z — bodyguard active' : 'V_in < V_Z — Zener idle, load unprotected'}
+            {regulated ? 'V_in ≥ V_Z - bodyguard active' : 'V_in < V_Z - Zener idle, load unprotected'}
           </div>
         </div>
       </motion.div>
@@ -257,7 +257,7 @@ export const S04_ZenerReg: React.FC<Props> = ({ isActive, isDarkMode }) => {
       >
         <strong className="text-rose-300">Kirchhoff check:</strong> total series current splits at
         the node. Load takes <span className="font-mono">I_L = V_Z / R_L</span>; Zener absorbs
-        whatever&apos;s left. If V_in rises, total current rises, Zener absorbs more — load
+        whatever&apos;s left. If V_in rises, total current rises, Zener absorbs more - load
         voltage doesn&apos;t budge.
       </motion.div>
 
@@ -273,7 +273,7 @@ export const S04_ZenerReg: React.FC<Props> = ({ isActive, isDarkMode }) => {
           <li>Series current <span className="font-mono">I_S = (V_in − V_Z) / R_S = {Math.max(0, ((vsource - VZ) / rs) * 1000).toFixed(2)} mA</span>.</li>
           <li>Load draws <span className="font-mono">I_L = V_Z / R_L = {iL.toFixed(2)} mA</span>.</li>
           <li>Zener absorbs the difference: <span className="font-mono">I_Z = I_S − I_L = {iZ.toFixed(2)} mA</span>.</li>
-          <li>Power dissipated in Zener: <span className="font-mono">P_Z = V_Z · I_Z = {(VZ * iZ / 1000).toFixed(3)} W</span> — must stay below the diode&apos;s rated power.</li>
+          <li>Power dissipated in Zener: <span className="font-mono">P_Z = V_Z · I_Z = {(VZ * iZ / 1000).toFixed(3)} W</span> - must stay below the diode&apos;s rated power.</li>
         </ol>
       </motion.div>
 
@@ -298,7 +298,7 @@ export const S04_ZenerReg: React.FC<Props> = ({ isActive, isDarkMode }) => {
         >
           <div className="font-mono text-[10px] uppercase tracking-widest text-amber-300 mb-2">Common pitfall</div>
           <div className={`text-sm ${subText}`}>
-            If <span className="font-mono">V_in &lt; V_Z</span>, the Zener does nothing — your load
+            If <span className="font-mono">V_in &lt; V_Z</span>, the Zener does nothing - your load
             voltage drops with the source. Try pulling the V_in slider below {VZ} V and watch the
             output collapse.
           </div>

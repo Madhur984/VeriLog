@@ -1,5 +1,5 @@
 /**
- * debugMissions.ts — Debug mission definitions
+ * debugMissions.ts - Debug mission definitions
  *
  * Each mission describes a broken circuit and the expected fix.
  */
@@ -54,10 +54,10 @@ export const DEBUG_MISSIONS: DebugMission[] = [
         description: 'An AND gate should output HIGH when both inputs are HIGH, but it\'s always outputting LOW.',
         symptom: 'AND gate output stays LOW regardless of inputs.',
         hint: 'Check what\'s connected to the AND gate inputs. Are both inputs receiving the correct signals?',
-        solution: 'One input is connected to a Constant LOW — change it to Constant HIGH.',
+        solution: 'One input is connected to a Constant LOW - change it to Constant HIGH.',
         nodes: [
             { type: NodeType.CONSTANT, params: { value: true }, label: 'Input A (HIGH)' },
-            { type: NodeType.CONSTANT, params: { value: false }, label: 'Input B (LOW — bug!)' },
+            { type: NodeType.CONSTANT, params: { value: false }, label: 'Input B (LOW - bug!)' },
             { type: NodeType.AND, label: 'AND Gate' },
             { type: NodeType.LED, label: 'Output LED' },
         ],
@@ -80,7 +80,7 @@ export const DEBUG_MISSIONS: DebugMission[] = [
         hint: 'Check the clock period parameter. What value would produce 1MHz?',
         solution: 'Change the clock period from 100,000ns to 1,000ns (1μs = 1MHz).',
         nodes: [
-            { type: NodeType.CLOCK, params: { periodNs: 100_000 }, label: 'Clock (100KHz — bug!)' },
+            { type: NodeType.CLOCK, params: { periodNs: 100_000 }, label: 'Clock (100KHz - bug!)' },
             { type: NodeType.NOT, label: 'Inverter' },
             { type: NodeType.LED, label: 'Output' },
         ],

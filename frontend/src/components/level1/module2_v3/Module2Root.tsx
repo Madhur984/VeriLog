@@ -364,7 +364,7 @@ export const Module2Root: React.FC = () => {
                         <h2 className={`text-3xl font-extrabold ${isDarkMode ? 'text-orange-100' : 'text-gray-900'}`}>Sampling: The <span className="text-orange-500">Blink</span></h2>
                         <p className={`text-base leading-relaxed ${isDarkMode ? 'text-orange-300/60' : 'text-gray-600'}`}>
                             Think of a movie camera. It takes 24 photos per second. If you move faster than that, your motion looks like a blur or a "ghost".
-                            Sampling is the temporal "Blink" of the digital system—the frequency at which we freeze reality into a snapshot.
+                            Sampling is the temporal "Blink" of the digital system-the frequency at which we freeze reality into a snapshot.
                         </p>
                         
                         <div className={`p-8 rounded-3xl border ${isDarkMode ? 'bg-orange-500/5 border-orange-500/20' : 'bg-orange-50 border-orange-200'}`}>
@@ -394,7 +394,7 @@ export const Module2Root: React.FC = () => {
                 <div className="flex flex-col gap-4">
                     <h2 className={`text-3xl font-extrabold ${isDarkMode ? 'text-orange-100' : 'text-gray-900'}`}>Scaling the <span className="text-orange-500">Peak</span></h2>
                     <p className={`text-base leading-relaxed ${isDarkMode ? 'text-orange-300/60' : 'text-gray-600'}`}>
-                        The math is simple, but the consequences are absolute. If you fail the 2x rule, reality "Aliases"—it creates artifacts that weren't there in the original signal.
+                        The math is simple, but the consequences are absolute. If you fail the 2x rule, reality "Aliases"-it creates artifacts that weren't there in the original signal.
                     </p>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -418,7 +418,7 @@ export const Module2Root: React.FC = () => {
                 <div className="flex flex-col gap-4">
                     <h2 className={`text-3xl font-extrabold ${isDarkMode ? 'text-orange-100' : 'text-gray-900'}`}>Quantization: The <span className="text-orange-500">Ruler</span></h2>
                     <p className={`text-base leading-relaxed ${isDarkMode ? 'text-orange-300/60' : 'text-gray-600'}`}>
-                        If sampling is <strong>when</strong> we look, quantization is <strong>what</strong> we see. It’s the precision of our measurement—how many "rungs" are on our ladder of volume.
+                        If sampling is <strong>when</strong> we look, quantization is <strong>what</strong> we see. It’s the precision of our measurement-how many "rungs" are on our ladder of volume.
                     </p>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -428,7 +428,7 @@ export const Module2Root: React.FC = () => {
                         <p className="text-xs opacity-60 leading-relaxed">
                             A computer can't store "about 5 volts". It must choose between 5.0 and 5.1. 
                             <strong>Bit Depth</strong> determines the number of choices. 
-                            Increasing bits doesn't make the sound "louder"—it makes the quiet parts "cleaner".
+                            Increasing bits doesn't make the sound "louder"-it makes the quiet parts "cleaner".
                         </p>
                         <div className="mt-4 flex gap-4">
                             <div className="flex-1 p-4 rounded-xl bg-orange-500/10 border border-orange-500/20 text-center">
@@ -444,7 +444,7 @@ export const Module2Root: React.FC = () => {
                      <div className="p-10 rounded-3xl bg-orange-500 text-black space-y-4 shadow-xl">
                         <h3 className="text-xl font-black uppercase italic">Quantization Noise</h3>
                         <p className="text-xs font-bold leading-relaxed opacity-80">
-                            When we round a measurement, we lose the "in-between" data. This lost data doesn't just disappear—it manifests as a grainy hiss called Quantization Noise.
+                            When we round a measurement, we lose the "in-between" data. This lost data doesn't just disappear-it manifests as a grainy hiss called Quantization Noise.
                         </p>
                         <div className="p-4 bg-black rounded-xl font-mono text-[9px] space-y-1">
                             <div className="flex justify-between"><span>Micro-Reality:</span><span className="text-orange-500">0.50032v</span></div>
@@ -492,7 +492,7 @@ export const Module2Root: React.FC = () => {
                 <div className="space-y-8">
                      <h2 className={`text-4xl font-extrabold ${isDarkMode ? 'text-orange-100' : 'text-gray-900'}`}>Why <span className="text-orange-500">Digital</span> Wins</h2>
                      <p className={`text-base leading-relaxed ${isDarkMode ? 'text-orange-300/60' : 'text-gray-600'}`}>
-                        Analog is like whispering a secret through 10 people—it gets distorted. 
+                        Analog is like whispering a secret through 10 people-it gets distorted. 
                         Digital is like holding up cards with "1" or "0". Even if the cards are a bit dirty, you can still see the numbers.
                      </p>
                      <div className="flex gap-4">

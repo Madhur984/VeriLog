@@ -32,7 +32,7 @@ export const OptimizationComparison: React.FC<{ onComplete: () => void; isDarkMo
         <div className="flex flex-col gap-8 w-full max-w-6xl mx-auto px-10">
             <div className="text-center mb-4">
                 <span className="font-mono text-[9px] tracking-[0.25em] uppercase text-emerald-500 font-black mb-2 block">
-                    Scene 5.6 — The Power of Optimization
+                    Scene 5.6 - The Power of Optimization
                 </span>
                 <h2 className={`text-3xl font-black ${isDarkMode ? 'text-white' : 'text-slate-900'} mb-3`}>
                     From 11 Gates to 0

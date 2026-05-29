@@ -28,7 +28,7 @@ export const S12_Masterclass: React.FC<Props> = ({ isActive, isDarkMode }) => {
       Icon: Compass, title: 'The Corridors',
       tag: 'TORUS',
       headline: 'Always check the edges and corners.',
-      body: 'The map curls into a torus — left edge meets right, top meets bottom. The four absolute corners cluster into one wing. Many of the cleanest simplifications hide on the wrap-arounds.',
+      body: 'The map curls into a torus - left edge meets right, top meets bottom. The four absolute corners cluster into one wing. Many of the cleanest simplifications hide on the wrap-arounds.',
       color: '#a78bfa',
     },
   ];
@@ -107,7 +107,7 @@ export const S12_Masterclass: React.FC<Props> = ({ isActive, isDarkMode }) => {
       >
         <div className="font-mono text-[10px] uppercase tracking-widest text-amber-400 mb-3">Final thought</div>
         <p className={`text-lg leading-relaxed ${textColor}`}>
-          Karnaugh maps aren&apos;t a trick — they&apos;re a <strong className="text-amber-300">change of perspective</strong>.
+          Karnaugh maps aren&apos;t a trick - they&apos;re a <strong className="text-amber-300">change of perspective</strong>.
           Once you see Boolean terms as rooms and adjacency as architecture, simplification is just{' '}
           <strong>finding the biggest rectangles</strong>. The hostel was the textbook all along.
         </p>

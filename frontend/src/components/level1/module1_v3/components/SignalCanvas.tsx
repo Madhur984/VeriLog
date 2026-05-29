@@ -8,9 +8,9 @@ interface SignalCanvasProps { className?: string; }
 // ─── SCENE COLOR EVOLUTION ────────────────────────────────────────────────────
 function getSignalColor(scene: number, entryFrames: number): string {
   if (entryFrames < 12)  return '#BAE6FD'; // soft entry handoff
-  if (scene === 0)       return '#64748B'; // S00 — dead/desaturated
-  if (scene === 12)      return '#BAE6FD'; // S12 — final, brightest
-  return '#7DD3FC';                         // S01–S11 — signal-core
+  if (scene === 0)       return '#64748B'; // S00 - dead/desaturated
+  if (scene === 12)      return '#BAE6FD'; // S12 - final, brightest
+  return '#7DD3FC';                         // S01-S11 - signal-core
 }
 
 export const SignalCanvas: React.FC<SignalCanvasProps> = ({ className }) => {
@@ -80,7 +80,7 @@ export const SignalCanvas: React.FC<SignalCanvasProps> = ({ className }) => {
 
       snapScale += ((s.stability > 0.85 ? 0.93 : 1.0) - snapScale) * 0.15;
 
-      // Pure black clear — zero color accumulation
+      // Pure black clear - zero color accumulation
       if (s.phase === 'ACTIVE') {
         ctx.fillStyle = 'rgba(0,0,0,0.13)';
         ctx.fillRect(0, 0, w, h);

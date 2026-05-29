@@ -28,7 +28,7 @@ export const S07_BuildPOS: React.FC<Props> = ({ isActive, isDarkMode }) => {
           </h2>
           <p className={`text-base ${subText}`}>
             A single barricade only blocks one disaster. To survive every bad day, Ben must pass
-            through <strong>every</strong> barricade — link them with AND. The chain is the
+            through <strong>every</strong> barricade - link them with AND. The chain is the
             canonical POS.
           </p>
         </section>
@@ -37,7 +37,7 @@ export const S07_BuildPOS: React.FC<Props> = ({ isActive, isDarkMode }) => {
           transition={{ delay: 0.1 }}
           className="rounded-3xl overflow-hidden border border-white/10" style={{ background: '#fef9f0' }}
         >
-          <img src="/images/sketchbook/p09.webp" alt="Sketchbook — chain of barricades for POS" className="w-full block" />
+          <img src="/images/sketchbook/p09.webp" alt="Sketchbook - chain of barricades for POS" className="w-full block" />
         </motion.div>
       </div>
 
@@ -88,7 +88,7 @@ export const S07_BuildPOS: React.FC<Props> = ({ isActive, isDarkMode }) => {
           >
             <Construction size={20} className="text-amber-400" />
             <span className="font-mono text-xs uppercase tracking-widest text-amber-400 font-black">
-              The mandatory checkpoint chain — all walls must hold
+              The mandatory checkpoint chain - all walls must hold
             </span>
           </motion.div>
         </div>
@@ -132,7 +132,7 @@ export const S07_BuildPOS: React.FC<Props> = ({ isActive, isDarkMode }) => {
           <div className={`font-mono text-[10px] uppercase tracking-widest mb-3 ${
             isDarkMode ? 'text-amber-400' : 'text-amber-700'
           }`}>
-            Shorthand notation — what you should actually write
+            Shorthand notation - what you should actually write
           </div>
           <div className={`font-mono text-3xl md:text-4xl font-black ${
             isDarkMode ? 'text-amber-400' : 'text-amber-700'

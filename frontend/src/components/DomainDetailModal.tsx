@@ -183,9 +183,9 @@ export const DomainDetailModal: React.FC<DomainDetailModalProps> = ({ domain, on
                               </div>
                            </div>
                            <div className="space-y-2">
-                              <p className="text-xs text-slate-300">USA: $140k – $220k</p>
-                              <p className="text-xs text-slate-300">GER: €65k – €90k</p>
-                              <p className="text-xs text-slate-300">SGP: SGD 80k – 130k</p>
+                              <p className="text-xs text-slate-300">USA: $140k - $220k</p>
+                              <p className="text-xs text-slate-300">GER: €65k - €90k</p>
+                              <p className="text-xs text-slate-300">SGP: SGD 80k - 130k</p>
                            </div>
                         </div>
                      </div>

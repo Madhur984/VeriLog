@@ -1,5 +1,5 @@
 // Maps scene number to signal visual state.
-// Varies opacity, lineWidth, intensity — NOT color hue.
+// Varies opacity, lineWidth, intensity - NOT color hue.
 export interface MindState {
   opacity: number;
   lineWidth: number;

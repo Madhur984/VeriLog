@@ -16,7 +16,7 @@ const ConductorArt: React.FC = () => (
     {/* tap */}
     <rect x="100" y="30" width="40" height="40" rx="4" fill="#475569" />
     <rect x="118" y="20" width="6" height="12" fill="#94a3b8" />
-    {/* water gushing — multiple streams */}
+    {/* water gushing - multiple streams */}
     {[80, 100, 120, 140, 160].map((x, i) => (
       <path
         key={i}
@@ -129,7 +129,7 @@ const CARDS: Card[] = [
     Art: SemiArt,
     title: 'SEMICONDUCTORS',
     tag: 'The Controllable',
-    desc: 'A valve we can open or close. Conductivity sits exactly between conductors and insulators — and we dictate when they play.',
+    desc: 'A valve we can open or close. Conductivity sits exactly between conductors and insulators - and we dictate when they play.',
     facts: ['Si, Ge, GaAs', 'Negative temperature coefficient', 'Heart of every chip'],
     color: '#fb923c',
   },
@@ -156,7 +156,7 @@ export const S02_QuestForControl: React.FC<Props> = ({ isActive, isDarkMode }) =
         </div>
         <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>The Quest for Control</h2>
         <p className={`text-base max-w-3xl ${subText}`}>
-          Every electronic device on Earth comes down to one quest — the quest for{' '}
+          Every electronic device on Earth comes down to one quest - the quest for{' '}
           <strong>control</strong> over electric current. Three families of materials offer three
           different answers.
         </p>
@@ -198,8 +198,8 @@ export const S02_QuestForControl: React.FC<Props> = ({ isActive, isDarkMode }) =
       >
         <div className="font-mono text-[10px] uppercase tracking-widest text-orange-400 mb-2">The thesis</div>
         <p className={`text-base leading-relaxed ${textColor}`}>
-          Conductors are too generous. Insulators are too strict. The sweet spot — and the entire reason
-          modern electronics exists — is the <strong className="text-orange-300">semiconductor</strong>: a
+          Conductors are too generous. Insulators are too strict. The sweet spot - and the entire reason
+          modern electronics exists - is the <strong className="text-orange-300">semiconductor</strong>: a
           material we can flip between conducting and not conducting on demand.
         </p>
       </motion.div>

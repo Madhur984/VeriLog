@@ -1,5 +1,5 @@
 /**
- * M3LabEngine.tsx — Binary Awakening Standalone (Full Port from m_3 branch)
+ * M3LabEngine.tsx - Binary Awakening Standalone (Full Port from m_3 branch)
  * ─────────────────────────────────────────────────────────────
  * Complete, standalone laboratory engine for Module 3.
  */

@@ -34,7 +34,7 @@ interface Pulse {
 // ── Constants ─────────────────────────────────────────────────────────────────
 
 const NODE_COUNT = 55;
-const CONNECTION_DIST = 160;  // px — max edge draw distance
+const CONNECTION_DIST = 160;  // px - max edge draw distance
 const CURSOR_ATTRACT_DIST = 180;
 const CURSOR_ATTRACT_FORCE = 0.018;
 const DRIFT = 0.3;  // max random velocity

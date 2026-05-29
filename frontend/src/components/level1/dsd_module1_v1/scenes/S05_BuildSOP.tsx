@@ -27,7 +27,7 @@ export const S05_BuildSOP: React.FC<Props> = ({ isActive, isDarkMode }) => {
             Building the Canonical Sum of Products
           </h2>
           <p className={`text-base ${subText}`}>
-            A snapshot is just one happy moment — Ben needs <em>any</em> of them to call the day a
+            A snapshot is just one happy moment - Ben needs <em>any</em> of them to call the day a
             win. Drop every minterm into a basket and OR them together. The basket itself is the
             canonical SOP.
           </p>
@@ -37,7 +37,7 @@ export const S05_BuildSOP: React.FC<Props> = ({ isActive, isDarkMode }) => {
           transition={{ delay: 0.1 }}
           className="rounded-3xl overflow-hidden border border-white/10" style={{ background: '#fef9f0' }}
         >
-          <img src="/images/sketchbook/p06.webp" alt="Sketchbook — gathering minterms in a basket" className="w-full block" />
+          <img src="/images/sketchbook/p06.webp" alt="Sketchbook - gathering minterms in a basket" className="w-full block" />
         </motion.div>
       </div>
 
@@ -83,7 +83,7 @@ export const S05_BuildSOP: React.FC<Props> = ({ isActive, isDarkMode }) => {
           >
             <ShoppingBasket size={20} className="text-emerald-400" />
             <span className="font-mono text-xs uppercase tracking-widest text-emerald-400 font-black">
-              The basket — gather any happy snapshot
+              The basket - gather any happy snapshot
             </span>
           </motion.div>
         </div>
@@ -127,7 +127,7 @@ export const S05_BuildSOP: React.FC<Props> = ({ isActive, isDarkMode }) => {
           <div className={`font-mono text-[10px] uppercase tracking-widest mb-3 ${
             isDarkMode ? 'text-emerald-400' : 'text-emerald-700'
           }`}>
-            Shorthand notation — what you should actually write
+            Shorthand notation - what you should actually write
           </div>
           <div className={`font-mono text-3xl md:text-4xl font-black ${
             isDarkMode ? 'text-emerald-400' : 'text-emerald-700'
@@ -141,7 +141,7 @@ export const S05_BuildSOP: React.FC<Props> = ({ isActive, isDarkMode }) => {
         Sum of Products literally means a <strong>collection (+)</strong> of <strong>specific scenarios (·)</strong>.
       </p>
 
-      {/* Boolean algebra primer — postulates that justify the canonical form */}
+      {/* Boolean algebra primer - postulates that justify the canonical form */}
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.7 }}
@@ -152,7 +152,7 @@ export const S05_BuildSOP: React.FC<Props> = ({ isActive, isDarkMode }) => {
         </div>
         <div className="grid md:grid-cols-3 gap-3">
           {[
-            { law: 'X + 0 = X',     title: 'Identity (OR)',       why: 'OR-ing a 0 changes nothing — so missing minterms add no error.' },
+            { law: 'X + 0 = X',     title: 'Identity (OR)',       why: 'OR-ing a 0 changes nothing - so missing minterms add no error.' },
             { law: 'X · 1 = X',     title: 'Identity (AND)',      why: 'A "true" condition contributes only itself.' },
             { law: 'X + X̄ = 1',     title: 'Complement (OR)',     why: 'Every variable is either itself or its complement.' },
             { law: 'X · X̄ = 0',     title: 'Complement (AND)',    why: 'Cannot be true and false simultaneously.' },

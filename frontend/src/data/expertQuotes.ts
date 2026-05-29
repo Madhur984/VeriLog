@@ -10,7 +10,7 @@ export interface ExpertQuote {
 
 export const EXPERT_QUOTES: ExpertQuote[] = [
   {
-    quote: "I spent 6 months learning SPICE simulations that no one used. The day I opened Cadence Virtuoso and ran my first actual transistor-level sim — that was when I understood what ECE actually meant. Stop chasing grades. Open the tools.",
+    quote: "I spent 6 months learning SPICE simulations that no one used. The day I opened Cadence Virtuoso and ran my first actual transistor-level sim - that was when I understood what ECE actually meant. Stop chasing grades. Open the tools.",
     name: "Rohan Mehta",
     role: "Physical Design Engineer",
     company: "Qualcomm India",

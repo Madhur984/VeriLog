@@ -8,7 +8,7 @@ interface Props { isActive: boolean; isDarkMode: boolean; }
 const IONIZATION_BARS = [
   { shell: 'K shell', e: 1839, color: '#22d3ee', note: 'inner-most' },
   { shell: 'L shell', e: 154, color: '#0ea5e9', note: 'middle' },
-  { shell: 'M shell', e: 8.15, color: '#f97316', note: 'valence — easiest!' },
+  { shell: 'M shell', e: 8.15, color: '#f97316', note: 'valence - easiest!' },
 ];
 
 export const S05_Tetravalent: React.FC<Props> = ({ isActive, isDarkMode }) => {
@@ -26,7 +26,7 @@ export const S05_Tetravalent: React.FC<Props> = ({ isActive, isDarkMode }) => {
         </div>
         <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>Tetravalent · The Magic 4</h2>
         <p className={`text-base max-w-3xl ${subText}`}>
-          Silicon and Germanium each carry exactly four valence electrons. That number is not arbitrary —
+          Silicon and Germanium each carry exactly four valence electrons. That number is not arbitrary -
           it sits at the perfect cross-roads of stability and reactivity, and it is why semiconductors
           even exist as a category.
         </p>
@@ -108,7 +108,7 @@ export const S05_Tetravalent: React.FC<Props> = ({ isActive, isDarkMode }) => {
         <div className="flex items-center gap-2 mb-6">
           <Zap size={14} className="text-orange-400" />
           <span className="font-mono text-[10px] uppercase tracking-widest text-orange-400">
-            Ionization potential of Silicon shells (eV — log scale)
+            Ionization potential of Silicon shells (eV - log scale)
           </span>
         </div>
         <div className="space-y-4">
@@ -137,7 +137,7 @@ export const S05_Tetravalent: React.FC<Props> = ({ isActive, isDarkMode }) => {
           })}
         </div>
         <p className={`text-[12px] mt-5 ${subText}`}>
-          The valence electron sits on the boundary at just <strong className="text-orange-300">8.15 eV</strong> —
+          The valence electron sits on the boundary at just <strong className="text-orange-300">8.15 eV</strong> -
           hundreds of times lower than inner-shell electrons. That tiny barrier is what makes Silicon
           willing to play.
         </p>
@@ -156,7 +156,7 @@ export const S05_Tetravalent: React.FC<Props> = ({ isActive, isDarkMode }) => {
           <div>
             <div className="font-mono text-[10px] uppercase tracking-widest text-pink-400 mb-2">Why 4 needs partners</div>
             <p className={`text-base leading-relaxed ${textColor}`}>
-              Atoms crave a full outer shell of <strong>8 electrons</strong>. With 4, Silicon is exactly halfway —
+              Atoms crave a full outer shell of <strong>8 electrons</strong>. With 4, Silicon is exactly halfway -
               too far from empty to give them away, too far from full to grab more. So instead of trading,
               it <strong className="text-pink-300">shares</strong>. Four neighbours, four shared pairs, eight
               effective electrons. Stability through partnership.

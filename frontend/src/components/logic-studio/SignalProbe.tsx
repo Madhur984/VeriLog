@@ -1,5 +1,5 @@
 /**
- * SignalProbe.tsx — Click-to-probe with real-time tooltip
+ * SignalProbe.tsx - Click-to-probe with real-time tooltip
  */
 
 import type { CanvasNode } from '../../hooks/useLogicStudio';

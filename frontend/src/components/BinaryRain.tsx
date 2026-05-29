@@ -32,7 +32,7 @@ export const BinaryRain = () => {
       const dt = (now - last) / 1000;
       last = now;
 
-      // Fade trail — very transparent overlay
+      // Fade trail - very transparent overlay
       ctx.fillStyle = 'rgba(7,8,10,0.08)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 

@@ -1,5 +1,5 @@
 /**
- * mure/index.ts — Barrel Exports for MURE Engine
+ * mure/index.ts - Barrel Exports for MURE Engine
  *
  * Single import point for all public MURE types and classes.
  */

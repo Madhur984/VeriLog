@@ -47,7 +47,7 @@ export const StatsSection = () => {
         </div>
 
         <p className="mt-16 text-center text-base md:text-lg italic max-w-2xl mx-auto leading-relaxed" style={{ color: '#CBD5E1' }}>
-          &ldquo;Built by students who couldn&apos;t find this anywhere else — for students who shouldn&apos;t have to.&rdquo;
+          &ldquo;Built by students who couldn&apos;t find this anywhere else - for students who shouldn&apos;t have to.&rdquo;
         </p>
       </div>
     </section>

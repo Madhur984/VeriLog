@@ -66,7 +66,7 @@ const PROBLEMS: ReverseProblem[] = [
     tt: buildTT(3, ([a, b, c]) => (((a && b) || (b && c) || (a && c)) ? 1 : 0) as Bit),
     questions: [
       { q: 'Look at each AND output, then the final OR. What is Y as a Boolean equation?',
-        a: 'Y = AB + BC + AC · this is the "majority" function — at least 2 of 3 must be 1.' },
+        a: 'Y = AB + BC + AC · this is the "majority" function - at least 2 of 3 must be 1.' },
       { q: 'Toggle the inputs. How many of the 8 input combinations give Y = 1?',
         a: '4 combinations · m3 (011), m5 (101), m6 (110), m7 (111). Y = Σm(3, 5, 6, 7).' },
       { q: 'Can the K-Map make this any shorter?',
@@ -76,7 +76,7 @@ const PROBLEMS: ReverseProblem[] = [
     ],
     unsimplified: 'Y = AB + BC + AC',
     simplified: 'Y = AB + BC + AC  (already shortest · majority function)',
-    insight: 'This is a case where the long form IS the shortest form. The K-Map only finds 2-cell groups — no 4-cell group is possible — so all three terms stay.',
+    insight: 'This is a case where the long form IS the shortest form. The K-Map only finds 2-cell groups - no 4-cell group is possible - so all three terms stay.',
   },
   {
     id: 'r2',
@@ -120,7 +120,7 @@ const PROBLEMS: ReverseProblem[] = [
     Icon: Bell,
     title: "R3 · Burglar Alarm Logic (factored form)",
     scenario:
-      'A shop alarm has 3 inputs: D (door open), W (window open), M (staff moving inside — counts as approved). The alarm should ring ONLY when a door or window opens AND no staff is moving. Read the circuit below — note the OR feeds into an AND with M inverted.',
+      'A shop alarm has 3 inputs: D (door open), W (window open), M (staff moving inside - counts as approved). The alarm should ring ONLY when a door or window opens AND no staff is moving. Read the circuit below - note the OR feeds into an AND with M inverted.',
     inputs: [
       { sym: 'D', meaning: 'Door',          accent: '#0ea5e9' },
       { sym: 'W', meaning: 'Window',        accent: '#22d3ee' },
@@ -137,9 +137,9 @@ const PROBLEMS: ReverseProblem[] = [
     tt: buildTT(3, ([d, w, m]) => (((d || w) && (m === 0)) ? 1 : 0) as Bit),
     questions: [
       { q: 'Write Y in this form: (something) · (something else).',
-        a: 'Y = (D + W) · M′ — "door or window open" AND "no staff moving".' },
+        a: 'Y = (D + W) · M′ - "door or window open" AND "no staff moving".' },
       { q: 'Now write the same thing as a sum of ANDs.',
-        a: 'Y = DM′ + WM′ — multiply the AND through the OR.' },
+        a: 'Y = DM′ + WM′ - multiply the AND through the OR.' },
       { q: 'Which input rows make Y = 1?',
         a: 'Σm(2, 4, 6) · all rows where M = 0 AND at least one of D, W is 1.' },
       { q: 'If the rule changed to "ring if door OR window opens (ignore staff)", how many gates would you need?',
@@ -147,7 +147,7 @@ const PROBLEMS: ReverseProblem[] = [
     ],
     unsimplified: 'Y = (D + W) · M′',
     simplified: 'Y = DM′ + WM′  (sum-of-ANDs form)',
-    insight: 'The factored form (D+W)·M′ looks shorter on paper, but the sum-of-ANDs form maps directly onto AND-OR gates. Both are correct — pick the form that matches the gates you have.',
+    insight: 'The factored form (D+W)·M′ looks shorter on paper, but the sum-of-ANDs form maps directly onto AND-OR gates. Both are correct - pick the form that matches the gates you have.',
   },
 ];
 
@@ -381,7 +381,7 @@ export const S02_Reverse: React.FC<Props> = ({ isActive, isDarkMode }) => {
           Circuit → Equation. Read the schematic.
         </h2>
         <p className={`text-base max-w-3xl ${subText}`}>
-          Each problem gives you a finished circuit drawn in the same clean grid layout — input
+          Each problem gives you a finished circuit drawn in the same clean grid layout - input
           rails on the left, NOT bubbles inline, AND gates stacked, OR on the right, output box
           on the far right. Click the inputs to flip them, watch the wires light up, trace what
           each gate outputs, and figure out the Boolean equation. Then check your answer against
@@ -397,7 +397,7 @@ export const S02_Reverse: React.FC<Props> = ({ isActive, isDarkMode }) => {
         <div className={`text-sm ${subText}`}>
           <strong className="text-cyan-300">How to attack:</strong> name each wire after every
           gate (P1, P2, …). Once you reach the OR, write Y as the sum of those AND terms.
-          K-Map only helps if the circuit is in long form — many of these are already short.
+          K-Map only helps if the circuit is in long form - many of these are already short.
         </div>
       </motion.div>
 

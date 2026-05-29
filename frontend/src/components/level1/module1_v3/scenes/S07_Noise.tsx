@@ -31,7 +31,7 @@ export const S07_Noise: React.FC = () => {
             <div className="space-y-4">
                 <h4 className="micro-text text-v3-cyan font-black italic tracking-widest uppercase">The Signal Floor</h4>
                 <p className="text-[10px] text-white/40 leading-relaxed">
-                    Every physical system has a "noise floor"—a level of random electrical variation caused by heat, nearby interference, or the limits of your sensing hardware. If your signal is too weak, it gets "swallowed" by this floor.
+                    Every physical system has a "noise floor"-a level of random electrical variation caused by heat, nearby interference, or the limits of your sensing hardware. If your signal is too weak, it gets "swallowed" by this floor.
                 </p>
                 <div className="h-1 w-full bg-white/5 overflow-hidden">
                     <motion.div animate={{ x: [-20, 20] }} transition={{ repeat: Infinity, duration: 0.1 }} className="h-full w-20 bg-v3-cyan/40" />

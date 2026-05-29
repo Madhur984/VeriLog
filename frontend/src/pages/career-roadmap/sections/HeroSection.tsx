@@ -17,7 +17,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onCalibrate, onExplore
 
   const stats = [
     { label: 'Domains', value: 13 },
-    { label: '₹8–50 LPA', value: 0, isCurrency: true },
+    { label: '₹8-50 LPA', value: 0, isCurrency: true },
     { label: 'Companies', value: 10 },
     { label: 'Questions', value: 30 },
   ];
@@ -93,7 +93,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onCalibrate, onExplore
             <React.Fragment key={stat.label}>
               <div className="text-center">
                 <div className="text-3xl font-bold text-white mb-1">
-                  {stat.isCurrency ? '₹8–50 LPA' : stat.value}
+                  {stat.isCurrency ? '₹8-50 LPA' : stat.value}
                 </div>
                 <div className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">
                   {stat.label}

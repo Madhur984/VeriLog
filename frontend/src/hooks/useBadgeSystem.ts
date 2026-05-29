@@ -1,5 +1,5 @@
 /**
- * useBadgeSystem.ts — Auto-award badges based on engagement state
+ * useBadgeSystem.ts - Auto-award badges based on engagement state
  *
  * Listens to engagementStore and user actions to automatically
  * unlock badges when conditions are met.

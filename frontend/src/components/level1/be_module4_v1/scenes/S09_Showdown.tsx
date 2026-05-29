@@ -100,7 +100,7 @@ export const S09_Showdown: React.FC<Props> = ({ isActive, isDarkMode }) => {
               <p className={`text-sm ${textColor}`}>
                 The <strong>bridge rectifier</strong> wins on every count: low ripple, high V_dc,
                 small PIV (no 2× back-pressure), and no need for a bulky centre-tapped transformer.
-                Pair it with a <strong>shunt capacitor filter</strong> and ripple drops below 5% —
+                Pair it with a <strong>shunt capacitor filter</strong> and ripple drops below 5% -
                 that is the standard linear power supply found in every textbook and a thousand
                 consumer products.
               </p>

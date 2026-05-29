@@ -37,8 +37,8 @@ export const S02_Challenge: React.FC<Props> = ({ isActive, isDarkMode }) => {
         </div>
         <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>AC vs DC · taming the tide.</h2>
         <p className={`text-base max-w-3xl ${subText}`}>
-          The wall socket gives us alternating current — chaotic, bidirectional. Our devices need
-          direct current — smooth, one-direction only. The whole job of this module is converting
+          The wall socket gives us alternating current - chaotic, bidirectional. Our devices need
+          direct current - smooth, one-direction only. The whole job of this module is converting
           one into the other using two pieces of hardware: a <strong className="text-cyan-300">rectifier</strong> and a{' '}
           <strong className="text-amber-300">filter</strong>.
         </p>

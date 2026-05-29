@@ -1,5 +1,5 @@
 /**
- * pages/FSMPlayground.tsx — Full FSM Visual Simulator Page
+ * pages/FSMPlayground.tsx - Full FSM Visual Simulator Page
  *
  * Features:
  *   - FSM type selector (Moore / Mealy)
@@ -210,7 +210,7 @@ export function FSMPlayground() {
                         height: 'calc(100vh - 53px)',
                     }}
                 >
-                    {/* Left — Canvas + Timeline (desktop only slot) */}
+                    {/* Left - Canvas + Timeline (desktop only slot) */}
                     <div style={{ display: 'flex', flexDirection: 'column', padding: 20, gap: 16, overflow: 'auto' }}>
                         <FSMCanvas
                             fsm={fsm}
@@ -230,7 +230,7 @@ export function FSMPlayground() {
                         />
                     </div>
 
-                    {/* Right — Editor + Analysis (desktop only slot) */}
+                    {/* Right - Editor + Analysis (desktop only slot) */}
                     <div style={{
                         borderLeft: `1px solid ${T.border}`,
                         display: 'flex', flexDirection: 'column',

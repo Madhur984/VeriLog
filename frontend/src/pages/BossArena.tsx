@@ -1,5 +1,5 @@
 /**
- * pages/BossArena.tsx — Boss Engineering Challenges Hub
+ * pages/BossArena.tsx - Boss Engineering Challenges Hub
  *
  * 5 boss challenges, multi-phase, gamified.
  * Shows: locked/available/in-progress/complete states.
@@ -155,7 +155,7 @@ const BOSSES: BossChallenge[] = [
     },
 ];
 
-// Simulated progress — in production read from progressStore
+// Simulated progress - in production read from progressStore
 const USER_XP = 85;
 
 export function BossArena() {
@@ -220,9 +220,9 @@ export function BossArena() {
                     </h1>
                     <p style={{ margin: '12px 0 0', fontSize: 15, color: T.muted, lineHeight: 1.6, maxWidth: 580 }}>
                         Multi-phase engineering challenges that integrate every tool on the platform.
-                        Complete them in order — each boss synthesizes everything you have learned.
+                        Complete them in order - each boss synthesizes everything you have learned.
                     </p>
-                    {/* Stats row — wraps on mobile */}
+                    {/* Stats row - wraps on mobile */}
                     <div className="flex flex-wrap gap-6 lg:gap-8 mt-5">
                         {[
                             { label: 'Total XP Available', value: BOSSES.reduce((s, b) => s + b.xpReward, 0), color: T.warning },
@@ -412,7 +412,7 @@ export function BossArena() {
                                                         COMPLETION BADGE
                                                     </div>
                                                     <div style={{ fontFamily: T.sans, fontSize: 13, color: T.text, marginTop: 2 }}>
-                                                        "{boss.badgeTitle}" — awarded on completing all phases
+                                                        "{boss.badgeTitle}" - awarded on completing all phases
                                                     </div>
                                                 </div>
                                                 <div className="ml-auto shrink-0" style={{ fontFamily: T.mono, fontSize: 18, color: T.warning, fontWeight: 700 }}>

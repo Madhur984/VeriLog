@@ -61,7 +61,7 @@ export const S09_LiveLab: React.FC<Props> = ({ isActive, isDarkMode }) => {
         </h2>
         <p className={`text-base max-w-3xl ${subText}`}>
           You are the architect. Toggle any output bit in the truth table and watch the canonical
-          SOP and POS regenerate live. Bot lenses always describe the same function — the lab
+          SOP and POS regenerate live. Bot lenses always describe the same function - the lab
           proves it for whatever you build.
         </p>
       </section>
@@ -189,7 +189,7 @@ export const S09_LiveLab: React.FC<Props> = ({ isActive, isDarkMode }) => {
         </motion.div>
       </div>
 
-      {/* Cost analysis — literals + gates */}
+      {/* Cost analysis - literals + gates */}
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.4 }}
@@ -269,15 +269,15 @@ export const S09_LiveLab: React.FC<Props> = ({ isActive, isDarkMode }) => {
           } />
           <p className={`text-sm leading-relaxed ${textColor}`}>
             <strong>
-              {cheaperForm === 'tie' && 'Tie — both forms cost identically.'}
+              {cheaperForm === 'tie' && 'Tie - both forms cost identically.'}
               {cheaperForm === 'sop' && `SOP wins by ${posLiterals - sopLiterals} literal(s).`}
               {cheaperForm === 'pos' && `POS wins by ${sopLiterals - posLiterals} literal(s).`}
             </strong>{' '}
             {cheaperForm === 'tie'
               ? 'Pick whichever lens matches your problem statement.'
               : cheaperForm === 'sop'
-                ? 'This function has fewer happy rows — painting the 1s is the cheaper blueprint.'
-                : 'This function has fewer disaster rows — bricking up the 0s is the cheaper blueprint.'}{' '}
+                ? 'This function has fewer happy rows - painting the 1s is the cheaper blueprint.'
+                : 'This function has fewer disaster rows - bricking up the 0s is the cheaper blueprint.'}{' '}
             <em>Note: K-Map minimisation in the next module typically reduces both costs much further.</em>
           </p>
         </div>

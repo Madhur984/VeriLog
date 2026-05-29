@@ -12,62 +12,62 @@ const CHAPTERS: Chapter[] = [
   {
     t: 0,
     title: 'The Quest for Control',
-    line: 'Every electronic device on Earth comes down to one quest — the quest for control. Conductors let current flow freely; insulators block it completely. Semiconductors sit in between and they let us decide, moment by moment, when to allow current and when to refuse.',
+    line: 'Every electronic device on Earth comes down to one quest - the quest for control. Conductors let current flow freely; insulators block it completely. Semiconductors sit in between and they let us decide, moment by moment, when to allow current and when to refuse.',
   },
   {
     t: 25,
     title: 'The Starting Lineup',
-    line: 'Three materials make up most of modern semiconductor electronics. Silicon — the captain — is abundant and stable. Germanium — the veteran — is faster but more sensitive to heat. Gallium Arsenide — the specialist — is a compound with extreme speed and the ability to emit light. All three share one secret: their behaviour is decided entirely by the electrons in the outermost shell.',
+    line: 'Three materials make up most of modern semiconductor electronics. Silicon - the captain - is abundant and stable. Germanium - the veteran - is faster but more sensitive to heat. Gallium Arsenide - the specialist - is a compound with extreme speed and the ability to emit light. All three share one secret: their behaviour is decided entirely by the electrons in the outermost shell.',
   },
   {
     t: 65,
     title: 'The Silicon Franchise',
-    line: 'Picture Silicon\'s atom as a sports franchise. The owners are the nucleus — fourteen heavy protons fixed at the centre. The support staff are ten electrons in the inner shells, tightly bound and never interacting with the outside world. Then come the boundary riders — four electrons in the outermost shell. They are the star players, the only ones the outside world ever sees.',
+    line: 'Picture Silicon\'s atom as a sports franchise. The owners are the nucleus - fourteen heavy protons fixed at the centre. The support staff are ten electrons in the inner shells, tightly bound and never interacting with the outside world. Then come the boundary riders - four electrons in the outermost shell. They are the star players, the only ones the outside world ever sees.',
   },
   {
     t: 110,
     title: 'Tetravalent · The Magic Number',
-    line: 'Silicon has exactly four valence electrons. That number is magic. The energy needed to remove one of them — the ionization potential — is much lower than for any electron in the deeper shells. Sitting on the boundary makes them desperate to find stability. They need partners.',
+    line: 'Silicon has exactly four valence electrons. That number is magic. The energy needed to remove one of them - the ionization potential - is much lower than for any electron in the deeper shells. Sitting on the boundary makes them desperate to find stability. They need partners.',
   },
   {
     t: 145,
     title: 'The Garba Matrix · Covalent Bonding',
-    line: 'In a pure Silicon crystal, every atom shares each of its four valence electrons with one of its four neighbours. The lattice forms a perfectly synchronised dance — a Garba — where every dancer holds two hands. At absolute zero, the music stops, all dancers freeze in place, and the material behaves as a perfect insulator.',
+    line: 'In a pure Silicon crystal, every atom shares each of its four valence electrons with one of its four neighbours. The lattice forms a perfectly synchronised dance - a Garba - where every dancer holds two hands. At absolute zero, the music stops, all dancers freeze in place, and the material behaves as a perfect insulator.',
   },
   {
     t: 195,
     title: 'When the Dhol Drops',
-    line: 'At room temperature the beat kicks in. Valence electrons absorb thermal energy from the surroundings. Some absorb enough to break their bond and shoot up to the conduction band — they become free carriers. In a tiny sugar-cube of pure Silicon there are about fifteen billion such free electrons. Where each electron used to sit, a void is left behind. We call that void a hole.',
+    line: 'At room temperature the beat kicks in. Valence electrons absorb thermal energy from the surroundings. Some absorb enough to break their bond and shoot up to the conduction band - they become free carriers. In a tiny sugar-cube of pure Silicon there are about fifteen billion such free electrons. Where each electron used to sit, a void is left behind. We call that void a hole.',
   },
   {
     t: 245,
     title: 'The Dance of Electrons and Holes',
-    line: 'A nearby valence electron may drop into the void to fill it, but in doing so it leaves a fresh void where it came from. From the outside it looks as if a positive charge has hopped sideways. This apparent motion of holes is just as real as the motion of electrons. Conventional current — the direction we mark on schematics — follows the hole flow.',
+    line: 'A nearby valence electron may drop into the void to fill it, but in doing so it leaves a fresh void where it came from. From the outside it looks as if a positive charge has hopped sideways. This apparent motion of holes is just as real as the motion of electrons. Conventional current - the direction we mark on schematics - follows the hole flow.',
   },
   {
     t: 295,
     title: 'Shifting Dimensions · Energy Bands',
-    line: 'Knowing where the electrons are is only half the picture. We also need to know how much energy each one carries. To plot energy we use a different diagram — the energy band diagram. Welcome to the bands.',
+    line: 'Knowing where the electrons are is only half the picture. We also need to know how much energy each one carries. To plot energy we use a different diagram - the energy band diagram. Welcome to the bands.',
   },
   {
     t: 320,
     title: 'The 3-Tier City',
-    line: 'Imagine a 3-tier city. The valence band is the gully — low energy, crowded, electrons bound to their parent atoms. The conduction band is the elevated expressway — high energy, free flow, electrons that create current. Between them lies the energy gap — the forbidden zone — where no electron is allowed to exist.',
+    line: 'Imagine a 3-tier city. The valence band is the gully - low energy, crowded, electrons bound to their parent atoms. The conduction band is the elevated expressway - high energy, free flow, electrons that create current. Between them lies the energy gap - the forbidden zone - where no electron is allowed to exist.',
   },
   {
     t: 360,
     title: 'Paying the Toll · the eV',
-    line: 'To leave the gully and enter the expressway, an electron must pay the toll. The currency is the electron-volt. One eV equals 1.6 times ten to the minus nineteen Joules — exactly the kinetic energy gained by one electron crossing a one-volt potential difference. You either have the exact energy or you stay in the gully.',
+    line: 'To leave the gully and enter the expressway, an electron must pay the toll. The currency is the electron-volt. One eV equals 1.6 times ten to the minus nineteen Joules - exactly the kinetic energy gained by one electron crossing a one-volt potential difference. You either have the exact energy or you stay in the gully.',
   },
   {
     t: 410,
     title: 'The Master Blueprint',
-    line: 'Three blueprints, three personalities. In an insulator the expressway is miles above the gully — the gap exceeds five eV and traffic is impossible. In a conductor the bands overlap — traffic is uncontrollable. In a semiconductor the gap is small but real: 1.1 eV for Silicon, 0.67 eV for Germanium, 1.43 eV for Gallium Arsenide. The perfect jump.',
+    line: 'Three blueprints, three personalities. In an insulator the expressway is miles above the gully - the gap exceeds five eV and traffic is impossible. In a conductor the bands overlap - traffic is uncontrollable. In a semiconductor the gap is small but real: 1.1 eV for Silicon, 0.67 eV for Germanium, 1.43 eV for Gallium Arsenide. The perfect jump.',
   },
   {
     t: 460,
     title: 'The Pure State',
-    line: 'You now know the intrinsic rules of the game — how the Garba holds together and the exact price of the toll. But pure Silicon is just a blank canvas. In the next module we introduce impurities — we rig the game. Welcome to extrinsic doping.',
+    line: 'You now know the intrinsic rules of the game - how the Garba holds together and the exact price of the toll. But pure Silicon is just a blank canvas. In the next module we introduce impurities - we rig the game. Welcome to extrinsic doping.',
   },
 ];
 
@@ -107,7 +107,7 @@ export const S01_VideoLecture: React.FC<Props> = ({ isActive, isDarkMode }) => {
         <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>The Physics of Control</h2>
         <p className={`text-base max-w-3xl ${subText}`}>
           Watch the full illustrated lecture once end-to-end, then jump back to any chapter from the
-          transcript. The story unfolds in twelve panels — atomic structure, the Garba, electrons &
+          transcript. The story unfolds in twelve panels - atomic structure, the Garba, electrons &
           holes, and the 3-tier city.
         </p>
       </section>

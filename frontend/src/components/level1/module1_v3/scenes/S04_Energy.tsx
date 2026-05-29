@@ -22,7 +22,7 @@ export const S04_Energy: React.FC = () => {
             <div className="space-y-4">
                 <h4 className="micro-text text-v3-cyan font-black italic tracking-widest uppercase text-left">Linear vs Log</h4>
                 <p className="text-[10px] text-white/40 leading-relaxed text-left">
-                    Amplitude is the **reach** of a signal. In linear terms, doubling amplitude quadruples the power $(P ∝ A^2)$. This is why we use Decibels (dB)—to squash massive ranges of energy into numbers humans can handle.
+                    Amplitude is the **reach** of a signal. In linear terms, doubling amplitude quadruples the power $(P ∝ A^2)$. This is why we use Decibels (dB)-to squash massive ranges of energy into numbers humans can handle.
                 </p>
                 <div className="flex gap-1 h-4 items-end">
                     {[0, 1, 2, 4, 8, 16].map((h, i) => (

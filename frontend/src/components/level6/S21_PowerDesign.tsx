@@ -21,7 +21,7 @@ export const S21_PowerDesign: React.FC<{ isActive: boolean }> = ({ isActive }) =
           
           <div className="space-y-8 max-w-xl">
             <p className="body-text text-xl text-white/80 leading-relaxed font-light text-left">
-                Performance is no longer about speed—it's about the <span className="text-burnished-copper font-bold italic underline underline-offset-8 decoration-burnished-copper/30">Thermal Envelope.</span>
+                Performance is no longer about speed-it's about the <span className="text-burnished-copper font-bold italic underline underline-offset-8 decoration-burnished-copper/30">Thermal Envelope.</span>
             </p>
             <p className="body-text text-base text-white/50 leading-relaxed text-left font-light">
                In modern chip design, we face the <span className="text-burnished-copper font-black italic uppercase tracking-widest text-xs">"Dark Silicon"</span> bottleneck: we have the area to build massive logic, but we don't have the thermal headroom to turn it all on simultaneously.

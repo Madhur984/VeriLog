@@ -34,14 +34,14 @@ const QUIZ: MCQ[] = [
     q: 'Which of these is NOT a legal K-Map wing on a 4-variable map?',
     options: ['1×2 pair', '2×2 square', '1×3 trio', '1×4 strip'],
     correct: 2,
-    rationale: 'Wings must have an area that is a power of two. 3 is not a power of two — there is no HVAC capacity for "3 rooms".',
+    rationale: 'Wings must have an area that is a power of two. 3 is not a power of two - there is no HVAC capacity for "3 rooms".',
   },
   {
     q: 'In Madhur\'s metaphor, an X (don\'t care) on the K-Map represents:',
     options: [
       'A premium guest who paid extra.',
       'A wall that cannot be removed.',
-      'A room under maintenance — use it as 1 only if it grows the wing.',
+      'A room under maintenance - use it as 1 only if it grows the wing.',
       'An impossible variable combination that must be set to 0.',
     ],
     correct: 2,
@@ -74,7 +74,7 @@ const QUIZ: MCQ[] = [
       'It compresses the truth table to 8 rows.',
     ],
     correct: 1,
-    rationale: 'Gray-code ordering on both axes means the first and last rows (and columns) are one bit apart — they share a wall via the wrap-around corridor.',
+    rationale: 'Gray-code ordering on both axes means the first and last rows (and columns) are one bit apart - they share a wall via the wrap-around corridor.',
   },
   {
     q: 'A 1×4 strip wing on a 4-variable K-Map produces a product term with how many literals?',
@@ -91,9 +91,9 @@ const QUIZ: MCQ[] = [
   {
     q: 'What does it mean when a single 1-cell belongs to two different wings?',
     options: [
-      'It is illegal — every 1 must belong to exactly one wing.',
+      'It is illegal - every 1 must belong to exactly one wing.',
       'You forgot to combine the wings.',
-      'It is allowed — overlapping wings can each be useful for simplification.',
+      'It is allowed - overlapping wings can each be useful for simplification.',
       'It means the K-Map was drawn incorrectly.',
     ],
     correct: 2,
@@ -120,8 +120,8 @@ const QUIZ: MCQ[] = [
   {
     q: 'When should you absorb a don\'t-care X into a wing?',
     options: [
-      'Always — every X should be a 1.',
-      'Never — leave every X as 0.',
+      'Always - every X should be a 1.',
+      'Never - leave every X as 0.',
       'Only if absorbing it grows your wing to the next power of two.',
       'Only on Tuesdays.',
     ],
@@ -184,7 +184,7 @@ const WING_TARGETS: Array<{ id: string; want: number[]; hint: string; explanatio
   {
     id: 'top-bottom-pair',
     want: [1, 9],
-    hint: 'A vertical pair across the torus — top row meets bottom row.',
+    hint: 'A vertical pair across the torus - top row meets bottom row.',
     explanation: 'Wrap-around pair · B′C′D. Only A flips between row 00 and row 10.',
     level: 'Hard',
   },
@@ -205,7 +205,7 @@ const WING_TARGETS: Array<{ id: string; want: number[]; hint: string; explanatio
   {
     id: 'eight-block',
     want: [4, 5, 7, 6, 12, 13, 15, 14],
-    hint: 'A massive 2×4 wing — the middle two rows.',
+    hint: 'A massive 2×4 wing - the middle two rows.',
     explanation: 'Half-map wing · B. Only one literal: B = 1 in all eight rooms.',
     level: 'Hard',
   },
@@ -234,7 +234,7 @@ const MATCH_DECK: MatchPair[] = [
 interface TF { s: string; ans: boolean; reason: string; }
 const TF_DECK: TF[] = [
   { s: 'Two cells that differ by exactly one bit can always be merged into a wing of size 2.', ans: true,
-    reason: 'That is the definition of K-Map adjacency — one bit-flip means they share a wall.' },
+    reason: 'That is the definition of K-Map adjacency - one bit-flip means they share a wall.' },
   { s: 'A wing of size 6 cells is allowed if it is a 2×3 rectangle.', ans: false,
     reason: '6 is not a power of two. Wings must be 1, 2, 4, 8, or 16 cells.' },
   { s: 'On a 4-variable K-Map, the four corner cells form a single 2×2 wing.', ans: true,
@@ -293,7 +293,7 @@ const TERM_CHALLENGES: TermChallenge[] = [
 
 const VAR_OPTIONS: Array<'A' | "A'" | null> = ['A', "A'", null];
 
-const optionLabel = (v: string | null) => v === null ? '—' : v;
+const optionLabel = (v: string | null) => v === null ? '-' : v;
 
 /* ──────────────────────────────────────────────────────────────────────── */
 /*  Activity 6 · Spot the illegal wing                                       */
@@ -413,7 +413,7 @@ export const S13_PracticeArena: React.FC<Props> = ({ isActive, isDarkMode }) => 
         </div>
         <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>Practice Arena</h2>
         <p className={`text-base max-w-3xl ${subText}`}>
-          Six activities to lock in Madhur&apos;s craft. Cycle through them in any order — quiz, hunt, match,
+          Six activities to lock in Madhur&apos;s craft. Cycle through them in any order - quiz, hunt, match,
           rapid-fire, build, and spot. Every activity is graded live.
         </p>
 
@@ -550,7 +550,7 @@ export const S13_PracticeArena: React.FC<Props> = ({ isActive, isDarkMode }) => 
             <div className="font-mono text-[10px] uppercase tracking-widest text-amber-400 mb-1">Score</div>
             <div className={`text-3xl font-black ${textColor}`}>{score} / {QUIZ.length}</div>
             <div className={`text-[12px] mt-1 ${subText}`}>
-              {score >= 12 ? 'Master Architect — proceed to Verilog.' : score >= 9 ? 'Solid foundation. Replay the gray-code & corridors chapters.' : 'Re-watch the lecture and the operations chapter, then retry.'}
+              {score >= 12 ? 'Master Architect - proceed to Verilog.' : score >= 9 ? 'Solid foundation. Replay the gray-code & corridors chapters.' : 'Re-watch the lecture and the operations chapter, then retry.'}
             </div>
           </motion.div>
         )}
@@ -983,14 +983,14 @@ export const S13_PracticeArena: React.FC<Props> = ({ isActive, isDarkMode }) => 
             </div>
             <div className={`text-[11px] ${subText}`}>
               Tap a button to cycle through <span className="font-mono">A</span> →{' '}
-              <span className="font-mono">A&apos;</span> → <span className="font-mono">—</span> (eliminated).
+              <span className="font-mono">A&apos;</span> → <span className="font-mono">-</span> (eliminated).
               Pick the literal each variable takes across <em>all</em> cells of the wing. If a variable changes
               across the wing, eliminate it.
             </div>
             <div className={`p-4 rounded-2xl border ${tcCorrect ? 'border-emerald-400/50 bg-emerald-500/10' : isDarkMode ? 'border-white/10 bg-black/30' : 'border-slate-200 bg-slate-50'}`}>
               <div className="font-mono text-[10px] uppercase tracking-widest text-violet-400 mb-1">Your term</div>
               <div className="font-mono text-2xl font-black text-violet-300">
-                {[termPicks.A, termPicks.B, termPicks.C, termPicks.D].filter(Boolean).join(' · ') || '—'}
+                {[termPicks.A, termPicks.B, termPicks.C, termPicks.D].filter(Boolean).join(' · ') || '-'}
               </div>
               {tcCorrect && (
                 <div className="text-emerald-300 text-sm font-bold mt-2">
@@ -1133,7 +1133,7 @@ export const S13_PracticeArena: React.FC<Props> = ({ isActive, isDarkMode }) => 
         <Sparkles className="mx-auto text-amber-400 mb-3" size={20} />
         <div className="font-mono text-[10px] uppercase tracking-widest text-amber-400 mb-2">Module Complete</div>
         <p className={`text-base leading-relaxed ${textColor}`}>
-          You&apos;ve walked the entire labyrinth — gray-coded grid, power-of-two wings, the torus, the manifest, the
+          You&apos;ve walked the entire labyrinth - gray-coded grid, power-of-two wings, the torus, the manifest, the
           four operations, the don&apos;t-care loophole, the masterclass and the boss drill.{' '}
           <strong className="text-amber-300">Madhur tips his hat.</strong>
         </p>

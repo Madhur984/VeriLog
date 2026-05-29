@@ -17,7 +17,7 @@ export const VLSI_KNOWLEDGE: KnowledgeEntry[] = [
     {
         question: "What are De Morgan's theorems?",
         keywords: ['demorgan', 'de morgan', 'theorem', 'complement'],
-        answer: "De Morgan's Theorems: 1) (A·B)' = A' + B' — the complement of AND equals OR of complements. 2) (A+B)' = A'·B' — the complement of OR equals AND of complements. These are fundamental for simplifying digital logic expressions and converting between NAND/NOR forms.",
+        answer: "De Morgan's Theorems: 1) (A·B)' = A' + B' - the complement of AND equals OR of complements. 2) (A+B)' = A'·B' - the complement of OR equals AND of complements. These are fundamental for simplifying digital logic expressions and converting between NAND/NOR forms.",
         category: 'basics',
     },
 
@@ -25,19 +25,19 @@ export const VLSI_KNOWLEDGE: KnowledgeEntry[] = [
     {
         question: "What is an AND gate?",
         keywords: ['and', 'gate', 'conjunction'],
-        answer: "An AND gate outputs HIGH (1) only when ALL inputs are HIGH. Truth table: 0·0=0, 0·1=0, 1·0=0, 1·1=1. Boolean expression: Y = A·B. IC number: 7408 (quad 2-input AND). Think of it as series switches — both must be ON for current to flow.",
+        answer: "An AND gate outputs HIGH (1) only when ALL inputs are HIGH. Truth table: 0·0=0, 0·1=0, 1·0=0, 1·1=1. Boolean expression: Y = A·B. IC number: 7408 (quad 2-input AND). Think of it as series switches - both must be ON for current to flow.",
         category: 'gates',
     },
     {
         question: "What is an OR gate?",
         keywords: ['or', 'gate', 'disjunction'],
-        answer: "An OR gate outputs HIGH (1) when ANY input is HIGH. Truth table: 0+0=0, 0+1=1, 1+0=1, 1+1=1. Boolean expression: Y = A+B. IC number: 7432. Think of it as parallel switches — either one ON lets current flow.",
+        answer: "An OR gate outputs HIGH (1) when ANY input is HIGH. Truth table: 0+0=0, 0+1=1, 1+0=1, 1+1=1. Boolean expression: Y = A+B. IC number: 7432. Think of it as parallel switches - either one ON lets current flow.",
         category: 'gates',
     },
     {
         question: "What is a NAND gate?",
         keywords: ['nand', 'universal', 'gate'],
-        answer: "NAND (Not-AND) is a universal gate — you can build ANY other gate using only NAND gates! Output is LOW only when all inputs are HIGH. Y = (A·B)'. IC: 7400. NAND gates are the building blocks of modern flash memory (hence 'NAND flash').",
+        answer: "NAND (Not-AND) is a universal gate - you can build ANY other gate using only NAND gates! Output is LOW only when all inputs are HIGH. Y = (A·B)'. IC: 7400. NAND gates are the building blocks of modern flash memory (hence 'NAND flash').",
         category: 'gates',
     },
     {
@@ -69,13 +69,13 @@ export const VLSI_KNOWLEDGE: KnowledgeEntry[] = [
     {
         question: "What is the difference between wire and reg in Verilog?",
         keywords: ['wire', 'reg', 'verilog', 'difference'],
-        answer: "'wire' represents a physical connection — it can't store values and must be continuously driven (used with assign statements). 'reg' can hold a value and is used inside always blocks. Note: 'reg' doesn't always synthesize to a register — it can be combinational logic too!",
+        answer: "'wire' represents a physical connection - it can't store values and must be continuously driven (used with assign statements). 'reg' can hold a value and is used inside always blocks. Note: 'reg' doesn't always synthesize to a register - it can be combinational logic too!",
         category: 'verilog',
     },
     {
         question: "What is the difference between blocking and non-blocking assignments?",
         keywords: ['blocking', 'non-blocking', 'assignment', '<=', '='],
-        answer: "Blocking (=) executes sequentially — each statement completes before the next starts. Non-blocking (<=) executes concurrently — all right-hand sides are evaluated first, then assigned simultaneously. Rule of thumb: use '=' in combinational always blocks, '<=' in sequential (clocked) always blocks.",
+        answer: "Blocking (=) executes sequentially - each statement completes before the next starts. Non-blocking (<=) executes concurrently - all right-hand sides are evaluated first, then assigned simultaneously. Rule of thumb: use '=' in combinational always blocks, '<=' in sequential (clocked) always blocks.",
         category: 'verilog',
     },
     {
@@ -89,7 +89,7 @@ export const VLSI_KNOWLEDGE: KnowledgeEntry[] = [
     {
         question: "What is setup time?",
         keywords: ['setup', 'time', 'timing', 'violation'],
-        answer: "Setup time (Tsu) is the minimum time the data input must be stable BEFORE the active clock edge. If violated (data changes too close to clock edge), the flip-flop may capture incorrect data — this is called a setup violation. Fix: slow down the clock or optimize the combinational path.",
+        answer: "Setup time (Tsu) is the minimum time the data input must be stable BEFORE the active clock edge. If violated (data changes too close to clock edge), the flip-flop may capture incorrect data - this is called a setup violation. Fix: slow down the clock or optimize the combinational path.",
         category: 'timing',
     },
     {
@@ -121,7 +121,7 @@ export const VLSI_KNOWLEDGE: KnowledgeEntry[] = [
     {
         question: "What is the difference between a latch and a flip-flop?",
         keywords: ['latch', 'flip-flop', 'difference', 'level', 'edge'],
-        answer: "A latch is level-sensitive — it's transparent when enable is HIGH. A flip-flop is edge-triggered — it captures data only at clock edges. Flip-flops are preferred in synchronous design because they prevent race conditions and are easier to analyze for timing.",
+        answer: "A latch is level-sensitive - it's transparent when enable is HIGH. A flip-flop is edge-triggered - it captures data only at clock edges. Flip-flops are preferred in synchronous design because they prevent race conditions and are easier to analyze for timing.",
         category: 'circuits',
     },
 

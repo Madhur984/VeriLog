@@ -47,7 +47,7 @@ export const S09_EnergyBands: React.FC<Props> = ({ isActive, isDarkMode }) => {
           {/* Sky */}
           <rect x="0" y="0" width="800" height="480" fill="url(#sky)" />
 
-          {/* Conduction band — elevated expressway */}
+          {/* Conduction band - elevated expressway */}
           <rect x="0" y="60" width="800" height="80" fill="url(#exp)" opacity="0.92" />
           <text x="20" y="50" fontFamily="monospace" fontSize="14" fontWeight="900" fill="#7dd3fc">CONDUCTION BAND</text>
           <text x="20" y="155" fontFamily="monospace" fontSize="11" fill="#bae6fd">High energy · free flow · creates current</text>
@@ -90,7 +90,7 @@ export const S09_EnergyBands: React.FC<Props> = ({ isActive, isDarkMode }) => {
             <text x="20" y="50" textAnchor="middle" fontFamily="monospace" fontSize="9" fontWeight="900" fill="#fcd34d">TOLL · Eg eV</text>
           </g>
 
-          {/* Valence band — crowded gully */}
+          {/* Valence band - crowded gully */}
           <rect x="0" y="320" width="800" height="120" fill="url(#gully)" opacity="0.88" />
           <text x="20" y="312" fontFamily="monospace" fontSize="14" fontWeight="900" fill="#fbcfe8">VALENCE BAND</text>
           <text x="20" y="455" fontFamily="monospace" fontSize="11" fill="#fbcfe8">Low energy · crowded · electrons bound to parent atoms</text>
@@ -168,7 +168,7 @@ export const S09_EnergyBands: React.FC<Props> = ({ isActive, isDarkMode }) => {
           </div>
           <h3 className={`text-lg font-black mb-2 ${textColor}`}>The Gully</h3>
           <p className={`text-[13px] leading-relaxed ${subText}`}>
-            Low-energy, crowded. Electrons are <em>bound</em> to their parent atoms via covalent bonds —
+            Low-energy, crowded. Electrons are <em>bound</em> to their parent atoms via covalent bonds -
             they participate in chemistry but not in current.
           </p>
         </motion.div>

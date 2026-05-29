@@ -1,5 +1,5 @@
 /**
- * ShareCircuitDialog.tsx — Dialog for sharing circuits to the community
+ * ShareCircuitDialog.tsx - Dialog for sharing circuits to the community
  *
  * Allows users to set title, description, tags, difficulty,
  * category, and visibility before publishing.

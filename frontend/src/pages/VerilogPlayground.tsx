@@ -1,5 +1,5 @@
 /**
- * pages/VerilogPlayground.tsx — Verilog HDL Editor + Simulator
+ * pages/VerilogPlayground.tsx - Verilog HDL Editor + Simulator
  *
  * Features:
  *   - Monaco editor with Verilog syntax (closest: `cpp` grammar)
@@ -152,7 +152,7 @@ export function VerilogPlayground() {
                     Verilog Playground
                 </span>
 
-                {/* Exercise title — hidden on very small screens, shown md+ */}
+                {/* Exercise title - hidden on very small screens, shown md+ */}
                 <div className="hidden sm:flex items-center gap-2" style={{ marginLeft: 8 }}>
                     <span style={{
                         padding: '2px 8px', fontFamily: T.mono, fontSize: 7,
@@ -220,7 +220,7 @@ export function VerilogPlayground() {
             {/* ── Main layout ──────────────────────────────────────────── */}
             {/* Desktop: 3-panel flex row; Mobile: stacked */}
             <div className="flex-1 flex flex-col lg:flex-row lg:overflow-hidden overflow-y-auto">
-                {/* Left — Exercise Browser (desktop: fixed sidebar; mobile: collapsible) */}
+                {/* Left - Exercise Browser (desktop: fixed sidebar; mobile: collapsible) */}
                 <div
                     className={`${showSidebar ? 'block' : 'hidden'} lg:block`}
                     style={{
@@ -297,7 +297,7 @@ export function VerilogPlayground() {
                     </div>
                 </div>
 
-                {/* Center — Editor */}
+                {/* Center - Editor */}
                 <div
                     className="flex flex-col min-h-[500px] lg:min-h-0"
                     style={{ flex: 1, overflow: 'hidden' }}
@@ -431,7 +431,7 @@ export function VerilogPlayground() {
                                 >
                                     {runStatus === 'pass'
                                         ? <><CheckCircle2 size={13} style={{ color: T.success }} /><span style={{ fontFamily: T.mono, fontSize: 9, color: T.success }}>ALL TESTS PASS +{selectedExercise.xpReward} XP</span></>
-                                        : <><AlertTriangle size={13} style={{ color: T.error }} /><span style={{ fontFamily: T.mono, fontSize: 9, color: T.error }}>FAILED — check implementation</span></>
+                                        : <><AlertTriangle size={13} style={{ color: T.error }} /><span style={{ fontFamily: T.mono, fontSize: 9, color: T.error }}>FAILED - check implementation</span></>
                                     }
                                 </motion.div>
                             )}
@@ -439,7 +439,7 @@ export function VerilogPlayground() {
                     </div>
                 </div>
 
-                {/* Right — LogicAnalysis Panel (desktop: fixed sidebar; mobile: collapsible) */}
+                {/* Right - LogicAnalysis Panel (desktop: fixed sidebar; mobile: collapsible) */}
                 <div
                     className={`${showAnalysis ? 'block' : 'hidden'} lg:block`}
                     style={{

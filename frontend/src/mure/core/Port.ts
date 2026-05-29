@@ -1,5 +1,5 @@
 /**
- * mure/core/Port.ts — Port State & Drive Strength
+ * mure/core/Port.ts - Port State & Drive Strength
  *
  * Every port carries both an analog voltage and a digital logic level.
  * Drive strength determines signal priority when multiple drivers conflict.

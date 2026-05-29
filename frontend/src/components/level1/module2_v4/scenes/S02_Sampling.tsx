@@ -103,7 +103,7 @@ export const S02_Sampling: React.FC<{ time: number; isDarkMode: boolean }> = ({ 
           The Catching <span className={accentColor}>Frequency</span>
         </h2>
         <p className={`text-xl leading-relaxed font-medium max-w-2xl ${subTextColor}`}>
-            Sampling means measuring the signal’s value at specific moments in time – like a camera taking pictures.
+            Sampling means measuring the signal’s value at specific moments in time - like a camera taking pictures.
             To see reality correctly, you must "blink" at least twice as fast as it moves.
         </p>
       </header>
@@ -249,7 +249,7 @@ export const S02_Sampling: React.FC<{ time: number; isDarkMode: boolean }> = ({ 
            <div className="space-y-6">
                 <h3 className={`text-2xl font-black italic tracking-tight border-l-4 border-orange-500 pl-6 ${textColor}`}>The Speed of Information</h3>
                 <p className={`text-base font-medium leading-relaxed opacity-60 ${textColor}`}>
-                    The rule is absolute: **Fs &gt; 2f**. If you sample slower than twice the speed of reality, you don't just lose detail—you create a fake reality (Aliasing). 
+                    The rule is absolute: **Fs &gt; 2f**. If you sample slower than twice the speed of reality, you don't just lose detail-you create a fake reality (Aliasing). 
                     As you move the mouse up, increase your sampling speed to maintain signal integrity.
                 </p>
            </div>
@@ -276,7 +276,7 @@ export const S02_Sampling: React.FC<{ time: number; isDarkMode: boolean }> = ({ 
                   },
                   {
                       title: "Shannon's Ideal",
-                      content: "Shannon proved that if the signal is band-limited and sampled correctly, it can be reconstructed perfectly using an infinite series of Sinc pulses. Digital isn't 'missing' data—it's just compacting it."
+                      content: "Shannon proved that if the signal is band-limited and sampled correctly, it can be reconstructed perfectly using an infinite series of Sinc pulses. Digital isn't 'missing' data-it's just compacting it."
                   }
               ]
           }}
@@ -328,7 +328,7 @@ export const S02_Sampling: React.FC<{ time: number; isDarkMode: boolean }> = ({ 
                       <div className={`mt-20 p-10 rounded-[2.5rem] italic leading-relaxed text-[1rem] ${isDarkMode ? 'bg-orange-500/5 text-white/40' : 'bg-orange-50 text-gray-600'}`}>
                           <p>
                             To reconstruct x(t), we must recover X(ω) from Y(ω). This is possible only when there is **no overlapping** 
-                            between the cycles of Y(ω)—the fundamental condition of the Nyquist-Shannon Theorem.
+                            between the cycles of Y(ω)-the fundamental condition of the Nyquist-Shannon Theorem.
                           </p>
                       </div>
                   </div>

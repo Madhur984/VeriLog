@@ -1397,7 +1397,7 @@ export const Module1Root: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                <div className={`p-8 rounded-3xl border transition-all hover:scale-[1.02] ${isDarkMode ? 'bg-black/30 border-orange-900/20' : 'bg-white shadow-sm border-gray-100'}`}>
                   <h3 className="text-xl font-bold mb-3 text-rose-500">Aliasing</h3>
-                  <p className="text-sm opacity-70 leading-relaxed">Occurs when sampling rate is too low. High-frequency signals appear as incorrect lower frequencies — like a wagon wheel spinning backward in movies.</p>
+                  <p className="text-sm opacity-70 leading-relaxed">Occurs when sampling rate is too low. High-frequency signals appear as incorrect lower frequencies - like a wagon wheel spinning backward in movies.</p>
                </div>
                <div className={`p-8 rounded-3xl border transition-all hover:scale-[1.02] ${isDarkMode ? 'bg-black/30 border-orange-900/20' : 'bg-white shadow-sm border-gray-100'}`}>
                   <h3 className="text-xl font-bold mb-3 text-emerald-500">Quantization Error</h3>

@@ -19,7 +19,7 @@ export const S07_Stampede: React.FC<Props> = ({ isActive, isDarkMode }) => {
         <p className={`text-base max-w-3xl ${subText}`}>
           Apply <em>too much</em> reverse voltage and the depletion region&apos;s field becomes
           violent. Minority carriers accelerate hard, smash valence electrons free, those smash
-          more electrons free — an <strong className="text-rose-300">avalanche</strong>. Reverse
+          more electrons free - an <strong className="text-rose-300">avalanche</strong>. Reverse
           current explodes. Most diodes are{' '}
           <strong className="text-rose-300">permanently destroyed</strong>.
         </p>
@@ -29,7 +29,7 @@ export const S07_Stampede: React.FC<Props> = ({ isActive, isDarkMode }) => {
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         className={`relative rounded-3xl overflow-hidden border ${cardBg}`}
       >
-        <img src="/images/commuter/p09.webp" alt="Breakdown region — the stampede" className="w-full block aspect-[16/9] object-cover" />
+        <img src="/images/commuter/p09.webp" alt="Breakdown region - the stampede" className="w-full block aspect-[16/9] object-cover" />
         <div className="absolute bottom-3 right-4 font-mono text-[9px] uppercase tracking-widest text-rose-200/80">
           Commuter Circuit · Breakdown
         </div>
@@ -37,7 +37,7 @@ export const S07_Stampede: React.FC<Props> = ({ isActive, isDarkMode }) => {
 
       <div className="grid md:grid-cols-3 gap-4">
         {[
-          { Icon: Zap,           t: 'The Trigger',     d: 'Reverse voltage exceeds V_BV (the breakdown voltage — diode-specific).' },
+          { Icon: Zap,           t: 'The Trigger',     d: 'Reverse voltage exceeds V_BV (the breakdown voltage - diode-specific).' },
           { Icon: AlertTriangle, t: 'The Avalanche',   d: 'Accelerated minority carriers collide with valence electrons, knocking many free in a chain reaction.' },
           { Icon: Skull,         t: 'The Damage',      d: 'Reverse current spikes uncontrolled. Without a current-limit resistor, the junction is destroyed.' },
         ].map((c) => (
@@ -73,7 +73,7 @@ export const S07_Stampede: React.FC<Props> = ({ isActive, isDarkMode }) => {
             <h4 className={`font-black text-base ${textColor} mb-2`}>Zener Breakdown</h4>
             <p className={`text-xs ${subText}`}>
               Quantum tunnelling through a thin depletion region in heavily-doped diodes (low
-              V_BV, ~ 2–6 V). Reversible — Zener diodes <em>operate</em> in this region as voltage
+              V_BV, ~ 2-6 V). Reversible - Zener diodes <em>operate</em> in this region as voltage
               regulators.
             </p>
           </div>

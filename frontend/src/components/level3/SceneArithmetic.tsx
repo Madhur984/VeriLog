@@ -1,5 +1,5 @@
 /**
- * SceneArithmetic.tsx — Module 3.4: Binary Arithmetic Lab
+ * SceneArithmetic.tsx - Module 3.4: Binary Arithmetic Lab
  * Elite Upgrade: Prediction-First Step-by-Step Addition with Physical Causality.
  */
 import React, { useState, useEffect } from 'react';
@@ -230,7 +230,7 @@ export const SceneArithmetic: React.FC<Props> = ({ onCorrect }) => {
                     initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
                     style={{ fontFamily: T.mono, fontSize: 12, letterSpacing: '0.4em', textTransform: 'uppercase', color: T.accent, display: 'block', marginBottom: 12 }}
                 >
-                    3.4 — The Logic of Math
+                    3.4 - The Logic of Math
                 </motion.span>
                 <h2 style={{ fontSize: 32, fontWeight: 800, color: T.text, marginBottom: 12 }}>Binary Synthesis</h2>
                 <div style={{ maxWidth: 500, margin: '0 auto', position: 'relative' }}>

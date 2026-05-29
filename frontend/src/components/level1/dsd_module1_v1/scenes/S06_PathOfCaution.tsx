@@ -14,7 +14,7 @@ const SAD = [
 const lit = (name: string, val: number) => val === 0 ? name : `${name}'`;
 
 export const S06_PathOfCaution: React.FC<Props> = ({ isDarkMode }) => {
-  const [pick, setPick] = useState(3); // index 7 by default — the apocalypse
+  const [pick, setPick] = useState(3); // index 7 by default - the apocalypse
   const row = SAD[pick];
 
   const textColor = isDarkMode ? 'text-white' : 'text-slate-900';
@@ -28,10 +28,10 @@ export const S06_PathOfCaution: React.FC<Props> = ({ isDarkMode }) => {
           Chapter 06 · Targeting the Zeros
         </div>
         <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>
-          The Path of Caution <span className="opacity-50 font-light">— Anatomy of a Maxterm</span>
+          The Path of Caution <span className="opacity-50 font-light">- Anatomy of a Maxterm</span>
         </h2>
         <p className={`text-base max-w-3xl ${subText}`}>
-          The pessimist designs to <em>avoid</em> failure. Each disaster row gets a barricade — an
+          The pessimist designs to <em>avoid</em> failure. Each disaster row gets a barricade - an
           OR of complemented literals. The translation rule flips: <strong>1 becomes
           complemented (X&apos;), 0 stays normal (X)</strong>. Why the inversion? Because{' '}
           <strong>1</strong> is the dangerous state we are escaping.
@@ -41,13 +41,13 @@ export const S06_PathOfCaution: React.FC<Props> = ({ isDarkMode }) => {
       {/* Side-by-side sketchbook reference */}
       <div className="grid md:grid-cols-2 gap-5">
         <div className="rounded-3xl overflow-hidden border border-white/10" style={{ background: '#fef9f0' }}>
-          <img src="/images/sketchbook/p07.webp" alt="Path of Caution — targeting the zeros" className="w-full block" />
+          <img src="/images/sketchbook/p07.webp" alt="Path of Caution - targeting the zeros" className="w-full block" />
           <div className="px-4 py-2 text-[10px] font-mono uppercase tracking-widest text-slate-700 bg-white/60">
             Sketchbook · barricading M3, M5, M6, M7
           </div>
         </div>
         <div className="rounded-3xl overflow-hidden border border-white/10" style={{ background: '#fef9f0' }}>
-          <img src="/images/sketchbook/p08.webp" alt="Anatomy of a maxterm — barricade metaphor" className="w-full block" />
+          <img src="/images/sketchbook/p08.webp" alt="Anatomy of a maxterm - barricade metaphor" className="w-full block" />
           <div className="px-4 py-2 text-[10px] font-mono uppercase tracking-widest text-slate-700 bg-white/60">
             Sketchbook · barricade construction rule
           </div>
@@ -168,7 +168,7 @@ export const S06_PathOfCaution: React.FC<Props> = ({ isDarkMode }) => {
           <div className={`font-mono text-[10px] uppercase tracking-widest mb-3 ${
             isDarkMode ? 'text-rose-400' : 'text-rose-700'
           }`}>
-            OR the escape routes — at least ONE must hold
+            OR the escape routes - at least ONE must hold
           </div>
           <div className="font-mono text-3xl md:text-4xl font-black tracking-tight"
                style={{ color: '#f43f5e' }}>
@@ -193,7 +193,7 @@ export const S06_PathOfCaution: React.FC<Props> = ({ isDarkMode }) => {
           <span className="font-mono text-purple-400 font-black">Mᵢ</span> is exactly the
           complement of the minterm{' '}
           <span className="font-mono text-purple-400 font-black">mᵢ</span>:
-          <span className="font-mono mx-1">(mᵢ)′ = Mᵢ</span>. Try it on row 5 — the minterm{' '}
+          <span className="font-mono mx-1">(mᵢ)′ = Mᵢ</span>. Try it on row 5 - the minterm{' '}
           <span className="font-mono">m5 = R · A′ · W</span>. Apply DeMorgan
           and you get <span className="font-mono">(R · A′ · W)′ = R′ + A + W′</span>, which is
           exactly <span className="font-mono">M5</span>. We&apos;ll dwell on this in Chapter 8.

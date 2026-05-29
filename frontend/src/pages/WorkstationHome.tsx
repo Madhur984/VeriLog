@@ -123,6 +123,7 @@ const ProfileCard: React.FC<{
 
   return (
     <motion.div
+      data-tour="portal-profile"
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ delay: 1.2, duration: 0.6 }}
@@ -277,16 +278,16 @@ export const WorkstationHome: React.FC = () => {
 
 
   return (
-    <div className="min-h-[100svh] lg:h-screen flex overflow-y-auto lg:overflow-hidden font-sans" style={{ backgroundColor: '#06090f', color: '#cbd5e1' }}>
+    <div className="min-h-[100svh] lg:h-screen flex overflow-x-hidden overflow-y-auto lg:overflow-hidden font-sans" style={{ backgroundColor: '#06090f', color: '#cbd5e1' }}>
       {/* PCB substrate background with moving data packets */}
       <PCBBackground />
 
-      {/* Left radial nav — desktop only (the 360px dial is too large for phones) */}
+      {/* Left radial nav - desktop only (the 360px dial is too large for phones) */}
       <div className="hidden lg:block">
         <RadialMenu />
       </div>
 
-      {/* Profile card — top right, desktop only */}
+      {/* Profile card - top right, desktop only */}
       <div className="hidden lg:block">
         <ProfileCard
           name={name}
@@ -315,14 +316,15 @@ export const WorkstationHome: React.FC = () => {
             className="flex-1 w-full flex flex-col lg:flex-row gap-6 lg:gap-20 justify-start items-stretch lg:items-start px-0 lg:px-6 overflow-visible lg:overflow-hidden pb-8 lg:pb-0"
             style={{ maxWidth: 1400 }}
           >
-            {/* Diagnostic console — desktop only (decorative telemetry; phone shows the tree full-screen) */}
+            {/* Diagnostic console - desktop only (decorative telemetry; phone shows the tree full-screen) */}
             <div className="hidden lg:flex w-auto flex-shrink-0 pt-8 flex-col gap-6" style={{ marginLeft: 0 }}>
               <DiagnosticConsole onCommandPaletteOpen={() => setCmdOpen(true)} />
 
             </div>
 
-            {/* Holographic skill tree — center/right */}
+            {/* Holographic skill tree - center/right */}
             <div
+              data-tour="portal-tree"
               className="w-full flex-1 min-h-[68vh] lg:min-h-0 lg:h-full relative rounded-3xl flex flex-col overflow-hidden"
               style={{
                 background: 'linear-gradient(160deg, rgba(5, 8, 12, 0.95) 0%, rgba(3, 5, 8, 1) 100%)',
@@ -334,7 +336,7 @@ export const WorkstationHome: React.FC = () => {
                 ].join(', '),
               }}
             >
-              <div className="w-full h-full overflow-hidden px-4 pt-4 lg:px-10 lg:pt-10">
+              <div className="w-full h-full overflow-hidden px-2 pt-3 sm:px-4 lg:px-10 lg:pt-10">
                 {/* Corner LED indicators */}
                 {[
                   ['top-3 left-3', '#22d3ee'],

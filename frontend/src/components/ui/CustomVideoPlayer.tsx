@@ -17,7 +17,7 @@ export interface VideoPlayerHandle {
 
 interface CustomVideoPlayerProps {
   src: string;
-  /** Theme accent (hex). Each module passes its own — cyan/amber/orange. */
+  /** Theme accent (hex). Each module passes its own - cyan/amber/orange. */
   accent?: string;
   poster?: string;
   className?: string;

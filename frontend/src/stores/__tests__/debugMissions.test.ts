@@ -1,5 +1,5 @@
 /**
- * debugMissions.test.ts — Data integrity tests for debug missions
+ * debugMissions.test.ts - Data integrity tests for debug missions
  */
 
 import { describe, it, expect } from 'vitest';

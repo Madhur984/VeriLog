@@ -1,5 +1,5 @@
 /**
- * StreakPanel.tsx — 7-day streak calendar with multiplier display
+ * StreakPanel.tsx - 7-day streak calendar with multiplier display
  */
 
 import { useGamificationStore } from '../../stores/gamificationStore';

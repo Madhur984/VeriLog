@@ -1,12 +1,12 @@
 /**
  * useXPSystem.ts
  *
- * XP Psychology System — Signal Integrity Index (SII).
+ * XP Psychology System - Signal Integrity Index (SII).
  *
  * Three XP categories:
- *   structural   (+10) — Lab snap, quiz correct
- *   diagnostic   (+20) — Correct diagnoses
- *   application  (+15) — Matching + blanks correct
+ *   structural   (+10) - Lab snap, quiz correct
+ *   diagnostic   (+20) - Correct diagnoses
+ *   application  (+15) - Matching + blanks correct
  *
  * Hesitation penalty: answer time > 30s reduces award by 50%.
  * Signal Integrity Index: weighted composite of all categories.
@@ -104,7 +104,7 @@ export function useXPSystem() {
         if (el) el.textContent = String(xpRef.current.total).padStart(3, '0');
     }, []);
 
-    /** Weighted Signal Integrity Index: 0–100 */
+    /** Weighted Signal Integrity Index: 0-100 */
     const signalIntegrityIndex = useCallback((): number => {
         const cur = xpRef.current;
         const weighted =

@@ -58,7 +58,7 @@ export const S08_Control: React.FC = () => {
 
         <div className="pointer-events-auto mt-8 max-w-2xl">
              <p className="text-[10px] leading-relaxed text-white/30 text-center">
-                Processing is the bridge between **Matter** and **Meaning**. By applying mathematical operators—filters, gains, and transforms—we can isolate the information that matters while discarding the noise that doesn't.
+                Processing is the bridge between **Matter** and **Meaning**. By applying mathematical operators-filters, gains, and transforms-we can isolate the information that matters while discarding the noise that doesn't.
              </p>
         </div>
 

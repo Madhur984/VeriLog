@@ -39,7 +39,7 @@ function loadState(): GamificationState {
     try {
         const raw = localStorage.getItem(STORAGE_KEY);
         if (raw) return JSON.parse(raw) as GamificationState;
-    } catch { /* corrupted — reset */ }
+    } catch { /* corrupted - reset */ }
 
     return {
         xp: 0,

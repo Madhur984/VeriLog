@@ -10,14 +10,14 @@ interface Chapter { t: number; title: string; line: string; }
 const VIDEO_SRC = '/videos/P-N_Junction_Diode.mp4';
 
 const CHAPTERS: Chapter[] = [
-  { t: 0,   title: 'The Junction Forms',         line: 'Sandwich an N-type slab to a P-type slab. At the boundary, free electrons from N rush across to fill nearby holes in P — the start of every diode story.' },
+  { t: 0,   title: 'The Junction Forms',         line: 'Sandwich an N-type slab to a P-type slab. At the boundary, free electrons from N rush across to fill nearby holes in P - the start of every diode story.' },
   { t: 30,  title: 'Diffusion vs Drift',         line: 'Initial carrier diffusion creates uncovered ions: + on N side, − on P side. Those ions create an internal electric field that pulls carriers back. Equilibrium = drift cancels diffusion.' },
-  { t: 80,  title: 'The Depletion Region',       line: 'A narrow zone around the junction is now devoid of mobile carriers — the depletion region. It has a built-in voltage (~0.7 V for Si) called the barrier potential V_bi.' },
+  { t: 80,  title: 'The Depletion Region',       line: 'A narrow zone around the junction is now devoid of mobile carriers - the depletion region. It has a built-in voltage (~0.7 V for Si) called the barrier potential V_bi.' },
   { t: 130, title: 'Reverse Bias',               line: 'Apply + to N, − to P. The external field reinforces the internal one. The gap widens, majority carriers are pulled away, and only a tiny minority leak (I_S) survives.' },
-  { t: 180, title: 'Forward Bias',               line: 'Flip the battery: + to P, − to N. The external field opposes the internal one. Once V_D crosses ~0.7 V, the gap collapses and carriers flood across — exponential current.' },
+  { t: 180, title: 'Forward Bias',               line: 'Flip the battery: + to P, − to N. The external field opposes the internal one. Once V_D crosses ~0.7 V, the gap collapses and carriers flood across - exponential current.' },
   { t: 230, title: 'Shockley\'s Equation',       line: 'I_D = I_S(e^(V_D/nV_T) − 1). Three constants and one variable predict every operating point in the active region.' },
   { t: 280, title: 'Breakdown Region',           line: 'Push reverse voltage past V_BV and minority carriers gain enough energy to ionise the lattice. Avalanche or Zener depending on doping. Most diodes die here.' },
-  { t: 330, title: 'The V-I Curve',              line: 'One curve, four regions: breakdown, reverse, no-bias point, forward. Memorise the shape — it appears on every diode datasheet ever.' },
+  { t: 330, title: 'The V-I Curve',              line: 'One curve, four regions: breakdown, reverse, no-bias point, forward. Memorise the shape - it appears on every diode datasheet ever.' },
   { t: 380, title: 'The Diode Symbol',           line: 'Triangle = direction of permitted current. Bar = the closed door for reverse bias. Anode (P) on the triangle side, cathode (N) on the bar side. One-way street.' },
 ];
 
@@ -56,7 +56,7 @@ export const S01_VideoLecture: React.FC<Props> = ({ isActive, isDarkMode }) => {
         </div>
         <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>P-N Junction Diode</h2>
         <p className={`text-base max-w-3xl ${subText}`}>
-          Full guided walkthrough — from junction formation to diode symbol. The transcript
+          Full guided walkthrough - from junction formation to diode symbol. The transcript
           below is keyed to the video; click any chapter to jump.
         </p>
       </section>

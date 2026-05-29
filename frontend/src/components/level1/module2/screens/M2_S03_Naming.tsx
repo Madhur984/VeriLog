@@ -41,11 +41,11 @@ export const M2_S03_Naming: React.FC<M2ScreenProps> = ({ triggerHaptic }) => {
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
                   <div className="text-[10px] uppercase text-[#8A8A99] font-mono">Analog</div>
-                  <div className="text-[11px] leading-tight text-white/90">{item.analogExample.split(' – ')[0]}</div>
+                  <div className="text-[11px] leading-tight text-white/90">{item.analogExample.split(' - ')[0]}</div>
                 </div>
                 <div className="space-y-1">
                   <div className="text-[10px] uppercase text-[#FF5F1F] font-mono">Digital</div>
-                  <div className="text-[11px] leading-tight text-white/90">{item.digitalExample.split(' – ')[0]}</div>
+                  <div className="text-[11px] leading-tight text-white/90">{item.digitalExample.split(' - ')[0]}</div>
                 </div>
               </div>
 

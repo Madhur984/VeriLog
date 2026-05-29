@@ -17,7 +17,7 @@ export const S04_Minterms: React.FC<Props> = ({ isActive, isDarkMode }) => {
   const subText   = isDarkMode ? 'text-slate-300' : 'text-slate-600';
   const cardBg    = isDarkMode ? 'bg-white/5 border-white/10' : 'bg-white border-slate-200 shadow-xl';
 
-  // Sequentially "build" the canonical SOP — adds one minterm at a time
+  // Sequentially "build" the canonical SOP - adds one minterm at a time
   const [revealCount, setRevealCount] = useState(0);
   useEffect(() => {
     if (!isActive) { setRevealCount(0); return; }
@@ -44,11 +44,11 @@ export const S04_Minterms: React.FC<Props> = ({ isActive, isDarkMode }) => {
           The translation rule is mechanical: in a row where F = 1, look at each input. If it is{' '}
           <strong className="text-rose-300">0</strong>, write the variable <strong>primed</strong>{' '}
           (X′). If it is <strong className="text-emerald-300">1</strong>, write it{' '}
-          <strong>unprimed</strong> (X). AND them together — that is the minterm.
+          <strong>unprimed</strong> (X). AND them together - that is the minterm.
         </p>
       </section>
 
-      {/* Translation rule — visual */}
+      {/* Translation rule - visual */}
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         className={`p-6 rounded-3xl border ${cardBg} grid sm:grid-cols-2 gap-3`}
@@ -224,7 +224,7 @@ export const S04_Minterms: React.FC<Props> = ({ isActive, isDarkMode }) => {
           <p className={`text-sm ${subText}`}>
             5 product terms × 3 inputs = <strong className={textColor}>15 literals</strong>. Five
             three-input AND gates plus one five-input OR ={' '}
-            <strong className="text-rose-300">6 gates</strong>. It works — but it is wasteful.
+            <strong className="text-rose-300">6 gates</strong>. It works - but it is wasteful.
             Step 4 collapses this with a Karnaugh Map.
           </p>
         </motion.div>

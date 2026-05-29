@@ -12,7 +12,7 @@ interface VeriSwitchProps {
 }
 
 /**
- * VeriSwitch — Unified VeriLog V1 Toggle.
+ * VeriSwitch - Unified VeriLog V1 Toggle.
  * Includes 15ms pre-action tension and 80ms flip timing.
  */
 export const VeriSwitch: React.FC<VeriSwitchProps> = ({

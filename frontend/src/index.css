@@ -18,7 +18,7 @@ html, body, #root {
   :root {
     /* ═══ MASTER COLOR SYSTEM (LOCKED) ═══ */
 
-    /* BASE — 90% of all UI surface */
+    /* BASE - 90% of all UI surface */
     --bg-void: #0E1116;
     --bg-base: #141922;
     --bg-elev: #1C2430;
@@ -29,16 +29,16 @@ html, body, #root {
 
     --border-soft: rgba(255,255,255,0.08);
 
-    /* SIGNAL — 8% — canvas waveform ONLY */
+    /* SIGNAL - 8% - canvas waveform ONLY */
     --signal-core:   #7DD3FC;
     --signal-bright: #BAE6FD;
     --signal-dim:    #38BDF8;
     --signal-primary: #7DD3FC; /* alias for Tailwind classes */
 
-    /* ACCENT — 2% — rare active states */
+    /* ACCENT - 2% - rare active states */
     --accent-orange: #F97316;
     --accent-soft:   #FB923C;
-    --accent-pink:   #EC4899;  /* 1% — peak success only */
+    --accent-pink:   #EC4899;  /* 1% - peak success only */
 
     /* GLOW SYSTEM (hint, not effect) */
     --glow-signal: 0 0 8px rgba(125,211,252,0.35);
@@ -46,7 +46,7 @@ html, body, #root {
     --glow-pink:   0 0 6px rgba(236,72,153,0.35);
     --glow-subtle: 0 0 4px rgba(255,255,255,0.07);
 
-    /* NVG — NIGHT VISION GREEN (MILITARY TACTICAL) */
+    /* NVG - NIGHT VISION GREEN (MILITARY TACTICAL) */
     --nvg-core:   #22C55E;
     --nvg-bright: #4ADE80;
     --nvg-glow:   0 0 15px rgba(34,197,94,0.4);
@@ -104,7 +104,7 @@ html, body, #root {
     mix-blend-mode: color-dodge;
   }
 
-  /* Global typography resets — minimal & professional */
+  /* Global typography resets - minimal & professional */
   .hero-text  { 
     font-family: 'Space Grotesk', sans-serif;
     font-weight: 700;

@@ -79,7 +79,7 @@ export const ALULab: React.FC<Props> = ({ isDarkMode = true }) => {
             {/* Header */}
             <div style={{ textAlign: 'center', marginBottom: 40 }}>
                 <span className="font-mono text-[10px] tracking-[0.3em] uppercase block mb-3" style={{ color: T.accent }}>
-                    Scene 4.7 — The Silicon Heart
+                    Scene 4.7 - The Silicon Heart
                 </span>
                 <h2 style={{ fontSize: 32, fontWeight: 800, color: T.text, marginBottom: 8 }}>ALU Laboratory</h2>
                 <p style={{ color: T.muted, fontSize: 14 }}>

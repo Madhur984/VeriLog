@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 
 /**
- * Glossy, NON-interactive snapshot of the platform (DSD Module 01 — Boolean
+ * Glossy, NON-interactive snapshot of the platform (DSD Module 01 - Boolean
  * logic: truth table → minterm solver). Now "alive": a scanning highlight,
  * breathing status LED, flowing waveform, easing progress, typing cursor, plus
  * two layered glass cards (K-map + gate schematic) behind it for 3D depth.
@@ -45,7 +45,7 @@ export const ProductMockup = () => {
         style={{ background: 'radial-gradient(ellipse 80% 80% at 60% 40%, rgba(34,211,238,0.18), transparent 70%)', filter: 'blur(20px)' }}
       />
 
-      {/* Secondary layered card — K-map (upper-left, behind) */}
+      {/* Secondary layered card - K-map (upper-left, behind) */}
       <GlassCard className="-top-9 -left-10 w-44" title="Karnaugh map" titleColor="#22D3EE" delay={0.2} dir={-1}>
         <div className="grid grid-cols-4 gap-1">
           {[0, 1, 0, 0, 0, 0, 1, 1].map((v, i) => (
@@ -57,7 +57,7 @@ export const ProductMockup = () => {
         </div>
       </GlassCard>
 
-      {/* Secondary layered card — gate schematic (lower-right, behind) */}
+      {/* Secondary layered card - gate schematic (lower-right, behind) */}
       <GlassCard className="-bottom-10 -right-9 w-40" title="Logic gates" titleColor="#8B5CF6" delay={0.8} dir={1}>
         <svg viewBox="0 0 90 46" className="w-full" style={{ opacity: 0.9 }}>
           <path d="M10 10 h12 a11 11 0 0 1 0 22 h-12 z" fill="none" stroke="#8B5CF6" strokeWidth="1.4" />

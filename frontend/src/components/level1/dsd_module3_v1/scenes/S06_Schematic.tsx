@@ -45,9 +45,9 @@ export const S06_Schematic: React.FC<Props> = ({ isActive, isDarkMode }) => {
       >
         <div className="grid md:grid-cols-3 gap-4">
           {[
-            { sym: '·', name: 'Product (·)', detail: 'Each AND gate becomes a series circuit — every input must be 1.', accent: '#fbbf24' },
-            { sym: '+', name: 'Sum (+)',     detail: 'Each OR gate is a parallel circuit — any input being 1 is enough.', accent: '#22c55e' },
-            { sym: '′', name: 'Prime (′)',   detail: 'Each NOT gate inverts a signal. We need none here — A, B, C are unprimed.', accent: '#fb7185' },
+            { sym: '·', name: 'Product (·)', detail: 'Each AND gate becomes a series circuit - every input must be 1.', accent: '#fbbf24' },
+            { sym: '+', name: 'Sum (+)',     detail: 'Each OR gate is a parallel circuit - any input being 1 is enough.', accent: '#22c55e' },
+            { sym: '′', name: 'Prime (′)',   detail: 'Each NOT gate inverts a signal. We need none here - A, B, C are unprimed.', accent: '#fb7185' },
           ].map((m) => (
             <div
               key={m.name}
@@ -110,7 +110,7 @@ export const S06_Schematic: React.FC<Props> = ({ isActive, isDarkMode }) => {
           ))}
         </div>
 
-        {/* SVG schematic — F = A + BC */}
+        {/* SVG schematic - F = A + BC */}
         <svg viewBox="0 0 760 280" className="w-full h-auto">
           {/* Input rail labels */}
           <g fontFamily="monospace" fontSize="14" fontWeight="bold">

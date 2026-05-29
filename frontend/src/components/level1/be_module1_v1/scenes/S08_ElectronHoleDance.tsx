@@ -33,7 +33,7 @@ export const S08_ElectronHoleDance: React.FC<Props> = ({ isActive, isDarkMode })
         <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>The Dance of Electrons and Holes</h2>
         <p className={`text-base max-w-3xl ${subText}`}>
           When a free electron drops into a hole to fill the void, it leaves a <strong>new void</strong>{' '}
-          behind. From a distance the void looks as if it has hopped sideways. Two flows emerge — and
+          behind. From a distance the void looks as if it has hopped sideways. Two flows emerge - and
           they go in <strong>opposite directions</strong>.
         </p>
       </section>
@@ -171,7 +171,7 @@ export const S08_ElectronHoleDance: React.FC<Props> = ({ isActive, isDarkMode })
           <p className={`text-sm leading-relaxed ${textColor}`}>
             The <strong>apparent</strong> movement of a positively charged void. As each electron jumps
             into a hole, the hole appears to move the other way. <strong className="text-pink-300">Conventional
-            current</strong> — the arrow on every schematic — follows hole flow.
+            current</strong> - the arrow on every schematic - follows hole flow.
           </p>
         </motion.div>
       </div>
@@ -185,7 +185,7 @@ export const S08_ElectronHoleDance: React.FC<Props> = ({ isActive, isDarkMode })
         <div className="font-mono text-[10px] uppercase tracking-widest text-orange-400 mb-2">Madhur&apos;s memory rule</div>
         <p className={`text-base leading-relaxed ${textColor}`}>
           Electrons go <strong className="text-cyan-300">toward +</strong>. Holes (and conventional current) go{' '}
-          <strong className="text-pink-300">toward −</strong>. Two flows, one current — but always in opposite
+          <strong className="text-pink-300">toward −</strong>. Two flows, one current - but always in opposite
           directions.
         </p>
       </motion.div>

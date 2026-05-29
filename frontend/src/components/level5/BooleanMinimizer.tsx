@@ -1,5 +1,5 @@
 /**
- * BooleanMinimizer.tsx — Step-by-step Quine-McCluskey minimization visualizer
+ * BooleanMinimizer.tsx - Step-by-step Quine-McCluskey minimization visualizer
  *
  * Shows the minimization process for Boolean expressions:
  * 1. Minterms input

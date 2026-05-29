@@ -28,13 +28,13 @@ export const S04_PathOfJoy: React.FC<Props> = ({ isActive, isDarkMode }) => {
           Chapter 04 · Targeting the Ones
         </div>
         <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>
-          The Path of Joy <span className="opacity-50 font-light">— Anatomy of a Minterm</span>
+          The Path of Joy <span className="opacity-50 font-light">- Anatomy of a Minterm</span>
         </h2>
         <p className={`text-base max-w-3xl ${subText}`}>
           The optimist designs for perfection. Pick a happy row and watch how the snapshot is
           assembled: every <strong>0</strong> input becomes a complemented variable
           (<em>X&apos;</em>), every <strong>1</strong> input stays as <em>X</em>. AND them
-          together and you have captured exactly that universe — and no other.
+          together and you have captured exactly that universe - and no other.
         </p>
       </section>
 
@@ -44,7 +44,7 @@ export const S04_PathOfJoy: React.FC<Props> = ({ isActive, isDarkMode }) => {
           initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
           className="rounded-3xl overflow-hidden border border-white/10" style={{ background: '#fef9f0' }}
         >
-          <img src="/images/sketchbook/p04.webp" alt="Path of Joy — selecting the happy rows" className="w-full block" />
+          <img src="/images/sketchbook/p04.webp" alt="Path of Joy - selecting the happy rows" className="w-full block" />
           <div className="px-4 py-2 text-[10px] font-mono uppercase tracking-widest text-slate-700 bg-white/60">
             Sketchbook · selecting m0, m1, m2, m4
           </div>
@@ -53,7 +53,7 @@ export const S04_PathOfJoy: React.FC<Props> = ({ isActive, isDarkMode }) => {
           initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
           className="rounded-3xl overflow-hidden border border-white/10" style={{ background: '#fef9f0' }}
         >
-          <img src="/images/sketchbook/p05.webp" alt="Anatomy of a minterm — puzzle metaphor" className="w-full block" />
+          <img src="/images/sketchbook/p05.webp" alt="Anatomy of a minterm - puzzle metaphor" className="w-full block" />
           <div className="px-4 py-2 text-[10px] font-mono uppercase tracking-widest text-slate-700 bg-white/60">
             Sketchbook · the puzzle / snapshot rule
           </div>
@@ -187,7 +187,7 @@ export const S04_PathOfJoy: React.FC<Props> = ({ isActive, isDarkMode }) => {
           <span className="font-mono text-blue-400 font-black">5</span> because{' '}
           <span className="font-mono">1·2² + 0·2¹ + 1·2⁰ = 5</span>. So <strong>m5</strong>{' '}
           is the minterm that fires <em>only</em> at row 5. This indexing is a bridge between
-          two languages — Boolean expressions and ordinary base-2 arithmetic.
+          two languages - Boolean expressions and ordinary base-2 arithmetic.
         </p>
       </motion.div>
 

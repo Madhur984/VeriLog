@@ -69,7 +69,7 @@ export const CircuitComplexityDemo: React.FC<{ onComplete: () => void; isDarkMod
         <div className="flex flex-col gap-8 w-full max-w-6xl mx-auto px-10">
             <div className="text-center mb-4">
                 <span className="font-mono text-[9px] tracking-[0.25em] uppercase text-cyan-500 font-black mb-2 block">
-                    Scene 5.1 — The Complexity Problem
+                    Scene 5.1 - The Complexity Problem
                 </span>
                 <h2 className={`text-3xl font-black ${isDarkMode ? 'text-white' : 'text-slate-900'} mb-3`}>
                     Boolean Expression Translation

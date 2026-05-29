@@ -87,7 +87,7 @@ export const S02_TheHeadache: React.FC<Props> = ({ isActive, isDarkMode }) => {
             </table>
           </div>
           <p className={`text-[11px] mt-4 ${subText}`}>
-            Highlighted rows are <strong className="text-amber-300">premium guests</strong> — minterms where F = 1.
+            Highlighted rows are <strong className="text-amber-300">premium guests</strong> - minterms where F = 1.
             Algebra has to stitch them together blindly. Eight 1s feel like noise, not a pattern.
           </p>
         </motion.div>
@@ -142,7 +142,7 @@ export const S02_TheHeadache: React.FC<Props> = ({ isActive, isDarkMode }) => {
             </button>
           </div>
           <p className={`text-[11px] ${subText}`}>
-            Six expansion-and-collapse moves to land back on the same starting point. The algebra is correct —
+            Six expansion-and-collapse moves to land back on the same starting point. The algebra is correct -
             but it&apos;s blind. There&apos;s no way to <strong>see</strong> which terms group naturally.
           </p>
         </motion.div>
@@ -157,7 +157,7 @@ export const S02_TheHeadache: React.FC<Props> = ({ isActive, isDarkMode }) => {
         <div className="font-mono text-[10px] uppercase tracking-widest text-amber-400 mb-2">The Diagnosis</div>
         <p className={`text-base leading-relaxed ${textColor}`}>
           Algebra works on <em>symbols</em>. But Boolean simplification is fundamentally a problem of{' '}
-          <strong className="text-amber-300">geometry</strong> — which terms differ by exactly one variable so they
+          <strong className="text-amber-300">geometry</strong> - which terms differ by exactly one variable so they
           can be merged. Madhur&apos;s next move: <em>turn the table into a floor plan</em>.
         </p>
       </motion.div>

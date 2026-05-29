@@ -188,7 +188,7 @@ export const S08_Manifest: React.FC<Props> = ({ isActive, isDarkMode }) => {
           </div>
           <p className={`text-[11px] mt-5 ${subText}`}>
             <strong>Step 1 complete.</strong> Each premium room is lit on the blueprint. The next chapter walks
-            through the four wings Madhur uses to cover them — including a torus trick.
+            through the four wings Madhur uses to cover them - including a torus trick.
           </p>
         </motion.div>
       </div>

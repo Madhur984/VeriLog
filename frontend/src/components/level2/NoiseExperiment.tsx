@@ -1,10 +1,10 @@
 /**
- * NoiseExperiment.tsx — Micro-Module 2.3
+ * NoiseExperiment.tsx - Micro-Module 2.3
  *
  * Side-by-side comparison: Analog vs Digital under noise.
  *
  * Layout:
- *   [Noise Slider — shared]
+ *   [Noise Slider - shared]
  *   [Analog Circuit] [Digital Circuit]
  *   [Dual-channel Oscilloscope]
  *   [Interactive Concept Table]
@@ -33,14 +33,14 @@ const T = {
 const CONCEPT_ROWS = [
     {
         concept: 'Resolution',
-        analog: 'Infinite — any value in range',
+        analog: 'Infinite - any value in range',
         digital: '2 levels: HIGH or LOW',
         insight: 'A 12-bit ADC divides the analog range into 4096 discrete levels. More bits → finer resolution.',
     },
     {
         concept: 'Noise Immunity',
-        analog: 'Low — noise directly corrupts value',
-        digital: 'High — noise margin absorbs interference',
+        analog: 'Low - noise directly corrupts value',
+        digital: 'High - noise margin absorbs interference',
         insight: 'Digital noise margin = V_OH_min − V_IH. Any noise below this is rejected entirely.',
     },
     {
@@ -58,7 +58,7 @@ const CONCEPT_ROWS = [
     {
         concept: 'Processing',
         analog: 'Requires op-amps, continuous circuits',
-        digital: 'Logic gates — fast, dense, scalable',
+        digital: 'Logic gates - fast, dense, scalable',
         insight: 'A modern CPU performs 10^10 operations/sec using transistors as digital switches. Equivalent analog complexity is impossible.',
     },
 ];
@@ -67,7 +67,7 @@ const SCENARIOS = [
     { label: 'Temperature sensor reading 23.7°C', correct: 'Analog', reason: 'Temperature is a continuous physical quantity.' },
     { label: 'Keyboard key being pressed', correct: 'Digital', reason: 'Key is either pressed (HIGH) or not (LOW). Binary state.' },
     { label: 'MP3 audio file on disk', correct: 'Digital', reason: 'Audio encoded as discrete samples at 44,100 Hz, 16 bits each.' },
-    { label: 'Vinyl record groove', correct: 'Analog', reason: 'Groove depth maps continuously to pressure — no discrete steps.' },
+    { label: 'Vinyl record groove', correct: 'Analog', reason: 'Groove depth maps continuously to pressure - no discrete steps.' },
 ];
 
 interface NoiseExperimentProps {
@@ -118,7 +118,7 @@ export function NoiseExperiment({ onComplete }: NoiseExperimentProps) {
                         triggerHaptic('light');
                     }}
                     min={0} max={10}
-                    label="Noise Generator — Shared Channel"
+                    label="Noise Generator - Shared Channel"
                     variant="signal"
                 />
                 <div style={{
@@ -131,7 +131,7 @@ export function NoiseExperiment({ onComplete }: NoiseExperimentProps) {
                         border: `1px solid ${noiseAmp > 0 ? `${T.error}20` : T.border}`,
                     }}>
                         <span style={{ color: T.analog }}>ANALOG:</span> noise directly corrupts signal
-                        {noiseAmp > 4 && <span style={{ color: T.error }}> — DEGRADED</span>}
+                        {noiseAmp > 4 && <span style={{ color: T.error }}> - DEGRADED</span>}
                     </div>
                     <div style={{
                         padding: '8px 12px', borderRadius: 4,
@@ -139,7 +139,7 @@ export function NoiseExperiment({ onComplete }: NoiseExperimentProps) {
                         border: `1px solid ${noiseAmp > 7 ? `${T.warning}20` : T.border}`,
                     }}>
                         <span style={{ color: T.digital }}>DIGITAL:</span> stable within noise margin
-                        {noiseAmp > 7 && <span style={{ color: T.warning }}> — MARGIN EXCEEDED</span>}
+                        {noiseAmp > 7 && <span style={{ color: T.warning }}> - MARGIN EXCEEDED</span>}
                     </div>
                 </div>
             </div>
@@ -167,7 +167,7 @@ export function NoiseExperiment({ onComplete }: NoiseExperimentProps) {
                         className={flickering ? 'led--flickering' : ''}
                     />
                     <span style={{ fontFamily: T.mono, fontSize: 9, color: T.muted }}>
-                        {flickering ? '⚠ Flickering — noise corrupting signal' : 'Smooth dimming'}
+                        {flickering ? '⚠ Flickering - noise corrupting signal' : 'Smooth dimming'}
                     </span>
                 </div>
 
@@ -188,7 +188,7 @@ export function NoiseExperiment({ onComplete }: NoiseExperimentProps) {
                         transition: 'background 0.08s step-end, box-shadow 0.08s step-end',
                     }} />
                     <span style={{ fontFamily: T.mono, fontSize: 9, color: T.muted }}>
-                        {noiseAmp > 7 ? '⚠ Threshold exceeded' : 'Stable — noise rejected'}
+                        {noiseAmp > 7 ? '⚠ Threshold exceeded' : 'Stable - noise rejected'}
                     </span>
                 </div>
             </div>
@@ -232,7 +232,7 @@ export function NoiseExperiment({ onComplete }: NoiseExperimentProps) {
                     letterSpacing: '0.2em', textTransform: 'uppercase',
                     color: `${T.accent}80`, marginBottom: 16,
                 }}>
-                    Comparison Matrix — Click to Expand
+                    Comparison Matrix - Click to Expand
                 </span>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
                     {/* Header */}
@@ -326,7 +326,7 @@ export function NoiseExperiment({ onComplete }: NoiseExperimentProps) {
                         letterSpacing: '0.2em', textTransform: 'uppercase',
                         color: `${T.accent}80`, marginBottom: 12,
                     }}>
-                        Challenge — Signal Classification ({scenarioIdx + 1}/{SCENARIOS.length})
+                        Challenge - Signal Classification ({scenarioIdx + 1}/{SCENARIOS.length})
                     </span>
                     <div style={{ fontFamily: T.sans, fontSize: 18, color: T.text, marginBottom: 16, lineHeight: 1.6 }}>
                         {SCENARIOS[scenarioIdx].label}

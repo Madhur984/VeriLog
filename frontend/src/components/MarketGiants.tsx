@@ -121,7 +121,7 @@ export const MarketGiants: React.FC = () => {
         <div className="flex items-center gap-4 justify-center">
            <div className="h-px w-24 bg-white/5" />
            <p className="text-[10px] font-mono text-slate-600 uppercase tracking-widest">
-              Data synchronized with BitforBytes Market Intelligence API — May 2026
+              Data synchronized with BitforBytes Market Intelligence API - May 2026
            </p>
            <div className="h-px w-24 bg-white/5" />
         </div>

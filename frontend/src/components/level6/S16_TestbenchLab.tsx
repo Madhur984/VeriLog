@@ -35,7 +35,7 @@ export const S16_TestbenchLab: React.FC<{ isActive: boolean }> = ({ isActive }) 
                 In the semiconductor industry, <span className="text-plasma-cyan font-bold italic underline underline-offset-8 decoration-plasma-cyan/30">70% of engineering cycles</span> are spent in the Testbench.
             </p>
             <p className="body-text text-base text-white/50 leading-relaxed text-left">
-               You don't build hardware until you prove it works in every corner case. A Verilog engineer who cannot verify is an engineer who creates "Silicon Waste." Verification isn't an afterthought—it's the core of the implementation process.
+               You don't build hardware until you prove it works in every corner case. A Verilog engineer who cannot verify is an engineer who creates "Silicon Waste." Verification isn't an afterthought-it's the core of the implementation process.
             </p>
 
             <div className="p-8 rounded-[40px] bg-white/[0.02] border border-white/5 border-l-4 border-l-plasma-cyan group shadow-xl">

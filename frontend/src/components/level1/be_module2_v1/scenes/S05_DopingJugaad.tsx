@@ -19,7 +19,7 @@ export const S05_DopingJugaad: React.FC<Props> = ({ isActive, isDarkMode }) => {
         <p className={`text-base max-w-3xl ${subText}`}>
           One free electron per <strong className="text-violet-300">10¹²</strong> atoms.{' '}
           <em>Bhai, efficiency bohot low hai.</em> The fix is{' '}
-          <strong className="text-violet-300">doping</strong> — intentionally adding a tiny
+          <strong className="text-violet-300">doping</strong> - intentionally adding a tiny
           fraction (just 1 part in 10 million!) of a different element to massively boost
           carriers. The doped material is called an <strong className="text-violet-300">extrinsic
           semiconductor</strong>.

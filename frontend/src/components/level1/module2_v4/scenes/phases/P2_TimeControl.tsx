@@ -40,7 +40,7 @@ export const P2_TimeControl: React.FC<{
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <InsightPanel 
                             title="The Jitter Factor"
-                            content="Sampling requires a perfect clock. If the timing of each sample varies slightly, it creates 'Jitter'—a form of noise that distorts high-frequency signals even if the value itself is accurate."
+                            content="Sampling requires a perfect clock. If the timing of each sample varies slightly, it creates 'Jitter'-a form of noise that distorts high-frequency signals even if the value itself is accurate."
                             career="Clock & Timing Specialist"
                         />
                         <InsightPanel 

@@ -6,7 +6,7 @@ import { useMultiClock, MissionClockData } from '../hooks/useMultiClock';
 
 const PRESETS: Omit<MissionClockData, 'id'>[] = [
   { examName: 'GATE 2027', targetDate: '2027-02-07T09:00:00+05:30', notes: "India's gateway to PSUs and IITs.", color: 'cyan' },
-  { examName: 'BARC OCES', targetDate: '2027-03-31T23:59:59+05:30', notes: 'DAE stipendiary traineeship — ₹32K/month', color: 'amber' },
+  { examName: 'BARC OCES', targetDate: '2027-03-31T23:59:59+05:30', notes: 'DAE stipendiary traineeship - ₹32K/month', color: 'amber' },
   { examName: 'ISRO Scientist', targetDate: '2027-01-15T23:59:59+05:30', notes: 'Research Scientist entry point.', color: 'copper' },
   { examName: 'Campus Placement', targetDate: '2026-08-01T09:00:00+05:30', notes: 'Dream company target.', color: 'green' },
 ];

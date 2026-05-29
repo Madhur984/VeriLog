@@ -20,11 +20,11 @@ export const S10_NeutralityHeat: React.FC<Props> = ({ isActive, isDarkMode }) =>
           Two facts that catch students off-guard in vivas: a doped material is{' '}
           <strong className="text-violet-300">still electrically neutral</strong>, and a
           semiconductor has a <strong className="text-violet-300">negative temperature
-          coefficient</strong> — the opposite of metals.
+          coefficient</strong> - the opposite of metals.
         </p>
       </section>
 
-      {/* Twist 1: Neutrality — custom balance scale */}
+      {/* Twist 1: Neutrality - custom balance scale */}
       <motion.div
         initial={{ opacity: 0, x: -20 }} animate={isActive ? { opacity: 1, x: 0 } : {}}
         className={`p-8 rounded-3xl border ${cardBg}`}
@@ -70,7 +70,7 @@ export const S10_NeutralityHeat: React.FC<Props> = ({ isActive, isDarkMode }) =>
         {[
           { Icon: Scale, t: 'The Trap',  d: 'If N-Type has extra electrons, isn\'t it negatively charged?' },
           { Icon: Scale, t: 'The Truth', d: 'No. The donor atom\'s nucleus has 5 protons matching its 5 electrons. Total = neutral.' },
-          { Icon: Scale, t: 'The Logic', d: 'The 5th electron is just free to roam — not added from outside. Charge balance preserved.' },
+          { Icon: Scale, t: 'The Logic', d: 'The 5th electron is just free to roam - not added from outside. Charge balance preserved.' },
         ].map((c) => (
           <motion.div
             key={c.t}
@@ -86,7 +86,7 @@ export const S10_NeutralityHeat: React.FC<Props> = ({ isActive, isDarkMode }) =>
         ))}
       </div>
 
-      {/* Twist 2: Negative Temp Coefficient — custom comparison graph */}
+      {/* Twist 2: Negative Temp Coefficient - custom comparison graph */}
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.2 }}
@@ -102,12 +102,12 @@ export const S10_NeutralityHeat: React.FC<Props> = ({ isActive, isDarkMode }) =>
           <text x="650" y="220" fontFamily="monospace" fontSize="11" fill="#94a3b8" textAnchor="end">Temperature →</text>
           <text x="50" y="40" fontFamily="monospace" fontSize="11" fill="#94a3b8" textAnchor="end">R</text>
 
-          {/* Conductor curve — rises */}
+          {/* Conductor curve - rises */}
           <path d="M 60 170 Q 250 168 400 145 T 640 70" fill="none" stroke="#f43f5e" strokeWidth="3" />
           <text x="640" y="60" fontFamily="monospace" fontSize="12" fill="#f43f5e" textAnchor="end" fontWeight="bold">CONDUCTOR ↗</text>
           <text x="640" y="78" fontFamily="monospace" fontSize="9" fill="#f43f5e" textAnchor="end">positive temp coefficient</text>
 
-          {/* Semiconductor curve — falls steeply */}
+          {/* Semiconductor curve - falls steeply */}
           <path d="M 60 60 Q 200 70 320 130 T 640 195" fill="none" stroke="#fb923c" strokeWidth="3" />
           <text x="640" y="185" fontFamily="monospace" fontSize="12" fill="#fb923c" textAnchor="end" fontWeight="bold">SEMICONDUCTOR ↘</text>
           <text x="640" y="170" fontFamily="monospace" fontSize="9" fill="#fb923c" textAnchor="end">negative temp coefficient</text>
@@ -168,11 +168,11 @@ export const S10_NeutralityHeat: React.FC<Props> = ({ isActive, isDarkMode }) =>
         <p className={`text-sm ${subText}`}>
           <strong className="text-orange-300">Core rule:</strong> as temperature rises, a
           semiconductor&apos;s conductivity skyrockets. Most diodes derate at high temperatures
-          precisely because of this — a runaway feedback loop called <em>thermal runaway</em>.
+          precisely because of this - a runaway feedback loop called <em>thermal runaway</em>.
         </p>
       </motion.div>
 
-      {/* Closing wrap — point students to Module 3 */}
+      {/* Closing wrap - point students to Module 3 */}
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.4 }}
@@ -182,7 +182,7 @@ export const S10_NeutralityHeat: React.FC<Props> = ({ isActive, isDarkMode }) =>
         <h3 className={`text-2xl font-black ${textColor}`}>You can now think in carriers and bands.</h3>
         <p className={`text-sm ${subText} max-w-2xl mx-auto`}>
           Pure Si → energy gap → broken bonds → doping → N-Type / P-Type → flow → neutrality →
-          temperature behaviour. Every fact above is load-bearing for the next module — the
+          temperature behaviour. Every fact above is load-bearing for the next module - the
           <strong className="text-emerald-300"> P-N junction diode</strong>, where N and P slabs
           finally meet.
         </p>

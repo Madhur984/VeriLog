@@ -1,5 +1,5 @@
 /**
- * SceneWhyBinary.tsx — Module 3.0: Pre-Scene
+ * SceneWhyBinary.tsx - Module 3.0: Pre-Scene
  * Grounding Binary in Physical Reality (Noise vs. Threshold).
  */
 import React, { useState, useEffect, useRef } from 'react';
@@ -89,7 +89,7 @@ export const SceneWhyBinary: React.FC<Props> = ({ onComplete }) => {
                     initial={{ opacity: 0 }} animate={{ opacity: 1 }}
                     style={{ fontFamily: T.mono, fontSize: 12, letterSpacing: '0.4em', color: T.accent, display: 'block', marginBottom: 12 }}
                 >
-                    3.0 — The Engineering Choice
+                    3.0 - The Engineering Choice
                 </motion.span>
                 <h2 style={{ fontSize: 32, fontWeight: 800, color: T.text, marginBottom: 16 }}>The Cost of Continuity</h2>
                 <div style={{ maxWidth: 500, margin: '0 auto' }}>

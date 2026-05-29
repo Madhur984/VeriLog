@@ -70,7 +70,7 @@ const KMAP_RULES = [
   { t: 'Loops are powers of 2',   d: '1, 2, 4, 8 cells. Never 3, 5, 6, 7.' },
   { t: 'Largest first',           d: 'A 4-cell loop drops 2 variables. Always grab the biggest legal rectangle.' },
   { t: 'Wrap-around is legal',    d: 'Top edge ↔ bottom edge. Left edge ↔ right edge. Corners can form a quad.' },
-  { t: 'Overlap is free',         d: "If a cell sits in two loops, no problem — the OR doesn't double-count." },
+  { t: 'Overlap is free',         d: "If a cell sits in two loops, no problem - the OR doesn't double-count." },
   { t: "Don't-cares are wildcards", d: 'Treat X as 1 if it helps form a larger group; otherwise as 0.' },
   { t: 'Variables that change drop', d: 'Inside a loop, any variable that takes both 0 and 1 is eliminated.' },
 ];
@@ -103,7 +103,7 @@ export const S05_Cheatsheet: React.FC<Props> = ({ isActive, isDarkMode }) => {
         </div>
         <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>One-page reference.</h2>
         <p className={`text-base max-w-3xl ${subText}`}>
-          Stuck mid-drill? Everything you need is on this page — gate symbols, K-Map adjacency
+          Stuck mid-drill? Everything you need is on this page - gate symbols, K-Map adjacency
           rules, the four-stage pipeline. Bookmark and keep moving.
         </p>
       </motion.section>

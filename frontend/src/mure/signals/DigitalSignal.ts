@@ -1,5 +1,5 @@
 /**
- * mure/signals/DigitalSignal.ts — Digital Signal Model
+ * mure/signals/DigitalSignal.ts - Digital Signal Model
  *
  * Type: 0 | 1 (binary).
  * Threshold conversion between analog and digital domains.

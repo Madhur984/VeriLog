@@ -18,7 +18,7 @@ export const S07_PTypeSquad: React.FC<Props> = ({ isActive, isDarkMode }) => {
         <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>The 3-Friend Squad</h2>
         <p className={`text-base max-w-3xl ${subText}`}>
           Now dope silicon with a <strong className="text-fuchsia-300">trivalent</strong>{' '}
-          impurity (B, Ga, In). Only 3 of the 4 covalent bonds get filled — the missing electron
+          impurity (B, Ga, In). Only 3 of the 4 covalent bonds get filled - the missing electron
           leaves a <strong className="text-fuchsia-300">vacancy = a hole</strong>, behaving like a
           mobile positive charge.
         </p>
@@ -53,7 +53,7 @@ export const S07_PTypeSquad: React.FC<Props> = ({ isActive, isDarkMode }) => {
             </div>
             <p className={`text-sm ${textColor}`}>
               Trivalent impurities = <strong>acceptor atoms</strong>. They sit there ready to
-              <em> accept</em> any wandering electron — leaving the original spot empty.
+              <em> accept</em> any wandering electron - leaving the original spot empty.
             </p>
           </div>
         </motion.div>
@@ -71,7 +71,7 @@ export const S07_PTypeSquad: React.FC<Props> = ({ isActive, isDarkMode }) => {
         <p className={`text-xs ${subText} mb-5`}>
           Watch carefully. Only the <span className="text-orange-300">orange electrons</span>{' '}
           actually move (left to right). The <span className="text-fuchsia-300">magenta hole</span>
-          {' '}appears to move the opposite way — but it&apos;s just a vacancy being filled in
+          {' '}appears to move the opposite way - but it&apos;s just a vacancy being filled in
           sequence. That apparent motion <em>behaves identically</em> to a positive charge moving
           right-to-left.
         </p>
@@ -85,7 +85,7 @@ export const S07_PTypeSquad: React.FC<Props> = ({ isActive, isDarkMode }) => {
               style={{ left: `calc(${(i + 0.5) * (100 / 7)}% - 24px)` }}
             />
           ))}
-          {/* Animated hole — moves leftward (positions 6 → 0 cyclically) */}
+          {/* Animated hole - moves leftward (positions 6 → 0 cyclically) */}
           <motion.div
             animate={{ left: ['calc(85.7% - 18px)', 'calc(14.3% - 18px)'] }}
             transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
@@ -93,7 +93,7 @@ export const S07_PTypeSquad: React.FC<Props> = ({ isActive, isDarkMode }) => {
           >
             HOLE
           </motion.div>
-          {/* Six electrons — they move right one slot at a time, opposite to the hole */}
+          {/* Six electrons - they move right one slot at a time, opposite to the hole */}
           {[0, 1, 2, 3, 4, 5].map((i) => (
             <motion.div
               key={i}
@@ -121,7 +121,7 @@ export const S07_PTypeSquad: React.FC<Props> = ({ isActive, isDarkMode }) => {
           </div>
           <div className={`p-4 rounded-2xl border ${isDarkMode ? 'bg-black/30 border-white/10' : 'bg-slate-50 border-slate-200'}`}>
             <div className="font-mono text-[10px] uppercase tracking-widest text-fuchsia-300 mb-1">Apparent motion</div>
-            <p className={`text-xs ${subText}`}>The hole drifts leftward — opposite to the electrons.</p>
+            <p className={`text-xs ${subText}`}>The hole drifts leftward - opposite to the electrons.</p>
           </div>
           <div className={`p-4 rounded-2xl border-2 border-fuchsia-400/60 bg-fuchsia-500/10`}>
             <div className="font-mono text-[10px] uppercase tracking-widest text-fuchsia-300 mb-1">Why we model it</div>
@@ -139,18 +139,18 @@ export const S07_PTypeSquad: React.FC<Props> = ({ isActive, isDarkMode }) => {
         <p className={`text-sm ${subText} leading-relaxed`}>
           Holes don&apos;t physically move. Electrons keep jumping into adjacent vacancies, which
           makes the <em>vacancy itself</em> appear to slide in the opposite direction. We treat
-          this apparent movement as a positive charge carrier — it&apos;s simpler.
+          this apparent movement as a positive charge carrier - it&apos;s simpler.
         </p>
         <div className="grid sm:grid-cols-3 gap-4 pt-2">
           <div className={`p-5 rounded-2xl border-2 border-fuchsia-400 bg-fuchsia-500/10`}>
             <div className="font-mono text-[10px] uppercase tracking-widest text-fuchsia-300 mb-2">Majority</div>
             <h4 className={`text-2xl font-black text-fuchsia-300`}>Holes</h4>
-            <p className={`text-xs ${subText} mt-2`}>The bosses — the dominant carrier in P-Type.</p>
+            <p className={`text-xs ${subText} mt-2`}>The bosses - the dominant carrier in P-Type.</p>
           </div>
           <div className={`p-5 rounded-2xl border ${isDarkMode ? 'bg-black/30 border-white/10' : 'bg-slate-50 border-slate-200'}`}>
             <div className="font-mono text-[10px] uppercase tracking-widest text-orange-300 mb-2">Minority</div>
             <h4 className={`text-2xl font-black text-orange-300`}>Electrons</h4>
-            <p className={`text-xs ${subText} mt-2`}>Tiny thermal generation — present but negligible.</p>
+            <p className={`text-xs ${subText} mt-2`}>Tiny thermal generation - present but negligible.</p>
           </div>
           <div className={`p-5 rounded-2xl border ${isDarkMode ? 'bg-black/30 border-white/10' : 'bg-slate-50 border-slate-200'}`}>
             <div className="font-mono text-[10px] uppercase tracking-widest text-fuchsia-400 mb-2">Result</div>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Activity, Moon, Sun, ArrowRight, ArrowLeft } from 'lucide-react';
+import { DrawerShell, HamburgerButton } from '../components/level1/_shared/MobileDrawer';
 import { useNavigate, useParams } from 'react-router-dom';
 
 // --- Scene Components ---
@@ -131,7 +132,7 @@ const Sidebar: React.FC<{
             <motion.div animate={{ width: `${progress}%`, backgroundColor: '#00D4FF' }} className="h-full shadow-cyan-glow" />
           </div>
         </div>
-        <button onClick={toggleTheme} className="h-10 w-full rounded-xl border border-white/10 flex items-center justify-center gap-3 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:bg-white/5 transition-colors">
+        <button onClick={toggleTheme} className="hidden h-10 w-full rounded-xl border border-white/10 flex items-center justify-center gap-3 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:bg-white/5 transition-colors">
           {isDarkMode ? <Sun size={14} /> : <Moon size={14} />} {isDarkMode ? 'Solar' : 'Lunar'}
         </button>
       </footer>
@@ -143,6 +144,7 @@ export const ModuleSix: React.FC = () => {
   const { index } = useParams();
   const [current, setCurrent] = useState(index ? parseInt(index) : 0);
   const [isDarkMode, setIsDarkMode] = useState(true);
+  const [navOpen, setNavOpen] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
@@ -176,18 +178,21 @@ export const ModuleSix: React.FC = () => {
          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(0,212,255,0.03),transparent_70%)]" />
       </div>
       
-      <Sidebar 
-        current={current} 
-        isDarkMode={isDarkMode} 
-        onChange={(i) => navigate(`/module/6/${i}`)} 
-        toggleTheme={() => setIsDarkMode(!isDarkMode)} 
-        primary={primary} 
-      />
+      <DrawerShell open={navOpen} onClose={() => setNavOpen(false)}>
+        <Sidebar
+          current={current}
+          isDarkMode={isDarkMode}
+          onChange={(i) => { navigate(`/module/6/${i}`); setNavOpen(false); }}
+          toggleTheme={() => setIsDarkMode(!isDarkMode)}
+          primary={primary}
+        />
+      </DrawerShell>
       
       <div className="flex-1 flex flex-col h-full overflow-hidden relative z-10">
-        <header className="h-16 border-b border-white/10 backdrop-blur-md flex items-center justify-between px-10 z-10 bg-black/20">
-          <div>
-            <h2 className="text-lg font-black tracking-tight">{page.label}</h2>
+        <header className="h-16 border-b border-white/10 backdrop-blur-md flex items-center justify-between px-4 lg:px-10 z-10 bg-black/20 gap-3">
+          <div className="flex items-center gap-3 min-w-0">
+            <HamburgerButton isDarkMode={isDarkMode} onClick={() => setNavOpen(true)} />
+            <h2 className="text-base lg:text-lg font-black tracking-tight truncate">{page.label}</h2>
           </div>
           <div className="text-right text-[10px] font-mono opacity-20 uppercase tracking-widest">
             {current + 1} / {PAGES.length} System.V6
@@ -238,11 +243,10 @@ export const ModuleSix: React.FC = () => {
             <div className="h-32 w-px bg-gradient-to-b from-white/5 via-plasma-cyan/20 to-transparent self-end mr-2" />
         </div>
 
-        <footer className="h-20 border-t border-white/5 flex items-center justify-between px-10 z-10">
-          <button 
-            disabled={current === 0} 
-            onClick={() => go(-1)} 
-            className={`flex items-center gap-3 px-8 py-3 rounded-[20px] font-black uppercase tracking-widest text-[10px] transition-all ${current === 0 ? 'opacity-0' : 'hover:bg-white/5 border border-white/10 text-white/40'}`}
+        <footer className="h-20 border-t border-white/5 flex items-center justify-between px-4 lg:px-10 z-10 gap-3">
+          <button
+            onClick={() => { if (current === 0) { navigate('/portal'); } else { go(-1); } }}
+            className="flex items-center gap-3 px-4 lg:px-8 py-3 rounded-[20px] font-black uppercase tracking-widest text-[10px] transition-all hover:bg-white/5 border border-white/10 text-white/40"
           >
             <ArrowLeft size={16} /> Previous Node
           </button>
@@ -255,14 +259,13 @@ export const ModuleSix: React.FC = () => {
               </div>
               <div className="text-[8px] font-mono opacity-20 uppercase tracking-[0.5em]">Neural Link Status: Active</div>
           </div>
-          
-          <button 
-            onClick={() => go(1)} 
-            disabled={current === PAGES.length - 1} 
-            className={`flex items-center gap-3 px-10 py-3 rounded-[20px] font-black uppercase tracking-[0.4em] text-[10px] transition-all duration-500 ${current === PAGES.length - 1 ? 'opacity-0' : 'text-black shadow-cyan-glow group'}`}
-            style={{ backgroundColor: current === PAGES.length - 1 ? 'transparent' : primary }}
+
+          <button
+            onClick={() => { if (current === PAGES.length - 1) { navigate('/portal'); } else { go(1); } }}
+            className="flex items-center gap-3 px-5 lg:px-10 py-3 rounded-[20px] font-black uppercase tracking-[0.4em] text-[10px] transition-all duration-500 text-black shadow-cyan-glow group"
+            style={{ backgroundColor: primary }}
           >
-            Execute Next <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+            {current === PAGES.length - 1 ? 'Complete' : 'Execute Next'} <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
           </button>
         </footer>
       </div>

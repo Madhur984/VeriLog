@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 
 interface FluencyLEDGridProps {
-  fluency?: number; // 0–100
+  fluency?: number; // 0-100
 }
 
 // LED color palette cycling through a vibrant spectrum

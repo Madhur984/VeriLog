@@ -1,5 +1,5 @@
 /**
- * CPUTypes.ts — Type definitions for CPU Builder Lab
+ * CPUTypes.ts - Type definitions for CPU Builder Lab
  *
  * Defines the ISA, datapath components, pipeline stages,
  * and CPU configuration types.

@@ -37,7 +37,7 @@ export const M2_S02_DirectManipulation: React.FC<M2ScreenProps> = ({ triggerHapt
               exit={{ opacity: 0, y: 6 }}
               style={{ fontFamily: T.mono, fontSize: 9, letterSpacing: '0.2em', textTransform: 'uppercase', color: mode === 'analog' ? T.signal : T.interact }}
             >
-              {mode === 'analog' ? 'ANALOG — Continuous' : 'DIGITAL — Discrete'}
+              {mode === 'analog' ? 'ANALOG - Continuous' : 'DIGITAL - Discrete'}
             </motion.span>
           </AnimatePresence>
         </div>

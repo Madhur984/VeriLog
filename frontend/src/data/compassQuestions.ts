@@ -116,7 +116,7 @@ export const COMPASS_QUESTIONS: CompassQuestion[] = [
   {
     id: 5,
     category: "INDIA PRIORITY",
-    question: "India's semiconductor push — where do you want to be?",
+    question: "India's semiconductor push - where do you want to be?",
     options: [
       {
         id: 'A',

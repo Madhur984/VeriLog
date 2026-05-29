@@ -29,7 +29,7 @@ export const S19_FinalBridge: React.FC<{ isActive: boolean }> = ({ isActive }) =
                You have passed the <span className="text-plasma-cyan font-bold italic underline underline-offset-8 decoration-plasma-cyan/30">Language Gate.</span>
             </p>
             <p className="body-text text-base text-white/50 leading-relaxed text-left">
-              Synthesis is complete. The RTL is verified. You are no longer just a coder—you are a <span className="text-plasma-cyan font-black italic uppercase tracking-widest text-xs">Hardware Architect.</span> The world of physical gates and silicon substrates awaits your instruction.
+              Synthesis is complete. The RTL is verified. You are no longer just a coder-you are a <span className="text-plasma-cyan font-black italic uppercase tracking-widest text-xs">Hardware Architect.</span> The world of physical gates and silicon substrates awaits your instruction.
             </p>
 
             <div className="relative h-[240px] rounded-[50px] overflow-hidden border border-white/5 bg-black group shadow-2xl">

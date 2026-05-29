@@ -1,5 +1,5 @@
 /**
- * LogicStudio.tsx — Main Digital Logic Studio workspace
+ * LogicStudio.tsx - Main Digital Logic Studio workspace
  *
  * Route: /logic-studio
  */
@@ -109,7 +109,7 @@ export function LogicStudio() {
                     onToggleXray={() => studio.setXrayEnabled(!studio.xrayEnabled)}
                 />
 
-                {/* Debug missions link — hidden on mobile to save header space */}
+                {/* Debug missions link - hidden on mobile to save header space */}
                 <div className="hidden lg:flex" style={{ marginLeft: '8px', gap: '4px' }}>
                     {DEBUG_MISSIONS.slice(0, 3).map((m) => (
                         <button

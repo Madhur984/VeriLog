@@ -34,7 +34,7 @@ export function Wire({ from, to, isLive, wireId }: WireProps) {
                 filter="url(#glow)"
             />
 
-            {/* Main wire — data-wire-id stamped here for ElectronFlow animator */}
+            {/* Main wire - data-wire-id stamped here for ElectronFlow animator */}
             <path
                 d={d}
                 fill="none"

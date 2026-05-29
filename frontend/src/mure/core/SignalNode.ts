@@ -1,5 +1,5 @@
 /**
- * mure/core/SignalNode.ts — Node Model for Circuit Graph
+ * mure/core/SignalNode.ts - Node Model for Circuit Graph
  *
  * Each node represents a circuit component: battery, resistor, LED, gate, etc.
  * Nodes own input/output ports and implement evaluate() for simulation.

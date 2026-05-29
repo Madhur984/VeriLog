@@ -26,7 +26,7 @@ interface VeriSliderProps {
 }
 
 /**
- * VeriSlider — Unified VeriLog V1 Slider.
+ * VeriSlider - Unified VeriLog V1 Slider.
  * Follows strict Cyan (#00E5FF) for Signal and Purple (#7C3AED) for Logic.
  */
 export const VeriSlider: React.FC<VeriSliderProps> = ({

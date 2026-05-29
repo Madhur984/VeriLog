@@ -1,5 +1,5 @@
 /**
- * LogicPuzzle.tsx — Level 4, Scene 4.4
+ * LogicPuzzle.tsx - Level 4, Scene 4.4
  * 5 progressive challenges: build circuits that match a target truth table using gates.
  * Simple drag-from-palette approach using inline state (no external DnD library needed).
  */
@@ -71,7 +71,7 @@ const PUZZLES: Puzzle[] = [
         id: 4,
         title: 'All-Zero Detector',
         description: 'Output 1 ONLY when both A and B are 0.',
-        hint: 'NOR is the natural choice — but think why.',
+        hint: 'NOR is the natural choice - but think why.',
         allowedGates: ['NOR', 'NAND', 'AND', 'OR', 'NOT', 'XOR'],
         solution: ['NOR'],
         rows: [
@@ -85,7 +85,7 @@ const PUZZLES: Puzzle[] = [
         id: 5,
         title: 'Equality Comparator',
         description: 'Output 1 when A and B are the SAME value (both 0 or both 1).',
-        hint: 'XNOR — or XOR followed by NOT.',
+        hint: 'XNOR - or XOR followed by NOT.',
         allowedGates: ['XNOR', 'XOR', 'NOT', 'AND', 'OR'],
         solution: ['XNOR'],
         rows: [
@@ -197,7 +197,7 @@ export const LogicPuzzle: React.FC<Props> = ({ onAllComplete, onSolve, isDarkMod
         <div style={{ width: '100%', maxWidth: 900, margin: '0 auto' }}>
             <div style={{ textAlign: 'center', marginBottom: 32 }}>
                 <span style={{ fontFamily: T.mono, fontSize: 9, letterSpacing: '0.25em', textTransform: 'uppercase', color: T.accent, display: 'block', marginBottom: 8 }}>
-                    Scene 4.4 — Logic Puzzle Arena
+                    Scene 4.4 - Logic Puzzle Arena
                 </span>
                 <h2 style={{ fontSize: 26, fontWeight: 700, color: T.text, marginBottom: 8 }}>Build the Circuit</h2>
                 <p style={{ color: T.muted, fontSize: 14 }}>

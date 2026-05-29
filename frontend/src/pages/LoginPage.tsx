@@ -15,7 +15,7 @@ export const LoginPage: React.FC = () => {
     const setFirstName = useGamificationStore((state) => state.setFirstName);
     const setHasSeenGreeting = useGamificationStore((state) => state.setHasSeenGreeting);
 
-    // Post-login destination — RequireAuth puts the original URL in state.from.
+    // Post-login destination - RequireAuth puts the original URL in state.from.
     const redirectTo = (location.state as { from?: string } | null)?.from || '/portal';
 
     // Auth State
@@ -32,7 +32,7 @@ export const LoginPage: React.FC = () => {
 
     const handleGuestLogin = () => {
         if (!isGuestNameValid) {
-            setError('Guest username is required (2–32 characters)');
+            setError('Guest username is required (2-32 characters)');
             return;
         }
         setError(null);
@@ -77,15 +77,21 @@ export const LoginPage: React.FC = () => {
                     });
                     if (signUpError) throw signUpError;
 
-                    setIsSwitchOn(true);
                     const name = data.user?.user_metadata?.full_name || fullName || 'Explorer';
-                    setFirstName(name.split(' ')[0]);
-                    setHasSeenGreeting(false);
-
-                    if (data.session?.access_token) {
-                        localStorage.setItem('supabase_token', data.session.access_token);
+                    const token = data.session?.access_token;
+                    if (token) {
+                        // Confirmation OFF: a session is returned immediately - persist + enter.
+                        localStorage.setItem('supabase_token', token);
+                        setIsSwitchOn(true);
+                        setFirstName(name.split(' ')[0]);
+                        setHasSeenGreeting(false);
+                        setTimeout(() => navigate(redirectTo, { replace: true }), 1000);
+                    } else {
+                        // Confirmation ON: no session yet. Don't fake a login (else the user
+                        // lands on /portal but reverts to "Sign in" on the next reload).
+                        setIsSwitchOn(false);
+                        setError('Account created. Check your email to verify, then sign in.');
                     }
-                    setTimeout(() => navigate(redirectTo, { replace: true }), 1000);
                 } else {
                     const { data, error: signInError } = await supabase.auth.signInWithPassword({
                         email,
@@ -93,15 +99,19 @@ export const LoginPage: React.FC = () => {
                     });
                     if (signInError) throw signInError;
 
-                    setIsSwitchOn(true);
                     const name = data.user?.user_metadata?.full_name || fullName || 'Explorer';
-                    setFirstName(name.split(' ')[0]);
-                    setHasSeenGreeting(false);
-
-                    if (data.session?.access_token) {
-                        localStorage.setItem('supabase_token', data.session.access_token);
+                    const token = data.session?.access_token;
+                    if (token) {
+                        localStorage.setItem('supabase_token', token);
+                        setIsSwitchOn(true);
+                        setFirstName(name.split(' ')[0]);
+                        setHasSeenGreeting(false);
+                        setTimeout(() => navigate(redirectTo, { replace: true }), 1000);
+                    } else {
+                        // Successful call but no session token - treat as not logged in.
+                        setIsSwitchOn(false);
+                        setError('Could not establish a session. Please try again.');
                     }
-                    setTimeout(() => navigate(redirectTo, { replace: true }), 1000);
                 }
             } catch (err: any) {
                 console.error('Auth Error details:', err);
@@ -199,7 +209,7 @@ export const LoginPage: React.FC = () => {
                             {isSignUp ? 'Already have access? LOG_IN' : 'New user? REQUEST_ACCESS'}
                         </button>
 
-                        {/* Guest entry — bypasses Supabase entirely. No persistence beyond localStorage. */}
+                        {/* Guest entry - bypasses Supabase entirely. No persistence beyond localStorage. */}
                         <div className="guest-divider">
                             <span>OR</span>
                         </div>
@@ -226,7 +236,7 @@ export const LoginPage: React.FC = () => {
                             title={
                                 isGuestNameValid
                                     ? 'Continue as guest. Progress saved locally only.'
-                                    : 'Enter a guest username (2–32 chars) to continue'
+                                    : 'Enter a guest username (2-32 chars) to continue'
                             }
                         >
                             <UserCircle2 size={18} />

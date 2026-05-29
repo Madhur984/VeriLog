@@ -1,5 +1,5 @@
 /**
- * mure/core/SignalEdge.ts — Edge Model (Connections Between Nodes)
+ * mure/core/SignalEdge.ts - Edge Model (Connections Between Nodes)
  *
  * Each edge connects one output port of a source node
  * to one input port of a destination node.

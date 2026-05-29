@@ -41,7 +41,7 @@ export const LandingVisuals = () => {
         }}
       />
 
-      {/* Dual breathing aurora — cyan + violet, out of phase */}
+      {/* Dual breathing aurora - cyan + violet, out of phase */}
       <motion.div
         className="absolute inset-0"
         style={{ background: 'radial-gradient(circle 680px at 76% 26%, rgba(34,211,238,0.14) 0%, transparent 60%)' }}
@@ -55,7 +55,7 @@ export const LandingVisuals = () => {
         transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut', delay: 6 }}
       />
 
-      {/* Floor reflection — anchors the mockup in space */}
+      {/* Floor reflection - anchors the mockup in space */}
       <div
         className="absolute inset-0"
         style={{

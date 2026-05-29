@@ -1,5 +1,5 @@
 /**
- * SVGRenderer.ts — SVG-based implementation of ICanvasRenderer
+ * SVGRenderer.ts - SVG-based implementation of ICanvasRenderer
  *
  * Renders circuit nodes and edges as React-compatible SVG.
  * This is the current default renderer.

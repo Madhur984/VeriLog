@@ -29,7 +29,7 @@ const STAGES = [
     label: 'Digital Output',
     icon: '01',
     color: T.success,
-    tooltip: 'Binary code — noise-immune, compressible, storable\nThe language of Verilog',
+    tooltip: 'Binary code - noise-immune, compressible, storable\nThe language of Verilog',
   },
 ];
 

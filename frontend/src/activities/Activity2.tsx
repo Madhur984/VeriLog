@@ -57,7 +57,7 @@ export const Activity2 = ({ onNext }: ActivityProps) => {
         const type = e.dataTransfer.getData('type');
         setGate(type);
         if (type === 'and') setAnalystMessage("Logic verified. Protocol sequence ready for toggle.");
-        else setAnalystMessage("Signal mismatch. OR gate detected—incorrect variance for this sequence.");
+        else setAnalystMessage("Signal mismatch. OR gate detected-incorrect variance for this sequence.");
     };
 
     return (

@@ -1,5 +1,5 @@
 /**
- * StudioCanvas.tsx — SVG circuit canvas with zoom/pan and node rendering
+ * StudioCanvas.tsx - SVG circuit canvas with zoom/pan and node rendering
  */
 
 import { useRef, useCallback, useState, useEffect } from 'react';
@@ -116,7 +116,7 @@ export function StudioCanvas({
 
         if (mode === 'wire' || wireStart) {
             if (wireStart) {
-                // Completing wire — ensure different direction
+                // Completing wire - ensure different direction
                 if (wireStart.isOutput !== isOutput) {
                     onCompleteWire(nodeId, portIndex);
                 }

@@ -1,5 +1,5 @@
 /**
- * CommunityFeed.tsx — Community circuit feed and discovery
+ * CommunityFeed.tsx - Community circuit feed and discovery
  *
  * Shows shared circuits with search, filters, likes, and category tabs.
  * Each card shows circuit title, author, stats, and action buttons.

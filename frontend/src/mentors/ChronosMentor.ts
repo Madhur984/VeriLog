@@ -1,5 +1,5 @@
 /**
- * ChronosMentor.ts — Timing Analysis & Propagation Delay Mentor
+ * ChronosMentor.ts - Timing Analysis & Propagation Delay Mentor
  *
  * Specializes in:
  * - Propagation delay concepts
@@ -20,21 +20,21 @@ export class ChronosMentor extends BaseMentor {
             domain: 'timing',
             avatar: '⏱',
             accentColor: '#F59E0B',
-            greeting: "⏱ Time is everything in digital circuits. I'm Chronos — I'll help you understand how signals race through your designs. Let's analyze some timing!",
+            greeting: "⏱ Time is everything in digital circuits. I'm Chronos - I'll help you understand how signals race through your designs. Let's analyze some timing!",
             encouragements: [
                 "Good timing sense! You're thinking about delays correctly.",
-                "That's a fast path you've found — literally!",
+                "That's a fast path you've found - literally!",
                 "You're getting the hang of timing constraints.",
             ],
             corrections: [
                 "Hmm, that timing might cause a glitch. Let's look at it together.",
-                "Watch out — that signal might arrive too late. Check the propagation path.",
+                "Watch out - that signal might arrive too late. Check the propagation path.",
                 "There's a race condition hiding here. Let me show you.",
             ],
             celebrations: [
                 "⚡ Your timing is spot on! No setup violations anywhere!",
                 "🎯 Perfect timing analysis! You've mastered propagation delays!",
-                "⏱ Tick-tock — your circuit meets all timing constraints!",
+                "⏱ Tick-tock - your circuit meets all timing constraints!",
             ],
             catchphrases: [
                 "Every nanosecond counts.",
@@ -101,6 +101,6 @@ export class ChronosMentor extends BaseMentor {
     }
 
     private getSetupExplanation(): string {
-        return 'for at least t_setup before the clock edge arrives. Think of it like arriving at a bus stop — you need to be there before the bus!';
+        return 'for at least t_setup before the clock edge arrives. Think of it like arriving at a bus stop - you need to be there before the bus!';
     }
 }

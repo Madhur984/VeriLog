@@ -2,7 +2,7 @@
  * magneticAssist.ts
  *
  * Visual-only magnetic pull effect when dragging near valid snap nodes.
- * NEVER modifies simulation state — purely cosmetic.
+ * NEVER modifies simulation state - purely cosmetic.
  *
  * Listens for 'drag:near-node' events and directly mutates SVG attributes
  * on anchor circles: scale-up (1.1x), glow filter, subtle ghost pos offset.
@@ -111,7 +111,7 @@ export class MagneticAssist implements AnimModule {
                     circle.setAttribute('transform', `scale(${state.scale.toFixed(4)})`);
                     circle.setAttribute('filter', 'url(#magnetGlow)');
                 } else {
-                    // Back to resting state — clear extra attrs
+                    // Back to resting state - clear extra attrs
                     circle.removeAttribute('filter');
                     circle.setAttribute('transform', '');
                     toRemove.push(anchorId);

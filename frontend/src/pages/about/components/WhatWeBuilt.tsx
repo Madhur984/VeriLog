@@ -10,7 +10,7 @@ const PHASE2_TASKS = [
   { done: false, text: 'Verilog HDL module (VL-M01)' },
   { done: false, text: 'Advanced Digital Design (DD-M02)' },
   { done: false, text: 'Silicon Resume generator' },
-  { done: false, text: 'Interview Terminal — domain question banks' },
+  { done: false, text: 'Interview Terminal - domain question banks' },
   { done: false, text: 'College verification + peer connections' },
   { done: false, text: 'VoltMonkey AI hint system (Adarsh)' },
 ];
@@ -173,14 +173,14 @@ export const WhatWeBuilt: React.FC = () => {
                   <h3 className="text-xl md:text-2xl font-bold text-white uppercase tracking-tight">The ECE Companion</h3>
                 </div>
                 <span className="px-3 py-1 bg-cyan-400/10 text-cyan-400 font-mono text-[9px] font-bold uppercase tracking-widest rounded-full border border-cyan-400/20">
-                  2026–2027
+                  2026-2027
                 </span>
               </div>
 
               <div className="space-y-4 max-w-3xl">
                 <span className="text-[9px] font-mono text-slate-500 uppercase tracking-widest block">Project Destination</span>
                 <p className="text-slate-400 text-xs md:text-sm leading-relaxed font-sans">
-                  A complete 4-year ECE companion — from "I don't know what
+                  A complete 4-year ECE companion - from "I don't know what
                   my degree means" to "I have my first chip design offer."
                 </p>
                 <p className="text-slate-400 text-xs md:text-sm leading-relaxed font-sans">

@@ -6,7 +6,7 @@ interface Props { isActive: boolean; isDarkMode: boolean; }
 
 interface MCQ { prompt: string; options: string[]; correctIndex: number; explain: string; }
 
-// Drill 01 — Concept MCQ (semiconductor physics only — no junction content)
+// Drill 01 - Concept MCQ (semiconductor physics only - no junction content)
 const CONCEPT_QUIZ: MCQ[] = [
   {
     prompt: 'A pentavalent impurity (e.g. Phosphorus) is added to silicon. The doped material is:',
@@ -36,7 +36,7 @@ const CONCEPT_QUIZ: MCQ[] = [
     prompt: 'Pure (intrinsic) silicon at room temperature has approximately how many free carriers per cm³?',
     options: ['~10²² (like copper)', '~10¹⁶', '~10¹⁰', '0 (perfect insulator)'],
     correctIndex: 2,
-    explain: '~1.5 × 10¹⁰ /cm³ — that\'s why we dope. (Copper ≈ 10²² /cm³ which is why it\'s metallic.)',
+    explain: '~1.5 × 10¹⁰ /cm³ - that\'s why we dope. (Copper ≈ 10²² /cm³ which is why it\'s metallic.)',
   },
   {
     prompt: 'Conventional current direction in a circuit is:',
@@ -58,8 +58,8 @@ const CONCEPT_QUIZ: MCQ[] = [
   },
 ];
 
-// Drill 02 — Carrier Sandbox (already non-junction, keep)
-// Drill 03 — Speed Round (large pool — sprint shuffles + never repeats inside one run)
+// Drill 02 - Carrier Sandbox (already non-junction, keep)
+// Drill 03 - Speed Round (large pool - sprint shuffles + never repeats inside one run)
 const SPEED_QS: MCQ[] = [
   { prompt: 'Si valence electrons',          options: ['2', '3', '4', '5'],                                  correctIndex: 2, explain: '' },
   { prompt: 'Ge valence electrons',          options: ['2', '3', '4', '5'],                                  correctIndex: 2, explain: '' },
@@ -121,15 +121,15 @@ export const S11_PracticeArena: React.FC<Props> = ({ isActive, isDarkMode }) => 
   };
   const restart = () => { setQIdx(0); setPicked(null); setScore(0); setDone(false); };
 
-  // ─── Drill 2 — Carrier Sandbox ───
+  // ─── Drill 2 - Carrier Sandbox ───
   const [doping, setDoping] = useState<'intrinsic' | 'n' | 'p'>('intrinsic');
   const counts = useMemo(() => {
-    if (doping === 'intrinsic') return { electrons: 6, holes: 6, ions: 0, label: 'Pure Si — equal carriers' };
-    if (doping === 'n') return { electrons: 22, holes: 2, ions: 4, label: 'N-Type — electrons dominate' };
-    return { electrons: 2, holes: 22, ions: 4, label: 'P-Type — holes dominate' };
+    if (doping === 'intrinsic') return { electrons: 6, holes: 6, ions: 0, label: 'Pure Si - equal carriers' };
+    if (doping === 'n') return { electrons: 22, holes: 2, ions: 4, label: 'N-Type - electrons dominate' };
+    return { electrons: 2, holes: 22, ions: 4, label: 'P-Type - holes dominate' };
   }, [doping]);
 
-  // ─── Drill 3 — Speed Round (shuffle on start, no repeats inside a run) ───
+  // ─── Drill 3 - Speed Round (shuffle on start, no repeats inside a run) ───
   const [running, setRunning] = useState(false);
   const [sIdx, setSIdx] = useState(0);
   const [sScore, setSScore] = useState(0);
@@ -179,11 +179,11 @@ export const S11_PracticeArena: React.FC<Props> = ({ isActive, isDarkMode }) => 
         <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>Boss Drills</h2>
         <p className={`text-base max-w-3xl ${subText}`}>
           Three drills · concept quiz, carrier sandbox, and a 45-second sprint. The next module
-          (the P-N junction) builds on every fact in here — make sure these stick first.
+          (the P-N junction) builds on every fact in here - make sure these stick first.
         </p>
       </section>
 
-      {/* DRILL 1 — Concept MCQ */}
+      {/* DRILL 1 - Concept MCQ */}
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         className={`p-8 rounded-3xl border ${cardBg}`}
@@ -263,7 +263,7 @@ export const S11_PracticeArena: React.FC<Props> = ({ isActive, isDarkMode }) => 
             >
               <Trophy className="mx-auto text-amber-300" size={48} />
               <h3 className={`text-2xl font-black ${textColor}`}>
-                {score === CONCEPT_QUIZ.length ? 'Perfect · all eight cracked.' : `${score} / ${CONCEPT_QUIZ.length} — solid work.`}
+                {score === CONCEPT_QUIZ.length ? 'Perfect · all eight cracked.' : `${score} / ${CONCEPT_QUIZ.length} - solid work.`}
               </h3>
               <button
                 onClick={restart}
@@ -276,7 +276,7 @@ export const S11_PracticeArena: React.FC<Props> = ({ isActive, isDarkMode }) => 
         </AnimatePresence>
       </motion.div>
 
-      {/* DRILL 2 — Carrier Sandbox */}
+      {/* DRILL 2 - Carrier Sandbox */}
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         className={`p-8 rounded-3xl border ${cardBg}`}
@@ -389,7 +389,7 @@ export const S11_PracticeArena: React.FC<Props> = ({ isActive, isDarkMode }) => 
         </div>
       </motion.div>
 
-      {/* DRILL 3 — Speed Round */}
+      {/* DRILL 3 - Speed Round */}
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         className={`p-8 rounded-3xl border ${cardBg} relative overflow-hidden`}
@@ -467,8 +467,8 @@ export const S11_PracticeArena: React.FC<Props> = ({ isActive, isDarkMode }) => 
             <h3 className={`text-3xl font-black ${textColor}`}>{sScore} correct in 45s</h3>
             <p className={`text-sm ${subText}`}>
               {sScore >= 18 ? 'Madhur-level. Move to Module 3 · the P-N junction.'
-                : sScore >= 12 ? 'Strong sprint — solid grasp.'
-                  : sScore >= 6 ? 'Good baseline — re-read chapters 6–8.'
+                : sScore >= 12 ? 'Strong sprint - solid grasp.'
+                  : sScore >= 6 ? 'Good baseline - re-read chapters 6-8.'
                     : 'Re-watch the lecture and try again.'}
             </p>
             <button

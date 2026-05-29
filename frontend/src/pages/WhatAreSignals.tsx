@@ -64,7 +64,7 @@ export const WhatAreSignals: React.FC = () => {
                     letterSpacing: '0.16em', color: T.muted,
                     textTransform: 'uppercase',
                 }}>
-                    Theory — Signal Layer
+                    Theory - Signal Layer
                 </span>
             </header>
 
@@ -82,7 +82,7 @@ export const WhatAreSignals: React.FC = () => {
                         fontFamily: T.mono, fontSize: 9,
                         letterSpacing: '0.22em', color: `${T.accent}99`,
                         textTransform: 'uppercase', marginBottom: 12,
-                    }}>Theoretical Scaffold — 01</span>
+                    }}>Theoretical Scaffold - 01</span>
 
                     <h1 style={{
                         fontSize: 36, fontWeight: 500, letterSpacing: '-0.03em',
@@ -129,7 +129,7 @@ export const WhatAreSignals: React.FC = () => {
                         },
                         {
                             title: 'Core Invariant',
-                            def: 'A signal strictly requires a physical circuit—a designated, uninterrupted loop for controlled energy movement.',
+                            def: 'A signal strictly requires a physical circuit-a designated, uninterrupted loop for controlled energy movement.',
                             principle: 'Energy must leave a source, perform structural work at a load, and return entirely to the source via a reference return plane.',
                             practical: 'An LED illuminates only when both the high-side supply (+V) and low-side ground return (GND) are securely bonded in a loop.',
                             insight: 'Always design the return path first. If omitted or broken, high-speed signals will parasitize adjacent traces to return, causing catastrophic EMI failure.'

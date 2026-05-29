@@ -14,7 +14,7 @@ export const useCircuitGraph = () => {
         const adj = new Map<string, { to: string; compId: string }[]>();
 
         components.forEach(c => {
-            // Skip open switches — they break the circuit
+            // Skip open switches - they break the circuit
             if (c.type === 'switch' && c.isOpen) return;
 
             const n1 = c.snapNodeIds[0];
@@ -27,7 +27,7 @@ export const useCircuitGraph = () => {
             }
         });
 
-        // Find battery — loop must go from neg through circuit back to pos
+        // Find battery - loop must go from neg through circuit back to pos
         const battery = components.find(c => c.type === 'battery');
         if (!battery || !battery.snapNodeIds[0] || !battery.snapNodeIds[1]) {
             console.log('OPEN CIRCUIT');

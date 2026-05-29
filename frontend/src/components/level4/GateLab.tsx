@@ -1,5 +1,5 @@
 /**
- * GateLab.tsx — Level 4, Scene 4.2
+ * GateLab.tsx - Level 4, Scene 4.2
  *
  * 6 gate stations side-by-side. Student tests each, truth table fills in real-time.
  * Enhanced: per-gate progress bar, XP spring badge, glowing completion state.
@@ -64,7 +64,7 @@ export const GateLab: React.FC<Props> = ({ onComplete, hasCompleted, isDarkMode 
             {/* Header */}
             <div style={{ textAlign: 'center', marginBottom: 36 }}>
                 <span style={{ fontFamily: T.mono, fontSize: 9, letterSpacing: '0.25em', textTransform: 'uppercase', color: '#10B981', display: 'block', marginBottom: 8 }}>
-                    Scene 4.2 — Gate Lab
+                    Scene 4.2 - Gate Lab
                 </span>
                 <h2 style={{ fontSize: 26, fontWeight: 700, color: T.text, marginBottom: 8 }}>6-Gate Characterization Lab</h2>
                 <p style={{ color: T.muted, fontSize: 14 }}>
@@ -199,7 +199,7 @@ export const GateLab: React.FC<Props> = ({ onComplete, hasCompleted, isDarkMode 
                                 })}
                             </div>
 
-                            {/* XP Badge — springs in on completion */}
+                            {/* XP Badge - springs in on completion */}
                             <AnimatePresence>
                                 {isDone && (
                                     <motion.div
@@ -209,7 +209,7 @@ export const GateLab: React.FC<Props> = ({ onComplete, hasCompleted, isDarkMode 
                                         style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 12, padding: '5px 10px', background: `${meta.color}15`, borderRadius: 6, border: `1px solid ${meta.color}40` }}
                                     >
                                         <CheckCircle2 size={12} style={{ color: meta.color }} />
-                                        <span style={{ fontFamily: T.mono, fontSize: 9, color: meta.color, fontWeight: 700 }}>Characterized — +XP</span>
+                                        <span style={{ fontFamily: T.mono, fontSize: 9, color: meta.color, fontWeight: 700 }}>Characterized - +XP</span>
                                     </motion.div>
                                 )}
                             </AnimatePresence>

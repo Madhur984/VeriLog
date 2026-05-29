@@ -6,7 +6,7 @@ import { AccentBadges } from './AccentBadges';
 /**
  * Wraps the product mockup + floating badges in a subtle pointer-parallax
  * (rotateX/Y + translate via springs). Desktop fine-pointer only; respects
- * prefers-reduced-motion. Decorative only — not an interactive widget.
+ * prefers-reduced-motion. Decorative only - not an interactive widget.
  */
 export const ParallaxMockupContainer = () => {
   const ref = useRef<HTMLDivElement>(null);

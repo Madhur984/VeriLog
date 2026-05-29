@@ -1,5 +1,5 @@
 /**
- * useLogicAnalystL3.ts — Logic Analyst for Level 3: Binary Awakening
+ * useLogicAnalystL3.ts - Logic Analyst for Level 3: Binary Awakening
  */
 
 import { useCallback, useRef } from 'react';
@@ -27,7 +27,7 @@ const ANALYST_DB: Record<L3Scene, Record<AnalystTier, AnalystResponse[]>> = {
     switch: {
         sharp: [{ observation: "Voltage-to-Binary matrix confirmed.", analysis: "Static 4-bit CMOS input. Logic HIGH (VDD) vs Logic LOW (GND) abstraction verified.", conclusion: "You are viewing the foundational binary digitization of physical voltage potential.", insight: "In ultra-low power designs, even 'static' bits consume leakage power. Every 1 in this register represents a real current flow in the sub-micron substrate.", tier: "sharp" }],
         steady: [{ observation: "Switch transition detected.", analysis: "Standard thresholding logic applied. Digital systems map continuous voltage to discrete logic states.", conclusion: "The switch connected VDD to the input node, crossing the 2.0V binary HIGH threshold.", insight: "Real-world signals are noisy. Hardware uses 'Schmitt Triggers' to clean up these transitions before the CPU sees them.", tier: "steady" }],
-        struggling: [{ observation: "Switch bit changed.", analysis: "A digital system knows only two states: ON (1) and OFF (0).", conclusion: "Look at Bit 0 (the LSB) — it toggles based on the rightmost switch.", insight: "Start by toggling one switch at a time. The rightmost bit is the smallest power of two (2^0 = 1).", tier: "struggling" }],
+        struggling: [{ observation: "Switch bit changed.", analysis: "A digital system knows only two states: ON (1) and OFF (0).", conclusion: "Look at Bit 0 (the LSB) - it toggles based on the rightmost switch.", insight: "Start by toggling one switch at a time. The rightmost bit is the smallest power of two (2^0 = 1).", tier: "struggling" }],
         overconfident: [{ observation: "Rapid switch toggling detected. Pattern integrity suspect.", analysis: "High interaction frequency without state analysis suggests trial-and-error rather than systematic engineering.", conclusion: "Slowing down to observe the transformation will stabilize your model.", insight: "Real-world bounce in physical switches requires debouncing logic.", tier: "overconfident" }],
         passive: [{ observation: "Low interaction density in Switch Lab.", analysis: "Binary systems are experimental. Observe how the LSB affects the total differently than the MSB.", conclusion: "Toggle each switch once to map the physical position to its binary weight.", insight: "Passive observation misses the 'feel' of digital thresholds.", tier: "passive" }]
     },
@@ -39,7 +39,7 @@ const ANALYST_DB: Record<L3Scene, Record<AnalystTier, AnalystResponse[]>> = {
         passive: [{ observation: "Counter interaction is low.", analysis: "Counting to 15 is the best way to see the full ripple effect.", conclusion: "Increment until you see multiple bits flip at once.", insight: "Binary counters are the heartbeat of digital clocks.", tier: "passive" }]
     },
     register: {
-        sharp: [{ observation: "8-bit memory cell modification confirmed.", analysis: "Addressable 1-byte register stored. Hex display 0x00–0xFF verified.", conclusion: "The register stores 8 bits—the fundamental unit of addressable memory.", insight: "Each bit here is a physical D flip-flop. At the hardware level, this is a synchronous array.", tier: "sharp" }],
+        sharp: [{ observation: "8-bit memory cell modification confirmed.", analysis: "Addressable 1-byte register stored. Hex display 0x00-0xFF verified.", conclusion: "The register stores 8 bits-the fundamental unit of addressable memory.", insight: "Each bit here is a physical D flip-flop. At the hardware level, this is a synchronous array.", tier: "sharp" }],
         steady: [{ observation: "Register bit pattern updated.", analysis: "Groups of 4 bits drive the Hex display. 1010 (10) = 0xA.", conclusion: "Storage is volatile until you pulse the 'Store' signal.", insight: "Hexadecimal is the engineer's shorthand. One hex digit represents 4 bits.", tier: "steady" }],
         struggling: [{ observation: "Register state changed.", analysis: "A byte is 8 bits. It can store numbers, colors, or letters.", conclusion: "Try toggling different nibbles.", insight: "Think of this as a save button. Until you 'Store', it's just a buffer.", tier: "struggling" }],
         overconfident: [{ observation: "Register bits modified rapidly without storage.", analysis: "Data in a register is volatile until the WRITE ENABLE signal is pulsed.", conclusion: "The current bits represent the input buffer.", insight: "Registers have 'Setup' and 'Hold' time requirements.", tier: "overconfident" }],

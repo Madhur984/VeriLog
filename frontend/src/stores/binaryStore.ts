@@ -1,5 +1,5 @@
 /**
- * binaryStore.ts — Level 3 Binary Awakening State Engine
+ * binaryStore.ts - Level 3 Binary Awakening State Engine
  *
  * Manages the complete state for all four Level 3 micro-modules:
  *  - 4-bit switch register (Module 3.1)
@@ -89,13 +89,13 @@ interface BinaryState {
     isBitTransitioning: boolean[];
     isBitUnstable: boolean[];
     
-    // Module 3.1 — Switch Register
+    // Module 3.1 - Switch Register
     switchBits: Bit[];
     switchVoltages: number[];
     toggleSwitchBit: (index: number) => Promise<void>;
     resetSwitches: () => void;
 
-    // Module 3.2 — Counter
+    // Module 3.2 - Counter
     counterValue: number;
     carryHistory: CarryEvent[];
     isIncrementing: boolean;
@@ -106,7 +106,7 @@ interface BinaryState {
     increment: (force?: boolean) => Promise<void>;
     resetCounter: () => void;
 
-    // Module 3.3 — Memory Register
+    // Module 3.3 - Memory Register
     registerBits: Bit[];
     registerWidth: 8 | 16 | 32;
     storedValue: number | null;
@@ -122,7 +122,7 @@ interface BinaryState {
     refreshMemory: () => void;
     resetRegister: () => void;
 
-    // Module 3.4 — Adder
+    // Module 3.4 - Adder
     operandA: Bit[];
     operandB: Bit[];
     addSteps: AddStep[];
@@ -457,7 +457,7 @@ export const useBinaryStore = create<BinaryState>((set, get) => ({
             const nextBits = toBits4(nextVal);
             const carries: CarryEvent[] = [];
 
-            // 1. ANIMATION PHASE — Update visual bits only, keep counterValue stable
+            // 1. ANIMATION PHASE - Update visual bits only, keep counterValue stable
             const visualBits = [...prevBits];
             
             for (let i = 3; i >= 0; i--) {
@@ -489,7 +489,7 @@ export const useBinaryStore = create<BinaryState>((set, get) => ({
                 }
             }
 
-            // 2. COMMIT PHASE — Finalize counterValue atomically
+            // 2. COMMIT PHASE - Finalize counterValue atomically
             set({ 
                 counterValue: nextVal, 
                 bits: nextBits,

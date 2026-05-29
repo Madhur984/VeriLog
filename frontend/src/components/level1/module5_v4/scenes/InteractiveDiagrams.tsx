@@ -49,7 +49,7 @@ const Bit: React.FC<{ accent: string; value: 0 | 1; label?: string; size?: numbe
 );
 
 // ════════════════════════════════════════════════════════════════════════════
-// 1. ANIMATED CLOCK — running cursor + adjustable period
+// 1. ANIMATED CLOCK - running cursor + adjustable period
 // ════════════════════════════════════════════════════════════════════════════
 export const AnimatedClock: React.FC<Props> = ({ accent }) => {
   const [period, setPeriod] = useState(10); // ns
@@ -123,7 +123,7 @@ export const AnimatedClock: React.FC<Props> = ({ accent }) => {
 };
 
 // ════════════════════════════════════════════════════════════════════════════
-// 2. ANIMATED LEVEL vs EDGE — autoplay clock + d, latch and flop side by side
+// 2. ANIMATED LEVEL vs EDGE - autoplay clock + d, latch and flop side by side
 // ════════════════════════════════════════════════════════════════════════════
 export const AnimatedLevelVsEdge: React.FC<Props> = ({ accent }) => {
   const [tick, setTick] = useState(0);
@@ -224,7 +224,7 @@ export const AnimatedLevelVsEdge: React.FC<Props> = ({ accent }) => {
 };
 
 // ════════════════════════════════════════════════════════════════════════════
-// 3. ANIMATED POSEDGE — cursor + flash on each rising edge
+// 3. ANIMATED POSEDGE - cursor + flash on each rising edge
 // ════════════════════════════════════════════════════════════════════════════
 export const AnimatedPosedge: React.FC<Props> = ({ accent }) => {
   const [tick, setTick] = useState(0);
@@ -309,7 +309,7 @@ export const AnimatedPosedge: React.FC<Props> = ({ accent }) => {
 };
 
 // ════════════════════════════════════════════════════════════════════════════
-// 4. INTERACTIVE FLIP-FLOP — buttons + live waveform
+// 4. INTERACTIVE FLIP-FLOP - buttons + live waveform
 // ════════════════════════════════════════════════════════════════════════════
 export const InteractiveFlipFlop: React.FC<Props> = ({ accent }) => {
   const [d, setD] = useState<0 | 1>(0);
@@ -432,7 +432,7 @@ export const InteractiveFlipFlop: React.FC<Props> = ({ accent }) => {
 };
 
 // ════════════════════════════════════════════════════════════════════════════
-// 5. INTERACTIVE HALF-ADDER — toggle inputs, watch outputs light up
+// 5. INTERACTIVE HALF-ADDER - toggle inputs, watch outputs light up
 // ════════════════════════════════════════════════════════════════════════════
 export const InteractiveHalfAdder: React.FC<Props> = ({ accent }) => {
   const [a, setA] = useState<0 | 1>(0);
@@ -515,7 +515,7 @@ export const InteractiveHalfAdder: React.FC<Props> = ({ accent }) => {
 };
 
 // ════════════════════════════════════════════════════════════════════════════
-// 6. INTERACTIVE 2:1 MUX — toggle inputs and selector, see active path
+// 6. INTERACTIVE 2:1 MUX - toggle inputs and selector, see active path
 // ════════════════════════════════════════════════════════════════════════════
 export const InteractiveMux: React.FC<Props> = ({ accent }) => {
   const [a, setA] = useState<0 | 1>(0);
@@ -580,7 +580,7 @@ export const InteractiveMux: React.FC<Props> = ({ accent }) => {
 };
 
 // ════════════════════════════════════════════════════════════════════════════
-// 7. ANIMATED HDL PIPELINE — particle flowing through stages
+// 7. ANIMATED HDL PIPELINE - particle flowing through stages
 // ════════════════════════════════════════════════════════════════════════════
 export const AnimatedHDLPipeline: React.FC<Props> = ({ accent }) => {
   const stages = [

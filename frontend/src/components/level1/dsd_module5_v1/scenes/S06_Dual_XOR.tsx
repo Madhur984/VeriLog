@@ -25,7 +25,7 @@ export const S06_Dual_XOR: React.FC<SceneProps> = ({ isActive, isDarkMode, mode 
   const builds = mode === 'nand'
     ? [
         { title: 'NOR · Level 3', count: 4, eq: 'Y = (A + B)′', note: 'Build OR (3 NANDs), then push it through a tied-NAND inverter. Total: 4 NANDs.' },
-        { title: 'XOR · Level 4', count: 4, eq: 'Y = A·B′ + A′·B', note: 'The "cross-weave" — an elegant 4-NAND symmetry. No separate NOT gates needed for the inputs.' },
+        { title: 'XOR · Level 4', count: 4, eq: 'Y = A·B′ + A′·B', note: 'The "cross-weave" - an elegant 4-NAND symmetry. No separate NOT gates needed for the inputs.' },
         { title: 'XNOR · Level 4', count: 5, eq: 'Y = (A ⊕ B)′', note: 'XOR followed by one more tied-NAND inverter. Outputs 1 only when A and B are equal.' },
       ]
     : [
@@ -100,7 +100,7 @@ export const S06_Dual_XOR: React.FC<SceneProps> = ({ isActive, isDarkMode, mode 
       <line x1="100" y1="156" x2={atomInLeftX(220)} y2="156" stroke={accent} strokeWidth="2" />  {/* to N1 bottom */}
       <line x1="100" y1="222" x2={atomInLeftX(360)} y2="222" stroke={accent} strokeWidth="2" />  {/* to N3 bottom */}
 
-      {/* N1 — atom(A, B) */}
+      {/* N1 - atom(A, B) */}
       {drawAtom(220, 137, 'N1')}
 
       {/* N1 output → split, drives N2 bottom input AND N3 top input */}
@@ -114,9 +114,9 @@ export const S06_Dual_XOR: React.FC<SceneProps> = ({ isActive, isDarkMode, mode 
         (A {mode === 'nand' ? '·' : '+'} B)′
       </text>
 
-      {/* N2 — atom(A, N1) */}
+      {/* N2 - atom(A, N1) */}
       {drawAtom(360, 60, 'N2')}
-      {/* N3 — atom(N1, B) */}
+      {/* N3 - atom(N1, B) */}
       {drawAtom(360, 214, 'N3')}
 
       {/* N2 → N4 top, N3 → N4 bottom */}
@@ -127,7 +127,7 @@ export const S06_Dual_XOR: React.FC<SceneProps> = ({ isActive, isDarkMode, mode 
       <line x1="500" y1="214" x2="500" y2="149" stroke={accent} strokeWidth="2" />
       <line x1="500" y1="149" x2={atomInLeftX(540)} y2="149" stroke={accent} strokeWidth="2" />
 
-      {/* N4 — final atom */}
+      {/* N4 - final atom */}
       {drawAtom(540, 137, 'N4')}
 
       {/* Output */}
@@ -145,7 +145,7 @@ export const S06_Dual_XOR: React.FC<SceneProps> = ({ isActive, isDarkMode, mode 
     <div className="max-w-6xl mx-auto space-y-12 py-4">
       <section className="space-y-3">
         <div className="flex items-center gap-2 font-mono text-[10px] tracking-[0.4em] uppercase" style={{ color: accent }}>
-          <Boxes size={14} /> Levels 3 – 4 · The dual gate, XOR & XNOR
+          <Boxes size={14} /> Levels 3 - 4 · The dual gate, XOR & XNOR
         </div>
         <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>
           {mode === 'nand' ? 'NOR + XOR + XNOR.' : 'NAND + XNOR + XOR.'}
@@ -204,7 +204,7 @@ export const S06_Dual_XOR: React.FC<SceneProps> = ({ isActive, isDarkMode, mode 
             <p className={`text-sm ${subText}`}>
               <strong style={{ color: accent }}>Why it's beautiful:</strong> the central NAND output (A·B)′
               feeds back into both A and B, naturally producing inverted forms when needed. No separate NOT
-              gates required for the inputs — the structure is its own inverter.
+              gates required for the inputs - the structure is its own inverter.
             </p>
           ) : (
             <p className={`text-sm ${subText}`}>
@@ -237,13 +237,13 @@ export const S06_Dual_XOR: React.FC<SceneProps> = ({ isActive, isDarkMode, mode 
                 { n: 'N1', t: 'Atom 1',  eq: '(A · B)′',                 note: 'The shared "anti-AND" wire used by everyone downstream.' },
                 { n: 'N2', t: 'Atom 2',  eq: '(A · (A·B)′)′ = A′ + AB',  note: 'Outputs 1 when A=0 OR when both A and B are 1.' },
                 { n: 'N3', t: 'Atom 3',  eq: '(B · (A·B)′)′ = B′ + AB',  note: 'Outputs 1 when B=0 OR when both A and B are 1.' },
-                { n: 'N4', t: 'Final',   eq: '(N2 · N3)′ = A ⊕ B',       note: 'Combines the two arms — outputs 1 only when A ≠ B.' },
+                { n: 'N4', t: 'Final',   eq: '(N2 · N3)′ = A ⊕ B',       note: 'Combines the two arms - outputs 1 only when A ≠ B.' },
               ]
             : [
                 { n: 'N1', t: 'Atom 1',  eq: '(A + B)′',                 note: 'The shared "anti-OR" wire used by everyone downstream.' },
                 { n: 'N2', t: 'Atom 2',  eq: '(A + (A+B)′)′',            note: 'Outputs 1 only when A=0 AND (A+B)=1, i.e. A=0 ∧ B=1.' },
                 { n: 'N3', t: 'Atom 3',  eq: '((A+B)′ + B)′',            note: 'Outputs 1 only when B=0 AND (A+B)=1, i.e. A=1 ∧ B=0.' },
-                { n: 'N4', t: 'Final',   eq: '(N2 + N3)′ = (A ⊕ B)′',    note: 'Combines the two arms — outputs 1 only when A = B.' },
+                { n: 'N4', t: 'Final',   eq: '(N2 + N3)′ = (A ⊕ B)′',    note: 'Combines the two arms - outputs 1 only when A = B.' },
               ]
           ).map((s) => (
             <motion.div
@@ -263,7 +263,7 @@ export const S06_Dual_XOR: React.FC<SceneProps> = ({ isActive, isDarkMode, mode 
           ))}
         </div>
 
-        {/* Per-row outcome — full trace through all 4 gates */}
+        {/* Per-row outcome - full trace through all 4 gates */}
         <div className="font-mono text-[10px] uppercase tracking-widest mb-3" style={{ color: accent }}>
           Trace · every input combination through every atom
         </div>
@@ -313,13 +313,13 @@ export const S06_Dual_XOR: React.FC<SceneProps> = ({ isActive, isDarkMode, mode 
           </div>
           <p className={`text-sm ${subText}`}>
             {mode === 'nand'
-              ? 'Y is 1 ONLY when A and B differ — that is the definition of XOR. The 4 NANDs cooperate to filter every "agreement" row down to 0 and let "disagreement" rows pass through as 1.'
-              : 'Y is 1 ONLY when A and B match — that is the definition of XNOR (equality). The 4 NORs cooperate to filter every "disagreement" row down to 0 and let "agreement" rows pass through as 1.'}
+              ? 'Y is 1 ONLY when A and B differ - that is the definition of XOR. The 4 NANDs cooperate to filter every "agreement" row down to 0 and let "disagreement" rows pass through as 1.'
+              : 'Y is 1 ONLY when A and B match - that is the definition of XNOR (equality). The 4 NORs cooperate to filter every "disagreement" row down to 0 and let "agreement" rows pass through as 1.'}
           </p>
         </div>
       </motion.div>
 
-      {/* The +1 inverter step — extending to the dual XOR/XNOR */}
+      {/* The +1 inverter step - extending to the dual XOR/XNOR */}
       <motion.div
         initial={{ opacity: 0, y: 14 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.55 }}

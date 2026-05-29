@@ -62,7 +62,7 @@ export const S10_BinaryArithmetic: React.FC<Props> = ({ isActive, isDarkMode }) 
           initial={{ opacity: 0 }} animate={isActive ? { opacity: 1 } : {}}
           className={`font-mono text-[10px] tracking-[0.4em] uppercase block mb-4 ${isDarkMode ? 'text-sky-400' : 'text-sky-600'}`}
         >
-          Binary Arithmetic — Chapter 3.1
+          Binary Arithmetic - Chapter 3.1
         </motion.span>
         <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>Binary Addition</h2>
         <p className={`text-lg max-w-2xl mx-auto opacity-70 ${textColor}`}>
@@ -97,7 +97,7 @@ export const S10_BinaryArithmetic: React.FC<Props> = ({ isActive, isDarkMode }) 
       {/* Interactive Adder */}
       <div className={`p-8 md:p-12 rounded-[2rem] border relative overflow-hidden ${isDarkMode ? 'bg-sky-500/5 border-sky-500/20' : 'bg-sky-50 border-sky-200 shadow-2xl'}`}>
         <h3 className={`font-mono text-xs uppercase tracking-widest mb-10 text-center ${isDarkMode ? 'text-sky-400' : 'text-sky-600'}`}>
-          Click Bits to Toggle — Live Ripple Carry Adder
+          Click Bits to Toggle - Live Ripple Carry Adder
         </h3>
 
         {/* Carry row */}
@@ -181,7 +181,7 @@ export const S10_BinaryArithmetic: React.FC<Props> = ({ isActive, isDarkMode }) 
       >
         <Zap size={24} className="text-amber-500 mx-auto mb-4" />
         <p className={`text-lg font-black leading-tight ${textColor}`}>
-          A <span className="text-amber-500">ripple carry adder</span> chains multiple full adders —<br />
+          A <span className="text-amber-500">ripple carry adder</span> chains multiple full adders -<br />
           the carry-out of each bit becomes the carry-in of the next.
         </p>
         <p className={`text-sm opacity-50 mt-3 font-mono ${textColor}`}>1+1=10₂  (sum=0, carry=1 propagates left)</p>

@@ -36,7 +36,7 @@ export const useDragEngine = (
         return { x: svgPt.x, y: svgPt.y };
     }, [svgRef]);
 
-    // RAF loop — runs continuously while dragging
+    // RAF loop - runs continuously while dragging
     useEffect(() => {
         const tick = () => {
             if (dragRef.current.isDragging && needsUpdateRef.current) {

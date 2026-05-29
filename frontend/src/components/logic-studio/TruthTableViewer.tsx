@@ -1,5 +1,5 @@
 /**
- * TruthTableViewer.tsx — Auto-generated truth table for logic gates
+ * TruthTableViewer.tsx - Auto-generated truth table for logic gates
  */
 
 import { useMemo } from 'react';
@@ -71,7 +71,7 @@ export function TruthTableViewer({ gateType, inputCount = 2, currentInputs }: Pr
     return (
         <div className="studio-truth-table">
             <div className="studio-truth-table-header">
-                {gateName} Gate — Truth Table
+                {gateName} Gate - Truth Table
             </div>
             <table className="studio-truth-table-grid">
                 <thead>

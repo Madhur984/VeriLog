@@ -77,7 +77,7 @@ export const S08_TurnstileMatrix: React.FC<Props> = ({ isActive, isDarkMode }) =
         </svg>
         <p className={`text-xs ${subText} mt-3 text-center`}>
           A diode lives in four distinct regions. The matrix below summarises what happens in
-          each — and the analogy that makes it stick.
+          each - and the analogy that makes it stick.
         </p>
       </motion.div>
 
@@ -163,7 +163,7 @@ export const S08_TurnstileMatrix: React.FC<Props> = ({ isActive, isDarkMode }) =
         </p>
       </motion.div>
 
-      {/* Headline PDF — the iconic turnstile illustration */}
+      {/* Headline PDF - the iconic turnstile illustration */}
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.45 }}
@@ -185,7 +185,7 @@ export const S08_TurnstileMatrix: React.FC<Props> = ({ isActive, isDarkMode }) =
         <h3 className={`text-2xl font-black ${textColor}`}>You can now read any P-N junction in any context.</h3>
         <p className={`text-sm ${subText} max-w-2xl mx-auto`}>
           Depletion region → forward/reverse/breakdown V-I → the diode symbol. Every diode in
-          every textbook collapses into the four regions above. Onward to the transistor — same
+          every textbook collapses into the four regions above. Onward to the transistor - same
           machinery, more terminals.
         </p>
       </motion.div>

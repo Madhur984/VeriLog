@@ -1,5 +1,5 @@
 /**
- * mure/core/SimulationKernel.ts — The Heart of MURE
+ * mure/core/SimulationKernel.ts - The Heart of MURE
  *
  * Owns the SignalGraph + EventQueue.
  * Implements event-driven propagation:
@@ -56,7 +56,7 @@ export class SimulationKernel {
     // ─── Flush (Combinational) ────────────────────────────────────────
 
     /**
-     * Synchronous flush — evaluate all dirty nodes until stable.
+     * Synchronous flush - evaluate all dirty nodes until stable.
      * Used for combinational circuits without propagation delays.
      */
     flush(): void {
@@ -159,7 +159,7 @@ export class SimulationKernel {
         }
 
         if (iterations >= MAX_ITERATIONS) {
-            console.warn('[MURE] SimulationKernel: max iterations reached — possible oscillation');
+            console.warn('[MURE] SimulationKernel: max iterations reached - possible oscillation');
         }
     }
 

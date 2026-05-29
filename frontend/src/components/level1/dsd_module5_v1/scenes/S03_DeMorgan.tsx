@@ -9,7 +9,7 @@ export const S03_DeMorgan: React.FC<SceneProps> = ({ isActive, isDarkMode, mode 
   const cardBg    = isDarkMode ? 'bg-white/5 border-white/10' : 'bg-white border-slate-200 shadow-xl';
   const accent = mode === 'nand' ? '#22d3ee' : '#fb923c';
 
-  // Both laws shown — but the one most relevant to the current mode is highlighted
+  // Both laws shown - but the one most relevant to the current mode is highlighted
   const primary = mode === 'nand'
     ? "(A · B)′  =  A′ + B′"
     : "(A + B)′  =  A′ · B′";
@@ -31,7 +31,7 @@ export const S03_DeMorgan: React.FC<SceneProps> = ({ isActive, isDarkMode, mode 
         <p className={`text-base max-w-3xl ${subText}`}>{intro}</p>
       </section>
 
-      {/* The two laws — primary one shown bigger */}
+      {/* The two laws - primary one shown bigger */}
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         className={`p-8 rounded-3xl border ${cardBg}`}
@@ -42,7 +42,7 @@ export const S03_DeMorgan: React.FC<SceneProps> = ({ isActive, isDarkMode, mode 
         </div>
 
         <div className="grid md:grid-cols-2 gap-5">
-          {/* Primary law — relevant to current mode */}
+          {/* Primary law - relevant to current mode */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -80,7 +80,7 @@ export const S03_DeMorgan: React.FC<SceneProps> = ({ isActive, isDarkMode, mode 
         </div>
       </motion.div>
 
-      {/* Bridge visual — bubble migration */}
+      {/* Bridge visual - bubble migration */}
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.3 }}

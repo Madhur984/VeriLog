@@ -1,7 +1,7 @@
 /**
  * shortCircuit.ts
  *
- * AnimModule — Short Circuit Detection & Visual Feedback
+ * AnimModule - Short Circuit Detection & Visual Feedback
  *
  * On 'circuit:short':
  *   - Adds CSS class 'wire--short' to all wire <path> elements → red glow + faster pulse
@@ -82,7 +82,7 @@ export class ShortCircuit implements AnimModule {
         }
     };
 
-    // ShortCircuit is purely event-driven — no per-tick work needed
+    // ShortCircuit is purely event-driven - no per-tick work needed
     tick(_ts: number, _dt: number) {
         // intentionally empty
     }

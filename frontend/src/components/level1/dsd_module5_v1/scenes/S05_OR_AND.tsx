@@ -31,16 +31,16 @@ export const S05_OR_AND: React.FC<SceneProps> = ({ isActive, isDarkMode, mode })
   const easyCount = 2;
   const hardCount = 3;
 
-  // ── EASY gate (double inversion) — NAND→AND or NOR→OR ──
+  // ── EASY gate (double inversion) - NAND→AND or NOR→OR ──
   const stage1: Bit = mode === 'nand'
     ? (((a && b) ? 1 : 0) === 1 ? 0 : 1) // NAND output
     : (((a || b) ? 1 : 0) === 1 ? 0 : 1); // NOR output
 
-  // ── HARD gate (De Morgan inversion of inputs first) — NAND→OR or NOR→AND ──
+  // ── HARD gate (De Morgan inversion of inputs first) - NAND→OR or NOR→AND ──
   const an: Bit = (a === 0 ? 1 : 0);
   const bn: Bit = (b === 0 ? 1 : 0);
 
-  // Atom (NAND or NOR) gate body — centered at (cx, cy)
+  // Atom (NAND or NOR) gate body - centered at (cx, cy)
   const ATOM_H = 36;
 
   const drawAtom = (cx: number, cy: number, label?: string) => {
@@ -90,8 +90,8 @@ export const S05_OR_AND: React.FC<SceneProps> = ({ isActive, isDarkMode, mode })
         </h2>
         <p className={`text-base max-w-3xl ${subText}`}>
           {mode === 'nand'
-            ? 'AND is just NAND followed by another (tied-input) NAND inverter — double-inversion cancels and you get the original AND back. OR is trickier: by De Morgan, invert each input first, then NAND them.'
-            : 'OR is just NOR followed by another (tied-input) NOR inverter — double-inversion cancels. AND is trickier: by De Morgan, invert each input first, then NOR them.'}
+            ? 'AND is just NAND followed by another (tied-input) NAND inverter - double-inversion cancels and you get the original AND back. OR is trickier: by De Morgan, invert each input first, then NAND them.'
+            : 'OR is just NOR followed by another (tied-input) NOR inverter - double-inversion cancels. AND is trickier: by De Morgan, invert each input first, then NOR them.'}
         </p>
       </section>
 
@@ -123,7 +123,7 @@ export const S05_OR_AND: React.FC<SceneProps> = ({ isActive, isDarkMode, mode })
         </div>
       </motion.div>
 
-      {/* EASY gate — 2 atoms (atom + tied-atom inverter) */}
+      {/* EASY gate - 2 atoms (atom + tied-atom inverter) */}
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.1 }}
@@ -133,7 +133,7 @@ export const S05_OR_AND: React.FC<SceneProps> = ({ isActive, isDarkMode, mode })
           {easyName} = {mode === 'nand' ? '(A · B)' : '(A + B)'} · built with {easyCount} {mode.toUpperCase()}s · double inversion
         </div>
         <svg viewBox="0 0 720 220" className="w-full h-auto">
-          {/* Coordinates plan — flat horizontal flow:
+          {/* Coordinates plan - flat horizontal flow:
                 rails 30 → 90, gate1 cx=170, midwire 220→340, gate2 cx=400, output 460→700 */}
           {/* Input labels & rails */}
           <text x="6"  y="76"  fontSize="13" fontFamily="monospace" fontWeight="bold" fill={accent}>A = {a}</text>
@@ -141,7 +141,7 @@ export const S05_OR_AND: React.FC<SceneProps> = ({ isActive, isDarkMode, mode })
           <line x1="40" y1="72"  x2="148" y2="100" stroke={wireC(a)} strokeWidth="2.5" style={{ filter: glow(a) }} />
           <line x1="40" y1="152" x2="148" y2="124" stroke={wireC(b)} strokeWidth="2.5" style={{ filter: glow(b) }} />
 
-          {/* Atom 1 — full {NAND or NOR} of (A, B) */}
+          {/* Atom 1 - full {NAND or NOR} of (A, B) */}
           {drawAtom(170, 112, mode === 'nand' ? 'NAND' : 'NOR')}
 
           {/* Wire from atom 1 → split into atom 2's both inputs (tied) */}
@@ -157,7 +157,7 @@ export const S05_OR_AND: React.FC<SceneProps> = ({ isActive, isDarkMode, mode })
           <line x1="280" y1="124" x2={atomInLeftX(400)} y2="124" stroke={wireC(stage1)} strokeWidth="2" style={{ filter: glow(stage1) }} />
           <text x="290" y="148" fontSize="9" fontFamily="monospace" fill={accent} opacity="0.7">tied</text>
 
-          {/* Atom 2 — tied-input inverter */}
+          {/* Atom 2 - tied-input inverter */}
           {drawAtom(400, 112, 'INV')}
 
           {/* Output */}
@@ -172,7 +172,7 @@ export const S05_OR_AND: React.FC<SceneProps> = ({ isActive, isDarkMode, mode })
         </svg>
       </motion.div>
 
-      {/* HARD gate — 3 atoms · 2 input inverters + 1 final atom */}
+      {/* HARD gate - 3 atoms · 2 input inverters + 1 final atom */}
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.2 }}
@@ -287,7 +287,7 @@ export const S05_OR_AND: React.FC<SceneProps> = ({ isActive, isDarkMode, mode })
           ))}
         </div>
 
-        {/* Per-row outcome table — proves correctness for all 4 input combos */}
+        {/* Per-row outcome table - proves correctness for all 4 input combos */}
         <div className="font-mono text-[10px] uppercase tracking-widest mb-3" style={{ color: accent }}>
           Outcome for every input combination
         </div>
@@ -332,7 +332,7 @@ export const S05_OR_AND: React.FC<SceneProps> = ({ isActive, isDarkMode, mode })
           </table>
         </div>
         <p className={`text-xs ${subText} mt-3`}>
-          The Y column matches a normal {easyName} gate exactly — proof that double-inverting works.
+          The Y column matches a normal {easyName} gate exactly - proof that double-inverting works.
         </p>
       </motion.div>
 
@@ -434,8 +434,8 @@ export const S05_OR_AND: React.FC<SceneProps> = ({ isActive, isDarkMode, mode })
           <div className="font-mono text-[10px] uppercase tracking-widest mb-1" style={{ color: accent }}>De Morgan in plain words</div>
           <p className={`text-sm ${subText}`}>
             {mode === 'nand'
-              ? '"NAND of inverted inputs" gives you OR. Inverting on the way IN is the same as not-inverting on the way OUT — that\'s De Morgan\'s law in action.'
-              : '"NOR of inverted inputs" gives you AND. Inverting on the way IN is the same as not-inverting on the way OUT — that\'s De Morgan\'s law in action.'}
+              ? '"NAND of inverted inputs" gives you OR. Inverting on the way IN is the same as not-inverting on the way OUT - that\'s De Morgan\'s law in action.'
+              : '"NOR of inverted inputs" gives you AND. Inverting on the way IN is the same as not-inverting on the way OUT - that\'s De Morgan\'s law in action.'}
           </p>
         </div>
       </motion.div>

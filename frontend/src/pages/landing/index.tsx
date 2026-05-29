@@ -4,6 +4,7 @@ import { LANDING_ROUTES } from './landingRoutes';
 import { LandingVisuals } from './LandingVisuals';
 import { ParallaxMockupContainer } from './ParallaxMockupContainer';
 import { ProductMockup } from './ProductMockup';
+import { useIsAuthenticated } from '../../hooks/useIsAuthenticated';
 
 /**
  * Single-screen, non-scrolling, product-forward landing.
@@ -20,13 +21,18 @@ const CHIPS = ['13 ECE domains', 'No lab required', 'Free · India-first'];
 const ease = [0.16, 1, 0.3, 1] as const;
 
 const LandingPage = () => {
+  const authed = useIsAuthenticated();
+  // Once a session exists, the primary action becomes "continue to the hub".
+  const primaryTo = authed ? LANDING_ROUTES.workstation : LANDING_ROUTES.firstModule;
+  const primaryLabel = authed ? '▶ Continue to your Workstation' : '▶ Start your first module - free';
+
   return (
     <div className="relative min-h-[100svh] lg:h-screen w-full overflow-x-hidden lg:overflow-hidden flex flex-col text-white" style={{ background: '#05070E', fontFamily: "'Inter', sans-serif" }}>
       <LandingVisuals />
 
       {/* Top bar */}
       <header className="relative z-10 flex items-center justify-between px-6 md:px-10 h-16 shrink-0">
-        <Link to="/" aria-label="BitforBytes — home" className="font-extrabold tracking-tight text-lg select-none">
+        <Link to="/" aria-label="BitforBytes - home" className="font-extrabold tracking-tight text-lg select-none">
           <span style={{ color: '#F8FAFC' }}>Bit</span>
           <span style={{ color: '#64748B' }}>for</span>
           <span style={{ color: '#22D3EE' }}>Bytes</span>
@@ -40,14 +46,23 @@ const LandingPage = () => {
           ))}
         </nav>
         <div className="flex items-center gap-2.5">
-          <Link to={LANDING_ROUTES.login} className="hidden sm:inline text-sm font-semibold px-4 py-2 rounded-xl transition-colors" style={{ color: '#CBD5E1' }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = '#fff')} onMouseLeave={(e) => (e.currentTarget.style.color = '#CBD5E1')}>
-            Sign in
-          </Link>
-          <Link to={LANDING_ROUTES.firstModule} className="text-sm font-bold px-5 py-2 rounded-xl transition-all" style={{ background: '#22D3EE', color: '#06121A' }}
-            onMouseEnter={(e) => (e.currentTarget.style.background = '#38BDF8')} onMouseLeave={(e) => (e.currentTarget.style.background = '#22D3EE')}>
-            Start free →
-          </Link>
+          {authed ? (
+            <Link to={LANDING_ROUTES.workstation} className="text-sm font-bold px-5 py-2 rounded-xl transition-all" style={{ background: '#22D3EE', color: '#06121A' }}
+              onMouseEnter={(e) => (e.currentTarget.style.background = '#38BDF8')} onMouseLeave={(e) => (e.currentTarget.style.background = '#22D3EE')}>
+              Go to Workstation →
+            </Link>
+          ) : (
+            <>
+              <Link to={LANDING_ROUTES.login} className="hidden sm:inline text-sm font-semibold px-4 py-2 rounded-xl transition-colors" style={{ color: '#CBD5E1' }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = '#fff')} onMouseLeave={(e) => (e.currentTarget.style.color = '#CBD5E1')}>
+                Sign in
+              </Link>
+              <Link to={LANDING_ROUTES.firstModule} className="text-sm font-bold px-5 py-2 rounded-xl transition-all" style={{ background: '#22D3EE', color: '#06121A' }}
+                onMouseEnter={(e) => (e.currentTarget.style.background = '#38BDF8')} onMouseLeave={(e) => (e.currentTarget.style.background = '#22D3EE')}>
+                Start free →
+              </Link>
+            </>
+          )}
         </div>
       </header>
 
@@ -101,7 +116,7 @@ const LandingPage = () => {
               className="mt-6 max-w-lg text-base md:text-lg font-medium leading-relaxed" style={{ color: '#A9B6C9' }}>
               Go from confused ECE student to industry-ready{' '}
               <span style={{ color: '#7DD3FC', fontWeight: 700 }}>chip designer</span>. Learn VLSI &amp;
-              digital design the interactive way — right in your browser. No lab, no installs.
+              digital design the interactive way - right in your browser. No lab, no installs.
             </motion.p>
 
             <motion.div
@@ -111,14 +126,14 @@ const LandingPage = () => {
               <div className="relative inline-flex">
                 <motion.span aria-hidden className="absolute inset-0 rounded-xl blur-lg pointer-events-none" style={{ background: '#22D3EE' }}
                   animate={{ opacity: [0.28, 0.5, 0.28] }} transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }} />
-                <Link to={LANDING_ROUTES.firstModule}
+                <Link to={primaryTo}
                   className="relative inline-flex items-center gap-2 px-7 py-3.5 rounded-xl font-bold text-sm transition-transform overflow-hidden"
                   style={{ background: '#22D3EE', color: '#06121A', boxShadow: '0 14px 40px rgba(34,211,238,0.28)' }}
                   onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-2px)')} onMouseLeave={(e) => (e.currentTarget.style.transform = 'translateY(0)')}>
                   <motion.span aria-hidden className="absolute inset-0 pointer-events-none"
                     style={{ background: 'linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.45) 50%, transparent 60%)', backgroundSize: '250% 100%' }}
                     animate={{ backgroundPosition: ['180% 0', '-80% 0'] }} transition={{ duration: 2.4, repeat: Infinity, repeatDelay: 2.6, ease: 'easeInOut' }} />
-                  <span className="relative">▶ Start your first module — free</span>
+                  <span className="relative">{primaryLabel}</span>
                 </Link>
               </div>
               <Link to={LANDING_ROUTES.career}
@@ -144,7 +159,7 @@ const LandingPage = () => {
             </motion.div>
           </div>
 
-          {/* Right: product mockup — parallax cluster on desktop, clean static on mobile */}
+          {/* Right: product mockup - parallax cluster on desktop, clean static on mobile */}
           <div className="w-full">
             <ParallaxMockupContainer />
             <div className="lg:hidden mx-auto w-full max-w-sm">

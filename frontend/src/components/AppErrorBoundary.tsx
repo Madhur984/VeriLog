@@ -5,14 +5,14 @@ import type { ErrorInfo, ReactNode } from 'react';
  * App-wide error boundary.
  *
  * Two jobs:
- *  1. Stale/failed code-split chunks — the #1 cause of a blank page that
+ *  1. Stale/failed code-split chunks - the #1 cause of a blank page that
  *     "fixes itself on reload" after route-based code-splitting. When a lazy
  *     import ultimately fails (stale chunk hash after a new deploy, a
  *     service-worker-cached old manifest, or a dropped fetch), this reloads
- *     ONCE — within a short window, guarded by sessionStorage — to pull the
+ *     ONCE - within a short window, guarded by sessionStorage - to pull the
  *     fresh asset manifest. The guard prevents a reload loop if the fresh
  *     fetch also fails.
- *  2. Any other render error — instead of unmounting the whole tree to a white
+ *  2. Any other render error - instead of unmounting the whole tree to a white
  *     screen, show a themed recovery panel with a manual reload.
  */
 
@@ -41,7 +41,7 @@ function canAutoReload(): boolean {
 
 interface State {
   error: Error | null;
-  /** When true, render the loading spinner (a reload is in flight) — no error flash. */
+  /** When true, render the loading spinner (a reload is in flight) - no error flash. */
   reloading: boolean;
 }
 
@@ -50,7 +50,7 @@ export class AppErrorBoundary extends Component<{ children: ReactNode }, State> 
 
   static getDerivedStateFromError(error: Error): State {
     // If this is a recoverable chunk error and we haven't just reloaded, we'll
-    // reload in componentDidCatch — render the spinner instead of the error UI.
+    // reload in componentDidCatch - render the spinner instead of the error UI.
     const reloading = isChunkLoadError(error) && canAutoReload();
     return { error, reloading };
   }
@@ -76,7 +76,7 @@ export class AppErrorBoundary extends Component<{ children: ReactNode }, State> 
     const { error, reloading } = this.state;
     if (!error) return this.props.children;
 
-    // A reload is in flight — show the same calm loading state, not an error.
+    // A reload is in flight - show the same calm loading state, not an error.
     if (reloading) {
       return (
         <div
@@ -96,7 +96,7 @@ export class AppErrorBoundary extends Component<{ children: ReactNode }, State> 
       );
     }
 
-    // Persistent / non-chunk error — manual recovery.
+    // Persistent / non-chunk error - manual recovery.
     return (
       <div
         className="min-h-[100svh] w-full flex items-center justify-center px-6"

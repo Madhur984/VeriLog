@@ -1,5 +1,5 @@
 /**
- * mure/nodes/MemoryNode.ts — Simple RAM Model
+ * mure/nodes/MemoryNode.ts - Simple RAM Model
  *
  * Address bus + data bus + read/write control.
  * Inputs: [addr0..addrN-1, dataIn0..dataInM-1, writeEnable, clock]

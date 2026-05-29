@@ -59,7 +59,7 @@ export const S03a_VerilogMandate: React.FC<{ isActive: boolean }> = ({ isActive 
                             </div>
                         </div>
                         <p className="body-text text-2xl leading-snug text-white/90 font-light max-w-lg">
-                            Verilog is the high-fidelity blueprint of chip design—used to model, simulate, and <span className="text-plasma-cyan font-medium">synthesize digital reality.</span>
+                            Verilog is the high-fidelity blueprint of chip design-used to model, simulate, and <span className="text-plasma-cyan font-medium">synthesize digital reality.</span>
                         </p>
                         <div className="p-8 rounded-[40px] bg-white/[0.02] border border-white/5 border-l-4 border-l-plasma-cyan space-y-4">
                             <div className="flex items-center gap-3 text-plasma-cyan">
@@ -67,7 +67,7 @@ export const S03a_VerilogMandate: React.FC<{ isActive: boolean }> = ({ isActive 
                                 <span className="micro-text font-black uppercase tracking-widest text-[10px]">Architectural Advantage // Parallelism</span>
                             </div>
                             <p className="body-text text-sm text-white/40 font-light leading-relaxed">
-                                Unlike sequential software, Verilog describes <span className="text-white font-medium">spatial logic fabric</span>—where millions of events occur at the exact same nanosecond.
+                                Unlike sequential software, Verilog describes <span className="text-white font-medium">spatial logic fabric</span>-where millions of events occur at the exact same nanosecond.
                             </p>
                         </div>
                     </div>
@@ -183,7 +183,7 @@ export const S03a_VerilogMandate: React.FC<{ isActive: boolean }> = ({ isActive 
                         <div className="micro-text uppercase text-plasma-cyan font-black tracking-[0.4em] text-[10px]">The AI Hardware Secret Weapon</div>
                         <h3 className="hero-text text-4xl uppercase text-white tracking-widest leading-none">Architectural Mastery</h3>
                         <p className="body-text text-xl opacity-50 leading-relaxed font-light max-w-3xl">
-                             GPUs, NPUs, and Neural Engines are not software objects—they are <span className="text-plasma-cyan font-bold italic">Verilog Architectures.</span> This is your ticket to the elite tier of global engineering.
+                             GPUs, NPUs, and Neural Engines are not software objects-they are <span className="text-plasma-cyan font-bold italic">Verilog Architectures.</span> This is your ticket to the elite tier of global engineering.
                         </p>
                     </div>
                 </div>

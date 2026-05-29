@@ -1,5 +1,5 @@
 /**
- * BadgeUnlockToast.tsx — Animated badge unlock notification
+ * BadgeUnlockToast.tsx - Animated badge unlock notification
  */
 
 import { useEffect, useState } from 'react';

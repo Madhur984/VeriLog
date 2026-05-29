@@ -117,7 +117,7 @@ export class ParticleField implements AnimModule {
             p.x += p.vx;
             p.y += p.vy;
 
-            // Gentle zero-g drift — very slight vertical oscillation
+            // Gentle zero-g drift - very slight vertical oscillation
             p.vy += (Math.random() - 0.5) * 0.004;
             p.vy *= 0.999; // damping
 

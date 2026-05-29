@@ -43,7 +43,7 @@ export const S03_Multiverse: React.FC<Props> = ({ isActive, isDarkMode }) => {
           </h2>
           <p className={`text-base ${subText}`}>
             Three binary variables produce <strong>2³ = 8</strong> possible mornings. Each row is a
-            parallel universe — <span className="text-emerald-400 font-bold">m0–m7</span>. Hover
+            parallel universe - <span className="text-emerald-400 font-bold">m0-m7</span>. Hover
             over a row below to enter that universe and read its caption.
           </p>
         </section>
@@ -131,7 +131,7 @@ export const S03_Multiverse: React.FC<Props> = ({ isActive, isDarkMode }) => {
             <Sparkles size={12} /> Happy paths
           </div>
           <div className={`text-4xl font-black mb-1 ${textColor}`}>{happyCount}<span className="opacity-30 text-2xl"> / 8</span></div>
-          <div className={`text-xs ${subText}`}>Rows m0, m1, m2, m4 — these become <strong>minterms</strong> in SOP.</div>
+          <div className={`text-xs ${subText}`}>Rows m0, m1, m2, m4 - these become <strong>minterms</strong> in SOP.</div>
         </motion.div>
 
         <motion.div
@@ -143,7 +143,7 @@ export const S03_Multiverse: React.FC<Props> = ({ isActive, isDarkMode }) => {
             <Layers size={12} /> Disasters
           </div>
           <div className={`text-4xl font-black mb-1 ${textColor}`}>{sadCount}<span className="opacity-30 text-2xl"> / 8</span></div>
-          <div className={`text-xs ${subText}`}>Rows M3, M5, M6, M7 — these become <strong>maxterms</strong> in POS.</div>
+          <div className={`text-xs ${subText}`}>Rows M3, M5, M6, M7 - these become <strong>maxterms</strong> in POS.</div>
         </motion.div>
 
         <motion.div
@@ -155,7 +155,7 @@ export const S03_Multiverse: React.FC<Props> = ({ isActive, isDarkMode }) => {
         >
           <div className="font-mono text-[10px] uppercase tracking-widest mb-3 text-amber-400">Key Insight</div>
           <p className={`text-sm leading-relaxed ${textColor}`}>
-            The universe is perfectly balanced — 4 paths to joy, 4 paths to disaster. Either side
+            The universe is perfectly balanced - 4 paths to joy, 4 paths to disaster. Either side
             uniquely determines the function. <em>Which side feels easier to write down?</em>
           </p>
         </motion.div>

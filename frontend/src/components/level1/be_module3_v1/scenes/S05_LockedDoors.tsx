@@ -29,7 +29,7 @@ export const S05_LockedDoors: React.FC<Props> = ({ isActive, isDarkMode }) => {
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         className={`relative rounded-3xl overflow-hidden border ${cardBg}`}
       >
-        <img src="/images/commuter/p05.webp" alt="Reverse bias — locked doors" className="w-full block aspect-[16/9] object-cover" />
+        <img src="/images/commuter/p05.webp" alt="Reverse bias - locked doors" className="w-full block aspect-[16/9] object-cover" />
         <div className="absolute bottom-3 right-4 font-mono text-[9px] uppercase tracking-widest text-violet-200/80">
           Commuter Circuit · Reverse Bias
         </div>
@@ -94,7 +94,7 @@ export const S05_LockedDoors: React.FC<Props> = ({ isActive, isDarkMode }) => {
         </svg>
         <p className={`text-xs ${subText} mt-4 text-center max-w-xl mx-auto`}>
           The external battery&apos;s pull on majority carriers <em>matches</em> the depletion
-          region&apos;s internal pull — but in opposite directions. Net result: the gap widens
+          region&apos;s internal pull - but in opposite directions. Net result: the gap widens
           and majority current is choked off completely.
         </p>
       </motion.div>
@@ -126,7 +126,7 @@ export const S05_LockedDoors: React.FC<Props> = ({ isActive, isDarkMode }) => {
           </div>
           <p className={`text-sm ${subText}`}>
             A small <strong className="text-violet-300">reverse saturation current I_S</strong>{' '}
-            (nA–μA range) still leaks across because of thermally-generated minority carriers.
+            (nA-μA range) still leaks across because of thermally-generated minority carriers.
             It&apos;s nearly independent of voltage, but very sensitive to temperature.
           </p>
         </motion.div>

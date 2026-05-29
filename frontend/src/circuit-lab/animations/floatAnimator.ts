@@ -11,7 +11,7 @@ import type { AnimModule } from './animationController';
 interface FloatState {
     phase: number;       // unique offset per component (radians)
     period: number;      // oscillation period (ms)
-    amplitude: number;   // current Y amplitude (px) — tapers to 0 when connected
+    amplitude: number;   // current Y amplitude (px) - tapers to 0 when connected
     targetAmp: number;   // what amplitude is converging to
     baseTransform: string; // React's transform string for the group
 }
@@ -40,7 +40,7 @@ export class FloatAnimator implements AnimModule {
             if (!this.states.has(id)) {
                 this.states.set(id, {
                     phase: Math.random() * TWO_PI,
-                    period: 6000 + Math.random() * 2000, // 6–8s
+                    period: 6000 + Math.random() * 2000, // 6-8s
                     amplitude: 0,
                     targetAmp: 4,
                     baseTransform: '',
@@ -62,7 +62,7 @@ export class FloatAnimator implements AnimModule {
             state.amplitude += (state.targetAmp - state.amplitude) * 0.06;
 
             if (Math.abs(state.amplitude) < 0.01) {
-                // No float — clear animation transform, keep base
+                // No float - clear animation transform, keep base
                 g.setAttribute('transform', state.baseTransform || '');
                 return;
             }
@@ -72,7 +72,7 @@ export class FloatAnimator implements AnimModule {
             const dy = Math.sin(angle) * state.amplitude;
             const dr = Math.sin(angle * 0.7 + state.phase) * 1.5; // ±1.5deg
 
-            // Get base translate from React (position) — stored in data-base-x/y
+            // Get base translate from React (position) - stored in data-base-x/y
             const bx = parseFloat(g.dataset.baseX || '0');
             const by = parseFloat(g.dataset.baseY || '0');
 

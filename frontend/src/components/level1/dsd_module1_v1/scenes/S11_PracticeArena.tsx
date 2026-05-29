@@ -94,8 +94,8 @@ const PROBLEMS: Problem[] = [
     prompt:
       'For a 3-variable function with seven 1-rows and one 0-row, which canonical form is cheaper to wire up?',
     options: [
-      'SOP — fewer terms',
-      'POS — fewer terms',
+      'SOP - fewer terms',
+      'POS - fewer terms',
       'They are identical',
       'Cannot determine without simplification',
     ],
@@ -157,7 +157,7 @@ export const S11_PracticeArena: React.FC<Props> = ({ isDarkMode }) => {
           Chapter 10 · Practice Arena
         </div>
         <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>
-          Boss Drill — 7 Problems
+          Boss Drill - 7 Problems
         </h2>
         <p className={`text-base max-w-3xl ${subText}`}>
           Rapid-fire scenarios across truth tables, canonical-form conversion, minterm anatomy,
@@ -374,10 +374,10 @@ export const S11_PracticeArena: React.FC<Props> = ({ isDarkMode }) => {
           <Swords size={28} className={`mx-auto mb-2 ${score === PROBLEMS.length ? 'text-emerald-400' : 'text-amber-400'}`} />
           <h4 className={`text-xl font-black mb-2 ${textColor}`}>
             {score === PROBLEMS.length
-              ? 'Flawless run — Boss defeated.'
+              ? 'Flawless run - Boss defeated.'
               : score >= 5
-                ? `Solid run — ${score}/${PROBLEMS.length}. Review the misses, then advance.`
-                : `${score}/${PROBLEMS.length} — replay the chapters with the missed concepts before moving on.`}
+                ? `Solid run - ${score}/${PROBLEMS.length}. Review the misses, then advance.`
+                : `${score}/${PROBLEMS.length} - replay the chapters with the missed concepts before moving on.`}
           </h4>
           <p className={`text-sm ${subText}`}>
             Hop back to any chapter from the sidebar at any time, or proceed to the wrap-up.

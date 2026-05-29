@@ -22,7 +22,7 @@ export const S06A_Testbench: React.FC<{ isActive: boolean }> = ({ isActive }) =>
               Verification is the <span className="text-emerald-400 font-bold italic underline underline-offset-8 decoration-emerald-400/30 uppercase tracking-widest text-sm">Invisible Half</span> of high-stakes design.
             </p>
             <p className="body-text text-base text-white/50 leading-relaxed font-light">
-               Hardware bugs aren't just crashes—they are multi-million dollar recalls. The Testbench is your safety shield, ensuring logic is flawless before silicon etching.
+               Hardware bugs aren't just crashes-they are multi-million dollar recalls. The Testbench is your safety shield, ensuring logic is flawless before silicon etching.
             </p>
 
             <div className="space-y-3 pt-4">

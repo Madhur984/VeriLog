@@ -42,7 +42,7 @@ export const LandingNav = () => {
       }}
     >
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-5 md:px-8 h-16">
-        <Link to="/" aria-label="BitforBytes — home" className="shrink-0">
+        <Link to="/" aria-label="BitforBytes - home" className="shrink-0">
           <Wordmark />
         </Link>
 

@@ -1,5 +1,5 @@
 /**
- * mure/MUREEngine.ts — Minimum Unified Real Engine (Public Façade)
+ * mure/MUREEngine.ts - Minimum Unified Real Engine (Public Façade)
  *
  * The single entry point for all circuit simulation.
  * Wraps SimulationKernel, SignalTrace, and NodeRegistry.

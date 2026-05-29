@@ -70,10 +70,10 @@ export const WireTrace: React.FC<WireTraceProps> = ({ path, active, isShort }) =
                 />
             )}
 
-            {/* ════ LIVE SIGNAL TRAIL — only when active ════ */}
+            {/* ════ LIVE SIGNAL TRAIL - only when active ════ */}
             {active && !isShort && (
                 <>
-                    {/* Signal pulse #1 — fast bright electron */}
+                    {/* Signal pulse #1 - fast bright electron */}
                     <motion.path
                         d={d}
                         fill="none"
@@ -87,7 +87,7 @@ export const WireTrace: React.FC<WireTraceProps> = ({ path, active, isShort }) =
                         opacity={0.95}
                         style={{ filter: 'blur(0px)' }}
                     />
-                    {/* Signal pulse #2 — glowing trail behind it */}
+                    {/* Signal pulse #2 - glowing trail behind it */}
                     <motion.path
                         d={d}
                         fill="none"
@@ -101,7 +101,7 @@ export const WireTrace: React.FC<WireTraceProps> = ({ path, active, isShort }) =
                         opacity={0.6}
                         style={{ filter: 'blur(4px)' }}
                     />
-                    {/* Signal pulse #3 — second electron slightly behind */}
+                    {/* Signal pulse #3 - second electron slightly behind */}
                     <motion.path
                         d={d}
                         fill="none"
@@ -114,7 +114,7 @@ export const WireTrace: React.FC<WireTraceProps> = ({ path, active, isShort }) =
                         transition={{ duration: 1.4, repeat: Infinity, ease: 'linear' }}
                         opacity={0.7}
                     />
-                    {/* Signal pulse #4 — third faint electron */}
+                    {/* Signal pulse #4 - third faint electron */}
                     <motion.path
                         d={d}
                         fill="none"

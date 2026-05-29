@@ -1,5 +1,5 @@
 /**
- * ChallengeEngine.ts — Hardware LeetCode challenge system
+ * ChallengeEngine.ts - Hardware LeetCode challenge system
  *
  * Defines challenge types, verification engine, and scoring.
  * Challenges require building circuits that match expected truth tables.
@@ -73,11 +73,11 @@ export interface ChallengeResult {
 export class ChallengeVerifier {
     /**
      * Verify a circuit's outputs against the expected truth table.
-     * @param truthTable — expected truth table
-     * @param circuitOutputs — actual outputs from user's circuit
-     * @param gatesUsed — number of gates in user's circuit
-     * @param timeTaken — seconds taken to solve
-     * @param challenge — the challenge definition (for limits and scoring)
+     * @param truthTable - expected truth table
+     * @param circuitOutputs - actual outputs from user's circuit
+     * @param gatesUsed - number of gates in user's circuit
+     * @param timeTaken - seconds taken to solve
+     * @param challenge - the challenge definition (for limits and scoring)
      */
     verify(
         truthTable: TruthTableRow[],
@@ -192,17 +192,17 @@ export class ChallengeVerifier {
 
         badges.push('solver');
 
-        // Speed demon — solved in less than 50% of time limit
+        // Speed demon - solved in less than 50% of time limit
         if (timeLimit > 0 && timeTaken < timeLimit * 0.5) {
             badges.push('speed_demon');
         }
 
-        // Minimalist — used less than 50% of gate limit
+        // Minimalist - used less than 50% of gate limit
         if (gateLimit > 0 && gatesUsed < gateLimit * 0.5) {
             badges.push('minimalist');
         }
 
-        // Perfect — used exactly the minimum gates
+        // Perfect - used exactly the minimum gates
         if (gateLimit > 0 && gatesUsed <= Math.ceil(gateLimit * 0.3)) {
             badges.push('optimal');
         }
@@ -257,11 +257,11 @@ export const HARDWARE_CHALLENGES: HardwareChallenge[] = [
             { inputs: { A: true, B: true }, expectedOutputs: { Y: false } },
         ],
         hints: [
-            'XOR = "exclusive or" — outputs 1 when exactly one input is 1',
+            'XOR = "exclusive or" - outputs 1 when exactly one input is 1',
             'Can be built from AND, OR, and NOT gates',
             'XOR = (A AND NOT B) OR (NOT A AND B)',
         ],
-        examples: ['Think of a light switch at each end of a hallway — either switch can toggle the light'],
+        examples: ['Think of a light switch at each end of a hallway - either switch can toggle the light'],
         constraints: ['Use at most 4 gates'],
         tags: ['xor', 'basic'],
         solvedCount: 892,
@@ -322,7 +322,7 @@ export const HARDWARE_CHALLENGES: HardwareChallenge[] = [
             'Y = (NOT Sel AND I0) OR (Sel AND I1)',
             'Think of Sel as choosing which input to pass through',
         ],
-        examples: ['A MUX is like a switch — it selects between two data lines'],
+        examples: ['A MUX is like a switch - it selects between two data lines'],
         constraints: ['Use at most 4 gates (AND, OR, NOT)'],
         tags: ['mux', 'selector'],
         solvedCount: 523,
@@ -375,7 +375,7 @@ export const HARDWARE_CHALLENGES: HardwareChallenge[] = [
         gateLimit: 0,
         inputSignals: ['A3', 'A2', 'A1', 'A0', 'B3', 'B2', 'B1', 'B0'],
         outputSignals: ['GT', 'EQ', 'LT'],
-        truthTable: [], // Too large for full truth table — verified programmatically
+        truthTable: [], // Too large for full truth table - verified programmatically
         hints: [
             'Compare from the most significant bit down',
             'If A3 > B3, then A > B regardless of lower bits',

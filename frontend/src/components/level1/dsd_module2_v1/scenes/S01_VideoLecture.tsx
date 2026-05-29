@@ -19,14 +19,14 @@ const CHAPTERS: Chapter[] = [
     t: 0,
     titleEn: 'The 16-Row Headache',
     titleHi: '16 पंक्तियों का सिरदर्द',
-    lineEn: 'Minimising a 4-variable Boolean expression with raw algebra means staring at a 16-row truth table. The patterns are buried — like managing a hotel using a chaotic, sequential guest list.',
-    lineHi: 'चार वेरिएबल के बूलियन समीकरण को सिर्फ़ बीजगणित से छोटा करना मतलब 16 पंक्तियों की ट्रुथ टेबल को घूरते रहना। पैटर्न दिखाई ही नहीं देते — जैसे एक होटल को बेतरतीब अतिथि सूची से चलाना।',
+    lineEn: 'Minimising a 4-variable Boolean expression with raw algebra means staring at a 16-row truth table. The patterns are buried - like managing a hotel using a chaotic, sequential guest list.',
+    lineHi: 'चार वेरिएबल के बूलियन समीकरण को सिर्फ़ बीजगणित से छोटा करना मतलब 16 पंक्तियों की ट्रुथ टेबल को घूरते रहना। पैटर्न दिखाई ही नहीं देते - जैसे एक होटल को बेतरतीब अतिथि सूची से चलाना।',
   },
   {
     t: 18,
     titleEn: 'Enter Madhur',
     titleHi: 'मधुर का आगमन',
-    lineEn: 'Meet Madhur, the hostel warden. He doesn\'t see lists — he sees architecture. Madhur folds the 16 possible combinations into a 4×4 floor plan. Every minterm gets its own room.',
+    lineEn: 'Meet Madhur, the hostel warden. He doesn\'t see lists - he sees architecture. Madhur folds the 16 possible combinations into a 4×4 floor plan. Every minterm gets its own room.',
     lineHi: 'मिलिए मधुर से, हॉस्टल वार्डन। उसे सूचियाँ नहीं, इमारत दिखती है। मधुर 16 संभावनाओं को 4×4 फ़्लोर प्लान में मोड़ देता है। हर minterm को उसका अपना कमरा मिलता है।',
   },
   {
@@ -40,8 +40,8 @@ const CHAPTERS: Chapter[] = [
     t: 80,
     titleEn: 'Rule 1 · Why Standard Binary Fails',
     titleHi: 'नियम 1 · मानक बाइनरी क्यों फ़ेल है',
-    lineEn: 'Going from 01 to 10 in standard binary flips two bits at once. In Madhur\'s world that\'s knocking down two walls simultaneously — a structural disaster. Adjacency must be one-bit, one-wall.',
-    lineHi: '01 से 10 जाने में मानक बाइनरी दो बिट्स एक साथ बदलती है। मधुर के लिए यह दो दीवारें एक साथ तोड़ना है — संरचनात्मक आपदा। आसन्नता एक बिट, एक दीवार होनी चाहिए।',
+    lineEn: 'Going from 01 to 10 in standard binary flips two bits at once. In Madhur\'s world that\'s knocking down two walls simultaneously - a structural disaster. Adjacency must be one-bit, one-wall.',
+    lineHi: '01 से 10 जाने में मानक बाइनरी दो बिट्स एक साथ बदलती है। मधुर के लिए यह दो दीवारें एक साथ तोड़ना है - संरचनात्मक आपदा। आसन्नता एक बिट, एक दीवार होनी चाहिए।',
   },
   {
     t: 110,
@@ -61,29 +61,29 @@ const CHAPTERS: Chapter[] = [
     t: 185,
     titleEn: 'Rule 2 · Powers of Two',
     titleHi: 'नियम 2 · दो की घातें',
-    lineEn: 'Madhur upgrades by grouping rooms into Wings. But his HVAC only comes in capacities of 1, 2, 4, 8 and 16 rooms. The goal is always the largest possible wing — bigger wings eliminate more variables.',
-    lineHi: 'मधुर कमरों को विंग्स में जोड़कर अपग्रेड करता है। पर उसका HVAC सिर्फ़ 1, 2, 4, 8 और 16 कमरों की क्षमता में आता है। लक्ष्य हमेशा सबसे बड़ी संभव विंग — बड़ी विंग अधिक वेरिएबल हटाती है।',
+    lineEn: 'Madhur upgrades by grouping rooms into Wings. But his HVAC only comes in capacities of 1, 2, 4, 8 and 16 rooms. The goal is always the largest possible wing - bigger wings eliminate more variables.',
+    lineHi: 'मधुर कमरों को विंग्स में जोड़कर अपग्रेड करता है। पर उसका HVAC सिर्फ़ 1, 2, 4, 8 और 16 कमरों की क्षमता में आता है। लक्ष्य हमेशा सबसे बड़ी संभव विंग - बड़ी विंग अधिक वेरिएबल हटाती है।',
   },
   {
     t: 220,
     titleEn: 'Allowed vs Illegal Wings',
     titleHi: 'अनुमत बनाम अवैध विंग्स',
-    lineEn: 'Wings must be perfect rectangles or squares. Diagonals, L-shapes and zig-zags don\'t share enough walls to function as a single logical group. Geometry isn\'t cosmetic — it\'s law.',
-    lineHi: 'विंग्स पूर्ण आयत या वर्ग होनी चाहिए। विकर्ण, L-आकार और ज़िग-ज़ैग समूह नहीं बन सकते क्योंकि साझी दीवारें कम पड़ती हैं। ज्यामिति सजावट नहीं — यह नियम है।',
+    lineEn: 'Wings must be perfect rectangles or squares. Diagonals, L-shapes and zig-zags don\'t share enough walls to function as a single logical group. Geometry isn\'t cosmetic - it\'s law.',
+    lineHi: 'विंग्स पूर्ण आयत या वर्ग होनी चाहिए। विकर्ण, L-आकार और ज़िग-ज़ैग समूह नहीं बन सकते क्योंकि साझी दीवारें कम पड़ती हैं। ज्यामिति सजावट नहीं - यह नियम है।',
   },
   {
     t: 255,
     titleEn: 'Rule 3 · The Secret Corridors',
     titleHi: 'नियम 3 · गुप्त गलियारे',
-    lineEn: 'The far-left and far-right columns differ by exactly one bit too — so they\'re adjacent. The flat blueprint rolls into a cylinder. The hostel literally curves.',
-    lineHi: 'सबसे बाएँ और सबसे दाएँ स्तंभ भी ठीक एक बिट से अलग हैं — इसलिए वे आसन्न हैं। सपाट ब्लूप्रिंट एक सिलिंडर में लपेट जाता है। हॉस्टल वास्तव में मुड़ता है।',
+    lineEn: 'The far-left and far-right columns differ by exactly one bit too - so they\'re adjacent. The flat blueprint rolls into a cylinder. The hostel literally curves.',
+    lineHi: 'सबसे बाएँ और सबसे दाएँ स्तंभ भी ठीक एक बिट से अलग हैं - इसलिए वे आसन्न हैं। सपाट ब्लूप्रिंट एक सिलिंडर में लपेट जाता है। हॉस्टल वास्तव में मुड़ता है।',
   },
   {
     t: 290,
     titleEn: 'The Torus Effect',
     titleHi: 'टोरस प्रभाव',
-    lineEn: 'The same magic applies vertically. Top row and bottom row share a wall. Curl left-to-right, then top-to-bottom — Madhur\'s hostel is a torus. The four extreme corners (0, 2, 8, 10) are one tight cluster.',
-    lineHi: 'यही जादू ऊर्ध्वाधर रूप से भी लागू होता है। ऊपर और नीचे की पंक्तियाँ दीवार साझा करती हैं। बाएँ-दाएँ, फिर ऊपर-नीचे मोड़ें — मधुर का हॉस्टल एक टोरस है। चारों चरम कोने (0, 2, 8, 10) एक करीबी समूह हैं।',
+    lineEn: 'The same magic applies vertically. Top row and bottom row share a wall. Curl left-to-right, then top-to-bottom - Madhur\'s hostel is a torus. The four extreme corners (0, 2, 8, 10) are one tight cluster.',
+    lineHi: 'यही जादू ऊर्ध्वाधर रूप से भी लागू होता है। ऊपर और नीचे की पंक्तियाँ दीवार साझा करती हैं। बाएँ-दाएँ, फिर ऊपर-नीचे मोड़ें - मधुर का हॉस्टल एक टोरस है। चारों चरम कोने (0, 2, 8, 10) एक करीबी समूह हैं।',
   },
   {
     t: 320,
@@ -96,8 +96,8 @@ const CHAPTERS: Chapter[] = [
     t: 350,
     titleEn: 'Four Operations',
     titleHi: 'चार ऑपरेशन',
-    lineEn: 'Operation 1 — the Corner Suite {0,2,8,10} via the torus, gives B′D′. Operation 2 — the Vertical Corridor {2,6,10,14} gives CD′. Operation 3 — the Standard Pair {0,1} gives A′B′C′. Operation 4 — the Lone VIP at 13 gives ABC′D.',
-    lineHi: 'ऑपरेशन 1 — कोने का सूट {0,2,8,10} टोरस से, देता है B′D′। ऑपरेशन 2 — ऊर्ध्वाधर गलियारा {2,6,10,14} देता है CD′। ऑपरेशन 3 — मानक जोड़ी {0,1} देती है A′B′C′। ऑपरेशन 4 — अकेला VIP 13 देता है ABC′D।',
+    lineEn: 'Operation 1 - the Corner Suite {0,2,8,10} via the torus, gives B′D′. Operation 2 - the Vertical Corridor {2,6,10,14} gives CD′. Operation 3 - the Standard Pair {0,1} gives A′B′C′. Operation 4 - the Lone VIP at 13 gives ABC′D.',
+    lineHi: 'ऑपरेशन 1 - कोने का सूट {0,2,8,10} टोरस से, देता है B′D′। ऑपरेशन 2 - ऊर्ध्वाधर गलियारा {2,6,10,14} देता है CD′। ऑपरेशन 3 - मानक जोड़ी {0,1} देती है A′B′C′। ऑपरेशन 4 - अकेला VIP 13 देता है ABC′D।',
   },
   {
     t: 395,
@@ -110,15 +110,15 @@ const CHAPTERS: Chapter[] = [
     t: 430,
     titleEn: "The Don't Care Loophole",
     titleHi: "Don't Care का दाँव",
-    lineEn: 'An X on the K-Map is a Room Under Maintenance. Madhur treats it as a 1 if doing so doubles the size of a wing — and treats it as a 0 otherwise. Free upgrades when geometry allows.',
-    lineHi: 'K-मैप पर X मतलब रखरखाव में कमरा। अगर X को 1 मानने से विंग बड़ी होती है, मधुर उसे 1 मानता है — वरना 0। ज्यामिति अनुमति दे तो मुफ़्त अपग्रेड।',
+    lineEn: 'An X on the K-Map is a Room Under Maintenance. Madhur treats it as a 1 if doing so doubles the size of a wing - and treats it as a 0 otherwise. Free upgrades when geometry allows.',
+    lineHi: 'K-मैप पर X मतलब रखरखाव में कमरा। अगर X को 1 मानने से विंग बड़ी होती है, मधुर उसे 1 मानता है - वरना 0। ज्यामिति अनुमति दे तो मुफ़्त अपग्रेड।',
   },
   {
     t: 460,
     titleEn: 'Three Core Principles',
     titleHi: 'तीन मूल सिद्धांत',
-    lineEn: 'The Grid: Gray code guarantees one-bit-flip = one shared wall. The Wings: group strictly in rectangles of 1, 2, 4, 8, 16 — bigger always wins. The Corridors: it\'s a torus, always check the edges and corners.',
-    lineHi: 'ग्रिड: ग्रे कोड सुनिश्चित करता है — एक बिट परिवर्तन = एक साझी दीवार। विंग्स: सख़्ती से 1, 2, 4, 8, 16 के आयतों में समूह बनाएँ — बड़ा हमेशा बेहतर। गलियारे: यह टोरस है, किनारों और कोनों को हमेशा जाँचें।',
+    lineEn: 'The Grid: Gray code guarantees one-bit-flip = one shared wall. The Wings: group strictly in rectangles of 1, 2, 4, 8, 16 - bigger always wins. The Corridors: it\'s a torus, always check the edges and corners.',
+    lineHi: 'ग्रिड: ग्रे कोड सुनिश्चित करता है - एक बिट परिवर्तन = एक साझी दीवार। विंग्स: सख़्ती से 1, 2, 4, 8, 16 के आयतों में समूह बनाएँ - बड़ा हमेशा बेहतर। गलियारे: यह टोरस है, किनारों और कोनों को हमेशा जाँचें।',
   },
 ];
 
@@ -175,7 +175,7 @@ export const S01_VideoLecture: React.FC<Props> = ({ isActive, isDarkMode }) => {
         </div>
         <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>The Logic Labyrinth</h2>
         <p className={`text-base max-w-3xl ${subText}`}>
-          Madhur&apos;s full architectural walkthrough — pick your language above the player. The
+          Madhur&apos;s full architectural walkthrough - pick your language above the player. The
           <strong> English</strong> track narrates the story end-to-end; the <strong>हिंदी</strong> track gives the same
           journey with a Hindi voiceover. Both transcripts stay in sync as you scrub.
         </p>

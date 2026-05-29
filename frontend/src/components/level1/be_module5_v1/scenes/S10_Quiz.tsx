@@ -21,14 +21,14 @@ const QUESTIONS: Q[] = [
     question: 'Which of these three special-purpose diodes operates in FORWARD bias?',
     choices: ['Zener diode', 'LED', 'Photodiode', 'All of them'],
     answer: 1,
-    explanation: 'The LED needs forward bias so electrons can recombine with holes across the junction — that recombination releases the photon. Zener and Photodiode both work in reverse bias.',
+    explanation: 'The LED needs forward bias so electrons can recombine with holes across the junction - that recombination releases the photon. Zener and Photodiode both work in reverse bias.',
     accent: '#fbbf24',
   },
   {
     id: 'q2',
     topic: 'Zener',
     question: 'A 5.6 V Zener diode is used in a shunt regulator with V_in = 9 V. The load needs 20 mA. What is V_OUT?',
-    choices: ['9 V — same as input', '5.6 V — clamped at V_Z', '3.4 V — the difference', '0 V — Zener blocks everything'],
+    choices: ['9 V - same as input', '5.6 V - clamped at V_Z', '3.4 V - the difference', '0 V - Zener blocks everything'],
     answer: 1,
     explanation: 'In reverse breakdown the Zener pins the output voltage to V_Z regardless of small changes in V_in or load. As long as V_in > V_Z, the regulator holds 5.6 V.',
     accent: '#ef4444',
@@ -36,7 +36,7 @@ const QUESTIONS: Q[] = [
   {
     id: 'q3',
     topic: 'Zener',
-    question: 'A 3.3 V Zener vs a 12 V Zener — which breakdown mechanism dominates in each?',
+    question: 'A 3.3 V Zener vs a 12 V Zener - which breakdown mechanism dominates in each?',
     choices: [
       'Both Zener breakdown',
       'Both Avalanche breakdown',
@@ -53,12 +53,12 @@ const QUESTIONS: Q[] = [
     question: 'Why can a pure silicon diode never emit visible light?',
     choices: [
       'Silicon doesn\'t conduct in forward bias',
-      'Its band gap (~1.1 eV) is too small — emits infrared, not visible',
+      'Its band gap (~1.1 eV) is too small - emits infrared, not visible',
       'Silicon isn\'t a semiconductor',
       'It needs reverse bias to glow',
     ],
     answer: 1,
-    explanation: 'λ = h·c / E_g. With E_g ≈ 1.1 eV silicon emits around 1100 nm — well into the infrared. Visible LEDs need wider-gap compounds like GaP (green) or GaN (blue).',
+    explanation: 'λ = h·c / E_g. With E_g ≈ 1.1 eV silicon emits around 1100 nm - well into the infrared. Visible LEDs need wider-gap compounds like GaP (green) or GaN (blue).',
     accent: '#fbbf24',
   },
   {
@@ -67,7 +67,7 @@ const QUESTIONS: Q[] = [
     question: 'You want a BLUE LED. Which material would you choose?',
     choices: ['GaAsP', 'GaP', 'GaN', 'Pure Silicon'],
     answer: 2,
-    explanation: 'GaN has a band gap of ~2.6 eV, producing photons around 470 nm — the blue end of visible. GaP gives green, GaAsP gives red.',
+    explanation: 'GaN has a band gap of ~2.6 eV, producing photons around 470 nm - the blue end of visible. GaP gives green, GaAsP gives red.',
     accent: '#fbbf24',
   },
   {
@@ -75,8 +75,8 @@ const QUESTIONS: Q[] = [
     topic: 'Photodiode',
     question: 'In total darkness, does a reverse-biased photodiode still pass any current?',
     choices: [
-      'No — current is exactly zero',
-      'Yes — a tiny dark current from thermally generated carriers',
+      'No - current is exactly zero',
+      'Yes - a tiny dark current from thermally generated carriers',
       'Only if you apply forward bias',
       'Only at temperatures below 0 °C',
     ],
@@ -124,10 +124,10 @@ const QUESTIONS: Q[] = [
   {
     id: 'q10',
     topic: 'LED',
-    question: 'A red LED (λ ≈ 650 nm) and a blue LED (λ ≈ 470 nm) — which has the LARGER band gap?',
+    question: 'A red LED (λ ≈ 650 nm) and a blue LED (λ ≈ 470 nm) - which has the LARGER band gap?',
     choices: [
-      'Red LED — longer wavelength means more energy',
-      'Blue LED — shorter wavelength means higher photon energy',
+      'Red LED - longer wavelength means more energy',
+      'Blue LED - shorter wavelength means higher photon energy',
       'They are equal',
       'Depends on the manufacturer',
     ],
@@ -164,7 +164,7 @@ export const S10_Quiz: React.FC<Props> = ({ isActive, isDarkMode }) => {
   const percent = allDone ? Math.round((score.correct / QUESTIONS.length) * 100) : 0;
   const verdict = percent >= 90 ? { tone: '#22c55e', label: 'VIP-level mastery' }
                 : percent >= 70 ? { tone: '#facc15', label: 'Solid foundation' }
-                : percent >= 50 ? { tone: '#fb923c', label: 'Almost there — revisit the weak spots' }
+                : percent >= 50 ? { tone: '#fb923c', label: 'Almost there - revisit the weak spots' }
                 : { tone: '#ef4444', label: 'Re-watch the video and try again' };
 
   return (
@@ -199,7 +199,7 @@ export const S10_Quiz: React.FC<Props> = ({ isActive, isDarkMode }) => {
         </div>
         <p className={`text-sm ${subText} leading-relaxed`}>
           Time to play! Tap the answer you think is right. <strong className="text-emerald-300">Green</strong>{' '}
-          means yes. <strong className="text-rose-300">Red</strong> means oops — and you&apos;ll get
+          means yes. <strong className="text-rose-300">Red</strong> means oops - and you&apos;ll get
           a little hint to help you remember next time. The score at the top counts how many you
           got right. Get 9 out of 10 and you&apos;ve mastered Module 5.
         </p>
@@ -369,7 +369,7 @@ export const S10_Quiz: React.FC<Props> = ({ isActive, isDarkMode }) => {
         >
           <Trophy size={28} className="mx-auto" style={{ color: verdict.tone }} />
           <div className={`text-2xl md:text-3xl font-black ${textColor}`}>
-            {percent}% — <span style={{ color: verdict.tone }}>{verdict.label}</span>
+            {percent}% - <span style={{ color: verdict.tone }}>{verdict.label}</span>
           </div>
           <p className={`text-sm ${subText}`}>
             {percent >= 90

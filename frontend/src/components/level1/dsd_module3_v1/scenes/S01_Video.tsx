@@ -83,7 +83,7 @@ export const S01_Video: React.FC<Props> = ({ isActive, isDarkMode }) => {
       >
         <ArrowRight className="text-cyan-300 shrink-0" size={18} />
         <p className={`text-sm ${subText}`}>
-          Once the video is done, hit <strong className="text-cyan-300">Next</strong> — Step 1 is
+          Once the video is done, hit <strong className="text-cyan-300">Next</strong> - Step 1 is
           where we slow down and meet the vault.
         </p>
       </motion.div>

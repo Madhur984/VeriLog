@@ -29,7 +29,7 @@ export const S05_VerilogBridge: React.FC<Props> = ({ isDarkMode: _ }) => {
         transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
         className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-12 items-center mb-20"
       >
-        {/* LEFT — Text */}
+        {/* LEFT - Text */}
         <div className="space-y-8 text-left">
           <p className="micro-text text-plasma-cyan opacity-60">
             Phase_Conclusion // Gateway_01
@@ -44,7 +44,7 @@ export const S05_VerilogBridge: React.FC<Props> = ({ isDarkMode: _ }) => {
           </p>
         </div>
 
-        {/* RIGHT — Code Panel */}
+        {/* RIGHT - Code Panel */}
         <div className="relative group">
           <div className="absolute -inset-4 bg-plasma-cyan/10 blur-[50px] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
           <motion.div

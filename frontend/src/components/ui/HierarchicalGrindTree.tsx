@@ -47,31 +47,31 @@ const ROOT_NODES: RootNode[] = [
     ],
   },
   {
-    id: 'r2', label: 'Sampling & ADC', fullLabel: 'Analog → Digital',
-    description: 'Sampling, aliasing, Nyquist, quantization, dither, reconstruction, and ADC architectures.',
-    tech: 'SAMPLING_THEORY', level: 'L2', pct: 67, icon: '⊞',
+    id: 'r2', label: 'Number Systems', fullLabel: 'Bases & Boolean',
+    description: 'Decimal, binary, octal, hex, conversions, Boolean algebra, complements, and 7-segment.',
+    tech: 'NUMBER_SYSTEMS', level: 'L2', pct: 0, icon: '⊞',
     color: ['#065f46', '#34d399'], glow: '#34d399', route: '/module/2',
     gate: 'or', status: 'active',
     children: [
-      { id: 'r2c1', label: 'Sampling', pct: 100, color: '#34d399', icon: '◉' },
-      { id: 'r2c2', label: 'Aliasing & Nyquist', pct: 90, color: '#6ee7b7', icon: '≁' },
-      { id: 'r2c3', label: 'Quantization', pct: 70, color: '#10b981', icon: '▤' },
-      { id: 'r2c4', label: 'Reconstruction', pct: 55, color: '#059669', icon: '∽' },
-      { id: 'r2c5', label: 'ADC Architecture', pct: 20, color: '#a7f3d0', icon: '⊟' },
+      { id: 'r2c1', label: 'Decimal & Binary', pct: 0, color: '#34d399', icon: '◉' },
+      { id: 'r2c2', label: 'Octal & Hex', pct: 0, color: '#6ee7b7', icon: '≁' },
+      { id: 'r2c3', label: 'Conversions', pct: 0, color: '#10b981', icon: '▤' },
+      { id: 'r2c4', label: 'Boolean Algebra', pct: 0, color: '#059669', icon: '∽' },
+      { id: 'r2c5', label: 'Complements', pct: 0, color: '#a7f3d0', icon: '⊟' },
     ],
   },
   {
-    id: 'r4', label: 'Binary & Logic', fullLabel: 'Numbers & Boolean',
-    description: 'Decimal, binary, octal, hex, conversions, logic gates, carry chain, Boolean algebra.',
-    tech: 'BOOLEAN_LOGIC', level: 'L3', pct: 0, icon: '⊃',
+    id: 'r4', label: 'Logic Gates', fullLabel: 'Universal Gates',
+    description: 'Why gates, AND/OR/NOT, universal NAND/NOR, XOR/XNOR, gate discovery, and the mini ALU.',
+    tech: 'GATE_LOGIC', level: 'L3', pct: 0, icon: '⊃',
     color: ['#1e3a8a', '#60a5fa'], glow: '#60a5fa', route: '/module/3',
     gate: 'and', status: 'active',
     children: [
-      { id: 'r4c1', label: 'Number Systems', pct: 0, color: '#60a5fa', icon: '0b' },
-      { id: 'r4c2', label: 'Logic Gates', pct: 0, color: '#3b82f6', icon: '∧' },
-      { id: 'r4c3', label: 'Carry Chain', pct: 0, color: '#2563eb', icon: '⊕' },
-      { id: 'r4c4', label: 'Boolean Algebra', pct: 0, color: '#bfdbfe', icon: '⊗' },
-      { id: 'r4c5', label: 'Complements', pct: 0, color: '#dbeafe', icon: '±' },
+      { id: 'r4c1', label: 'AND / OR / NOT', pct: 0, color: '#60a5fa', icon: '0b' },
+      { id: 'r4c2', label: 'NAND / NOR', pct: 0, color: '#3b82f6', icon: '∧' },
+      { id: 'r4c3', label: 'XOR / XNOR', pct: 0, color: '#2563eb', icon: '⊕' },
+      { id: 'r4c4', label: 'Gate Discovery', pct: 0, color: '#bfdbfe', icon: '⊗' },
+      { id: 'r4c5', label: 'Mini ALU', pct: 0, color: '#dbeafe', icon: '±' },
     ],
   },
   {
@@ -90,7 +90,7 @@ const ROOT_NODES: RootNode[] = [
   },
   {
     id: 'r6', label: 'Verilog Core', fullLabel: 'HDL Synthesis Gateway',
-    description: 'First Verilog, modules, testbenches, clock signals, hierarchy — gateway to L6 mastery.',
+    description: 'First Verilog, modules, testbenches, clock signals, hierarchy - gateway to L6 mastery.',
     tech: 'HDL_GATEWAY', level: 'L5', pct: 0, icon: '≡',
     color: ['#4c1d95', '#c4b5fd'], glow: '#c4b5fd', route: '/module/5',
     gate: 'nand', status: 'active',
@@ -390,7 +390,7 @@ const LogicGateShape: React.FC<GateProps> = ({ type, accent, isLocked, hovered, 
   return null;
 };
 
-// ─── ROOT MODULE GEM — LOGIC GATE EDITION ─────────────────────────────────────
+// ─── ROOT MODULE GEM - LOGIC GATE EDITION ─────────────────────────────────────
 const RootGem: React.FC<{ node: RootNode; index: number; onClick: () => void }> = ({
   node, index, onClick,
 }) => {
@@ -408,8 +408,8 @@ const RootGem: React.FC<{ node: RootNode; index: number; onClick: () => void }> 
 
   return (
     <motion.div
-      className="relative flex flex-col items-center"
-      style={{ width: 140, cursor: isLocked ? 'not-allowed' : 'pointer' }}
+      className="relative flex flex-col items-center w-[96px] sm:w-[120px] lg:w-[140px]"
+      style={{ cursor: isLocked ? 'not-allowed' : 'pointer' }}
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.07, duration: 0.4, ease: 'easeOut' }}
@@ -452,14 +452,14 @@ const RootGem: React.FC<{ node: RootNode; index: number; onClick: () => void }> 
       </div>
 
       {/* Decoded label */}
-      <div className="mt-2 text-center text-[11px] font-semibold leading-tight tracking-wide font-mono"
-        style={{ color: isLocked ? '#475569' : '#E5E7EB', maxWidth: 130, minHeight: 28 }}>
+      <div className="mt-2 w-full text-center text-[10px] sm:text-[11px] font-semibold leading-tight tracking-wide font-mono px-0.5"
+        style={{ color: isLocked ? '#475569' : '#E5E7EB', maxWidth: '100%', minHeight: 28 }}>
         {displayLabel}
       </div>
 
       {/* Tech badge */}
-      <div className="mt-1 text-[7.5px] font-mono tracking-[0.2em] text-center"
-        style={{ color: isLocked ? '#334155' : `${accent}88`, maxWidth: 130 }}>
+      <div className="mt-1 w-full text-[7px] font-mono tracking-[0.1em] text-center truncate"
+        style={{ color: isLocked ? '#334155' : `${accent}88`, maxWidth: '100%' }}>
         {node.tech}
       </div>
 
@@ -569,25 +569,6 @@ const L6_PATHS: PathOption[] = [
           { id: 'be5s8', label: 'Photo · 2 · I-V vs Illumination',         route: '/basic-electronics/5/photo-resp' },
           { id: 'be5s9', label: 'Summary · Diagnostic Matrix',             route: '/basic-electronics/5/matrix'     },
           { id: 'be5s10',label: 'Final · Self-Check Quiz',                 route: '/basic-electronics/5/quiz'       },
-        ],
-      },
-      {
-        id: 'm1', label: 'Signals & Waves', subtitle: 'L1 · WAVE FOUNDATION', route: '/module/1',
-        submodules: [
-          { id: 'm1s1', label: 'Standard Signals', route: '/module/1' },
-          { id: 'm1s2', label: 'Analog vs Digital', route: '/module/1' },
-          { id: 'm1s3', label: 'Wave Parameters', route: '/module/1' },
-          { id: 'm1s4', label: 'Verilog Bridge', route: '/module/1/1' },
-        ],
-      },
-      {
-        id: 'm2', label: 'Sampling & ADC', subtitle: 'L2 · SAMPLING THEORY', route: '/module/2',
-        submodules: [
-          { id: 'm2s1', label: 'Sampling', route: '/module/2' },
-          { id: 'm2s2', label: 'Aliasing & Nyquist', route: '/module/2' },
-          { id: 'm2s3', label: 'Quantization', route: '/module/2' },
-          { id: 'm2s4', label: 'Reconstruction', route: '/module/2' },
-          { id: 'm2s5', label: 'ADC Architecture', route: '/module/2' },
         ],
       },
     ],
@@ -883,7 +864,7 @@ export const HierarchicalGrindTree: React.FC = () => {
   return (
     <div className="w-full h-full flex flex-col bg-transparent overflow-hidden relative">
       {/* ── Header: L1-L5 Root Module Row ── */}
-      <div className="flex-shrink-0 w-full pt-6 pb-5 px-4 lg:px-6 border-b border-white/10 bg-[#0A0B0F]/95 backdrop-blur-md relative z-30 flex justify-center">
+      <div className="flex-shrink-0 w-full pt-6 pb-5 px-2 sm:px-4 lg:px-6 border-b border-white/10 bg-[#0A0B0F]/95 backdrop-blur-md relative z-30 flex justify-center">
         <div className="w-full max-w-[900px] flex flex-col items-center">
           <div className="flex items-center justify-between w-full mb-5 px-1">
             <div className="flex items-center gap-2 text-[10px] font-mono tracking-[0.2em] text-white/55">
@@ -891,15 +872,15 @@ export const HierarchicalGrindTree: React.FC = () => {
                 animate={{ opacity: [0.4, 1, 0.4] }} transition={{ duration: 2, repeat: Infinity }} />
               Foundation Framework
             </div>
-            <div className="text-[9px] font-mono tracking-[0.2em] text-white/35">L1 — L5 · 5 modules</div>
+            <div className="text-[9px] font-mono tracking-[0.2em] text-white/35">L1 - L5 · 5 modules</div>
           </div>
 
           <div className="relative w-full">
-            {/* Animated horizontal connector trace */}
-            <div className="absolute left-[8%] right-[8%] pointer-events-none" style={{ top: 56 }}>
+            {/* Animated horizontal connector trace - desktop only (gems wrap on mobile) */}
+            <div className="absolute left-[8%] right-[8%] pointer-events-none hidden lg:block" style={{ top: 56 }}>
               <PathwayPulse color="#22d3ee" length={800} />
             </div>
-            <div className="flex items-start justify-center gap-2 lg:gap-4 w-full flex-wrap sm:flex-nowrap relative">
+            <div className="flex items-start justify-center gap-x-1.5 gap-y-3 lg:gap-4 w-full flex-wrap lg:flex-nowrap relative">
               {ROOT_NODES.map((node, idx) => (
                 <RootGem key={node.id} node={node} index={idx}
                   onClick={() => { if (node.route && node.status !== 'locked') navigate(node.route); }} />
@@ -910,7 +891,7 @@ export const HierarchicalGrindTree: React.FC = () => {
       </div>
 
       {/* ── L6 Path Selector ── */}
-      <div className="flex-1 w-full px-4 lg:px-6 pt-10 pb-12 flex flex-col items-center relative z-10 overflow-y-auto scrollbar-hide">
+      <div className="flex-1 w-full px-4 lg:px-6 pt-10 pb-12 flex flex-col items-center relative z-10 overflow-x-hidden overflow-y-auto scrollbar-hide">
         <div className="flex items-center gap-2 text-[10px] font-mono tracking-[0.2em] text-white/55 mb-4">
           <motion.span className="w-1 h-1 rounded-full bg-cyan-400/70"
             animate={{ opacity: [0.4, 1, 0.4] }} transition={{ duration: 2, repeat: Infinity }} />

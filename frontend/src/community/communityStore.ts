@@ -1,5 +1,5 @@
 /**
- * communityStore.ts — Zustand store for community features
+ * communityStore.ts - Zustand store for community features
  *
  * Manages shared circuits, feed, and social interactions.
  * Uses optimistic updates for likes/bookmarks.
@@ -27,24 +27,24 @@ interface CommunityState {
     // Social
     following: Set<string>;
 
-    // Actions — Feed
+    // Actions - Feed
     setFeedSort: (sort: FeedSortOrder) => void;
     setFeedCategory: (category: CircuitCategory | undefined) => void;
     setFeedSearch: (search: string) => void;
     loadFeed: () => void;
 
-    // Actions — Circuits
+    // Actions - Circuits
     shareCircuit: (circuit: Omit<SharedCircuit, 'id' | 'createdAt' | 'updatedAt' | 'likes' | 'views' | 'forks' | 'comments' | 'isLiked' | 'isBookmarked' | 'author'>) => void;
     selectCircuit: (id: string | null) => void;
     likeCircuit: (id: string) => void;
     bookmarkCircuit: (id: string) => void;
     forkCircuit: (id: string) => void;
 
-    // Actions — Comments
+    // Actions - Comments
     addComment: (circuitId: string, content: string) => void;
     likeComment: (commentId: string) => void;
 
-    // Actions — Social
+    // Actions - Social
     followUser: (userId: string) => void;
     unfollowUser: (userId: string) => void;
 }

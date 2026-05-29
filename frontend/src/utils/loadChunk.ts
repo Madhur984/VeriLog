@@ -1,11 +1,11 @@
 /**
  * Resilient dynamic-import for React.lazy routes.
  *
- * Code-split chunks occasionally fail to load for transient reasons — a brief
+ * Code-split chunks occasionally fail to load for transient reasons - a brief
  * network drop, or a chunk requested mid-flight right after navigation (e.g.
  * landing on /portal straight after sign-in, when the whole workstation chunk
  * graph is fetched for the first time). Without a retry, React.lazy throws and
- * — absent an error boundary — blanks the page, which is the classic
+ * - absent an error boundary - blanks the page, which is the classic
  * "it works after I reload" bug.
  *
  * This retries the import a couple of times with a short backoff before giving

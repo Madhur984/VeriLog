@@ -269,7 +269,7 @@ export function Canvas({
             {/* Blueprint grid */}
             <rect width={CANVAS_W} height={CANVAS_H} fill="url(#gridLarge)" />
 
-            {/* Particle field container — inserted by ParticleField module */}
+            {/* Particle field container - inserted by ParticleField module */}
             <g id="cl-particles" pointerEvents="none" />
 
             {/* Corner crosshairs */}
@@ -288,7 +288,7 @@ export function Canvas({
                 ◈ CIRCUIT LAB CANVAS ◈
             </text>
 
-            {/* Wires — tagged with data-wire-id for electron flow animator */}
+            {/* Wires - tagged with data-wire-id for electron flow animator */}
             {wires.map((wire) => {
                 const fromAnchor = anchorWorldMap.get(wire.fromAnchorId);
                 const toAnchor = anchorWorldMap.get(wire.toAnchorId);
@@ -306,7 +306,7 @@ export function Canvas({
                 );
             })}
 
-            {/* Components — tagged with data-comp-id, data-type, data-base-x/y etc. */}
+            {/* Components - tagged with data-comp-id, data-type, data-base-x/y etc. */}
             {components.map((comp) => (
                 <DraggableComponent
                     key={comp.id}

@@ -1,5 +1,5 @@
 /**
- * ArchonMentor.ts — Computer Architecture Mentor
+ * ArchonMentor.ts - Computer Architecture Mentor
  *
  * Specializes in:
  * - CPU datapath design
@@ -20,7 +20,7 @@ export class ArchonMentor extends BaseMentor {
             domain: 'architecture',
             avatar: '🏛',
             accentColor: '#06B6D4',
-            greeting: "🏛 Welcome to computer architecture! I'm Archon — I'll guide you through CPU design, pipelines, and memory hierarchies. Let's build a processor!",
+            greeting: "🏛 Welcome to computer architecture! I'm Archon - I'll guide you through CPU design, pipelines, and memory hierarchies. Let's build a processor!",
             encouragements: [
                 "Excellent datapath design! Those control signals are correct.",
                 "You've identified the right pipeline stages. Well done!",
@@ -28,18 +28,18 @@ export class ArchonMentor extends BaseMentor {
             ],
             corrections: [
                 "That datapath connection might cause a data hazard. Check the forwarding paths.",
-                "Your pipeline has a structural hazard — two units trying to use the same resource.",
+                "Your pipeline has a structural hazard - two units trying to use the same resource.",
                 "The control signals don't match the instruction format. Let's trace through it.",
             ],
             celebrations: [
                 "🏛 Magnificent architecture! Your CPU executes correctly!",
-                "⚡ Your pipeline has no stalls — maximum throughput achieved!",
+                "⚡ Your pipeline has no stalls - maximum throughput achieved!",
                 "🎯 Perfect ISA design! Clean, orthogonal, and implementable!",
             ],
             catchphrases: [
                 "Every instruction tells a story through the datapath.",
                 "The fastest instruction is the one you don't execute.",
-                "Cache is king — locality of reference is everything.",
+                "Cache is king - locality of reference is everything.",
             ],
         });
     }
@@ -91,9 +91,9 @@ export class ArchonMentor extends BaseMentor {
 
     protected generateContextualHint(level: HintLevel): MentorHint {
         const hints: Record<HintLevel, string> = {
-            nudge: "🏛 Think about how data flows through the processor — from instruction memory to register file to ALU...",
+            nudge: "🏛 Think about how data flows through the processor - from instruction memory to register file to ALU...",
             hint: "🏛 A basic CPU has 5 stages: Fetch (IF), Decode (ID), Execute (EX), Memory (MEM), WriteBack (WB). Each instruction progresses through all stages.",
-            explanation: "🏛 The datapath connects: PC → Instruction Memory → Register File → ALU → Data Memory → Register File. Control signals from the Decode stage tell each component what to do. The key insight: multiple instructions can be in different stages simultaneously — that's pipelining!",
+            explanation: "🏛 The datapath connects: PC → Instruction Memory → Register File → ALU → Data Memory → Register File. Control signals from the Decode stage tell each component what to do. The key insight: multiple instructions can be in different stages simultaneously - that's pipelining!",
             solution: "🏛 Here's the complete pipeline: Stage 1 (IF): PC → InstrMem, Stage 2 (ID): Read registers + sign-extend immediate, Stage 3 (EX): ALU operation, Stage 4 (MEM): Read/Write data memory, Stage 5 (WB): Write result to register file. Pipeline registers between each stage store intermediate values.",
         };
 

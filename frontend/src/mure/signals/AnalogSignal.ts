@@ -1,5 +1,5 @@
 /**
- * mure/signals/AnalogSignal.ts — Analog Signal Model
+ * mure/signals/AnalogSignal.ts - Analog Signal Model
  *
  * Represents continuous voltage values.
  * Helper utilities for voltage interpolation and range clamping.

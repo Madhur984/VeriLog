@@ -14,13 +14,13 @@ export const COMPANY_SKILL_MAP: Record<string, {
   'qualcomm': {
     required: ['wireless-comm', '5g-nr', 'digital-logic', 'verilog', 'signal-processing', 'rfic-design'],
     preferred: ['antenna-design', 'protocol-stacks', 'dsp'],
-    role: 'Systems Engineer — 5G Modem',
+    role: 'Systems Engineer - 5G Modem',
     level: 'Fresher'
   },
   'texas-instruments': {
     required: ['analog-design', 'embedded-systems', 'power-electronics', 'c-programming', 'microcontrollers'],
     preferred: ['motor-control', 'industrial-comms', 'spice-simulation'],
-    role: 'Systems Engineer — Analog/Embedded',
+    role: 'Systems Engineer - Analog/Embedded',
     level: 'Fresher'
   },
   'isro': {
@@ -38,7 +38,7 @@ export const COMPANY_SKILL_MAP: Record<string, {
   'samsung-semi': {
     required: ['vlsi-design', 'dram-design', 'process-tech', 'verilog'],
     preferred: ['5g-modem', 'ai-accelerator', 'packaging'],
-    role: 'Design Engineer — Memory/5G',
+    role: 'Design Engineer - Memory/5G',
     level: 'Fresher'
   },
   'iisc-research': {

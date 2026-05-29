@@ -6,7 +6,7 @@ import { ParticleField } from './ParticleField';
 import { canvasState } from '../../engine/canvasState';
 
 /**
- * Tunnel Effect — High-fidelity wireframe rings.
+ * Tunnel Effect - High-fidelity wireframe rings.
  */
 const Tunnel: React.FC = () => {
   const groupRef = useRef<THREE.Group>(null!);
@@ -40,7 +40,7 @@ const Tunnel: React.FC = () => {
 };
 
 /**
- * CameraController — Syncs R3F camera with canvasState.
+ * CameraController - Syncs R3F camera with canvasState.
  */
 const CameraController: React.FC = () => {
   useFrame((state) => {

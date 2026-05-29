@@ -1,5 +1,5 @@
 /**
- * XPCounter.tsx — Signal Integrity Index
+ * XPCounter.tsx - Signal Integrity Index
  *
  * Monochrome by default. Three category breakdown inline on hover.
  * RAF counter animation via direct textContent write (no React state).

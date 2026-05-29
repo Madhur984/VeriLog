@@ -1,5 +1,5 @@
 /**
- * DebugMissionPage.tsx — Debug mission runner
+ * DebugMissionPage.tsx - Debug mission runner
  */
 
 import { useParams, useNavigate } from 'react-router-dom';

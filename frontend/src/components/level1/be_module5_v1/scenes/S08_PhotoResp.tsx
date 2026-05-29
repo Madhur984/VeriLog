@@ -58,7 +58,7 @@ export const S08_PhotoResp: React.FC<Props> = ({ isActive, isDarkMode }) => {
         </h2>
         <p className={`text-base max-w-3xl ${subText}`}>
           Reverse current increases almost linearly with incident luminous flux. Each line below
-          is a different illumination level (in foot-candles). The shape is the same — it just
+          is a different illumination level (in foot-candles). The shape is the same - it just
           scales upward.
         </p>
       </motion.section>
@@ -209,8 +209,8 @@ export const S08_PhotoResp: React.FC<Props> = ({ isActive, isDarkMode }) => {
           </div>
           <ul className={`text-sm ${subText} space-y-2`}>
             <li>▸ <strong className="text-emerald-300">Luminous flux correlation:</strong> reverse current increases almost linearly with incident flux.</li>
-            <li>▸ <strong className="text-emerald-300">Saturation:</strong> beyond a few volts the curve flattens — extra bias doesn&apos;t add carriers.</li>
-            <li>▸ <strong className="text-emerald-300">Temporal response:</strong> exceptionally low rise/fall times (nanosecond range) — ideal for high-speed switching and optical comms.</li>
+            <li>▸ <strong className="text-emerald-300">Saturation:</strong> beyond a few volts the curve flattens - extra bias doesn&apos;t add carriers.</li>
+            <li>▸ <strong className="text-emerald-300">Temporal response:</strong> exceptionally low rise/fall times (nanosecond range) - ideal for high-speed switching and optical comms.</li>
           </ul>
         </motion.div>
       </div>
@@ -224,14 +224,14 @@ export const S08_PhotoResp: React.FC<Props> = ({ isActive, isDarkMode }) => {
         <div className="font-mono text-[10px] uppercase tracking-widest text-emerald-300">Plain English</div>
         <p className={`text-sm ${subText}`}>
           Each curve shows what reverse current you get at a given reverse voltage, for one
-          fixed illumination level. The shape is identical — only the height changes with
+          fixed illumination level. The shape is identical - only the height changes with
           brightness. That linearity is what makes the photodiode a <em>measuring instrument</em>:
           double the light gives roughly double the current, so you can convert a current reading
           directly back into a brightness value.
         </p>
         <div className={`rounded-xl p-3 border ${cardBg} text-xs font-mono ${textColor}`}>
           Responsivity R (A/W) = I_λ / P_optical
-          &nbsp; &nbsp; — a typical Si photodiode gives ~0.5 A per watt of red light.
+          &nbsp; &nbsp; - a typical Si photodiode gives ~0.5 A per watt of red light.
         </div>
       </motion.div>
 
@@ -245,7 +245,7 @@ export const S08_PhotoResp: React.FC<Props> = ({ isActive, isDarkMode }) => {
           <div className="font-mono text-[10px] uppercase tracking-widest text-emerald-300 mb-2">Why nanoseconds matter</div>
           <div className={`text-sm ${subText}`}>
             10 Gb/s fiber-optic links push a new photon pulse every 100 ps. The receiver photodiode
-            must keep up — only the ns-scale rise time makes that possible. Slower sensors (like
+            must keep up - only the ns-scale rise time makes that possible. Slower sensors (like
             phototransistors) can&apos;t.
           </div>
         </motion.div>
@@ -257,7 +257,7 @@ export const S08_PhotoResp: React.FC<Props> = ({ isActive, isDarkMode }) => {
           <div className="font-mono text-[10px] uppercase tracking-widest text-emerald-300 mb-2">Why the curves saturate</div>
           <div className={`text-sm ${subText}`}>
             Once the depletion region is fully &ldquo;swept clean&rdquo; of carriers, extra reverse
-            bias can&apos;t pull more current — the only knob left is generating more carriers,
+            bias can&apos;t pull more current - the only knob left is generating more carriers,
             which means more light.
           </div>
         </motion.div>

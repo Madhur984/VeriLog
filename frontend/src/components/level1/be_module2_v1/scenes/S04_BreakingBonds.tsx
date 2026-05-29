@@ -21,7 +21,7 @@ export const S04_BreakingBonds: React.FC<Props> = ({ isActive, isDarkMode }) => 
         </div>
         <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>Breaking Covalent Bonds</h2>
         <p className={`text-base max-w-3xl ${subText}`}>
-          Apply external energy — heat, light — and some valence electrons absorb it. They snap
+          Apply external energy - heat, light - and some valence electrons absorb it. They snap
           their covalent bonds and leap into the conduction band. Each escape leaves a{' '}
           <strong className="text-orange-300">hole</strong> behind.
         </p>
@@ -144,7 +144,7 @@ export const S04_BreakingBonds: React.FC<Props> = ({ isActive, isDarkMode }) => 
         <p className={`text-sm ${subText}`}>
           <strong className="text-orange-300">Reality check:</strong> 1.5 × 10¹⁰ carriers/cm³
           <em> sounds </em>like a lot, but a copper wire of the same volume has ~10²² carriers.
-          Pure silicon is still hopeless for fast circuits — that&apos;s why we dope it. Next chapter.
+          Pure silicon is still hopeless for fast circuits - that&apos;s why we dope it. Next chapter.
         </p>
       </motion.div>
     </div>

@@ -1,5 +1,5 @@
 /**
- * VerityMentor.ts — Verilog HDL Coding Mentor
+ * VerityMentor.ts - Verilog HDL Coding Mentor
  *
  * Specializes in:
  * - Verilog syntax and semantics
@@ -20,15 +20,15 @@ export class VerityMentor extends BaseMentor {
             domain: 'verilog',
             avatar: '📝',
             accentColor: '#8B5CF6',
-            greeting: "📝 Welcome to the world of Hardware Description Languages! I'm Verity — I'll guide you through Verilog syntax, semantics, and best practices. Let's write some hardware!",
+            greeting: "📝 Welcome to the world of Hardware Description Languages! I'm Verity - I'll guide you through Verilog syntax, semantics, and best practices. Let's write some hardware!",
             encouragements: [
                 "Clean Verilog! Your sensitivity list is perfect.",
-                "Great module structure — that's very synthesizable code.",
+                "Great module structure - that's very synthesizable code.",
                 "Your testbench coverage is looking solid!",
             ],
             corrections: [
                 "That assignment might cause a latch. Let me explain the difference between = and <=.",
-                "Your sensitivity list might be incomplete — this could cause simulation mismatches.",
+                "Your sensitivity list might be incomplete - this could cause simulation mismatches.",
                 "Be careful with blocking assignments in sequential logic blocks.",
             ],
             celebrations: [
@@ -37,7 +37,7 @@ export class VerityMentor extends BaseMentor {
                 "⚡ Perfect! Your Verilog simulates correctly AND is synthesizable!",
             ],
             catchphrases: [
-                "In Verilog, always means always — unless you forget the sensitivity list.",
+                "In Verilog, always means always - unless you forget the sensitivity list.",
                 "Think in hardware, not software.",
                 "If it's not synthesizable, it's just a simulation dream.",
             ],

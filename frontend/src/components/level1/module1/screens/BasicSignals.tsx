@@ -157,7 +157,7 @@ export const BasicSignals: React.FC<ScreenProps> = ({
           <KnowledgeCard 
             title="The Dirac Delta & Heaviside Step"
             description="These 'Atomic' signals are the building blocks of System Response analysis."
-            details="The Impulse (Dirac Delta) helps engineers find a system's 'Impulse Response'—it's like hitting a bell once to hear how it rings. The Unit Step (Heaviside) shows how a system stabilizes when turned on instantly."
+            details="The Impulse (Dirac Delta) helps engineers find a system's 'Impulse Response'-it's like hitting a bell once to hear how it rings. The Unit Step (Heaviside) shows how a system stabilizes when turned on instantly."
             icon={FlaskConical}
             className="bg-white border-slate-200 shadow-sm"
           />

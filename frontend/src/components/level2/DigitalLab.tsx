@@ -1,5 +1,5 @@
 /**
- * DigitalLab.tsx — Micro-Module 2.2
+ * DigitalLab.tsx - Micro-Module 2.2
  *
  * Interactive digital circuit: Battery → Switch → LED
  *
@@ -84,7 +84,7 @@ export function DigitalLab({
         description: 'Digital signals use abstraction to ignore small variations. They operate on thresholds (LOW or HIGH), creating a "Noise Margin" that rejects interference.',
         visualLink: 'Threshold Bands (LOW/HIGH)',
         insight: 'By deciding that only 0 and 1 exist, computers can transmit data perfectly even if the wire has static.',
-        memoryHook: 'Digital is like a light switch—it is either ON or OFF.',
+        memoryHook: 'Digital is like a light switch-it is either ON or OFF.',
         color: T.digital
     };
 
@@ -114,7 +114,7 @@ export function DigitalLab({
     const DIGITAL_GATE_LEVELS: ConceptLevel[] = [
         {
             title: "Abstraction",
-            content: "Digital isn't 'real'—it's a decision. We take messy analog voltages and force them into two boxes: 0 and 1."
+            content: "Digital isn't 'real'-it's a decision. We take messy analog voltages and force them into two boxes: 0 and 1."
         },
         {
             title: "Noise Margin",
@@ -122,7 +122,7 @@ export function DigitalLab({
         },
         {
             title: "The Danger Zone",
-            content: "What happens between 0 and 1? The 'Undefined' zone. Here, hardware enters a 'metastable' state—unstable, unpredictable, and dangerous for logic."
+            content: "What happens between 0 and 1? The 'Undefined' zone. Here, hardware enters a 'metastable' state-unstable, unpredictable, and dangerous for logic."
         }
     ];
 
@@ -181,7 +181,7 @@ export function DigitalLab({
                     letterSpacing: '0.2em', textTransform: 'uppercase',
                     color: `${T.accent}80`, marginBottom: 16,
                 }}>
-                    Circuit Lab — Digital Toggle
+                    Circuit Lab - Digital Toggle
                 </span>
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 32, alignItems: 'center' }}>
@@ -438,7 +438,7 @@ export function DigitalLab({
                                     background: ledOn ? T.success : T.error,
                                     boxShadow: `0 0 8px ${ledOn ? T.success : T.error}`,
                                 }} />
-                                {ledOn ? 'ON — HIGH (5V)' : 'OFF — LOW (0V)'}
+                                {ledOn ? 'ON - HIGH (5V)' : 'OFF - LOW (0V)'}
                             </VeriButton>
                         </div>
 
@@ -467,9 +467,9 @@ export function DigitalLab({
                             variant="signal"
                         />
                         <div style={{ fontFamily: T.mono, fontSize: 8, color: T.muted, marginTop: -10 }}>
-                            {noiseAmp < 2 ? 'Signal stable — within noise margin' :
-                                noiseAmp < 6 ? 'Approaching threshold — caution' :
-                                    'Exceeding noise margin — signal corrupted'}
+                            {noiseAmp < 2 ? 'Signal stable - within noise margin' :
+                                noiseAmp < 6 ? 'Approaching threshold - caution' :
+                                    'Exceeding noise margin - signal corrupted'}
                         </div>
                     </div>
                 </div>
@@ -488,7 +488,7 @@ export function DigitalLab({
                             fontFamily: T.mono, fontSize: 8, color: `${T.success}80`,
                             letterSpacing: '0.2em', textTransform: 'uppercase',
                         }}>
-                            Oscilloscope — CH2 Digital
+                            Oscilloscope - CH2 Digital
                         </span>
                         <div style={{ display: 'flex', gap: 4 }}>
                             <VeriButton
@@ -522,7 +522,7 @@ export function DigitalLab({
                 <OscilloscopeCanvas
                     ch1Samples={waveformSamples}
                     showThreshold={true}
-                    label1="CH2 — Digital"
+                    label1="CH2 - Digital"
                     height={160}
                     isPaused={isPaused}
                     isEngineerMode={isEngineerMode}
@@ -540,7 +540,7 @@ export function DigitalLab({
                         letterSpacing: '0.2em', textTransform: 'uppercase',
                         color: `${T.accent}80`, marginBottom: 12,
                     }}>
-                        Challenge — Voltage Classification ({quizIdx + 1}/3)
+                        Challenge - Voltage Classification ({quizIdx + 1}/3)
                     </span>
                     <div style={{ fontFamily: T.sans, fontSize: 18, color: T.text, marginBottom: 16 }}>
                         Classify{' '}

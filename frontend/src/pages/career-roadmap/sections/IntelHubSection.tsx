@@ -121,7 +121,7 @@ export const IntelHubSection: React.FC<IntelHubSectionProps> = ({
                   <p className="text-[10px] font-mono text-text-dim mb-3">{h.organizer}</p>
                   <div className="flex justify-between text-[10px] font-mono">
                     <span className="text-plasma-cyan">{h.prize.split('(')[0]}</span>
-                    <span className="text-text-dim italic">{h.nextEdition.split('—')[0]}</span>
+                    <span className="text-text-dim italic">{h.nextEdition.split('-')[0]}</span>
                   </div>
                 </div>
               ))}

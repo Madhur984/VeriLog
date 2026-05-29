@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 
 /**
- * useAttentionLock — Unified Module Attention System.
+ * useAttentionLock - Unified Module Attention System.
  * Rule 9: When interacting, dim other elements to 30-40%.
  */
 export const useAttentionLock = (initialState = false) => {

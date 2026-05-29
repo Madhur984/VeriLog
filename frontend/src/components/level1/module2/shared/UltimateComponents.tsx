@@ -45,48 +45,48 @@ export const dailyExamples = [
   {
     id: "thermostat",
     title: "Temperature Control",
-    analogExample: "Mercury/Bimetallic thermostat – continuous mechanical movement",
-    digitalExample: "Digital thermostat – precise temperature setpoint (e.g., 22.5°C)",
+    analogExample: "Mercury/Bimetallic thermostat - continuous mechanical movement",
+    digitalExample: "Digital thermostat - precise temperature setpoint (e.g., 22.5°C)",
     icon: <Thermometer size={24} />,
     description: "Analog thermostats use a bimetallic strip that bends continuously. Digital thermostats use a thermistor and ADC to read exact temperature."
   },
   {
     id: "audio",
     title: "Music & Audio",
-    analogExample: "Vinyl records – physical grooves represent sound waves",
-    digitalExample: "MP3, Spotify – audio sampled and compressed into bits",
+    analogExample: "Vinyl records - physical grooves represent sound waves",
+    digitalExample: "MP3, Spotify - audio sampled and compressed into bits",
     icon: <Music size={24} />,
     description: "Vinyl records store continuous waveforms. Digital audio samples the waveform 44,100 times per second (CD quality)."
   },
   {
     id: "lighting",
     title: "Light Dimming",
-    analogExample: "Rheostat dimmer – varies resistance continuously",
-    digitalExample: "PWM dimmer – rapidly turns LED on/off (human eye sees dimming)",
+    analogExample: "Rheostat dimmer - varies resistance continuously",
+    digitalExample: "PWM dimmer - rapidly turns LED on/off (human eye sees dimming)",
     icon: <Lightbulb size={24} />,
     description: "Analog dimmers waste power as heat. Digital PWM dimmers are efficient and precise."
   },
   {
     id: "volume",
     title: "Volume Control",
-    analogExample: "Potentiometer knob – continuous rotation",
-    digitalExample: "Digital volume buttons – discrete steps (0-100)",
+    analogExample: "Potentiometer knob - continuous rotation",
+    digitalExample: "Digital volume buttons - discrete steps (0-100)",
     icon: <Volume2 size={24} />,
     description: "Analog volume controls are smooth but can get scratchy. Digital controls offer precise repeatability."
   },
   {
     id: "clock",
     title: "Timekeeping",
-    analogExample: "Analog clock – continuous sweep of hands",
-    digitalExample: "Digital clock – discrete digits (12:34)",
+    analogExample: "Analog clock - continuous sweep of hands",
+    digitalExample: "Digital clock - discrete digits (12:34)",
     icon: <Activity size={24} />,
-    description: "Analog clocks show time continuously. Digital clocks display discrete values – but both count the same seconds."
+    description: "Analog clocks show time continuously. Digital clocks display discrete values - but both count the same seconds."
   },
   {
     id: "camera",
     title: "Photography",
-    analogExample: "Film camera – chemical reaction on film",
-    digitalExample: "Digital camera – pixels (0-255 per colour channel)",
+    analogExample: "Film camera - chemical reaction on film",
+    digitalExample: "Digital camera - pixels (0-255 per colour channel)",
     icon: <Camera size={24} />,
     description: "Film captures continuous light intensities. Digital sensors quantize light into discrete pixel values."
   },
@@ -151,7 +151,7 @@ export const quizQuestions = [
     question: "Which type of signal has an infinite number of possible values?",
     options: ["Analog", "Digital", "Both", "Neither"],
     correct: 0,
-    explanation: "Analog signals are continuous and can take any value within a range – infinite possibilities."
+    explanation: "Analog signals are continuous and can take any value within a range - infinite possibilities."
   },
   {
     id: 2,

@@ -1,5 +1,5 @@
 /**
- * CanvasRenderer.ts — Abstract canvas rendering interface
+ * CanvasRenderer.ts - Abstract canvas rendering interface
  *
  * Decouples circuit rendering from implementation.
  * Current implementation: SVGRenderer (React SVG).
@@ -41,7 +41,7 @@ export interface RenderOptions {
 }
 
 /**
- * Abstract renderer — implement this interface to swap rendering backends.
+ * Abstract renderer - implement this interface to swap rendering backends.
  */
 export interface ICanvasRenderer {
     /** Initialize the renderer (e.g., create WebGL context) */
@@ -53,7 +53,7 @@ export interface ICanvasRenderer {
     /** Handle viewport changes */
     setViewport(zoom: number, panX: number, panY: number): void;
 
-    /** Hit test — find node/edge at position */
+    /** Hit test - find node/edge at position */
     hitTest(x: number, y: number): { type: 'node' | 'edge' | 'port' | 'none'; id: string; portIndex?: number };
 
     /** Cleanup resources */

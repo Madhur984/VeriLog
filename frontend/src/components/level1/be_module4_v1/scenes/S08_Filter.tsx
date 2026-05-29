@@ -68,7 +68,7 @@ export const S08_Filter: React.FC<Props> = ({ isActive, isDarkMode }) => {
         <p className={`text-base max-w-3xl ${subText}`}>
           Even after full-wave rectification the output drops to zero 100 times per second. We
           need to store excess pressure when the wave is high and release it when the wave is low.
-          That storage element is the capacitor — our overhead water tank.
+          That storage element is the capacitor - our overhead water tank.
         </p>
       </section>
 

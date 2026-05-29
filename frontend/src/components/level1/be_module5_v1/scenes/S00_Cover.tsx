@@ -17,7 +17,7 @@ const VIPS = [
     Icon: SunIcon,
     title: 'Light-Emitting Diode',
     role: 'The Diwali Sparkler',
-    desc: 'Forward-biased. Electrons and holes recombine across the band gap and emit a photon — colour set by the material.',
+    desc: 'Forward-biased. Electrons and holes recombine across the band gap and emit a photon - colour set by the material.',
     bias: 'FORWARD BIAS',
     accent: '#fbbf24',
   },
@@ -61,7 +61,7 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
           <span className="text-yellow-300">diodes.</span>
         </h1>
         <p className={`text-xl ${subText} max-w-3xl`}>
-          The normal P-N diode is a one-way valve — boring. But push that valve to its limits and
+          The normal P-N diode is a one-way valve - boring. But push that valve to its limits and
           you unlock three <strong className="text-yellow-300">VIP behaviours</strong> the industry
           can&apos;t live without:
           <strong className="text-rose-300"> voltage regulation</strong>,
@@ -85,7 +85,7 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
           <p className={`text-base ${subText} leading-relaxed`}>
             Imagine three little superhero toys from the same family. <strong className="text-rose-300">Zener</strong> is
             a tiny <em>bouncer</em> who keeps electricity from getting too &ldquo;tall.&rdquo;{' '}
-            <strong className="text-amber-300">LED</strong> is a tiny <em>light bulb pet</em> — feed it electricity and it
+            <strong className="text-amber-300">LED</strong> is a tiny <em>light bulb pet</em> - feed it electricity and it
             glows. <strong className="text-violet-300">Photodiode</strong> is a tiny <em>eye</em> that can &ldquo;feel&rdquo; how
             bright the room is. Same toy family. Three different jobs.
           </p>
@@ -97,13 +97,13 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
             <div className="font-mono text-[10px] uppercase tracking-widest text-yellow-300 mb-1">In one sentence</div>
             <div className="text-sm">
               Take a regular diode, push it past its safe zone, and you can either hold a fixed voltage,
-              emit light, or measure light — three different superpowers, same silicon family.
+              emit light, or measure light - three different superpowers, same silicon family.
             </div>
           </div>
           <div className={`rounded-2xl p-4 border-2 border-cyan-300/30 bg-cyan-300/5 ${subText}`}>
             <div className="font-mono text-[10px] uppercase tracking-widest text-cyan-300 mb-1">Before you start</div>
             <div className="text-sm">
-              You should be comfortable with the normal P-N junction (<span className="font-mono">be/3</span>) —
+              You should be comfortable with the normal P-N junction (<span className="font-mono">be/3</span>) -
               forward/reverse bias, depletion zone, V-I curve. If not, that&apos;s a 10-minute prereq.
             </div>
           </div>
@@ -139,7 +139,7 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
             </radialGradient>
           </defs>
 
-          {/* Stage 1: Zener — triangle + Z-shaped cathode bar */}
+          {/* Stage 1: Zener - triangle + Z-shaped cathode bar */}
           <g transform="translate(80, 110)">
             {/* Anode lead */}
             <line x1="-26" y1="0" x2="0" y2="0" stroke="#ef4444" strokeWidth="2.5" strokeLinecap="round" />

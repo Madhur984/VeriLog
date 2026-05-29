@@ -1,5 +1,5 @@
 /**
- * XRayOverlay.tsx — Internal signal visualization on nodes
+ * XRayOverlay.tsx - Internal signal visualization on nodes
  */
 
 import type { CanvasNode } from '../../hooks/useLogicStudio';

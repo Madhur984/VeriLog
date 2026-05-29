@@ -18,7 +18,7 @@ export const S04_Diode: React.FC<Props> = ({ isActive, isDarkMode }) => {
         <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>The Diode · one-way valve.</h2>
         <p className={`text-base max-w-3xl ${subText}`}>
           A diode is a semiconductor that lets current flow in one direction only. In plumbing
-          terms, it is a flapper valve — water can push it open one way, but reverse pressure
+          terms, it is a flapper valve - water can push it open one way, but reverse pressure
           jams it shut. This is the single component every rectifier is built from.
         </p>
       </section>
@@ -143,7 +143,7 @@ export const S04_Diode: React.FC<Props> = ({ isActive, isDarkMode }) => {
           <div className="rounded-2xl p-5 border-2 border-emerald-400/40 bg-emerald-500/10">
             <div className="font-mono text-[10px] uppercase tracking-widest text-emerald-300 mb-2">Ideal</div>
             <p className={`text-sm ${textColor}`}>
-              A perfectly oiled valve — opens with the slightest forward push. Closes instantly on
+              A perfectly oiled valve - opens with the slightest forward push. Closes instantly on
               reverse. <strong className="text-emerald-300">No friction, no delay.</strong>
             </p>
           </div>

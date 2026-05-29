@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { M2ScreenProps, T } from '../types';
 
-// Inline animated wave — seamless continuation from Module 1
+// Inline animated wave - seamless continuation from Module 1
 const ContinuityWave: React.FC = () => {
   const pathRef = useRef<SVGPathElement>(null);
   const rafRef = useRef<number>(0);

@@ -1,5 +1,5 @@
 /**
- * mure/nodes/WireNode.ts — Wire (Pass-through)
+ * mure/nodes/WireNode.ts - Wire (Pass-through)
  *
  * Passes signal from input to output unchanged.
  * Single input → single output.

@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, Building2, Crown, DoorClosed, Wrench, Layers3 } from 'lucide-react';
 
-// Illustrated Madhur the Hostel Warden — SVG character (clipboard, glasses, suit)
+// Illustrated Madhur the Hostel Warden - SVG character (clipboard, glasses, suit)
 const MadhurSVG: React.FC<{ size?: number }> = ({ size = 220 }) => (
   <svg viewBox="0 0 220 280" width={size} height={size * (280 / 220)} aria-label="Madhur the Hostel Warden">
     <defs>
@@ -96,7 +96,7 @@ const TRANSLATIONS: Row[] = [
     hostel: '“Wing Optimisation” (combining premium rooms)',
     hostelHi: '"विंग ऑप्टिमाइज़ेशन" (कमरे जोड़ना)',
     Icon: Building2,
-    detail: 'Merging rooms into the largest possible rectangular wing — that IS simplification.',
+    detail: 'Merging rooms into the largest possible rectangular wing - that IS simplification.',
   },
   {
     text: 'Logical Adjacency',
@@ -145,7 +145,7 @@ export const S03_HostelMetaphor: React.FC<Props> = ({ isActive, isDarkMode }) =>
           <div className="font-mono text-[10px] uppercase tracking-widest text-amber-400 mb-3">The Architect</div>
           <h3 className={`text-2xl font-black mb-3 ${textColor}`}>Madhur, the Hostel Warden</h3>
           <p className={`text-sm leading-relaxed ${subText} mb-5`}>
-            Clipboard in hand, blueprint unfurled. He doesn&apos;t see a 16-row table — he sees a building.
+            Clipboard in hand, blueprint unfurled. He doesn&apos;t see a 16-row table - he sees a building.
             By folding combinations into a 4×4 plan, abstract algebra becomes a <strong>spatial puzzle</strong>.
           </p>
 

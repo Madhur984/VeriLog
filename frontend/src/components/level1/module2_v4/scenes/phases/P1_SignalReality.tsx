@@ -45,7 +45,7 @@ export const P1_SignalReality: React.FC<{
                         />
                         <InsightPanel 
                             title="Signal Propagation"
-                            content="Analog signals travel as electromagnetic waves. Every component they pass through—every wire, every transistor—adds a unique physical 'signature' or distortion."
+                            content="Analog signals travel as electromagnetic waves. Every component they pass through-every wire, every transistor-adds a unique physical 'signature' or distortion."
                             career="RF / Antenna Engineer"
                         />
                      </div>

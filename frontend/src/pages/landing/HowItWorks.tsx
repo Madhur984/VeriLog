@@ -12,7 +12,7 @@ const STEPS = [
   },
   {
     n: '03', accent: '#10B981', Icon: Boxes, title: 'Build',
-    body: "By the end of each module you've built a mental model — not memorised a formula. It follows you into every exam and interview.",
+    body: "By the end of each module you've built a mental model - not memorised a formula. It follows you into every exam and interview.",
   },
 ];
 

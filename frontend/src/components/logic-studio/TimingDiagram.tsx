@@ -1,5 +1,5 @@
 /**
- * TimingDiagram.tsx — Multi-channel signal trace renderer
+ * TimingDiagram.tsx - Multi-channel signal trace renderer
  *
  * Reads traces from MUREEngine and renders them as waveforms.
  */
@@ -155,7 +155,7 @@ function buildWaveformPath(
                 parts.push(`L${x},${y}`);
             }
         } else {
-            // Analog: map 0–5V to lowY–highY
+            // Analog: map 0-5V to lowY-highY
             const range = lowY - highY;
             const y = lowY - (pt.value / 5) * range;
             parts.push(i === 0 ? `M${x},${y}` : `L${x},${y}`);

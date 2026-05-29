@@ -121,7 +121,7 @@ export const GatePreview = () => {
                     stroke={a ? '#22D3EE' : '#334155'} strokeWidth="1.5"/>
               <line x1="0" y1="40" x2="20" y2="40"
                     stroke={b ? '#22D3EE' : '#334155'} strokeWidth="1.5"/>
-              {/* Gate body — AND/NAND/OR/NOR/XOR shape */}
+              {/* Gate body - AND/NAND/OR/NOR/XOR shape */}
               <path d="M20 10 L20 50 L40 50 Q65 50 65 30 Q65 10 40 10 Z"
                     fill="#0D0F12"
                     stroke="#22D3EE"

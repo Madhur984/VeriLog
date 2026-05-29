@@ -1,5 +1,5 @@
 /**
- * mure/nodes/ResistorNode.ts — Resistor
+ * mure/nodes/ResistorNode.ts - Resistor
  *
  * Simple voltage divider model.
  * Passes signal with reduced voltage proportional to resistance ratio.

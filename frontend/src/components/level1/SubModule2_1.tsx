@@ -1,15 +1,15 @@
 /**
- * SubModule2_1.tsx — Module 2: "Analog → Digital: The Translation Layer"
+ * SubModule2_1.tsx - Module 2: "Analog → Digital: The Translation Layer"
  *
  * 19-screen scroll-snap cinematic module following the same architecture as SubModule1_1.
  * Each screen is a full-viewport section tracked by IntersectionObserver.
  * Shared signal state flows down through M2Signal context.
  *
  * 4-Act Structure:
- *   ACT I   — Perception      (S00–S03)
- *   ACT II  — Control         (S04–S08)
- *   ACT III — Sampling        (S09–S13)
- *   ACT IV  — Quantization    (S14–S18)
+ *   ACT I   - Perception      (S00-S03)
+ *   ACT II  - Control         (S04-S08)
+ *   ACT III - Sampling        (S09-S13)
+ *   ACT IV  - Quantization    (S14-S18)
  */
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -38,25 +38,25 @@ const SCREEN_ORDER = [
 ] as const;
 
 const ACT_LABELS: Record<string, string> = {
-  m2_entry: 'ACT I — PERCEPTION',
-  m2_smooth_vs_stepped: 'ACT I — PERCEPTION',
-  m2_direct_manipulation: 'ACT I — PERCEPTION',
-  m2_naming: 'ACT I — PERCEPTION',
-  m2_amplitude_control: 'ACT II — CONTROL',
-  m2_frequency_control: 'ACT II — CONTROL',
-  m2_digital_limit: 'ACT II — CONTROL',
-  m2_continuous_discrete: 'ACT II — CONTROL',
-  m2_checkpoint_1: 'ACT II — CHECKPOINT',
-  m2_sampling_intro: 'ACT III — SAMPLING',
-  m2_sampling_rate: 'ACT III — SAMPLING',
-  m2_aliasing_discovery: 'ACT III — SAMPLING',
-  m2_nyquist_insight: 'ACT III — SAMPLING',
-  m2_checkpoint_2: 'ACT III — CHECKPOINT',
-  m2_quantization: 'ACT IV — QUANTIZATION',
-  m2_digital_formed: 'ACT IV — QUANTIZATION',
-  m2_full_pipeline: 'ACT IV — QUANTIZATION',
-  m2_final_checkpoint: 'ACT IV — CHECKPOINT',
-  m2_closing: 'ACT IV — COMPLETE',
+  m2_entry: 'ACT I - PERCEPTION',
+  m2_smooth_vs_stepped: 'ACT I - PERCEPTION',
+  m2_direct_manipulation: 'ACT I - PERCEPTION',
+  m2_naming: 'ACT I - PERCEPTION',
+  m2_amplitude_control: 'ACT II - CONTROL',
+  m2_frequency_control: 'ACT II - CONTROL',
+  m2_digital_limit: 'ACT II - CONTROL',
+  m2_continuous_discrete: 'ACT II - CONTROL',
+  m2_checkpoint_1: 'ACT II - CHECKPOINT',
+  m2_sampling_intro: 'ACT III - SAMPLING',
+  m2_sampling_rate: 'ACT III - SAMPLING',
+  m2_aliasing_discovery: 'ACT III - SAMPLING',
+  m2_nyquist_insight: 'ACT III - SAMPLING',
+  m2_checkpoint_2: 'ACT III - CHECKPOINT',
+  m2_quantization: 'ACT IV - QUANTIZATION',
+  m2_digital_formed: 'ACT IV - QUANTIZATION',
+  m2_full_pipeline: 'ACT IV - QUANTIZATION',
+  m2_final_checkpoint: 'ACT IV - CHECKPOINT',
+  m2_closing: 'ACT IV - COMPLETE',
 };
 
 const ACT_COLORS: Record<string, string> = {
@@ -114,7 +114,7 @@ export const SubModule2_1: React.FC = () => {
     setSignal((prev: M2Signal) => ({ ...prev, ...updates }));
   }, []);
 
-  // IntersectionObserver — same pattern as SubModule1_1
+  // IntersectionObserver - same pattern as SubModule1_1
   useEffect(() => {
     const options = {
       root: containerRef.current,
@@ -169,7 +169,7 @@ export const SubModule2_1: React.FC = () => {
 
   const activeScreenId = SCREEN_ORDER[activeScreenIndex];
   const actLabel = ACT_LABELS[activeScreenId] || '';
-  const actKey = actLabel.split(' — ')[0];
+  const actKey = actLabel.split(' - ')[0];
   const actColor = ACT_COLORS[actKey] || T.signal;
 
   const progressPercent = Math.round(progress * 100);
@@ -299,97 +299,97 @@ export const SubModule2_1: React.FC = () => {
           boxSizing: 'border-box',
         }}
       >
-        {/* S00 — Entry */}
+        {/* S00 - Entry */}
         <section id="m2_entry" style={sectionStyle}>
           <M2_S00_Entry {...screenProps(0)} />
         </section>
 
-        {/* S01 — Smooth vs Stepped */}
+        {/* S01 - Smooth vs Stepped */}
         <section id="m2_smooth_vs_stepped" style={sectionStyle}>
           <M2_S01_SmoothVsStepped {...screenProps(1)} />
         </section>
 
-        {/* S02 — Direct Manipulation */}
+        {/* S02 - Direct Manipulation */}
         <section id="m2_direct_manipulation" style={sectionStyle}>
           <M2_S02_DirectManipulation {...screenProps(2)} />
         </section>
 
-        {/* S03 — Naming */}
+        {/* S03 - Naming */}
         <section id="m2_naming" style={sectionStyle}>
           <M2_S03_Naming {...screenProps(3)} />
         </section>
 
-        {/* S04 — Amplitude Control */}
+        {/* S04 - Amplitude Control */}
         <section id="m2_amplitude_control" style={sectionStyle}>
           <M2_S04_AmplitudeControl {...screenProps(4)} />
         </section>
 
-        {/* S05 — Frequency Control */}
+        {/* S05 - Frequency Control */}
         <section id="m2_frequency_control" style={sectionStyle}>
           <M2_S05_FrequencyControl {...screenProps(5)} />
         </section>
 
-        {/* S06 — Digital Limit */}
+        {/* S06 - Digital Limit */}
         <section id="m2_digital_limit" style={sectionStyle}>
           <M2_S06_DigitalLimit {...screenProps(6)} />
         </section>
 
-        {/* S07 — Continuous to Discrete */}
+        {/* S07 - Continuous to Discrete */}
         <section id="m2_continuous_discrete" style={sectionStyle}>
           <M2_S07_ContinuousDiscrete {...screenProps(7)} />
         </section>
 
-        {/* S08 — Checkpoint 1 */}
+        {/* S08 - Checkpoint 1 */}
         <section id="m2_checkpoint_1" style={sectionStyle}>
           <M2_S08_Checkpoint1 {...screenProps(8)} />
         </section>
 
-        {/* S09 — Sampling Intro */}
+        {/* S09 - Sampling Intro */}
         <section id="m2_sampling_intro" style={sectionStyle}>
           <M2_S09_SamplingIntro {...screenProps(9)} />
         </section>
 
-        {/* S10 — Sampling Rate */}
+        {/* S10 - Sampling Rate */}
         <section id="m2_sampling_rate" style={sectionStyle}>
           <M2_S10_SamplingRate {...screenProps(10)} />
         </section>
 
-        {/* S11 — Aliasing Discovery */}
+        {/* S11 - Aliasing Discovery */}
         <section id="m2_aliasing_discovery" style={sectionStyle}>
           <M2_S11_AliasingDiscovery {...screenProps(11)} />
         </section>
 
-        {/* S12 — Nyquist Insight */}
+        {/* S12 - Nyquist Insight */}
         <section id="m2_nyquist_insight" style={sectionStyle}>
           <M2_S12_NyquistInsight {...screenProps(12)} />
         </section>
 
-        {/* S13 — Checkpoint 2 */}
+        {/* S13 - Checkpoint 2 */}
         <section id="m2_checkpoint_2" style={sectionStyle}>
           <M2_S13_Checkpoint2 {...screenProps(13)} />
         </section>
 
-        {/* S14 — Quantization */}
+        {/* S14 - Quantization */}
         <section id="m2_quantization" style={sectionStyle}>
           <M2_S14_Quantization {...screenProps(14)} />
         </section>
 
-        {/* S15 — Digital Formed */}
+        {/* S15 - Digital Formed */}
         <section id="m2_digital_formed" style={sectionStyle}>
           <M2_S15_DigitalFormed {...screenProps(15)} />
         </section>
 
-        {/* S16 — Full Pipeline */}
+        {/* S16 - Full Pipeline */}
         <section id="m2_full_pipeline" style={sectionStyle}>
           <M2_S16_FullPipeline {...screenProps(16)} />
         </section>
 
-        {/* S17 — Final Checkpoint */}
+        {/* S17 - Final Checkpoint */}
         <section id="m2_final_checkpoint" style={sectionStyle}>
           <M2_S17_FinalCheckpoint {...screenProps(17)} />
         </section>
 
-        {/* S18 — Closing */}
+        {/* S18 - Closing */}
         <section id="m2_closing" style={sectionStyle}>
           <M2_S18_Closing {...screenProps(18)} />
         </section>

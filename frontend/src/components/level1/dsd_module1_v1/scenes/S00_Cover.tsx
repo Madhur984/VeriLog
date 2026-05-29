@@ -20,7 +20,7 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
       >
         <img
           src="/images/sketchbook/p01.webp"
-          alt="The Architecture of a Decision — Ben as photographer and as protector"
+          alt="The Architecture of a Decision - Ben as photographer and as protector"
           className="w-full block"
         />
         <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
@@ -52,7 +52,7 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
           transition={{ delay: 0.2 }}
           className={`text-lg md:text-xl max-w-2xl mx-auto ${subText}`}
         >
-          A hand-drawn story-walk through SOP, POS, minterms and maxterms — narrated through{' '}
+          A hand-drawn story-walk through SOP, POS, minterms and maxterms - narrated through{' '}
           <strong className="text-sky-400">Ben Bitdiddle&apos;s</strong> picnic.
         </motion.p>
       </section>
@@ -75,7 +75,7 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
             </div>
           </div>
           <p className={`text-sm leading-relaxed ${subText}`}>
-            Ben the photographer hunts for sunny universes — every <strong>1</strong> in the truth
+            Ben the photographer hunts for sunny universes - every <strong>1</strong> in the truth
             table is a moment worth catching. Each captured snapshot is a <strong>minterm</strong>;
             the basket of all snapshots is <em>Sum&nbsp;of&nbsp;Products</em>.
           </p>
@@ -97,7 +97,7 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
             </div>
           </div>
           <p className={`text-sm leading-relaxed ${subText}`}>
-            Ben the protector erects barricades against doom — every <strong>0</strong> in the truth
+            Ben the protector erects barricades against doom - every <strong>0</strong> in the truth
             table is a disaster to wall off. Each barricade is a <strong>maxterm</strong>; the
             chain of every barricade is <em>Product&nbsp;of&nbsp;Sums</em>.
           </p>
@@ -117,7 +117,7 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
         <div className="grid md:grid-cols-3 gap-5">
           {[
             { n: '01', t: 'Watch the picnic', d: 'A 5-minute illustrated lecture introduces the variables, the rule of the day, and the multiverse of outcomes.' },
-            { n: '02', t: 'Explore the truth', d: 'Tap each of the 8 universes to see what makes Ben happy or miserable. Hunt minterms or barricade maxterms — your choice.' },
+            { n: '02', t: 'Explore the truth', d: 'Tap each of the 8 universes to see what makes Ben happy or miserable. Hunt minterms or barricade maxterms - your choice.' },
             { n: '03', t: 'Build both lenses', d: 'In the live lab, design any 3-variable function and watch SOP, POS, and DeMorgan\'s bridge appear in real time.' },
           ].map((s, i) => (
             <div key={s.n} className="space-y-2">

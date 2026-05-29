@@ -35,7 +35,7 @@ const QUESTION_POOL: Question[] = [
     question: "You see a notification light flickering on your phone. What is the light acting as in this system?",
     options: ["The Signal itself", "The Medium", "The Return Path", "The Noise"],
     correct: 0,
-    explanation: "The light serves as the carrier of information—notifying you of an event.",
+    explanation: "The light serves as the carrier of information-notifying you of an event.",
     hint: "What is physically moving information to your eyes?"
   },
   {

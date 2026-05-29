@@ -48,7 +48,7 @@ export function SkillTree() {
                 </div>
             </div>
 
-            {/* Skill Canvas — grows to fill remaining height; on mobile the canvas itself must handle its own scroll/sizing */}
+            {/* Skill Canvas - grows to fill remaining height; on mobile the canvas itself must handle its own scroll/sizing */}
             <div className="flex-1 relative min-h-[500px] overflow-auto">
                 <SkillCanvas />
             </div>

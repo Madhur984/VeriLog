@@ -1,5 +1,5 @@
 /**
- * mure/nodes/EncoderNode.ts — Priority Encoder
+ * mure/nodes/EncoderNode.ts - Priority Encoder
  *
  * 2^N inputs → N-bit output.
  * Outputs binary code of the highest-priority active input.

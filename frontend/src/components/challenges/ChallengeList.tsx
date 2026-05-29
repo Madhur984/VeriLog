@@ -1,5 +1,5 @@
 /**
- * ChallengeList.tsx — Browse hardware challenges by difficulty/category
+ * ChallengeList.tsx - Browse hardware challenges by difficulty/category
  *
  * Grid of challenge cards with filtering and progress tracking.
  */

@@ -16,7 +16,7 @@ export const GateIntro: React.FC<{isActive: boolean, isDarkMode: boolean}> = ({ 
                     initial={{ opacity: 0 }} animate={isActive ? { opacity: 1 } : {}}
                     className={`font-mono text-[10px] tracking-[0.4em] uppercase ${subTextColor} block mb-4`}
                 >
-                    Digital Electronics — Chapter 4.1
+                    Digital Electronics - Chapter 4.1
                 </motion.span>
                 <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>Logic Gates 101</h2>
                 <p className={`text-lg max-w-2xl mx-auto opacity-70 ${textColor}`}>
@@ -27,7 +27,7 @@ export const GateIntro: React.FC<{isActive: boolean, isDarkMode: boolean}> = ({ 
             <div className={`p-10 rounded-[2rem] border ${bgCard}`}>
                 <h3 className={`font-mono text-xs uppercase tracking-widest mb-6 ${subTextColor}`}>The Absolute Simplest Explanation</h3>
                 <p className={`text-base leading-relaxed opacity-80 ${textColor} mb-6`}>
-                    You don’t need an electronics background. Just imagine you’re making <strong>decisions</strong> based on yes/no questions. That’s what logic gates do – they take one or more <strong>yes/no (1/0) inputs</strong> and produce a <strong>yes/no output</strong> following a fixed rule.
+                    You don’t need an electronics background. Just imagine you’re making <strong>decisions</strong> based on yes/no questions. That’s what logic gates do - they take one or more <strong>yes/no (1/0) inputs</strong> and produce a <strong>yes/no output</strong> following a fixed rule.
                 </p>
                 <div className={`p-6 rounded-2xl ${isDarkMode ? 'bg-black/40' : 'bg-gray-50 border border-gray-100'}`}>
                     <p className={`text-sm leading-relaxed opacity-70 ${textColor}`}>
@@ -97,7 +97,7 @@ const THEORY_CONTENT: Record<string, { category: string; desc: React.ReactNode; 
     'NOT': {
         category: 'Basic Gate',
         desc: <>
-            A NOT gate performs logical inversion. Also known as an inverter—it just flips the input to the exact opposite!<br/><br/>
+            A NOT gate performs logical inversion. Also known as an inverter-it just flips the input to the exact opposite!<br/><br/>
             The Boolean Expression is denoted by a bar or prime (<strong className="text-sky-400">Y = A’ or Y = Ā</strong>).
         </>,
         properties: [
@@ -146,7 +146,7 @@ const THEORY_CONTENT: Record<string, { category: string; desc: React.ReactNode; 
     'XOR': {
         category: 'Exclusive Gate',
         desc: <>
-            XOR (Exclusive-OR) performs exclusive addition. It is literally a difference checker—it outputs 1 if the inputs are different!<br/><br/>
+            XOR (Exclusive-OR) performs exclusive addition. It is literally a difference checker-it outputs 1 if the inputs are different!<br/><br/>
             The Boolean Expression is (<strong className="text-sky-400">X = A’B + AB’</strong>) or A ⊕ B.
         </>,
         properties: [

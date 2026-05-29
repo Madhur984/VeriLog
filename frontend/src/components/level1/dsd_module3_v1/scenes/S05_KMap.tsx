@@ -10,7 +10,7 @@ const ACTIVE = new Set([3, 4, 5, 6, 7]);
 
 // Loop "A": entire bottom row covers m4, m5, m6, m7  →  A
 // Loop "BC": column BC=11 (col index 2) covers m3 and m7  →  BC
-// (Group outlines drawn via SVG overlay below — no per-cell highlight here.)
+// (Group outlines drawn via SVG overlay below - no per-cell highlight here.)
 
 type Phase = 'empty' | 'plot' | 'group' | 'minimised';
 const PHASES: { id: Phase; label: string }[] = [
@@ -49,7 +49,7 @@ export const S05_KMap: React.FC<Props> = ({ isActive, isDarkMode }) => {
         <p className={`text-base max-w-3xl ${subText}`}>
           A Karnaugh Map rearranges the 8 truth-table rows into a 2×4 grid where columns are{' '}
           <strong className="text-violet-300">Gray-coded</strong> (00, 01, 11, 10). Adjacency on
-          the grid <em>is</em> mathematical adjacency — and adjacent 1s collapse into shorter
+          the grid <em>is</em> mathematical adjacency - and adjacent 1s collapse into shorter
           product terms.
         </p>
       </section>
@@ -205,7 +205,7 @@ export const S05_KMap: React.FC<Props> = ({ isActive, isDarkMode }) => {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                 >
-                  {/* Loop A — entire bottom row · 4 cells · cyan */}
+                  {/* Loop A - entire bottom row · 4 cells · cyan */}
                   <motion.rect
                     x="2" y="92" width="328" height="80" rx="14"
                     fill="none" stroke="#22d3ee" strokeWidth="3"
@@ -225,7 +225,7 @@ export const S05_KMap: React.FC<Props> = ({ isActive, isDarkMode }) => {
                     Group → A
                   </motion.text>
 
-                  {/* Loop BC — column BC=11 · 2 cells · orange */}
+                  {/* Loop BC - column BC=11 · 2 cells · orange */}
                   <motion.rect
                     x="170" y="2" width="80" height="170" rx="14"
                     fill="none" stroke="#fb923c" strokeWidth="3"
@@ -261,16 +261,16 @@ export const S05_KMap: React.FC<Props> = ({ isActive, isDarkMode }) => {
               className={`text-sm font-mono ${subText}`}
             >
               {phase === 'empty' && (
-                <>A blank 2×4 K-Map. Note the Gray-code header on columns — only one bit changes between any two adjacent cells.</>
+                <>A blank 2×4 K-Map. Note the Gray-code header on columns - only one bit changes between any two adjacent cells.</>
               )}
               {phase === 'plot' && (
-                <>Drop a 1 in every cell whose minterm is active — m3, m4, m5, m6, m7. Watch them light up in sequence.</>
+                <>Drop a 1 in every cell whose minterm is active - m3, m4, m5, m6, m7. Watch them light up in sequence.</>
               )}
               {phase === 'group' && (
                 <>Two adjacent groups appear. Inside each loop, the variables that <em>change</em> get cancelled out.</>
               )}
               {phase === 'minimised' && (
-                <>Cell <strong className="text-emerald-300">m7</strong> is shared by both groups — overlap is mathematically free. Read the surviving variables.</>
+                <>Cell <strong className="text-emerald-300">m7</strong> is shared by both groups - overlap is mathematically free. Read the surviving variables.</>
               )}
             </motion.div>
           </AnimatePresence>

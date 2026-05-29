@@ -1,5 +1,5 @@
 /**
- * StreakCounter.tsx — Engineering "Uptime" / Daily Streak
+ * StreakCounter.tsx - Engineering "Uptime" / Daily Streak
  *
  * Displays consecutive days of learning as an operational metric.
  */

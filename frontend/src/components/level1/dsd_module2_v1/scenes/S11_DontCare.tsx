@@ -37,7 +37,7 @@ export const S11_DontCare: React.FC<Props> = ({ isActive, isDarkMode }) => {
         <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>The Don&apos;t Care Loophole</h2>
         <p className={`text-base max-w-3xl ${subText}`}>
           Some inputs are impossible or simply don&apos;t matter. K-Maps mark these as <span className="font-mono text-violet-300">X</span>.
-          To Madhur, an <strong>X</strong> is a <em>room under maintenance</em> — he can <strong>upgrade it for free</strong> if
+          To Madhur, an <strong>X</strong> is a <em>room under maintenance</em> - he can <strong>upgrade it for free</strong> if
           doing so doubles the size of a wing. Otherwise he treats it as a 0 and ignores it.
         </p>
         <div className={`inline-block p-4 rounded-2xl border ${cardBg} font-mono text-base`}>
@@ -143,7 +143,7 @@ export const S11_DontCare: React.FC<Props> = ({ isActive, isDarkMode }) => {
               <div className="font-mono text-[10px] uppercase tracking-widest text-amber-400 mb-2">Why it matters</div>
               <p className={`text-[12px] leading-relaxed ${subText}`}>
                 {absorb
-                  ? 'Absorbing 13 and 15 turns a tiny pair-wing into a 2×2 wing. We just deleted A and B from the term — fewer literals = fewer gates = a smaller circuit.'
+                  ? 'Absorbing 13 and 15 turns a tiny pair-wing into a 2×2 wing. We just deleted A and B from the term - fewer literals = fewer gates = a smaller circuit.'
                   : 'Ignoring 13 and 15 leaves a 2-cell wing that pins down all four variables. The implementation is unnecessarily large.'}
               </p>
             </div>
@@ -163,7 +163,7 @@ export const S11_DontCare: React.FC<Props> = ({ isActive, isDarkMode }) => {
         </div>
         <p className={`text-base leading-relaxed ${textColor}`}>
           For every X you encounter: ask <em>“does treating this as 1 grow my wing to the next power of two?”</em>
-          If yes — absorb it. If no — leave it as 0. Never circle an X just to circle it; X must <strong>earn</strong> its place
+          If yes - absorb it. If no - leave it as 0. Never circle an X just to circle it; X must <strong>earn</strong> its place
           in the wing.
         </p>
       </motion.div>

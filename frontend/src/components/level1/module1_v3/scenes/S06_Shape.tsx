@@ -30,7 +30,7 @@ export const S06_Shape: React.FC = () => {
 
   const SHAPE_INFO: Record<string, string> = {
     analog: "The pure mathematician. Infinite precision, smooth gradients. The foundation of all natural sound and light.",
-    step: "The computer's breath. Binary logic—on or off. Instantaneous transitions that define digital memory.",
+    step: "The computer's breath. Binary logic-on or off. Instantaneous transitions that define digital memory.",
     impulse: "The mathematical ghost. Infinite height, zero width. Used to test how systems react to sudden shocks.",
     ramp: "The steady climber. Linear growth over time. Essential for scanning techniques and generating timing references."
   };

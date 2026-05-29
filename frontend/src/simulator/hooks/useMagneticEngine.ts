@@ -60,7 +60,7 @@ export const useMagneticEngine = (snapNodes: SnapNode[]) => {
                 const dy = nearest.y - worldY;
 
                 if (minDist < SNAP_RADIUS) {
-                    // Hard snap — lock to pad
+                    // Hard snap - lock to pad
                     targetX += dx;
                     targetY += dy;
                     currentSnaps[index] = nearest.id;

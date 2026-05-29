@@ -1,5 +1,5 @@
 /**
- * mure/core/SignalGraph.ts — Circuit Graph Model
+ * mure/core/SignalGraph.ts - Circuit Graph Model
  *
  * All circuits represented as directed graphs.
  * Nodes = components, Edges = wire connections.

@@ -1,5 +1,5 @@
 /**
- * CPUChallenges.ts — Learning progression challenges for CPU Builder
+ * CPUChallenges.ts - Learning progression challenges for CPU Builder
  *
  * Defines challenges from basic single-cycle execution
  * to advanced pipeline optimization.
@@ -99,7 +99,7 @@ export const CPU_CHALLENGES: CPUChallenge[] = [
         instruction: 'Look for Read-After-Write (RAW) dependencies',
         expectedResult: {},
         hints: [
-            'SUB reads x3, but ADD writes x3 — dependency!',
+            'SUB reads x3, but ADD writes x3 - dependency!',
             'This is a RAW (Read After Write) hazard',
             'Without forwarding, you need 2 stall cycles (or NOP bubbles)',
         ],
@@ -113,7 +113,7 @@ export const CPU_CHALLENGES: CPUChallenge[] = [
         expectedResult: { x3: 30, x4: 20 },
         hints: [
             'ADD writes x3 in WB stage (cycle 5)',
-            'SUB reads x3 in ID stage — must wait until after WB',
+            'SUB reads x3 in ID stage - must wait until after WB',
             'Insert 2 NOPs between ADD and SUB',
         ],
     },

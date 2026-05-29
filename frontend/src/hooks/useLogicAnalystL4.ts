@@ -1,5 +1,5 @@
 /**
- * useLogicAnalystL4.ts — Logic Analyst for Level 4: Logic Gates
+ * useLogicAnalystL4.ts - Logic Analyst for Level 4: Logic Gates
  *
  * Covers: gate behavior, CMOS realization, truth tables, circuit construction,
  * logic puzzle analysis (De Morgan, canonical forms, universal gates).
@@ -35,7 +35,7 @@ const DB: Record<L4Scene, Record<L4Tier, AnalystL4Response[]>> = {
                 observation: 'XOR behavior confirmed.',
                 analysis: 'XOR implements modulo-2 addition. Output = 1 when inputs differ. This is also a parity checker: odd number of HIGHs → output HIGH.',
                 conclusion: 'XOR is the core of every binary adder. The full adder sum bit is A⊕B⊕Cin.',
-                insight: 'XOR requires 8–12 transistors in static CMOS. Transmission gate XOR uses only 4 transistors but has weaker drive strength.',
+                insight: 'XOR requires 8-12 transistors in static CMOS. Transmission gate XOR uses only 4 transistors but has weaker drive strength.',
                 tier: 'sharp',
             },
         ],
@@ -43,7 +43,7 @@ const DB: Record<L4Scene, Record<L4Tier, AnalystL4Response[]>> = {
             {
                 observation: 'Gate input/output state observed.',
                 analysis: 'Logic 1 represents HIGH voltage (≈VDD, typically 3.3V or 1.8V). Logic 0 represents LOW (≈GND). Gates translate these voltage levels according to their truth table.',
-                conclusion: 'Every gate you see here is built from CMOS transistors — pMOS for pull-up, nMOS for pull-down.',
+                conclusion: 'Every gate you see here is built from CMOS transistors - pMOS for pull-up, nMOS for pull-down.',
                 insight: 'NAND and NOR are called "universal gates" because any logic function can be built using only NAND gates (or only NOR gates).',
                 tier: 'steady',
             },
@@ -52,7 +52,7 @@ const DB: Record<L4Scene, Record<L4Tier, AnalystL4Response[]>> = {
             {
                 observation: 'Gate behavior being explored.',
                 analysis: 'Focus on one input combination at a time. For AND: both inputs must be HIGH (1) for output to be HIGH. If either input is LOW (0), the output is LOW.',
-                conclusion: 'Use the truth table as a reference. Toggle inputs systematically: 00, 01, 10, 11 — four combinations exhaustively test a 2-input gate.',
+                conclusion: 'Use the truth table as a reference. Toggle inputs systematically: 00, 01, 10, 11 - four combinations exhaustively test a 2-input gate.',
                 insight: 'Think of AND as a series switch: both switches must be closed (ON) for current to flow to the output.',
                 tier: 'struggling',
             },
@@ -62,7 +62,7 @@ const DB: Record<L4Scene, Record<L4Tier, AnalystL4Response[]>> = {
         sharp: [
             {
                 observation: 'All gate characterizations complete.',
-                analysis: 'Notice NAND and NOR are functionally complete — any Boolean function can be expressed using only these gates. This is why NAND is the foundational cell in standard cell libraries.',
+                analysis: 'Notice NAND and NOR are functionally complete - any Boolean function can be expressed using only these gates. This is why NAND is the foundational cell in standard cell libraries.',
                 conclusion: 'De Morgan\'s theorem: ¬(A·B) = ¬A+¬B and ¬(A+B) = ¬A·¬B. NAND = inverted AND = OR of inverted inputs.',
                 insight: 'In practice, a chip inverter uses a single CMOS NOT cell. All other gates add inverting cells at the end. Pure AND/OR without inversion cost more area.',
                 tier: 'sharp',
@@ -71,9 +71,9 @@ const DB: Record<L4Scene, Record<L4Tier, AnalystL4Response[]>> = {
         steady: [
             {
                 observation: 'Gate lab exercise in progress.',
-                analysis: 'Compare and contrast: AND outputs 1 for input 11 only. NAND outputs 0 for input 11 only — it is AND with a bubble (inversion) on the output.',
+                analysis: 'Compare and contrast: AND outputs 1 for input 11 only. NAND outputs 0 for input 11 only - it is AND with a bubble (inversion) on the output.',
                 conclusion: 'The relationship between AND↔NAND and OR↔NOR is inversion. Once you know one, you know the other through De Morgan.',
-                insight: 'Circuit designers often use NAND/NOR over AND/OR because NAND/NOR have smaller footprints in CMOS technology — fewer transistors in series.',
+                insight: 'Circuit designers often use NAND/NOR over AND/OR because NAND/NOR have smaller footprints in CMOS technology - fewer transistors in series.',
                 tier: 'steady',
             },
         ],
@@ -100,8 +100,8 @@ const DB: Record<L4Scene, Record<L4Tier, AnalystL4Response[]>> = {
         steady: [
             {
                 observation: 'Circuit wiring in progress.',
-                analysis: 'Fan-out (number of gates driven by one output) is limited. Driving too many gates from one output causes voltage degradation — the driving gate cannot source enough current.',
-                conclusion: 'Each gate output has a maximum fanout rating. In the lab, standard CMOS gates support fanout of 4–10.',
+                analysis: 'Fan-out (number of gates driven by one output) is limited. Driving too many gates from one output causes voltage degradation - the driving gate cannot source enough current.',
+                conclusion: 'Each gate output has a maximum fanout rating. In the lab, standard CMOS gates support fanout of 4-10.',
                 insight: 'When high fanout is needed, insert BUFFER gates to regenerate the signal before distributing to multiple inputs.',
                 tier: 'steady',
             },
@@ -121,7 +121,7 @@ const DB: Record<L4Scene, Record<L4Tier, AnalystL4Response[]>> = {
             {
                 observation: 'Logic puzzle solution submitted.',
                 analysis: 'Verifying against expected truth table. If all rows match, the Boolean function is correctly implemented regardless of gate topology used.',
-                conclusion: 'There are multiple valid implementations. Minimum gate count is not always optimal — critical path delay may require different topology.',
+                conclusion: 'There are multiple valid implementations. Minimum gate count is not always optimal - critical path delay may require different topology.',
                 insight: 'Quine-McCluskey method or Karnaugh maps minimize Boolean expressions to minimum sum-of-products (SOP) form before gate mapping.',
                 tier: 'sharp',
             },

@@ -1,5 +1,5 @@
 /**
- * S13_LabActivity_v2.tsx — Digital Electronics Mega Lab
+ * S13_LabActivity_v2.tsx - Digital Electronics Mega Lab
  * ──────────────────────────────────────────────────────
  * Activities:
  *   1. Binary Converter Drill (binary ↔ decimal ↔ hex)
@@ -250,7 +250,7 @@ const Slide2: React.FC<{ play: any }> = ({ play }) => {
         <motion.h2 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} style={{ fontFamily: C.sans, fontSize: 'clamp(32px,5vw,52px)', fontWeight: 900, color: C.text, margin: 0 }}>
           Engineering Adder
         </motion.h2>
-        <Hud style={{ marginTop: 8 }}>Click bits to toggle — observe carry propagation</Hud>
+        <Hud style={{ marginTop: 8 }}>Click bits to toggle - observe carry propagation</Hud>
       </div>
 
       <div style={{ display: 'flex', gap: 12 }}>
@@ -315,8 +315,8 @@ const Slide2: React.FC<{ play: any }> = ({ play }) => {
 
       {/* Insight */}
       <div style={{ width: '100%', background: `${C.cyan}08`, border: `1px solid ${C.cyan}22`, borderRadius: 20, padding: '20px 28px', fontFamily: C.mono, fontSize: 13, color: C.muted, lineHeight: 1.8 }}>
-        <span style={{ color: C.cyan, fontWeight: 900 }}>A + 1 = Increment</span> — the simplest counter operation. Every flip-flop counter uses this.{' '}
-        Overflow = when the carry ripples past the MSB — your result wraps around!
+        <span style={{ color: C.cyan, fontWeight: 900 }}>A + 1 = Increment</span> - the simplest counter operation. Every flip-flop counter uses this.{' '}
+        Overflow = when the carry ripples past the MSB - your result wraps around!
       </div>
     </div>
   );
@@ -481,7 +481,7 @@ const Slide4: React.FC<{ play: any }> = ({ play }) => {
             style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}
           >
             <div style={{ fontFamily: C.mono, fontSize: 16, color: isCorrect ? C.green : C.rose, fontWeight: 900 }}>
-              {isCorrect ? '✓ Perfect! ' + puzzle.answer + ' gate confirmed.' : `✗ Try again — answer: ${puzzle.answer}`}
+              {isCorrect ? '✓ Perfect! ' + puzzle.answer + ' gate confirmed.' : `✗ Try again - answer: ${puzzle.answer}`}
             </div>
             {!isCorrect && !showHint && <button onClick={() => setShowHint(true)} style={{ background: 'transparent', border: `1px solid ${C.borderLite}`, color: C.muted, fontFamily: C.mono, fontSize: 11, padding: '8px 16px', borderRadius: 20, cursor: 'pointer' }}>Show Hint</button>}
             {showHint && <div style={{ fontFamily: C.mono, fontSize: 12, color: C.amber, padding: '12px 20px', border: `1px solid ${C.amber}33`, borderRadius: 16, background: `${C.amber}08` }}>{puzzle.hint}</div>}
@@ -545,7 +545,7 @@ const Slide5: React.FC<{ play: any }> = ({ play }) => {
               </motion.button>
             </div>
             <div style={{ textAlign: 'center', fontFamily: C.mono, fontSize: 11, color: row.y ? C.cyan : C.border, fontWeight: row.y ? 700 : 400 }}>
-              {row.y ? `m${row.idx}` : '—'}
+              {row.y ? `m${row.idx}` : '-'}
             </div>
           </div>
         ))}
@@ -856,7 +856,7 @@ export const S13_LabActivity_v2: React.FC<{ isActive: boolean; isDarkMode: boole
           </div>
 
           <Hud style={{ background: C.surfaceTop, padding: '8px 16px', borderRadius: 20, border: `1px solid ${C.borderLite}`, color: C.text }}>
-            {slide + 1} / {TOTAL_SLIDES} — <span style={{ color: C.cyan }}>{LABELS[slide]}</span>
+            {slide + 1} / {TOTAL_SLIDES} - <span style={{ color: C.cyan }}>{LABELS[slide]}</span>
           </Hud>
 
           <div style={{ display: 'flex', gap: 10 }}>

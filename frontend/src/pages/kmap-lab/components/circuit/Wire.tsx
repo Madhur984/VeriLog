@@ -44,7 +44,7 @@ export const Wire: React.FC<WireProps> = ({ x1, y1, x2, y2, active }) => {
   );
 };
 
-/** SVG filter definition for the wire glow — include once in the SVG defs */
+/** SVG filter definition for the wire glow - include once in the SVG defs */
 export const WireGlowFilter: React.FC = () => (
   <defs>
     <filter id="wire-glow" x="-30%" y="-30%" width="160%" height="160%">

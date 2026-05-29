@@ -214,7 +214,7 @@ export const CleanCircuit: React.FC<CleanCircuitProps> = ({
                       style={{ filter: tv ? `drop-shadow(0 0 3px ${term.color}aa)` : 'none' }} />
                 <text x={andX + 30} y={rowY - 6} fontSize="10" fontFamily="monospace"
                       fill={term.color} fontWeight="bold">
-                  {term.literals.map(litLabel).join('') || '—'}={tv}
+                  {term.literals.map(litLabel).join('') || '-'}={tv}
                 </text>
               </g>
             )}

@@ -234,13 +234,13 @@ export const IntroTheory: React.FC<Props> = ({ isActive, isDarkMode }) => {
         <div className="space-y-5">
           <CalloutBox icon="🗺️" color="sky" title="Think of it as a Magic Map" isDarkMode={isDarkMode}>
             A K-Map is just a <strong>special table</strong> where you put the <strong>1s and 0s from your Truth Table</strong> into special boxes.
-            The <em>magic</em> part is how those boxes are arranged — neighbors are not random! Every box that touches another box is just <strong>ONE variable different</strong>. That's the secret.
+            The <em>magic</em> part is how those boxes are arranged - neighbors are not random! Every box that touches another box is just <strong>ONE variable different</strong>. That's the secret.
           </CalloutBox>
           <CalloutBox icon="🎮" color="emerald" title="The Circle Game" isDarkMode={isDarkMode}>
             Once you've placed your 1s, you play a game: <strong>circle the 1s in groups</strong>. The bigger the circle, the simpler your final answer. Each circle eventually becomes just one small term in your final Boolean expression. That's literally all K-Maps are!
           </CalloutBox>
           <CalloutBox icon="🧱" color="amber" title="Why Not Just Use Algebra?" isDarkMode={isDarkMode}>
-            Boolean algebra can be extremely painful for more than 2 variables. You'd need to apply De Morgan's law, absorption, and distribution repeatedly — and it's very easy to make mistakes.
+            Boolean algebra can be extremely painful for more than 2 variables. You'd need to apply De Morgan's law, absorption, and distribution repeatedly - and it's very easy to make mistakes.
             K-Maps are a <strong>visual shortcut</strong> that gives you the minimal form directly without needing algebra.
           </CalloutBox>
         </div>
@@ -306,7 +306,7 @@ export const TwoVarTheory: React.FC<Props> = ({ isDarkMode }) => {
               items={[[0,1],[0,1]]}
               groupStyles={[{ css: getOverlayStyle(0, 1, 2, 1), customColors: 'border-emerald-500 bg-emerald-500/30' }]} />
           </div>
-          <p>A group of 2 cells eliminates <strong>1 variable</strong>. A was 0 in one cell and 1 in the other — so A is eliminated! Only B=1 survives.</p>
+          <p>A group of 2 cells eliminates <strong>1 variable</strong>. A was 0 in one cell and 1 in the other - so A is eliminated! Only B=1 survives.</p>
         </div>
       )
     },
@@ -316,7 +316,7 @@ export const TwoVarTheory: React.FC<Props> = ({ isDarkMode }) => {
         <div className={`space-y-3 text-sm ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}`}>
           <p>The circled group covers cells where <strong>B = 1</strong>. A varies (both 0 and 1), so A disappears from the term.</p>
           <MathBlock isDarkMode={isDarkMode}>Y = B</MathBlock>
-          <p>That's it! From a truth table, directly to <strong>Y = B</strong> — the simplest possible answer. No algebra needed. 🎉</p>
+          <p>That's it! From a truth table, directly to <strong>Y = B</strong> - the simplest possible answer. No algebra needed. 🎉</p>
         </div>
       )
     },
@@ -327,7 +327,7 @@ export const TwoVarTheory: React.FC<Props> = ({ isDarkMode }) => {
       <section className="text-center space-y-4">
         <h2 className={`text-3xl md:text-5xl font-black ${c.text}`}>The 2-Variable Map</h2>
         <p className={`text-lg max-w-2xl mx-auto opacity-80 ${c.muted}`}>
-          For 2 variables (A, B), there are 2² = 4 possible combinations. This is the simplest K-Map — a 2×2 grid. Perfect to learn the basics.
+          For 2 variables (A, B), there are 2² = 4 possible combinations. This is the simplest K-Map - a 2×2 grid. Perfect to learn the basics.
         </p>
       </section>
 
@@ -441,7 +441,7 @@ export const ThreeVarTheory: React.FC<Props> = ({ isDarkMode }) => {
             </h3>
             <p className={`${c.muted} leading-relaxed`}>
               The whole point of K-Maps is that <strong>adjacent cells differ by exactly ONE variable</strong>. 
-              If we used normal binary counting (00, 01, 10, 11), then columns 2 and 3 would be "01" and "10" — two bits change! That would break everything.
+              If we used normal binary counting (00, 01, 10, 11), then columns 2 and 3 would be "01" and "10" - two bits change! That would break everything.
             </p>
             <div className={`p-5 rounded-2xl ${c.cardInner} space-y-3`}>
               <p className="text-amber-500 font-black text-[10px] uppercase tracking-widest">The Gray Code Column Order</p>
@@ -455,7 +455,7 @@ export const ThreeVarTheory: React.FC<Props> = ({ isDarkMode }) => {
               </div>
               <p className={`text-xs ${c.muted} leading-relaxed pt-2`}>
                 Notice: <strong>00→01</strong> (only C changes), <strong>01→11</strong> (only B changes), <strong>11→10</strong> (only C changes), <strong>10→00</strong> (only B changes). 
-                Every step — only ONE bit flips! This is the entire foundation.
+                Every step - only ONE bit flips! This is the entire foundation.
               </p>
             </div>
             <CalloutBox icon="🚨" color="rose" title="Common Mistake!" isDarkMode={isDarkMode}>
@@ -566,7 +566,7 @@ export const FourVarTheory: React.FC<Props> = ({ isDarkMode }) => {
             <h3 className={`text-xl font-bold ${c.text}`}>The 4×4 Structure</h3>
             <p className={`${c.muted} leading-relaxed`}>
               Now we have 4 variables: <strong>A, B</strong> labelling rows and <strong>C, D</strong> labelling columns.
-              Both axis use Gray Code — so both the row jump and the column jump are all single-bit changes.
+              Both axis use Gray Code - so both the row jump and the column jump are all single-bit changes.
             </p>
             <div className="space-y-3">
               {[
@@ -720,12 +720,12 @@ export const GroupingRulesTheory: React.FC<Props> = ({ isDarkMode }) => {
       title: "Rule 1: Power-of-Two Group Sizes Only",
       icon: "2ⁿ",
       emoji: "🔢",
-      layman: "Imagine you're making pizza. A pizza can only be cut into 1, 2, 4, 8, or 16 slices — never 3, 5, or 6! Why? Because each time you double the group size, you cancel out one more variable, giving you a simpler expression. 3 or 5 just doesn't work in binary math.",
-      theory: "Groups must have sizes that are powers of 2: 1, 2, 4, 8, 16. This is because grouping 2ⁿ adjacent cells allows exactly n variables to cancel out. You cannot simplify a group of 3 because it would require eliminating a fractional variable — mathematically impossible in Boolean algebra.",
+      layman: "Imagine you're making pizza. A pizza can only be cut into 1, 2, 4, 8, or 16 slices - never 3, 5, or 6! Why? Because each time you double the group size, you cancel out one more variable, giving you a simpler expression. 3 or 5 just doesn't work in binary math.",
+      theory: "Groups must have sizes that are powers of 2: 1, 2, 4, 8, 16. This is because grouping 2ⁿ adjacent cells allows exactly n variables to cancel out. You cannot simplify a group of 3 because it would require eliminating a fractional variable - mathematically impossible in Boolean algebra.",
       simplification: "Group of 1 → saves nothing\nGroup of 2 → eliminates 1 variable\nGroup of 4 → eliminates 2 variables\nGroup of 8 → eliminates 3 variables\nGroup of 16 → eliminates ALL variables → Y = 1",
       examples: (
         <div className="flex flex-col sm:flex-row gap-4 mt-4">
-          <MiniMapFixed isDarkMode={isDarkMode} label="WRONG: Group of 3" isBad={true} caption="3 is not a power of 2 — illegal!"
+          <MiniMapFixed isDarkMode={isDarkMode} label="WRONG: Group of 3" isBad={true} caption="3 is not a power of 2 - illegal!"
             items={[[1,1,1,0],[0,0,0,0]]}
             groupStyles={[{ css: getOverlayStyle(0,0,1,3) }]} />
           <MiniMapFixed isDarkMode={isDarkMode} label="RIGHT: Two groups of 2" isBad={false} caption="Two pairs = two terms in final expression"
@@ -763,7 +763,7 @@ export const GroupingRulesTheory: React.FC<Props> = ({ isDarkMode }) => {
       icon: "∩",
       emoji: "🤝",
       layman: "In K-Maps, a 1 can be a member of MULTIPLE groups simultaneously. Think of it like a student who joins BOTH the Chess Club AND the Science Club. The goal is to make each group as BIG as possible, and sharing members (1s) is the trick to forming bigger groups! Actually, if a cell is already covered, you MUST still try to use it again to form an even bigger group.",
-      theory: "Every group must cover at least one 'essential prime implicant' — a '1' that no other group can cover. But beyond that, cells may (and should) be shared between multiple groups. Sharing allows you to form larger prime implicants. The algorithm is: find the biggest legal group for each '1', even if it overlaps an already-covered '1'. Minimize the TOTAL number of groups needed, not the overlap.",
+      theory: "Every group must cover at least one 'essential prime implicant' - a '1' that no other group can cover. But beyond that, cells may (and should) be shared between multiple groups. Sharing allows you to form larger prime implicants. The algorithm is: find the biggest legal group for each '1', even if it overlaps an already-covered '1'. Minimize the TOTAL number of groups needed, not the overlap.",
       simplification: "Sharing is ALWAYS allowed.\nSharing helps form LARGER groups → fewer, simpler terms.",
       examples: (
         <div className="flex flex-col sm:flex-row gap-4 mt-4">
@@ -784,11 +784,11 @@ export const GroupingRulesTheory: React.FC<Props> = ({ isDarkMode }) => {
       )
     },
     {
-      title: "Rule 4: The Pac-Man Rule — Wrap-Around",
+      title: "Rule 4: The Pac-Man Rule - Wrap-Around",
       icon: "⟳",
       emoji: "👾",
-      layman: "Imagine the K-Map is printed on a piece of paper and then you roll it into a cylinder so the left edge touches the right edge, and the top edge touches the bottom edge. Now cells that were on opposite sides are now neighbors! This is the 'wrap-around' rule — edge cells CAN be grouped with their partner on the other side.",
-      theory: "A K-Map is topologically a torus (a donut shape). The left and right edges wrap around (horizontally), and the top and bottom edges wrap around (vertically). This means: Column 1 (CD=00) and column 4 (CD=10) are adjacent — they differ by only D. Row 1 (AB=00) and row 4 (AB=10) are adjacent — they differ by only A. Diagonal wrap-arounds are also valid (all 4 corners form a valid group of 4!).",
+      layman: "Imagine the K-Map is printed on a piece of paper and then you roll it into a cylinder so the left edge touches the right edge, and the top edge touches the bottom edge. Now cells that were on opposite sides are now neighbors! This is the 'wrap-around' rule - edge cells CAN be grouped with their partner on the other side.",
+      theory: "A K-Map is topologically a torus (a donut shape). The left and right edges wrap around (horizontally), and the top and bottom edges wrap around (vertically). This means: Column 1 (CD=00) and column 4 (CD=10) are adjacent - they differ by only D. Row 1 (AB=00) and row 4 (AB=10) are adjacent - they differ by only A. Diagonal wrap-arounds are also valid (all 4 corners form a valid group of 4!).",
       simplification: "Valid wraps:\n· Left column ↔ Right column (horizontal)\n· Top row ↔ Bottom row (vertical)\n· All 4 corners form a group of 4",
       examples: (
         <div className="flex flex-col md:flex-row gap-4 mt-4">
@@ -812,7 +812,7 @@ export const GroupingRulesTheory: React.FC<Props> = ({ isDarkMode }) => {
       icon: "↑",
       emoji: "🏆",
       layman: "Always go for the BIGGEST team possible. A team of 4 beats two teams of 2 every single time. Why? Because a bigger group means more variables cancel out, giving you a simpler term with fewer gates. More gates = more money = slower chip. Bigger groups = cheaper, faster electronics.",
-      theory: "Always prefer the largest possible group (prime implicant). Never settle for a subgroup if a larger valid group exists. A prime implicant is a group that cannot be made any bigger without including a 0. Your goal is to cover all 1s using the minimum number of prime implicants. An essential prime implicant is a group that is the ONLY group covering at least one '1' — it must be included.",
+      theory: "Always prefer the largest possible group (prime implicant). Never settle for a subgroup if a larger valid group exists. A prime implicant is a group that cannot be made any bigger without including a 0. Your goal is to cover all 1s using the minimum number of prime implicants. An essential prime implicant is a group that is the ONLY group covering at least one '1' - it must be included.",
       simplification: "Prime Implicant = biggest legal group for a given '1'\nEssential PI = only group covering a particular '1'\n→ Essential PIs MUST be included in the final answer.",
       examples: (
         <div className="flex flex-col sm:flex-row gap-4 mt-4">
@@ -834,7 +834,7 @@ export const GroupingRulesTheory: React.FC<Props> = ({ isDarkMode }) => {
       title: "Rule 6: Every '1' Must Be Covered",
       icon: "✓",
       emoji: "☑️",
-      layman: "No 1 can be left behind! Every single 1 in your K-Map MUST be inside at least one circle. If you forget to include a 1, your final expression will produce a wrong output for that input. Imagine a scoreboard that shows '1' for the winning condition — you can't leave a win uncounted!",
+      layman: "No 1 can be left behind! Every single 1 in your K-Map MUST be inside at least one circle. If you forget to include a 1, your final expression will produce a wrong output for that input. Imagine a scoreboard that shows '1' for the winning condition - you can't leave a win uncounted!",
       theory: "An essential objective: all minterms with output=1 must be covered by at least one prime implicant group. It's fine if a '1' is covered by multiple groups (sharing), but every '1' must be covered by at least one group. Uncovered '1's lead to incorrect simplification. The final expression is the OR of all selected prime implicant terms.",
       simplification: "∀ minterm mᵢ where Y=1: mᵢ must be in at least one selected group.",
       examples: (
@@ -844,7 +844,7 @@ export const GroupingRulesTheory: React.FC<Props> = ({ isDarkMode }) => {
             groupStyles={[
               { css: getOverlayStyle(1,0,1,1) },   // covers m4 equiv
             ]} />
-          <MiniMapFixed isDarkMode={isDarkMode} label="RIGHT: All 1s covered" isBad={false} caption="Both groups needed — both 1s covered."
+          <MiniMapFixed isDarkMode={isDarkMode} label="RIGHT: All 1s covered" isBad={false} caption="Both groups needed - both 1s covered."
             items={[[0,0,1,0],[1,0,1,0]]}
             groupStyles={[
               { css: getOverlayStyle(0,2,2,1), customColors:'border-emerald-500 bg-emerald-500/30' },
@@ -865,9 +865,9 @@ export const GroupingRulesTheory: React.FC<Props> = ({ isDarkMode }) => {
           <div className={`p-4 rounded-xl font-mono text-xs space-y-1.5 ${isDarkMode?'bg-black/30 text-slate-300':'bg-slate-100 text-slate-800'}`}>
             <p className="font-bold text-amber-500 mb-2">Example: 3-variable group of 4</p>
             <p>Group covers: m0(000), m1(001), m4(100), m5(101)</p>
-            <p>→ A: 0,0,1,1 — CHANGES → eliminated</p>
-            <p>→ B: 0,0,0,0 — ALWAYS 0 → write B'</p>
-            <p>→ C: 0,1,0,1 — CHANGES → eliminated</p>
+            <p>→ A: 0,0,1,1 - CHANGES → eliminated</p>
+            <p>→ B: 0,0,0,0 - ALWAYS 0 → write B'</p>
+            <p>→ C: 0,1,0,1 - CHANGES → eliminated</p>
             <p className="font-black text-emerald-400 pt-1">Term = B' ✓</p>
           </div>
         </div>
@@ -880,7 +880,7 @@ export const GroupingRulesTheory: React.FC<Props> = ({ isDarkMode }) => {
       <section className="text-center space-y-4">
         <h2 className={`text-3xl md:text-5xl font-black ${c.text}`}>The Complete Grouping Rulebook</h2>
         <p className={`text-lg max-w-2xl mx-auto opacity-80 ${c.muted}`}>
-          7 essential rules. Master these and K-Maps become automatic. Each rule is explained like you're 5 — then the theory underneath.
+          7 essential rules. Master these and K-Maps become automatic. Each rule is explained like you're 5 - then the theory underneath.
         </p>
       </section>
 
@@ -946,7 +946,7 @@ export const GroupingRulesTheory: React.FC<Props> = ({ isDarkMode }) => {
             'Find all "1"s that need to be covered.',
             'For each "1", find the LARGEST legal group (power of 2, rectangle, can wrap).',
             'Select groups to cover ALL "1"s using the FEWEST groups.',
-            'Prefer bigger groups over smaller — always.',
+            'Prefer bigger groups over smaller - always.',
             'For each selected group, identify variables that are CONSTANT → that is your term.',
             'OR all terms together → that is your minimized expression!',
           ].map((step, i) => (
@@ -978,7 +978,7 @@ export const DontCareTheory: React.FC<Props> = ({ isDarkMode }) => {
         <span className={`font-mono text-[10px] tracking-[0.4em] uppercase text-rose-400 block font-bold`}>The X Factor</span>
         <h2 className={`text-3xl md:text-5xl font-black ${c.text}`}>Don't Care Conditions</h2>
         <p className={`text-lg max-w-2xl mx-auto opacity-80 ${c.muted}`}>
-          Some input combinations will <strong>never occur</strong> in real life. For those, we literally don't care what the output is — and we can exploit that freedom to make BIGGER groups.
+          Some input combinations will <strong>never occur</strong> in real life. For those, we literally don't care what the output is - and we can exploit that freedom to make BIGGER groups.
         </p>
       </section>
 
@@ -991,17 +991,17 @@ export const DontCareTheory: React.FC<Props> = ({ isDarkMode }) => {
         </div>
         <div className={`p-6 rounded-2xl mb-5 ${isDarkMode?'bg-rose-500/10 border border-rose-500/20':'bg-rose-50 border border-rose-100'}`}>
           <p className={`text-base leading-relaxed font-medium ${isDarkMode?'text-rose-200':'text-rose-900'}`}>
-            Imagine a vending machine with 4 buttons (A, B, C, D). But only 10 combinations are valid — the other 6 physically can't happen because you can't press those buttons simultaneously. For those impossible inputs, it doesn't matter what the machine does — so we mark the output with an <strong className="font-black text-rose-400">"X"</strong>. We can then treat each X as either 0 or 1, whichever helps us form BIGGER groups and get a simpler expression!
+            Imagine a vending machine with 4 buttons (A, B, C, D). But only 10 combinations are valid - the other 6 physically can't happen because you can't press those buttons simultaneously. For those impossible inputs, it doesn't matter what the machine does - so we mark the output with an <strong className="font-black text-rose-400">"X"</strong>. We can then treat each X as either 0 or 1, whichever helps us form BIGGER groups and get a simpler expression!
           </p>
         </div>
         <div className={`p-5 rounded-2xl ${c.cardInner}`}>
           <p className={`text-xs font-black uppercase tracking-widest text-amber-500 mb-3`}>Where Do Don't Cares Come From?</p>
           <ul className={`space-y-2 text-sm ${c.muted}`}>
             {[
-              ['BCD Inputs', 'BCD uses codes 0–9 only. Codes 1010–1111 (10–15) never appear → 6 don\'t-care cells!'],
+              ['BCD Inputs', 'BCD uses codes 0-9 only. Codes 1010-1111 (10-15) never appear → 6 don\'t-care cells!'],
               ['Physical constraints', 'Some button combos on a physical panel can\'t be pressed simultaneously.'],
               ['Unused FSM states', 'A 3-bit counter cycling through only 5 states leaves 3 states unused.'],
-              ['Design choice', 'Designer says: "I don\'t care about this edge case — optimise the common path."'],
+              ['Design choice', 'Designer says: "I don\'t care about this edge case - optimise the common path."'],
             ].map(([t, d], i) => (
               <li key={i} className="flex gap-3 items-start">
                 <span className="shrink-0 w-5 h-5 rounded-full bg-rose-500/20 text-rose-400 flex items-center justify-center text-[10px] font-black mt-0.5">{i+1}</span>
@@ -1028,9 +1028,9 @@ export const DontCareTheory: React.FC<Props> = ({ isDarkMode }) => {
             <p className={`text-xs font-black uppercase tracking-widest text-emerald-${isDarkMode?'400':'600'}`}>The Golden Rule</p>
             <ul className={`text-sm space-y-2 ${c.muted}`}>
               <li>✅ Treat X as <strong>1</strong> if it helps form a BIGGER group.</li>
-              <li>✅ Treat X as <strong>0</strong> — just leave it uncircled.</li>
+              <li>✅ Treat X as <strong>0</strong> - just leave it uncircled.</li>
               <li>🚫 You are <strong>NEVER forced</strong> to use an X.</li>
-              <li>🚫 You <strong>CANNOT</strong> form a group of ONLY Xs — every group needs at least one real 1.</li>
+              <li>🚫 You <strong>CANNOT</strong> form a group of ONLY Xs - every group needs at least one real 1.</li>
             </ul>
           </div>
         </div>
@@ -1090,7 +1090,7 @@ export const DontCareTheory: React.FC<Props> = ({ isDarkMode }) => {
         <div className={`mt-8 p-5 rounded-2xl ${isDarkMode?'bg-emerald-950/30 border border-emerald-800/30':'bg-emerald-50 border border-emerald-200'}`}>
           <p className="text-emerald-500 font-black text-[10px] uppercase tracking-widest mb-2">⚡ The Payoff</p>
           <p className={`text-sm leading-relaxed ${isDarkMode?'text-emerald-200/80':'text-emerald-900'}`}>
-            In complex 4-variable problems, using don't cares wisely can reduce a 4-term SOP expression down to 1–2 terms. Always check if any X cells sit next to your 1s before finalizing your groups!
+            In complex 4-variable problems, using don't cares wisely can reduce a 4-term SOP expression down to 1-2 terms. Always check if any X cells sit next to your 1s before finalizing your groups!
           </p>
         </div>
       </motion.div>
@@ -1098,7 +1098,7 @@ export const DontCareTheory: React.FC<Props> = ({ isDarkMode }) => {
       {/* Quick tips table */}
       <motion.div initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ delay:0.4 }}
         className={`p-8 rounded-[2rem] border ${c.cardBg}`}>
-        <h3 className={`text-lg font-bold ${c.text} mb-5`}>📋 Don't Care — Quick Reference</h3>
+        <h3 className={`text-lg font-bold ${c.text} mb-5`}>📋 Don't Care - Quick Reference</h3>
         <div className="grid md:grid-cols-2 gap-4">
           {[
             { icon:'✅', title:'Always OK',  items:['Treat X as 1 to expand a group','Leave X uncircled (treat as 0)','Use some Xs as 1 and others as 0 in same map'] },
@@ -1113,7 +1113,7 @@ export const DontCareTheory: React.FC<Props> = ({ isDarkMode }) => {
           ))}
         </div>
         <div className={`mt-5 p-4 rounded-2xl font-mono text-xs text-center ${isDarkMode?'bg-black/40 text-rose-300':'bg-rose-50 text-rose-700'}`}>
-          Don't Cares are written as: <strong>X</strong> or <strong>d</strong> or <strong>φ</strong> — all mean the same thing!
+          Don't Cares are written as: <strong>X</strong> or <strong>d</strong> or <strong>φ</strong> - all mean the same thing!
         </div>
       </motion.div>
     </div>
@@ -1137,7 +1137,7 @@ export const POSTheory: React.FC<Props> = ({ isDarkMode }) => {
         <span className={`font-mono text-[10px] tracking-[0.4em] uppercase ${isDarkMode?'text-violet-400':'text-violet-600'} block font-bold`}>The Mirror Approach</span>
         <h2 className={`text-3xl md:text-5xl font-black ${c.text}`}>Product of Sums (POS)</h2>
         <p className={`text-lg max-w-2xl mx-auto opacity-80 ${c.muted}`}>
-          Everything so far was <strong>SOP</strong> — we circled the 1s. POS is the mirror image: circle the <strong>0s</strong> to get an equally valid (sometimes simpler) expression.
+          Everything so far was <strong>SOP</strong> - we circled the 1s. POS is the mirror image: circle the <strong>0s</strong> to get an equally valid (sometimes simpler) expression.
         </p>
       </section>
 
@@ -1185,13 +1185,13 @@ export const POSTheory: React.FC<Props> = ({ isDarkMode }) => {
       {/* SOP vs POS overview */}
       <motion.div initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ delay:0.1 }}
         className={`p-8 rounded-[2rem] border ${c.cardBg}`}>
-        <h3 className={`text-xl font-bold ${c.text} mb-6`}>SOP vs POS — The Big Picture</h3>
+        <h3 className={`text-xl font-bold ${c.text} mb-6`}>SOP vs POS - The Big Picture</h3>
         <div className="grid md:grid-cols-2 gap-6">
           {[
-            { title:'SOP — Sum of Products', sub:'(What you already know)', color:'emerald',
+            { title:'SOP - Sum of Products', sub:'(What you already know)', color:'emerald',
               steps:['Circle groups of 1s','Each circle → AND term','OR all terms together'],
               circuit:'AND gates → OR gate', ex:'Y = AB + BC\'D' },
-            { title:'POS — Product of Sums', sub:'(The mirror approach)', color:'violet',
+            { title:'POS - Product of Sums', sub:'(The mirror approach)', color:'violet',
               steps:['Circle groups of 0s','Each circle → OR term (variables FLIPPED)','AND all terms together'],
               circuit:'OR gates → AND gate', ex:'Y = (A+B)(B\'+C)' },
           ].map(side => (
@@ -1229,9 +1229,9 @@ export const POSTheory: React.FC<Props> = ({ isDarkMode }) => {
           <p className={`text-base leading-relaxed font-medium ${isDarkMode?'text-violet-200':'text-violet-900'}`}>
             In SOP you ask: <em>"When does the light turn ON?"</em> You list all the happy conditions (1s) and say "turn on when A AND B, OR when C AND D."
             <br /><br />
-            In POS you instead ask: <em>"When does the light turn OFF?"</em> You list all the sad conditions (0s) and say "it stays OFF when NOT A or NOT B — AND when NOT C or NOT D."
+            In POS you instead ask: <em>"When does the light turn OFF?"</em> You list all the sad conditions (0s) and say "it stays OFF when NOT A or NOT B - AND when NOT C or NOT D."
             <br /><br />
-            Both fully describe the same light. One starts from the OFF conditions, the other from the ON conditions. Same house — different map.
+            Both fully describe the same light. One starts from the OFF conditions, the other from the ON conditions. Same house - different map.
           </p>
         </div>
       </motion.div>
@@ -1318,7 +1318,7 @@ export const POSTheory: React.FC<Props> = ({ isDarkMode }) => {
         <div className={`mt-5 p-5 rounded-2xl ${isDarkMode?'bg-amber-950/30 border border-amber-800/30':'bg-amber-50 border border-amber-200'}`}>
           <p className="text-amber-500 font-black text-[10px] uppercase tracking-widest mb-2">🔁 Memory Trick</p>
           <p className={`text-sm ${c.muted}`}>
-            SOP: circling 1s — constant-1 stays normal. POS: circling 0s — constant-0 stays normal (0 is "at home" in a zeros-group). The unusual value always gets complemented.
+            SOP: circling 1s - constant-1 stays normal. POS: circling 0s - constant-0 stays normal (0 is "at home" in a zeros-group). The unusual value always gets complemented.
           </p>
         </div>
       </motion.div>
@@ -1442,7 +1442,7 @@ export const POSTheory: React.FC<Props> = ({ isDarkMode }) => {
           </table>
         </div>
         <p className={`mt-4 text-xs font-mono italic text-center ${c.muted}`}>
-          For Don't Cares in POS: treat X as 0 (leave uncircled) to avoid covering real 0s — opposite of SOP where X→1.
+          For Don't Cares in POS: treat X as 0 (leave uncircled) to avoid covering real 0s - opposite of SOP where X→1.
         </p>
       </motion.div>
 

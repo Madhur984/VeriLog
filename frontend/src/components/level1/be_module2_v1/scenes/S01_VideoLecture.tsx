@@ -10,14 +10,14 @@ interface Chapter { t: number; title: string; line: string; }
 const VIDEO_SRC = '/videos/Semiconductor_Physics.mp4';
 
 const CHAPTERS: Chapter[] = [
-  { t: 0,   title: 'Welcome to the Tapri', line: 'Forget the textbook. We use hostels and tapris to build intuition for what silicon actually does. The vocabulary maps 1-to-1 — only the metaphor changes.' },
-  { t: 30,  title: 'Pure Silicon · Good Boys', line: '14 electrons, 4 in the valence shell. Each atom shares its 4 electrons with 4 neighbours forming covalent bonds. Stable. Static. Net current zero — boring.' },
+  { t: 0,   title: 'Welcome to the Tapri', line: 'Forget the textbook. We use hostels and tapris to build intuition for what silicon actually does. The vocabulary maps 1-to-1 - only the metaphor changes.' },
+  { t: 30,  title: 'Pure Silicon · Good Boys', line: '14 electrons, 4 in the valence shell. Each atom shares its 4 electrons with 4 neighbours forming covalent bonds. Stable. Static. Net current zero - boring.' },
   { t: 80,  title: 'Hostel vs Tapri', line: 'Valence band = the disciplined hostel. Conduction band = the lively tapri across the hill. The vertical gap between them is Eg ≈ 1.1 eV for silicon.' },
   { t: 130, title: 'The Jump', line: 'Heat or light gives some electrons enough energy to jump the gap. Each jump leaves behind a hole. At room temperature you get ~1.5 × 10¹⁰ free carriers per cm³.' },
   { t: 180, title: 'Pure Si is Too Slow', line: 'One free electron per 10¹² atoms is nowhere near enough for fast electronics. Time for jugaad: doping.' },
-  { t: 220, title: 'N-Type · 5-Friend Squad', line: 'Add a Group V impurity (P, As, Sb) — pentavalent. 4 electrons bond, the 5th is a free awara electron. Donor atom. Majority carrier = electron.' },
-  { t: 270, title: 'P-Type · 3-Friend Squad', line: 'Add a Group III impurity (B, Ga, In) — trivalent. One bond is missing → that vacancy is the hole. Acceptor atom. Majority carrier = hole.' },
-  { t: 320, title: 'Electron Flow vs Hole Flow', line: 'Holes don\'t actually move — electrons keep filling them. Conventional current direction always follows the apparent hole flow (positive to negative).' },
+  { t: 220, title: 'N-Type · 5-Friend Squad', line: 'Add a Group V impurity (P, As, Sb) - pentavalent. 4 electrons bond, the 5th is a free awara electron. Donor atom. Majority carrier = electron.' },
+  { t: 270, title: 'P-Type · 3-Friend Squad', line: 'Add a Group III impurity (B, Ga, In) - trivalent. One bond is missing → that vacancy is the hole. Acceptor atom. Majority carrier = hole.' },
+  { t: 320, title: 'Electron Flow vs Hole Flow', line: 'Holes don\'t actually move - electrons keep filling them. Conventional current direction always follows the apparent hole flow (positive to negative).' },
   { t: 370, title: 'The Neutrality Twist', line: 'N-type isn\'t negative; P-type isn\'t positive. The atoms still have equal protons and electrons. Carriers are just free, not extra.' },
   { t: 410, title: 'Negative Temperature Coefficient', line: 'Heat increases broken bonds → more carriers → lower resistance. Opposite to metals. This is the semiconductor\'s superpower.' },
   { t: 460, title: 'Tease · The P-N Junction', line: 'Now sandwich an N-Type slab to a P-Type slab. Diffusion. Drift. The depletion region. The diode. Onward.' },

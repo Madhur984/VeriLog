@@ -9,7 +9,7 @@ const PARAGRAPHS = [
   {
     id: 'reality',
     text: `I'm Kriten. I'm pursuing BTech ECE from a tier‑3 college.
-I didn't choose this branch — I ended up here after missing the CS cutoff.
+I didn't choose this branch - I ended up here after missing the CS cutoff.
 Most of my classmates had the same story. In the first semester,
 half the class was already planning to "switch to IT" after graduation.
 Nobody was talking about what ECE could become. Nobody was showing us.`,
@@ -18,7 +18,7 @@ Nobody was talking about what ECE could become. Nobody was showing us.`,
     id: 'discovery',
     text: `In my third year, I accidentally came across the term "VLSI Design."
 I looked it up. I kept reading for three hours.
-I had no idea that the chips inside every phone, every laptop, every EV —
+I had no idea that the chips inside every phone, every laptop, every EV -
 they are designed by ECE engineers. By people with degrees exactly like mine.
 My degree could do this. Nobody had told me. For two years, nobody had told me.`,
   },
@@ -34,7 +34,7 @@ that were never meant to fit together.`,
   {
     id: 'decision',
     text: `I told Madhur. He saw the same gap I did.
-He took my rough ideas — a scribbled notebook, some broken HTML files —
+He took my rough ideas - a scribbled notebook, some broken HTML files -
 and built them into something real. From scratch. No boilerplate.
 No templates. Just code and intent.
 Kartik was in the loop from day one, keeping us together when the project
@@ -44,7 +44,7 @@ felt too big and our code felt too broken.`,
     id: 'mission',
     text: `We tried. We failed. We rebuilt. We tried again.
 That is what engineers do. We build.
-This platform isn't just a learning tool — it's our answer to the question
+This platform isn't just a learning tool - it's our answer to the question
 nobody asked us: what would you have needed when you were lost?
 And it's our small contribution to something bigger:
 building India's semiconductor talent, indigenously, from the inside.`,
@@ -54,7 +54,7 @@ building India's semiconductor talent, indigenously, from the inside.`,
     text: `AXE‑OR is still early. Some modules are done.
 Many more are being built. But the promise is already live:
 if you're an ECE student anywhere in India, you can start
-learning VLSI fundamentals today — for free — without a lab,
+learning VLSI fundamentals today - for free - without a lab,
 without expensive software, without a well-connected college.
 That gap is what we're closing. One module at a time.`,
   },
@@ -135,7 +135,7 @@ export const FounderStory: React.FC = () => {
             className="text-sm font-mono space-y-1"
             style={{ color: '#475569' }}
           >
-            <div style={{ color: '#F1F5F9', fontWeight: 600 }}>— KRITEN</div>
+            <div style={{ color: '#F1F5F9', fontWeight: 600 }}>- KRITEN</div>
             <div>Founder, AXE‑OR</div>
             <div className="text-xs italic" style={{ color: '#475569' }}>
               Building what I needed and couldn't find.

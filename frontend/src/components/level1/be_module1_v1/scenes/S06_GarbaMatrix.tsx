@@ -120,7 +120,7 @@ export const S06_GarbaMatrix: React.FC<Props> = ({ isActive, isDarkMode }) => {
         <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>The Garba Matrix</h2>
         <p className={`text-base max-w-3xl ${subText}`}>
           In a pure (intrinsic) Silicon crystal, every atom forms bonds with <strong>four neighbours</strong>,
-          sharing one electron each — a perfectly synchronised dance. Picture it as a Garba: each dancer
+          sharing one electron each - a perfectly synchronised dance. Picture it as a Garba: each dancer
           holds two hands, each pair is one shared electron pair, and the entire floor moves as one.
         </p>
       </section>
@@ -183,7 +183,7 @@ export const S06_GarbaMatrix: React.FC<Props> = ({ isActive, isDarkMode }) => {
                   <strong className="text-sky-300">perfect insulator</strong>. Resistance approaches infinity.</>
                 ) : (
                   <>At room temperature the dance is alive. Yellow dots are the shared electrons hopping
-                  between paired atoms — the bonds. Each Silicon shares one electron with each of its four
+                  between paired atoms - the bonds. Each Silicon shares one electron with each of its four
                   neighbours, completing an effective octet through partnership.</>
                 )}
               </p>
@@ -218,7 +218,7 @@ export const S06_GarbaMatrix: React.FC<Props> = ({ isActive, isDarkMode }) => {
       >
         <p className={`text-base leading-relaxed ${textColor}`}>
           The Garba is the foundation of every silicon device on Earth. Now flip the toggle back to{' '}
-          <strong className="text-pink-300">Room Temp</strong> and watch the next chapter — when the dhol
+          <strong className="text-pink-300">Room Temp</strong> and watch the next chapter - when the dhol
           drops, dancers break loose and the magic begins.
         </p>
       </motion.div>

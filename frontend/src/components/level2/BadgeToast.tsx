@@ -1,5 +1,5 @@
 /**
- * BadgeToast.tsx — Slide-up badge award notification
+ * BadgeToast.tsx - Slide-up badge award notification
  *
  * Fixed bottom-center, framer-motion animation, auto-dismisses in 3.5s.
  */

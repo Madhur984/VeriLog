@@ -19,7 +19,7 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
       >
         <img
           src="/images/commuter/p01.webp"
-          alt="The Commuter Circuit — P-N junction demystified"
+          alt="The Commuter Circuit - P-N junction demystified"
           className="absolute inset-0 w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#020812] via-transparent to-transparent opacity-80" />
@@ -50,13 +50,13 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
           transition={{ delay: 0.2 }}
           className={`text-lg md:text-xl max-w-2xl mx-auto ${subText}`}
         >
-          The P-N junction explained through Mumbai Local — crowded platforms, locked doors,
+          The P-N junction explained through Mumbai Local - crowded platforms, locked doors,
           massive boarding, and a chaotic stampede. Every diode operating mode mapped to a
           rush-hour scenario that <em>actually</em> sticks.
         </motion.p>
       </section>
 
-      {/* Story arc — 4 modes */}
+      {/* Story arc - 4 modes */}
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.3 }}

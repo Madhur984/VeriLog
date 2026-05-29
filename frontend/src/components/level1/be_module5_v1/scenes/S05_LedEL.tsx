@@ -40,8 +40,8 @@ export const S05_LedEL: React.FC<Props> = ({ isActive, isDarkMode }) => {
         </h2>
         <p className={`text-base max-w-3xl ${subText}`}>
           In forward bias the electron from the conduction band falls into a hole in the valence
-          band. The energy difference — exactly the band gap{' '}
-          <span className="font-mono text-amber-300">E_g</span> — leaves as a photon. Wavelength{' '}
+          band. The energy difference - exactly the band gap{' '}
+          <span className="font-mono text-amber-300">E_g</span> - leaves as a photon. Wavelength{' '}
           <span className="font-mono text-amber-300">λ = h·c / E_g</span>.
         </p>
       </motion.section>
@@ -60,7 +60,7 @@ export const S05_LedEL: React.FC<Props> = ({ isActive, isDarkMode }) => {
         <p className={`text-sm ${subText} leading-relaxed`}>
           Think of a <strong>bunk bed</strong>. The blue circle (electron) is sitting on the top
           bunk. The pink circle (hole) is an empty spot on the bottom bunk. When the electron
-          jumps DOWN to fill the hole, it has extra energy from the fall — and it lets that
+          jumps DOWN to fill the hole, it has extra energy from the fall - and it lets that
           energy out as a <strong>tiny flash of light</strong> (the photon).
         </p>
         <p className={`mt-2 text-sm ${subText}`}>
@@ -125,7 +125,7 @@ export const S05_LedEL: React.FC<Props> = ({ isActive, isDarkMode }) => {
               )}
             </AnimatePresence>
 
-            {/* Photon emission — wavy line */}
+            {/* Photon emission - wavy line */}
             {biased && (
               <motion.g
                 animate={{ x: [0, 80], opacity: [0, 1, 0] }}
@@ -199,7 +199,7 @@ export const S05_LedEL: React.FC<Props> = ({ isActive, isDarkMode }) => {
               color: biased ? '#22c55e' : '#94a3b8',
             }}
           >
-            {biased ? <><Pause size={14} /> Bias active — pause</> : <><Play size={14} /> Bias OFF — resume</>}
+            {biased ? <><Pause size={14} /> Bias active - pause</> : <><Play size={14} /> Bias OFF - resume</>}
           </button>
         </div>
       </motion.div>
@@ -255,7 +255,7 @@ export const S05_LedEL: React.FC<Props> = ({ isActive, isDarkMode }) => {
         <div className="font-mono text-[10px] uppercase tracking-widest text-amber-300 mb-2">Where you&apos;ll meet this</div>
         <ul className={`text-sm ${subText} space-y-1`}>
           <li>▸ Every status indicator on every device you own.</li>
-          <li>▸ LED display backlights — white LEDs are blue LEDs coated with yellow phosphor.</li>
+          <li>▸ LED display backlights - white LEDs are blue LEDs coated with yellow phosphor.</li>
           <li>▸ Infrared remotes (E_g chosen for invisible IR).</li>
           <li>▸ Laser diodes (same physics, narrower spectral width).</li>
         </ul>

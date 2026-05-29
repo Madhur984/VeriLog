@@ -203,7 +203,7 @@ export const S05_HalfWave: React.FC<Props> = ({ isActive, isDarkMode }) => {
         </div>
         <p className={`text-sm ${subText} mb-3`}>
           Exactly half of every input cycle hits the closed valve and is wasted as heat or simply
-          dissipated. We have unidirectional flow — but the efficiency is poor and the output is
+          dissipated. We have unidirectional flow - but the efficiency is poor and the output is
           full of holes.
         </p>
         <div className="grid sm:grid-cols-3 gap-3">

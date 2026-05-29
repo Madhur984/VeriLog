@@ -1,5 +1,5 @@
 /**
- * CPUEngine.ts — CPU Simulation Engine
+ * CPUEngine.ts - CPU Simulation Engine
  *
  * Simulates a simplified RISC-V inspired processor:
  * - 32 registers (x0 hardwired to 0)
@@ -206,7 +206,7 @@ export class CPUEngine {
 
     private stageDecode(reg: PipelineRegister): void {
         if (!reg.valid || !reg.instruction) return;
-        // Register reads happen in decode — already done by decode()
+        // Register reads happen in decode - already done by decode()
     }
 
     private stageExecute(reg: PipelineRegister): void {
@@ -264,7 +264,7 @@ export class CPUEngine {
                 hazards.push({
                     type: 'control',
                     stage: 'ID',
-                    description: `Branch/jump: ${pl.ID.instruction.mnemonic} — next instruction uncertain`,
+                    description: `Branch/jump: ${pl.ID.instruction.mnemonic} - next instruction uncertain`,
                     resolution: 'flush',
                 });
             }

@@ -74,7 +74,7 @@ export const M2_S18_Closing: React.FC<M2ScreenProps> = ({ triggerHaptic }) => {
   const SUMMARY = [
     { key: 'Analog', value: 'Continuous. Infinite resolution. Noise-vulnerable.' },
     { key: 'Digital', value: 'Discrete. Finite levels. Noise immune.' },
-    { key: 'Nyquist', value: 'fs ≥ 2f — or aliasing corrupts the signal.' },
+    { key: 'Nyquist', value: 'fs ≥ 2f - or aliasing corrupts the signal.' },
     { key: 'Quantization', value: '2^n levels. More bits = less error.' },
     { key: 'ADC', value: 'Samples → Quantizes → Encodes to binary.' },
   ];

@@ -80,7 +80,7 @@ export const M2_S05_FrequencyControl: React.FC<M2ScreenProps> = ({ triggerHaptic
           style={{ padding: '12px 16px', border: `1px solid ${T.interact}30`, borderRadius: 2, background: `${T.interact}06` }}
         >
           <p style={{ fontFamily: T.mono, fontSize: 10, color: T.interact, margin: 0 }}>
-            ⚡ High frequency — you'll need a faster sampler to capture this correctly.
+            ⚡ High frequency - you'll need a faster sampler to capture this correctly.
           </p>
         </motion.div>
       )}

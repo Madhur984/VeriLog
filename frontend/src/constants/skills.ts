@@ -1,5 +1,5 @@
 /**
- * constants/skills.ts — Engineering Skill Tree Data
+ * constants/skills.ts - Engineering Skill Tree Data
  */
 
 export type SkillDomain = 'foundations' | 'digital' | 'hdl' | 'hardware';
@@ -25,7 +25,7 @@ export const SKILLS: SkillNode[] = [
     // Tier 2
     { id: 'analog-digital', title: 'Analog vs Digital', tier: 2, domain: 'foundations', xpRequired: 50, prerequisites: ['signals'], route: '/module/3', description: 'Continuous signals vs. discrete binary representation.', x: 300, y: 300 },
     { id: 'binary', title: 'Binary Systems', tier: 2, domain: 'digital', xpRequired: 80, prerequisites: ['analog-digital'], route: '/module/3', description: 'Number bases, 2\'s complement, binary arithmetic.', x: 500, y: 200 },
-    { id: 'logic-gates', title: 'Logic Gates', tier: 2, domain: 'digital', xpRequired: 80, prerequisites: ['analog-digital'], route: '/circuit-lab', description: 'AND, OR, NOT, NAND, NOR, XOR — gate library unlocked.', x: 500, y: 400 },
+    { id: 'logic-gates', title: 'Logic Gates', tier: 2, domain: 'digital', xpRequired: 80, prerequisites: ['analog-digital'], route: '/circuit-lab', description: 'AND, OR, NOT, NAND, NOR, XOR - gate library unlocked.', x: 500, y: 400 },
 
     // Tier 3
     { id: 'boolean', title: 'Boolean Algebra', tier: 3, domain: 'digital', xpRequired: 150, prerequisites: ['binary', 'logic-gates'], description: 'De Morgan\'s laws, minimization, Karnaugh maps.', x: 700, y: 300 },

@@ -1,5 +1,5 @@
 /*
- * K-Map Lab styles — scoped under .kmap-lab-root so they only apply on this page.
+ * K-Map Lab styles - scoped under .kmap-lab-root so they only apply on this page.
  * (Tailwind base/components/utilities are already loaded once globally by the host
  * frontend at index.css, so we don't redeclare them here.)
  */

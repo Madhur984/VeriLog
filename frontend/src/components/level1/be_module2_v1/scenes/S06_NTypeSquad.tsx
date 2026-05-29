@@ -19,7 +19,7 @@ export const S06_NTypeSquad: React.FC<Props> = ({ isActive, isDarkMode }) => {
         <p className={`text-base max-w-3xl ${subText}`}>
           Replace one Si atom with a <strong className="text-orange-300">pentavalent</strong>{' '}
           impurity (P, As, Sb). Four electrons join the existing covalent bonds; the
-          <strong className="text-orange-300"> 5th electron has nowhere to bond</strong> — it
+          <strong className="text-orange-300"> 5th electron has nowhere to bond</strong> - it
           drifts straight up to the conduction band as a free carrier.
         </p>
       </section>
@@ -41,7 +41,7 @@ export const S06_NTypeSquad: React.FC<Props> = ({ isActive, isDarkMode }) => {
         >
           <div className="font-mono text-[10px] uppercase tracking-widest text-orange-400">The Chemistry</div>
           <p className={`text-sm ${subText} leading-relaxed`}>
-            We dope silicon with a Group V element — that&apos;s 5 valence electrons. Four of
+            We dope silicon with a Group V element - that&apos;s 5 valence electrons. Four of
             them form normal covalent bonds with neighbours. The 5th is loosely bound and
             <strong className="text-orange-300"> immediately enters the conduction band</strong>.
           </p>
@@ -81,7 +81,7 @@ export const S06_NTypeSquad: React.FC<Props> = ({ isActive, isDarkMode }) => {
             </g>
           ))}
 
-          {/* Donor atom (Phosphorus) — at center */}
+          {/* Donor atom (Phosphorus) - at center */}
           <circle cx="360" cy="200" r="26" fill="#fb923c30" stroke="#fb923c" strokeWidth="3" />
           <text x="360" y="205" fontFamily="monospace" fontSize="14" fill="#fb923c" textAnchor="middle" fontWeight="bold">P</text>
           <text x="360" y="170" fontFamily="monospace" fontSize="10" fill="#fb923c" textAnchor="middle">donor</text>
@@ -92,7 +92,7 @@ export const S06_NTypeSquad: React.FC<Props> = ({ isActive, isDarkMode }) => {
           <line x1="360" y1="178" x2="360" y2="105" stroke="#22d3ee" strokeWidth="2" />
           <line x1="360" y1="222" x2="360" y2="295" stroke="#22d3ee" strokeWidth="2" />
 
-          {/* The free 5th electron — released */}
+          {/* The free 5th electron - released */}
           <motion.circle
             r="9" fill="#fb923c"
             animate={{ cx: [400, 540, 580, 480, 400], cy: [180, 130, 250, 290, 180] }}
@@ -145,17 +145,17 @@ export const S06_NTypeSquad: React.FC<Props> = ({ isActive, isDarkMode }) => {
           <div className={`p-5 rounded-2xl border-2 border-orange-400 bg-orange-500/10`}>
             <div className="font-mono text-[10px] uppercase tracking-widest text-orange-300 mb-2">Majority</div>
             <h4 className={`text-2xl font-black text-orange-300`}>Electrons</h4>
-            <p className={`text-xs ${subText} mt-2`}>The VVIPs — abundant and active. Provide the bulk of conduction.</p>
+            <p className={`text-xs ${subText} mt-2`}>The VVIPs - abundant and active. Provide the bulk of conduction.</p>
           </div>
           <div className={`p-5 rounded-2xl border ${isDarkMode ? 'bg-black/30 border-white/10' : 'bg-slate-50 border-slate-200'}`}>
             <div className="font-mono text-[10px] uppercase tracking-widest text-fuchsia-300 mb-2">Minority</div>
             <h4 className={`text-2xl font-black text-fuchsia-300`}>Holes</h4>
-            <p className={`text-xs ${subText} mt-2`}>The sidekicks — small thermal-generation population still present.</p>
+            <p className={`text-xs ${subText} mt-2`}>The sidekicks - small thermal-generation population still present.</p>
           </div>
           <div className={`p-5 rounded-2xl border ${isDarkMode ? 'bg-black/30 border-white/10' : 'bg-slate-50 border-slate-200'}`}>
             <div className="font-mono text-[10px] uppercase tracking-widest text-orange-400 mb-2">Result</div>
             <h4 className={`text-2xl font-black ${textColor}`}>N-Type</h4>
-            <p className={`text-xs ${subText} mt-2`}>Conductivity dominated by negative carriers — hence the &quot;N&quot;.</p>
+            <p className={`text-xs ${subText} mt-2`}>Conductivity dominated by negative carriers - hence the &quot;N&quot;.</p>
           </div>
         </div>
       </motion.div>

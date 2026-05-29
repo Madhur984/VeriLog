@@ -76,7 +76,7 @@ export const S02_Signal: React.FC = () => {
                 </div>
                 <p className="text-xs leading-relaxed text-white/40 mb-6">
                     Signals are classified by our ability to predict them. A **Deterministic** signal has no uncertainty; we can calculate its value at any moment with a formula. 
-                    A **Random** signal (Stochastic) is unpredictable—we can only describe it using statistics and averages.
+                    A **Random** signal (Stochastic) is unpredictable-we can only describe it using statistics and averages.
                 </p>
                 <div className="flex gap-3">
                     <span className="px-3 py-1 bg-v3-cyan/5 border border-v3-cyan/20 text-[8px] font-bold text-v3-cyan tracking-widest uppercase">Predictable</span>

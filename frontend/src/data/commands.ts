@@ -1,5 +1,5 @@
 /**
- * commands.ts — Command registry for the Engineering Workbench
+ * commands.ts - Command registry for the Engineering Workbench
  *
  * Each command has an id, label, category, shortcut hint, and action callback.
  * Used by the Command Palette for fuzzy-search execution.

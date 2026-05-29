@@ -6,9 +6,9 @@ interface UseDragOptions {
     onDragEnd?: (finalPosition: Position) => void;
     onDragMove?: (position: Position) => void;
     canvasBounds?: React.RefObject<SVGSVGElement | null>;
-    /** ID of the component being dragged — used for animation events */
+    /** ID of the component being dragged - used for animation events */
     compId?: string;
-    /** Current list of all components — used for magnetic assist proximity calc */
+    /** Current list of all components - used for magnetic assist proximity calc */
     components?: CircuitComponent[];
 }
 

@@ -1,5 +1,5 @@
 /**
- * KMapChallenges.tsx — Scene 5.4: 6 K-Map optimization challenges.
+ * KMapChallenges.tsx - Scene 5.4: 6 K-Map optimization challenges.
  *
  * Features:
  * - 6 challenges across 3 difficulty tiers  
@@ -236,7 +236,7 @@ export const KMapChallenges: React.FC<Props> = ({ onComplete, submitChallenge, c
             {/* Header */}
             <div className="text-center">
                 <span className="text-[9px] tracking-[0.25em] uppercase text-sky-500 font-black block mb-3">
-                    Scene 5.4 — Optimization Challenges
+                    Scene 5.4 - Optimization Challenges
                 </span>
                 <h2 className="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tighter m-0">Hardware LeetCode</h2>
                 <p className="text-slate-500 dark:text-slate-400 text-sm mt-4 font-sans font-medium italic">

@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Cpu, Moon, Sun, ArrowRight, ArrowLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { DrawerShell, HamburgerButton } from '../_shared/MobileDrawer';
 
 // --- Scene Components (clean study-focused Verilog scenes) ---
 import {
@@ -35,9 +37,9 @@ interface Page {
 }
 
 // ─── CURRICULUM ────────────────────────────────────────────────────────────────
-// L5 · Verilog Core: focused HDL fundamentals — concept → write → time → verify → bridge
+// L5 · Verilog Core: focused HDL fundamentals - concept → write → time → verify → bridge
 const PAGES: Page[] = [
-  // PART I · LANGUAGE FOUNDATION — Why a Hardware Description Language exists
+  // PART I · LANGUAGE FOUNDATION - Why a Hardware Description Language exists
   {
     id: 'what-is-hdl', part: 'PART I · LANGUAGE FOUNDATION', partNum: 1,
     label: 'What is HDL?',
@@ -60,7 +62,7 @@ const PAGES: Page[] = [
     Component: SceneOriginStory,
   },
 
-  // PART II · WRITING VERILOG — Module syntax, encapsulation, hierarchy
+  // PART II · WRITING VERILOG - Module syntax, encapsulation, hierarchy
   {
     id: 'first-verilog', part: 'PART II · WRITING VERILOG', partNum: 2,
     label: 'First Verilog Module',
@@ -83,11 +85,11 @@ const PAGES: Page[] = [
     Component: SceneHierarchy,
   },
 
-  // PART III · BEHAVIOR & TIMING — concurrent execution, combinational vs sequential, clocks
+  // PART III · BEHAVIOR & TIMING - concurrent execution, combinational vs sequential, clocks
   {
     id: 'parallel', part: 'PART III · BEHAVIOR & TIMING', partNum: 3,
     label: 'Parallel Execution',
-    subtitle: 'Hardware runs concurrently — every always block runs at once.',
+    subtitle: 'Hardware runs concurrently - every always block runs at once.',
     accentHex: '#a78bfa',
     Component: SceneParallel,
   },
@@ -115,7 +117,7 @@ const PAGES: Page[] = [
   {
     id: 'posedge', part: 'PART III · BEHAVIOR & TIMING', partNum: 3,
     label: 'Positive Edge Triggering',
-    subtitle: 'always @(posedge clk) — sample on the rising edge.',
+    subtitle: 'always @(posedge clk) - sample on the rising edge.',
     accentHex: '#a78bfa',
     Component: ScenePosedge,
   },
@@ -134,7 +136,7 @@ const PAGES: Page[] = [
     Component: SceneResetPreset,
   },
 
-  // PART IV · VERIFICATION — testbenches, simulation, the gap to silicon
+  // PART IV · VERIFICATION - testbenches, simulation, the gap to silicon
   {
     id: 'testbench', part: 'PART IV · VERIFICATION', partNum: 4,
     label: 'Testbench Basics',
@@ -152,12 +154,12 @@ const PAGES: Page[] = [
   {
     id: 'sim-vs-real', part: 'PART IV · VERIFICATION', partNum: 4,
     label: 'Simulation vs Reality',
-    subtitle: 'What simulators model — and what they miss.',
+    subtitle: 'What simulators model - and what they miss.',
     accentHex: '#f59e0b',
     Component: SceneSimVsReal,
   },
 
-  // PART V · GATEWAY — RTL → Gates and the engineer's mindset
+  // PART V · GATEWAY - RTL → Gates and the engineer's mindset
   {
     id: 'synthesis', part: 'PART V · GATEWAY', partNum: 5,
     label: 'Synthesis Flow',
@@ -289,7 +291,7 @@ const Sidebar: React.FC<{
             />
           </div>
         </div>
-        <button onClick={toggleTheme} className={`h-12 w-full rounded-2xl border flex items-center justify-center gap-3 text-[10px] font-black uppercase tracking-widest transition-all ${isDarkMode ? 'border-white/10 text-slate-400 hover:bg-white/5' : 'border-slate-200 text-slate-600 hover:bg-slate-100'}`}>{isDarkMode ? <Sun size={14} /> : <Moon size={14} />} {isDarkMode ? 'Light Mode' : 'Dark Mode'}</button>
+        <button onClick={toggleTheme} className={`hidden h-12 w-full rounded-2xl border flex items-center justify-center gap-3 text-[10px] font-black uppercase tracking-widest transition-all ${isDarkMode ? 'border-white/10 text-slate-400 hover:bg-white/5' : 'border-slate-200 text-slate-600 hover:bg-slate-100'}`}>{isDarkMode ? <Sun size={14} /> : <Moon size={14} />} {isDarkMode ? 'Light Mode' : 'Dark Mode'}</button>
       </footer>
     </div>
   );
@@ -298,7 +300,9 @@ const Sidebar: React.FC<{
 export const Module5Engine: React.FC<{
   isDarkMode: boolean; onThemeToggle: () => void;
 }> = ({ isDarkMode, onThemeToggle }) => {
+  const navigate = useNavigate();
   const [current, setCurrent] = useState(0);
+  const [navOpen, setNavOpen] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
 
   const go = useCallback((dir: number) => {
@@ -336,13 +340,18 @@ export const Module5Engine: React.FC<{
         />
       </div>
 
-      <Sidebar current={current} isDarkMode={isDarkMode} onChange={setCurrent} toggleTheme={onThemeToggle} theme={theme} />
+      <DrawerShell open={navOpen} onClose={() => setNavOpen(false)}>
+        <Sidebar current={current} isDarkMode={isDarkMode} onChange={(i) => { setCurrent(i); setNavOpen(false); }} toggleTheme={onThemeToggle} theme={theme} />
+      </DrawerShell>
 
       <div className="flex-1 flex flex-col h-full overflow-hidden relative z-10">
-        <header className="h-20 border-b flex items-center justify-between px-12 z-10" style={{ borderColor: isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }}>
-          <div className="flex flex-col">
-            <span className="text-[10px] font-mono uppercase tracking-[0.4em] font-bold transition-colors duration-500" style={{ color: theme.primary }}>{page.part}</span>
-            <h2 className={`text-xl font-bold tracking-tight ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{page.label}</h2>
+        <header className="h-16 lg:h-20 border-b flex items-center justify-between px-4 lg:px-12 z-10 gap-3" style={{ borderColor: isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }}>
+          <div className="flex items-center gap-3 min-w-0">
+            <HamburgerButton isDarkMode={isDarkMode} onClick={() => setNavOpen(true)} />
+            <div className="flex flex-col min-w-0">
+              <span className="text-[10px] font-mono uppercase tracking-[0.4em] font-bold transition-colors duration-500" style={{ color: theme.primary }}>{page.part}</span>
+              <h2 className={`text-base lg:text-xl font-bold tracking-tight truncate ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{page.label}</h2>
+            </div>
           </div>
           <div className="hidden md:flex items-center gap-8">
             <div className="text-right">
@@ -361,26 +370,25 @@ export const Module5Engine: React.FC<{
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
               transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-              className="max-w-5xl mx-auto px-12 py-24"
+              className="max-w-5xl mx-auto px-4 py-10 lg:px-12 lg:py-24"
             >
               <Component accent={page.accentHex} />
             </motion.div>
           </AnimatePresence>
         </div>
 
-        <footer className="h-24 border-t flex items-center justify-between px-12 z-10" style={{ borderColor: isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }}>
-          <button disabled={current === 0} onClick={() => go(-1)} className={`flex items-center gap-2 px-8 py-3 rounded-2xl font-bold transition-all ${current === 0 ? 'opacity-20 cursor-not-allowed' : 'hover:bg-black/5 active:scale-95'} ${isDarkMode ? 'text-white' : 'text-slate-900'}`}><ArrowLeft size={18} /> Back</button>
+        <footer className="h-20 lg:h-24 border-t flex items-center justify-between px-4 lg:px-12 z-10 gap-3" style={{ borderColor: isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }}>
+          <button onClick={() => { if (current === 0) { navigate('/portal'); } else { go(-1); } }} className={`flex items-center gap-2 px-4 lg:px-8 py-3 rounded-2xl font-bold transition-all hover:bg-black/5 active:scale-95 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}><ArrowLeft size={18} /> Back</button>
           <div className="hidden sm:block text-center">
             <span className="text-[10px] font-mono uppercase tracking-widest opacity-30 block mb-1">Up Next</span>
             <span className={`text-sm font-bold opacity-70 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{current < PAGES.length - 1 ? PAGES[current + 1].label : 'Module Complete'}</span>
           </div>
           <button
-            onClick={() => go(1)}
-            disabled={current === PAGES.length - 1}
-            className={`flex items-center gap-2 px-10 py-3 rounded-2xl font-black text-black transition-all duration-500 active:scale-95 ${current === PAGES.length - 1 ? 'bg-slate-800 text-slate-500' : ''}`}
+            onClick={() => { if (current === PAGES.length - 1) { navigate('/portal'); } else { go(1); } }}
+            className="flex items-center gap-2 px-5 lg:px-10 py-3 rounded-2xl font-black text-black transition-all duration-500 active:scale-95"
             style={{
-              backgroundColor: current === PAGES.length - 1 ? undefined : theme.primary,
-              boxShadow: current === PAGES.length - 1 ? undefined : `0 10px 30px ${theme.primary}33`
+              backgroundColor: theme.primary,
+              boxShadow: `0 10px 30px ${theme.primary}33`
             }}
           >
             {current === PAGES.length - 1 ? 'Complete' : 'Next Step'} <ArrowRight size={18} />

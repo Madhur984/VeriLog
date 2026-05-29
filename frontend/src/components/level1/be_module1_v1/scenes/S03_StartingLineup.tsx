@@ -37,7 +37,7 @@ const AtomDiagram: React.FC<{ shells: number[]; symbol: string; color: string }>
   );
 };
 
-// GaAs has a different visualisation — a diatomic molecule
+// GaAs has a different visualisation - a diatomic molecule
 const GaAsDiagram: React.FC = () => (
   <svg viewBox="0 0 200 200" className="w-full h-44">
     <defs>
@@ -137,7 +137,7 @@ export const S03_StartingLineup: React.FC<Props> = ({ isActive, isDarkMode }) =>
         </div>
         <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>The Starting Lineup</h2>
         <p className={`text-base max-w-3xl ${subText}`}>
-          Three semiconductor materials power most of modern electronics. Meet the team — each one
+          Three semiconductor materials power most of modern electronics. Meet the team - each one
           with its own personality, strengths, and signature use case.
         </p>
       </section>

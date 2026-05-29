@@ -8,7 +8,7 @@ export interface HeroScrollEntryProps {
 export const HeroScrollEntry = ({ title, subtitle }: HeroScrollEntryProps) => {
     const { scrollYProgress } = useScroll();
 
-    // Map scroll progress (0–10%) to opacity and vertical movement
+    // Map scroll progress (0-10%) to opacity and vertical movement
     // Opacity: [0, 0.05, 0.1] -> [1, 1, 0]
     // y: [0, 0.1] -> [0, -40]
     const opacity = useTransform(scrollYProgress, [0, 0.05, 0.13], [1, 1, 0]);

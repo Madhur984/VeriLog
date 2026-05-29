@@ -1,5 +1,5 @@
 /**
- * useLogicStudio.ts — Bridge between React and MURE engine
+ * useLogicStudio.ts - Bridge between React and MURE engine
  *
  * Manages the engine instance, canvas state, selected nodes,
  * and provides actions for the Digital Logic Studio.

@@ -1,5 +1,5 @@
 /**
- * KMapIntro.tsx — Scene 5.1: Animated concept introduction for Karnaugh Maps.
+ * KMapIntro.tsx - Scene 5.1: Animated concept introduction for Karnaugh Maps.
  *
  * Visual flow:
  * 1. Truth table fades in row by row
@@ -67,13 +67,13 @@ export const KMapIntro: React.FC<Props> = ({ onComplete }) => {
             <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
                 className="text-center">
                 <span className="text-[9px] uppercase tracking-[0.25em] text-sky-500 font-black block mb-2">
-                    Scene 5.1 — Concept Introduction
+                    Scene 5.1 - Concept Introduction
                 </span>
                 <h2 className="text-3xl font-black text-slate-900 italic tracking-tighter margin-0 uppercase">
                     Why Karnaugh Maps?
                 </h2>
                 <p className="text-slate-400 text-sm mt-4 max-w-xl mx-auto font-sans font-bold leading-relaxed italic">
-                    "Watch how truth table rows map directly into K-Map cells — exposing hidden patterns that eliminate redundant logic."
+                    "Watch how truth table rows map directly into K-Map cells - exposing hidden patterns that eliminate redundant logic."
                 </p>
             </motion.div>
 
@@ -176,7 +176,7 @@ export const KMapIntro: React.FC<Props> = ({ onComplete }) => {
                         <div>
                             <div className="text-[10px] text-sky-500 font-black uppercase tracking-widest mb-2">Logic Analyst · Engineering Insight</div>
                             <div className="text-sm font-bold text-slate-600 leading-relaxed italic">
-                                "Notice how all four 1s in the K-Map are adjacent. A single group of 4 cells eliminates two variables entirely — turning a 3-input AND-OR expression into a single wire. <span className="text-sky-500 font-black">F = C.</span>"
+                                "Notice how all four 1s in the K-Map are adjacent. A single group of 4 cells eliminates two variables entirely - turning a 3-input AND-OR expression into a single wire. <span className="text-sky-500 font-black">F = C.</span>"
                             </div>
                         </div>
                     </motion.div>

@@ -81,7 +81,7 @@ export const DAILY_GALLERY = [
 ];
 
 // ----------------------------------------------------------------------
-// LABORATORY INSTRUMENTATION (v8 — DEEP DIVE EDITION)
+// LABORATORY INSTRUMENTATION (v8 - DEEP DIVE EDITION)
 // ----------------------------------------------------------------------
 
 export const KineticText: React.FC<{ text: string }> = ({ text }) => {

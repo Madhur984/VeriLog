@@ -21,7 +21,7 @@ export const quizQuestions: QuizQuestion[] = [
 
   // Wireless / RF
   { q: "5G NR uses which multiple access scheme?", options: ["OFDMA", "CDMA", "FDMA", "TDMA"], correct: 0, domain: "RF", explanation: "5G NR uses OFDMA (Orthogonal Frequency Division Multiple Access) for both DL and UL." },
-  { q: "VSWR of 1:1 indicates:", options: ["Perfect mismatch", "Perfect match", "Infinite reflection", "50% efficiency"], correct: 1, domain: "RF", explanation: "VSWR 1:1 means zero reflected power — a perfect impedance match." },
+  { q: "VSWR of 1:1 indicates:", options: ["Perfect mismatch", "Perfect match", "Infinite reflection", "50% efficiency"], correct: 1, domain: "RF", explanation: "VSWR 1:1 means zero reflected power - a perfect impedance match." },
   { q: "Which modulation has highest spectral efficiency?", options: ["BPSK", "QPSK", "16-QAM", "64-QAM"], correct: 3, domain: "RF", explanation: "64-QAM carries 6 bits/symbol, giving the highest spectral efficiency but requiring better SNR." },
 
   // Embedded
@@ -62,13 +62,13 @@ export const domainQuizzes: Record<string, QuizQuestion[]> = {
   embedded: [
     { q: "FreeRTOS task states include:", options: ["Running, Ready, Blocked, Suspended", "Active, Passive, Sleep", "On, Off, Idle", "Start, Stop, Pause"], correct: 0, domain: "Embedded", explanation: "FreeRTOS tasks cycle through Running, Ready, Blocked, and Suspended states." },
     { q: "Volatile keyword in C prevents:", options: ["Memory leaks", "Compiler optimization of variable access", "Stack overflow", "Type casting"], correct: 1, domain: "Embedded", explanation: "Volatile tells the compiler to always read from memory, preventing optimization of hardware registers." },
-    { q: "SPI communication requires minimum wires:", options: ["2", "3", "4", "5"], correct: 2, domain: "Embedded", explanation: "SPI needs MOSI, MISO, SCLK, and SS (chip select) — 4 wires minimum." },
+    { q: "SPI communication requires minimum wires:", options: ["2", "3", "4", "5"], correct: 2, domain: "Embedded", explanation: "SPI needs MOSI, MISO, SCLK, and SS (chip select) - 4 wires minimum." },
     { q: "Watchdog timer is used to:", options: ["Measure time", "Reset system on hang", "Generate PWM", "Count events"], correct: 1, domain: "Embedded", explanation: "A watchdog timer resets the MCU if the firmware fails to 'pet' it within the timeout period." },
     { q: "Bootloader resides in:", options: ["RAM", "Flash (start address)", "EEPROM", "External SD"], correct: 1, domain: "Embedded", explanation: "The bootloader occupies the beginning of flash memory and runs first on power-up." },
   ],
   wireless: [
     { q: "MIMO stands for:", options: ["Multiple Input Multiple Output", "Modulated Input Modulated Output", "Mixed Intermediate Mode Operation", "Multi-band Internal Modulation Output"], correct: 0, domain: "RF", explanation: "MIMO uses multiple antennas at both transmitter and receiver for spatial multiplexing." },
-    { q: "5G NR frequency range FR2 covers:", options: ["Sub-6 GHz", "24.25–52.6 GHz (mmWave)", "700 MHz–2.5 GHz", "Above 100 GHz"], correct: 1, domain: "RF", explanation: "FR2 is the millimeter-wave band (24.25–52.6 GHz) offering high bandwidth but limited range." },
+    { q: "5G NR frequency range FR2 covers:", options: ["Sub-6 GHz", "24.25-52.6 GHz (mmWave)", "700 MHz-2.5 GHz", "Above 100 GHz"], correct: 1, domain: "RF", explanation: "FR2 is the millimeter-wave band (24.25-52.6 GHz) offering high bandwidth but limited range." },
     { q: "Channel coding in 5G data channel uses:", options: ["Turbo codes", "LDPC codes", "Convolutional codes", "Reed-Solomon"], correct: 1, domain: "RF", explanation: "5G NR uses LDPC (Low-Density Parity-Check) codes for data and Polar codes for control channels." },
     { q: "Beamforming improves:", options: ["Battery life", "Signal directivity and range", "Modulation order", "Bandwidth"], correct: 1, domain: "RF", explanation: "Beamforming steers the antenna pattern toward the intended user, boosting SNR and range." },
     { q: "Path loss in free space increases with:", options: ["Distance only", "Frequency only", "Both distance and frequency", "Neither"], correct: 2, domain: "RF", explanation: "Free-space path loss (Friis equation) is proportional to both distance² and frequency²." },
@@ -76,7 +76,7 @@ export const domainQuizzes: Record<string, QuizQuestion[]> = {
   signal: [
     { q: "FFT reduces DFT complexity from O(N²) to:", options: ["O(N)", "O(N log N)", "O(log N)", "O(N³)"], correct: 1, domain: "Signals", explanation: "The FFT algorithm (Cooley-Tukey) reduces N² multiplications to N log₂ N." },
     { q: "Windowing in spectral analysis reduces:", options: ["Noise", "Spectral leakage", "Sampling rate", "Bit depth"], correct: 1, domain: "Signals", explanation: "Window functions (Hamming, Hanning) reduce spectral leakage caused by finite-length signals." },
-    { q: "Convolution in time domain equals:", options: ["Addition in frequency", "Multiplication in frequency", "Division in frequency", "Subtraction in frequency"], correct: 1, domain: "Signals", explanation: "This is the Convolution Theorem — convolution in time = multiplication in frequency domain." },
+    { q: "Convolution in time domain equals:", options: ["Addition in frequency", "Multiplication in frequency", "Division in frequency", "Subtraction in frequency"], correct: 1, domain: "Signals", explanation: "This is the Convolution Theorem - convolution in time = multiplication in frequency domain." },
     { q: "A causal system's impulse response h(t) is:", options: ["Zero for t < 0", "Zero for t > 0", "Always positive", "Always bounded"], correct: 0, domain: "Signals", explanation: "A causal system cannot respond before the input arrives, so h(t) = 0 for t < 0." },
     { q: "Kalman filter is used for:", options: ["Image compression", "Optimal state estimation", "Audio synthesis", "Database queries"], correct: 1, domain: "Signals", explanation: "The Kalman filter recursively estimates the state of a dynamic system from noisy measurements." },
   ],

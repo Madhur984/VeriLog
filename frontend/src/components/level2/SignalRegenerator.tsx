@@ -1,5 +1,5 @@
 /**
- * SignalRegenerator.tsx — Micro-Module 2.4 (Advanced)
+ * SignalRegenerator.tsx - Micro-Module 2.4 (Advanced)
  *
  * Demonstrates digital signal regeneration:
  *   Noisy square wave input → Digital buffer → Clean output
@@ -164,7 +164,7 @@ export function SignalRegenerator({ onComplete }: SignalRegeneratorProps) {
                     <div className="text-[10px] text-sky-500 font-black uppercase tracking-widest mb-2">Engineering Principle · Digital Integrity</div>
                     <p className="text-sm font-bold text-slate-600 leading-relaxed italic">
                         "A digital buffer compares input to threshold, then drives output rail to VCC or GND.
-                        Noise on the input is discarded — only the binary decision propagates.
+                        Noise on the input is discarded - only the binary decision propagates.
                         This is why a digital signal can traverse thousands of kilometers through
                         repeater nodes with zero accumulated degradation."
                     </p>
@@ -188,7 +188,7 @@ export function SignalRegenerator({ onComplete }: SignalRegeneratorProps) {
                     <CheckCircle2 size={24} />
                     <div className="font-black">
                         <div className="text-xs uppercase tracking-widest">
-                            MODULE 2.4 COMPLETE — ADVANCED
+                            MODULE 2.4 COMPLETE - ADVANCED
                         </div>
                         <div className="text-[10px] text-emerald-500/70 uppercase tracking-tighter mt-1">
                             +15 XP · Badge: Digital Advocate Synchronized

@@ -2,10 +2,10 @@ import type { HapticType, SoundType } from '../../../hooks/useGlobalSensory';
 
 /** Shared Module 2 signal state stored in global memory. */
 export interface M2Signal {
-  amplitude: number;    // 0.1 – 1.0
-  frequency: number;    // 1 – 15 Hz
-  samplingRate: number; // 2 – 40 samples per period
-  bitDepth: number;     // 1 – 8 bits
+  amplitude: number;    // 0.1 - 1.0
+  frequency: number;    // 1 - 15 Hz
+  samplingRate: number; // 2 - 40 samples per period
+  bitDepth: number;     // 1 - 8 bits
 }
 
 export interface M2ScreenProps {

@@ -9,9 +9,9 @@ interface MCQ { prompt: string; options: string[]; correctIndex: number; explain
 const CONCEPT_QUIZ: MCQ[] = [
   {
     prompt: 'When two N-Type and P-Type slabs are joined, what forms in the boundary?',
-    options: ['A short circuit', 'The depletion region', 'A high-current channel', 'Nothing — neutral'],
+    options: ['A short circuit', 'The depletion region', 'A high-current channel', 'Nothing - neutral'],
     correctIndex: 1,
-    explain: 'Initial diffusion leaves uncovered ions on both sides — that\'s the depletion region.',
+    explain: 'Initial diffusion leaves uncovered ions on both sides - that\'s the depletion region.',
   },
   {
     prompt: 'Under no bias (V_D = 0), the net current through the junction is:',
@@ -47,7 +47,7 @@ const CONCEPT_QUIZ: MCQ[] = [
     prompt: 'In a P-N junction symbol, the triangle points from:',
     options: ['Cathode to anode', 'Anode to cathode', 'P to N (and current flows that way under forward bias)', 'Always toward ground'],
     correctIndex: 2,
-    explain: 'The triangle points from anode (P) to cathode (N) — same direction as forward current.',
+    explain: 'The triangle points from anode (P) to cathode (N) - same direction as forward current.',
   },
 ];
 
@@ -56,14 +56,14 @@ const BIAS_DRILL: BiasQ[] = [
   { vd: '0.0 V',                expected: 'No' },
   { vd: '+0.8 V',               expected: 'Forward' },
   { vd: '-3.0 V',               expected: 'Reverse' },
-  { vd: '+0.2 V',               expected: 'Forward', note: 'Forward bias, but below the Si knee (~0.7 V) — current is small but nonzero.' },
+  { vd: '+0.2 V',               expected: 'Forward', note: 'Forward bias, but below the Si knee (~0.7 V) - current is small but nonzero.' },
   { vd: '-V_BV',                expected: 'Breakdown' },
   { vd: '+1.2 V',               expected: 'Forward' },
   { vd: '-0.3 V',               expected: 'Reverse' },
-  { vd: '+0.7 V',               expected: 'Forward', note: 'At the Si knee — current starts to rise sharply.' },
+  { vd: '+0.7 V',               expected: 'Forward', note: 'At the Si knee - current starts to rise sharply.' },
   { vd: '-15 V (V_BV = -10 V)', expected: 'Breakdown', note: '|V_D| > |V_BV| → avalanche/Zener region.' },
   { vd: '+2.0 V',               expected: 'Forward' },
-  { vd: '-0.001 V',             expected: 'Reverse', note: 'Even tiny negative bias counts as reverse — the depletion widens slightly.' },
+  { vd: '-0.001 V',             expected: 'Reverse', note: 'Even tiny negative bias counts as reverse - the depletion widens slightly.' },
 ];
 
 const BIAS_OPTIONS: BiasQ['expected'][] = ['No', 'Forward', 'Reverse', 'Breakdown'];
@@ -75,7 +75,7 @@ const BIAS_EXPLAIN: Record<BiasQ['expected'], string> = {
   Breakdown: '|V_D| ≥ |V_BV| in reverse ⇒ avalanche or Zener; reverse current explodes.',
 };
 
-// Sprint pool — large + shuffled so questions never repeat inside a single run.
+// Sprint pool - large + shuffled so questions never repeat inside a single run.
 const SPEED_QS: MCQ[] = [
   { prompt: 'Si knee voltage',                 options: ['0.2 V', '0.3 V', '0.7 V', '1.4 V'],            correctIndex: 2, explain: '' },
   { prompt: 'Ge knee voltage',                 options: ['0.2 V', '0.3 V', '0.7 V', '1.4 V'],            correctIndex: 1, explain: '' },
@@ -282,7 +282,7 @@ export const S09_PracticeArena: React.FC<Props> = ({ isActive, isDarkMode }) => 
             >
               <Trophy className="mx-auto text-amber-300" size={48} />
               <h3 className={`text-2xl font-black ${textColor}`}>
-                {score === CONCEPT_QUIZ.length ? 'Perfect · case closed.' : `${score} / ${CONCEPT_QUIZ.length} — solid work.`}
+                {score === CONCEPT_QUIZ.length ? 'Perfect · case closed.' : `${score} / ${CONCEPT_QUIZ.length} - solid work.`}
               </h3>
               <button
                 onClick={restart}
@@ -295,7 +295,7 @@ export const S09_PracticeArena: React.FC<Props> = ({ isActive, isDarkMode }) => 
         </AnimatePresence>
       </motion.div>
 
-      {/* DRILL 2 — Bias Detective */}
+      {/* DRILL 2 - Bias Detective */}
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         className={`p-8 rounded-3xl border ${cardBg}`}
@@ -364,7 +364,7 @@ export const S09_PracticeArena: React.FC<Props> = ({ isActive, isDarkMode }) => 
         </div>
       </motion.div>
 
-      {/* DRILL 3 — Speed Round */}
+      {/* DRILL 3 - Speed Round */}
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         className={`p-8 rounded-3xl border ${cardBg} relative overflow-hidden`}
@@ -442,8 +442,8 @@ export const S09_PracticeArena: React.FC<Props> = ({ isActive, isDarkMode }) => 
             <h3 className={`text-3xl font-black ${textColor}`}>{sScore} correct in 45s</h3>
             <p className={`text-sm ${subText}`}>
               {sScore >= 18 ? 'Junction guru. Diodes have no secrets left.'
-                : sScore >= 12 ? 'Strong sprint — solid grasp.'
-                  : sScore >= 6 ? 'Good baseline — re-read chapters 5-8.'
+                : sScore >= 12 ? 'Strong sprint - solid grasp.'
+                  : sScore >= 6 ? 'Good baseline - re-read chapters 5-8.'
                     : 'Re-watch the lecture and try again.'}
             </p>
             <button

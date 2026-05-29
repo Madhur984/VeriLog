@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════════════
-   logic-studio.css — Digital Logic Studio workspace theme (Whitepage)
+   logic-studio.css - Digital Logic Studio workspace theme (Whitepage)
    ═══════════════════════════════════════════════════════════════════════ */
 
 /* ── Layout ────────────────────────────────────────────────────────── */
@@ -72,7 +72,7 @@
     flex-shrink: 0;
 }
 
-/* ── Desktop layout (lg: 1024px+) — restore original grid ─────────── */
+/* ── Desktop layout (lg: 1024px+) - restore original grid ─────────── */
 @media (min-width: 1024px) {
     .studio-layout {
         display: grid;

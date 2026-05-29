@@ -10,11 +10,11 @@
  *   - prefers-reduced-motion: static matte, text fade only
  *
  * Layer stacking:
- *   L1  #0B0F14 matte — solid, no gradient
- *   L2  Grid field — CSS background-image + grid-drift keyframe
- *   L3  Signal line — 1px centered, scaleX from center
- *   L4  System text — geometricPrecision, 0.2em tracking
- *   L5  Level markers — L1 active, L2/L3 dimmed (aspirational)
+ *   L1  #0B0F14 matte - solid, no gradient
+ *   L2  Grid field - CSS background-image + grid-drift keyframe
+ *   L3  Signal line - 1px centered, scaleX from center
+ *   L4  System text - geometricPrecision, 0.2em tracking
+ *   L5  Level markers - L1 active, L2/L3 dimmed (aspirational)
  */
 
 /* ─── Keyframes ────────────────────────────────────────────────────────────── */
@@ -106,7 +106,7 @@
     }
 }
 
-/* L2 background grid drift — barely perceptible */
+/* L2 background grid drift - barely perceptible */
 @keyframes grid-drift {
     from {
         transform: translate3d(0, 0, 0);
@@ -125,10 +125,10 @@
     z-index: 9999;
     pointer-events: none;
 
-    /* L1: Matte background — solid, no gradient, no noise */
+    /* L1: Matte background - solid, no gradient, no noise */
     background: #0B0F14;
 
-    /* Hidden by default — transform-origin top for scaleY */
+    /* Hidden by default - transform-origin top for scaleY */
     transform: scaleY(0);
     transform-origin: top center;
 
@@ -274,7 +274,7 @@
     border-radius: 50%;
 }
 
-/* Dimmed future levels — visible but aspirational */
+/* Dimmed future levels - visible but aspirational */
 .vl-level-marker.is-future {
     color: rgba(229, 231, 235, 0.18);
 }
@@ -293,7 +293,7 @@
     box-shadow: 0 0 6px rgba(0, 191, 255, 0.8);
 }
 
-/* Completed levels — dimmed green */
+/* Completed levels - dimmed green */
 .vl-level-marker.is-complete {
     color: rgba(16, 185, 129, 0.4);
 }
@@ -359,7 +359,7 @@
         transition: none !important;
     }
 
-    /* Static matte for 250ms — browser handles opacity only */
+    /* Static matte for 250ms - browser handles opacity only */
     .vl-overlay.is-active {
         transform: scaleY(1);
         /* Show immediately */

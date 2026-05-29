@@ -4,8 +4,8 @@
  * One-shot celebration animation fired when circuit loop completes.
  * Sequence:
  *   0ms   → all live component <g> elements drop -2px (lift illusion)
- *   0–400ms → outer pulse ring opacity 0→0.8→0
- *   100–700ms → bulb fill-opacity ramps 0.85→1.0
+ *   0-400ms → outer pulse ring opacity 0→0.8→0
+ *   100-700ms → bulb fill-opacity ramps 0.85→1.0
  *   700ms → components settle back to 0
  *
  * Direct attribute mutation only. No React. All timing via performance.now().
@@ -137,7 +137,7 @@ export class ActivationPulse implements AnimModule {
             ring.el.setAttribute('opacity', opacity.toFixed(3));
         }
 
-        // ── 3. Bulb brightness ramp (runs 100ms–700ms) ─────────────────────────
+        // ── 3. Bulb brightness ramp (runs 100ms-700ms) ─────────────────────────
         if (this.bulbEl) {
             const bt = Math.max(0, Math.min((elapsed - 100) / 600, 1));
             const brightness = 0.85 + 0.15 * easeOut(bt);

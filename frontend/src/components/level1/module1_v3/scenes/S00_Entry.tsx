@@ -84,18 +84,18 @@ export const S00_Entry: React.FC = () => {
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           className="text-center"
         >
-          {/* Neutral white — no cyan */}
+          {/* Neutral white - no cyan */}
           <div className="hero-text text-xl tracking-[0.4em] uppercase mb-3">
             {text}
           </div>
-          {/* Dim gray subtext — no color */}
+          {/* Dim gray subtext - no color */}
           <div className="micro-text opacity-50">
             {subText}
           </div>
         </motion.div>
       </AnimatePresence>
 
-      {/* Cursor hint — neutral pulsing text */}
+      {/* Cursor hint - neutral pulsing text */}
       {localPhase === 1 && (
         <motion.div
           initial={{ opacity: 0 }}

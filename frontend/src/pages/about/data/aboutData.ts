@@ -61,9 +61,9 @@ export const PROBLEM_STATS: StatCard[] = [
 ];
 
 export const HONEST_PROBLEM_ITEMS = [
-  "Most students discover VLSI exists only in their 7th semester — when it's almost too late to prepare.",
+  "Most students discover VLSI exists only in their 7th semester - when it's almost too late to prepare.",
   "A student at IIT has Cadence lab access. A student at a tier-3 college has a 2017 YouTube video.",
-  "The domain with the highest salary growth in India — VLSI Design — has zero free, structured, interactive courses.",
+  "The domain with the highest salary growth in India - VLSI Design - has zero free, structured, interactive courses.",
   "GATE coaching covers the exam. Nobody covers the career.",
   "India's Semiconductor Mission needs engineers NOW. The pipeline of trained students is years behind.",
   "The students who do get VLSI jobs mostly figured it out alone. That shouldn't be a requirement."
@@ -73,7 +73,7 @@ export const COMMITMENTS: CommitmentCard[] = [
   {
     number: "01",
     title: "Always Free",
-    description: "Core learning content — every module, every exercise, every career tool — will always be free for students. No paywalls on education.",
+    description: "Core learning content - every module, every exercise, every career tool - will always be free for students. No paywalls on education.",
     iconName: "Unlock",
     color: "#22D3EE",
   },
@@ -87,7 +87,7 @@ export const COMMITMENTS: CommitmentCard[] = [
   {
     number: "03",
     title: "India First",
-    description: "ISRO, ISM, C2S, Indian salary data, Indian company hiring patterns — this platform is built for the Indian semiconductor ecosystem, not imported from a US curriculum.",
+    description: "ISRO, ISM, C2S, Indian salary data, Indian company hiring patterns - this platform is built for the Indian semiconductor ecosystem, not imported from a US curriculum.",
     iconName: "Flag",
     color: "#10B981",
   },
@@ -107,7 +107,7 @@ export const USER_TYPES: UserTypeCard[] = [
     label: "THE STUCK THIRD-YEAR",
     color: "#F59E0B",
     opening: "Your CS friends have internships. You have derivations.",
-    detail: "You've finished 5 semesters of theory and you're watching placement season from the sidelines. The gap between what your college taught and what companies want is real — and bridgeable. The Skill Topology will show you exactly what's missing.",
+    detail: "You've finished 5 semesters of theory and you're watching placement season from the sidelines. The gap between what your college taught and what companies want is real - and bridgeable. The Skill Topology will show you exactly what's missing.",
     cta: "SEE YOUR SKILL GAPS →",
     ctaLink: "/career-roadmap",
   },
@@ -123,7 +123,7 @@ export const USER_TYPES: UserTypeCard[] = [
     label: 'THE NATION BUILDER',
     color: '#EA580C',
     opening: 'You want to do something that matters for India.',
-    detail: "You see what China did with semiconductors in 20 years. You see India's ISM. You want to be part of it — not as a spectator but as an engineer. This platform is built with exactly that intent.",
+    detail: "You see what China did with semiconductors in 20 years. You see India's ISM. You want to be part of it - not as a spectator but as an engineer. This platform is built with exactly that intent.",
     cta: "EXPLORE INDIA'S SILICON MISSION →",
     ctaLink: '/career-roadmap',
   },

@@ -86,7 +86,7 @@ const SidebarComponent: React.FC<SidebarProps> = ({
           </div>
           <div>
             <h2 className={`text-sm font-bold tracking-tight ${textColor}`}>Digital Electronics</h2>
-            <p className={`text-[10px] font-mono uppercase tracking-widest mt-0.5 font-bold ${subTextColor}`}>Module 03 — 40 Pages</p>
+            <p className={`text-[10px] font-mono uppercase tracking-widest mt-0.5 font-bold ${subTextColor}`}>Module 03 - 40 Pages</p>
           </div>
         </div>
       </header>

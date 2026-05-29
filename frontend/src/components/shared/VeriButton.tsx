@@ -12,7 +12,7 @@ interface VeriButtonProps {
 }
 
 /**
- * VeriButton — Unified VeriLog V1 Button.
+ * VeriButton - Unified VeriLog V1 Button.
  * Identical press depth, feedback timing, and haptic pattern.
  */
 export const VeriButton: React.FC<VeriButtonProps> = ({

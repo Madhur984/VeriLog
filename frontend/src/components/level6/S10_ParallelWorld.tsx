@@ -29,7 +29,7 @@ export const S10_ParallelWorld: React.FC<{ isActive: boolean }> = ({ isActive })
           
           <div className="space-y-8 max-w-xl">
             <p className="body-text text-xl text-white/80 leading-relaxed font-light">
-              In hardware, everything happens at once. Break the sequential mindset—assignments in Verilog exist in <span className="text-plasma-cyan font-bold italic underline underline-offset-8 decoration-plasma-cyan/30">parallel harmony.</span>
+              In hardware, everything happens at once. Break the sequential mindset-assignments in Verilog exist in <span className="text-plasma-cyan font-bold italic underline underline-offset-8 decoration-plasma-cyan/30">parallel harmony.</span>
             </p>
             <p className="body-text text-base text-white/50 leading-relaxed text-left">
                Unlike software which executes line-by-line, Verilog describes independent physical circuits. When power flows, every `assign` statement evaluates simultaneously across the entire silicon die.

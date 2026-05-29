@@ -1,5 +1,5 @@
 /**
- * SimulationBridge.ts — Typed message passing between UI thread and simulation worker
+ * SimulationBridge.ts - Typed message passing between UI thread and simulation worker
  *
  * Provides a promise-based API that wraps Web Worker postMessage/onMessage.
  * Falls back to direct MUREEngine usage if workers aren't available.

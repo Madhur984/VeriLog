@@ -28,7 +28,7 @@ export const S02_Vault: React.FC<Props> = ({ isActive, isDarkMode }) => {
         </div>
         <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>Securing the Server Vault.</h2>
         <p className={`text-base max-w-3xl ${subText}`}>
-          The vault cannot rely on software — software can be bypassed. We need a{' '}
+          The vault cannot rely on software - software can be bypassed. We need a{' '}
           <strong className="text-orange-300">hardwired, fail-safe combinational circuit</strong>{' '}
           that takes three input signals and decides whether to unlock. Three inputs, one output.
         </p>
@@ -50,7 +50,7 @@ export const S02_Vault: React.FC<Props> = ({ isActive, isDarkMode }) => {
         }}
       >
         <div className="grid lg:grid-cols-[1fr_auto] gap-8 items-center">
-          {/* LEFT — clickable input cards */}
+          {/* LEFT - clickable input cards */}
           <div className="space-y-4">
             <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-orange-400 flex items-center gap-2">
               <Zap size={12} /> Try it · click any sensor
@@ -122,7 +122,7 @@ export const S02_Vault: React.FC<Props> = ({ isActive, isDarkMode }) => {
             </motion.div>
           </div>
 
-          {/* RIGHT — animated vault */}
+          {/* RIGHT - animated vault */}
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }} animate={isActive ? { opacity: 1, scale: 1 } : {}}
             transition={{ delay: 0.3 }}
@@ -193,7 +193,7 @@ export const S02_Vault: React.FC<Props> = ({ isActive, isDarkMode }) => {
                         style={{ filter: f ? 'drop-shadow(0 0 12px rgba(34,197,94,0.7))' : 'drop-shadow(0 0 8px rgba(239,68,68,0.5))' }} />
               </motion.g>
 
-              {/* LED indicators for inputs A B C — light up when input is 1 */}
+              {/* LED indicators for inputs A B C - light up when input is 1 */}
               {[
                 { x: 50,  y: 290, k: 'A' as const, color: '#0ea5e9' },
                 { x: 140, y: 290, k: 'B' as const, color: '#22d3ee' },

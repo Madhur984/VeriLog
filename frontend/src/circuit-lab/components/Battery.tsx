@@ -59,7 +59,7 @@ export function Battery({ component, isLive, onPointerDown, isDragging,
 
             {/* + sign */}
             <text x={0} y={-18} textAnchor="middle" fill="#4ade80" fontSize={18} fontWeight="bold" fontFamily="monospace">+</text>
-            {/* – sign */}
+            {/* - sign */}
             <text x={0} y={20} textAnchor="middle" fill="#f87171" fontSize={22} fontWeight="bold" fontFamily="monospace">−</text>
 
             {/* Battery label */}

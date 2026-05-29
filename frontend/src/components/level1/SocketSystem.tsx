@@ -1,5 +1,5 @@
 /**
- * SocketSystem.tsx — Enterprise Circuit Lab
+ * SocketSystem.tsx - Enterprise Circuit Lab
  *
  * Features:
  *   - IEC electrical symbols (battery, resistive load, lamp)
@@ -187,7 +187,7 @@ export const SocketSystem = memo(({ onComplete }: SocketSystemProps) => {
                     shortCircuit ? "text-rose-600" : snapped ? "text-emerald-600" : "text-sky-600"
                 )}>
                     {shortCircuit
-                        ? 'FAULT — SHORT CIRCUIT DETECTED'
+                        ? 'FAULT - SHORT CIRCUIT DETECTED'
                         : snapped
                             ? 'LOOP INTEGRITY VERIFIED'
                             : 'CONNECT PATH TO CLOSE CIRCUIT'}

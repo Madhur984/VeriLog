@@ -14,28 +14,28 @@ export interface GlobalSalary {
 export const globalSalaries: GlobalSalary[] = [
   {
     country: "India", currency: "₹ LPA", flag: "🇮🇳",
-    fresher: "5–15", midLevel: "15–30", senior: "30–60",
+    fresher: "5-15", midLevel: "15-30", senior: "30-60",
     costOfLivingIndex: 28, visaDifficulty: "Easy",
-    avgNoticePeriod: "60–90 days",
+    avgNoticePeriod: "60-90 days",
     topCompanies: ["Qualcomm", "Intel", "TI"]
   },
   {
     country: "USA", currency: "$K", flag: "🇺🇸",
-    fresher: "80–140", midLevel: "140–200", senior: "200–300",
+    fresher: "80-140", midLevel: "140-200", senior: "200-300",
     costOfLivingIndex: 75, visaDifficulty: "Hard",
     avgNoticePeriod: "2 weeks",
     topCompanies: ["NVIDIA", "Apple", "Google"]
   },
   {
     country: "Germany", currency: "€K", flag: "🇩🇪",
-    fresher: "45–65", midLevel: "65–95", senior: "95–140",
+    fresher: "45-65", midLevel: "65-95", senior: "95-140",
     costOfLivingIndex: 65, visaDifficulty: "Medium",
     avgNoticePeriod: "3 months",
     topCompanies: ["Infineon", "Bosch", "Siemens"]
   },
   {
     country: "Singapore", currency: "SGD K", flag: "🇸🇬",
-    fresher: "50–75", midLevel: "75–120", senior: "120–180",
+    fresher: "50-75", midLevel: "75-120", senior: "120-180",
     costOfLivingIndex: 80, visaDifficulty: "Medium",
     avgNoticePeriod: "1 month",
     topCompanies: ["TSMC", "Broadcom", "Micron"]

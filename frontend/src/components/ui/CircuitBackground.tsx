@@ -141,7 +141,7 @@ function generatePCBLayout(seed = 42) {
 }
 
 /* ──────────────────────────────────────────────────────────────────
-   ANIMATED TRACE  — draws itself using stroke-dasharray trick
+   ANIMATED TRACE  - draws itself using stroke-dasharray trick
 ────────────────────────────────────────────────────────────────── */
 const AnimatedTrace: React.FC<TraceProps> = ({ d, delay, dur, color, width }) => (
     <motion.path

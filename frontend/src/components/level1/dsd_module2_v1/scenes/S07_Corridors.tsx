@@ -50,7 +50,7 @@ export const S07_Corridors: React.FC<Props> = ({ isActive, isDarkMode }) => {
         <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>The Secret Corridors</h2>
         <p className={`text-base max-w-3xl ${subText}`}>
           Look at the columns: 00 and 10 differ by exactly one bit. So the far-left and far-right corridors are
-          actually <strong>adjacent</strong>. The flat blueprint is a lie — it&apos;s a <em>cylinder</em>. And once
+          actually <strong>adjacent</strong>. The flat blueprint is a lie - it&apos;s a <em>cylinder</em>. And once
           you do the same trick vertically, the building becomes a <em>torus</em>.
         </p>
       </section>
@@ -230,7 +230,7 @@ export const S07_Corridors: React.FC<Props> = ({ isActive, isDarkMode }) => {
         </div>
         <p className={`text-base leading-relaxed ${textColor}`}>
           Whenever you see a K-Map, mentally curl it into a torus. Always inspect the four corners and the two
-          edge-pairs. Many simplifications hide on the wrap-arounds — and they&apos;re usually the biggest wings
+          edge-pairs. Many simplifications hide on the wrap-arounds - and they&apos;re usually the biggest wings
           available.
         </p>
       </motion.div>

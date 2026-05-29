@@ -45,7 +45,7 @@ const OPS: Op[] = [
       { literal: "D'", reason: 'D = 0 in all four rooms' },
     ],
     story:
-      'Rooms 6 and 14 form a pair of 2 — but Madhur thinks bigger. Using the top/bottom wrap-around they connect with rooms 2 and 10 to form a massive group of 4.',
+      'Rooms 6 and 14 form a pair of 2 - but Madhur thinks bigger. Using the top/bottom wrap-around they connect with rooms 2 and 10 to form a massive group of 4.',
   },
   {
     id: 'pair',
@@ -72,7 +72,7 @@ const OPS: Op[] = [
       { literal: 'D',  reason: 'D = 1' },
     ],
     story:
-      'Room 13 is isolated. No premium neighbours up, down, left or right. It cannot be grouped — it gets its own dedicated single-room HVAC unit (a wing of size 2⁰ = 1).',
+      'Room 13 is isolated. No premium neighbours up, down, left or right. It cannot be grouped - it gets its own dedicated single-room HVAC unit (a wing of size 2⁰ = 1).',
   },
 ];
 

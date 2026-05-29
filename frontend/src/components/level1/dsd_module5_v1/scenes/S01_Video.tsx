@@ -38,7 +38,7 @@ export const S01_Video: React.FC<SceneProps> = ({ isActive, isDarkMode, mode }) 
         </div>
         <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>Watch the construction once.</h2>
         <p className={`text-base max-w-3xl ${subText}`}>
-          Every level explained end-to-end — atom → NOT → AND/OR → the dual → XOR/XNOR. Once you
+          Every level explained end-to-end - atom → NOT → AND/OR → the dual → XOR/XNOR. Once you
           have the shape of the journey, the chapters that follow drill into each step.
         </p>
       </section>

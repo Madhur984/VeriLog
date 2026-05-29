@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════════════
-   level2.css — VeriLog Level 2: Continuous vs Discrete
+   level2.css - VeriLog Level 2: Continuous vs Discrete
    ═══════════════════════════════════════════════════════════════════════ */
 
 /* ── LED States ─────────────────────────────────────────────────────── */
@@ -287,7 +287,7 @@
     animation: waveform-draw 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
-/* ── Oscilloscope Grid — Time & Voltage Axes ───────────────────────── */
+/* ── Oscilloscope Grid - Time & Voltage Axes ───────────────────────── */
 
 .scope-grid {
     position: absolute;

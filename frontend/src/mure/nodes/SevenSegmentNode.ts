@@ -1,5 +1,5 @@
 /**
- * mure/nodes/SevenSegmentNode.ts — 7-Segment Display
+ * mure/nodes/SevenSegmentNode.ts - 7-Segment Display
  *
  * 4-bit BCD input → 7 segment outputs (a-g).
  * Maps binary-coded decimal values 0-15 to segment patterns.

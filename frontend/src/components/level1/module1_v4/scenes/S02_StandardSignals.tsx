@@ -61,7 +61,7 @@ export const S02_StandardSignals: React.FC<{ isDarkMode: boolean }> = ({ isDarkM
                 <h3 className="text-2xl font-black">The Unit Impulse</h3>
               </div>
               <p className={`text-base leading-relaxed ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>
-                A momentary blast of energy. Infinite height, zero duration, area of one. This reveals the "Impusle Response" — the complete mathematical behavior of any system.
+                A momentary blast of energy. Infinite height, zero duration, area of one. This reveals the "Impusle Response" - the complete mathematical behavior of any system.
               </p>
               <div className={`p-4 rounded-xl border text-[10px] font-mono ${isDarkMode ? 'bg-black/40 border-cyan-900/30 text-cyan-500' : 'bg-cyan-50 border-cyan-100 text-cyan-700'}`}>
                 Equation: δ(t) = ∞ at t=0, Area = 1

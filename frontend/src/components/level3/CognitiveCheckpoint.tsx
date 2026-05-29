@@ -1,5 +1,5 @@
 /**
- * CognitiveCheckpoint.tsx — Module 3: Post-Lab Verification
+ * CognitiveCheckpoint.tsx - Module 3: Post-Lab Verification
  * 
  * Verifies concept retention and enforces "Correct Understanding" 
  * before advancing to the next engineering phase.

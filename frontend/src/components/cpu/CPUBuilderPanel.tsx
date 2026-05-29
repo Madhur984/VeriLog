@@ -1,5 +1,5 @@
 /**
- * CPUBuilderPanel.tsx — Main CPU Builder Lab interface
+ * CPUBuilderPanel.tsx - Main CPU Builder Lab interface
  *
  * Interactive CPU construction and simulation panel with:
  * - Assembly editor (simplified RISC-V)
@@ -63,7 +63,7 @@ function assemble(asm: string): number[] {
                 instructions.push(0x13); // addi x0, x0, 0
                 break;
             default:
-                // Unknown — skip
+                // Unknown - skip
                 break;
         }
     }

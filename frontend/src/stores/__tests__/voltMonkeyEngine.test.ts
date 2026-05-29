@@ -1,5 +1,5 @@
 /**
- * voltMonkeyEngine.test.ts — Tests for VoltMonkey hint engine
+ * voltMonkeyEngine.test.ts - Tests for VoltMonkey hint engine
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';

@@ -66,7 +66,7 @@ export const S10_Conclusion: React.FC<Props> = ({ isActive, isDarkMode }) => {
           Choose the form that<br />makes your design easiest.
         </h2>
         <p className={`text-base max-w-2xl mx-auto ${subText}`}>
-          SOP and POS are not arbitrary mathematical inverses — they are two distinct philosophies
+          SOP and POS are not arbitrary mathematical inverses - they are two distinct philosophies
           for human problem-solving. Boolean logic guarantees both routes arrive at the same truth.
         </p>
       </section>
@@ -78,7 +78,7 @@ export const S10_Conclusion: React.FC<Props> = ({ isActive, isDarkMode }) => {
         className="rounded-3xl overflow-hidden border border-white/10 mx-auto max-w-3xl"
         style={{ background: '#fef9f0' }}
       >
-        <img src="/images/sketchbook/p12.webp" alt="The Architecture of Logic — final page" className="w-full block" />
+        <img src="/images/sketchbook/p12.webp" alt="The Architecture of Logic - final page" className="w-full block" />
       </motion.div>
 
       {/* Three-rule recap */}
@@ -86,7 +86,7 @@ export const S10_Conclusion: React.FC<Props> = ({ isActive, isDarkMode }) => {
         {[
           { n: '01', t: 'SOP and POS are dual blueprints', d: 'For every function, both forms exist. They are mathematically interchangeable through DeMorgan.' },
           { n: '02', t: 'Use the lens that fits the problem', d: 'A function with few 1s? Paint the ones. A function with few 0s? Brick the zeros.' },
-          { n: '03', t: 'Minimisation comes next', d: 'Canonical forms are the starting point. K-maps, Quine–McCluskey and tools then strip redundant literals.' },
+          { n: '03', t: 'Minimisation comes next', d: 'Canonical forms are the starting point. K-maps, Quine-McCluskey and tools then strip redundant literals.' },
         ].map((r, i) => (
           <motion.div
             key={r.n}
@@ -225,7 +225,7 @@ export const S10_Conclusion: React.FC<Props> = ({ isActive, isDarkMode }) => {
       >
         <p className={`text-lg font-medium leading-relaxed ${textColor}`}>
           You now hold both lenses. In the next module we move from <em>canonical</em> forms to{' '}
-          <strong>minimised</strong> ones — Karnaugh maps, prime implicants, and the art of removing
+          <strong>minimised</strong> ones - Karnaugh maps, prime implicants, and the art of removing
           redundant literals without losing truth.
         </p>
         <div className="mt-4 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-amber-400">

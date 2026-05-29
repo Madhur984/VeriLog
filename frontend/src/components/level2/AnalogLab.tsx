@@ -1,5 +1,5 @@
 /**
- * AnalogLab.tsx — Micro-Module 2.1
+ * AnalogLab.tsx - Micro-Module 2.1
  *
  * Interactive potentiometer circuit:
  *   Battery → Potentiometer → LED → Battery (return)
@@ -106,7 +106,7 @@ export function AnalogLab({
     const ANALOG_CONCEPT: ConceptData = {
         id: 'analog_continuous',
         title: 'Continuous Signals',
-        description: 'Analog signals map physical quantities (like voltage) directly to information. They have infinite resolution—there is always a value between any two points.',
+        description: 'Analog signals map physical quantities (like voltage) directly to information. They have infinite resolution-there is always a value between any two points.',
         visualLink: 'Potentiometer Voltage',
         insight: 'In the analog world, every micro-volt matters. This makes them precise but vulnerable to noise.',
         memoryHook: 'Analog is like a dimmer switch, not a button.',
@@ -128,7 +128,7 @@ export function AnalogLab({
     const ANALOG_GATE_LEVELS: ConceptLevel[] = [
         {
             title: "Intuition",
-            content: "Analog signals are like a dimmer switch—there are no 'snaps' or 'jumps'. Every slight physical change is mirrored perfectly in the signal."
+            content: "Analog signals are like a dimmer switch-there are no 'snaps' or 'jumps'. Every slight physical change is mirrored perfectly in the signal."
         },
         {
             title: "Technical",
@@ -186,7 +186,7 @@ export function AnalogLab({
                     letterSpacing: '0.2em', textTransform: 'uppercase',
                     color: `${T.accent}80`, marginBottom: 16,
                 }}>
-                    Circuit Lab — Potentiometer Voltage Divider
+                    Circuit Lab - Potentiometer Voltage Divider
                 </span>
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 32, alignItems: 'center' }}>
@@ -596,7 +596,7 @@ export function AnalogLab({
                             fontFamily: T.mono, fontSize: 8, color: `${T.accent}80`,
                             letterSpacing: '0.2em', textTransform: 'uppercase',
                         }}>
-                            Oscilloscope — CH1 Analog
+                            Oscilloscope - CH1 Analog
                         </span>
                         <div style={{ display: 'flex', gap: 4 }}>
                              <button
@@ -632,7 +632,7 @@ export function AnalogLab({
                 </div>
                 <OscilloscopeCanvas
                     ch1Samples={waveformSamples}
-                    label1="CH1 — Analog"
+                    label1="CH1 - Analog"
                     height={180}
                     isPaused={isPaused}
                     isEngineerMode={isEngineerMode}

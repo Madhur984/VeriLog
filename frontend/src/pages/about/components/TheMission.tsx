@@ -24,7 +24,7 @@ export const TheMission: React.FC = () => {
         {/* Mission Statement */}
         <div className="flex justify-center">
           <h2 className="text-2xl md:text-4xl font-extrabold text-white text-center font-sans tracking-tight max-w-3xl leading-[1.3] uppercase">
-            Every ECE student in India deserves to know what their degree can actually do — <span className="text-cyan-400">for free</span>, in plain language, <span className="text-amber-400">starting today.</span>
+            Every ECE student in India deserves to know what their degree can actually do - <span className="text-cyan-400">for free</span>, in plain language, <span className="text-amber-400">starting today.</span>
           </h2>
         </div>
 
@@ -84,7 +84,7 @@ export const TheMission: React.FC = () => {
               lineHeight: 1.6,
             }}
           >
-            What engineers do best — we build. This is our contribution
+            What engineers do best - we build. This is our contribution
             to India's semiconductor decade.
           </p>
         </motion.div>

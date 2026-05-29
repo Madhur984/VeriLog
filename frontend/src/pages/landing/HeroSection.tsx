@@ -54,7 +54,7 @@ export const HeroSection = () => {
           <span style={{ color: '#0891B2' }}>One bit at a time.</span>
         </motion.h1>
 
-        {/* Subhead — PDF-aligned */}
+        {/* Subhead - PDF-aligned */}
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -63,7 +63,7 @@ export const HeroSection = () => {
           style={{ color: '#475569' }}
         >
           From confused ECE student to industry-ready silicon designer. Signals become
-          logic, logic becomes systems — all in your browser. No lab, no install, free for
+          logic, logic becomes systems - all in your browser. No lab, no install, free for
           every student in India.
         </motion.p>
 

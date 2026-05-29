@@ -1,5 +1,5 @@
 /**
- * useKMapProgress.ts — Supabase-backed data hook for Level 5 K-Map module.
+ * useKMapProgress.ts - Supabase-backed data hook for Level 5 K-Map module.
  *
  * Provides:
  * - loadProgress()         → fetches completed scenes from DB

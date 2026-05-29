@@ -22,7 +22,7 @@ interface CommandItem {
 interface CommandPaletteProps {
     isOpen: boolean;
     onClose: () => void;
-    /** User-specific localStorage key for tour — passed from WorkstationHome */
+    /** User-specific localStorage key for tour - passed from WorkstationHome */
     tourKey?: string;
 }
 

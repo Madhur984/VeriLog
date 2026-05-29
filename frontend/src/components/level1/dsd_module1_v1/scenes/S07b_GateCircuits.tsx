@@ -54,14 +54,14 @@ export const S07b_GateCircuits: React.FC<Props> = ({ isActive, isDarkMode }) => 
   const [W, setW] = useState(1);
 
   const Rn = 1 - R, An = 1 - A, Wn = 1 - W;
-  // SOP minterm outputs (m0, m1, m2, m4 — happy rows)
+  // SOP minterm outputs (m0, m1, m2, m4 - happy rows)
   const m0 = Rn & An & Wn; // 000
   const m1 = Rn & An & W;  // 001
   const m2 = Rn & A  & Wn; // 010
   const m4 = R  & An & Wn; // 100
   const sopOut = m0 | m1 | m2 | m4;
 
-  // POS maxterm outputs — each fires 0 only at its disaster row
+  // POS maxterm outputs - each fires 0 only at its disaster row
   const M3 = R  | An | Wn;       // (R + A' + W')
   const M5 = Rn | A  | Wn;       // (R' + A + W')
   const M6 = Rn | An | W;        // (R' + A' + W)
@@ -158,7 +158,7 @@ export const S07b_GateCircuits: React.FC<Props> = ({ isActive, isDarkMode }) => 
             <Wire d="M 80 40 L 80 340" on={1} />
             <Wire d="M 110 40 L 110 340" on={1} />
 
-            {/* m0 = R'·A'·W' (top) — branch off rails with bubbles */}
+            {/* m0 = R'·A'·W' (top) - branch off rails with bubbles */}
             <Wire d="M 50 60 L 130 60"  on={Rn} /><Bubble cx={120} cy={60} on={Rn} />
             <Wire d="M 80 75 L 130 75"  on={An} /><Bubble cx={120} cy={75} on={An} />
             <Wire d="M 110 90 L 130 90" on={Wn} /><Bubble cx={120} cy={90} on={Wn} />
@@ -320,7 +320,7 @@ export const S07b_GateCircuits: React.FC<Props> = ({ isActive, isDarkMode }) => 
           </span>
         </div>
         <ul className={`space-y-2 text-sm leading-relaxed ${subText}`}>
-          <li>• Both circuits are <strong>two-level</strong> — every signal traverses at most two gates between input and output. This bounds the propagation delay.</li>
+          <li>• Both circuits are <strong>two-level</strong> - every signal traverses at most two gates between input and output. This bounds the propagation delay.</li>
           <li>• A NAND-only or NOR-only realisation is always possible by inserting bubble pairs (DeMorgan in silicon). NAND chips are the cheapest building blocks on a real PCB.</li>
           <li>• Identical truth tables, different gate counts: pick whichever form yields the smaller bill of materials. K-Map minimisation in the next module shrinks both further.</li>
         </ul>

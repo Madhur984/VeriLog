@@ -1,5 +1,5 @@
 /**
- * EngineeringPortfolio.tsx — Student Professional Record
+ * EngineeringPortfolio.tsx - Student Professional Record
  *
  * Displays earned badges, module completion, XP breakdown, and personalized
  * engineering insights. This serves as a "public profile" teaser for the learner.

@@ -126,7 +126,7 @@ export const S06_HalfMath: React.FC<Props> = ({ isActive, isDarkMode }) => {
           <p className={`text-lg ${textColor} font-black`}>
             The DC output is merely <span className="text-rose-300">31.8%</span> of the peak voltage.
           </p>
-          <p className={`text-xs ${subText} mt-1`}>Very low efficiency — most of the input is lost.</p>
+          <p className={`text-xs ${subText} mt-1`}>Very low efficiency - most of the input is lost.</p>
         </motion.div>
       </motion.div>
 
@@ -208,7 +208,7 @@ export const S06_HalfMath: React.FC<Props> = ({ isActive, isDarkMode }) => {
             <p className={`text-sm ${textColor}`}>
               Ripple of 121% means the AC slosh on top of the DC line is <em>larger</em> than the
               underlying DC itself. No microchip can run on this. We need full-wave rectification +
-              a capacitor filter — coming up next.
+              a capacitor filter - coming up next.
             </p>
           </div>
         </div>

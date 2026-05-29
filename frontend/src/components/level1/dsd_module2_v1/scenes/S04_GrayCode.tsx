@@ -76,7 +76,7 @@ export const S04_GrayCode: React.FC<Props> = ({ isActive, isDarkMode }) => {
         <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>The Gray Code Walls</h2>
         <p className={`text-base max-w-3xl ${subText}`}>
           In Madhur&apos;s world a single bit-flip is one wall to knock down. Two bits flipping at once means
-          knocking down two walls — a structural disaster. So the corridors must be <strong>Gray-coded</strong>:
+          knocking down two walls - a structural disaster. So the corridors must be <strong>Gray-coded</strong>:
           every neighbour differs by exactly one bit.
         </p>
       </section>
@@ -249,7 +249,7 @@ export const S04_GrayCode: React.FC<Props> = ({ isActive, isDarkMode }) => {
             <div className="font-mono text-[10px] uppercase tracking-widest text-rose-400">Why Standard Binary Fails</div>
           </div>
           <p className={`text-sm leading-relaxed ${subText}`}>
-            The jump from binary 01 to 10 changes both bits. Two variables flip simultaneously — neither room is a single
+            The jump from binary 01 to 10 changes both bits. Two variables flip simultaneously - neither room is a single
             wall away from the other. That breaks the architectural promise that <em>physical adjacency</em> means
             <em> logical adjacency</em>.
           </p>

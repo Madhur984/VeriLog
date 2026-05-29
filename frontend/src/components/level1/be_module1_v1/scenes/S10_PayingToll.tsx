@@ -165,7 +165,7 @@ export const S10_PayingToll: React.FC<Props> = ({ isActive, isDarkMode }) => {
             </div>
           </div>
           <div className={`text-[13px] leading-relaxed ${subText}`}>
-            Joules are too big for atomic events. The electron-volt is the natural unit of the band gap —
+            Joules are too big for atomic events. The electron-volt is the natural unit of the band gap -
             it lets us write 1.1 instead of 1.76 × 10⁻¹⁹.
           </div>
         </div>

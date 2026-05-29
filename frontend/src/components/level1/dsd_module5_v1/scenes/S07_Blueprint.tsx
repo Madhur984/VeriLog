@@ -9,7 +9,7 @@ export const S07_Blueprint: React.FC<SceneProps> = ({ isActive, isDarkMode, mode
   const cardBg    = isDarkMode ? 'bg-white/5 border-white/10' : 'bg-white border-slate-200 shadow-xl';
   const accent = mode === 'nand' ? '#22d3ee' : '#fb923c';
 
-  // Master matrix — every gate, count, equation
+  // Master matrix - every gate, count, equation
   const rows = mode === 'nand'
     ? [
         { gate: 'NOT',  eq: 'A′',           count: 1, prop: 1, note: 'Tied-input NAND' },
@@ -41,8 +41,8 @@ export const S07_Blueprint: React.FC<SceneProps> = ({ isActive, isDarkMode, mode
           {mode === 'nand' ? 'NAND universality · proven.' : 'NOR universality · proven.'}
         </h2>
         <p className={`text-base max-w-3xl ${subText}`}>
-          Every Boolean operation on 2 variables — and by extension, every Boolean function of any
-          arity — can be physically realised using one repeated cell. Below is the complete
+          Every Boolean operation on 2 variables - and by extension, every Boolean function of any
+          arity - can be physically realised using one repeated cell. Below is the complete
           construction matrix.
         </p>
       </section>

@@ -41,15 +41,15 @@ export const ThreePaths = () => {
     {
       id: 1, accent: '#0891B2', tag: 'DD · LIVE NOW', status: 'LIVE',
       title: 'Digital Design Foundations',
-      description: 'From AND gates to K-maps to NAND-only circuits — the fundamentals every ECE student needs, interactive and built to actually stick.',
-      time: '~90 min', level: 'Start here · Year 1–3',
+      description: 'From AND gates to K-maps to NAND-only circuits - the fundamentals every ECE student needs, interactive and built to actually stick.',
+      time: '~90 min', level: 'Start here · Year 1-3',
       cta: 'Begin module →', link: LANDING_ROUTES.digitalDesign, Icon: Waves,
     },
     {
       id: 2, accent: '#F59E0B', tag: 'VL · COMING SOON', status: 'SOON',
       title: 'Verilog Hardware Description',
-      description: 'The language of chips — from always-blocks to testbenches. Built for Indian ECE students who have never touched Verilog.',
-      time: '~120 min', level: 'Year 3–4 · post-DD',
+      description: 'The language of chips - from always-blocks to testbenches. Built for Indian ECE students who have never touched Verilog.',
+      time: '~120 min', level: 'Year 3-4 · post-DD',
       cta: 'Join waitlist', action: () => setShowWaitlist(true), Icon: Code2,
     },
     {

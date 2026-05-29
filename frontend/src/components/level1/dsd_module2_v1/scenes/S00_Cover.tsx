@@ -31,7 +31,7 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
         />
         <div className="absolute inset-0 flex items-center">
           <div className="flex-1 px-12">
-            <div className="font-mono text-[10px] tracking-[0.4em] uppercase text-amber-300/80 mb-2">Scale 1:100 · Section A–A</div>
+            <div className="font-mono text-[10px] tracking-[0.4em] uppercase text-amber-300/80 mb-2">Scale 1:100 · Section A-A</div>
             <h2 className="text-4xl md:text-5xl font-black text-amber-300 leading-none drop-shadow-[0_0_18px_rgba(252,211,77,0.4)]">
               THE ARCHITECT
             </h2>
@@ -94,7 +94,7 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
           transition={{ delay: 0.2 }}
           className={`text-lg md:text-xl max-w-2xl mx-auto ${subText}`}
         >
-          A visual, story-driven walk through 4-variable K-Maps — narrated through{' '}
+          A visual, story-driven walk through 4-variable K-Maps - narrated through{' '}
           <strong className="text-amber-300">Madhur the Hostel Warden&apos;s</strong> floor plan.
         </motion.p>
       </section>
@@ -140,7 +140,7 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
           </div>
           <p className={`text-sm leading-relaxed ${subText}`}>
             Two minterms that share a wall on Madhur&apos;s blueprint are guaranteed to differ
-            by exactly one variable — and can therefore be merged. The K-Map turns Boolean
+            by exactly one variable - and can therefore be merged. The K-Map turns Boolean
             simplification into a game of <strong>finding the largest rectangular wing</strong>.
           </p>
         </motion.div>
@@ -158,8 +158,8 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
         </div>
         <div className="grid md:grid-cols-3 gap-5">
           {[
-            { Icon: Map,      n: '01', t: 'Lay the Grid',   d: 'Gray code organises the corridors. Every neighbour differs by exactly one bit — one shared wall.' },
-            { Icon: Building2,n: '02', t: 'Group the Wings', d: 'HVAC works only in powers of two. Bigger rectangles wipe out more variables — always go bigger.' },
+            { Icon: Map,      n: '01', t: 'Lay the Grid',   d: 'Gray code organises the corridors. Every neighbour differs by exactly one bit - one shared wall.' },
+            { Icon: Building2,n: '02', t: 'Group the Wings', d: 'HVAC works only in powers of two. Bigger rectangles wipe out more variables - always go bigger.' },
             { Icon: Wand2,    n: '03', t: 'Walk the Torus', d: 'The blueprint rolls into a cylinder, then a doughnut. The corners cluster. Edges share secret corridors.' },
           ].map((s) => (
             <div key={s.n} className="space-y-2">
@@ -192,7 +192,7 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
           {[
             { tag: '4-var K-Map', desc: 'Lay out 16 minterms on a Gray-coded 4×4 grid.' },
             { tag: 'Wing Rules',  desc: 'Group 1s into rectangular wings of 1, 2, 4, 8 or 16.' },
-            { tag: 'Wrap-around', desc: 'Spot torus adjacencies — corners, edges, top/bottom.' },
+            { tag: 'Wrap-around', desc: 'Spot torus adjacencies - corners, edges, top/bottom.' },
             { tag: "Don't Care",  desc: 'Use X to upgrade a wing or ignore it cleanly.' },
           ].map((cap) => (
             <div

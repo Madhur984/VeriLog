@@ -83,13 +83,13 @@ export const S07_Recap: React.FC<Props> = ({ isActive, isDarkMode }) => {
         </div>
       </motion.div>
 
-      {/* The four faces — synchronized */}
+      {/* The four faces - synchronized */}
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.1 }}
         className="grid md:grid-cols-2 gap-4"
       >
-        {/* Face 1 — Truth table */}
+        {/* Face 1 - Truth table */}
         <div className={`p-5 rounded-2xl border-2 border-orange-400/40 bg-orange-500/5`}>
           <div className="font-mono text-[10px] uppercase tracking-widest text-orange-300 mb-3 flex items-center justify-between">
             <span>① Truth table</span>
@@ -134,7 +134,7 @@ export const S07_Recap: React.FC<Props> = ({ isActive, isDarkMode }) => {
           </div>
         </div>
 
-        {/* Face 2 — Algebra (live evaluation) */}
+        {/* Face 2 - Algebra (live evaluation) */}
         <div className={`p-5 rounded-2xl border-2 border-amber-400/40 bg-amber-500/5`}>
           <div className="font-mono text-[10px] uppercase tracking-widest text-amber-300 mb-3">② Algebra · live</div>
           <div className={`font-mono text-base space-y-3`}>
@@ -165,7 +165,7 @@ export const S07_Recap: React.FC<Props> = ({ isActive, isDarkMode }) => {
           </div>
         </div>
 
-        {/* Face 3 — K-Map with live cell highlight */}
+        {/* Face 3 - K-Map with live cell highlight */}
         <div className={`p-5 rounded-2xl border-2 border-violet-400/40 bg-violet-500/5`}>
           <div className="font-mono text-[10px] uppercase tracking-widest text-violet-300 mb-3 flex items-center justify-between">
             <span>③ K-Map · live cell</span>
@@ -210,7 +210,7 @@ export const S07_Recap: React.FC<Props> = ({ isActive, isDarkMode }) => {
           </div>
         </div>
 
-        {/* Face 4 — Live schematic */}
+        {/* Face 4 - Live schematic */}
         <div className={`p-5 rounded-2xl border-2 border-rose-400/40 bg-rose-500/5`}>
           <div className="font-mono text-[10px] uppercase tracking-widest text-rose-300 mb-3">④ Schematic · live signal flow</div>
           <svg viewBox="0 0 280 160" className="w-full h-auto">
@@ -262,7 +262,7 @@ export const S07_Recap: React.FC<Props> = ({ isActive, isDarkMode }) => {
           <strong className="text-emerald-300">All four panels reading the same state right now.</strong>{' '}
           Truth table row m{currentRow}, algebra evaluating to F={f}, K-Map cell m{currentRow}{' '}
           highlighted, and the schematic output box {f ? 'lit green' : 'dark'}. They cannot
-          disagree — they are the same function under four different lenses.
+          disagree - they are the same function under four different lenses.
         </p>
       </motion.div>
 

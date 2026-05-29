@@ -49,7 +49,7 @@ export const S07_DholDrops: React.FC<Props> = ({ isActive, isDarkMode }) => {
         <p className={`text-base max-w-3xl ${subText}`}>
           At room temperature the beat kicks in. Valence electrons absorb kinetic energy from ambient
           heat. A few absorb enough to <strong>break their covalent bond</strong> and shoot up to the
-          conduction band — they become free carriers. The empty space they leave behind is called a{' '}
+          conduction band - they become free carriers. The empty space they leave behind is called a{' '}
           <strong className="text-pink-300">hole</strong>.
         </p>
       </section>
@@ -200,7 +200,7 @@ export const S07_DholDrops: React.FC<Props> = ({ isActive, isDarkMode }) => {
             <div className={`p-4 rounded-2xl border ${isDarkMode ? 'bg-black/30 border-white/10' : 'bg-slate-50 border-slate-200'}`}>
               <div className="flex items-center gap-2 mb-1">
                 <CircleIcon size={12} className="text-cyan-400" />
-                <span className="font-mono text-[10px] uppercase tracking-widest text-cyan-400">Electron–hole pairs</span>
+                <span className="font-mono text-[10px] uppercase tracking-widest text-cyan-400">Electron-hole pairs</span>
               </div>
               <p className={`text-[12px] leading-relaxed ${subText}`}>
                 Every broken bond creates exactly one free electron <em>and</em> one hole. They are
@@ -229,7 +229,7 @@ export const S07_DholDrops: React.FC<Props> = ({ isActive, isDarkMode }) => {
       >
         <p className={`text-sm leading-relaxed ${textColor}`}>
           At 300 K (room temperature) a sugar-cube of pure Silicon contains approximately{' '}
-          <strong className="text-pink-300 font-mono">1.5 × 10¹⁰ free electrons / cm³</strong> — a number
+          <strong className="text-pink-300 font-mono">1.5 × 10¹⁰ free electrons / cm³</strong> - a number
           with eleven zeros, yet still tiny compared to the 5 × 10²² atoms in the same cube. That ratio
           is exactly why pure Si is a poor conductor… and why we need doping (next module).
         </p>

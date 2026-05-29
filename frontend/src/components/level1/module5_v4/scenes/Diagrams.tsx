@@ -483,7 +483,7 @@ export const ConcurrentBlocks: React.FC<Props> = ({ accent }) => (
   </svg>
 );
 
-// ── 15. Clock anatomy — period, frequency, duty cycle, edges ─────────────────
+// ── 15. Clock anatomy - period, frequency, duty cycle, edges ─────────────────
 export const ClockAnatomy: React.FC<Props> = ({ accent }) => (
   <svg viewBox="0 0 600 240" className="w-full max-w-2xl">
     {/* Clock waveform: 3 cycles */}
@@ -584,7 +584,7 @@ export const LevelVsEdge: React.FC<Props> = ({ accent }) => {
   );
 };
 
-// ── 17. Posedge sampling — the always @(posedge clk) idiom ────────────────────
+// ── 17. Posedge sampling - the always @(posedge clk) idiom ────────────────────
 export const PosedgeSampling: React.FC<Props> = ({ accent }) => {
   const cycle = 100;
   // 4 cycles: low edges at 40, 140, 240, 340 (high)→ rising at 40, 140, 240, 340
@@ -620,7 +620,7 @@ export const PosedgeSampling: React.FC<Props> = ({ accent }) => {
   );
 };
 
-// ── 18. Flip-flop internal — master/slave latch pair ─────────────────────────
+// ── 18. Flip-flop internal - master/slave latch pair ─────────────────────────
 export const FlipFlopParts: React.FC<Props> = ({ accent }) => (
   <svg viewBox="0 0 640 260" className="w-full max-w-2xl">
     {/* External wrapper */}

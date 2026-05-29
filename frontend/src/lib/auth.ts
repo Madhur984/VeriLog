@@ -2,8 +2,8 @@
  * Tiny client-side auth helper.
  *
  * Recognizes TWO kinds of session:
- *  1. Real Supabase session — `supabase_token` in localStorage (set by LoginPage).
- *  2. Guest session — `guest_session === 'true'` in localStorage (set by the
+ *  1. Real Supabase session - `supabase_token` in localStorage (set by LoginPage).
+ *  2. Guest session - `guest_session === 'true'` in localStorage (set by the
  *     guest-login button). Useful when Supabase is offline / for quick demos.
  *
  * Both are persisted client-side. A guest login is ALSO best-effort logged to
@@ -100,7 +100,7 @@ export function startGuestSession(name: string = 'Guest'): SessionInfo {
 }
 
 /* ------------------------------------------------------------------ *
- *  Module access gate — first N distinct modules free, then login.
+ *  Module access gate - first N distinct modules free, then login.
  * ------------------------------------------------------------------ */
 
 /**

@@ -1,8 +1,8 @@
 /**
- * mure/nodes/BatteryNode.ts — Voltage Source
+ * mure/nodes/BatteryNode.ts - Voltage Source
  *
  * Outputs a fixed voltage. Always drives its output.
- * No inputs — battery is a source node.
+ * No inputs - battery is a source node.
  */
 
 import type { SignalNode } from '../core/SignalNode';

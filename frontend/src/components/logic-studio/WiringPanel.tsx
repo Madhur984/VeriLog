@@ -1,5 +1,5 @@
 /**
- * WiringPanel.tsx — Connection list and management
+ * WiringPanel.tsx - Connection list and management
  */
 
 import type { SignalEdge } from '../../mure/core/SignalEdge';

@@ -9,7 +9,7 @@ export const S07_PhotoCircuit: React.FC<Props> = ({ isActive, isDarkMode }) => {
   const subText   = isDarkMode ? 'text-slate-300' : 'text-slate-600';
   const cardBg    = isDarkMode ? 'bg-white/5 border-white/10' : 'bg-white border-slate-200 shadow-xl';
 
-  const [lux, setLux] = useState(0); // 0 to 100% — incident light intensity
+  const [lux, setLux] = useState(0); // 0 to 100% - incident light intensity
 
   // Reverse current as a function of light (μA). Dark current ≈ 0.05 μA
   const iRev = 0.05 + (lux / 100) * 600;
@@ -27,7 +27,7 @@ export const S07_PhotoCircuit: React.FC<Props> = ({ isActive, isDarkMode }) => {
           Reverse-bias on duty. <span className="text-violet-300">Light turns into current.</span>
         </h2>
         <p className={`text-base max-w-3xl ${subText}`}>
-          The photodiode lives in reverse bias — normally a closed door. But incident photons
+          The photodiode lives in reverse bias - normally a closed door. But incident photons
           carry enough energy to free minority carriers inside the depletion region, and a tiny
           reverse current <span className="font-mono text-violet-300">I_reverse</span> starts to
           flow. Drag the light slider and watch.
@@ -48,7 +48,7 @@ export const S07_PhotoCircuit: React.FC<Props> = ({ isActive, isDarkMode }) => {
         <p className={`text-sm ${subText} leading-relaxed`}>
           A photodiode is a <strong>piggy bank that only opens when sunlight hits it</strong>. The
           brighter the sunshine, the more coins (current) drip out per second. In a totally dark
-          room, almost no coins fall — but a tiny trickle still leaks out. We call that trickle
+          room, almost no coins fall - but a tiny trickle still leaks out. We call that trickle
           the <span className="font-mono text-violet-300">dark current</span>.
         </p>
         <p className={`mt-2 text-sm ${subText}`}>
@@ -184,7 +184,7 @@ export const S07_PhotoCircuit: React.FC<Props> = ({ isActive, isDarkMode }) => {
             <div>
               <strong className="text-violet-300">Mental model:</strong> a camera shutter that
               opens just enough current to be measured. The brighter the scene, the wider it
-              opens — but never fully off, because of dark current.
+              opens - but never fully off, because of dark current.
             </div>
           </div>
         </div>
@@ -223,7 +223,7 @@ export const S07_PhotoCircuit: React.FC<Props> = ({ isActive, isDarkMode }) => {
           Same junction, opposite energy direction.
         </p>
         <p className={`text-sm ${subText}`}>
-          The reverse bias isn&apos;t there to drive current — it&apos;s there to widen the
+          The reverse bias isn&apos;t there to drive current - it&apos;s there to widen the
           depletion region so that more photons land inside the &ldquo;catch zone&rdquo; where
           they can liberate carriers.
         </p>

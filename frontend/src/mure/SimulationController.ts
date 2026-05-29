@@ -1,5 +1,5 @@
 /**
- * mure/SimulationController.ts — React Integration Layer
+ * mure/SimulationController.ts - React Integration Layer
  *
  * Owns a MUREEngine instance and runs a requestAnimationFrame loop.
  * React components read snapshots; simulation runs outside React state.

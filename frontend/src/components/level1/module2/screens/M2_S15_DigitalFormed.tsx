@@ -30,7 +30,7 @@ export const M2_S15_DigitalFormed: React.FC<M2ScreenProps> = ({ signal }) => {
         style={{ width: '100%', border: `2px solid ${T.signal}40`, borderRadius: 2, overflow: 'hidden', boxShadow: `0 0 40px ${T.signal}10` }}
       >
         <div style={{ padding: '12px 20px', borderBottom: `1px solid ${T.border}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: `${T.signal}06` }}>
-          <span style={{ fontFamily: T.mono, fontSize: 8, letterSpacing: '0.3em', textTransform: 'uppercase', color: T.signal }}>Digital Signal — Output</span>
+          <span style={{ fontFamily: T.mono, fontSize: 8, letterSpacing: '0.3em', textTransform: 'uppercase', color: T.signal }}>Digital Signal - Output</span>
           <span style={{ fontFamily: T.mono, fontSize: 11, color: T.signal }}>{bits}-bit · {levels} levels</span>
         </div>
         <WaveCanvas mode="digital" frequency={signal?.frequency ?? 3} amplitude={signal?.amplitude ?? 0.65}
@@ -42,7 +42,7 @@ export const M2_S15_DigitalFormed: React.FC<M2ScreenProps> = ({ signal }) => {
         {[
           { icon: '⚡', title: 'Noise-Immune', desc: 'Errors < 0.5 LSB are correctable with error codes' },
           { icon: '📦', title: 'Compressible', desc: 'Redundancy can be removed. FLAC, ZIP, JPEG.' },
-          { icon: '🔁', title: 'Lossless Copy', desc: 'Identical copies forever — bits do not degrade' },
+          { icon: '🔁', title: 'Lossless Copy', desc: 'Identical copies forever - bits do not degrade' },
         ].map(item => (
           <motion.div
             key={item.title}

@@ -54,13 +54,13 @@ function playMagneticClick() {
         gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
         osc.start(ctx.currentTime);
         osc.stop(ctx.currentTime + 0.08);
-    } catch { /* AudioContext blocked — silent */ }
+    } catch { /* AudioContext blocked - silent */ }
 }
 
 function playSnapSound() {
     try {
         const ctx = getAudioCtx();
-        // Filtered noise burst — mechanical snap character
+        // Filtered noise burst - mechanical snap character
         const bufSize = ctx.sampleRate * 0.05; // 50ms
         const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
         const data = buf.getChannelData(0);
@@ -77,7 +77,7 @@ function playSnapSound() {
         src.buffer = buf;
         src.connect(filter); filter.connect(gain); gain.connect(ctx.destination);
         src.start();
-    } catch { /* AudioContext blocked — silent */ }
+    } catch { /* AudioContext blocked - silent */ }
 }
 
 // ─── Euclidean distance ──────────────────────────────────────────────────────

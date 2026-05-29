@@ -1,5 +1,5 @@
 /**
- * StudioToolbox.tsx — Play/Pause/Step/Reset toolbar + mode switcher
+ * StudioToolbox.tsx - Play/Pause/Step/Reset toolbar + mode switcher
  */
 
 import type { StudioMode } from '../../hooks/useLogicStudio';

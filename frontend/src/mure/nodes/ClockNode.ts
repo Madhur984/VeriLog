@@ -1,5 +1,5 @@
 /**
- * mure/nodes/ClockNode.ts — Clock Signal Generator
+ * mure/nodes/ClockNode.ts - Clock Signal Generator
  *
  * Generates square wave at configurable frequency.
  * Output alternates between HIGH (5V) and LOW (0V).

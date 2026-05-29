@@ -35,7 +35,7 @@ const QUIZ: MCQ[] = [
     q: 'In a pure Silicon crystal at room temperature, the number of free electrons per cm³ is approximately:',
     options: ['1.5 × 10²² ', '1.5 × 10¹⁰', '4 × 10¹⁹', '6.022 × 10²³'],
     correct: 1,
-    rationale: 'Approximately 1.5 × 10¹⁰ carriers / cm³ — billions, but still tiny compared to ~5 × 10²² atoms / cm³ in the same volume.',
+    rationale: 'Approximately 1.5 × 10¹⁰ carriers / cm³ - billions, but still tiny compared to ~5 × 10²² atoms / cm³ in the same volume.',
   },
   {
     q: 'What is the band gap energy of pure Silicon at 300 K?',
@@ -52,7 +52,7 @@ const QUIZ: MCQ[] = [
       'A type of dopant atom.',
     ],
     correct: 2,
-    rationale: 'A hole is just the absence of an electron in a bond — it acts as if it were a positive charge carrier.',
+    rationale: 'A hole is just the absence of an electron in a bond - it acts as if it were a positive charge carrier.',
   },
   {
     q: 'The direction of conventional current is:',
@@ -63,13 +63,13 @@ const QUIZ: MCQ[] = [
       'Random.',
     ],
     correct: 1,
-    rationale: 'Conventional current follows the (apparent) movement of positive charge — the holes — and is therefore opposite to the actual electron motion.',
+    rationale: 'Conventional current follows the (apparent) movement of positive charge - the holes - and is therefore opposite to the actual electron motion.',
   },
   {
     q: 'Why does the resistance of a semiconductor DECREASE when temperature increases?',
     options: [
       'More heat means more atoms, hence more conductors.',
-      'Heat breaks more covalent bonds, creating more electron–hole pairs.',
+      'Heat breaks more covalent bonds, creating more electron-hole pairs.',
       'Heat aligns the crystal lattice perfectly.',
       'Heat reduces the band gap to zero.',
     ],
@@ -80,7 +80,7 @@ const QUIZ: MCQ[] = [
     q: 'One electron-volt (1 eV) equals:',
     options: ['1 J', '1.6 × 10⁻¹⁹ J', '6.022 × 10²³ J', '9.1 × 10⁻³¹ J'],
     correct: 1,
-    rationale: '1 eV = 1.6 × 10⁻¹⁹ Joules — the energy gained by one electron through 1 V potential difference.',
+    rationale: '1 eV = 1.6 × 10⁻¹⁹ Joules - the energy gained by one electron through 1 V potential difference.',
   },
   {
     q: 'In a perfect insulator the energy gap Eg is:',
@@ -97,13 +97,13 @@ const QUIZ: MCQ[] = [
       'Are both completely full.',
     ],
     correct: 1,
-    rationale: 'Conductors have overlapping bands — there is no forbidden zone, so free carriers exist at any temperature without applied energy.',
+    rationale: 'Conductors have overlapping bands - there is no forbidden zone, so free carriers exist at any temperature without applied energy.',
   },
   {
     q: 'A pure semiconductor at absolute zero (0 K) behaves as:',
     options: ['A perfect conductor', 'A perfect insulator', 'A capacitor', 'A diode'],
     correct: 1,
-    rationale: 'No thermal energy means no ionised carriers. All electrons are locked in covalent bonds — a perfect insulator.',
+    rationale: 'No thermal energy means no ionised carriers. All electrons are locked in covalent bonds - a perfect insulator.',
   },
   {
     q: 'Why does GaAs (Eg = 1.43 eV) emit visible light efficiently while Silicon does not?',
@@ -114,7 +114,7 @@ const QUIZ: MCQ[] = [
       'GaAs is a conductor.',
     ],
     correct: 1,
-    rationale: 'GaAs is a direct-band-gap semiconductor — electron transitions release energy as photons. Silicon\'s indirect gap mostly releases heat instead.',
+    rationale: 'GaAs is a direct-band-gap semiconductor - electron transitions release energy as photons. Silicon\'s indirect gap mostly releases heat instead.',
   },
 ];
 
@@ -151,13 +151,13 @@ const TF_DECK: TF[] = [
   { s: 'Pure Silicon at 0 K behaves as a perfect insulator.', ans: true,
     reason: 'No thermal energy means every covalent bond stays intact and no carriers are free.' },
   { s: 'A semiconductor has a positive temperature coefficient like a metal.', ans: false,
-    reason: 'Semiconductors have a NEGATIVE temperature coefficient — heat creates carriers, lowering resistance.' },
+    reason: 'Semiconductors have a NEGATIVE temperature coefficient - heat creates carriers, lowering resistance.' },
   { s: 'A hole is a real positively charged particle.', ans: false,
-    reason: 'A hole is the absence of an electron — it ACTS like a positive charge but has no mass of its own.' },
+    reason: 'A hole is the absence of an electron - it ACTS like a positive charge but has no mass of its own.' },
   { s: 'Free electrons and holes are always created in equal numbers in pure Silicon.', ans: true,
     reason: 'Every broken bond releases exactly one electron and leaves exactly one hole. Strict pair generation.' },
   { s: 'In an insulator the conduction band is completely full at room temperature.', ans: false,
-    reason: 'In an insulator the conduction band is essentially empty — that is why no current flows.' },
+    reason: 'In an insulator the conduction band is essentially empty - that is why no current flows.' },
   { s: 'Conventional current and electron current point in the same direction.', ans: false,
     reason: 'They point in opposite directions. Conventional current follows hole flow.' },
   { s: '1 eV is exactly the kinetic energy of an electron after falling through 1 V.', ans: true,
@@ -602,7 +602,7 @@ export const S12_PracticeArena: React.FC<Props> = ({ isActive, isDarkMode }) => 
                 )}
                 {result === false && (
                   <div className="text-rose-300 text-sm font-bold flex items-center gap-2">
-                    <XCircle size={14} /> Off — try {c.v} × 1.6 × 10⁻¹⁹.
+                    <XCircle size={14} /> Off - try {c.v} × 1.6 × 10⁻¹⁹.
                   </div>
                 )}
               </div>
@@ -620,7 +620,7 @@ export const S12_PracticeArena: React.FC<Props> = ({ isActive, isDarkMode }) => 
         <Sparkles className="mx-auto text-orange-400 mb-3" size={20} />
         <div className="font-mono text-[10px] uppercase tracking-widest text-orange-400 mb-2">Module Complete</div>
         <p className={`text-base leading-relaxed ${textColor}`}>
-          You&apos;ve walked the entire blueprint — atom, lattice, Garba, dhol, electrons & holes, the
+          You&apos;ve walked the entire blueprint - atom, lattice, Garba, dhol, electrons & holes, the
           3-tier city, and the toll booth. <strong className="text-orange-300">The pure state is just the
           beginning.</strong> Module 2 introduces dopants and rigs the game in our favour.
         </p>

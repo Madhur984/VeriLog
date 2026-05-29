@@ -41,10 +41,10 @@ export const S08_TwoLenses: React.FC<Props> = ({ isActive, isDarkMode }) => {
         </p>
       </section>
 
-      {/* Sketchbook references — blueprint matrix + the two-lens equality */}
+      {/* Sketchbook references - blueprint matrix + the two-lens equality */}
       <div className="grid md:grid-cols-2 gap-5">
         <div className="rounded-3xl overflow-hidden border border-white/10" style={{ background: '#fef9f0' }}>
-          <img src="/images/sketchbook/p10.webp" alt="The Blueprint Matrix — SOP vs POS comparison" className="w-full block" />
+          <img src="/images/sketchbook/p10.webp" alt="The Blueprint Matrix - SOP vs POS comparison" className="w-full block" />
           <div className="px-4 py-2 text-[10px] font-mono uppercase tracking-widest text-slate-700 bg-white/60">
             Sketchbook · the blueprint matrix
           </div>
@@ -98,7 +98,7 @@ export const S08_TwoLenses: React.FC<Props> = ({ isActive, isDarkMode }) => {
         <div className="flex items-center gap-2 mb-6">
           <Eye size={14} className="text-fuchsia-400" />
           <span className="font-mono text-[10px] uppercase tracking-widest text-fuchsia-400">
-            Live equivalence — pick any input, both lenses must agree
+            Live equivalence - pick any input, both lenses must agree
           </span>
         </div>
 
@@ -138,7 +138,7 @@ export const S08_TwoLenses: React.FC<Props> = ({ isActive, isDarkMode }) => {
             <div className={`font-mono text-[10px] uppercase tracking-widest text-center ${
               allMatch ? 'text-emerald-400' : 'text-rose-400'
             }`}>
-              {allMatch ? 'Both lenses agree' : 'Mismatch — investigate!'}
+              {allMatch ? 'Both lenses agree' : 'Mismatch - investigate!'}
             </div>
             <div className={`text-[10px] text-center ${subText}`}>
               Truth-table answer: <strong>{truth}</strong>
@@ -163,7 +163,7 @@ export const S08_TwoLenses: React.FC<Props> = ({ isActive, isDarkMode }) => {
           <CheckCircle2 size={18} className="text-emerald-400 mt-0.5 shrink-0" />
           <p className={`text-sm leading-relaxed ${subText}`}>
             <strong>DeMorgan&apos;s bridge:</strong>{' '}
-            <span className="font-mono">(m<sub>i</sub>)&apos; = M<sub>i</sub></span> — the
+            <span className="font-mono">(m<sub>i</sub>)&apos; = M<sub>i</sub></span> - the
             complement of a single minterm <em>is</em> the corresponding maxterm. Apply DeMorgan
             to every term of one canonical form and you obtain the other.
           </p>
@@ -189,7 +189,7 @@ export const S08_TwoLenses: React.FC<Props> = ({ isActive, isDarkMode }) => {
         <ol className="space-y-3">
           {[
             { step: 'Start with the minterm.',                                  expr: 'm5 = R · A′ · W' },
-            { step: "Complement both sides — we want (m5)′.",                   expr: '(m5)′ = (R · A′ · W)′' },
+            { step: "Complement both sides - we want (m5)′.",                   expr: '(m5)′ = (R · A′ · W)′' },
             { step: "DeMorgan I: (X · Y · Z)′ = X′ + Y′ + Z′.",                 expr: '(m5)′ = R′ + (A′)′ + W′' },
             { step: 'Double negation: (A′)′ = A.',                              expr: '(m5)′ = R′ + A + W′' },
             { step: 'This is exactly the maxterm M5 from the row R=1, A=0, W=1.', expr: 'M5 = R′ + A + W′  ✓' },

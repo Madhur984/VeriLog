@@ -92,7 +92,7 @@ export const TIMELINE_DATA: TimelineCard[] = [
   },
   {
     year: 'EARLY CAREER',
-    phase: 'YEAR 1–3 AT WORK',
+    phase: 'YEAR 1-3 AT WORK',
     quote: '"Your learning rate here outpaces your college years."',
     milestones: [
       'Complete company onboarding + tool certification',
@@ -113,8 +113,8 @@ export const TIMELINE_DATA: TimelineCard[] = [
   },
   {
     year: 'SENIOR+',
-    phase: 'YEAR 5–10',
-    quote: '"At this stage, your career defines you — not the other way."',
+    phase: 'YEAR 5-10',
+    quote: '"At this stage, your career defines you - not the other way."',
     milestones: [
       'Salary crosses ₹30 LPA (India) or $150k (USA) milestone',
       'Lead a team or technical project',

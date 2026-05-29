@@ -1,5 +1,5 @@
 /**
- * mure/nodes/LogicGateNode.ts — Unified Logic Gate Node
+ * mure/nodes/LogicGateNode.ts - Unified Logic Gate Node
  *
  * Supports: AND, OR, NOT, NAND, NOR, XOR, XNOR
  * Parameterized by gate type and input count.

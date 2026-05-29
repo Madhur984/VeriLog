@@ -36,7 +36,7 @@ export const S10_FinalBlueprint: React.FC<Props> = ({ isActive, isDarkMode }) =>
         </div>
         <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>The Final Architectural Blueprint</h2>
         <p className={`text-base max-w-3xl ${subText}`}>
-          Add the four wing terms together — that&apos;s the simplified Sum-of-Products. A 16-row truth table
+          Add the four wing terms together - that&apos;s the simplified Sum-of-Products. A 16-row truth table
           collapses into four short product terms. The architecture is approved.
         </p>
       </section>
@@ -102,7 +102,7 @@ export const S10_FinalBlueprint: React.FC<Props> = ({ isActive, isDarkMode }) =>
             ))}
           </div>
           <p className={`text-[11px] mt-5 ${subText}`}>
-            Cells covered by more than one wing show a small <span className="font-mono">×n</span> badge — a
+            Cells covered by more than one wing show a small <span className="font-mono">×n</span> badge - a
             single room is allowed to belong to multiple wings if it makes the wings bigger.
           </p>
         </motion.div>
@@ -166,7 +166,7 @@ export const S10_FinalBlueprint: React.FC<Props> = ({ isActive, isDarkMode }) =>
         </div>
         <p className={`text-[13px] leading-relaxed ${subText}`}>
           Every premium guest must be covered by at least one wing. Every non-premium room must <em>not</em> be
-          covered by any wing. Trace each of the 8 minterms through the legend above — and confirm rooms
+          covered by any wing. Trace each of the 8 minterms through the legend above - and confirm rooms
           {' 3, 4, 5, 7, 9, 11, 12, 15'} are all uncovered. ✓
         </p>
       </motion.div>

@@ -1,5 +1,5 @@
 /**
- * mure/nodes/MuxNode.ts — Multiplexer
+ * mure/nodes/MuxNode.ts - Multiplexer
  *
  * N data inputs + S select lines → 1 output.
  * Select lines determine which data input is routed to output.

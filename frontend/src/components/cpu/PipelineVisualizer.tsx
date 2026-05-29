@@ -1,5 +1,5 @@
 /**
- * PipelineVisualizer.tsx — Visual representation of CPU pipeline stages
+ * PipelineVisualizer.tsx - Visual representation of CPU pipeline stages
  *
  * Shows 5-stage pipeline (IF/ID/EX/MEM/WB) with:
  * - Currently executing instruction in each stage
@@ -108,7 +108,7 @@ export const PipelineVisualizer = memo(({ pipeline }: PipelineVisualizerProps) =
                                         )}
                                     </>
                                 ) : (
-                                    <span style={{ color: 'rgba(255,255,255,0.08)', fontSize: 9 }}>—</span>
+                                    <span style={{ color: 'rgba(255,255,255,0.08)', fontSize: 9 }}>-</span>
                                 )}
                             </div>
 

@@ -1,5 +1,5 @@
 /**
- * simulationWorker.ts — Web Worker running MUREEngine off the UI thread
+ * simulationWorker.ts - Web Worker running MUREEngine off the UI thread
  *
  * Receives commands via postMessage, runs simulation, returns results.
  * This file is loaded as a Web Worker (new Worker(new URL(...), import.meta.url))

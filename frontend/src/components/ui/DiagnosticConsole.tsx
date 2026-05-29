@@ -60,7 +60,7 @@ export const DiagnosticConsole: React.FC<DiagnosticConsoleProps> = ({
       className="relative"
       style={{ width: 260 }}
     >
-      {/* Outer shell — burnished metal */}
+      {/* Outer shell - burnished metal */}
       <div
         className="relative rounded-2xl overflow-hidden"
         style={{
@@ -171,7 +171,7 @@ export const DiagnosticConsole: React.FC<DiagnosticConsoleProps> = ({
           </div>
         </div>
 
-        {/* Button grid — 2 columns */}
+        {/* Button grid - 2 columns */}
         <div className="px-4 pb-3 grid grid-cols-2 gap-2">
           {BUTTONS.map(btn => (
             <motion.button

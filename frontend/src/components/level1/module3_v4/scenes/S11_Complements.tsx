@@ -137,11 +137,11 @@ export const S11_Complements: React.FC<Props> = ({ isActive, isDarkMode }) => {
           initial={{ opacity: 0 }} animate={isActive ? { opacity: 1 } : {}}
           className={`font-mono text-[10px] tracking-[0.4em] uppercase block mb-4 ${isDarkMode ? 'text-sky-400' : 'text-sky-600'}`}
         >
-          Complements — Chapter 3.2
+          Complements - Chapter 3.2
         </motion.span>
         <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>Complements</h2>
         <p className={`text-lg max-w-2xl mx-auto opacity-70 ${textColor}`}>
-          The secret weapon of digital arithmetic — turn subtraction into addition.
+          The secret weapon of digital arithmetic - turn subtraction into addition.
         </p>
       </section>
 
@@ -281,7 +281,7 @@ export const S11_Complements: React.FC<Props> = ({ isActive, isDarkMode }) => {
                 {type === '10s' && (
                   <div className={`p-6 rounded-2xl ${isDarkMode ? 'bg-amber-500/5 border border-amber-500/20' : 'bg-amber-50 border border-amber-200'}`}>
                     <div className={`text-xs mb-3 font-mono ${isDarkMode ? 'text-amber-400' : 'text-amber-700'}`}>
-                      Verify: {decNum} + {tens(decNum, digits)} = {decNum + tens(decNum, digits)} (= 10^{digits} — discard leading 1)
+                      Verify: {decNum} + {tens(decNum, digits)} = {decNum + tens(decNum, digits)} (= 10^{digits} - discard leading 1)
                     </div>
                     <div className={`text-xs opacity-60 ${textColor}`}>
                       9's complement of {decNum} = {nines(decNum, digits)}, then +1 = {nines(decNum, digits) + 1}
@@ -332,15 +332,15 @@ export const S11_Complements: React.FC<Props> = ({ isActive, isDarkMode }) => {
               {[
                 ['+7', '0111', '0111', '0111'],
                 ['+0', '0000', '0000', '0000'],
-                ['−0', '1000', '1111', '—'],
+                ['−0', '1000', '1111', '-'],
                 ['−1', '1001', '1110', '1111'],
                 ['−3', '1011', '1100', '1101'],
                 ['−7', '1111', '1000', '1001'],
-                ['−8', '—', '—', '1000'],
+                ['−8', '-', '-', '1000'],
               ].map((row, i) => (
                 <tr key={i} className={`border-t ${isDarkMode ? 'border-white/5 hover:bg-white/3' : 'border-gray-100 hover:bg-gray-50'}`}>
                   {row.map((cell, j) => (
-                    <td key={j} className={`px-6 py-3 ${j === 0 ? (cell.startsWith('-') ? 'text-rose-400' : (isDarkMode ? 'text-sky-400' : 'text-sky-600')) : (cell === '—' ? 'opacity-20' : (isDarkMode ? 'text-white/70' : 'text-gray-700'))} font-black`}>
+                    <td key={j} className={`px-6 py-3 ${j === 0 ? (cell.startsWith('-') ? 'text-rose-400' : (isDarkMode ? 'text-sky-400' : 'text-sky-600')) : (cell === '-' ? 'opacity-20' : (isDarkMode ? 'text-white/70' : 'text-gray-700'))} font-black`}>
                       {cell}
                     </td>
                   ))}

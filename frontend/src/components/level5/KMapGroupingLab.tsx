@@ -1,5 +1,5 @@
 /**
- * KMapGroupingLab.tsx — Scene 5.3: Interactive grouping with real validation feedback.
+ * KMapGroupingLab.tsx - Scene 5.3: Interactive grouping with real validation feedback.
  *
  * Wraps KMapEngine in group mode and adds:
  * - Green pulse + XP badge pop on valid group saved
@@ -68,7 +68,7 @@ export const KMapGroupingLab: React.FC<Props> = ({ onComplete, onInvalidGroup, s
             {/* Header */}
             <div className="text-center">
                 <span className="text-[9px] uppercase tracking-[0.25em] text-sky-500 font-black block mb-2">
-                    Scene 5.3 — Grouping Lab
+                    Scene 5.3 - Grouping Lab
                 </span>
                 <h2 className="text-3xl font-black text-slate-900 dark:text-white italic tracking-tighter uppercase m-0">Mathematical Minimization</h2>
                 <p className="text-slate-500 dark:text-slate-400 text-sm mt-4 font-sans font-medium leading-relaxed italic max-w-2xl mx-auto">

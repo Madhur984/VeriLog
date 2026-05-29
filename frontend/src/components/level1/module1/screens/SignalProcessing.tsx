@@ -100,7 +100,7 @@ export const SignalProcessing: React.FC<ScreenProps> = ({
       <div className="mt-40 w-full max-w-md bg-sky-50 border border-sky-100 p-6 rounded-2xl flex items-center gap-4 shadow-sm" style={getDimStyle(false)}>
           <ArrowRightLeft className="text-sky-600 shrink-0" size={18} />
           <p className="text-[9px] text-sky-700/70 font-mono tracking-wider italic uppercase leading-relaxed">
-            From the continuous flow of the physical world to the discrete steps of logic gates—the conversion determines fidelity.
+            From the continuous flow of the physical world to the discrete steps of logic gates-the conversion determines fidelity.
           </p>
       </div>
     </div>

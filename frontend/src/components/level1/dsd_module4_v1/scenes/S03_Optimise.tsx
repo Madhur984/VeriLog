@@ -210,7 +210,7 @@ const PROBLEMS: OptProblem[] = [
     minimised: "F = A'B + CD + A'C",
     literalsBefore: 32,
     literalsAfter: 6,
-    insight: 'When two 4-cell groups overlap, the shared cells show up in both terms. That is FREE in hardware — the OR gate does not mind if 2 ANDs fire at the same time.',
+    insight: 'When two 4-cell groups overlap, the shared cells show up in both terms. That is FREE in hardware - the OR gate does not mind if 2 ANDs fire at the same time.',
   },
 
   {
@@ -225,8 +225,8 @@ const PROBLEMS: OptProblem[] = [
       { cells: [1, 3, 5, 7, 9, 11, 13, 15], color: '#0ea5e9', term: 'D', label: 'CD=01 ∪ CD=11 columns · D=1 stays · 8-cell octet' },
     ],
     questions: [
-      { q: 'BCD only uses 0–9 (rows m0 to m9). So what about m10 to m15?',
-        a: 'Those rows are "don\'t cares" — those input combos never happen in real BCD. We can pretend they are 0 OR 1, whichever helps shrink F.' },
+      { q: 'BCD only uses 0-9 (rows m0 to m9). So what about m10 to m15?',
+        a: 'Those rows are "don\'t cares" - those input combos never happen in real BCD. We can pretend they are 0 OR 1, whichever helps shrink F.' },
       { q: 'If you treat the don\'t-cares as 1 when helpful, can you find an 8-cell group?',
         a: 'Yes! The CD=01 and CD=11 columns together = 8 cells. All the real 1s (m1, m3, m5, m7, m9) plus the don\'t-cares m11, m13, m15 all fall in D=1. Set the rest to 0.' },
       { q: 'What is the shortest equation?',
@@ -238,7 +238,7 @@ const PROBLEMS: OptProblem[] = [
     minimised: 'F = D',
     literalsBefore: 6,
     literalsAfter: 1,
-    insight: 'BCD odd-number detector. By using the unused codes 10–15 as wildcards, the K-Map combines 5 separate rows into one big 8-cell column — F is just the last bit.',
+    insight: 'BCD odd-number detector. By using the unused codes 10-15 as wildcards, the K-Map combines 5 separate rows into one big 8-cell column - F is just the last bit.',
   },
 ];
 
@@ -442,7 +442,7 @@ export const S03_Optimise: React.FC<Props> = ({ isActive, isDarkMode }) => {
           Three K-Map drills · just shrink the equation.
         </h2>
         <p className={`text-base max-w-3xl ${subText}`}>
-          No story, no schematic — just a list of rows where F = 1, and a K-Map. Find the smallest
+          No story, no schematic - just a list of rows where F = 1, and a K-Map. Find the smallest
           equation that covers them all. Click <strong className="text-violet-300">Show groups</strong>{' '}
           if you get stuck. Each problem ends with a "before vs after" comparison.
         </p>

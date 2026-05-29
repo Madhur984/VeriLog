@@ -58,7 +58,7 @@ export const S06_MassiveBoarding: React.FC<Props> = ({ isActive, isDarkMode }) =
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         className={`relative rounded-3xl overflow-hidden border ${cardBg}`}
       >
-        <img src="/images/commuter/p07.webp" alt="Forward bias — massive boarding" className="w-full block aspect-[16/9] object-cover" />
+        <img src="/images/commuter/p07.webp" alt="Forward bias - massive boarding" className="w-full block aspect-[16/9] object-cover" />
         <div className="absolute bottom-3 right-4 font-mono text-[9px] uppercase tracking-widest text-violet-200/80">
           Commuter Circuit · Forward Bias
         </div>
@@ -85,10 +85,10 @@ export const S06_MassiveBoarding: React.FC<Props> = ({ isActive, isDarkMode }) =
             { sym: 'I_S',  name: 'Reverse saturation',      detail: '~10⁻¹² A for small Si diodes; very temperature-dependent.' },
             { sym: 'V_D',  name: 'Applied voltage',         detail: 'The bias you put across the diode (positive = forward).' },
             { sym: 'V_T',  name: 'Thermal voltage',         detail: 'kT/q ≈ 26 mV at room temperature (300 K).' },
-            { sym: 'n',    name: 'Ideality factor',         detail: 'Between 1 (ideal) and 2 (real). Ge ≈ 1, Si ≈ 1–2.' },
+            { sym: 'n',    name: 'Ideality factor',         detail: 'Between 1 (ideal) and 2 (real). Ge ≈ 1, Si ≈ 1-2.' },
             { sym: 'e^x',  name: 'Exponential',             detail: 'The reason the curve is non-linear above the knee.' },
             { sym: '−1',   name: 'The "−1" term',           detail: 'Forces I_D = 0 at V_D = 0. Significant only below ~0.1 V.' },
-            { sym: '0.7V', name: 'Knee voltage',            detail: 'Where exp grows fast enough to overwhelm I_S — the diode turns "on".' },
+            { sym: '0.7V', name: 'Knee voltage',            detail: 'Where exp grows fast enough to overwhelm I_S - the diode turns "on".' },
           ].map((c) => (
             <div key={c.sym} className={`p-3 rounded-xl border ${isDarkMode ? 'bg-black/30 border-white/10' : 'bg-slate-50 border-slate-200'}`}>
               <div className="font-mono text-xl font-black text-violet-300 mb-1">{c.sym}</div>

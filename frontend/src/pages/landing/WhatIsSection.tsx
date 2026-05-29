@@ -19,12 +19,12 @@ export const WhatIsSection = () => {
             </h2>
             <div className="space-y-4 text-[15px] leading-relaxed" style={{ color: '#CBD5E1' }}>
               <p>
-                You landed in ECE off a CS cutoff, then spent years on derivations — never
+                You landed in ECE off a CS cutoff, then spent years on derivations - never
                 hearing the words VLSI, RTL, or RF until placements. Meanwhile real fabs need
                 hands-on, tool-fluent designers. That mismatch is the <strong style={{ color: '#F8FAFC' }}>Glasswing Gap</strong>.
               </p>
               <p>
-                BitforBytes closes it the way it should be taught — through{' '}
+                BitforBytes closes it the way it should be taught - through{' '}
                 <strong style={{ color: '#F8FAFC' }}>simulation, not slides</strong>. Every concept is a live
                 interaction: you toggle a bit, you see the signal, you build the system. No lab,
                 no expensive EDA licence.

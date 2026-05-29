@@ -1,5 +1,5 @@
 /**
- * mure/nodes/RegisterNode.ts — N-bit Register
+ * mure/nodes/RegisterNode.ts - N-bit Register
  *
  * Stores N bits on clock edge. Has clock, load, and reset inputs.
  * Inputs: [data0..dataN-1, clock, load, reset]

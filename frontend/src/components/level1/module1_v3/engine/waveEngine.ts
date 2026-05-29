@@ -8,7 +8,7 @@ export interface WaveParams {
   waveType: WaveType;
 }
 
-// Precomputed noise — init once at module load
+// Precomputed noise - init once at module load
 const NOISE_SIZE = 4096;
 const noiseTable = new Float32Array(NOISE_SIZE);
 for (let i = 0; i < NOISE_SIZE; i++) noiseTable[i] = (Math.random() - 0.5) * 2;

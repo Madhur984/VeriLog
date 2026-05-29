@@ -1,5 +1,5 @@
 /**
- * mure/nodes/DecoderNode.ts — N-to-2^N Decoder
+ * mure/nodes/DecoderNode.ts - N-to-2^N Decoder
  *
  * N input lines → 2^N output lines.
  * Exactly one output is HIGH based on the binary input value.

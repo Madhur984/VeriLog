@@ -3,7 +3,7 @@
  *
  * Every request automatically gets `Authorization: Bearer <token>` from the
  * active session (Supabase JWT or guest pseudo-token). 401 responses surface
- * to the caller — the route guard handles redirect-to-login.
+ * to the caller - the route guard handles redirect-to-login.
  *
  * Existing code that does `import axios from 'axios'` keeps working because
  * we also install a global default header at module load. Prefer importing

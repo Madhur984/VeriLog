@@ -43,8 +43,8 @@ export const M2_S11_AliasingDiscovery: React.FC<M2ScreenProps> = ({ triggerHapti
         >
           <span style={{ fontFamily: T.mono, fontSize: 10, color: isAliasing ? '#EC4899' : T.success, letterSpacing: '0.1em' }}>
             {isAliasing
-              ? `⚠ ALIASING — f={signalFreq}Hz, fs={sampleRate}Hz. Phantom freq: ${fAlias.toFixed(1)}Hz`
-              : `✓ CLEAN — fs/f = ${(sampleRate / signalFreq).toFixed(2)}× (Nyquist satisfied)`}
+              ? `⚠ ALIASING - f={signalFreq}Hz, fs={sampleRate}Hz. Phantom freq: ${fAlias.toFixed(1)}Hz`
+              : `✓ CLEAN - fs/f = ${(sampleRate / signalFreq).toFixed(2)}× (Nyquist satisfied)`}
           </span>
           <span style={{ fontFamily: T.mono, fontSize: 9, color: T.muted }}>
             {isAliasing ? `f_alias = |${signalFreq} − ${Math.round(signalFreq / sampleRate)}×${sampleRate}|` : 'fs ≥ 2f'}

@@ -32,7 +32,7 @@ export const S02_Baseline: React.FC<Props> = ({ isActive, isDarkMode }) => {
           One door. <span className="text-cyan-300">One way in.</span>
         </h2>
         <p className={`text-base max-w-3xl ${subText}`}>
-          The standard P-N junction is a mechanical switch — conducts in forward bias, blocks in
+          The standard P-N junction is a mechanical switch - conducts in forward bias, blocks in
           reverse. Toggle the bias below and watch the depletion zone breathe.
         </p>
       </motion.section>
@@ -66,7 +66,7 @@ export const S02_Baseline: React.FC<Props> = ({ isActive, isDarkMode }) => {
         <div className="grid lg:grid-cols-[1.3fr_1fr] gap-8 items-center">
           <div>
             <div className="font-mono text-[10px] uppercase tracking-widest text-cyan-300 mb-3">
-              {isForward ? 'Forward bias — current flows' : 'Reverse bias — current blocked'}
+              {isForward ? 'Forward bias - current flows' : 'Reverse bias - current blocked'}
             </div>
             <svg viewBox="0 0 480 170" className="w-full h-auto">
               {/* P region */}
@@ -131,7 +131,7 @@ export const S02_Baseline: React.FC<Props> = ({ isActive, isDarkMode }) => {
             </div>
             <div className={`rounded-2xl p-5 border ${cardBg} text-sm ${subText}`}>
               <strong className="text-cyan-300">Behaviour:</strong> the baseline diode either lets
-              current pass or doesn&apos;t — purely binary. No regulation, no light, no detection.
+              current pass or doesn&apos;t - purely binary. No regulation, no light, no detection.
               That&apos;s why we need the specialists.
             </div>
           </div>

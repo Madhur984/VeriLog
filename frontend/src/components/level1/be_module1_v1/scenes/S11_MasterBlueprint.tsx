@@ -32,7 +32,7 @@ const BLUEPRINTS: Blueprint[] = [
     type: 'SEMICONDUCTOR',
     Icon: Cpu,
     tag: 'Controlled traffic',
-    egRange: 'Eg ≈ 0.5 – 3 eV',
+    egRange: 'Eg ≈ 0.5 - 3 eV',
     conduction: 'Lightly populated at 300 K',
     valence: 'Mostly full',
     examples: ['Si · 1.1 eV', 'Ge · 0.67 eV', 'GaAs · 1.43 eV'],
@@ -187,7 +187,7 @@ export const S11_MasterBlueprint: React.FC<Props> = ({ isActive, isDarkMode }) =
         <p className={`text-base leading-relaxed ${textColor}`}>
           You now know how to read any energy-band diagram in the world. Insulators are locked, conductors
           are uncontrolled, semiconductors are the perfect jump.{' '}
-          <strong className="text-orange-300">Pure Silicon at 1.1 eV is just the blank canvas</strong> — in the
+          <strong className="text-orange-300">Pure Silicon at 1.1 eV is just the blank canvas</strong> - in the
           next module we add impurities and start painting.
         </p>
       </motion.div>

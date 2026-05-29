@@ -1,5 +1,5 @@
 /**
- * MentorFramework.ts — Unified AI Mentor System
+ * MentorFramework.ts - Unified AI Mentor System
  *
  * Base framework for all AI mentors in the DigiLogic platform.
  * Provides common personality engine, dialogue system, and context management.

@@ -1,5 +1,5 @@
 /**
- * mure/nodes/NodeRegistry.ts — Node Factory Registry
+ * mure/nodes/NodeRegistry.ts - Node Factory Registry
  *
  * Central lookup for creating nodes by type.
  * Single point of access for the MUREEngine facade.

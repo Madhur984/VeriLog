@@ -53,7 +53,7 @@ export const M2_S06_DigitalLimit: React.FC<M2ScreenProps> = ({ triggerHaptic, up
       <div style={{ width: '100%', border: `1px solid ${T.border}`, borderRadius: 2, overflow: 'hidden' }}>
         <div style={{ padding: '10px 20px', borderBottom: `1px solid ${T.border}` }}>
           <span style={{ fontFamily: T.mono, fontSize: 8, letterSpacing: '0.3em', textTransform: 'uppercase', color: T.muted }}>
-            Digital Signal — {bits}bit / {levels} levels
+            Digital Signal - {bits}bit / {levels} levels
           </span>
         </div>
         <WaveCanvas mode="digital" frequency={signal?.frequency ?? 3} amplitude={signal?.amplitude ?? 0.65} bitDepth={bits} height={200} showGrid signalColor={T.interact} />

@@ -1,5 +1,5 @@
 /**
- * SceneLogicBridge.tsx — Module 3.5: Post-Arithmetic Transition
+ * SceneLogicBridge.tsx - Module 3.5: Post-Arithmetic Transition
  * 
  * "Building Mode": The user manually configures gates to create a Half-Adder,
  * proving they understand how arithmetic manifests from physical logic.
@@ -153,7 +153,7 @@ export const SceneLogicBridge: React.FC<Props> = ({ onComplete }) => {
                     initial={{ opacity: 0 }} animate={{ opacity: 1 }}
                     style={{ fontFamily: T.mono, fontSize: 12, letterSpacing: '0.4em', color: T.accent, display: 'block', marginBottom: 16 }}
                 >
-                    3.5 — The Bridge to Logic
+                    3.5 - The Bridge to Logic
                 </motion.span>
                 <h2 style={{ fontSize: 32, fontWeight: 800, color: T.text, marginBottom: 16 }}>Manifesting Computation</h2>
                 <div style={{ maxWidth: 500, margin: '0 auto' }}>

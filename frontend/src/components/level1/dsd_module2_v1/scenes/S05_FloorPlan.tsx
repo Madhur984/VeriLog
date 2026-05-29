@@ -52,7 +52,7 @@ export const S05_FloorPlan: React.FC<Props> = ({ isActive, isDarkMode }) => {
         <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>The Master Floor Plan</h2>
         <p className={`text-base max-w-3xl ${subText}`}>
           Because the row-axis (AB) and column-axis (CD) are <strong>both Gray-coded</strong>, the decimal room
-          numbers don&apos;t run sequentially — they zig-zag. Every shared border on this 4×4 plan corresponds to
+          numbers don&apos;t run sequentially - they zig-zag. Every shared border on this 4×4 plan corresponds to
           one shared Boolean variable.
         </p>
       </section>
@@ -155,7 +155,7 @@ export const S05_FloorPlan: React.FC<Props> = ({ isActive, isDarkMode }) => {
               </div>
               <div className={`text-[11px] ${subText}`}>
                 Each lit cell means that variable is <strong>uncomplemented</strong> in the minterm. Its neighbours
-                in the grid differ from this room by exactly one of those bits — that wall is the variable they
+                in the grid differ from this room by exactly one of those bits - that wall is the variable they
                 disagree on.
               </div>
             </>
@@ -343,7 +343,7 @@ const WallInspector: React.FC<{ isActive: boolean; isDarkMode: boolean }> = ({ i
               </text>
             ))}
 
-            {/* Horizontal walls (between rows) — only render the first 3 internal walls of the leftmost 2 cols for clarity */}
+            {/* Horizontal walls (between rows) - only render the first 3 internal walls of the leftmost 2 cols for clarity */}
             {WALLS.filter((w) => w.orient === 'h').map((w) => {
               const x = 40 + w.col * 80;
               const y = 80 + w.row * 70;
