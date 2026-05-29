@@ -22,8 +22,8 @@ export const GreetingSequence: React.FC = () => {
             icon: <Zap className="w-12 h-12 text-yellow-500" />
         },
         {
-            text: "Let's see how much you are familiar with this world",
-            subtext: "Initializing aptitude assessment protocol...",
+            text: "Let's get you to your workstation",
+            subtext: "Booting your engineering hub...",
             icon: <ArrowRight className="w-12 h-12 text-signal-success" />
         }
     ];
@@ -33,7 +33,7 @@ export const GreetingSequence: React.FC = () => {
             setStep(s => s + 1);
         } else {
             setHasSeenGreeting(true);
-            navigate('/assessment');
+            navigate('/portal');
         }
     };
 

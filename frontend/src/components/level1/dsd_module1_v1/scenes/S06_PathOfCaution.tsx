@@ -41,13 +41,13 @@ export const S06_PathOfCaution: React.FC<Props> = ({ isDarkMode }) => {
       {/* Side-by-side sketchbook reference */}
       <div className="grid md:grid-cols-2 gap-5">
         <div className="rounded-3xl overflow-hidden border border-white/10" style={{ background: '#fef9f0' }}>
-          <img src="/images/sketchbook/p07.png" alt="Path of Caution — targeting the zeros" className="w-full block" />
+          <img src="/images/sketchbook/p07.webp" alt="Path of Caution — targeting the zeros" className="w-full block" />
           <div className="px-4 py-2 text-[10px] font-mono uppercase tracking-widest text-slate-700 bg-white/60">
             Sketchbook · barricading M3, M5, M6, M7
           </div>
         </div>
         <div className="rounded-3xl overflow-hidden border border-white/10" style={{ background: '#fef9f0' }}>
-          <img src="/images/sketchbook/p08.png" alt="Anatomy of a maxterm — barricade metaphor" className="w-full block" />
+          <img src="/images/sketchbook/p08.webp" alt="Anatomy of a maxterm — barricade metaphor" className="w-full block" />
           <div className="px-4 py-2 text-[10px] font-mono uppercase tracking-widest text-slate-700 bg-white/60">
             Sketchbook · barricade construction rule
           </div>

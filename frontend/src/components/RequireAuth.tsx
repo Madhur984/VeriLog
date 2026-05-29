@@ -15,7 +15,7 @@ import { isAuthenticated } from '../lib/auth';
  *   </Route>
  *
  * Or wrap a single element:
- *   <Route path="/hero" element={<RequireAuth><HeroExperience /></RequireAuth>} />
+ *   <Route path="/portal" element={<RequireAuth><WorkstationHome /></RequireAuth>} />
  */
 export const RequireAuth: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
     const location = useLocation();

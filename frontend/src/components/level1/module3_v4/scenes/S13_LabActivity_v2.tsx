@@ -288,12 +288,10 @@ const Slide2: React.FC<{ play: any }> = ({ play }) => {
         {/* Row B */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
           <span style={{ fontFamily: C.mono, fontSize: 18, fontWeight: 900, color: C.cyanDim, width: 80, textAlign: 'right' }}>
-            {mode === 'addone' ? '+ 1' : `B = ${decB}`}
+            B = {decB}
           </span>
           {effectiveB.map((b, i) => (
-            mode === 'addone'
-              ? <div key={i} style={{ width: 52, height: 56, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: C.mono, fontSize: 20, fontWeight: 900, color: i === BITS - 1 ? C.cyanDim : C.border }}>{b}</div>
-              : <BitBtn key={i} val={b} color={C.cyanDim} size={48} onClick={() => { setBitsB(p => p.map((v, idx) => idx === i ? 1 - v : v)); play('toggle'); }} />
+            <BitBtn key={i} val={b} color={C.cyanDim} size={48} onClick={() => { setBitsB(p => p.map((v, idx) => idx === i ? 1 - v : v)); play('toggle'); }} />
           ))}
         </div>
 

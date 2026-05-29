@@ -13,7 +13,7 @@ const PIPELINE_STAGES = [
 export const SiliconPipeline: React.FC = () => {
   return (
     <DataTerminal title="SILICON PIPELINE" subtitle="Industrial Talent Flow & Saturation Analysis">
-      <div className="p-8 bg-[#020408]">
+      <div className="p-8 bg-[#020408] h-full">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 relative">
           {PIPELINE_STAGES.map((stage, i) => (
             <div key={stage.label} className="relative z-10">
@@ -46,7 +46,7 @@ export const SiliconPipeline: React.FC = () => {
               </motion.div>
               
               {i < PIPELINE_STAGES.length - 1 && (
-                <div className="hidden md:flex absolute top-1/2 -right-4 z-20 items-center justify-center text-cyan-400/30">
+                <div className="hidden md:flex absolute top-1/2 -right-2 -translate-y-1/2 z-10 items-center justify-center text-cyan-400/30 pointer-events-none">
                   <ArrowRight size={16} />
                 </div>
               )}

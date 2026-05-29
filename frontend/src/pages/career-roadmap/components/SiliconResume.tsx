@@ -136,9 +136,9 @@ export const SiliconResume = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto px-6 py-12 bg-[#07080A] text-white grid grid-cols-1 lg:grid-cols-12 gap-8 border border-white/5 rounded-xl">
+    <div className="w-full px-6 py-12 bg-[#07080A] text-white grid grid-cols-1 lg:grid-cols-12 gap-8 border border-white/5 rounded-xl">
       {/* Left Panel: Real-Time Quality Analyzer Controls (5 Columns) */}
-      <div className="lg:col-span-5 space-y-6 flex flex-col justify-between">
+      <div className="lg:col-span-5 space-y-6 flex flex-col justify-between h-full">
         <div className="space-y-6">
           <div>
             <span className="text-[10px] font-mono tracking-[0.2em] text-[#22D3EE]">COMPILER STAGE 04</span>
@@ -210,8 +210,8 @@ export const SiliconResume = () => {
       </div>
 
       {/* Right Panel: The Clean ATS-Readable Live Rendering Engine (7 Columns) */}
-      <div className="lg:col-span-7 bg-white text-black p-8 rounded-xl shadow-2xl min-h-[600px] font-sans overflow-x-auto selection:bg-slate-200">
-        <div className="min-w-[500px]">
+      <div className="lg:col-span-7 bg-white text-black p-8 rounded-xl shadow-2xl min-h-[600px] h-full font-sans overflow-x-auto selection:bg-slate-200">
+        <div className="min-w-0">
           {/* Header */}
           <div className="text-center border-b border-slate-300 pb-4">
             <h1 className="text-2xl font-bold tracking-tight text-slate-900">{resumeData.name}</h1>

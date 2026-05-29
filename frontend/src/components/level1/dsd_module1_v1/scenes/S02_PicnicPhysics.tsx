@@ -53,7 +53,7 @@ export const S02_PicnicPhysics: React.FC<Props> = ({ isActive, isDarkMode }) => 
           className="rounded-3xl overflow-hidden border border-white/10"
           style={{ background: '#fef9f0' }}
         >
-          <img src="/images/sketchbook/p02.png" alt="Variables and the rule of the day" className="w-full block" />
+          <img src="/images/sketchbook/p02.webp" alt="Variables and the rule of the day" className="w-full block" />
         </motion.div>
       </div>
 

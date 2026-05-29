@@ -19,7 +19,7 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
         style={{ background: '#fef9f0' }}
       >
         <img
-          src="/images/sketchbook/p01.png"
+          src="/images/sketchbook/p01.webp"
           alt="The Architecture of a Decision — Ben as photographer and as protector"
           className="w-full block"
         />

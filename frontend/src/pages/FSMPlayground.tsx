@@ -69,6 +69,7 @@ export function FSMPlayground() {
     const [currentStep, setCurrentStep] = useState(-1);
     const [activeTransId, setActiveTransId] = useState<string | undefined>();
     const [showExport, setShowExport] = useState(false);
+    const [showPanel, setShowPanel] = useState(false);
 
     const analysis = analyzeFSM(fsm);
     const hasIssues =
@@ -127,35 +128,38 @@ export function FSMPlayground() {
     }, [fsm.states.size]);
 
     return (
-        <div style={{ minHeight: '100vh', background: T.bg, color: T.text, fontFamily: T.sans }}>
+        <div
+            className="min-h-[100svh] overflow-y-auto lg:overflow-hidden"
+            style={{ background: T.bg, color: T.text, fontFamily: T.sans }}
+        >
             {/* ── Top Bar ──────────────────────────────────────────────── */}
-            <div style={{
-                display: 'flex', alignItems: 'center', gap: 16,
-                padding: '14px 24px',
-                borderBottom: `1px solid ${T.border}`,
-                background: T.card,
-            }}>
-                <button onClick={() => navigate('/portal')} style={{ background: 'none', border: 'none', color: T.muted, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}>
-                    <ArrowLeft size={16} /> <span style={{ fontFamily: T.mono, fontSize: 8, letterSpacing: '0.12em', textTransform: 'uppercase' }}>BACK</span>
+            <div
+                className="flex flex-wrap items-center gap-2 px-4 py-3 lg:gap-4 lg:px-6 lg:py-[14px]"
+                style={{ borderBottom: `1px solid ${T.border}`, background: T.card }}
+            >
+                <button
+                    onClick={() => navigate('/portal')}
+                    style={{ background: 'none', border: 'none', color: T.muted, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}
+                >
+                    <ArrowLeft size={16} />
+                    <span style={{ fontFamily: T.mono, fontSize: 8, letterSpacing: '0.12em', textTransform: 'uppercase' }}>BACK</span>
                 </button>
                 <div style={{ width: 1, height: 20, background: T.border }} />
                 <span style={{ fontFamily: T.mono, fontSize: 9, letterSpacing: '0.2em', textTransform: 'uppercase', color: `${T.accent}CC` }}>
                     FSM Visual Simulator
                 </span>
 
-                {/* FSM type badge */}
-                <div style={{
-                    marginLeft: 'auto', display: 'flex', gap: 8, alignItems: 'center',
-                }}>
+                {/* FSM type badge + export */}
+                <div className="flex gap-2 items-center ml-auto flex-wrap">
                     {(['Moore', 'Mealy'] as const).map(type => (
                         <button key={type} onClick={() => setFSM((p: any) => ({ ...p, type }))}
                             style={{
-                                padding: '4px 12px', fontFamily: T.mono, fontSize: 8,
+                                padding: '6px 12px', fontFamily: T.mono, fontSize: 8,
                                 letterSpacing: '0.1em', textTransform: 'uppercase',
                                 background: fsm.type === type ? `${T.accent}15` : 'transparent',
                                 border: `1px solid ${fsm.type === type ? T.accent : T.border}`,
                                 borderRadius: 2, color: fsm.type === type ? T.accent : T.muted,
-                                cursor: 'pointer',
+                                cursor: 'pointer', minHeight: 36,
                             }}
                         >
                             {type}
@@ -163,159 +167,115 @@ export function FSMPlayground() {
                     ))}
 
                     <button onClick={() => setShowExport(true)} style={{
-                        padding: '4px 12px', fontFamily: T.mono, fontSize: 8,
+                        padding: '6px 12px', fontFamily: T.mono, fontSize: 8,
                         letterSpacing: '0.1em', display: 'flex', alignItems: 'center', gap: 6,
                         background: 'transparent', border: `1px solid ${T.border}`,
-                        borderRadius: 2, color: T.muted, cursor: 'pointer',
+                        borderRadius: 2, color: T.muted, cursor: 'pointer', minHeight: 36,
                     }}>
                         <Download size={12} /> Verilog
+                    </button>
+
+                    {/* Mobile: toggle panel button */}
+                    <button
+                        className="lg:hidden"
+                        onClick={() => setShowPanel(p => !p)}
+                        style={{
+                            padding: '6px 12px', fontFamily: T.mono, fontSize: 8,
+                            letterSpacing: '0.1em',
+                            background: showPanel ? `${T.accent}15` : 'transparent',
+                            border: `1px solid ${showPanel ? T.accent : T.border}`,
+                            borderRadius: 2, color: showPanel ? T.accent : T.muted,
+                            cursor: 'pointer', minHeight: 36,
+                        }}
+                    >
+                        States / Analysis
                     </button>
                 </div>
             </div>
 
             {/* ── Main Layout ──────────────────────────────────────────── */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: 0, height: 'calc(100vh - 53px)' }}>
-                {/* Left — Canvas + Timeline */}
-                <div style={{ display: 'flex', flexDirection: 'column', padding: 20, gap: 16, overflow: 'auto' }}>
-                    {/* Canvas */}
-                    <FSMCanvas
-                        fsm={fsm}
-                        activeState={fsm.currentState}
-                        activeTransitionId={activeTransId}
-                        onPositionChange={handlePositionChange}
-                        height={380}
-                    />
+            {/* Mobile: single column stack. Desktop: 2-col grid */}
+            <div
+                className="flex flex-col lg:grid lg:overflow-hidden"
+                style={{
+                    // desktop keeps the fixed-height 2-col grid
+                }}
+            >
+                {/* On desktop this div acts as the grid wrapper */}
+                <div
+                    className="hidden lg:grid"
+                    style={{
+                        display: undefined, /* overridden by Tailwind */
+                        gridTemplateColumns: '1fr 320px',
+                        height: 'calc(100vh - 53px)',
+                    }}
+                >
+                    {/* Left — Canvas + Timeline (desktop only slot) */}
+                    <div style={{ display: 'flex', flexDirection: 'column', padding: 20, gap: 16, overflow: 'auto' }}>
+                        <FSMCanvas
+                            fsm={fsm}
+                            activeState={fsm.currentState}
+                            activeTransitionId={activeTransId}
+                            onPositionChange={handlePositionChange}
+                            height={380}
+                        />
+                        <InputRunner
+                            inputSeq={inputSeq}
+                            setInputSeq={setInputSeq}
+                            handleRun={handleRun}
+                            handleReset={handleReset}
+                            trace={trace}
+                            currentStep={currentStep}
+                            handleSeek={handleSeek}
+                        />
+                    </div>
 
-                    {/* Input runner */}
+                    {/* Right — Editor + Analysis (desktop only slot) */}
                     <div style={{
-                        background: T.card, border: `1px solid ${T.border}`,
-                        borderRadius: 4, padding: 16,
+                        borderLeft: `1px solid ${T.border}`,
+                        display: 'flex', flexDirection: 'column',
+                        overflow: 'auto',
                     }}>
-                        <span style={{ display: 'block', fontFamily: T.mono, fontSize: 8, letterSpacing: '0.2em', textTransform: 'uppercase', color: `${T.accent}80`, marginBottom: 12 }}>
-                            Input Sequence Runner
-                        </span>
-                        <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
-                            <input
-                                value={inputSeq}
-                                onChange={e => setInputSeq(e.target.value)}
-                                placeholder="tick,tick,tick (comma-separated)"
-                                style={{
-                                    flex: 1, padding: '8px 12px',
-                                    background: T.surface, border: `1px solid ${T.border}`,
-                                    borderRadius: 2, color: T.text,
-                                    fontFamily: T.mono, fontSize: 11,
-                                    outline: 'none',
-                                }}
-                            />
-                            <button onClick={handleRun} style={{
-                                padding: '8px 16px', display: 'flex', alignItems: 'center', gap: 6,
-                                background: `${T.accent}12`, border: `1px solid ${T.accent}40`,
-                                borderRadius: 2, color: T.accent,
-                                fontFamily: T.mono, fontSize: 9, letterSpacing: '0.1em',
-                                cursor: 'pointer',
-                            }}>
-                                <Play size={12} /> RUN
-                            </button>
-                            <button onClick={handleReset} style={{
-                                padding: '8px 12px',
-                                background: 'transparent', border: `1px solid ${T.border}`,
-                                borderRadius: 2, color: T.muted, cursor: 'pointer',
-                            }}>
-                                <RotateCcw size={12} />
-                            </button>
-                        </div>
-                        {/* Timeline */}
-                        <div style={{ background: T.surface, borderRadius: 2, border: `1px solid ${T.border}` }}>
-                            <FSMTimeline
-                                inputs={inputSeq.split(',').map(s => s.trim()).filter(Boolean)}
-                                trace={trace}
-                                currentStep={currentStep}
-                                onSeek={handleSeek}
-                            />
-                        </div>
+                        <StateList fsm={fsm} handleAddState={handleAddState} />
+                        <AnalysisPanel hasIssues={hasIssues} analysis={analysis} />
                     </div>
                 </div>
 
-                {/* Right — Editor + Analysis */}
-                <div style={{
-                    borderLeft: `1px solid ${T.border}`,
-                    display: 'flex', flexDirection: 'column',
-                    overflow: 'auto',
-                }}>
-                    {/* State list */}
-                    <div style={{ padding: 16, borderBottom: `1px solid ${T.border}` }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-                            <span style={{ fontFamily: T.mono, fontSize: 8, letterSpacing: '0.15em', textTransform: 'uppercase', color: `${T.accent}80` }}>
-                                States ({fsm.states.size})
-                            </span>
-                            <button onClick={handleAddState} style={{
-                                padding: '4px 8px', display: 'flex', alignItems: 'center', gap: 4,
-                                background: 'transparent', border: `1px solid ${T.border}`,
-                                borderRadius: 2, color: T.muted, cursor: 'pointer', fontSize: 10,
-                            }}>
-                                <Plus size={10} /> Add
-                            </button>
-                        </div>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                            {Array.from(fsm.states.values()).map((s: any) => (
-                                <div key={s.id} style={{
-                                    display: 'flex', alignItems: 'center', gap: 8,
-                                    padding: '6px 10px',
-                                    background: s.id === fsm.currentState ? `${T.warning}10` : 'transparent',
-                                    border: `1px solid ${s.id === fsm.currentState ? T.warning : T.border}`,
-                                    borderRadius: 2,
-                                }}>
-                                    <div style={{
-                                        width: 8, height: 8, borderRadius: '50%',
-                                        background: s.id === fsm.initialState ? T.accent : s.id === fsm.currentState ? T.warning : T.muted,
-                                    }} />
-                                    <span style={{ fontFamily: T.mono, fontSize: 10, color: T.text, flex: 1 }}>{s.label}</span>
-                                    {s.output && <span style={{ fontFamily: T.mono, fontSize: 8, color: T.muted }}>/{s.output}</span>}
-                                    {s.isFinal && <span style={{ fontFamily: T.mono, fontSize: 7, color: T.success }}>FINAL</span>}
-                                </div>
-                            ))}
+                {/* Mobile: stacked panes */}
+                <div className="lg:hidden flex flex-col">
+                    {/* Canvas */}
+                    <div style={{ padding: 12, overflow: 'hidden' }}>
+                        <div style={{ width: '100%', overflowX: 'auto' }}>
+                            <FSMCanvas
+                                fsm={fsm}
+                                activeState={fsm.currentState}
+                                activeTransitionId={activeTransId}
+                                onPositionChange={handlePositionChange}
+                                height={280}
+                            />
                         </div>
                     </div>
 
-                    {/* Logic Analysis */}
-                    <div style={{ padding: 16, flex: 1 }}>
-                        <span style={{ display: 'block', fontFamily: T.mono, fontSize: 8, letterSpacing: '0.15em', textTransform: 'uppercase', color: hasIssues ? `${T.warning}80` : `${T.success}80`, marginBottom: 12 }}>
-                            Logic Analysis
-                        </span>
-
-                        {!hasIssues && (
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 10px', border: `1px solid ${T.success}30`, borderRadius: 2, background: `${T.success}08` }}>
-                                <CheckCircle2 size={14} style={{ color: T.success, flexShrink: 0 }} />
-                                <span style={{ fontFamily: T.mono, fontSize: 8, color: T.success }}>FSM is well-formed</span>
-                            </div>
-                        )}
-
-                        {analysis.unreachableStates.length > 0 && (
-                            <IssueCard
-                                title="Unreachable States"
-                                items={analysis.unreachableStates}
-                                color={T.error}
-                                insight="These states can never be entered from the initial state."
-                            />
-                        )}
-                        {analysis.deadStates.length > 0 && (
-                            <IssueCard
-                                title="Dead States"
-                                items={analysis.deadStates}
-                                color={T.error}
-                                insight="Dead states have no outgoing transitions."
-                            />
-                        )}
-                        {analysis.missingTransitions.map((m: any) => (
-                            <IssueCard
-                                key={m.state}
-                                title={`Missing in '${m.state}'`}
-                                items={m.missingInputs}
-                                color={T.warning}
-                                insight={`Add transitions for inputs: ${m.missingInputs.join(', ')}`}
-                            />
-                        ))}
+                    {/* Input runner */}
+                    <div style={{ padding: '0 12px 12px' }}>
+                        <InputRunner
+                            inputSeq={inputSeq}
+                            setInputSeq={setInputSeq}
+                            handleRun={handleRun}
+                            handleReset={handleReset}
+                            trace={trace}
+                            currentStep={currentStep}
+                            handleSeek={handleSeek}
+                        />
                     </div>
+
+                    {/* Collapsible States / Analysis panel */}
+                    {showPanel && (
+                        <div style={{ borderTop: `1px solid ${T.border}` }}>
+                            <StateList fsm={fsm} handleAddState={handleAddState} />
+                            <AnalysisPanel hasIssues={hasIssues} analysis={analysis} />
+                        </div>
+                    )}
                 </div>
             </div>
 
@@ -329,6 +289,7 @@ export function FSMPlayground() {
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
                             zIndex: 100,
                             backdropFilter: 'blur(4px)',
+                            padding: '16px',
                         }}
                         onClick={() => setShowExport(false)}
                     >
@@ -336,7 +297,7 @@ export function FSMPlayground() {
                             initial={{ scale: 0.95, y: 20 }} animate={{ scale: 1, y: 0 }}
                             style={{
                                 background: T.card, border: `1px solid ${T.border}`,
-                                borderRadius: 4, padding: 24, width: 600, maxHeight: '80vh',
+                                borderRadius: 4, padding: 24, width: '100%', maxWidth: 600, maxHeight: '80vh',
                                 overflow: 'auto', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)'
                             }}
                             onClick={e => e.stopPropagation()}
@@ -356,6 +317,150 @@ export function FSMPlayground() {
                     </motion.div>
                 )}
             </AnimatePresence>
+        </div>
+    );
+}
+
+// ── Extracted sub-components for reuse between mobile and desktop ──────────
+
+function InputRunner({ inputSeq, setInputSeq, handleRun, handleReset, trace, currentStep, handleSeek }: {
+    inputSeq: string;
+    setInputSeq: (v: string) => void;
+    handleRun: () => void;
+    handleReset: () => void;
+    trace: any[];
+    currentStep: number;
+    handleSeek: (step: number) => void;
+}) {
+    return (
+        <div style={{
+            background: T.card, border: `1px solid ${T.border}`,
+            borderRadius: 4, padding: 16,
+        }}>
+            <span style={{ display: 'block', fontFamily: T.mono, fontSize: 8, letterSpacing: '0.2em', textTransform: 'uppercase', color: `${T.accent}80`, marginBottom: 12 }}>
+                Input Sequence Runner
+            </span>
+            <div style={{ display: 'flex', gap: 8, marginBottom: 12, flexWrap: 'wrap' }}>
+                <input
+                    value={inputSeq}
+                    onChange={e => setInputSeq(e.target.value)}
+                    placeholder="tick,tick,tick (comma-separated)"
+                    style={{
+                        flex: 1, minWidth: 0, padding: '8px 12px',
+                        background: T.surface, border: `1px solid ${T.border}`,
+                        borderRadius: 2, color: T.text,
+                        fontFamily: T.mono, fontSize: 11,
+                        outline: 'none',
+                    }}
+                />
+                <button onClick={handleRun} style={{
+                    padding: '8px 16px', display: 'flex', alignItems: 'center', gap: 6,
+                    background: `${T.accent}12`, border: `1px solid ${T.accent}40`,
+                    borderRadius: 2, color: T.accent,
+                    fontFamily: T.mono, fontSize: 9, letterSpacing: '0.1em',
+                    cursor: 'pointer', minHeight: 40,
+                }}>
+                    <Play size={12} /> RUN
+                </button>
+                <button onClick={handleReset} style={{
+                    padding: '8px 12px',
+                    background: 'transparent', border: `1px solid ${T.border}`,
+                    borderRadius: 2, color: T.muted, cursor: 'pointer', minHeight: 40,
+                }}>
+                    <RotateCcw size={12} />
+                </button>
+            </div>
+            {/* Timeline */}
+            <div style={{ background: T.surface, borderRadius: 2, border: `1px solid ${T.border}`, overflowX: 'auto' }}>
+                <FSMTimeline
+                    inputs={inputSeq.split(',').map(s => s.trim()).filter(Boolean)}
+                    trace={trace}
+                    currentStep={currentStep}
+                    onSeek={handleSeek}
+                />
+            </div>
+        </div>
+    );
+}
+
+function StateList({ fsm, handleAddState }: { fsm: any; handleAddState: () => void }) {
+    return (
+        <div style={{ padding: 16, borderBottom: `1px solid ${T.border}` }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                <span style={{ fontFamily: T.mono, fontSize: 8, letterSpacing: '0.15em', textTransform: 'uppercase', color: `${T.accent}80` }}>
+                    States ({fsm.states.size})
+                </span>
+                <button onClick={handleAddState} style={{
+                    padding: '6px 10px', display: 'flex', alignItems: 'center', gap: 4,
+                    background: 'transparent', border: `1px solid ${T.border}`,
+                    borderRadius: 2, color: T.muted, cursor: 'pointer', fontSize: 10,
+                    minHeight: 36,
+                }}>
+                    <Plus size={10} /> Add
+                </button>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                {Array.from(fsm.states.values()).map((s: any) => (
+                    <div key={s.id} style={{
+                        display: 'flex', alignItems: 'center', gap: 8,
+                        padding: '8px 10px',
+                        background: s.id === fsm.currentState ? `${T.warning}10` : 'transparent',
+                        border: `1px solid ${s.id === fsm.currentState ? T.warning : T.border}`,
+                        borderRadius: 2,
+                    }}>
+                        <div style={{
+                            width: 8, height: 8, borderRadius: '50%',
+                            background: s.id === fsm.initialState ? T.accent : s.id === fsm.currentState ? T.warning : T.muted,
+                        }} />
+                        <span style={{ fontFamily: T.mono, fontSize: 10, color: T.text, flex: 1 }}>{s.label}</span>
+                        {s.output && <span style={{ fontFamily: T.mono, fontSize: 8, color: T.muted }}>/{s.output}</span>}
+                        {s.isFinal && <span style={{ fontFamily: T.mono, fontSize: 7, color: T.success }}>FINAL</span>}
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+}
+
+function AnalysisPanel({ hasIssues, analysis }: { hasIssues: boolean; analysis: any }) {
+    return (
+        <div style={{ padding: 16, flex: 1 }}>
+            <span style={{ display: 'block', fontFamily: T.mono, fontSize: 8, letterSpacing: '0.15em', textTransform: 'uppercase', color: hasIssues ? `${T.warning}80` : `${T.success}80`, marginBottom: 12 }}>
+                Logic Analysis
+            </span>
+
+            {!hasIssues && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 10px', border: `1px solid ${T.success}30`, borderRadius: 2, background: `${T.success}08` }}>
+                    <CheckCircle2 size={14} style={{ color: T.success, flexShrink: 0 }} />
+                    <span style={{ fontFamily: T.mono, fontSize: 8, color: T.success }}>FSM is well-formed</span>
+                </div>
+            )}
+
+            {analysis.unreachableStates.length > 0 && (
+                <IssueCard
+                    title="Unreachable States"
+                    items={analysis.unreachableStates}
+                    color={T.error}
+                    insight="These states can never be entered from the initial state."
+                />
+            )}
+            {analysis.deadStates.length > 0 && (
+                <IssueCard
+                    title="Dead States"
+                    items={analysis.deadStates}
+                    color={T.error}
+                    insight="Dead states have no outgoing transitions."
+                />
+            )}
+            {analysis.missingTransitions.map((m: any) => (
+                <IssueCard
+                    key={m.state}
+                    title={`Missing in '${m.state}'`}
+                    items={m.missingInputs}
+                    color={T.warning}
+                    insight={`Add transitions for inputs: ${m.missingInputs.join(', ')}`}
+                />
+            ))}
         </div>
     );
 }

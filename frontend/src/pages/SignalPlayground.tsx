@@ -39,62 +39,62 @@ export const SignalPlayground = () => {
     };
 
     return (
-        <div className="min-h-screen bg-white text-slate-900 font-sans overflow-hidden relative selection:bg-sky-500/10">
+        <div className="min-h-[100svh] bg-white text-slate-900 font-sans overflow-x-hidden overflow-y-auto relative selection:bg-sky-500/10">
             {/* Soft Ambient Background Elements */}
             <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-sky-500/5 blur-[120px] rounded-full -translate-y-1/2 translate-x-1/2 opacity-50" />
-                <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-indigo-500/5 blur-[120px] rounded-full translate-y-1/2 -translate-x-1/2 opacity-50" />
+                <div className="absolute top-0 right-0 w-[300px] h-[300px] lg:w-[600px] lg:h-[600px] bg-sky-500/5 blur-[80px] lg:blur-[120px] rounded-full -translate-y-1/2 translate-x-1/2 opacity-50" />
+                <div className="absolute bottom-0 left-0 w-[300px] h-[300px] lg:w-[600px] lg:h-[600px] bg-indigo-500/5 blur-[80px] lg:blur-[120px] rounded-full translate-y-1/2 -translate-x-1/2 opacity-50" />
             </div>
 
             {/* Header - Glassmorphism */}
-            <header className="relative z-30 border-b border-slate-200 bg-white/80 backdrop-blur-xl px-12 py-5 flex items-center justify-between">
-                <div className="flex items-center space-x-6">
+            <header className="relative z-30 border-b border-slate-200 bg-white/80 backdrop-blur-xl px-4 py-3 lg:px-12 lg:py-5 flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3 lg:space-x-6 min-w-0">
                     <button
                         onClick={() => navigate('/portal')}
-                        className="p-3 bg-slate-50 border border-slate-200 rounded-2xl text-slate-600 hover:text-sky-600 transition-all hover:bg-white active:scale-95 shadow-sm"
+                        className="p-2.5 lg:p-3 bg-slate-50 border border-slate-200 rounded-2xl text-slate-600 hover:text-sky-600 transition-all hover:bg-white active:scale-95 shadow-sm flex-shrink-0"
                     >
-                        <ChevronLeft className="w-5 h-5" />
+                        <ChevronLeft className="w-4 h-4 lg:w-5 lg:h-5" />
                     </button>
-                    <div>
-                        <h1 className="text-3xl font-heading font-black text-slate-900 tracking-tight">Signal Playground</h1>
-                        <p className="text-sm font-medium text-slate-400 font-sans tracking-wide uppercase tracking-[0.2em] text-[10px]">Module 1: Signals Alive</p>
+                    <div className="min-w-0">
+                        <h1 className="text-xl lg:text-3xl font-heading font-black text-slate-900 tracking-tight truncate">Signal Playground</h1>
+                        <p className="text-slate-400 font-sans uppercase tracking-[0.2em] text-[9px] lg:text-[10px]">Module 1: Signals Alive</p>
                     </div>
                 </div>
-                <div className="flex items-center space-x-6">
+                <div className="flex items-center flex-shrink-0">
                     <motion.div
                         animate={isSystemSynced ? { scale: [1, 1.05, 1], transition: { repeat: Infinity } } : {}}
                         className={cn(
-                            "px-6 py-2.5 rounded-2xl border transition-colors",
+                            "flex items-center gap-2 px-3 py-2 lg:px-6 lg:py-2.5 rounded-2xl border transition-colors",
                             isSystemSynced ? "border-emerald-500/30 bg-emerald-50 shadow-sm" : "bg-slate-50 border-slate-200"
                         )}
                     >
                         <div className={cn(
-                            "w-2 h-2 rounded-full",
+                            "w-2 h-2 rounded-full flex-shrink-0",
                             isSystemSynced ? "bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" : "bg-slate-300"
                         )} />
                         <span className={cn(
-                            "text-sm font-heading font-bold uppercase tracking-widest text-[10px]",
+                            "font-heading font-bold uppercase tracking-widest text-[9px] lg:text-[10px] whitespace-nowrap",
                             isSystemSynced ? "text-emerald-600" : "text-slate-500"
                         )}>
-                            {isSystemSynced ? "Engine Active" : "Waiting for Sync"}
+                            {isSystemSynced ? "Engine Active" : "Waiting"}
                         </span>
                     </motion.div>
                 </div>
             </header>
 
-            <main className="relative z-20 p-12 flex flex-col items-center justify-center min-h-[calc(100vh-100px)]">
-                <div className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-3 gap-12 items-stretch">
+            <main className="relative z-20 p-4 lg:p-12 flex flex-col items-center justify-center min-h-[calc(100svh-64px)] lg:min-h-[calc(100vh-100px)]">
+                <div className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-12 items-stretch">
 
                     {/* Left: Ms. Analog */}
                     <div className={cn(
-                        "group relative p-10 rounded-2xl border transition-all duration-700 backdrop-blur-xl flex flex-col items-center shadow-xl space-y-8",
+                        "group relative p-6 lg:p-10 rounded-2xl border transition-all duration-700 backdrop-blur-xl flex flex-col items-center shadow-xl space-y-6 lg:space-y-8",
                         isAnalogSynced
                             ? "bg-sky-50 border-sky-200 shadow-sky-500/10"
                             : "bg-white border-slate-200 shadow-slate-200/50 hover:border-sky-200"
                     )}>
                         <div className="w-full flex justify-between items-center">
-                            <h2 className="text-2xl font-heading font-black text-slate-900 tracking-tight">Analog Control</h2>
-                            {isAnalogSynced && <CheckCircle2 className="text-sky-500 w-6 h-6" />}
+                            <h2 className="text-xl lg:text-2xl font-heading font-black text-slate-900 tracking-tight">Analog Control</h2>
+                            {isAnalogSynced && <CheckCircle2 className="text-sky-500 w-5 h-5 lg:w-6 lg:h-6" />}
                         </div>
 
                         <div className="w-full space-y-2">
@@ -102,7 +102,7 @@ export const SignalPlayground = () => {
                                 <span>Frequency Calibration</span>
                                 <span className="text-sky-600">{Math.round(analogLevel)}%</span>
                             </div>
-                            <div className="h-44 w-full bg-slate-50 rounded-xl border border-slate-200 relative overflow-hidden flex items-center justify-center shadow-inner">
+                            <div className="h-36 lg:h-44 w-full bg-slate-50 rounded-xl border border-slate-200 relative overflow-hidden flex items-center justify-center shadow-inner">
                                 {/* Wave Viz */}
                                 <svg className="absolute inset-0 w-full h-full opacity-50" preserveAspectRatio="none">
                                     <motion.path
@@ -150,13 +150,13 @@ export const SignalPlayground = () => {
                     </div>
 
                     {/* Center: Message & Progress */}
-                    <div className="flex flex-col items-center justify-center space-y-12 py-12">
-                        <div className="flex-1 flex items-center justify-center w-full px-4">
-                           <div className="w-full p-8 bg-slate-50 border border-slate-200 rounded-2xl shadow-sm text-center space-y-4">
+                    <div className="flex flex-col items-center justify-center gap-6 lg:space-y-12 lg:py-12">
+                        <div className="flex-1 flex items-center justify-center w-full">
+                           <div className="w-full p-6 lg:p-8 bg-slate-50 border border-slate-200 rounded-2xl shadow-sm text-center space-y-4">
                                <div className="inline-flex p-3 bg-sky-100 rounded-full text-sky-600 mb-2">
                                    <Zap className="w-6 h-6 fill-current" />
                                </div>
-                               <h3 className="text-xl font-heading font-black text-slate-900 tracking-tight">System Status</h3>
+                               <h3 className="text-lg lg:text-xl font-heading font-black text-slate-900 tracking-tight">System Status</h3>
                                <p className="text-slate-600 font-medium leading-relaxed text-sm">
                                    {statusMessage}
                                </p>
@@ -169,9 +169,9 @@ export const SignalPlayground = () => {
                                     initial={{ opacity: 0, y: 20, scale: 0.9 }}
                                     animate={{ opacity: 1, y: 0, scale: 1 }}
                                     onClick={() => navigate('/gatekeeper')}
-                                    className="group h-20 px-12 bg-sky-600 hover:bg-sky-500 text-white rounded-2xl font-heading font-black text-lg shadow-xl shadow-sky-500/30 transition-all flex items-center space-x-6 active:scale-95"
+                                    className="group h-16 lg:h-20 px-8 lg:px-12 bg-sky-600 hover:bg-sky-500 text-white rounded-2xl font-heading font-black text-base lg:text-lg shadow-xl shadow-sky-500/30 transition-all flex items-center space-x-4 lg:space-x-6 active:scale-95 w-full justify-center"
                                 >
-                                    <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center group-hover:bg-white/30 transition-colors">
+                                    <div className="w-9 h-9 lg:w-10 lg:h-10 bg-white/20 rounded-xl flex items-center justify-center group-hover:bg-white/30 transition-colors flex-shrink-0">
                                         <Zap className="w-5 h-5 fill-current" />
                                     </div>
                                     <span className="uppercase tracking-tight">Access Gatekeeper</span>
@@ -182,14 +182,14 @@ export const SignalPlayground = () => {
 
                     {/* Right: Mr. Digital */}
                     <div className={cn(
-                        "group relative p-10 rounded-2xl border transition-all duration-700 backdrop-blur-xl flex flex-col items-center shadow-xl space-y-8",
+                        "group relative p-6 lg:p-10 rounded-2xl border transition-all duration-700 backdrop-blur-xl flex flex-col items-center shadow-xl space-y-6 lg:space-y-8",
                         digitalState
                             ? "bg-indigo-50 border-indigo-200 shadow-indigo-500/10"
                             : "bg-white border-slate-200 shadow-slate-200/50 hover:border-indigo-200"
                     )}>
                         <div className="w-full flex justify-between items-center">
-                            <h2 className="text-2xl font-heading font-black text-slate-900 tracking-tight">Digital Phase</h2>
-                            {digitalState && <CheckCircle2 className="text-indigo-500 w-6 h-6" />}
+                            <h2 className="text-xl lg:text-2xl font-heading font-black text-slate-900 tracking-tight">Digital Phase</h2>
+                            {digitalState && <CheckCircle2 className="text-indigo-500 w-5 h-5 lg:w-6 lg:h-6" />}
                         </div>
 
                         <div className="w-full space-y-2">
@@ -197,7 +197,7 @@ export const SignalPlayground = () => {
                                 <span>Logic Phase</span>
                                 <span className="text-indigo-600">{digitalState ? "1 (High)" : "0 (Low)"}</span>
                             </div>
-                            <div className="h-44 w-full bg-slate-50 rounded-xl border border-slate-200 relative overflow-hidden flex items-center justify-center shadow-inner">
+                            <div className="h-36 lg:h-44 w-full bg-slate-50 rounded-xl border border-slate-200 relative overflow-hidden flex items-center justify-center shadow-inner">
                                 <div className="absolute inset-0 flex items-center justify-around px-8 opacity-10">
                                     <div className="h-1 w-full bg-indigo-400 rounded-full" />
                                 </div>

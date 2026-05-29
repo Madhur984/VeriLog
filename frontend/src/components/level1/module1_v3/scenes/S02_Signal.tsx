@@ -7,6 +7,8 @@ export const S02_Signal: React.FC = () => {
   const updateInteraction = useSignalStore((s) => s.updateInteraction);
   const checkProceed = useSignalStore((s) => s.checkProceed);
   const setSignalMode = useSignalStore((s) => s.setSignalMode);
+  // This scene renders against the module's dark instrument theme.
+  const isDarkMode = true;
 
   useEffect(() => {
     setSignalMode('digital');

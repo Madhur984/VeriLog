@@ -29,7 +29,7 @@ export const S02_GoodBoyHostel: React.FC<Props> = ({ isActive, isDarkMode }) => 
         className={`relative rounded-3xl overflow-hidden border ${cardBg}`}
       >
         <img
-          src="/images/semi/p02.png"
+          src="/images/semi/p02.webp"
           alt="Pure silicon — the good boy hostel"
           className="w-full block aspect-[16/9] object-cover"
         />

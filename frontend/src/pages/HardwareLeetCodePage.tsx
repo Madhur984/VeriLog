@@ -11,15 +11,15 @@ export const HardwareLeetCodePage: React.FC = () => {
     const navigate = useNavigate();
 
     return (
-        <div className="h-screen w-full bg-[#0a0a0a] text-white overflow-hidden flex flex-col">
-            <header className="h-14 shrink-0 border-b border-white/10 flex items-center px-6 bg-[#111]">
+        <div className="min-h-[100svh] w-full bg-[#0a0a0a] text-white overflow-y-auto lg:overflow-hidden lg:h-screen flex flex-col">
+            <header className="h-12 lg:h-14 shrink-0 border-b border-white/10 flex items-center px-4 lg:px-6 bg-[#111]">
                 <button onClick={() => {
                     if (activeChallengeId) setActiveChallengeId(null);
                     else navigate('/portal');
-                }} className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-sm font-medium mr-4">
+                }} className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-sm font-medium mr-3 lg:mr-4 min-w-[40px] min-h-[40px] justify-center">
                     <ArrowLeft className="w-4 h-4" />
                 </button>
-                <h1 className="text-lg font-bold">Hardware LeetCode</h1>
+                <h1 className="text-base lg:text-lg font-bold">Hardware LeetCode</h1>
             </header>
 
             <div className="flex-1 overflow-auto">

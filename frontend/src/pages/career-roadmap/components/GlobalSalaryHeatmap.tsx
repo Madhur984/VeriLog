@@ -23,7 +23,7 @@ export const GlobalSalaryHeatmap: React.FC = () => {
 
   return (
     <DataTerminal title="GLOBAL SILICON HOTSPOTS" subtitle="Real-time PPP Analysis & Entity Presence">
-      <div className="relative w-full h-[500px] bg-[#020408] overflow-hidden rounded-sm flex">
+      <div className="relative w-full h-[320px] sm:h-[500px] bg-[#020408] overflow-hidden rounded-sm flex">
         {/* SVG World Map Background (Simplified Abstract) */}
         <motion.div 
           className="absolute inset-0 opacity-20 pointer-events-none"
@@ -61,12 +61,12 @@ export const GlobalSalaryHeatmap: React.FC = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 10 }}
-              className="absolute bottom-8 right-8 w-80 bg-black/80 backdrop-blur-md border border-cyan-400/30 p-6 shadow-[0_0_30px_rgba(34,211,238,0.1)] z-20 pointer-events-none"
+              className="absolute bottom-4 sm:bottom-8 right-2 sm:right-8 w-[min(18rem,calc(100%-1rem))] sm:w-80 bg-black/80 backdrop-blur-md border border-cyan-400/30 p-4 sm:p-6 shadow-[0_0_30px_rgba(34,211,238,0.1)] z-20 pointer-events-none"
             >
               <div className="flex justify-between items-start mb-4">
                  <div>
                    <div className="text-[10px] font-mono text-cyan-400 uppercase tracking-widest">{activeSpot.type}</div>
-                   <h3 className="text-2xl font-bold text-white font-mono tracking-tighter">{activeSpot.name}</h3>
+                   <h3 className="text-lg sm:text-2xl font-bold text-white font-mono tracking-tighter">{activeSpot.name}</h3>
                  </div>
                  <div className="text-right">
                    <div className="text-[9px] font-mono text-slate-500 uppercase tracking-widest">PPP Adjusted</div>
@@ -93,7 +93,7 @@ export const GlobalSalaryHeatmap: React.FC = () => {
           {!activeSpot && (
             <motion.div 
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              className="absolute bottom-8 right-8 w-80 bg-black/40 backdrop-blur-sm border border-white/5 p-6 z-10 pointer-events-none"
+              className="absolute bottom-4 sm:bottom-8 right-2 sm:right-8 w-[min(18rem,calc(100%-1rem))] sm:w-80 bg-black/40 backdrop-blur-sm border border-white/5 p-4 sm:p-6 z-10 pointer-events-none"
             >
               <div className="w-8 h-8 rounded-full border border-dashed border-cyan-400/50 flex items-center justify-center animate-spin-slow mb-4">
                 <div className="w-1 h-1 bg-cyan-400 rounded-full" />

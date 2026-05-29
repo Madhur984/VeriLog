@@ -29,7 +29,7 @@ export const S02_TheCast: React.FC<Props> = ({ isActive, isDarkMode }) => {
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         className={`relative rounded-3xl overflow-hidden border ${cardBg}`}
       >
-        <img src="/images/commuter/p02.png" alt="The cast — N-Type and P-Type" className="w-full block aspect-[16/9] object-cover" />
+        <img src="/images/commuter/p02.webp" alt="The cast — N-Type and P-Type" className="w-full block aspect-[16/9] object-cover" />
         <div className="absolute bottom-3 right-4 font-mono text-[9px] uppercase tracking-widest text-sky-200/80">
           Commuter Circuit · The Cast
         </div>

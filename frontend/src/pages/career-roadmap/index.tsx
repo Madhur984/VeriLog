@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 
 // Layout & Foundation
@@ -52,8 +53,26 @@ import { useComparison } from '../../hooks/useComparison';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import { motion } from 'framer-motion';
 
+/**
+ * Valid tab ids rendered by this page (must match FloatingCommandBar).
+ * The alias map lets external links use intent-named params (e.g. ?tab=radar
+ * for the skill-gap radar, ?tab=team for the about section) without the page
+ * silently falling back to the wrong view.
+ */
+const TAB_ALIASES: Record<string, string> = {
+  about: 'about', team: 'about', story: 'about', mission: 'about',
+  explore: 'explore', career: 'explore', roadmap: 'explore', domains: 'explore',
+  skills: 'skills', radar: 'skills', gaps: 'skills',
+  financials: 'financials', finance: 'financials', salary: 'financials',
+  portfolio: 'portfolio', resume: 'portfolio',
+};
+
+const resolveTab = (raw: string | null): string =>
+  (raw && TAB_ALIASES[raw.toLowerCase()]) || 'explore';
+
 const CareerRoadmapPage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('about');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [activeTab, setActiveTab] = useState(() => resolveTab(searchParams.get('tab')));
   const [audioStarted, setAudioStarted] = useState(false);
   const { start: startAudio } = useAmbientAudio();
   const { completed: compassCompleted } = useCompass();
@@ -63,8 +82,23 @@ const CareerRoadmapPage: React.FC = () => {
   const [unlockedBadgeIds] = useState<string[]>(['digital-foundation']);
   const [newBadge, setNewBadge] = useState<{ id: string; name: string; description: string; svgContent: string } | null>(null);
 
+  // Keep the active tab in sync with the URL so deep links (and back/forward)
+  // open the right view — e.g. /career-roadmap?tab=about lands on About,
+  // bare /career-roadmap lands on Explore.
+  useEffect(() => {
+    setActiveTab(resolveTab(searchParams.get('tab')));
+  }, [searchParams]);
+
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        next.set('tab', tab);
+        return next;
+      },
+      { replace: true },
+    );
     window.scrollTo(0, 0);
   };
 
@@ -116,7 +150,7 @@ const CareerRoadmapPage: React.FC = () => {
       />
 
       {/* Main Industrial Flow */}
-      <main className="relative z-10 pt-28">
+      <main className="relative z-10 pt-20 sm:pt-28">
         <AnimatePresence mode="wait">
           {activeTab === 'explore' && (
             <motion.div
@@ -147,10 +181,10 @@ const CareerRoadmapPage: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -15 }}
               transition={{ duration: 0.25 }}
-              className="space-y-12 py-12 max-w-7xl mx-auto px-6"
+              className="space-y-12 py-8 sm:py-12 max-w-7xl mx-auto px-4 sm:px-6"
             >
               <div>
-                <h1 className="text-4xl font-extrabold text-white tracking-tighter uppercase mb-6">Skill Topology & Gap Analysis</h1>
+                <h1 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tighter uppercase mb-6">Skill Topology & Gap Analysis</h1>
                 <SkillTopology />
               </div>
               
@@ -171,10 +205,10 @@ const CareerRoadmapPage: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -15 }}
               transition={{ duration: 0.25 }}
-              className="space-y-12 py-12 max-w-7xl mx-auto px-6"
+              className="space-y-12 py-8 sm:py-12 max-w-7xl mx-auto px-4 sm:px-6"
             >
               <div>
-                <h1 className="text-4xl font-extrabold text-white tracking-tighter uppercase mb-6">Financial Yield & Trajectory</h1>
+                <h1 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tighter uppercase mb-6">Financial Yield & Trajectory</h1>
                 <FiscalMatrix />
               </div>
 
@@ -199,9 +233,9 @@ const CareerRoadmapPage: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -15 }}
               transition={{ duration: 0.25 }}
-              className="space-y-12 py-12 max-w-7xl mx-auto px-6"
+              className="space-y-12 py-8 sm:py-12 max-w-7xl mx-auto px-4 sm:px-6"
             >
-              <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+              <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 items-start">
                  <SiliconPipeline />
                  <SiliconNetwork />
               </div>
@@ -212,7 +246,7 @@ const CareerRoadmapPage: React.FC = () => {
 
               <div className="border-t border-white/[0.03] pt-12 pb-24">
                 <div className="mb-8">
-                  <h2 className="text-4xl font-bold text-white tracking-tight uppercase">Silicon Cabinet</h2>
+                  <h2 className="text-2xl sm:text-4xl font-bold text-white tracking-tight uppercase">Silicon Cabinet</h2>
                 </div>
                 <SiliconCabinet 
                   unlockedBadgeIds={unlockedBadgeIds} 
@@ -243,7 +277,7 @@ const CareerRoadmapPage: React.FC = () => {
                 <AboutHero />
                 
                 {/* Interactive Hardware Scope Section */}
-                <div className="max-w-7xl mx-auto px-6 py-16 border-t border-white/[0.04] relative">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16 border-t border-white/[0.04] relative">
                   <LogicTraceScope />
                 </div>
 

@@ -1,6 +1,7 @@
-import React, { useRef, useState } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import { PlayCircle, FileText, Volume2, ArrowRight } from 'lucide-react';
+import { CustomVideoPlayer } from '../../../ui/CustomVideoPlayer';
 
 interface Props { isActive: boolean; isDarkMode: boolean; }
 
@@ -15,12 +16,9 @@ const KEY_POINTS = [
 ];
 
 export const S01_Video: React.FC<Props> = ({ isActive, isDarkMode }) => {
-  const videoRef = useRef<HTMLVideoElement>(null);
   const textColor = isDarkMode ? 'text-white' : 'text-slate-900';
   const subText   = isDarkMode ? 'text-slate-300' : 'text-slate-600';
   const cardBg    = isDarkMode ? 'bg-white/5 border-white/10' : 'bg-white border-slate-200 shadow-xl';
-
-  const [isPlaying, setIsPlaying] = useState(false);
 
   return (
     <div className="max-w-6xl mx-auto space-y-12 py-4">
@@ -40,23 +38,10 @@ export const S01_Video: React.FC<Props> = ({ isActive, isDarkMode }) => {
         initial={{ opacity: 0, scale: 0.98 }} animate={isActive ? { opacity: 1, scale: 1 } : {}}
         className={`relative rounded-3xl overflow-hidden border ${cardBg} shadow-2xl`}
       >
-        <video
-          ref={videoRef}
-          src={VIDEO_SRC}
-          controls
-          playsInline
-          onPlay={() => setIsPlaying(true)}
-          onPause={() => setIsPlaying(false)}
-          className="w-full block aspect-video bg-black"
-        />
-        <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-black/60 backdrop-blur border border-cyan-400/30 font-mono text-[10px] uppercase tracking-widest text-cyan-300 flex items-center gap-2">
+        <CustomVideoPlayer src={VIDEO_SRC} accent="#22d3ee" />
+        <div className="absolute top-3 left-3 z-10 px-3 py-1 rounded-full bg-black/60 backdrop-blur border border-cyan-400/30 font-mono text-[10px] uppercase tracking-widest text-cyan-300 flex items-center gap-2 pointer-events-none">
           <Volume2 size={12} /> Logic to Hardware Pipeline
         </div>
-        {!isPlaying && (
-          <div className="absolute bottom-4 right-4 px-3 py-1.5 rounded-full bg-cyan-400/90 text-black font-mono text-[10px] uppercase tracking-widest font-black animate-pulse">
-            Press play
-          </div>
-        )}
       </motion.div>
 
       {/* Quick beats */}

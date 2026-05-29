@@ -109,8 +109,8 @@ export function LogicStudio() {
                     onToggleXray={() => studio.setXrayEnabled(!studio.xrayEnabled)}
                 />
 
-                {/* Debug missions link */}
-                <div style={{ marginLeft: '8px', display: 'flex', gap: '4px' }}>
+                {/* Debug missions link — hidden on mobile to save header space */}
+                <div className="hidden lg:flex" style={{ marginLeft: '8px', gap: '4px' }}>
                     {DEBUG_MISSIONS.slice(0, 3).map((m) => (
                         <button
                             key={m.id}
@@ -127,6 +127,7 @@ export function LogicStudio() {
                                 display: 'flex',
                                 alignItems: 'center',
                                 gap: '4px',
+                                minHeight: 36,
                             }}
                             title={m.title}
                         >

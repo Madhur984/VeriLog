@@ -16,7 +16,7 @@ export const LoginPage: React.FC = () => {
     const setHasSeenGreeting = useGamificationStore((state) => state.setHasSeenGreeting);
 
     // Post-login destination — RequireAuth puts the original URL in state.from.
-    const redirectTo = (location.state as { from?: string } | null)?.from || '/hero';
+    const redirectTo = (location.state as { from?: string } | null)?.from || '/portal';
 
     // Auth State
     const [isSignUp, setIsSignUp] = useState(false);
@@ -63,10 +63,17 @@ export const LoginPage: React.FC = () => {
             setError(null);
             try {
                 if (isSignUp) {
+                    // The verification email's confirm link redirects here. Use the
+                    // real deployed origin (or VITE_SITE_URL) instead of whatever
+                    // Supabase's dashboard "Site URL" defaults to (was localhost).
+                    const siteUrl = import.meta.env.VITE_SITE_URL || window.location.origin;
                     const { data, error: signUpError } = await supabase.auth.signUp({
                         email,
                         password,
-                        options: { data: { full_name: fullName } }
+                        options: {
+                            data: { full_name: fullName },
+                            emailRedirectTo: `${siteUrl}/login`,
+                        }
                     });
                     if (signUpError) throw signUpError;
 

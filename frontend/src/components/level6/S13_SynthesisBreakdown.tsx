@@ -102,7 +102,7 @@ export const S13_SynthesisBreakdown: React.FC<{ isActive: boolean }> = ({ isActi
                     >
                         <div className="p-10 rounded-[50px] bg-white/[0.01] border border-white/5 backdrop-blur-md relative overflow-hidden group min-h-[380px] flex flex-col justify-end">
                             <img 
-                                src="/assets/module5/synthesis.png" 
+                                src="/assets/module5/synthesis.webp" 
                                 alt="Synthesis Map" 
                                 className="absolute inset-0 w-full h-full object-cover opacity-[0.08] group-hover:opacity-[0.15] transition-opacity duration-1000 grayscale group-hover:grayscale-0" 
                             />

@@ -32,10 +32,10 @@ export const FiscalMatrix: React.FC = () => {
               </p>
             </div>
 
-            <div className="p-8 bg-observatory-bg border border-white/5 rounded-2xl space-y-8">
-              <div className="flex justify-between items-baseline">
+            <div className="p-5 sm:p-8 bg-observatory-bg border border-white/5 rounded-2xl space-y-8">
+              <div className="flex justify-between items-baseline gap-4">
                 <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">Entry Trajectory (CTC)</span>
-                <span className="text-6xl font-bold text-white">₹7.5L</span>
+                <span className="text-4xl sm:text-6xl font-bold text-white shrink-0">₹7.5L</span>
               </div>
 
               <div className="space-y-6">
@@ -60,7 +60,7 @@ export const FiscalMatrix: React.FC = () => {
           </div>
 
           <div className="w-full md:w-96 space-y-6">
-            <div className="p-8 bg-observatory-bg border border-white/5 rounded-2xl space-y-6">
+            <div className="p-5 sm:p-8 bg-observatory-bg border border-white/5 rounded-2xl space-y-6">
               <h3 className="text-xs font-mono font-bold text-white uppercase tracking-widest flex items-center gap-2">
                 <TrendingUp size={14} className="text-cyan-400" />
                 Freedom Age Simulator

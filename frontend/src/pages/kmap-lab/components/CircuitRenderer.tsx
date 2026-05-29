@@ -54,9 +54,9 @@ export const CircuitRenderer: React.FC = () => {
   const isTrivial = expression === '1' || expression === '0';
 
   return (
-    <div className="glass-card p-8 mt-2 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-800">
+    <div className="glass-card p-4 lg:p-8 mt-2 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-800">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-4 lg:mb-6 gap-3">
         <div className="flex items-center gap-3">
           <div className="p-2 rounded-lg bg-orange-500/15 border border-orange-500/25">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f97316" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -83,7 +83,7 @@ export const CircuitRenderer: React.FC = () => {
       {/* Canvas */}
       <div
         className="relative w-full overflow-hidden rounded-2xl border border-white/5 bg-black/50"
-        style={{ height: 360, cursor: dragging ? 'grabbing' : 'grab' }}
+        style={{ height: 'clamp(220px, 45vw, 360px)', cursor: dragging ? 'grabbing' : 'grab' }}
         onMouseDown={onMouseDown}
         onMouseMove={onMouseMove}
         onMouseUp={onMouseUp}
@@ -178,13 +178,13 @@ export const CircuitRenderer: React.FC = () => {
 
       {/* Gate count info */}
       {circuit && !isTrivial && (
-        <div className="mt-4 flex items-center gap-5 text-xs font-medium text-gray-500">
+        <div className="mt-4 flex flex-wrap items-center gap-3 lg:gap-5 text-xs font-medium text-gray-500">
           <GateCount nodes={circuit.nodes} type="AND" />
-          <div className="w-px h-3 bg-white/10" />
+          <div className="hidden sm:block w-px h-3 bg-white/10" />
           <GateCount nodes={circuit.nodes} type="OR" />
-          <div className="w-px h-3 bg-white/10" />
+          <div className="hidden sm:block w-px h-3 bg-white/10" />
           <GateCount nodes={circuit.nodes} type="NOT" />
-          <div className="w-px h-3 bg-white/10" />
+          <div className="hidden sm:block w-px h-3 bg-white/10" />
           <GateCount nodes={circuit.nodes} type="INPUT" label="Inputs" />
         </div>
       )}

@@ -190,7 +190,7 @@ export const ALULab: React.FC<Props> = ({ isDarkMode = true }) => {
                         </div>
                     </div>
 
-                    <div style={{ p: 20, background: isDarkMode ? 'rgba(0,0,0,0.2)' : 'rgba(0,0,0,0.03)', borderRadius: 16, border: `1px solid ${T.border}` }}>
+                    <div style={{ padding: 20, background: isDarkMode ? 'rgba(0,0,0,0.2)' : 'rgba(0,0,0,0.03)', borderRadius: 16, border: `1px solid ${T.border}` }}>
                         <div className="flex items-center gap-2 mb-2">
                            <Calculator size={14} color={T.accent} />
                            <span style={{ fontFamily: T.mono, fontSize: 10, fontWeight: 700, color: T.text, textTransform: 'uppercase' }}>Operation Trace</span>

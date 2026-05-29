@@ -156,7 +156,7 @@ export const RadialMenu: React.FC = () => {
   useEffect(() => {
      const path = location.pathname;
      if (path.includes('/workbench')) setActiveId('grid');
-     else if (path.includes('/boss-arena') || path.includes('/assessment')) setActiveId('leaderboards');
+     else if (path.includes('/boss-arena')) setActiveId('leaderboards');
      else if (path.includes('/portfolio')) setActiveId('settings');
      else if (path.includes('/career-roadmap')) setActiveId('career');
      else setActiveId('overview');

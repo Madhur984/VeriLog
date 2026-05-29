@@ -57,7 +57,7 @@ export const TrajectorySimulator: React.FC = () => {
   return (
     <SectionWrapper id="sim" className="bg-observatory-bg" aria-label="Trajectory Simulator">
       <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col md:flex-row gap-12 items-stretch min-h-[600px]">
+        <div className="flex flex-col md:flex-row gap-8 sm:gap-12 items-stretch min-h-[400px] sm:min-h-[600px]">
           <div className="flex-1 space-y-8 flex flex-col justify-center">
             <AnimatePresence mode="wait">
               {fullOutcomeData ? (
@@ -72,7 +72,7 @@ export const TrajectorySimulator: React.FC = () => {
                 >
                   <div className="space-y-4">
                     <div className="text-[11px] font-mono text-cyan-400 uppercase tracking-[0.4em]">Simulator Node: {currentNode.id}</div>
-                    <h2 className="text-5xl md:text-6xl font-bold text-white leading-[0.9] tracking-tighter">
+                    <h2 className="text-3xl sm:text-5xl md:text-6xl font-bold text-white leading-[0.9] tracking-tighter">
                       {currentNode.question}
                     </h2>
                   </div>

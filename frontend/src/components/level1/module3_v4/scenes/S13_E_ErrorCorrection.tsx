@@ -59,7 +59,7 @@ export const S13_E_ErrorCorrection: React.FC<Props> = ({ isActive, isDarkMode })
   const toggleNoise = (i: number) => {
       if (noiseIdx === i) setNoiseIdx(null);
       else setNoiseIdx(i);
-      playBitTone(4, 'med');
+      playBitTone(4, 'low');
       recordAction('interactions');
   };
 

@@ -19,7 +19,7 @@ const SCENARIOS = [
         title: "Tesla Logic",
         icon: <Car size={24} />,
         description: "Sensor data must be immune to engine noise. Conversion to binary logic bands ensures absolute data integrity over distance.",
-        target: { samplingRate: 80 },
+        target: { sampleRate: 80 },
         accent: "#F59E0B"
     },
     {
@@ -43,7 +43,7 @@ export const P4_SystemConversion: React.FC<{
 
     const isSuccess = 
         (activeId === 'ecg' && state.bitDepth >= 12) ||
-        (activeId === 'radar' && state.samplingRate >= 80) ||
+        (activeId === 'radar' && state.sampleRate >= 80) ||
         (activeId === 'audio' && metrics.fidelity >= 92 && state.dither);
 
     return (
@@ -100,7 +100,7 @@ export const P4_SystemConversion: React.FC<{
                      <InteractiveInstrument 
                         state={state} onUpdate={onUpdate} time={time}
                         mapping={{
-                            x: { label: "SYSTEM_LATENCY", key: "samplingRate", min: 4, max: 128, unit: "ms" },
+                            x: { label: "SYSTEM_LATENCY", key: "sampleRate", min: 4, max: 128, unit: "ms" },
                             y: { label: "QUANTIZATION_ERROR", key: "bitDepth", min: 1, max: 24, unit: "LSB" }
                         }}
                     />

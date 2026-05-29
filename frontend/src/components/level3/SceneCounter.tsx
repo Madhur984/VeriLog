@@ -8,6 +8,7 @@ import { useBinaryStore, selectCounterBits, Bit } from '../../stores/binaryStore
 import { useGlobalSensory } from '../../hooks/useGlobalSensory';
 import { playBitTone } from '../../utils/synesthesiaEngine';
 import { AlertTriangle, RefreshCcw } from 'lucide-react';
+import { KineticTraces, TracePath } from './KineticTraces';
 
 const T = {
     bg: '#0A0B10', card: '#0D0F16', surface: '#1A1D24', border: '#1A1D24',

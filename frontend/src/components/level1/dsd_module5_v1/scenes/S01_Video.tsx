@@ -1,7 +1,8 @@
-import React, { useRef, useState } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import { PlayCircle, FileText, Volume2 } from 'lucide-react';
 import type { SceneProps } from '../types';
+import { CustomVideoPlayer } from '../../../ui/CustomVideoPlayer';
 
 export const S01_Video: React.FC<SceneProps> = ({ isActive, isDarkMode, mode }) => {
   const textColor = isDarkMode ? 'text-white' : 'text-slate-900';
@@ -10,8 +11,6 @@ export const S01_Video: React.FC<SceneProps> = ({ isActive, isDarkMode, mode }) 
   const accent = mode === 'nand' ? '#22d3ee' : '#fb923c';
 
   const videoSrc = mode === 'nand' ? '/videos/NAND_Universality.mp4' : '/videos/NOR_Universality.mp4';
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
 
   const beats = mode === 'nand'
     ? [
@@ -49,29 +48,13 @@ export const S01_Video: React.FC<SceneProps> = ({ isActive, isDarkMode, mode }) 
         initial={{ opacity: 0, scale: 0.98 }} animate={isActive ? { opacity: 1, scale: 1 } : {}}
         className={`relative rounded-3xl overflow-hidden border ${cardBg} shadow-2xl`}
       >
-        <video
-          ref={videoRef}
-          src={videoSrc}
-          controls
-          playsInline
-          onPlay={() => setIsPlaying(true)}
-          onPause={() => setIsPlaying(false)}
-          className="w-full block aspect-video bg-black"
-        />
+        <CustomVideoPlayer src={videoSrc} accent={accent} />
         <div
-          className="absolute top-3 left-3 px-3 py-1 rounded-full bg-black/60 backdrop-blur border font-mono text-[10px] uppercase tracking-widest flex items-center gap-2"
+          className="absolute top-3 left-3 z-10 px-3 py-1 rounded-full bg-black/60 backdrop-blur border font-mono text-[10px] uppercase tracking-widest flex items-center gap-2 pointer-events-none"
           style={{ borderColor: `${accent}55`, color: accent }}
         >
           <Volume2 size={12} /> {title}
         </div>
-        {!isPlaying && (
-          <div
-            className="absolute bottom-4 right-4 px-3 py-1.5 rounded-full text-black font-mono text-[10px] uppercase tracking-widest font-black animate-pulse"
-            style={{ background: `${accent}E6` }}
-          >
-            Press play
-          </div>
-        )}
       </motion.div>
 
       {/* Beats */}

@@ -1,63 +1,56 @@
+import { Link } from 'react-router-dom';
 import { GatePreview } from '../../components/GatePreview';
+import { LANDING_ROUTES } from './landingRoutes';
 
 export const WhatIsSection = () => {
   return (
-    <section
-      id="what-is-section"
-      className="py-24 px-6 md:px-12 lg:px-20 max-w-5xl mx-auto w-full"
-    >
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-12 items-center">
-        {/* Left Side: Pitch Text (40%) */}
-        <div className="md:col-span-5 space-y-6">
-          <span
-            className="text-[10px] font-mono tracking-widest uppercase block"
-            style={{ color: '#475569' }}
-          >
-            WHAT IS THIS
-          </span>
-          <h2
-            className="font-bold leading-tight font-sans"
-            style={{
-              fontSize: 'clamp(32px, 5vw, 44px)',
-              color: '#F1F5F9',
-              letterSpacing: '-0.03em',
-            }}
-          >
-            Not a course.
-            <br />
-            Not a textbook.
-            <br />
-            <span style={{ color: '#22D3EE' }}>An experience.</span>
-          </h2>
-          <div className="space-y-4 text-sm leading-relaxed" style={{ color: '#94A3B8' }}>
-            <p>
-              BitforBytes is a free, interactive platform that teaches
-              VLSI and digital design the way it should be taught —
-              through simulation, not slides.
-            </p>
-            <p>
-              Every concept is a live interaction. You toggle inputs.
-              You see signals. You build understanding from the ground up.
-              No lab access required. No expensive software.
-            </p>
-            <p className="italic text-xs" style={{ color: '#475569' }}>
-              Built by ECE students who couldn't find this anywhere else.
-            </p>
-          </div>
-          <div className="pt-2">
-            <a
-              href="/career-roadmap?tab=about"
-              className="text-xs font-mono tracking-wider transition-all duration-150 inline-block hover:text-[#22D3EE]"
-              style={{ color: '#475569' }}
+    <section id="what-is-section" className="w-full" style={{ background: '#0B1220' }}>
+      <div className="max-w-6xl mx-auto px-6 md:px-10 py-24 md:py-28">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-16 items-center">
+          {/* Left: the gap narrative */}
+          <div className="md:col-span-6 space-y-6">
+            <span className="text-[11px] font-bold tracking-[0.22em] uppercase" style={{ color: '#22D3EE' }}>
+              The gap we close
+            </span>
+            <h2 className="font-extrabold leading-[1.1] tracking-tight" style={{ fontSize: 'clamp(30px, 4.5vw, 46px)', color: '#F8FAFC', letterSpacing: '-0.02em' }}>
+              Most ECE students meet VLSI
+              <br />
+              <span style={{ color: '#22D3EE' }}>far too late.</span>
+            </h2>
+            <div className="space-y-4 text-[15px] leading-relaxed" style={{ color: '#CBD5E1' }}>
+              <p>
+                You landed in ECE off a CS cutoff, then spent years on derivations — never
+                hearing the words VLSI, RTL, or RF until placements. Meanwhile real fabs need
+                hands-on, tool-fluent designers. That mismatch is the <strong style={{ color: '#F8FAFC' }}>Glasswing Gap</strong>.
+              </p>
+              <p>
+                BitforBytes closes it the way it should be taught — through{' '}
+                <strong style={{ color: '#F8FAFC' }}>simulation, not slides</strong>. Every concept is a live
+                interaction: you toggle a bit, you see the signal, you build the system. No lab,
+                no expensive EDA licence.
+              </p>
+              <p className="text-[13px] italic" style={{ color: '#64748B' }}>
+                Built by ECE students who couldn&apos;t find this anywhere else.
+              </p>
+            </div>
+            <Link
+              to={LANDING_ROUTES.about}
+              className="inline-flex items-center gap-1.5 text-sm font-semibold transition-colors"
+              style={{ color: '#22D3EE' }}
             >
-              READ OUR STORY →
-            </a>
+              Read our story →
+            </Link>
           </div>
-        </div>
 
-        {/* Right Side: GatePreview Simulator (60%) */}
-        <div className="md:col-span-7 h-full">
-          <GatePreview />
+          {/* Right: live interactive gate (signature flair) */}
+          <div className="md:col-span-6">
+            <div
+              className="rounded-3xl p-1.5"
+              style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)' }}
+            >
+              <GatePreview />
+            </div>
+          </div>
         </div>
       </div>
     </section>

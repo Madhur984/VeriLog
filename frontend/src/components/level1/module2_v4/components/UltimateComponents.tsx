@@ -536,7 +536,7 @@ export const SpectrumAnalyzer: React.FC<{ state: GlobalSignalState }> = ({ state
             for(let i=0; i<H; i+=40) { ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(W, i); ctx.stroke(); }
 
             const fundamental = state.frequency;
-            const sampling = state.samplingRate;
+            const sampling = state.sampleRate;
             const isAliasing = sampling / 2 < fundamental;
 
             // Fundamental Peak
@@ -576,8 +576,8 @@ export const SpectrumAnalyzer: React.FC<{ state: GlobalSignalState }> = ({ state
                     <span className="text-[10px] font-black uppercase text-white/30 tracking-[0.3em]">Freq_Domain // Analyser</span>
                     <span className="text-[9px] font-mono text-[#00D4FF]"><KineticText text="FFT_SCAN_ACTIVE" /></span>
                 </div>
-                <div className={`px-4 py-2 rounded-xl text-[10px] font-black italic uppercase tracking-widest ${state.samplingRate / 2 < state.frequency ? 'bg-red-500/10 text-red-500 border border-red-500/40' : 'bg-green-500/10 text-green-500 border border-green-500/40'}`}>
-                    {state.samplingRate / 2 < state.frequency ? 'Aliasing_Detected' : 'Nyquist_Lock'}
+                <div className={`px-4 py-2 rounded-xl text-[10px] font-black italic uppercase tracking-widest ${state.sampleRate / 2 < state.frequency ? 'bg-red-500/10 text-red-500 border border-red-500/40' : 'bg-green-500/10 text-green-500 border border-green-500/40'}`}>
+                    {state.sampleRate / 2 < state.frequency ? 'Aliasing_Detected' : 'Nyquist_Lock'}
                 </div>
             </div>
             <canvas ref={canvasRef} className="w-full h-[200px] rounded-[2.5rem] bg-black/40" />
@@ -587,7 +587,7 @@ export const SpectrumAnalyzer: React.FC<{ state: GlobalSignalState }> = ({ state
                     <div className="w-px h-2 bg-white/20 mt-1" />
                  </div>
                  <div className="flex flex-col items-center">
-                    <span className="text-[8px] font-mono text-white/40">Nyquist ({state.samplingRate / 2}Hz)</span>
+                    <span className="text-[8px] font-mono text-white/40">Nyquist ({state.sampleRate / 2}Hz)</span>
                     <div className="w-px h-4 bg-[#EF4444]/40 mt-1" />
                  </div>
                  <div className="flex flex-col items-center">

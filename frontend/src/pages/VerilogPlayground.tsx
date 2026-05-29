@@ -126,20 +126,23 @@ export function VerilogPlayground() {
     const errorCount = lintIssues.filter(i => i.severity === 'error').length;
     const warnCount = lintIssues.filter(i => i.severity === 'warning').length;
 
+    // Mobile panel visibility state
+    const [showSidebar, setShowSidebar] = useState(false);
+    const [showAnalysis, setShowAnalysis] = useState(false);
+
     return (
-        <div style={{
-            height: '100vh', display: 'flex', flexDirection: 'column',
-            background: T.bg, color: T.text, fontFamily: T.sans, overflow: 'hidden',
-        }}>
+        <div
+            className="min-h-[100svh] lg:h-screen flex flex-col overflow-x-hidden lg:overflow-hidden"
+            style={{ background: T.bg, color: T.text, fontFamily: T.sans }}
+        >
             {/* ── Top Bar ───────────────────────────────────────────────── */}
-            <div style={{
-                display: 'flex', alignItems: 'center', gap: 12, padding: '10px 20px',
-                background: T.card, borderBottom: `1px solid ${T.border}`,
-                flexShrink: 0,
-            }}>
+            <div
+                className="flex flex-wrap items-center gap-2 px-3 py-2 lg:px-5 lg:py-[10px]"
+                style={{ background: T.card, borderBottom: `1px solid ${T.border}`, flexShrink: 0 }}
+            >
                 <button onClick={() => navigate('/portal')} style={{
                     background: 'none', border: 'none', color: T.muted, cursor: 'pointer',
-                    display: 'flex', alignItems: 'center', gap: 6,
+                    display: 'flex', alignItems: 'center', gap: 6, minHeight: 36,
                 }}>
                     <ArrowLeft size={15} />
                 </button>
@@ -149,8 +152,8 @@ export function VerilogPlayground() {
                     Verilog Playground
                 </span>
 
-                {/* Exercise title */}
-                <div style={{ marginLeft: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
+                {/* Exercise title — hidden on very small screens, shown md+ */}
+                <div className="hidden sm:flex items-center gap-2" style={{ marginLeft: 8 }}>
                     <span style={{
                         padding: '2px 8px', fontFamily: T.mono, fontSize: 7,
                         border: `1px solid ${LEVEL_COLORS[selectedExercise.level]}40`,
@@ -164,37 +167,69 @@ export function VerilogPlayground() {
                     </span>
                 </div>
 
-                <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 8 }}>
+                <div className="flex items-center gap-2 ml-auto flex-wrap">
                     <Zap size={13} style={{ color: T.warning }} />
                     <span style={{ fontFamily: T.mono, fontSize: 10, color: T.warning }}>
                         {totalXP} XP
                     </span>
-                    <div style={{ width: 1, height: 16, background: T.border, margin: '0 4px' }} />
                     {/* Lint status badge */}
                     <div style={{
                         display: 'flex', alignItems: 'center', gap: 6,
-                        padding: '3px 10px',
+                        padding: '3px 8px',
                         background: errorCount > 0 ? `${T.error}10` : warnCount > 0 ? `${T.warning}10` : `${T.success}10`,
                         border: `1px solid ${errorCount > 0 ? `${T.error}40` : warnCount > 0 ? `${T.warning}40` : `${T.success}40`}`,
                         borderRadius: 2,
                     }}>
                         {errorCount > 0
-                            ? <><AlertTriangle size={11} style={{ color: T.error }} /><span style={{ fontFamily: T.mono, fontSize: 8, color: T.error }}>{errorCount} error{errorCount !== 1 ? 's' : ''}</span></>
+                            ? <><AlertTriangle size={11} style={{ color: T.error }} /><span style={{ fontFamily: T.mono, fontSize: 8, color: T.error }}>{errorCount}e</span></>
                             : warnCount > 0
-                                ? <><AlertTriangle size={11} style={{ color: T.warning }} /><span style={{ fontFamily: T.mono, fontSize: 8, color: T.warning }}>{warnCount} warn</span></>
+                                ? <><AlertTriangle size={11} style={{ color: T.warning }} /><span style={{ fontFamily: T.mono, fontSize: 8, color: T.warning }}>{warnCount}w</span></>
                                 : <><CheckCircle2 size={11} style={{ color: T.success }} /><span style={{ fontFamily: T.mono, fontSize: 8, color: T.success }}>clean</span></>
                         }
                     </div>
+                    {/* Mobile toggle buttons */}
+                    <button
+                        className="lg:hidden"
+                        onClick={() => setShowSidebar(s => !s)}
+                        style={{
+                            padding: '4px 10px', fontFamily: T.mono, fontSize: 8,
+                            background: showSidebar ? `${T.accent}15` : 'transparent',
+                            border: `1px solid ${showSidebar ? T.accent : T.border}`,
+                            borderRadius: 2, color: showSidebar ? T.accent : T.muted,
+                            cursor: 'pointer', minHeight: 36,
+                        }}
+                    >
+                        Exercises
+                    </button>
+                    <button
+                        className="lg:hidden"
+                        onClick={() => setShowAnalysis(s => !s)}
+                        style={{
+                            padding: '4px 10px', fontFamily: T.mono, fontSize: 8,
+                            background: showAnalysis ? `${T.accent}15` : 'transparent',
+                            border: `1px solid ${showAnalysis ? T.accent : T.border}`,
+                            borderRadius: 2, color: showAnalysis ? T.accent : T.muted,
+                            cursor: 'pointer', minHeight: 36,
+                        }}
+                    >
+                        Analysis
+                    </button>
                 </div>
             </div>
 
-            {/* ── Main 3-panel layout ──────────────────────────────────── */}
-            <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
-                {/* Left — Exercise Browser */}
-                <div style={{
-                    width: 220, flexShrink: 0, overflowY: 'auto',
-                    borderRight: `1px solid ${T.border}`, background: T.panel,
-                }}>
+            {/* ── Main layout ──────────────────────────────────────────── */}
+            {/* Desktop: 3-panel flex row; Mobile: stacked */}
+            <div className="flex-1 flex flex-col lg:flex-row lg:overflow-hidden overflow-y-auto">
+                {/* Left — Exercise Browser (desktop: fixed sidebar; mobile: collapsible) */}
+                <div
+                    className={`${showSidebar ? 'block' : 'hidden'} lg:block`}
+                    style={{
+                        flexShrink: 0, overflowY: 'auto',
+                        borderBottom: `1px solid ${T.border}`,
+                        background: T.panel,
+                    }}
+                >
+                    <div style={{ borderRight: `1px solid ${T.border}` }} className="lg:w-[220px]">
                     {LEVELS.map(level => {
                         const exercises = getExercisesByLevel(level);
                         const isExpanded = expandedLevel === level;
@@ -204,7 +239,7 @@ export function VerilogPlayground() {
                                 <button
                                     onClick={() => setExpandedLevel(isExpanded ? '' as ExerciseLevel : level)}
                                     style={{
-                                        width: '100%', padding: '10px 14px',
+                                        width: '100%', padding: '10px 14px', minHeight: 40,
                                         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                                         background: 'none', border: 'none',
                                         borderBottom: `1px solid ${T.border}`,
@@ -238,7 +273,7 @@ export function VerilogPlayground() {
                                                             borderLeft: `2px solid ${isSelected ? color : 'transparent'}`,
                                                             borderBottom: `1px solid ${T.border}`,
                                                             cursor: 'pointer',
-                                                            display: 'flex', alignItems: 'center', gap: 8,
+                                                            display: 'flex', alignItems: 'center', gap: 8, minHeight: 40,
                                                         }}
                                                     >
                                                         <div style={{ flex: 1 }}>
@@ -259,10 +294,14 @@ export function VerilogPlayground() {
                             </div>
                         );
                     })}
+                    </div>
                 </div>
 
                 {/* Center — Editor */}
-                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+                <div
+                    className="flex flex-col min-h-[500px] lg:min-h-0"
+                    style={{ flex: 1, overflow: 'hidden' }}
+                >
                     {/* Brief panel */}
                     <div style={{
                         padding: '12px 16px', borderBottom: `1px solid ${T.border}`,
@@ -330,7 +369,7 @@ export function VerilogPlayground() {
                     </div>
 
                     {/* Monaco Editor */}
-                    <div style={{ flex: 1, overflow: 'hidden' }}>
+                    <div className="h-[350px] lg:h-auto lg:flex-1" style={{ overflow: 'hidden' }}>
                         <Editor
                             defaultLanguage="cpp"
                             value={code}
@@ -356,14 +395,15 @@ export function VerilogPlayground() {
                     <div style={{
                         display: 'flex', alignItems: 'center', gap: 8, padding: '10px 16px',
                         background: T.card, borderTop: `1px solid ${T.border}`, flexShrink: 0,
+                        flexWrap: 'wrap',
                     }}>
                         <button onClick={handleRun} disabled={runStatus === 'running'} style={{
-                            padding: '8px 20px', display: 'flex', alignItems: 'center', gap: 8,
+                            padding: '8px 16px', display: 'flex', alignItems: 'center', gap: 8,
                             background: runStatus === 'running' ? `${T.accent}06` : `${T.accent}12`,
                             border: `1px solid ${T.accent}40`, borderRadius: 2,
                             color: T.accent, fontFamily: T.mono, fontSize: 9,
                             letterSpacing: '0.1em', cursor: runStatus === 'running' ? 'wait' : 'pointer',
-                            transition: 'all 0.2s',
+                            transition: 'all 0.2s', minHeight: 40,
                         }}>
                             <Play size={13} />
                             {runStatus === 'running' ? 'SIMULATING...' : 'RUN SIMULATION'}
@@ -372,6 +412,7 @@ export function VerilogPlayground() {
                             padding: '8px 14px', display: 'flex', alignItems: 'center', gap: 6,
                             background: 'transparent', border: `1px solid ${T.border}`,
                             borderRadius: 2, color: T.muted, cursor: 'pointer', fontFamily: T.mono, fontSize: 9,
+                            minHeight: 40,
                         }}>
                             <RotateCcw size={12} /> RESET
                         </button>
@@ -382,15 +423,15 @@ export function VerilogPlayground() {
                                 <motion.div
                                     initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }}
                                     style={{
-                                        padding: '6px 14px', display: 'flex', alignItems: 'center', gap: 8,
+                                        padding: '6px 12px', display: 'flex', alignItems: 'center', gap: 8,
                                         background: runStatus === 'pass' ? `${T.success}10` : `${T.error}10`,
                                         border: `1px solid ${runStatus === 'pass' ? T.success : T.error}40`,
-                                        borderRadius: 2,
+                                        borderRadius: 2, flexWrap: 'wrap',
                                     }}
                                 >
                                     {runStatus === 'pass'
                                         ? <><CheckCircle2 size={13} style={{ color: T.success }} /><span style={{ fontFamily: T.mono, fontSize: 9, color: T.success }}>ALL TESTS PASS +{selectedExercise.xpReward} XP</span></>
-                                        : <><AlertTriangle size={13} style={{ color: T.error }} /><span style={{ fontFamily: T.mono, fontSize: 9, color: T.error }}>SIMULATION FAILED — check your implementation</span></>
+                                        : <><AlertTriangle size={13} style={{ color: T.error }} /><span style={{ fontFamily: T.mono, fontSize: 9, color: T.error }}>FAILED — check implementation</span></>
                                     }
                                 </motion.div>
                             )}
@@ -398,12 +439,15 @@ export function VerilogPlayground() {
                     </div>
                 </div>
 
-                {/* Right — LogicAnalysis Panel */}
-                <div style={{
-                    width: 280, flexShrink: 0, overflowY: 'auto',
-                    borderLeft: `1px solid ${T.border}`, background: T.panel,
-                    display: 'flex', flexDirection: 'column',
-                }}>
+                {/* Right — LogicAnalysis Panel (desktop: fixed sidebar; mobile: collapsible) */}
+                <div
+                    className={`${showAnalysis ? 'block' : 'hidden'} lg:block`}
+                    style={{
+                        flexShrink: 0, overflowY: 'auto',
+                        borderLeft: `1px solid ${T.border}`, background: T.panel,
+                    }}
+                >
+                <div className="lg:w-[280px]" style={{ display: 'flex', flexDirection: 'column' }}>
                     {/* Header */}
                     <div style={{ padding: '12px 16px', borderBottom: `1px solid ${T.border}` }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
@@ -501,8 +545,9 @@ export function VerilogPlayground() {
                             ))}
                         </div>
                     )}
-                </div>
-            </div>
+                </div>{/* end lg:w-[280px] inner */}
+                </div>{/* end collapsible analysis panel wrapper */}
+            </div>{/* end main flex row */}
         </div>
     );
 }

@@ -34,7 +34,7 @@ export const GatekeeperGame = () => {
     };
 
     return (
-        <div className={`min-h-screen ${T.bg} ${T.text} flex flex-col p-8 relative font-sans`}>
+        <div className={`min-h-[100svh] ${T.bg} ${T.text} flex flex-col p-4 sm:p-8 relative font-sans overflow-x-hidden`}>
             {/* Background Pattern */}
             <div className="fixed inset-0 z-0 opacity-[0.05] pointer-events-none">
                 <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
@@ -47,27 +47,27 @@ export const GatekeeperGame = () => {
                 </svg>
             </div>
 
-            <header className="flex items-center justify-between mb-12 relative z-10">
-                <button 
-                    onClick={() => navigate('/')} 
-                    className="flex items-center px-4 py-2 bg-white border border-slate-200 rounded-xl font-bold text-slate-600 hover:text-sky-600 hover:border-sky-200 transition-all shadow-sm"
+            <header className="flex items-center justify-between mb-6 sm:mb-12 relative z-10 gap-3">
+                <button
+                    onClick={() => navigate('/')}
+                    className="flex items-center px-3 py-2 sm:px-4 sm:py-2 bg-white border border-slate-200 rounded-xl font-bold text-slate-600 hover:text-sky-600 hover:border-sky-200 transition-all shadow-sm shrink-0 min-h-[40px]"
                 >
-                    <ArrowLeft className="mr-2 w-4 h-4" /> Exit to Lounge
+                    <ArrowLeft className="mr-1 sm:mr-2 w-4 h-4" /> <span className="hidden sm:inline">Exit to Lounge</span><span className="sm:hidden">Exit</span>
                 </button>
-                <div className="flex items-center gap-3">
-                    <div className="p-2 bg-sky-50 text-sky-600 rounded-lg">
-                        <Zap size={20} />
+                <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                    <div className="p-2 bg-sky-50 text-sky-600 rounded-lg shrink-0">
+                        <Zap size={18} />
                     </div>
-                    <div className="text-xl font-heading font-black tracking-tight text-slate-800 uppercase">
+                    <div className="text-base sm:text-xl font-heading font-black tracking-tight text-slate-800 uppercase truncate">
                         Module 02: <span className="text-sky-600">Gatekeeper</span>
                     </div>
                 </div>
             </header>
 
-            <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-8 max-w-7xl mx-auto w-full relative z-10">
+            <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-8 max-w-7xl mx-auto w-full relative z-10">
 
                 {/* Left: Logic Controls */}
-                <div className={`${T.card} rounded-[32px] p-8 ${T.border} border ${T.shadow} lg:col-span-3 flex flex-col space-y-8 h-fit`}>
+                <div className={`${T.card} rounded-[32px] p-5 sm:p-8 ${T.border} border ${T.shadow} lg:col-span-3 flex flex-col space-y-5 sm:space-y-8 h-fit`}>
                     <div className="space-y-1">
                         <h2 className="text-xl font-black font-heading tracking-tight">Logic Matrix</h2>
                         <p className="text-xs text-slate-400 font-bold uppercase tracking-widest">Configuration Panel</p>
@@ -136,9 +136,9 @@ export const GatekeeperGame = () => {
                 </div>
 
                 {/* Center: The Castle Gate */}
-                <div className="lg:col-span-6 flex flex-col items-center relative py-12">
+                <div className="lg:col-span-6 flex flex-col items-center relative py-8 sm:py-12">
                     {/* Wires */}
-                    <div className="absolute top-0 w-full flex justify-between px-24 opacity-30">
+                    <div className="absolute top-0 w-full flex justify-between px-12 sm:px-24 opacity-30">
                         <div className="w-2 h-44 relative bg-slate-200 rounded-full">
                             <Wire active={guardA} color="bg-emerald-500" className="h-full w-2" />
                         </div>
@@ -154,7 +154,7 @@ export const GatekeeperGame = () => {
                                 scale: isOpen ? 1.05 : 1,
                                 filter: isOpen ? "drop-shadow(0 20px 40px rgba(14, 165, 233, 0.2))" : "none"
                             }}
-                            className="w-80 h-96 bg-slate-100 rounded-t-full border-[6px] border-slate-200 flex items-end justify-center overflow-hidden relative shadow-inner"
+                            className="w-64 h-80 sm:w-80 sm:h-96 bg-slate-100 rounded-t-full border-[6px] border-slate-200 flex items-end justify-center overflow-hidden relative shadow-inner"
                         >
                             {/* Doors */}
                             <motion.div
@@ -207,14 +207,14 @@ export const GatekeeperGame = () => {
                     </div>
 
                     {/* Action */}
-                    <div className="mt-16">
+                    <div className="mt-8 sm:mt-16 w-full flex justify-center">
                         <button
                             onClick={checkSuccess}
                             disabled={!isOpen}
                             className={cn(
-                                "group relative px-14 py-5 rounded-2xl font-black text-xl tracking-tight transition-all active:scale-95 shadow-2xl",
-                                isOpen 
-                                    ? "bg-sky-600 text-white hover:bg-sky-700 shadow-sky-600/20" 
+                                "group relative w-full max-w-xs sm:w-auto px-8 sm:px-14 py-4 sm:py-5 rounded-2xl font-black text-base sm:text-xl tracking-tight transition-all active:scale-95 shadow-2xl min-h-[48px]",
+                                isOpen
+                                    ? "bg-sky-600 text-white hover:bg-sky-700 shadow-sky-600/20"
                                     : "bg-slate-100 text-slate-300 border border-slate-200 cursor-not-allowed shadow-none"
                             )}
                         >
@@ -225,11 +225,11 @@ export const GatekeeperGame = () => {
                 </div>
 
                 {/* Right: Analysis & Feedback (Replacing Bot) */}
-                <div className="lg:col-span-3 flex flex-col justify-center gap-6">
+                <div className="lg:col-span-3 flex flex-col justify-center gap-4 sm:gap-6">
                     <motion.div
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
-                        className={`${T.card} p-8 rounded-[32px] ${T.border} border ${T.shadow}`}
+                        className={`${T.card} p-5 sm:p-8 rounded-[32px] ${T.border} border ${T.shadow}`}
                     >
                         <div className="flex items-center gap-4 mb-6">
                             <div className="p-3 bg-indigo-50 text-indigo-600 rounded-2xl">

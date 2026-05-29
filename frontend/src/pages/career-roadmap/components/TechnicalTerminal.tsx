@@ -108,11 +108,10 @@ export const TechnicalTerminal: React.FC = () => {
                   className="flex flex-col gap-2"
                 >
                   <label className="text-[10px] text-slate-500 uppercase tracking-widest mt-4">Provide Answer:</label>
-                  <textarea 
+                  <textarea
                     value={answer}
                     onChange={(e) => setAnswer(e.target.value)}
                     className="w-full h-32 bg-transparent border border-white/10 p-3 text-cyan-400 text-sm focus:outline-none focus:border-cyan-400 resize-none custom-scrollbar"
-                    autoFocus
                   />
                   <button type="submit" className="hidden" />
                 </motion.form>

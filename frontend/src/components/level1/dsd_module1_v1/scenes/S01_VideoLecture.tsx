@@ -1,6 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { PlayCircle, FileText, Bookmark } from 'lucide-react';
+import { CustomVideoPlayer, VideoPlayerHandle } from '../../../ui/CustomVideoPlayer';
 
 interface Props { isActive: boolean; isDarkMode: boolean; }
 
@@ -38,38 +39,21 @@ const formatTime = (s: number) => {
 };
 
 export const S01_VideoLecture: React.FC<Props> = ({ isActive, isDarkMode }) => {
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const playerRef = useRef<VideoPlayerHandle>(null);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [activeChapter, setActiveChapter] = useState(0);
 
-  useEffect(() => {
-    const v = videoRef.current;
-    if (!v) return;
-    const onTime = () => {
-      setCurrentTime(v.currentTime);
-      // Find current chapter
-      let idx = 0;
-      for (let i = 0; i < CHAPTERS.length; i++) {
-        if (v.currentTime >= CHAPTERS[i].t) idx = i;
-      }
-      setActiveChapter(idx);
-    };
-    const onMeta = () => setDuration(v.duration || 0);
-    v.addEventListener('timeupdate', onTime);
-    v.addEventListener('loadedmetadata', onMeta);
-    return () => {
-      v.removeEventListener('timeupdate', onTime);
-      v.removeEventListener('loadedmetadata', onMeta);
-    };
-  }, []);
-
-  const seek = (t: number) => {
-    if (videoRef.current) {
-      videoRef.current.currentTime = t;
-      videoRef.current.play().catch(() => {});
+  const handleTimeUpdate = (t: number) => {
+    setCurrentTime(t);
+    let idx = 0;
+    for (let i = 0; i < CHAPTERS.length; i++) {
+      if (t >= CHAPTERS[i].t) idx = i;
     }
+    setActiveChapter(idx);
   };
+
+  const seek = (t: number) => playerRef.current?.seek(t);
 
   const textColor = isDarkMode ? 'text-white' : 'text-slate-900';
   const subText = isDarkMode ? 'text-slate-300' : 'text-slate-600';
@@ -96,12 +80,12 @@ export const S01_VideoLecture: React.FC<Props> = ({ isActive, isDarkMode }) => {
             initial={{ opacity: 0, scale: 0.98 }} animate={isActive ? { opacity: 1, scale: 1 } : {}}
             className={`relative rounded-3xl overflow-hidden border ${cardBg}`}
           >
-            <video
-              ref={videoRef}
+            <CustomVideoPlayer
+              ref={playerRef}
               src="/videos/Ben_s_Boolean_Picnic.mp4"
-              controls
-              playsInline
-              className="w-full block aspect-video bg-black"
+              accent="#22d3ee"
+              onTimeUpdate={handleTimeUpdate}
+              onLoadedMetadata={setDuration}
             />
           </motion.div>
 

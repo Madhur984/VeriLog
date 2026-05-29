@@ -30,7 +30,7 @@ export const S05_DopingJugaad: React.FC<Props> = ({ isActive, isDarkMode }) => {
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         className={`relative rounded-3xl overflow-hidden border ${cardBg}`}
       >
-        <img src="/images/semi/p05.png" alt="The doping jugaad" className="w-full block aspect-[16/9] object-cover" />
+        <img src="/images/semi/p05.webp" alt="The doping jugaad" className="w-full block aspect-[16/9] object-cover" />
         <div className="absolute bottom-3 right-4 font-mono text-[9px] uppercase tracking-widest text-violet-200/80">
           Madhur&apos;s Lab · Page 05
         </div>

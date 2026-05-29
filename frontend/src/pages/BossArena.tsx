@@ -169,48 +169,61 @@ export function BossArena() {
     }
 
     return (
-        <div style={{ minHeight: '100vh', background: T.bg, color: T.text, fontFamily: T.sans }}>
+        <div
+            className="min-h-[100svh] overflow-x-hidden"
+            style={{ background: T.bg, color: T.text, fontFamily: T.sans }}
+        >
             {/* Top Bar */}
-            <div style={{
-                display: 'flex', alignItems: 'center', gap: 16, padding: '14px 24px',
-                background: T.card, borderBottom: `1px solid ${T.border}`,
-            }}>
-                <button onClick={() => navigate('/')} style={{
-                    background: 'none', border: 'none', color: T.muted, cursor: 'pointer',
-                    display: 'flex', alignItems: 'center', gap: 6,
-                }}>
+            <div
+                className="flex items-center gap-3 px-4 lg:px-6 py-3"
+                style={{ background: T.card, borderBottom: `1px solid ${T.border}` }}
+            >
+                <button
+                    onClick={() => navigate('/')}
+                    className="flex items-center gap-1.5 min-h-[40px] min-w-[40px] shrink-0"
+                    style={{ background: 'none', border: 'none', color: T.muted, cursor: 'pointer' }}
+                >
                     <ArrowLeft size={15} />
                     <span style={{ fontFamily: T.mono, fontSize: 8, letterSpacing: '0.12em', textTransform: 'uppercase' }}>BACK</span>
                 </button>
-                <div style={{ width: 1, height: 20, background: T.border }} />
-                <Shield size={14} style={{ color: T.error }} />
-                <span style={{ fontFamily: T.mono, fontSize: 9, letterSpacing: '0.2em', textTransform: 'uppercase', color: `${T.error}80` }}>
+                <div className="shrink-0" style={{ width: 1, height: 20, background: T.border }} />
+                <Shield size={14} style={{ color: T.error, flexShrink: 0 }} />
+                <span
+                    className="hidden sm:inline truncate"
+                    style={{ fontFamily: T.mono, fontSize: 9, letterSpacing: '0.2em', textTransform: 'uppercase', color: `${T.error}80` }}
+                >
                     Boss Engineering Challenges
                 </span>
-                <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 8 }}>
+                <div className="ml-auto flex items-center gap-2 shrink-0">
                     <Zap size={13} style={{ color: T.warning }} />
                     <span style={{ fontFamily: T.mono, fontSize: 10, color: T.warning }}>{USER_XP} XP</span>
                 </div>
             </div>
 
             {/* Hero band */}
-            <div style={{
-                padding: '40px 48px 32px',
-                background: `linear-gradient(180deg, #E0F2FE 0%, ${T.bg} 100%)`,
-                borderBottom: `1px solid ${T.border}`,
-            }}>
+            <div
+                className="px-4 sm:px-8 lg:px-12 pt-8 lg:pt-10 pb-8"
+                style={{
+                    background: `linear-gradient(180deg, #E0F2FE 0%, ${T.bg} 100%)`,
+                    borderBottom: `1px solid ${T.border}`,
+                }}
+            >
                 <div style={{ maxWidth: 720 }}>
                     <div style={{ fontFamily: T.mono, fontSize: 8, color: `${T.error}80`, letterSpacing: '0.3em', textTransform: 'uppercase', marginBottom: 12 }}>
                         ADVANCED ENGINEERING CHALLENGES
                     </div>
-                    <h1 style={{ margin: 0, fontSize: 32, fontWeight: 700, letterSpacing: '-0.02em', color: T.text, lineHeight: 1.2 }}>
+                    <h1
+                        className="text-2xl sm:text-3xl lg:text-4xl"
+                        style={{ margin: 0, fontWeight: 700, letterSpacing: '-0.02em', color: T.text, lineHeight: 1.2 }}
+                    >
                         Boss Challenges
                     </h1>
                     <p style={{ margin: '12px 0 0', fontSize: 15, color: T.muted, lineHeight: 1.6, maxWidth: 580 }}>
                         Multi-phase engineering challenges that integrate every tool on the platform.
                         Complete them in order — each boss synthesizes everything you have learned.
                     </p>
-                    <div style={{ display: 'flex', gap: 32, marginTop: 20 }}>
+                    {/* Stats row — wraps on mobile */}
+                    <div className="flex flex-wrap gap-6 lg:gap-8 mt-5">
                         {[
                             { label: 'Total XP Available', value: BOSSES.reduce((s, b) => s + b.xpReward, 0), color: T.warning },
                             { label: 'Bosses Available', value: BOSSES.filter(b => USER_XP >= b.requiredXP).length, color: T.success },
@@ -230,7 +243,7 @@ export function BossArena() {
             </div>
 
             {/* Boss List */}
-            <div style={{ padding: '32px 48px', maxWidth: 900 }}>
+            <div className="px-4 sm:px-8 lg:px-12 py-6 lg:py-8 w-full" style={{ maxWidth: 900 }}>
                 {BOSSES.map((boss) => {
                     const status = getBossStatus(boss);
                     const isLocked = status === 'locked';
@@ -247,11 +260,11 @@ export function BossArena() {
                             {/* Boss header card */}
                             <div
                                 onClick={() => !isLocked && setExpandedBoss(isExpanded ? null : boss.id)}
+                                className="flex items-center gap-3 sm:gap-5 px-4 sm:px-6 py-4 sm:py-5"
                                 style={{
                                     background: T.card, border: `1px solid ${isHovered && !isLocked ? boss.badgeColor : T.border}`,
                                     borderRadius: isExpanded ? '4px 4px 0 0' : 4,
-                                    padding: '20px 24px', cursor: isLocked ? 'not-allowed' : 'pointer',
-                                    display: 'flex', alignItems: 'center', gap: 20,
+                                    cursor: isLocked ? 'not-allowed' : 'pointer',
                                     transition: 'all 0.2s',
                                     boxShadow: isHovered && !isLocked ? `0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05)` : 'none',
                                 }}
@@ -268,24 +281,25 @@ export function BossArena() {
                                     {isLocked ? <Lock size={18} style={{ color: T.muted }} /> : boss.number}
                                 </div>
 
-                                <div style={{ flex: 1 }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
+                                <div className="flex-1 min-w-0">
+                                    <div className="flex items-center flex-wrap gap-2 mb-1">
                                         <span style={{
                                             padding: '2px 8px', fontFamily: T.mono, fontSize: 7,
                                             border: `1px solid ${boss.badgeColor}30`, borderRadius: 1,
                                             color: boss.badgeColor, letterSpacing: '0.1em', textTransform: 'uppercase',
+                                            flexShrink: 0,
                                         }}>TIER {boss.tier}</span>
-                                        <span style={{ fontFamily: T.mono, fontSize: 8, color: T.muted }}>{boss.domain}</span>
+                                        <span className="truncate" style={{ fontFamily: T.mono, fontSize: 8, color: T.muted }}>{boss.domain}</span>
                                     </div>
-                                    <div style={{ fontFamily: T.mono, fontSize: 15, color: T.text, letterSpacing: '0.02em' }}>
+                                    <div className="truncate" style={{ fontFamily: T.mono, fontSize: 15, color: T.text, letterSpacing: '0.02em' }}>
                                         {boss.title}
                                     </div>
-                                    <div style={{ fontFamily: T.sans, fontSize: 12, color: T.muted, marginTop: 2 }}>
+                                    <div className="truncate" style={{ fontFamily: T.sans, fontSize: 12, color: T.muted, marginTop: 2 }}>
                                         {boss.subtitle}
                                     </div>
                                 </div>
 
-                                <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                                <div className="shrink-0 text-right">
                                     <div style={{ fontFamily: T.mono, fontSize: 18, color: T.warning }}>+{boss.xpReward}</div>
                                     <div style={{ fontFamily: T.mono, fontSize: 7, color: T.muted, letterSpacing: '0.1em' }}>XP REWARD</div>
                                     {isLocked && (
@@ -295,7 +309,7 @@ export function BossArena() {
                                     )}
                                 </div>
 
-                                <div style={{ color: T.muted, marginLeft: 8 }}>
+                                <div className="shrink-0" style={{ color: T.muted }}>
                                     {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
                                 </div>
                             </div>
@@ -309,12 +323,14 @@ export function BossArena() {
                                         exit={{ height: 0, opacity: 0 }}
                                         style={{ overflow: 'hidden' }}
                                     >
-                                        <div style={{
-                                            background: T.surface,
-                                            border: `1px solid ${T.border}`, borderTop: 'none',
-                                            borderRadius: '0 0 4px 4px',
-                                            padding: '20px 24px',
-                                        }}>
+                                        <div
+                                            className="px-4 sm:px-6 py-5"
+                                            style={{
+                                                background: T.surface,
+                                                border: `1px solid ${T.border}`, borderTop: 'none',
+                                                borderRadius: '0 0 4px 4px',
+                                            }}
+                                        >
                                             {/* Description + Concepts */}
                                             <p style={{ margin: '0 0 16px', fontFamily: T.sans, fontSize: 13, color: T.muted, lineHeight: 1.6 }}>
                                                 {boss.description}
@@ -362,8 +378,9 @@ export function BossArena() {
                                                         {phase.toolRoute && (
                                                             <button
                                                                 onClick={(e) => { e.stopPropagation(); navigate(phase.toolRoute!); }}
+                                                                className="min-h-[40px] mt-2"
                                                                 style={{
-                                                                    marginTop: 8, padding: '4px 10px',
+                                                                    padding: '4px 10px',
                                                                     display: 'inline-flex', alignItems: 'center', gap: 5,
                                                                     background: `${boss.badgeColor}10`,
                                                                     border: `1px solid ${boss.badgeColor}30`,
@@ -381,14 +398,16 @@ export function BossArena() {
                                             ))}
 
                                             {/* Badge reward */}
-                                            <div style={{
-                                                marginTop: 20, padding: '12px 16px',
-                                                background: `${boss.badgeColor}06`,
-                                                border: `1px solid ${boss.badgeColor}30`,
-                                                borderRadius: 3, display: 'flex', alignItems: 'center', gap: 12,
-                                            }}>
+                                            <div
+                                                className="flex flex-wrap items-center gap-3 mt-5 px-4 py-3"
+                                                style={{
+                                                    background: `${boss.badgeColor}06`,
+                                                    border: `1px solid ${boss.badgeColor}30`,
+                                                    borderRadius: 3,
+                                                }}
+                                            >
                                                 <Cpu size={18} style={{ color: boss.badgeColor, flexShrink: 0 }} />
-                                                <div>
+                                                <div className="flex-1 min-w-0">
                                                     <div style={{ fontFamily: T.mono, fontSize: 9, color: boss.badgeColor, letterSpacing: '0.1em' }}>
                                                         COMPLETION BADGE
                                                     </div>
@@ -396,7 +415,7 @@ export function BossArena() {
                                                         "{boss.badgeTitle}" — awarded on completing all phases
                                                     </div>
                                                 </div>
-                                                <div style={{ marginLeft: 'auto', fontFamily: T.mono, fontSize: 18, color: T.warning, fontWeight: 700 }}>
+                                                <div className="ml-auto shrink-0" style={{ fontFamily: T.mono, fontSize: 18, color: T.warning, fontWeight: 700 }}>
                                                     +{boss.xpReward}
                                                 </div>
                                             </div>

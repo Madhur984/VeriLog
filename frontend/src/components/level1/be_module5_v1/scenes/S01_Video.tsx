@@ -1,6 +1,7 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PlayCircle, Languages, FileText, Volume2, Baby } from 'lucide-react';
+import { CustomVideoPlayer } from '../../../ui/CustomVideoPlayer';
 
 interface Props { isActive: boolean; isDarkMode: boolean; }
 type Lang = 'en' | 'hi';
@@ -36,8 +37,6 @@ export const S01_Video: React.FC<Props> = ({ isActive, isDarkMode }) => {
   const cardBg    = isDarkMode ? 'bg-white/5 border-white/10' : 'bg-white border-slate-200 shadow-xl';
 
   const [lang, setLang] = useState<Lang>('en');
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
 
   const transcript = TRANSCRIPT[lang];
 
@@ -76,23 +75,10 @@ export const S01_Video: React.FC<Props> = ({ isActive, isDarkMode }) => {
           initial={{ opacity: 0 }} animate={{ opacity: 1 }}
           className={`relative rounded-3xl overflow-hidden border ${cardBg} shadow-2xl`}
         >
-          <video
-            ref={videoRef}
-            src="/videos/BE5_Diode_Gala.mp4"
-            controls
-            playsInline
-            onPlay={() => setIsPlaying(true)}
-            onPause={() => setIsPlaying(false)}
-            className="w-full block aspect-video bg-black"
-          />
-          <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-black/60 backdrop-blur border border-yellow-400/30 font-mono text-[10px] uppercase tracking-widest text-yellow-300 flex items-center gap-2">
+          <CustomVideoPlayer src="/videos/BE5_Diode_Gala.mp4" accent="#facc15" />
+          <div className="absolute top-3 left-3 z-10 px-3 py-1 rounded-full bg-black/60 backdrop-blur border border-yellow-400/30 font-mono text-[10px] uppercase tracking-widest text-yellow-300 flex items-center gap-2 pointer-events-none">
             <Volume2 size={12} /> Neon Diode Gala
           </div>
-          {!isPlaying && (
-            <div className="absolute bottom-4 right-4 px-3 py-1.5 rounded-full bg-yellow-300/90 text-black font-mono text-[10px] uppercase tracking-widest font-black animate-pulse">
-              Press play
-            </div>
-          )}
         </motion.div>
 
         <motion.div

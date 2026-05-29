@@ -15,7 +15,7 @@ export const ActivityPage = () => {
     }, [id]);
 
     return (
-        <div className="w-full h-screen">
+        <div className="w-full min-h-[100svh]">
             {/* Logic to initialize simulator based on activity data would go here */}
             {/* For now, render the generic canvas */}
             <SimulatorCanvas />

@@ -40,7 +40,7 @@ export const P5_MasterLab: React.FC<{
                     <InteractiveInstrument 
                         state={state} onUpdate={onUpdate} time={time}
                         mapping={{
-                            x: { label: "NYQUIST_FS", key: "samplingRate", min: 4, max: 128, unit: "Hz" },
+                            x: { label: "NYQUIST_FS", key: "sampleRate", min: 4, max: 128, unit: "Hz" },
                             y: { label: "QUANTIZATION_BITS", key: "bitDepth", min: 1, max: 24, unit: "Bits" }
                         }}
                     />
@@ -87,7 +87,7 @@ export const P5_MasterLab: React.FC<{
                         </div>
                         <div className="space-y-6">
                             {[
-                                { label: "Nyquist-Shannon Law", state: !metrics.aliasing, val: state.samplingRate + "Hz" },
+                                { label: "Nyquist-Shannon Law", state: !metrics.aliasing, val: state.sampleRate + "Hz" },
                                 { label: "Quantization Depth", state: state.bitDepth >= 16, val: state.bitDepth + "Bits" },
                                 { label: "Integrated Fidelity", state: metrics.fidelity > 92, val: metrics.fidelity.toFixed(1) + "%" }
                             ].map((c, i) => (

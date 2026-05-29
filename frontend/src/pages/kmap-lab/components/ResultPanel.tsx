@@ -15,8 +15,8 @@ export const ResultPanel: React.FC = () => {
   }, 0);
 
   return (
-    <div className="glass-card p-8 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-700">
-      <div className="flex items-center justify-between mb-8">
+    <div className="glass-card p-4 lg:p-8 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-700">
+      <div className="flex items-center justify-between mb-5 lg:mb-8 gap-3">
         <div className="flex items-center gap-3">
           <div className={`p-2 rounded-lg ${solType === 'SOP' ? 'bg-orange-500/20 text-orange-400' : 'bg-amber-500/20 text-amber-400'}`}>
             <Cpu size={24} />

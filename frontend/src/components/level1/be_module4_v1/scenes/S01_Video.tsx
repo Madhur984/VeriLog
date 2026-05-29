@@ -1,6 +1,7 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PlayCircle, Languages, FileText, Volume2 } from 'lucide-react';
+import { CustomVideoPlayer } from '../../../ui/CustomVideoPlayer';
 
 interface Props { isActive: boolean; isDarkMode: boolean; }
 type Lang = 'en' | 'hi';
@@ -60,8 +61,6 @@ export const S01_Video: React.FC<Props> = ({ isActive, isDarkMode }) => {
 
   const [part, setPart] = useState<Part>(1);
   const [lang, setLang] = useState<Lang>('en');
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
 
   const videoSrc = part === 1 ? '/videos/BE4_Rectifiers_Part1.mp4' : '/videos/BE4_Rectifiers_Part2.mp4';
   const transcript = TRANSCRIPT[part][lang];
@@ -104,23 +103,10 @@ export const S01_Video: React.FC<Props> = ({ isActive, isDarkMode }) => {
           initial={{ opacity: 0 }} animate={{ opacity: 1 }}
           className={`relative rounded-3xl overflow-hidden border ${cardBg} shadow-2xl`}
         >
-          <video
-            ref={videoRef}
-            src={videoSrc}
-            controls
-            playsInline
-            onPlay={() => setIsPlaying(true)}
-            onPause={() => setIsPlaying(false)}
-            className="w-full block aspect-video bg-black"
-          />
-          <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-black/60 backdrop-blur border border-cyan-400/30 font-mono text-[10px] uppercase tracking-widest text-cyan-300 flex items-center gap-2">
+          <CustomVideoPlayer src={videoSrc} accent="#22d3ee" />
+          <div className="absolute top-3 left-3 z-10 px-3 py-1 rounded-full bg-black/60 backdrop-blur border border-cyan-400/30 font-mono text-[10px] uppercase tracking-widest text-cyan-300 flex items-center gap-2 pointer-events-none">
             <Volume2 size={12} /> Part {part}
           </div>
-          {!isPlaying && (
-            <div className="absolute bottom-4 right-4 px-3 py-1.5 rounded-full bg-cyan-400/90 text-black font-mono text-[10px] uppercase tracking-widest font-black animate-pulse">
-              Press play
-            </div>
-          )}
         </motion.div>
 
         {/* Transcript with EN/HI tabs */}

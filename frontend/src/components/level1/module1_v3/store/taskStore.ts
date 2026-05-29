@@ -68,8 +68,7 @@ export const useTaskStore = create<TaskState>((set, get) => ({
 
   completeTask: () => {
     const { currentTask } = get();
-    set({ 
-      taskCompleted: true, 
+    set({
       currentTask: currentTask + 1,
       isValid: false,
       taskCompleted: false // Reset for next task

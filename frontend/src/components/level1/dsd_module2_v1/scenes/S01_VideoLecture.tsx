@@ -1,6 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PlayCircle, FileText, Bookmark, Languages, Volume2 } from 'lucide-react';
+import { CustomVideoPlayer, VideoPlayerHandle } from '../../../ui/CustomVideoPlayer';
 
 interface Props { isActive: boolean; isDarkMode: boolean; }
 
@@ -128,54 +129,39 @@ const formatTime = (s: number) => {
 };
 
 export const S01_VideoLecture: React.FC<Props> = ({ isActive, isDarkMode }) => {
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const playerRef = useRef<VideoPlayerHandle>(null);
+  const resumeTimeRef = useRef(0);
   const [lang, setLang] = useState<Lang>('en');
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [activeChapter, setActiveChapter] = useState(0);
 
-  // When language changes, swap source but try to preserve playback position.
-  useEffect(() => {
-    const v = videoRef.current;
-    if (!v) return;
-    const t = v.currentTime;
-    const wasPlaying = !v.paused;
-    v.src = TRACKS[lang].src;
-    v.load();
-    const onLoaded = () => {
-      v.currentTime = Math.min(t, v.duration || t);
-      if (wasPlaying) v.play().catch(() => {});
-      v.removeEventListener('loadedmetadata', onLoaded);
-    };
-    v.addEventListener('loadedmetadata', onLoaded);
-  }, [lang]);
+  const handleTimeUpdate = (t: number) => {
+    setCurrentTime(t);
+    let idx = 0;
+    for (let i = 0; i < CHAPTERS.length; i++) {
+      if (t >= CHAPTERS[i].t) idx = i;
+    }
+    setActiveChapter(idx);
+  };
 
-  useEffect(() => {
-    const v = videoRef.current;
-    if (!v) return;
-    const onTime = () => {
-      setCurrentTime(v.currentTime);
-      let idx = 0;
-      for (let i = 0; i < CHAPTERS.length; i++) {
-        if (v.currentTime >= CHAPTERS[i].t) idx = i;
-      }
-      setActiveChapter(idx);
-    };
-    const onMeta = () => setDuration(v.duration || 0);
-    v.addEventListener('timeupdate', onTime);
-    v.addEventListener('loadedmetadata', onMeta);
-    return () => {
-      v.removeEventListener('timeupdate', onTime);
-      v.removeEventListener('loadedmetadata', onMeta);
-    };
-  }, []);
-
-  const seek = (t: number) => {
-    if (videoRef.current) {
-      videoRef.current.currentTime = t;
-      videoRef.current.play().catch(() => {});
+  const handleLoadedMetadata = (d: number) => {
+    setDuration(d);
+    // After a language swap, resume where the viewer left off.
+    if (resumeTimeRef.current > 0) {
+      playerRef.current?.seek(Math.min(resumeTimeRef.current, d || resumeTimeRef.current));
+      resumeTimeRef.current = 0;
     }
   };
+
+  // Switch audio track, remembering the position to resume at after reload.
+  const switchLang = (k: Lang) => {
+    if (k === lang) return;
+    resumeTimeRef.current = currentTime;
+    setLang(k);
+  };
+
+  const seek = (t: number) => playerRef.current?.seek(t);
 
   const textColor = isDarkMode ? 'text-white' : 'text-slate-900';
   const subText = isDarkMode ? 'text-slate-300' : 'text-slate-600';
@@ -215,7 +201,7 @@ export const S01_VideoLecture: React.FC<Props> = ({ isActive, isDarkMode }) => {
             return (
               <button
                 key={k}
-                onClick={() => setLang(k)}
+                onClick={() => switchLang(k)}
                 className={`relative z-10 flex items-center gap-2 px-5 py-2 rounded-xl font-bold text-sm transition-colors ${
                   active ? 'text-black' : isDarkMode ? 'text-slate-300' : 'text-slate-600'
                 }`}
@@ -245,15 +231,15 @@ export const S01_VideoLecture: React.FC<Props> = ({ isActive, isDarkMode }) => {
             initial={{ opacity: 0, scale: 0.98 }} animate={isActive ? { opacity: 1, scale: 1 } : {}}
             className={`relative rounded-3xl overflow-hidden border ${cardBg}`}
           >
-            <video
-              key={lang} // ensures clean remount when needed
-              ref={videoRef}
+            <CustomVideoPlayer
+              key={lang} // clean remount on language swap; resume handled in handleLoadedMetadata
+              ref={playerRef}
               src={TRACKS[lang].src}
-              controls
-              playsInline
-              className="w-full block aspect-video bg-black"
+              accent="#f59e0b"
+              onTimeUpdate={handleTimeUpdate}
+              onLoadedMetadata={handleLoadedMetadata}
             />
-            <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-black/60 backdrop-blur border border-amber-400/30 font-mono text-[10px] uppercase tracking-widest text-amber-300 flex items-center gap-2">
+            <div className="absolute top-3 left-3 z-10 px-3 py-1 rounded-full bg-black/60 backdrop-blur border border-amber-400/30 font-mono text-[10px] uppercase tracking-widest text-amber-300 flex items-center gap-2 pointer-events-none">
               <Volume2 size={12} /> {TRACKS[lang].native}
             </div>
           </motion.div>

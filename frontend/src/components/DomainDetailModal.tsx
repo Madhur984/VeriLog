@@ -23,8 +23,17 @@ export const DomainDetailModal: React.FC<DomainDetailModalProps> = ({ domain, on
   ] as const;
 
   return (
-    <div className="fixed inset-0 z-[1500] flex items-end justify-center sm:items-center p-0 sm:p-6 bg-black/60 backdrop-blur-sm">
+    <motion.div
+      key="domain-modal-backdrop"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2 }}
+      onClick={onClose}
+      className="fixed inset-0 z-[1500] flex items-end justify-center sm:items-center p-0 sm:p-6 bg-black/60 backdrop-blur-sm"
+    >
       <motion.div
+        onClick={(e) => e.stopPropagation()}
         initial={{ y: '100%' }}
         animate={{ y: 0 }}
         exit={{ y: '100%' }}
@@ -327,6 +336,6 @@ export const DomainDetailModal: React.FC<DomainDetailModalProps> = ({ domain, on
           </AnimatePresence>
         </div>
       </motion.div>
-    </div>
+    </motion.div>
   );
 };

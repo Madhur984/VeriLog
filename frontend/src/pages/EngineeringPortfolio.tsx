@@ -47,37 +47,42 @@ export const EngineeringPortfolio: React.FC = () => {
     ];
 
     return (
-        <div style={{
-            minHeight: '100vh', width: '100%', background: T.bg,
-            color: T.text, fontFamily: T.sans, padding: '40px 24px',
-            backgroundImage: 'radial-gradient(circle at 50% 0%, rgba(2,132,199,0.05) 0%, transparent 70%)',
-        }}>
-            <div style={{ maxWidth: 800, margin: '0 auto' }}>
+        <div
+            className="min-h-[100svh] w-full overflow-x-hidden px-4 py-8 sm:px-6 md:py-10"
+            style={{
+                background: T.bg,
+                color: T.text,
+                fontFamily: T.sans,
+                backgroundImage: 'radial-gradient(circle at 50% 0%, rgba(2,132,199,0.05) 0%, transparent 70%)',
+            }}
+        >
+            <div className="mx-auto w-full max-w-[800px]">
 
                 {/* Header */}
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 48 }}>
+                <div className="flex flex-wrap items-center justify-between gap-3 mb-10 md:mb-12">
                     <button
                         onClick={() => navigate('/portal')}
                         style={{
                             padding: '8px 16px', borderRadius: 6, border: `1px solid ${T.border}`,
                             background: 'transparent', color: T.muted, cursor: 'pointer',
                             display: 'flex', alignItems: 'center', gap: 8, fontSize: 13,
+                            minHeight: 40,
                         }}
                     >
                         <ArrowLeft size={16} /> Back to Station
                     </button>
                     <div style={{ display: 'flex', gap: 12 }}>
-                        <button style={{ padding: '8px 16px', borderRadius: 6, background: T.surface, border: 'none', color: T.text, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8, fontSize: 13 }}>
+                        <button style={{ padding: '8px 16px', borderRadius: 6, background: T.surface, border: 'none', color: T.text, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, minHeight: 40 }}>
                             <Share2 size={16} /> Share
                         </button>
-                        <button style={{ padding: '8px 16px', borderRadius: 6, background: T.accent, border: 'none', color: '#FFFFFF', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8, fontSize: 13 }}>
+                        <button style={{ padding: '8px 16px', borderRadius: 6, background: T.accent, border: 'none', color: '#FFFFFF', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, minHeight: 40 }}>
                             <Download size={16} /> Export PDF
                         </button>
                     </div>
                 </div>
 
                 {/* Profile Section */}
-                <header style={{ marginBottom: 64, textAlign: 'center' }}>
+                <header className="mb-12 md:mb-16 text-center">
                     <div style={{
                         width: 100, height: 100, borderRadius: '50%',
                         background: 'linear-gradient(135deg, #0284C7 0%, #3B82F6 100%)',
@@ -89,14 +94,22 @@ export const EngineeringPortfolio: React.FC = () => {
                     }}>
                         {(firstName || 'S')[0].toUpperCase()}
                     </div>
-                    <h1 style={{ fontSize: 36, fontWeight: 800, marginBottom: 8, letterSpacing: '-0.02em' }}>{firstName || 'Explorer'}'s Engineering Portfolio</h1>
-                    <p style={{ color: T.muted, fontSize: 16, maxWidth: 500, margin: '0 auto', lineHeight: 1.6 }}>
-                        Specializing in Digital Systems Design. Verified progress in Circuit Theory & Logic Analysis.
+                    <h1
+                        className="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-2 leading-tight"
+                        style={{ letterSpacing: '-0.02em' }}
+                    >
+                        {firstName || 'Explorer'}'s Engineering Portfolio
+                    </h1>
+                    <p
+                        className="text-sm sm:text-base mx-auto px-2"
+                        style={{ color: T.muted, maxWidth: 500, lineHeight: 1.6 }}
+                    >
+                        Specializing in Digital Systems Design. Verified progress in Circuit Theory &amp; Logic Analysis.
                     </p>
                 </header>
 
                 {/* Stats Grid */}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 20, marginBottom: 48 }}>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-10 md:mb-12">
                     {stats.map((s, i) => (
                         <div key={i} style={{ padding: 24, borderRadius: 12, border: `1px solid ${T.border}`, background: T.card }}>
                             <s.icon size={20} color={T.accent} style={{ marginBottom: 16 }} />
@@ -107,11 +120,11 @@ export const EngineeringPortfolio: React.FC = () => {
                 </div>
 
                 {/* Achievements Section */}
-                <section style={{ marginBottom: 64 }}>
+                <section className="mb-12 md:mb-16">
                     <h3 style={{ fontSize: 12, fontFamily: T.mono, textTransform: 'uppercase', letterSpacing: '0.2em', color: T.accent, marginBottom: 24 }}>
                         Earned Credentials
                     </h3>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         {badgesData.map((b, i) => (
                             <motion.div
                                 key={i}
@@ -120,19 +133,19 @@ export const EngineeringPortfolio: React.FC = () => {
                                 transition={{ delay: i * 0.1 }}
                                 style={{
                                     padding: 20, borderRadius: 12, border: `1px solid ${T.border}`,
-                                    background: T.surface, display: 'flex', alignItems: 'center', gap: 20
+                                    background: T.surface, display: 'flex', alignItems: 'center', gap: 16
                                 }}
                             >
                                 <div style={{
-                                    width: 48, height: 48, borderRadius: 8,
+                                    width: 48, height: 48, flexShrink: 0, borderRadius: 8,
                                     background: 'rgba(2,132,199,0.05)', display: 'flex',
                                     alignItems: 'center', justifyContent: 'center', color: T.accent,
                                     border: `1px solid ${T.border}`
                                 }}>
                                     <Award size={24} />
                                 </div>
-                                <div>
-                                    <div style={{ fontSize: 15, fontWeight: 600 }}>{b.name}</div>
+                                <div className="min-w-0">
+                                    <div style={{ fontSize: 15, fontWeight: 600 }} className="truncate">{b.name}</div>
                                     <div style={{ fontSize: 10, fontFamily: T.mono, color: T.muted, marginTop: 2 }}>
                                         {b.cat} • ISSUED {b.date}
                                     </div>
@@ -143,8 +156,11 @@ export const EngineeringPortfolio: React.FC = () => {
                 </section>
 
                 {/* Skills Radar / Competencies Teaser */}
-                <section style={{ padding: 32, borderRadius: 16, background: '#FFFFFF', border: `1px solid ${T.border}` }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 24 }}>
+                <section
+                    className="mb-12 md:mb-16"
+                    style={{ padding: 32, borderRadius: 16, background: '#FFFFFF', border: `1px solid ${T.border}` }}
+                >
+                    <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-6">
                         <div>
                             <h3 style={{ fontSize: 12, fontFamily: T.mono, textTransform: 'uppercase', letterSpacing: '0.2em', color: T.accent, marginBottom: 8 }}>
                                 Core Competencies
@@ -179,13 +195,16 @@ export const EngineeringPortfolio: React.FC = () => {
                 </section>
 
                 {/* Engineering Trivia (Feature 8) */}
-                <section style={{ marginBottom: 64 }}>
-                    <div style={{
-                        padding: 24, borderRadius: 16, border: '1px solid rgba(245,158,11,0.2)',
-                        background: 'rgba(245,158,11,0.03)', display: 'flex', gap: 20, alignItems: 'center'
-                    }}>
+                <section className="mb-12 md:mb-16">
+                    <div
+                        className="flex flex-col sm:flex-row gap-4 sm:gap-5 sm:items-center"
+                        style={{
+                            padding: 24, borderRadius: 16, border: '1px solid rgba(245,158,11,0.2)',
+                            background: 'rgba(245,158,11,0.03)',
+                        }}
+                    >
                         <div style={{
-                            width: 54, height: 54, borderRadius: '50%', background: 'rgba(245,158,11,0.1)',
+                            width: 54, height: 54, flexShrink: 0, borderRadius: '50%', background: 'rgba(245,158,11,0.1)',
                             display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#F59E0B'
                         }}>
                             <HelpCircle size={28} />
@@ -201,7 +220,7 @@ export const EngineeringPortfolio: React.FC = () => {
                     </div>
                 </section>
 
-                <footer style={{ marginTop: 80, textAlign: 'center', color: T.muted, fontSize: 12, fontFamily: T.mono }}>
+                <footer className="mt-16 md:mt-20 text-center" style={{ color: T.muted, fontSize: 12, fontFamily: T.mono }}>
                     <div style={{ marginBottom: 8 }}>VERILOG LEARNING PLATFORM // AUTHENTICATED RECORD</div>
                     <div>HASH: 0x82F...E10B // {new Date().toLocaleDateString()}</div>
                 </footer>

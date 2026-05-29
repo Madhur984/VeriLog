@@ -27,7 +27,6 @@ const ROUTE_MAP: Record<string, TransitionMessage> = {
     '/level/1': { primary: 'INITIALIZING LAB ENVIRONMENT', level: 1 },
     '/module/1': { primary: 'INITIALIZING LAB ENVIRONMENT', level: 1 },
     '/circuit-lab': { primary: 'INITIALIZING LAB ENVIRONMENT', level: 1 },
-    '/assessment': { primary: 'VALIDATING SIGNAL STRUCTURE', level: 1 },
     '/portal': { primary: 'STRUCTURAL UNDERSTANDING CONFIRMED', level: 1 },
     '/home': { primary: 'RETURNING TO ENGINEERING HUB', level: 1 },
     '/training': { primary: 'ACCESSING TRAINING MATRIX', level: 1 },

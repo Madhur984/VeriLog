@@ -45,6 +45,7 @@ export const ChallengeList = memo(({ completedIds, onSelect }: ChallengeListProp
                 display: 'flex',
                 alignItems: 'center',
                 gap: 12,
+                flexWrap: 'wrap',
             }}>
                 <h2 style={{ margin: 0, color: '#00D4FF', fontSize: 14, fontWeight: 700 }}>
                     ⚡ Hardware LeetCode
@@ -77,6 +78,8 @@ export const ChallengeList = memo(({ completedIds, onSelect }: ChallengeListProp
                 gap: 2,
                 padding: '6px 16px',
                 borderBottom: '1px solid rgba(0, 212, 255, 0.04)',
+                overflowX: 'auto',
+                WebkitOverflowScrolling: 'touch',
             }}>
                 {DIFF_TABS.map(tab => (
                     <button
@@ -87,11 +90,14 @@ export const ChallengeList = memo(({ completedIds, onSelect }: ChallengeListProp
                             border: `1px solid ${activeDiff === tab.key ? `${tab.color}25` : 'transparent'}`,
                             color: activeDiff === tab.key ? tab.color : 'rgba(255,255,255,0.3)',
                             fontSize: 10,
-                            padding: '3px 10px',
+                            padding: '6px 10px',
+                            minHeight: 40,
                             borderRadius: 3,
                             cursor: 'pointer',
                             fontFamily: 'inherit',
                             transition: 'all 100ms',
+                            whiteSpace: 'nowrap',
+                            flexShrink: 0,
                         }}
                     >
                         {tab.label}
@@ -105,7 +111,7 @@ export const ChallengeList = memo(({ completedIds, onSelect }: ChallengeListProp
                 overflow: 'auto',
                 padding: 16,
                 display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(260, 1fr))',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(min(260px, 100%), 1fr))',
                 gap: 10,
                 alignContent: 'start',
             }}>
@@ -122,6 +128,7 @@ export const ChallengeList = memo(({ completedIds, onSelect }: ChallengeListProp
                                 border: `1px solid ${solved ? 'rgba(16, 185, 129, 0.12)' : 'rgba(0, 212, 255, 0.06)'}`,
                                 borderRadius: 6,
                                 padding: '12px 14px',
+                                minHeight: 64,
                                 textAlign: 'left',
                                 cursor: 'pointer',
                                 fontFamily: 'inherit',

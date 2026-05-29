@@ -4,58 +4,127 @@
 
 /* ── Layout ────────────────────────────────────────────────────────── */
 
+/* Mobile-first: single-column stack */
 .studio-layout {
-    display: grid;
-    grid-template-columns: 200px 1fr 220px;
-    grid-template-rows: 56px 1fr 200px;
-    gap: 0;
-    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    min-height: 100svh;
     background: #FFFFFF;
     color: #475569;
     font-family: 'Inter', system-ui, sans-serif;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 .studio-layout-header {
-    grid-column: 1 / -1;
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 0 16px;
+    gap: 8px;
+    padding: 0 12px;
+    min-height: 52px;
     background: #FFFFFF;
     border-bottom: 1px solid #E2E8F0;
     box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
     z-index: 50;
+    flex-shrink: 0;
+    flex-wrap: wrap;
 }
 
 .studio-layout-sidebar {
-    grid-row: 2 / 4;
+    order: 2;
     overflow-y: auto;
-    border-right: 1px solid #E2E8F0;
+    border-top: 1px solid #E2E8F0;
+    border-bottom: 1px solid #E2E8F0;
     background: #F8FAFC;
     z-index: 40;
+    /* Collapsed on mobile by default; JS can toggle a class if needed */
+    max-height: 200px;
+    overflow-y: auto;
 }
 
 .studio-layout-canvas {
+    order: 3;
     overflow: hidden;
     position: relative;
     background: #FFFFFF;
+    min-height: 320px;
+    flex-shrink: 0;
 }
 
 .studio-layout-panel {
-    grid-row: 2 / 4;
+    order: 5;
     overflow-y: auto;
-    border-left: 1px solid #E2E8F0;
+    border-top: 1px solid #E2E8F0;
     background: #F8FAFC;
     z-index: 40;
+    max-height: 200px;
 }
 
 .studio-layout-bottom {
-    grid-column: 2;
+    order: 4;
     border-top: 1px solid #E2E8F0;
-    overflow: hidden;
+    overflow-x: auto;
+    overflow-y: hidden;
     display: flex;
     background: #FFFFFF;
+    min-height: 140px;
+    max-height: 180px;
+    flex-shrink: 0;
+}
+
+/* ── Desktop layout (lg: 1024px+) — restore original grid ─────────── */
+@media (min-width: 1024px) {
+    .studio-layout {
+        display: grid;
+        grid-template-columns: 200px 1fr 220px;
+        grid-template-rows: 56px 1fr 200px;
+        gap: 0;
+        height: 100vh;
+        min-height: unset;
+        overflow: hidden;
+        flex-direction: unset;
+    }
+
+    .studio-layout-header {
+        grid-column: 1 / -1;
+        min-height: unset;
+        padding: 0 16px;
+        flex-wrap: nowrap;
+        order: unset;
+    }
+
+    .studio-layout-sidebar {
+        grid-row: 2 / 4;
+        order: unset;
+        border-top: none;
+        border-bottom: none;
+        border-right: 1px solid #E2E8F0;
+        max-height: unset;
+        overflow-y: auto;
+    }
+
+    .studio-layout-canvas {
+        order: unset;
+        overflow: hidden;
+        min-height: unset;
+    }
+
+    .studio-layout-panel {
+        grid-row: 2 / 4;
+        order: unset;
+        border-top: none;
+        border-left: 1px solid #E2E8F0;
+        max-height: unset;
+        overflow-y: auto;
+    }
+
+    .studio-layout-bottom {
+        grid-column: 2;
+        order: unset;
+        overflow: hidden;
+        min-height: unset;
+        max-height: unset;
+    }
 }
 
 /* ── Canvas ────────────────────────────────────────────────────────── */

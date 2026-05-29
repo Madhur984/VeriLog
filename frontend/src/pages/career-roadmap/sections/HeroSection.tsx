@@ -48,7 +48,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onCalibrate, onExplore
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-          className="text-7xl md:text-[110px] font-bold tracking-tighter leading-[0.85] mb-8"
+          className="text-5xl sm:text-7xl md:text-[110px] font-bold tracking-tighter leading-[0.85] mb-6 sm:mb-8"
         >
           <span className="text-white">SILICON</span><br />
           <span className="text-cyan-400">OBSERVATORY</span>
@@ -68,27 +68,27 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onCalibrate, onExplore
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
-          className="flex flex-wrap justify-center gap-4 relative z-20"
+          className="flex flex-col sm:flex-row flex-wrap justify-center gap-3 sm:gap-4 relative z-20 px-4 sm:px-0"
         >
           <button
             ref={primaryCTA.ref as any}
             onMouseMove={primaryCTA.onMouseMove}
             onMouseLeave={primaryCTA.onMouseLeave}
             onClick={() => onCalibrate?.(50)}
-            className="px-10 py-5 bg-cyan-400 text-observatory-bg font-mono text-xs font-bold uppercase tracking-widest rounded-full shadow-observatory-glow hover:brightness-110 transition-all cursor-pointer pointer-events-auto"
+            className="w-full sm:w-auto px-8 sm:px-10 py-4 sm:py-5 bg-cyan-400 text-observatory-bg font-mono text-xs font-bold uppercase tracking-widest rounded-full shadow-observatory-glow hover:brightness-110 transition-all cursor-pointer pointer-events-auto"
           >
             Begin Calibration
           </button>
           <button 
             onClick={onExplore}
-            className="px-10 py-5 border border-white/10 text-slate-400 font-mono text-xs uppercase tracking-widest rounded-full hover:border-cyan-400/30 hover:text-white transition-all cursor-pointer pointer-events-auto"
+            className="w-full sm:w-auto px-8 sm:px-10 py-4 sm:py-5 border border-white/10 text-slate-400 font-mono text-xs uppercase tracking-widest rounded-full hover:border-cyan-400/30 hover:text-white transition-all cursor-pointer pointer-events-auto"
           >
             Explore Domains
           </button>
         </motion.div>
 
         {/* Stats Row */}
-        <div className="mt-20 flex flex-wrap justify-center items-center gap-12">
+        <div className="mt-12 sm:mt-20 flex flex-wrap justify-center items-center gap-6 sm:gap-12">
           {stats.map((stat, i) => (
             <React.Fragment key={stat.label}>
               <div className="text-center">
@@ -110,7 +110,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onCalibrate, onExplore
       </div>
 
       {/* Secondary Panels (Calibration + Clock) */}
-      <div className="relative z-10 mt-24 grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto w-full px-6">
+      <div className="relative z-10 mt-12 sm:mt-24 grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 max-w-5xl mx-auto w-full px-4 sm:px-6">
         <BiometricCalibration />
         <MissionClock />
       </div>

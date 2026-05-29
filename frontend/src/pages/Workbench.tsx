@@ -8,9 +8,8 @@ export default function Workbench() {
       // Using the embed path - the Vue router will match /embed/:projectId?
       // and render embed.vue which initializes the simulator without API auth
       src="/circuitverse/index.html#/embed"
+      className="block w-full min-h-[100svh] border-none"
       style={{
-        width: "100vw",
-        height: "100vh",
         border: "none",
         display: "block"
       }}

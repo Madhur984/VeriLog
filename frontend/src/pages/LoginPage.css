@@ -1,14 +1,19 @@
 .login-container {
-    height: 100vh;
+    min-height: 100svh;
     width: 100vw;
+    max-width: 100%;
     background: radial-gradient(circle at center, #f8fafc 0%, #f1f5f9 100%);
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
     color: #0f172a;
     font-family: 'Roboto Mono', monospace;
+    /* safe vertical padding so card isn't glued to top/bottom on phones */
+    padding: 1.5rem 1rem;
+    box-sizing: border-box;
 }
 
 .hardware-mesh {
@@ -25,16 +30,19 @@
 }
 
 .login-card {
-    width: 420px;
+    /* Mobile: full width with safe side margins; Desktop: capped at 420px */
+    width: min(420px, calc(100vw - 2rem));
     background: rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(12px);
     border: 1px solid rgba(14, 165, 233, 0.15);
     border-radius: 16px;
-    padding: 32px;
+    /* Tighter padding on small screens */
+    padding: 20px 16px;
     position: relative;
     z-index: 2;
     transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.05), 0 4px 12px rgba(0, 0, 0, 0.02);
+    box-sizing: border-box;
 }
 
 .login-card.power-on {
@@ -359,7 +367,7 @@
 }
 
 .login-card.signup-mode {
-    width: 460px;
+    width: min(460px, calc(100vw - 2rem));
 }
 
 .guest-name-row {
@@ -395,4 +403,105 @@
     border-color: #0f172a;
     background: #ffffff;
     box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.05);
+}
+
+/* ───────────────────────────────────────────────────
+   Responsive overrides
+   Base styles above are mobile-first.
+   Everything in this block restores the original
+   desktop appearance at ≥ 640px.
+─────────────────────────────────────────────────── */
+
+@media (min-width: 640px) {
+    /* Container: no extra padding needed, restore overflow:hidden for desktop */
+    .login-container {
+        padding: 0;
+        overflow: hidden;
+        min-height: 100svh;
+        height: 100svh;
+    }
+
+    /* Card: restore full desktop padding */
+    .login-card {
+        padding: 32px;
+    }
+
+    /* master-action: restore original desktop padding */
+    .master-action {
+        padding: 24px;
+    }
+}
+
+/* Extra guard: prevent any child from causing horizontal scroll on mobile */
+@media (max-width: 639px) {
+    .login-card *,
+    .login-container * {
+        max-width: 100%;
+    }
+
+    /* Reduce card-header h1 so long text doesn't overflow on very small phones */
+    .card-header h1 {
+        font-size: 16px;
+        letter-spacing: 1px;
+    }
+
+    .card-header .dim {
+        font-size: 12px;
+    }
+
+    /* master-action: tighter on mobile */
+    .master-action {
+        padding: 16px 12px;
+    }
+
+    /* Give card-footer text a bit more room to breathe on narrow screens */
+    .card-footer {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    /* Ensure switch SVG doesn't overflow */
+    .switch-wrapper svg {
+        width: 64px;
+        height: 80px;
+    }
+
+    /* logic-gate can be hidden on very small phones to avoid overflow */
+    .logic-gate {
+        display: none;
+    }
+
+    /* Input groups: without the gate, inputs can use full row width */
+    .input-group {
+        gap: 0;
+    }
+
+    /* Guarantee ≥44px tap target on all text inputs */
+    .hardware-input,
+    .guest-name-input {
+        min-height: 44px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        box-sizing: border-box;
+    }
+
+    /* Guest button already full-width; ensure ≥44px tap target */
+    .guest-button {
+        min-height: 44px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+
+    /* mode-toggle: full-width tappable area on mobile */
+    .mode-toggle {
+        display: block;
+        width: 100%;
+        padding: 10px 0;
+        min-height: 44px;
+    }
+
+    /* card-header: allow title to wrap gracefully instead of overflowing */
+    .card-header {
+        flex-wrap: wrap;
+    }
 }

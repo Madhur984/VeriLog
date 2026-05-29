@@ -36,7 +36,7 @@ export const DataTerminal: React.FC<DataTerminalProps> = ({
           <div className="w-1.5 h-1.5 rounded-full bg-plasma-cyan shadow-cyan-glow"></div>
         </div>
       </div>
-      <div className="flex-1 overflow-auto custom-scrollbar">
+      <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar">
         {children}
       </div>
     </div>

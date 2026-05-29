@@ -116,7 +116,7 @@ export const S05_VLSIConnection: React.FC<{ isActive: boolean }> = ({ isActive }
 
             <div className="mt-8 p-1 bg-gradient-to-br from-white/20 via-white/5 to-transparent rounded-[45px] shadow-2xl relative overflow-hidden group">
                 <img 
-                    src="/assets/module5/wafer.png" 
+                    src="/assets/module5/wafer.webp" 
                     alt="Silicon Wafer Fabrication" 
                     className="w-full h-32 object-cover rounded-[44px] opacity-40 group-hover:opacity-80 transition-all duration-1000 grayscale group-hover:grayscale-0 scale-110 group-hover:scale-100" 
                 />

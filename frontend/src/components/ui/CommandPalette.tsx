@@ -46,8 +46,8 @@ export const CommandPalette: React.FC<CommandPaletteProps & { navigate: (path: s
             group: 'Navigate', shortcut: 'G D', action: () => { navigate('/portal'); onClose(); }
         },
         {
-            id: 'nav-challenges', label: 'Go to Challenges', description: 'Active assessments', icon: Target,
-            group: 'Navigate', shortcut: 'G C', action: () => { navigate('/assessment'); onClose(); }
+            id: 'nav-challenges', label: 'Go to Challenges', description: 'Quests & missions', icon: Target,
+            group: 'Navigate', shortcut: 'G C', action: () => { navigate('/quests'); onClose(); }
         },
         {
             id: 'nav-workbench', label: 'Open Workbench', description: 'Engineering workbench', icon: FlaskConical,

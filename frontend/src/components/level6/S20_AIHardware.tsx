@@ -118,7 +118,7 @@ export const S20_AIHardware: React.FC<{ isActive: boolean }> = ({ isActive }) =>
             <div className="p-1 rounded-[45px] bg-gradient-to-br from-plasma-cyan/30 via-white/5 to-transparent shadow-2xl relative overflow-hidden group">
                  <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black to-transparent z-10" />
                  <img 
-                    src="/assets/module5/npu.png" 
+                    src="/assets/module5/npu.webp" 
                     alt="NPU Architecture" 
                     className="w-full h-48 object-cover rounded-[44px] opacity-60 group-hover:opacity-100 transition-opacity duration-1000 grayscale group-hover:grayscale-0 scale-105 group-hover:scale-100" 
                  />

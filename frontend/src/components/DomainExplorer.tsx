@@ -184,16 +184,16 @@ export const DomainExplorer: React.FC = () => {
               exit={{ y: 20, opacity: 0 }}
               className="sticky bottom-8 z-50 mx-auto w-full max-w-2xl"
             >
-               <div className="bg-[#0D0F12]/95 backdrop-blur-xl border border-cyan-400/30 rounded-2xl p-4 shadow-2xl flex items-center justify-between">
-                  <div className="flex gap-4">
+               <div className="bg-[#0D0F12]/95 backdrop-blur-xl border border-cyan-400/30 rounded-2xl p-3 sm:p-4 shadow-2xl flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-0 justify-between">
+                  <div className="flex flex-wrap gap-2 sm:gap-4">
                     {comparingIds.map(id => (
-                      <div key={id} className="flex items-center gap-2 px-3 py-1.5 bg-cyan-400/10 border border-cyan-400/20 rounded-lg">
-                        <span className="text-[10px] font-mono text-cyan-400 font-bold uppercase">
+                      <div key={id} className="flex items-center gap-2 px-3 py-1.5 bg-cyan-400/10 border border-cyan-400/20 rounded-lg min-w-0">
+                        <span className="text-[10px] font-mono text-cyan-400 font-bold uppercase truncate max-w-[120px]">
                           {DOMAINS.find(d => d.id === id)?.name}
                         </span>
-                        <X 
-                          size={12} 
-                          className="text-cyan-400 cursor-pointer hover:text-white" 
+                        <X
+                          size={12}
+                          className="text-cyan-400 cursor-pointer hover:text-white shrink-0"
                           onClick={() => handleToggleCompare(id)}
                         />
                       </div>
@@ -204,10 +204,10 @@ export const DomainExplorer: React.FC = () => {
                       </div>
                     )}
                   </div>
-                  <div className="flex items-center gap-4">
-                    <button 
+                  <div className="flex items-center gap-3 sm:gap-4 shrink-0">
+                    <button
                       onClick={() => setComparingIds([])}
-                      className="text-[9px] font-mono text-slate-500 hover:text-white uppercase tracking-widest"
+                      className="text-[9px] font-mono text-slate-500 hover:text-white uppercase tracking-widest py-2"
                     >
                       CLEAR ALL
                     </button>

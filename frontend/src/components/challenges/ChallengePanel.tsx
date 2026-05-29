@@ -46,8 +46,8 @@ export const ChallengePanel = memo(({ challenge, onSubmit, onBack }: ChallengePa
     const diffColor = DIFFICULTY_COLORS[challenge.difficulty] || '#6B7280';
 
     return (
-        <div style={{
-            height: '100%',
+        <div className="challenge-panel-root" style={{
+            minHeight: '100%',
             display: 'flex',
             flexDirection: 'column',
             fontFamily: "'IBM Plex Mono', monospace",
@@ -57,8 +57,10 @@ export const ChallengePanel = memo(({ challenge, onSubmit, onBack }: ChallengePa
             <div style={{
                 display: 'flex',
                 alignItems: 'center',
+                flexWrap: 'wrap',
                 gap: 8,
-                padding: '6px 12px',
+                padding: '8px 12px',
+                minHeight: 44,
                 borderBottom: '1px solid rgba(0, 212, 255, 0.06)',
             }}>
                 <button onClick={onBack} style={backBtnStyle}>← Back</button>
@@ -84,17 +86,16 @@ export const ChallengePanel = memo(({ challenge, onSubmit, onBack }: ChallengePa
                 </span>
             </div>
 
-            {/* Content */}
-            <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
+            {/* Content — stacks vertically on mobile, side-by-side on lg+ */}
+            <div className="flex flex-col lg:flex-row" style={{ flex: 1, overflow: 'auto' }}>
                 {/* Problem Panel */}
-                <div style={{
-                    width: '50%',
+                <div className="lg:w-1/2 overflow-y-auto" style={{
                     borderRight: '1px solid rgba(0, 212, 255, 0.06)',
-                    overflow: 'auto',
                     padding: 16,
                     display: 'flex',
                     flexDirection: 'column',
                     gap: 12,
+                    borderBottom: '1px solid rgba(0, 212, 255, 0.06)',
                 }}>
                     {/* Description */}
                     <div>
@@ -179,11 +180,11 @@ export const ChallengePanel = memo(({ challenge, onSubmit, onBack }: ChallengePa
                 </div>
 
                 {/* Workspace Panel */}
-                <div style={{
-                    width: '50%',
+                <div className="lg:w-1/2" style={{
                     display: 'flex',
                     flexDirection: 'column',
                     overflow: 'hidden',
+                    minHeight: 200,
                 }}>
                     {/* Workspace placeholder */}
                     <div style={{
@@ -202,6 +203,7 @@ export const ChallengePanel = memo(({ challenge, onSubmit, onBack }: ChallengePa
                         padding: '8px 12px',
                         borderTop: '1px solid rgba(0, 212, 255, 0.06)',
                         display: 'flex',
+                        flexWrap: 'wrap',
                         gap: 8,
                         alignItems: 'center',
                     }}>

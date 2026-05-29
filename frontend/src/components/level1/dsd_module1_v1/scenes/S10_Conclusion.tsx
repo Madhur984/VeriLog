@@ -78,7 +78,7 @@ export const S10_Conclusion: React.FC<Props> = ({ isActive, isDarkMode }) => {
         className="rounded-3xl overflow-hidden border border-white/10 mx-auto max-w-3xl"
         style={{ background: '#fef9f0' }}
       >
-        <img src="/images/sketchbook/p12.png" alt="The Architecture of Logic — final page" className="w-full block" />
+        <img src="/images/sketchbook/p12.webp" alt="The Architecture of Logic — final page" className="w-full block" />
       </motion.div>
 
       {/* Three-rule recap */}

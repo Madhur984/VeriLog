@@ -20,18 +20,18 @@ export const SkillTopology: React.FC = () => {
             </p>
           </div>
 
-          <div className="flex items-center gap-4">
-            <div className="flex items-center bg-observatory-surface border border-white/5 rounded-full px-4 py-2">
-              <Search size={14} className="text-slate-500 mr-3" />
+          <div className="flex flex-wrap items-center gap-3 sm:gap-4 w-full md:w-auto">
+            <div className="flex items-center bg-observatory-surface border border-white/5 rounded-full px-4 py-2 flex-1 md:flex-none">
+              <Search size={14} className="text-slate-500 mr-3 shrink-0" />
               <label htmlFor="topology-search" className="sr-only">Search topology nodes</label>
-              <input 
+              <input
                 id="topology-search"
-                type="text" 
-                placeholder="SEARCH NODE..." 
-                className="bg-transparent border-none outline-none text-[11px] font-mono text-white placeholder-slate-600 w-48"
+                type="text"
+                placeholder="SEARCH NODE..."
+                className="bg-transparent border-none outline-none text-[11px] font-mono text-white placeholder-slate-600 w-full md:w-48 min-w-0"
               />
             </div>
-            <div className="flex gap-1 p-1 bg-observatory-surface border border-white/5 rounded-full">
+            <div className="flex gap-1 p-1 bg-observatory-surface border border-white/5 rounded-full shrink-0">
               {['2D', '3D'].map(mode => (
                 <button
                   key={mode}

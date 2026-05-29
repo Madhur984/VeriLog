@@ -18,7 +18,7 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
         className="relative rounded-3xl overflow-hidden border border-orange-300/30 mx-auto max-w-4xl aspect-[16/9] shadow-[0_30px_80px_rgba(251,146,60,0.2)]"
       >
         <img
-          src="/images/semi/p01.png"
+          src="/images/semi/p01.webp"
           alt="Decoding Semiconductor Physics the Madhur Way"
           className="absolute inset-0 w-full h-full object-cover"
         />

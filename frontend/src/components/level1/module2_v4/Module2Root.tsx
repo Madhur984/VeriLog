@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { useColorScheme } from '../../../hooks/useColorScheme';
 import { Module2Engine } from './Module2Engine';
 import './module2.css';
 
 import { GlobalSignalState } from './types';
 
 export const Module2Root: React.FC = () => {
-  const [scheme, toggleTheme] = useColorScheme();
-  const isDarkMode = scheme === 'dark';
+  // Default to dark like every other module (was following the OS scheme via
+  // useColorScheme, which defaulted to light and leaked the choice globally).
+  const [isDarkMode, setIsDarkMode] = useState(true);
+  const toggleTheme = () => setIsDarkMode((prev) => !prev);
   const [time, setTime] = useState(0);
 
   // --- GLOBAL SYSTEM STATE ---
   const [signalState, setSignalState] = useState<GlobalSignalState>({
-    samplingRate: 48,
+    sampleRate: 48,
     bitDepth: 8,
     frequency: 4,
     amplitude: 80,

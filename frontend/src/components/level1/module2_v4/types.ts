@@ -1,5 +1,5 @@
 export interface GlobalSignalState {
-  samplingRate: number;
+  sampleRate: number;
   bitDepth: number;
   frequency: number;
   amplitude: number;

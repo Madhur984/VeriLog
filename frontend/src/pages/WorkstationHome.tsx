@@ -277,52 +277,53 @@ export const WorkstationHome: React.FC = () => {
 
 
   return (
-    <div className="h-screen flex overflow-hidden font-sans" style={{ backgroundColor: '#06090f', color: '#cbd5e1' }}>
-      {/* ── TOP CENTER HUD ── */}
-      {/* HUD Removed */}
-
+    <div className="min-h-[100svh] lg:h-screen flex overflow-y-auto lg:overflow-hidden font-sans" style={{ backgroundColor: '#06090f', color: '#cbd5e1' }}>
       {/* PCB substrate background with moving data packets */}
       <PCBBackground />
 
-      {/* Left radial nav */}
-      <RadialMenu />
+      {/* Left radial nav — desktop only (the 360px dial is too large for phones) */}
+      <div className="hidden lg:block">
+        <RadialMenu />
+      </div>
 
-      {/* Profile card — top right */}
-      <ProfileCard
-        name={name}
-        xp={xp}
-        level={level}
-        streak={streak.current}
-        gems={gems}
-        hearts={hearts}
-        badgesCount={badges.length}
-        completedCount={skills.completedIds.length}
-      />
+      {/* Profile card — top right, desktop only */}
+      <div className="hidden lg:block">
+        <ProfileCard
+          name={name}
+          xp={xp}
+          level={level}
+          streak={streak.current}
+          gems={gems}
+          hearts={hearts}
+          badgesCount={badges.length}
+          completedCount={skills.completedIds.length}
+        />
+      </div>
 
       {/* Main scrollable canvas */}
       <main
         ref={scrollRef}
-        className="flex-1 pl-[76px] pr-[280px] h-screen flex flex-col relative z-10 overflow-hidden"
+        className="flex-1 px-3 lg:pl-[76px] lg:pr-[280px] min-h-[100svh] lg:h-screen flex flex-col relative z-10 overflow-visible lg:overflow-hidden"
         style={{ color: '#cbd5e1' }}
       >
-        <div className="flex-1 flex flex-col items-start overflow-hidden">
+        <div className="flex-1 w-full flex flex-col items-start overflow-visible lg:overflow-hidden">
           {/* ─ Top spacing ─ */}
-          <div className="flex-shrink-0 h-10" />
+          <div className="flex-shrink-0 h-4 lg:h-6" />
 
           {/* ─ Main platform with tree + console ─ */}
           <div
-            className="flex-1 w-full flex gap-20 justify-start items-start px-6 overflow-hidden"
+            className="flex-1 w-full flex flex-col lg:flex-row gap-6 lg:gap-20 justify-start items-stretch lg:items-start px-0 lg:px-6 overflow-visible lg:overflow-hidden pb-8 lg:pb-0"
             style={{ maxWidth: 1400 }}
           >
-            {/* Diagnostic console — left */}
-            <div className="flex-shrink-0 pt-8 flex flex-col gap-6" style={{ marginLeft: 0 }}>
+            {/* Diagnostic console — desktop only (decorative telemetry; phone shows the tree full-screen) */}
+            <div className="hidden lg:flex w-auto flex-shrink-0 pt-8 flex-col gap-6" style={{ marginLeft: 0 }}>
               <DiagnosticConsole onCommandPaletteOpen={() => setCmdOpen(true)} />
-              
+
             </div>
 
             {/* Holographic skill tree — center/right */}
             <div
-              className="flex-1 h-full relative rounded-3xl flex flex-col overflow-hidden"
+              className="w-full flex-1 min-h-[68vh] lg:min-h-0 lg:h-full relative rounded-3xl flex flex-col overflow-hidden"
               style={{
                 background: 'linear-gradient(160deg, rgba(5, 8, 12, 0.95) 0%, rgba(3, 5, 8, 1) 100%)',
                 border: '1px solid rgba(59, 130, 246, 0.1)',
@@ -333,7 +334,7 @@ export const WorkstationHome: React.FC = () => {
                 ].join(', '),
               }}
             >
-              <div className="w-full h-full overflow-hidden px-10 pt-10">
+              <div className="w-full h-full overflow-hidden px-4 pt-4 lg:px-10 lg:pt-10">
                 {/* Corner LED indicators */}
                 {[
                   ['top-3 left-3', '#22d3ee'],

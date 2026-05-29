@@ -33,7 +33,7 @@ export const P2_TimeControl: React.FC<{
                     <InteractiveInstrument 
                         state={state} onUpdate={onUpdate} time={time}
                         mapping={{
-                            x: { label: "SAMPLING_CLOCK (Fs)", key: "samplingRate", min: 4, max: 128, unit: "Hz" },
+                            x: { label: "SAMPLING_CLOCK (Fs)", key: "sampleRate", min: 4, max: 128, unit: "Hz" },
                             y: { label: "INPUT_FREQUENCY (Fmax)", key: "frequency", min: 1, max: 16, unit: "Hz" }
                         }}
                     />

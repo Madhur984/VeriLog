@@ -16,10 +16,10 @@ import './kmap-lab.css';
 export const KMapLab: React.FC = () => {
   return (
     <main
-      className="kmap-lab-root min-h-screen text-slate-50 relative"
+      className="kmap-lab-root min-h-[100svh] text-slate-50 relative overflow-x-hidden"
       style={{ background: 'radial-gradient(circle at 20% 20%, #0a0a0a, #000000 70%)' }}
     >
-      <div className="max-w-[1200px] mx-auto px-6 py-12 flex flex-col gap-10">
+      <div className="max-w-[1200px] mx-auto px-4 py-6 lg:px-6 lg:py-12 flex flex-col gap-6 lg:gap-10">
         <Header />
         <VariableSelector />
 

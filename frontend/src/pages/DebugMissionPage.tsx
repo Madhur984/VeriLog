@@ -30,7 +30,7 @@ export function DebugMissionPage() {
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
-                height: '100vh',
+                minHeight: '100svh',
                 background: '#F8FAFC',
                 color: '#475569',
                 gap: '16px',
@@ -63,11 +63,13 @@ export function DebugMissionPage() {
 
     return (
         <div style={{
-            minHeight: '100vh',
+            minHeight: '100svh',
             background: '#F8FAFC',
             color: '#475569',
             fontFamily: "'IBM Plex Mono', 'Roboto Mono', monospace",
-            padding: '24px',
+            padding: 'clamp(12px, 4vw, 24px)',
+            boxSizing: 'border-box',
+            overflowX: 'hidden',
         }}>
             {/* Back button */}
             <button
@@ -147,7 +149,7 @@ export function DebugMissionPage() {
             </div>
 
             {/* Actions */}
-            <div style={{ display: 'flex', gap: '8px', marginBottom: '24px' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '24px' }}>
                 <button
                     onClick={() => setShowHint(!showHint)}
                     style={{

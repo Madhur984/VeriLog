@@ -13,7 +13,7 @@ const PEERS = [
 export const SiliconNetwork: React.FC = () => {
   return (
     <DataTerminal title="SILICON NETWORK" subtitle="Verified Peer Intelligence & Mentorship Connections">
-      <div className="p-8 space-y-8 bg-[#020408]">
+      <div className="p-8 space-y-8 bg-[#020408] h-full">
         <div className="flex items-center gap-4 text-cyan-400 mb-6">
           <Users size={18} />
           <span className="font-mono text-xs uppercase tracking-widest font-bold">Active Peer Synchronization</span>

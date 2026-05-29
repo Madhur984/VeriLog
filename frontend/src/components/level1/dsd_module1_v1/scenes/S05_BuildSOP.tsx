@@ -37,7 +37,7 @@ export const S05_BuildSOP: React.FC<Props> = ({ isActive, isDarkMode }) => {
           transition={{ delay: 0.1 }}
           className="rounded-3xl overflow-hidden border border-white/10" style={{ background: '#fef9f0' }}
         >
-          <img src="/images/sketchbook/p06.png" alt="Sketchbook — gathering minterms in a basket" className="w-full block" />
+          <img src="/images/sketchbook/p06.webp" alt="Sketchbook — gathering minterms in a basket" className="w-full block" />
         </motion.div>
       </div>
 

@@ -28,7 +28,7 @@ export const S08_FlowDuel: React.FC<Props> = ({ isActive, isDarkMode }) => {
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         className={`relative rounded-3xl overflow-hidden border ${cardBg}`}
       >
-        <img src="/images/semi/p10.png" alt="Electron flow vs hole flow" className="w-full block aspect-[16/9] object-cover" />
+        <img src="/images/semi/p10.webp" alt="Electron flow vs hole flow" className="w-full block aspect-[16/9] object-cover" />
         <div className="absolute bottom-3 right-4 font-mono text-[9px] uppercase tracking-widest text-amber-200/80">
           Madhur&apos;s Lab · Page 10
         </div>

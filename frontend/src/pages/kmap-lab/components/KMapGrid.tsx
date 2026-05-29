@@ -106,8 +106,9 @@ export const KMapGrid: React.FC = () => {
   }, [groups, rows, cols, numVars]);
 
   return (
-    <div className="flex flex-col items-center animate-in fade-in zoom-in duration-700">
-      <div className="relative mb-12">
+    <div className="flex flex-col items-center animate-in fade-in zoom-in duration-700 w-full overflow-x-auto">
+      {/* Extra horizontal padding on mobile to give room for row labels */}
+      <div className="relative mb-6 lg:mb-12 ml-10 lg:ml-0">
         {/* Labels: Columns */}
         <div className="absolute -top-8 left-0 right-0 flex justify-around px-8">
             {colGray.map(g => <span key={g} className="text-xs font-mono font-bold text-gray-500">{g}</span>)}
