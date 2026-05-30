@@ -43,3 +43,10 @@ __pycache__/
 .venv/
 venv/
 ENV/
+
+# Blender backup files
+*.blend1
+
+# Claude agent configuration directory
+.claude/
+

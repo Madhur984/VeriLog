@@ -1,6 +1,6 @@
 // Bump this whenever the caching strategy changes — the activate handler below
 // deletes every cache that isn't the current one, so old (stale) precaches go.
-const CACHE_NAME = "ece-pokedex-v5";
+const CACHE_NAME = "ece-pokedex-v6";
 const PRECACHE_URLS = ["/", "/index.html", "/manifest.json"];
 
 self.addEventListener("install", (event) => {
@@ -37,7 +37,8 @@ self.addEventListener("fetch", (event) => {
     url.pathname.startsWith("/assets/") ||
     url.pathname.startsWith("/src/") ||
     url.pathname.startsWith("/@") ||
-    url.pathname.startsWith("/node_modules/");
+    url.pathname.startsWith("/node_modules/") ||
+    url.pathname.startsWith("/mascot/"); // mascot art: always fresh so redesigns show
   if (isAsset) {
     event.respondWith(fetch(request).catch(() => caches.match(request)));
     return;

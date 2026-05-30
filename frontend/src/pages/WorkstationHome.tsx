@@ -304,7 +304,7 @@ export const WorkstationHome: React.FC = () => {
       {/* Main scrollable canvas */}
       <main
         ref={scrollRef}
-        className="flex-1 px-3 lg:pl-[76px] lg:pr-[280px] min-h-[100svh] lg:h-screen flex flex-col relative z-10 overflow-visible lg:overflow-hidden"
+        className="flex-1 min-w-0 max-w-full px-3 lg:pl-[76px] lg:pr-[280px] min-h-[100svh] lg:h-screen flex flex-col relative z-10 overflow-x-hidden overflow-y-visible lg:overflow-hidden"
         style={{ color: '#cbd5e1' }}
       >
         <div className="flex-1 w-full flex flex-col items-start overflow-visible lg:overflow-hidden">
