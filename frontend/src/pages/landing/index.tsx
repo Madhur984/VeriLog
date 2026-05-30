@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Menu, X, ChevronDown, ArrowUp } from 'lucide-react';
+import { FaDiscord } from 'react-icons/fa';
 import { LANDING_ROUTES } from './landingRoutes';
 import { LandingVisuals } from './LandingVisuals';
 import { ParallaxMockupContainer } from './ParallaxMockupContainer';
@@ -15,6 +16,7 @@ import { StatsSection } from './StatsSection';
 import { FinalCTA } from './FinalCTA';
 import { LandingFooter } from './LandingFooter';
 import { ThemeToggle } from '../../components/ThemeToggle';
+
 
 /**
  * Full-viewport product-forward landing with scrolling narrative.
@@ -302,6 +304,30 @@ export default function LandingPage() {
       <FinalCTA />
       <LandingFooter />
 
+      {/* Floating Discord Link */}
+      <a
+        href={LANDING_ROUTES.social.discord}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed bottom-6 left-6 z-50 flex h-10 w-10 items-center justify-center rounded-full cursor-pointer shadow-lg transition-all duration-200"
+        style={{
+          background: '#5865F2',
+          border: '1px solid rgba(255,255,255,0.1)',
+          color: '#FFFFFF',
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = 'scale(1.1)';
+          e.currentTarget.style.boxShadow = '0 0 15px rgba(88,101,242,0.6)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = 'scale(1)';
+          e.currentTarget.style.boxShadow = 'none';
+        }}
+        aria-label="Join our Discord community"
+      >
+        <FaDiscord size={18} />
+      </a>
+
       {/* Back to top */}
       <AnimatePresence>
         {showBackToTop && (
@@ -322,4 +348,5 @@ export default function LandingPage() {
     </div>
   );
 }
+
 
