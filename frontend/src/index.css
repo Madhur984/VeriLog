@@ -409,3 +409,32 @@ html, body, #root {
     100% { transform: rotate(360deg); }
   }
 }
+
+/* ════ EASTER EGG EFFECTS ════ */
+body.konami-crt-active {
+  filter: sepia(0.2) saturate(1.4) hue-rotate(85deg) contrast(1.1) brightness(0.95);
+  text-shadow: 0 0 4px rgba(16, 185, 129, 0.4);
+}
+
+body.silicon-lottery-invert {
+  filter: invert(1) hue-rotate(180deg);
+  transition: filter 0.3s ease-in-out;
+}
+
+@keyframes fifo-shake {
+  0% { transform: translate(0, 0); }
+  10% { transform: translate(-3px, -2px) rotate(-0.5deg); }
+  20% { transform: translate(3px, 2px) rotate(0.5deg); }
+  30% { transform: translate(-3px, 2px) rotate(-0.5deg); }
+  40% { transform: translate(3px, -2px) rotate(0.5deg); }
+  50% { transform: translate(-2px, -2px); }
+  60% { transform: translate(2px, 2px); }
+  70% { transform: translate(-2px, 1px); }
+  80% { transform: translate(2px, -1px); }
+  90% { transform: translate(-1px, 2px); }
+  100% { transform: translate(0, 0); }
+}
+
+.fifo-overflow-shake {
+  animation: fifo-shake 0.6s ease-in-out infinite;
+}
