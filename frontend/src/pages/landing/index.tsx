@@ -5,6 +5,13 @@ import { LandingVisuals } from './LandingVisuals';
 import { ParallaxMockupContainer } from './ParallaxMockupContainer';
 import { ProductMockup } from './ProductMockup';
 import { useIsAuthenticated } from '../../hooks/useIsAuthenticated';
+import { WhatIsSection } from './WhatIsSection';
+import { ThreePaths } from './ThreePaths';
+import { HowItWorks } from './HowItWorks';
+import { ForWhoSection } from './ForWhoSection';
+import { StatsSection } from './StatsSection';
+import { FinalCTA } from './FinalCTA';
+import { LandingFooter } from './LandingFooter';
 
 /**
  * Single-screen, non-scrolling, product-forward landing.
@@ -27,7 +34,9 @@ const LandingPage = () => {
   const primaryLabel = authed ? '▶ Continue to your Workstation' : '▶ Start your first module - free';
 
   return (
-    <div className="relative min-h-[100svh] lg:h-screen w-full overflow-x-hidden lg:overflow-hidden flex flex-col text-white" style={{ background: '#05070E', fontFamily: "'Inter', sans-serif" }}>
+    <div className="relative w-full overflow-x-hidden text-white" style={{ background: '#05070E', fontFamily: "'Inter', sans-serif" }}>
+      {/* Hero viewport — fills 100svh so the above-the-fold is always complete */}
+      <div className="relative min-h-[100svh] flex flex-col">
       <LandingVisuals />
 
       {/* Top bar */}
@@ -168,12 +177,16 @@ const LandingPage = () => {
           </div>
         </div>
       </main>
+      </div>{/* end hero viewport */}
 
-      {/* Bottom strip */}
-      <footer className="relative z-10 flex items-center justify-between px-6 md:px-10 h-12 shrink-0 text-[11px]" style={{ color: '#475569' }}>
-        <span>Built by ECE students in India.</span>
-        <span className="hidden sm:inline">© 2026 BitforBytes · Free for students.</span>
-      </footer>
+      {/* Scrolling narrative sections */}
+      <WhatIsSection />
+      <ThreePaths />
+      <HowItWorks />
+      <ForWhoSection />
+      <StatsSection />
+      <FinalCTA />
+      <LandingFooter />
     </div>
   );
 };

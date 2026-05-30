@@ -50,6 +50,9 @@ export const StatsSection = () => {
           &ldquo;Built by students who couldn&apos;t find this anywhere else - for students who shouldn&apos;t have to.&rdquo;
         </p>
       </div>
+
+      {/* Subtle divider */}
+      <div className="max-w-2xl mx-auto px-6" style={{ height: '1px', background: 'linear-gradient(90deg, transparent, rgba(34,211,238,0.18), transparent)' }} />
     </section>
   );
 };
