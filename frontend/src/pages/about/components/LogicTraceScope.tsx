@@ -270,12 +270,22 @@ export const LogicTraceScope: React.FC = () => {
         traceData.current.rst.shift();
       }
 
-      // Draw Oscilloscope background and grid
-      ctx.fillStyle = '#07080A';
+      // Draw Oscilloscope background and grid using computed styles
+      const computedStyle = window.getComputedStyle(canvas);
+      const scopeBg = computedStyle.getPropertyValue('--scope-bg').trim() || '#07080A';
+      const scopeGrid = computedStyle.getPropertyValue('--scope-grid').trim() || 'rgba(16, 185, 129, 0.04)';
+      const scopeRef = computedStyle.getPropertyValue('--scope-ref').trim() || 'rgba(255, 255, 255, 0.03)';
+      const scopeClk = computedStyle.getPropertyValue('--scope-clk').trim() || '#22D3EE';
+      const scopeDin = computedStyle.getPropertyValue('--scope-din').trim() || '#F59E0B';
+      const scopeQ = computedStyle.getPropertyValue('--scope-q').trim() || '#10B981';
+      const scopeRst = computedStyle.getPropertyValue('--scope-rst').trim() || '#EF4444';
+      const scopeText = computedStyle.getPropertyValue('--scope-text').trim() || 'rgba(255, 255, 255, 0.4)';
+
+      ctx.fillStyle = scopeBg;
       ctx.fillRect(0, 0, width, height);
 
-      // Draw Grid Lines (Green phosphor tint, very faint)
-      ctx.strokeStyle = 'rgba(16, 185, 129, 0.04)';
+      // Draw Grid Lines ( phosphor tint, very faint)
+      ctx.strokeStyle = scopeGrid;
       ctx.lineWidth = 1;
       const gridSize = 40;
       for (let x = 0; x < width; x += gridSize) {
@@ -292,7 +302,7 @@ export const LogicTraceScope: React.FC = () => {
       }
 
       // Draw Horizontal baselines and trigger reference lines
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
+      ctx.strokeStyle = scopeRef;
       ctx.setLineDash([5, 5]);
       ctx.beginPath();
       ctx.moveTo(0, height * 0.25); ctx.lineTo(width, height * 0.25);
@@ -322,13 +332,13 @@ export const LogicTraceScope: React.FC = () => {
         const isGlitchQ = isQTrace && glitchTimeRef.current > 0;
 
         if (isGlitchQ) {
-          ctx.strokeStyle = '#F59E0B'; // metastable orange
-          ctx.shadowColor = 'rgba(245, 158, 11, 0.8)';
+          ctx.strokeStyle = scopeDin; // metastable orange/din color
+          ctx.shadowColor = scopeDin;
           ctx.shadowBlur = 15 + Math.random() * 8;
         } else {
           ctx.strokeStyle = color;
           ctx.shadowColor = glowColor;
-          ctx.shadowBlur = 10;
+          ctx.shadowBlur = 8;
         }
         
         ctx.lineWidth = 2.5;
@@ -365,23 +375,23 @@ export const LogicTraceScope: React.FC = () => {
         ctx.shadowBlur = 0; // reset
       };
 
-      // Draw signals: CLK (Cyan), DIN (Amber), Q (Emerald), RST (Red)
+      // Draw signals dynamically
       const sectionHeight = height / 4;
-      drawSignalTrace(traceData.current.clk, sectionHeight * 0.8, 30, '#22D3EE', 'rgba(34, 211, 238, 0.5)');
-      drawSignalTrace(traceData.current.din, sectionHeight * 1.8, 30, '#F59E0B', 'rgba(245, 158, 11, 0.5)');
-      drawSignalTrace(traceData.current.q, sectionHeight * 2.8, 30, '#10B981', 'rgba(16, 185, 129, 0.5)', true);
-      drawSignalTrace(traceData.current.rst, sectionHeight * 3.8, 20, '#EF4444', 'rgba(239, 68, 68, 0.5)');
+      drawSignalTrace(traceData.current.clk, sectionHeight * 0.8, 30, scopeClk, scopeClk);
+      drawSignalTrace(traceData.current.din, sectionHeight * 1.8, 30, scopeDin, scopeDin);
+      drawSignalTrace(traceData.current.q, sectionHeight * 2.8, 30, scopeQ, scopeQ, true);
+      drawSignalTrace(traceData.current.rst, sectionHeight * 3.8, 20, scopeRst, scopeRst);
 
       // Signal Label Decals on the Left Margin
       ctx.font = 'bold 9px monospace';
-      ctx.fillStyle = '#22D3EE'; ctx.fillText('CLK (CLOCK_IN)', 10, sectionHeight * 0.8 - 20);
-      ctx.fillStyle = '#F59E0B'; ctx.fillText('D   (DATA_IN)', 10, sectionHeight * 1.8 - 20);
-      ctx.fillStyle = '#10B981'; ctx.fillText('Q   (REG_OUT)', 10, sectionHeight * 2.8 - 20);
-      ctx.fillStyle = '#EF4444'; ctx.fillText('RST (ASYNC_RESET)', 10, sectionHeight * 3.8 - 20);
+      ctx.fillStyle = scopeClk; ctx.fillText('CLK (CLOCK_IN)', 10, sectionHeight * 0.8 - 20);
+      ctx.fillStyle = scopeDin; ctx.fillText('D   (DATA_IN)', 10, sectionHeight * 1.8 - 20);
+      ctx.fillStyle = scopeQ; ctx.fillText('Q   (REG_OUT)', 10, sectionHeight * 2.8 - 20);
+      ctx.fillStyle = scopeRst; ctx.fillText('RST (ASYNC_RESET)', 10, sectionHeight * 3.8 - 20);
 
       // Trigger status HUD
       ctx.font = '8px monospace';
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+      ctx.fillStyle = scopeText;
       ctx.fillText(`CH1 Freq: ${frequencyRef.current.toFixed(1)} Hz`, width - 110, sectionHeight * 0.8 - 20);
       ctx.fillText(`Setup Slack: ${lastSetupCheckState.current === 'PASS' ? '+180 ps' : '-45 ps'}`, width - 110, sectionHeight * 1.8 - 20);
       ctx.fillText(`Jitter: ${(jitterRef.current * 100).toFixed(0)}%`, width - 110, sectionHeight * 2.8 - 20);
@@ -398,12 +408,12 @@ export const LogicTraceScope: React.FC = () => {
   }, []);
 
   return (
-    <div className="w-full bg-[#090A0D] border border-white/[0.08] p-6 font-mono text-xs text-slate-400 select-none shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+    <div className="w-full bg-bg-elev border border-border-soft p-6 font-mono text-xs text-text-sub select-none shadow-[0_20px_50px_rgba(0,0,0,0.05)]">
       {/* HUD Header Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-white/[0.06] mb-6">
+      <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-border-soft mb-6">
         <div className="flex items-center gap-3">
-          <div className="w-2.5 h-2.5 bg-cyan-500 rounded-full animate-ping" />
-          <span className="text-white font-bold tracking-wider uppercase text-[10px]">
+          <div className="w-2.5 h-2.5 bg-signal-core rounded-full animate-ping" />
+          <span className="text-text-main font-bold tracking-wider uppercase text-[10px]">
             BitforBytes // Logic Scope Probe V1.0
           </span>
         </div>
@@ -411,14 +421,14 @@ export const LogicTraceScope: React.FC = () => {
         {/* Real-time Hardware Metrics Display */}
         <div className="flex items-center gap-6">
           <div className="flex flex-col items-end">
-            <span className="text-[8px] text-slate-500 uppercase tracking-widest">CLK Edge Delay</span>
-            <span className="text-cyan-400 font-bold tracking-tight text-sm">
-              {lastTpd} <span className="text-[9px] text-slate-500 font-normal">ps</span>
+            <span className="text-[8px] text-text-dim uppercase tracking-widest">CLK Edge Delay</span>
+            <span className="text-signal-core font-bold tracking-tight text-sm">
+              {lastTpd} <span className="text-[9px] text-text-dim font-normal">ps</span>
             </span>
           </div>
 
           <div className="flex flex-col items-end">
-            <span className="text-[8px] text-slate-500 uppercase tracking-widest">Setup Status</span>
+            <span className="text-[8px] text-text-dim uppercase tracking-widest">Setup Status</span>
             <span className={`font-bold tracking-tight text-sm ${
               setupCheck === 'PASS' 
                 ? 'text-emerald-400' 
@@ -431,8 +441,8 @@ export const LogicTraceScope: React.FC = () => {
           </div>
 
           <div className="flex flex-col items-end">
-            <span className="text-[8px] text-slate-500 uppercase tracking-widest">Violations</span>
-            <span className={`font-bold tracking-tight text-sm ${violationCount > 0 ? 'text-rose-400 animate-pulse' : 'text-slate-400'}`}>
+            <span className="text-[8px] text-text-dim uppercase tracking-widest">Violations</span>
+            <span className={`font-bold tracking-tight text-sm ${violationCount > 0 ? 'text-rose-400 animate-pulse' : 'text-text-dim'}`}>
               {violationCount}
             </span>
           </div>
@@ -443,21 +453,21 @@ export const LogicTraceScope: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
         
         {/* Controls Layout */}
-        <div className="lg:col-span-4 flex flex-col justify-between gap-6 p-5 bg-white/[0.01] border border-white/[0.04]">
+        <div className="lg:col-span-4 flex flex-col justify-between gap-6 p-5 bg-bg-base/40 border border-border-soft">
           
           {/* Signal Injection */}
           <div className="space-y-4">
             <div className="flex items-center gap-2">
-              <Cpu size={14} className="text-cyan-400" />
-              <span className="text-white font-bold text-[10px] uppercase tracking-wider">Signal Injection</span>
+              <Cpu size={14} className="text-signal-core" />
+              <span className="text-text-main font-bold text-[10px] uppercase tracking-wider">Signal Injection</span>
             </div>
 
             {/* Pattern Mode Toggle */}
-            <div className="grid grid-cols-2 p-1 bg-white/[0.02] border border-white/[0.08]">
+            <div className="grid grid-cols-2 p-1 bg-bg-base/60 border border-border-soft">
               <button
                 onClick={() => setAutoToggle(false)}
                 className={`py-1.5 text-[9px] font-bold uppercase transition-all cursor-pointer ${
-                  !autoToggle ? 'bg-amber-400 text-black' : 'text-slate-500 hover:text-slate-300'
+                  !autoToggle ? 'bg-accent-orange text-white' : 'text-text-dim hover:text-text-main'
                 }`}
               >
                 Manual
@@ -465,7 +475,7 @@ export const LogicTraceScope: React.FC = () => {
               <button
                 onClick={() => setAutoToggle(true)}
                 className={`py-1.5 text-[9px] font-bold uppercase transition-all cursor-pointer ${
-                  autoToggle ? 'bg-amber-400 text-black' : 'text-slate-500 hover:text-slate-300'
+                  autoToggle ? 'bg-accent-orange text-white' : 'text-text-dim hover:text-text-main'
                 }`}
               >
                 Auto Drift
@@ -476,29 +486,29 @@ export const LogicTraceScope: React.FC = () => {
               <div className="grid grid-cols-2 gap-3">
                 <button
                   onClick={() => handleManualToggle(1)}
-                  className={`py-3 px-4 text-center font-bold transition-all relative border cursor-pointer hover:bg-white/[0.03] ${
+                  className={`py-3 px-4 text-center font-bold transition-all relative border cursor-pointer hover:bg-bg-base/60 ${
                     inputBit === 1 
-                      ? 'border-amber-500/50 bg-amber-500/10 text-amber-400' 
-                      : 'border-white/[0.08] text-slate-500'
+                      ? 'border-accent-orange/50 bg-accent-orange/10 text-accent-orange' 
+                      : 'border-border-soft text-text-dim'
                   }`}
                 >
                   INPUT HIGH (1)
                 </button>
                 <button
                   onClick={() => handleManualToggle(0)}
-                  className={`py-3 px-4 text-center font-bold transition-all relative border cursor-pointer hover:bg-white/[0.03] ${
+                  className={`py-3 px-4 text-center font-bold transition-all relative border cursor-pointer hover:bg-bg-base/60 ${
                     inputBit === 0 
-                      ? 'border-amber-500/50 bg-amber-500/10 text-amber-400' 
-                      : 'border-white/[0.08] text-slate-500'
+                      ? 'border-accent-orange/50 bg-accent-orange/10 text-accent-orange' 
+                      : 'border-border-soft text-text-dim'
                   }`}
                 >
                   INPUT LOW (0)
                 </button>
               </div>
             ) : (
-              <div className="py-3 px-4 text-center border border-amber-500/20 bg-amber-500/5 text-amber-400/80 text-[10px] uppercase font-bold tracking-wider leading-relaxed">
+              <div className="py-3 px-4 text-center border border-accent-orange/25 bg-accent-orange/5 text-accent-orange/80 text-[10px] uppercase font-bold tracking-wider leading-relaxed">
                 Auto signal active<br />
-                <span className="text-[8px] text-slate-500 lowercase normal-case">drifting phase relative to clock</span>
+                <span className="text-[8px] text-text-dim lowercase normal-case">drifting phase relative to clock</span>
               </div>
             )}
 
@@ -512,17 +522,17 @@ export const LogicTraceScope: React.FC = () => {
           </div>
 
           {/* Clock parameters */}
-          <div className="space-y-4 border-t border-white/[0.04] pt-4">
+          <div className="space-y-4 border-t border-border-soft pt-4">
             <div className="flex items-center gap-2">
-              <Zap size={14} className="text-cyan-400" />
-              <span className="text-white font-bold text-[10px] uppercase tracking-wider">Clock Parameters</span>
+              <Zap size={14} className="text-signal-core" />
+              <span className="text-text-main font-bold text-[10px] uppercase tracking-wider">Clock Parameters</span>
             </div>
 
             {/* Frequency Slider */}
             <div className="space-y-2">
               <div className="flex justify-between text-[10px]">
-                <span className="text-slate-500 uppercase">Frequency</span>
-                <span className="text-white">{frequency.toFixed(1)} Hz</span>
+                <span className="text-text-dim uppercase">Frequency</span>
+                <span className="text-text-main">{frequency.toFixed(1)} Hz</span>
               </div>
               <input
                 type="range"
@@ -531,18 +541,18 @@ export const LogicTraceScope: React.FC = () => {
                 step="0.5"
                 value={frequency}
                 onChange={(e) => setFrequency(parseFloat(e.target.value))}
-                className="w-full accent-cyan-400 cursor-pointer h-1 bg-white/[0.08] rounded-full outline-none"
+                className="w-full accent-signal-core cursor-pointer h-1 bg-border-soft rounded-full outline-none"
               />
             </div>
 
             {/* Edge Trigger Selection */}
             <div className="space-y-2">
-              <span className="text-[10px] text-slate-500 uppercase block mb-1">Active Register Trigger</span>
-              <div className="grid grid-cols-2 p-1 bg-white/[0.02] border border-white/[0.08]">
+              <span className="text-[10px] text-text-dim uppercase block mb-1">Active Register Trigger</span>
+              <div className="grid grid-cols-2 p-1 bg-bg-base/60 border border-border-soft">
                 <button
                   onClick={() => setTriggerEdge('rising')}
                   className={`py-1.5 text-[9px] font-bold uppercase transition-all cursor-pointer ${
-                    triggerEdge === 'rising' ? 'bg-cyan-400 text-black' : 'text-slate-500 hover:text-slate-300'
+                    triggerEdge === 'rising' ? 'bg-signal-core text-white dark:text-black' : 'text-text-dim hover:text-text-main'
                   }`}
                 >
                   Rising Edge (↑)
@@ -550,7 +560,7 @@ export const LogicTraceScope: React.FC = () => {
                 <button
                   onClick={() => setTriggerEdge('falling')}
                   className={`py-1.5 text-[9px] font-bold uppercase transition-all cursor-pointer ${
-                    triggerEdge === 'falling' ? 'bg-cyan-400 text-black' : 'text-slate-500 hover:text-slate-300'
+                    triggerEdge === 'falling' ? 'bg-signal-core text-white dark:text-black' : 'text-text-dim hover:text-text-main'
                   }`}
                 >
                   Falling Edge (↓)
@@ -560,17 +570,17 @@ export const LogicTraceScope: React.FC = () => {
           </div>
 
           {/* Calibration Advanced */}
-          <div className="space-y-4 border-t border-white/[0.04] pt-4">
+          <div className="space-y-4 border-t border-border-soft pt-4">
             <div className="flex items-center gap-2">
-              <Settings size={14} className="text-cyan-400" />
-              <span className="text-white font-bold text-[10px] uppercase tracking-wider">Edge Setup Calibration</span>
+              <Settings size={14} className="text-signal-core" />
+              <span className="text-text-main font-bold text-[10px] uppercase tracking-wider">Edge Setup Calibration</span>
             </div>
 
             {/* Jitter Jolt */}
             <div className="space-y-2">
               <div className="flex justify-between text-[10px]">
-                <span className="text-slate-500 uppercase">Clock Jitter / Noise</span>
-                <span className="text-white">{(jitter * 100).toFixed(0)}%</span>
+                <span className="text-text-dim uppercase">Clock Jitter / Noise</span>
+                <span className="text-text-main">{(jitter * 100).toFixed(0)}%</span>
               </div>
               <input
                 type="range"
@@ -579,22 +589,22 @@ export const LogicTraceScope: React.FC = () => {
                 step="0.05"
                 value={jitter}
                 onChange={(e) => setJitter(parseFloat(e.target.value))}
-                className="w-full accent-cyan-400 cursor-pointer h-1 bg-white/[0.08] rounded-full outline-none"
+                className="w-full accent-signal-core cursor-pointer h-1 bg-border-soft rounded-full outline-none"
               />
             </div>
 
             {/* Simulation Speed Toggle */}
             <div className="flex items-center justify-between text-[10px]">
-              <span className="text-slate-500 uppercase">Sweep Speed</span>
+              <span className="text-text-dim uppercase">Sweep Speed</span>
               <div className="flex gap-2">
                 {[0.5, 1, 2].map((s) => (
                   <button
                     key={s}
                     onClick={() => setSimulationSpeed(s)}
-                    className={`px-2 py-0.5 border text-[9px] cursor-pointer hover:bg-white/[0.03] transition-all ${
+                    className={`px-2 py-0.5 border text-[9px] cursor-pointer hover:bg-bg-base/40 transition-all ${
                       simulationSpeed === s 
-                        ? 'border-cyan-400/50 bg-cyan-400/10 text-cyan-400 font-bold' 
-                        : 'border-white/[0.08] text-slate-500'
+                        ? 'border-signal-core/50 bg-signal-core/10 text-signal-core font-bold' 
+                        : 'border-border-soft text-text-dim'
                     }`}
                   >
                     {s}x
@@ -608,7 +618,7 @@ export const LogicTraceScope: React.FC = () => {
 
         {/* Oscilloscope View Display */}
         <div className="lg:col-span-8 flex flex-col">
-          <div className="relative flex-1 min-h-[360px] border border-white/[0.08]">
+          <div className="relative flex-1 min-h-[360px] border border-border-soft">
             <canvas ref={canvasRef} className="absolute inset-0 w-full h-full block" />
             
             {/* Warning Alert Banner overlay for high-jitter or metastability glitch */}
@@ -628,9 +638,9 @@ export const LogicTraceScope: React.FC = () => {
       </div>
 
       {/* Physics/ECE concept card underneath */}
-      <div className="mt-6 p-4 bg-white/[0.01] border border-white/[0.06] text-[11px] leading-relaxed text-slate-500">
-        <span className="text-white font-bold uppercase tracking-wider block mb-1">ECE Lesson: Metastability & Flip-Flops</span>
-        In sequential circuit design, data must remain stable at the input <span className="text-amber-400">D</span> for a minimum duration (Setup Time, <span className="text-white">t_setup</span>) before the clock <span className="text-cyan-400">CLK</span> edge transition. High jitter violates this stability, leading to timing violations where the registry registers an unpredictable output state.
+      <div className="mt-6 p-4 bg-bg-base/40 border border-border-soft text-[11px] leading-relaxed text-text-dim">
+        <span className="text-text-main font-bold uppercase tracking-wider block mb-1">ECE Lesson: Metastability & Flip-Flops</span>
+        In sequential circuit design, data must remain stable at the input <span className="text-accent-orange">D</span> for a minimum duration (Setup Time, <span className="text-white">t_setup</span>) before the clock <span className="text-signal-core">CLK</span> edge transition. High jitter violates this stability, leading to timing violations where the registry registers an unpredictable output state.
       </div>
     </div>
   );

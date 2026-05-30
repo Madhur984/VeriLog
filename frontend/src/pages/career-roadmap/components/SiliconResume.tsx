@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react';
 import { FileDown, CheckCircle, Sparkles } from 'lucide-react';
+import { useColorScheme } from '../../../hooks/useColorScheme';
 import jsPDF from 'jspdf';
 
 export const SiliconResume = () => {
+  const [scheme] = useColorScheme();
+  const isLight = scheme === 'light';
   const [activeTemplate, setActiveTemplate] = useState('india');
   const [masteredNodes, setMasteredNodes] = useState<string[]>([]);
   
@@ -22,7 +25,6 @@ export const SiliconResume = () => {
 
   const defaultSkills = ["SystemVerilog / Verilog", "STA Timing Optimization", "FSM Synthesis", "Digital Circuit Design"];
   
-  // Map slugs to readable names
   const mappedSkills = masteredNodes.map(node => {
     return node
       .split('-')
@@ -30,7 +32,6 @@ export const SiliconResume = () => {
       .join(' ');
   });
 
-  // Combine unique skills
   const skillsList = Array.from(new Set([...mappedSkills, ...defaultSkills]));
 
   const resumeData = {
@@ -48,12 +49,9 @@ export const SiliconResume = () => {
 
   const exportPDF = () => {
     const doc = new jsPDF('p', 'pt', 'a4');
-    
-    // Font settings based on template choice
     const fontHeader = activeTemplate === 'global' ? 'times' : 'helvetica';
     const fontBody = activeTemplate === 'global' ? 'times' : 'helvetica';
     
-    // Header section
     doc.setFont(fontHeader, 'bold');
     doc.setFontSize(22);
     doc.text(resumeData.name, 297, 50, { align: 'center' });
@@ -63,19 +61,16 @@ export const SiliconResume = () => {
     doc.text(resumeData.contact, 297, 68, { align: 'center' });
     doc.text(resumeData.links, 297, 80, { align: 'center' });
     
-    // Horizontal divider
     doc.setLineWidth(0.5);
     doc.setDrawColor(180, 180, 180);
     doc.line(40, 92, 555, 92);
     
     let y = 115;
     
-    // 1. OBJECTIVE PROFILE
     doc.setFont(fontHeader, 'bold');
     doc.setFontSize(10);
     doc.text("OBJECTIVE PROFILE", 40, y);
     doc.line(40, y + 3, 555, y + 3);
-    
     y += 18;
     doc.setFont(fontBody, 'normal');
     doc.setFontSize(9);
@@ -83,12 +78,10 @@ export const SiliconResume = () => {
     doc.text(splitSummary, 40, y);
     y += splitSummary.length * 12 + 15;
     
-    // 2. TECHNICAL MATRICES
     doc.setFont(fontHeader, 'bold');
     doc.setFontSize(10);
     doc.text("TECHNICAL MATRICES", 40, y);
     doc.line(40, y + 3, 555, y + 3);
-    
     y += 18;
     doc.setFont(fontBody, 'normal');
     doc.setFontSize(9);
@@ -97,12 +90,10 @@ export const SiliconResume = () => {
     doc.text(splitSkills, 40, y);
     y += splitSkills.length * 12 + 15;
     
-    // 3. VERIFIED CERTIFICATIONS
     doc.setFont(fontHeader, 'bold');
     doc.setFontSize(10);
     doc.text("VERIFIED CERTIFICATIONS (BITFORBYTES PLATFORM)", 40, y);
     doc.line(40, y + 3, 555, y + 3);
-    
     y += 18;
     doc.setFont(fontBody, 'normal');
     doc.setFontSize(9);
@@ -112,12 +103,10 @@ export const SiliconResume = () => {
     });
     y += 10;
     
-    // 4. ENGINEERING ARTIFACTS
     doc.setFont(fontHeader, 'bold');
     doc.setFontSize(10);
     doc.text("ENGINEERING ARTIFACTS", 40, y);
     doc.line(40, y + 3, 555, y + 3);
-    
     y += 18;
     resumeData.projects.forEach((proj) => {
       doc.setFont(fontHeader, 'bold');
@@ -126,7 +115,6 @@ export const SiliconResume = () => {
       doc.setFont(fontBody, 'normal');
       doc.text("2025 - Present", 555, y, { align: 'right' });
       y += 14;
-      
       const splitDesc = doc.splitTextToSize(proj.desc, 515);
       doc.text(splitDesc, 40, y);
       y += splitDesc.length * 12 + 12;
@@ -136,28 +124,30 @@ export const SiliconResume = () => {
   };
 
   return (
-    <div className="w-full px-6 py-12 bg-[#07080A] text-white grid grid-cols-1 lg:grid-cols-12 gap-8 border border-white/5 rounded-xl">
-      {/* Left Panel: Real-Time Quality Analyzer Controls (5 Columns) */}
+    <div className={`w-full px-6 py-12 grid grid-cols-1 lg:grid-cols-12 gap-8 border rounded-xl ${
+      isLight ? 'bg-bg-base border-border-soft text-text-main' : 'bg-[#07080A] text-white border-white/5'
+    }`}>
+      {/* Left Panel: Real-Time Quality Analyzer Controls */}
       <div className="lg:col-span-5 space-y-6 flex flex-col justify-between h-full">
         <div className="space-y-6">
           <div>
-            <span className="text-[10px] font-mono tracking-[0.2em] text-[#22D3EE]">COMPILER STAGE 04</span>
-            <h2 className="text-3xl font-bold font-mono mt-1">SILICON RESUME</h2>
-            <p className="text-sm text-slate-400 mt-2">
+            <span className={`text-[10px] font-mono tracking-[0.2em] ${isLight ? 'text-signal-core' : 'text-[#22D3EE]'}`}>COMPILER STAGE 04</span>
+            <h2 className="text-3xl font-bold font-mono mt-1 text-text-main">SILICON RESUME</h2>
+            <p className="text-sm text-text-dim mt-2">
               One-click deployment matrix. Your platform achievements are mapped directly onto an ATS-proof professional canvas.
             </p>
           </div>
 
           {/* Template Selector */}
-          <div className="bg-[#0D0F12] border border-white/5 rounded-xl p-4">
-            <label className="text-xs font-mono text-slate-500 block mb-2 uppercase">TARGET SUBSYSTEM ENVIRONMENT</label>
+          <div className={`border rounded-xl p-4 ${isLight ? 'bg-bg-elev border-border-soft' : 'bg-[#0D0F12] border-white/5'}`}>
+            <label className="text-xs font-mono text-text-dim block mb-2 uppercase">TARGET SUBSYSTEM ENVIRONMENT</label>
             <div className="grid grid-cols-2 gap-2">
               <button
                 onClick={() => setActiveTemplate('india')}
                 className={`py-2 text-[10px] font-mono rounded border transition-all ${
                   activeTemplate === 'india' 
                     ? 'border-[#22D3EE] bg-[#22D3EE]/5 text-[#22D3EE]' 
-                    : 'border-white/5 text-slate-400 hover:border-white/10'
+                    : `${isLight ? 'border-border-soft text-text-dim hover:border-ghost-trace' : 'border-white/5 text-slate-400 hover:border-white/10'}`
                 }`}
               >
                 INDIA STANDARD (LPA)
@@ -167,7 +157,7 @@ export const SiliconResume = () => {
                 className={`py-2 text-[10px] font-mono rounded border transition-all ${
                   activeTemplate === 'global' 
                     ? 'border-[#F59E0B] bg-[#F59E0B]/5 text-[#F59E0B]' 
-                    : 'border-white/5 text-slate-400 hover:border-white/10'
+                    : `${isLight ? 'border-border-soft text-text-dim hover:border-ghost-trace' : 'border-white/5 text-slate-400 hover:border-white/10'}`
                 }`}
               >
                 GLOBAL DESIGN (LaTeX)
@@ -176,22 +166,22 @@ export const SiliconResume = () => {
           </div>
 
           {/* Automated Quality Diagnostic Readout */}
-          <div className="bg-[#0D0F12] border border-white/5 rounded-xl p-5 space-y-4">
-            <div className="flex justify-between items-center border-b border-white/5 pb-3">
-              <span className="text-xs font-mono text-slate-400">ATS VALIDATION STREAM</span>
+          <div className={`border rounded-xl p-5 space-y-4 ${isLight ? 'bg-bg-elev border-border-soft' : 'bg-[#0D0F12] border-white/5'}`}>
+            <div className={`flex justify-between items-center border-b pb-3 ${isLight ? 'border-border-soft' : 'border-white/5'}`}>
+              <span className="text-xs font-mono text-text-dim">ATS VALIDATION STREAM</span>
               <span className="text-xs font-mono text-[#10B981] font-bold">PASS RATE: 98%</span>
             </div>
             
             <div className="space-y-3 text-[11px] font-mono leading-relaxed">
-              <div className="flex items-start gap-2 text-slate-300">
+              <div className="flex items-start gap-2 text-text-sub">
                 <CheckCircle size={14} className="text-[#10B981] shrink-0 mt-0.5" />
                 <span>Structural verification successful: Zero table grids, graphical frames, or unreadable fonts detected.</span>
               </div>
-              <div className="flex items-start gap-2 text-slate-300">
+              <div className="flex items-start gap-2 text-text-sub">
                 <CheckCircle size={14} className="text-[#10B981] shrink-0 mt-0.5" />
-                <span>Keyword parsing match: Found core tags: <code className="text-[#22D3EE]">Verilog</code>, <code className="text-[#22D3EE]">RTL</code>, and <code className="text-[#22D3EE]">STA</code>.</span>
+                <span>Keyword parsing match: Found core tags: <code className={isLight ? 'text-signal-core' : 'text-[#22D3EE]'}>Verilog</code>, <code className={isLight ? 'text-signal-core' : 'text-[#22D3EE]'}>RTL</code>, and <code className={isLight ? 'text-signal-core' : 'text-[#22D3EE]'}>STA</code>.</span>
               </div>
-              <div className="flex items-start gap-2 text-slate-400">
+              <div className="flex items-start gap-2 text-text-dim">
                 <Sparkles size={14} className="text-[#F59E0B] shrink-0 mt-0.5" />
                 <span>Recommendation: Fill 1 more RTL timing node to pass Nvidia parsing algorithms completely.</span>
               </div>
@@ -199,33 +189,32 @@ export const SiliconResume = () => {
           </div>
         </div>
 
-        {/* Action Button Trigger */}
+        {/* Action Button */}
         <button 
           onClick={exportPDF}
-          className="w-full bg-[#22D3EE] text-[#07080A] font-mono text-sm py-3 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-[#19b1c9] transition-all"
+          className={`w-full font-mono text-sm py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition-all ${
+            isLight ? 'bg-signal-core text-white hover:bg-signal-core/90' : 'bg-[#22D3EE] text-[#07080A] hover:bg-[#19b1c9]'
+          }`}
         >
           <FileDown size={16} />
           EXPORT INDUSTRIAL PDF
         </button>
       </div>
 
-      {/* Right Panel: The Clean ATS-Readable Live Rendering Engine (7 Columns) */}
+      {/* Right Panel: ATS-Readable Live Rendering Engine */}
       <div className="lg:col-span-7 bg-white text-black p-8 rounded-xl shadow-2xl min-h-[600px] h-full font-sans overflow-x-auto selection:bg-slate-200">
         <div className="min-w-0">
-          {/* Header */}
           <div className="text-center border-b border-slate-300 pb-4">
             <h1 className="text-2xl font-bold tracking-tight text-slate-900">{resumeData.name}</h1>
             <p className="text-xs text-slate-600 font-mono mt-1">{resumeData.contact}</p>
             <p className="text-xs text-slate-600 font-mono">{resumeData.links}</p>
           </div>
 
-          {/* Objective Statement Block */}
           <div className="mt-4">
             <h3 className="text-xs font-bold font-mono tracking-wider text-slate-900 border-b border-slate-200 pb-0.5 mb-1">OBJECTIVE PROFILE</h3>
             <p className="text-xs leading-relaxed text-slate-700">{resumeData.summary}</p>
           </div>
 
-          {/* Core Core Expertise Quantization */}
           <div className="mt-4">
             <h3 className="text-xs font-bold font-mono tracking-wider text-slate-900 border-b border-slate-200 pb-0.5 mb-1">TECHNICAL MATRICES</h3>
             <p className="text-xs text-slate-700 leading-relaxed">
@@ -233,7 +222,6 @@ export const SiliconResume = () => {
             </p>
           </div>
 
-          {/* Verified Achievements Platform Assertions */}
           <div className="mt-4">
             <h3 className="text-xs font-bold font-mono tracking-wider text-slate-900 border-b border-slate-200 pb-0.5 mb-1">VERIFIED CERTIFICATIONS (BITFORBYTES PLATFORM)</h3>
             <ul className="list-disc pl-4 text-xs text-slate-700 space-y-0.5">
@@ -243,7 +231,6 @@ export const SiliconResume = () => {
             </ul>
           </div>
 
-          {/* Project Architectural Artifact Blocks */}
           <div className="mt-4">
             <h3 className="text-xs font-bold font-mono tracking-wider text-slate-900 border-b border-slate-200 pb-0.5 mb-1">ENGINEERING ARTIFACTS</h3>
             <div className="space-y-3">

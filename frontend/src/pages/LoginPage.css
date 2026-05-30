@@ -2,7 +2,7 @@
     min-height: 100svh;
     width: 100vw;
     max-width: 100%;
-    background: radial-gradient(circle at center, var(--bg-elev) 0%, var(--bg-base) 60%, var(--bg-void) 100%);
+    background-color: var(--bg-void);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -32,7 +32,7 @@
 .login-card {
     /* Mobile: full width with safe side margins; Desktop: capped at 420px */
     width: min(420px, calc(100vw - 2rem));
-    background: var(--bg-base);
+    background-color: var(--card-bg);
     backdrop-filter: blur(12px);
     border: 1px solid var(--border-soft);
     border-radius: 16px;
@@ -41,7 +41,7 @@
     position: relative;
     z-index: 2;
     transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-    box-shadow: var(--shadow-md);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
     box-sizing: border-box;
 }
 
@@ -175,8 +175,8 @@
 
 .hardware-input {
     width: 100%;
-    background: var(--bg-void);
-    border: 1px solid var(--border-soft);
+    background-color: var(--input-bg);
+    border: 1px solid var(--input-border);
     border-radius: 8px;
     padding: 12px 12px 12px 40px;
     color: var(--text-main);
@@ -188,8 +188,8 @@
 
 .hardware-input:focus {
     border-color: var(--signal-core);
-    background: var(--bg-elev);
-    box-shadow: 0 0 0 3px var(--glow-signal);
+    outline: none;
+    box-shadow: 0 0 0 2px var(--signal-glow);
 }
 
 .logic-gate {
@@ -316,7 +316,7 @@
 }
 
 .guest-button:hover:not(:disabled) {
-    background: var(--bg-elev);
+    background: var(--hover-bg);
     border-color: var(--text-main);
     color: var(--text-main);
     transform: translateY(-1px);
@@ -387,8 +387,8 @@
 
 .guest-name-input {
     width: 100%;
-    background: var(--bg-void);
-    border: 1px solid var(--border-soft);
+    background-color: var(--input-bg);
+    border: 1px solid var(--input-border);
     border-radius: 10px;
     padding: 12px 12px 12px 40px;
     color: var(--text-main);
@@ -400,9 +400,23 @@
 }
 
 .guest-name-input:focus {
-    border-color: var(--text-main);
-    background: var(--bg-elev);
-    box-shadow: 0 0 0 3px var(--border-soft);
+    border-color: var(--signal-core);
+    outline: none;
+    box-shadow: 0 0 0 2px var(--signal-glow);
+}
+
+.guest-name-input:hover {
+    background-color: var(--hover-bg);
+}
+
+.login-button {
+    background-color: var(--signal-core);
+    color: white;
+    border: none;
+}
+
+.login-button:hover {
+    background-color: var(--accent-orange);
 }
 
 /* ───────────────────────────────────────────────────

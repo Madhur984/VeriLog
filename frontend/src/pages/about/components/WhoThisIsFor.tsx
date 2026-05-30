@@ -6,14 +6,14 @@ import { SectionWrapper } from '../../../components/SectionWrapper';
 
 export const WhoThisIsFor: React.FC = () => {
   return (
-    <SectionWrapper id="who-this-is-for" className="bg-[#07080A]">
+    <SectionWrapper id="who-this-is-for" className="bg-bg-void">
       <div className="max-w-7xl mx-auto space-y-16">
         {/* Section Header */}
         <div className="space-y-4">
-          <span className="font-mono text-[10px] text-slate-500 uppercase tracking-widest block">
+          <span className="font-mono text-[10px] text-text-dim uppercase tracking-widest block">
             FOR YOU, IF
           </span>
-          <h2 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight uppercase leading-[1.1]">
+          <h2 className="text-3xl md:text-4xl font-extrabold text-text-main tracking-tight uppercase leading-[1.1]">
             You'll know this is for you.
           </h2>
         </div>
@@ -28,21 +28,21 @@ export const WhoThisIsFor: React.FC = () => {
               viewport={{ once: true }}
               transition={{ delay: idx * 0.1 }}
               style={{ borderLeftColor: card.color }}
-              className="bg-[#0D0F12] border border-white/[0.08] border-l-4 rounded-xl p-8 flex flex-col justify-between hover:border-slate-800 transition-colors min-h-[300px]"
+              className="bg-bg-elev border border-border-soft border-l-4 rounded-xl p-8 flex flex-col justify-between hover:border-text-dim transition-colors min-h-[300px]"
             >
               <div className="space-y-4">
                 <span className="font-mono text-[10px] uppercase tracking-wider block" style={{ color: card.color }}>
                   {card.label}
                 </span>
-                <h3 className="text-lg font-bold text-white leading-snug font-sans">
+                <h3 className="text-lg font-bold text-text-main leading-snug font-sans">
                   {card.opening}
                 </h3>
-                <p className="text-slate-400 text-xs md:text-sm leading-relaxed font-sans">
+                <p className="text-text-sub text-xs md:text-sm leading-relaxed font-sans">
                   {card.detail}
                 </p>
               </div>
 
-              <div className="pt-6 mt-6 border-t border-white/[0.04]">
+              <div className="pt-6 mt-6 border-t border-border-soft">
                 <Link
                   to={card.ctaLink}
                   style={{ color: card.color }}

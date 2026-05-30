@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { BadgeDefinition } from '../data/badgeDefinitions';
 import { generateBadgeSVG, downloadBadge } from '../utils/BadgeEngine';
 import { Lock, Download, ShieldCheck, Activity } from 'lucide-react';
+import { useColorScheme } from '../hooks/useColorScheme';
 
 interface SiliconCabinetProps {
   unlockedBadgeIds: string[];
@@ -10,6 +11,7 @@ interface SiliconCabinetProps {
 }
 
 export const SiliconCabinet: React.FC<SiliconCabinetProps> = ({ unlockedBadgeIds, allBadges }) => {
+  const [scheme] = useColorScheme();
   const [hoveredBadge, setHoveredBadge] = useState<string | null>(null);
 
   const unlockedCount = allBadges.filter(b => unlockedBadgeIds.includes(b.id)).length;
@@ -18,8 +20,8 @@ export const SiliconCabinet: React.FC<SiliconCabinetProps> = ({ unlockedBadgeIds
   return (
     <div className="space-y-8">
       {/* Telemetry & Progress Header */}
-      <div className="flex flex-col md:flex-row justify-between md:items-end gap-6 bg-black/40 border border-white/10 p-6 rounded-sm relative overflow-hidden">
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0)_1px,transparent_1px)] bg-[size:20px_20px] opacity-10" />
+      <div className="flex flex-col md:flex-row justify-between md:items-end gap-6 bg-bg-elev/40 border border-border-soft p-6 rounded-sm relative overflow-hidden">
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0)_1px,transparent_1px)] bg-[size:20px_20px] opacity-[0.03]" />
         
         <div className="relative z-10 space-y-2">
           <div className="flex items-center gap-3 text-cyan-400">
@@ -36,7 +38,7 @@ export const SiliconCabinet: React.FC<SiliconCabinetProps> = ({ unlockedBadgeIds
             <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">Acquisition Progress</span>
             <span className="text-sm font-mono text-cyan-400 font-bold">{unlockedCount} / {allBadges.length}</span>
           </div>
-          <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+          <div className="h-1.5 w-full bg-bg-dim rounded-full overflow-hidden">
             <motion.div 
               className="h-full bg-cyan-400"
               initial={{ width: 0 }}
@@ -51,7 +53,7 @@ export const SiliconCabinet: React.FC<SiliconCabinetProps> = ({ unlockedBadgeIds
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {allBadges.map((badge, index) => {
           const isUnlocked = unlockedBadgeIds.includes(badge.id);
-          const svgContent = generateBadgeSVG(badge, 'BFB-5091');
+          const svgContent = generateBadgeSVG(badge, 'BFB-5091', scheme);
           const isHovered = hoveredBadge === badge.id;
 
           return (
@@ -63,10 +65,10 @@ export const SiliconCabinet: React.FC<SiliconCabinetProps> = ({ unlockedBadgeIds
               transition={{ delay: index * 0.1 }}
               onMouseEnter={() => setHoveredBadge(badge.id)}
               onMouseLeave={() => setHoveredBadge(null)}
-              className={`relative bg-[#050505] rounded-sm transition-all duration-300 group ${
+              className={`relative bg-bg-base rounded-sm transition-all duration-300 group ${
                 isUnlocked 
                   ? 'border border-cyan-400/30 hover:border-cyan-400 shadow-[0_0_15px_rgba(34,211,238,0.05)] hover:shadow-[0_0_30px_rgba(34,211,238,0.15)]' 
-                  : 'border border-white/5 grayscale opacity-60'
+                  : 'border border-border-soft grayscale opacity-60'
               }`}
             >
               {/* Scanline Effect for Unlocked */}
@@ -81,7 +83,7 @@ export const SiliconCabinet: React.FC<SiliconCabinetProps> = ({ unlockedBadgeIds
               )}
 
               {/* Slot Header */}
-              <div className="flex justify-between items-center p-3 border-b border-white/5 bg-white/[0.02]">
+              <div className="flex justify-between items-center p-3 border-b border-border-soft bg-bg-elev/20">
                 <div className="flex items-center gap-2">
                   <span className="text-[9px] font-mono text-slate-600 uppercase tracking-widest">
                     SLOT-{index.toString().padStart(3, '0')}
@@ -110,17 +112,17 @@ export const SiliconCabinet: React.FC<SiliconCabinetProps> = ({ unlockedBadgeIds
                 </div>
                 
                 {/* Crosshairs & Grid inside display area */}
-                <div className="absolute inset-4 border border-white/5 pointer-events-none" />
-                <div className="absolute top-4 left-4 w-2 h-2 border-t border-l border-white/20" />
-                <div className="absolute top-4 right-4 w-2 h-2 border-t border-r border-white/20" />
-                <div className="absolute bottom-4 left-4 w-2 h-2 border-b border-l border-white/20" />
-                <div className="absolute bottom-4 right-4 w-2 h-2 border-b border-r border-white/20" />
+                <div className="absolute inset-4 border border-border-soft pointer-events-none" />
+                <div className="absolute top-4 left-4 w-2 h-2 border-t border-l border-border-soft" />
+                <div className="absolute top-4 right-4 w-2 h-2 border-t border-r border-border-soft" />
+                <div className="absolute bottom-4 left-4 w-2 h-2 border-b border-l border-border-soft" />
+                <div className="absolute bottom-4 right-4 w-2 h-2 border-b border-r border-border-soft" />
               </div>
 
               {/* Data Footer */}
-              <div className="p-4 border-t border-white/5 bg-black/40">
+              <div className="p-4 border-t border-border-soft bg-bg-elev/40">
                 <div className="space-y-1">
-                  <h4 className="text-xs font-mono font-bold text-white uppercase tracking-wider truncate" title={badge.name}>
+                  <h4 className="text-xs font-mono font-bold text-text-main uppercase tracking-wider truncate" title={badge.name}>
                     {badge.name}
                   </h4>
                   <div className="flex justify-between items-end">
@@ -140,7 +142,7 @@ export const SiliconCabinet: React.FC<SiliconCabinetProps> = ({ unlockedBadgeIds
               <AnimatePresence>
                 {isHovered && isUnlocked && (
                     <motion.div 
-                      className="absolute inset-0 z-20 flex items-center justify-center bg-black/60 backdrop-blur-[2px]"
+                      className="absolute inset-0 z-20 flex items-center justify-center bg-bg-void/80 backdrop-blur-[2px]"
                     >
                       <motion.button 
                         onClick={() => downloadBadge(svgContent, badge.id)}

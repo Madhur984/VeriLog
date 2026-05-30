@@ -20,6 +20,7 @@ html, body, #root {
 
     /* BASE - 90% of all UI surface */
     --bg-void: #0E1116;
+    --grid-line-opacity: 0.03;
     --bg-base: #141922;
     --bg-elev: #1C2430;
 
@@ -42,6 +43,7 @@ html, body, #root {
 
     /* GLOW SYSTEM (hint, not effect) */
     --glow-signal: 0 0 8px rgba(125,211,252,0.35);
+    --signal-glow: rgba(125, 211, 252, 0.25);
     --glow-orange: 0 0 6px rgba(249,115,22,0.35);
     --glow-pink:   0 0 6px rgba(236,72,153,0.35);
     --glow-subtle: 0 0 4px rgba(255,255,255,0.07);
@@ -69,6 +71,20 @@ html, body, #root {
     --oscilloscope-trace: #E6E6ED;
     --grid-line: #8A8A99;
 
+    /* Oscilloscope variables (dark mode default) */
+    --scope-bg: #07080A;
+    --scope-grid: rgba(16, 185, 129, 0.04);
+    --scope-ref: rgba(255, 255, 255, 0.03);
+    --scope-clk: #22D3EE;
+    --scope-din: #F59E0B;
+    --scope-q: #10B981;
+    --scope-rst: #EF4444;
+    --scope-text: rgba(255, 255, 255, 0.4);
+
+    /* KMapLab gradient variables (dark mode default) */
+    --kmap-bg-start: #0a0a0a;
+    --kmap-bg-end: #000000;
+
     /* shadcn/ui compatibility */
     --background:         216 17% 9%;
     --foreground:         210 40% 98%;
@@ -80,9 +96,11 @@ html, body, #root {
     --muted-foreground:   215 20% 48%;
   }
 
-  :root.light {
+  .light,
+  .light-theme {
     /* ===== 90% BASE (Neutral Workspace) ===== */
     --bg-void: #EFF3F6;        /* Main background – drafting board slate-white */
+    --grid-line-opacity: 0.015;
     --bg-base: #F8FAFC;        /* Card surface – crisp paper off-white */
     --bg-elev: #FFFFFF;        /* Active panels, modals – pure white */
     --bg-dim: #E2E8F0;         /* Subtle separators, borders */
@@ -108,6 +126,13 @@ html, body, #root {
     --accent-soft: #F97316;    /* Hover states – warm amber */
     --accent-pink: #DB2777;    /* Peak success / lock moment – pink current */
     --accent-green: #16A34A;   /* Stable / optimal state (rare) */
+
+    /* Derived / semantic aliases */
+    --border-soft: var(--bg-dim);
+    --input-bg: var(--bg-base);
+    --input-border: var(--ghost-trace);
+    --card-bg: var(--bg-base);
+    --hover-bg: rgba(15, 23, 42, 0.04);
 
     /* GLOW SYSTEM (reduced opacity for light mode: 0.25 instead of 0.35) */
     --glow-signal: 0 0 8px rgba(3, 105, 161, 0.25);
@@ -138,6 +163,20 @@ html, body, #root {
     --oscilloscope-trace: #334155;
     --grid-line: #64748B;
 
+    /* Oscilloscope variables (light mode) */
+    --scope-bg: #F8FAFC;
+    --scope-grid: rgba(15, 23, 42, 0.04);
+    --scope-ref: rgba(15, 23, 42, 0.03);
+    --scope-clk: #0369A1;
+    --scope-din: #EA580C;
+    --scope-q: #16A34A;
+    --scope-rst: #DC2626;
+    --scope-text: rgba(15, 23, 42, 0.5);
+
+    /* KMapLab gradient variables (light mode) */
+    --kmap-bg-start: #EFF3F6;
+    --kmap-bg-end: #E2E8F0;
+
     /* ===== BORDERS & SHADOWS ===== */
     --border-subtle: #E2E8F0;
     --shadow-sm: 0 1px 2px rgba(0,0,0,0.03), 0 1px 3px rgba(0,0,0,0.03);
@@ -154,13 +193,36 @@ html, body, #root {
     --muted-foreground:   215.4 16.3% 46.9%;
   }
 
-  :root.light body {
-    background-image: 
-      linear-gradient(rgba(15, 23, 42, 0.015) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(15, 23, 42, 0.015) 1px, transparent 1px),
-      radial-gradient(circle at center, var(--bg-elev) 0%, var(--bg-base) 60%, var(--bg-void) 100%);
-    background-size: 24px 24px, 24px 24px, 100% 100%;
-    background-blend-mode: normal, normal, normal;
+  .light body,
+  .light-theme body {
+    background-color: var(--bg-void);
+    background-image: linear-gradient(rgba(15, 23, 42, var(--grid-line-opacity, 0.015)) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(15, 23, 42, var(--grid-line-opacity, 0.015)) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+
+  /* Light mode scrollbar */
+  .light,
+  .light-theme {
+    scrollbar-width: thin;
+    scrollbar-color: var(--ghost-trace) var(--bg-dim);
+  }
+
+  .light::-webkit-scrollbar,
+  .light-theme::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  .light::-webkit-scrollbar-track,
+  .light-theme::-webkit-scrollbar-track {
+    background: var(--bg-dim);
+  }
+
+  .light::-webkit-scrollbar-thumb,
+  .light-theme::-webkit-scrollbar-thumb {
+    background-color: var(--ghost-trace);
+    border-radius: 4px;
   }
 
   * { box-sizing: border-box; }
@@ -236,11 +298,57 @@ html, body, #root {
     color: var(--text-dim); 
   }
 
-  /* Scrollbar */
-  ::-webkit-scrollbar       { width: 6px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--ghost-trace); border-radius: 10px; }
-  ::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
+  /* Scrollbar - Dark Mode Default */
+  .dark::-webkit-scrollbar,
+  html:not(.light):not(.light-theme) ::-webkit-scrollbar { width: 6px; }
+  .dark::-webkit-scrollbar-track,
+  html:not(.light):not(.light-theme) ::-webkit-scrollbar-track { background: transparent; }
+  .dark::-webkit-scrollbar-thumb,
+  html:not(.light):not(.light-theme) ::-webkit-scrollbar-thumb { background: var(--ghost-trace); border-radius: 10px; }
+  .dark::-webkit-scrollbar-thumb:hover,
+  html:not(.light):not(.light-theme) ::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
+
+  /* Smooth theme transitions */
+  * {
+    transition: background-color 0.25s ease-in-out,
+                border-color 0.25s ease-in-out,
+                color 0.25s ease-in-out,
+                box-shadow 0.25s ease-in-out;
+  }
+  canvas, svg, .no-transition, .skill-graph-canvas, svg *, canvas *, .framer-motion-no-transition {
+    transition: none !important;
+  }
+
+  /* Force Light Mode / High Contrast for Print and PDF Exports */
+  @media print {
+    body, .light, .dark, .light-theme, .dark-theme {
+      --bg-void: #ffffff !important;
+      --bg-base: #ffffff !important;
+      --bg-elev: #ffffff !important;
+      --bg-dim: #e2e8f0 !important;
+      --text-main: #000000 !important;
+      --text-sub: #334155 !important;
+      --text-dim: #64748b !important;
+      --signal-core: #0369a1 !important;
+      --accent-orange: #ea580c !important;
+      --border-soft: #e2e8f0 !important;
+      background-color: #ffffff !important;
+      background-image: none !important;
+      color: #000000 !important;
+    }
+    .bg-dot-grid, .bg-ghost-traces, .tactical-scanbar, .nvg-overlay {
+      background-image: none !important;
+      display: none !important;
+    }
+    * {
+      color: #000000 !important;
+      background-color: #ffffff !important;
+      border-color: #e2e8f0 !important;
+      box-shadow: none !important;
+      text-shadow: none !important;
+      transition: none !important;
+    }
+  }
 }
 
 @layer utilities {

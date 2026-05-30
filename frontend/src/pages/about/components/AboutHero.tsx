@@ -20,7 +20,7 @@ export const AboutHero: React.FC = () => {
         style={{
           backgroundImage: `
             radial-gradient(circle at 1px 1px,
-              rgba(148,163,184,0.06) 1px, transparent 0)`,
+              var(--border-soft) 1px, transparent 0)`,
           backgroundSize: '32px 32px',
         }}
       />
@@ -31,7 +31,7 @@ export const AboutHero: React.FC = () => {
                    -translate-y-1/2 w-[600px] h-[600px]
                    rounded-full pointer-events-none"
         style={{
-          background: 'radial-gradient(circle, rgba(34,211,238,0.03) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, var(--cyan-muted) 0%, transparent 70%)',
         }}
       />
 
@@ -39,7 +39,7 @@ export const AboutHero: React.FC = () => {
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <motion.div
           className="absolute left-0 right-0 h-px"
-          style={{ background: 'linear-gradient(to right, transparent, rgba(34,211,238,0.08), transparent)' }}
+          style={{ background: 'linear-gradient(to right, transparent, var(--ghost-border-active), transparent)' }}
           animate={{ top: ['0%', '100%'] }}
           transition={{ duration: 8, repeat: Infinity, ease: 'linear', repeatType: 'loop' }}
         />
@@ -55,8 +55,7 @@ export const AboutHero: React.FC = () => {
           className="inline-flex items-center gap-2 mb-12"
         >
           <span
-            className="text-[10px] font-mono tracking-[0.2em]"
-            style={{ color: '#475569' }}
+            className="text-[10px] font-mono tracking-[0.2em] text-text-dim"
           >
             BUILT BY ECE STUDENTS // FOR ECE STUDENTS
           </span>
@@ -67,9 +66,9 @@ export const AboutHero: React.FC = () => {
           style={{ fontSize: 'clamp(48px, 8vw, 80px)' }}
         >
           {[
-            { text: 'We know why', color: '#F1F5F9', delay: 0 },
-            { text: "you're here.", color: '#F1F5F9', delay: 0.12 },
-            { text: "You didn't plan to be.", color: '#22D3EE', delay: 0.24 },
+            { text: 'We know why', color: 'var(--text-main)', delay: 0 },
+            { text: "you're here.", color: 'var(--text-main)', delay: 0.12 },
+            { text: "You didn't plan to be.", color: 'var(--signal-core)', delay: 0.24 },
           ].map((line, i) => (
             <motion.span
               key={i}
@@ -92,15 +91,13 @@ export const AboutHero: React.FC = () => {
           className="mt-10 space-y-4"
         >
           <p
-            className="text-lg leading-relaxed max-w-xl mx-auto"
-            style={{ color: '#94A3B8' }}
+            className="text-lg leading-relaxed max-w-xl mx-auto text-text-sub"
           >
             Most ECE students in India are here because CS cutoffs were
             too high - or a branch change didn't go as planned.
           </p>
           <p
-            className="text-lg leading-relaxed max-w-xl mx-auto"
-            style={{ color: '#94A3B8' }}
+            className="text-lg leading-relaxed max-w-xl mx-auto text-text-sub"
           >
             Everyone knows the word "VLSI." Nobody shows you what to
             actually <em>do</em> in it. That gap is why AXE‑OR exists.
@@ -118,11 +115,10 @@ export const AboutHero: React.FC = () => {
             animate={{ y: [0, 8, 0] }}
             transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
             className="w-px h-8"
-            style={{ background: 'linear-gradient(to bottom, #22D3EE, transparent)' }}
+            style={{ background: 'linear-gradient(to bottom, var(--signal-core), transparent)' }}
           />
           <span
-            className="text-[9px] font-mono tracking-[0.2em]"
-            style={{ color: '#475569' }}
+            className="text-[9px] font-mono tracking-[0.2em] text-text-dim"
           >
             SCROLL TO READ OUR STORY
           </span>

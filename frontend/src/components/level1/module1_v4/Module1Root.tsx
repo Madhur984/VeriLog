@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Module1Engine } from './Module1Engine';
+import { useColorScheme } from '../../../hooks/useColorScheme';
 
 export const Module1Root: React.FC = () => {
-    const [isDarkMode, setIsDarkMode] = useState(true);
+    const [scheme, toggleTheme] = useColorScheme();
+    const isDarkMode = scheme === 'dark';
 
     return (
         <div className={isDarkMode ? 'dark text-white' : 'light text-slate-900'}>
             <Module1Engine 
                 isDarkMode={isDarkMode} 
-                onThemeToggle={() => setIsDarkMode(!isDarkMode)} 
+                onThemeToggle={toggleTheme} 
             />
         </div>
     );

@@ -111,15 +111,15 @@ export const KMapGrid: React.FC = () => {
       <div className="relative mb-6 lg:mb-12 ml-10 lg:ml-0">
         {/* Labels: Columns */}
         <div className="absolute -top-8 left-0 right-0 flex justify-around px-8">
-            {colGray.map(g => <span key={g} className="text-xs font-mono font-bold text-gray-500">{g}</span>)}
+            {colGray.map(g => <span key={g} className="text-xs font-mono font-bold text-text-dim">{g}</span>)}
         </div>
         {/* Labels: Rows */}
         <div className="absolute top-0 bottom-0 -left-10 flex flex-col justify-around py-8">
-            {rowGray.map(g => <span key={g} className="text-xs font-mono font-bold text-gray-500">{g}</span>)}
+            {rowGray.map(g => <span key={g} className="text-xs font-mono font-bold text-text-dim">{g}</span>)}
         </div>
 
         <div className="relative" style={{ width: gridWidth, height: gridHeight }}>
-          <div className="grid gap-2 border border-white/5 p-2 bg-black/50 rounded-xl relative z-0"
+          <div className="grid gap-2 border border-border-soft p-2 bg-bg-base/40 rounded-xl relative z-0"
                style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
             {Array.from({ length: rows * cols }).map((_, i) => {
               const r = Math.floor(i / cols);
@@ -132,11 +132,11 @@ export const KMapGrid: React.FC = () => {
                   onClick={() => handleCellClick(r, c)}
                   className={`
                     w-[70px] h-[70px] flex items-center justify-center text-2xl font-extrabold rounded-lg transition-all duration-200 relative group/cell
-                    bg-[#111111] border-white/[0.08] border hover:bg-[#1a1a1a] hover:scale-[1.05]
-                    ${val === 1 ? 'text-[#f97316]' : val === 'X' ? 'text-[#fbbf24]' : 'text-[#525252]'}
+                    bg-bg-elev border border-border-soft hover:bg-hover-bg hover:scale-[1.05]
+                    ${val === 1 ? 'text-accent-orange' : val === 'X' ? 'text-amber-500' : 'text-text-dim/60'}
                   `}
                 >
-                  <span className="absolute top-1.5 right-1.5 text-[10px] font-mono opacity-20 group-hover/cell:opacity-60 transition-opacity text-gray-600">
+                  <span className="absolute top-1.5 right-1.5 text-[10px] font-mono opacity-25 group-hover/cell:opacity-70 transition-opacity text-text-dim">
                     {index}
                   </span>
                   {val === 'X' ? '×' : val}

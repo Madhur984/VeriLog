@@ -28,6 +28,7 @@ export default {
                 'accent-orange': 'var(--accent-orange)',
                 'accent-soft':   'var(--accent-soft)',
                 'accent-pink':   'var(--accent-pink)',
+                'border-soft':   'var(--border-soft)',
                 
                 // ════ SILICON OBSERVATORY v3.1 TOKENS ════
                 'observatory-bg': 'var(--observatory-bg)',
@@ -84,11 +85,15 @@ export default {
                 mono: ['IBM Plex Mono', 'monospace'],
             },
             backgroundImage: {
-                'dot-grid': `radial-gradient(circle at 1px 1px, var(--ghost-trace) 0.5px, transparent 0.5px)`,
+                'dot-grid': `radial-gradient(var(--ghost-trace) 1px, transparent 1px)`,
                 'blueprint-grid': `linear-gradient(to right, rgba(0, 212, 255, 0.05) 1px, transparent 1px),
                                   linear-gradient(to bottom, rgba(0, 212, 255, 0.05) 1px, transparent 1px)`,
-                'ghost-traces': `repeating-linear-gradient(90deg, var(--ghost-trace) 0px, var(--ghost-trace) 1px, transparent 1px, transparent 40px),
-                                 repeating-linear-gradient(0deg, var(--ghost-trace) 0px, var(--ghost-trace) 1px, transparent 1px, transparent 40px)`,
+                'ghost-traces': `linear-gradient(90deg, var(--ghost-trace) 1px, transparent 1px),
+                                 linear-gradient(0deg, var(--ghost-trace) 1px, transparent 1px)`,
+            },
+            backgroundSize: {
+                'dot-grid': '24px 24px',
+                'ghost-traces': '40px 40px',
             },
             boxShadow: {
                 'cyan-glow': '0 0 6px #00D4FF, 0 0 2px #00D4FF inset',

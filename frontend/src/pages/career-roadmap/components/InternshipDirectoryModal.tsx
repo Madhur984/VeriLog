@@ -44,7 +44,7 @@ export const InternshipDirectoryModal: React.FC<InternshipDirectoryModalProps> =
               ))}
               <button 
                 onClick={onClose}
-                className="ml-auto text-text-dim hover:text-white font-mono text-[10px] uppercase tracking-widest"
+                className="ml-auto text-text-dim hover:text-text-main font-mono text-[10px] uppercase tracking-widest"
               >
                 [ ESC ] CLOSE
               </button>

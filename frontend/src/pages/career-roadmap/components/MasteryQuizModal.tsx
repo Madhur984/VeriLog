@@ -111,7 +111,7 @@ export const MasteryQuizModal: React.FC<MasteryQuizModalProps> = ({
                   </button>
                   <button 
                     onClick={onClose}
-                    className="px-8 py-3 bg-white/5 border border-white/10 text-white font-mono text-sm font-bold uppercase tracking-widest hover:bg-white/10 transition-colors"
+                    className="px-8 py-3 bg-bg-base border border-ghost-trace text-text-main font-mono text-sm font-bold uppercase tracking-widest hover:bg-bg-elev transition-colors"
                   >
                     Close
                   </button>

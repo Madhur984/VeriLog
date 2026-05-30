@@ -66,15 +66,15 @@ export const CircuitRenderer: React.FC = () => {
             </svg>
           </div>
           <div>
-            <h3 className="text-xl font-bold text-white tracking-tight">Circuit Diagram</h3>
-            <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mt-0.5">
-              {solType} · <span className="text-orange-400 font-mono">{expression || '-'}</span>
+            <h3 className="text-xl font-bold text-text-main tracking-tight">Circuit Diagram</h3>
+            <p className="text-xs font-bold text-text-dim uppercase tracking-widest mt-0.5">
+              {solType} · <span className="text-accent-orange font-mono">{expression || '-'}</span>
             </p>
           </div>
         </div>
         <button
           onClick={() => setPan({ x: 0, y: 0 })}
-          className="text-xs font-bold uppercase tracking-widest text-gray-600 hover:text-orange-400 transition-colors px-3 py-1.5 rounded-lg border border-white/5 hover:border-orange-500/30"
+          className="text-xs font-bold uppercase tracking-widest text-text-dim hover:text-accent-orange transition-colors px-3 py-1.5 rounded-lg border border-border-soft hover:border-accent-orange/30"
         >
           Reset view
         </button>
@@ -82,7 +82,7 @@ export const CircuitRenderer: React.FC = () => {
 
       {/* Canvas */}
       <div
-        className="relative w-full overflow-hidden rounded-2xl border border-white/5 bg-black/50"
+        className="relative w-full overflow-hidden rounded-2xl border border-border-soft bg-bg-base/30"
         style={{ height: 'clamp(220px, 45vw, 360px)', cursor: dragging ? 'grabbing' : 'grab' }}
         onMouseDown={onMouseDown}
         onMouseMove={onMouseMove}
@@ -93,7 +93,7 @@ export const CircuitRenderer: React.FC = () => {
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
-            backgroundImage: 'radial-gradient(rgba(255,255,255,0.06) 1px, transparent 1px)',
+            backgroundImage: 'radial-gradient(var(--border-soft) 1.2px, transparent 1.2px)',
             backgroundSize: '24px 24px',
           }}
         />
@@ -104,10 +104,10 @@ export const CircuitRenderer: React.FC = () => {
             <div className="w-14 h-14 rounded-full border-2 border-orange-500/40 flex items-center justify-center bg-orange-500/10">
               <span className="text-2xl font-bold font-mono text-orange-400">{expression}</span>
             </div>
-            <p className="text-sm font-semibold text-gray-500">
+            <p className="text-sm font-semibold text-text-sub">
               {expression === '1' ? 'Tautology - always ON' : 'Contradiction - always OFF'}
             </p>
-            <p className="text-xs text-gray-700 font-mono uppercase tracking-widest">No gates needed</p>
+            <p className="text-xs text-text-dim font-mono uppercase tracking-widest">No gates needed</p>
           </div>
         )}
 
@@ -178,13 +178,13 @@ export const CircuitRenderer: React.FC = () => {
 
       {/* Gate count info */}
       {circuit && !isTrivial && (
-        <div className="mt-4 flex flex-wrap items-center gap-3 lg:gap-5 text-xs font-medium text-gray-500">
+        <div className="mt-4 flex flex-wrap items-center gap-3 lg:gap-5 text-xs font-medium text-text-dim">
           <GateCount nodes={circuit.nodes} type="AND" />
-          <div className="hidden sm:block w-px h-3 bg-white/10" />
+          <div className="hidden sm:block w-px h-3 bg-border-soft" />
           <GateCount nodes={circuit.nodes} type="OR" />
-          <div className="hidden sm:block w-px h-3 bg-white/10" />
+          <div className="hidden sm:block w-px h-3 bg-border-soft" />
           <GateCount nodes={circuit.nodes} type="NOT" />
-          <div className="hidden sm:block w-px h-3 bg-white/10" />
+          <div className="hidden sm:block w-px h-3 bg-border-soft" />
           <GateCount nodes={circuit.nodes} type="INPUT" label="Inputs" />
         </div>
       )}
@@ -210,6 +210,6 @@ const Legend: React.FC<{ color: string; label: string; shape: 'rect' | 'hex' | '
     {shape === 'rect' && <div className="w-3 h-2 rounded border" style={{ borderColor: color }} />}
     {shape === 'hex' && <div className="w-3 h-3 rounded-sm border" style={{ borderColor: color }} />}
     {shape === 'line' && <div className="w-4 h-px" style={{ background: color }} />}
-    <span className="text-[10px] font-bold uppercase tracking-widest text-gray-600">{label}</span>
+    <span className="text-[10px] font-bold uppercase tracking-widest text-text-dim">{label}</span>
   </div>
 );
