@@ -4,11 +4,14 @@ import { DOMAINS, Domain } from '../data/domains';
 import { DomainCard } from './DomainCard';
 import { DomainDetailModal } from './DomainDetailModal';
 import { useCompass } from '../hooks/useCompass';
+import { useColorScheme } from '../hooks/useColorScheme';
 import { cn } from '../utils/cn';
 import { AnimatePresence, motion } from 'framer-motion';
 
 export const DomainExplorer: React.FC = () => {
   const { result: compassResult } = useCompass();
+  const [scheme] = useColorScheme();
+  const isLight = scheme === 'light';
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState<'ALL' | 'HIGH DEMAND' | 'GROWING' | 'INDIA HOT' | 'HARD' | 'MODERATE'>('ALL');
   const [sortBy, setSortBy] = useState<'salary' | 'demand' | 'difficulty'>('salary');
@@ -54,24 +57,24 @@ export const DomainExplorer: React.FC = () => {
   };
 
   return (
-    <section id="domain-explorer" className="py-24 px-6 sm:px-12 bg-black border-y border-white/[0.03]">
+    <section id="domain-explorer" className={cn("py-24 px-6 sm:px-12 border-y transition-colors duration-300", isLight ? "bg-bg-void border-border-soft" : "bg-black border-white/[0.03]")}>
       <div className="max-w-7xl mx-auto space-y-12">
         
         {/* Section Header */}
         <div className="space-y-4">
-          <h2 className="text-4xl sm:text-5xl font-extrabold text-white tracking-tighter uppercase">
+          <h2 className={cn("text-4xl sm:text-5xl font-extrabold tracking-tighter uppercase", isLight ? "text-text-main" : "text-white")}>
             Domain Explorer
           </h2>
-          <p className="text-slate-500 font-mono text-sm tracking-widest uppercase">
+          <p className={cn("font-mono text-sm tracking-widest uppercase", isLight ? "text-text-dim" : "text-slate-500")}>
             Navigate the 13 Silicon Specializations
           </p>
         </div>
 
         {/* Toolbar */}
-        <div className="flex flex-col lg:flex-row gap-6 items-start lg:items-center justify-between bg-white/[0.02] border border-white/10 p-4 rounded-2xl">
+        <div className={cn("flex flex-col lg:flex-row gap-6 items-start lg:items-center justify-between border p-4 rounded-2xl transition-colors", isLight ? "bg-bg-base border-border-soft" : "bg-white/[0.02] border-white/10")}>
           {/* Search */}
           <div className="relative w-full lg:w-[280px]">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={14} />
+            <Search className={cn("absolute left-3 top-1/2 -translate-y-1/2", isLight ? "text-text-dim" : "text-slate-500")} size={14} />
             <label htmlFor="domain-search" className="sr-only">Search domains</label>
             <input 
               id="domain-search"
@@ -79,7 +82,7 @@ export const DomainExplorer: React.FC = () => {
               placeholder="SEARCH DOMAINS..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-[#0D0F12] border border-white/[0.08] rounded-lg py-2.5 pl-10 pr-4 text-white font-mono text-xs focus:border-cyan-400/50 outline-none transition-all placeholder:text-slate-600"
+              className={cn("w-full rounded-lg py-2.5 pl-10 pr-4 font-mono text-xs outline-none transition-all", isLight ? "bg-bg-elev border border-border-soft text-text-main placeholder:text-text-dim focus:border-cyan-600" : "bg-[#0D0F12] border border-white/[0.08] text-white placeholder:text-slate-600 focus:border-cyan-400/50")}
             />
           </div>
 
@@ -92,8 +95,8 @@ export const DomainExplorer: React.FC = () => {
                 className={cn(
                   "px-4 py-2 rounded-full font-mono text-[10px] tracking-widest border transition-all whitespace-nowrap",
                   activeFilter === filter 
-                    ? "bg-cyan-400 border-cyan-400 text-[#020408] font-bold" 
-                    : "bg-transparent border-white/[0.10] text-slate-500 hover:text-white hover:border-white/20"
+                    ? (isLight ? "bg-cyan-600 border-cyan-600 text-white font-bold" : "bg-cyan-400 border-cyan-400 text-[#020408] font-bold") 
+                    : (isLight ? "bg-transparent border-border-soft text-text-dim hover:text-text-main hover:border-text-dim" : "bg-transparent border-white/[0.10] text-slate-500 hover:text-white hover:border-white/20")
                 )}
               >
                 {filter}
@@ -102,33 +105,33 @@ export const DomainExplorer: React.FC = () => {
           </div>
 
           {/* Sort & Compare */}
-          <div className="flex items-center gap-4 w-full lg:w-auto border-t lg:border-t-0 border-white/5 pt-4 lg:pt-0">
-            <div className="flex items-center gap-2 text-slate-500 hover:text-white transition-colors cursor-pointer group">
+          <div className={cn("flex items-center gap-4 w-full lg:w-auto border-t lg:border-t-0 pt-4 lg:pt-0", isLight ? "border-border-soft" : "border-white/5")}>
+            <div className={cn("flex items-center gap-2 transition-colors cursor-pointer group", isLight ? "text-text-dim hover:text-text-main" : "text-slate-500 hover:text-white")}>
               <ArrowUpDown size={14} />
               <label htmlFor="domain-sort" className="sr-only">Sort domains by</label>
               <select 
                 id="domain-sort"
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as any)}
-                className="bg-transparent text-[10px] font-mono font-bold uppercase tracking-widest outline-none cursor-pointer"
+                className={cn("bg-transparent text-[10px] font-mono font-bold uppercase tracking-widest outline-none cursor-pointer", isLight ? "text-text-main" : "text-white")}
               >
-                <option value="salary">SORT: SALARY ↓</option>
-                <option value="demand">SORT: DEMAND</option>
-                <option value="difficulty">SORT: DIFFICULTY</option>
+                <option value="salary" className={isLight ? "bg-bg-elev text-text-main" : "bg-[#0D0F12] text-white"}>SORT: SALARY ↓</option>
+                <option value="demand" className={isLight ? "bg-bg-elev text-text-main" : "bg-[#0D0F12] text-white"}>SORT: DEMAND</option>
+                <option value="difficulty" className={isLight ? "bg-bg-elev text-text-main" : "bg-[#0D0F12] text-white"}>SORT: DIFFICULTY</option>
               </select>
             </div>
 
-            <div className="h-4 w-px bg-white/10 mx-2" />
+            <div className={cn("h-4 w-px mx-2", isLight ? "bg-border-soft" : "bg-white/10")} />
 
             <button 
               disabled={comparingIds.length === 0}
               className={cn(
                 "flex items-center gap-2 px-4 py-2 rounded-lg font-mono text-[10px] font-bold uppercase tracking-widest transition-all",
                 comparingIds.length === 2 
-                  ? "bg-cyan-400 text-[#020408] animate-pulse" 
+                  ? (isLight ? "bg-cyan-600 text-white animate-pulse" : "bg-cyan-400 text-[#020408] animate-pulse") 
                   : comparingIds.length === 1 
-                    ? "bg-cyan-400/20 text-cyan-400 border border-cyan-400/30"
-                    : "bg-white/5 text-slate-600 cursor-not-allowed"
+                    ? (isLight ? "bg-cyan-600/10 text-cyan-700 border border-cyan-600/30" : "bg-cyan-400/20 text-cyan-400 border border-cyan-400/30")
+                    : (isLight ? "bg-bg-base text-text-dim border border-border-soft cursor-not-allowed" : "bg-white/5 text-slate-600 cursor-not-allowed")
               )}
             >
               <GitCompare size={14} />
@@ -155,10 +158,10 @@ export const DomainExplorer: React.FC = () => {
           </div>
         ) : (
           <div className="py-24 text-center space-y-4">
-            <p className="text-slate-500 font-mono text-sm uppercase tracking-widest">No domains match your search parameters</p>
+            <p className={cn("font-mono text-sm uppercase tracking-widest", isLight ? "text-text-dim" : "text-slate-500")}>No domains match your search parameters</p>
             <button 
               onClick={() => { setSearchQuery(''); setActiveFilter('ALL'); }}
-              className="text-cyan-400 font-mono text-xs hover:underline uppercase"
+              className={cn("font-mono text-xs hover:underline uppercase", isLight ? "text-cyan-600" : "text-cyan-400")}
             >
               Clear all filters
             </button>
@@ -184,22 +187,22 @@ export const DomainExplorer: React.FC = () => {
               exit={{ y: 20, opacity: 0 }}
               className="sticky bottom-8 z-50 mx-auto w-full max-w-2xl"
             >
-               <div className="bg-[#0D0F12]/95 backdrop-blur-xl border border-cyan-400/30 rounded-2xl p-3 sm:p-4 shadow-2xl flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-0 justify-between">
+               <div className={cn("backdrop-blur-xl rounded-2xl p-3 sm:p-4 shadow-2xl flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-0 justify-between border", isLight ? "bg-bg-elev/95 border-cyan-600/30" : "bg-[#0D0F12]/95 border-cyan-400/30")}>
                   <div className="flex flex-wrap gap-2 sm:gap-4">
                     {comparingIds.map(id => (
-                      <div key={id} className="flex items-center gap-2 px-3 py-1.5 bg-cyan-400/10 border border-cyan-400/20 rounded-lg min-w-0">
-                        <span className="text-[10px] font-mono text-cyan-400 font-bold uppercase truncate max-w-[120px]">
+                      <div key={id} className={cn("flex items-center gap-2 px-3 py-1.5 rounded-lg min-w-0 border", isLight ? "bg-cyan-600/10 border-cyan-600/20" : "bg-cyan-400/10 border-cyan-400/20")}>
+                        <span className={cn("text-[10px] font-mono font-bold uppercase truncate max-w-[120px]", isLight ? "text-cyan-700" : "text-cyan-400")}>
                           {DOMAINS.find(d => d.id === id)?.name}
                         </span>
                         <X
                           size={12}
-                          className="text-cyan-400 cursor-pointer hover:text-white shrink-0"
+                          className={cn("cursor-pointer shrink-0", isLight ? "text-cyan-700 hover:text-text-main" : "text-cyan-400 hover:text-white")}
                           onClick={() => handleToggleCompare(id)}
                         />
                       </div>
                     ))}
                     {comparingIds.length < 2 && (
-                      <div className="flex items-center gap-2 px-3 py-1.5 border border-dashed border-white/20 rounded-lg text-slate-500 italic text-[10px] font-mono">
+                      <div className={cn("flex items-center gap-2 px-3 py-1.5 border border-dashed rounded-lg italic text-[10px] font-mono", isLight ? "border-border-soft text-text-dim" : "border-white/20 text-slate-500")}>
                         + ADD SECOND DOMAIN
                       </div>
                     )}
@@ -207,12 +210,12 @@ export const DomainExplorer: React.FC = () => {
                   <div className="flex items-center gap-3 sm:gap-4 shrink-0">
                     <button
                       onClick={() => setComparingIds([])}
-                      className="text-[9px] font-mono text-slate-500 hover:text-white uppercase tracking-widest py-2"
+                      className={cn("text-[9px] font-mono uppercase tracking-widest py-2", isLight ? "text-text-dim hover:text-text-main" : "text-slate-500 hover:text-white")}
                     >
                       CLEAR ALL
                     </button>
                     {comparingIds.length === 2 && (
-                      <button className="px-4 py-2 bg-cyan-400 text-[#020408] font-bold text-[10px] font-mono uppercase rounded-lg hover:bg-white transition-colors">
+                      <button className={cn("px-4 py-2 font-bold text-[10px] font-mono uppercase rounded-lg transition-colors", isLight ? "bg-cyan-600 text-white hover:bg-cyan-700" : "bg-cyan-400 text-[#020408] hover:bg-white")}>
                         COMPARE NOW →
                       </button>
                     )}
