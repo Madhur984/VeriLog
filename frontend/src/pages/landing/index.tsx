@@ -14,6 +14,7 @@ import { ForWhoSection } from './ForWhoSection';
 import { StatsSection } from './StatsSection';
 import { FinalCTA } from './FinalCTA';
 import { LandingFooter } from './LandingFooter';
+import { ThemeToggle } from '../../components/ThemeToggle';
 
 /**
  * Full-viewport product-forward landing with scrolling narrative.
@@ -35,7 +36,7 @@ const smoothScroll = (href: string) => {
   if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
 };
 
-const LandingPage = () => {
+export default function LandingPage() {
   const authed = useIsAuthenticated();
   const [menuOpen, setMenuOpen] = useState(false);
   const [showBackToTop, setShowBackToTop] = useState(false);
@@ -50,7 +51,7 @@ const LandingPage = () => {
   }, []);
 
   return (
-    <div className="relative w-full overflow-x-hidden text-white" style={{ background: '#05070E', fontFamily: "'Inter', sans-serif" }}>
+    <div className="relative w-full overflow-x-hidden text-white transition-colors duration-200" style={{ background: 'var(--bg-void)', color: 'var(--text-main)', fontFamily: "'Inter', sans-serif" }}>
       {/* Hero viewport */}
       <div className="relative min-h-[100svh] flex flex-col">
       <LandingVisuals />
@@ -82,6 +83,7 @@ const LandingPage = () => {
         </nav>
 
         <div className="flex items-center gap-2.5">
+          <ThemeToggle />
           {authed ? (
             <Link to={LANDING_ROUTES.workstation} className="text-sm font-bold px-5 py-2 rounded-xl transition-all" style={{ background: '#22D3EE', color: '#06121A' }}
               onMouseEnter={(e) => (e.currentTarget.style.background = '#38BDF8')} onMouseLeave={(e) => (e.currentTarget.style.background = '#22D3EE')}>
@@ -319,7 +321,5 @@ const LandingPage = () => {
       </AnimatePresence>
     </div>
   );
-};
-
-export default LandingPage;
+}
 

@@ -1,7 +1,10 @@
 import { useEffect, useRef } from 'react';
+import { useColorScheme } from '../hooks/useColorScheme';
 
 export const BinaryRain = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [scheme] = useColorScheme();
+  const isLight = scheme === 'light';
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -32,12 +35,12 @@ export const BinaryRain = () => {
       const dt = (now - last) / 1000;
       last = now;
 
-      // Fade trail - very transparent overlay
-      ctx.fillStyle = 'rgba(7,8,10,0.08)';
+      // Fade trail - very transparent overlay matching theme backgrounds
+      ctx.fillStyle = isLight ? 'rgba(247,249,252,0.08)' : 'rgba(7,8,10,0.08)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       ctx.font = '12px IBM Plex Mono';
-      ctx.fillStyle = '#22D3EE';
+      ctx.fillStyle = isLight ? '#0284C7' : '#22D3EE';
 
       for (let i = 0; i < cols; i++) {
         const char = Math.random() > 0.5 ? '1' : '0';
@@ -64,7 +67,7 @@ export const BinaryRain = () => {
       cancelAnimationFrame(animId);
       window.removeEventListener('resize', resize);
     };
-  }, []);
+  }, [isLight]);
 
   return (
     <canvas

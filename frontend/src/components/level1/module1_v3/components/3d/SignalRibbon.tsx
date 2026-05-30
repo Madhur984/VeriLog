@@ -1,7 +1,8 @@
-import { useRef, useMemo } from 'react';
+import { useRef, useMemo, useEffect } from 'react';
 import * as THREE from 'three';
 import { useFrame } from '@react-three/fiber';
 import { useSignalStore, SignalMode } from '../../store/signalStore';
+import { useColorScheme } from '../../../../../hooks/useColorScheme';
 
 
 interface RibbonProps {
@@ -30,7 +31,23 @@ export const SignalRibbon: React.FC<RibbonProps> = ({
 }) => {
   const meshRef = useRef<THREE.Mesh>(null!);
   const { amplitude: globalAmp, frequency: globalFreq, phase, noise: globalNoise, signalMode, scene } = useSignalStore();
+  const [scheme] = useColorScheme();
+  const isLight = scheme === 'light';
 
+  useEffect(() => {
+    if (!meshRef.current) return;
+    const mat = meshRef.current.material as THREE.ShaderMaterial;
+    if (isLight) {
+      mat.uniforms.u_coreColor.value.set('#0284C7');
+      mat.uniforms.u_accentColor.value.set('#BAE6FD');
+      mat.blending = THREE.NormalBlending;
+    } else {
+      mat.uniforms.u_coreColor.value.set('#E6F9FF');
+      mat.uniforms.u_accentColor.value.set('#00E5FF');
+      mat.blending = THREE.AdditiveBlending;
+    }
+    mat.needsUpdate = true;
+  }, [isLight]);
 
   const geometry = useMemo(() => new THREE.PlaneGeometry(8, 0.4, 512, 1), []);
 

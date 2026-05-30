@@ -51,6 +51,24 @@ html, body, #root {
     --nvg-bright: #4ADE80;
     --nvg-glow:   0 0 15px rgba(34,197,94,0.4);
 
+    /* ════ SILICON OBSERVATORY v3.1 TOKENS ════ */
+    --observatory-bg: #07080A;
+    --observatory-surface: #0D0F12;
+    --observatory-surface-alt: #131619;
+    --cyan-muted: rgba(34, 211, 238, 0.09);
+    --ghost-border: rgba(148, 163, 184, 0.08);
+    --ghost-border-active: rgba(34, 211, 238, 0.25);
+
+    /* ════ ECE POKÉDEX DESIGN TOKENS ════ */
+    --matte-obsidian: #0A0A0B;
+    --solder-mask: #121215;
+    --ghost-trace: #2A2A35;
+    --plasma-cyan: #00D4FF;
+    --cyan-mist: #0088AA;
+    --burnished-copper: #FF5F1F;
+    --oscilloscope-trace: #E6E6ED;
+    --grid-line: #8A8A99;
+
     /* shadcn/ui compatibility */
     --background:         216 17% 9%;
     --foreground:         210 40% 98%;
@@ -60,6 +78,89 @@ html, body, #root {
     --ring:               199 89% 48%;
     --muted:              217 19% 13%;
     --muted-foreground:   215 20% 48%;
+  }
+
+  :root.light {
+    /* ===== 90% BASE (Neutral Workspace) ===== */
+    --bg-void: #EFF3F6;        /* Main background – drafting board slate-white */
+    --bg-base: #F8FAFC;        /* Card surface – crisp paper off-white */
+    --bg-elev: #FFFFFF;        /* Active panels, modals – pure white */
+    --bg-dim: #E2E8F0;         /* Subtle separators, borders */
+
+    /* Text / Ink */
+    --text-main: #0F172A;      /* Primary text – carbon ink (high contrast) */
+    --text-sub:  #334155;      /* Slate Gray */
+    --text-secondary: #334155; /* Secondary text – slate */
+    --text-dim: #64748B;       /* Microcopy, labels, HUD */
+
+    --border-soft: rgba(15, 23, 42, 0.08);
+
+    /* ===== 8% SIGNAL (Circuit Traces & Waveforms) ===== */
+    --ghost-trace: #CBD5E1;    /* Inactive trace / solder mask guide */
+    --signal-core: #0369A1;    /* Active waveform – deep cobalt blue */
+    --signal-bright: #00D4FF;  /* Peak / active highlight – plasma cyan */
+    --signal-glow: #BAE6FD;    /* Soft glow behind signal (opacity 0.25) */
+    --signal-dim: #0369A1;
+    --signal-primary: #0369A1;
+
+    /* ===== 2% ACCENT (Interactive & Warning) ===== */
+    --accent-orange: #EA580C;  /* Active buttons, sliders – burnished copper */
+    --accent-soft: #F97316;    /* Hover states – warm amber */
+    --accent-pink: #DB2777;    /* Peak success / lock moment – pink current */
+    --accent-green: #16A34A;   /* Stable / optimal state (rare) */
+
+    /* GLOW SYSTEM (reduced opacity for light mode: 0.25 instead of 0.35) */
+    --glow-signal: 0 0 8px rgba(3, 105, 161, 0.25);
+    --glow-orange: 0 0 6px rgba(234, 88, 12, 0.25);
+    --glow-pink:   0 0 6px rgba(219, 39, 119, 0.25);
+    --glow-subtle: 0 0 4px rgba(0, 0, 0, 0.03);
+
+    /* NVG - NIGHT VISION GREEN (tactical light mode override) */
+    --nvg-core:   #16A34A;
+    --nvg-bright: #22C55E;
+    --nvg-glow:   0 0 10px rgba(22, 163, 74, 0.15);
+
+    /* ════ SILICON OBSERVATORY v3.1 TOKENS ════ */
+    --observatory-bg: #EFF3F6;
+    --observatory-surface: #FFFFFF;
+    --observatory-surface-alt: #F8FAFC;
+    --cyan-muted: rgba(3, 105, 161, 0.08);
+    --ghost-border: rgba(15, 23, 42, 0.06);
+    --ghost-border-active: rgba(3, 105, 161, 0.25);
+
+    /* ════ ECE POKÉDEX DESIGN TOKENS ════ */
+    --matte-obsidian: #EFF3F6;
+    --solder-mask: #FFFFFF;
+    --ghost-trace: #CBD5E1;
+    --plasma-cyan: #00D4FF;
+    --cyan-mist: #0369A1;
+    --burnished-copper: #EA580C;
+    --oscilloscope-trace: #334155;
+    --grid-line: #64748B;
+
+    /* ===== BORDERS & SHADOWS ===== */
+    --border-subtle: #E2E8F0;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.03), 0 1px 3px rgba(0,0,0,0.03);
+    --shadow-md: 0 4px 6px -2px rgba(0,0,0,0.02), 0 2px 4px -1px rgba(0,0,0,0.02);
+
+    /* shadcn/ui compatibility (light mode values) */
+    --background:         210 20% 98%;
+    --foreground:         222.2 84% 4.9%;
+    --primary:            201 96% 39%;
+    --primary-foreground: 210 20% 98%;
+    --border:             214.3 31.8% 91.4%;
+    --ring:               201 96% 39%;
+    --muted:              210 40% 96.1%;
+    --muted-foreground:   215.4 16.3% 46.9%;
+  }
+
+  :root.light body {
+    background-image: 
+      linear-gradient(rgba(15, 23, 42, 0.015) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(15, 23, 42, 0.015) 1px, transparent 1px),
+      radial-gradient(circle at center, var(--bg-elev) 0%, var(--bg-base) 60%, var(--bg-void) 100%);
+    background-size: 24px 24px, 24px 24px, 100% 100%;
+    background-blend-mode: normal, normal, normal;
   }
 
   * { box-sizing: border-box; }
@@ -137,9 +238,9 @@ html, body, #root {
 
   /* Scrollbar */
   ::-webkit-scrollbar       { width: 6px; }
-  ::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
-  ::-webkit-scrollbar-thumb { background: rgba(34, 211, 238, 0.2); border-radius: 10px; }
-  ::-webkit-scrollbar-thumb:hover { background: rgba(34, 211, 238, 0.4); }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--ghost-trace); border-radius: 10px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
 }
 
 @layer utilities {
@@ -184,7 +285,7 @@ html, body, #root {
     content: '';
     position: absolute;
     inset: 1px; /* Trace thickness */
-    background: #0D0F12; /* Match surface color */
+    background: var(--bg-elev); /* Match surface color dynamically */
     border-radius: inherit;
     z-index: 1;
   }

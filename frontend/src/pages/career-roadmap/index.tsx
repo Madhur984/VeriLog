@@ -184,7 +184,7 @@ const CareerRoadmapPage: React.FC = () => {
               className="space-y-12 py-8 sm:py-12 max-w-7xl mx-auto px-4 sm:px-6"
             >
               <div>
-                <h1 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tighter uppercase mb-6">Skill Topology & Gap Analysis</h1>
+                <h1 className="text-2xl sm:text-4xl font-extrabold text-text-main tracking-tighter uppercase mb-6">Skill Topology & Gap Analysis</h1>
                 <SkillTopology />
               </div>
               
@@ -208,7 +208,7 @@ const CareerRoadmapPage: React.FC = () => {
               className="space-y-12 py-8 sm:py-12 max-w-7xl mx-auto px-4 sm:px-6"
             >
               <div>
-                <h1 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tighter uppercase mb-6">Financial Yield & Trajectory</h1>
+                <h1 className="text-2xl sm:text-4xl font-extrabold text-text-main tracking-tighter uppercase mb-6">Financial Yield & Trajectory</h1>
                 <FiscalMatrix />
               </div>
 
@@ -246,7 +246,7 @@ const CareerRoadmapPage: React.FC = () => {
 
               <div className="border-t border-white/[0.03] pt-12 pb-24">
                 <div className="mb-8">
-                  <h2 className="text-2xl sm:text-4xl font-bold text-white tracking-tight uppercase">Silicon Cabinet</h2>
+                  <h2 className="text-2xl sm:text-4xl font-bold text-text-main tracking-tight uppercase">Silicon Cabinet</h2>
                 </div>
                 <SiliconCabinet 
                   unlockedBadgeIds={unlockedBadgeIds} 

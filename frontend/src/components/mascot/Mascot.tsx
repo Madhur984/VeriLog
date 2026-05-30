@@ -4,6 +4,7 @@ import { useLocation } from 'react-router-dom';
 import { X, Compass } from 'lucide-react';
 import { getMascotLines } from './mascotLines';
 import { useTour } from '../tour/TourProvider';
+import { useColorScheme } from '../../hooks/useColorScheme';
 
 /**
  * "Byte" - a route-aware talking spider mascot that DANGLES from a silk web
@@ -34,6 +35,8 @@ function lsSet(k: string, v: string) { try { localStorage.setItem(k, v); } catch
 export const Mascot: React.FC = () => {
   const location = useLocation();
   const { isActive: tourActive, hasTourForPath, start: startTour, index: tourIndex } = useTour();
+  const [scheme] = useColorScheme();
+  const isLight = scheme === 'light';
 
   const script = useMemo(() => getMascotLines(location.pathname), [location.pathname]);
 
@@ -188,14 +191,21 @@ export const Mascot: React.FC = () => {
         {/* ceiling anchor node */}
         <div
           className="w-2.5 h-2.5 rounded-full -mb-px"
-          style={{ background: 'rgba(226,232,240,0.85)', boxShadow: '0 0 10px rgba(34,211,238,0.7)' }}
+          style={{ 
+            background: isLight ? 'rgba(2, 132, 199, 0.85)' : 'rgba(226,232,240,0.85)', 
+            boxShadow: isLight ? '0 0 10px rgba(2, 132, 199, 0.5)' : '0 0 10px rgba(34,211,238,0.7)' 
+          }}
         />
         {/* silk web strand */}
         <div
           className={`w-[2px] ${strandClass}`}
           style={{
-            background: 'linear-gradient(to bottom, rgba(226,232,240,0.15), rgba(226,232,240,0.6))',
-            boxShadow: '0 0 6px rgba(34,211,238,0.45)',
+            background: isLight
+              ? 'linear-gradient(to bottom, rgba(2, 132, 199, 0.15), rgba(2, 132, 199, 0.6))'
+              : 'linear-gradient(to bottom, rgba(226,232,240,0.15), rgba(226,232,240,0.6))',
+            boxShadow: isLight
+              ? '0 0 6px rgba(2, 132, 199, 0.25)'
+              : '0 0 6px rgba(34,211,238,0.45)',
           }}
         />
 
@@ -212,22 +222,28 @@ export const Mascot: React.FC = () => {
                 onClick={handleTap}
                 className="absolute right-full top-1/3 -translate-y-1/2 mr-3 w-[min(240px,62vw)] cursor-pointer rounded-2xl px-4 py-3"
                 style={{
-                  background: 'linear-gradient(160deg, rgba(13,17,24,0.97), rgba(5,8,14,0.99))',
-                  border: '1px solid rgba(34,211,238,0.35)',
-                  boxShadow: '0 16px 50px rgba(0,0,0,0.6), 0 0 30px rgba(34,211,238,0.18)',
+                  background: isLight
+                    ? 'linear-gradient(160deg, rgba(255,255,255,0.98), rgba(247,249,252,0.99))'
+                    : 'linear-gradient(160deg, rgba(13,17,24,0.97), rgba(5,8,14,0.99))',
+                  border: isLight
+                    ? '1px solid rgba(2, 132, 199, 0.22)'
+                    : '1px solid rgba(34,211,238,0.35)',
+                  boxShadow: isLight
+                    ? '0 16px 50px rgba(0,0,0,0.08), 0 0 30px rgba(2, 132, 199, 0.06)'
+                    : '0 16px 50px rgba(0,0,0,0.6), 0 0 30px rgba(34,211,238,0.18)',
                 }}
               >
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-[10px] font-mono font-bold tracking-[0.2em] uppercase" style={{ color: '#22D3EE' }}>
+                  <span className="text-[10px] font-mono font-bold tracking-[0.2em] uppercase" style={{ color: isLight ? '#EA580C' : '#22D3EE' }}>
                     Byte
                   </span>
                   <span className="text-[9px] font-mono text-slate-500">
                     {lineIdx + 1}/{script.lines.length}
                   </span>
                 </div>
-                <p className="text-[12.5px] leading-snug text-slate-100 min-h-[34px]">
+                <p className="text-[12.5px] leading-snug min-h-[34px]" style={{ color: isLight ? '#334155' : '#E6EDF3' }}>
                   {typed}
-                  <span className="inline-block w-1.5 h-3.5 ml-0.5 align-middle animate-pulse" style={{ background: '#22D3EE', opacity: typed.length < fullLine.length ? 1 : 0 }} />
+                  <span className="inline-block w-1.5 h-3.5 ml-0.5 align-middle animate-pulse" style={{ background: isLight ? '#EA580C' : '#22D3EE', opacity: typed.length < fullLine.length ? 1 : 0 }} />
                 </p>
                 {/* In-bubble: offer the full tour */}
                 {hasTourForPath && (
@@ -244,7 +260,12 @@ export const Mascot: React.FC = () => {
                   {script.lines.length > 1 ? 'tap me for more' : 'tap me anytime'}
                 </div>
                 <span className="absolute top-1/3 -right-1.5 -translate-y-1/2 w-3 h-3 rotate-45"
-                  style={{ background: 'rgba(5,8,14,0.99)', borderTop: '1px solid rgba(34,211,238,0.35)', borderRight: '1px solid rgba(34,211,238,0.35)' }} />
+                  style={{
+                    background: isLight ? '#FFFFFF' : 'rgba(5,8,14,0.99)',
+                    borderTop: isLight ? '1px solid rgba(2, 132, 199, 0.22)' : '1px solid rgba(34,211,238,0.35)',
+                    borderRight: isLight ? '1px solid rgba(2, 132, 199, 0.22)' : '1px solid rgba(34,211,238,0.35)'
+                  }}
+                />
               </motion.div>
             )}
           </AnimatePresence>
@@ -260,16 +281,27 @@ export const Mascot: React.FC = () => {
                 transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
                 className="absolute right-full top-1/3 -translate-y-1/2 mr-3 whitespace-nowrap rounded-full px-3.5 py-1.5"
                 style={{
-                  background: 'linear-gradient(160deg, rgba(13,17,24,0.97), rgba(5,8,14,0.99))',
-                  border: '1px solid rgba(34,211,238,0.45)',
-                  boxShadow: '0 10px 30px rgba(0,0,0,0.6), 0 0 24px rgba(34,211,238,0.25)',
+                  background: isLight
+                    ? 'linear-gradient(160deg, rgba(255,255,255,0.98), rgba(247,249,252,0.99))'
+                    : 'linear-gradient(160deg, rgba(13,17,24,0.97), rgba(5,8,14,0.99))',
+                  border: isLight
+                    ? '1px solid rgba(2, 132, 199, 0.3)'
+                    : '1px solid rgba(34,211,238,0.45)',
+                  boxShadow: isLight
+                    ? '0 10px 30px rgba(0,0,0,0.06), 0 0 24px rgba(2, 132, 199, 0.1)'
+                    : '0 10px 30px rgba(0,0,0,0.6), 0 0 24px rgba(34,211,238,0.25)',
                 }}
               >
-                <span className="text-[12px] font-bold" style={{ color: '#7DD3FC' }}>
+                <span className="text-[12px] font-bold" style={{ color: isLight ? '#0284C7' : '#7DD3FC' }}>
                   {TOUR_CHEERS[cheerIdx]}
                 </span>
                 <span className="absolute top-1/2 -right-1.5 -translate-y-1/2 w-3 h-3 rotate-45"
-                  style={{ background: 'rgba(5,8,14,0.99)', borderTop: '1px solid rgba(34,211,238,0.45)', borderRight: '1px solid rgba(34,211,238,0.45)' }} />
+                  style={{
+                    background: isLight ? '#FFFFFF' : 'rgba(5,8,14,0.99)',
+                    borderTop: isLight ? '1px solid rgba(2, 132, 199, 0.3)' : '1px solid rgba(34,211,238,0.45)',
+                    borderRight: isLight ? '1px solid rgba(2, 132, 199, 0.3)' : '1px solid rgba(34,211,238,0.45)'
+                  }}
+                />
               </motion.div>
             )}
           </AnimatePresence>
@@ -289,13 +321,18 @@ export const Mascot: React.FC = () => {
                 <div className="relative" style={{ transformOrigin: 'right center', transform: 'rotate(-13deg)' }}>
                   <div style={{
                     width: 52, height: 2,
-                    background: 'linear-gradient(to left, rgba(34,211,238,0.95), rgba(226,232,240,0.12))',
-                    boxShadow: '0 0 6px rgba(34,211,238,0.6)',
+                    background: isLight
+                      ? 'linear-gradient(to left, rgba(2, 132, 199, 0.95), rgba(0, 0, 0, 0.05))'
+                      : 'linear-gradient(to left, rgba(34,211,238,0.95), rgba(226,232,240,0.12))',
+                    boxShadow: isLight ? '0 0 6px rgba(2, 132, 199, 0.4)' : '0 0 6px rgba(34,211,238,0.6)',
                   }} />
                   {/* sticky web tip aimed at the bubble */}
                   <motion.span
                     className="absolute -left-1 -top-[5px] w-3 h-3 rounded-full"
-                    style={{ background: '#22D3EE', boxShadow: '0 0 10px #22D3EE' }}
+                    style={{
+                      background: isLight ? '#0284C7' : '#22D3EE',
+                      boxShadow: isLight ? '0 0 10px #0284C7' : '0 0 10px #22D3EE'
+                    }}
                     animate={{ scale: [1, 1.35, 1] }}
                     transition={{ duration: 1.1, repeat: Infinity, ease: 'easeInOut' }}
                   />
@@ -329,7 +366,7 @@ export const Mascot: React.FC = () => {
             whileTap={{ scale: 0.96 }}
           >
             <span className="absolute left-1/2 -translate-x-1/2 bottom-2 w-28 h-3 rounded-full blur-md"
-              style={{ background: 'rgba(34,211,238,0.30)' }} />
+              style={{ background: isLight ? 'rgba(2, 132, 199, 0.15)' : 'rgba(34,211,238,0.30)' }} />
             <img
               src={blinking ? BLINK : OPEN}
               alt="Byte the spider mascot"
