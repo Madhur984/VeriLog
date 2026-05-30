@@ -7,6 +7,7 @@ const TYPES = [
     label: 'The confused first-year',
     color: '#0891B2',
     opening: 'You got ECE because the CS cutoff was too high.',
+    body: 'You\'re staring at 13 branches you\'ve never heard of — VLSI, RF, embedded, signal processing. No one told you which one leads where. BitforBytes maps all 13 domains so you can stop guessing and start exploring.',
     cta: 'Explore the domains →',
     to: LANDING_ROUTES.career,
   },
@@ -14,6 +15,7 @@ const TYPES = [
     label: 'The stuck third-year',
     color: '#F59E0B',
     opening: 'Your CS friends have internships. You have derivations.',
+    body: 'Placement season is closing in and you\'ve never written a line of Verilog. Our interactive modules let you go from zero to designing combinational circuits — no expensive EDA tools, no lab access needed.',
     cta: 'See your skill gaps →',
     to: LANDING_ROUTES.careerSkills,
   },
@@ -21,6 +23,7 @@ const TYPES = [
     label: 'The determined one',
     color: '#10B981',
     opening: 'You actually want to design chips.',
+    body: 'You know this is the career — but your college syllabus barely scratches the surface. Go deeper with structured, hands-on modules that teach the way top engineers learned: by building.',
     cta: 'Start learning →',
     to: LANDING_ROUTES.firstModule,
   },
@@ -53,6 +56,7 @@ export const ForWhoSection = () => {
               <div className="space-y-3">
                 <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: card.color }}>{card.label}</span>
                 <h3 className="text-base font-bold leading-snug" style={{ color: '#0B1220' }}>{card.opening}</h3>
+                <p className="text-sm leading-relaxed" style={{ color: '#64748B' }}>{card.body}</p>
               </div>
               <div className="pt-5 mt-5" style={{ borderTop: '1px solid rgba(15,23,42,0.06)' }}>
                 <Link to={card.to} className="inline-flex items-center gap-1.5 text-sm font-bold hover:gap-2.5 transition-all" style={{ color: card.color }}>

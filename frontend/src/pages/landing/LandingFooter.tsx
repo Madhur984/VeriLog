@@ -26,8 +26,8 @@ export const LandingFooter = () => {
               {[
                 { label: 'Start learning', to: LANDING_ROUTES.firstModule },
                 { label: 'Explore career paths', to: LANDING_ROUTES.career },
-                { label: 'About BitforBytes', to: LANDING_ROUTES.about },
-                { label: 'Meet the team', to: LANDING_ROUTES.about },
+                { label: 'Assess skill gaps', to: LANDING_ROUTES.careerSkills },
+                { label: 'Our story & team', to: LANDING_ROUTES.about },
               ].map((l) => (
                 <Link key={l.label} to={l.to} className="transition-colors hover:text-white" style={{ color: '#94A3B8' }}>
                   {l.label}

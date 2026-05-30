@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { GatePreview } from '../../components/GatePreview';
 import { LANDING_ROUTES } from './landingRoutes';
@@ -8,7 +9,13 @@ export const WhatIsSection = () => {
       <div className="max-w-6xl mx-auto px-6 md:px-10 py-24 md:py-28">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-16 items-center">
           {/* Left: the gap narrative */}
-          <div className="md:col-span-6 space-y-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="md:col-span-6 space-y-6"
+          >
             <span className="text-[11px] font-bold tracking-[0.22em] uppercase" style={{ color: '#22D3EE' }}>
               The gap we close
             </span>
@@ -40,17 +47,23 @@ export const WhatIsSection = () => {
             >
               Read our story →
             </Link>
-          </div>
+          </motion.div>
 
           {/* Right: live interactive gate (signature flair) */}
-          <div className="md:col-span-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.15 }}
+            className="md:col-span-6"
+          >
             <div
               className="rounded-3xl p-1.5"
               style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)' }}
             >
               <GatePreview />
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>
