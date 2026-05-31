@@ -5,10 +5,15 @@
 
 /* ── Global mobile safety net ──
    Stop any wide/fixed desktop element from causing horizontal scroll on phones,
-   and keep tap targets from overflowing the viewport. */
+   and keep tap targets from overflowing the viewport.
+
+   NOTE: use `overflow-x: clip`, NOT `hidden`. `hidden` makes the root a scroll
+   container, and during vertical scroll the clipped x-axis fights the scrollbar
+   and the page visibly jitters/shakes sideways. `clip` just clips overflow
+   without creating a scroll container, which kills the shake. */
 html, body, #root {
   max-width: 100%;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 * {
   -webkit-tap-highlight-color: transparent;

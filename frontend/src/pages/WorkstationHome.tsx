@@ -7,7 +7,6 @@ import { OnboardingTour } from '../components/ui/OnboardingTour';
 import { RadialMenu } from '../components/ui/RadialMenu';
 import { Globe } from 'lucide-react';
 import { KineticText } from '../components/ui/KineticText';
-import { useColorScheme } from '../hooks/useColorScheme';
 
 import { DiagnosticConsole } from '../components/ui/DiagnosticConsole';
 import { HierarchicalGrindTree } from '../components/ui/HierarchicalGrindTree';
@@ -17,8 +16,6 @@ const getTourKey = (n: string | null) => `digi_tour_done_${n ?? 'guest'}`;
 // ─── PCB ISOMETRIC BACKGROUND ──────────────────────────────────────────────────
 // ─── PCB ISOMETRIC BACKGROUND ──────────────────────────────────────────────────
 const PCBBackground: React.FC = () => {
-  const [scheme] = useColorScheme();
-  const isLight = scheme === 'light';
   const [mouse, setMouse] = useState({ x: 0, y: 0 });
   
   return (
@@ -29,20 +26,14 @@ const PCBBackground: React.FC = () => {
       {/* Base darkfield */}
       <div
         className="absolute inset-0"
-        style={{
-          background: isLight 
-            ? 'radial-gradient(ellipse 120% 100% at 50% 0%, #EBF1F6 0%, #F5F7FA 80%)' 
-            : 'radial-gradient(ellipse 120% 100% at 50% 0%, #0d1526 0%, #06090f 80%)'
-        }}
+        style={{ background: 'radial-gradient(ellipse 120% 100% at 50% 0%, #0d1526 0%, #06090f 80%)' }}
       />
 
       {/* Kinetic Glow Follower */}
       <div 
         className="absolute w-[600px] h-[600px] rounded-full pointer-events-none opacity-20"
         style={{
-          background: isLight 
-            ? 'radial-gradient(circle, rgba(2, 132, 199, 0.08) 0%, transparent 70%)' 
-            : 'radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%)',
           left: mouse.x - 300,
           top: mouse.y - 300,
           filter: 'blur(40px)',
@@ -54,12 +45,7 @@ const PCBBackground: React.FC = () => {
       <div
         className="absolute inset-0"
         style={{
-          backgroundImage: isLight ? `
-            linear-gradient(rgba(2, 132, 199, 0.03) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(2, 132, 199, 0.03) 1px, transparent 1px),
-            linear-gradient(rgba(2, 132, 199, 0.01) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(2, 132, 199, 0.01) 1px, transparent 1px)
-          ` : `
+          backgroundImage: `
             linear-gradient(rgba(59, 130, 246, 0.05) 1px, transparent 1px),
             linear-gradient(90deg, rgba(59, 130, 246, 0.05) 1px, transparent 1px),
             linear-gradient(rgba(59, 130, 246, 0.02) 1px, transparent 1px),
@@ -70,20 +56,20 @@ const PCBBackground: React.FC = () => {
       />
 
       {/* Gold circuit trace decoration */}
-      <svg className="absolute inset-0 w-full h-full" style={{ opacity: isLight ? 0.18 : 0.07 }} xmlns="http://www.w3.org/2000/svg">
+      <svg className="absolute inset-0 w-full h-full opacity-[0.07]" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <pattern id="gold-trace" x="0" y="0" width="200" height="200" patternUnits="userSpaceOnUse">
             {/* Gold horizontal traces */}
-            <path d="M0,100 L60,100 L60,60 L100,60 L100,0" stroke={isLight ? "#EA580C" : "#3b82f6"} strokeWidth="1.5" fill="none" opacity={isLight ? 0.6 : 0.3} />
-            <path d="M200,100 L140,100 L140,140 L100,140 L100,200" stroke={isLight ? "#EA580C" : "#3b82f6"} strokeWidth="1.5" fill="none" opacity={isLight ? 0.6 : 0.3} />
+            <path d="M0,100 L60,100 L60,60 L100,60 L100,0" stroke="#3b82f6" strokeWidth="1.5" fill="none" opacity="0.3" />
+            <path d="M200,100 L140,100 L140,140 L100,140 L100,200" stroke="#3b82f6" strokeWidth="1.5" fill="none" opacity="0.3" />
             {/* Indigo traces */}
-            <path d="M0,50 L30,50 L30,100 L80,100" stroke={isLight ? "#D97706" : "#00D4FF"} strokeWidth="1" fill="none" opacity={isLight ? 0.5 : 0.2} />
-            <path d="M200,150 L170,150 L170,100 L120,100" stroke={isLight ? "#64748B" : "#A855F7"} strokeWidth="1" fill="none" opacity={isLight ? 0.4 : 0.2} />
+            <path d="M0,50 L30,50 L30,100 L80,100" stroke="#00D4FF" strokeWidth="1" fill="none" opacity="0.2" />
+            <path d="M200,150 L170,150 L170,100 L120,100" stroke="#A855F7" strokeWidth="1" fill="none" opacity="0.2" />
             {/* Solder pads */}
-            <circle cx="60" cy="100" r="4" fill="none" stroke={isLight ? "#EA580C" : "#3b82f6"} strokeWidth="1.5" />
-            <circle cx="140" cy="100" r="4" fill="none" stroke={isLight ? "#EA580C" : "#3b82f6"} strokeWidth="1.5" />
-            <rect x="96" y="56" width="8" height="8" fill="none" stroke={isLight ? "#D97706" : "#00D4FF"} strokeWidth="1" />
-            <rect x="96" y="136" width="8" height="8" fill="none" stroke={isLight ? "#64748B" : "#a78bfa"} strokeWidth="1" />
+            <circle cx="60" cy="100" r="4" fill="none" stroke="#3b82f6" strokeWidth="1.5" />
+            <circle cx="140" cy="100" r="4" fill="none" stroke="#3b82f6" strokeWidth="1.5" />
+            <rect x="96" y="56" width="8" height="8" fill="none" stroke="#00D4FF" strokeWidth="1" />
+            <rect x="96" y="136" width="8" height="8" fill="none" stroke="#a78bfa" strokeWidth="1" />
           </pattern>
         </defs>
         <rect width="100%" height="100%" fill="url(#gold-trace)" />
@@ -98,12 +84,8 @@ const PCBBackground: React.FC = () => {
             width: 4,
             height: 4,
             borderRadius: '50%',
-            background: isLight 
-              ? ['#ea580c', '#334155', '#16a34a', '#d97706', '#db2777', '#0284c7', '#0d9488', '#be185d'][i] 
-              : ['#22d3ee', '#a78bfa', '#34d399', '#fbbf24', '#fb7185', '#60a5fa', '#4ade80', '#f472b6'][i],
-            boxShadow: `0 0 6px ${isLight 
-              ? ['#ea580c', '#334155', '#16a34a', '#d97706', '#db2777', '#0284c7', '#0d9488', '#be185d'][i] 
-              : ['#22d3ee', '#a78bfa', '#34d399', '#fbbf24', '#fb7185', '#60a5fa', '#4ade80', '#f472b6'][i]}`,
+            background: ['#22d3ee', '#a78bfa', '#34d399', '#fbbf24', '#fb7185', '#60a5fa', '#4ade80', '#f472b6'][i],
+            boxShadow: `0 0 6px ${['#22d3ee', '#a78bfa', '#34d399', '#fbbf24', '#fb7185', '#60a5fa', '#4ade80', '#f472b6'][i]}`,
             top: `${10 + i * 11}%`,
           }}
           animate={{
@@ -134,9 +116,6 @@ const ProfileCard: React.FC<{
   badgesCount: number;
   completedCount: number;
 }> = ({ name, xp, level, streak, gems, hearts, badgesCount, completedCount }) => {
-  const [scheme] = useColorScheme();
-  const isLight = scheme === 'light';
-  
   // Calculate progress to next level
   const currentLevelXP = Math.pow(level - 1, 2) * 100;
   const nextLevelXP = Math.pow(level, 2) * 100;
@@ -150,14 +129,10 @@ const ProfileCard: React.FC<{
       transition={{ delay: 1.2, duration: 0.6 }}
       className="fixed top-8 right-8 z-50 p-4 rounded-2xl w-60"
       style={{
-        background: isLight ? 'rgba(255, 255, 255, 0.85)' : 'rgba(5, 8, 12, 0.95)',
-        border: isLight ? '1px solid rgba(15, 23, 42, 0.08)' : '1px solid rgba(59, 130, 246, 0.2)',
+        background: 'rgba(5, 8, 12, 0.95)',
+        border: '1px solid rgba(59, 130, 246, 0.2)',
         backdropFilter: 'blur(20px)',
-        boxShadow: isLight ? [
-          '0 20px 50px rgba(15,23,42,0.05)',
-          '0 0 0 1px rgba(15, 23, 42, 0.03)',
-          'inset 0 1px 1px rgba(255,255,255,0.8)',
-        ].join(', ') : [
+        boxShadow: [
           '0 20px 50px rgba(0,0,0,0.8)',
           '0 0 0 1px rgba(59, 130, 246, 0.05)',
           'inset 0 1px 1px rgba(255,255,255,0.02)',
@@ -170,11 +145,9 @@ const ProfileCard: React.FC<{
           <div
             className="w-12 h-12 rounded-xl flex items-center justify-center text-xl font-black relative overflow-hidden group"
             style={{
-              background: isLight 
-                ? 'linear-gradient(135deg, #ea580c, #f97316)' 
-                : 'linear-gradient(135deg, #3b82f6, #2563eb)',
-              color: isLight ? '#fff' : '#000',
-              boxShadow: isLight ? '0 0 15px rgba(234, 88, 12, 0.2)' : '0 0 15px rgba(59, 130, 246, 0.3)',
+              background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+              color: '#000',
+              boxShadow: '0 0 15px rgba(59, 130, 246, 0.3)',
               fontFamily: 'monospace',
             }}
           >
@@ -187,7 +160,7 @@ const ProfileCard: React.FC<{
             />
           </div>
           <div>
-            <div className="text-[14px] font-black tracking-widest uppercase text-text-main leading-tight">
+            <div className="text-[14px] font-black tracking-widest uppercase text-white leading-tight">
               <KineticText text={name} />
             </div>
             <div className="flex items-center gap-1.5 mt-0.5">
@@ -199,10 +172,10 @@ const ProfileCard: React.FC<{
           </div>
         </div>
         <div className="flex flex-col items-end">
-          <div className="text-[10px] font-mono font-bold text-text-main leading-none">
-            <span className={isLight ? 'text-sky-700' : 'text-cyan-400'}>LVL </span>{level}
+          <div className="text-[10px] font-mono font-bold text-white leading-none">
+            <span className="text-cyan-400">LVL </span>{level}
           </div>
-          <div className="text-[8px] font-mono text-text-dim mt-1 uppercase">
+          <div className="text-[8px] font-mono text-slate-500 mt-1 uppercase">
             {xp.total.toLocaleString()} total sip
           </div>
         </div>
@@ -211,17 +184,13 @@ const ProfileCard: React.FC<{
       {/* Progress to next Level */}
       <div className="mb-5">
         <div className="flex justify-between items-center mb-1.5 px-0.5">
-          <span className="text-[9px] font-black uppercase tracking-[0.2em] text-text-dim">Progression</span>
-          <span className={`text-[9px] font-mono font-bold ${isLight ? 'text-sky-700' : 'text-cyan-400'}`}>{Math.round(progress)}%</span>
+          <span className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">Progression</span>
+          <span className="text-[9px] font-mono text-cyan-400 font-bold">{Math.round(progress)}%</span>
         </div>
-        <div className="h-1.5 w-full bg-slate-200 dark:bg-black/60 rounded-full overflow-hidden border border-border-soft p-[1px]">
+        <div className="h-1.5 w-full bg-black/60 rounded-full overflow-hidden border border-white/5 p-[1px]">
           <motion.div
             className="h-full rounded-full"
-            style={{ 
-              background: isLight 
-                ? 'linear-gradient(90deg, #ea580c, #f97316)' 
-                : 'linear-gradient(90deg, #3b82f6, #60a5fa)' 
-            }}
+            style={{ background: 'linear-gradient(90deg, #3b82f6, #60a5fa)' }}
             initial={{ width: 0 }}
             animate={{ width: `${progress}%` }}
             transition={{ delay: 1.8, duration: 1.2 }}
@@ -239,14 +208,14 @@ const ProfileCard: React.FC<{
         ].map((stat) => (
           <div
             key={stat.label}
-            className="bg-slate-50 dark:bg-white/[0.03] border border-slate-200/50 dark:border-white/[0.05] rounded-xl px-3 py-2 flex items-center justify-between"
+            className="bg-white/[0.03] border border-white/[0.05] rounded-xl px-3 py-2 flex items-center justify-between"
           >
             <div>
-              <div className="text-[9px] font-black text-text-dim uppercase tracking-widest leading-none mb-1">
+              <div className="text-[9px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1">
                 {stat.label}
               </div>
-              <div className="text-[11px] font-mono font-black text-text-main leading-none">
-                {stat.value} <span className="text-[8px] font-normal text-text-dim ml-0.5">{stat.unit}</span>
+              <div className="text-[11px] font-mono font-black text-white leading-none">
+                {stat.value} <span className="text-[8px] font-normal text-slate-500 ml-0.5">{stat.unit}</span>
               </div>
             </div>
             <div className="text-xs opacity-80">{stat.icon}</div>
@@ -255,21 +224,21 @@ const ProfileCard: React.FC<{
       </div>
 
       {/* Secondary readout */}
-      <div className="flex items-center justify-between pt-3 border-t border-border-soft">
+      <div className="flex items-center justify-between pt-3 border-t border-white/5">
         <div className="flex gap-4">
           <div className="flex flex-col">
-            <span className="text-[8px] font-black text-text-dim uppercase tracking-widest mb-0.5">Missions</span>
-            <span className="text-[10px] font-mono text-text-main font-bold">{completedCount} Completed</span>
+            <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-0.5">Missions</span>
+            <span className="text-[10px] font-mono text-white font-bold">{completedCount} Completed</span>
           </div>
           <div className="flex flex-col">
-            <span className="text-[8px] font-black text-text-dim uppercase tracking-widest mb-0.5">Rank</span>
-            <span className={`text-[10px] font-mono font-bold ${isLight ? 'text-amber-700' : 'text-amber-400'}`}>Technician</span>
+            <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-0.5">Rank</span>
+            <span className="text-[10px] font-mono text-amber-400 font-bold">Technician</span>
           </div>
         </div>
         <motion.button
-          whileHover={{ scale: 1.05, background: isLight ? 'rgba(234, 88, 12, 0.05)' : 'rgba(59, 130, 246, 0.1)' }}
+          whileHover={{ scale: 1.05, background: 'rgba(59, 130, 246, 0.1)' }}
           whileTap={{ scale: 0.95 }}
-          className="px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-widest border border-accent-orange/20 dark:border-blue-500/20 text-accent-orange dark:text-blue-500 transition-colors"
+          className="px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-widest border border-blue-500/20 text-blue-500 transition-colors"
         >
           Analysis
         </motion.button>
@@ -280,8 +249,6 @@ const ProfileCard: React.FC<{
 
 // ─── MAIN ──────────────────────────────────────────────────────────────────────
 export const WorkstationHome: React.FC = () => {
-  const [scheme] = useColorScheme();
-  const isLight = scheme === 'light';
   const navigate = useNavigate();
   const {
     firstName,
@@ -309,8 +276,9 @@ export const WorkstationHome: React.FC = () => {
 
   const name = firstName ?? 'Kriten';
 
+
   return (
-    <div className="min-h-[100svh] lg:h-screen flex overflow-x-hidden overflow-y-auto lg:overflow-hidden font-sans bg-bg-void text-text-sub">
+    <div className="min-h-[100svh] lg:h-screen flex overflow-x-hidden overflow-y-auto lg:overflow-hidden font-sans" style={{ backgroundColor: '#06090f', color: '#cbd5e1' }}>
       {/* PCB substrate background with moving data packets */}
       <PCBBackground />
 
@@ -337,6 +305,7 @@ export const WorkstationHome: React.FC = () => {
       <main
         ref={scrollRef}
         className="flex-1 min-w-0 max-w-full px-3 lg:pl-[76px] lg:pr-[280px] min-h-[100svh] lg:h-screen flex flex-col relative z-10 overflow-x-hidden overflow-y-visible lg:overflow-hidden"
+        style={{ color: '#cbd5e1' }}
       >
         <div className="flex-1 w-full flex flex-col items-start overflow-visible lg:overflow-hidden">
           {/* ─ Top spacing ─ */}
@@ -358,15 +327,9 @@ export const WorkstationHome: React.FC = () => {
               data-tour="portal-tree"
               className="w-full flex-1 min-h-[68vh] lg:min-h-0 lg:h-full relative rounded-3xl flex flex-col overflow-hidden"
               style={{
-                background: isLight 
-                  ? 'linear-gradient(160deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 1) 100%)' 
-                  : 'linear-gradient(160deg, rgba(5, 8, 12, 0.95) 0%, rgba(3, 5, 8, 1) 100%)',
-                border: isLight ? '1px solid rgba(15, 23, 42, 0.08)' : '1px solid rgba(59, 130, 246, 0.1)',
-                boxShadow: isLight ? [
-                  '0 40px 100px rgba(15, 23, 42, 0.05)',
-                  '0 0 0 1px rgba(15, 23, 42, 0.03)',
-                  'inset 0 1px 1px rgba(255,255,255,0.8)',
-                ].join(', ') : [
+                background: 'linear-gradient(160deg, rgba(5, 8, 12, 0.95) 0%, rgba(3, 5, 8, 1) 100%)',
+                border: '1px solid rgba(59, 130, 246, 0.1)',
+                boxShadow: [
                   '0 40px 100px rgba(0,0,0,0.95)',
                   '0 0 0 1px rgba(59, 130, 246, 0.05)',
                   'inset 0 1px 1px rgba(255,255,255,0.02)',
@@ -394,10 +357,7 @@ export const WorkstationHome: React.FC = () => {
                 <div
                   className="absolute inset-0 rounded-3xl pointer-events-none opacity-20"
                   style={{
-                    backgroundImage: isLight ? `
-                      linear-gradient(rgba(15, 23, 42, 0.03) 1px, transparent 1px),
-                      linear-gradient(90deg, rgba(15, 23, 42, 0.03) 1px, transparent 1px)
-                    ` : `
+                    backgroundImage: `
                       linear-gradient(rgba(59, 130, 246, 0.07) 1px, transparent 1px),
                       linear-gradient(90deg, rgba(59, 130, 246, 0.07) 1px, transparent 1px)
                     `,

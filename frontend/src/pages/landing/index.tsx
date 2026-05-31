@@ -15,7 +15,6 @@ import { ForWhoSection } from './ForWhoSection';
 import { StatsSection } from './StatsSection';
 import { FinalCTA } from './FinalCTA';
 import { LandingFooter } from './LandingFooter';
-import { ThemeToggle } from '../../components/ThemeToggle';
 
 
 /**
@@ -53,7 +52,7 @@ export default function LandingPage() {
   }, []);
 
   return (
-    <div className="relative w-full overflow-x-hidden text-white transition-colors duration-200" style={{ background: 'var(--bg-void)', color: 'var(--text-main)', fontFamily: "'Inter', sans-serif" }}>
+    <div className="relative w-full [overflow-x:clip] text-white transition-colors duration-200" style={{ background: 'var(--bg-void)', color: 'var(--text-main)', fontFamily: "'Inter', sans-serif" }}>
       {/* Hero viewport */}
       <div className="relative min-h-[100svh] flex flex-col">
       <LandingVisuals />
@@ -85,7 +84,6 @@ export default function LandingPage() {
         </nav>
 
         <div className="flex items-center gap-2.5">
-          <ThemeToggle />
           {authed ? (
             <Link to={LANDING_ROUTES.workstation} className="text-sm font-bold px-5 py-2 rounded-xl transition-all" style={{ background: '#22D3EE', color: '#06121A' }}
               onMouseEnter={(e) => (e.currentTarget.style.background = '#38BDF8')} onMouseLeave={(e) => (e.currentTarget.style.background = '#22D3EE')}>
