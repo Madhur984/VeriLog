@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Activity, Moon, Sun, ArrowRight, ArrowLeft } from 'lucide-react';
 import { DrawerShell, HamburgerButton } from '../components/level1/_shared/MobileDrawer';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useColorScheme } from '../hooks/useColorScheme';
 
 // --- Scene Components ---
 import { S00_BreakingPoint } from '../components/level6/S00_BreakingPoint';
@@ -143,7 +144,8 @@ const Sidebar: React.FC<{
 export const ModuleSix: React.FC = () => {
   const { index } = useParams();
   const [current, setCurrent] = useState(index ? parseInt(index) : 0);
-  const [isDarkMode, setIsDarkMode] = useState(true);
+  const [scheme, toggleTheme] = useColorScheme();
+  const isDarkMode = scheme === 'dark';
   const [navOpen, setNavOpen] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
@@ -170,7 +172,7 @@ export const ModuleSix: React.FC = () => {
   const primary = '#00D4FF'; // BitforBytes Plasma Cyan
 
   return (
-    <div className={`flex h-screen overflow-hidden ${isDarkMode ? 'bg-matte-obsidian text-oscilloscope-trace' : 'bg-slate-50 text-slate-900'} relative`}>
+    <div className={`flex h-screen overflow-hidden ${isDarkMode ? 'bg-matte-obsidian text-oscilloscope-trace' : 'bg-bg-void text-text-main'} relative`}>
       {/* Global Engineering Aesthetics */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
          <div className="absolute inset-0 bg-dot-grid opacity-30" />
@@ -183,7 +185,7 @@ export const ModuleSix: React.FC = () => {
           current={current}
           isDarkMode={isDarkMode}
           onChange={(i) => { navigate(`/module/6/${i}`); setNavOpen(false); }}
-          toggleTheme={() => setIsDarkMode(!isDarkMode)}
+          toggleTheme={toggleTheme}
           primary={primary}
         />
       </DrawerShell>

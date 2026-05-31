@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ShieldAlert, Zap, CheckCircle2 } from 'lucide-react';
+import { useColorScheme } from '../../../hooks/useColorScheme';
 
 interface RadarAxis {
   label: string;
@@ -11,45 +12,30 @@ interface RadarAxis {
 const computeUserSkills = (masteredNodes: string[]) => {
   const masteredSet = new Set(masteredNodes.map(s => s.toLowerCase().trim()));
   
-  // Calculate dynamic score for each axis from 0 to 100
-  // Each axis has a baseline value (e.g. 15 or 20) and grows based on specific nodes mastered.
-  
-  // 1. Digital Foundations (Max 100)
-  // Nodes: digital-foundation, digital-logic, boolean-algebra, k-map-master, digital-design
   let digitalVal = 20;
   if (masteredSet.has('digital-foundation') || masteredSet.has('digital-logic') || masteredSet.has('digital-design')) digitalVal += 35;
   if (masteredSet.has('boolean-algebra')) digitalVal += 25;
   if (masteredSet.has('k-map-master') || masteredSet.has('k-map')) digitalVal += 20;
   
-  // 2. Verilog/SV
-  // Nodes: verilog-hdl, verilog, systemverilog
   let verilogVal = 20;
   if (masteredSet.has('verilog-hdl') || masteredSet.has('verilog')) verilogVal += 45;
   if (masteredSet.has('systemverilog') || masteredSet.has('sv-basics')) verilogVal += 35;
   
-  // 3. STA & Timing
-  // Nodes: timing-analysis, setup-hold, clock-domain-crossing
   let staVal = 10;
   if (masteredSet.has('timing-analysis') || masteredSet.has('sta-timing')) staVal += 40;
   if (masteredSet.has('setup-hold') || masteredSet.has('setup-hold-checks')) staVal += 25;
   if (masteredSet.has('clock-domain-crossing') || masteredSet.has('cdc')) staVal += 25;
   
-  // 4. Computer Arch
-  // Nodes: computer-architecture, cpu-architecture, gpu-architecture, risc-v
   let archVal = 20;
   if (masteredSet.has('computer-architecture') || masteredSet.has('cpu-architecture') || masteredSet.has('architecture-basics')) archVal += 30;
   if (masteredSet.has('gpu-architecture') || masteredSet.has('gpu-basics')) archVal += 25;
   if (masteredSet.has('risc-v') || masteredSet.has('riscv-core')) archVal += 25;
   
-  // 5. UVM/DV
-  // Nodes: uvm-basics, verification, systemverilog-assertions
   let uvmVal = 10;
   if (masteredSet.has('uvm-basics') || masteredSet.has('uvm-verification') || masteredSet.has('verification-methodology')) uvmVal += 40;
   if (masteredSet.has('verification') || masteredSet.has('dv-basics')) uvmVal += 30;
   if (masteredSet.has('systemverilog-assertions') || masteredSet.has('sva')) uvmVal += 20;
   
-  // 6. Scripting (Tcl/Py)
-  // Nodes: scripting-tcl, python-scripting, tcl-scripting, scripting-basics
   let scriptingVal = 20;
   if (masteredSet.has('scripting-tcl') || masteredSet.has('tcl-scripting')) scriptingVal += 40;
   if (masteredSet.has('python-scripting') || masteredSet.has('python')) scriptingVal += 40;
@@ -65,6 +51,8 @@ const computeUserSkills = (masteredNodes: string[]) => {
 };
 
 export const SkillGapRadar = () => {
+  const [scheme] = useColorScheme();
+  const isLight = scheme === 'light';
   const [activeCompany, setActiveCompany] = useState('nvidia');
   const [studyHours, setStudyHours] = useState(2);
   const [masteredNodes, setMasteredNodes] = useState<string[]>([]);
@@ -76,7 +64,6 @@ export const SkillGapRadar = () => {
         if (stored) {
           setMasteredNodes(JSON.parse(stored));
         } else {
-          // Default nodes for visual preview
           setMasteredNodes(['digital-foundation', 'verilog-hdl']);
         }
       } catch (e) {
@@ -84,12 +71,9 @@ export const SkillGapRadar = () => {
       }
     };
 
-    // Load initial
     handleStorageChange();
 
-    // Listen to local custom storage events if any
     window.addEventListener('storage', handleStorageChange);
-    // Custom event dispatch for same-tab updates if trigger is present
     window.addEventListener('bfb_nodes_updated', handleStorageChange);
     
     return () => {
@@ -142,31 +126,34 @@ export const SkillGapRadar = () => {
     };
   };
 
-  // Generate SVG paths
   const userPoints = currentPreset.axes.map((axis, i) => getCoordinates(i, axis.userValue));
   const reqPoints = currentPreset.axes.map((axis, i) => getCoordinates(i, axis.reqValue));
   
   const userPath = userPoints.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ') + ' Z';
   const reqPath = reqPoints.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ') + ' Z';
 
-  // Calculate Overall Match %
   const matchPercentage = Math.round(
     (currentPreset.axes.reduce((acc, axis) => acc + Math.min(axis.userValue / axis.reqValue, 1), 0) / totalAxes) * 100
   );
 
-  // Calculate total missing percentage points
   const totalGapPoints = currentPreset.axes.reduce((acc, axis) => acc + Math.max(0, axis.reqValue - axis.userValue), 0);
-  // Weekly rate mapping based on study hours (more hours = faster closing)
-  // Base rate of learning: 3 gap points closed per hour of study per week.
   const pointsPerWeek = studyHours * 3;
   const weeksToParity = totalGapPoints > 0 ? Math.ceil(totalGapPoints / pointsPerWeek) : 0;
 
+  // Theme-aware grid and spoke colors
+  const gridStroke = isLight ? 'rgba(15, 23, 42, 0.06)' : 'rgba(148,163,184,0.05)';
+  const spokeStroke = isLight ? 'rgba(15, 23, 42, 0.08)' : 'rgba(148,163,184,0.08)';
+
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-6xl mx-auto px-6 py-12 bg-[#07080A] text-white border border-white/5 rounded-xl">
+    <div className={`grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-6xl mx-auto px-6 py-12 border rounded-xl ${
+      isLight ? 'bg-bg-base text-text-main border-border-soft' : 'bg-[#07080A] text-white border-white/5'
+    }`}>
       {/* Left: Interactive Telemetry Matrix */}
-      <div className="bg-[#0D0F12] border border-white/5 rounded-xl p-6 flex flex-col items-center relative">
-        <div className="w-full flex justify-between items-center mb-6 border-b border-white/5 pb-4">
-          <span className="text-xs font-mono text-slate-500 tracking-wider">SKILL QUANTIZATION SPECTRUM</span>
+      <div className={`border rounded-xl p-6 flex flex-col items-center relative ${
+        isLight ? 'bg-bg-elev border-border-soft' : 'bg-[#0D0F12] border-white/5'
+      }`}>
+        <div className={`w-full flex justify-between items-center mb-6 border-b pb-4 ${isLight ? 'border-border-soft' : 'border-white/5'}`}>
+          <span className="text-xs font-mono text-text-dim tracking-wider">SKILL QUANTIZATION SPECTRUM</span>
           <div className="flex gap-2">
             {Object.keys(COMPANY_PRESETS).map((key) => (
               <button
@@ -175,7 +162,7 @@ export const SkillGapRadar = () => {
                 className={`px-3 py-1 text-xs font-mono rounded border transition-all ${
                   activeCompany === key 
                     ? 'border-[#22D3EE] bg-[#22D3EE]/10 text-[#22D3EE]' 
-                    : 'border-white/10 text-slate-400 hover:border-white/20'
+                    : `${isLight ? 'border-border-soft text-text-dim hover:border-ghost-trace' : 'border-white/10 text-slate-400 hover:border-white/20'}`
                 }`}
               >
                 {COMPANY_PRESETS[key].name}
@@ -190,13 +177,13 @@ export const SkillGapRadar = () => {
           {[25, 50, 75, 100].map((pct) => {
             const ringPoints = currentPreset.axes.map((_, i) => getCoordinates(i, pct));
             const ringPath = ringPoints.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ') + ' Z';
-            return <path key={pct} d={ringPath} fill="none" stroke="rgba(148,163,184,0.05)" strokeWidth="1" />;
+            return <path key={pct} d={ringPath} fill="none" stroke={gridStroke} strokeWidth="1" />;
           })}
 
           {/* Grid Spokes */}
           {currentPreset.axes.map((_, i) => {
             const edge = getCoordinates(i, 100);
-            return <line key={i} x1={center} y1={center} x2={edge.x} y2={edge.y} stroke="rgba(148,163,184,0.08)" strokeWidth="1" />;
+            return <line key={i} x1={center} y1={center} x2={edge.x} y2={edge.y} stroke={spokeStroke} strokeWidth="1" />;
           })}
 
           {/* Target Profile Boundary */}
@@ -219,8 +206,8 @@ export const SkillGapRadar = () => {
             animate={{ scale: 1, opacity: 1 }}
             transition={{ type: 'spring', damping: 15 }}
             d={userPath} 
-            fill="rgba(34,211,238,0.12)" 
-            stroke="#22D3EE" 
+            fill={isLight ? 'rgba(3,105,161,0.12)' : 'rgba(34,211,238,0.12)'}
+            stroke={isLight ? '#0369A1' : '#22D3EE'}
             strokeWidth="2" 
           />
 
@@ -237,7 +224,7 @@ export const SkillGapRadar = () => {
                 key={i} x={lx} y={ly}
                 textAnchor="middle" dominantBaseline="middle"
                 className="text-[10px] font-mono font-medium"
-                fill={isMet ? '#22D3EE' : '#F59E0B'}
+                fill={isMet ? (isLight ? '#0369A1' : '#22D3EE') : '#F59E0B'}
               >
                 {axis.label}
               </text>
@@ -245,8 +232,8 @@ export const SkillGapRadar = () => {
           })}
         </svg>
 
-        <div className="mt-6 flex gap-6 text-xs font-mono border-t border-white/5 pt-4 w-full justify-center">
-          <div className="flex items-center gap-2"><div className="w-2 h-2 bg-[#22D3EE] rounded-full" /> YOUR GRAPH</div>
+        <div className={`mt-6 flex gap-6 text-xs font-mono border-t pt-4 w-full justify-center ${isLight ? 'border-border-soft' : 'border-white/5'}`}>
+          <div className="flex items-center gap-2"><div className={`w-2 h-2 rounded-full ${isLight ? 'bg-signal-core' : 'bg-[#22D3EE]'}`} /> YOUR GRAPH</div>
           <div className="flex items-center gap-2"><div className="w-2 h-2 bg-[#F59E0B] rounded-full border border-dashed" /> REQUIRED</div>
         </div>
       </div>
@@ -256,7 +243,7 @@ export const SkillGapRadar = () => {
         <div>
           <div className="mb-6">
             <span className="text-[10px] font-mono tracking-[0.2em] text-[#F59E0B]">TARGET: {currentPreset.target.toUpperCase()}</span>
-            <h3 className="text-4xl font-bold font-mono text-white mt-1">{matchPercentage}% MATCH</h3>
+            <h3 className="text-4xl font-bold font-mono text-text-main mt-1">{matchPercentage}% MATCH</h3>
           </div>
 
           <div className="space-y-3">
@@ -264,15 +251,17 @@ export const SkillGapRadar = () => {
               const gap = axis.reqValue - axis.userValue;
               if (gap <= 0) {
                 return (
-                  <div key={axis.label} className="p-4 bg-[#0D0F12] border border-green-500/10 rounded-lg flex items-start gap-3">
-                    <CheckCircle2 className="text-[#22D3EE] shrink-0 mt-0.5" size={16} />
+                  <div key={axis.label} className={`p-4 border rounded-lg flex items-start gap-3 ${
+                    isLight ? 'bg-bg-elev border-green-500/15' : 'bg-[#0D0F12] border-green-500/10'
+                  }`}>
+                    <CheckCircle2 className={`shrink-0 mt-0.5 ${isLight ? 'text-signal-core' : 'text-[#22D3EE]'}`} size={16} />
                     <div className="w-full">
                       <div className="flex justify-between text-xs font-mono">
-                        <span className="text-white font-semibold">{axis.label}</span>
-                        <span className="text-[#22D3EE]">MET</span>
+                        <span className="text-text-main font-semibold">{axis.label}</span>
+                        <span className={isLight ? 'text-signal-core' : 'text-[#22D3EE]'}>MET</span>
                       </div>
-                      <div className="w-full bg-slate-800 h-1 mt-2 rounded-full overflow-hidden">
-                        <div className="bg-[#22D3EE] h-full" style={{ width: `${axis.userValue}%` }} />
+                      <div className={`w-full h-1 mt-2 rounded-full overflow-hidden ${isLight ? 'bg-ghost-trace' : 'bg-slate-800'}`}>
+                        <div className={`h-full ${isLight ? 'bg-signal-core' : 'bg-[#22D3EE]'}`} style={{ width: `${axis.userValue}%` }} />
                       </div>
                     </div>
                   </div>
@@ -280,15 +269,17 @@ export const SkillGapRadar = () => {
               }
 
               return (
-                <div key={axis.label} className="p-4 bg-[#0D0F12] border border-orange-500/10 rounded-lg flex items-start gap-3">
+                <div key={axis.label} className={`p-4 border rounded-lg flex items-start gap-3 ${
+                  isLight ? 'bg-bg-elev border-orange-500/15' : 'bg-[#0D0F12] border-orange-500/10'
+                }`}>
                   <ShieldAlert className="text-[#F59E0B] shrink-0 mt-0.5" size={16} />
                   <div className="w-full">
                     <div className="flex justify-between text-xs font-mono">
-                      <span className="text-white font-semibold">{axis.label}</span>
+                      <span className="text-text-main font-semibold">{axis.label}</span>
                       <span className="text-[#F59E0B]">GAP: -{gap}%</span>
                     </div>
-                    <div className="w-full bg-slate-800 h-1 mt-2 rounded-full overflow-hidden">
-                      <div className="bg-[#22D3EE] h-full" style={{ width: `${axis.userValue}%` }} />
+                    <div className={`w-full h-1 mt-2 rounded-full overflow-hidden ${isLight ? 'bg-ghost-trace' : 'bg-slate-800'}`}>
+                      <div className={`h-full ${isLight ? 'bg-signal-core' : 'bg-[#22D3EE]'}`} style={{ width: `${axis.userValue}%` }} />
                       <div className="bg-[#F59E0B] h-full" style={{ width: `${gap}%`, marginLeft: `${axis.userValue}%` }} />
                     </div>
                   </div>
@@ -298,23 +289,23 @@ export const SkillGapRadar = () => {
           </div>
         </div>
 
-        {/* Direct Adaptive Execution Estimator */}
-        <div className="bg-[#0D0F12] border border-white/5 rounded-xl p-5 mt-6">
-          <div className="flex justify-between items-center text-xs font-mono text-slate-400 mb-3">
+        {/* Adaptive Execution Estimator */}
+        <div className={`border rounded-xl p-5 mt-6 ${isLight ? 'bg-bg-elev border-border-soft' : 'bg-[#0D0F12] border-white/5'}`}>
+          <div className="flex justify-between items-center text-xs font-mono text-text-dim mb-3">
             <span>INTENSITY ADJUSTER</span>
-            <span className="text-[#22D3EE] font-bold">{studyHours} HRS/DAY</span>
+            <span className={`font-bold ${isLight ? 'text-signal-core' : 'text-[#22D3EE]'}`}>{studyHours} HRS/DAY</span>
           </div>
           <input
             type="range" min="1" max="5" value={studyHours}
             onChange={(e) => setStudyHours(Number(e.target.value))}
-            className="w-full accent-[#22D3EE] h-1 bg-slate-800 rounded-lg cursor-pointer"
+            className={`w-full h-1 rounded-lg cursor-pointer ${isLight ? 'accent-[#0369A1] bg-ghost-trace' : 'accent-[#22D3EE] bg-slate-800'}`}
           />
-          <div className="flex items-center gap-3 mt-4 text-xs font-mono text-slate-400">
-            <Zap size={14} className="text-[#22D3EE]" />
+          <div className="flex items-center gap-3 mt-4 text-xs font-mono text-text-dim">
+            <Zap size={14} className={isLight ? 'text-signal-core' : 'text-[#22D3EE]'} />
             {weeksToParity > 0 ? (
-              <span>Time to 100% Industry Parity: <strong className="text-white">{weeksToParity} Weeks</strong></span>
+              <span>Time to 100% Industry Parity: <strong className="text-text-main">{weeksToParity} Weeks</strong></span>
             ) : (
-              <span>All target metrics successfully met! <strong className="text-[#22D3EE]">Ready for Interview Subsystem.</strong></span>
+              <span>All target metrics successfully met! <strong className={isLight ? 'text-signal-core' : 'text-[#22D3EE]'}>Ready for Interview Subsystem.</strong></span>
             )}
           </div>
         </div>

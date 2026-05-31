@@ -12,6 +12,15 @@
  *  - The career roadmap honours a `?tab=` query param (see career-roadmap
  *    index). Bare `/career-roadmap` now lands on the Explore tab.
  */
+export const SOCIAL_LINKS = {
+  discord: 'https://discord.gg/mvKfBGmCc',
+  email: 'mailto:bitforbyte.in@gmail.com',
+  twitter: 'https://x.com/bitforbyte_',
+  instagram: 'https://www.instagram.com/bit_for_bytes',
+  reddit: 'https://www.reddit.com/u/Constant_Prize4232',
+  linkedin: 'https://www.linkedin.com/company/bitforbytes/',
+} as const;
+
 export const LANDING_ROUTES = {
   /** The real first module a newcomer should start with. */
   firstModule: '/module/1',
@@ -29,4 +38,7 @@ export const LANDING_ROUTES = {
   workstation: '/portal',
   /** Public source repository. */
   github: 'https://github.com/kriten370/VeriLog_k1',
+  /** Social media links object. */
+  social: SOCIAL_LINKS,
 } as const;
+

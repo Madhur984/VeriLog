@@ -11,6 +11,8 @@ import { loadChunk } from './utils/loadChunk';
 import { TourProvider } from './components/tour/TourProvider';
 import { TourOverlay } from './components/tour/TourOverlay';
 import { Mascot } from './components/mascot/Mascot';
+import { EasterEggManager } from './easter-eggs/EasterEggManager';
+
 
 // Layout (eager - tiny, wraps every portal route)
 import { PortalLayout } from './layouts/PortalLayout';
@@ -44,6 +46,8 @@ const QuestsPage = named(() => import('./pages/QuestsPage'), 'QuestsPage');
 const ActivityPage = named(() => import('./pages/ActivityPage'), 'ActivityPage');
 const CommunityPage = named(() => import('./pages/CommunityPage'), 'CommunityPage');
 const DebugMissionPage = named(() => import('./pages/DebugMissionPage'), 'DebugMissionPage');
+const SiliconSecrets = named(() => import('./pages/SiliconSecrets'), 'SiliconSecrets');
+
 const GatekeeperGame = named(() => import('./pages/GatekeeperGame'), 'GatekeeperGame');
 
 // Modules (the heaviest chunks - three.js / monaco / scene graphs live here)
@@ -138,6 +142,7 @@ function App() {
             <Route path="/community" element={<CommunityPage />} />
             <Route path="/debug-mission" element={<DebugMissionPage />} />
             <Route path="/gatekeeper-game" element={<GatekeeperGame />} />
+            <Route path="/eggs" element={<SiliconSecrets />} />
           </Route>
 
           {/* Fallback */}
@@ -146,6 +151,7 @@ function App() {
       </Suspense>
       <TourOverlay />
       <Mascot />
+      <EasterEggManager />
       </TourProvider>
       </AppErrorBoundary>
     </TransitionProvider>

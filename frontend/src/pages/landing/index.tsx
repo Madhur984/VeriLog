@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Menu, X, ChevronDown, ArrowUp } from 'lucide-react';
+import { FaDiscord } from 'react-icons/fa';
 import { LANDING_ROUTES } from './landingRoutes';
 import { LandingVisuals } from './LandingVisuals';
 import { ParallaxMockupContainer } from './ParallaxMockupContainer';
@@ -14,6 +15,8 @@ import { ForWhoSection } from './ForWhoSection';
 import { StatsSection } from './StatsSection';
 import { FinalCTA } from './FinalCTA';
 import { LandingFooter } from './LandingFooter';
+import { ThemeToggle } from '../../components/ThemeToggle';
+
 
 /**
  * Full-viewport product-forward landing with scrolling narrative.
@@ -35,7 +38,7 @@ const smoothScroll = (href: string) => {
   if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
 };
 
-const LandingPage = () => {
+export default function LandingPage() {
   const authed = useIsAuthenticated();
   const [menuOpen, setMenuOpen] = useState(false);
   const [showBackToTop, setShowBackToTop] = useState(false);
@@ -50,7 +53,7 @@ const LandingPage = () => {
   }, []);
 
   return (
-    <div className="relative w-full overflow-x-hidden text-white" style={{ background: '#05070E', fontFamily: "'Inter', sans-serif" }}>
+    <div className="relative w-full overflow-x-hidden text-white transition-colors duration-200" style={{ background: 'var(--bg-void)', color: 'var(--text-main)', fontFamily: "'Inter', sans-serif" }}>
       {/* Hero viewport */}
       <div className="relative min-h-[100svh] flex flex-col">
       <LandingVisuals />
@@ -82,6 +85,7 @@ const LandingPage = () => {
         </nav>
 
         <div className="flex items-center gap-2.5">
+          <ThemeToggle />
           {authed ? (
             <Link to={LANDING_ROUTES.workstation} className="text-sm font-bold px-5 py-2 rounded-xl transition-all" style={{ background: '#22D3EE', color: '#06121A' }}
               onMouseEnter={(e) => (e.currentTarget.style.background = '#38BDF8')} onMouseLeave={(e) => (e.currentTarget.style.background = '#22D3EE')}>
@@ -300,6 +304,30 @@ const LandingPage = () => {
       <FinalCTA />
       <LandingFooter />
 
+      {/* Floating Discord Link */}
+      <a
+        href={LANDING_ROUTES.social.discord}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed bottom-6 left-6 z-50 flex h-10 w-10 items-center justify-center rounded-full cursor-pointer shadow-lg transition-all duration-200"
+        style={{
+          background: '#5865F2',
+          border: '1px solid rgba(255,255,255,0.1)',
+          color: '#FFFFFF',
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = 'scale(1.1)';
+          e.currentTarget.style.boxShadow = '0 0 15px rgba(88,101,242,0.6)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = 'scale(1)';
+          e.currentTarget.style.boxShadow = 'none';
+        }}
+        aria-label="Join our Discord community"
+      >
+        <FaDiscord size={18} />
+      </a>
+
       {/* Back to top */}
       <AnimatePresence>
         {showBackToTop && (
@@ -319,7 +347,6 @@ const LandingPage = () => {
       </AnimatePresence>
     </div>
   );
-};
+}
 
-export default LandingPage;
 

@@ -10,19 +10,19 @@ export const TruthTable: React.FC = () => {
 
   return (
     <div className="glass-card p-6 flex flex-col h-full animate-in fade-in slide-in-from-right-8 duration-1000 delay-300">
-      <div className="flex items-center gap-2 mb-6 text-[#f97316]">
+      <div className="flex items-center gap-2 mb-6 text-accent-orange">
         <TableIcon size={20} />
-        <h3 className="text-xl font-bold text-white tracking-tight">Truth Table</h3>
+        <h3 className="text-xl font-bold text-text-main tracking-tight">Truth Table</h3>
       </div>
       
-      <div className="border border-white/5 rounded-xl overflow-hidden bg-black/30">
-        <div className="grid border-b border-white/10 bg-[#111111]" style={{ gridTemplateColumns: `repeat(${numVars}, 1fr) 80px` }}>
+      <div className="border border-border-soft rounded-xl overflow-hidden bg-bg-base/20">
+        <div className="grid border-b border-border-soft bg-bg-base" style={{ gridTemplateColumns: `repeat(${numVars}, 1fr) 80px` }}>
           {variables.map((v) => (
-            <div key={v} className="py-3 text-center text-xs font-bold text-[#f97316] uppercase tracking-widest border-r border-white/[0.05]">
+            <div key={v} className="py-3 text-center text-xs font-bold text-accent-orange uppercase tracking-widest border-r border-border-soft">
               {v}
             </div>
           ))}
-          <div className="py-3 text-center text-xs font-bold text-[#f97316] uppercase tracking-widest">
+          <div className="py-3 text-center text-xs font-bold text-accent-orange uppercase tracking-widest">
             F
           </div>
         </div>
@@ -35,15 +35,15 @@ export const TruthTable: React.FC = () => {
             return (
               <div 
                 key={i} 
-                className="grid border-b border-white/[0.05] hover:bg-[#1a1a1a] transition-colors" 
+                className="grid border-b border-border-soft hover:bg-hover-bg transition-colors" 
                 style={{ gridTemplateColumns: `repeat(${numVars}, 1fr) 80px` }}
               >
                 {binary.split('').map((bit, idx) => (
-                  <div key={idx} className="py-2.5 text-center font-mono text-sm text-gray-500 border-r border-white/[0.05]">
+                  <div key={idx} className="py-2.5 text-center font-mono text-sm text-text-dim border-r border-border-soft">
                     {bit}
                   </div>
                 ))}
-                <div className={`py-2.5 text-center font-mono font-bold text-sm ${val === 1 ? 'text-orange-400' : val === 'X' ? 'text-amber-400' : 'text-gray-700'}`}>
+                <div className={`py-2.5 text-center font-mono font-bold text-sm ${val === 1 ? 'text-accent-orange' : val === 'X' ? 'text-amber-500' : 'text-text-dim/40'}`}>
                   {val === 'X' ? '×' : val}
                 </div>
               </div>

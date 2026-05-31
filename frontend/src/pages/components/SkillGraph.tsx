@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import dagre from "dagre";
+import { useColorScheme } from "../../hooks/useColorScheme";
 import {
   CircuitBoard, Cpu, Wifi, Radio, Zap, Move3d, Shield, Eye, TrendingUp,
   Lock, Unlock, RefreshCw, Maximize2, Minimize2, Search,
@@ -68,6 +69,8 @@ interface SkillGraphProps {
 }
 
 export const SkillGraph: React.FC<SkillGraphProps> = ({ onNodeClick, unlockedNodes: _unlockedNodes = new Set(), onDragCount }) => {
+  const [scheme] = useColorScheme();
+  const isDarkMode = scheme === 'dark';
   const [nodes, setNodes] = useState<GraphNode[]>(() => {
     const saved = localStorage.getItem("bfb_skill_graph_positions_v2");
     const positions = saved ? JSON.parse(saved) : defaultPositions;
@@ -167,37 +170,37 @@ export const SkillGraph: React.FC<SkillGraphProps> = ({ onNodeClick, unlockedNod
   const edges = nodes.flatMap(n => n.prerequisites.map(p => ({ from: p, to: n.id })));
 
   return (
-    <div ref={containerRef} className={`w-full ${isFullscreen ? "fixed inset-0 z-[100] bg-[#050505]" : "h-[750px] bg-[#050505]/40 border border-[#1A1A25] rounded-[2rem] shadow-[0_0_40px_rgba(0,0,0,0.5)]"} overflow-hidden relative transition-all duration-700 font-ui`}>
+    <div ref={containerRef} className={`w-full ${isFullscreen ? "fixed inset-0 z-[100] bg-bg-void" : "h-[750px] bg-bg-base/40 border border-border-soft rounded-[2rem] shadow-[0_0_40px_rgba(0,0,0,0.15)]"} overflow-hidden relative transition-all duration-700 font-ui`}>
       {/* Neo-Brutalist HUD */}
       <div className="absolute top-8 right-8 z-50 flex flex-col gap-4">
-        <div className="flex gap-2 p-1.5 bg-[#0A0A0F]/80 backdrop-blur-xl rounded-2xl border border-white/5 shadow-2xl">
-          <button onClick={() => setPhysicsOn(!physicsOn)} className={`p-3 rounded-xl transition-all ${physicsOn ? "text-plasma-cyan shadow-cyan-glow bg-plasma-cyan/10" : "text-white/20 hover:text-white"}`} title="Bio-Luminescence Flow"><Activity size={18} /></button>
-          <button onClick={() => autoLayout("LR")} className="p-3 text-white/20 hover:text-plasma-cyan transition-all"><Layout size={18} /></button>
-          <button onClick={() => setEditMode(!editMode)} className={`p-3 rounded-xl transition-all ${editMode ? "bg-plasma-cyan text-black" : "text-white/20 hover:text-plasma-cyan"}`}>{editMode ? <Unlock size={18} /> : <Lock size={18} />}</button>
-          <button onClick={() => setNodes(defaultNodesRaw.map(n => ({ ...n, x: defaultPositions[n.id].x, y: defaultPositions[n.id].y })))} className="p-3 text-white/20 hover:text-white"><RefreshCw size={18} /></button>
-          <button onClick={toggleFullscreen} className="p-3 text-white/20 hover:text-white">{isFullscreen ? <Minimize2 size={18} /> : <Maximize2 size={18} />}</button>
+        <div className="flex gap-2 p-1.5 bg-bg-elev/80 backdrop-blur-xl rounded-2xl border border-border-soft shadow-2xl">
+          <button onClick={() => setPhysicsOn(!physicsOn)} className={`p-3 rounded-xl transition-all ${physicsOn ? "text-plasma-cyan shadow-cyan-glow bg-plasma-cyan/10" : "text-text-dim hover:text-text-main"}`} title="Bio-Luminescence Flow"><Activity size={18} /></button>
+          <button onClick={() => autoLayout("LR")} className="p-3 text-text-dim hover:text-plasma-cyan transition-all"><Layout size={18} /></button>
+          <button onClick={() => setEditMode(!editMode)} className={`p-3 rounded-xl transition-all ${editMode ? "bg-plasma-cyan text-black" : "text-text-dim hover:text-plasma-cyan"}`}>{editMode ? <Unlock size={18} /> : <Lock size={18} />}</button>
+          <button onClick={() => setNodes(defaultNodesRaw.map(n => ({ ...n, x: defaultPositions[n.id]?.x ?? defaultPositions[n.id].x, y: defaultPositions[n.id]?.y ?? defaultPositions[n.id].y })))} className="p-3 text-text-dim hover:text-text-main"><RefreshCw size={18} /></button>
+          <button onClick={toggleFullscreen} className="p-3 text-text-dim hover:text-text-main">{isFullscreen ? <Minimize2 size={18} /> : <Maximize2 size={18} />}</button>
         </div>
         
         {/* Real-time Diagnostics HUD */}
-        <div className="p-4 bg-[#0A0A0F]/80 backdrop-blur-xl border border-white/5 rounded-2xl shadow-2xl space-y-3">
+        <div className="p-4 bg-bg-elev/80 backdrop-blur-xl border border-border-soft rounded-2xl shadow-2xl space-y-3">
            <div className="text-[10px] font-black text-plasma-cyan uppercase tracking-[0.2em] mb-2 flex items-center gap-2">
               <Sparkles size={12} /> TRAJECTORY_PULSE
            </div>
            <div className="space-y-1">
-              <div className="flex justify-between text-[8px] font-mono text-white/40 uppercase"><span>Active Path</span> <span className="text-plasma-cyan">{activePath.upstream.size + activePath.downstream.size} Nodes</span></div>
-              <div className="flex justify-between text-[8px] font-mono text-white/40 uppercase"><span>System Load</span> <span className="text-green-400">0.04ms</span></div>
+              <div className="flex justify-between text-[8px] font-mono text-text-dim uppercase"><span>Active Path</span> <span className="text-plasma-cyan">{activePath.upstream.size + activePath.downstream.size} Nodes</span></div>
+              <div className="flex justify-between text-[8px] font-mono text-text-dim uppercase"><span>System Load</span> <span className="text-green-400">0.04ms</span></div>
            </div>
         </div>
       </div>
 
-      <div className="absolute top-8 left-8 z-50 flex items-center gap-4 bg-[#0A0A0F]/80 border border-white/5 rounded-2xl px-5 py-4 backdrop-blur-xl shadow-2xl group/search">
+      <div className="absolute top-8 left-8 z-50 flex items-center gap-4 bg-bg-elev/80 border border-border-soft rounded-2xl px-5 py-4 backdrop-blur-xl shadow-2xl group/search">
         <Search size={18} className="text-plasma-cyan group-focus-within/search:scale-125 transition-transform" />
         <input
           type="text"
           placeholder="IDENTIFY_SILICON_NODE..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="bg-transparent border-none text-[11px] font-mono text-white outline-none w-64 uppercase tracking-[0.3em] placeholder:opacity-20 decoration-none"
+          className="bg-transparent border-none text-[11px] font-mono text-text-main outline-none w-64 uppercase tracking-[0.3em] placeholder:opacity-20 decoration-none"
         />
       </div>
 
@@ -317,7 +320,7 @@ export const SkillGraph: React.FC<SkillGraphProps> = ({ onNodeClick, unlockedNod
                            {[...Array(5)].map((_, i) => (
                               <div 
                                 key={i} 
-                                className={`w-1 h-1 rounded-full ${i < (node.demandIntensity || 5)/2 ? '' : 'bg-white/5'}`} 
+                                className={`w-1 h-1 rounded-full ${i < (node.demandIntensity || 5)/2 ? '' : 'bg-bg-dim'}`} 
                                 style={{ backgroundColor: i < (node.demandIntensity || 5)/2 ? groupColors[node.group] : undefined }}
                               />
                            ))}
@@ -333,13 +336,13 @@ export const SkillGraph: React.FC<SkillGraphProps> = ({ onNodeClick, unlockedNod
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 120 }}
                             exit={{ opacity: 0, x: 20 }}
-                            className="absolute top-0 left-0 w-48 bg-[#0A0A0F]/95 border border-white/5 p-4 rounded-2xl shadow-3xl pointer-events-none z-[100] backdrop-blur-xl"
+                            className="absolute top-0 left-0 w-48 bg-bg-elev/95 border border-border-soft p-4 rounded-2xl shadow-3xl pointer-events-none z-[100] backdrop-blur-xl"
                           >
-                             <div className="text-[10px] font-black text-white mb-2 uppercase tracking-[0.1em]">{node.name}</div>
-                             <div className="h-0.5 w-full bg-white/5 mb-2" />
+                             <div className="text-[10px] font-black text-text-main mb-2 uppercase tracking-[0.1em]">{node.name}</div>
+                             <div className="h-0.5 w-full bg-border-soft mb-2" />
                              <div className="space-y-2">
-                                <div className="text-[8px] font-mono text-white/40 uppercase">Demand Scalar: <span className="text-plasma-cyan">{node.demandIntensity}/10</span></div>
-                                <div className="text-[8px] font-mono text-white/40 uppercase">Prerequisites: <span className="text-orange-400">{node.prerequisites.length || "ROOT"}</span></div>
+                                <div className="text-[8px] font-mono text-text-dim uppercase">Demand Scalar: <span className="text-plasma-cyan">{node.demandIntensity}/10</span></div>
+                                <div className="text-[8px] font-mono text-text-dim uppercase">Prerequisites: <span className="text-orange-400">{node.prerequisites.length || "ROOT"}</span></div>
                                 <div className="text-[7px] text-grid-line italic leading-tight mt-2">[ CLICK_TO_INIT_INDUSTRIAL_PROBE ]</div>
                              </div>
                           </motion.div>
@@ -351,9 +354,9 @@ export const SkillGraph: React.FC<SkillGraphProps> = ({ onNodeClick, unlockedNod
               </div>
             </TransformComponent>
 
-            {/* Tactical Minimap */}
+             {/* Tactical Minimap */}
             {showMinimap && (
-              <div className="absolute bottom-8 right-8 z-50 w-72 h-44 bg-[#0A0A0F]/80 border border-white/5 rounded-[1.5rem] overflow-hidden backdrop-blur-3xl shadow-3xl group/minimap">
+              <div className="absolute bottom-8 right-8 z-50 w-72 h-44 bg-bg-elev/80 border border-border-soft rounded-[1.5rem] overflow-hidden backdrop-blur-3xl shadow-3xl group/minimap">
                 <div className="w-full h-full relative cursor-crosshair">
                    <svg width="100%" height="100%" viewBox="0 0 4000 3000" preserveAspectRatio="none">
                       {edges.map((e, i) => {
@@ -364,17 +367,17 @@ export const SkillGraph: React.FC<SkillGraphProps> = ({ onNodeClick, unlockedNod
                       {nodes.map(n => <circle key={n.id} cx={n.x} cy={n.y} r={hoveredId === n.id ? 80 : 40} fill={groupColors[n.group]} className="transition-all" />)}
                    </svg>
                    <div className="absolute inset-0 bg-transparent hover:bg-white/5 transition-all" />
-                   <div className="absolute top-3 left-4 text-[7px] font-black text-white/20 uppercase tracking-widest pointer-events-none">MINIMAP_RADAR</div>
+                   <div className="absolute top-3 left-4 text-[7px] font-black text-text-dim/40 uppercase tracking-widest pointer-events-none">MINIMAP_RADAR</div>
                 </div>
               </div>
             )}
             
             {/* View HUD */}
-            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-10 text-[9px] font-mono text-white/20 bg-[#0A0A0F]/60 px-10 py-3 rounded-full border border-white/5 backdrop-blur-xl z-50">
-               <div className="flex items-center gap-2">ZOOM: <span className="text-white font-black">{(state.scale * 100).toFixed(0)}%</span></div>
-               <div className="h-3 w-px bg-white/5" />
+            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-10 text-[9px] font-mono text-text-dim/60 bg-bg-elev/60 px-10 py-3 rounded-full border border-border-soft backdrop-blur-xl z-50">
+               <div className="flex items-center gap-2">ZOOM: <span className="text-text-main font-black">{(state.scale * 100).toFixed(0)}%</span></div>
+               <div className="h-3 w-px bg-border-soft" />
                <div className="flex items-center gap-2">ENGINE: <span className="text-plasma-cyan font-black">HYBRID_V4.2</span></div>
-               <div className="h-3 w-px bg-white/5" />
+               <div className="h-3 w-px bg-border-soft" />
                <div className="flex items-center gap-2">STATUS: <span className="text-green-400 font-black">STABLE</span></div>
             </div>
           </>

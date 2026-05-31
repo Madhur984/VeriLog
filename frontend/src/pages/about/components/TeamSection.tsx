@@ -44,8 +44,8 @@ export const TeamSection = () => {
   return (
     <section className="max-w-6xl mx-auto px-6 py-20">
       <div className="mb-16">
-        <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">The Core Team</h2>
-        <p className="text-slate-400">Four engineers from different branches. One shared mission.</p>
+        <h2 className="text-3xl md:text-5xl font-bold text-text-main mb-4">The Core Team</h2>
+        <p className="text-text-sub">Four engineers from different branches. One shared mission.</p>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -58,7 +58,7 @@ export const TeamSection = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className="pcb-trace-card p-8 bg-[#0D0F12] border border-white/5"
+              className="pcb-trace-card p-8 bg-bg-elev border border-border-soft"
             >
               <div 
                 className="absolute left-0 top-0 bottom-0 w-1 rounded-l-xl z-10" 
@@ -69,14 +69,14 @@ export const TeamSection = () => {
                   <Icon style={{ color: member.color }} size={24} />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-white">{member.name}</h3>
-                  <p className="text-xs font-mono text-slate-500 mt-1">{member.role} // {member.branch}</p>
+                  <h3 className="text-xl font-bold text-text-main">{member.name}</h3>
+                  <p className="text-xs font-mono text-text-dim mt-1">{member.role} // {member.branch}</p>
                 </div>
               </div>
-              <p className="text-slate-400 text-sm leading-relaxed mb-6">
+              <p className="text-text-sub text-sm leading-relaxed mb-6">
                 {member.detail}
               </p>
-              <blockquote className="text-sm italic text-slate-500 border-t border-white/5 pt-4">
+              <blockquote className="text-sm italic text-text-dim border-t border-border-soft pt-4">
                 "{member.quote}"
               </blockquote>
             </motion.div>

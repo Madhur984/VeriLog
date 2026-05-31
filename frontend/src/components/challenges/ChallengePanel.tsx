@@ -52,6 +52,8 @@ export const ChallengePanel = memo(({ challenge, onSubmit, onBack }: ChallengePa
             flexDirection: 'column',
             fontFamily: "'IBM Plex Mono', monospace",
             fontSize: 11,
+            backgroundColor: 'var(--bg-void)',
+            color: 'var(--text-main)',
         }}>
             {/* Header */}
             <div style={{
@@ -61,10 +63,11 @@ export const ChallengePanel = memo(({ challenge, onSubmit, onBack }: ChallengePa
                 gap: 8,
                 padding: '8px 12px',
                 minHeight: 44,
-                borderBottom: '1px solid rgba(0, 212, 255, 0.06)',
+                borderBottom: '1px solid var(--border-soft)',
+                backgroundColor: 'var(--bg-elev)',
             }}>
                 <button onClick={onBack} style={backBtnStyle}>← Back</button>
-                <h3 style={{ margin: 0, color: '#e6edf3', fontSize: 13, fontWeight: 700, flex: 1 }}>
+                <h3 style={{ margin: 0, color: 'var(--text-main)', fontSize: 13, fontWeight: 700, flex: 1 }}>
                     {challenge.title}
                 </h3>
                 <span style={{
@@ -81,7 +84,7 @@ export const ChallengePanel = memo(({ challenge, onSubmit, onBack }: ChallengePa
                 <span style={{ color: '#F59E0B', fontSize: 10 }}>
                     ⏱ {formatTime(elapsed)}
                 </span>
-                <span style={{ color: 'rgba(255,255,255,0.2)', fontSize: 9 }}>
+                <span style={{ color: 'var(--text-dim)', fontSize: 9 }}>
                     💎 {challenge.xpReward} XP
                 </span>
             </div>
@@ -90,17 +93,18 @@ export const ChallengePanel = memo(({ challenge, onSubmit, onBack }: ChallengePa
             <div className="flex flex-col lg:flex-row" style={{ flex: 1, overflow: 'auto' }}>
                 {/* Problem Panel */}
                 <div className="lg:w-1/2 overflow-y-auto" style={{
-                    borderRight: '1px solid rgba(0, 212, 255, 0.06)',
+                    borderRight: '1px solid var(--border-soft)',
                     padding: 16,
                     display: 'flex',
                     flexDirection: 'column',
                     gap: 12,
-                    borderBottom: '1px solid rgba(0, 212, 255, 0.06)',
+                    borderBottom: '1px solid var(--border-soft)',
+                    backgroundColor: 'var(--bg-elev)',
                 }}>
                     {/* Description */}
                     <div>
                         <SectionTitle>Description</SectionTitle>
-                        <p style={{ color: 'rgba(255,255,255,0.5)', lineHeight: 1.7, margin: 0 }}>
+                        <p style={{ color: 'var(--text-sub)', lineHeight: 1.7, margin: 0 }}>
                             {challenge.description}
                         </p>
                     </div>
@@ -142,7 +146,7 @@ export const ChallengePanel = memo(({ challenge, onSubmit, onBack }: ChallengePa
                     {challenge.constraints.length > 0 && (
                         <div>
                             <SectionTitle>Constraints</SectionTitle>
-                            <ul style={{ margin: 0, paddingLeft: 16, color: 'rgba(255,255,255,0.4)', fontSize: 10, lineHeight: 1.8 }}>
+                            <ul style={{ margin: 0, paddingLeft: 16, color: 'var(--text-dim)', fontSize: 10, lineHeight: 1.8 }}>
                                 {challenge.constraints.map((c, i) => <li key={i}>{c}</li>)}
                                 {challenge.gateLimit > 0 && <li>Maximum gates: {challenge.gateLimit}</li>}
                                 {challenge.timeLimit > 0 && <li>Time limit: {formatTime(challenge.timeLimit)}</li>}
@@ -161,10 +165,10 @@ export const ChallengePanel = memo(({ challenge, onSubmit, onBack }: ChallengePa
                         {Array.from({ length: hintIndex + 1 }, (_, i) => (
                             <div key={i} style={{
                                 padding: '6px 8px',
-                                background: 'rgba(245, 158, 11, 0.04)',
-                                border: '1px solid rgba(245, 158, 11, 0.1)',
+                                background: 'rgba(245, 158, 11, 0.06)',
+                                border: '1px solid rgba(245, 158, 11, 0.15)',
                                 borderRadius: 4,
-                                color: 'rgba(255,255,255,0.5)',
+                                color: 'var(--text-sub)',
                                 fontSize: 10,
                                 marginTop: 4,
                             }}>
@@ -174,7 +178,7 @@ export const ChallengePanel = memo(({ challenge, onSubmit, onBack }: ChallengePa
                     </div>
 
                     {/* Stats */}
-                    <div style={{ color: 'rgba(255,255,255,0.15)', fontSize: 9, marginTop: 8 }}>
+                    <div style={{ color: 'var(--text-dim)', fontSize: 9, marginTop: 8 }}>
                         Solved by {challenge.solvedCount} users · {Math.round(challenge.acceptanceRate * 100)}% acceptance
                     </div>
                 </div>
@@ -185,6 +189,7 @@ export const ChallengePanel = memo(({ challenge, onSubmit, onBack }: ChallengePa
                     flexDirection: 'column',
                     overflow: 'hidden',
                     minHeight: 200,
+                    backgroundColor: 'var(--bg-void)',
                 }}>
                     {/* Workspace placeholder */}
                     <div style={{
@@ -192,8 +197,9 @@ export const ChallengePanel = memo(({ challenge, onSubmit, onBack }: ChallengePa
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        color: 'rgba(255,255,255,0.08)',
+                        color: 'var(--text-dim)',
                         fontSize: 13,
+                        opacity: 0.7,
                     }}>
                         Circuit workspace will be connected here
                     </div>
@@ -201,11 +207,12 @@ export const ChallengePanel = memo(({ challenge, onSubmit, onBack }: ChallengePa
                     {/* Submit Bar */}
                     <div style={{
                         padding: '8px 12px',
-                        borderTop: '1px solid rgba(0, 212, 255, 0.06)',
+                        borderTop: '1px solid var(--border-soft)',
                         display: 'flex',
                         flexWrap: 'wrap',
                         gap: 8,
                         alignItems: 'center',
+                        backgroundColor: 'var(--bg-elev)',
                     }}>
                         <button onClick={handleSubmit} style={submitBtnStyle}>
                             🚀 Submit Solution
@@ -257,7 +264,7 @@ const TruthTableView = memo(({ inputs, outputs, rows, failedRows }: {
                     const isFailed = failedSet.has(JSON.stringify(row.inputs));
                     return (
                         <tr key={i} style={{
-                            background: isFailed ? 'rgba(239, 68, 68, 0.06)' : 'transparent',
+                            background: isFailed ? 'rgba(239, 68, 68, 0.08)' : 'transparent',
                         }}>
                             {inputs.map(s => (
                                 <td key={s} style={tdStyle}>{row.inputs[s] ? '1' : '0'}</td>
@@ -297,7 +304,7 @@ const ResultBadge = memo(({ result }: { result: ChallengeResult }) => (
         <span style={{ color: result.passed ? '#10B981' : '#EF4444', fontWeight: 600, fontSize: 11 }}>
             {result.passed ? 'ACCEPTED' : 'WRONG ANSWER'}
         </span>
-        <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: 9 }}>
+        <span style={{ color: 'var(--text-dim)', fontSize: 9 }}>
             {result.passedRows}/{result.totalRows} rows
         </span>
         {result.passed && (
@@ -321,7 +328,7 @@ ResultBadge.displayName = 'ResultBadge';
 
 const SectionTitle = memo(({ children }: { children: React.ReactNode }) => (
     <div style={{
-        color: 'rgba(0, 212, 255, 0.4)',
+        color: 'var(--accent-orange)',
         fontSize: 9,
         letterSpacing: '0.08em',
         textTransform: 'uppercase',
@@ -329,6 +336,7 @@ const SectionTitle = memo(({ children }: { children: React.ReactNode }) => (
         display: 'flex',
         alignItems: 'center',
         gap: 8,
+        fontWeight: 700,
     }}>
         {children}
     </div>
@@ -364,10 +372,10 @@ function formatTime(seconds: number): string {
 
 const backBtnStyle: React.CSSProperties = {
     background: 'none',
-    border: '1px solid rgba(255,255,255,0.08)',
-    color: 'rgba(255,255,255,0.3)',
+    border: '1px solid var(--border-soft)',
+    color: 'var(--text-dim)',
     fontSize: 10,
-    padding: '3px 8px',
+    padding: '3.5px 8px',
     borderRadius: 3,
     cursor: 'pointer',
     fontFamily: "'IBM Plex Mono', monospace",
@@ -391,7 +399,7 @@ const hintBtnStyle: React.CSSProperties = {
     border: '1px solid rgba(245, 158, 11, 0.15)',
     color: '#F59E0B',
     fontSize: 8,
-    padding: '1px 6px',
+    padding: '1.5px 6px',
     borderRadius: 2,
     cursor: 'pointer',
     fontFamily: "'IBM Plex Mono', monospace",
@@ -405,7 +413,7 @@ function thStyle(color: string): React.CSSProperties {
         fontSize: 9,
         fontWeight: 700,
         textAlign: 'center',
-        borderBottom: '1px solid rgba(255,255,255,0.06)',
+        borderBottom: '1px solid var(--border-soft)',
         letterSpacing: '0.05em',
     };
 }
@@ -413,6 +421,6 @@ function thStyle(color: string): React.CSSProperties {
 const tdStyle: React.CSSProperties = {
     padding: '3px 8px',
     textAlign: 'center',
-    color: 'rgba(255,255,255,0.4)',
-    borderBottom: '1px solid rgba(255,255,255,0.02)',
+    color: 'var(--text-sub)',
+    borderBottom: '1px solid var(--border-soft)',
 };

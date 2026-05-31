@@ -64,15 +64,14 @@ export const FounderStory: React.FC = () => {
   const { ref, isInView } = useSectionReveal(0.1);
 
   return (
-    <SectionWrapper id="founder-story" className="bg-[#07080A]">
+    <SectionWrapper id="founder-story" className="bg-bg-void">
       <div ref={ref} className="max-w-2xl mx-auto space-y-12">
         {/* Section label */}
         <motion.span
           initial={{ opacity: 0 }}
           animate={isInView ? { opacity: 1 } : {}}
           transition={{ duration: 0.5, ease }}
-          className="block text-center text-[10px] font-mono tracking-[0.2em] mb-10"
-          style={{ color: '#475569' }}
+          className="block text-center text-[10px] font-mono tracking-[0.2em] mb-10 text-text-dim"
         >
           THE STORY
         </motion.span>
@@ -87,8 +86,8 @@ export const FounderStory: React.FC = () => {
           <div
             className="inline-block"
             style={{
-              borderTop: '2px solid #22D3EE',
-              borderBottom: '2px solid #22D3EE',
+              borderTop: '2px solid var(--signal-core)',
+              borderBottom: '2px solid var(--signal-core)',
               padding: '16px 0',
             }}
           >
@@ -96,7 +95,7 @@ export const FounderStory: React.FC = () => {
               className="font-bold text-center"
               style={{
                 fontSize: 'clamp(22px, 3.5vw, 32px)',
-                color: '#F1F5F9',
+                color: 'var(--text-main)',
                 lineHeight: 1.3,
                 maxWidth: '520px',
               }}
@@ -115,8 +114,7 @@ export const FounderStory: React.FC = () => {
               initial={{ opacity: 0, y: 16 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.18 + i * 0.09, ease }}
-              className="text-base leading-[1.85] whitespace-pre-line"
-              style={{ color: '#94A3B8' }}
+              className="text-base leading-[1.85] whitespace-pre-line text-text-sub"
             >
               {para.text}
             </motion.p>
@@ -128,16 +126,12 @@ export const FounderStory: React.FC = () => {
           initial={{ opacity: 0 }}
           animate={isInView ? { opacity: 1 } : {}}
           transition={{ duration: 0.5, delay: 0.8, ease }}
-          className="mt-12 pt-8"
-          style={{ borderTop: '1px solid rgba(148,163,184,0.08)' }}
+          className="mt-12 pt-8 border-t border-border-soft"
         >
-          <div
-            className="text-sm font-mono space-y-1"
-            style={{ color: '#475569' }}
-          >
-            <div style={{ color: '#F1F5F9', fontWeight: 600 }}>- KRITEN</div>
+          <div className="text-sm font-mono space-y-1 text-text-dim">
+            <div className="text-text-main font-semibold">- KRITEN</div>
             <div>Founder, AXE‑OR</div>
-            <div className="text-xs italic" style={{ color: '#475569' }}>
+            <div className="text-xs italic text-text-dim">
               Building what I needed and couldn't find.
             </div>
           </div>

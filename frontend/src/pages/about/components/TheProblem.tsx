@@ -63,16 +63,16 @@ import { TerminalTextReveal } from '../../../components/TerminalTextReveal';
 
 export const TheProblem: React.FC = () => {
   return (
-    <SectionWrapper id="the-problem" className="bg-[#07080A] border-y border-white/[0.03]">
+    <SectionWrapper id="the-problem" className="bg-bg-void border-y border-border-soft">
       <div className="max-w-7xl mx-auto space-y-12">
         {/* Section Header */}
         <div className="space-y-4">
-          <span className="font-mono text-[10px] text-slate-500 uppercase tracking-widest block">
+          <span className="font-mono text-[10px] text-text-dim uppercase tracking-widest block">
             THE GAP
           </span>
-          <h2 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight uppercase leading-[1.1] max-w-3xl">
+          <h2 className="text-4xl md:text-5xl font-extrabold text-text-main tracking-tight uppercase leading-[1.1] max-w-3xl">
             <TerminalTextReveal text="1.5 million ECE graduates." />{' '}
-            <span className="text-cyan-400">
+            <span className="text-signal-core">
               <TerminalTextReveal text="< 8% in core roles." delay={300} />
             </span>
           </h2>
@@ -89,16 +89,16 @@ export const TheProblem: React.FC = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: idx * 0.1 }}
-                className="bg-[#0D0F12] border border-white/[0.08] rounded-xl p-6 flex flex-col justify-between min-h-[160px] hover:border-slate-600 hover:bg-[#131619] transition-all duration-200"
+                className="bg-bg-elev border border-border-soft rounded-xl p-6 flex flex-col justify-between min-h-[160px] hover:border-text-dim hover:bg-bg-base transition-all duration-200"
               >
                 <div className="font-mono text-3xl md:text-4xl font-bold">
                   <StatCounter value={stat.value} color={stat.color} />
                 </div>
                 <div className="space-y-2 mt-4">
-                  <div className="text-xs font-semibold text-white leading-snug">
+                  <div className="text-xs font-semibold text-text-main leading-snug">
                     {stat.label}
                   </div>
-                  <div className="text-[11px] text-slate-500 italic leading-snug">
+                  <div className="text-[11px] text-text-dim italic leading-snug">
                     {stat.context}
                   </div>
                 </div>
@@ -108,7 +108,7 @@ export const TheProblem: React.FC = () => {
 
           {/* Right Column - Honest List */}
           <div className="space-y-6">
-            <h3 className="text-lg font-bold text-white font-sans">
+            <h3 className="text-lg font-bold text-text-main font-sans">
               What nobody tells ECE students
             </h3>
 
@@ -120,9 +120,9 @@ export const TheProblem: React.FC = () => {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: idx * 0.08 }}
-                  className="pl-4 py-3 border-l-2 border-amber-400 bg-amber-400/[0.02] hover:bg-amber-400/[0.05] transition-colors rounded-r-lg"
+                  className="pl-4 py-3 border-l-2 border-accent-orange bg-accent-orange/[0.02] hover:bg-accent-orange/[0.05] transition-colors rounded-r-lg"
                 >
-                  <p className="text-slate-400 text-xs md:text-sm leading-relaxed font-sans">
+                  <p className="text-text-sub text-xs md:text-sm leading-relaxed font-sans">
                     {item}
                   </p>
                 </motion.div>

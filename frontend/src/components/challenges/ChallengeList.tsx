@@ -37,28 +37,30 @@ export const ChallengeList = memo(({ completedIds, onSelect }: ChallengeListProp
             flexDirection: 'column',
             fontFamily: "'IBM Plex Mono', monospace",
             fontSize: 11,
+            backgroundColor: 'var(--bg-void)',
+            color: 'var(--text-main)',
         }}>
             {/* Header */}
             <div style={{
                 padding: '12px 16px',
-                borderBottom: '1px solid rgba(0, 212, 255, 0.06)',
+                borderBottom: '1px solid var(--border-soft)',
                 display: 'flex',
                 alignItems: 'center',
                 gap: 12,
                 flexWrap: 'wrap',
             }}>
-                <h2 style={{ margin: 0, color: '#00D4FF', fontSize: 14, fontWeight: 700 }}>
+                <h2 style={{ margin: 0, color: 'var(--accent-orange)', fontSize: 14, fontWeight: 700 }}>
                     ⚡ Hardware LeetCode
                 </h2>
                 <span style={{ flex: 1 }} />
-                <span style={{ color: 'rgba(255,255,255,0.25)', fontSize: 10 }}>
+                <span style={{ color: 'var(--text-dim)', fontSize: 10 }}>
                     {totalSolved}/{totalChallenges} solved
                 </span>
                 {/* Progress bar */}
                 <div style={{
                     width: 80,
                     height: 4,
-                    background: 'rgba(255,255,255,0.05)',
+                    background: 'var(--border-soft)',
                     borderRadius: 2,
                     overflow: 'hidden',
                 }}>
@@ -77,7 +79,7 @@ export const ChallengeList = memo(({ completedIds, onSelect }: ChallengeListProp
                 display: 'flex',
                 gap: 2,
                 padding: '6px 16px',
-                borderBottom: '1px solid rgba(0, 212, 255, 0.04)',
+                borderBottom: '1px solid var(--border-soft)',
                 overflowX: 'auto',
                 WebkitOverflowScrolling: 'touch',
             }}>
@@ -86,9 +88,9 @@ export const ChallengeList = memo(({ completedIds, onSelect }: ChallengeListProp
                         key={tab.key}
                         onClick={() => setActiveDiff(tab.key)}
                         style={{
-                            background: activeDiff === tab.key ? `${tab.color}10` : 'transparent',
-                            border: `1px solid ${activeDiff === tab.key ? `${tab.color}25` : 'transparent'}`,
-                            color: activeDiff === tab.key ? tab.color : 'rgba(255,255,255,0.3)',
+                            background: activeDiff === tab.key ? `${tab.color}15` : 'transparent',
+                            border: `1px solid ${activeDiff === tab.key ? `${tab.color}30` : 'transparent'}`,
+                            color: activeDiff === tab.key ? tab.color : 'var(--text-dim)',
                             fontSize: 10,
                             padding: '6px 10px',
                             minHeight: 40,
@@ -124,8 +126,8 @@ export const ChallengeList = memo(({ completedIds, onSelect }: ChallengeListProp
                             key={challenge.id}
                             onClick={() => onSelect(challenge)}
                             style={{
-                                background: solved ? 'rgba(16, 185, 129, 0.04)' : 'rgba(255,255,255,0.02)',
-                                border: `1px solid ${solved ? 'rgba(16, 185, 129, 0.12)' : 'rgba(0, 212, 255, 0.06)'}`,
+                                background: solved ? 'rgba(16, 185, 129, 0.06)' : 'var(--bg-elev)',
+                                border: `1px solid ${solved ? 'rgba(16, 185, 129, 0.2)' : 'var(--border-soft)'}`,
                                 borderRadius: 6,
                                 padding: '12px 14px',
                                 minHeight: 64,
@@ -141,7 +143,7 @@ export const ChallengeList = memo(({ completedIds, onSelect }: ChallengeListProp
                             {/* Title row */}
                             <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                                 <span style={{ fontSize: 12 }}>{solved ? '✅' : '⬜'}</span>
-                                <span style={{ color: '#e6edf3', fontWeight: 600, fontSize: 12, flex: 1 }}>
+                                <span style={{ color: 'var(--text-main)', fontWeight: 600, fontSize: 12, flex: 1 }}>
                                     {challenge.title}
                                 </span>
                                 <span style={{
@@ -159,7 +161,7 @@ export const ChallengeList = memo(({ completedIds, onSelect }: ChallengeListProp
 
                             {/* Category + XP */}
                             <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                                <span style={{ color: 'rgba(255,255,255,0.2)', fontSize: 9, textTransform: 'capitalize' }}>
+                                <span style={{ color: 'var(--text-sub)', fontSize: 9, textTransform: 'capitalize' }}>
                                     {challenge.category.replace('_', ' ')}
                                 </span>
                                 <span style={{ flex: 1 }} />
@@ -167,7 +169,7 @@ export const ChallengeList = memo(({ completedIds, onSelect }: ChallengeListProp
                             </div>
 
                             {/* Stats */}
-                            <div style={{ color: 'rgba(255,255,255,0.12)', fontSize: 8 }}>
+                            <div style={{ color: 'var(--text-dim)', fontSize: 8 }}>
                                 {challenge.solvedCount} solved · {Math.round(challenge.acceptanceRate * 100)}% acceptance
                             </div>
                         </button>

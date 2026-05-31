@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Activity, Moon, Sun, ArrowRight, ArrowLeft } from 'lucide-react';
 import { DrawerShell, HamburgerButton } from '../components/level1/_shared/MobileDrawer';
 import { useNavigate } from 'react-router-dom';
+import { useColorScheme } from '../hooks/useColorScheme';
 
 // --- Scene Components ---
 import { GateIntro, GateDetail } from '../components/level4/GateTheory';
@@ -143,7 +144,8 @@ const Sidebar: React.FC<{
 
 export const ModuleThree: React.FC = () => {
   const [current, setCurrent] = useState(0);
-  const [isDarkMode, setIsDarkMode] = useState(true);
+  const [scheme, toggleTheme] = useColorScheme();
+  const isDarkMode = scheme === 'dark';
   const [navOpen, setNavOpen] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
 
@@ -188,7 +190,7 @@ export const ModuleThree: React.FC = () => {
       )}
 
       <DrawerShell open={navOpen} onClose={() => setNavOpen(false)}>
-        <Sidebar current={current} isDarkMode={isDarkMode} onChange={(i) => { setCurrent(i); setNavOpen(false); }} toggleTheme={() => setIsDarkMode(!isDarkMode)} theme={theme} />
+        <Sidebar current={current} isDarkMode={isDarkMode} onChange={(i) => { setCurrent(i); setNavOpen(false); }} toggleTheme={toggleTheme} theme={theme} />
       </DrawerShell>
 
       <div className="flex-1 flex flex-col h-full overflow-hidden relative z-10">

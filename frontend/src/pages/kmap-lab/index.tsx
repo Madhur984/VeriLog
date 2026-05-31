@@ -16,13 +16,13 @@ import './kmap-lab.css';
 export const KMapLab: React.FC = () => {
   return (
     <main
-      className="kmap-lab-root min-h-[100svh] text-slate-50 relative overflow-x-hidden"
-      style={{ background: 'radial-gradient(circle at 20% 20%, #0a0a0a, #000000 70%)' }}
+      className="kmap-lab-root min-h-[100svh] text-text-main relative overflow-x-hidden"
+      style={{ background: 'radial-gradient(circle at 20% 20%, var(--kmap-bg-start), var(--kmap-bg-end) 70%)' }}
     >
       <div className="max-w-[1200px] mx-auto px-4 py-6 lg:px-6 lg:py-12 flex flex-col gap-6 lg:gap-10">
         <Header />
         <VariableSelector />
-
+ 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
           <div className="lg:col-span-8 flex justify-center">
             <KMapGrid />
@@ -31,17 +31,17 @@ export const KMapLab: React.FC = () => {
             <TruthTable />
           </div>
         </div>
-
+ 
         <BooleanInput />
-
+ 
         <div className="flex flex-col gap-10">
           <ResultPanel />
           <CircuitRenderer />
         </div>
-
+ 
         <QuickActions />
-
-        <footer className="mt-16 py-10 border-t border-white/5 text-center text-sm text-gray-500 font-medium">
+ 
+        <footer className="mt-16 py-10 border-t border-border-soft text-center text-sm text-text-dim font-medium">
           &copy; {new Date().getFullYear()} K-Map Lab &bull; Digital Logic Synthesis
         </footer>
       </div>

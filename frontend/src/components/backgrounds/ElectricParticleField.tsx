@@ -72,13 +72,19 @@ export const ElectricParticleField: React.FC = () => {
         const animate = () => {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+            // Fetch theme colors dynamically from CSS variables
+            const style = getComputedStyle(document.documentElement);
+            const bgVoid = style.getPropertyValue('--bg-void').trim() || '#0E1116';
+            const bgBase = style.getPropertyValue('--bg-base').trim() || '#141922';
+            const signalCore = style.getPropertyValue('--signal-core').trim() || '#0284c7';
+
             // Background subtle gradient
             const bgGradient = ctx.createRadialGradient(
                 canvas.width / 2, canvas.height / 2, 0,
                 canvas.width / 2, canvas.height / 2, canvas.width
             );
-            bgGradient.addColorStop(0, '#f8fafc');
-            bgGradient.addColorStop(1, '#f1f5f9');
+            bgGradient.addColorStop(0, bgBase);
+            bgGradient.addColorStop(1, bgVoid);
             ctx.fillStyle = bgGradient;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -119,7 +125,7 @@ export const ElectricParticleField: React.FC = () => {
                 if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
 
                 // Draw Particle
-                ctx.fillStyle = '#0284c7';
+                ctx.fillStyle = signalCore;
                 ctx.beginPath();
                 ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
                 ctx.fill();
@@ -132,12 +138,14 @@ export const ElectricParticleField: React.FC = () => {
                     const dist2 = Math.sqrt(dx2 * dx2 + dy2 * dy2);
 
                     if (dist2 < 100) {
-                        ctx.strokeStyle = `rgba(2, 132, 199, ${0.4 - dist2 / 250})`;
+                        ctx.strokeStyle = signalCore;
+                        ctx.globalAlpha = 0.4 - dist2 / 250;
                         ctx.lineWidth = 0.5;
                         ctx.beginPath();
                         ctx.moveTo(p.x, p.y);
                         ctx.lineTo(p2.x, p2.y);
                         ctx.stroke();
+                        ctx.globalAlpha = 1.0;
                     }
                 }
             }
@@ -165,7 +173,7 @@ export const ElectricParticleField: React.FC = () => {
                 width: '100%',
                 height: '100%',
                 zIndex: -1,
-                background: '#f8fafc'
+                background: 'transparent'
             }}
         />
     );

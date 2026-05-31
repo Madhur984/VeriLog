@@ -10,15 +10,23 @@ const generateDeterministicHash = (str: string): string => {
   return Math.abs(hash).toString(16).toUpperCase().slice(0, 6);
 };
 
-export const generateBadgeSVG = (badge: BadgeDefinition, userId: string): string => {
+export const generateBadgeSVG = (badge: BadgeDefinition, userId: string, theme?: 'light' | 'dark'): string => {
   const serial = `${badge.serialPrefix}-${generateDeterministicHash(userId + badge.id)}`;
-  const tierColors = {
+  const activeTheme = theme || (localStorage.getItem('bitforbytes_theme') as 'light' | 'dark') || 'dark';
+  
+  const tierColors = activeTheme === 'light' ? {
+    BRONZE: { primary: '#9A3412', secondary: '#C2410C', glow: 'rgba(154,52,18,0.1)' },
+    SILVER: { primary: '#475569', secondary: '#64748B', glow: 'rgba(71,85,105,0.1)' },
+    GOLD:   { primary: '#B45309', secondary: '#D97706', glow: 'rgba(180,83,9,0.1)' },
+    UTILITY:{ primary: '#0369A1', secondary: '#0284C7', glow: 'rgba(3,105,161,0.1)' },
+  } : {
     BRONZE: { primary: '#CD7F32', secondary: '#8B5E3C', glow: 'rgba(205,127,50,0.25)' },
     SILVER: { primary: '#C0C0C0', secondary: '#808080', glow: 'rgba(192,192,192,0.25)' },
     GOLD:   { primary: '#FFD700', secondary: '#B8860B', glow: 'rgba(255,215,0,0.25)' },
     UTILITY:{ primary: '#22D3EE', secondary: '#0891B2', glow: 'rgba(34,211,238,0.25)' },
   };
   const colors = tierColors[badge.tier];
+  const bgFill = activeTheme === 'light' ? '#EFF3F6' : '#07080A';
   
   return `
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
@@ -29,7 +37,7 @@ export const generateBadgeSVG = (badge: BadgeDefinition, userId: string): string
     </filter>
   </defs>
   
-  <rect width="300" height="300" fill="#07080A"/>
+  <rect width="300" height="300" fill="${bgFill}"/>
   
   <polygon
     points="60,15 240,15 285,60 285,240 240,285 60,285 15,240 15,60"

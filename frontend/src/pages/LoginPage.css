@@ -2,14 +2,14 @@
     min-height: 100svh;
     width: 100vw;
     max-width: 100%;
-    background: radial-gradient(circle at center, #f8fafc 0%, #f1f5f9 100%);
+    background-color: var(--bg-void);
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
     overflow-x: hidden;
     overflow-y: auto;
-    color: #0f172a;
+    color: var(--text-main);
     font-family: 'Roboto Mono', monospace;
     /* safe vertical padding so card isn't glued to top/bottom on phones */
     padding: 1.5rem 1rem;
@@ -32,22 +32,22 @@
 .login-card {
     /* Mobile: full width with safe side margins; Desktop: capped at 420px */
     width: min(420px, calc(100vw - 2rem));
-    background: rgba(255, 255, 255, 0.8);
+    background-color: var(--card-bg);
     backdrop-filter: blur(12px);
-    border: 1px solid rgba(14, 165, 233, 0.15);
+    border: 1px solid var(--border-soft);
     border-radius: 16px;
     /* Tighter padding on small screens */
     padding: 20px 16px;
     position: relative;
     z-index: 2;
     transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.05), 0 4px 12px rgba(0, 0, 0, 0.02);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
     box-sizing: border-box;
 }
 
 .login-card.power-on {
-    border-color: rgba(14, 165, 233, 0.4);
-    box-shadow: 0 0 60px rgba(14, 165, 233, 0.1);
+    border-color: var(--signal-core);
+    box-shadow: 0 0 60px var(--cyan-muted);
 }
 
 .card-header {
@@ -73,11 +73,11 @@
     font-size: 20px;
     font-weight: 800;
     letter-spacing: 2px;
-    color: #0f172a;
+    color: var(--text-main);
 }
 
 .card-header .dim {
-    color: #64748b;
+    color: var(--text-dim);
     font-size: 14px;
     font-weight: 500;
 }
@@ -88,8 +88,8 @@
 
 /* Oscilloscope Styles */
 .oscilloscope-wrapper {
-    background: #ffffff;
-    border: 2px solid #e2e8f0;
+    background: var(--bg-elev);
+    border: 2px solid var(--border-soft);
     border-radius: 12px;
     padding: 10px;
     margin-bottom: 24px;
@@ -112,19 +112,19 @@
 .freq-display .label {
     display: block;
     font-size: 10px;
-    color: #64748b;
+    color: var(--text-dim);
     font-weight: 700;
 }
 
 .freq-display .value {
     font-size: 18px;
-    color: #0284c7;
+    color: var(--signal-core);
     font-weight: 800;
 }
 
 .control-panel .instruction {
     font-size: 12px;
-    color: #64748b;
+    color: var(--text-dim);
     margin-bottom: 12px;
     text-align: center;
     font-weight: 500;
@@ -133,7 +133,7 @@
 .freq-slider {
     width: 100%;
     height: 4px;
-    background: #e2e8f0;
+    background: var(--border-soft);
     border-radius: 2px;
     appearance: none;
     outline: none;
@@ -175,11 +175,11 @@
 
 .hardware-input {
     width: 100%;
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
+    background-color: var(--input-bg);
+    border: 1px solid var(--input-border);
     border-radius: 8px;
     padding: 12px 12px 12px 40px;
-    color: #0f172a;
+    color: var(--text-main);
     font-size: 14px;
     outline: none;
     transition: all 0.2s ease;
@@ -187,9 +187,9 @@
 }
 
 .hardware-input:focus {
-    border-color: #0284c7;
-    background: #ffffff;
-    box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.1);
+    border-color: var(--signal-core);
+    outline: none;
+    box-shadow: 0 0 0 2px var(--signal-glow);
 }
 
 .logic-gate {
@@ -210,21 +210,21 @@
     margin-top: 40px;
     text-align: center;
     padding: 24px;
-    background: #f8fafc;
+    background: var(--bg-void);
     border-radius: 12px;
-    border: 1px dashed #cbd5e1;
+    border: 1px dashed var(--border-soft);
 }
 
 .switch-label {
     font-size: 11px;
-    color: #64748b;
+    color: var(--text-dim);
     margin-bottom: 16px;
     letter-spacing: 1.5px;
     font-weight: 700;
 }
 
 .switch-label.glow {
-    color: #059669;
+    color: var(--accent-green);
 }
 
 .switch-wrapper {
@@ -246,7 +246,7 @@
 .card-footer {
     margin-top: 32px;
     padding-top: 24px;
-    border-top: 1px solid #e2e8f0;
+    border-top: 1px solid var(--border-soft);
     display: flex;
     justify-content: space-between;
 }
@@ -266,7 +266,7 @@
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    background: #e2e8f0;
+    background: var(--border-soft);
     transition: all 0.3s ease;
 }
 
@@ -282,7 +282,7 @@
     align-items: center;
     gap: 10px;
     margin: 20px 0 12px;
-    color: #94a3b8;
+    color: var(--text-dim);
     font-size: 10px;
     letter-spacing: 2px;
     font-weight: 700;
@@ -293,7 +293,7 @@
     content: '';
     flex: 1;
     height: 1px;
-    background: #e2e8f0;
+    background: var(--border-soft);
 }
 
 .guest-button {
@@ -303,10 +303,10 @@
     justify-content: center;
     gap: 10px;
     padding: 12px 16px;
-    border: 1px dashed #94a3b8;
+    border: 1px dashed var(--text-dim);
     border-radius: 10px;
-    background: rgba(241, 245, 249, 0.5);
-    color: #475569;
+    background: var(--border-soft);
+    color: var(--text-sub);
     font-family: 'Roboto Mono', monospace;
     font-size: 12px;
     font-weight: 700;
@@ -316,11 +316,11 @@
 }
 
 .guest-button:hover:not(:disabled) {
-    background: rgba(15, 23, 42, 0.05);
-    border-color: #0f172a;
-    color: #0f172a;
+    background: var(--hover-bg);
+    border-color: var(--text-main);
+    color: var(--text-main);
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+    box-shadow: var(--shadow-sm);
 }
 
 .guest-button:disabled {
@@ -387,11 +387,11 @@
 
 .guest-name-input {
     width: 100%;
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
+    background-color: var(--input-bg);
+    border: 1px solid var(--input-border);
     border-radius: 10px;
     padding: 12px 12px 12px 40px;
-    color: #0f172a;
+    color: var(--text-main);
     font-family: 'Roboto Mono', monospace;
     font-size: 12px;
     outline: none;
@@ -400,9 +400,23 @@
 }
 
 .guest-name-input:focus {
-    border-color: #0f172a;
-    background: #ffffff;
-    box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.05);
+    border-color: var(--signal-core);
+    outline: none;
+    box-shadow: 0 0 0 2px var(--signal-glow);
+}
+
+.guest-name-input:hover {
+    background-color: var(--hover-bg);
+}
+
+.login-button {
+    background-color: var(--signal-core);
+    color: white;
+    border: none;
+}
+
+.login-button:hover {
+    background-color: var(--accent-orange);
 }
 
 /* ───────────────────────────────────────────────────

@@ -7,7 +7,7 @@ export const QuickActions: React.FC = () => {
   const { reset } = useStore();
 
   return (
-    <div className="flex flex-wrap items-center justify-center gap-3 lg:gap-4 mt-6 lg:mt-8 py-6 lg:py-8 border-t border-white/5 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-1000">
+    <div className="flex flex-wrap items-center justify-center gap-3 lg:gap-4 mt-6 lg:mt-8 py-6 lg:py-8 border-t border-border-soft animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-1000">
       <button
         onClick={reset}
         className="flex items-center gap-2 px-4 py-2.5 lg:px-6 bg-red-600/10 hover:bg-red-600/20 text-red-500 rounded-xl font-bold transition-all border border-red-500/20 text-sm min-h-[40px]"
@@ -16,7 +16,7 @@ export const QuickActions: React.FC = () => {
         Clear Board
       </button>
 
-      <button className="flex items-center gap-2 px-4 py-2.5 lg:px-6 bg-white/5 hover:bg-white/10 text-white rounded-xl font-bold transition-all border border-white/10 text-sm min-h-[40px]">
+      <button className="flex items-center gap-2 px-4 py-2.5 lg:px-6 bg-bg-elev hover:bg-hover-bg text-text-main rounded-xl font-bold transition-all border border-border-soft text-sm min-h-[40px]">
         <RotateCcw size={16} />
         Restore Previous
       </button>
@@ -24,7 +24,7 @@ export const QuickActions: React.FC = () => {
       <a
         href="https://github.com"
         target="_blank"
-        className="flex items-center gap-2 px-4 py-2.5 lg:px-6 bg-black hover:bg-zinc-900 text-white rounded-xl font-bold transition-all border border-white/10 text-sm min-h-[40px]"
+        className="flex items-center gap-2 px-4 py-2.5 lg:px-6 bg-bg-void hover:bg-bg-base text-text-main rounded-xl font-bold transition-all border border-border-soft text-sm min-h-[40px]"
       >
         <Github size={16} />
         Source

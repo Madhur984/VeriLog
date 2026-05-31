@@ -55,11 +55,11 @@ export const SiliconCompass: React.FC<{ onComplete?: () => void }> = ({ onComple
   const progress = (currentStep / 5) * 100;
 
   return (
-    <div className="fixed inset-0 z-[2000] flex items-center justify-center bg-[#020408]/95 backdrop-blur-xl">
+    <div className="fixed inset-0 z-[2000] flex items-center justify-center bg-bg-void/95 backdrop-blur-xl">
       <div className="relative w-full max-w-4xl px-6">
         
         {/* Progress Bar */}
-        <div className="absolute top-[-100px] left-0 w-full h-[2px] bg-white/5 overflow-hidden">
+        <div className="absolute top-[-100px] left-0 w-full h-[2px] bg-bg-dim overflow-hidden">
           <motion.div 
             className="h-full bg-gradient-to-right from-cyan-400 to-amber-500"
             initial={{ width: 0 }}
@@ -82,11 +82,11 @@ export const SiliconCompass: React.FC<{ onComplete?: () => void }> = ({ onComple
                 <span className="font-mono text-[10px] tracking-[0.2em] text-cyan-400 uppercase">
                   {currentQ.category}
                 </span>
-                <h2 className="text-3xl md:text-4xl font-bold text-white max-w-2xl leading-tight">
+                <h2 className="text-3xl md:text-4xl font-bold text-text-main max-w-2xl leading-tight">
                   {currentQ.question}
                 </h2>
               </div>
-
+ 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {currentQ.options.map((option) => {
                   const Icon = iconMap[option.icon] || Cpu;
@@ -94,12 +94,12 @@ export const SiliconCompass: React.FC<{ onComplete?: () => void }> = ({ onComple
                     <button
                       key={option.id}
                       onClick={() => handleAnswer(currentQ.id, option.tags)}
-                      className="group relative flex flex-col items-start p-6 bg-white/[0.03] border border-white/10 rounded-2xl text-left transition-all hover:bg-white/[0.06] hover:border-cyan-400/30 hover:translate-y-[-2px]"
+                      className="group relative flex flex-col items-start p-6 bg-bg-elev/40 border border-border-soft rounded-2xl text-left transition-all hover:bg-bg-elev/80 hover:border-cyan-400/30 hover:translate-y-[-2px]"
                     >
-                      <div className="mb-4 p-3 rounded-xl bg-white/[0.05] text-cyan-400 group-hover:bg-cyan-400/10 transition-colors">
+                      <div className="mb-4 p-3 rounded-xl bg-bg-dim text-cyan-400 group-hover:bg-cyan-400/10 transition-colors">
                         <Icon size={24} />
                       </div>
-                      <p className="text-white font-medium text-lg leading-snug">
+                      <p className="text-text-main font-medium text-lg leading-snug">
                         {option.text}
                       </p>
                     </button>
@@ -120,7 +120,7 @@ export const SiliconCompass: React.FC<{ onComplete?: () => void }> = ({ onComple
 
         <button 
           onClick={handleSkip}
-          className="absolute bottom-[-100px] right-6 font-mono text-[10px] tracking-[0.1em] text-slate-500 uppercase hover:text-white transition-colors"
+          className="absolute bottom-[-100px] right-6 font-mono text-[10px] tracking-[0.1em] text-slate-500 uppercase hover:text-text-main transition-colors"
         >
           SKIP FOR NOW
         </button>
@@ -144,7 +144,7 @@ const ResultScreen: React.FC<{ result: any; onClose: () => void }> = ({ result, 
         <span className="font-mono text-[10px] tracking-[0.3em] text-cyan-400 uppercase">
           CALIBRATION COMPLETE
         </span>
-        <h2 className="text-4xl font-bold text-white uppercase tracking-tight">
+        <h2 className="text-4xl font-bold text-text-main uppercase tracking-tight">
           Your Silicon Trajectory is Mapped.
         </h2>
       </div>
@@ -156,7 +156,7 @@ const ResultScreen: React.FC<{ result: any; onClose: () => void }> = ({ result, 
               <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-cyan-400" />
               <div className="flex justify-between items-start">
                 <div>
-                  <h3 className="text-2xl font-bold text-white uppercase">{primaryDomain.name}</h3>
+                  <h3 className="text-2xl font-bold text-text-main uppercase">{primaryDomain.name}</h3>
                   <p className="text-slate-400 mt-1 italic">"{primaryDomain.tagline}"</p>
                 </div>
                 <div className="flex flex-col items-end gap-1">
@@ -168,13 +168,13 @@ const ResultScreen: React.FC<{ result: any; onClose: () => void }> = ({ result, 
         </div>
 
         <div className="grid grid-cols-2 gap-4">
-           <div className="p-4 rounded-xl bg-white/[0.03] border border-white/5 opacity-50 text-left">
+           <div className="p-4 rounded-xl bg-bg-elev/40 border border-border-soft opacity-70 text-left">
               <span className="font-mono text-[9px] text-slate-500 uppercase">Secondary Match</span>
-              <p className="text-white font-semibold mt-1 uppercase text-sm">{secondaryDomain.name}</p>
+              <p className="text-text-main font-semibold mt-1 uppercase text-sm">{secondaryDomain.name}</p>
            </div>
-           <div className="p-4 rounded-xl bg-white/[0.03] border border-white/5 opacity-50 text-left">
+           <div className="p-4 rounded-xl bg-bg-elev/40 border border-border-soft opacity-70 text-left">
               <span className="font-mono text-[9px] text-slate-500 uppercase">Tertiary Match</span>
-              <p className="text-white font-semibold mt-1 uppercase text-sm">{tertiaryDomain.name}</p>
+              <p className="text-text-main font-semibold mt-1 uppercase text-sm">{tertiaryDomain.name}</p>
            </div>
         </div>
       </div>
@@ -194,7 +194,7 @@ const ResultScreen: React.FC<{ result: any; onClose: () => void }> = ({ result, 
           </button>
           <button 
             onClick={onClose}
-            className="px-8 py-3 bg-white/5 text-white font-bold uppercase text-xs tracking-widest rounded-lg border border-white/10 hover:bg-white/10 transition-colors"
+            className="px-8 py-3 bg-bg-elev text-text-main font-bold uppercase text-xs tracking-widest rounded-lg border border-border-soft hover:bg-bg-base transition-colors"
           >
             View Full Roadmap
           </button>
