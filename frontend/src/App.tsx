@@ -10,7 +10,6 @@ import { AppErrorBoundary } from './components/AppErrorBoundary';
 import { loadChunk } from './utils/loadChunk';
 import { TourProvider } from './components/tour/TourProvider';
 import { TourOverlay } from './components/tour/TourOverlay';
-import { Mascot } from './components/mascot/Mascot';
 
 // Layout (eager - tiny, wraps every portal route)
 import { PortalLayout } from './layouts/PortalLayout';
@@ -145,7 +144,6 @@ function App() {
         </Routes>
       </Suspense>
       <TourOverlay />
-      <Mascot />
       </TourProvider>
       </AppErrorBoundary>
     </TransitionProvider>

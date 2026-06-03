@@ -1,10 +1,9 @@
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { useEffect, useRef } from 'react';
 import { ProductMockup } from './ProductMockup';
-import { AccentBadges } from './AccentBadges';
 
 /**
- * Wraps the product mockup + floating badges in a subtle pointer-parallax
+ * Wraps the product mockup in a subtle pointer-parallax
  * (rotateX/Y + translate via springs). Desktop fine-pointer only; respects
  * prefers-reduced-motion. Decorative only - not an interactive widget.
  */
@@ -46,7 +45,6 @@ export const ParallaxMockupContainer = () => {
       <motion.div style={{ rotateX, rotateY, x: tx, y: ty, transformStyle: 'preserve-3d' }}>
         <div className="relative">
           <ProductMockup />
-          <AccentBadges />
         </div>
       </motion.div>
     </div>

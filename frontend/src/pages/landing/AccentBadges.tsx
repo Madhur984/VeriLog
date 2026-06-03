@@ -7,7 +7,7 @@ import { Sparkles, Cpu, CheckCircle2, type LucideIcon } from 'lucide-react';
  */
 const BADGES: { label: string; Icon: LucideIcon; cls: string; color: string; float: number }[] = [
   { label: '+50 XP', Icon: Sparkles, cls: '-top-5 right-10', color: '#22D3EE', float: -8 },
-  { label: 'RTL · Verilog', Icon: Cpu, cls: 'top-1/2 -right-6 -translate-y-1/2', color: '#8B5CF6', float: 7 },
+  { label: 'RTL · Verilog', Icon: Cpu, cls: 'top-1/2 -right-6 -translate-y-1/2', color: '#10B981', float: 7 },
   { label: 'NAND-only solved', Icon: CheckCircle2, cls: '-bottom-5 left-12', color: '#22D3EE', float: 8 },
 ];
 

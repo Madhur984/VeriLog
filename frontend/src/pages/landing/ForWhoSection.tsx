@@ -1,70 +1,129 @@
-import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
-import { LANDING_ROUTES } from './landingRoutes';
+import React, { useState } from 'react';
 
-const TYPES = [
+type TabId = 'academic' | 'systems' | 'professional';
+
+interface TabItem {
+  id: TabId;
+  label: string;
+  title: string;
+  description: string;
+  details: string[];
+}
+
+const TABS: TabItem[] = [
   {
-    label: 'The confused first-year',
-    color: '#0891B2',
-    opening: 'You got ECE because the CS cutoff was too high.',
-    body: 'You\'re staring at 13 branches you\'ve never heard of — VLSI, RF, embedded, signal processing. No one told you which one leads where. BitforBytes maps all 13 domains so you can stop guessing and start exploring.',
-    cta: 'Explore the domains →',
-    to: LANDING_ROUTES.career,
+    id: 'academic',
+    label: 'Academic Foundations',
+    title: 'Visualise abstract lecture physics.',
+    description: 'For students navigating lecture material who require a visual, tactile model to master the physics of digital circuits. Replace manual truth tables with real-time waveform analyzers and gate debuggers.',
+    details: [
+      'Interactive Boolean algebra solvers',
+      'Instant K-Map simplification feedback',
+      'Visual logic gate state representations'
+    ]
   },
   {
-    label: 'The stuck third-year',
-    color: '#F59E0B',
-    opening: 'Your CS friends have internships. You have derivations.',
-    body: 'Placement season is closing in and you\'ve never written a line of Verilog. Our interactive modules let you go from zero to designing combinational circuits — no expensive EDA tools, no lab access needed.',
-    cta: 'See your skill gaps →',
-    to: LANDING_ROUTES.careerSkills,
+    id: 'systems',
+    label: 'Systems Transition',
+    title: 'De-abstract computer architecture.',
+    description: 'For software engineers looking to break past abstraction layers and understand computer architecture deeply, from register transfer levels down to execution pipelines.',
+    details: [
+      'Verilog RTL module simulation models',
+      'Clock signal propagation diagrams',
+      'Register transfer level telemetry analysis'
+    ]
   },
   {
-    label: 'The determined one',
-    color: '#10B981',
-    opening: 'You actually want to design chips.',
-    body: 'You know this is the career — but your college syllabus barely scratches the surface. Go deeper with structured, hands-on modules that teach the way top engineers learned: by building.',
-    cta: 'Start learning →',
-    to: LANDING_ROUTES.firstModule,
-  },
+    id: 'professional',
+    label: 'Professional Expansion',
+    title: 'Validate timing constraints.',
+    description: 'For junior engineers and VLSI students preparing for core placement benchmarks, timing closure diagnostics, and physical macro floorplanning validation.',
+    details: [
+      'Propagation delay analysis metrics',
+      'Setup and hold margin validation models',
+      'Clock skew latency telemetry diagnostics'
+    ]
+  }
 ];
 
-export const ForWhoSection = () => {
+export const ForWhoDiagnosticsSection: React.FC = () => {
+  const [activeTabId, setActiveTabId] = useState<TabId>('academic');
+  const activeTab = TABS.find((t) => t.id === activeTabId) || TABS[0];
+
   return (
-    <section className="w-full" style={{ background: '#F4F6FA' }}>
-      <div className="max-w-6xl mx-auto px-6 md:px-10 py-24">
-        <div className="text-center max-w-2xl mx-auto mb-14">
-          <span className="text-[11px] font-bold tracking-[0.22em] uppercase" style={{ color: '#0891B2' }}>
-            Who it&apos;s for
+    <section id="documentation-section" className="w-full bg-[#0B0F19] py-24 border-b border-slate-900" aria-label="Target audience documentation tabs">
+      <div className="max-w-6xl mx-auto px-6 md:px-10">
+        
+        {/* Section Heading */}
+        <div className="max-w-2xl mb-16">
+          <span className="text-xs font-mono text-[#22D3EE] uppercase tracking-widest block">
+            // DOCUMENTATION TARGET PROFILES
           </span>
-          <h2 className="mt-3 font-extrabold tracking-tight" style={{ fontSize: 'clamp(30px, 4.5vw, 46px)', color: '#0B1220', letterSpacing: '-0.02em' }}>
-            You&apos;ll know this is for you.
+          <h2 
+            className="mt-3 font-bold text-slate-100 tracking-tight leading-[1.1] uppercase"
+            style={{ fontSize: 'clamp(2rem, 4vw, 3rem)' }}
+          >
+            Engineered for clarity at every level.
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {TYPES.map((card, idx) => (
-            <motion.div
-              key={card.label}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: idx * 0.1, duration: 0.5 }}
-              className="flex flex-col justify-between rounded-2xl bg-white p-7 min-h-[200px]"
-              style={{ borderLeft: `4px solid ${card.color}`, border: '1px solid rgba(15,23,42,0.08)', borderLeftWidth: 4, borderLeftColor: card.color, boxShadow: '0 1px 3px rgba(15,23,42,0.04)' }}
-            >
-              <div className="space-y-3">
-                <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: card.color }}>{card.label}</span>
-                <h3 className="text-base font-bold leading-snug" style={{ color: '#0B1220' }}>{card.opening}</h3>
-                <p className="text-sm leading-relaxed" style={{ color: '#64748B' }}>{card.body}</p>
+        {/* Tab Console Layout Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-stretch">
+          
+          {/* Left Navigation Stack (4 Columns) */}
+          <nav className="md:col-span-4 flex flex-col gap-2 justify-center" aria-label="Documentation profile navigation">
+            {TABS.map((tab) => {
+              const isActive = activeTabId === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTabId(tab.id)}
+                  aria-label={`Show ${tab.label} details`}
+                  className={`w-full text-left p-4 rounded-lg border text-sm font-sans transition-all duration-200 cursor-pointer ${
+                    isActive
+                      ? 'bg-[#090e1a] border-slate-800 text-[#22D3EE]'
+                      : 'bg-transparent border-transparent text-slate-500 hover:text-slate-350 hover:border-slate-900/40'
+                  }`}
+                >
+                  <span className="font-semibold">{tab.label}</span>
+                </button>
+              );
+            })}
+          </nav>
+
+          {/* Right Display Panel (8 Columns) */}
+          <div className="md:col-span-8">
+            <div className="rounded-xl border border-slate-800 bg-[#0F172A] p-8 h-full flex flex-col justify-between shadow-lg">
+              
+              <div className="space-y-6">
+                <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest block">
+                  ACTIVE_STAGE: {activeTab.id.toUpperCase()}
+                </span>
+                
+                <h3 className="text-xl font-bold text-slate-100 leading-snug">
+                  {activeTab.title}
+                </h3>
+                
+                <p className="text-sm text-slate-400 leading-relaxed max-w-[65ch]">
+                  {activeTab.description}
+                </p>
               </div>
-              <div className="pt-5 mt-5" style={{ borderTop: '1px solid rgba(15,23,42,0.06)' }}>
-                <Link to={card.to} className="inline-flex items-center gap-1.5 text-sm font-bold hover:gap-2.5 transition-all" style={{ color: card.color }}>
-                  {card.cta}
-                </Link>
+
+              {/* Bullet points detailing the target profile parameters */}
+              <div className="mt-8 pt-6 border-t border-slate-900/60">
+                <ul className="space-y-2 text-xs font-mono text-slate-500">
+                  {activeTab.details.map((detail, idx) => (
+                    <li key={idx} className="flex gap-2.5 items-center">
+                      <span className="text-[#10B981] font-bold">✓</span>
+                      <span>{detail}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
-            </motion.div>
-          ))}
+
+            </div>
+          </div>
+
         </div>
       </div>
     </section>

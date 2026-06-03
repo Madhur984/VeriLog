@@ -5,10 +5,11 @@ import { LANDING_ROUTES } from './landingRoutes';
 
 export const WhatIsSection = () => {
   return (
-    <section id="what-is-section" className="w-full" style={{ background: '#0B1220' }}>
+    <section id="what-is-section" className="w-full bg-[#0B0F19] border-b border-slate-900" aria-label="Interactive digital design analysis">
       <div className="max-w-6xl mx-auto px-6 md:px-10 py-24 md:py-28">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-16 items-center">
-          {/* Left: the gap narrative */}
+          
+          {/* Left Column: Academic Gap Narrative */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -16,40 +17,38 @@ export const WhatIsSection = () => {
             transition={{ duration: 0.5 }}
             className="md:col-span-6 space-y-6"
           >
-            <span className="text-[11px] font-bold tracking-[0.22em] uppercase" style={{ color: '#22D3EE' }}>
-              The gap we close
+            <span className="text-xs font-mono text-[#22D3EE] uppercase tracking-widest block">
+              // ANALYTICAL LOGIC PLAYGROUND
             </span>
-            <h2 className="font-extrabold leading-[1.1] tracking-tight" style={{ fontSize: 'clamp(30px, 4.5vw, 46px)', color: '#F8FAFC', letterSpacing: '-0.02em' }}>
-              Most ECE students meet VLSI
-              <br />
-              <span style={{ color: '#22D3EE' }}>far too late.</span>
+            <h2 
+              className="font-bold text-slate-100 tracking-tight leading-[1.1] uppercase"
+              style={{ fontSize: 'clamp(2rem, 4vw, 3rem)' }}
+            >
+              Bridge the gap between math derivations and actual silicon.
             </h2>
-            <div className="space-y-4 text-[15px] leading-relaxed" style={{ color: '#CBD5E1' }}>
+            <div className="space-y-4 text-sm md:text-base text-slate-400 leading-relaxed max-w-[65ch]">
               <p>
-                You landed in ECE off a CS cutoff, then spent years on derivations - never
-                hearing the words VLSI, RTL, or RF until placements. Meanwhile real fabs need
-                hands-on, tool-fluent designers. That mismatch is the <strong style={{ color: '#F8FAFC' }}>Glasswing Gap</strong>.
+                Traditional engineering curricula often leave students stuck in abstract whiteboard derivations, disconnected from the physical tools and systems used in the semiconductor industry. Real chip design demands tool fluency, hands-on RTL prototyping, and rigorous clock domain validation.
               </p>
               <p>
-                BitforBytes closes it the way it should be taught - through{' '}
-                <strong style={{ color: '#F8FAFC' }}>simulation, not slides</strong>. Every concept is a live
-                interaction: you toggle a bit, you see the signal, you build the system. No lab,
-                no expensive EDA licence.
+                BitforBytes closes this engineering gap by providing a visual, browser-based runtime workspace. Every module translates theoretical circuit math into simulated, interactive reality: toggle inputs, observe logic propagation times, and test structural synthesis rules in real time.
               </p>
-              <p className="text-[13px] italic" style={{ color: '#64748B' }}>
-                Built by ECE students who couldn&apos;t find this anywhere else.
+              <p className="text-[12px] italic text-slate-500">
+                Custom-built by ECE architects to establish practical engineering foundations.
               </p>
             </div>
-            <Link
-              to={LANDING_ROUTES.about}
-              className="inline-flex items-center gap-1.5 text-sm font-semibold transition-colors"
-              style={{ color: '#22D3EE' }}
-            >
-              Read our story →
-            </Link>
+            <div>
+              <Link
+                to={LANDING_ROUTES.about}
+                className="inline-flex items-center gap-1.5 text-sm font-semibold transition-colors text-[#22D3EE] hover:text-[#5ce1e6]"
+                aria-label="Read our documentation story"
+              >
+                Read our story →
+              </Link>
+            </div>
           </motion.div>
 
-          {/* Right: live interactive gate (signature flair) */}
+          {/* Right Column: Minimalist Gate Preview Container */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -57,13 +56,11 @@ export const WhatIsSection = () => {
             transition={{ duration: 0.5, delay: 0.15 }}
             className="md:col-span-6"
           >
-            <div
-              className="rounded-3xl p-1.5"
-              style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)' }}
-            >
+            <div className="rounded-xl border border-slate-800 bg-[#090e1a] overflow-hidden p-1 shadow-xl">
               <GatePreview />
             </div>
           </motion.div>
+
         </div>
       </div>
     </section>

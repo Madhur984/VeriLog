@@ -20,4 +20,22 @@ export default defineConfig({
             },
         },
     },
+    build: {
+        rollupOptions: {
+            output: {
+                manualChunks(id) {
+                    if (id.includes('node_modules')) {
+                        if (id.includes('framer-motion') || id.includes('motion/react')) {
+                            return 'vendor-animation';
+                        }
+                        if (id.includes('lucide-react')) {
+                            return 'vendor-icons';
+                        }
+                        return 'vendor-core';
+                    }
+                }
+            }
+        },
+        chunkSizeWarningLimit: 600
+    }
 })

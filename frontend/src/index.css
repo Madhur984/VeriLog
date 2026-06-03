@@ -20,6 +20,15 @@ html, body, #root {
 }
 
 @layer base {
+  button:focus, a:focus, select:focus, textarea:focus, input:focus, [role="button"]:focus {
+    outline: none;
+  }
+  button:focus-visible, a:focus-visible, select:focus-visible, textarea:focus-visible, input:focus-visible, [role="button"]:focus-visible {
+    outline: none !important;
+    box-shadow: 0 0 0 2px #03050a, 0 0 0 3px #00F5FF !important;
+    border-radius: inherit;
+  }
+
   :root {
     /* ═══ MASTER COLOR SYSTEM (LOCKED) ═══ */
 

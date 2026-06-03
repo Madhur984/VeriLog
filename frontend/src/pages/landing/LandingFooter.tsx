@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LANDING_ROUTES } from './landingRoutes';
-import { useColorScheme } from '../../hooks/useColorScheme';
 import {
   FaDiscord,
   FaEnvelope,
@@ -24,9 +23,6 @@ const socialItems = [
 const SECRET_SEQUENCE = ['discord', 'twitter', 'linkedin', 'email'];
 
 export const LandingFooter = () => {
-  const [scheme] = useColorScheme();
-  const isLight = scheme === 'light';
-
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
   const [copied, setCopied] = useState(false);
   const [announcement, setAnnouncement] = useState('');
@@ -79,7 +75,7 @@ export const LandingFooter = () => {
   }, []);
 
   return (
-    <footer className="w-full relative" style={{ background: isLight ? 'var(--bg-base)' : '#070B14', borderTop: '1px solid var(--border-soft)' }}>
+    <footer className="w-full relative" style={{ background: '#070B14', borderTop: '1px solid var(--border-soft)' }}>
       <div className="sr-only" aria-live="polite">
         {announcement}
       </div>
@@ -98,7 +94,7 @@ export const LandingFooter = () => {
               boxShadow: '0 10px 40px rgba(34, 211, 238, 0.35)',
             }}
           >
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-cyan-950 text-[#22D3EE] font-extrabold text-xs">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-cyan-955 text-[#22D3EE] font-extrabold text-xs">
               ⚡
             </div>
             <div>
@@ -120,9 +116,9 @@ export const LandingFooter = () => {
           <div className="md:col-span-5 space-y-6">
             <div className="space-y-3">
               <span className="font-extrabold tracking-tight text-lg">
-                <span style={{ color: isLight ? '#0B1220' : '#F8FAFC' }}>Bit</span>
+                <span style={{ color: '#F8FAFC' }}>Bit</span>
                 <span style={{ color: '#64748B' }}>for</span>
-                <span style={{ color: isLight ? '#0891B2' : '#22D3EE' }}>Bytes</span>
+                <span style={{ color: '#22D3EE' }}>Bytes</span>
               </span>
               <p className="text-sm leading-relaxed max-w-xs" style={{ color: 'var(--text-dim)' }}>
                 Signals become logic. Logic becomes systems. Free, browser-based VLSI &amp; digital
@@ -144,8 +140,8 @@ export const LandingFooter = () => {
                       exit={{ opacity: 0, scale: 0.9, y: 5 }}
                       className="absolute bottom-12 left-0 w-64 p-3 rounded-xl border text-xs leading-snug z-50 shadow-lg"
                       style={{
-                        background: isLight ? '#ffffff' : 'rgba(15,23,42,0.96)',
-                        borderColor: isLight ? 'rgba(15,23,42,0.1)' : 'rgba(34,211,238,0.25)',
+                        background: 'rgba(15,23,42,0.96)',
+                        borderColor: 'rgba(34,211,238,0.25)',
                         color: 'var(--text-main)',
                       }}
                     >
@@ -185,7 +181,7 @@ export const LandingFooter = () => {
                     onMouseEnter={(e) => {
                       setHoveredIdx(index);
                       setAnnouncement(`Hovered ${social.name}`);
-                      e.currentTarget.style.background = isLight ? 'rgba(15,23,42,0.08)' : 'rgba(255,255,255,0.08)';
+                      e.currentTarget.style.background = 'rgba(255,255,255,0.08)';
                       e.currentTarget.style.borderColor = social.color;
                       e.currentTarget.style.color = social.color;
                       e.currentTarget.style.transform = 'translateY(-2px)';
@@ -193,8 +189,8 @@ export const LandingFooter = () => {
                     }}
                     onMouseLeave={(e) => {
                       setHoveredIdx(null);
-                      e.currentTarget.style.background = isLight ? 'rgba(15,23,42,0.04)' : 'rgba(255,255,255,0.03)';
-                      e.currentTarget.style.borderColor = isLight ? 'rgba(15,23,42,0.08)' : 'rgba(255,255,255,0.06)';
+                      e.currentTarget.style.background = 'rgba(255,255,255,0.03)';
+                      e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)';
                       e.currentTarget.style.color = 'var(--text-sub)';
                       e.currentTarget.style.transform = 'none';
                       e.currentTarget.style.boxShadow = 'none';
@@ -205,8 +201,8 @@ export const LandingFooter = () => {
                     }}
                     className="group relative flex items-center justify-center w-10 h-10 rounded-xl transition-all duration-200 overflow-hidden"
                     style={{
-                      background: isLight ? 'rgba(15,23,42,0.04)' : 'rgba(255,255,255,0.03)',
-                      border: isLight ? '1px solid rgba(15,23,42,0.08)' : '1px solid rgba(255,255,255,0.06)',
+                      background: 'rgba(255,255,255,0.03)',
+                      border: '1px solid rgba(255,255,255,0.06)',
                       color: 'var(--text-sub)',
                     }}
                     aria-label={social.name}
@@ -241,7 +237,7 @@ export const LandingFooter = () => {
                   to={l.to}
                   className="transition-colors"
                   style={{ color: 'var(--text-sub)' }}
-                  onMouseEnter={(e) => (e.currentTarget.style.color = isLight ? '#0B1220' : '#FFFFFF')}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = '#FFFFFF')}
                   onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-sub)')}
                 >
                   {l.label}
@@ -261,9 +257,9 @@ export const LandingFooter = () => {
                 target="_blank"
                 rel="noreferrer"
                 className="inline-block pt-1 text-[13px] font-bold transition-colors"
-                style={{ color: isLight ? '#0891B2' : '#22D3EE' }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = isLight ? '#0369A1' : '#BAE6FD')}
-                onMouseLeave={(e) => (e.currentTarget.style.color = isLight ? '#0891B2' : '#22D3EE')}
+                style={{ color: '#22D3EE' }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = '#BAE6FD')}
+                onMouseLeave={(e) => (e.currentTarget.style.color = '#22D3EE')}
               >
                 View on GitHub →
               </a>

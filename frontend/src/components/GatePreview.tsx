@@ -57,6 +57,7 @@ export const GatePreview = () => {
                 playToggleTone(true);
                 setGate(g);
               }}
+              aria-label={`Select ${g} logic gate`}
               className="px-3 py-1 rounded text-[10px] font-mono transition-all duration-150 cursor-pointer"
               style={{
                 background: gate === g ? '#22D3EE' : 'transparent',
@@ -86,6 +87,7 @@ export const GatePreview = () => {
                     playToggleTone(!val);
                     set(v => !v);
                   }}
+                  aria-label={`Toggle logic input ${label} state`}
                   className="w-12 h-6 rounded-full relative transition-all duration-200 flex items-center cursor-pointer"
                   style={{
                     background: val
