@@ -16,6 +16,9 @@ import { Link } from 'react-router-dom';
 import { LANDING_ROUTES } from './landingRoutes';
 import { useIsAuthenticated } from '../../hooks/useIsAuthenticated';
 import { PremiumBentoFeatures } from './PremiumBentoFeatures';
+import { SiliconPlaypenGrid } from './SiliconPlaypenGrid';
+import { ThemeToggle } from '../../components/ThemeToggle';
+import { useColorScheme } from '../../hooks/useColorScheme';
 
 /**
  * ENHANCEMENT 2: Scroll-Triggered Section Entrance Animation
@@ -60,24 +63,61 @@ const FAQ_DATA: FaqItem[] = [
   { q: "Can I track my logic verification history?", a: "Every testbench run updates automated timing coverage maps, logs propagation slack metrics, and archives passing vectors inside your local workspace status profile." }
 ];
 
-
-
 export default function LandingPageContainer() {
   // Authentication check
   const authed = useIsAuthenticated();
   const primaryTo = authed ? LANDING_ROUTES.workstation : LANDING_ROUTES.firstModule;
   const primaryLabel = authed ? 'Go to Workstation' : 'Start Learning';
 
-  // Application Interface States
-  const [heroTab, setHeroTab] = useState<'CODE' | 'WAVE'>('CODE');
-  const [bentoTab, setBentoTab] = useState<BentoTabType>('GATES');
-  const [profileTab, setProfileTab] = useState<ProfileTabType>('ACADEMIC');
-  const [activeFaq, setActiveFaq] = useState<number | null>(0);
+  // Application Interface States (with LocalStorage Persistence)
+  const [heroTab, setHeroTab] = useState<'CODE' | 'WAVE'>(() => {
+    const saved = localStorage.getItem('bitforbytes_hero_tab');
+    return (saved === 'CODE' || saved === 'WAVE') ? saved : 'CODE';
+  });
+  const [profileTab, setProfileTab] = useState<ProfileTabType>(() => {
+    const saved = localStorage.getItem('bitforbytes_profile_tab');
+    return (saved === 'ACADEMIC' || saved === 'SYSTEMS' || saved === 'PROFESSIONAL') ? saved as ProfileTabType : 'ACADEMIC';
+  });
+  const [activeFaq, setActiveFaq] = useState<number | null>(() => {
+    const saved = localStorage.getItem('bitforbytes_active_faq');
+    if (saved === null) return 0;
+    if (saved === 'null') return null;
+    const parsed = parseInt(saved, 10);
+    return isNaN(parsed) ? 0 : parsed;
+  });
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
   // Interactive Hardware State Toggles
-  const [pinState, setPinState] = useState<{ A: boolean; B: boolean }>({ A: true, B: false });
+  const [pinState, setPinState] = useState<{ A: boolean; B: boolean }>(() => {
+    const saved = localStorage.getItem('bitforbytes_pin_state');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (typeof parsed.A === 'boolean' && typeof parsed.B === 'boolean') {
+          return parsed;
+        }
+      } catch (e) {}
+    }
+    return { A: true, B: false };
+  });
   const outNand = !(pinState.A && pinState.B);
+
+  // Sync state values to LocalStorage
+  useEffect(() => {
+    localStorage.setItem('bitforbytes_hero_tab', heroTab);
+  }, [heroTab]);
+
+  useEffect(() => {
+    localStorage.setItem('bitforbytes_profile_tab', profileTab);
+  }, [profileTab]);
+
+  useEffect(() => {
+    localStorage.setItem('bitforbytes_active_faq', String(activeFaq));
+  }, [activeFaq]);
+
+  useEffect(() => {
+    localStorage.setItem('bitforbytes_pin_state', JSON.stringify(pinState));
+  }, [pinState]);
 
   // Synchronized System Clock State
   const [londonTime, setLondonTime] = useState<string>('21:00');
@@ -123,9 +163,15 @@ export default function LandingPageContainer() {
     e.currentTarget.style.setProperty('--mouse-y', `${y}px`);
   };
 
+  const [scheme] = useColorScheme();
+  const isDarkMode = scheme === 'dark';
+
   return (
-    <main className="relative w-full min-h-screen bg-[#03050a] text-slate-200 antialiased font-sans selection:bg-[#22D3EE]/20 selection:text-[#22D3EE]">
+    <main className="relative w-full min-h-screen bg-slate-50 dark:bg-[#03050a] text-slate-800 dark:text-slate-200 antialiased font-sans selection:bg-[#00F5FF]/20 selection:text-[#00F5FF]">
       
+      {/* Floating analog CRT noise grain overlay */}
+      <div className="fixed inset-0 pointer-events-none z-[100] bg-grain" />
+
       {/* Embedded Global Stylesheet Utilities for Elite Layout Components */}
       <style>{`
         .liquid-glass {
@@ -137,6 +183,10 @@ export default function LandingPageContainer() {
           box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.08);
           position: relative;
           overflow: hidden;
+        }
+        .light .liquid-glass {
+          background: rgba(0, 0, 0, 0.01);
+          box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
         }
         .liquid-glass::before {
           content: '';
@@ -154,8 +204,11 @@ export default function LandingPageContainer() {
           pointer-events: none;
         }
         .micro-grid {
-          background-image: linear-gradient(rgba(30, 41, 59, 0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(30, 41, 59, 0.15) 1px, transparent 1px);
+          background-image: linear-gradient(rgba(148, 163, 184, 0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(148, 163, 184, 0.08) 1px, transparent 1px);
           background-size: 32px 32px;
+        }
+        .dark .micro-grid {
+          background-image: linear-gradient(rgba(30, 41, 59, 0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(30, 41, 59, 0.15) 1px, transparent 1px);
         }
         .bento-spotlight {
           position: relative;
@@ -164,7 +217,7 @@ export default function LandingPageContainer() {
           content: "";
           position: absolute;
           inset: -1px;
-          background: radial-gradient(220px circle at var(--mouse-x, 0px) var(--mouse-y, 0px), rgba(34, 211, 238, 0.12), transparent 80%);
+          background: radial-gradient(220px circle at var(--mouse-x, 0px) var(--mouse-y, 0px), rgba(0, 245, 255, 0.12), transparent 80%);
           border-radius: inherit;
           z-index: 0;
           pointer-events: none;
@@ -177,9 +230,14 @@ export default function LandingPageContainer() {
         .bento-card-inner {
           position: relative;
           z-index: 1;
-          background: #090e1a;
+          background: #ffffff;
           border-radius: calc(0.75rem - 1px);
           height: 100%;
+          border: 1px solid rgba(0, 0, 0, 0.06);
+        }
+        .dark .bento-card-inner {
+          background: #090e1a;
+          border: none;
         }
         /* ENHANCEMENT 1: Tabular Numerics — Prevents layout jitter on dynamic data */
         .tabular-data {
@@ -205,30 +263,31 @@ export default function LandingPageContainer() {
       <div className="absolute inset-0 micro-grid pointer-events-none z-0" />
 
       {/* STICKY TOP NAVIGATION BAR */}
-      <nav className="fixed top-0 left-0 w-full z-50 bg-[#03050a]/80 backdrop-blur-md border-b border-slate-900/60 px-6 py-4" role="navigation" aria-label="Main navigation">
+      <nav className="fixed top-0 left-0 w-full z-50 bg-white/80 dark:bg-[#03050a]/80 backdrop-blur-md border-b border-slate-200/60 dark:border-slate-900/60 px-6 py-4" role="navigation" aria-label="Main navigation">
         <div className="max-w-7xl mx-auto w-full flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2.5">
-            <div className="w-6 h-6 rounded bg-gradient-to-br from-[#22D3EE] to-[#10B981] flex items-center justify-center text-[#03050a] font-mono font-bold text-[11px]">B</div>
-            <span className="text-md font-bold tracking-tight text-white uppercase">Bit<span className="text-[#22D3EE]">for</span>Bytes</span>
+          <Link to="/" className="flex items-center gap-2.5 active-press">
+            <div className="w-6 h-6 rounded bg-gradient-to-br from-[#00F5FF] to-[#10B981] flex items-center justify-center text-[#03050a] font-mono font-bold text-[11px]">B</div>
+            <span className="text-md font-bold tracking-tight text-slate-900 dark:text-white uppercase">Bit<span className="text-[#00F5FF]">for</span>Bytes</span>
           </Link>
           
-          <div className="hidden md:flex items-center gap-8 text-[10px] font-mono uppercase tracking-widest text-[#8E9AA8]">
-            <a href="#curriculum" onClick={(e) => scrollToSection(e, 'curriculum')} className="hover:text-white transition-colors">Curriculum</a>
-            <a href="#playground" onClick={(e) => scrollToSection(e, 'playground')} className="hover:text-white transition-colors">Playground</a>
-            <a href="#diagnostics" onClick={(e) => scrollToSection(e, 'diagnostics')} className="hover:text-white transition-colors">Documentation</a>
-            <Link to={LANDING_ROUTES.about} className="hover:text-white transition-colors">About Us</Link>
+          <div className="hidden md:flex items-center gap-8 text-[10px] font-mono uppercase tracking-widest text-slate-600 dark:text-[#8E9AA8]">
+            <a href="#curriculum" onClick={(e) => scrollToSection(e, 'curriculum')} className="hover:text-slate-900 dark:hover:text-white transition-colors">Curriculum</a>
+            <a href="#playground" onClick={(e) => scrollToSection(e, 'playground')} className="hover:text-slate-900 dark:hover:text-white transition-colors">Playground</a>
+            <a href="#diagnostics" onClick={(e) => scrollToSection(e, 'diagnostics')} className="hover:text-slate-900 dark:hover:text-white transition-colors">Documentation</a>
+            <Link to={LANDING_ROUTES.about} className="hover:text-slate-900 dark:hover:text-white transition-colors">About Us</Link>
           </div>
 
           <div className="flex items-center gap-4">
-            <div className="hidden sm:flex items-center gap-2 font-mono text-[10px] text-[#8E9AA8]">
-              <Clock size={12} className="text-[#FFB000]" /> <span className="tabular-data">{londonTime} UTC_LN</span>
+            <div className="hidden sm:flex items-center gap-2 font-mono text-[10px] text-slate-550 dark:text-[#8E9AA8]">
+              <Clock size={12} className="text-[#FF5F1F]" /> <span className="tabular-data">{londonTime} UTC_LN</span>
             </div>
-            <Link to={primaryTo} className="hidden md:inline-flex bg-slate-900 border border-slate-800 text-[10px] font-mono uppercase tracking-wider text-slate-200 px-3.5 py-2 rounded-lg hover:bg-slate-800 transition-colors">
+            <ThemeToggle />
+            <Link to={primaryTo} className="hidden md:inline-flex bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-[10px] font-mono uppercase tracking-wider text-slate-800 dark:text-slate-200 px-3.5 py-2 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-850 transition-colors active-press">
               {primaryLabel}
             </Link>
             {/* ENHANCEMENT 3: Mobile Hamburger Menu Toggle */}
             <button
-              className="md:hidden p-1.5 rounded-lg border border-slate-800 text-[#8E9AA8] hover:text-white hover:bg-slate-900 transition-colors"
+              className="md:hidden p-1.5 rounded-lg border border-slate-250 dark:border-slate-800 text-slate-650 dark:text-[#8E9AA8] hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors active-press"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-label={mobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
               aria-expanded={mobileMenuOpen}
@@ -246,14 +305,14 @@ export default function LandingPageContainer() {
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.2, ease: 'easeInOut' }}
-              className="md:hidden mt-4 pt-4 border-t border-slate-900/60"
+              className="md:hidden mt-4 pt-4 border-t border-slate-200/60 dark:border-slate-900/60"
             >
-              <div className="flex flex-col gap-3 font-mono text-[11px] uppercase tracking-widest text-[#8E9AA8]">
-                <a href="#curriculum" onClick={(e) => scrollToSection(e, 'curriculum')} className="py-2 hover:text-white transition-colors">Curriculum</a>
-                <a href="#playground" onClick={(e) => scrollToSection(e, 'playground')} className="py-2 hover:text-white transition-colors">Playground</a>
-                <a href="#diagnostics" onClick={(e) => scrollToSection(e, 'diagnostics')} className="py-2 hover:text-white transition-colors">Documentation</a>
-                <Link to={LANDING_ROUTES.about} onClick={() => setMobileMenuOpen(false)} className="py-2 hover:text-white transition-colors">About Us</Link>
-                <Link to={primaryTo} onClick={() => setMobileMenuOpen(false)} className="mt-2 bg-slate-900 border border-slate-800 text-slate-200 px-4 py-2.5 rounded-lg hover:bg-slate-800 transition-colors text-center">
+              <div className="flex flex-col gap-3 font-mono text-[11px] uppercase tracking-widest text-slate-600 dark:text-[#8E9AA8]">
+                <a href="#curriculum" onClick={(e) => scrollToSection(e, 'curriculum')} className="py-2 hover:text-slate-900 dark:hover:text-white transition-colors">Curriculum</a>
+                <a href="#playground" onClick={(e) => scrollToSection(e, 'playground')} className="py-2 hover:text-slate-900 dark:hover:text-white transition-colors">Playground</a>
+                <a href="#diagnostics" onClick={(e) => scrollToSection(e, 'diagnostics')} className="py-2 hover:text-slate-900 dark:hover:text-white transition-colors">Documentation</a>
+                <Link to={LANDING_ROUTES.about} onClick={() => setMobileMenuOpen(false)} className="py-2 hover:text-slate-900 dark:hover:text-white transition-colors">About Us</Link>
+                <Link to={primaryTo} onClick={() => setMobileMenuOpen(false)} className="mt-2 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 px-4 py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors text-center active-press">
                   {primaryLabel}
                 </Link>
               </div>
@@ -264,87 +323,87 @@ export default function LandingPageContainer() {
 
       <section className="relative z-10 max-w-7xl mx-auto px-6 pt-32 md:pt-40 pb-16 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
         <div className="lg:col-span-5 space-y-6 text-left">
-          <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-slate-900 border border-slate-800 text-[10px] font-mono text-[#8E9AA8] uppercase tracking-widest">
+          <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-[10px] font-mono text-slate-500 dark:text-[#8E9AA8] uppercase tracking-widest">
             <span>Platform Core // v2.0.26</span>
           </div>
-          <h1 className="font-bold text-white tracking-tight leading-[1.08] uppercase text-[clamp(2.25rem,5vw,4rem)]">
+          <h1 className="font-bold text-slate-900 dark:text-white tracking-tight leading-[1.08] uppercase text-[clamp(2.25rem,5vw,4rem)]">
             Bits become logic. <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#22D3EE] via-teal-400 to-[#10B981]">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00F5FF] via-teal-400 to-[#10B981]">
               Logic becomes silicon.
             </span>
           </h1>
-          <p className="text-sm text-[#8E9AA8] leading-relaxed max-w-[65ch]">
+          <p className="text-sm text-slate-650 dark:text-[#8E9AA8] leading-relaxed max-w-[65ch]">
             Go from confused ECE undergraduate to industry-ready digital design engineer. Learn VLSI, physical layout rules, and RTL synthesis through zero-install interactive simulation tools.
           </p>
           <div className="flex flex-wrap gap-3 font-mono text-[11px]">
-            <Link to={primaryTo} className="px-5 py-3 rounded-lg font-bold bg-slate-100 text-slate-950 hover:bg-white transition-all text-center">{primaryLabel}</Link>
-            <Link to={LANDING_ROUTES.career} className="px-5 py-3 rounded-lg font-bold bg-slate-900 border border-slate-800 text-slate-300 hover:bg-slate-800 transition-all text-center">Explore career paths</Link>
+            <Link to={primaryTo} className="px-5 py-3 rounded-lg font-bold bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-950 hover:bg-slate-850 dark:hover:bg-white transition-all text-center active-press">{primaryLabel}</Link>
+            <Link to={LANDING_ROUTES.career} className="px-5 py-3 rounded-lg font-bold bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-205 dark:hover:bg-slate-800 transition-all text-center active-press">Explore career paths</Link>
           </div>
           {/* ENHANCEMENT 6: Social Proof / Institutions Strip */}
-          <div className="pt-4 border-t border-slate-900 space-y-1.5">
-            <span className="text-[9px] font-mono text-[#8E9AA8] uppercase tracking-wider block">Trusted at engineering institutions</span>
-            <div className="flex flex-wrap gap-x-4 gap-y-1 font-mono text-[10px] text-[#8E9AA8]">
+          <div className="pt-4 border-t border-slate-200 dark:border-slate-900 space-y-1.5">
+            <span className="text-[9px] font-mono text-slate-500 dark:text-[#8E9AA8] uppercase tracking-wider block">Trusted at engineering institutions</span>
+            <div className="flex flex-wrap gap-x-4 gap-y-1 font-mono text-[10px] text-slate-500 dark:text-[#8E9AA8]">
               <span>IIT</span> &bull; <span>NIT</span> &bull; <span>VIT</span> &bull; <span>BITS</span> &bull; <span>DTU</span> &bull; <span>ANNA UNIV</span>
             </div>
           </div>
         </div>
 
         <div className="lg:col-span-7 w-full">
-          <div className="w-full bg-[#090e1a] border border-slate-800 rounded-xl shadow-2xl overflow-hidden flex flex-col justify-between min-h-[400px]">
-            <div className="bg-[#03050a] px-4 py-3 border-b border-slate-900 flex items-center justify-between">
+          <div className="w-full bg-white dark:bg-[#090e1a] border border-slate-200 dark:border-slate-800 rounded-xl shadow-2xl overflow-hidden flex flex-col justify-between min-h-[400px]">
+            <div className="bg-slate-50 dark:bg-[#03050a] px-4 py-3 border-b border-slate-200 dark:border-slate-900 flex items-center justify-between">
               <div className="flex items-center gap-6">
-                <div className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-slate-800" /><span className="w-2 h-2 rounded-full bg-slate-800" /><span className="w-2 h-2 rounded-full bg-slate-800" /></div>
+                <div className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-slate-200 dark:bg-slate-850" /><span className="w-2 h-2 rounded-full bg-slate-200 dark:bg-slate-850" /><span className="w-2 h-2 rounded-full bg-slate-200 dark:bg-slate-850" /></div>
                 <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-wider">
-                  <button onClick={() => setHeroTab('CODE')} className={`px-2 py-0.5 transition-colors ${heroTab === 'CODE' ? 'text-[#22D3EE] border-b border-[#22D3EE]' : 'text-[#8E9AA8] hover:text-slate-300'}`}>nand_gate.v</button>
-                  <button onClick={() => setHeroTab('WAVE')} className={`px-2 py-0.5 transition-colors ${heroTab === 'WAVE' ? 'text-[#22D3EE] border-b border-[#22D3EE]' : 'text-[#8E9AA8] hover:text-slate-300'}`}>timing_diagram.out</button>
+                  <button onClick={() => setHeroTab('CODE')} className={`px-2 py-0.5 transition-colors active-press ${heroTab === 'CODE' ? 'text-[#00F5FF] border-b border-[#00F5FF]' : 'text-slate-550 dark:text-[#8E9AA8] hover:text-slate-800 dark:hover:text-slate-300'}`}>nand_gate.v</button>
+                  <button onClick={() => setHeroTab('WAVE')} className={`px-2 py-0.5 transition-colors active-press ${heroTab === 'WAVE' ? 'text-[#00F5FF] border-b border-[#00F5FF]' : 'text-slate-550 dark:text-[#8E9AA8] hover:text-slate-800 dark:hover:text-slate-300'}`}>timing_diagram.out</button>
                 </div>
               </div>
               <div className="font-mono text-[9px] text-[#10B981] bg-[#10B981]/5 border border-[#10B981]/10 px-2 py-0.5 rounded uppercase tracking-wide">Simulation_Pass</div>
             </div>
 
-            <div className="p-6 flex-1 bg-[#090e1a]/40 flex flex-col justify-center">
+            <div className="p-6 flex-1 bg-slate-50/10 dark:bg-[#090e1a]/40 flex flex-col justify-center">
               {heroTab === 'CODE' ? (
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
                   {/* ENHANCEMENT 7: Code Block with Line Numbers */}
-                  <div className="md:col-span-7 bg-[#03050a] p-4 rounded-lg border border-slate-900 font-mono text-[11px] text-slate-300 shadow-inner">
+                  <div className="md:col-span-7 bg-slate-50 dark:bg-[#03050a] p-4 rounded-lg border border-slate-255 dark:border-slate-900 font-mono text-[11px] text-slate-800 dark:text-slate-300 shadow-inner">
                     <div className="flex gap-4">
-                      <div className="flex flex-col text-right text-slate-700 select-none border-r border-slate-900 pr-3 leading-[1.6]" aria-hidden="true">
+                      <div className="flex flex-col text-right text-slate-400 dark:text-slate-700 select-none border-r border-slate-200 dark:border-slate-900 pr-3 leading-[1.6]" aria-hidden="true">
                         <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span>
                       </div>
                       <div className="space-y-0 leading-[1.6]">
-                        <div><span className="text-cyan-400">module</span> nand_primitive (</div>
-                        <div className="text-[#8E9AA8]">  input <span className="text-slate-400">a, b,</span></div>
-                        <div className="text-[#8E9AA8]">  output <span className="text-slate-400">out</span></div>
+                        <div><span className="text-blue-600 dark:text-cyan-400">module</span> nand_primitive (</div>
+                        <div className="text-slate-550 dark:text-[#8E9AA8]">  input <span className="text-slate-800 dark:text-slate-400">a, b,</span></div>
+                        <div className="text-slate-550 dark:text-[#8E9AA8]">  output <span className="text-slate-800 dark:text-slate-400">out</span></div>
                         <div>);</div>
-                        <div className="text-slate-400">  <span className="text-cyan-400">assign</span> out = ~(a & b);</div>
-                        <div><span className="text-cyan-400">endmodule</span></div>
+                        <div className="text-slate-800 dark:text-slate-400">  <span className="text-blue-600 dark:text-cyan-400">assign</span> out = ~(a & b);</div>
+                        <div><span className="text-blue-600 dark:text-cyan-400">endmodule</span></div>
                       </div>
                     </div>
                   </div>
-                  <div className="md:col-span-5 space-y-4 font-mono text-[11px] border-l border-slate-900/60 pl-0 md:pl-6">
+                  <div className="md:col-span-5 space-y-4 font-mono text-[11px] border-l border-slate-200 dark:border-slate-900/60 pl-0 md:pl-6">
                     <div className="space-y-1.5">
-                      <span className="text-[9px] text-[#8E9AA8] uppercase block tracking-wider">Modify Pin Vectors</span>
-                      <button onClick={() => setPinState(p => ({ ...p, A: !p.A }))} aria-pressed={pinState.A} aria-label={`Input A: ${pinState.A ? 'HIGH' : 'LOW'}`} className={`w-full text-left px-3 py-2 rounded border flex justify-between ${pinState.A ? 'bg-[#090e1a] border-[#22D3EE]/30 text-[#22D3EE]' : 'bg-slate-950 border-slate-900 text-[#8E9AA8]'}`}>
+                      <span className="text-[9px] text-slate-550 dark:text-[#8E9AA8] uppercase block tracking-wider">Modify Pin Vectors</span>
+                      <button onClick={() => setPinState(p => ({ ...p, A: !p.A }))} aria-pressed={pinState.A} aria-label={`Input A: ${pinState.A ? 'HIGH' : 'LOW'}`} className={`w-full text-left px-3 py-2 rounded border flex justify-between active-press ${pinState.A ? 'bg-[#00F5FF]/10 border-[#00F5FF] text-[#00F5FF]' : 'bg-slate-100 dark:bg-slate-950 border-slate-200 dark:border-slate-900 text-slate-500 dark:text-[#8E9AA8]'}`}>
                         <span>INPUT_A</span><span className="font-bold tabular-data">{pinState.A ? '1' : '0'}</span>
                       </button>
-                      <button onClick={() => setPinState(p => ({ ...p, B: !p.B }))} aria-pressed={pinState.B} aria-label={`Input B: ${pinState.B ? 'HIGH' : 'LOW'}`} className={`w-full text-left px-3 py-2 rounded border flex justify-between ${pinState.B ? 'bg-[#090e1a] border-[#22D3EE]/30 text-[#22D3EE]' : 'bg-slate-950 border-slate-900 text-[#8E9AA8]'}`}>
+                      <button onClick={() => setPinState(p => ({ ...p, B: !p.B }))} aria-pressed={pinState.B} aria-label={`Input B: ${pinState.B ? 'HIGH' : 'LOW'}`} className={`w-full text-left px-3 py-2 rounded border flex justify-between active-press ${pinState.B ? 'bg-[#00F5FF]/10 border-[#00F5FF] text-[#00F5FF]' : 'bg-slate-100 dark:bg-slate-950 border-slate-200 dark:border-slate-900 text-slate-500 dark:text-[#8E9AA8]'}`}>
                         <span>INPUT_B</span><span className="font-bold tabular-data">{pinState.B ? '1' : '0'}</span>
                       </button>
                     </div>
-                    <div className="pt-2 border-t border-slate-900">
-                      <span className="text-[9px] text-[#8E9AA8] uppercase block tracking-wider mb-1">Evaluated Output</span>
-                      <div className={`font-bold px-3 py-2 rounded border tabular-data ${outNand ? 'bg-[#10B981]/5 border-[#10B981]/20 text-[#10B981]' : 'bg-slate-950 border-slate-900 text-slate-500'}`}>OUTPUT_OUT = {outNand ? '1' : '0'}</div>
+                    <div className="pt-2 border-t border-slate-200 dark:border-slate-900">
+                      <span className="text-[9px] text-slate-550 dark:text-[#8E9AA8] uppercase block tracking-wider mb-1">Evaluated Output</span>
+                      <div className={`font-bold px-3 py-2 rounded border tabular-data ${outNand ? 'bg-[#10B981]/5 border-[#10B981]/20 text-[#10B981]' : 'bg-slate-100 dark:bg-slate-950 border-slate-200 dark:border-slate-900 text-slate-455 dark:text-slate-500'}`}>OUTPUT_OUT = {outNand ? '1' : '0'}</div>
                     </div>
                   </div>
                 </div>
               ) : (
-                <div className="bg-[#03050a] p-4 rounded-lg border border-slate-900 space-y-3 font-mono text-[11px]">
-                  <div className="flex items-center gap-4"><span className="w-16 text-[#8E9AA8]">CLK_REF</span><svg width="100%" height="16" viewBox="0 0 300 16" preserveAspectRatio="none" className="text-slate-800"><path d="M 0 14 L 30 14 L 30 2 L 60 2 L 60 14 L 90 14 L 90 2 L 120 2 L 120 14 L 150 14 L 150 2 L 180 2 L 180 14 L 210 14 L 210 2 L 240 2 L 240 14 L 270 14 L 270 2 L 300 2" fill="none" stroke="currentColor" strokeWidth="1.5" /></svg></div>
-                  <div className="flex items-center gap-4"><span className="w-16 text-[#22D3EE]">SIG_OUT</span><svg width="100%" height="16" viewBox="0 0 300 16" preserveAspectRatio="none" className="text-[#22D3EE]/80"><path d="M 0 2 L 90 2 L 90 14 L 180 14 L 180 2 L 300 2" fill="none" stroke="currentColor" strokeWidth="1.5" /></svg></div>
+                <div className="bg-slate-50 dark:bg-[#03050a] p-4 rounded-lg border border-slate-200 dark:border-slate-900 space-y-3 font-mono text-[11px]">
+                  <div className="flex items-center gap-4"><span className="w-16 text-slate-500 dark:text-[#8E9AA8]">CLK_REF</span><svg width="100%" height="16" viewBox="0 0 300 16" preserveAspectRatio="none" className="text-slate-300 dark:text-slate-800"><path d="M 0 14 L 30 14 L 30 2 L 60 2 L 60 14 L 90 14 L 90 2 L 120 2 L 120 14 L 150 14 L 150 2 L 180 2 L 180 14 L 210 14 L 210 2 L 240 2 L 240 14 L 270 14 L 270 2 L 300 2" fill="none" stroke="currentColor" strokeWidth="1.5" /></svg></div>
+                  <div className="flex items-center gap-4"><span className="w-16 text-[#00F5FF]">SIG_OUT</span><svg width="100%" height="16" viewBox="0 0 300 16" preserveAspectRatio="none" className="text-[#00F5FF]/80"><path d="M 0 2 L 90 2 L 90 14 L 180 14 L 180 2 L 300 2" fill="none" stroke="currentColor" strokeWidth="1.5" /></svg></div>
                 </div>
               )}
             </div>
-            <div className="bg-[#03050a] px-4 py-3 border-t border-slate-900 font-mono text-[10px] text-[#8E9AA8] flex justify-between">
+            <div className="bg-slate-50 dark:bg-[#03050a] px-4 py-3 border-t border-slate-200 dark:border-slate-900 font-mono text-[10px] text-slate-500 dark:text-[#8E9AA8] flex justify-between">
               <span>&gt;_ Active Target: Core_Matrix_Evaluator_01</span>
               <span className="tabular-data">Delay: 12ps &bull; Foundry Capable: Yes</span>
             </div>
@@ -352,116 +411,40 @@ export default function LandingPageContainer() {
         </div>
       </section>
 
-      <AnimatedSection className="relative z-10 max-w-7xl mx-auto px-6 py-20 border-t border-slate-900/60 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+      <AnimatedSection className="relative z-10 max-w-7xl mx-auto px-6 py-20 border-t border-slate-200/60 dark:border-slate-900/60 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
         <div className="lg:col-span-6 space-y-4 max-w-[65ch]">
-          <span className="text-[10px] font-mono text-[#22D3EE] uppercase tracking-widest block">// ANALYTICAL LOGIC PLAYGROUND</span>
-          <h2 className="font-bold text-white uppercase tracking-tight text-[clamp(1.75rem,4vw,3rem)] leading-[1.1]">
+          <span className="text-[10px] font-mono text-[#00F5FF] uppercase tracking-widest block">// ANALYTICAL LOGIC PLAYGROUND</span>
+          <h2 className="font-bold text-slate-900 dark:text-white uppercase tracking-tight text-[clamp(1.75rem,4vw,3rem)] leading-[1.1]">
             Bridge the gap between math derivations and actual silicon.
           </h2>
-          <p className="text-sm text-[#8E9AA8] leading-relaxed">
+          <p className="text-sm text-slate-650 dark:text-[#8E9AA8] leading-relaxed">
             Traditional engineering curricula often leave students stuck in abstract whiteboard derivations, disconnected from the physical tools and systems used in the semiconductor industry. BitforBytes tethers physical concepts directly to a visually accurate logic gate environment.
           </p>
         </div>
-        <div className="lg:col-span-6 bg-[#090e1a] border border-slate-900 rounded-xl p-6 flex flex-col justify-center items-center min-h-[200px]">
+        <div className="lg:col-span-6 bg-white dark:bg-[#090e1a] border border-slate-200 dark:border-slate-900 rounded-xl p-6 flex flex-col justify-center items-center min-h-[200px]">
           <div className="flex gap-2 font-mono text-[10px] mb-4">
             {['AND', 'OR', 'NAND', 'NOR', 'XOR'].map((g) => (
-              <span key={g} className={`px-2.5 py-1 rounded border ${g === 'NOR' ? 'bg-[#22D3EE]/10 border-[#22D3EE] text-[#22D3EE]' : 'bg-slate-950 border-slate-900 text-[#8E9AA8]'}`}>{g}</span>
+              <span key={g} className={`px-2.5 py-1 rounded border active-press ${g === 'NOR' ? 'bg-[#00F5FF]/10 border-[#00F5FF] text-[#00F5FF]' : 'bg-slate-100 dark:bg-slate-950 border-slate-200 dark:border-slate-900 text-slate-600 dark:text-[#8E9AA8]'}`}>{g}</span>
             ))}
           </div>
           <div className="w-10 h-10 rounded-full bg-[#10B981]/10 border border-[#10B981]/30 flex items-center justify-center text-[#10B981] font-mono text-xs font-bold shadow-[0_0_15px_rgba(16,185,129,0.1)]">HIGH</div>
         </div>
       </AnimatedSection>
 
-      <AnimatedSection id="playground" className="relative z-10 max-w-7xl mx-auto px-6 py-20 border-t border-t-slate-900/60 space-y-8">
-        <div className="max-w-[65ch] space-y-2">
-          <span className="text-[10px] font-mono text-[#22D3EE] uppercase tracking-widest block">// LIVE SYSTEM RUNTIME ENVIRONMENT</span>
-          <h2 className="font-bold text-white uppercase tracking-tight text-[clamp(1.75rem,4vw,3rem)] leading-[1.1]">Interact with real hardware primitives.</h2>
-          <p className="text-sm text-[#8E9AA8]">Click the workspace matrix below to toggle inputs, monitor real-time clock cycles, and evaluate execution timing closures concurrently.</p>
-        </div>
+      <SiliconPlaypenGrid />
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
-          <div className="lg:col-span-4 flex flex-col gap-2 font-mono text-[11px]" role="tablist" aria-label="EDA Stage Selector">
-            <span className="text-[9px] text-[#8E9AA8] uppercase tracking-widest mb-1">Select_EDA_Stage</span>
-            {(['GATES', 'WAVEFORMS', 'TELEMETRY'] as BentoTabType[]).map((t) => (
-              <button key={t} role="tab" aria-selected={bentoTab === t} aria-controls={`panel-${t.toLowerCase()}`} onClick={() => setBentoTab(t)} className={`w-full text-left px-4 py-3.5 border uppercase tracking-wider rounded-lg transition-colors ${bentoTab === t ? 'bg-[#090e1a] border-[#22D3EE]/50 text-[#22D3EE]' : 'bg-[#090e1a]/20 border-slate-900 text-[#8E9AA8] hover:border-slate-800'}`}>
-                {t} MODULE
-              </button>
-            ))}
-          </div>
-
-          <div className="lg:col-span-8 bg-[#090e1a] border border-slate-900 rounded-xl overflow-hidden flex flex-col justify-between min-h-[300px]">
-            <div className="bg-[#03050a] px-4 py-2.5 border-b border-slate-900 flex justify-between items-center font-mono text-[10px] text-[#8E9AA8]">
-              <span>bitforbytes_core_analyzer.{bentoTab.toLowerCase()}</span>
-              <span className="text-[#22D3EE] bg-[#22D3EE]/5 px-2 py-0.5 rounded border border-[#22D3EE]/10 uppercase">Sys_Status: Running</span>
-            </div>
-            <div className="p-6 flex-1 flex flex-col justify-center" role="tabpanel" id={`panel-${bentoTab.toLowerCase()}`}>
-              {bentoTab === 'GATES' && (
-                <div className="space-y-4">
-                  <div className="flex gap-8 items-center justify-center font-mono text-xs tabular-data">
-                    <div className="bg-slate-950 border border-slate-900 px-3 py-1.5 rounded text-[#22D3EE]">PIN_A: {pinState.A ? '1' : '0'}</div>
-                    <div className="w-12 h-6 border border-slate-800 flex items-center justify-center rounded bg-slate-900/60 text-[10px]">NAND</div>
-                    <div className="bg-[#10B981]/5 border border-[#10B981]/20 px-3 py-1.5 rounded text-[#10B981] font-bold">OUT: {outNand ? '1' : '0'}</div>
-                  </div>
-                  <div className="bg-[#03050a] rounded-lg border border-slate-900 p-3 max-w-xs mx-auto w-full">
-                    <div className="font-mono text-[9px] text-[#8E9AA8] uppercase tracking-wider mb-2">NAND Truth Table</div>
-                    <table className="w-full font-mono text-[10px] tabular-data">
-                      <thead>
-                        <tr className="text-[#8E9AA8] border-b border-slate-900">
-                          <th className="py-1 px-2 text-left font-medium">A</th>
-                          <th className="py-1 px-2 text-left font-medium">B</th>
-                          <th className="py-1 px-2 text-left font-medium">OUT</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {[
-                          { a: false, b: false, out: true },
-                          { a: false, b: true, out: true },
-                          { a: true, b: false, out: true },
-                          { a: true, b: true, out: false },
-                        ].map((row, i) => {
-                          const isActive = row.a === pinState.A && row.b === pinState.B;
-                          return (
-                            <tr key={i} className={`transition-colors duration-200 ${isActive ? 'bg-[#22D3EE]/8' : ''}`}>
-                              <td className={`py-1.5 px-2 ${isActive ? 'text-[#22D3EE] font-semibold' : 'text-[#8E9AA8]'}`}>{row.a ? '1' : '0'}</td>
-                              <td className={`py-1.5 px-2 ${isActive ? 'text-[#22D3EE] font-semibold' : 'text-[#8E9AA8]'}`}>{row.b ? '1' : '0'}</td>
-                              <td className={`py-1.5 px-2 font-bold ${isActive ? (row.out ? 'text-[#10B981]' : 'text-red-400') : 'text-[#8E9AA8]'}`}>{row.out ? '1' : '0'}</td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              )}
-              {bentoTab === 'WAVEFORMS' && (
-                <div className="w-full h-12 flex items-end px-4 bg-slate-950 rounded border border-slate-900 py-2"><svg width="100%" height="100%" viewBox="0 0 400 20" preserveAspectRatio="none" className="text-[#22D3EE]"><path d="M 0 18 L 40 18 L 40 2 L 120 2 L 120 18 L 200 18 L 200 2 L 300 2" fill="none" stroke="currentColor" strokeWidth="2" /></svg></div>
-              )}
-              {bentoTab === 'TELEMETRY' && (
-                <div className="space-y-3 font-mono text-[11px] text-left max-w-sm mx-auto w-full">
-                  <div><div className="flex justify-between text-[#8E9AA8] mb-1"><span>SETUP_MARGIN_CONSTRAINT</span><span className="text-[#10B981] tabular-data">88%</span></div><div className="w-full h-1 bg-slate-950 rounded-full"><div className="h-full bg-[#10B981] w-[88%] rounded-full" /></div></div>
-                  <div><div className="flex justify-between text-[#8E9AA8] mb-1"><span>LOGIC_CELL_OPTIMIZATION</span><span className="text-[#22D3EE] tabular-data">65%</span></div><div className="w-full h-1 bg-slate-950 rounded-full"><div className="h-full bg-[#22D3EE] w-[65%] rounded-full" /></div></div>
-                </div>
-              )}
-            </div>
-            <div className="bg-[#03050a] px-4 py-2.5 border-t border-slate-900 font-mono text-[10px] text-[#8E9AA8]">
-              <span>&gt;_ Active Workspace: DSD_Module_01_Foundations &bull; Grid: 45° Route Matrix</span>
-            </div>
-          </div>
-        </div>
-      </AnimatedSection>
-
-      <AnimatedSection className="relative z-10 max-w-7xl mx-auto px-6 py-12 space-y-8 border-t border-slate-900/60">
+      <AnimatedSection className="relative z-10 max-w-7xl mx-auto px-6 py-12 space-y-8 border-t border-slate-200/60 dark:border-slate-900/60">
         <PremiumBentoFeatures />
       </AnimatedSection>
 
-      {/* SECTION 5: THE CURRICULUM INDEX SEQUENCE (image_a4a701.png & image_a4a71b.png) */}
-      <AnimatedSection id="curriculum" className="relative z-10 max-w-7xl mx-auto px-6 py-16 border-t border-slate-900/60 space-y-12">
+      {/* SECTION 5: THE CURRICULUM INDEX SEQUENCE */}
+      <AnimatedSection id="curriculum" className="relative z-10 max-w-7xl mx-auto px-6 py-16 border-t border-slate-200/60 dark:border-slate-900/60 space-y-12">
         <div className="text-left max-w-[65ch] space-y-2">
-          <span className="text-[10px] font-mono text-[#22D3EE] uppercase tracking-widest block">// CURRICULUM PIPELINE PATHWAYS</span>
-          <h2 className="font-bold text-white uppercase tracking-tight text-[clamp(1.75rem,4vw,3rem)] leading-[1.1]">
+          <span className="text-[10px] font-mono text-[#00F5FF] uppercase tracking-widest block">// CURRICULUM PIPELINE PATHWAYS</span>
+          <h2 className={`font-bold uppercase tracking-tight text-[clamp(1.75rem,4vw,3rem)] leading-[1.1] ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
             A COMPLETE SILICON ENGINEERING PIPELINE.
           </h2>
-          <p className="text-sm text-slate-400 leading-relaxed">
+          <p className={`text-sm leading-relaxed ${isDarkMode ? 'text-slate-400' : 'text-slate-650'}`}>
             Select your curriculum entry block. Build fundamental digital logic components, synthesise functional hardware modules, and evaluate physical floorplanning timing metrics.
           </p>
         </div>
@@ -472,32 +455,32 @@ export default function LandingPageContainer() {
             { id: "02", title: "Verilog HDL RTL Synthesis", subtitle: "Hardware Description Languages", desc: "Transition from visual schematics to industry-standard Verilog. Learn to author functional testbenches and verify logic loops via browser-based RTL synthesis.", action: "Join Queue Waitlist &rarr;", time: "YEAR RANGE: 3-4" },
             { id: "03", title: "Silicon Timing & Physical Floorplanning", subtitle: "Physical Layer Optimization", desc: "Understand the structural realities of silicon. Manage propagation delays, setup and hold constraints, and evaluate clock skew latency parameters on macro floorplanning diagrams.", action: "Explore Market Maps &rarr;", time: "TELEMETRY: ACTIVE" }
           ].map((c) => (
-            <div key={c.id} className="bg-[#090e1a] border border-slate-900 rounded-xl p-6 flex flex-col justify-between group">
+            <div key={c.id} className={`border rounded-xl p-6 flex flex-col justify-between group transition-colors duration-500 ${isDarkMode ? 'bg-[#090e1a] border-slate-900' : 'bg-white border-slate-200 shadow-sm'}`}>
               <div className="space-y-4">
-                <span className="font-mono text-[10px] text-[#22D3EE] block uppercase tracking-wider">{c.id} / {c.subtitle}</span>
-                <h3 className="text-base font-semibold text-slate-200 tracking-tight">{c.title}</h3>
-                <p className="text-xs text-slate-400 leading-relaxed">{c.desc}</p>
+                <span className="font-mono text-[10px] text-[#00F5FF] block uppercase tracking-wider">{c.id} / {c.subtitle}</span>
+                <h3 className={`text-base font-semibold tracking-tight ${isDarkMode ? 'text-slate-200' : 'text-slate-800'}`}>{c.title}</h3>
+                <p className={`text-xs leading-relaxed ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>{c.desc}</p>
               </div>
-              <div className="mt-8 pt-4 border-t border-slate-900/60 flex items-center justify-between font-mono text-[10px]">
+              <div className={`mt-8 pt-4 border-t flex items-center justify-between font-mono text-[10px] ${isDarkMode ? 'border-slate-900/60' : 'border-slate-100'}`}>
                 <span className="text-[#8E9AA8] tabular-data">{c.time}</span>
-                <button className="text-[#22D3EE] group-hover:underline">{c.action}</button>
+                <button className="text-[#00F5FF] group-hover:underline active-press">{c.action}</button>
               </div>
             </div>
           ))}
         </div>
       </AnimatedSection>
 
-      {/* SECTION 6: THE TARGET PROFILES CONSOLE (image_a4a6e4.png) */}
-      <AnimatedSection id="diagnostics" className="relative z-10 max-w-7xl mx-auto px-6 py-16 border-t border-slate-900/60 space-y-8">
+      {/* SECTION 6: THE TARGET PROFILES CONSOLE */}
+      <AnimatedSection id="diagnostics" className="relative z-10 max-w-7xl mx-auto px-6 py-16 border-t border-slate-200/60 dark:border-slate-900/60 space-y-8">
         <div className="max-w-[65ch] space-y-1 text-left">
-          <span className="text-[10px] font-mono text-[#22D3EE] uppercase tracking-widest block">// DOCUMENTATION TARGET PROFILES</span>
-          <h2 className="font-bold text-white uppercase tracking-tight text-[clamp(1.5rem,4vw,2.75rem)]">Engineered for clarity at every level.</h2>
+          <span className="text-[10px] font-mono text-[#00F5FF] uppercase tracking-widest block">// DOCUMENTATION TARGET PROFILES</span>
+          <h2 className={`font-bold uppercase tracking-tight text-[clamp(1.5rem,4vw,2.75rem)] ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Engineered for clarity at every level.</h2>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           <div className="lg:col-span-4 flex flex-col gap-2 font-mono text-[11px]" role="tablist" aria-label="Profile Stage Selector">
             {(['ACADEMIC', 'SYSTEMS', 'PROFESSIONAL'] as ProfileTabType[]).map((p) => (
-              <button key={p} role="tab" aria-selected={profileTab === p} onClick={() => setProfileTab(p)} className={`w-full text-left px-4 py-3.5 border rounded-lg transition-colors ${profileTab === p ? 'bg-[#090e1a] border-[#22D3EE]/30 text-[#22D3EE]' : 'bg-[#090e1a]/20 border-slate-900 text-[#8E9AA8] hover:text-slate-400'}`}>
+              <button key={p} role="tab" aria-selected={profileTab === p} onClick={() => setProfileTab(p)} className={`w-full text-left px-4 py-3.5 border rounded-lg transition-colors active-press ${profileTab === p ? 'bg-white dark:bg-[#090e1a] border-[#00F5FF]/30 text-[#00F5FF] shadow-sm' : 'bg-slate-50/20 dark:bg-[#090e1a]/20 border-slate-200 dark:border-slate-900 text-slate-600 dark:text-[#8E9AA8] hover:text-slate-900 dark:hover:text-slate-400'}`}>
                 {p === 'ACADEMIC' && 'Academic Foundations'}
                 {p === 'SYSTEMS' && 'Systems Transition'}
                 {p === 'PROFESSIONAL' && 'Professional Expansion'}
@@ -505,59 +488,59 @@ export default function LandingPageContainer() {
             ))}
           </div>
 
-          <div className="lg:col-span-8 bg-[#090e1a] border border-slate-900 rounded-xl p-6 min-h-[220px] font-mono flex flex-col justify-between" role="tabpanel">
+          <div className={`lg:col-span-8 border rounded-xl p-6 min-h-[220px] font-mono flex flex-col justify-between transition-colors duration-500 ${isDarkMode ? 'bg-[#090e1a] border-slate-900' : 'bg-white border-slate-200 shadow-sm'}`} role="tabpanel">
             <div className="space-y-3">
               <span className="text-[9px] text-[#8E9AA8] block uppercase tracking-wider">Active_Stage: {profileTab}</span>
               {profileTab === 'ACADEMIC' && (
                 <>
                   <div className="flex items-center gap-2">
-                    <Cpu size={16} className="text-cyan-400" />
-                    <h3 className="text-sm font-semibold text-slate-200">Visualize abstract lecture physics.</h3>
+                    <Cpu size={16} className="text-[#00F5FF]" />
+                    <h3 className={`text-sm font-semibold ${isDarkMode ? 'text-slate-200' : 'text-slate-800'}`}>Visualize abstract lecture physics.</h3>
                   </div>
-                  <p className="text-xs text-slate-400 leading-relaxed font-sans max-w-prose">For students navigating lecture material who require a visual, tactile model to master the physics of digital circuits. Replace manual truth tables with real-time waveform analyzers and gate debuggers.</p>
+                  <p className={`text-xs leading-relaxed font-sans max-w-prose ${isDarkMode ? 'text-slate-400' : 'text-slate-650'}`}>For students navigating lecture material who require a visual, tactile model to master the physics of digital circuits. Replace manual truth tables with real-time waveform analyzers and gate debuggers.</p>
                 </>
               )}
               {profileTab === 'SYSTEMS' && (
                 <>
                   <div className="flex items-center gap-2">
-                    <Terminal size={16} className="text-[#22D3EE]" />
-                    <h3 className="text-sm font-semibold text-slate-200">Master architectural cross-compilation execution pipelines.</h3>
+                    <Terminal size={16} className="text-[#00F5FF]" />
+                    <h3 className={`text-sm font-semibold ${isDarkMode ? 'text-slate-200' : 'text-slate-800'}`}>Master architectural cross-compilation execution pipelines.</h3>
                   </div>
-                  <p className="text-xs text-slate-400 leading-relaxed font-sans max-w-prose">For software developers moving down the hardware stack. Uncover how operational instructions synthesize into custom physical layouts, cache topologies, and core vectors.</p>
+                  <p className={`text-xs leading-relaxed font-sans max-w-prose ${isDarkMode ? 'text-slate-400' : 'text-slate-650'}`}>For software developers moving down the hardware stack. Uncover how operational instructions synthesize into custom physical layouts, cache topologies, and core vectors.</p>
                 </>
               )}
               {profileTab === 'PROFESSIONAL' && (
                 <>
                   <div className="flex items-center gap-2">
                     <Zap size={16} className="text-[#10B981]" />
-                    <h3 className="text-sm font-semibold text-slate-200">Scale tool-fluent foundry capability.</h3>
+                    <h3 className={`text-sm font-semibold ${isDarkMode ? 'text-slate-200' : 'text-slate-800'}`}>Scale tool-fluent foundry capability.</h3>
                   </div>
-                  <p className="text-xs text-slate-400 leading-relaxed font-sans max-w-prose">For senior engineering profiles tuning low-level ASIC parameters. Close setup errors, optimize routing layers, and secure continuous verification targets.</p>
+                  <p className={`text-xs leading-relaxed font-sans max-w-prose ${isDarkMode ? 'text-slate-400' : 'text-slate-650'}`}>For senior engineering profiles tuning low-level ASIC parameters. Close setup errors, optimize routing layers, and secure continuous verification targets.</p>
                 </>
               )}
             </div>
-            <div className="mt-4 pt-3 border-t border-slate-900/60 text-[10px] text-[#10B981] flex gap-2 items-center">&bull; <span>System diagnostic paths loaded cleanly</span></div>
+            <div className={`mt-4 pt-3 border-t text-[10px] text-[#10B981] flex gap-2 items-center ${isDarkMode ? 'border-slate-900/60' : 'border-slate-100'}`}>&bull; <span>System diagnostic paths loaded cleanly</span></div>
           </div>
         </div>
       </AnimatedSection>
 
       {/* FAQ Accordion Section */}
-      <AnimatedSection className="relative z-10 max-w-4xl mx-auto px-6 py-16 border-t border-slate-900/60 space-y-8">
+      <AnimatedSection className="relative z-10 max-w-4xl mx-auto px-6 py-16 border-t border-slate-200/60 dark:border-slate-900/60 space-y-8">
         <div className="text-center space-y-2">
-          <span className="text-[10px] font-mono text-[#22D3EE] uppercase tracking-widest block">// SYSTEM FREQUENTLY ASKED QUESTIONS</span>
-          <h2 className="font-bold text-white uppercase tracking-tight text-2xl md:text-3xl">Common Inquiries</h2>
+          <span className="text-[10px] font-mono text-[#00F5FF] uppercase tracking-widest block">// SYSTEM FREQUENTLY ASKED QUESTIONS</span>
+          <h2 className={`font-bold uppercase tracking-tight text-2xl md:text-3xl ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Common Inquiries</h2>
         </div>
         <div className="space-y-4">
           {FAQ_DATA.map((faq, index) => {
             const isOpen = activeFaq === index;
             return (
-              <div key={index} className="bg-[#090e1a] border border-slate-900 rounded-xl overflow-hidden">
+              <div key={index} className={`border rounded-xl overflow-hidden transition-colors duration-500 ${isDarkMode ? 'bg-[#090e1a] border-slate-900' : 'bg-white border-slate-200 shadow-sm'}`}>
                 <button
                   onClick={() => setActiveFaq(isOpen ? null : index)}
-                  className="w-full px-6 py-4 flex items-center justify-between text-left text-sm font-semibold text-slate-200 hover:text-white transition-colors font-sans"
+                  className={`w-full px-6 py-4 flex items-center justify-between text-left text-sm font-semibold transition-colors font-sans active-press ${isDarkMode ? 'text-slate-200 hover:text-white' : 'text-slate-800 hover:text-black'}`}
                 >
                   <div className="flex items-center gap-3">
-                    <HelpCircle size={16} className="text-[#22D3EE]" />
+                    <HelpCircle size={16} className="text-[#00F5FF]" />
                     <span>{faq.q}</span>
                   </div>
                   {isOpen ? <ChevronUp size={16} className="text-[#8E9AA8]" /> : <ChevronDown size={16} className="text-[#8E9AA8]" />}
@@ -570,7 +553,7 @@ export default function LandingPageContainer() {
                       exit={{ height: 0, opacity: 0 }}
                       transition={{ duration: 0.25, ease: 'easeInOut' }}
                     >
-                      <div className="px-6 pb-5 pt-1 text-xs text-slate-400 leading-relaxed font-sans border-t border-slate-900/30">
+                      <div className={`px-6 pb-5 pt-1 text-xs leading-relaxed font-sans border-t ${isDarkMode ? 'text-slate-400 border-slate-900/30' : 'text-slate-600 border-slate-100'}`}>
                         {faq.a}
                       </div>
                     </motion.div>
@@ -582,10 +565,12 @@ export default function LandingPageContainer() {
         </div>
       </AnimatedSection>
 
-      {/* SECTION 7: THE CONVERSION STAGE & LIQUID GLASS FOOTER (image_a4a6df.png & image_a4a6c6.png) */}
+      {/* SECTION 7: THE CONVERSION STAGE & LIQUID GLASS FOOTER */}
       <section className="relative z-10 max-w-7xl mx-auto px-4 md:px-6 py-12 space-y-16">
         <div className="text-center space-y-6 max-w-2xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-xl mx-auto text-center border-b border-slate-900 pb-6 font-mono">
+          <div className={`grid grid-cols-2 md:grid-cols-4 gap-4 max-w-xl mx-auto text-center border-b pb-6 font-mono ${
+            isDarkMode ? 'border-slate-900' : 'border-slate-200'
+          }`}>
             {[
               { v: '13', l: 'ECE Domains Map' },
               { v: '₹0', l: 'Free for Students' },
@@ -595,56 +580,56 @@ export default function LandingPageContainer() {
               <div key={idx} className="flex flex-col items-center">
                 <div className="flex items-center gap-1">
                   <CheckCircle2 size={12} className="text-[#10B981]" />
-                  <div className="text-lg font-bold text-[#22D3EE] tabular-data">{i.v}</div>
+                  <div className="text-lg font-bold text-[#00F5FF] tabular-data">{i.v}</div>
                 </div>
-                <div className="text-[8px] text-[#8E9AA8] uppercase tracking-wider">{i.l}</div>
+                <div className="text-[8px] text-slate-500 dark:text-[#8E9AA8] uppercase tracking-wider">{i.l}</div>
               </div>
             ))}
           </div>
 
-          <h2 className="font-bold text-white tracking-tight uppercase leading-[1.1] text-[clamp(1.75rem,4.5vw,3rem)]">
+          <h2 className={`font-bold tracking-tight uppercase leading-[1.1] text-[clamp(1.75rem,4.5vw,3rem)] ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
             Modern hardware design <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#22D3EE] to-[#10B981]">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00F5FF] to-[#10B981]">
               requires intuitive tools.
             </span>
           </h2>
-          <p className="text-xs md:text-sm text-slate-400 max-w-[60ch] mx-auto leading-relaxed">
+          <p className={`text-xs md:text-sm max-w-[60ch] mx-auto leading-relaxed ${isDarkMode ? 'text-slate-400' : 'text-slate-650'}`}>
             Join thousands of engineering students and developers who use our application workspace. BitforBytes guides you through every layer of the processor stack with free, browser-based environments.
           </p>
           <div className="flex justify-center gap-3 font-mono text-[11px]">
-            <Link to={primaryTo} className="bg-[#22D3EE] text-[#03050a] font-bold px-6 py-3 rounded-lg hover:bg-cyan-400 transition-colors text-center">{primaryLabel}</Link>
-            <a href={LANDING_ROUTES.social.discord} target="_blank" rel="noopener noreferrer" className="border border-slate-800 text-slate-300 px-6 py-3 rounded-lg bg-slate-900/40 hover:bg-slate-800 transition-colors text-center">Join Discord Community</a>
+            <Link to={primaryTo} className="bg-[#00F5FF] text-[#03050a] font-bold px-6 py-3 rounded-lg hover:bg-cyan-400 transition-colors text-center active-press">{primaryLabel}</Link>
+            <a href={LANDING_ROUTES.social.discord} target="_blank" rel="noopener noreferrer" className={`border px-6 py-3 rounded-lg transition-colors text-center active-press ${isDarkMode ? 'border-slate-800 text-slate-300 bg-slate-900/40 hover:bg-slate-800' : 'border-slate-200 text-slate-700 bg-white hover:bg-slate-100 shadow-sm'}`}>Join Discord Community</a>
           </div>
-          <span className="text-[9px] font-mono text-[#8E9AA8] tracking-wider block uppercase">No Account Required &bull; No CC Needed &bull; Installs: 0</span>
+          <span className="text-[9px] font-mono text-slate-500 dark:text-[#8E9AA8] tracking-wider block uppercase">No Account Required &bull; No CC Needed &bull; Installs: 0</span>
         </div>
 
         {/* ULTRA-PREMIUM LIQUID GLASS FOOTER COMPONENT */}
-        <footer className="liquid-glass w-full rounded-2xl p-8 md:p-12 text-white/50 border-t border-slate-900/60 z-10">
+        <footer className={`liquid-glass w-full rounded-2xl p-8 md:p-12 border-t z-10 transition-all duration-500 ${isDarkMode ? 'text-white/50 border-slate-900/60' : 'text-slate-700/60 border-slate-200'}`}>
           <div className="grid grid-cols-1 md:grid-cols-12 gap-8 mb-10 text-left">
             <div className="md:col-span-5 space-y-3">
-              <div className="text-sm font-bold text-white uppercase font-mono tracking-wider">Bit<span className="text-[#22D3EE]">for</span>Bytes</div>
-              <p className="text-xs leading-relaxed text-[#8E9AA8] font-sans max-w-xs">
+              <div className={`text-sm font-bold uppercase font-mono tracking-wider ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Bit<span className="text-[#00F5FF]">for</span>Bytes</div>
+              <p className={`text-xs leading-relaxed font-sans max-w-xs ${isDarkMode ? 'text-[#8E9AA8]' : 'text-slate-650'}`}>
                 Signals become logic. Logic becomes systems. Free, open-access digital design and VLSI education.
               </p>
-              <p className="text-[10px] font-mono text-[#8E9AA8]">&copy; 2026 BitforBytes. All rights reserved. Aligned to ISM 2.0.</p>
+              <p className="text-[10px] font-mono text-slate-550 dark:text-[#8E9AA8]">&copy; 2026 BitforBytes. All rights reserved. Aligned to ISM 2.0.</p>
             </div>
             <div className="md:col-span-7 grid grid-cols-2 sm:grid-cols-3 gap-6 font-mono text-[10px] tracking-wider">
               <div>
-                <h4 className="text-slate-400 font-semibold mb-3 uppercase text-[11px]">// Navigation</h4>
-                <ul className="space-y-2 text-[#8E9AA8]">
-                  <li><a href="#curriculum" className="hover:text-[#22D3EE] transition-colors">&gt;_ Curriculum</a></li>
-                  <li><a href="#playground" className="hover:text-[#22D3EE] transition-colors">&gt;_ Playground</a></li>
-                  <li><a href="#diagnostics" className="hover:text-[#22D3EE] transition-colors">&gt;_ Documentation</a></li>
-                  <li><Link to={LANDING_ROUTES.about} className="hover:text-[#22D3EE] transition-colors">&gt;_ About Us</Link></li>
+                <h4 className={`font-semibold mb-3 uppercase text-[11px] ${isDarkMode ? 'text-slate-400' : 'text-slate-800'}`}>// Navigation</h4>
+                <ul className={`space-y-2 ${isDarkMode ? 'text-[#8E9AA8]' : 'text-slate-600'}`}>
+                  <li><a href="#curriculum" className="hover:text-[#00F5FF] transition-colors">&gt;_ Curriculum</a></li>
+                  <li><a href="#playground" className="hover:text-[#00F5FF] transition-colors">&gt;_ Playground</a></li>
+                  <li><a href="#diagnostics" className="hover:text-[#00F5FF] transition-colors">&gt;_ Documentation</a></li>
+                  <li><Link to={LANDING_ROUTES.about} className="hover:text-[#00F5FF] transition-colors">&gt;_ About Us</Link></li>
                 </ul>
               </div>
               <div>
-                <h4 className="text-slate-400 font-semibold mb-3 uppercase text-[11px]">// Platform</h4>
-                <ul className="space-y-2 text-[#8E9AA8]">
-                  <li><a href={LANDING_ROUTES.github} target="_blank" rel="noopener noreferrer" className="hover:text-[#22D3EE] transition-colors">&gt;_ GitHub Source</a></li>
-                  <li><span className="text-[#8E9AA8]">&gt;_ Terms of Service</span></li>
-                  <li><span className="text-[#8E9AA8]">&gt;_ Privacy Policy</span></li>
-                  <li><a href={LANDING_ROUTES.social.email} className="hover:text-[#22D3EE] transition-colors">&gt;_ Contact Email</a></li>
+                <h4 className={`font-semibold mb-3 uppercase text-[11px] ${isDarkMode ? 'text-slate-400' : 'text-slate-800'}`}>// Platform</h4>
+                <ul className={`space-y-2 ${isDarkMode ? 'text-[#8E9AA8]' : 'text-slate-600'}`}>
+                  <li><a href={LANDING_ROUTES.github} target="_blank" rel="noopener noreferrer" className="hover:text-[#00F5FF] transition-colors">&gt;_ GitHub Source</a></li>
+                  <li><span className="hover:text-[#00F5FF] transition-colors">&gt;_ Terms of Service</span></li>
+                  <li><span className="hover:text-[#00F5FF] transition-colors">&gt;_ Privacy Policy</span></li>
+                  <li><a href={LANDING_ROUTES.social.email} className="hover:text-[#00F5FF] transition-colors">&gt;_ Contact Email</a></li>
                 </ul>
               </div>
             </div>

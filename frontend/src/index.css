@@ -418,6 +418,28 @@ html, body, #root {
     z-index: 2;
   }
 
+  /* Physical active button press state */
+  .active-press {
+    transition: transform 0.1s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.1s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .active-press:active {
+    transform: scale(0.97) translateY(1.5px) !important;
+    box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.7) !important;
+  }
+
+  /* Phosphor glow beam persistence */
+  .phosphor-glow {
+    filter: drop-shadow(0 0 3px var(--glow-color, #00F5FF)) drop-shadow(0 0 8px var(--glow-color, #00F5FF));
+  }
+
+  /* Oscilloscope grid sweep animation */
+  @keyframes oscilloscope-sweep {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+  .grid-sweep-line {
+    animation: oscilloscope-sweep 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  }
   @keyframes pcb-trace-spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
@@ -451,4 +473,11 @@ body.silicon-lottery-invert {
 
 .fifo-overflow-shake {
   animation: fifo-shake 0.6s ease-in-out infinite;
+}
+
+/* Micro-grain analog CRT texture utility */
+.bg-grain {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity: 0.012;
+  pointer-events: none;
 }

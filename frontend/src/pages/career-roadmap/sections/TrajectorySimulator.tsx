@@ -71,8 +71,8 @@ export const TrajectorySimulator: React.FC = () => {
                   className="space-y-12"
                 >
                   <div className="space-y-4">
-                    <div className="text-[11px] font-mono text-cyan-400 uppercase tracking-[0.4em]">Simulator Node: {currentNode.id}</div>
-                    <h2 className="text-3xl sm:text-5xl md:text-6xl font-bold text-white leading-[0.9] tracking-tighter">
+                    <div className="text-[11px] font-mono text-signal-core uppercase tracking-[0.4em]">Simulator Node: {currentNode.id}</div>
+                    <h2 className="text-3xl sm:text-5xl md:text-6xl font-bold text-text-main leading-[0.9] tracking-tighter">
                       {currentNode.question}
                     </h2>
                   </div>
@@ -82,13 +82,13 @@ export const TrajectorySimulator: React.FC = () => {
                       <button
                         key={choice.nextId}
                         onClick={() => handleChoice(choice.nextId)}
-                        className="p-6 bg-observatory-surface border border-white/5 rounded-2xl text-left hover:border-cyan-400/50 hover:bg-observatory-surface-alt transition-all group flex items-center justify-between"
+                        className="p-6 bg-observatory-surface border border-border-soft rounded-2xl text-left hover:border-signal-core/50 hover:bg-observatory-surface-alt transition-all group flex items-center justify-between"
                       >
                         <div className="pointer-events-none">
-                          <div className="text-white font-bold mb-1 tracking-tight">{choice.label}</div>
-                          <div className="text-slate-500 font-mono text-[10px] uppercase tracking-widest">{choice.description}</div>
+                          <div className="text-text-main font-bold mb-1 tracking-tight">{choice.label}</div>
+                          <div className="text-text-dim font-mono text-[10px] uppercase tracking-widest">{choice.description}</div>
                         </div>
-                        <div className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center text-slate-500 group-hover:border-cyan-400 group-hover:text-cyan-400 transition-all pointer-events-none">
+                        <div className="w-8 h-8 rounded-full border border-border-soft flex items-center justify-center text-text-dim group-hover:border-signal-core group-hover:text-signal-core transition-all pointer-events-none">
                           →
                         </div>
                       </button>
@@ -99,7 +99,7 @@ export const TrajectorySimulator: React.FC = () => {
             </AnimatePresence>
           </div>
 
-          <div className="w-full md:w-[400px] bg-observatory-surface border border-white/5 rounded-2xl overflow-hidden hidden lg:block">
+          <div className="w-full md:w-[400px] bg-observatory-surface border border-border-soft rounded-2xl overflow-hidden hidden lg:block">
             <SimulatorRightPanel 
               history={panelHistory} 
               outcomes={mockOutcomes} 

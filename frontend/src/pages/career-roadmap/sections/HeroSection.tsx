@@ -40,7 +40,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onCalibrate, onExplore
       </motion.div>
 
       {/* Gentle Radial Glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-cyan-400/5 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-signal-core/5 rounded-full blur-[120px] pointer-events-none" />
 
       {/* Hero Content */}
       <div className="relative z-10 max-w-4xl mx-auto text-center px-6">
@@ -50,15 +50,15 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onCalibrate, onExplore
           transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
           className="text-5xl sm:text-7xl md:text-[110px] font-bold tracking-tighter leading-[0.85] mb-6 sm:mb-8"
         >
-          <span className="text-white">SILICON</span><br />
-          <span className="text-cyan-400">OBSERVATORY</span>
+          <span className="text-text-main">SILICON</span><br />
+          <span className="text-signal-core">OBSERVATORY</span>
         </motion.h1>
 
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-12 leading-relaxed"
+          className="text-lg md:text-xl text-text-sub max-w-2xl mx-auto mb-12 leading-relaxed"
         >
           The industrial-grade intelligence platform for the modern ECE engineer.
           Calibrate your trajectory. Master the silicon stack.
@@ -75,13 +75,13 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onCalibrate, onExplore
             onMouseMove={primaryCTA.onMouseMove}
             onMouseLeave={primaryCTA.onMouseLeave}
             onClick={() => onCalibrate?.(50)}
-            className="w-full sm:w-auto px-8 sm:px-10 py-4 sm:py-5 bg-cyan-400 text-observatory-bg font-mono text-xs font-bold uppercase tracking-widest rounded-full shadow-observatory-glow hover:brightness-110 transition-all cursor-pointer pointer-events-auto"
+            className="w-full sm:w-auto px-8 sm:px-10 py-4 sm:py-5 bg-signal-core text-bg-void font-mono text-xs font-bold uppercase tracking-widest rounded-full shadow-observatory-glow hover:brightness-110 transition-all cursor-pointer pointer-events-auto"
           >
             Begin Calibration
           </button>
           <button 
             onClick={onExplore}
-            className="w-full sm:w-auto px-8 sm:px-10 py-4 sm:py-5 border border-white/10 text-slate-400 font-mono text-xs uppercase tracking-widest rounded-full hover:border-cyan-400/30 hover:text-white transition-all cursor-pointer pointer-events-auto"
+            className="w-full sm:w-auto px-8 sm:px-10 py-4 sm:py-5 border border-border-soft text-text-sub font-mono text-xs uppercase tracking-widest rounded-full hover:border-signal-core/30 hover:text-text-main transition-all cursor-pointer pointer-events-auto"
           >
             Explore Domains
           </button>
@@ -92,15 +92,15 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onCalibrate, onExplore
           {stats.map((stat, i) => (
             <React.Fragment key={stat.label}>
               <div className="text-center">
-                <div className="text-3xl font-bold text-white mb-1">
+                <div className="text-3xl font-bold text-text-main mb-1">
                   {stat.isCurrency ? '₹8-50 LPA' : stat.value}
                 </div>
-                <div className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">
+                <div className="text-[10px] font-mono text-text-dim uppercase tracking-widest">
                   {stat.label}
                 </div>
               </div>
               {i < stats.length - 1 && (
-                <div className="hidden md:block w-px h-8 bg-white/10" />
+                <div className="hidden md:block w-px h-8 bg-border-soft" />
               )}
             </React.Fragment>
           ))}

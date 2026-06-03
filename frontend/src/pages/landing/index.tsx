@@ -18,9 +18,9 @@ const LandingPageContainer = React.lazy(
 const LandingPageSkeleton: React.FC = () => (
   <div className="w-full min-h-screen bg-[#03050a] flex items-center justify-center">
     <div className="flex flex-col items-center gap-4">
-      <div className="w-6 h-6 rounded bg-gradient-to-br from-[#22D3EE] to-[#10B981] animate-pulse" />
+      <div className="w-6 h-6 rounded bg-gradient-to-br from-[#00F5FF] to-[#10B981] animate-pulse" />
       <div className="h-1 w-32 bg-slate-900 rounded-full overflow-hidden">
-        <div className="h-full w-1/2 bg-[#22D3EE]/30 rounded-full animate-pulse" />
+        <div className="h-full w-1/2 bg-[#00F5FF]/30 rounded-full animate-pulse" />
       </div>
     </div>
   </div>

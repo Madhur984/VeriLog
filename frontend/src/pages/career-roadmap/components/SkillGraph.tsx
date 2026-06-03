@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { COMPANY_SKILL_MAP } from '../../../data/companySkillMap';
+import { useColorScheme } from '../../../hooks/useColorScheme';
 import * as dagre from 'dagre';
 
 interface SkillGraphProps {
@@ -11,6 +12,8 @@ interface SkillGraphProps {
 export const SkillGraph: React.FC<SkillGraphProps> = ({ selectedCompany, masteredNodes }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+  const [scheme] = useColorScheme();
+  const isLight = scheme === 'light';
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -79,15 +82,23 @@ export const SkillGraph: React.FC<SkillGraphProps> = ({ selectedCompany, mastere
   if (dimensions.width === 0 || !layout) {
     return (
       <div ref={containerRef} className="w-full h-[600px] bg-observatory-surface/30 rounded-2xl animate-pulse flex items-center justify-center">
-        <span className="font-mono text-xs text-slate-700 tracking-widest">INITIALIZING TOPOLOGY...</span>
+        <span className="font-mono text-xs text-text-dim tracking-widest">INITIALIZING TOPOLOGY...</span>
       </div>
     );
   }
 
   const requirements = selectedCompany ? COMPANY_SKILL_MAP[selectedCompany] : null;
 
+  // Dynamic colors based on theme
+  const nodeFill = isLight ? '#F8FAFC' : '#1C1F26';
+  const edgeDefault = isLight ? '#CBD5E1' : '#1e293b';
+  const textActive = isLight ? '#0F172A' : '#FFFFFF';
+  const textInactive = isLight ? '#94A3B8' : '#334155';
+  const subTextActive = isLight ? '#64748B' : '#64748B';
+  const subTextInactive = isLight ? '#CBD5E1' : '#1e293b';
+
   return (
-    <div ref={containerRef} className="w-full h-[600px] bg-observatory-surface rounded-2xl border border-white/5 relative overflow-hidden">
+    <div ref={containerRef} className="w-full h-[600px] bg-observatory-surface rounded-2xl border border-border-soft relative overflow-hidden">
       <svg className="w-full h-full">
         <g transform={`translate(${dimensions.width / 4}, 50)`}>
           {/* Render Edges */}
@@ -99,7 +110,7 @@ export const SkillGraph: React.FC<SkillGraphProps> = ({ selectedCompany, mastere
               <path
                 key={i}
                 d={`M ${edge.points[0].x} ${edge.points[0].y} L ${edge.points[edge.points.length-1].x} ${edge.points[edge.points.length-1].y}`}
-                stroke={isRelatedToCompany ? '#F59E0B' : '#1e293b'}
+                stroke={isRelatedToCompany ? '#F59E0B' : edgeDefault}
                 strokeWidth={isRelatedToCompany ? 2 : 1}
                 fill="none"
                 className="transition-all duration-500"
@@ -116,7 +127,7 @@ export const SkillGraph: React.FC<SkillGraphProps> = ({ selectedCompany, mastere
             
             const groupColors: any = {
               foundation: '#F59E0B',
-              core: '#22D3EE',
+              core: isLight ? '#0369A1' : '#22D3EE',
               spec: '#14B8A6'
             };
 
@@ -129,7 +140,7 @@ export const SkillGraph: React.FC<SkillGraphProps> = ({ selectedCompany, mastere
                   height="56"
                   rx="8"
                   className="transition-all duration-500"
-                  fill="#1C1F26"
+                  fill={nodeFill}
                   stroke={isRequired ? '#F59E0B' : (isMastered ? '#10B981' : groupColors[node.group])}
                   strokeWidth={isRequired || isMastered ? 2 : 1}
                   opacity={isActive ? 1 : 0.15}
@@ -144,7 +155,8 @@ export const SkillGraph: React.FC<SkillGraphProps> = ({ selectedCompany, mastere
                   y="28" 
                   textAnchor="middle" 
                   alignmentBaseline="middle"
-                  className={`font-mono text-[11px] font-bold ${isActive ? 'fill-white' : 'fill-slate-700'}`}
+                  className="font-mono text-[11px] font-bold"
+                  fill={isActive ? textActive : textInactive}
                 >
                   {node.label}
                 </text>
@@ -152,7 +164,8 @@ export const SkillGraph: React.FC<SkillGraphProps> = ({ selectedCompany, mastere
                   x="70" 
                   y="46" 
                   textAnchor="middle"
-                  className={`font-mono text-[8px] uppercase tracking-widest ${isActive ? 'fill-slate-500' : 'fill-slate-800'}`}
+                  className="font-mono text-[8px] uppercase tracking-widest"
+                  fill={isActive ? subTextActive : subTextInactive}
                 >
                   {node.group}
                 </text>

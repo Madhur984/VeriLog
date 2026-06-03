@@ -122,7 +122,7 @@ const CareerRoadmapPage: React.FC = () => {
 
   return (
     <div 
-      className="min-h-screen bg-observatory-bg selection:bg-cyan-400 selection:text-black scroll-smooth"
+      className="min-h-screen bg-observatory-bg selection:bg-signal-core selection:text-bg-void scroll-smooth"
       onClick={handleStartInteraction}
     >
       <ScrollProgress />
@@ -188,11 +188,11 @@ const CareerRoadmapPage: React.FC = () => {
                 <SkillTopology />
               </div>
               
-              <div className="border-t border-white/[0.03] pt-12">
+              <div className="border-t border-border-soft pt-12">
                 <SkillGapRadar />
               </div>
 
-              <div className="border-t border-white/[0.03] pt-12">
+              <div className="border-t border-border-soft pt-12">
                 <TechnicalTerminal />
               </div>
             </motion.div>
@@ -277,7 +277,7 @@ const CareerRoadmapPage: React.FC = () => {
                 <AboutHero />
                 
                 {/* Interactive Hardware Scope Section */}
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16 border-t border-white/[0.04] relative">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16 border-t border-border-soft relative">
                   <LogicTraceScope />
                 </div>
 
