@@ -212,15 +212,15 @@ const CareerRoadmapPage: React.FC = () => {
                 <FiscalMatrix />
               </div>
 
-              <div className="border-t border-white/[0.03] pt-12">
+              <div className="border-t border-border-soft pt-12">
                 <GlobalSalaryHeatmap />
               </div>
 
-              <div className="border-t border-white/[0.03] pt-12">
+              <div className="border-t border-border-soft pt-12">
                 <TrajectorySimulator />
               </div>
 
-              <div className="border-t border-white/[0.03] pt-12">
+              <div className="border-t border-border-soft pt-12">
                 <ExecutionTimeline />
               </div>
             </motion.div>
@@ -240,11 +240,11 @@ const CareerRoadmapPage: React.FC = () => {
                  <SiliconNetwork />
               </div>
 
-              <div className="border-t border-white/[0.03] pt-12">
+              <div className="border-t border-border-soft pt-12">
                 <SiliconResume />
               </div>
 
-              <div className="border-t border-white/[0.03] pt-12 pb-24">
+              <div className="border-t border-border-soft pt-12 pb-24">
                 <div className="mb-8">
                   <h2 className="text-2xl sm:text-4xl font-bold text-text-main tracking-tight uppercase">Silicon Cabinet</h2>
                 </div>

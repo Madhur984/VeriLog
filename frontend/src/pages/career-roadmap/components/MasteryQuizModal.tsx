@@ -58,7 +58,7 @@ export const MasteryQuizModal: React.FC<MasteryQuizModalProps> = ({
                   </h2>
                   <button 
                     onClick={onClose}
-                    className="text-text-dim hover:text-text-main font-mono text-xs uppercase px-2 py-1 border border-ghost-trace hover:border-white/20 transition-all"
+                    className="text-text-dim hover:text-text-main font-mono text-xs uppercase px-2 py-1 border border-ghost-trace hover:border-text-main/20 transition-all"
                   >
                     Abort [ESC]
                   </button>
@@ -74,9 +74,9 @@ export const MasteryQuizModal: React.FC<MasteryQuizModalProps> = ({
                         ${selectedOption === null 
                           ? 'border-ghost-trace hover:border-plasma-cyan hover:bg-plasma-cyan/5 text-text-sub' 
                           : i === questions[currentIdx].correct
-                            ? 'border-green-500 bg-green-500/10 text-green-400'
+                            ? 'border-green-500 bg-green-500/10 text-green-600 dark:text-green-400'
                             : i === selectedOption
-                              ? 'border-red-500 bg-red-500/10 text-red-400'
+                              ? 'border-red-500 bg-red-500/10 text-red-600 dark:text-red-400'
                               : 'border-ghost-trace opacity-50 text-text-dim'
                         }
                       `}

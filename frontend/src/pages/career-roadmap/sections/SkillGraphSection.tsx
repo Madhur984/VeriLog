@@ -81,7 +81,7 @@ export const SkillGraphSection: React.FC<SkillGraphSectionProps> = ({
                       onClick={() => setActiveDomain(domain)}
                       className={`
                         w-full p-6 text-left transition-all relative group
-                        ${activeDomain.id === domain.id ? 'bg-plasma-cyan/5' : 'hover:bg-white/5'}
+                        ${activeDomain.id === domain.id ? 'bg-plasma-cyan/5' : 'hover:bg-text-main/5'}
                       `}
                     >
                       {activeDomain.id === domain.id && (

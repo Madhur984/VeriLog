@@ -41,7 +41,7 @@ export const IntelHubSection: React.FC<IntelHubSectionProps> = ({
           <DataTerminal title="CORPORATE ENTITY DIRECTORY" subtitle="Target Tiers & Recruitment Patterns">
             <div className="grid grid-cols-1 md:grid-cols-2 border-l border-t border-ghost-trace/30">
               {dreamCompanies.slice(0, 8).map((company, i) => (
-                <div key={i} className="p-6 border-r border-b border-ghost-trace/30 hover:bg-white/5 transition-all group">
+                <div key={i} className="p-6 border-r border-b border-ghost-trace/30 hover:bg-text-main/5 transition-all group">
                   <div className="flex justify-between items-start mb-4">
                     <h4 className="text-lg font-mono font-bold text-text-main tracking-tight group-hover:text-plasma-cyan transition-colors">
                       {company.name}
@@ -109,7 +109,7 @@ export const IntelHubSection: React.FC<IntelHubSectionProps> = ({
           <DataTerminal title="COMPETITION PIPELINE" subtitle="Active Hackathons">
             <div className="divide-y divide-ghost-trace/30">
               {hackathons.slice(0, 3).map((h, i) => (
-                <div key={i} className="p-5 hover:bg-white/5 transition-all">
+                <div key={i} className="p-5 hover:bg-text-main/5 transition-all">
                   <div className="flex justify-between items-start mb-2">
                     <h5 className="text-xs font-mono text-text-main font-bold uppercase">{h.name}</h5>
                     <div className={`text-[8px] font-mono px-1.5 py-0.5 rounded border ${
@@ -127,7 +127,7 @@ export const IntelHubSection: React.FC<IntelHubSectionProps> = ({
               ))}
             </div>
             <div className="p-4 bg-matte-obsidian/50 text-center">
-              <button className="text-[9px] font-mono text-text-sub uppercase tracking-widest hover:text-white transition-colors">
+              <button className="text-[9px] font-mono text-text-sub uppercase tracking-widest hover:text-text-main transition-colors">
                 View Full Competition Calendar
               </button>
             </div>

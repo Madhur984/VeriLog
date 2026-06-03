@@ -60,7 +60,7 @@ export const SiliconBriefing: React.FC = () => {
 
       <div className={`flex items-center gap-6 border-l pl-6 shrink-0 h-full ${isLight ? 'border-border-soft' : 'border-white/10'}`}>
         <div className="flex items-center gap-2">
-           <div className="w-1.5 h-1.5 bg-green-400 rounded-full" />
+           <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
            <span className="font-mono text-[9px] text-text-dim uppercase">System Ready</span>
         </div>
         <div className="font-mono text-[9px] text-text-dim uppercase">

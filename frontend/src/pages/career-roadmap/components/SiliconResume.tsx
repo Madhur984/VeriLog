@@ -146,7 +146,7 @@ export const SiliconResume = () => {
                 onClick={() => setActiveTemplate('india')}
                 className={`py-2 text-[10px] font-mono rounded border transition-all ${
                   activeTemplate === 'india' 
-                    ? 'border-[#22D3EE] bg-[#22D3EE]/5 text-[#22D3EE]' 
+                    ? (isLight ? 'border-signal-core bg-signal-core/5 text-signal-core' : 'border-[#22D3EE] bg-[#22D3EE]/5 text-[#22D3EE]')
                     : `${isLight ? 'border-border-soft text-text-dim hover:border-ghost-trace' : 'border-white/5 text-slate-400 hover:border-white/10'}`
                 }`}
               >
@@ -156,7 +156,7 @@ export const SiliconResume = () => {
                 onClick={() => setActiveTemplate('global')}
                 className={`py-2 text-[10px] font-mono rounded border transition-all ${
                   activeTemplate === 'global' 
-                    ? 'border-[#F59E0B] bg-[#F59E0B]/5 text-[#F59E0B]' 
+                    ? (isLight ? 'border-accent-orange bg-accent-orange/5 text-accent-orange' : 'border-[#F59E0B] bg-[#F59E0B]/5 text-[#F59E0B]')
                     : `${isLight ? 'border-border-soft text-text-dim hover:border-ghost-trace' : 'border-white/5 text-slate-400 hover:border-white/10'}`
                 }`}
               >
@@ -169,16 +169,16 @@ export const SiliconResume = () => {
           <div className={`border rounded-xl p-5 space-y-4 ${isLight ? 'bg-bg-elev border-border-soft' : 'bg-[#0D0F12] border-white/5'}`}>
             <div className={`flex justify-between items-center border-b pb-3 ${isLight ? 'border-border-soft' : 'border-white/5'}`}>
               <span className="text-xs font-mono text-text-dim">ATS VALIDATION STREAM</span>
-              <span className="text-xs font-mono text-[#10B981] font-bold">PASS RATE: 98%</span>
+              <span className={`text-xs font-mono font-bold ${isLight ? 'text-emerald-700' : 'text-[#10B981]'}`}>PASS RATE: 98%</span>
             </div>
             
             <div className="space-y-3 text-[11px] font-mono leading-relaxed">
               <div className="flex items-start gap-2 text-text-sub">
-                <CheckCircle size={14} className="text-[#10B981] shrink-0 mt-0.5" />
+                <CheckCircle size={14} className={`shrink-0 mt-0.5 ${isLight ? 'text-emerald-700' : 'text-[#10B981]'}`} />
                 <span>Structural verification successful: Zero table grids, graphical frames, or unreadable fonts detected.</span>
               </div>
               <div className="flex items-start gap-2 text-text-sub">
-                <CheckCircle size={14} className="text-[#10B981] shrink-0 mt-0.5" />
+                <CheckCircle size={14} className={`shrink-0 mt-0.5 ${isLight ? 'text-emerald-700' : 'text-[#10B981]'}`} />
                 <span>Keyword parsing match: Found core tags: <code className={isLight ? 'text-signal-core' : 'text-[#22D3EE]'}>Verilog</code>, <code className={isLight ? 'text-signal-core' : 'text-[#22D3EE]'}>RTL</code>, and <code className={isLight ? 'text-signal-core' : 'text-[#22D3EE]'}>STA</code>.</span>
               </div>
               <div className="flex items-start gap-2 text-text-dim">

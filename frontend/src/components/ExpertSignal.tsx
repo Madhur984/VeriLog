@@ -37,7 +37,7 @@ export const ExpertSignal: React.FC = () => {
                 <Quote size={80} className={`absolute top-4 right-4 -z-0 ${isLight ? 'text-slate-900/[0.03]' : 'text-white/[0.02]'}`} />
 
                 <div className="space-y-6 relative z-10">
-                   <p className="text-text-sub text-sm leading-relaxed italic">
+                   <p className="font-serif text-[15px] text-text-sub/90 leading-relaxed italic">
                       "{item.quote}"
                    </p>
                    

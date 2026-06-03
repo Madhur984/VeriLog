@@ -130,10 +130,10 @@ const CenterButton: React.FC<{ isLight: boolean }> = ({ isLight }) => {
       transition={{ duration: 0.6, type: "spring", damping: 15 }}
       style={{ originX: '160px', originY: '160px', cursor: 'pointer', transform: 'translateZ(20px)' }}
     >
-      <circle cx={160} cy={180} r={85} fill={isLight ? "rgba(0,0,0,0.05)" : "rgba(0,0,0,0.7)"} filter="blur(16px)" className="pointer-events-none" />
-      <circle cx={160} cy={168} r={86} className={isLight ? "fill-slate-200 pointer-events-none" : "fill-[#020617] pointer-events-none"} />
+      <circle cx="160" cy="180" r="85" fill={isLight ? "rgba(0,0,0,0.05)" : "rgba(0,0,0,0.7)"} filter="blur(16px)" className="pointer-events-none" />
+      <circle cx="160" cy="168" r="86" className={isLight ? "fill-slate-200 pointer-events-none" : "fill-[#020617] pointer-events-none"} />
       
-      <circle cx={160} cy={160} r={86} 
+      <circle cx="160" cy="160" r="86" 
         className={cn("transition-colors duration-300", 
           isLight 
             ? "stroke-slate-200 fill-white" 
@@ -146,10 +146,10 @@ const CenterButton: React.FC<{ isLight: boolean }> = ({ isLight }) => {
             : (isHovered ? 'drop-shadow(0 0 40px rgba(56,189,248,0.6))' : 'drop-shadow(0 0 20px rgba(56,189,248,0.3))') 
         }} 
       />
-      <circle cx={160} cy={160} r={84} fill="url(#core-glass-glare)" className="pointer-events-none" />
+      <circle cx="160" cy="160" r="84" fill="url(#core-glass-glare)" className="pointer-events-none" />
 
-      <motion.circle cx={160} cy={160} r={72} className={isLight ? "fill-transparent stroke-slate-100 pointer-events-none" : "fill-transparent stroke-slate-700/40 pointer-events-none"} strokeWidth={14} />
-      <motion.circle cx={160} cy={160} r={72} className={isLight ? "fill-transparent stroke-sky-500 pointer-events-none" : "fill-transparent stroke-sky-400 pointer-events-none"} strokeWidth={2} strokeDasharray="2 12" animate={{ rotate: 360 }} transition={{ duration: 40, repeat: Infinity, ease: "linear" }} style={{ originX: '160px', originY: '160px' }} />
+      <circle cx="160" cy="160" r="72" className={isLight ? "fill-transparent stroke-slate-100 pointer-events-none" : "fill-transparent stroke-slate-700/40 pointer-events-none"} strokeWidth={14} />
+      <motion.circle cx="160" cy="160" r="72" className={isLight ? "fill-transparent stroke-sky-500 pointer-events-none" : "fill-transparent stroke-sky-400 pointer-events-none"} strokeWidth={2} strokeDasharray="2 12" animate={{ rotate: 360 }} transition={{ duration: 40, repeat: Infinity, ease: "linear" }} style={{ originX: '160px', originY: '160px' }} />
       
       <g className={isLight ? "stroke-slate-200 pointer-events-none" : "stroke-slate-500/20 pointer-events-none"}>
         <line x1={160} y1={70} x2={160} y2={90} strokeWidth={2} />
@@ -158,7 +158,7 @@ const CenterButton: React.FC<{ isLight: boolean }> = ({ isLight }) => {
         <line x1={230} y1={160} x2={250} y2={160} strokeWidth={2} />
       </g>
 
-      <motion.circle cx={160} cy={160} r={78} className={isLight ? "fill-transparent stroke-sky-500 pointer-events-none" : "fill-transparent stroke-sky-400 pointer-events-none"} strokeWidth={4.5} strokeDasharray="100 400" strokeLinecap="round" initial={{ strokeDashoffset: -100 }}
+      <motion.circle cx="160" cy="160" r="78" className={isLight ? "fill-transparent stroke-sky-500 pointer-events-none" : "fill-transparent stroke-sky-400 pointer-events-none"} strokeWidth={4.5} strokeDasharray="100 400" strokeLinecap="round" initial={{ strokeDashoffset: -100 }}
         animate={{ strokeDashoffset: -20, rotate: isHovered ? 15 : 0, filter: isHovered ? (isLight ? "drop-shadow(0 0 8px #0284c7)" : "drop-shadow(0 0 16px #38bdf8)") : (isLight ? "drop-shadow(0 0 4px #0284c7)" : "drop-shadow(0 0 8px #0369a1)") }}
         transition={{ duration: 0.8, ease: "easeOut", rotate: { duration: 2, ease: "easeOut" } }}
         style={{ originX: '160px', originY: '160px' }} />
@@ -263,8 +263,8 @@ export const RadialMenu: React.FC = () => {
  
              {/* Background Base SVG Layer (Lowest Z) */}
              <svg width="320" height="320" viewBox="0 0 320 320" className="absolute inset-0 overflow-visible z-10" style={{ transform: 'translateZ(-10px)' }}>
-                 <circle cx={160} cy={168} r={156} fill={isLight ? "rgba(226, 232, 240, 0.9)" : "rgba(2, 6, 23, 0.9)"} />
-                 <circle cx={160} cy={160} r={156} fill={isLight ? "rgba(255, 255, 255, 0.85)" : "rgba(15, 23, 42, 0.85)"} stroke={isLight ? "rgba(15,23,42,0.05)" : "rgba(255,255,255,0.05)"} strokeWidth={1} />
+                 <circle cx="160" cy="168" r="156" fill={isLight ? "rgba(226, 232, 240, 0.9)" : "rgba(2, 6, 23, 0.9)"} />
+                 <circle cx="160" cy="160" r="156" fill={isLight ? "rgba(255, 255, 255, 0.85)" : "rgba(15, 23, 42, 0.85)"} stroke={isLight ? "rgba(15,23,42,0.05)" : "rgba(255,255,255,0.05)"} strokeWidth={1} />
               </svg>
  
               {/* Dynamic Layers SVG (Middle & High Z) */}

@@ -60,7 +60,11 @@ export const MarketGiants: React.FC = () => {
                            <div className="flex items-center gap-2">
                              <h4 className="text-text-main font-bold text-sm uppercase tracking-tight">{company.name}</h4>
                             {matches.find(m => m.name === company.name) && (
-                              <span className="px-1.5 py-0.5 rounded bg-cyan-400/10 text-cyan-400 text-[10px] font-mono border border-cyan-400/20 font-bold">
+                              <span className={`px-1.5 py-0.5 rounded text-[10px] font-mono border font-bold ${
+                                isLight 
+                                  ? 'bg-signal-core/10 text-signal-core border-signal-core/20' 
+                                  : 'bg-cyan-400/10 text-cyan-400 border-cyan-400/20'
+                              }`}>
                                 {matches.find(m => m.name === company.name)?.matchScore}% MATCH
                               </span>
                             )}
@@ -81,7 +85,11 @@ export const MarketGiants: React.FC = () => {
                       </div>
                        <div className="mt-1 flex items-center gap-1 text-[9px] font-mono text-text-dim uppercase">
                           <span>Visa:</span>
-                         <span className={matches.find(m => m.name === company.name)?.visa.includes('High') ? 'text-green-400' : 'text-slate-400'}>
+                         <span className={
+                           matches.find(m => m.name === company.name)?.visa.includes('High') 
+                             ? (isLight ? 'text-green-600 font-semibold' : 'text-green-400') 
+                             : (isLight ? 'text-slate-600' : 'text-slate-400')
+                         }>
                            {matches.find(m => m.name === company.name)?.visa || 'Unknown'}
                          </span>
                       </div>

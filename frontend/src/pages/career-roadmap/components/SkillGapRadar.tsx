@@ -161,7 +161,7 @@ export const SkillGapRadar = () => {
                 onClick={() => setActiveCompany(key)}
                 className={`px-3 py-1 text-xs font-mono rounded border transition-all ${
                   activeCompany === key 
-                    ? 'border-[#22D3EE] bg-[#22D3EE]/10 text-[#22D3EE]' 
+                    ? (isLight ? 'border-signal-core bg-signal-core/10 text-signal-core' : 'border-[#22D3EE] bg-[#22D3EE]/10 text-[#22D3EE]') 
                     : `${isLight ? 'border-border-soft text-text-dim hover:border-ghost-trace' : 'border-white/10 text-slate-400 hover:border-white/20'}`
                 }`}
               >

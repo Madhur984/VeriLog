@@ -81,7 +81,12 @@ export const SkillGraph: React.FC<SkillGraphProps> = ({ selectedCompany, mastere
 
   if (dimensions.width === 0 || !layout) {
     return (
-      <div ref={containerRef} className="w-full h-[600px] bg-observatory-surface/30 rounded-2xl animate-pulse flex items-center justify-center">
+      <div 
+        ref={containerRef} 
+        className={`w-full h-[600px] rounded-2xl animate-pulse flex items-center justify-center ${
+          isLight ? 'bg-slate-100/50' : 'bg-observatory-surface/30'
+        }`}
+      >
         <span className="font-mono text-xs text-text-dim tracking-widest">INITIALIZING TOPOLOGY...</span>
       </div>
     );
@@ -90,15 +95,22 @@ export const SkillGraph: React.FC<SkillGraphProps> = ({ selectedCompany, mastere
   const requirements = selectedCompany ? COMPANY_SKILL_MAP[selectedCompany] : null;
 
   // Dynamic colors based on theme
-  const nodeFill = isLight ? '#F8FAFC' : '#1C1F26';
+  const nodeFill = isLight ? '#FFFFFF' : '#1C1F26';
   const edgeDefault = isLight ? '#CBD5E1' : '#1e293b';
   const textActive = isLight ? '#0F172A' : '#FFFFFF';
   const textInactive = isLight ? '#94A3B8' : '#334155';
-  const subTextActive = isLight ? '#64748B' : '#64748B';
-  const subTextInactive = isLight ? '#CBD5E1' : '#1e293b';
+  const subTextActive = isLight ? '#475569' : '#64748B';
+  const subTextInactive = isLight ? '#94A3B8' : '#1e293b';
 
   return (
-    <div ref={containerRef} className="w-full h-[600px] bg-observatory-surface rounded-2xl border border-border-soft relative overflow-hidden">
+    <div 
+      ref={containerRef} 
+      className={`w-full h-[600px] rounded-2xl border relative overflow-hidden transition-all duration-300 ${
+        isLight 
+          ? 'bg-slate-50/70 shadow-[inset_0_2px_8px_rgba(0,0,0,0.06)] border-slate-200/80' 
+          : 'bg-observatory-surface border-border-soft'
+      }`}
+    >
       <svg className="w-full h-full">
         <g transform={`translate(${dimensions.width / 4}, 50)`}>
           {/* Render Edges */}

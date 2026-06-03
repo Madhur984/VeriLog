@@ -109,7 +109,7 @@ export const TechnicalTerminal: React.FC = () => {
                 <motion.div 
                   key="feedback"
                   initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                  className={`text-sm ${feedback.includes('ACCEPTABLE') ? 'text-green-400' : 'text-red-400'}`}
+                  className={`text-sm ${feedback.includes('ACCEPTABLE') ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}
                 >
                   [SYSTEM] {feedback}
                 </motion.div>

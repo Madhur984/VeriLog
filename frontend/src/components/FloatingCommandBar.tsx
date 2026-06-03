@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, useScroll, useMotionValueEvent } from 'framer-motion';
 import { Zap, Share2, FileText } from 'lucide-react';
+import { ThemeToggle } from './ThemeToggle';
 
 interface NavItemProps {
   label: string;
@@ -59,6 +60,8 @@ export const FloatingCommandBar: React.FC<{ activeTab: string; onTabChange: (tab
                  shadow-[0_0_0_1px_rgba(34,211,238,0.05),0_20px_40px_rgba(0,0,0,0.4)]
                  max-w-[calc(100vw-16px)] overflow-x-auto scrollbar-hide"
     >
+      <ThemeToggle variant="minimal" className="mr-1" />
+
       <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-signal-core/10 border border-signal-core/20
                       flex items-center justify-center mr-1 sm:mr-2 shrink-0">
         <Zap size={11} className="text-signal-core" />
