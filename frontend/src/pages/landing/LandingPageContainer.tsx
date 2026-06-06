@@ -382,30 +382,30 @@ export default function LandingPageContainer() {
                   </div>
                   <div className="md:col-span-5 space-y-4 font-mono text-[11px] border-l border-slate-200 dark:border-slate-900/60 pl-0 md:pl-6">
                     <div className="space-y-1.5">
-                      <span className="text-[9px] text-slate-550 dark:text-[#8E9AA8] uppercase block tracking-wider">Modify Pin Vectors</span>
+                      <span className="text-[9px] text-slate-550 dark:text-[#8E9AA8] uppercase block tracking-wider">Toggle inputs</span>
                       <button onClick={() => setPinState(p => ({ ...p, A: !p.A }))} aria-pressed={pinState.A} aria-label={`Input A: ${pinState.A ? 'HIGH' : 'LOW'}`} className={`w-full text-left px-3 py-2 rounded border flex justify-between active-press ${pinState.A ? 'bg-[#00F5FF]/10 border-[#00F5FF] text-[#00F5FF]' : 'bg-slate-100 dark:bg-slate-950 border-slate-200 dark:border-slate-900 text-slate-500 dark:text-[#8E9AA8]'}`}>
-                        <span>INPUT_A</span><span className="font-bold tabular-data">{pinState.A ? '1' : '0'}</span>
+                        <span>Input A</span><span className="font-bold tabular-data">{pinState.A ? '1' : '0'}</span>
                       </button>
                       <button onClick={() => setPinState(p => ({ ...p, B: !p.B }))} aria-pressed={pinState.B} aria-label={`Input B: ${pinState.B ? 'HIGH' : 'LOW'}`} className={`w-full text-left px-3 py-2 rounded border flex justify-between active-press ${pinState.B ? 'bg-[#00F5FF]/10 border-[#00F5FF] text-[#00F5FF]' : 'bg-slate-100 dark:bg-slate-950 border-slate-200 dark:border-slate-900 text-slate-500 dark:text-[#8E9AA8]'}`}>
-                        <span>INPUT_B</span><span className="font-bold tabular-data">{pinState.B ? '1' : '0'}</span>
+                        <span>Input B</span><span className="font-bold tabular-data">{pinState.B ? '1' : '0'}</span>
                       </button>
                     </div>
                     <div className="pt-2 border-t border-slate-200 dark:border-slate-900">
-                      <span className="text-[9px] text-slate-550 dark:text-[#8E9AA8] uppercase block tracking-wider mb-1">Evaluated Output</span>
-                      <div className={`font-bold px-3 py-2 rounded border tabular-data ${outNand ? 'bg-[#10B981]/5 border-[#10B981]/20 text-[#10B981]' : 'bg-slate-100 dark:bg-slate-950 border-slate-200 dark:border-slate-900 text-slate-455 dark:text-slate-500'}`}>OUTPUT_OUT = {outNand ? '1' : '0'}</div>
+                      <span className="text-[9px] text-slate-550 dark:text-[#8E9AA8] uppercase block tracking-wider mb-1">Computed result</span>
+                      <div className={`font-bold px-3 py-2 rounded border tabular-data ${outNand ? 'bg-[#10B981]/5 border-[#10B981]/20 text-[#10B981]' : 'bg-slate-100 dark:bg-slate-950 border-slate-200 dark:border-slate-900 text-slate-455 dark:text-slate-500'}`}>Output = {outNand ? '1' : '0'}</div>
                     </div>
                   </div>
                 </div>
               ) : (
                 <div className="bg-slate-50 dark:bg-[#03050a] p-4 rounded-lg border border-slate-200 dark:border-slate-900 space-y-3 font-mono text-[11px]">
-                  <div className="flex items-center gap-4"><span className="w-16 text-slate-500 dark:text-[#8E9AA8]">CLK_REF</span><svg width="100%" height="16" viewBox="0 0 300 16" preserveAspectRatio="none" className="text-slate-300 dark:text-slate-800"><path d="M 0 14 L 30 14 L 30 2 L 60 2 L 60 14 L 90 14 L 90 2 L 120 2 L 120 14 L 150 14 L 150 2 L 180 2 L 180 14 L 210 14 L 210 2 L 240 2 L 240 14 L 270 14 L 270 2 L 300 2" fill="none" stroke="currentColor" strokeWidth="1.5" /></svg></div>
-                  <div className="flex items-center gap-4"><span className="w-16 text-[#00F5FF]">SIG_OUT</span><svg width="100%" height="16" viewBox="0 0 300 16" preserveAspectRatio="none" className="text-[#00F5FF]/80"><path d="M 0 2 L 90 2 L 90 14 L 180 14 L 180 2 L 300 2" fill="none" stroke="currentColor" strokeWidth="1.5" /></svg></div>
+                  <div className="flex items-center gap-4"><span className="w-16 text-slate-500 dark:text-[#8E9AA8]">Clock</span><svg width="100%" height="16" viewBox="0 0 300 16" preserveAspectRatio="none" className="text-slate-300 dark:text-slate-800"><path d="M 0 14 L 30 14 L 30 2 L 60 2 L 60 14 L 90 14 L 90 2 L 120 2 L 120 14 L 150 14 L 150 2 L 180 2 L 180 14 L 210 14 L 210 2 L 240 2 L 240 14 L 270 14 L 270 2 L 300 2" fill="none" stroke="currentColor" strokeWidth="1.5" /></svg></div>
+                  <div className="flex items-center gap-4"><span className="w-16 text-[#00F5FF]">Output</span><svg width="100%" height="16" viewBox="0 0 300 16" preserveAspectRatio="none" className="text-[#00F5FF]/80"><path d="M 0 2 L 90 2 L 90 14 L 180 14 L 180 2 L 300 2" fill="none" stroke="currentColor" strokeWidth="1.5" /></svg></div>
                 </div>
               )}
             </div>
             <div className="bg-slate-50 dark:bg-[#03050a] px-4 py-3 border-t border-slate-200 dark:border-slate-900 font-mono text-[10px] text-slate-500 dark:text-[#8E9AA8] flex justify-between">
-              <span>&gt;_ Active Target: Core_Matrix_Evaluator_01</span>
-              <span className="tabular-data">Delay: 12ps &bull; Foundry Capable: Yes</span>
+              <span>&gt;_ Running: Gate logic simulator</span>
+              <span className="tabular-data">Delay: 12ps &bull; Ready</span>
             </div>
           </div>
         </div>

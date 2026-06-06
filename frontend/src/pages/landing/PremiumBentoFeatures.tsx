@@ -6,9 +6,13 @@ import { useColorScheme } from '../../hooks/useColorScheme';
 type FabLayer = 'METAL1' | 'POLY' | 'VIA';
 
 /**
- * PremiumBentoFeatures — Asymmetric Interactive Feature Grid
+ * PremiumBentoFeatures — Spatial 3D Interactive Feature Grid
  *
- * Four-panel bento layout with dopamine-driven micro-interactions:
+ * Four-panel asymmetric bento layout with dual-layer pointer-reactive interactions:
+ *  - 3D perspective tilt (perspective(1000px) rotateX/Y + scale3d) via mouse tracking
+ *  - Radial spotlight gradient overlay following cursor position
+ *  - Smooth cubic-bezier(0.16, 1, 0.3, 1) physics resets on mouse leave
+ *
  *  Panel 1 (2-col): Click-to-compute NAND gate synthesis with live output
  *  Panel 2 (1-col): Auto-cycling testbench assertion stream
  *  Panel 3 (1-col): Hover-to-explore semiconductor layer switcher + canvas
@@ -93,13 +97,11 @@ export const PremiumBentoFeatures: React.FC = () => {
       ctx.fillStyle = color;
       ctx.lineWidth = 0.5;
       
-      // Main line
       ctx.beginPath();
       ctx.moveTo(x1, y1);
       ctx.lineTo(x2, y2);
       ctx.stroke();
       
-      // Boundary ticks
       ctx.beginPath();
       if (y1 === y2) {
         ctx.moveTo(x1, y1 - 3); ctx.lineTo(x1, y1 + 3);
@@ -110,14 +112,12 @@ export const PremiumBentoFeatures: React.FC = () => {
       }
       ctx.stroke();
       
-      // Label text
       ctx.font = '7px monospace';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       const mx = (x1 + x2) / 2;
       const my = (y1 + y2) / 2;
       
-      // Background mask for label legibility
       const textWidth = ctx.measureText(text).width;
       ctx.fillStyle = isDarkMode ? '#03050a' : '#f8fafc';
       ctx.fillRect(mx - textWidth / 2 - 2, my - 5, textWidth + 4, 10);
@@ -157,7 +157,6 @@ export const PremiumBentoFeatures: React.FC = () => {
       ctx.fillStyle = isDarkMode ? 'rgba(0, 245, 255, 0.6)' : 'rgba(3, 105, 161, 0.75)';
       ctx.fillText('M1_ROUTE', 14, 14);
 
-      // Draw horizontal clearance dimension annotation
       drawDimension(w * 0.35, h * 0.45, w * 0.5, h * 0.45, 'S: 14nm', colorsMap.METAL1);
     } else if (activeLayer === 'POLY') {
       ctx.fillStyle = colorsMap.POLY_BG;
@@ -173,7 +172,6 @@ export const PremiumBentoFeatures: React.FC = () => {
       ctx.fillStyle = colorsMap.POLY;
       ctx.fillText('POLY_GATE', w * 0.08 + 4, h * 0.15 + 12);
 
-      // Draw poly width dimension annotation
       drawDimension(w * 0.08, h * 0.22, w * 0.33, h * 0.22, 'Lg: 5nm', colorsMap.POLY);
     } else {
       // VIA contacts
@@ -193,7 +191,6 @@ export const PremiumBentoFeatures: React.FC = () => {
       ctx.fillStyle = colorsMap.VIA;
       ctx.fillText('VIA_ARRAY', 14, 14);
 
-      // Draw via diameter CAD indicator
       ctx.strokeStyle = colorsMap.VIA;
       ctx.beginPath();
       ctx.moveTo(w * 0.2, h * 0.25);
@@ -206,18 +203,40 @@ export const PremiumBentoFeatures: React.FC = () => {
     }
   }, [activeLayer, isDarkMode]);
 
-  // Mouse spotlight handler — uses parent's CSS .bento-spotlight::before
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    e.currentTarget.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
-    e.currentTarget.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+  // ═══ DUAL-LAYER SPATIAL INTERACTION ENGINE ═══
+  // Combines radial spotlight gradient tracking with 3D perspective tilt transforms
+  const handleSpatialInteraction = (e: React.MouseEvent<HTMLDivElement>) => {
+    const card = e.currentTarget;
+    const box = card.getBoundingClientRect();
+
+    // Layer 1: Spotlight gradient coordinates
+    const mx = e.clientX - box.left;
+    const my = e.clientY - box.top;
+    card.style.setProperty('--mouse-x', `${mx}px`);
+    card.style.setProperty('--mouse-y', `${my}px`);
+
+    // Layer 2: Normalized 3D tilt vector math (-0.5 to 0.5 bounds)
+    const tx = (e.clientX - box.left) / box.width - 0.5;
+    const ty = (e.clientY - box.top) / box.height - 0.5;
+
+    // Constrain rotation to ±6° for subtle, premium feel
+    const rotateX = (ty * -12).toFixed(2);
+    const rotateY = (tx * 12).toFixed(2);
+
+    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.01, 1.01, 1.01)`;
+  };
+
+  // Smooth physics reset with industrial transition curve
+  const resetSpatialInteraction = (e: React.MouseEvent<HTMLDivElement>) => {
+    const card = e.currentTarget;
+    card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
   };
 
   const testVectors = [
-    { label: 'vec_001_initial_reset', time: '0.01' },
-    { label: 'vec_002_max_vector_load', time: '0.08' },
-    { label: 'vec_003_hold_skew_delta', time: '0.14' },
-    { label: 'vec_004_edge_propagation', time: '0.22' },
+    { label: 'System initialization pass', time: '0.01' },
+    { label: 'Max load cycle execution', time: '0.08' },
+    { label: 'Timing margin validation', time: '0.14' },
+    { label: 'Signal edge propagation check', time: '0.22' },
   ];
 
   const fabData: Record<FabLayer, { metric: string; value: string; color: string }> = {
@@ -226,14 +245,33 @@ export const PremiumBentoFeatures: React.FC = () => {
     VIA:    { metric: 'Contact Resistance', value: '0.2\u03A9', color: isDarkMode ? '#10B981' : '#16a34a' },
   };
 
+  // CSS class for the 3D spatial card — combines tilt transform + spotlight gradient
+  const bento3DClass = `bento-spotlight bento-3d-tilt`;
+
   return (
     <div className="space-y-8 text-left">
+      {/* Embedded 3D tilt transform styles — complements bento-spotlight from LandingPageContainer */}
+      <style>{`
+        .bento-3d-tilt {
+          transform-style: preserve-3d;
+          will-change: transform;
+          transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
+        }
+        .bento-3d-tilt:hover {
+          border-color: ${isDarkMode ? 'rgba(0, 245, 255, 0.12)' : 'rgba(3, 105, 161, 0.2)'};
+        }
+        .tabular-nums-lock {
+          font-variant-numeric: tabular-nums;
+          font-feature-settings: "tnum";
+        }
+      `}</style>
+
       <div className="space-y-2 max-w-[65ch]">
         <span className="text-[10px] font-mono text-[#00F5FF] uppercase tracking-widest block">
-          // INTEGRATED WORKSPACE SPECIFICATIONS
+          // Core workspace features
         </span>
         <h2 className={`text-[clamp(1.75rem,4vw,3rem)] font-black tracking-tight uppercase leading-[0.95] ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
-          Engineered for physical execution metrics.
+          Engineered for practical clarity.
         </h2>
       </div>
 
@@ -241,20 +279,21 @@ export const PremiumBentoFeatures: React.FC = () => {
 
         {/* ═══ PANEL 1: Interactive NAND Synthesis (2-col) ═══ */}
         <div 
-          onMouseMove={handleMouseMove} 
-          className={`bento-spotlight md:col-span-2 border rounded-xl p-[1px] min-h-[300px] transition-colors duration-200 ${
-            isDarkMode ? 'bg-slate-900/40 border-slate-900 hover:border-slate-800' : 'bg-slate-50/40 border-slate-200 hover:border-slate-300 shadow-sm'
+          onMouseMove={handleSpatialInteraction}
+          onMouseLeave={resetSpatialInteraction}
+          className={`${bento3DClass} md:col-span-2 border rounded-xl p-[1px] min-h-[300px] ${
+            isDarkMode ? 'bg-slate-900/40 border-slate-900' : 'bg-slate-50/40 border-slate-200 shadow-sm'
           }`}
         >
           <div className="bento-card-inner p-6 md:p-8 flex flex-col justify-between">
             <div className="space-y-2">
               <div className="flex items-center gap-2">
                 <FileCode size={14} className="text-[#00F5FF]" />
-                <span className="text-[9px] font-mono text-[#8E9AA8] uppercase tracking-wider block">01 // VISUAL GRAPH SYNTHESIS</span>
+                <span className="text-[9px] font-mono text-[#8E9AA8] uppercase tracking-wider block">01 // Visual design editor</span>
               </div>
-              <h3 className={`text-lg font-bold tracking-tight uppercase ${isDarkMode ? 'text-slate-100' : 'text-slate-800'}`}>Interactive Schematic Generation</h3>
+              <h3 className={`text-lg font-bold tracking-tight uppercase ${isDarkMode ? 'text-slate-100' : 'text-slate-800'}`}>Interactive Layout Generation</h3>
               <p className={`text-xs leading-relaxed max-w-[58ch] ${isDarkMode ? 'text-[#8E9AA8]' : 'text-slate-600'}`}>
-                Verify how computational statements map onto physical silicon layers. Toggle parameters below to evaluate NAND gate states instantly — see the output logic recompute in real time.
+                See exactly how your logical design maps onto hardware components. Modify inputs below to trigger real-time calculations instantly.
               </p>
             </div>
 
@@ -272,7 +311,7 @@ export const PremiumBentoFeatures: React.FC = () => {
                       : (isDarkMode ? 'bg-slate-950 border-slate-900 text-[#8E9AA8]' : 'bg-white border-slate-200 text-slate-500')
                   }`}
                 >
-                  NODE_A = {gateA ? '1' : '0'}
+                  Input A = {gateA ? '1' : '0'}
                 </button>
                 <button
                   onClick={() => setGateB(!gateB)}
@@ -284,12 +323,12 @@ export const PremiumBentoFeatures: React.FC = () => {
                       : (isDarkMode ? 'bg-slate-950 border-slate-900 text-[#8E9AA8]' : 'bg-white border-slate-200 text-slate-500')
                   }`}
                 >
-                  NODE_B = {gateB ? '1' : '0'}
+                  Input B = {gateB ? '1' : '0'}
                 </button>
               </div>
 
               <div className="font-mono text-xs text-[#8E9AA8] flex items-center gap-2">
-                <span>Footprint:</span>
+                <span>Area:</span>
                 <span className={`${isDarkMode ? 'text-white' : 'text-slate-800'} font-bold tracking-wider tabular-data`}>3 Cells</span>
               </div>
 
@@ -298,7 +337,7 @@ export const PremiumBentoFeatures: React.FC = () => {
                   ? 'bg-[#10B981]/10 border-[#10B981] text-[#10B981]' 
                   : (isDarkMode ? 'bg-slate-950 border-slate-900 text-[#8E9AA8]' : 'bg-white border-slate-200 text-slate-400')
               }`}>
-                SIG_OUT = {nandOut ? '1' : '0'}
+                Output = {nandOut ? '1' : '0'}
               </div>
             </div>
           </div>
@@ -306,20 +345,21 @@ export const PremiumBentoFeatures: React.FC = () => {
 
         {/* ═══ PANEL 2: Live Testbench Assertion Stream (1-col) ═══ */}
         <div 
-          onMouseMove={handleMouseMove} 
-          className={`bento-spotlight border rounded-xl p-[1px] min-h-[300px] transition-colors duration-200 ${
-            isDarkMode ? 'bg-slate-900/40 border-slate-900 hover:border-slate-800' : 'bg-slate-50/40 border-slate-200 hover:border-slate-300 shadow-sm'
+          onMouseMove={handleSpatialInteraction}
+          onMouseLeave={resetSpatialInteraction}
+          className={`${bento3DClass} border rounded-xl p-[1px] min-h-[300px] ${
+            isDarkMode ? 'bg-slate-900/40 border-slate-900' : 'bg-slate-50/40 border-slate-200 shadow-sm'
           }`}
         >
           <div className="bento-card-inner p-6 flex flex-col justify-between">
             <div className="space-y-2">
               <div className="flex items-center gap-2">
                 <ShieldCheck size={14} className="text-[#10B981]" />
-                <span className="text-[9px] font-mono text-[#8E9AA8] uppercase tracking-wider block">02 // VERIFICATION ENGINE</span>
+                <span className="text-[9px] font-mono text-[#8E9AA8] uppercase tracking-wider block">02 // Integrated simulator</span>
               </div>
-              <h3 className={`text-lg font-bold tracking-tight uppercase ${isDarkMode ? 'text-slate-100' : 'text-slate-800'}`}>Assertion Testbenches</h3>
+              <h3 className={`text-lg font-bold tracking-tight uppercase ${isDarkMode ? 'text-slate-100' : 'text-slate-800'}`}>Automated Testing</h3>
               <p className={`text-xs leading-relaxed ${isDarkMode ? 'text-[#8E9AA8]' : 'text-slate-600'}`}>
-                Watch continuous verification vectors execute in real time. Each assertion validates a distinct timing boundary in the simulation model.
+                Run multi-stage validation routines inside an automated, web-ready simulation environment. Watch each check pass in real time.
               </p>
             </div>
 
@@ -331,8 +371,8 @@ export const PremiumBentoFeatures: React.FC = () => {
                   key={vec.label}
                   className={`flex justify-between items-center py-0.5 transition-all duration-300 ${i <= testCycle ? 'text-[#10B981] font-semibold' : 'text-slate-400 dark:text-slate-850'}`}
                 >
-                  <span>[PASS] {vec.label}</span>
-                  <span className="tabular-data text-[#8E9AA8]">{vec.time}ps</span>
+                  <span>✓ {vec.label}</span>
+                  <span className="tabular-data text-[#8E9AA8]">{vec.time}s</span>
                 </div>
               ))}
               <div className={`pt-2 mt-1 border-t flex justify-between text-[9px] uppercase font-bold tracking-wider ${
@@ -347,20 +387,21 @@ export const PremiumBentoFeatures: React.FC = () => {
 
         {/* ═══ PANEL 3: Fabrication Layer Explorer + Canvas (1-col) ═══ */}
         <div 
-          onMouseMove={handleMouseMove} 
-          className={`bento-spotlight border rounded-xl p-[1px] min-h-[300px] transition-colors duration-200 ${
-            isDarkMode ? 'bg-slate-900/40 border-slate-900 hover:border-slate-800' : 'bg-slate-50/40 border-slate-200 hover:border-slate-300 shadow-sm'
+          onMouseMove={handleSpatialInteraction}
+          onMouseLeave={resetSpatialInteraction}
+          className={`${bento3DClass} border rounded-xl p-[1px] min-h-[300px] ${
+            isDarkMode ? 'bg-slate-900/40 border-slate-900' : 'bg-slate-50/40 border-slate-200 shadow-sm'
           }`}
         >
           <div className="bento-card-inner p-6 flex flex-col justify-between">
             <div className="space-y-2">
               <div className="flex items-center gap-2">
                 <Layers size={14} className="text-[#FF5F1F]" />
-                <span className="text-[9px] font-mono text-[#8E9AA8] uppercase tracking-wider block">03 // PHYSICAL FOUNDRY LAYOUT</span>
+                <span className="text-[9px] font-mono text-[#8E9AA8] uppercase tracking-wider block">03 // Physical layer</span>
               </div>
-              <h3 className={`text-lg font-bold tracking-tight uppercase ${isDarkMode ? 'text-slate-100' : 'text-slate-800'}`}>Geometry Constraints</h3>
+              <h3 className={`text-lg font-bold tracking-tight uppercase ${isDarkMode ? 'text-slate-100' : 'text-slate-800'}`}>Fabrication Rules</h3>
               <p className={`text-xs leading-relaxed ${isDarkMode ? 'text-[#8E9AA8]' : 'text-slate-600'}`}>
-                Hover over fabrication parameters to explore trace widths, clearance paths, and via contact arrays.
+                Confront realistic hardware limitations. Hover over the choices below to view structural constraints and layer properties.
               </p>
             </div>
 
@@ -421,20 +462,21 @@ export const PremiumBentoFeatures: React.FC = () => {
 
         {/* ═══ PANEL 4: Career Domain Intelligence Matrix (2-col) ═══ */}
         <div 
-          onMouseMove={handleMouseMove} 
-          className={`bento-spotlight md:col-span-2 border rounded-xl p-[1px] min-h-[300px] transition-colors duration-200 ${
-            isDarkMode ? 'bg-slate-900/40 border-slate-900 hover:border-slate-800' : 'bg-slate-50/40 border-slate-200 hover:border-slate-300 shadow-sm'
+          onMouseMove={handleSpatialInteraction}
+          onMouseLeave={resetSpatialInteraction}
+          className={`${bento3DClass} md:col-span-2 border rounded-xl p-[1px] min-h-[300px] ${
+            isDarkMode ? 'bg-slate-900/40 border-slate-900' : 'bg-slate-50/40 border-slate-200 shadow-sm'
           }`}
         >
           <div className="bento-card-inner p-6 md:p-8 flex flex-col justify-between">
             <div className="space-y-2">
               <div className="flex items-center gap-2">
                 <Monitor size={14} className="text-[#00F5FF]" />
-                <span className="text-[9px] font-mono text-[#8E9AA8] uppercase tracking-wider block">04 // SEMICONDUCTOR PLACEMENT MATRIX</span>
+                <span className="text-[9px] font-mono text-[#8E9AA8] uppercase tracking-wider block">04 // Career maps</span>
               </div>
-              <h3 className={`text-lg font-bold tracking-tight uppercase ${isDarkMode ? 'text-slate-100' : 'text-slate-800'}`}>Direct Career Domain Intelligence</h3>
+              <h3 className={`text-lg font-bold tracking-tight uppercase ${isDarkMode ? 'text-slate-100' : 'text-slate-800'}`}>Industry Placement Tracks</h3>
               <p className={`text-xs leading-relaxed max-w-[55ch] ${isDarkMode ? 'text-[#8E9AA8]' : 'text-slate-600'}`}>
-                Evaluate silicon engineering profiles across hardware verticals. Review salary boundaries, EDA mastery indexes, and enterprise trajectories mapped across 13 engineering disciplines.
+                Review detailed salary data, required tool expertise, and career trajectories across leading hardware engineering domains.
               </p>
             </div>
 

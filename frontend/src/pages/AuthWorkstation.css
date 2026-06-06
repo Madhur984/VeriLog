@@ -1,0 +1,210 @@
+/* ═══════════════════════════════════════════════════════════
+   AUTH WORKSTATION — Spatial 3D Glass Substrate System
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Glass substrate with hardware-accelerated backdrop ── */
+.auth-glass-substrate {
+  background: rgba(9, 14, 26, 0.65);
+  backdrop-filter: blur(32px) saturate(1.2);
+  -webkit-backdrop-filter: blur(32px) saturate(1.2);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.08),
+    0 0 80px rgba(0, 245, 255, 0.03),
+    0 32px 64px rgba(0, 0, 0, 0.4);
+  transition: border-color 0.3s ease;
+}
+
+/* ── Dynamic Transition Classes for Spatial Tilt/Float ── */
+.auth-glass-substrate.is-tilting {
+  transition: transform 0.1s ease-out, border-color 0.3s ease;
+}
+
+.auth-glass-substrate.is-resetting {
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
+}
+
+/* ── Ambient Zero-Gravity Float Animation ── */
+@keyframes float-drift {
+  0% {
+    transform: perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px);
+  }
+  25% {
+    transform: perspective(1000px) rotateX(0.8deg) rotateY(-0.6deg) translateY(-4px);
+  }
+  50% {
+    transform: perspective(1000px) rotateX(-0.6deg) rotateY(0.8deg) translateY(-8px);
+  }
+  75% {
+    transform: perspective(1000px) rotateX(0.5deg) rotateY(-0.5deg) translateY(-4px);
+  }
+  100% {
+    transform: perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px);
+  }
+}
+
+.auth-idle-float {
+  animation: float-drift 8s ease-in-out infinite;
+}
+
+/* ── Focus ring: 2px gap + cyan trace ── */
+.custom-focus-ring:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px #03050a, 0 0 0 3px #00F5FF;
+}
+
+/* ── Tabular numerics for monospace alignment ── */
+.tabular-metrics {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Suppression of browser default outlines on interactive elements ── */
+.auth-workstation-root input:focus,
+.auth-workstation-root button:focus {
+  outline: none;
+}
+
+/* ── Ambient grid pattern behind card ── */
+.auth-grid-texture {
+  background-image:
+    linear-gradient(#fff 1px, transparent 1px),
+    linear-gradient(90deg, #fff 1px, transparent 1px);
+  background-size: 32px 32px;
+  opacity: 0.015;
+  pointer-events: none;
+}
+
+/* ── Reactive glow border on tilt hover ── */
+.auth-glass-substrate:hover {
+  border-color: rgba(0, 245, 255, 0.15) !important;
+}
+
+/* ── Terminal cursor blink ── */
+@keyframes terminal-cursor-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+.terminal-cursor {
+  animation: terminal-cursor-blink 1s step-end infinite;
+}
+
+/* ── Crypto log line entry slide ── */
+@keyframes crypto-line-in {
+  from {
+    opacity: 0;
+    transform: translateX(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+.crypto-log-line {
+  animation: crypto-line-in 0.15s ease-out forwards;
+}
+
+/* ── Loading pulse ring ── */
+@keyframes auth-pulse-ring {
+  0% {
+    box-shadow: 0 0 0 0 rgba(0, 245, 255, 0.25);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(0, 245, 255, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(0, 245, 255, 0);
+  }
+}
+.auth-pulse {
+  animation: auth-pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* ── Input field hover/active states ── */
+.auth-input-field {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.auth-input-field:hover {
+  border-color: rgba(148, 163, 184, 0.2);
+}
+.auth-input-field:focus {
+  border-color: #00F5FF;
+  box-shadow: 0 0 0 2px #03050a, 0 0 0 3px #00F5FF;
+}
+
+/* Custom placeholder styling for high accessibility */
+.auth-input-field::placeholder {
+  color: #475569 !important; /* slate-600 */
+  opacity: 1;
+}
+
+/* ── OAuth button micro-interaction ── */
+.auth-oauth-btn {
+  transition: border-color 0.2s ease, transform 0.1s ease, background-color 0.2s ease, color 0.2s ease;
+}
+.auth-oauth-btn:hover {
+  border-color: rgba(148, 163, 184, 0.25);
+  background-color: rgba(14, 17, 22, 0.9);
+  color: #f8fafc !important; /* white-slate */
+}
+.auth-oauth-btn:active {
+  transform: scale(0.96);
+}
+
+/* ── Submit button glow ── */
+.auth-submit-btn {
+  transition: background-color 0.15s ease, transform 0.1s ease, box-shadow 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+.auth-submit-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    transparent 50%
+  );
+  pointer-events: none;
+}
+.auth-submit-btn:hover {
+  background-color: #f1f5f9;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+}
+.auth-submit-btn:active {
+  transform: scale(0.99);
+}
+
+/* ── Success card border glow animation ── */
+@keyframes success-border-glow {
+  0%, 100% {
+    border-color: rgba(16, 185, 129, 0.2);
+    box-shadow: 0 0 12px rgba(16, 185, 129, 0.05);
+  }
+  50% {
+    border-color: rgba(16, 185, 129, 0.35);
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.1);
+  }
+}
+.success-card {
+  animation: success-border-glow 2s ease-in-out infinite;
+}
+
+/* ── Error shake animation ── */
+@keyframes auth-error-shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-4px); }
+  40% { transform: translateX(4px); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(2px); }
+}
+.auth-error-shake {
+  animation: auth-error-shake 0.4s ease-in-out;
+}
+
+/* ── Responsive: mobile adjustments ── */
+@media (max-width: 639px) {
+  .auth-glass-substrate {
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+}
