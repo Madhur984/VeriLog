@@ -50,3 +50,6 @@ ENV/
 # Claude agent configuration directory
 .claude/
 
+# Generated audit reports
+reports/
+

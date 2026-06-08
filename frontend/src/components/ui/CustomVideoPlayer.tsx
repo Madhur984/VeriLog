@@ -20,6 +20,10 @@ interface CustomVideoPlayerProps {
   /** Theme accent (hex). Each module passes its own - cyan/amber/orange. */
   accent?: string;
   poster?: string;
+  /** Optional WebVTT captions track (WCAG 1.2.2 for lecture content). */
+  captionsSrc?: string;
+  /** BCP-47 language for the captions track. */
+  captionsLang?: string;
   className?: string;
   /** Optional element rendered top-left over the video (e.g. a chapter badge). */
   topBadge?: React.ReactNode;
@@ -50,6 +54,8 @@ export const CustomVideoPlayer = forwardRef<VideoPlayerHandle, CustomVideoPlayer
       src,
       accent = '#22d3ee',
       poster,
+      captionsSrc,
+      captionsLang = 'en',
       className = '',
       topBadge,
       onTimeUpdate,
@@ -196,7 +202,11 @@ export const CustomVideoPlayer = forwardRef<VideoPlayerHandle, CustomVideoPlayer
             setMuted(v.muted);
             setVolume(v.volume);
           }}
-        />
+        >
+          {captionsSrc && (
+            <track kind="captions" src={captionsSrc} srcLang={captionsLang} label="Captions" default />
+          )}
+        </video>
 
         {topBadge && <div className="absolute top-4 left-4 z-10 pointer-events-none">{topBadge}</div>}
 
@@ -222,7 +232,29 @@ export const CustomVideoPlayer = forwardRef<VideoPlayerHandle, CustomVideoPlayer
           {/* Seek bar */}
           <div className="flex items-center gap-3 mb-2">
             <div
+              role="slider"
+              tabIndex={0}
+              aria-label="Seek"
+              aria-valuemin={0}
+              aria-valuemax={Math.floor(duration) || 0}
+              aria-valuenow={Math.floor(current)}
+              aria-valuetext={`${fmt(current)} of ${fmt(duration)}`}
               className="relative flex-1 h-1.5 rounded-full bg-white/15 cursor-pointer group/seek"
+              onKeyDown={(e) => {
+                // Self-contained seek so the slider works when focused; stop the
+                // event reaching the container's global key handler (avoids double skip).
+                const v = videoRef.current;
+                if (!v || !duration) return;
+                let handled = true;
+                switch (e.key) {
+                  case 'ArrowLeft': case 'ArrowDown': v.currentTime = Math.max(0, v.currentTime - 5); break;
+                  case 'ArrowRight': case 'ArrowUp': v.currentTime = Math.min(duration, v.currentTime + 5); break;
+                  case 'Home': v.currentTime = 0; break;
+                  case 'End': v.currentTime = duration; break;
+                  default: handled = false;
+                }
+                if (handled) { e.preventDefault(); e.stopPropagation(); }
+              }}
               onClick={(e) => {
                 const rect = e.currentTarget.getBoundingClientRect();
                 const ratio = (e.clientX - rect.left) / rect.width;

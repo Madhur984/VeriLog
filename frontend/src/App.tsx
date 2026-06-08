@@ -44,6 +44,9 @@ const ActivityPage = named(() => import('./pages/ActivityPage'), 'ActivityPage')
 const CommunityPage = named(() => import('./pages/CommunityPage'), 'CommunityPage');
 const DebugMissionPage = named(() => import('./pages/DebugMissionPage'), 'DebugMissionPage');
 const GatekeeperGame = named(() => import('./pages/GatekeeperGame'), 'GatekeeperGame');
+const AiLab = lazy(() => loadChunk(() => import('./pages/AiLab/AiLab')));
+const SiliconSecrets = named(() => import('./pages/SiliconSecrets'), 'SiliconSecrets');
+const ResetPasswordPage = named(() => import('./pages/ResetPasswordPage'), 'ResetPasswordPage');
 
 // Modules (the heaviest chunks - three.js / monaco / scene graphs live here)
 const ModuleOne = named(() => import('./pages/ModuleOne'), 'ModuleOne');
@@ -80,6 +83,7 @@ function App() {
           {/* Landing / Auth - public */}
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
 
           {/* Public browse + marketing */}
           <Route element={<PortalLayout />}>
@@ -136,7 +140,10 @@ function App() {
             <Route path="/activities" element={<ActivityPage />} />
             <Route path="/community" element={<CommunityPage />} />
             <Route path="/debug-mission" element={<DebugMissionPage />} />
+            <Route path="/debug-mission/:id" element={<DebugMissionPage />} />
             <Route path="/gatekeeper-game" element={<GatekeeperGame />} />
+            <Route path="/ai-lab" element={<AiLab />} />
+            <Route path="/silicon-secrets" element={<SiliconSecrets />} />
           </Route>
 
           {/* Fallback */}

@@ -401,9 +401,19 @@ const RootGem: React.FC<{ node: RootNode; index: number; onClick: () => void }> 
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.07, duration: 0.4, ease: 'easeOut' }}
+      role="button"
+      tabIndex={isLocked ? -1 : 0}
+      aria-disabled={isLocked}
+      aria-label={`${node.level} ${node.label}${isLocked ? ' — locked' : isDone ? ' — completed' : ''}`}
       onClick={() => { if (!isLocked) onClick(); }}
+      onKeyDown={(e) => {
+        if (isLocked) return;
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(); }
+      }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
+      onFocus={() => { if (!isLocked) setHovered(true); }}
+      onBlur={() => setHovered(false)}
     >
       <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-sm border bg-transparent mb-3"
         style={{
@@ -413,7 +423,7 @@ const RootGem: React.FC<{ node: RootNode; index: number; onClick: () => void }> 
           boxShadow: hovered && !isLocked ? `0 0 8px ${accent}33` : 'none',
           transition: 'box-shadow 0.3s',
         }}>
-        <span className={`text-[8.5px] font-mono tracking-[0.25em] ${isLight ? 'text-slate-600' : 'text-white/55'}`}>{node.level}</span>
+        <span className={`text-[8.5px] font-mono tracking-[0.25em] ${isLight ? 'text-[#1D4ED8]' : 'text-white/75'}`}>{node.level}</span>
         <motion.span className="w-1 h-1 rounded-full"
           style={{ backgroundColor: isLocked ? (isLight ? 'rgba(15,23,42,0.2)' : 'rgba(255,255,255,0.15)') : accent }}
           animate={!isLocked ? { opacity: [0.5, 1, 0.5] } : {}}
@@ -429,7 +439,7 @@ const RootGem: React.FC<{ node: RootNode; index: number; onClick: () => void }> 
 
           {isDone && (
             <motion.div className={`absolute -top-1 -right-1 px-1 py-0.5 rounded-sm border ${
-              isLight ? 'bg-white' : 'bg-[#0A0B0F]'
+              isLight ? 'bg-white' : 'bg-[#070810]'
             }`}
               style={{ borderColor: accent }}
               initial={{ scale: 0 }} animate={{ scale: 1 }}
@@ -453,11 +463,11 @@ const RootGem: React.FC<{ node: RootNode; index: number; onClick: () => void }> 
       </div>
 
       <div className="mt-1 w-full text-[7px] font-mono tracking-[0.1em] text-center truncate"
-        style={{ 
-          color: isLocked 
-            ? (isLight ? '#64748B' : '#334155') 
-            : `${accent}aa`, 
-          maxWidth: '100%' 
+        style={{
+          color: isLocked
+            ? (isLight ? '#475569' : '#334155')
+            : (isLight ? '#1D4ED8' : `${accent}aa`),
+          maxWidth: '100%'
         }}
       >
         {node.tech}
@@ -472,7 +482,7 @@ const RootGem: React.FC<{ node: RootNode; index: number; onClick: () => void }> 
               transition={{ duration: 0.9, delay: index * 0.08 + 0.3, ease: 'easeOut' }} />
           </div>
           <div className="mt-0.5 text-[8px] font-mono tabular-nums text-right"
-            style={{ color: `${accent}88` }}>{node.pct}%</div>
+            style={{ color: isLight ? '#1D4ED8' : `${accent}88` }}>{node.pct}%</div>
         </div>
       )}
     </motion.div>
@@ -703,10 +713,10 @@ const L6PathDropdown: React.FC<{ onPick: (route: string) => void }> = ({ onPick 
           type="button"
           onClick={() => setPathOpen(o => !o)}
           className={`w-full flex items-center justify-between px-4 py-3 rounded-sm border outline-none transition-all ${
-            isLight ? "bg-white border-slate-200" : "bg-[#0A0B0F] border-white/10"
+            isLight ? "bg-white border-slate-300 shadow-sm" : "bg-[#070810] border-white/10"
           }`}
           style={{
-            borderColor: pathOpen ? accent : (isLight ? 'rgba(0,0,0,0.08)' : `${accent}55`),
+            borderColor: pathOpen ? accent : (isLight ? '#CBD5E1' : `${accent}55`),
             boxShadow: pathOpen ? `0 0 14px ${accent}33` : 'none',
           }}
         >
@@ -715,8 +725,8 @@ const L6PathDropdown: React.FC<{ onPick: (route: string) => void }> = ({ onPick 
               style={{ backgroundColor: accent, boxShadow: `0 0 6px ${accent}` }}
               animate={{ opacity: [0.5, 1, 0.5] }} transition={{ duration: 2, repeat: Infinity }} />
             <div>
-              <div className={`text-[12px] font-mono font-semibold ${isLight ? 'text-slate-800' : 'text-white/90'}`}>{pathSel.label}</div>
-              <div className="text-[8.5px] font-mono tracking-[0.22em] uppercase" style={{ color: `${accent}aa` }}>
+              <div className={`text-[12px] font-mono font-semibold ${isLight ? 'text-[#0F172A]' : 'text-white/90'}`}>{pathSel.label}</div>
+              <div className="text-[8.5px] font-mono tracking-[0.22em] uppercase" style={{ color: isLight ? '#475569' : `${accent}aa` }}>
                 {pathSel.subtitle} · {pathSel.modules.length} modules
               </div>
             </div>
@@ -733,9 +743,9 @@ const L6PathDropdown: React.FC<{ onPick: (route: string) => void }> = ({ onPick 
               exit={{ opacity: 0, y: -4 }}
               transition={{ duration: 0.16 }}
               className={`absolute left-0 right-0 mt-2 rounded-sm border backdrop-blur-md overflow-hidden z-40 ${
-                isLight ? "bg-white border-slate-200" : "bg-[#0A0B0F]/97 border-white/8"
+                isLight ? "bg-white border-slate-300 shadow-lg" : "bg-[#070810]/97 border-white/8"
               }`}
-              style={{ borderColor: isLight ? 'rgba(0,0,0,0.08)' : 'rgba(255,255,255,0.08)' }}
+              style={{ borderColor: isLight ? '#CBD5E1' : 'rgba(255,255,255,0.08)' }}
             >
               {L6_PATHS.map(opt => {
                 const isActive = opt.id === pathSel.id;
@@ -752,8 +762,8 @@ const L6PathDropdown: React.FC<{ onPick: (route: string) => void }> = ({ onPick 
                       }}>
                       <span className="w-1 h-1 rounded-full" style={{ backgroundColor: opt.color, boxShadow: `0 0 5px ${opt.color}` }} />
                       <div className="flex-1">
-                        <div className={`text-[12px] font-mono font-semibold ${isLight ? 'text-slate-800' : 'text-white/90'}`}>{opt.label}</div>
-                        <div className="text-[8.5px] font-mono tracking-[0.22em] uppercase" style={{ color: `${opt.color}aa` }}>
+                        <div className={`text-[12px] font-mono font-semibold ${isLight ? 'text-[#0F172A]' : 'text-white/90'}`}>{opt.label}</div>
+                        <div className="text-[8.5px] font-mono tracking-[0.22em] uppercase" style={{ color: isLight ? '#475569' : `${opt.color}aa` }}>
                           {opt.subtitle} · {opt.modules.length} modules
                         </div>
                       </div>
@@ -777,9 +787,9 @@ const L6PathDropdown: React.FC<{ onPick: (route: string) => void }> = ({ onPick 
               transition={{ delay: idx * 0.05, duration: 0.25 }}
               className="rounded-md border overflow-hidden"
               style={{
-                borderColor: isOpen ? (isLight ? accent : `${accent}66`) : (isLight ? 'rgba(0,0,0,0.08)' : 'rgba(255,255,255,0.08)'),
-                backgroundColor: isLight ? 'rgba(255,255,255,0.7)' : 'rgba(10,11,15,0.6)',
-                boxShadow: isOpen ? `0 0 18px ${accent}1f` : 'none',
+                borderColor: isOpen ? (isLight ? accent : `${accent}66`) : (isLight ? '#CBD5E1' : 'rgba(255,255,255,0.08)'),
+                backgroundColor: isLight ? '#FFFFFF' : 'rgba(6,7,12,0.72)',
+                boxShadow: isOpen ? `0 0 18px ${accent}1f` : (isLight ? '0 1px 3px rgba(15,23,42,0.08)' : 'none'),
                 transition: 'border-color 0.2s, box-shadow 0.2s',
               }}>
               <button type="button"
@@ -796,13 +806,13 @@ const L6PathDropdown: React.FC<{ onPick: (route: string) => void }> = ({ onPick 
                   {idx + 1}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className={`text-[14px] font-semibold truncate ${isLight ? 'text-slate-800' : 'text-white/95'}`}>{mod.label}</div>
-                  <div className="text-[9px] font-mono tracking-[0.2em] uppercase mt-0.5" style={{ color: `${accent}aa` }}>
+                  <div className={`text-[14px] font-semibold truncate ${isLight ? 'text-[#0F172A]' : 'text-white/95'}`}>{mod.label}</div>
+                  <div className="text-[9px] font-mono tracking-[0.2em] uppercase mt-0.5" style={{ color: isLight ? '#1D4ED8' : `${accent}aa` }}>
                     {mod.subtitle}
                   </div>
                 </div>
                 <div className="flex items-center gap-3 flex-shrink-0">
-                  <span className={`text-[11px] font-mono ${isLight ? 'text-slate-500' : 'text-white/45'}`}>
+                  <span className={`text-[11px] font-mono ${isLight ? 'text-slate-600' : 'text-white/70'}`}>
                     {mod.submodules.length} Topics
                   </span>
                   <motion.div
@@ -810,8 +820,8 @@ const L6PathDropdown: React.FC<{ onPick: (route: string) => void }> = ({ onPick 
                     transition={{ duration: 0.2 }}
                     className="w-7 h-7 rounded-full flex items-center justify-center"
                     style={{
-                      backgroundColor: isLight ? 'rgba(0,0,0,0.02)' : 'rgba(255,255,255,0.04)',
-                      border: isLight ? '1px solid rgba(0,0,0,0.06)' : '1px solid rgba(255,255,255,0.08)',
+                      backgroundColor: isLight ? 'rgba(15,23,42,0.04)' : 'rgba(255,255,255,0.04)',
+                      border: isLight ? '1px solid rgba(15,23,42,0.12)' : '1px solid rgba(255,255,255,0.08)',
                     }}>
                     <span className={`text-[10px] ${isLight ? 'text-slate-600' : 'text-white/60'}`}>▾</span>
                   </motion.div>
@@ -825,7 +835,7 @@ const L6PathDropdown: React.FC<{ onPick: (route: string) => void }> = ({ onPick 
                     exit={{ height: 0, opacity: 0 }}
                     transition={{ duration: 0.22, ease: 'easeInOut' }}
                     className="overflow-hidden"
-                    style={{ borderTop: isLight ? '1px solid rgba(0,0,0,0.06)' : `1px solid ${accent}22` }}>
+                    style={{ borderTop: isLight ? '1px solid rgba(15,23,42,0.12)' : `1px solid ${accent}22` }}>
                     <ul className="flex flex-col">
                       {mod.submodules.map((sub, i) => (
                         <li key={sub.id}>
@@ -837,11 +847,11 @@ const L6PathDropdown: React.FC<{ onPick: (route: string) => void }> = ({ onPick 
                             style={{ borderLeftColor: 'transparent' }}
                             onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.borderLeftColor = accent; }}
                             onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.borderLeftColor = 'transparent'; }}>
-                            <span className="flex-shrink-0 w-9 text-center text-[10px] font-mono tabular-nums" style={{ color: `${accent}88` }}>
+                            <span className="flex-shrink-0 w-9 text-center text-[10px] font-mono tabular-nums" style={{ color: isLight ? '#475569' : `${accent}88` }}>
                               {idx + 1}.{String(i + 1).padStart(2, '0')}
                             </span>
                             <span className={`flex-1 text-[12.5px] ${isLight ? 'text-slate-700' : 'text-white/80'}`}>{sub.label}</span>
-                            <span className="text-[11px] font-mono" style={{ color: `${accent}aa` }}>→</span>
+                            <span className="text-[11px] font-mono" style={{ color: isLight ? '#1D4ED8' : `${accent}aa` }}>→</span>
                           </button>
                         </li>
                       ))}
@@ -865,16 +875,16 @@ export const HierarchicalGrindTree: React.FC = () => {
   return (
     <div className="w-full h-full flex flex-col bg-transparent overflow-hidden relative">
       <div className={`flex-shrink-0 w-full pt-6 pb-5 px-2 sm:px-4 lg:px-6 border-b backdrop-blur-md relative z-30 flex justify-center transition-colors duration-300 ${
-        isLight ? 'border-slate-200 bg-white/95' : 'border-white/10 bg-[#0A0B0F]/95'
+        isLight ? 'border-slate-300 bg-white/95' : 'border-white/10 bg-[#070810]/95'
       }`}>
         <div className="w-full max-w-[900px] flex flex-col items-center">
           <div className="flex items-center justify-between w-full mb-5 px-1">
-            <div className={`flex items-center gap-2 text-[10px] font-mono tracking-[0.2em] ${isLight ? 'text-slate-500' : 'text-white/55'}`}>
+            <div className={`flex items-center gap-2 text-[10px] font-mono tracking-[0.2em] ${isLight ? 'text-slate-600' : 'text-white/75'}`}>
               <motion.span className="w-1 h-1 rounded-full bg-cyan-400/70"
                 animate={{ opacity: [0.4, 1, 0.4] }} transition={{ duration: 2, repeat: Infinity }} />
               Foundation Framework
             </div>
-            <div className={`text-[9px] font-mono tracking-[0.2em] ${isLight ? 'text-slate-400' : 'text-white/35'}`}>L1 - L5 · 5 modules</div>
+            <div className={`text-[9px] font-mono tracking-[0.2em] ${isLight ? 'text-slate-600' : 'text-white/60'}`}>L1 - L5 · 5 modules</div>
           </div>
           <div className="relative w-full">
             <div className="absolute left-[8%] right-[8%] pointer-events-none hidden lg:block" style={{ top: 56 }}>
@@ -891,7 +901,7 @@ export const HierarchicalGrindTree: React.FC = () => {
       </div>
 
       <div className="flex-1 w-full px-4 lg:px-6 pt-10 pb-12 flex flex-col items-center relative z-10 overflow-x-hidden overflow-y-auto scrollbar-hide">
-        <div className={`flex items-center gap-2 text-[10px] font-mono tracking-[0.2em] ${isLight ? 'text-slate-500' : 'text-white/55'} mb-4`}>
+        <div className={`flex items-center gap-2 text-[10px] font-mono tracking-[0.2em] ${isLight ? 'text-slate-600' : 'text-white/75'} mb-4`}>
           <motion.span className="w-1 h-1 rounded-full bg-cyan-400/70"
             animate={{ opacity: [0.4, 1, 0.4] }} transition={{ duration: 2, repeat: Infinity }} />
           Choose your path

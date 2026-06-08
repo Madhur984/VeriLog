@@ -217,11 +217,15 @@ export const useGamificationStore = create<GamificationState>()(
 
                 const yesterday = yesterdayISO();
                 let newStreak: number;
+                let freezesRemaining = state.streak.freezesRemaining;
 
                 if (state.streak.lastActiveDate === yesterday) {
                     newStreak = state.streak.current + 1;
                 } else if (state.streak.current > 0 && state.streak.freezesRemaining > 0) {
+                    // A day was missed but a freeze saves the streak — consume one.
+                    // (Without this decrement, a single freeze made streaks unbreakable.)
                     newStreak = state.streak.current;
+                    freezesRemaining = state.streak.freezesRemaining - 1;
                 } else {
                     newStreak = 1;
                 }
@@ -231,6 +235,7 @@ export const useGamificationStore = create<GamificationState>()(
                         ...state.streak,
                         current: newStreak,
                         lastActiveDate: today,
+                        freezesRemaining,
                         longestEver: Math.max(state.streak.longestEver, newStreak),
                     }
                 });

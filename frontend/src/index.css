@@ -20,13 +20,28 @@ html, body, #root {
 }
 
 @layer base {
-  button:focus, a:focus, select:focus, textarea:focus, input:focus, [role="button"]:focus {
+  /* Only suppress the focus ring for pointer/mouse focus — keyboard users
+     (:focus-visible) keep a clear ring. Previously a blanket `:focus { outline:none }`
+     removed indicators even for keyboard interactions that don't compute
+     :focus-visible, hurting keyboard accessibility. */
+  button:focus:not(:focus-visible), a:focus:not(:focus-visible), select:focus:not(:focus-visible), textarea:focus:not(:focus-visible), input:focus:not(:focus-visible), [role="button"]:focus:not(:focus-visible) {
     outline: none;
   }
   button:focus-visible, a:focus-visible, select:focus-visible, textarea:focus-visible, input:focus-visible, [role="button"]:focus-visible {
     outline: none !important;
     box-shadow: 0 0 0 2px #03050a, 0 0 0 3px #00F5FF !important;
     border-radius: inherit;
+  }
+
+  /* Respect the OS "reduce motion" setting: neutralise CSS animations/transitions
+     (framer-motion is handled separately via <MotionConfig reducedMotion="user">). */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 
   :root {

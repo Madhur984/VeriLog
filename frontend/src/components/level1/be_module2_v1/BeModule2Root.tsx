@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { BeModule2Engine } from './BeModule2Engine';
 
 export const BeModule2Root: React.FC = () => {
-  const [isDarkMode, setIsDarkMode] = useState(true);
+  const [isDarkMode, setIsDarkMode] = useState(() => { try { return localStorage.getItem('bitforbytes_theme') !== 'light'; } catch { return true; } });
   const { chapter } = useParams<{ chapter?: string }>();
 
   return (

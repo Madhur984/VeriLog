@@ -15,6 +15,7 @@ export const ThemeToggle: React.FC<{ variant?: 'default' | 'minimal'; className?
         whileTap={{ scale: 0.95 }}
         className={`p-1.5 sm:p-2 text-text-dim hover:text-text-main transition-colors cursor-pointer shrink-0 ${className}`}
         title={isLight ? 'Switch to Dark Mode' : 'Switch to Light Mode'}
+        aria-label={isLight ? 'Switch to dark mode' : 'Switch to light mode'}
         style={{ background: 'transparent', border: 'none' }}
       >
         {isLight ? (
@@ -38,6 +39,7 @@ export const ThemeToggle: React.FC<{ variant?: 'default' | 'minimal'; className?
         color: isLight ? '#ea580c' : '#22d3ee', // active colors: orange in light, cyan in dark
       }}
       title={isLight ? 'Switch to Dark Mode' : 'Switch to Light Mode'}
+      aria-label={isLight ? 'Switch to dark mode' : 'Switch to light mode'}
     >
       {isLight ? (
         <Sun className="w-4 h-4" />

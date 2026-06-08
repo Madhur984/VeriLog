@@ -433,6 +433,9 @@ export const useBinaryStore = create<BinaryState>((set, get) => ({
             predictedBits: bits,
             metrics: {
                 ...s.metrics,
+                // Count this prediction so the running accuracy average is weighted
+                // correctly (matches submitRegisterPrediction / submitArithmeticPrediction).
+                interactions: s.metrics.interactions + 1,
                 predictionAccuracy: (s.metrics.predictionAccuracy * s.metrics.interactions + (isCorrect ? 1 : 0)) / (s.metrics.interactions + 1),
                 errorStreak: isCorrect ? 0 : s.metrics.errorStreak + 1
             }

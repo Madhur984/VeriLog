@@ -7,7 +7,7 @@ import { GlobalSignalState } from './types';
 export const Module2Root: React.FC = () => {
   // Default to dark like every other module (was following the OS scheme via
   // useColorScheme, which defaulted to light and leaked the choice globally).
-  const [isDarkMode, setIsDarkMode] = useState(true);
+  const [isDarkMode, setIsDarkMode] = useState(() => { try { return localStorage.getItem('bitforbytes_theme') !== 'light'; } catch { return true; } });
   const toggleTheme = () => setIsDarkMode((prev) => !prev);
   const [time, setTime] = useState(0);
 

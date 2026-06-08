@@ -31,30 +31,39 @@ export const evaluateCircuit = (
 
         // Components process logic
         Object.values(components).forEach(c => {
+            const inputs = c.inputs.map(p => p.value);
+            const anyHigh = inputs.some(Boolean);
+            const allHigh = inputs.length > 0 && inputs.every(Boolean);
+            // Odd-parity → true for an odd number of high inputs (2-input XOR generalises cleanly).
+            const oddParity = inputs.reduce<boolean>((acc, v) => acc !== !!v, false);
+
+            // Combinational gate output, or null for non-gate components handled below.
+            let out: boolean | null = null;
             switch (c.type) {
-                case 'and-gate': {
-                    const allHigh = c.inputs.length > 0 && c.inputs.every(p => p.value);
-                    c.state = allHigh ? 'active' : 'off';
-                    c.outputs[0].value = allHigh;
-                    break;
-                }
-                case 'or-gate': {
-                    const anyHigh = c.inputs.some(p => p.value);
-                    c.state = anyHigh ? 'active' : 'off';
-                    c.outputs[0].value = anyHigh;
-                    break;
-                }
+                case 'and-gate': case 'and': out = allHigh; break;
+                case 'or-gate': case 'or': out = anyHigh; break;
+                case 'nand-gate': out = !allHigh; break;
+                case 'nor-gate': out = !anyHigh; break;
+                case 'xor-gate': out = oddParity; break;
+                case 'xnor-gate': out = !oddParity; break;
+                case 'not-gate': out = !(inputs[0] ?? false); break;
                 case 'led': {
-                    const inputActive = c.inputs[0]?.value;
-                    c.state = inputActive ? 'on' : 'off';
+                    c.state = inputs[0] ? 'on' : 'off';
                     break;
                 }
                 case 'resistor': {
-                    const inputActive = c.inputs[0]?.value;
-                    c.state = inputActive ? 'active' : 'off';
-                    if (c.outputs[0]) c.outputs[0].value = inputActive;
+                    const a = inputs[0] ?? false;
+                    c.state = a ? 'active' : 'off';
+                    if (c.outputs[0]) c.outputs[0].value = a; // guarded: gate may have no output pin
                     break;
                 }
+            }
+
+            if (out !== null) {
+                c.state = out ? 'active' : 'off';
+                // Guard against a malformed gate with no output pin (previously this
+                // threw "Cannot set properties of undefined" and broke the engine).
+                if (c.outputs[0]) c.outputs[0].value = out;
             }
         });
     }

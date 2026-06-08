@@ -70,10 +70,10 @@ export const DiagnosticConsole: React.FC<DiagnosticConsoleProps> = ({
           background: isLight 
             ? 'linear-gradient(145deg, #FFFFFF 0%, #F1F5F9 40%, #E2E8F0 100%)' 
             : 'linear-gradient(145deg, #0a0f1a 0%, #05080c 40%, #020408 100%)',
-          border: isLight ? '1px solid rgba(15, 23, 42, 0.08)' : '1px solid rgba(59, 130, 246, 0.15)',
+          border: isLight ? '1px solid #CBD5E1' : '1px solid rgba(59, 130, 246, 0.15)',
           boxShadow: isLight ? [
-            '0 20px 60px rgba(15,23,42,0.04)',
-            '0 0 0 1px rgba(15,23,42,0.02)',
+            '0 20px 60px rgba(15,23,42,0.10)',
+            '0 0 0 1px rgba(15,23,42,0.12)',
             'inset 0 1px 1px rgba(255,255,255,0.8)',
             'inset 0 -1px 1px rgba(0,0,0,0.05)',
           ].join(', ') : [
@@ -103,7 +103,7 @@ export const DiagnosticConsole: React.FC<DiagnosticConsoleProps> = ({
           className="flex items-center justify-between px-4 py-2"
           style={{
             background: 'linear-gradient(90deg, rgba(59, 130, 246, 0.08) 0%, transparent 100%)',
-            borderBottom: isLight ? '1px solid rgba(15, 23, 42, 0.06)' : '1px solid rgba(59, 130, 246, 0.1)',
+            borderBottom: isLight ? '1px solid rgba(15, 23, 42, 0.12)' : '1px solid rgba(59, 130, 246, 0.1)',
           }}
         >
           <div className="flex items-center gap-2">
@@ -113,7 +113,7 @@ export const DiagnosticConsole: React.FC<DiagnosticConsoleProps> = ({
               animate={{ opacity: [1, 0.3, 1] }}
               transition={{ duration: 1.2, repeat: Infinity }}
             />
-            <span className="text-[7px] font-black tracking-[0.35em] uppercase" style={{ color: isLight ? '#0284c7cc' : '#3b82f680' }}>
+            <span className="text-[7px] font-black tracking-[0.35em] uppercase" style={{ color: isLight ? '#1D4ED8' : '#3b82f680' }}>
               BitforBytes // READY
             </span>
           </div>
@@ -136,9 +136,9 @@ export const DiagnosticConsole: React.FC<DiagnosticConsoleProps> = ({
             className="rounded-lg p-3 relative overflow-hidden"
             style={{
               background: isLight ? '#FFFFFF' : '#020408',
-              border: isLight ? '1px solid rgba(15, 23, 42, 0.12)' : '1px solid rgba(59, 130, 246, 0.25)',
-              boxShadow: isLight 
-                ? 'inset 0 1px 3px rgba(0,0,0,0.05), 0 0 20px rgba(2, 132, 199, 0.03)' 
+              border: isLight ? '1px solid #CBD5E1' : '1px solid rgba(59, 130, 246, 0.25)',
+              boxShadow: isLight
+                ? 'inset 0 1px 3px rgba(0,0,0,0.05), 0 0 20px rgba(29, 78, 216, 0.06)'
                 : 'inset 0 2px 8px rgba(0,0,0,0.9), 0 0 20px rgba(59, 130, 246, 0.05)',
             }}
           >
@@ -161,7 +161,7 @@ export const DiagnosticConsole: React.FC<DiagnosticConsoleProps> = ({
                 )`,
               }}
             />
-            <div className="text-[6px] font-mono tracking-[0.25em] uppercase mb-1" style={{ color: isLight ? '#0284c780' : '#3b82f640' }}>
+            <div className="text-[6px] font-mono tracking-[0.25em] uppercase mb-1" style={{ color: isLight ? '#475569' : '#3b82f640' }}>
               MISSION_TELEMETRY
             </div>
             <AnimatePresence mode="wait">
@@ -172,9 +172,9 @@ export const DiagnosticConsole: React.FC<DiagnosticConsoleProps> = ({
                 exit={{ opacity: 0, y: -4 }}
                 transition={{ duration: 0.3 }}
                 className="text-[9px] font-black tracking-[0.2em] font-mono"
-                style={{ 
-                  color: isLight ? '#0284C7' : '#3b82f6', 
-                  textShadow: isLight ? 'none' : '0 0 10px #3b82f680' 
+                style={{
+                  color: isLight ? '#1D4ED8' : '#3b82f6',
+                  textShadow: isLight ? 'none' : '0 0 10px #3b82f680'
                 }}
               >
                 {TICKER_MSGS[tickerIdx]}
@@ -183,7 +183,7 @@ export const DiagnosticConsole: React.FC<DiagnosticConsoleProps> = ({
             {/* Blinking cursor */}
             <motion.span
               className="inline-block ml-1 text-[9px] font-mono"
-              style={{ color: isLight ? '#0284C7' : '#3b82f6' }}
+              style={{ color: isLight ? '#1D4ED8' : '#3b82f6' }}
               animate={{ opacity: [1, 0, 1] }}
               transition={{ duration: 0.8, repeat: Infinity }}
             >
@@ -207,17 +207,17 @@ export const DiagnosticConsole: React.FC<DiagnosticConsoleProps> = ({
                       ? 'linear-gradient(145deg, rgba(255,255,255,0.9) 0%, rgba(241,245,249,0.9) 100%)' 
                       : 'linear-gradient(145deg, rgba(255,255,255,0.04) 0%, rgba(0,0,0,0.2) 100%)',
                 border: `1px solid ${
-                  activeBtn === btn.id 
-                    ? `${btn.color}60` 
-                    : isLight 
-                      ? 'rgba(15,23,42,0.08)' 
+                  activeBtn === btn.id
+                    ? `${btn.color}60`
+                    : isLight
+                      ? '#CBD5E1'
                       : 'rgba(255,255,255,0.06)'
                 }`,
                 boxShadow:
                   activeBtn === btn.id
                     ? `0 0 12px ${btn.color}40, inset 0 1px 1px rgba(255,255,255,0.1)`
-                    : isLight 
-                      ? 'inset 0 1px 1px rgba(255,255,255,0.8), 0 2px 4px rgba(15,23,42,0.03)' 
+                    : isLight
+                      ? 'inset 0 1px 1px rgba(255,255,255,0.8), 0 2px 4px rgba(15,23,42,0.08)'
                       : 'inset 0 1px 1px rgba(255,255,255,0.04), 0 2px 4px rgba(0,0,0,0.4)',
                 cursor: 'pointer',
               }}
@@ -241,11 +241,11 @@ export const DiagnosticConsole: React.FC<DiagnosticConsoleProps> = ({
               <div>
                 <div
                   className="text-[7px] font-black tracking-[0.15em] uppercase leading-none"
-                  style={{ color: isLight ? '#1E293B' : btn.color }}
+                  style={{ color: isLight ? '#0F172A' : btn.color }}
                 >
                   {btn.label}
                 </div>
-                <div className="text-[9px] font-mono mt-0.5" style={{ color: isLight ? 'rgba(15,23,42,0.4)' : 'rgba(255,255,255,0.25)' }}>
+                <div className="text-[9px] font-mono mt-0.5" style={{ color: isLight ? '#475569' : 'rgba(255,255,255,0.55)' }}>
                   {btn.icon}
                 </div>
               </div>
@@ -267,12 +267,12 @@ export const DiagnosticConsole: React.FC<DiagnosticConsoleProps> = ({
         <div
           className="flex items-center justify-between px-4 py-2"
           style={{
-            borderTop: isLight ? '1px solid rgba(15, 23, 42, 0.06)' : '1px solid rgba(255,255,255,0.05)',
-            background: isLight ? 'rgba(15, 23, 42, 0.02)' : 'rgba(0,0,0,0.3)',
+            borderTop: isLight ? '1px solid rgba(15, 23, 42, 0.12)' : '1px solid rgba(255,255,255,0.05)',
+            background: isLight ? '#F1F5F9' : 'rgba(0,0,0,0.3)',
           }}
         >
           {['CPU 43%', 'MEM 1.2G', 'NET OK'].map((stat, i) => (
-            <div key={i} className="text-[7px] font-mono" style={{ color: isLight ? '#64748B' : '#334155' }}>
+            <div key={i} className="text-[7px] font-mono" style={{ color: isLight ? '#475569' : '#334155' }}>
               {stat}
             </div>
           ))}

@@ -1,6 +1,7 @@
 export type ComponentType =
     | 'battery' | 'resistor' | 'switch' | 'led'
-    | 'and-gate' | 'or-gate' | 'and' | 'or' | 'wire' | 'capacitor';
+    | 'and-gate' | 'or-gate' | 'and' | 'or' | 'wire' | 'capacitor'
+    | 'not-gate' | 'nand-gate' | 'nor-gate' | 'xor-gate' | 'xnor-gate';
 
 export interface Pin {
     id: string;

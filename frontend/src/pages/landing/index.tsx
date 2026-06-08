@@ -11,16 +11,16 @@ import React, { Suspense } from 'react';
  * The loading fallback renders a minimal skeleton that matches the
  * landing page's dark void background to prevent layout flash.
  */
-const LandingPageContainer = React.lazy(
-  () => import('./LandingPageContainer')
+const BrilliantHome = React.lazy(
+  () => import('./BrilliantHome')
 );
 
 const LandingPageSkeleton: React.FC = () => (
-  <div className="w-full min-h-screen bg-[#03050a] flex items-center justify-center">
+  <div className="w-full min-h-screen bg-white dark:bg-[#0A0B12] flex items-center justify-center">
     <div className="flex flex-col items-center gap-4">
-      <div className="w-6 h-6 rounded bg-gradient-to-br from-[#00F5FF] to-[#10B981] animate-pulse" />
-      <div className="h-1 w-32 bg-slate-900 rounded-full overflow-hidden">
-        <div className="h-full w-1/2 bg-[#00F5FF]/30 rounded-full animate-pulse" />
+      <img src="/logo.png" alt="" className="w-9 h-9 animate-pulse" />
+      <div className="h-1 w-32 bg-slate-200 dark:bg-white/10 rounded-full overflow-hidden">
+        <div className="h-full w-1/2 bg-[#2E32FF]/40 rounded-full animate-pulse" />
       </div>
     </div>
   </div>
@@ -29,7 +29,7 @@ const LandingPageSkeleton: React.FC = () => (
 export default function LandingPage() {
   return (
     <Suspense fallback={<LandingPageSkeleton />}>
-      <LandingPageContainer />
+      <BrilliantHome />
     </Suspense>
   );
 }

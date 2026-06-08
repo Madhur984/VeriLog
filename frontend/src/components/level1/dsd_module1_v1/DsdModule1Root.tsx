@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { DsdModule1Engine } from './DsdModule1Engine';
 
 export const DsdModule1Root: React.FC = () => {
-  const [isDarkMode, setIsDarkMode] = useState(true);
+  const [isDarkMode, setIsDarkMode] = useState(() => { try { return localStorage.getItem('bitforbytes_theme') !== 'light'; } catch { return true; } });
   const { chapter } = useParams<{ chapter?: string }>();
 
   return (

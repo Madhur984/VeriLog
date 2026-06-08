@@ -29,9 +29,9 @@ const PCBBackground: React.FC<{ isLight: boolean }> = ({ isLight }) => {
       <div
         className="absolute inset-0"
         style={{ 
-          background: isLight 
-            ? 'radial-gradient(ellipse 120% 100% at 50% 0%, #e2e8f0 0%, #EFF3F6 80%)' 
-            : 'radial-gradient(ellipse 120% 100% at 50% 0%, #0d1526 0%, #06090f 80%)' 
+          background: isLight
+            ? 'radial-gradient(ellipse 120% 100% at 50% 0%, #DCE3EC 0%, #EEF1F5 80%)'
+            : 'radial-gradient(ellipse 120% 100% at 50% 0%, #0d1526 0%, #06090f 80%)'
         }}
       />
 
@@ -149,11 +149,11 @@ const ProfileCard: React.FC<{
       transition={{ delay: 1.2, duration: 0.6 }}
       className="fixed top-8 right-8 z-50 p-4 rounded-2xl w-60 transition-all duration-300"
       style={{
-        background: isLight ? 'rgba(255, 255, 255, 0.95)' : 'rgba(5, 8, 12, 0.95)',
-        border: isLight ? '1px solid rgba(15, 23, 42, 0.08)' : '1px solid rgba(59, 130, 246, 0.2)',
+        background: isLight ? 'rgba(255, 255, 255, 0.95)' : 'rgba(3, 4, 8, 0.96)',
+        border: isLight ? '1px solid #CBD5E1' : '1px solid rgba(59, 130, 246, 0.2)',
         backdropFilter: 'blur(20px)',
         boxShadow: isLight
-          ? '0 20px 50px rgba(15,23,42,0.05), 0 0 0 1px rgba(15,23,42,0.01)'
+          ? '0 20px 50px rgba(15,23,42,0.12), 0 0 0 1px rgba(15,23,42,0.06)'
           : [
               '0 20px 50px rgba(0,0,0,0.8)',
               '0 0 0 1px rgba(59, 130, 246, 0.05)',
@@ -189,7 +189,7 @@ const ProfileCard: React.FC<{
             </div>
             <div className="flex items-center gap-1.5 mt-0.5">
               <div className={`w-1.5 h-1.5 rounded-full animate-pulse ${isLight ? 'bg-sky-500 shadow-[0_0_6px_#0284c7]' : 'bg-blue-500 shadow-[0_0_6px_#3b82f6]'}`} />
-              <span className={`text-[9px] font-bold tracking-widest uppercase ${isLight ? 'text-sky-600/90' : 'text-blue-500/80'}`}>
+              <span className={`text-[9px] font-bold tracking-widest uppercase ${isLight ? 'text-sky-700' : 'text-blue-500/80'}`}>
                 Tactical Session
               </span>
             </div>
@@ -199,7 +199,7 @@ const ProfileCard: React.FC<{
           <div className={`text-[10px] font-mono font-bold leading-none ${isLight ? 'text-slate-800' : 'text-white'}`}>
             <span className={isLight ? 'text-sky-600' : 'text-cyan-400'}>LVL </span>{level}
           </div>
-          <div className="text-[8px] font-mono text-slate-500 mt-1 uppercase">
+          <div className={`text-[8px] font-mono mt-1 uppercase ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>
             {xp.total.toLocaleString()} total sip
           </div>
         </div>
@@ -208,10 +208,10 @@ const ProfileCard: React.FC<{
       {/* Progress to next Level */}
       <div className="mb-5">
         <div className="flex justify-between items-center mb-1.5 px-0.5">
-          <span className={`text-[9px] font-black uppercase tracking-[0.2em] ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>Progression</span>
+          <span className={`text-[9px] font-black uppercase tracking-[0.2em] ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>Progression</span>
           <span className={`text-[9px] font-mono font-bold ${isLight ? 'text-sky-600' : 'text-cyan-400'}`}>{Math.round(progress)}%</span>
         </div>
-        <div className={`h-1.5 w-full rounded-full overflow-hidden p-[1px] ${isLight ? 'bg-slate-200 border border-slate-300/30' : 'bg-black/60 border border-white/5'}`}>
+        <div className={`h-1.5 w-full rounded-full overflow-hidden p-[1px] ${isLight ? 'bg-slate-200 border border-slate-300' : 'bg-black/60 border border-white/5'}`}>
           <motion.div
             className="h-full rounded-full"
             style={{ 
@@ -237,17 +237,17 @@ const ProfileCard: React.FC<{
           <div
             key={stat.label}
             className={`rounded-xl px-3 py-2 flex items-center justify-between transition-colors ${
-              isLight 
-                ? 'bg-slate-100/80 border border-slate-200/50' 
+              isLight
+                ? 'bg-slate-100 border border-slate-300'
                 : 'bg-white/[0.03] border border-white/[0.05]'
             }`}
           >
             <div>
-              <div className="text-[9px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1">
+              <div className={`text-[9px] font-black uppercase tracking-widest leading-none mb-1 ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>
                 {stat.label}
               </div>
               <div className={`text-[11px] font-mono font-black leading-none ${isLight ? 'text-slate-800' : 'text-white'}`}>
-                {stat.value} <span className="text-[8px] font-normal text-slate-500 ml-0.5">{stat.unit}</span>
+                {stat.value} <span className={`text-[8px] font-normal ml-0.5 ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>{stat.unit}</span>
               </div>
             </div>
             <div className="text-xs opacity-80">{stat.icon}</div>
@@ -256,15 +256,15 @@ const ProfileCard: React.FC<{
       </div>
 
       {/* Secondary readout */}
-      <div className={`flex items-center justify-between pt-3 border-t ${isLight ? 'border-slate-200' : 'border-white/5'}`}>
+      <div className={`flex items-center justify-between pt-3 border-t ${isLight ? 'border-slate-300' : 'border-white/5'}`}>
         <div className="flex gap-4">
           <div className="flex flex-col">
-            <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-0.5">Missions</span>
+            <span className={`text-[8px] font-black uppercase tracking-widest mb-0.5 ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>Missions</span>
             <span className={`text-[10px] font-mono font-bold ${isLight ? 'text-slate-800' : 'text-white'}`}>{completedCount} Completed</span>
           </div>
           <div className="flex flex-col">
-            <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-0.5">Rank</span>
-            <span className="text-[10px] font-mono text-amber-400 font-bold">Technician</span>
+            <span className={`text-[8px] font-black uppercase tracking-widest mb-0.5 ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>Rank</span>
+            <span className={`text-[10px] font-mono font-bold ${isLight ? 'text-amber-700' : 'text-amber-400'}`}>Technician</span>
           </div>
         </div>
         <div className="flex items-center gap-1">
@@ -273,8 +273,8 @@ const ProfileCard: React.FC<{
             whileHover={{ scale: 1.05, background: isLight ? 'rgba(2, 132, 199, 0.08)' : 'rgba(59, 130, 246, 0.1)' }}
             whileTap={{ scale: 0.95 }}
             className={`px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-widest border transition-colors ${
-              isLight 
-                ? 'border-sky-500/20 text-sky-600' 
+              isLight
+                ? 'border-sky-600/50 text-sky-700'
                 : 'border-blue-500/20 text-blue-500'
             }`}
           >
@@ -322,8 +322,8 @@ export const WorkstationHome: React.FC = () => {
     <div 
       className="min-h-[100svh] lg:h-screen flex overflow-x-hidden overflow-y-auto lg:overflow-hidden font-sans transition-colors duration-300" 
       style={{ 
-        backgroundColor: isLight ? 'var(--bg-void)' : '#06090f', 
-        color: isLight ? 'var(--text-main)' : '#cbd5e1' 
+        backgroundColor: isLight ? 'var(--bg-void)' : '#04060A',
+        color: isLight ? 'var(--text-main)' : '#E2E8F0'
       }}
     >
       {/* PCB substrate background with moving data packets */}
@@ -353,7 +353,7 @@ export const WorkstationHome: React.FC = () => {
       <main
         ref={scrollRef}
         className="flex-1 min-w-0 max-w-full px-3 lg:pl-[76px] lg:pr-[280px] min-h-[100svh] lg:h-screen flex flex-col relative z-10 overflow-x-hidden overflow-y-visible lg:overflow-hidden"
-        style={{ color: isLight ? 'var(--text-main)' : '#cbd5e1' }}
+        style={{ color: isLight ? 'var(--text-main)' : '#E2E8F0' }}
       >
         <div className="flex-1 w-full flex flex-col items-start overflow-visible lg:overflow-hidden">
           {/* ─ Top spacing ─ */}
@@ -376,10 +376,10 @@ export const WorkstationHome: React.FC = () => {
               style={{
                 background: isLight 
                   ? 'linear-gradient(160deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 1) 100%)' 
-                  : 'linear-gradient(160deg, rgba(5, 8, 12, 0.95) 0%, rgba(3, 5, 8, 1) 100%)',
-                border: isLight ? '1px solid rgba(15, 23, 42, 0.08)' : '1px solid rgba(59, 130, 246, 0.1)',
+                  : 'linear-gradient(160deg, rgba(4, 5, 9, 0.97) 0%, rgba(2, 3, 6, 1) 100%)',
+                border: isLight ? '1px solid #CBD5E1' : '1px solid rgba(59, 130, 246, 0.1)',
                 boxShadow: isLight
-                  ? '0 40px 100px rgba(15, 23, 42, 0.05), 0 0 0 1px rgba(15, 23, 42, 0.01)'
+                  ? '0 24px 60px rgba(15, 23, 42, 0.12), 0 1px 0 rgba(255,255,255,0.9) inset, 0 0 0 1px rgba(15, 23, 42, 0.04)'
                   : [
                       '0 40px 100px rgba(0,0,0,0.95)',
                       '0 0 0 1px rgba(59, 130, 246, 0.05)',

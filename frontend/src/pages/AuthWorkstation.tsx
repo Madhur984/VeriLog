@@ -5,6 +5,7 @@ import { supabase } from '../lib/supabase';
 import { startGuestSession } from '../lib/auth';
 import { ArrowRight, CheckCircle2, Loader2, UserCircle2, Eye, EyeOff } from 'lucide-react';
 import { useGamificationStore } from '../stores/gamificationStore';
+import { BrandWordmark } from '../components/Brand';
 import './AuthWorkstation.css';
 
 type AuthMode = 'SIGN_IN' | 'REGISTER' | 'RECOVER';
@@ -143,7 +144,7 @@ export const AuthWorkstation: React.FC = () => {
 
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(0, 245, 255, 0.2)';
+        ctx.fillStyle = 'rgba(74, 87, 255, 0.2)';
         ctx.fill();
       });
 
@@ -161,7 +162,7 @@ export const AuthWorkstation: React.FC = () => {
             ctx.moveTo(p1.x, p1.y);
             ctx.lineTo(p2.x, p2.y);
             const alpha = (1 - dist / 115) * 0.07;
-            ctx.strokeStyle = `rgba(0, 245, 255, ${alpha})`;
+            ctx.strokeStyle = `rgba(74, 87, 255, ${alpha})`;
             ctx.lineWidth = 0.75;
             ctx.stroke();
           }
@@ -179,7 +180,7 @@ export const AuthWorkstation: React.FC = () => {
             ctx.moveTo(mouseRef.current.x, mouseRef.current.y);
             ctx.lineTo(p.x, p.y);
             const alpha = (1 - dist / 160) * 0.1;
-            ctx.strokeStyle = `rgba(0, 245, 255, ${alpha})`;
+            ctx.strokeStyle = `rgba(74, 87, 255, ${alpha})`;
             ctx.lineWidth = 0.75;
             ctx.stroke();
           }
@@ -300,7 +301,9 @@ export const AuthWorkstation: React.FC = () => {
           password,
           options: {
             data: { full_name: fullName },
-            emailRedirectTo: `${siteUrl}/login`,
+            // Land verified users straight in the portal — session-sync
+            // (lib/sessionSync) writes the token so they arrive logged in.
+            emailRedirectTo: `${siteUrl}/portal`,
           },
         });
         if (signUpError) throw signUpError;
@@ -407,7 +410,7 @@ export const AuthWorkstation: React.FC = () => {
   };
 
   return (
-    <div className="auth-workstation-root w-full min-h-screen bg-[#03050a] text-slate-200 antialiased font-sans flex flex-col justify-center items-center p-6 relative select-none overflow-hidden">
+    <div className="auth-workstation-root relative w-full min-h-[100svh] bg-[#03050a] text-slate-200 antialiased font-sans select-none overflow-hidden">
 
       {/* GPU Interactive Particle Canvas Background */}
       <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none z-0" />
@@ -415,19 +418,62 @@ export const AuthWorkstation: React.FC = () => {
       {/* Precision architectural layout background grid */}
       <div className="absolute inset-0 auth-grid-texture z-0" />
 
-      {/* ═══ THREE-DIMENSIONAL SPATIAL CONTAINER CARD ═══ */}
-      <div
-        ref={cardRef}
-        onMouseMove={handle3DTilt}
-        onMouseLeave={reset3DTilt}
-        className={`w-full max-w-[460px] auth-glass-substrate border border-slate-900 rounded-2xl p-8 md:p-10 space-y-6 z-10 will-change-transform ${
-          transitionState === 'idle' && !isGyroActive ? 'auth-idle-float' : ''
-        } ${
-          transitionState === 'tilting' ? 'is-tilting' : ''
-        } ${
-          transitionState === 'resetting' ? 'is-resetting' : ''
-        }`}
-      >
+      {/* Ambient brand glows */}
+      <div className="pointer-events-none absolute -left-40 -top-24 h-[55vh] w-[55vh] rounded-full bg-[#4A57FF]/10 blur-[130px] z-0" />
+      <div className="pointer-events-none absolute -right-24 bottom-0 h-[42vh] w-[42vh] rounded-full bg-[#2E32FF]/10 blur-[130px] z-0" />
+
+      <div className="relative z-10 grid min-h-[100svh] lg:grid-cols-2">
+
+        {/* ═══ LEFT · BRAND PANEL (desktop only) ═══ */}
+        <aside className="relative hidden lg:flex flex-col justify-between p-12 xl:p-16 border-r border-white/[0.06]">
+          <a href="/" className="w-fit">
+            <BrandWordmark size={34} textClassName="text-lg text-white" />
+          </a>
+
+          <div className="max-w-md">
+            <div className="inline-flex items-center gap-2 mb-6 px-3 py-1 rounded-full border border-white/10 bg-white/[0.03] text-[11px] font-mono uppercase tracking-[0.18em] text-[#8E97FF]">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#4A57FF] animate-pulse" /> Free VLSI learning
+            </div>
+            <h2 className="text-4xl xl:text-5xl font-extrabold leading-[1.05] tracking-tight text-white">
+              Where bits<br />become{' '}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#7E8BFF] to-[#2E32FF]">silicon.</span>
+            </h2>
+            <p className="mt-5 text-[15px] leading-relaxed text-slate-400">
+              Sign in to track your progress across interactive modules, circuit simulators, and the full path from logic gates to chips.
+            </p>
+            <ul className="mt-8 space-y-3.5">
+              {['13 ECE domains, zero install', 'Hands-on circuit & Verilog labs', 'Progress saved and gamified'].map((t) => (
+                <li key={t} className="flex items-center gap-3 text-sm text-slate-300">
+                  <CheckCircle2 size={17} className="text-[#6E7BFF] flex-shrink-0" /> {t}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="font-mono text-[11px] text-slate-600 tracking-wide">Free forever · Built for every ECE student in India</div>
+        </aside>
+
+        {/* ═══ RIGHT · AUTH CARD ═══ */}
+        <main className="relative flex items-center justify-center px-5 py-10 sm:px-8">
+
+        {/* ═══ AUTH CONTAINER CARD ═══ */}
+        <div
+          ref={cardRef}
+          onMouseMove={handle3DTilt}
+          onMouseLeave={reset3DTilt}
+          className={`w-full max-w-[440px] auth-glass-substrate border border-white/10 rounded-2xl p-6 sm:p-8 space-y-6 will-change-transform ${
+            transitionState === 'idle' && !isGyroActive ? 'auth-idle-float' : ''
+          } ${
+            transitionState === 'tilting' ? 'is-tilting' : ''
+          } ${
+            transitionState === 'resetting' ? 'is-resetting' : ''
+          }`}
+        >
+        {/* Mobile brand mark (desktop shows the brand panel instead) */}
+        <a href="/" className="lg:hidden w-fit">
+          <BrandWordmark size={28} textClassName="text-base text-white" />
+        </a>
+
         <AnimatePresence mode="wait">
           {!isLoading ? (
 
@@ -567,7 +613,7 @@ export const AuthWorkstation: React.FC = () => {
                         <button
                           type="button"
                           onClick={() => { setMode('RECOVER'); setError(null); }}
-                          className="text-xs text-[#00F5FF]/85 hover:text-[#00F5FF] font-medium hover:underline focus:outline-none"
+                          className="text-xs text-[#4A57FF]/85 hover:text-[#4A57FF] font-medium hover:underline focus:outline-none"
                         >
                           Forgot password?
                         </button>
@@ -635,12 +681,12 @@ export const AuthWorkstation: React.FC = () => {
                 <button
                   id="auth-submit-btn"
                   type="submit"
-                  className="auth-submit-btn w-full bg-white text-slate-950 font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 cursor-pointer text-[15px]"
+                  className="auth-submit-btn group/sub w-full bg-gradient-to-r from-[#5664FF] to-[#2E32FF] text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 cursor-pointer text-[15px] shadow-[0_12px_34px_-8px_rgba(46,50,255,0.55)]"
                 >
                   <span>
                     {mode === 'RECOVER' ? 'Send recovery link' : 'Continue with email'}
                   </span>
-                  <ArrowRight size={15} />
+                  <ArrowRight size={16} className="transition-transform duration-200 group-hover/sub:translate-x-0.5" />
                 </button>
               </form>
 
@@ -699,7 +745,7 @@ export const AuthWorkstation: React.FC = () => {
                       id="auth-mode-toggle"
                       type="button"
                       onClick={() => { setMode('SIGN_IN'); setError(null); }}
-                      className="text-[#00F5FF] font-bold hover:underline cursor-pointer"
+                      className="text-[#4A57FF] font-bold hover:underline cursor-pointer"
                     >
                       Sign in
                     </button>
@@ -711,7 +757,7 @@ export const AuthWorkstation: React.FC = () => {
                       id="auth-mode-toggle"
                       type="button"
                       onClick={() => { setMode(mode === 'SIGN_IN' ? 'REGISTER' : 'SIGN_IN'); setError(null); }}
-                      className="text-[#00F5FF] font-bold hover:underline cursor-pointer"
+                      className="text-[#4A57FF] font-bold hover:underline cursor-pointer"
                     >
                       {mode === 'SIGN_IN' ? 'Create an account' : 'Sign in'}
                     </button>
@@ -757,7 +803,7 @@ export const AuthWorkstation: React.FC = () => {
                   })}
                   {/* Blinking cursor */}
                   {loadingStep < initializationLogs.length - 1 && (
-                    <span className="terminal-cursor text-[#00F5FF] font-bold">▌</span>
+                    <span className="terminal-cursor text-[#4A57FF] font-bold">▌</span>
                   )}
                 </div>
               </div>
@@ -795,7 +841,7 @@ export const AuthWorkstation: React.FC = () => {
                             setMode('SIGN_IN');
                             setError(null);
                           }}
-                          className="text-xs font-mono font-bold text-[#00F5FF] hover:underline cursor-pointer"
+                          className="text-xs font-mono font-bold text-[#4A57FF] hover:underline cursor-pointer"
                         >
                           ← Return to Sign In
                         </button>
@@ -807,6 +853,8 @@ export const AuthWorkstation: React.FC = () => {
             </motion.div>
           )}
         </AnimatePresence>
+        </div>
+        </main>
       </div>
 
     </div>

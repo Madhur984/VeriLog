@@ -195,6 +195,8 @@ export const EnhancedSlider: React.FC<EnhancedSliderProps> = ({
                     onMouseUp={handleDragEnd}
                     onTouchStart={handleDragStart}
                     onTouchEnd={handleDragEnd}
+                    aria-label={label || 'Slider'}
+                    aria-valuetext={`${value.toFixed(1)}${unit}`}
                     style={{
                         position: 'absolute', width: '100%', height: '100%',
                         opacity: 0, cursor: 'pointer', zIndex: 10

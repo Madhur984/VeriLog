@@ -6,6 +6,8 @@ import {
     BookOpen, Zap
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
+import { useTour } from '../tour/TourProvider';
+import { useColorScheme } from '../../hooks/useColorScheme';
 
 /* ─── Types ────────────────────────────────────────────────────────── */
 
@@ -38,6 +40,8 @@ export const CommandPalette: React.FC<CommandPaletteProps & { navigate: (path: s
     const [selectedIdx, setSelectedIdx] = useState(0);
     const inputRef = useRef<HTMLInputElement>(null);
     const listRef = useRef<HTMLDivElement>(null);
+    const { start: startTour } = useTour();
+    const [, toggleTheme] = useColorScheme();
 
     const ALL_COMMANDS: CommandItem[] = [
         /* Navigation */
@@ -55,7 +59,7 @@ export const CommandPalette: React.FC<CommandPaletteProps & { navigate: (path: s
         },
         {
             id: 'nav-progress', label: 'View Progress', description: 'Track your learning', icon: BarChart3,
-            group: 'Navigate', shortcut: 'G P', action: () => { navigate('/training'); onClose(); }
+            group: 'Navigate', shortcut: 'G P', action: () => { navigate('/portal'); onClose(); }
         },
         {
             id: 'nav-settings', label: 'Settings', description: 'Account & preferences', icon: Settings,
@@ -78,16 +82,16 @@ export const CommandPalette: React.FC<CommandPaletteProps & { navigate: (path: s
         {
             id: 'act-tour', label: 'Start Onboarding Tour', description: 'Get a guided walkthrough', icon: Zap,
             group: 'Actions', action: () => {
+                // Clear the legacy "done" flag and launch the route-aware tour.
                 localStorage.removeItem(tourKey);
-                window.location.reload();
                 onClose();
+                startTour();
             }
         },
         {
             id: 'act-darkmode', label: 'Toggle Theme', description: 'Switch light / dark mode', icon: BookOpen,
             group: 'Actions', action: () => {
-                const event = new CustomEvent('toggle-theme');
-                window.dispatchEvent(event);
+                toggleTheme();
                 onClose();
             }
         },

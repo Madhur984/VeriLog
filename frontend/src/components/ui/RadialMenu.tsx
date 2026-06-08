@@ -60,52 +60,52 @@ const RadialSegment: React.FC<SegmentProps> = ({ label, icon, startAngle, endAng
       transition={{ duration: 0.5, delay: index * 0.05, type: 'spring', damping: 15 }}
       style={{ originX: '160px', originY: '160px', cursor: 'pointer' }}
     >
-      <motion.path d={basePath} className={cn("transition-colors duration-300 pointer-events-none", isActive ? (isLight ? "fill-sky-200/90" : "fill-sky-950/90") : isHovered ? (isLight ? "fill-indigo-100/90" : "fill-indigo-950/90") : (isLight ? "fill-[#CBD5E1]/90" : "fill-[#020617]/90"))} />
-      
-      <motion.path d={topPath} 
-        className={cn("transition-colors duration-300", 
-          isActive 
-            ? (isLight ? "fill-sky-100/80 stroke-sky-500 stroke-2" : "fill-sky-900/70 stroke-sky-400 stroke-2") 
-            : isHovered 
-              ? (isLight ? "fill-indigo-50/70 stroke-indigo-400 stroke-[1.5]" : "fill-indigo-900/60 stroke-indigo-400 stroke-[1.5]") 
-              : (isLight ? "fill-white stroke-slate-200 stroke-1" : "fill-slate-800/80 stroke-slate-600/60 stroke-1")
+      <motion.path d={basePath} className={cn("transition-colors duration-300 pointer-events-none", isActive ? (isLight ? "fill-[#38BDF8]/15" : "fill-blue-950/90") : isHovered ? (isLight ? "fill-[#5664FF]/12" : "fill-indigo-950/90") : (isLight ? "fill-[#22D3EE]/[0.06]" : "fill-[#020617]/90"))} />
+
+      <motion.path d={topPath}
+        className={cn("transition-colors duration-300",
+          isActive
+            ? (isLight ? "fill-[#38BDF8]/[0.22] stroke-[#38BDF8] stroke-[1.5]" : "fill-blue-900/70 stroke-blue-400 stroke-2")
+            : isHovered
+              ? (isLight ? "fill-[#5664FF]/[0.16] stroke-[#5664FF] stroke-1" : "fill-indigo-900/60 stroke-indigo-400 stroke-[1.5]")
+              : (isLight ? "fill-[#22D3EE]/[0.08] stroke-[#22D3EE]/70 stroke-1" : "fill-slate-800/80 stroke-slate-600/60 stroke-1")
         )}
-        style={{ 
-          filter: isActive 
-            ? (isLight ? 'drop-shadow(0 0 10px rgba(2, 132, 199, 0.3))' : 'drop-shadow(0 0 15px rgba(56, 189, 248, 0.5))') 
-            : isHovered 
-              ? (isLight ? 'drop-shadow(0 4px 6px rgba(0,0,0,0.05))' : 'drop-shadow(0 8px 12px rgba(0,0,0,0.6))') 
-              : (isLight ? 'drop-shadow(0 2px 4px rgba(0,0,0,0.02))' : 'drop-shadow(0 4px 6px rgba(0,0,0,0.5))') 
+        style={{
+          filter: isActive
+            ? (isLight ? 'drop-shadow(0 0 12px rgba(56,189,248,0.7)) drop-shadow(0 0 4px rgba(56,189,248,0.5))' : 'drop-shadow(0 0 15px rgba(59, 130, 246, 0.5))')
+            : isHovered
+              ? (isLight ? 'drop-shadow(0 0 10px rgba(86,100,255,0.55)) drop-shadow(0 0 3px rgba(86,100,255,0.4))' : 'drop-shadow(0 8px 12px rgba(0,0,0,0.6))')
+              : (isLight ? 'drop-shadow(0 0 6px rgba(34,211,238,0.4))' : 'drop-shadow(0 4px 6px rgba(0,0,0,0.5))')
         }}
       />
-      
-      <motion.path d={describeArc(160, 160, radius - 1.5, innerRadius + 1.5, startAngle, endAngle)} className={cn("fill-none stroke-1 pointer-events-none", isLight ? "stroke-black/5" : "stroke-white/10")} />
+
+      <motion.path d={describeArc(160, 160, radius - 1.5, innerRadius + 1.5, startAngle, endAngle)} className={cn("fill-none stroke-1 pointer-events-none", isLight ? "stroke-[#38BDF8]/25" : "stroke-white/10")} />
 
       {isActive && (
-        <motion.path d={describeArc(160, 160, radius + 1, radius, startAngle, endAngle)} className={cn("pointer-events-none", isLight ? "fill-sky-500" : "fill-sky-400")}
-          initial={{ opacity: 0 }} animate={{ opacity: [0.6, 1, 0.6] }} transition={{ duration: 2, repeat: Infinity }} style={{ filter: isLight ? 'blur(2px)' : 'blur(3px)' }}
+        <motion.path d={describeArc(160, 160, radius + 1, radius, startAngle, endAngle)} className={cn("pointer-events-none", isLight ? "fill-[#38BDF8]" : "fill-blue-400")}
+          initial={{ opacity: 0 }} animate={{ opacity: [0.6, 1, 0.6] }} transition={{ duration: 2, repeat: Infinity }} style={{ filter: isLight ? 'blur(3px)' : 'blur(3px)' }}
         />
       )}
 
       <motion.g style={{ pointerEvents: 'none' }}>
         <foreignObject x={iconPos.x - 45} y={iconPos.y - 35} width={90} height={75}>
           <div className="w-full h-full flex flex-col items-center justify-center gap-1.5 pt-1">
-            <div className={cn("w-10 h-10 rounded-xl border flex items-center justify-center transition-colors duration-300 relative overflow-hidden backdrop-blur-md", 
-              isActive 
-                ? (isLight ? "bg-sky-100 border-sky-400/80 text-sky-600 shadow-md" : "bg-sky-500/20 border-sky-400/50 shadow-[0_0_15px_rgba(56,189,248,0.5)] text-sky-300") 
-                : isHovered 
-                  ? (isLight ? "bg-indigo-50 border-indigo-300/80 text-indigo-600 shadow-md" : "bg-indigo-500/20 border-indigo-400/40 text-indigo-300 shadow-xl") 
-                  : (isLight ? "bg-slate-50 border-slate-200 text-slate-500 shadow-sm" : "bg-slate-900/60 border-slate-600/50 text-slate-400 shadow-lg")
+            <div className={cn("w-10 h-10 rounded-xl border flex items-center justify-center transition-colors duration-300 relative overflow-hidden backdrop-blur-md",
+              isActive
+                ? (isLight ? "bg-[#38BDF8]/15 border-[#38BDF8]/70 text-[#0EA5E9] shadow-[0_0_15px_rgba(56,189,248,0.5)]" : "bg-blue-500/20 border-blue-400/50 shadow-[0_0_15px_rgba(59,130,246,0.5)] text-blue-300")
+                : isHovered
+                  ? (isLight ? "bg-[#5664FF]/12 border-[#5664FF]/60 text-[#4F46E5] shadow-[0_0_12px_rgba(86,100,255,0.4)]" : "bg-indigo-500/20 border-indigo-400/40 text-indigo-300 shadow-xl")
+                  : (isLight ? "bg-[#22D3EE]/[0.08] border-[#22D3EE]/40 text-[#0891B2] shadow-[0_0_8px_rgba(34,211,238,0.3)]" : "bg-slate-900/60 border-slate-600/50 text-slate-400 shadow-lg")
             )}>
               <div className="absolute top-0 inset-x-0 h-1/2 bg-gradient-to-b from-white/10 to-transparent pointer-events-none" />
               {icon}
             </div>
-            <div className={cn("px-2 py-0.5 rounded-full border border-white/5 backdrop-blur-md transition-colors text-[9px] font-black tracking-widest uppercase font-mono shadow-xl", 
-              isActive 
-                ? (isLight ? "bg-sky-100 text-sky-700 border-sky-200" : "bg-sky-900/90 text-sky-300 shadow-[0_0_10px_rgba(56,189,248,0.3)]") 
-                : isHovered 
-                  ? (isLight ? "bg-indigo-100 text-indigo-700 border-indigo-200" : "bg-indigo-950/90 text-indigo-200") 
-                  : (isLight ? "bg-slate-200 text-slate-500 border-slate-300" : "bg-[#090e1a]/90 text-slate-400")
+            <div className={cn("px-2 py-0.5 rounded-full border border-white/5 backdrop-blur-md transition-colors text-[9px] font-black tracking-widest uppercase font-mono shadow-xl",
+              isActive
+                ? (isLight ? "bg-[#38BDF8]/15 text-[#0369A1] border-[#38BDF8]/50 shadow-[0_0_10px_rgba(56,189,248,0.35)]" : "bg-blue-900/90 text-blue-300 shadow-[0_0_10px_rgba(59,130,246,0.3)]")
+                : isHovered
+                  ? (isLight ? "bg-[#5664FF]/12 text-[#4338CA] border-[#5664FF]/40" : "bg-indigo-950/90 text-indigo-200")
+                  : (isLight ? "bg-[#22D3EE]/[0.08] text-[#0E7490] border-[#22D3EE]/30" : "bg-[#090e1a]/90 text-slate-400")
             )}>
               {label}
             </div>
@@ -130,48 +130,48 @@ const CenterButton: React.FC<{ isLight: boolean }> = ({ isLight }) => {
       transition={{ duration: 0.6, type: "spring", damping: 15 }}
       style={{ originX: '160px', originY: '160px', cursor: 'pointer', transform: 'translateZ(20px)' }}
     >
-      <circle cx="160" cy="180" r="85" fill={isLight ? "rgba(0,0,0,0.05)" : "rgba(0,0,0,0.7)"} filter="blur(16px)" className="pointer-events-none" />
-      <circle cx="160" cy="168" r="86" className={isLight ? "fill-slate-200 pointer-events-none" : "fill-[#020617] pointer-events-none"} />
-      
-      <circle cx="160" cy="160" r="86" 
-        className={cn("transition-colors duration-300", 
-          isLight 
-            ? "stroke-slate-200 fill-white" 
-            : cn("stroke-slate-500/50", isHovered ? "fill-sky-950/90" : "fill-slate-900/95")
+      <circle cx="160" cy="180" r="85" fill={isLight ? "rgba(56,189,248,0.18)" : "rgba(0,0,0,0.7)"} filter="blur(16px)" className="pointer-events-none" />
+      <circle cx="160" cy="168" r="86" className={isLight ? "fill-[#38BDF8]/[0.06] pointer-events-none" : "fill-[#020617] pointer-events-none"} />
+
+      <circle cx="160" cy="160" r="86"
+        className={cn("transition-colors duration-300",
+          isLight
+            ? cn("stroke-[#38BDF8]", isHovered ? "fill-[#5664FF]/[0.12]" : "fill-[#22D3EE]/[0.07]")
+            : cn("stroke-slate-500/50", isHovered ? "fill-blue-950/90" : "fill-slate-900/95")
         )}
-        strokeWidth={2} 
-        style={{ 
-          filter: isLight 
-            ? (isHovered ? 'drop-shadow(0 0 20px rgba(2,132,199,0.2))' : 'drop-shadow(0 0 10px rgba(2,132,199,0.05))')
-            : (isHovered ? 'drop-shadow(0 0 40px rgba(56,189,248,0.6))' : 'drop-shadow(0 0 20px rgba(56,189,248,0.3))') 
-        }} 
+        strokeWidth={isLight ? 1.5 : 2}
+        style={{
+          filter: isLight
+            ? (isHovered ? 'drop-shadow(0 0 28px rgba(56,189,248,0.6)) drop-shadow(0 0 8px rgba(56,189,248,0.5))' : 'drop-shadow(0 0 18px rgba(56,189,248,0.4)) drop-shadow(0 0 5px rgba(34,211,238,0.4))')
+            : (isHovered ? 'drop-shadow(0 0 40px rgba(59,130,246,0.6))' : 'drop-shadow(0 0 20px rgba(59,130,246,0.3))')
+        }}
       />
       <circle cx="160" cy="160" r="84" fill="url(#core-glass-glare)" className="pointer-events-none" />
 
-      <circle cx="160" cy="160" r="72" className={isLight ? "fill-transparent stroke-slate-100 pointer-events-none" : "fill-transparent stroke-slate-700/40 pointer-events-none"} strokeWidth={14} />
-      <motion.circle cx="160" cy="160" r="72" className={isLight ? "fill-transparent stroke-sky-500 pointer-events-none" : "fill-transparent stroke-sky-400 pointer-events-none"} strokeWidth={2} strokeDasharray="2 12" animate={{ rotate: 360 }} transition={{ duration: 40, repeat: Infinity, ease: "linear" }} style={{ originX: '160px', originY: '160px' }} />
-      
-      <g className={isLight ? "stroke-slate-200 pointer-events-none" : "stroke-slate-500/20 pointer-events-none"}>
+      <circle cx="160" cy="160" r="72" className={isLight ? "fill-transparent stroke-[#38BDF8]/15 pointer-events-none" : "fill-transparent stroke-slate-700/40 pointer-events-none"} strokeWidth={14} />
+      <motion.circle cx="160" cy="160" r="72" className={isLight ? "fill-transparent stroke-[#22D3EE] pointer-events-none" : "fill-transparent stroke-blue-400 pointer-events-none"} strokeWidth={2} strokeDasharray="2 12" animate={{ rotate: 360 }} transition={{ duration: 40, repeat: Infinity, ease: "linear" }} style={{ originX: '160px', originY: '160px', filter: isLight ? 'drop-shadow(0 0 4px rgba(34,211,238,0.8))' : undefined }} />
+
+      <g className={isLight ? "stroke-[#38BDF8]/40 pointer-events-none" : "stroke-slate-500/20 pointer-events-none"}>
         <line x1={160} y1={70} x2={160} y2={90} strokeWidth={2} />
         <line x1={160} y1={230} x2={160} y2={250} strokeWidth={2} />
         <line x1={70} y1={160} x2={90} y2={160} strokeWidth={2} />
         <line x1={230} y1={160} x2={250} y2={160} strokeWidth={2} />
       </g>
 
-      <motion.circle cx="160" cy="160" r="78" className={isLight ? "fill-transparent stroke-sky-500 pointer-events-none" : "fill-transparent stroke-sky-400 pointer-events-none"} strokeWidth={4.5} strokeDasharray="100 400" strokeLinecap="round" initial={{ strokeDashoffset: -100 }}
-        animate={{ strokeDashoffset: -20, rotate: isHovered ? 15 : 0, filter: isHovered ? (isLight ? "drop-shadow(0 0 8px #0284c7)" : "drop-shadow(0 0 16px #38bdf8)") : (isLight ? "drop-shadow(0 0 4px #0284c7)" : "drop-shadow(0 0 8px #0369a1)") }}
+      <motion.circle cx="160" cy="160" r="78" className={isLight ? "fill-transparent stroke-[#38BDF8] pointer-events-none" : "fill-transparent stroke-blue-400 pointer-events-none"} strokeWidth={4.5} strokeDasharray="100 400" strokeLinecap="round" initial={{ strokeDashoffset: -100 }}
+        animate={{ strokeDashoffset: -20, rotate: isHovered ? 15 : 0, filter: isHovered ? (isLight ? "drop-shadow(0 0 14px #38BDF8)" : "drop-shadow(0 0 16px #60a5fa)") : (isLight ? "drop-shadow(0 0 8px #38BDF8)" : "drop-shadow(0 0 8px #1d4ed8)") }}
         transition={{ duration: 0.8, ease: "easeOut", rotate: { duration: 2, ease: "easeOut" } }}
         style={{ originX: '160px', originY: '160px' }} />
 
       <foreignObject x={85} y={105} width={150} height={110} style={{ pointerEvents: 'none' }}>
         <div className="w-full h-full flex flex-col items-center justify-center p-2 text-center select-none">
-          <div className={`text-[9px] font-mono uppercase tracking-[0.25em] mb-1 font-bold flex items-center justify-center gap-1.5 opacity-90 ${isLight ? 'text-sky-600' : 'text-sky-400'}`}>
-             <div className={`w-1.5 h-1.5 rounded-full animate-pulse ${isLight ? 'bg-sky-500 shadow-[0_0_8px_rgba(2,132,199,0.5)]' : 'bg-sky-400 shadow-[0_0_8px_#38bdf8]'}`} /> OS Core V1
+          <div className={`text-[9px] font-mono uppercase tracking-[0.25em] mb-1 font-bold flex items-center justify-center gap-1.5 opacity-90 ${isLight ? 'text-[#0EA5E9] drop-shadow-[0_0_6px_rgba(56,189,248,0.5)]' : 'text-blue-400'}`}>
+             <div className={`w-1.5 h-1.5 rounded-full animate-pulse ${isLight ? 'bg-[#22D3EE] shadow-[0_0_10px_rgba(34,211,238,0.9)]' : 'bg-blue-400 shadow-[0_0_8px_#60a5fa]'}`} /> OS Core V1
           </div>
-          <div className={`text-[15px] font-black leading-tight tracking-wide uppercase ${isLight ? 'text-slate-800 drop-shadow-sm' : 'text-white drop-shadow-[0_4px_8px_rgba(0,0,0,0.9)]'}`}>Hierarchical<br/>Grind</div>
-          <div className={`mt-3 w-20 h-1.5 border rounded-full overflow-hidden shadow-inner flex ${isLight ? 'bg-slate-100 border-slate-200' : 'bg-[#020617] border-slate-700/50'}`}>
-             <motion.div className="h-full bg-cyan-400 relative" initial={{ width: '0%' }} animate={{ width: '65%' }} transition={{ delay: 0.5, duration: 1.5, ease: "easeOut" }}>
-                <div className={`absolute inset-0 ${isLight ? 'bg-sky-400 shadow-[0_0_12px_rgba(2,132,199,0.5)]' : 'bg-white/40 shadow-[0_0_12px_#22d3ee]'}`} />
+          <div className={`text-[15px] font-black leading-tight tracking-wide uppercase ${isLight ? 'text-[#0369A1] drop-shadow-[0_0_8px_rgba(56,189,248,0.4)]' : 'text-white drop-shadow-[0_4px_8px_rgba(0,0,0,0.9)]'}`}>Hierarchical<br/>Grind</div>
+          <div className={`mt-3 w-20 h-1.5 border rounded-full overflow-hidden shadow-inner flex ${isLight ? 'bg-[#38BDF8]/10 border-[#38BDF8]/40' : 'bg-[#020617] border-slate-700/50'}`}>
+             <motion.div className="h-full bg-blue-400 relative" initial={{ width: '0%' }} animate={{ width: '65%' }} transition={{ delay: 0.5, duration: 1.5, ease: "easeOut" }}>
+                <div className={`absolute inset-0 ${isLight ? 'bg-[#22D3EE] shadow-[0_0_12px_rgba(34,211,238,0.8)]' : 'bg-white/40 shadow-[0_0_12px_#3b82f6]'}`} />
              </motion.div>
           </div>
         </div>
@@ -187,7 +187,11 @@ export const RadialMenu: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [activeId, setActiveId] = useState<string>('overview');
-  
+
+  // Collapsed-to-corner state: the menu sits small in the bottom-left to free up
+  // page space, and scales back to full size on hover / keyboard focus.
+  const [expanded, setExpanded] = useState(false);
+
   // Interactive 3D Parallax Tilt state
   const mouseX = useMotionValue(0.5);
   const mouseY = useMotionValue(0.5);
@@ -231,23 +235,39 @@ export const RadialMenu: React.FC = () => {
   const anglePerSegment = 360 / SEGMENTS.length;
 
   return (
-    // Top-most container setting up the physical 3d perspective environment
-    <div data-tour="portal-radial" className="fixed bottom-4 left-4 z-50 pointer-events-none flex justify-center items-center w-[360px] h-[360px]" style={{ perspective: '1400px' }}>
+    // Top-most container setting up the physical 3d perspective environment.
+    // Collapses into the bottom-left corner (scale 0.4) and grows back to full
+    // size from that corner on hover/focus, freeing up page space when idle.
+    <div
+      data-tour="portal-radial"
+      className="fixed bottom-4 left-4 z-50 pointer-events-none flex justify-center items-center w-[360px] h-[360px]"
+      style={{
+        perspective: '1400px',
+        transform: expanded ? 'scale(1)' : 'scale(0.4)',
+        transformOrigin: 'bottom left',
+        transition: 'transform 0.5s cubic-bezier(0.22, 1, 0.36, 1)',
+        willChange: 'transform',
+      }}
+    >
        {/* Ambient Bloom Area */}
-       <div className={isLight ? "absolute inset-0 bg-sky-200/30 rounded-full blur-[80px] scale-150" : "absolute inset-0 bg-sky-500/10 rounded-full blur-[80px] scale-150"} />
+       <div className={isLight ? "absolute inset-0 bg-[#38BDF8]/25 rounded-full blur-[80px] scale-150" : "absolute inset-0 bg-blue-500/10 rounded-full blur-[80px] scale-150"} />
        
        {/* Base entry & hover backward tilt animation wrapper */}
        <motion.div
          className="pointer-events-auto rounded-full relative w-[320px] h-[320px] transition-colors duration-500"
+         onMouseEnter={() => setExpanded(true)}
+         onMouseLeave={() => setExpanded(false)}
+         onFocusCapture={() => setExpanded(true)}
+         onBlurCapture={(e) => { if (!e.currentTarget.contains(e.relatedTarget as Node)) setExpanded(false); }}
          initial={{ rotateX: 50, rotateY: -5, scale: 0.85, y: 40, opacity: 0 }}
-         animate={{ rotateX: 38, rotateY: -4, scale: 1, y: 0, opacity: 0.6 }}
+         animate={{ rotateX: 38, rotateY: -4, scale: 1, y: 0, opacity: expanded ? 1 : 0.7 }}
          whileHover={{ rotateX: 28, rotateY: -4, scale: 1.04, opacity: 1 }}
          transition={{ duration: 1.2, type: "spring", damping: 20 }}
          style={{ 
              transformStyle: 'preserve-3d',
-             boxShadow: isLight 
-               ? '0 30px 60px rgba(15,23,42,0.08), 0 10px 25px rgba(2,132,199,0.05)' 
-               : '0 60px 120px rgba(0,0,0,0.7), 0 20px 50px rgba(0,255,255,0.2)' 
+             boxShadow: isLight
+               ? '0 30px 60px rgba(56,189,248,0.18), 0 10px 35px rgba(34,211,238,0.22), 0 0 40px rgba(86,100,255,0.12)'
+               : '0 60px 120px rgba(0,0,0,0.7), 0 20px 50px rgba(0,255,255,0.2)'
          }}
        >
          {/* Mouse-based Parallax Interaction wrapper */}
@@ -256,15 +276,15 @@ export const RadialMenu: React.FC = () => {
             style={{ transformStyle: 'preserve-3d', rotateX: tiltX, rotateY: tiltY }}
          >
              {/* Lighting Correction - darker top (farther), brighter bottom (closer) */}
-             <div className="absolute inset-0 rounded-full pointer-events-none z-50" style={{ transform: 'translateZ(1px)', background: 'linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(255,255,255,0.05))' }} />
-             
+             <div className="absolute inset-0 rounded-full pointer-events-none z-50" style={{ transform: 'translateZ(1px)', background: isLight ? 'linear-gradient(to bottom, rgba(56,189,248,0.08), rgba(34,211,238,0.04))' : 'linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(255,255,255,0.05))' }} />
+
              {/* Edge lighting - subtle bottom highlight simulating physical light catch */}
-             <div className="absolute inset-0 rounded-full pointer-events-none z-50" style={{ transform: 'translateZ(1px)', borderBottom: isLight ? '1px solid rgba(15,23,42,0.06)' : '1px solid rgba(255,255,255,0.15)' }} />
+             <div className="absolute inset-0 rounded-full pointer-events-none z-50" style={{ transform: 'translateZ(1px)', borderBottom: isLight ? '1px solid rgba(56,189,248,0.45)' : '1px solid rgba(255,255,255,0.15)' }} />
  
              {/* Background Base SVG Layer (Lowest Z) */}
              <svg width="320" height="320" viewBox="0 0 320 320" className="absolute inset-0 overflow-visible z-10" style={{ transform: 'translateZ(-10px)' }}>
-                 <circle cx="160" cy="168" r="156" fill={isLight ? "rgba(226, 232, 240, 0.9)" : "rgba(2, 6, 23, 0.9)"} />
-                 <circle cx="160" cy="160" r="156" fill={isLight ? "rgba(255, 255, 255, 0.85)" : "rgba(15, 23, 42, 0.85)"} stroke={isLight ? "rgba(15,23,42,0.05)" : "rgba(255,255,255,0.05)"} strokeWidth={1} />
+                 <circle cx="160" cy="168" r="156" fill={isLight ? "rgba(34,211,238,0.05)" : "rgba(2, 6, 23, 0.9)"} />
+                 <circle cx="160" cy="160" r="156" fill={isLight ? "rgba(56,189,248,0.06)" : "rgba(15, 23, 42, 0.85)"} stroke={isLight ? "rgba(56,189,248,0.35)" : "rgba(255,255,255,0.05)"} strokeWidth={1} />
               </svg>
  
               {/* Dynamic Layers SVG (Middle & High Z) */}

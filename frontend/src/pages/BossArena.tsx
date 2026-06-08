@@ -9,6 +9,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useGamificationStore } from '../stores/gamificationStore';
 import {
     ArrowLeft, Lock, Zap, ChevronDown, ChevronRight,
     ExternalLink, Cpu, Shield,
@@ -66,9 +67,9 @@ const BOSSES: BossChallenge[] = [
         phases: [
             { id: 'p1', title: 'Draw State Diagram', tool: 'FSM Playground', toolRoute: '/fsm', description: 'Create a 4-state FSM: RED, GREEN, YELLOW, ALL_RED. Define transitions triggered by a timer tick.', xp: 40 },
             { id: 'p2', title: 'State Transition Table', tool: 'FSM Playground', toolRoute: '/fsm', description: 'Derive the complete next-state table for all state × input combinations. Export it.', xp: 40 },
-            { id: 'p3', title: 'Gate-Level Implementation', tool: 'Circuit Lab', toolRoute: '/circuit-lab', description: 'Build the state register (D flip-flops) + output decoder in Circuit Lab. Verify LED outputs cycle correctly.', xp: 50 },
-            { id: 'p4', title: 'Verilog Implementation', tool: 'Verilog Playground', toolRoute: '/verilog', description: 'Write synthesizable Verilog: state register, next-state logic, output logic. Use the Traffic Light FSM exercise as scaffold.', xp: 50 },
-            { id: 'p5', title: 'Simulate & Verify', tool: 'Verilog Playground', toolRoute: '/verilog', description: 'Run simulation. Confirm light cycles RED→GREEN→YELLOW→RED with correct timing.', xp: 20 },
+            { id: 'p3', title: 'Gate-Level Implementation', tool: 'Circuit Lab', toolRoute: '/workbench', description: 'Build the state register (D flip-flops) + output decoder in Circuit Lab. Verify LED outputs cycle correctly.', xp: 50 },
+            { id: 'p4', title: 'Verilog Implementation', tool: 'Verilog Playground', toolRoute: '/verilog-playground', description: 'Write synthesizable Verilog: state register, next-state logic, output logic. Use the Traffic Light FSM exercise as scaffold.', xp: 50 },
+            { id: 'p5', title: 'Simulate & Verify', tool: 'Verilog Playground', toolRoute: '/verilog-playground', description: 'Run simulation. Confirm light cycles RED→GREEN→YELLOW→RED with correct timing.', xp: 20 },
         ],
     },
     {
@@ -85,11 +86,11 @@ const BOSSES: BossChallenge[] = [
         description: 'Build a 4-bit binary adder starting from a single-bit full adder in Circuit Lab, chain four together, then optimize with carry-lookahead.',
         concepts: ['Full adder', 'Gate-level design', 'Carry propagation', 'Timing optimization'],
         phases: [
-            { id: 'p1', title: '1-bit Full Adder in Circuit Lab', tool: 'Circuit Lab', toolRoute: '/circuit-lab', description: 'Build the full adder from gates: 2 XOR + 2 AND + 1 OR. Verify Sum and Carry for all 8 input combinations.', xp: 35 },
-            { id: 'p2', title: 'Chain 4 Full Adders', tool: 'Circuit Lab', toolRoute: '/circuit-lab', description: 'Connect 4 full adders in ripple-carry configuration. Connect Cout[n] → Cin[n+1]. Verify 4-bit addition.', xp: 35 },
-            { id: 'p3', title: 'Verilog Full Adder', tool: 'Verilog Playground', toolRoute: '/verilog', description: 'Implement the full adder in Verilog using assign statements. Pass the Full Adder exercise.', xp: 30 },
-            { id: 'p4', title: '4-bit Adder Verilog', tool: 'Verilog Playground', toolRoute: '/verilog', description: 'Instantiate 4 full_adder modules. Use wire [4:0] result to capture carry out. Verify all 256 combinations pass.', xp: 50 },
-            { id: 'p5', title: 'Carry-Lookahead Upgrade', tool: 'Verilog Playground', toolRoute: '/verilog', description: 'Replace ripple carry with CLA. Compute generate (G=AB) and propagate (P=A⊕B) signals. Measure timing improvement.', xp: 30 },
+            { id: 'p1', title: '1-bit Full Adder in Circuit Lab', tool: 'Circuit Lab', toolRoute: '/workbench', description: 'Build the full adder from gates: 2 XOR + 2 AND + 1 OR. Verify Sum and Carry for all 8 input combinations.', xp: 35 },
+            { id: 'p2', title: 'Chain 4 Full Adders', tool: 'Circuit Lab', toolRoute: '/workbench', description: 'Connect 4 full adders in ripple-carry configuration. Connect Cout[n] → Cin[n+1]. Verify 4-bit addition.', xp: 35 },
+            { id: 'p3', title: 'Verilog Full Adder', tool: 'Verilog Playground', toolRoute: '/verilog-playground', description: 'Implement the full adder in Verilog using assign statements. Pass the Full Adder exercise.', xp: 30 },
+            { id: 'p4', title: '4-bit Adder Verilog', tool: 'Verilog Playground', toolRoute: '/verilog-playground', description: 'Instantiate 4 full_adder modules. Use wire [4:0] result to capture carry out. Verify all 256 combinations pass.', xp: 50 },
+            { id: 'p5', title: 'Carry-Lookahead Upgrade', tool: 'Verilog Playground', toolRoute: '/verilog-playground', description: 'Replace ripple carry with CLA. Compute generate (G=AB) and propagate (P=A⊕B) signals. Measure timing improvement.', xp: 30 },
         ],
     },
     {
@@ -108,8 +109,8 @@ const BOSSES: BossChallenge[] = [
         phases: [
             { id: 'p1', title: 'Define States & Transitions', tool: 'FSM Playground', toolRoute: '/fsm', description: 'Map all 4 states: IDLE, MOVING_UP, MOVING_DOWN, DOOR_OPEN. Define guard conditions for each transition (floor_reached, button_pressed, door_timer).', xp: 50 },
             { id: 'p2', title: 'Add Request Logic', tool: 'FSM Playground', toolRoute: '/fsm', description: 'Add floor request register (4-bit). Modify FSM transitions to evaluate pending requests. Prioritize nearest floor.', xp: 50 },
-            { id: 'p3', title: 'Verilog Implementation', tool: 'Verilog Playground', toolRoute: '/verilog', description: 'Implement state machine in Verilog. Separate always blocks for state register, next-state logic, and output logic.', xp: 60 },
-            { id: 'p4', title: 'Testbench & Simulation', tool: 'Verilog Playground', toolRoute: '/verilog', description: 'Write a testbench. Simulate pressing floor 1 from floor 3, then floor 4 from floor 1. Verify correct MOVING_UP/DOWN sequence.', xp: 60 },
+            { id: 'p3', title: 'Verilog Implementation', tool: 'Verilog Playground', toolRoute: '/verilog-playground', description: 'Implement state machine in Verilog. Separate always blocks for state register, next-state logic, and output logic.', xp: 60 },
+            { id: 'p4', title: 'Testbench & Simulation', tool: 'Verilog Playground', toolRoute: '/verilog-playground', description: 'Write a testbench. Simulate pressing floor 1 from floor 3, then floor 4 from floor 1. Verify correct MOVING_UP/DOWN sequence.', xp: 60 },
         ],
     },
     {
@@ -126,10 +127,10 @@ const BOSSES: BossChallenge[] = [
         description: 'Implement a complete UART transmitter: 8N1 format with baud rate generator. From shift register design → Verilog implementation → FPGA synthesis.',
         concepts: ['Serial protocol', 'Baud rate generator', 'Shift register', 'State machine'],
         phases: [
-            { id: 'p1', title: 'Shift Register in Circuit Lab', tool: 'Circuit Lab', toolRoute: '/circuit-lab', description: 'Build an 8-bit parallel-to-serial shift register using 8 D flip-flops. Verify serial output matches parallel input MSB-first.', xp: 60 },
-            { id: 'p2', title: 'Verilog UART TX', tool: 'Verilog Playground', toolRoute: '/verilog', description: 'Complete the UART Transmitter exercise. Implement state machine: IDLE → START → DATA × 8 → STOP → IDLE.', xp: 80 },
-            { id: 'p3', title: 'Baud Rate Generator', tool: 'Verilog Playground', toolRoute: '/verilog', description: 'Add a clock divider module to generate the baud clock from a 50MHz system clock. Target: 9600 baud.', xp: 80 },
-            { id: 'p4', title: 'Integration & Waveform', tool: 'Verilog Playground', toolRoute: '/verilog', description: 'Connect UART TX to baud generator. Simulate sending 0xAB (10101011). Verify start → 8 data bits → stop on waveform.', xp: 80 },
+            { id: 'p1', title: 'Shift Register in Circuit Lab', tool: 'Circuit Lab', toolRoute: '/workbench', description: 'Build an 8-bit parallel-to-serial shift register using 8 D flip-flops. Verify serial output matches parallel input MSB-first.', xp: 60 },
+            { id: 'p2', title: 'Verilog UART TX', tool: 'Verilog Playground', toolRoute: '/verilog-playground', description: 'Complete the UART Transmitter exercise. Implement state machine: IDLE → START → DATA × 8 → STOP → IDLE.', xp: 80 },
+            { id: 'p3', title: 'Baud Rate Generator', tool: 'Verilog Playground', toolRoute: '/verilog-playground', description: 'Add a clock divider module to generate the baud clock from a 50MHz system clock. Target: 9600 baud.', xp: 80 },
+            { id: 'p4', title: 'Integration & Waveform', tool: 'Verilog Playground', toolRoute: '/verilog-playground', description: 'Connect UART TX to baud generator. Simulate sending 0xAB (10101011). Verify start → 8 data bits → stop on waveform.', xp: 80 },
         ],
     },
     {
@@ -146,25 +147,24 @@ const BOSSES: BossChallenge[] = [
         description: 'Design and implement a minimal 8-bit CPU: 4-instruction ISA, ALU, register file, program counter, and control unit. The ultimate VeriLog challenge.',
         concepts: ['ISA design', 'Datapath', 'Control unit FSM', 'Memory-mapped I/O'],
         phases: [
-            { id: 'p1', title: 'Define Instruction Set', tool: 'Verilog Playground', toolRoute: '/verilog', description: 'Design a 4-instruction ISA: ADD, LOAD, STORE, JMP. Specify opcode encoding (8-bit instruction word format).', xp: 80 },
-            { id: 'p2', title: 'ALU + Register File', tool: 'Verilog Playground', toolRoute: '/verilog', description: 'Implement 8-bit ALU (ADD, AND, OR, NOT operations) and a 4-register file with read/write ports.', xp: 100 },
+            { id: 'p1', title: 'Define Instruction Set', tool: 'Verilog Playground', toolRoute: '/verilog-playground', description: 'Design a 4-instruction ISA: ADD, LOAD, STORE, JMP. Specify opcode encoding (8-bit instruction word format).', xp: 80 },
+            { id: 'p2', title: 'ALU + Register File', tool: 'Verilog Playground', toolRoute: '/verilog-playground', description: 'Implement 8-bit ALU (ADD, AND, OR, NOT operations) and a 4-register file with read/write ports.', xp: 100 },
             { id: 'p3', title: 'Control Unit FSM', tool: 'FSM Playground + Verilog', toolRoute: '/fsm', description: 'Design the fetch-decode-execute control unit FSM. Define control signals for each instruction.', xp: 100 },
-            { id: 'p4', title: 'Full CPU Integration', tool: 'Verilog Playground', toolRoute: '/verilog', description: 'Connect ALU, register file, PC, and control unit in a top-level module. Wire up the datapath.', xp: 120 },
-            { id: 'p5', title: 'Execute a Program', tool: 'Verilog Playground', toolRoute: '/verilog', description: 'Load a simple program (e.g., count to 10 using ADD + JMP). Run testbench. Verify register values after execution.', xp: 100 },
+            { id: 'p4', title: 'Full CPU Integration', tool: 'Verilog Playground', toolRoute: '/verilog-playground', description: 'Connect ALU, register file, PC, and control unit in a top-level module. Wire up the datapath.', xp: 120 },
+            { id: 'p5', title: 'Execute a Program', tool: 'Verilog Playground', toolRoute: '/verilog-playground', description: 'Load a simple program (e.g., count to 10 using ADD + JMP). Run testbench. Verify register values after execution.', xp: 100 },
         ],
     },
 ];
 
-// Simulated progress - in production read from progressStore
-const USER_XP = 85;
-
 export function BossArena() {
     const navigate = useNavigate();
+    // Real earned XP from the persisted gamification store gates every boss.
+    const userXp = useGamificationStore((s) => s.xp.total);
     const [expandedBoss, setExpandedBoss] = useState<string | null>('boss01');
     const [hoveredBoss, setHoveredBoss] = useState<string | null>(null);
 
     function getBossStatus(boss: BossChallenge): BossStatus {
-        if (USER_XP >= boss.requiredXP) return 'available';
+        if (userXp >= boss.requiredXP) return 'available';
         return 'locked';
     }
 
@@ -196,7 +196,7 @@ export function BossArena() {
                 </span>
                 <div className="ml-auto flex items-center gap-2 shrink-0">
                     <Zap size={13} style={{ color: T.warning }} />
-                    <span style={{ fontFamily: T.mono, fontSize: 10, color: T.warning }}>{USER_XP} XP</span>
+                    <span style={{ fontFamily: T.mono, fontSize: 10, color: T.warning }}>{userXp} XP</span>
                 </div>
             </div>
 
@@ -226,7 +226,7 @@ export function BossArena() {
                     <div className="flex flex-wrap gap-6 lg:gap-8 mt-5">
                         {[
                             { label: 'Total XP Available', value: BOSSES.reduce((s, b) => s + b.xpReward, 0), color: T.warning },
-                            { label: 'Bosses Available', value: BOSSES.filter(b => USER_XP >= b.requiredXP).length, color: T.success },
+                            { label: 'Bosses Available', value: BOSSES.filter(b => userXp >= b.requiredXP).length, color: T.success },
                             { label: 'Total Bosses', value: BOSSES.length, color: T.muted },
                         ].map(stat => (
                             <div key={stat.label}>

@@ -1,22 +1,25 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { 
-  ChevronDown, 
-  ChevronUp, 
-  Cpu, 
-  Terminal, 
-  Clock, 
-  CheckCircle2, 
+import {
+  ChevronDown,
+  ChevronUp,
+  Cpu,
+  Terminal,
+  Clock,
+  CheckCircle2,
   HelpCircle,
   Zap,
   Menu,
-  X
+  X,
+  ArrowRight
 } from 'lucide-react';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { LANDING_ROUTES } from './landingRoutes';
 import { useIsAuthenticated } from '../../hooks/useIsAuthenticated';
+import { BrandWordmark } from '../../components/Brand';
 import { PremiumBentoFeatures } from './PremiumBentoFeatures';
 import { SiliconPlaypenGrid } from './SiliconPlaypenGrid';
+import { SignalShowcase } from './SignalShowcase';
 import { ThemeToggle } from '../../components/ThemeToggle';
 import { useColorScheme } from '../../hooks/useColorScheme';
 
@@ -163,11 +166,32 @@ export default function LandingPageContainer() {
     e.currentTarget.style.setProperty('--mouse-y', `${y}px`);
   };
 
-  const [scheme] = useColorScheme();
-  const isDarkMode = scheme === 'dark';
+  // Brilliant-style landing is light-only. Force the light scheme *synchronously*
+  // (in render, before children mount) so child components that read the scheme
+  // from localStorage on first render (SiliconPlaypenGrid, PremiumBentoFeatures)
+  // also come up light — otherwise their isDarkMode ternaries paint white text on
+  // the now-light background and it disappears. Restore the user's pref on leave.
+  const isDarkMode = false;
+  const prevThemeRef = useRef<string | null>(null);
+  if (prevThemeRef.current === null) {
+    try {
+      prevThemeRef.current = localStorage.getItem('bitforbytes_theme') ?? 'dark';
+      localStorage.setItem('bitforbytes_theme', 'light');
+    } catch { prevThemeRef.current = 'dark'; }
+  }
+  useEffect(() => {
+    const root = document.documentElement;
+    root.classList.remove('dark');
+    root.classList.add('light');
+    return () => {
+      const prev = prevThemeRef.current || 'dark';
+      try { localStorage.setItem('bitforbytes_theme', prev); } catch { /* ignore */ }
+      if (prev === 'dark') { root.classList.add('dark'); root.classList.remove('light'); }
+    };
+  }, []);
 
   return (
-    <main className="relative w-full min-h-screen bg-slate-50 dark:bg-[#03050a] text-slate-800 dark:text-slate-200 antialiased font-sans selection:bg-[#00F5FF]/20 selection:text-[#00F5FF]">
+    <main className="relative w-full min-h-screen bg-[#FAF9F6] dark:bg-[#03050a] text-slate-800 dark:text-slate-200 antialiased font-sans selection:bg-[#4A57FF]/20 selection:text-[#4A57FF]">
       
       {/* Floating analog CRT noise grain overlay */}
       <div className="fixed inset-0 pointer-events-none z-[100] bg-grain" />
@@ -217,7 +241,7 @@ export default function LandingPageContainer() {
           content: "";
           position: absolute;
           inset: -1px;
-          background: radial-gradient(220px circle at var(--mouse-x, 0px) var(--mouse-y, 0px), rgba(0, 245, 255, 0.12), transparent 80%);
+          background: radial-gradient(220px circle at var(--mouse-x, 0px) var(--mouse-y, 0px), rgba(74, 87, 255, 0.14), transparent 80%);
           border-radius: inherit;
           z-index: 0;
           pointer-events: none;
@@ -254,7 +278,7 @@ export default function LandingPageContainer() {
         }
         button:focus-visible, a:focus-visible, [role="button"]:focus-visible {
           outline: none !important;
-          box-shadow: 0 0 0 2px #03050a, 0 0 0 3px #00F5FF !important;
+          box-shadow: 0 0 0 2px #03050a, 0 0 0 3px #4A57FF !important;
           border-radius: inherit;
         }
       `}</style>
@@ -265,25 +289,21 @@ export default function LandingPageContainer() {
       {/* STICKY TOP NAVIGATION BAR */}
       <nav className="fixed top-0 left-0 w-full z-50 bg-white/80 dark:bg-[#03050a]/80 backdrop-blur-md border-b border-slate-200/60 dark:border-slate-900/60 px-6 py-4" role="navigation" aria-label="Main navigation">
         <div className="max-w-7xl mx-auto w-full flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2.5 active-press">
-            <div className="w-6 h-6 rounded bg-gradient-to-br from-[#00F5FF] to-[#10B981] flex items-center justify-center text-[#03050a] font-mono font-bold text-[11px]">B</div>
-            <span className="text-md font-bold tracking-tight text-slate-900 dark:text-white uppercase">Bit<span className="text-[#00F5FF]">for</span>Bytes</span>
+          <Link to="/" className="active-press">
+            <BrandWordmark size={26} textClassName="text-base text-slate-900 dark:text-white" />
           </Link>
           
-          <div className="hidden md:flex items-center gap-8 text-[10px] font-mono uppercase tracking-widest text-slate-600 dark:text-[#8E9AA8]">
+          <div className="hidden md:flex items-center gap-7 text-[14px] font-semibold text-slate-600 dark:text-[#8E9AA8]">
             <a href="#curriculum" onClick={(e) => scrollToSection(e, 'curriculum')} className="hover:text-slate-900 dark:hover:text-white transition-colors">Curriculum</a>
             <a href="#playground" onClick={(e) => scrollToSection(e, 'playground')} className="hover:text-slate-900 dark:hover:text-white transition-colors">Playground</a>
             <a href="#diagnostics" onClick={(e) => scrollToSection(e, 'diagnostics')} className="hover:text-slate-900 dark:hover:text-white transition-colors">Documentation</a>
             <Link to={LANDING_ROUTES.about} className="hover:text-slate-900 dark:hover:text-white transition-colors">About Us</Link>
           </div>
 
-          <div className="flex items-center gap-4">
-            <div className="hidden sm:flex items-center gap-2 font-mono text-[10px] text-slate-550 dark:text-[#8E9AA8]">
-              <Clock size={12} className="text-[#FF5F1F]" /> <span className="tabular-data">{londonTime} UTC_LN</span>
-            </div>
-            <ThemeToggle />
-            <Link to={primaryTo} className="hidden md:inline-flex bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-[10px] font-mono uppercase tracking-wider text-slate-800 dark:text-slate-200 px-3.5 py-2 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-850 transition-colors active-press">
-              {primaryLabel}
+          <div className="flex items-center gap-3 sm:gap-5">
+            <Link to="/login" className="hidden sm:inline-flex text-[13px] font-semibold text-slate-600 hover:text-slate-900 transition-colors">Sign in</Link>
+            <Link to={primaryTo} className="hidden md:inline-flex items-center gap-1.5 bg-[#2E32FF] hover:bg-[#1E22E0] text-white text-[13px] font-semibold px-5 py-2.5 rounded-full shadow-[0_8px_20px_-6px_rgba(46,50,255,0.5)] transition-all active-press">
+              {primaryLabel} <ArrowRight size={14} />
             </Link>
             {/* ENHANCEMENT 3: Mobile Hamburger Menu Toggle */}
             <button
@@ -322,29 +342,41 @@ export default function LandingPageContainer() {
       </nav>
 
       <section className="relative z-10 max-w-7xl mx-auto px-6 pt-32 md:pt-40 pb-16 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-        <div className="lg:col-span-5 space-y-6 text-left">
-          <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-[10px] font-mono text-slate-500 dark:text-[#8E9AA8] uppercase tracking-widest">
-            <span>Platform Core // v2.0.26</span>
+        <div className="lg:col-span-5 space-y-7 text-left">
+          {/* Eyebrow */}
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#2E32FF]/[0.07] border border-[#2E32FF]/15 text-[12px] font-semibold tracking-wide text-[#2E32FF]">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#2E32FF]" /> Learn by doing · Free forever
           </div>
-          <h1 className="font-bold text-slate-900 dark:text-white tracking-tight leading-[1.08] uppercase text-[clamp(2.25rem,5vw,4rem)]">
-            Bits become logic. <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00F5FF] via-teal-400 to-[#10B981]">
-              Logic becomes silicon.
-            </span>
+
+          {/* Headline */}
+          <h1 className="font-extrabold text-slate-900 tracking-tight leading-[1.05] text-[clamp(2.75rem,5.8vw,4.75rem)]">
+            Bits become logic.<br />
+            <span className="text-[#2E32FF]">Logic becomes silicon.</span>
           </h1>
-          <p className="text-sm text-slate-650 dark:text-[#8E9AA8] leading-relaxed max-w-[65ch]">
-            Go from confused ECE undergraduate to industry-ready digital design engineer. Learn VLSI, physical layout rules, and RTL synthesis through zero-install interactive simulation tools.
+
+          <p className="text-lg text-slate-600 leading-relaxed max-w-[46ch]">
+            Interactive VLSI &amp; digital-logic courses you actually play with — from logic gates to silicon, right in your browser.
           </p>
-          <div className="flex flex-wrap gap-3 font-mono text-[11px]">
-            <Link to={primaryTo} className="px-5 py-3 rounded-lg font-bold bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-950 hover:bg-slate-850 dark:hover:bg-white transition-all text-center active-press">{primaryLabel}</Link>
-            <Link to={LANDING_ROUTES.career} className="px-5 py-3 rounded-lg font-bold bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-205 dark:hover:bg-slate-800 transition-all text-center active-press">Explore career paths</Link>
+
+          {/* CTAs */}
+          <div className="flex flex-col sm:flex-row gap-3 pt-1">
+            <Link to={primaryTo} className="group/cta inline-flex items-center justify-center gap-2 px-7 py-4 rounded-full font-bold text-[16px] bg-[#2E32FF] hover:bg-[#1E22E0] text-white shadow-[0_16px_38px_-12px_rgba(46,50,255,0.7)] transition-all active-press">
+              {primaryLabel}
+              <ArrowRight size={18} className="transition-transform group-hover/cta:translate-x-0.5" />
+            </Link>
+            <Link to={LANDING_ROUTES.career} className="inline-flex items-center justify-center gap-2 px-6 py-4 rounded-full font-semibold text-[16px] bg-white border border-slate-300 text-slate-800 hover:border-slate-400 transition-all active-press">
+              Explore career paths
+            </Link>
           </div>
-          {/* ENHANCEMENT 6: Social Proof / Institutions Strip */}
-          <div className="pt-4 border-t border-slate-200 dark:border-slate-900 space-y-1.5">
-            <span className="text-[9px] font-mono text-slate-500 dark:text-[#8E9AA8] uppercase tracking-wider block">Trusted at engineering institutions</span>
-            <div className="flex flex-wrap gap-x-4 gap-y-1 font-mono text-[10px] text-slate-500 dark:text-[#8E9AA8]">
-              <span>IIT</span> &bull; <span>NIT</span> &bull; <span>VIT</span> &bull; <span>BITS</span> &bull; <span>DTU</span> &bull; <span>ANNA UNIV</span>
-            </div>
+
+          {/* Social proof metrics */}
+          <div className="flex items-center gap-8 pt-3">
+            {[['13', 'ECE domains'], ['100%', 'Free forever'], ['0', 'Installs needed']].map(([n, l]) => (
+              <div key={l}>
+                <div className="text-[26px] font-extrabold text-slate-900 leading-none">{n}</div>
+                <div className="text-[12px] text-slate-500 font-medium mt-1">{l}</div>
+              </div>
+            ))}
           </div>
         </div>
 
@@ -354,8 +386,8 @@ export default function LandingPageContainer() {
               <div className="flex items-center gap-6">
                 <div className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-slate-200 dark:bg-slate-850" /><span className="w-2 h-2 rounded-full bg-slate-200 dark:bg-slate-850" /><span className="w-2 h-2 rounded-full bg-slate-200 dark:bg-slate-850" /></div>
                 <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-wider">
-                  <button onClick={() => setHeroTab('CODE')} className={`px-2 py-0.5 transition-colors active-press ${heroTab === 'CODE' ? 'text-[#00F5FF] border-b border-[#00F5FF]' : 'text-slate-550 dark:text-[#8E9AA8] hover:text-slate-800 dark:hover:text-slate-300'}`}>nand_gate.v</button>
-                  <button onClick={() => setHeroTab('WAVE')} className={`px-2 py-0.5 transition-colors active-press ${heroTab === 'WAVE' ? 'text-[#00F5FF] border-b border-[#00F5FF]' : 'text-slate-550 dark:text-[#8E9AA8] hover:text-slate-800 dark:hover:text-slate-300'}`}>timing_diagram.out</button>
+                  <button onClick={() => setHeroTab('CODE')} className={`px-2 py-0.5 transition-colors active-press ${heroTab === 'CODE' ? 'text-[#4A57FF] border-b border-[#4A57FF]' : 'text-slate-550 dark:text-[#8E9AA8] hover:text-slate-800 dark:hover:text-slate-300'}`}>nand_gate.v</button>
+                  <button onClick={() => setHeroTab('WAVE')} className={`px-2 py-0.5 transition-colors active-press ${heroTab === 'WAVE' ? 'text-[#4A57FF] border-b border-[#4A57FF]' : 'text-slate-550 dark:text-[#8E9AA8] hover:text-slate-800 dark:hover:text-slate-300'}`}>timing_diagram.out</button>
                 </div>
               </div>
               <div className="font-mono text-[9px] text-[#10B981] bg-[#10B981]/5 border border-[#10B981]/10 px-2 py-0.5 rounded uppercase tracking-wide">Simulation_Pass</div>
@@ -371,22 +403,22 @@ export default function LandingPageContainer() {
                         <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span>
                       </div>
                       <div className="space-y-0 leading-[1.6]">
-                        <div><span className="text-blue-600 dark:text-cyan-400">module</span> nand_primitive (</div>
+                        <div><span className="text-blue-600 dark:text-[#6E7BFF]">module</span> nand_primitive (</div>
                         <div className="text-slate-550 dark:text-[#8E9AA8]">  input <span className="text-slate-800 dark:text-slate-400">a, b,</span></div>
                         <div className="text-slate-550 dark:text-[#8E9AA8]">  output <span className="text-slate-800 dark:text-slate-400">out</span></div>
                         <div>);</div>
-                        <div className="text-slate-800 dark:text-slate-400">  <span className="text-blue-600 dark:text-cyan-400">assign</span> out = ~(a & b);</div>
-                        <div><span className="text-blue-600 dark:text-cyan-400">endmodule</span></div>
+                        <div className="text-slate-800 dark:text-slate-400">  <span className="text-blue-600 dark:text-[#6E7BFF]">assign</span> out = ~(a & b);</div>
+                        <div><span className="text-blue-600 dark:text-[#6E7BFF]">endmodule</span></div>
                       </div>
                     </div>
                   </div>
                   <div className="md:col-span-5 space-y-4 font-mono text-[11px] border-l border-slate-200 dark:border-slate-900/60 pl-0 md:pl-6">
                     <div className="space-y-1.5">
                       <span className="text-[9px] text-slate-550 dark:text-[#8E9AA8] uppercase block tracking-wider">Toggle inputs</span>
-                      <button onClick={() => setPinState(p => ({ ...p, A: !p.A }))} aria-pressed={pinState.A} aria-label={`Input A: ${pinState.A ? 'HIGH' : 'LOW'}`} className={`w-full text-left px-3 py-2 rounded border flex justify-between active-press ${pinState.A ? 'bg-[#00F5FF]/10 border-[#00F5FF] text-[#00F5FF]' : 'bg-slate-100 dark:bg-slate-950 border-slate-200 dark:border-slate-900 text-slate-500 dark:text-[#8E9AA8]'}`}>
+                      <button onClick={() => setPinState(p => ({ ...p, A: !p.A }))} aria-pressed={pinState.A} aria-label={`Input A: ${pinState.A ? 'HIGH' : 'LOW'}`} className={`w-full text-left px-3 py-2 rounded border flex justify-between active-press ${pinState.A ? 'bg-[#4A57FF]/10 border-[#4A57FF] text-[#4A57FF]' : 'bg-slate-100 dark:bg-slate-950 border-slate-200 dark:border-slate-900 text-slate-500 dark:text-[#8E9AA8]'}`}>
                         <span>Input A</span><span className="font-bold tabular-data">{pinState.A ? '1' : '0'}</span>
                       </button>
-                      <button onClick={() => setPinState(p => ({ ...p, B: !p.B }))} aria-pressed={pinState.B} aria-label={`Input B: ${pinState.B ? 'HIGH' : 'LOW'}`} className={`w-full text-left px-3 py-2 rounded border flex justify-between active-press ${pinState.B ? 'bg-[#00F5FF]/10 border-[#00F5FF] text-[#00F5FF]' : 'bg-slate-100 dark:bg-slate-950 border-slate-200 dark:border-slate-900 text-slate-500 dark:text-[#8E9AA8]'}`}>
+                      <button onClick={() => setPinState(p => ({ ...p, B: !p.B }))} aria-pressed={pinState.B} aria-label={`Input B: ${pinState.B ? 'HIGH' : 'LOW'}`} className={`w-full text-left px-3 py-2 rounded border flex justify-between active-press ${pinState.B ? 'bg-[#4A57FF]/10 border-[#4A57FF] text-[#4A57FF]' : 'bg-slate-100 dark:bg-slate-950 border-slate-200 dark:border-slate-900 text-slate-500 dark:text-[#8E9AA8]'}`}>
                         <span>Input B</span><span className="font-bold tabular-data">{pinState.B ? '1' : '0'}</span>
                       </button>
                     </div>
@@ -399,7 +431,7 @@ export default function LandingPageContainer() {
               ) : (
                 <div className="bg-slate-50 dark:bg-[#03050a] p-4 rounded-lg border border-slate-200 dark:border-slate-900 space-y-3 font-mono text-[11px]">
                   <div className="flex items-center gap-4"><span className="w-16 text-slate-500 dark:text-[#8E9AA8]">Clock</span><svg width="100%" height="16" viewBox="0 0 300 16" preserveAspectRatio="none" className="text-slate-300 dark:text-slate-800"><path d="M 0 14 L 30 14 L 30 2 L 60 2 L 60 14 L 90 14 L 90 2 L 120 2 L 120 14 L 150 14 L 150 2 L 180 2 L 180 14 L 210 14 L 210 2 L 240 2 L 240 14 L 270 14 L 270 2 L 300 2" fill="none" stroke="currentColor" strokeWidth="1.5" /></svg></div>
-                  <div className="flex items-center gap-4"><span className="w-16 text-[#00F5FF]">Output</span><svg width="100%" height="16" viewBox="0 0 300 16" preserveAspectRatio="none" className="text-[#00F5FF]/80"><path d="M 0 2 L 90 2 L 90 14 L 180 14 L 180 2 L 300 2" fill="none" stroke="currentColor" strokeWidth="1.5" /></svg></div>
+                  <div className="flex items-center gap-4"><span className="w-16 text-[#4A57FF]">Output</span><svg width="100%" height="16" viewBox="0 0 300 16" preserveAspectRatio="none" className="text-[#4A57FF]/80"><path d="M 0 2 L 90 2 L 90 14 L 180 14 L 180 2 L 300 2" fill="none" stroke="currentColor" strokeWidth="1.5" /></svg></div>
                 </div>
               )}
             </div>
@@ -411,9 +443,24 @@ export default function LandingPageContainer() {
         </div>
       </section>
 
+      {/* ─── SEE IT IN ACTION · self-built animated signal scope ─── */}
+      <section className="relative z-10 max-w-5xl mx-auto px-6 pt-2 pb-20">
+        <div className="text-center max-w-2xl mx-auto mb-10">
+          <span className="inline-block text-[12px] font-bold tracking-[0.14em] text-[#2E32FF] uppercase mb-3">See it in action</span>
+          <h2 className="font-extrabold text-slate-900 tracking-tight text-[clamp(2rem,4.2vw,3.25rem)] leading-[1.08]">
+            Watch signals become silicon.
+          </h2>
+          <p className="mt-4 text-lg text-slate-600 leading-relaxed">
+            Every concept is something you can see, toggle, and play with — not just read about.
+          </p>
+        </div>
+
+        <SignalShowcase />
+      </section>
+
       <AnimatedSection className="relative z-10 max-w-7xl mx-auto px-6 py-20 border-t border-slate-200/60 dark:border-slate-900/60 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
         <div className="lg:col-span-6 space-y-4 max-w-[65ch]">
-          <span className="text-[10px] font-mono text-[#00F5FF] uppercase tracking-widest block">// ANALYTICAL LOGIC PLAYGROUND</span>
+          <span className="text-[10px] font-mono text-[#4A57FF] uppercase tracking-widest block">// ANALYTICAL LOGIC PLAYGROUND</span>
           <h2 className="font-bold text-slate-900 dark:text-white uppercase tracking-tight text-[clamp(1.75rem,4vw,3rem)] leading-[1.1]">
             Bridge the gap between math derivations and actual silicon.
           </h2>
@@ -424,7 +471,7 @@ export default function LandingPageContainer() {
         <div className="lg:col-span-6 bg-white dark:bg-[#090e1a] border border-slate-200 dark:border-slate-900 rounded-xl p-6 flex flex-col justify-center items-center min-h-[200px]">
           <div className="flex gap-2 font-mono text-[10px] mb-4">
             {['AND', 'OR', 'NAND', 'NOR', 'XOR'].map((g) => (
-              <span key={g} className={`px-2.5 py-1 rounded border active-press ${g === 'NOR' ? 'bg-[#00F5FF]/10 border-[#00F5FF] text-[#00F5FF]' : 'bg-slate-100 dark:bg-slate-950 border-slate-200 dark:border-slate-900 text-slate-600 dark:text-[#8E9AA8]'}`}>{g}</span>
+              <span key={g} className={`px-2.5 py-1 rounded border active-press ${g === 'NOR' ? 'bg-[#4A57FF]/10 border-[#4A57FF] text-[#4A57FF]' : 'bg-slate-100 dark:bg-slate-950 border-slate-200 dark:border-slate-900 text-slate-600 dark:text-[#8E9AA8]'}`}>{g}</span>
             ))}
           </div>
           <div className="w-10 h-10 rounded-full bg-[#10B981]/10 border border-[#10B981]/30 flex items-center justify-center text-[#10B981] font-mono text-xs font-bold shadow-[0_0_15px_rgba(16,185,129,0.1)]">HIGH</div>
@@ -440,7 +487,7 @@ export default function LandingPageContainer() {
       {/* SECTION 5: THE CURRICULUM INDEX SEQUENCE */}
       <AnimatedSection id="curriculum" className="relative z-10 max-w-7xl mx-auto px-6 py-16 border-t border-slate-200/60 dark:border-slate-900/60 space-y-12">
         <div className="text-left max-w-[65ch] space-y-2">
-          <span className="text-[10px] font-mono text-[#00F5FF] uppercase tracking-widest block">// CURRICULUM PIPELINE PATHWAYS</span>
+          <span className="text-[10px] font-mono text-[#4A57FF] uppercase tracking-widest block">// CURRICULUM PIPELINE PATHWAYS</span>
           <h2 className={`font-bold uppercase tracking-tight text-[clamp(1.75rem,4vw,3rem)] leading-[1.1] ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
             A COMPLETE SILICON ENGINEERING PIPELINE.
           </h2>
@@ -457,13 +504,13 @@ export default function LandingPageContainer() {
           ].map((c) => (
             <div key={c.id} className={`border rounded-xl p-6 flex flex-col justify-between group transition-colors duration-500 ${isDarkMode ? 'bg-[#090e1a] border-slate-900' : 'bg-white border-slate-200 shadow-sm'}`}>
               <div className="space-y-4">
-                <span className="font-mono text-[10px] text-[#00F5FF] block uppercase tracking-wider">{c.id} / {c.subtitle}</span>
+                <span className="font-mono text-[10px] text-[#4A57FF] block uppercase tracking-wider">{c.id} / {c.subtitle}</span>
                 <h3 className={`text-base font-semibold tracking-tight ${isDarkMode ? 'text-slate-200' : 'text-slate-800'}`}>{c.title}</h3>
                 <p className={`text-xs leading-relaxed ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>{c.desc}</p>
               </div>
               <div className={`mt-8 pt-4 border-t flex items-center justify-between font-mono text-[10px] ${isDarkMode ? 'border-slate-900/60' : 'border-slate-100'}`}>
                 <span className="text-[#8E9AA8] tabular-data">{c.time}</span>
-                <button className="text-[#00F5FF] group-hover:underline active-press">{c.action}</button>
+                <button className="text-[#4A57FF] group-hover:underline active-press">{c.action}</button>
               </div>
             </div>
           ))}
@@ -473,14 +520,14 @@ export default function LandingPageContainer() {
       {/* SECTION 6: THE TARGET PROFILES CONSOLE */}
       <AnimatedSection id="diagnostics" className="relative z-10 max-w-7xl mx-auto px-6 py-16 border-t border-slate-200/60 dark:border-slate-900/60 space-y-8">
         <div className="max-w-[65ch] space-y-1 text-left">
-          <span className="text-[10px] font-mono text-[#00F5FF] uppercase tracking-widest block">// DOCUMENTATION TARGET PROFILES</span>
+          <span className="text-[10px] font-mono text-[#4A57FF] uppercase tracking-widest block">// DOCUMENTATION TARGET PROFILES</span>
           <h2 className={`font-bold uppercase tracking-tight text-[clamp(1.5rem,4vw,2.75rem)] ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Engineered for clarity at every level.</h2>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           <div className="lg:col-span-4 flex flex-col gap-2 font-mono text-[11px]" role="tablist" aria-label="Profile Stage Selector">
             {(['ACADEMIC', 'SYSTEMS', 'PROFESSIONAL'] as ProfileTabType[]).map((p) => (
-              <button key={p} role="tab" aria-selected={profileTab === p} onClick={() => setProfileTab(p)} className={`w-full text-left px-4 py-3.5 border rounded-lg transition-colors active-press ${profileTab === p ? 'bg-white dark:bg-[#090e1a] border-[#00F5FF]/30 text-[#00F5FF] shadow-sm' : 'bg-slate-50/20 dark:bg-[#090e1a]/20 border-slate-200 dark:border-slate-900 text-slate-600 dark:text-[#8E9AA8] hover:text-slate-900 dark:hover:text-slate-400'}`}>
+              <button key={p} role="tab" aria-selected={profileTab === p} onClick={() => setProfileTab(p)} className={`w-full text-left px-4 py-3.5 border rounded-lg transition-colors active-press ${profileTab === p ? 'bg-white dark:bg-[#090e1a] border-[#4A57FF]/30 text-[#4A57FF] shadow-sm' : 'bg-slate-50/20 dark:bg-[#090e1a]/20 border-slate-200 dark:border-slate-900 text-slate-600 dark:text-[#8E9AA8] hover:text-slate-900 dark:hover:text-slate-400'}`}>
                 {p === 'ACADEMIC' && 'Academic Foundations'}
                 {p === 'SYSTEMS' && 'Systems Transition'}
                 {p === 'PROFESSIONAL' && 'Professional Expansion'}
@@ -494,7 +541,7 @@ export default function LandingPageContainer() {
               {profileTab === 'ACADEMIC' && (
                 <>
                   <div className="flex items-center gap-2">
-                    <Cpu size={16} className="text-[#00F5FF]" />
+                    <Cpu size={16} className="text-[#4A57FF]" />
                     <h3 className={`text-sm font-semibold ${isDarkMode ? 'text-slate-200' : 'text-slate-800'}`}>Visualize abstract lecture physics.</h3>
                   </div>
                   <p className={`text-xs leading-relaxed font-sans max-w-prose ${isDarkMode ? 'text-slate-400' : 'text-slate-650'}`}>For students navigating lecture material who require a visual, tactile model to master the physics of digital circuits. Replace manual truth tables with real-time waveform analyzers and gate debuggers.</p>
@@ -503,7 +550,7 @@ export default function LandingPageContainer() {
               {profileTab === 'SYSTEMS' && (
                 <>
                   <div className="flex items-center gap-2">
-                    <Terminal size={16} className="text-[#00F5FF]" />
+                    <Terminal size={16} className="text-[#4A57FF]" />
                     <h3 className={`text-sm font-semibold ${isDarkMode ? 'text-slate-200' : 'text-slate-800'}`}>Master architectural cross-compilation execution pipelines.</h3>
                   </div>
                   <p className={`text-xs leading-relaxed font-sans max-w-prose ${isDarkMode ? 'text-slate-400' : 'text-slate-650'}`}>For software developers moving down the hardware stack. Uncover how operational instructions synthesize into custom physical layouts, cache topologies, and core vectors.</p>
@@ -527,7 +574,7 @@ export default function LandingPageContainer() {
       {/* FAQ Accordion Section */}
       <AnimatedSection className="relative z-10 max-w-4xl mx-auto px-6 py-16 border-t border-slate-200/60 dark:border-slate-900/60 space-y-8">
         <div className="text-center space-y-2">
-          <span className="text-[10px] font-mono text-[#00F5FF] uppercase tracking-widest block">// SYSTEM FREQUENTLY ASKED QUESTIONS</span>
+          <span className="text-[10px] font-mono text-[#4A57FF] uppercase tracking-widest block">// SYSTEM FREQUENTLY ASKED QUESTIONS</span>
           <h2 className={`font-bold uppercase tracking-tight text-2xl md:text-3xl ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Common Inquiries</h2>
         </div>
         <div className="space-y-4">
@@ -540,7 +587,7 @@ export default function LandingPageContainer() {
                   className={`w-full px-6 py-4 flex items-center justify-between text-left text-sm font-semibold transition-colors font-sans active-press ${isDarkMode ? 'text-slate-200 hover:text-white' : 'text-slate-800 hover:text-black'}`}
                 >
                   <div className="flex items-center gap-3">
-                    <HelpCircle size={16} className="text-[#00F5FF]" />
+                    <HelpCircle size={16} className="text-[#4A57FF]" />
                     <span>{faq.q}</span>
                   </div>
                   {isOpen ? <ChevronUp size={16} className="text-[#8E9AA8]" /> : <ChevronDown size={16} className="text-[#8E9AA8]" />}
@@ -580,7 +627,7 @@ export default function LandingPageContainer() {
               <div key={idx} className="flex flex-col items-center">
                 <div className="flex items-center gap-1">
                   <CheckCircle2 size={12} className="text-[#10B981]" />
-                  <div className="text-lg font-bold text-[#00F5FF] tabular-data">{i.v}</div>
+                  <div className="text-lg font-bold text-[#4A57FF] tabular-data">{i.v}</div>
                 </div>
                 <div className="text-[8px] text-slate-500 dark:text-[#8E9AA8] uppercase tracking-wider">{i.l}</div>
               </div>
@@ -589,7 +636,7 @@ export default function LandingPageContainer() {
 
           <h2 className={`font-bold tracking-tight uppercase leading-[1.1] text-[clamp(1.75rem,4.5vw,3rem)] ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
             Modern hardware design <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00F5FF] to-[#10B981]">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4A57FF] to-[#10B981]">
               requires intuitive tools.
             </span>
           </h2>
@@ -597,7 +644,7 @@ export default function LandingPageContainer() {
             Join thousands of engineering students and developers who use our application workspace. BitforBytes guides you through every layer of the processor stack with free, browser-based environments.
           </p>
           <div className="flex justify-center gap-3 font-mono text-[11px]">
-            <Link to={primaryTo} className="bg-[#00F5FF] text-[#03050a] font-bold px-6 py-3 rounded-lg hover:bg-cyan-400 transition-colors text-center active-press">{primaryLabel}</Link>
+            <Link to={primaryTo} className="bg-[#2E32FF] text-white font-bold px-6 py-3 rounded-lg hover:bg-[#1E22E0] transition-colors text-center active-press">{primaryLabel}</Link>
             <a href={LANDING_ROUTES.social.discord} target="_blank" rel="noopener noreferrer" className={`border px-6 py-3 rounded-lg transition-colors text-center active-press ${isDarkMode ? 'border-slate-800 text-slate-300 bg-slate-900/40 hover:bg-slate-800' : 'border-slate-200 text-slate-700 bg-white hover:bg-slate-100 shadow-sm'}`}>Join Discord Community</a>
           </div>
           <span className="text-[9px] font-mono text-slate-500 dark:text-[#8E9AA8] tracking-wider block uppercase">No Account Required &bull; No CC Needed &bull; Installs: 0</span>
@@ -607,7 +654,7 @@ export default function LandingPageContainer() {
         <footer className={`liquid-glass w-full rounded-2xl p-8 md:p-12 border-t z-10 transition-all duration-500 ${isDarkMode ? 'text-white/50 border-slate-900/60' : 'text-slate-700/60 border-slate-200'}`}>
           <div className="grid grid-cols-1 md:grid-cols-12 gap-8 mb-10 text-left">
             <div className="md:col-span-5 space-y-3">
-              <div className={`text-sm font-bold uppercase font-mono tracking-wider ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Bit<span className="text-[#00F5FF]">for</span>Bytes</div>
+              <BrandWordmark size={26} textClassName={`text-sm ${isDarkMode ? 'text-white' : 'text-slate-900'}`} />
               <p className={`text-xs leading-relaxed font-sans max-w-xs ${isDarkMode ? 'text-[#8E9AA8]' : 'text-slate-650'}`}>
                 Signals become logic. Logic becomes systems. Free, open-access digital design and VLSI education.
               </p>
@@ -617,19 +664,19 @@ export default function LandingPageContainer() {
               <div>
                 <h4 className={`font-semibold mb-3 uppercase text-[11px] ${isDarkMode ? 'text-slate-400' : 'text-slate-800'}`}>// Navigation</h4>
                 <ul className={`space-y-2 ${isDarkMode ? 'text-[#8E9AA8]' : 'text-slate-600'}`}>
-                  <li><a href="#curriculum" className="hover:text-[#00F5FF] transition-colors">&gt;_ Curriculum</a></li>
-                  <li><a href="#playground" className="hover:text-[#00F5FF] transition-colors">&gt;_ Playground</a></li>
-                  <li><a href="#diagnostics" className="hover:text-[#00F5FF] transition-colors">&gt;_ Documentation</a></li>
-                  <li><Link to={LANDING_ROUTES.about} className="hover:text-[#00F5FF] transition-colors">&gt;_ About Us</Link></li>
+                  <li><a href="#curriculum" className="hover:text-[#4A57FF] transition-colors">&gt;_ Curriculum</a></li>
+                  <li><a href="#playground" className="hover:text-[#4A57FF] transition-colors">&gt;_ Playground</a></li>
+                  <li><a href="#diagnostics" className="hover:text-[#4A57FF] transition-colors">&gt;_ Documentation</a></li>
+                  <li><Link to={LANDING_ROUTES.about} className="hover:text-[#4A57FF] transition-colors">&gt;_ About Us</Link></li>
                 </ul>
               </div>
               <div>
                 <h4 className={`font-semibold mb-3 uppercase text-[11px] ${isDarkMode ? 'text-slate-400' : 'text-slate-800'}`}>// Platform</h4>
                 <ul className={`space-y-2 ${isDarkMode ? 'text-[#8E9AA8]' : 'text-slate-600'}`}>
-                  <li><a href={LANDING_ROUTES.github} target="_blank" rel="noopener noreferrer" className="hover:text-[#00F5FF] transition-colors">&gt;_ GitHub Source</a></li>
-                  <li><span className="hover:text-[#00F5FF] transition-colors">&gt;_ Terms of Service</span></li>
-                  <li><span className="hover:text-[#00F5FF] transition-colors">&gt;_ Privacy Policy</span></li>
-                  <li><a href={LANDING_ROUTES.social.email} className="hover:text-[#00F5FF] transition-colors">&gt;_ Contact Email</a></li>
+                  <li><a href={LANDING_ROUTES.github} target="_blank" rel="noopener noreferrer" className="hover:text-[#4A57FF] transition-colors">&gt;_ GitHub Source</a></li>
+                  <li><span className="hover:text-[#4A57FF] transition-colors">&gt;_ Terms of Service</span></li>
+                  <li><span className="hover:text-[#4A57FF] transition-colors">&gt;_ Privacy Policy</span></li>
+                  <li><a href={LANDING_ROUTES.social.email} className="hover:text-[#4A57FF] transition-colors">&gt;_ Contact Email</a></li>
                 </ul>
               </div>
             </div>
