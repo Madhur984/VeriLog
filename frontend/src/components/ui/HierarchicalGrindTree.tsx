@@ -2,6 +2,18 @@ import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useColorScheme } from '../../hooks/useColorScheme';
+import { canOpenModule, moduleIdFromPath } from '../../lib/auth';
+
+/**
+ * Free-allowance lock: visitors without a real login can open any 5 distinct
+ * modules (ModuleGate enforces it). Once the allowance is used, every module
+ * they haven't opened shows as locked here and clicking it routes to /login.
+ */
+const isModuleLocked = (route?: string): boolean => {
+  if (!route) return false;
+  const id = moduleIdFromPath(route);
+  return id ? !canOpenModule(id) : false;
+};
 
 // ─── TYPES ─────────────────────────────────────────────────────────────────────
 type GateType = 'mux' | 'or' | 'and' | 'xor' | 'nand';
@@ -109,6 +121,36 @@ const ROOT_NODES: RootNode[] = [
 const HEX_CHARS = '0123456789ABCDEF01';
 const SCRAMBLE_FRAMES = 8;
 
+// ─── LIGHT-MODE FIGURE COLOR DARKENING ──────────────────────────────────────────
+// Figure colors (node.color tuples, node.glow, sub-node colors) are SHARED by both
+// modes via the data arrays above. To keep dark mode byte-for-byte identical while
+// darkening figures on a white background, light mode looks colors up in this map.
+// Each pale hue maps to a darker/more-saturated variant of the SAME hue.
+const LIGHT_FIGURE_OVERRIDE: Record<string, string> = {
+  // cyan / sky (Signals & Waves)
+  '#22d3ee': '#0E7490', '#38bdf8': '#0369A1', '#0ea5e9': '#0369A1', '#7dd3fc': '#0E7490',
+  '#67e8f9': '#0E7490',
+  // green (Number Systems)
+  '#34d399': '#047857', '#6ee7b7': '#047857', '#10b981': '#065F46', '#059669': '#065F46',
+  '#a7f3d0': '#047857', '#4ade80': '#047857',
+  // sky / blue (Logic Gates)
+  '#60a5fa': '#1D4ED8', '#3b82f6': '#1E40AF', '#2563eb': '#1E40AF', '#bfdbfe': '#1D4ED8',
+  '#dbeafe': '#1D4ED8', '#93c5fd': '#1E40AF',
+  // rose / pink (K-Maps)
+  '#fb7185': '#BE123C', '#f43f5e': '#BE123C', '#e11d48': '#BE185D', '#fda4af': '#BE123C',
+  '#fecdd3': '#BE185D', '#f472b6': '#BE185D',
+  // violet (Verilog)
+  '#c4b5fd': '#6D28D9', '#a78bfa': '#5B21B6', '#8b5cf6': '#5B21B6', '#7c3aed': '#5B21B6',
+  '#ddd6fe': '#6D28D9',
+};
+
+// Returns a darker, high-contrast variant of a figure color for light mode only.
+// Dark mode must pass through `c` unchanged (callers gate on isLight).
+const darkenFigure = (c: string): string => {
+  const key = c.toLowerCase();
+  return LIGHT_FIGURE_OVERRIDE[key] ?? c;
+};
+
 // ─── KINETIC DECODE HOOK ───────────────────────────────────────────────────────
 function useDecodeText(target: string, trigger: boolean) {
   const [display, setDisplay] = useState(target);
@@ -161,18 +203,18 @@ const HudTooltip: React.FC<{ text: string; color: string; visible: boolean; alig
             bottom: 'calc(100% + 10px)',
             [align === 'left' ? 'left' : 'right']: 0,
             width: 210,
-            background: isLight ? 'rgba(255,255,255,0.95)' : 'rgba(5,8,18,0.88)',
+            background: isLight ? 'rgba(255,255,255,0.97)' : 'rgba(5,8,18,0.88)',
             backdropFilter: 'blur(14px)',
             borderRadius: 4,
-            border: isLight ? '1px solid rgba(15,23,42,0.08)' : '1px solid rgba(255,255,255,0.07)',
+            border: isLight ? '1px solid rgba(15,23,42,0.18)' : '1px solid rgba(255,255,255,0.07)',
             borderLeft: `2px solid ${color}`,
             padding: '8px 10px',
           }}
         >
-          <div className="text-[8.5px] font-mono tracking-[0.18em] mb-1.5 uppercase" style={{ color: `${color}bb` }}>
+          <div className="text-[10px] font-mono tracking-[0.18em] mb-1.5 uppercase" style={{ color: isLight ? color : `${color}bb` }}>
             SYS · TELEMETRY
           </div>
-          <div className={`text-[10px] leading-snug font-mono ${isLight ? 'text-slate-800' : 'text-white/80'}`}>
+          <div className={`text-[12px] leading-snug font-mono ${isLight ? 'text-slate-900' : 'text-white/80'}`}>
             {text.slice(0, charIdx)}
             {charIdx < text.length && <span style={{ color }} className="opacity-80 animate-pulse">▌</span>}
           </div>
@@ -187,10 +229,13 @@ const HudTooltip: React.FC<{ text: string; color: string; visible: boolean; alig
 // ─── ANIMATED PATHWAY PULSE ────────────────────────────────────────────────────
 const PathwayPulse: React.FC<{ color: string; vertical?: boolean; length?: number }> = ({
   color, vertical = false, length = 48,
-}) => (
+}) => {
+  const [scheme] = useColorScheme();
+  const isLight = scheme === 'light';
+  return (
   <div className="relative overflow-hidden pointer-events-none"
     style={vertical ? { width: 1, height: length } : { height: 1, width: length }}>
-    <div className="absolute inset-0" style={{ backgroundColor: `${color}28` }} />
+    <div className="absolute inset-0" style={{ backgroundColor: isLight ? `${color}55` : `${color}28` }} />
     <motion.div className="absolute"
       style={vertical
         ? { left: 0, right: 0, height: 16, background: `linear-gradient(to bottom, transparent, ${color}cc, transparent)` }
@@ -198,7 +243,8 @@ const PathwayPulse: React.FC<{ color: string; vertical?: boolean; length?: numbe
       animate={vertical ? { y: [-16, length] } : { x: [-16, length] }}
       transition={{ duration: 1.8, repeat: Infinity, ease: 'linear', repeatDelay: 1.2 }} />
   </div>
-);
+  );
+};
 
 // ─── LOGIC GATE SVG SHAPES ─────────────────────────────────────────────────────
 interface GateProps {
@@ -212,9 +258,11 @@ interface GateProps {
 const AnimatedPin: React.FC<{ x1: number; y1: number; x2: number; y2: number; color: string; delay?: number }> = ({
   x1, y1, x2, y2, color, delay = 0,
 }) => {
+  const [scheme] = useColorScheme();
+  const isLight = scheme === 'light';
   return (
     <>
-      <line x1={x1} y1={y1} x2={x2} y2={y2} stroke={`${color}55`} strokeWidth="1" />
+      <line x1={x1} y1={y1} x2={x2} y2={y2} stroke={isLight ? `${color}99` : `${color}55`} strokeWidth={isLight ? 1.5 : 1} />
       <motion.circle
         r={1.4}
         fill={color}
@@ -225,19 +273,21 @@ const AnimatedPin: React.FC<{ x1: number; y1: number; x2: number; y2: number; co
   );
 };
 
-const LogicGateShape: React.FC<GateProps> = ({ type, accent, isLocked, hovered, icon }) => {
+const LogicGateShape: React.FC<GateProps> = ({ type, accent: accentRaw, isLocked, hovered, icon }) => {
   const [scheme] = useColorScheme();
   const isLight = scheme === 'light';
+  // Light mode darkens the figure accent; dark mode passes through unchanged.
+  const accent = isLight ? darkenFigure(accentRaw) : accentRaw;
   const fill = isLight ? '#FFFFFF' : '#090B10';
-  const stroke = isLocked 
-    ? (isLight ? 'rgba(15,23,42,0.15)' : 'rgba(255,255,255,0.1)') 
-    : `${accent}99`;
+  const stroke = isLocked
+    ? (isLight ? 'rgba(15,23,42,0.28)' : 'rgba(255,255,255,0.1)')
+    : (isLight ? `${accent}cc` : `${accent}99`);
   const strokeDash = isLocked ? '4 3' : undefined;
   const glow = hovered && !isLocked;
 
   const iconEl = (cx: number, cy: number) => (
     <text x={cx} y={cy} textAnchor="middle" dominantBaseline="middle"
-      fontFamily="monospace" fontSize="17" fill={isLocked ? (isLight ? '#94A3B8' : '#334155') : accent}>
+      fontFamily="monospace" fontSize="18" fill={isLocked ? (isLight ? '#475569' : '#334155') : accent}>
       {isLocked ? '🔒' : icon}
     </text>
   );
@@ -246,12 +296,12 @@ const LogicGateShape: React.FC<GateProps> = ({ type, accent, isLocked, hovered, 
     <svg width={80} height={64} viewBox="0 0 80 64"
       style={{ filter: glow ? `drop-shadow(0 0 8px ${accent}99)` : 'none', transition: 'filter 0.3s' }}>
       <motion.polygon points="16,4 64,4 60,60 20,60"
-        fill="transparent" stroke={`${accent}44`} strokeWidth="0.7"
+        fill="transparent" stroke={isLight ? `${accent}77` : `${accent}44`} strokeWidth={isLight ? 1 : 0.7}
         strokeDasharray={strokeDash}
         animate={hovered && !isLocked ? { rotate: 4, opacity: 1 } : { rotate: 0, opacity: 0.5 }}
         style={{ transformOrigin: '40px 32px' }}
         transition={{ duration: 0.8, ease: 'easeInOut' }} />
-      <polygon points="20,9 60,9 56,55 24,55" fill={fill} stroke={stroke} strokeWidth="1.2" />
+      <polygon points="20,9 60,9 56,55 24,55" fill={fill} stroke={stroke} strokeWidth={isLight ? 1.5 : 1.2} />
       {!isLocked && <AnimatedPin x1={40} y1={55} x2={40} y2={62} color={accent} delay={0} />}
       {!isLocked && (
         <>
@@ -261,7 +311,7 @@ const LogicGateShape: React.FC<GateProps> = ({ type, accent, isLocked, hovered, 
       )}
       {!isLocked && <AnimatedPin x1={60} y1={32} x2={76} y2={32} color={accent} delay={0.7} />}
       <text x={40} y={35} textAnchor="middle" fontFamily="monospace"
-        fontSize="8" fill={`${accent}66`} letterSpacing="1">MUX</text>
+        fontSize={isLight ? 9 : 8} fill={isLight ? `${accent}aa` : `${accent}66`} letterSpacing="1">MUX</text>
       {iconEl(40, 22)}
     </svg>
   );
@@ -271,12 +321,12 @@ const LogicGateShape: React.FC<GateProps> = ({ type, accent, isLocked, hovered, 
       style={{ filter: glow ? `drop-shadow(0 0 8px ${accent}99)` : 'none', transition: 'filter 0.3s' }}>
       <motion.path
         d="M 14,5 Q 26,32 14,59 Q 38,50 54,32 Q 38,14 14,5 Z"
-        fill="transparent" stroke={`${accent}44`} strokeWidth="0.7"
+        fill="transparent" stroke={isLight ? `${accent}77` : `${accent}44`} strokeWidth={isLight ? 1 : 0.7}
         animate={hovered && !isLocked ? { scale: 1.08, opacity: 1 } : { scale: 1, opacity: 0.5 }}
         style={{ transformOrigin: '35px 32px' }}
         transition={{ duration: 0.5 }} />
       <path d="M 18,8 Q 30,32 18,56 Q 42,48 58,32 Q 42,16 18,8 Z"
-        fill={fill} stroke={stroke} strokeWidth="1.2" strokeDasharray={strokeDash} />
+        fill={fill} stroke={stroke} strokeWidth={isLight ? 1.5 : 1.2} strokeDasharray={strokeDash} />
       {!isLocked && (
         <>
           <AnimatedPin x1={4} y1={20} x2={21} y2={23} color={accent} delay={0} />
@@ -285,7 +335,7 @@ const LogicGateShape: React.FC<GateProps> = ({ type, accent, isLocked, hovered, 
         </>
       )}
       <text x={40} y={50} textAnchor="middle" fontFamily="monospace"
-        fontSize="7" fill={`${accent}55`} letterSpacing="1">OR</text>
+        fontSize={isLight ? 9 : 7} fill={isLight ? `${accent}aa` : `${accent}55`} letterSpacing="1">OR</text>
       {iconEl(38, 30)}
     </svg>
   );
@@ -294,12 +344,12 @@ const LogicGateShape: React.FC<GateProps> = ({ type, accent, isLocked, hovered, 
     <svg width={80} height={64} viewBox="0 0 80 64"
       style={{ filter: glow ? `drop-shadow(0 0 8px ${accent}99)` : 'none', transition: 'filter 0.3s' }}>
       <motion.path d="M 14,5 L 38,5 Q 62,5 62,32 Q 62,59 38,59 L 14,59 Z"
-        fill="transparent" stroke={`${accent}44`} strokeWidth="0.7"
+        fill="transparent" stroke={isLight ? `${accent}77` : `${accent}44`} strokeWidth={isLight ? 1 : 0.7}
         animate={hovered && !isLocked ? { scale: 1.06, opacity: 1 } : { scale: 1, opacity: 0.5 }}
         style={{ transformOrigin: '38px 32px' }} transition={{ duration: 0.45 }} />
       <path d="M 18,9 L 38,9 Q 58,9 58,32 Q 58,55 38,55 L 18,55 Z"
-        fill={fill} stroke={stroke} strokeWidth="1.2" strokeDasharray={strokeDash} />
-      {!isLocked && <line x1="38" y1="9" x2="38" y2="55" stroke={accent} strokeOpacity="0.08" strokeWidth="0.5" />}
+        fill={fill} stroke={stroke} strokeWidth={isLight ? 1.5 : 1.2} strokeDasharray={strokeDash} />
+      {!isLocked && <line x1="38" y1="9" x2="38" y2="55" stroke={accent} strokeOpacity={isLight ? 0.18 : 0.08} strokeWidth="0.5" />}
       {!isLocked && (
         <>
           <AnimatedPin x1={4} y1={20} x2={18} y2={20} color={accent} delay={0} />
@@ -308,7 +358,7 @@ const LogicGateShape: React.FC<GateProps> = ({ type, accent, isLocked, hovered, 
         </>
       )}
       <text x={38} y={50} textAnchor="middle" fontFamily="monospace"
-        fontSize="7" fill={`${accent}55`} letterSpacing="1">AND</text>
+        fontSize={isLight ? 9 : 7} fill={isLight ? `${accent}aa` : `${accent}55`} letterSpacing="1">AND</text>
       {iconEl(38, 29)}
     </svg>
   );
@@ -317,18 +367,18 @@ const LogicGateShape: React.FC<GateProps> = ({ type, accent, isLocked, hovered, 
     <svg width={80} height={64} viewBox="0 0 80 64"
       style={{ filter: glow ? `drop-shadow(0 0 8px ${accent}99)` : 'none', transition: 'filter 0.3s' }}>
       <motion.path d="M 14,5 Q 26,32 14,59 Q 38,50 54,32 Q 38,14 14,5 Z"
-        fill="transparent" stroke={`${accent}33`} strokeWidth="0.7"
+        fill="transparent" stroke={isLight ? `${accent}66` : `${accent}33`} strokeWidth={isLight ? 1 : 0.7}
         animate={hovered && !isLocked ? { scale: 1.08, opacity: 1 } : { scale: 1, opacity: 0.4 }}
         style={{ transformOrigin: '35px 32px' }} transition={{ duration: 0.5 }} />
       <path d="M 18,8 Q 30,32 18,56 Q 42,48 58,32 Q 42,16 18,8 Z"
-        fill={fill} stroke={stroke} strokeWidth="1.2" strokeDasharray={strokeDash} />
+        fill={fill} stroke={stroke} strokeWidth={isLight ? 1.5 : 1.2} strokeDasharray={strokeDash} />
       {!isLocked ? (
         <motion.path d="M 12,8 Q 24,32 12,56"
-          fill="none" stroke={accent} strokeWidth="1.2" strokeOpacity="0.7"
+          fill="none" stroke={accent} strokeWidth={isLight ? 1.5 : 1.2} strokeOpacity="0.7"
           animate={{ strokeOpacity: hovered ? [0.7, 1, 0.7] : [0.4, 0.7, 0.4] }}
           transition={{ duration: 2, repeat: Infinity }} />
       ) : (
-        <path d="M 12,8 Q 24,32 12,56" fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="1" />
+        <path d="M 12,8 Q 24,32 12,56" fill="none" stroke={isLight ? 'rgba(15,23,42,0.28)' : 'rgba(255,255,255,0.1)'} strokeWidth="1" />
       )}
       {!isLocked && (
         <>
@@ -338,7 +388,7 @@ const LogicGateShape: React.FC<GateProps> = ({ type, accent, isLocked, hovered, 
         </>
       )}
       <text x={40} y={50} textAnchor="middle" fontFamily="monospace"
-        fontSize="7" fill={`${accent}55`} letterSpacing="1">XOR</text>
+        fontSize={isLight ? 9 : 7} fill={isLight ? `${accent}aa` : `${accent}55`} letterSpacing="1">XOR</text>
       {iconEl(38, 30)}
     </svg>
   );
@@ -347,13 +397,13 @@ const LogicGateShape: React.FC<GateProps> = ({ type, accent, isLocked, hovered, 
     <svg width={80} height={64} viewBox="0 0 80 64"
       style={{ filter: glow ? `drop-shadow(0 0 8px ${accent}99)` : 'none', transition: 'filter 0.3s' }}>
       <motion.path d="M 14,5 L 36,5 Q 60,5 60,32 Q 60,59 36,59 L 14,59 Z"
-        fill="transparent" stroke={`${accent}33`} strokeWidth="0.7"
+        fill="transparent" stroke={isLight ? `${accent}66` : `${accent}33`} strokeWidth={isLight ? 1 : 0.7}
         animate={hovered && !isLocked ? { scale: 1.06, opacity: 1 } : { scale: 1, opacity: 0.5 }}
         style={{ transformOrigin: '38px 32px' }} transition={{ duration: 0.45 }} />
       <path d="M 18,9 L 36,9 Q 56,9 56,32 Q 56,55 36,55 L 18,55 Z"
-        fill={fill} stroke={stroke} strokeWidth="1.2" strokeDasharray={strokeDash} />
+        fill={fill} stroke={stroke} strokeWidth={isLight ? 1.5 : 1.2} strokeDasharray={strokeDash} />
       <motion.circle cx={62} cy={32} r={5}
-        fill={fill} stroke={isLocked ? 'rgba(255,255,255,0.1)' : accent} strokeWidth="1.2"
+        fill={fill} stroke={isLocked ? (isLight ? 'rgba(15,23,42,0.28)' : 'rgba(255,255,255,0.1)') : accent} strokeWidth={isLight ? 1.5 : 1.2}
         animate={!isLocked && hovered ? { r: 6 } : { r: 5 }}
         transition={{ duration: 0.3 }} />
       {!isLocked && (
@@ -368,7 +418,7 @@ const LogicGateShape: React.FC<GateProps> = ({ type, accent, isLocked, hovered, 
         </>
       )}
       <text x={37} y={50} textAnchor="middle" fontFamily="monospace"
-        fontSize="7" fill={`${accent}55`} letterSpacing="1">NAND</text>
+        fontSize={isLight ? 9 : 7} fill={isLight ? `${accent}aa` : `${accent}55`} letterSpacing="1">NAND</text>
       {iconEl(37, 29)}
     </svg>
   );
@@ -384,7 +434,8 @@ const RootGem: React.FC<{ node: RootNode; index: number; onClick: () => void }> 
   const isLight = scheme === 'light';
   const isLocked = node.status === 'locked';
   const isDone = node.status === 'done';
-  const accent = node.glow;
+  // Light mode darkens the shared glow accent so rings/progress/badges read on white.
+  const accent = isLight ? darkenFigure(node.glow) : node.glow;
   const [hovered, setHovered] = useState(false);
   const [inView, setInView] = useState(false);
   const displayLabel = useDecodeText(node.label, inView);
@@ -405,9 +456,8 @@ const RootGem: React.FC<{ node: RootNode; index: number; onClick: () => void }> 
       tabIndex={isLocked ? -1 : 0}
       aria-disabled={isLocked}
       aria-label={`${node.level} ${node.label}${isLocked ? ' — locked' : isDone ? ' — completed' : ''}`}
-      onClick={() => { if (!isLocked) onClick(); }}
+      onClick={() => onClick()}
       onKeyDown={(e) => {
-        if (isLocked) return;
         if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(); }
       }}
       onMouseEnter={() => setHovered(true)}
@@ -417,15 +467,15 @@ const RootGem: React.FC<{ node: RootNode; index: number; onClick: () => void }> 
     >
       <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-sm border bg-transparent mb-3"
         style={{
-          borderColor: isLocked 
-            ? (isLight ? 'rgba(15,23,42,0.1)' : 'rgba(255,255,255,0.08)') 
-            : `${accent}44`,
+          borderColor: isLocked
+            ? (isLight ? 'rgba(15,23,42,0.28)' : 'rgba(255,255,255,0.08)')
+            : (isLight ? `${accent}88` : `${accent}44`),
           boxShadow: hovered && !isLocked ? `0 0 8px ${accent}33` : 'none',
           transition: 'box-shadow 0.3s',
         }}>
-        <span className={`text-[8.5px] font-mono tracking-[0.25em] ${isLight ? 'text-[#1D4ED8]' : 'text-white/75'}`}>{node.level}</span>
+        <span className={`text-[10px] font-mono tracking-[0.25em] ${isLight ? 'text-[#1D4ED8]' : 'text-white/75'}`}>{node.level}</span>
         <motion.span className="w-1 h-1 rounded-full"
-          style={{ backgroundColor: isLocked ? (isLight ? 'rgba(15,23,42,0.2)' : 'rgba(255,255,255,0.15)') : accent }}
+          style={{ backgroundColor: isLocked ? (isLight ? 'rgba(15,23,42,0.35)' : 'rgba(255,255,255,0.15)') : accent }}
           animate={!isLocked ? { opacity: [0.5, 1, 0.5] } : {}}
           transition={{ duration: 2, repeat: Infinity }} />
       </div>
@@ -444,28 +494,39 @@ const RootGem: React.FC<{ node: RootNode; index: number; onClick: () => void }> 
               style={{ borderColor: accent }}
               initial={{ scale: 0 }} animate={{ scale: 1 }}
               transition={{ delay: index * 0.07 + 0.4, type: 'spring', stiffness: 300 }}>
-              <span className="text-[8px] font-mono" style={{ color: accent }}>✓</span>
+              <span className="text-[10px] font-mono" style={{ color: accent }}>✓</span>
             </motion.div>
+          )}
+
+          {isLocked && (
+            <div className={`absolute -top-1 -right-1 rounded-sm border p-1 ${isLight ? 'bg-white' : 'bg-[#070810]'}`}
+              style={{ borderColor: isLight ? '#94A3B8' : 'rgba(255,255,255,0.25)' }}
+              title="Sign in to unlock">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={isLight ? '#475569' : '#94a3b8'} strokeWidth="3" strokeLinecap="round">
+                <rect x="5" y="11" width="14" height="9" rx="2" />
+                <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+              </svg>
+            </div>
           )}
         </motion.div>
       </div>
 
-      <div className="mt-2 w-full text-center text-[10px] sm:text-[11px] font-semibold leading-tight tracking-wide font-mono px-0.5"
-        style={{ 
-          color: isLocked 
-            ? (isLight ? '#94A3B8' : '#475569') 
-            : (isLight ? '#1E293B' : '#E5E7EB'), 
-          maxWidth: '100%', 
-          minHeight: 28 
+      <div className="mt-2 w-full text-center text-[12px] sm:text-[13px] font-semibold leading-tight tracking-wide font-mono px-0.5"
+        style={{
+          color: isLocked
+            ? (isLight ? '#475569' : '#475569')
+            : (isLight ? '#0F172A' : '#E5E7EB'),
+          maxWidth: '100%',
+          minHeight: 28
         }}
       >
         {displayLabel}
       </div>
 
-      <div className="mt-1 w-full text-[7px] font-mono tracking-[0.1em] text-center truncate"
+      <div className="mt-1 w-full text-[9px] font-mono tracking-[0.1em] text-center truncate"
         style={{
           color: isLocked
-            ? (isLight ? '#475569' : '#334155')
+            ? (isLight ? '#334155' : '#334155')
             : (isLight ? '#1D4ED8' : `${accent}aa`),
           maxWidth: '100%'
         }}
@@ -475,13 +536,13 @@ const RootGem: React.FC<{ node: RootNode; index: number; onClick: () => void }> 
 
       {!isLocked && (
         <div className="mt-2 w-full max-w-[96px]">
-          <div className="relative h-[3px] rounded-full overflow-hidden" style={{ backgroundColor: `${accent}22` }}>
+          <div className="relative h-[4px] rounded-full overflow-hidden" style={{ backgroundColor: isLight ? `${accent}33` : `${accent}22` }}>
             <motion.div className="absolute left-0 top-0 h-full rounded-full"
               style={{ backgroundColor: accent, boxShadow: `0 0 6px ${accent}` }}
               initial={{ width: 0 }} animate={{ width: `${node.pct}%` }}
               transition={{ duration: 0.9, delay: index * 0.08 + 0.3, ease: 'easeOut' }} />
           </div>
-          <div className="mt-0.5 text-[8px] font-mono tabular-nums text-right"
+          <div className="mt-0.5 text-[10px] font-mono tabular-nums text-right"
             style={{ color: isLight ? '#1D4ED8' : `${accent}88` }}>{node.pct}%</div>
         </div>
       )}
@@ -704,7 +765,8 @@ const L6PathDropdown: React.FC<{ onPick: (route: string) => void }> = ({ onPick 
     return () => document.removeEventListener('mousedown', onDoc);
   }, []);
 
-  const accent = pathSel.color;
+  // Light mode darkens the shared path color so figures read on white.
+  const accent = isLight ? darkenFigure(pathSel.color) : pathSel.color;
 
   return (
     <div className="w-full max-w-[760px] flex flex-col items-stretch gap-5">
@@ -713,10 +775,10 @@ const L6PathDropdown: React.FC<{ onPick: (route: string) => void }> = ({ onPick 
           type="button"
           onClick={() => setPathOpen(o => !o)}
           className={`w-full flex items-center justify-between px-4 py-3 rounded-sm border outline-none transition-all ${
-            isLight ? "bg-white border-slate-300 shadow-sm" : "bg-[#070810] border-white/10"
+            isLight ? "bg-white border-slate-400 shadow-sm" : "bg-[#070810] border-white/10"
           }`}
           style={{
-            borderColor: pathOpen ? accent : (isLight ? '#CBD5E1' : `${accent}55`),
+            borderColor: pathOpen ? accent : (isLight ? '#94A3B8' : `${accent}55`),
             boxShadow: pathOpen ? `0 0 14px ${accent}33` : 'none',
           }}
         >
@@ -725,14 +787,14 @@ const L6PathDropdown: React.FC<{ onPick: (route: string) => void }> = ({ onPick 
               style={{ backgroundColor: accent, boxShadow: `0 0 6px ${accent}` }}
               animate={{ opacity: [0.5, 1, 0.5] }} transition={{ duration: 2, repeat: Infinity }} />
             <div>
-              <div className={`text-[12px] font-mono font-semibold ${isLight ? 'text-[#0F172A]' : 'text-white/90'}`}>{pathSel.label}</div>
-              <div className="text-[8.5px] font-mono tracking-[0.22em] uppercase" style={{ color: isLight ? '#475569' : `${accent}aa` }}>
+              <div className={`text-[14px] font-mono font-semibold ${isLight ? 'text-[#0F172A]' : 'text-white/90'}`}>{pathSel.label}</div>
+              <div className="text-[10px] font-mono tracking-[0.22em] uppercase" style={{ color: isLight ? '#334155' : `${accent}aa` }}>
                 {pathSel.subtitle} · {pathSel.modules.length} modules
               </div>
             </div>
           </div>
           <motion.span animate={{ rotate: pathOpen ? 180 : 0 }} transition={{ duration: 0.2 }}
-            className="text-[10px] font-mono" style={{ color: accent }}>▾</motion.span>
+            className="text-[12px] font-mono" style={{ color: accent }}>▾</motion.span>
         </button>
 
         <AnimatePresence>
@@ -743,12 +805,13 @@ const L6PathDropdown: React.FC<{ onPick: (route: string) => void }> = ({ onPick 
               exit={{ opacity: 0, y: -4 }}
               transition={{ duration: 0.16 }}
               className={`absolute left-0 right-0 mt-2 rounded-sm border backdrop-blur-md overflow-hidden z-40 ${
-                isLight ? "bg-white border-slate-300 shadow-lg" : "bg-[#070810]/97 border-white/8"
+                isLight ? "bg-white border-slate-400 shadow-lg" : "bg-[#070810]/97 border-white/8"
               }`}
-              style={{ borderColor: isLight ? '#CBD5E1' : 'rgba(255,255,255,0.08)' }}
+              style={{ borderColor: isLight ? '#94A3B8' : 'rgba(255,255,255,0.08)' }}
             >
               {L6_PATHS.map(opt => {
                 const isActive = opt.id === pathSel.id;
+                const optColor = isLight ? darkenFigure(opt.color) : opt.color;
                 return (
                   <li key={opt.id}>
                     <button type="button"
@@ -757,17 +820,17 @@ const L6PathDropdown: React.FC<{ onPick: (route: string) => void }> = ({ onPick 
                         isLight ? 'hover:bg-slate-50' : 'hover:bg-white/[0.04]'
                       }`}
                       style={{
-                        backgroundColor: isActive ? `${opt.color}14` : 'transparent',
-                        borderLeft: `2px solid ${isActive ? opt.color : 'transparent'}`,
+                        backgroundColor: isActive ? (isLight ? `${optColor}22` : `${opt.color}14`) : 'transparent',
+                        borderLeft: `2px solid ${isActive ? optColor : 'transparent'}`,
                       }}>
-                      <span className="w-1 h-1 rounded-full" style={{ backgroundColor: opt.color, boxShadow: `0 0 5px ${opt.color}` }} />
+                      <span className="w-1 h-1 rounded-full" style={{ backgroundColor: optColor, boxShadow: `0 0 5px ${optColor}` }} />
                       <div className="flex-1">
-                        <div className={`text-[12px] font-mono font-semibold ${isLight ? 'text-[#0F172A]' : 'text-white/90'}`}>{opt.label}</div>
-                        <div className="text-[8.5px] font-mono tracking-[0.22em] uppercase" style={{ color: isLight ? '#475569' : `${opt.color}aa` }}>
+                        <div className={`text-[14px] font-mono font-semibold ${isLight ? 'text-[#0F172A]' : 'text-white/90'}`}>{opt.label}</div>
+                        <div className="text-[10px] font-mono tracking-[0.22em] uppercase" style={{ color: isLight ? '#334155' : `${opt.color}aa` }}>
                           {opt.subtitle} · {opt.modules.length} modules
                         </div>
                       </div>
-                      {isActive && <span className="text-[10px] font-mono" style={{ color: opt.color }}>●</span>}
+                      {isActive && <span className="text-[12px] font-mono" style={{ color: optColor }}>●</span>}
                     </button>
                   </li>
                 );
@@ -780,6 +843,7 @@ const L6PathDropdown: React.FC<{ onPick: (route: string) => void }> = ({ onPick 
       <ul className="w-full flex flex-col gap-3">
         {pathSel.modules.map((mod, idx) => {
           const isOpen = expandedId === mod.id;
+          const locked = isModuleLocked(mod.submodules[0]?.route ?? mod.route);
           return (
             <motion.li key={mod.id}
               initial={{ opacity: 0, y: 6 }}
@@ -787,9 +851,9 @@ const L6PathDropdown: React.FC<{ onPick: (route: string) => void }> = ({ onPick 
               transition={{ delay: idx * 0.05, duration: 0.25 }}
               className="rounded-md border overflow-hidden"
               style={{
-                borderColor: isOpen ? (isLight ? accent : `${accent}66`) : (isLight ? '#CBD5E1' : 'rgba(255,255,255,0.08)'),
+                borderColor: isOpen ? (isLight ? accent : `${accent}66`) : (isLight ? '#94A3B8' : 'rgba(255,255,255,0.08)'),
                 backgroundColor: isLight ? '#FFFFFF' : 'rgba(6,7,12,0.72)',
-                boxShadow: isOpen ? `0 0 18px ${accent}1f` : (isLight ? '0 1px 3px rgba(15,23,42,0.08)' : 'none'),
+                boxShadow: isOpen ? `0 0 18px ${accent}1f` : (isLight ? '0 1px 3px rgba(15,23,42,0.16)' : 'none'),
                 transition: 'border-color 0.2s, box-shadow 0.2s',
               }}>
               <button type="button"
@@ -797,33 +861,44 @@ const L6PathDropdown: React.FC<{ onPick: (route: string) => void }> = ({ onPick 
                 className={`w-full flex items-center gap-4 px-4 py-3.5 text-left transition-colors ${
                   isLight ? 'hover:bg-slate-50' : 'hover:bg-white/[0.02]'
                 }`}>
-                <div className="flex-shrink-0 w-9 h-9 rounded-md flex items-center justify-center font-mono font-bold text-[14px]"
+                <div className="flex-shrink-0 w-9 h-9 rounded-md flex items-center justify-center font-mono font-bold text-[15px]"
                   style={{
-                    backgroundColor: `${accent}1a`,
-                    border: `1px solid ${accent}33`,
+                    backgroundColor: isLight ? `${accent}26` : `${accent}1a`,
+                    border: isLight ? `1px solid ${accent}66` : `1px solid ${accent}33`,
                     color: accent,
                   }}>
                   {idx + 1}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className={`text-[14px] font-semibold truncate ${isLight ? 'text-[#0F172A]' : 'text-white/95'}`}>{mod.label}</div>
-                  <div className="text-[9px] font-mono tracking-[0.2em] uppercase mt-0.5" style={{ color: isLight ? '#1D4ED8' : `${accent}aa` }}>
+                  <div className={`text-[15px] font-semibold truncate ${isLight ? 'text-[#0F172A]' : 'text-white/95'}`}>{mod.label}</div>
+                  <div className="text-[11px] font-mono tracking-[0.2em] uppercase mt-0.5" style={{ color: isLight ? '#1D4ED8' : `${accent}aa` }}>
                     {mod.subtitle}
                   </div>
                 </div>
                 <div className="flex items-center gap-3 flex-shrink-0">
-                  <span className={`text-[11px] font-mono ${isLight ? 'text-slate-600' : 'text-white/70'}`}>
-                    {mod.submodules.length} Topics
-                  </span>
+                  {locked ? (
+                    <span className="inline-flex items-center gap-1.5 text-[12px] font-mono font-bold tracking-wider"
+                      style={{ color: isLight ? '#B45309' : '#fbbf24' }}>
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
+                        <rect x="5" y="11" width="14" height="9" rx="2" />
+                        <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+                      </svg>
+                      LOCKED
+                    </span>
+                  ) : (
+                    <span className={`text-[13px] font-mono ${isLight ? 'text-slate-700' : 'text-white/70'}`}>
+                      {mod.submodules.length} Topics
+                    </span>
+                  )}
                   <motion.div
                     animate={{ rotate: isOpen ? 180 : 0 }}
                     transition={{ duration: 0.2 }}
                     className="w-7 h-7 rounded-full flex items-center justify-center"
                     style={{
-                      backgroundColor: isLight ? 'rgba(15,23,42,0.04)' : 'rgba(255,255,255,0.04)',
-                      border: isLight ? '1px solid rgba(15,23,42,0.12)' : '1px solid rgba(255,255,255,0.08)',
+                      backgroundColor: isLight ? 'rgba(15,23,42,0.08)' : 'rgba(255,255,255,0.04)',
+                      border: isLight ? '1px solid rgba(15,23,42,0.24)' : '1px solid rgba(255,255,255,0.08)',
                     }}>
-                    <span className={`text-[10px] ${isLight ? 'text-slate-600' : 'text-white/60'}`}>▾</span>
+                    <span className={`text-[12px] ${isLight ? 'text-slate-700' : 'text-white/60'}`}>▾</span>
                   </motion.div>
                 </div>
               </button>
@@ -835,7 +910,7 @@ const L6PathDropdown: React.FC<{ onPick: (route: string) => void }> = ({ onPick 
                     exit={{ height: 0, opacity: 0 }}
                     transition={{ duration: 0.22, ease: 'easeInOut' }}
                     className="overflow-hidden"
-                    style={{ borderTop: isLight ? '1px solid rgba(15,23,42,0.12)' : `1px solid ${accent}22` }}>
+                    style={{ borderTop: isLight ? '1px solid rgba(15,23,42,0.24)' : `1px solid ${accent}22` }}>
                     <ul className="flex flex-col">
                       {mod.submodules.map((sub, i) => (
                         <li key={sub.id}>
@@ -847,11 +922,11 @@ const L6PathDropdown: React.FC<{ onPick: (route: string) => void }> = ({ onPick 
                             style={{ borderLeftColor: 'transparent' }}
                             onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.borderLeftColor = accent; }}
                             onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.borderLeftColor = 'transparent'; }}>
-                            <span className="flex-shrink-0 w-9 text-center text-[10px] font-mono tabular-nums" style={{ color: isLight ? '#475569' : `${accent}88` }}>
+                            <span className="flex-shrink-0 w-9 text-center text-[12px] font-mono tabular-nums" style={{ color: isLight ? '#334155' : `${accent}88` }}>
                               {idx + 1}.{String(i + 1).padStart(2, '0')}
                             </span>
-                            <span className={`flex-1 text-[12.5px] ${isLight ? 'text-slate-700' : 'text-white/80'}`}>{sub.label}</span>
-                            <span className="text-[11px] font-mono" style={{ color: isLight ? '#1D4ED8' : `${accent}aa` }}>→</span>
+                            <span className={`flex-1 text-[14px] ${isLight ? 'text-slate-800' : 'text-white/80'}`}>{sub.label}</span>
+                            <span className="text-[13px] font-mono" style={{ color: isLight ? '#1D4ED8' : `${accent}aa` }}>→</span>
                           </button>
                         </li>
                       ))}
@@ -879,34 +954,44 @@ export const HierarchicalGrindTree: React.FC = () => {
       }`}>
         <div className="w-full max-w-[900px] flex flex-col items-center">
           <div className="flex items-center justify-between w-full mb-5 px-1">
-            <div className={`flex items-center gap-2 text-[10px] font-mono tracking-[0.2em] ${isLight ? 'text-slate-600' : 'text-white/75'}`}>
-              <motion.span className="w-1 h-1 rounded-full bg-cyan-400/70"
+            <div className={`flex items-center gap-2 text-[12px] font-mono tracking-[0.2em] ${isLight ? 'text-slate-700' : 'text-white/75'}`}>
+              <motion.span className={`w-1 h-1 rounded-full ${isLight ? 'bg-cyan-700' : 'bg-cyan-400/70'}`}
                 animate={{ opacity: [0.4, 1, 0.4] }} transition={{ duration: 2, repeat: Infinity }} />
               Foundation Framework
             </div>
-            <div className={`text-[9px] font-mono tracking-[0.2em] ${isLight ? 'text-slate-600' : 'text-white/60'}`}>L1 - L5 · 5 modules</div>
+            <div className={`text-[11px] font-mono tracking-[0.2em] ${isLight ? 'text-slate-700' : 'text-white/60'}`}>L1 - L5 · 5 modules</div>
           </div>
           <div className="relative w-full">
             <div className="absolute left-[8%] right-[8%] pointer-events-none hidden lg:block" style={{ top: 56 }}>
-              <PathwayPulse color="#22d3ee" length={800} />
+              <PathwayPulse color={isLight ? '#0E7490' : '#22d3ee'} length={800} />
             </div>
             <div className="flex items-start justify-center gap-x-1.5 gap-y-3 lg:gap-4 w-full flex-wrap lg:flex-nowrap relative">
-              {ROOT_NODES.map((node, idx) => (
-                <RootGem key={node.id} node={node} index={idx}
-                  onClick={() => { if (node.route && node.status !== 'locked') navigate(node.route); }} />
-              ))}
+              {ROOT_NODES.map((node, idx) => {
+                const freeLocked = node.status !== 'locked' && isModuleLocked(node.route);
+                const effNode = freeLocked ? { ...node, status: 'locked' as RootNode['status'] } : node;
+                return (
+                  <RootGem key={node.id} node={effNode} index={idx}
+                    onClick={() => {
+                      if (freeLocked) { navigate('/login', { state: { from: node.route } }); return; }
+                      if (node.route && node.status !== 'locked') navigate(node.route);
+                    }} />
+                );
+              })}
             </div>
           </div>
         </div>
       </div>
 
       <div className="flex-1 w-full px-4 lg:px-6 pt-10 pb-12 flex flex-col items-center relative z-10 overflow-x-hidden overflow-y-auto scrollbar-hide">
-        <div className={`flex items-center gap-2 text-[10px] font-mono tracking-[0.2em] ${isLight ? 'text-slate-600' : 'text-white/75'} mb-4`}>
-          <motion.span className="w-1 h-1 rounded-full bg-cyan-400/70"
+        <div className={`flex items-center gap-2 text-[12px] font-mono tracking-[0.2em] ${isLight ? 'text-slate-700' : 'text-white/75'} mb-4`}>
+          <motion.span className={`w-1 h-1 rounded-full ${isLight ? 'bg-cyan-700' : 'bg-cyan-400/70'}`}
             animate={{ opacity: [0.4, 1, 0.4] }} transition={{ duration: 2, repeat: Infinity }} />
           Choose your path
         </div>
-        <L6PathDropdown onPick={(route) => navigate(route)} />
+        <L6PathDropdown onPick={(route) => {
+          if (isModuleLocked(route)) { navigate('/login', { state: { from: route } }); return; }
+          navigate(route);
+        }} />
       </div>
     </div>
   );

@@ -1,16 +1,17 @@
 import React, { useEffect, useMemo } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { moduleIdFromPath, canOpenModule, recordModuleVisit } from '../lib/auth';
+import { recordModuleHistory } from '../lib/moduleHistory';
 
 /**
  * Gate for course-module routes.
  *
  *  - A real Supabase login  => unlimited modules.
- *  - A guest / anonymous visitor => the first FREE_MODULE_LIMIT (5) DISTINCT
- *    modules are free. Opening a 6th new module redirects to /login (the
- *    original target is remembered in state.from so the user returns there
- *    after signing in). Re-opening an already-visited module never re-triggers
- *    the gate, and chapter sub-routes (e.g. /dsd/1/cover) count as one module.
+ *  - A guest / anonymous visitor => only the five free foundation modules
+ *    (FREE_MODULE_IDS: module/1..5). Opening any other module redirects to
+ *    /login (the original target is remembered in state.from so the user
+ *    returns there after signing in). Chapter sub-routes (e.g. /dsd/1/cover)
+ *    count as one module.
  *
  * Mirrors RequireAuth's redirect pattern, but keyed on the module-visit count
  * rather than mere presence of a session.
@@ -25,10 +26,14 @@ export const ModuleGate: React.FC<{ children?: React.ReactNode }> = ({ children 
         [moduleId],
     );
 
-    // Count the visit only after we've decided to allow it.
+    // Count the visit only after we've decided to allow it, and record the
+    // exact page so the profile can offer "continue where you left off".
     useEffect(() => {
-        if (moduleId && allowed) recordModuleVisit(moduleId);
-    }, [moduleId, allowed]);
+        if (moduleId && allowed) {
+            recordModuleVisit(moduleId);
+            recordModuleHistory(location.pathname);
+        }
+    }, [moduleId, allowed, location.pathname]);
 
     if (moduleId && !allowed) {
         return (

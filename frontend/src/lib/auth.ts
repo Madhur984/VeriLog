@@ -26,6 +26,14 @@ const MODULE_VISITS_KEY = 'module_visits';
 /** How many distinct modules a non-logged-in (guest/anon) visitor may open. */
 export const FREE_MODULE_LIMIT = 5;
 
+/**
+ * The five foundation modules (the portal's top L1-L5 row: Signals & Waves,
+ * Number Systems, Logic Gates, K-Maps, Verilog Core) are open without a real
+ * login. Everything else (Basic Electronics, DSD paths, Advanced Verilog)
+ * requires signing in.
+ */
+export const FREE_MODULE_IDS = ['module/1', 'module/2', 'module/3', 'module/4', 'module/5'] as const;
+
 export type SessionKind = 'supabase' | 'guest' | 'none';
 
 export interface SessionInfo {
@@ -131,13 +139,13 @@ export function getVisitedModules(): string[] {
 /**
  * May this visitor open `moduleId` right now?
  *  - Real Supabase session => always (unlimited).
- *  - Guest/anon => yes if already opened, or if a free slot remains (< limit).
+ *  - Guest/anon => only the five free foundation modules (FREE_MODULE_IDS);
+ *    every other module (Basic Electronics, DSD, Advanced Verilog) is locked
+ *    until they sign in.
  */
 export function canOpenModule(moduleId: string): boolean {
     if (getSession().kind === 'supabase') return true;
-    const visited = getVisitedModules();
-    if (visited.includes(moduleId)) return true;
-    return visited.length < FREE_MODULE_LIMIT;
+    return (FREE_MODULE_IDS as readonly string[]).includes(moduleId);
 }
 
 /** Record an opened module (no-op for real logins / already-recorded modules). */

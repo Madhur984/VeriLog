@@ -1,15 +1,30 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
-import { startGuestSession } from '../lib/auth';
-import { ArrowRight, CheckCircle2, Loader2, UserCircle2, Eye, EyeOff } from 'lucide-react';
+import { startGuestSession, isAuthenticated } from '../lib/auth';
+import { ArrowRight, CheckCircle2, Loader2, UserCircle2, Eye, EyeOff, HelpCircle } from 'lucide-react';
 import { useGamificationStore } from '../stores/gamificationStore';
-import { BrandWordmark } from '../components/Brand';
+import { BrandMark } from '../components/Brand';
+import { ThemeToggle } from '../components/ThemeToggle';
 import './AuthWorkstation.css';
 
 type AuthMode = 'SIGN_IN' | 'REGISTER' | 'RECOVER';
 
+// Rotating value props shown under the headline (sign-in / register).
+const TAGLINES = [
+  'From logic gates to a working CPU.',
+  'Write your first real Verilog.',
+  '90+ interactive labs, zero installs.',
+  'Learn by building, not memorizing.',
+];
+
+/**
+ * Clean, centered auth screen modelled on brilliant.org/welcome — a single
+ * column on a plain surface that adapts to light or dark mode via `dark:`
+ * variants. All Supabase sign-in / sign-up / recovery / OAuth / guest logic is
+ * preserved; only the visual shell is minimal now.
+ */
 export const AuthWorkstation: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -23,37 +38,51 @@ export const AuthWorkstation: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [fullName, setFullName] = useState('');
   const [guestName, setGuestName] = useState('');
+  const [showGuest, setShowGuest] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [loadingStep, setLoadingStep] = useState<number>(0);
   const [authSuccess, setAuthSuccess] = useState(false);
-  const cardRef = useRef<HTMLDivElement>(null);
+  const [tagIdx, setTagIdx] = useState(0);
 
-  // Dynamic transition states for tilt engine
-  const [transitionState, setTransitionState] = useState<'idle' | 'tilting' | 'resetting'>('idle');
-  const [isGyroActive, setIsGyroActive] = useState(false);
-  const resetTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const emailValid = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email);
+
+  // Already signed in (real or guest)? The login screen isn't for you — go where
+  // you were headed (state.from), or your profile by default.
+  useEffect(() => {
+    if (isAuthenticated()) {
+      const from = (location.state as { from?: string } | null)?.from;
+      navigate(from || '/profile', { replace: true });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Cycle the rotating tagline.
+  useEffect(() => {
+    const t = setInterval(() => setTagIdx((i) => (i + 1) % TAGLINES.length), 2800);
+    return () => clearInterval(t);
+  }, []);
 
   const guestNameTrimmed = guestName.trim();
   const isGuestNameValid = guestNameTrimmed.length >= 2 && guestNameTrimmed.length <= 32;
 
-  // Clean, dynamic terminal verification logs based on mode
+  // Terminal verification logs based on mode.
   const getLogsForMode = () => {
     if (mode === 'RECOVER') {
       return [
-        "Secure connection established.",
-        "Initiating password recovery protocol...",
-        "Generating secure password reset token...",
-        "Sending recovery link to email...",
-        "Recovery request dispatched."
+        'Secure connection established.',
+        'Initiating password recovery protocol...',
+        'Generating secure password reset token...',
+        'Sending recovery link to email...',
+        'Recovery request dispatched.',
       ];
     }
     return [
-      "Secure connection established.",
-      "Verifying your credentials...",
-      "Loading your personalized dashboard...",
-      "Syncing curriculum progress...",
-      "Workspace ready."
+      'Secure connection established.',
+      'Verifying your credentials...',
+      'Loading your personalized dashboard...',
+      'Syncing curriculum progress...',
+      'Workspace ready.',
     ];
   };
 
@@ -78,202 +107,25 @@ export const AuthWorkstation: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading, mode]);
 
-  // ── Particle Canvas Background Animation ──
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const mouseRef = useRef({ x: 0, y: 0, active: false });
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    let animationId: number;
-    let particles: Array<{
-      x: number;
-      y: number;
-      vx: number;
-      vy: number;
-      radius: number;
-    }> = [];
-
-    const resizeCanvas = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      initParticles();
-    };
-
-    const initParticles = () => {
-      particles = [];
-      const particleCount = Math.min(75, Math.floor((canvas.width * canvas.height) / 16000));
-      for (let i = 0; i < particleCount; i++) {
-        particles.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
-          vx: (Math.random() - 0.5) * 0.3,
-          vy: (Math.random() - 0.5) * 0.3,
-          radius: Math.random() * 1.5 + 0.8,
-        });
-      }
-    };
-
-    const draw = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
-      // Update and draw particles
-      particles.forEach((p) => {
-        p.x += p.vx;
-        p.y += p.vy;
-
-        // Bounce on boundaries
-        if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
-        if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
-
-        // Pull toward mouse if active
-        if (mouseRef.current.active) {
-          const dx = mouseRef.current.x - p.x;
-          const dy = mouseRef.current.y - p.y;
-          const dist = Math.hypot(dx, dy);
-          if (dist < 200) {
-            const force = (200 - dist) / 200;
-            p.x += (dx / dist) * force * 0.35;
-            p.y += (dy / dist) * force * 0.35;
-          }
-        }
-
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(74, 87, 255, 0.2)';
-        ctx.fill();
-      });
-
-      // Draw lines between close particles
-      for (let i = 0; i < particles.length; i++) {
-        for (let j = i + 1; j < particles.length; j++) {
-          const p1 = particles[i];
-          const p2 = particles[j];
-          const dx = p1.x - p2.x;
-          const dy = p1.y - p2.y;
-          const dist = Math.hypot(dx, dy);
-
-          if (dist < 115) {
-            ctx.beginPath();
-            ctx.moveTo(p1.x, p1.y);
-            ctx.lineTo(p2.x, p2.y);
-            const alpha = (1 - dist / 115) * 0.07;
-            ctx.strokeStyle = `rgba(74, 87, 255, ${alpha})`;
-            ctx.lineWidth = 0.75;
-            ctx.stroke();
-          }
-        }
-      }
-
-      // Draw faint lines to cursor if close
-      if (mouseRef.current.active) {
-        particles.forEach((p) => {
-          const dx = mouseRef.current.x - p.x;
-          const dy = mouseRef.current.y - p.y;
-          const dist = Math.hypot(dx, dy);
-          if (dist < 160) {
-            ctx.beginPath();
-            ctx.moveTo(mouseRef.current.x, mouseRef.current.y);
-            ctx.lineTo(p.x, p.y);
-            const alpha = (1 - dist / 160) * 0.1;
-            ctx.strokeStyle = `rgba(74, 87, 255, ${alpha})`;
-            ctx.lineWidth = 0.75;
-            ctx.stroke();
-          }
-        });
-      }
-
-      animationId = requestAnimationFrame(draw);
-    };
-
-    const handleMouseMoveGlobal = (e: MouseEvent) => {
-      mouseRef.current.x = e.clientX;
-      mouseRef.current.y = e.clientY;
-      mouseRef.current.active = true;
-    };
-
-    const handleMouseLeaveGlobal = () => {
-      mouseRef.current.active = false;
-    };
-
-    window.addEventListener('resize', resizeCanvas);
-    window.addEventListener('mousemove', handleMouseMoveGlobal);
-    document.addEventListener('mouseleave', handleMouseLeaveGlobal);
-
-    resizeCanvas();
-    draw();
-
-    return () => {
-      cancelAnimationFrame(animationId);
-      window.removeEventListener('resize', resizeCanvas);
-      window.removeEventListener('mousemove', handleMouseMoveGlobal);
-      document.removeEventListener('mouseleave', handleMouseLeaveGlobal);
-    };
-  }, []);
-
-  // ── Touch / Gyroscope Parallax Fallback ──
-  useEffect(() => {
-    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-    if (!isTouchDevice) return;
-
-    const handleOrientation = (e: DeviceOrientationEvent) => {
-      if (transitionState === 'tilting') return;
-      if (!cardRef.current) return;
-
-      const beta = e.beta;
-      const gamma = e.gamma;
-      if (beta === null || gamma === null) return;
-
-      // Check if gyroscope values are actively firing and changing
-      if (Math.abs(beta) > 0.1 || Math.abs(gamma) > 0.1) {
-        setIsGyroActive(true);
-      }
-
-      // Constrain tilt based on a natural 45-degree hand angle
-      const rotateX = (Math.max(-25, Math.min(25, beta - 45)) * -0.25).toFixed(2);
-      const rotateY = (Math.max(-25, Math.min(25, gamma)) * 0.25).toFixed(2);
-
-      cardRef.current.style.transform =
-        `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.005, 1.005, 1.005)`;
-    };
-
-    window.addEventListener('deviceorientation', handleOrientation);
-    return () => {
-      window.removeEventListener('deviceorientation', handleOrientation);
-    };
-  }, [transitionState]);
-
   // ── Password Strength calculation ──
   const calculatePasswordStrength = (pwd: string) => {
     let score = 0;
-    if (!pwd) return { score, label: 'Empty', color: '#64748b' };
-    
+    if (!pwd) return { score, label: 'Empty', color: '#94a3b8' };
     if (pwd.length >= 8) score++;
     if (/[a-z]/.test(pwd)) score++;
     if (/[A-Z]/.test(pwd)) score++;
     if (/[0-9]/.test(pwd) || /[^A-Za-z0-9]/.test(pwd)) score++;
 
     let label = 'Weak';
-    let color = '#FF5F1F'; // Orange
-    if (score === 3) {
-      label = 'Medium';
-      color = '#FBBC05'; // Yellow
-    } else if (score === 4) {
-      label = 'Secure';
-      color = '#10B981'; // Green
-    }
-
+    let color = '#F97316';
+    if (score === 3) { label = 'Medium'; color = '#F59E0B'; }
+    else if (score === 4) { label = 'Strong'; color = '#10B981'; }
     return { score, label, color };
   };
 
   const { score: strengthScore, label: strengthLabel, color: strengthColor } = calculatePasswordStrength(password);
 
   // ── Auth handlers (real Supabase integration) ──
-
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -286,9 +138,7 @@ export const AuthWorkstation: React.FC = () => {
           redirectTo: `${siteUrl}/reset-password`,
         });
         if (resetError) throw resetError;
-
-        setAuthSuccess(false); // Keeps display showing the custom check-email message
-        // Steps run automatically through useEffect step generator
+        setAuthSuccess(false);
       } else if (mode === 'REGISTER') {
         if (fullName.length < 3) {
           setError('Name must be at least 3 characters.');
@@ -299,12 +149,7 @@ export const AuthWorkstation: React.FC = () => {
         const { data, error: signUpError } = await supabase.auth.signUp({
           email,
           password,
-          options: {
-            data: { full_name: fullName },
-            // Land verified users straight in the portal — session-sync
-            // (lib/sessionSync) writes the token so they arrive logged in.
-            emailRedirectTo: `${siteUrl}/portal`,
-          },
+          options: { data: { full_name: fullName }, emailRedirectTo: `${siteUrl}/portal` },
         });
         if (signUpError) throw signUpError;
 
@@ -321,10 +166,7 @@ export const AuthWorkstation: React.FC = () => {
           setError('Account created! Check your email to verify, then sign in.');
         }
       } else {
-        const { data, error: signInError } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
+        const { data, error: signInError } = await supabase.auth.signInWithPassword({ email, password });
         if (signInError) throw signInError;
 
         const name = data.user?.user_metadata?.full_name || 'Explorer';
@@ -366,9 +208,7 @@ export const AuthWorkstation: React.FC = () => {
       const siteUrl = import.meta.env.VITE_SITE_URL || window.location.origin;
       const { error: oauthError } = await supabase.auth.signInWithOAuth({
         provider,
-        options: {
-          redirectTo: `${siteUrl}/portal`,
-        },
+        options: { redirectTo: `${siteUrl}/portal` },
       });
       if (oauthError) throw oauthError;
     } catch (err: any) {
@@ -378,485 +218,330 @@ export const AuthWorkstation: React.FC = () => {
     }
   };
 
-  // ── Premium Hardware-Accelerated 3D Tilt Engine ──
+  // ── shared class fragments (light + dark) ──
+  const inputCls =
+    'w-full rounded-xl px-4 py-3.5 text-[15px] outline-none transition-all bg-white border border-slate-300 text-slate-900 placeholder-slate-400 focus:border-slate-900 focus:ring-4 focus:ring-slate-900/[0.06] dark:bg-white/[0.04] dark:border-white/15 dark:text-white dark:placeholder-slate-500 dark:focus:border-white/40 dark:focus:ring-white/[0.07]';
+  const oauthCls =
+    'flex w-full items-center justify-center gap-2 rounded-full px-4 py-3 text-[14px] font-semibold transition-all active:scale-[0.98] bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 hover:border-slate-400 hover:shadow-sm dark:bg-white/[0.04] dark:border-white/15 dark:text-slate-200 dark:hover:bg-white/[0.08] dark:hover:border-white/25';
 
-  const handle3DTilt = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current) return;
-    if (resetTimeoutRef.current) {
-      clearTimeout(resetTimeoutRef.current);
-      resetTimeoutRef.current = null;
-    }
-    setTransitionState('tilting');
-
-    const box = cardRef.current.getBoundingClientRect();
-    const x = (e.clientX - box.left) / box.width - 0.5;
-    const y = (e.clientY - box.top) / box.height - 0.5;
-
-    const rotateX = (y * -14).toFixed(2);
-    const rotateY = (x * 14).toFixed(2);
-
-    cardRef.current.style.transform =
-      `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.01, 1.01, 1.01)`;
-  };
-
-  const reset3DTilt = () => {
-    if (!cardRef.current) return;
-    cardRef.current.style.transform = '';
-    setTransitionState('resetting');
-
-    resetTimeoutRef.current = setTimeout(() => {
-      setTransitionState('idle');
-    }, 600);
-  };
+  const headline =
+    mode === 'SIGN_IN' ? 'Welcome back'
+    : mode === 'REGISTER' ? 'Create a free profile to start learning'
+    : 'Reset your password';
+  const subhead =
+    mode === 'SIGN_IN' ? 'Log in to pick up right where you left off.'
+    : mode === 'REGISTER' ? 'Free forever. No credit card, no installs.'
+    : "Enter your email and we'll send you a reset link.";
+  const submitLabel =
+    mode === 'SIGN_IN' ? 'Sign in' : mode === 'REGISTER' ? 'Sign up' : 'Send reset link';
 
   return (
-    <div className="auth-workstation-root relative w-full min-h-[100svh] bg-[#03050a] text-slate-200 antialiased font-sans select-none overflow-hidden">
+    <div className="auth-workstation-root relative w-full min-h-[100svh] bg-white text-slate-900 antialiased font-sans overflow-hidden dark:bg-[#0A0B12] dark:text-white selection:bg-[#F97316]/20">
+      {/* Soft ambience */}
+      <div className="pointer-events-none absolute -left-40 -top-32 h-[55vh] w-[55vh] rounded-full bg-[#F97316]/[0.06] blur-[130px] dark:bg-[#F97316]/10" />
+      <div className="pointer-events-none absolute -right-28 -bottom-24 h-[45vh] w-[45vh] rounded-full bg-[#6E7BFF]/[0.06] blur-[130px] dark:bg-[#4A57FF]/10" />
 
-      {/* GPU Interactive Particle Canvas Background */}
-      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none z-0" />
+      {/* Dotted texture — fades away behind the form so the centre stays clean */}
+      <div
+        className="pointer-events-none absolute inset-0 z-0 dark:hidden"
+        style={{
+          backgroundImage: 'radial-gradient(circle, rgba(15,23,42,0.07) 1px, transparent 1px)',
+          backgroundSize: '24px 24px',
+          WebkitMaskImage: 'radial-gradient(ellipse 60% 60% at center, transparent 35%, black 85%)',
+          maskImage: 'radial-gradient(ellipse 60% 60% at center, transparent 35%, black 85%)',
+        }}
+      />
+      <div
+        className="pointer-events-none absolute inset-0 z-0 hidden dark:block"
+        style={{
+          backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px)',
+          backgroundSize: '24px 24px',
+          WebkitMaskImage: 'radial-gradient(ellipse 60% 60% at center, transparent 35%, black 85%)',
+          maskImage: 'radial-gradient(ellipse 60% 60% at center, transparent 35%, black 85%)',
+        }}
+      />
 
-      {/* Precision architectural layout background grid */}
-      <div className="absolute inset-0 auth-grid-texture z-0" />
+      {/* Theme toggle */}
+      <div className="absolute top-4 right-4 z-20">
+        <ThemeToggle />
+      </div>
 
-      {/* Ambient brand glows */}
-      <div className="pointer-events-none absolute -left-40 -top-24 h-[55vh] w-[55vh] rounded-full bg-[#4A57FF]/10 blur-[130px] z-0" />
-      <div className="pointer-events-none absolute -right-24 bottom-0 h-[42vh] w-[42vh] rounded-full bg-[#2E32FF]/10 blur-[130px] z-0" />
-
-      <div className="relative z-10 grid min-h-[100svh] lg:grid-cols-2">
-
-        {/* ═══ LEFT · BRAND PANEL (desktop only) ═══ */}
-        <aside className="relative hidden lg:flex flex-col justify-between p-12 xl:p-16 border-r border-white/[0.06]">
-          <a href="/" className="w-fit">
-            <BrandWordmark size={34} textClassName="text-lg text-white" />
-          </a>
-
-          <div className="max-w-md">
-            <div className="inline-flex items-center gap-2 mb-6 px-3 py-1 rounded-full border border-white/10 bg-white/[0.03] text-[11px] font-mono uppercase tracking-[0.18em] text-[#8E97FF]">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#4A57FF] animate-pulse" /> Free VLSI learning
-            </div>
-            <h2 className="text-4xl xl:text-5xl font-extrabold leading-[1.05] tracking-tight text-white">
-              Where bits<br />become{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#7E8BFF] to-[#2E32FF]">silicon.</span>
-            </h2>
-            <p className="mt-5 text-[15px] leading-relaxed text-slate-400">
-              Sign in to track your progress across interactive modules, circuit simulators, and the full path from logic gates to chips.
-            </p>
-            <ul className="mt-8 space-y-3.5">
-              {['13 ECE domains, zero install', 'Hands-on circuit & Verilog labs', 'Progress saved and gamified'].map((t) => (
-                <li key={t} className="flex items-center gap-3 text-sm text-slate-300">
-                  <CheckCircle2 size={17} className="text-[#6E7BFF] flex-shrink-0" /> {t}
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="font-mono text-[11px] text-slate-600 tracking-wide">Free forever · Built for every ECE student in India</div>
-        </aside>
-
-        {/* ═══ RIGHT · AUTH CARD ═══ */}
-        <main className="relative flex items-center justify-center px-5 py-10 sm:px-8">
-
-        {/* ═══ AUTH CONTAINER CARD ═══ */}
-        <div
-          ref={cardRef}
-          onMouseMove={handle3DTilt}
-          onMouseLeave={reset3DTilt}
-          className={`w-full max-w-[440px] auth-glass-substrate border border-white/10 rounded-2xl p-6 sm:p-8 space-y-6 will-change-transform ${
-            transitionState === 'idle' && !isGyroActive ? 'auth-idle-float' : ''
-          } ${
-            transitionState === 'tilting' ? 'is-tilting' : ''
-          } ${
-            transitionState === 'resetting' ? 'is-resetting' : ''
-          }`}
-        >
-        {/* Mobile brand mark (desktop shows the brand panel instead) */}
-        <a href="/" className="lg:hidden w-fit">
-          <BrandWordmark size={28} textClassName="text-base text-white" />
-        </a>
-
-        <AnimatePresence mode="wait">
-          {!isLoading ? (
-
-            /* ═══ SIGN-IN / REGISTER / RECOVERY FORM ═══ */
-            <motion.div
-              key="auth-entry"
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -6 }}
-              transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-              className="space-y-6"
-            >
-              {/* Header */}
-              <div className="space-y-2 text-left">
-                <h1 className="text-4xl font-extrabold tracking-tight text-white uppercase">
-                  {mode === 'SIGN_IN' && 'Welcome back'}
-                  {mode === 'REGISTER' && 'Create account'}
-                  {mode === 'RECOVER' && 'Reset password'}
+      <main className="relative z-10 flex min-h-[100svh] items-center justify-center px-5 py-12">
+        <div className="w-full max-w-[400px]">
+          <AnimatePresence mode="wait">
+            {!isLoading ? (
+              <motion.div
+                key="auth-entry"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+              >
+                {/* Logo + headline */}
+                <a href="/" className="relative mx-auto mb-6 block w-fit">
+                  <span className="pointer-events-none absolute inset-0 -z-10 animate-pulse rounded-full bg-[#4A57FF]/25 blur-xl" />
+                  <BrandMark size={54} />
+                </a>
+                <h1 className="text-center text-[27px] font-extrabold leading-tight tracking-tight">
+                  {headline}
                 </h1>
-                <p className="text-[15px] text-slate-400 font-normal leading-relaxed">
-                  {mode === 'RECOVER' 
-                    ? 'Enter your email address to receive a secure password recovery link.'
-                    : 'Sign in to track your learning paths and hardware simulation workspace.'
-                  }
-                </p>
-              </div>
-
-              {/* ═══ OAUTH SSO STACK (Google, LinkedIn, GitHub side-by-side) ═══ */}
-              {mode !== 'RECOVER' && (
-                <div className="space-y-3 text-left">
-                  <span className="text-[11px] font-mono font-bold tracking-wider text-slate-500 uppercase block">
-                    Continue with
-                  </span>
-
-                  <div className="grid grid-cols-3 gap-2.5 text-xs font-bold">
-                    {/* Google */}
-                    <button
-                      id="auth-google-oauth"
-                      type="button"
-                      onClick={() => handleOAuthLogin('google')}
-                      className="auth-oauth-btn w-full bg-[#03050a] border border-slate-800 rounded-xl px-3 py-3 flex items-center justify-center gap-1.5 text-slate-350 cursor-pointer"
+                <div className="mt-2 flex h-6 items-center justify-center overflow-hidden text-center text-[14px] text-slate-500 dark:text-slate-400">
+                  <AnimatePresence mode="wait">
+                    <motion.span
+                      key={mode === 'RECOVER' ? 'recover' : tagIdx}
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -8 }}
+                      transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                      className="block"
                     >
-                      <svg className="w-3.5 h-3.5 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                      {mode === 'RECOVER' ? subhead : TAGLINES[tagIdx]}
+                    </motion.span>
+                  </AnimatePresence>
+                </div>
+                <div className="mt-3 flex items-center justify-center gap-1.5 text-[12px] text-slate-400 dark:text-slate-500">
+                  <span className="tracking-tight text-[#F59E0B]">★★★★★</span>
+                  Loved by ECE students across India
+                </div>
+
+                {/* OAuth */}
+                {mode !== 'RECOVER' && (
+                  <div className="mt-7 space-y-3">
+                    <button id="auth-google-oauth" type="button" onClick={() => handleOAuthLogin('google')} className={oauthCls}>
+                      <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24">
                         <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
                         <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
                         <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/>
                         <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
                       </svg>
-                      <span className="truncate">Google</span>
+                      Continue with Google
                     </button>
-
-                    {/* LinkedIn */}
-                    <button
-                      id="auth-linkedin-oauth"
-                      type="button"
-                      onClick={() => handleOAuthLogin('linkedin')}
-                      className="auth-oauth-btn w-full bg-[#03050a] border border-slate-800 rounded-xl px-3 py-3 flex items-center justify-center gap-1.5 text-slate-350 cursor-pointer"
-                    >
-                      <svg className="w-3.5 h-3.5 text-[#0A66C2] flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
-                      </svg>
-                      <span className="truncate">LinkedIn</span>
-                    </button>
-
-                    {/* GitHub */}
-                    <button
-                      id="auth-github-oauth"
-                      type="button"
-                      onClick={() => handleOAuthLogin('github')}
-                      className="auth-oauth-btn w-full bg-[#03050a] border border-slate-800 rounded-xl px-3 py-3 flex items-center justify-center gap-1.5 text-slate-350 cursor-pointer"
-                    >
-                      <svg className="w-3.5 h-3.5 text-white flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
-                        <path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.483 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.464-1.11-1.464-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.579.688.481C19.137 20.164 22 16.418 22 12c0-5.523-4.477-10-10-10z" />
-                      </svg>
-                      <span className="truncate">GitHub</span>
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {/* Minimal divider */}
-              {mode !== 'RECOVER' && (
-                <div className="relative flex items-center justify-center font-mono text-[10px] text-slate-600 uppercase font-bold tracking-wider">
-                  <div className="absolute w-full h-px bg-slate-900" />
-                  <span className="relative bg-[#090e1a] px-3">or</span>
-                </div>
-              )}
-
-              {/* ═══ FORM ═══ */}
-              <form onSubmit={handleFormSubmit} className="space-y-5 text-left text-sm">
-                {/* Full name — register only */}
-                {mode === 'REGISTER' && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    exit={{ opacity: 0, height: 0 }}
-                    className="space-y-2 overflow-hidden"
-                  >
-                    <label htmlFor="auth-fullname" className="text-[13px] font-mono text-slate-400 uppercase tracking-wider font-bold block mb-1.5">
-                      Full name
-                    </label>
-                    <input
-                      id="auth-fullname"
-                      type="text"
-                      required
-                      value={fullName}
-                      onChange={(e) => setFullName(e.target.value)}
-                      placeholder="Ada Lovelace"
-                      className="auth-input-field w-full bg-[#03050a] border border-slate-800 rounded-xl px-4 py-3.5 text-slate-200 font-mono text-[15px] placeholder-slate-700"
-                    />
-                  </motion.div>
-                )}
-
-                <div className="space-y-2">
-                  <label htmlFor="auth-email" className="text-[13px] font-mono text-slate-400 uppercase tracking-wider font-bold block mb-1.5">
-                    Email address
-                  </label>
-                  <input
-                    id="auth-email"
-                    type="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="name@university.edu"
-                    className="auth-input-field w-full bg-[#03050a] border border-slate-800 rounded-xl px-4 py-3.5 text-slate-200 font-mono text-[15px] placeholder-slate-700"
-                  />
-                </div>
-
-                {/* Password field - sign-in/register only */}
-                {mode !== 'RECOVER' && (
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between mb-1.5">
-                      <label htmlFor="auth-password" className="text-[13px] font-mono text-slate-400 uppercase tracking-wider font-bold block">
-                        Password
-                      </label>
-                      {mode === 'SIGN_IN' && (
-                        <button
-                          type="button"
-                          onClick={() => { setMode('RECOVER'); setError(null); }}
-                          className="text-xs text-[#4A57FF]/85 hover:text-[#4A57FF] font-medium hover:underline focus:outline-none"
-                        >
-                          Forgot password?
-                        </button>
-                      )}
-                    </div>
-                    
-                    <div className="relative">
-                      <input
-                        id="auth-password"
-                        type={showPassword ? 'text' : 'password'}
-                        required
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        placeholder="••••••••••"
-                        className="auth-input-field w-full bg-[#03050a] border border-slate-800 rounded-xl pl-4 pr-11 py-3.5 text-slate-200 font-mono text-[15px] placeholder-slate-700"
-                        minLength={6}
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-350 focus:outline-none cursor-pointer flex items-center justify-center"
-                        tabIndex={-1}
-                      >
-                        {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                    <div className="grid grid-cols-2 gap-3">
+                      <button id="auth-linkedin-oauth" type="button" onClick={() => handleOAuthLogin('linkedin')} className={oauthCls}>
+                        <svg className="w-4 h-4 text-[#0A66C2] flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+                        </svg>
+                        LinkedIn
+                      </button>
+                      <button id="auth-github-oauth" type="button" onClick={() => handleOAuthLogin('github')} className={oauthCls}>
+                        <svg className="w-4 h-4 flex-shrink-0 text-slate-900 dark:text-white" viewBox="0 0 24 24" fill="currentColor">
+                          <path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.483 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.464-1.11-1.464-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.579.688.481C19.137 20.164 22 16.418 22 12c0-5.523-4.477-10-10-10z" />
+                        </svg>
+                        GitHub
                       </button>
                     </div>
+                  </div>
+                )}
 
-                    {/* Password Strength Indicator — register only */}
-                    {mode === 'REGISTER' && password.length > 0 && (
-                      <div className="space-y-1.5 pt-1.5">
-                        <div className="flex justify-between items-center text-[10px] font-mono font-bold uppercase tracking-wider">
-                          <span className="text-slate-500">Security strength:</span>
-                          <span style={{ color: strengthColor }}>{strengthLabel}</span>
+                {/* Divider */}
+                {mode !== 'RECOVER' && (
+                  <div className="relative my-6 flex items-center justify-center">
+                    <div className="absolute h-px w-full bg-slate-200 dark:bg-white/10" />
+                    <span className="relative bg-white px-3 text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:bg-[#0A0B12] dark:text-slate-500">or</span>
+                  </div>
+                )}
+
+                {/* Form */}
+                <form onSubmit={handleFormSubmit} className="space-y-3.5 text-left">
+                  {mode === 'REGISTER' && (
+                    <input
+                      id="auth-fullname" type="text" required value={fullName}
+                      onChange={(e) => setFullName(e.target.value)} placeholder="Your name"
+                      className={inputCls}
+                    />
+                  )}
+
+                  <div className="relative">
+                    <input
+                      id="auth-email" type="email" required value={email}
+                      onChange={(e) => setEmail(e.target.value)} placeholder="Email"
+                      className={`${inputCls} pr-11`}
+                    />
+                    <span
+                      title={emailValid ? 'Looks good' : 'Use your university or personal email'}
+                      className={`absolute right-3.5 top-1/2 -translate-y-1/2 transition-colors ${emailValid ? 'text-emerald-500' : 'text-slate-400 dark:text-slate-500'}`}
+                    >
+                      {emailValid ? <CheckCircle2 size={16} /> : <HelpCircle size={16} />}
+                    </span>
+                  </div>
+
+                  {mode !== 'RECOVER' && (
+                    <div className="space-y-2">
+                      <div className="relative">
+                        <input
+                          id="auth-password" type={showPassword ? 'text' : 'password'} required value={password}
+                          onChange={(e) => setPassword(e.target.value)} placeholder="Password" minLength={6}
+                          className={`${inputCls} pr-11`}
+                        />
+                        <button
+                          type="button" tabIndex={-1} onClick={() => setShowPassword(!showPassword)}
+                          className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300"
+                        >
+                          {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                        </button>
+                      </div>
+
+                      {mode === 'SIGN_IN' && (
+                        <div className="text-right">
+                          <button
+                            type="button" onClick={() => { setMode('RECOVER'); setError(null); }}
+                            className="text-[13px] font-medium text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
+                          >
+                            Forgot password?
+                          </button>
                         </div>
-                        <div className="grid grid-cols-4 gap-1.5">
-                          {[0, 1, 2, 3].map((index) => (
-                            <div
-                              key={index}
-                              className="h-1 rounded-full transition-all duration-300"
-                              style={{
-                                backgroundColor:
-                                  index < strengthScore
-                                    ? strengthColor
-                                    : 'rgba(255, 255, 255, 0.05)',
-                              }}
-                            />
-                          ))}
+                      )}
+
+                      {mode === 'REGISTER' && password.length > 0 && (
+                        <div className="space-y-1.5 pt-0.5">
+                          <div className="flex items-center justify-between text-[11px] font-semibold">
+                            <span className="text-slate-400">Password strength</span>
+                            <span style={{ color: strengthColor }}>{strengthLabel}</span>
+                          </div>
+                          <div className="grid grid-cols-4 gap-1.5">
+                            {[0, 1, 2, 3].map((index) => (
+                              <div key={index} className="h-1 rounded-full bg-slate-200 dark:bg-white/10 transition-all duration-300"
+                                style={{ backgroundColor: index < strengthScore ? strengthColor : undefined }} />
+                            ))}
+                          </div>
                         </div>
+                      )}
+                    </div>
+                  )}
+
+                  {error && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }}
+                      className="auth-error-shake rounded-xl border border-red-200 bg-red-50 p-3 text-[13px] font-medium text-red-600 dark:border-red-500/25 dark:bg-red-500/10 dark:text-red-300"
+                    >
+                      {error}
+                    </motion.div>
+                  )}
+
+                  <button
+                    id="auth-submit-btn" type="submit"
+                    className="group/sub mt-1 flex w-full items-center justify-center gap-2 rounded-full bg-slate-900 py-3.5 text-[15px] font-bold text-white shadow-[0_10px_28px_-8px_rgba(15,23,42,0.5)] transition-all hover:bg-slate-800 hover:shadow-[0_14px_32px_-8px_rgba(15,23,42,0.55)] active:scale-[0.99] dark:bg-white dark:text-slate-900 dark:shadow-[0_10px_28px_-10px_rgba(255,255,255,0.25)] dark:hover:bg-slate-100"
+                  >
+                    {submitLabel}
+                    <ArrowRight size={16} className="transition-transform group-hover/sub:translate-x-0.5" />
+                  </button>
+                </form>
+
+                {/* Fine print (register) */}
+                {mode === 'REGISTER' && (
+                  <p className="mt-3 text-center text-[12px] leading-relaxed text-slate-400 dark:text-slate-500">
+                    By clicking Sign up, you agree to our Terms and Privacy Policy.
+                  </p>
+                )}
+
+                {/* Toggle */}
+                <p className="mt-6 text-center text-[14px] text-slate-500 dark:text-slate-400">
+                  {mode === 'RECOVER' ? (
+                    <>Remembered it? <button type="button" onClick={() => { setMode('SIGN_IN'); setError(null); }} className="font-bold text-slate-900 underline underline-offset-2 dark:text-white">Sign in</button></>
+                  ) : mode === 'SIGN_IN' ? (
+                    <>New here? <button type="button" onClick={() => { setMode('REGISTER'); setError(null); }} className="font-bold text-slate-900 underline underline-offset-2 dark:text-white">Create a profile</button></>
+                  ) : (
+                    <>Existing user? <button type="button" onClick={() => { setMode('SIGN_IN'); setError(null); }} className="font-bold text-slate-900 underline underline-offset-2 dark:text-white">Sign in</button></>
+                  )}
+                </p>
+
+                {/* Guest */}
+                {mode !== 'RECOVER' && (
+                  <div className="mt-6 border-t border-slate-200 pt-5 dark:border-white/10">
+                    {!showGuest ? (
+                      <button
+                        type="button" onClick={() => setShowGuest(true)}
+                        className="mx-auto flex items-center justify-center gap-2 text-[13px] font-medium text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
+                      >
+                        <UserCircle2 size={15} /> Just looking? Continue as guest
+                      </button>
+                    ) : (
+                      <div className="space-y-2.5">
+                        <div className="relative">
+                          <UserCircle2 size={15} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
+                          <input
+                            id="auth-guest-name" type="text" placeholder="Your name" value={guestName}
+                            onChange={(e) => setGuestName(e.target.value)}
+                            onKeyDown={(e) => { if (e.key === 'Enter' && isGuestNameValid) handleGuestLogin(); }}
+                            maxLength={32} autoComplete="nickname"
+                            className={`${inputCls} pl-10`}
+                          />
+                        </div>
+                        <button
+                          id="auth-guest-btn" type="button" onClick={handleGuestLogin} disabled={!isGuestNameValid}
+                          className="w-full rounded-full border border-dashed border-slate-300 py-3 text-[14px] font-semibold text-slate-600 transition-colors hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed dark:border-white/15 dark:text-slate-300 dark:hover:bg-white/[0.05]"
+                        >
+                          Continue as guest
+                        </button>
+                        <p className="text-center text-[11px] text-slate-400 dark:text-slate-500">Guest progress is saved in this browser only.</p>
                       </div>
                     )}
                   </div>
                 )}
-
-                {/* Error display */}
-                {error && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -4 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="auth-error-shake bg-red-500/5 border border-red-500/20 text-red-400 text-xs font-mono p-3 rounded-xl"
-                  >
-                    {error}
-                  </motion.div>
-                )}
-
-                <button
-                  id="auth-submit-btn"
-                  type="submit"
-                  className="auth-submit-btn group/sub w-full bg-gradient-to-r from-[#5664FF] to-[#2E32FF] text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 cursor-pointer text-[15px] shadow-[0_12px_34px_-8px_rgba(46,50,255,0.55)]"
-                >
-                  <span>
-                    {mode === 'RECOVER' ? 'Send recovery link' : 'Continue with email'}
-                  </span>
-                  <ArrowRight size={16} className="transition-transform duration-200 group-hover/sub:translate-x-0.5" />
-                </button>
-              </form>
-
-              {/* Guest access — sign-in/register only */}
-              {mode !== 'RECOVER' && (
-                <div className="space-y-3">
-                  <div className="relative flex items-center justify-center font-mono text-[10px] text-slate-600 uppercase font-bold tracking-wider">
-                    <div className="absolute w-full h-px bg-slate-900" />
-                    <span className="relative bg-[#090e1a] px-3">or try as guest</span>
-                  </div>
-
-                  <div className="relative">
-                    <UserCircle2 size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 pointer-events-none" />
-                    <input
-                      id="auth-guest-name"
-                      type="text"
-                      placeholder="Your name"
-                      value={guestName}
-                      onChange={(e) => setGuestName(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' && isGuestNameValid) handleGuestLogin();
-                      }}
-                      className="auth-input-field w-full bg-[#03050a] border border-slate-800 rounded-xl pl-10 pr-4 py-3.5 text-slate-200 font-mono text-[15px] placeholder-slate-700"
-                      maxLength={32}
-                      autoComplete="nickname"
-                    />
-                  </div>
-
-                  <button
-                    id="auth-guest-btn"
-                    type="button"
-                    onClick={handleGuestLogin}
-                    disabled={!isGuestNameValid}
-                    className="auth-oauth-btn w-full bg-[#03050a] border border-dashed border-slate-800/80 px-4 py-3.5 rounded-xl flex items-center justify-center gap-2 font-mono text-sm font-bold text-slate-400 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
-                    title={
-                      isGuestNameValid
-                        ? 'Continue as guest. Progress saved locally only.'
-                        : 'Enter a name (2–32 chars) to continue'
-                    }
-                  >
-                    <UserCircle2 size={14} />
-                    <span>Continue as guest</span>
-                  </button>
-                  <p className="text-[11px] text-slate-500 font-mono text-center tracking-wide">
-                    Guest progress is saved in this browser only.
-                  </p>
-                </div>
-              )}
-
-              {/* Toggle row */}
-              <div className="pt-4 border-t border-slate-900 flex items-center justify-between text-xs text-slate-500 font-medium">
-                {mode === 'RECOVER' ? (
-                  <>
-                    <span>Remembered your password?</span>
-                    <button
-                      id="auth-mode-toggle"
-                      type="button"
-                      onClick={() => { setMode('SIGN_IN'); setError(null); }}
-                      className="text-[#4A57FF] font-bold hover:underline cursor-pointer"
-                    >
-                      Sign in
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <span>{mode === 'SIGN_IN' ? "New to the workspace?" : "Already have an account?"}</span>
-                    <button
-                      id="auth-mode-toggle"
-                      type="button"
-                      onClick={() => { setMode(mode === 'SIGN_IN' ? 'REGISTER' : 'SIGN_IN'); setError(null); }}
-                      className="text-[#4A57FF] font-bold hover:underline cursor-pointer"
-                    >
-                      {mode === 'SIGN_IN' ? 'Create an account' : 'Sign in'}
-                    </button>
-                  </>
-                )}
-              </div>
-            </motion.div>
-
-          ) : (
-
-            /* ═══ LIVELY LOADING SCREEN ═══ */
-            <motion.div
-              key="auth-loading"
-              initial={{ opacity: 0, scale: 0.98 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.98 }}
-              className="text-left font-mono text-xs space-y-6 min-h-[360px] flex flex-col justify-between"
-            >
-              <div className="space-y-4">
-                <div className="flex items-center justify-between text-slate-500 text-[10px] border-b border-slate-900 pb-2 uppercase tracking-widest font-bold">
+              </motion.div>
+            ) : (
+              /* ═══ LOADING ═══ */
+              <motion.div
+                key="auth-loading"
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.98 }}
+                className="min-h-[340px] font-mono text-[13px]"
+              >
+                <a href="/" className="mx-auto mb-6 block w-fit"><BrandMark size={44} /></a>
+                <div className="mb-4 flex items-center justify-between border-b border-slate-200 pb-2 text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:border-white/10 dark:text-slate-500">
                   <span>Setting up your workspace</span>
-                  <div className="flex items-center gap-1.5 text-[#FF5F1F]">
-                    <Loader2 size={11} className="animate-spin" />
-                    <span>Loading</span>
-                  </div>
+                  <span className="flex items-center gap-1.5 text-[#F97316]"><Loader2 size={11} className="animate-spin" /> Loading</span>
                 </div>
-
-                {/* Clean, satisfying live update rows */}
-                <div className="space-y-2.5 text-slate-400">
+                <div className="space-y-2.5 text-slate-500 dark:text-slate-400">
                   {initializationLogs.slice(0, loadingStep + 1).map((log, index) => {
                     const isDone = log.includes('ready') || log.includes('established') || log.includes('dispatched') || log.includes('delivered');
                     return (
                       <motion.div
-                        initial={{ opacity: 0, x: -3 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.15 }}
+                        initial={{ opacity: 0, x: -3 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.15 }}
                         key={index}
-                        className={`leading-relaxed crypto-log-line ${isDone ? 'text-emerald-400 font-bold' : ''}`}
+                        className={`crypto-log-line leading-relaxed ${isDone ? 'font-bold text-emerald-600 dark:text-emerald-400' : ''}`}
                       >
                         {isDone ? '✓ ' : '→ '}{log}
                       </motion.div>
                     );
                   })}
-                  {/* Blinking cursor */}
                   {loadingStep < initializationLogs.length - 1 && (
-                    <span className="terminal-cursor text-[#4A57FF] font-bold">▌</span>
+                    <span className="terminal-cursor font-bold text-[#F97316]">▌</span>
                   )}
                 </div>
-              </div>
 
-              {/* Success block */}
-              {loadingStep === initializationLogs.length - 1 && (
-                <motion.div
-                  initial={{ opacity: 0, y: 4 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className={`bg-emerald-500/5 border border-emerald-500/20 p-4 rounded-xl flex items-start gap-3 text-sm ${authSuccess ? 'success-card' : ''}`}
-                >
-                  <CheckCircle2 size={16} className="text-emerald-400 mt-0.5 flex-shrink-0" />
-                  <div className="space-y-1">
-                    <div className="text-emerald-400 font-bold uppercase tracking-wider text-xs">
-                      {mode === 'RECOVER' 
-                        ? 'Recovery link dispatched' 
-                        : (authSuccess ? 'Signed in — redirecting...' : 'Check your email')
-                      }
-                    </div>
-                    <p className="font-sans text-slate-400 leading-normal text-xs">
-                      {mode === 'RECOVER'
-                        ? 'We sent a password reset token link to your email address. Open it to recover your credentials.'
-                        : (authSuccess
-                          ? 'Your workspace is ready. Loading your dashboard now.'
-                          : 'We sent a verification link to your email address. Open it to finish setting up your account.'
-                        )
-                      }
-                    </p>
-                    {mode === 'RECOVER' && (
-                      <div className="pt-2">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setIsLoading(false);
-                            setMode('SIGN_IN');
-                            setError(null);
-                          }}
-                          className="text-xs font-mono font-bold text-[#4A57FF] hover:underline cursor-pointer"
-                        >
-                          ← Return to Sign In
-                        </button>
+                {loadingStep === initializationLogs.length - 1 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }}
+                    className={`mt-6 flex items-start gap-3 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm dark:border-emerald-500/25 dark:bg-emerald-500/10 ${authSuccess ? 'success-card' : ''}`}
+                  >
+                    <CheckCircle2 size={16} className="mt-0.5 flex-shrink-0 text-emerald-600 dark:text-emerald-400" />
+                    <div className="space-y-1">
+                      <div className="text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
+                        {mode === 'RECOVER' ? 'Recovery link dispatched' : (authSuccess ? 'Signed in, redirecting...' : 'Check your email')}
                       </div>
-                    )}
-                  </div>
-                </motion.div>
-              )}
-            </motion.div>
-          )}
-        </AnimatePresence>
+                      <p className="font-sans text-xs leading-normal text-slate-500 dark:text-slate-400">
+                        {mode === 'RECOVER'
+                          ? 'We sent a password reset link to your email. Open it to recover your account.'
+                          : (authSuccess ? 'Your workspace is ready. Loading your dashboard now.' : 'We sent a verification link to your email. Open it to finish setting up your account.')}
+                      </p>
+                      {mode === 'RECOVER' && (
+                        <button
+                          type="button" onClick={() => { setIsLoading(false); setMode('SIGN_IN'); setError(null); }}
+                          className="pt-1 text-xs font-bold text-[#EA580C] hover:underline"
+                        >
+                          ← Return to sign in
+                        </button>
+                      )}
+                    </div>
+                  </motion.div>
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
-        </main>
-      </div>
-
+      </main>
     </div>
   );
 };

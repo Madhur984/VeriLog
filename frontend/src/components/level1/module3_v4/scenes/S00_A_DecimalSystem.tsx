@@ -53,17 +53,17 @@ export const S00_A_DecimalSystem: React.FC<Props> = ({ isActive, isDarkMode }) =
       >
         <p className={`font-mono text-xs uppercase tracking-widest mb-4 ${subTextColor}`}>General Positional Notation</p>
         <div className={`text-xl md:text-2xl font-black font-mono ${textColor}`}>
-          (a5 a4 a3 a2 a1 a0)_r = a5*r^5 + a4*r^4 + a3*r^3 + a2*r^2 + a1*r^1 + a0*r^0
+          (a₅a₄a₃a₂a₁a₀)ᵣ = a₅×r⁵ + a₄×r⁴ + a₃×r³ + a₂×r² + a₁×r¹ + a₀×r⁰
         </div>
         <p className={`mt-4 text-sm opacity-60 ${textColor}`}>
-          Where <strong>r = base (radix)</strong> and each <strong>a_i</strong> is a digit multiplied by a power of the base.
+          Here <strong>r is the base (also called the radix)</strong> and each <strong>aᵢ</strong> is a digit multiplied by a power of the base.
         </p>
       </motion.div>
 
       {/* Worked Example: 2009 */}
       <div className={`p-8 rounded-[2rem] border ${cardBg}`}>
         <h3 className={`font-mono text-xs uppercase tracking-widest mb-8 text-center ${subTextColor}`}>
-          Worked Example: (2009)_10
+          Worked Example: (2009)₁₀
         </h3>
         <div className="flex justify-center gap-4 flex-wrap mb-8">
           {EXAMPLE.map((d, i) => (
@@ -79,13 +79,13 @@ export const S00_A_DecimalSystem: React.FC<Props> = ({ isActive, isDarkMode }) =
               >
                 {d}
               </div>
-              <span className={`font-mono text-[10px] font-bold ${subTextColor} opacity-70`}>* 10^{3 - i}</span>
+              <span className={`font-mono text-[10px] font-bold ${subTextColor} opacity-70`}>× 10{'³²¹⁰'[i]}</span>
               <span className={`font-mono text-xs font-black ${textColor}`}>= {d * WEIGHTS[i]}</span>
             </motion.div>
           ))}
         </div>
         <div className={`text-center font-mono text-sm p-4 rounded-xl ${isDarkMode ? 'bg-black/40' : 'bg-amber-50/50 border border-amber-100'}`}>
-          <span className={`opacity-60 ${textColor}`}>2*1000 + 0*100 + 0*10 + 9*1 = </span>
+          <span className={`opacity-60 ${textColor}`}>2×1000 + 0×100 + 0×10 + 9×1 = </span>
           <span className="text-amber-500 font-black text-lg">2009</span>
         </div>
       </div>
@@ -99,7 +99,7 @@ export const S00_A_DecimalSystem: React.FC<Props> = ({ isActive, isDarkMode }) =
         <div className="flex justify-center gap-6 flex-wrap mb-8">
           {digits.map((d, i) => (
             <div key={i} className="flex flex-col items-center gap-3">
-              <span className={`font-mono text-[10px] opacity-40 uppercase ${textColor}`}>10^{3 - i}</span>
+              <span className={`font-mono text-[10px] opacity-40 uppercase ${textColor}`}>10{'³²¹⁰'[i]}</span>
               <div className="flex flex-col items-center gap-1">
                 <button
                   onClick={() => setDigits(prev => prev.map((v, idx) => idx === i ? Math.min(9, v + 1) : v))}
@@ -116,7 +116,7 @@ export const S00_A_DecimalSystem: React.FC<Props> = ({ isActive, isDarkMode }) =
                   className={`text-lg font-black w-10 h-8 rounded-lg transition-all ${isDarkMode ? 'hover:bg-amber-500/20 text-white/40 hover:text-amber-400' : 'hover:bg-amber-50 text-gray-400 hover:text-amber-600'}`}
                 >[v]</button>
               </div>
-              <span className={`font-mono text-xs font-bold ${isDarkMode ? 'text-amber-400/70' : 'text-amber-600/70'}`}>* {WEIGHTS[i]}</span>
+              <span className={`font-mono text-xs font-bold ${isDarkMode ? 'text-amber-400/70' : 'text-amber-600/70'}`}>× {WEIGHTS[i]}</span>
               <span className={`font-mono text-[10px] ${isDarkMode ? 'text-white/50' : 'text-gray-500'}`}>= {d * WEIGHTS[i]}</span>
             </div>
           ))}
@@ -125,7 +125,7 @@ export const S00_A_DecimalSystem: React.FC<Props> = ({ isActive, isDarkMode }) =
           <p className={`font-mono text-xs uppercase tracking-widest opacity-60 mb-2 ${textColor}`}>Total Value</p>
           <div className="text-5xl font-black text-amber-500">{total}</div>
           <p className={`font-mono text-[10px] mt-2 opacity-40 ${textColor}`}>
-            {digits.map((d, i) => `${d}*${WEIGHTS[i]}`).join(' + ')} = {total}
+            {digits.map((d, i) => `${d}×${WEIGHTS[i]}`).join(' + ')} = {total}
           </p>
         </div>
       </div>
@@ -145,7 +145,7 @@ export const S00_A_DecimalSystem: React.FC<Props> = ({ isActive, isDarkMode }) =
         <div className={`font-mono text-sm leading-loose ${textColor}`}>
           <div className="opacity-60 mb-2">Decimal fractions use negative powers:</div>
           <div className={`p-4 rounded-xl text-base ${isDarkMode ? 'bg-black/40' : 'bg-white border border-gray-100'}`}>
-            (123.24)_10 = 1*10^2 + 2*10^1 + 3*10^0 + <span className="text-amber-500">2*10^-1</span> + <span className="text-amber-500">4*10^-2</span>
+            (123.24)₁₀ = 1×10² + 2×10¹ + 3×10⁰ + <span className="text-amber-500">2×10⁻¹</span> + <span className="text-amber-500">4×10⁻²</span>
             <br />= 100 + 20 + 3 + 0.2 + 0.04 = <strong className="text-amber-400">123.24</strong>
           </div>
         </div>

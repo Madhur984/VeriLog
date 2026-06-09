@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   ArrowRight, Sun, Moon, Menu, X,
-  Binary, Cpu, Sigma, Grid3x3, Waves, GitBranch, Gauge, Zap,
+  Binary, Grid3x3, Zap,
   Check, Star,
 } from 'lucide-react';
 import { BrandWordmark } from '../../components/Brand';
@@ -12,22 +12,40 @@ import { useIsAuthenticated } from '../../hooks/useIsAuthenticated';
 
 /* ── data ─────────────────────────────────────────────────────────────── */
 
-const COURSES = [
-  { icon: Binary, title: 'Number Systems & Binary', desc: "Bits, hex, and two's complement.", color: '#F97316', lessons: 12 },
-  { icon: Cpu, title: 'Logic Gates', desc: 'AND, OR, NAND and XOR by hand.', color: '#EA580C', lessons: 16 },
-  { icon: Sigma, title: 'Boolean Algebra', desc: 'Cut equations down with De Morgan.', color: '#DB2777', lessons: 10 },
-  { icon: Grid3x3, title: 'Karnaugh Maps', desc: 'Shrink logic on a grid.', color: '#9333EA', lessons: 9 },
-  { icon: GitBranch, title: 'Verilog HDL', desc: 'Describe real hardware in code.', color: '#2563EB', lessons: 18 },
-  { icon: Zap, title: 'Finite State Machines', desc: 'Build machines that react to input.', color: '#D97706', lessons: 11 },
-  { icon: Waves, title: 'Timing & Waveforms', desc: 'Read a signal the way a scope does.', color: '#E11D48', lessons: 8 },
-  { icon: Gauge, title: 'CPU Architecture', desc: 'Put a processor together, one stage at a time.', color: '#B45309', lessons: 14 },
+// Source of truth: HierarchicalGrindTree. Update here if a module is added or renamed.
+const PATHS = [
+  {
+    icon: Binary, title: 'Digital Logic & Verilog', tag: 'Verilog', color: '#F97316', base: '/module', startHere: true,
+    modules: ['Signals & Waves', 'Number Systems', 'Logic Gates', 'Karnaugh Maps', 'Verilog Core', 'Advanced Verilog'],
+  },
+  {
+    icon: Zap, title: 'Basic Electronics', tag: 'Electronics', color: '#2563EB', base: '/basic-electronics', startHere: false,
+    modules: ['Physics of Control', 'Silicon, Doping & Carriers', 'The P-N Junction', 'Rectifiers & Filters', 'Special-Purpose Diodes'],
+  },
+  {
+    icon: Grid3x3, title: 'Digital System Design', tag: 'DSD', color: '#9333EA', base: '/dsd', startHere: false,
+    modules: ['Binary & Boolean Logic', 'K-Maps', 'Circuit Realisation', 'Sequential Logic', 'Finite State Machines'],
+  },
 ];
 
-const STATS = [
-  { n: '13', l: 'ECE domains' },
-  { n: '90+', l: 'Interactive labs' },
-  { n: '100%', l: 'Free forever' },
-  { n: '0', l: 'Installs' },
+// One card per real module, each linking to its real route.
+const MODULE_CARDS = PATHS.flatMap((p) =>
+  p.modules.map((title, i) => ({
+    title,
+    icon: p.icon,
+    tag: p.tag,
+    color: p.color,
+    num: i + 1,
+    route: `${p.base}/${i + 1}`,
+    startHere: p.startHere && i === 0,
+  }))
+);
+
+const FACTS: Array<[string, string]> = [
+  ['3', 'learning paths'],
+  ['16', 'interactive modules'],
+  ['5', 'modules free, no account'],
+  ['0', 'installs'],
 ];
 
 const TESTIMONIALS = [
@@ -52,11 +70,99 @@ const PrimaryBtn: React.FC<{ to: string; children: React.ReactNode; className?: 
   </Link>
 );
 
+/* ── live XOR demo (the "try it" artifact in the why band) ───────────── */
+
+const XOR_ROWS = [
+  { a: false, b: false, out: false },
+  { a: false, b: true, out: true },
+  { a: true, b: false, out: true },
+  { a: true, b: true, out: false },
+];
+
+const XorDemo: React.FC = () => {
+  const [a, setA] = useState(false);
+  const [b, setB] = useState(true);
+  const out = a !== b;
+
+  const toggleCls = (on: boolean) =>
+    `flex h-12 w-12 items-center justify-center rounded-xl border-2 font-mono text-lg font-bold transition-all active:scale-95 ${
+      on
+        ? 'border-[#F97316] bg-[#F97316]/10 text-[#EA580C] dark:text-[#FDBA74]'
+        : 'border-slate-300 bg-white text-slate-400 dark:border-white/15 dark:bg-white/[0.04]'
+    }`;
+  const wireCls = (on: boolean) =>
+    on ? 'stroke-[#F97316] transition-colors duration-300' : 'stroke-slate-300 transition-colors duration-300 dark:stroke-white/20';
+
+  return (
+    <div className="rounded-3xl border border-slate-200 bg-slate-50 p-6 sm:p-8 dark:border-white/10 dark:bg-white/[0.03]">
+      <div className="mb-6 flex items-center justify-between">
+        <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-slate-400">XOR gate</span>
+        <span className="rounded-full bg-[#F97316]/10 px-2 py-0.5 text-[10px] font-bold text-[#C2410C] dark:bg-[#FB923C]/15 dark:text-[#FDBA74]">Live</span>
+      </div>
+
+      <div className="flex items-center justify-between gap-2 sm:gap-4">
+        <div className="flex flex-col gap-6">
+          <div>
+            <div className="mb-1 text-center font-mono text-[10px] text-slate-400">A</div>
+            <button aria-pressed={a} onClick={() => setA((v) => !v)} className={toggleCls(a)}>{a ? '1' : '0'}</button>
+          </div>
+          <div>
+            <div className="mb-1 text-center font-mono text-[10px] text-slate-400">B</div>
+            <button aria-pressed={b} onClick={() => setB((v) => !v)} className={toggleCls(b)}>{b ? '1' : '0'}</button>
+          </div>
+        </div>
+
+        <svg viewBox="0 0 200 96" className="h-24 w-full max-w-[200px]">
+          <path d="M0 24 H56" fill="none" strokeWidth={3} strokeLinecap="round" className={wireCls(a)} />
+          <path d="M0 72 H56" fill="none" strokeWidth={3} strokeLinecap="round" className={wireCls(b)} />
+          <path d="M128 48 H200" fill="none" strokeWidth={3} strokeLinecap="round" className={wireCls(out)} />
+          <rect x="56" y="12" width="72" height="72" rx="16" strokeWidth={2} className="fill-white stroke-slate-300 dark:fill-[#13141C] dark:stroke-white/15" />
+          <text x="92" y="53" textAnchor="middle" dominantBaseline="middle" className="fill-slate-700 font-mono text-sm font-bold dark:fill-slate-200">XOR</text>
+        </svg>
+
+        <div className="flex flex-col items-center gap-2">
+          <div className="font-mono text-[10px] text-slate-400">OUT</div>
+          <div
+            className={`h-12 w-12 rounded-full border-2 transition-all duration-300 ${
+              out
+                ? 'border-[#F97316] bg-[#F97316] shadow-[0_0_24px_rgba(249,115,22,0.55)]'
+                : 'border-slate-300 bg-slate-200 dark:border-white/15 dark:bg-white/10'
+            }`}
+          />
+        </div>
+      </div>
+
+      <div className="mt-6 overflow-hidden rounded-xl border border-slate-200 font-mono text-xs dark:border-white/10">
+        <div className="grid grid-cols-3 bg-slate-100 px-3 py-1.5 text-center font-bold text-slate-500 dark:bg-white/5">
+          <span>A</span><span>B</span><span>OUT</span>
+        </div>
+        {XOR_ROWS.map((row) => {
+          const active = row.a === a && row.b === b;
+          return (
+            <div
+              key={`${row.a}${row.b}`}
+              className={`grid grid-cols-3 px-3 py-1.5 text-center transition-colors ${
+                active ? 'bg-[#F97316]/10 font-bold text-[#C2410C] dark:bg-[#FB923C]/15 dark:text-[#FDBA74]' : 'text-slate-600 dark:text-slate-300'
+              }`}
+            >
+              <span>{row.a ? 1 : 0}</span><span>{row.b ? 1 : 0}</span><span>{row.out ? 1 : 0}</span>
+            </div>
+          );
+        })}
+      </div>
+
+      <p className="mt-4 text-center text-xs text-slate-400">Try it. This is what every lesson feels like.</p>
+    </div>
+  );
+};
+
 /* ── page ─────────────────────────────────────────────────────────────── */
 
 export const BrilliantHome: React.FC = () => {
   const authed = useIsAuthenticated();
-  const primaryTo = authed ? LANDING_ROUTES.workstation : LANDING_ROUTES.firstModule;
+  // Everyone lands on the portal: visitors without an account can open any 5
+  // modules free there (ModuleGate enforces the limit; the rest show locked).
+  const primaryTo = LANDING_ROUTES.workstation;
   const primaryLabel = authed ? 'Go to workstation' : 'Get started';
 
   // Home page is light by default with a working dark toggle. We capture the
@@ -111,7 +217,11 @@ export const BrilliantHome: React.FC = () => {
             >
               {dark ? <Sun size={16} /> : <Moon size={16} />}
             </button>
-            <Link to="/login" className="hidden text-[14px] font-semibold text-slate-600 transition-colors hover:text-slate-900 dark:text-slate-300 dark:hover:text-white sm:inline">Sign in</Link>
+            {authed ? (
+              <Link to="/profile" className="hidden text-[14px] font-semibold text-slate-600 transition-colors hover:text-slate-900 dark:text-slate-300 dark:hover:text-white sm:inline">Profile</Link>
+            ) : (
+              <Link to="/login" className="hidden text-[14px] font-semibold text-slate-600 transition-colors hover:text-slate-900 dark:text-slate-300 dark:hover:text-white sm:inline">Sign in</Link>
+            )}
             <Link to={primaryTo} className="hidden rounded-full bg-[#F97316] px-5 py-2.5 text-[14px] font-semibold text-white shadow-[0_8px_20px_-6px_rgba(249,115,22,0.6)] transition-all hover:bg-[#EA580C] md:inline-flex">{primaryLabel}</Link>
             <button onClick={() => setMenuOpen((o) => !o)} aria-label="Menu" className="rounded-lg border border-slate-200 p-1.5 text-slate-600 dark:border-white/10 dark:text-slate-300 md:hidden">
               {menuOpen ? <X size={18} /> : <Menu size={18} />}
@@ -124,7 +234,11 @@ export const BrilliantHome: React.FC = () => {
               {navLinks.map(([label, href]) => (
                 <a key={label} href={href} onClick={() => setMenuOpen(false)} className="rounded-lg px-2 py-2.5 hover:bg-slate-100 dark:hover:bg-white/5">{label}</a>
               ))}
-              <Link to="/login" onClick={() => setMenuOpen(false)} className="rounded-lg px-2 py-2.5 hover:bg-slate-100 dark:hover:bg-white/5">Sign in</Link>
+              {authed ? (
+                <Link to="/profile" onClick={() => setMenuOpen(false)} className="rounded-lg px-2 py-2.5 hover:bg-slate-100 dark:hover:bg-white/5">Profile</Link>
+              ) : (
+                <Link to="/login" onClick={() => setMenuOpen(false)} className="rounded-lg px-2 py-2.5 hover:bg-slate-100 dark:hover:bg-white/5">Sign in</Link>
+              )}
               <Link to={primaryTo} onClick={() => setMenuOpen(false)} className="mt-1 rounded-full bg-[#F97316] px-4 py-3 text-center text-white">{primaryLabel}</Link>
             </Shell>
           </div>
@@ -164,70 +278,99 @@ export const BrilliantHome: React.FC = () => {
         </Shell>
       </section>
 
-      {/* ── STATS ── */}
+      {/* ── FACT BAR ── */}
       <section className="border-y border-slate-200/70 bg-slate-50 dark:border-white/10 dark:bg-white/[0.02]">
-        <Shell className="grid grid-cols-2 gap-6 py-10 sm:grid-cols-4">
-          {STATS.map((s) => (
-            <div key={s.l} className="text-center">
-              <div className="text-3xl font-extrabold text-[#EA580C] dark:text-[#FDBA74]">{s.n}</div>
-              <div className="mt-1 text-[13px] font-medium text-slate-500 dark:text-slate-400">{s.l}</div>
+        <Shell className="grid grid-cols-2 gap-y-3 py-6 text-center sm:flex sm:items-baseline sm:justify-center sm:gap-0 sm:divide-x sm:divide-slate-200 dark:sm:divide-white/10">
+          {FACTS.map(([n, label]) => (
+            <div key={label} className="px-6">
+              <span className="text-xl font-extrabold text-[#EA580C] dark:text-[#FDBA74]">{n}</span>
+              <span className="ml-2 text-[13px] font-medium text-slate-500 dark:text-slate-400">{label}</span>
             </div>
           ))}
         </Shell>
       </section>
 
-      {/* ── HOW IT WORKS ── */}
-      <section id="how" className="py-20">
-        <Shell>
-          <div className="mx-auto max-w-2xl text-center">
-            <span className="text-[12px] font-bold uppercase tracking-[0.14em] text-[#EA580C] dark:text-[#FDBA74]">How it works</span>
-            <h2 className="mt-3 text-[clamp(1.9rem,4vw,3rem)] font-extrabold leading-[1.1] tracking-tight">Fifteen minutes a day is enough.</h2>
-            <p className="mt-4 text-lg text-slate-600 dark:text-slate-400">Skip the lectures. You build something, poke at it until it breaks, and the idea sticks.</p>
-          </div>
-          <div className="mt-12 grid gap-6 md:grid-cols-3">
-            {[
-              ['Try it yourself', 'Flip the inputs, drag the gates around, and watch what the output does.', Cpu],
-              ['See the why', 'Truth tables and live waveforms show you what is actually going on underneath.', Waves],
-              ['Build for real', 'Go from one gate to writing Verilog, and then to a CPU you wire up yourself.', Gauge],
-            ].map(([title, desc, Icon], i) => (
-              <div key={title as string} className="rounded-2xl border border-slate-200 bg-white p-7 dark:border-white/10 dark:bg-white/[0.03]">
-                <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-[#F97316]/10 text-[#EA580C] dark:bg-[#FB923C]/15 dark:text-[#FDBA74]">
-                  {React.createElement(Icon as React.FC<{ size?: number }>, { size: 22 })}
-                </div>
-                <div className="mb-1 text-[13px] font-mono text-slate-400">0{i + 1}</div>
-                <h3 className="text-lg font-bold">{title as string}</h3>
-                <p className="mt-2 leading-relaxed text-slate-600 dark:text-slate-400">{desc as string}</p>
-              </div>
-            ))}
-          </div>
-        </Shell>
-      </section>
-
-      {/* ── COURSE GRID ── */}
-      <section id="courses" className="border-t border-slate-200/70 bg-slate-50 py-20 dark:border-white/10 dark:bg-white/[0.02]">
+      {/* ── LEARNING PATHS ── */}
+      <section id="courses" className="py-20">
         <Shell>
           <div className="mx-auto max-w-2xl text-center">
             <span className="text-[12px] font-bold uppercase tracking-[0.14em] text-[#EA580C] dark:text-[#FDBA74]">Courses</span>
             <h2 className="mt-3 text-[clamp(1.9rem,4vw,3rem)] font-extrabold leading-[1.1] tracking-tight">From one bit to a whole chip.</h2>
-            <p className="mt-4 text-lg text-slate-600 dark:text-slate-400">Eight tracks. Each one starts from nothing and builds up.</p>
           </div>
-          <div className="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {COURSES.map(({ icon: Icon, title, desc, color, lessons }) => (
+
+          <div className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+            {MODULE_CARDS.map(({ icon: Icon, title, tag, color, num, route, startHere }) => (
               <Link
-                to={primaryTo}
-                key={title}
-                className="group rounded-2xl border border-slate-200 bg-white p-6 transition-all hover:-translate-y-1 hover:shadow-[0_24px_50px_-24px_rgba(15,23,42,0.25)] dark:border-white/10 dark:bg-[#13141C] dark:hover:shadow-[0_24px_50px_-24px_rgba(0,0,0,0.8)]"
+                key={route}
+                to={route}
+                className="group relative flex flex-col rounded-2xl border border-slate-200 bg-white p-5 transition-all hover:-translate-y-1 hover:shadow-[0_24px_50px_-24px_rgba(15,23,42,0.25)] dark:border-white/10 dark:bg-[#13141C] dark:hover:shadow-[0_24px_50px_-24px_rgba(0,0,0,0.8)]"
+                style={{ borderColor: undefined }}
               >
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl" style={{ background: `${color}1A`, color }}>
-                  <Icon size={24} />
+                <div className="flex items-center justify-between">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-xl" style={{ background: `${color}1A`, color }}>
+                    <Icon size={18} />
+                  </span>
+                  {startHere ? (
+                    <span className="rounded-full bg-[#F97316] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">Start here</span>
+                  ) : (
+                    <span className="font-mono text-[11px] font-semibold text-slate-400">{String(num).padStart(2, '0')}</span>
+                  )}
                 </div>
-                <h3 className="font-bold leading-snug">{title}</h3>
-                <p className="mt-1.5 text-sm text-slate-500 dark:text-slate-400">{desc}</p>
-                <div className="mt-4 flex items-center justify-between text-[12px] font-medium text-slate-400">
-                  <span>{lessons} lessons</span>
-                  <ArrowRight size={15} className="transition-transform group-hover:translate-x-1" style={{ color }} />
+                <h3 className="mt-4 text-[15px] font-bold leading-snug">{title}</h3>
+                <div className="mt-auto flex items-center justify-between pt-4">
+                  <span className="text-[11px] font-bold uppercase tracking-wide" style={{ color }}>{tag}</span>
+                  <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" style={{ color }} />
                 </div>
               </Link>
+            ))}
+          </div>
+
+          <p className="mt-10 text-center text-sm text-slate-500 dark:text-slate-400">
+            First five modules free, no account needed.
+            <Link to={LANDING_ROUTES.career} className="ml-2 font-semibold text-[#EA580C] hover:underline dark:text-[#FDBA74]">See where these skills lead</Link>
+          </p>
+        </Shell>
+      </section>
+
+      {/* ── HOW IT WORKS ── */}
+      <section id="how" className="border-y border-slate-200/70 bg-slate-50 py-20 dark:border-white/10 dark:bg-white/[0.02]">
+        <Shell>
+          <div className="mx-auto max-w-2xl text-center">
+            <span className="text-[12px] font-bold uppercase tracking-[0.14em] text-[#EA580C] dark:text-[#FDBA74]">How it works</span>
+            <h2 className="mt-3 text-[clamp(1.9rem,4vw,3rem)] font-extrabold leading-[1.1] tracking-tight">Every lesson is something you do.</h2>
+          </div>
+
+          <div className="relative mt-12 grid gap-10 md:grid-cols-3">
+            <div aria-hidden className="absolute left-6 right-6 top-6 hidden border-t-2 border-dotted border-slate-300 md:block dark:border-white/15" />
+            {([
+              ['01', 'Pick a path', 'Sixteen modules, first five free.',
+                <div key="v1" className="flex gap-2">
+                  {[Binary, Zap, Grid3x3].map((I, i) => (
+                    <span key={i} className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#F97316]/10 text-[#EA580C] dark:bg-[#FB923C]/15 dark:text-[#FDBA74]">
+                      <I size={18} />
+                    </span>
+                  ))}
+                </div>],
+              ['02', 'Mess with it', 'The circuit answers instantly.',
+                <div key="v2" className="flex items-center gap-2.5">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-xl border-2 border-[#F97316] bg-[#F97316]/10 font-mono text-sm font-bold text-[#EA580C] dark:text-[#FDBA74]">1</span>
+                  <span className="flex h-10 w-10 items-center justify-center rounded-xl border-2 border-slate-300 bg-white font-mono text-sm font-bold text-slate-400 dark:border-white/15 dark:bg-white/[0.04]">0</span>
+                  <ArrowRight size={16} className="text-slate-400" />
+                  <span className="h-10 w-10 rounded-full border-2 border-[#F97316] bg-[#F97316] shadow-[0_0_18px_rgba(249,115,22,0.5)]" />
+                </div>],
+              ['03', 'Go from gates to Verilog', 'Real hardware code, in the browser.',
+                <code key="v3" className="inline-block rounded-xl border border-slate-200 bg-white px-4 py-2.5 font-mono text-[13px] text-slate-700 dark:border-white/10 dark:bg-[#13141C] dark:text-slate-200">
+                  assign y = a ^ b;
+                </code>],
+            ] as Array<[string, string, string, React.ReactNode]>).map(([num, title, line, visual]) => (
+              <div key={num}>
+                <div className="relative z-10 flex h-12 w-12 items-center justify-center rounded-full border border-slate-200 bg-white font-mono text-sm font-bold text-[#EA580C] shadow-sm dark:border-white/10 dark:bg-[#13141C] dark:text-[#FDBA74]">
+                  {num}
+                </div>
+                <h3 className="mt-5 text-lg font-bold">{title}</h3>
+                <div className="mt-4">{visual}</div>
+                <p className="mt-3 text-sm text-slate-500 dark:text-slate-400">{line}</p>
+              </div>
             ))}
           </div>
         </Shell>
@@ -240,10 +383,10 @@ export const BrilliantHome: React.FC = () => {
             <span className="text-[12px] font-bold uppercase tracking-[0.14em] text-[#EA580C] dark:text-[#FDBA74]">Why it works</span>
             <h2 className="mt-3 text-[clamp(1.8rem,3.6vw,2.75rem)] font-extrabold leading-[1.12] tracking-tight">Understand it. Don't just memorize it.</h2>
             <p className="mt-4 text-lg leading-relaxed text-slate-600 dark:text-slate-400">
-              Most courses keep you stuck in the math. Here, every idea is wired to a circuit you can actually touch, so it sticks.
+              Reading about a gate is not the same as flipping its inputs. Try the one on the right.
             </p>
             <ul className="mt-6 space-y-3">
-              {['Simulators you can play with, not slides', 'You find out right away if you got it right', 'Logic gates now, a working CPU later'].map((t) => (
+              {['Live simulators in every lesson, not slides', 'Instant feedback on every answer', 'A clear route from basic electronics to Verilog'].map((t) => (
                 <li key={t} className="flex items-center gap-3 text-slate-700 dark:text-slate-300">
                   <span className="flex h-6 w-6 flex-none items-center justify-center rounded-full bg-[#F97316]/10 text-[#EA580C] dark:bg-[#FB923C]/15 dark:text-[#FDBA74]"><Check size={14} /></span>
                   {t}
@@ -252,9 +395,7 @@ export const BrilliantHome: React.FC = () => {
             </ul>
             <div className="mt-8"><PrimaryBtn to={primaryTo}>Start the first lesson</PrimaryBtn></div>
           </div>
-          <div className="rounded-3xl border border-slate-200 bg-gradient-to-br from-slate-50 to-white p-6 dark:border-white/10 dark:from-white/[0.04] dark:to-transparent">
-            <SignalShowcase />
-          </div>
+          <XorDemo />
         </Shell>
       </section>
 
@@ -268,10 +409,10 @@ export const BrilliantHome: React.FC = () => {
           <div className="mt-12 grid gap-6 md:grid-cols-3">
             {TESTIMONIALS.map((t) => (
               <figure key={t.name} className="rounded-2xl border border-slate-200 bg-white p-7 dark:border-white/10 dark:bg-[#13141C]">
-                <div className="mb-3 flex">{[0, 1, 2, 3, 4].map((i) => <Star key={i} size={15} className="fill-[#F59E0B] text-[#F59E0B]" />)}</div>
                 <blockquote className="leading-relaxed text-slate-700 dark:text-slate-300">"{t.quote}"</blockquote>
-                <figcaption className="mt-4 text-sm font-semibold">
-                  {t.name} <span className="font-normal text-slate-400">, {t.role}</span>
+                <figcaption className="mt-5 flex items-center gap-3">
+                  <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#F97316]/10 text-sm font-bold text-[#EA580C] dark:bg-[#FB923C]/15 dark:text-[#FDBA74]">{t.name[0]}</span>
+                  <span className="text-sm font-semibold">{t.name}<span className="font-normal text-slate-400">, {t.role}</span></span>
                 </figcaption>
               </figure>
             ))}

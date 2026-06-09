@@ -3,8 +3,24 @@ import React from 'react';
 /**
  * SignalShowcase: a self-contained, dependency-free animated "live oscilloscope".
  * Pure SVG + SMIL/CSS (no video, no canvas, no JS loop), so it stays tiny and smooth.
- * Warm waveforms scroll seamlessly across a dark screen with a sweeping scan line.
+ * Waveforms scroll seamlessly across a dark screen with a sweeping scan line.
+ * The accent palette is themeable so it can match warm (home) or blue (login) UIs.
  */
+
+export interface SignalAccent {
+  main: string;   // primary wave, grid lines, live dot, LOCKED label
+  soft: string;   // secondary (back) wave
+  bright: string; // clock wave, scan line, HUD text
+  glow: string;   // outer box-shadow colour
+}
+
+/** Default warm palette (used on the landing page). */
+const WARM_ACCENT: SignalAccent = {
+  main: '#FB923C',
+  soft: '#F97316',
+  bright: '#FDBA74',
+  glow: 'rgba(249,115,22,0.4)',
+};
 
 const VIEW_W = 1920;        // path width = 2× the visible tile so the scroll loops
 const SHIFT = 960;          // translate distance == one visible tile
@@ -54,8 +70,11 @@ const Scroller: React.FC<{ children: React.ReactNode; dur: number }> = ({ childr
   </g>
 );
 
-export const SignalShowcase: React.FC = () => (
-  <div className="relative aspect-video w-full overflow-hidden rounded-[28px] border border-slate-200 bg-[#0A0E1A] shadow-[0_40px_90px_-30px_rgba(46,50,255,0.45)]">
+export const SignalShowcase: React.FC<{ accent?: SignalAccent }> = ({ accent = WARM_ACCENT }) => (
+  <div
+    className="relative aspect-video w-full overflow-hidden rounded-[28px] border border-white/10"
+    style={{ background: '#0A0E1A', boxShadow: `0 40px 90px -30px ${accent.glow}` }}
+  >
     <style>{`
       @keyframes bfb-scan { 0%{transform:translateX(0);opacity:0} 8%{opacity:.9} 92%{opacity:.9} 100%{transform:translateX(100%);opacity:0} }
       @keyframes bfb-blink { 0%,100%{opacity:.35} 50%{opacity:1} }
@@ -67,10 +86,10 @@ export const SignalShowcase: React.FC = () => (
     {/* faint grid */}
     <svg className="absolute inset-0 h-full w-full opacity-[0.16]" preserveAspectRatio="none" viewBox="0 0 960 400">
       {Array.from({ length: 13 }).map((_, i) => (
-        <line key={'v' + i} x1={i * 80} y1="0" x2={i * 80} y2="400" stroke="#FB923C" strokeWidth="1" />
+        <line key={'v' + i} x1={i * 80} y1="0" x2={i * 80} y2="400" stroke={accent.main} strokeWidth="1" />
       ))}
       {Array.from({ length: 6 }).map((_, i) => (
-        <line key={'h' + i} x1="0" y1={i * 80} x2="960" y2={i * 80} stroke="#FB923C" strokeWidth="1" />
+        <line key={'h' + i} x1="0" y1={i * 80} x2="960" y2={i * 80} stroke={accent.main} strokeWidth="1" />
       ))}
     </svg>
 
@@ -83,25 +102,28 @@ export const SignalShowcase: React.FC = () => (
         </filter>
       </defs>
       <Scroller dur={11}>
-        <path d={WAVE_SOFT} fill="none" stroke="#F97316" strokeWidth="3" strokeOpacity="0.5" />
+        <path d={WAVE_SOFT} fill="none" stroke={accent.soft} strokeWidth="3" strokeOpacity="0.5" />
       </Scroller>
       <Scroller dur={6}>
-        <path d={CLOCK} fill="none" stroke="#FDBA74" strokeWidth="2.5" strokeOpacity="0.65" />
+        <path d={CLOCK} fill="none" stroke={accent.bright} strokeWidth="2.5" strokeOpacity="0.65" />
       </Scroller>
       <Scroller dur={7.5}>
-        <path d={WAVE_MAIN} fill="none" stroke="#FB923C" strokeWidth="3.5" filter="url(#bfbGlow2)" strokeLinecap="round" />
+        <path d={WAVE_MAIN} fill="none" stroke={accent.main} strokeWidth="3.5" filter="url(#bfbGlow2)" strokeLinecap="round" />
       </Scroller>
     </svg>
 
     {/* sweeping scan line */}
-    <div className="bfb-scan pointer-events-none absolute inset-y-0 left-0 w-[2px] bg-gradient-to-b from-transparent via-[#FDBA74] to-transparent" />
+    <div
+      className="bfb-scan pointer-events-none absolute inset-y-0 left-0 w-[2px]"
+      style={{ background: `linear-gradient(to bottom, transparent, ${accent.bright}, transparent)` }}
+    />
 
     {/* HUD labels */}
-    <div className="absolute left-5 top-4 flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.2em] text-[#FDBA74]">
-      <span className="bfb-blink h-2 w-2 rounded-full bg-[#FB923C]" /> Signal live
+    <div className="absolute left-5 top-4 flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.2em]" style={{ color: accent.bright }}>
+      <span className="bfb-blink h-2 w-2 rounded-full" style={{ background: accent.main }} /> Signal live
     </div>
     <div className="absolute bottom-4 left-5 font-mono text-[11px] text-white/55">
-      CLK 100&nbsp;MHz&nbsp;&nbsp;&nbsp;8-bit bus&nbsp;&nbsp;&nbsp;<span className="text-[#FB923C]">LOCKED</span>
+      CLK 100&nbsp;MHz&nbsp;&nbsp;&nbsp;8-bit bus&nbsp;&nbsp;&nbsp;<span style={{ color: accent.main }}>LOCKED</span>
     </div>
     <div className="absolute bottom-4 right-5 font-mono text-[11px] text-white/45 tabular-nums">▲ +5.0V&nbsp;&nbsp;▼ 0.0V</div>
   </div>

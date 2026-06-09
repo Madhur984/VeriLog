@@ -26,6 +26,8 @@ export const LANDING_ROUTES = {
   firstModule: '/module/1',
   /** Digital-design (gates → K-maps → NAND) track entry. */
   digitalDesign: '/dsd/1',
+  /** Basic Electronics track entry (module 1, Physics of Control). */
+  basicElectronics: '/basic-electronics/1',
   /** Career roadmap, Explore tab (domains, companies). */
   career: '/career-roadmap?tab=explore',
   /** Career roadmap, Skills tab (skill-gap radar). */
