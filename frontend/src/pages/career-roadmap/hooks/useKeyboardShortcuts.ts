@@ -9,10 +9,13 @@ interface ShortcutConfig {
 export function useKeyboardShortcuts(shortcuts: ShortcutConfig[]) {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Ignore if user is typing in an input or textarea
+      // Ignore if user is typing in an input, textarea, select, or contenteditable
+      const el = document.activeElement;
       if (
-        document.activeElement?.tagName === 'INPUT' ||
-        document.activeElement?.tagName === 'TEXTAREA'
+        el?.tagName === 'INPUT' ||
+        el?.tagName === 'TEXTAREA' ||
+        el?.tagName === 'SELECT' ||
+        (el as HTMLElement)?.isContentEditable
       ) {
         return;
       }

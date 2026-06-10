@@ -7,7 +7,7 @@ import { cn } from '../../../utils/cn';
 
 const PIPELINE_STAGES = [
   { label: 'ACADEMIC FOUNDATION', desc: 'Core Physics & Mathematics', density: 100 },
-  { label: 'LABORATORY SYSTHESIS', desc: 'Practical HDL & Analog Design', density: 65 },
+  { label: 'LABORATORY SYNTHESIS', desc: 'Practical HDL & Analog Design', density: 65 },
   { label: 'INTERNSHIP INTAKE', desc: 'Industrial Exposure (Tier 1)', density: 25 },
   { label: 'ELITE PLACEMENT', desc: 'Market Giant Absorption', density: 8 },
 ];

@@ -3,10 +3,18 @@ import { motion } from 'framer-motion';
 import { SectionWrapper } from '../../../components/SectionWrapper';
 import { TrendingUp, ShieldCheck } from 'lucide-react';
 
+const ROLE_PRESETS = [
+  { label: 'VLSI Design', ctc: 1200000 },
+  { label: 'Embedded Systems', ctc: 750000 },
+  { label: 'RF / Wireless', ctc: 1000000 },
+  { label: 'Software / EDA', ctc: 900000 },
+];
+
 export const FiscalMatrix: React.FC = () => {
   const [savingsRate, setSavingsRate] = useState(30);
+  const [activeRole, setActiveRole] = useState(0);
   const targetCorpus = 30000000; // 3Cr
-  const ctc = 750000; // 7.5L
+  const ctc = ROLE_PRESETS[activeRole].ctc;
   
   // Simplified math
   const annualSavings = (ctc * (savingsRate / 100));
@@ -35,7 +43,24 @@ export const FiscalMatrix: React.FC = () => {
             <div className="p-5 sm:p-8 bg-observatory-bg border border-border-soft rounded-2xl space-y-8">
               <div className="flex justify-between items-baseline gap-4">
                 <span className="text-[10px] font-mono text-text-dim uppercase tracking-widest">Entry Trajectory (CTC)</span>
-                <span className="text-4xl sm:text-6xl font-bold text-text-main shrink-0">₹7.5L</span>
+                <span className="text-4xl sm:text-6xl font-bold text-text-main shrink-0">₹{(ctc / 100000).toFixed(1)}L</span>
+              </div>
+
+              {/* Role Selector */}
+              <div className="flex flex-wrap gap-2">
+                {ROLE_PRESETS.map((role, i) => (
+                  <button
+                    key={role.label}
+                    onClick={() => setActiveRole(i)}
+                    className={`px-3 py-1.5 text-[9px] font-mono uppercase tracking-widest border rounded-full transition-all ${
+                      activeRole === i
+                        ? 'bg-signal-core border-signal-core text-bg-void font-bold'
+                        : 'border-border-soft text-text-dim hover:border-text-dim hover:text-text-sub'
+                    }`}
+                  >
+                    {role.label}
+                  </button>
+                ))}
               </div>
 
               <div className="space-y-6">
@@ -43,7 +68,7 @@ export const FiscalMatrix: React.FC = () => {
                   <div key={comp.label} className="space-y-2">
                     <div className="flex justify-between text-[11px] font-mono uppercase">
                       <span className="text-text-sub">{comp.label}</span>
-                      <span className="text-text-main">₹{comp.value.toLocaleString()}</span>
+                      <span className="text-text-main">₹{comp.value.toLocaleString('en-IN')}</span>
                     </div>
                     <div className="h-1 w-full bg-border-soft rounded-full overflow-hidden">
                       <motion.div 

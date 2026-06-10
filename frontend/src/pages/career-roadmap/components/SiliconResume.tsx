@@ -1,27 +1,41 @@
 import { useState, useEffect } from 'react';
-import { FileDown, CheckCircle, Sparkles } from 'lucide-react';
+import { FileDown, CheckCircle, Sparkles, Cpu, CircuitBoard, Zap } from 'lucide-react';
 import { useColorScheme } from '../../../hooks/useColorScheme';
+import { BADGE_DEFINITIONS } from '../../../data/badgeDefinitions';
 import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
+import { sfx } from '../utils/sfx';
 
-export const SiliconResume = () => {
+interface SiliconResumeProps {
+  unlockedBadgeIds?: string[];
+  masteredNodes?: string[];
+}
+
+export const SiliconResume: React.FC<SiliconResumeProps> = ({ 
+  unlockedBadgeIds = [], 
+  masteredNodes: propMasteredNodes 
+}) => {
   const [scheme] = useColorScheme();
   const isLight = scheme === 'light';
   const [activeTemplate, setActiveTemplate] = useState('india');
-  const [masteredNodes, setMasteredNodes] = useState<string[]>([]);
+  
+  const [localMasteredNodes, setLocalMasteredNodes] = useState<string[]>([]);
+  const masteredNodes = propMasteredNodes ?? localMasteredNodes;
   
   useEffect(() => {
+    if (propMasteredNodes) return;
     try {
       const stored = localStorage.getItem('bfb_mastered_nodes');
       if (stored) {
-        setMasteredNodes(JSON.parse(stored));
+        setLocalMasteredNodes(JSON.parse(stored));
       } else {
-        setMasteredNodes(['digital-foundation', 'verilog-hdl']);
+        setLocalMasteredNodes(['digital-foundation', 'verilog-hdl']);
       }
     } catch (e) {
       console.error('Error parsing mastered nodes for resume:', e);
-      setMasteredNodes(['digital-foundation', 'verilog-hdl']);
+      setLocalMasteredNodes(['digital-foundation', 'verilog-hdl']);
     }
-  }, []);
+  }, [propMasteredNodes]);
 
   const defaultSkills = ["SystemVerilog / Verilog", "STA Timing Optimization", "FSM Synthesis", "Digital Circuit Design"];
   
@@ -34,13 +48,28 @@ export const SiliconResume = () => {
 
   const skillsList = Array.from(new Set([...mappedSkills, ...defaultSkills]));
 
+  // Map badge names to their actual descriptions from definitions
+  const getBadgeDescription = (badgeName: string) => {
+    const normalized = badgeName.toLowerCase().replace(/\s+/g, '-');
+    const found = BADGE_DEFINITIONS.find(b => 
+      b.name.toLowerCase() === badgeName.toLowerCase() ||
+      b.id === normalized
+    );
+    return found?.description || `Verified competency in ${badgeName}.`;
+  };
+
+  const defaultBadges = ["Digital Design Foundations", "Binary Arithmetic Pioneer", "Timing Compliance Specialist"];
+  const unlockedBadges = unlockedBadgeIds.length > 0 
+    ? BADGE_DEFINITIONS.filter(b => unlockedBadgeIds.includes(b.id)).map(b => b.name)
+    : defaultBadges;
+
   const resumeData = {
     name: "KRITEN SINGHAL",
     contact: "k.singhal@bitforbytes.in | +91 XXXXXXXXXX | Ghaziabad, UP",
     links: "github.com/kriten | linkedin.com/in/kriten",
     summary: "ECE 3rd-year student focusing on logic optimization, RTL architecture, and hardware synthesis. Winner and Team Lead of Smart India Hackathon 2025 (Hardware Edition). Dedicated to building highly structured architecture prototypes.",
     skills: skillsList,
-    badges: ["Digital Design Foundations", "Binary Arithmetic Pioneer", "Timing Compliance Specialist"],
+    badges: unlockedBadges,
     projects: [
       { name: "BitforBytes Core Scrollytelling Simulator", desc: "Engineered browser-native 60fps structural clock domain simulator and physics-accurate transmission line trace graph components from absolute scratch using React & TypeScript layout arrays." },
       { name: "Smart India Hackathon 2025 Winning Hardware Node", desc: "Designed and fabricated an on-edge indigenous firmware hardware subsystem block. Managed structural validation schemas and timing analysis profiles under extreme stress limits." }
@@ -48,6 +77,7 @@ export const SiliconResume = () => {
   };
 
   const exportPDF = () => {
+    sfx.playClick();
     const doc = new jsPDF('p', 'pt', 'a4');
     const fontHeader = activeTemplate === 'global' ? 'times' : 'helvetica';
     const fontBody = activeTemplate === 'global' ? 'times' : 'helvetica';
@@ -98,7 +128,8 @@ export const SiliconResume = () => {
     doc.setFont(fontBody, 'normal');
     doc.setFontSize(9);
     resumeData.badges.forEach((badge) => {
-      doc.text(`* ${badge} Tag: Cryptographically verified structural core logic compliance token mapping.`, 40, y);
+      const desc = getBadgeDescription(badge);
+      doc.text(`* ${badge}: ${desc}`, 40, y);
       y += 14;
     });
     y += 10;
@@ -121,6 +152,38 @@ export const SiliconResume = () => {
     });
     
     doc.save(`Silicon_Resume_${activeTemplate}.pdf`);
+    sfx.playSuccess();
+  };
+
+  const [showPassport, setShowPassport] = useState(false);
+  const [exportingPassport, setExportingPassport] = useState(false);
+
+  const downloadPassport = async () => {
+    const cardElement = document.getElementById('silicon-passport-card');
+    if (!cardElement) return;
+
+    setExportingPassport(true);
+    sfx.playClick();
+    
+    try {
+      const canvas = await html2canvas(cardElement, {
+        useCORS: true,
+        scale: 2,
+        backgroundColor: '#090b11',
+        logging: false
+      });
+      const dataUrl = canvas.toDataURL('image/png');
+      const link = document.createElement('a');
+      link.download = `Silicon_Passport_Kriten.png`;
+      link.href = dataUrl;
+      link.click();
+      sfx.playSuccess();
+    } catch (e) {
+      console.error('Failed to export passport', e);
+      sfx.playGlitch();
+    } finally {
+      setExportingPassport(false);
+    }
   };
 
   return (
@@ -189,16 +252,28 @@ export const SiliconResume = () => {
           </div>
         </div>
 
-        {/* Action Button */}
-        <button 
-          onClick={exportPDF}
-          className={`w-full font-mono text-sm py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition-all ${
-            isLight ? 'bg-signal-core text-white hover:bg-signal-core/90' : 'bg-[#22D3EE] text-[#07080A] hover:bg-[#19b1c9]'
-          }`}
-        >
-          <FileDown size={16} />
-          EXPORT INDUSTRIAL PDF
-        </button>
+        {/* Action Buttons */}
+        <div className="space-y-2">
+          <button 
+            onClick={exportPDF}
+            className={`w-full font-mono text-sm py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition-all ${
+              isLight ? 'bg-signal-core text-white hover:bg-signal-core/90' : 'bg-[#22D3EE] text-[#07080A] hover:bg-[#19b1c9]'
+            }`}
+          >
+            <FileDown size={16} />
+            EXPORT INDUSTRIAL PDF
+          </button>
+          <button 
+            onClick={() => {
+              setShowPassport(true);
+              sfx.playClick();
+            }}
+            className="w-full font-mono text-sm py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition-all border border-[#F59E0B]/30 bg-[#F59E0B]/10 text-[#F59E0B] hover:bg-[#F59E0B]/20"
+          >
+            <Sparkles size={16} />
+            GENERATE SILICON PASSPORT
+          </button>
+        </div>
       </div>
 
       {/* Right Panel: ATS-Readable Live Rendering Engine */}
@@ -226,7 +301,7 @@ export const SiliconResume = () => {
             <h3 className="text-xs font-bold font-mono tracking-wider text-slate-900 border-b border-slate-200 pb-0.5 mb-1">VERIFIED CERTIFICATIONS (BITFORBYTES PLATFORM)</h3>
             <ul className="list-disc pl-4 text-xs text-slate-700 space-y-0.5">
               {resumeData.badges.map((badge, i) => (
-                <li key={i}><strong>{badge} Tag:</strong> Cryptographically verified structural core logic compliance token mapping.</li>
+                <li key={i}><strong>{badge}:</strong> {getBadgeDescription(badge)}</li>
               ))}
             </ul>
           </div>
@@ -247,6 +322,106 @@ export const SiliconResume = () => {
           </div>
         </div>
       </div>
+
+      {/* Silicon Passport Modal Dialog */}
+      {showPassport && (
+        <div className="fixed inset-0 bg-black/85 backdrop-blur-xl z-[999] flex flex-col items-center justify-center p-4 font-mono select-none">
+          <div 
+            id="silicon-passport-card"
+            className="w-[340px] h-[520px] rounded-3xl bg-[#090b11] border-2 border-cyan-500/30 p-6 flex flex-col justify-between relative overflow-hidden shadow-[0_0_50px_rgba(6,182,212,0.15)] text-white uppercase tracking-wider"
+          >
+            {/* Holographic PCB grid lines backdrop */}
+            <div className="absolute inset-0 opacity-10 pointer-events-none bg-[linear-gradient(to_right,#0ea5e9_1px,transparent_1px),linear-gradient(to_bottom,#0ea5e9_1px,transparent_1px)] bg-[size:20px_20px]" />
+            <div className="absolute top-0 right-0 w-28 h-28 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none" />
+
+            {/* Header */}
+            <div className="flex justify-between items-start border-b border-white/10 pb-3.5 z-10">
+              <div className="space-y-0.5">
+                <div className="text-[10px] font-black text-cyan-400 tracking-widest flex items-center gap-1.5">
+                  <Cpu size={12} /> BFB_SILICON_BOARD
+                </div>
+                <div className="text-[6px] text-slate-500 font-bold">VERIFIED HARDWARE ENGINEER IDENTITY</div>
+              </div>
+              <div className="text-[7px] text-slate-400 bg-white/5 border border-white/10 px-2 py-0.5 rounded font-bold">
+                ID: BFB-K1-9F3E
+              </div>
+            </div>
+
+            {/* Profile Photo Area (Futuristic outline or abstract avatar) */}
+            <div className="my-4 flex items-center gap-4 z-10">
+              <div className="w-16 h-16 rounded-2xl border-2 border-[#F59E0B]/50 bg-slate-950 flex items-center justify-center relative shadow-[0_0_15px_rgba(245,158,11,0.15)]">
+                <CircuitBoard className="text-[#F59E0B]/80" size={28} />
+                <div className="absolute -bottom-1 -right-1 w-2.5 h-2.5 bg-green-500 rounded-full border border-black animate-pulse" />
+              </div>
+              <div className="space-y-1">
+                <div className="text-[13px] font-black text-white leading-tight">KRITEN SINGHAL</div>
+                <div className="text-[8px] text-[#F59E0B] font-bold">L3 ASIC ARCHITECT</div>
+                <div className="text-[7px] text-slate-400 leading-normal">BitforBytes Academy</div>
+              </div>
+            </div>
+
+            {/* Stats list */}
+            <div className="space-y-3 z-10 border-t border-b border-white/5 py-4 my-2">
+              <div className="flex justify-between text-[8px]">
+                <span className="text-slate-500">COGNITIVE MASTERY:</span>
+                <span className="text-cyan-400 font-black">78% SYNTHESIS LEVEL</span>
+              </div>
+              <div className="flex justify-between text-[8px]">
+                <span className="text-slate-500">ACTIVE NODES SECURED:</span>
+                <span className="text-[#10B981] font-black">{masteredNodes.length} VERIFIED BLOCKS</span>
+              </div>
+              <div className="flex justify-between text-[8px]">
+                <span className="text-slate-500">CURRENT BADGES:</span>
+                <span className="text-slate-300 font-black">{unlockedBadges.length} DEPLOYED</span>
+              </div>
+            </div>
+
+            {/* Badges Grid (Displays mini-chip shapes of badges) */}
+            <div className="grid grid-cols-3 gap-2 my-2 z-10 flex-1 overflow-hidden max-h-24">
+              {unlockedBadges.slice(0, 3).map((badge, idx) => (
+                <div key={idx} className="bg-white/[0.02] border border-white/5 rounded-xl p-2 flex flex-col justify-between items-center text-center">
+                  <Zap size={11} className="text-[#F59E0B] mb-1.5" />
+                  <div className="text-[6px] text-slate-400 font-bold leading-tight uppercase line-clamp-2">{badge}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* Footer / QR / Signatures */}
+            <div className="border-t border-white/10 pt-3 flex justify-between items-center z-10">
+              <div className="space-y-0.5">
+                <div className="text-[6px] text-slate-500 font-bold">ISSUING AUTHORITY:</div>
+                <div className="text-[7px] text-white font-black tracking-widest">DEEPMIND_ANTIGRAVITY</div>
+              </div>
+              {/* Abstract barcode representation */}
+              <div className="flex gap-[1px] h-6 items-center bg-white/5 px-2 py-1 rounded">
+                {[2,4,1,3,2,1,4,2,3,1,2,4].map((h, i) => (
+                  <div key={i} className="bg-slate-300 w-[1.5px]" style={{ height: `${h * 4}px` }} />
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Dialog Action Buttons */}
+          <div className="flex gap-4 mt-6">
+            <button
+              onClick={() => {
+                setShowPassport(false);
+                sfx.playClick();
+              }}
+              className="px-6 py-2.5 rounded-xl border border-white/10 text-slate-400 hover:text-white transition-all text-[10px] font-mono uppercase tracking-widest"
+            >
+              [ CLOSE ]
+            </button>
+            <button
+              disabled={exportingPassport}
+              onClick={downloadPassport}
+              className="px-6 py-2.5 rounded-xl bg-cyan-500 text-black hover:bg-cyan-400 transition-all text-[10px] font-mono font-black uppercase tracking-widest shadow-[0_0_20px_rgba(6,182,212,0.25)]"
+            >
+              {exportingPassport ? 'ENCODING...' : 'DOWNLOAD PNG'}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -5,11 +5,17 @@ import { SimulatorRightPanel } from '../../../components/SimulatorRightPanel';
 import { OutcomeCard } from '../../../components/OutcomeCard';
 import { SiliconPersonalityEngine } from '../../../components/SiliconPersonalityEngine';
 import { storyTree, StoryNode } from '../data/storyTree';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 
-export const TrajectorySimulator: React.FC = () => {
+interface TrajectorySimulatorProps {
+  onRecordSimulation?: (outcomeId: string) => void;
+}
+
+export const TrajectorySimulator: React.FC<TrajectorySimulatorProps> = ({ onRecordSimulation }) => {
   const [currentNodeId, setCurrentNodeId] = useState('start');
   const [history, setHistory] = useState<StoryNode[]>([]);
   const [showArchetype, setShowArchetype] = useState(false);
+  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
 
   const currentNode = storyTree.find(n => n.id === currentNodeId) || storyTree[0];
   
@@ -19,6 +25,11 @@ export const TrajectorySimulator: React.FC = () => {
     // Archetype reveal at depth 3
     if (history.length === 2) {
       setShowArchetype(true);
+    }
+    
+    const nextNode = storyTree.find(n => n.id === nextId);
+    if (nextNode?.type === 'outcome' && onRecordSimulation) {
+      onRecordSimulation(nextId);
     }
     
     setCurrentNodeId(nextId);
@@ -99,12 +110,42 @@ export const TrajectorySimulator: React.FC = () => {
             </AnimatePresence>
           </div>
 
+          {/* Desktop: side panel */}
           <div className="w-full md:w-[400px] bg-observatory-surface border border-border-soft rounded-2xl overflow-hidden hidden lg:block">
             <SimulatorRightPanel 
               history={panelHistory} 
               outcomes={mockOutcomes} 
             />
           </div>
+        </div>
+
+        {/* Mobile: collapsible drawer */}
+        <div className="lg:hidden mt-6">
+          <button
+            onClick={() => setMobileDrawerOpen(!mobileDrawerOpen)}
+            className="w-full flex items-center justify-between px-5 py-3 bg-observatory-surface border border-border-soft rounded-xl text-[10px] font-mono font-bold uppercase tracking-widest text-text-dim hover:text-text-main transition-all"
+          >
+            <span>Trajectory Outcomes & History</span>
+            {mobileDrawerOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+          </button>
+          <AnimatePresence>
+            {mobileDrawerOpen && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                className="overflow-hidden"
+              >
+                <div className="mt-2 bg-observatory-surface border border-border-soft rounded-xl overflow-hidden">
+                  <SimulatorRightPanel 
+                    history={panelHistory} 
+                    outcomes={mockOutcomes} 
+                  />
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
 

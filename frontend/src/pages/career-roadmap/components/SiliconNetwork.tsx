@@ -1,19 +1,44 @@
-import React from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Users, Globe, Award, MessageSquare } from 'lucide-react';
 import { DataTerminal } from './DataTerminal';
 import { useColorScheme } from '../../../hooks/useColorScheme';
 
-const PEERS = [
+const ALL_PEERS = [
   { id: 1, name: 'BFB_USER_99', archetype: 'Architect', domain: 'VLSI', progress: 85, location: 'Bengaluru' },
   { id: 2, name: 'BFB_USER_42', archetype: 'Signal Analyst', domain: 'RF', progress: 62, location: 'Austin' },
   { id: 3, name: 'BFB_USER_101', archetype: 'Firmware Eng', domain: 'Embedded', progress: 94, location: 'Munich' },
   { id: 4, name: 'BFB_USER_07', archetype: 'Logic Ninja', domain: 'Digital', progress: 77, location: 'Hsinchu' },
+  { id: 5, name: 'BFB_USER_233', archetype: 'Timing Wizard', domain: 'STA', progress: 91, location: 'Hyderabad' },
+  { id: 6, name: 'BFB_USER_18', archetype: 'Power Lead', domain: 'Power', progress: 56, location: 'Chennai' },
+  { id: 7, name: 'BFB_USER_512', archetype: 'DV Engineer', domain: 'Verification', progress: 88, location: 'San Jose' },
+  { id: 8, name: 'BFB_USER_74', archetype: 'Analog Guru', domain: 'Analog', progress: 73, location: 'Dallas' },
+  { id: 9, name: 'BFB_USER_305', archetype: 'Layout Expert', domain: 'PD', progress: 69, location: 'Noida' },
+  { id: 10, name: 'BFB_USER_61', archetype: 'FPGA Dev', domain: 'FPGA', progress: 82, location: 'Pune' },
+  { id: 11, name: 'BFB_USER_148', archetype: 'SoC Integrator', domain: 'SoC', progress: 95, location: 'Cupertino' },
+  { id: 12, name: 'BFB_USER_29', archetype: 'RF Designer', domain: 'RF/mmWave', progress: 71, location: 'San Diego' },
 ];
 
 export const SiliconNetwork: React.FC = () => {
   const [scheme] = useColorScheme();
   const isLight = scheme === 'light';
+  const [visiblePeers, setVisiblePeers] = useState(ALL_PEERS.slice(0, 4));
+  const [onlineCount, setOnlineCount] = useState(4209);
+
+  useEffect(() => {
+    let peerIndex = 4;
+    const interval = setInterval(() => {
+      setVisiblePeers(prev => {
+        const next = [...prev];
+        const replaceIdx = Math.floor(Math.random() * 4);
+        next[replaceIdx] = ALL_PEERS[peerIndex % ALL_PEERS.length];
+        peerIndex++;
+        return next;
+      });
+      setOnlineCount(prev => prev + Math.floor(Math.random() * 7) - 3);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <DataTerminal title="SILICON NETWORK" subtitle="Verified Peer Intelligence & Mentorship Connections">
@@ -22,11 +47,11 @@ export const SiliconNetwork: React.FC = () => {
           <Users size={18} />
           <span className="font-mono text-xs uppercase tracking-widest font-bold">Active Peer Synchronization</span>
           <div className={`h-px flex-1 ${isLight ? 'bg-signal-core/20' : 'bg-cyan-400/20'}`} />
-          <span className="font-mono text-[10px] text-text-dim animate-pulse">4,209 USERS ONLINE</span>
+          <span className="font-mono text-[10px] text-text-dim animate-pulse">{onlineCount.toLocaleString()} USERS ONLINE</span>
         </div>
 
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-          {PEERS.map((peer) => (
+          {visiblePeers.map((peer) => (
             <motion.div 
               key={peer.id}
               whileHover={{ x: 5 }}

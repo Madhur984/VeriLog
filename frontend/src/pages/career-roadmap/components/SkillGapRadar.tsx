@@ -9,6 +9,40 @@ interface RadarAxis {
   reqValue: number;
 }
 
+const SKILL_ACTIONS: Record<string, { desc: string; route: string; label: string }> = {
+  'Verilog/SV': {
+    desc: 'Verify timing models & practice RTL in the Verilog Playground.',
+    route: '/verilog-playground',
+    label: 'Launch Playground'
+  },
+  'STA & Timing': {
+    desc: 'Practice timing constraints & setup/hold checks in the Logic Studio.',
+    route: '/logic-studio',
+    label: 'Open Studio'
+  },
+  'Computer Arch': {
+    desc: 'Navigate to the explore tab to study CPU architecture hotspots.',
+    route: '/career-roadmap?tab=explore',
+    label: 'Explore Hotspots'
+  },
+  'UVM/DV': {
+    desc: 'Master verification frameworks and assert coverages in the Workbench.',
+    route: '/workbench',
+    label: 'Open Workbench'
+  },
+  'Digital Foundations': {
+    desc: 'Master K-Map reduction and digital logic equations in the K-Map Lab.',
+    route: '/kmap-lab',
+    label: 'Open K-Map Lab'
+  },
+  'Scripting (Tcl/Py)': {
+    desc: 'Write automated build and test scripts in the AI Sandbox Lab.',
+    route: '/ai-lab',
+    label: 'Open AI Lab'
+  }
+};
+
+
 const computeUserSkills = (masteredNodes: string[]) => {
   const masteredSet = new Set(masteredNodes.map(s => s.toLowerCase().trim()));
   
@@ -50,21 +84,38 @@ const computeUserSkills = (masteredNodes: string[]) => {
   };
 };
 
-export const SkillGapRadar = () => {
+interface SkillGapRadarProps {
+  activeCompany?: string;
+  setActiveCompany?: (company: string) => void;
+  masteredNodes?: string[];
+}
+
+export const SkillGapRadar: React.FC<SkillGapRadarProps> = ({
+  activeCompany: propActiveCompany,
+  setActiveCompany: propSetActiveCompany,
+  masteredNodes: propMasteredNodes,
+}) => {
   const [scheme] = useColorScheme();
   const isLight = scheme === 'light';
-  const [activeCompany, setActiveCompany] = useState('nvidia');
+  
+  const [localActiveCompany, setLocalActiveCompany] = useState('nvidia');
+  const activeCompany = propActiveCompany ?? localActiveCompany;
+  const setActiveCompany = propSetActiveCompany ?? setLocalActiveCompany;
+
+  const [localMasteredNodes, setLocalMasteredNodes] = useState<string[]>([]);
+  const masteredNodes = propMasteredNodes ?? localMasteredNodes;
+
   const [studyHours, setStudyHours] = useState(2);
-  const [masteredNodes, setMasteredNodes] = useState<string[]>([]);
   
   useEffect(() => {
+    if (propMasteredNodes) return;
     const handleStorageChange = () => {
       try {
         const stored = localStorage.getItem('bfb_mastered_nodes');
         if (stored) {
-          setMasteredNodes(JSON.parse(stored));
+          setLocalMasteredNodes(JSON.parse(stored));
         } else {
-          setMasteredNodes(['digital-foundation', 'verilog-hdl']);
+          setLocalMasteredNodes(['digital-foundation', 'verilog-hdl']);
         }
       } catch (e) {
         console.error('Error parsing mastered nodes from storage:', e);
@@ -80,7 +131,7 @@ export const SkillGapRadar = () => {
       window.removeEventListener('storage', handleStorageChange);
       window.removeEventListener('bfb_nodes_updated', handleStorageChange);
     };
-  }, []);
+  }, [propMasteredNodes]);
 
   const userScores = computeUserSkills(masteredNodes);
 
@@ -106,6 +157,54 @@ export const SkillGapRadar = () => {
         { label: 'Computer Arch', userValue: userScores.arch, reqValue: 85 },
         { label: 'UVM/DV', userValue: userScores.uvm, reqValue: 95 },
         { label: 'Digital Foundations', userValue: userScores.digital, reqValue: 90 },
+        { label: 'Scripting (Tcl/Py)', userValue: userScores.scripting, reqValue: 80 }
+      ]
+    },
+    intel: {
+      name: 'Intel',
+      target: 'Physical Design Engineer',
+      axes: [
+        { label: 'Verilog/SV', userValue: userScores.verilog, reqValue: 85 },
+        { label: 'STA & Timing', userValue: userScores.sta, reqValue: 95 },
+        { label: 'Computer Arch', userValue: userScores.arch, reqValue: 85 },
+        { label: 'UVM/DV', userValue: userScores.uvm, reqValue: 70 },
+        { label: 'Digital Foundations', userValue: userScores.digital, reqValue: 90 },
+        { label: 'Scripting (Tcl/Py)', userValue: userScores.scripting, reqValue: 85 }
+      ]
+    },
+    isro: {
+      name: 'ISRO',
+      target: 'Scientist / Engineer SC',
+      axes: [
+        { label: 'Verilog/SV', userValue: userScores.verilog, reqValue: 70 },
+        { label: 'STA & Timing', userValue: userScores.sta, reqValue: 60 },
+        { label: 'Computer Arch', userValue: userScores.arch, reqValue: 80 },
+        { label: 'UVM/DV', userValue: userScores.uvm, reqValue: 50 },
+        { label: 'Digital Foundations', userValue: userScores.digital, reqValue: 95 },
+        { label: 'Scripting (Tcl/Py)', userValue: userScores.scripting, reqValue: 65 }
+      ]
+    },
+    'samsung-semi': {
+      name: 'Samsung Semi',
+      target: 'Memory Design Engineer',
+      axes: [
+        { label: 'Verilog/SV', userValue: userScores.verilog, reqValue: 90 },
+        { label: 'STA & Timing', userValue: userScores.sta, reqValue: 80 },
+        { label: 'Computer Arch', userValue: userScores.arch, reqValue: 75 },
+        { label: 'UVM/DV', userValue: userScores.uvm, reqValue: 85 },
+        { label: 'Digital Foundations', userValue: userScores.digital, reqValue: 90 },
+        { label: 'Scripting (Tcl/Py)', userValue: userScores.scripting, reqValue: 70 }
+      ]
+    },
+    'texas-instruments': {
+      name: 'Texas Instruments',
+      target: 'Analog/Mixed-Signal Engineer',
+      axes: [
+        { label: 'Verilog/SV', userValue: userScores.verilog, reqValue: 60 },
+        { label: 'STA & Timing', userValue: userScores.sta, reqValue: 70 },
+        { label: 'Computer Arch', userValue: userScores.arch, reqValue: 55 },
+        { label: 'UVM/DV', userValue: userScores.uvm, reqValue: 50 },
+        { label: 'Digital Foundations', userValue: userScores.digital, reqValue: 85 },
         { label: 'Scripting (Tcl/Py)', userValue: userScores.scripting, reqValue: 80 }
       ]
     }
@@ -188,11 +287,10 @@ export const SkillGapRadar = () => {
 
           {/* Target Profile Boundary */}
           <motion.path 
-            key={`${activeCompany}-req`}
-            initial={{ pathLength: 0 }}
-            animate={{ pathLength: 1 }}
-            transition={{ duration: 0.8 }}
-            d={reqPath} 
+            key="req-path"
+            d={reqPath}
+            animate={{ d: reqPath }}
+            transition={{ duration: 0.5, ease: 'easeInOut' }}
             fill="rgba(245,158,11,0.02)" 
             stroke="#F59E0B" 
             strokeWidth="1.5" 
@@ -201,11 +299,10 @@ export const SkillGapRadar = () => {
 
           {/* User Profile Polygon */}
           <motion.path 
-            key={`${activeCompany}-user-${masteredNodes.length}`}
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ type: 'spring', damping: 15 }}
-            d={userPath} 
+            key="user-path"
+            d={userPath}
+            animate={{ d: userPath }}
+            transition={{ duration: 0.5, ease: 'easeInOut' }}
             fill={isLight ? 'rgba(3,105,161,0.12)' : 'rgba(34,211,238,0.12)'}
             stroke={isLight ? '#0369A1' : '#22D3EE'}
             strokeWidth="2" 
@@ -288,6 +385,38 @@ export const SkillGapRadar = () => {
             })}
           </div>
         </div>
+
+        {/* Smart Action Path Checklist */}
+        {totalGapPoints > 0 && (
+          <div className={`mt-6 border rounded-xl p-5 ${isLight ? 'bg-bg-elev border-border-soft' : 'bg-[#0D0F12] border-white/5'}`}>
+            <div className="text-[10px] font-mono tracking-[0.2em] text-[#F59E0B] mb-4 flex items-center gap-2">
+              <Zap size={12} /> DYNAMIC_REMEDIATION_PLAN
+            </div>
+            <div className="space-y-3 max-h-56 overflow-y-auto pr-1">
+              {currentPreset.axes.map((axis) => {
+                const gap = axis.reqValue - axis.userValue;
+                if (gap <= 0) return null;
+                const action = SKILL_ACTIONS[axis.label];
+                if (!action) return null;
+
+                return (
+                  <div key={axis.label} className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3 bg-white/[0.01] border border-white/5 rounded-lg">
+                    <div className="space-y-1">
+                      <div className="text-[10px] font-bold text-white uppercase tracking-wider">{axis.label} GAP Remediation</div>
+                      <div className="text-[9px] text-slate-400 leading-normal uppercase">{action.desc}</div>
+                    </div>
+                    <a
+                      href={action.route}
+                      className="px-3 py-1.5 rounded bg-[#F59E0B]/10 hover:bg-[#F59E0B]/25 text-[#F59E0B] text-[8px] font-mono uppercase tracking-widest border border-[#F59E0B]/20 transition-all shrink-0"
+                    >
+                      {action.label}
+                    </a>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* Adaptive Execution Estimator */}
         <div className={`border rounded-xl p-5 mt-6 ${isLight ? 'bg-bg-elev border-border-soft' : 'bg-[#0D0F12] border-white/5'}`}>
