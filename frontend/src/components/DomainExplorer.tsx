@@ -8,7 +8,19 @@ import { useColorScheme } from '../hooks/useColorScheme';
 import { cn } from '../utils/cn';
 import { AnimatePresence, motion } from 'framer-motion';
 
-export const DomainExplorer: React.FC = () => {
+interface DomainExplorerProps {
+  comparingIds?: string[];
+  onToggleCompare?: (id: string) => void;
+  onClearCompare?: () => void;
+  onOpenInTopology?: (domainId: string) => void;
+}
+
+export const DomainExplorer: React.FC<DomainExplorerProps> = ({
+  comparingIds: propComparingIds,
+  onToggleCompare,
+  onClearCompare,
+  onOpenInTopology,
+}) => {
   const { result: compassResult } = useCompass();
   const [scheme] = useColorScheme();
   const isLight = scheme === 'light';
@@ -16,7 +28,9 @@ export const DomainExplorer: React.FC = () => {
   const [activeFilter, setActiveFilter] = useState<'ALL' | 'HIGH DEMAND' | 'GROWING' | 'INDIA HOT' | 'HARD' | 'MODERATE'>('ALL');
   const [sortBy, setSortBy] = useState<'salary' | 'demand' | 'difficulty'>('salary');
   const [selectedDomain, setSelectedDomain] = useState<Domain | null>(null);
-  const [comparingIds, setComparingIds] = useState<string[]>([]);
+  
+  const [localComparingIds, setLocalComparingIds] = useState<string[]>([]);
+  const comparingIds = propComparingIds ?? localComparingIds;
 
   const filteredDomains = useMemo(() => {
     let results = DOMAINS.filter(d => 
@@ -49,10 +63,22 @@ export const DomainExplorer: React.FC = () => {
   }, [searchQuery, activeFilter, sortBy]);
 
   const handleToggleCompare = (id: string) => {
-    if (comparingIds.includes(id)) {
-      setComparingIds(comparingIds.filter(cid => cid !== id));
-    } else if (comparingIds.length < 2) {
-      setComparingIds([...comparingIds, id]);
+    if (onToggleCompare) {
+      onToggleCompare(id);
+    } else {
+      if (comparingIds.includes(id)) {
+        setLocalComparingIds(comparingIds.filter(cid => cid !== id));
+      } else if (comparingIds.length < 2) {
+        setLocalComparingIds([...comparingIds, id]);
+      }
+    }
+  };
+
+  const handleClearCompare = () => {
+    if (onClearCompare) {
+      onClearCompare();
+    } else {
+      setLocalComparingIds([]);
     }
   };
 
@@ -174,6 +200,12 @@ export const DomainExplorer: React.FC = () => {
             <DomainDetailModal 
               domain={selectedDomain} 
               onClose={() => setSelectedDomain(null)} 
+              onOpenInTopology={(domainId) => {
+                if (onOpenInTopology) {
+                  onOpenInTopology(domainId);
+                }
+                setSelectedDomain(null);
+              }}
             />
           )}
         </AnimatePresence>
@@ -209,7 +241,7 @@ export const DomainExplorer: React.FC = () => {
                   </div>
                   <div className="flex items-center gap-3 sm:gap-4 shrink-0">
                     <button
-                      onClick={() => setComparingIds([])}
+                      onClick={handleClearCompare}
                       className={cn("text-[9px] font-mono uppercase tracking-widest py-2", isLight ? "text-text-dim hover:text-text-main" : "text-slate-500 hover:text-white")}
                     >
                       CLEAR ALL

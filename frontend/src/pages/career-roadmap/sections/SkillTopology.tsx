@@ -1,12 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { SkillGraph } from '../components/SkillGraph';
 import { SkillGapSummary } from '../../../components/SkillGapSummary';
 import { SectionWrapper } from '../../../components/SectionWrapper';
 import { Search } from 'lucide-react';
 
-export const SkillTopology: React.FC = () => {
-  const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
-  const [masteredNodes] = useState<Set<string>>(new Set(['digital-logic', 'verilog', 'boolean-algebra'])); // Mock data
+interface SkillTopologyProps {
+  selectedCompany?: string | null;
+  setSelectedCompany?: (company: string | null) => void;
+  unlockedNodes?: string[];
+  onUnlockNode?: (nodeId: string) => void;
+}
+
+export const SkillTopology: React.FC<SkillTopologyProps> = ({
+  selectedCompany: propSelectedCompany,
+  setSelectedCompany: propSetSelectedCompany,
+  unlockedNodes,
+  onUnlockNode,
+}) => {
+  const [localSelectedCompany, setLocalSelectedCompany] = useState<string | null>(null);
+  const selectedCompany = propSelectedCompany !== undefined ? propSelectedCompany : localSelectedCompany;
+  const setSelectedCompany = propSetSelectedCompany ?? setLocalSelectedCompany;
+  const [viewMode, setViewMode] = useState<'2D' | '3D'>('2D');
+
+  const masteredNodes = useMemo(() => {
+    if (unlockedNodes) {
+      const set = new Set<string>();
+      unlockedNodes.forEach(node => {
+        const id = node.toLowerCase().trim();
+        if (id === 'digital-foundation') set.add('digital-logic');
+        else if (id === 'verilog-hdl') set.add('verilog');
+        else set.add(id);
+      });
+      return set;
+    }
+    return new Set(['digital-logic', 'verilog', 'computer-arch']); // Fallback
+  }, [unlockedNodes]);
 
   return (
     <SectionWrapper id="skill-graph" className="bg-observatory-bg">
@@ -35,7 +63,8 @@ export const SkillTopology: React.FC = () => {
               {['2D', '3D'].map(mode => (
                 <button
                   key={mode}
-                  className={`px-4 py-1.5 rounded-full text-[10px] font-mono uppercase tracking-widest transition-all ${mode === '2D' ? 'bg-signal-core text-bg-void' : 'text-text-dim hover:text-text-main'}`}
+                  onClick={() => setViewMode(mode as '2D' | '3D')}
+                  className={`px-4 py-1.5 rounded-full text-[10px] font-mono uppercase tracking-widest transition-all ${viewMode === mode ? 'bg-signal-core text-bg-void' : 'text-text-dim hover:text-text-main'}`}
                 >
                   {mode}
                 </button>
@@ -79,6 +108,8 @@ export const SkillTopology: React.FC = () => {
           <SkillGraph 
             selectedCompany={selectedCompany} 
             masteredNodes={masteredNodes}
+            onNodeClick={onUnlockNode}
+            viewMode={viewMode}
           />
         </div>
 

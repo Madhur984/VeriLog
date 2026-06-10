@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo, useCallback, lazy, Suspense } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 
@@ -11,7 +11,6 @@ import { SiliconBriefing } from './components/SiliconBriefing';
 import { HeroSection } from './sections/HeroSection';
 import { SkillTopology } from './sections/SkillTopology';
 import { FiscalMatrix } from './sections/FiscalMatrix';
-import { TrajectorySimulator } from './sections/TrajectorySimulator';
 
 // New Integrated Components
 import { SiliconCompass } from '../../components/SiliconCompass';
@@ -22,12 +21,15 @@ import { ExpertSignal } from '../../components/ExpertSignal';
 import { ComparisonBench } from '../../components/ComparisonBench';
 
 // Phase 1 & 2 Components
-import { SkillGapRadar } from './components/SkillGapRadar';
-import { SiliconResume } from './components/SiliconResume';
-import { TechnicalTerminal } from './components/TechnicalTerminal';
-import { GlobalSalaryHeatmap } from './components/GlobalSalaryHeatmap';
 import { SiliconNetwork } from './components/SiliconNetwork';
 import { SiliconPipeline } from './components/SiliconPipeline';
+
+// Lazy Loaded Heavy Content (optimizes initial page load)
+const SkillGapRadar = lazy(() => import('./components/SkillGapRadar').then(m => ({ default: m.SkillGapRadar })));
+const SiliconResume = lazy(() => import('./components/SiliconResume').then(m => ({ default: m.SiliconResume })));
+const TechnicalTerminal = lazy(() => import('./components/TechnicalTerminal').then(m => ({ default: m.TechnicalTerminal })));
+const GlobalSalaryHeatmap = lazy(() => import('./components/GlobalSalaryHeatmap').then(m => ({ default: m.GlobalSalaryHeatmap })));
+const TrajectorySimulator = lazy(() => import('./sections/TrajectorySimulator').then(m => ({ default: m.TrajectorySimulator })));
 
 // About Components
 import { AboutHero } from '../about/components/AboutHero';
@@ -51,7 +53,10 @@ import { useAmbientAudio } from '../../hooks/useAmbientAudio';
 import { useCompass } from '../../hooks/useCompass';
 import { useComparison } from '../../hooks/useComparison';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
+import { useCareerState } from './hooks/useCareerState';
 import { motion } from 'framer-motion';
+import { Volume2, VolumeX } from 'lucide-react';
+import { sfx } from './utils/sfx';
 
 /**
  * Valid tab ids rendered by this page (must match FloatingCommandBar).
@@ -76,11 +81,72 @@ const CareerRoadmapPage: React.FC = () => {
   const [audioStarted, setAudioStarted] = useState(false);
   const { start: startAudio } = useAmbientAudio();
   const { completed: compassCompleted } = useCompass();
-  const { comparingIds, clearAll: clearComparison } = useComparison();
+  const { comparingIds, toggleDomain, clearAll: clearComparison } = useComparison();
 
-  // Mastery & Badge State
-  const [unlockedBadgeIds] = useState<string[]>(['digital-foundation']);
+  // Shared active target company preset between SkillTopology and SkillGapRadar
+  const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
+
+  // Career State — persistent across sessions
+  const careerState = useCareerState();
+
+  const [sfxMuted, setSfxMuted] = useState(!sfx.isEnabled());
+
+  const toggleSfx = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const newMuted = !sfxMuted;
+    setSfxMuted(newMuted);
+    sfx.setEnabled(!newMuted);
+    sfx.playClick();
+  };
+
+  // Dynamic badge unlocking: check mastered nodes against badge definitions
+  const unlockedBadgeIds = useMemo(() => {
+    const ids: string[] = [];
+    const masteredSet = new Set(careerState.unlockedNodes);
+    
+    BADGE_DEFINITIONS.forEach(badge => {
+      if (badge.trigger === 'complete_subtree' && badge.subtreeIds) {
+        if (badge.subtreeIds.every(id => masteredSet.has(id))) {
+          ids.push(badge.id);
+        }
+      } else if (badge.trigger === 'complete_mastery_quiz' && badge.domain) {
+        const score = careerState.quizScores[badge.domain] || 0;
+        if (score >= (badge.score || 0)) {
+          ids.push(badge.id);
+        }
+      } else if (badge.trigger === 'use_feature' && badge.feature) {
+        // Unlock fiscal-navigator when user visits financials tab
+        if (badge.feature === 'fiscal_matrix' && activeTab === 'financials') {
+          ids.push(badge.id);
+        }
+      }
+    });
+    return ids;
+  }, [careerState.unlockedNodes, careerState.quizScores, activeTab]);
+
+  // Track newly unlocked badges
+  const [prevBadgeCount, setPrevBadgeCount] = useState(0);
   const [newBadge, setNewBadge] = useState<{ id: string; name: string; description: string; svgContent: string } | null>(null);
+
+  useEffect(() => {
+    if (unlockedBadgeIds.length > prevBadgeCount && prevBadgeCount > 0) {
+      const latestId = unlockedBadgeIds[unlockedBadgeIds.length - 1];
+      const badge = BADGE_DEFINITIONS.find(b => b.id === latestId);
+      if (badge) {
+        setNewBadge({ id: badge.id, name: badge.name, description: badge.description, svgContent: '' });
+      }
+    }
+    setPrevBadgeCount(unlockedBadgeIds.length);
+  }, [unlockedBadgeIds]);
+
+  // Calculate overall progress percentage across all tabs
+  const overallProgress = useMemo(() => {
+    const nodeProgress = Math.min(100, (careerState.unlockedNodes.length / 20) * 100);
+    const quizProgress = Math.min(100, (Object.keys(careerState.quizScores).length / 5) * 100);
+    const simProgress = Math.min(100, (careerState.simulationHistory.length / 3) * 100);
+    const badgeProgress = Math.min(100, (unlockedBadgeIds.length / BADGE_DEFINITIONS.length) * 100);
+    return Math.round((nodeProgress + quizProgress + simProgress + badgeProgress) / 4);
+  }, [careerState.unlockedNodes, careerState.quizScores, careerState.simulationHistory, unlockedBadgeIds]);
 
   // Keep the active tab in sync with the URL so deep links (and back/forward)
   // open the right view - e.g. /career-roadmap?tab=about lands on About,
@@ -90,6 +156,7 @@ const CareerRoadmapPage: React.FC = () => {
   }, [searchParams]);
 
   const handleTabChange = (tab: string) => {
+    sfx.playClick();
     setActiveTab(tab);
     setSearchParams(
       (prev) => {
@@ -101,6 +168,24 @@ const CareerRoadmapPage: React.FC = () => {
     );
     window.scrollTo(0, 0);
   };
+
+  const handleOpenInTopology = useCallback((domainId: string) => {
+    const DOMAIN_TO_COMPANY: Record<string, string> = {
+      vlsi: 'nvidia',
+      embedded: 'qualcomm',
+      wireless: 'qualcomm',
+      analog: 'texas-instruments',
+      power: 'isro',
+      'semi-mfg': 'samsung-semi',
+      'comp-arch': 'intel',
+      automotive: 'texas-instruments',
+      quantum: 'intel',
+      eda: 'nvidia',
+    };
+    const mappedCompany = DOMAIN_TO_COMPANY[domainId] || 'nvidia';
+    setSelectedCompany(mappedCompany);
+    handleTabChange('skills');
+  }, []);
 
   useKeyboardShortcuts([
     { key: 'e', action: () => handleTabChange('explore'), description: 'Switch to Explore Tab' },
@@ -127,6 +212,38 @@ const CareerRoadmapPage: React.FC = () => {
     >
       <ScrollProgress />
       <FloatingCommandBar activeTab={activeTab} onTabChange={handleTabChange} />
+
+      {/* Persistent Progress Indicator */}
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="fixed top-4 sm:top-10 right-4 sm:right-8 z-[301] flex items-center gap-3 px-3.5 py-1.5 bg-observatory-surface/80 backdrop-blur-xl border border-border-soft rounded-full"
+      >
+        <button
+          onClick={toggleSfx}
+          className="p-1 text-text-dim hover:text-text-main transition-colors duration-200"
+          title={sfxMuted ? "Unmute Sound Effects" : "Mute Sound Effects"}
+        >
+          {sfxMuted ? <VolumeX size={15} /> : <Volume2 size={15} />}
+        </button>
+        <div className="h-4 w-px bg-border-soft" />
+        <svg width="20" height="20" viewBox="0 0 36 36" className="-rotate-90">
+          <circle cx="18" cy="18" r="15" fill="none" stroke="currentColor" className="text-border-soft" strokeWidth="3" />
+          <motion.circle 
+            cx="18" cy="18" r="15" fill="none" 
+            stroke="currentColor" 
+            className="text-signal-core" 
+            strokeWidth="3" 
+            strokeLinecap="round"
+            strokeDasharray={`${2 * Math.PI * 15}`}
+            strokeDashoffset={`${2 * Math.PI * 15 * (1 - overallProgress / 100)}`}
+            initial={{ strokeDashoffset: 2 * Math.PI * 15 }}
+            animate={{ strokeDashoffset: 2 * Math.PI * 15 * (1 - overallProgress / 100) }}
+            transition={{ duration: 1, ease: 'easeOut' }}
+          />
+        </svg>
+        <span className="text-[10px] font-mono text-text-dim tracking-widest">{overallProgress}%</span>
+      </motion.div>
 
       {/* High Priority Overlays */}
       <AnimatePresence>
@@ -168,7 +285,12 @@ const CareerRoadmapPage: React.FC = () => {
                   if (el) el.scrollIntoView({ behavior: 'smooth' });
                 }}
               />
-              <DomainExplorer />
+              <DomainExplorer 
+                comparingIds={comparingIds}
+                onToggleCompare={toggleDomain}
+                onClearCompare={clearComparison}
+                onOpenInTopology={handleOpenInTopology}
+              />
               <MarketGiants />
               <ExpertSignal />
             </motion.div>
@@ -185,15 +307,28 @@ const CareerRoadmapPage: React.FC = () => {
             >
               <div>
                 <h1 className="text-2xl sm:text-4xl font-extrabold text-text-main tracking-tighter uppercase mb-6">Skill Topology & Gap Analysis</h1>
-                <SkillTopology />
+                <SkillTopology 
+                  selectedCompany={selectedCompany}
+                  setSelectedCompany={setSelectedCompany}
+                  unlockedNodes={careerState.unlockedNodes}
+                  onUnlockNode={careerState.unlockNode}
+                />
               </div>
               
               <div className="border-t border-border-soft pt-12">
-                <SkillGapRadar />
+                <Suspense fallback={<div className="h-40 animate-pulse bg-observatory-surface/20 rounded-xl" />}>
+                  <SkillGapRadar 
+                    activeCompany={selectedCompany || 'nvidia'}
+                    setActiveCompany={setSelectedCompany}
+                    masteredNodes={careerState.unlockedNodes}
+                  />
+                </Suspense>
               </div>
 
               <div className="border-t border-border-soft pt-12">
-                <TechnicalTerminal />
+                <Suspense fallback={<div className="h-40 animate-pulse bg-observatory-surface/20 rounded-xl" />}>
+                  <TechnicalTerminal onUpdateQuizScore={careerState.updateQuizScore} />
+                </Suspense>
               </div>
             </motion.div>
           )}
@@ -213,11 +348,15 @@ const CareerRoadmapPage: React.FC = () => {
               </div>
 
               <div className="border-t border-border-soft pt-12">
-                <GlobalSalaryHeatmap />
+                <Suspense fallback={<div className="h-[500px] animate-pulse bg-observatory-surface/20 rounded-xl" />}>
+                  <GlobalSalaryHeatmap />
+                </Suspense>
               </div>
 
               <div className="border-t border-border-soft pt-12">
-                <TrajectorySimulator />
+                <Suspense fallback={<div className="h-[400px] animate-pulse bg-observatory-surface/20 rounded-xl" />}>
+                  <TrajectorySimulator onRecordSimulation={careerState.recordSimulation} />
+                </Suspense>
               </div>
 
               <div className="border-t border-border-soft pt-12">
@@ -241,12 +380,41 @@ const CareerRoadmapPage: React.FC = () => {
               </div>
 
               <div className="border-t border-border-soft pt-12">
-                <SiliconResume />
+                <Suspense fallback={<div className="h-40 animate-pulse bg-observatory-surface/20 rounded-xl" />}>
+                  <SiliconResume 
+                    unlockedBadgeIds={unlockedBadgeIds}
+                    masteredNodes={careerState.unlockedNodes}
+                  />
+                </Suspense>
               </div>
 
               <div className="border-t border-border-soft pt-12 pb-24">
-                <div className="mb-8">
+                <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                   <h2 className="text-2xl sm:text-4xl font-bold text-text-main tracking-tight uppercase">Silicon Cabinet</h2>
+                  <button
+                    onClick={() => {
+                      const profile = {
+                        exportDate: new Date().toISOString(),
+                        unlockedNodes: careerState.unlockedNodes,
+                        quizScores: careerState.quizScores,
+                        simulationHistory: careerState.simulationHistory,
+                        calibrationStreak: careerState.dailyCalibration.streak,
+                        calibrationPoints: careerState.dailyCalibration.points,
+                        unlockedBadges: unlockedBadgeIds,
+                        overallProgress,
+                      };
+                      const blob = new Blob([JSON.stringify(profile, null, 2)], { type: 'application/json' });
+                      const url = URL.createObjectURL(blob);
+                      const a = document.createElement('a');
+                      a.href = url;
+                      a.download = `career_profile_${new Date().toISOString().split('T')[0]}.json`;
+                      a.click();
+                      URL.revokeObjectURL(url);
+                    }}
+                    className="px-5 py-2.5 bg-observatory-surface border border-signal-core/30 rounded-full text-[10px] font-mono font-bold uppercase tracking-widest text-signal-core hover:bg-signal-core hover:text-bg-void transition-all flex items-center gap-2 self-start"
+                  >
+                    ↓ Export Career Profile
+                  </button>
                 </div>
                 <SiliconCabinet 
                   unlockedBadgeIds={unlockedBadgeIds} 

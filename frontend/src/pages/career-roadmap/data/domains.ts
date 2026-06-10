@@ -91,5 +91,85 @@ export const domains: Domain[] = [
       { name: "Infineon Academy", url: "#" },
       { name: "Power Electronics News", url: "#" }
     ]
+  },
+  {
+    id: "semi-mfg",
+    name: "Semiconductor Manufacturing",
+    salary: "₹10-30 LPA",
+    growth: "+35% YoY",
+    difficulty: 4,
+    tags: ["Fab", "Lithography", "Yield", "Process"],
+    description: "Building the foundries of the future. Process engineering, yield optimization, and next-gen node development.",
+    roadmap: ["Semiconductor Physics", "Cleanroom Processing", "Lithography & Patterning", "Yield Analysis", "Metrology & Inspection"],
+    skills: ["TCAD", "Process Integration", "Defect Analysis", "SPC/SQC", "Equipment Engineering"],
+    resources: [
+      { name: "TSMC University", url: "#" },
+      { name: "SEMI Academy", url: "#" },
+      { name: "Solid State Technology", url: "#" }
+    ]
+  },
+  {
+    id: "comp-arch",
+    name: "Computer Architecture",
+    salary: "₹15-45 LPA",
+    growth: "+20% YoY",
+    difficulty: 5,
+    tags: ["CPU", "GPU", "RISC-V", "Cache"],
+    description: "Designing the brains of computation. CPU/GPU micro-architecture, ISA design, and memory hierarchies.",
+    roadmap: ["ISA Design (RISC-V)", "Pipeline Architecture", "Cache Hierarchies", "Branch Prediction", "Out-of-Order Execution"],
+    skills: ["Gem5 Simulation", "RISC-V Assembly", "Performance Modeling", "RTL Design", "Compiler Awareness"],
+    resources: [
+      { name: "Computer Architecture: A Quantitative Approach (H&P)", url: "#" },
+      { name: "RISC-V Foundation", url: "#" },
+      { name: "Onur Mutlu Lectures", url: "#" }
+    ]
+  },
+  {
+    id: "automotive",
+    name: "Automotive Electronics",
+    salary: "₹8-28 LPA",
+    growth: "+28% YoY",
+    difficulty: 4,
+    tags: ["ADAS", "V2X", "CAN", "ISO-26262"],
+    description: "Engineering the next generation of intelligent vehicles. Sensor fusion, ADAS, and functional safety.",
+    roadmap: ["Automotive Protocols (CAN/LIN)", "ISO 26262 Functional Safety", "ADAS Sensor Fusion", "V2X Communication", "EV Powertrain Control"],
+    skills: ["AUTOSAR", "CAN Protocol", "Functional Safety", "Simulink", "Embedded C++"],
+    resources: [
+      { name: "Vector Academy", url: "#" },
+      { name: "NXP Automotive Training", url: "#" },
+      { name: "SAE International", url: "#" }
+    ]
+  },
+  {
+    id: "quantum",
+    name: "Quantum Computing",
+    salary: "₹18-50 LPA",
+    growth: "+40% YoY",
+    difficulty: 5,
+    tags: ["Qubits", "Cryogenics", "Error Correction", "Research"],
+    description: "The frontier of computation. Quantum hardware engineering, cryo-electronics, and error correction.",
+    roadmap: ["Quantum Mechanics Foundations", "Qubit Technologies", "Quantum Error Correction", "Cryogenic Electronics", "Quantum Algorithms"],
+    skills: ["Qiskit/Cirq", "Cryogenic Design", "RF/Microwave Engineering", "Statistical Mechanics", "Python"],
+    resources: [
+      { name: "IBM Quantum Learning", url: "#" },
+      { name: "MIT OpenCourseWare: Quantum", url: "#" },
+      { name: "Google Quantum AI", url: "#" }
+    ]
+  },
+  {
+    id: "eda",
+    name: "EDA / CAD Tools",
+    salary: "₹12-35 LPA",
+    growth: "+18% YoY",
+    difficulty: 5,
+    tags: ["Synthesis", "P&R", "Simulation", "Algorithms"],
+    description: "Building the tools that build chips. EDA algorithm development, physical design automation, and verification engines.",
+    roadmap: ["Graph Algorithms", "Logic Synthesis Algorithms", "Placement & Routing", "Timing Engine Development", "Formal Methods"],
+    skills: ["C++/Python", "Algorithms & Data Structures", "Compiler Design", "Computational Geometry", "VLSI Fundamentals"],
+    resources: [
+      { name: "Cadence University", url: "#" },
+      { name: "Synopsys Learning Center", url: "#" },
+      { name: "EDA Algorithm Research Papers", url: "#" }
+    ]
   }
 ];

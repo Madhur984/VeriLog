@@ -9,9 +9,10 @@ import { cn } from '../utils/cn';
 interface DomainDetailModalProps {
   domain: Domain | null;
   onClose: () => void;
+  onOpenInTopology?: (domainId: string) => void;
 }
 
-export const DomainDetailModal: React.FC<DomainDetailModalProps> = ({ domain, onClose }) => {
+export const DomainDetailModal: React.FC<DomainDetailModalProps> = ({ domain, onClose, onOpenInTopology }) => {
   const [activeTab, setActiveTab] = useState<'overview' | 'roadmap' | 'companies' | 'quiz'>('overview');
   const [scheme] = useColorScheme();
   const isLight = scheme === 'light';
@@ -197,7 +198,10 @@ export const DomainDetailModal: React.FC<DomainDetailModalProps> = ({ domain, on
                   </div>
 
                   <div className="space-y-4">
-                    <button className={cn("w-full py-4 font-bold uppercase text-[10px] tracking-widest rounded-xl transition-colors flex items-center justify-center gap-2", isLight ? "bg-cyan-600 text-white hover:bg-cyan-700" : "bg-cyan-400 text-black hover:bg-white")}>
+                    <button 
+                      onClick={() => onOpenInTopology && onOpenInTopology(domain.id)}
+                      className={cn("w-full py-4 font-bold uppercase text-[10px] tracking-widest rounded-xl transition-colors flex items-center justify-center gap-2", isLight ? "bg-cyan-600 text-white hover:bg-cyan-700" : "bg-cyan-400 text-black hover:bg-white")}
+                    >
                       <Rocket size={14} /> Open in Skill Topology
                     </button>
                     <button className={cn("w-full py-4 font-bold uppercase text-[10px] tracking-widest rounded-xl border transition-colors", isLight ? "bg-bg-base text-text-main border-border-soft hover:bg-hover-bg" : "bg-white/5 text-white border-white/10 hover:bg-white/10")}>

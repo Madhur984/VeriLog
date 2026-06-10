@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { DataTerminal } from './DataTerminal';
 import { useColorScheme } from '../../../hooks/useColorScheme';
@@ -19,7 +19,11 @@ const QUESTION_BANK = {
   ]
 };
 
-export const TechnicalTerminal: React.FC = () => {
+interface TechnicalTerminalProps {
+  onUpdateQuizScore?: (domainId: string, score: number) => void;
+}
+
+export const TechnicalTerminal: React.FC<TechnicalTerminalProps> = ({ onUpdateQuizScore }) => {
   const [scheme] = useColorScheme();
   const isLight = scheme === 'light';
   const [domain, setDomain] = useState<keyof typeof QUESTION_BANK>('VLSI RTL');
@@ -27,6 +31,12 @@ export const TechnicalTerminal: React.FC = () => {
   const [answer, setAnswer] = useState('');
   const [stress, setStress] = useState(20);
   const [feedback, setFeedback] = useState<string | null>(null);
+
+  // Stable random seed for stress bars — only regenerate on question changes, not on stress changes (prevents jitter while typing)
+  const stressBarHeights = useRef<number[]>(Array.from({ length: 15 }, () => Math.random()));
+  useEffect(() => {
+    stressBarHeights.current = Array.from({ length: 15 }, () => Math.random());
+  }, [domain, qIndex]);
 
   useEffect(() => {
     let timer: any;
@@ -50,6 +60,16 @@ export const TechnicalTerminal: React.FC = () => {
 
     if (matchedKeywords >= currentQ.keywords.length / 2) {
       setFeedback("ACCEPTABLE. Moving to next probe...");
+      
+      if (onUpdateQuizScore) {
+        const domainMap: Record<string, string> = {
+          'VLSI RTL': 'vlsi',
+          'Embedded C': 'embedded',
+          'RF Basics': 'wireless',
+        };
+        onUpdateQuizScore(domainMap[domain] || 'vlsi', 100);
+      }
+
       setTimeout(() => {
         setFeedback(null);
         setAnswer('');
@@ -124,13 +144,31 @@ export const TechnicalTerminal: React.FC = () => {
                   <textarea
                     value={answer}
                     onChange={(e) => setAnswer(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+                        e.preventDefault();
+                        handleSubmit(e as any);
+                      }
+                    }}
                     className={`w-full h-32 bg-transparent border p-3 text-sm focus:outline-none resize-none custom-scrollbar ${
                       isLight 
                         ? 'border-border-soft text-signal-core focus:border-signal-core' 
                         : 'border-white/10 text-cyan-400 focus:border-cyan-400'
                     }`}
                   />
-                  <button type="submit" className="hidden" />
+                  <div className="flex items-center justify-between">
+                    <span className="text-[9px] font-mono text-text-dim uppercase tracking-widest">Ctrl + Enter to submit</span>
+                    <button 
+                      type="submit" 
+                      className={`px-4 py-1.5 text-[10px] font-mono font-bold uppercase tracking-widest border rounded transition-all ${
+                        isLight 
+                          ? 'border-signal-core text-signal-core hover:bg-signal-core hover:text-white' 
+                          : 'border-cyan-400/50 text-cyan-400 hover:bg-cyan-400 hover:text-black'
+                      }`}
+                    >
+                      SUBMIT
+                    </button>
+                  </div>
                 </motion.form>
               )}
             </AnimatePresence>
@@ -146,15 +184,15 @@ export const TechnicalTerminal: React.FC = () => {
               <div className="text-3xl font-bold text-text-main mb-2">{stress}%</div>
               
               <div className="h-40 w-full flex items-end gap-1">
-                {Array.from({ length: 15 }).map((_, i) => {
-                  const h = Math.random() * stress;
+                {stressBarHeights.current.map((seed, i) => {
+                  const h = seed * stress;
                   return (
                     <motion.div 
                       key={i}
                       className="flex-1"
                       initial={{ height: '0%' }}
                       animate={{ height: `${h}%` }}
-                      transition={{ duration: 0.2 }}
+                      transition={{ duration: 0.4, ease: 'easeOut' }}
                       style={{ 
                         backgroundColor: stress > 70 ? '#ef4444' : stress > 40 ? '#f59e0b' : accentColor,
                         opacity: i > 10 ? 0.3 : 1
