@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useColorScheme } from '../../hooks/useColorScheme';
 import { isAuthenticated } from '../../lib/auth';
@@ -24,19 +24,6 @@ export const DiagnosticConsole: React.FC<DiagnosticConsoleProps> = ({
   const isLight = scheme === 'light';
   const navigate = useNavigate();
   const [activeBtn, setActiveBtn] = useState<string | null>(null);
-  const [tickerIdx, setTickerIdx] = useState(0);
-
-  const TICKER_MSGS = [
-    'BitforBytes // CORE_STABILITY: NOMINAL',
-    'CAPTURE_FIDELITY: 99.8%',
-    'SIGNAL_ENGINE: LOCKED',
-    'NEURAL_MAP: SYNC_READY',
-  ];
-
-  React.useEffect(() => {
-    const t = setInterval(() => setTickerIdx(i => (i + 1) % TICKER_MSGS.length), 4000);
-    return () => clearInterval(t);
-  }, []);
 
   const BUTTONS: ConsoleButton[] = [
     { id: 'profile',    icon: '◈',  label: 'My Profile',     color: '#6366f1', route: '/profile' },
@@ -137,70 +124,8 @@ export const DiagnosticConsole: React.FC<DiagnosticConsoleProps> = ({
           </div>
         </div>
 
-        {/* Main display */}
-        <div className="px-4 py-3">
-          <div
-            className="rounded-lg p-3 relative overflow-hidden"
-            style={{
-              background: isLight ? '#FFFFFF' : '#020408',
-              border: isLight ? '1px solid #94A3B8' : '1px solid rgba(59, 130, 246, 0.25)',
-              boxShadow: isLight
-                ? 'inset 0 1px 3px rgba(0,0,0,0.05), 0 0 20px rgba(29, 78, 216, 0.16)'
-                : 'inset 0 2px 8px rgba(0,0,0,0.9), 0 0 20px rgba(59, 130, 246, 0.05)',
-            }}
-          >
-            {/* CRT scanline */}
-            <div
-              className="absolute inset-0 pointer-events-none opacity-10"
-              style={{
-                backgroundImage: isLight ? `repeating-linear-gradient(
-                  0deg,
-                  rgba(15, 23, 42, 0.16) 0px,
-                  rgba(15, 23, 42, 0.16) 1px,
-                  transparent 1px,
-                  transparent 3px
-                )` : `repeating-linear-gradient(
-                  0deg,
-                  rgba(59, 130, 246, 0.15) 0px,
-                  rgba(59, 130, 246, 0.15) 1px,
-                  transparent 1px,
-                  transparent 3px
-                )`,
-              }}
-            />
-            <div className="text-[8px] font-mono tracking-[0.25em] uppercase mb-1" style={{ color: isLight ? '#334155' : '#3b82f640' }}>
-              MISSION_TELEMETRY
-            </div>
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={tickerIdx}
-                initial={{ opacity: 0, y: 4 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -4 }}
-                transition={{ duration: 0.3 }}
-                className="text-[11px] font-black tracking-[0.2em] font-mono"
-                style={{
-                  color: isLight ? '#1E40AF' : '#3b82f6',
-                  textShadow: isLight ? 'none' : '0 0 10px #3b82f680'
-                }}
-              >
-                {TICKER_MSGS[tickerIdx]}
-              </motion.div>
-            </AnimatePresence>
-            {/* Blinking cursor */}
-            <motion.span
-              className="inline-block ml-1 text-[11px] font-mono"
-              style={{ color: isLight ? '#1E40AF' : '#3b82f6' }}
-              animate={{ opacity: [1, 0, 1] }}
-              transition={{ duration: 0.8, repeat: Infinity }}
-            >
-              █
-            </motion.span>
-          </div>
-        </div>
-
         {/* Button grid - 2 columns */}
-        <div className="px-4 pb-3 grid grid-cols-2 gap-2">
+        <div className="px-4 pb-3 pt-3 grid grid-cols-2 gap-2">
           {BUTTONS.map(btn => (
             <motion.button
               key={btn.id}

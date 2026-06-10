@@ -717,6 +717,23 @@ const L6_PATHS: PathOption[] = [
           { id: 'm7dsd7', label: 'Master Blueprint',                    route: '/dsd/5/blueprint' },
         ],
       },
+      {
+        id: 'm8dsd', label: 'Combinational & Sequential · Module 06', subtitle: 'L6 · NOW vs THEN · 12 STAGES', route: '/dsd/6/cover',
+        submodules: [
+          { id: 'm8dsd0',  label: 'Cover · The Logic of Now and Then', route: '/dsd/6/cover'         },
+          { id: 'm8dsd1',  label: 'Video · How Machines Remember',     route: '/dsd/6/video'         },
+          { id: 'm8dsd2',  label: 'Two Flavors of Logic',              route: '/dsd/6/flavors'       },
+          { id: 'm8dsd3',  label: 'Prisoners of the Present',          route: '/dsd/6/combinational' },
+          { id: 'm8dsd4',  label: 'The Memoryless Tea Vendor',         route: '/dsd/6/teastall'      },
+          { id: 'm8dsd5',  label: 'Adders, MUX & Friends',             route: '/dsd/6/jobs'          },
+          { id: 'm8dsd6',  label: 'The Problem with Now',              route: '/dsd/6/limit'         },
+          { id: 'm8dsd7',  label: 'The Cricket Scoreboard',            route: '/dsd/6/scoreboard'    },
+          { id: 'm8dsd8',  label: 'Trapping a Bit',                    route: '/dsd/6/trap'          },
+          { id: 'm8dsd9',  label: 'The Heartbeat Clock',               route: '/dsd/6/clock'         },
+          { id: 'm8dsd10', label: 'Now vs Then · Face Off',            route: '/dsd/6/faceoff'       },
+          { id: 'm8dsd11', label: 'Practice Arena',                    route: '/dsd/6/practice'      },
+        ],
+      },
     ],
   },
   {

@@ -10,17 +10,17 @@ export const S01_Introduction: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode
       {/* --- HERO --- */}
       <section className="relative">
         <div className="flex flex-col gap-2 mb-8">
-          <span className="text-[10px] font-mono uppercase tracking-[0.5em] text-cyan-500 font-black">Module_Alpha // Level_01</span>
-          <h1 className="text-6xl md:text-8xl font-black leading-none tracking-tighter">
-            <KineticText text="UNIFIED" className={isDarkMode ? 'text-cyan-500' : 'text-cyan-600'} />
+          <span className="text-[10px] font-mono uppercase tracking-[0.5em] text-cyan-500 font-black">Module 01 // Signals &amp; Waves</span>
+          <h1 className="text-5xl md:text-7xl font-black leading-none tracking-tight">
+            <KineticText text="Signals" className={isDarkMode ? 'text-cyan-500' : 'text-cyan-600'} />
             <br />
-            <span className={isDarkMode ? 'text-white' : 'text-slate-900'}>FOUNDATION</span>
+            <span className={isDarkMode ? 'text-white' : 'text-slate-900'}>&amp; Waves</span>
           </h1>
         </div>
-        
+
         <div className="flex flex-col md:flex-row gap-10 items-start md:items-center">
           <div className="px-5 py-1.5 rounded-full border border-cyan-500/20 bg-cyan-500/5 text-[9px] font-black uppercase tracking-[0.3em] text-cyan-500">
-            Domain_Sync: Active
+            Where every chip begins
           </div>
           <p className={`text-xl font-medium leading-relaxed max-w-xl italic ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>
             "The universe speaks in waves. Engineers speak in bits. This is the bridge between them."

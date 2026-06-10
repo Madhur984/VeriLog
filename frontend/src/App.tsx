@@ -64,6 +64,7 @@ const DsdModule2Root = named(() => import('./components/level1/dsd_module2_v1/Ds
 const DsdModule3Root = named(() => import('./components/level1/dsd_module3_v1/DsdModule3Root'), 'DsdModule3Root');
 const DsdModule4Root = named(() => import('./components/level1/dsd_module4_v1/DsdModule4Root'), 'DsdModule4Root');
 const DsdModule5Root = named(() => import('./components/level1/dsd_module5_v1/DsdModule5Root'), 'DsdModule5Root');
+const DsdModule6Root = named(() => import('./components/level1/dsd_module6_v1/DsdModule6Root'), 'DsdModule6Root');
 const BeModule1Root = named(() => import('./components/level1/be_module1_v1/BeModule1Root'), 'BeModule1Root');
 const BeModule2Root = named(() => import('./components/level1/be_module2_v1/BeModule2Root'), 'BeModule2Root');
 const BeModule3Root = named(() => import('./components/level1/be_module3_v1/BeModule3Root'), 'BeModule3Root');
@@ -113,6 +114,8 @@ function App() {
             <Route path="/dsd/4/:chapter" element={<DsdModule4Root />} />
             <Route path="/dsd/5" element={<DsdModule5Root />} />
             <Route path="/dsd/5/:chapter" element={<DsdModule5Root />} />
+            <Route path="/dsd/6" element={<DsdModule6Root />} />
+            <Route path="/dsd/6/:chapter" element={<DsdModule6Root />} />
             <Route path="/basic-electronics/1" element={<BeModule1Root />} />
             <Route path="/basic-electronics/1/:chapter" element={<BeModule1Root />} />
             <Route path="/basic-electronics/2" element={<BeModule2Root />} />
