@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Lock, MousePointerClick, Clock } from 'lucide-react';
+import { Lock, MousePointerClick, Clock, BookOpen, Scale, ArrowLeftRight } from 'lucide-react';
 
 type Bit = 0 | 1;
 type Pulse = 'set' | 'reset' | null;
@@ -13,6 +13,7 @@ interface Props {
 const CYAN = '#22d3ee';
 const EMERALD = '#34d399';
 const AMBER = '#fbbf24';
+const ROSE = '#fb7185';
 
 // NOR gate body in local coords (0,0)-(88,64), tip pointing right
 const NOR_BODY = 'M 0 0 Q 22 32 0 64 Q 62 56 88 32 Q 62 8 0 0 Z';
@@ -69,6 +70,13 @@ export const S08_TrapMemory: React.FC<Props> = ({ isActive = true, isDarkMode })
     { k: 'S pulse', v: 'Q locks 1', c: EMERALD },
     { k: 'R pulse', v: 'Q locks 0', c: AMBER },
     { k: 'Both quiet', v: 'Q holds', c: CYAN },
+  ];
+
+  const latchStates = [
+    { k: 'S=1 · R=0', n: 'Set', v: 'Q forced to 1', c: EMERALD },
+    { k: 'S=0 · R=1', n: 'Reset', v: 'Q forced to 0', c: AMBER },
+    { k: 'S=0 · R=0', n: 'Hold', v: 'Q keeps its value', c: CYAN },
+    { k: 'S=1 · R=1', n: 'Forbidden', v: 'never allowed', c: ROSE },
   ];
 
   return (
@@ -274,6 +282,99 @@ export const S08_TrapMemory: React.FC<Props> = ({ isActive = true, isDarkMode })
           </div>
         </motion.div>
       </div>
+
+      {/* Standard text · theory behind the trap */}
+      <section className="space-y-6">
+        <div className="flex items-center gap-2 font-mono text-[10px] tracking-[0.4em] uppercase" style={{ color: CYAN }}>
+          <BookOpen size={14} /> Standard Text · The Theory Behind the Trap
+        </div>
+
+        {/* A) Meet the SR latch */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
+          transition={{ delay: 0.1 }}
+          className={`p-6 md:p-8 rounded-3xl border ${cardBg} space-y-4`}
+        >
+          <div className="font-mono text-[10px] uppercase tracking-widest" style={{ color: CYAN }}>
+            Meet the SR latch
+          </div>
+          <p className={`text-sm leading-relaxed ${textColor}`}>
+            The cross-coupled pair you just played with has a formal name: the <span className="font-bold">SR latch</span>, the simplest memory element in digital logic. Cross-coupled means each gate's output is wired back into the other gate's input - exactly the loop the bit keeps circling above. <span className="font-mono font-bold" style={{ color: EMERALD }}>S</span> stands for Set: drive it high to force the stored bit Q to 1. <span className="font-mono font-bold" style={{ color: AMBER }}>R</span> stands for Reset: drive it high to force Q to 0.
+          </p>
+          <p className={`text-sm leading-relaxed ${subText}`}>
+            With S = 0 and R = 0 the latch does nothing new - the loop simply holds whatever it has, and that quiet holding is the memory. Driving both control inputs at once is the forbidden combination: the latch's two outputs stop being opposites and its next state is unpredictable, so real designs never allow it.
+          </p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+            {latchStates.map((r) => (
+              <div
+                key={r.k}
+                className={`rounded-xl p-3 border ${isDarkMode ? 'bg-black/30 border-white/10' : 'bg-slate-50 border-slate-200'}`}
+              >
+                <div className="font-mono text-[9px] uppercase tracking-widest" style={{ color: r.c }}>{r.k}</div>
+                <div className={`text-xs font-mono font-black ${textColor}`}>{r.n}</div>
+                <div className={`text-[11px] ${subText}`}>{r.v}</div>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+
+        <div className="grid lg:grid-cols-2 gap-6 items-stretch">
+          {/* B) Key term: bistable */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
+            transition={{ delay: 0.2 }}
+            className={`p-6 md:p-8 rounded-3xl border ${cardBg} flex flex-col gap-4`}
+          >
+            <div className="font-mono text-[10px] uppercase tracking-widest flex items-center gap-2" style={{ color: EMERALD }}>
+              <Scale size={12} /> Key term · Bistable
+            </div>
+            <p className={`text-sm leading-relaxed ${textColor}`}>
+              A loop with exactly two stable resting states is called <span className="font-bold">bistable</span>. A stable state is a condition the circuit can sit in forever without outside help: one stable state stores a 0, the other stores a 1.
+            </p>
+            <p className={`text-sm leading-relaxed ${subText}`}>
+              Every flip-flop, every register, and every bit of fast on-chip memory is built on this one idea - a tiny loop that refuses to drift.
+            </p>
+            <div className="flex gap-2 mt-auto">
+              <div className={`flex-1 rounded-xl p-3 border ${isDarkMode ? 'bg-black/30 border-white/10' : 'bg-slate-50 border-slate-200'}`}>
+                <div className="font-mono text-[9px] uppercase tracking-widest" style={{ color: AMBER }}>Stable state 1</div>
+                <div className={`text-xs font-mono font-black ${textColor}`}>stores 0</div>
+              </div>
+              <div className={`flex-1 rounded-xl p-3 border ${isDarkMode ? 'bg-black/30 border-white/10' : 'bg-slate-50 border-slate-200'}`}>
+                <div className="font-mono text-[9px] uppercase tracking-widest" style={{ color: EMERALD }}>Stable state 2</div>
+                <div className={`text-xs font-mono font-black ${textColor}`}>stores 1</div>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* C) Latch vs flip-flop */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
+            transition={{ delay: 0.3 }}
+            className={`p-6 md:p-8 rounded-3xl border ${cardBg} flex flex-col gap-4`}
+          >
+            <div className="font-mono text-[10px] uppercase tracking-widest flex items-center gap-2" style={{ color: AMBER }}>
+              <ArrowLeftRight size={12} /> Latch vs flip-flop
+            </div>
+            <div className="space-y-2">
+              <div className={`rounded-xl p-3 border ${isDarkMode ? 'bg-black/30 border-white/10' : 'bg-slate-50 border-slate-200'}`}>
+                <div className="font-mono text-[9px] uppercase tracking-widest mb-1" style={{ color: CYAN }}>Latch · level-sensitive</div>
+                <p className={`text-xs leading-relaxed ${subText}`}>
+                  While its enable input - the control that says "listen now" - is on, a latch is transparent: the stored bit follows the input directly. It freezes only when the enable turns off.
+                </p>
+              </div>
+              <div className={`rounded-xl p-3 border ${isDarkMode ? 'bg-black/30 border-white/10' : 'bg-slate-50 border-slate-200'}`}>
+                <div className="font-mono text-[9px] uppercase tracking-widest mb-1" style={{ color: EMERALD }}>Flip-flop · edge-triggered</div>
+                <p className={`text-xs leading-relaxed ${subText}`}>
+                  A flip-flop copies its input only at the instant of a clock edge - the moment the clock signal switches - and ignores the input the rest of the time.
+                </p>
+              </div>
+            </div>
+            <p className={`text-sm leading-relaxed mt-auto ${textColor}`}>
+              Synchronous designs - circuits that all march to one shared clock - use flip-flops as the standard memory element, because the copy moment is precise.
+            </p>
+          </motion.div>
+        </div>
+      </section>
     </div>
   );
 };

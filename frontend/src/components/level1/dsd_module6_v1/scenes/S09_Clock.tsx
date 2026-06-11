@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Activity, MousePointerClick } from 'lucide-react';
+import { Activity, BookOpen, MousePointerClick, Timer, TrendingDown, TrendingUp, Workflow } from 'lucide-react';
 
 type Bit = 0 | 1;
 type Mode = 'sync' | 'async';
@@ -330,6 +330,120 @@ export const S09_Clock: React.FC<Props> = ({ isActive = true, isDarkMode }) => {
               The clock is the conductor: everyone updates together, nothing collides.
             </p>
           </div>
+        </motion.div>
+      </div>
+
+      {/* Standard text · the formal version */}
+      <section className="space-y-3">
+        <div className="flex items-center gap-2 font-mono text-[10px] tracking-[0.4em] uppercase" style={{ color: CYAN }}>
+          <BookOpen size={14} /> Standard Text · The Formal Version
+        </div>
+        <h3 className={`text-2xl md:text-3xl font-black ${textColor}`}>Same ideas, textbook wording.</h3>
+        <p className={`text-sm max-w-3xl ${subText}`}>
+          Three short notes that pin down the vocabulary you just watched in motion.
+        </p>
+      </section>
+
+      <div className="grid lg:grid-cols-3 gap-6 items-stretch">
+        {/* Clock arithmetic */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
+          transition={{ delay: 0.2 }}
+          className={`p-6 rounded-3xl border ${cardBg} flex flex-col gap-4`}
+        >
+          <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest" style={{ color: CYAN }}>
+            <Timer size={12} /> Clock arithmetic
+          </div>
+          <p className={`text-sm ${subText}`}>
+            The clock signal is a square wave: a voltage that snaps between low and high at perfectly
+            regular times. One full repeat - one high stretch plus one low stretch - is the period,
+            written T. The number of repeats per second is the frequency, written f and measured in
+            hertz (Hz). The two are tied by a single rule: f = 1/T.
+          </p>
+          <div className="flex flex-col gap-2">
+            {[
+              { term: 'period T', def: 'the time taken by one complete cycle of the wave', color: CYAN },
+              { term: 'frequency f', def: 'cycles completed per second; always f = 1/T', color: CYAN },
+              { term: '1 GHz', def: '10⁹ cycles every second, so each period is just 1 ns', color: EMERALD },
+            ].map(({ term, def, color }) => (
+              <div
+                key={term}
+                className={`rounded-xl px-3 py-2 border flex items-baseline gap-3 ${isDarkMode ? 'bg-black/30 border-white/10' : 'bg-slate-50 border-slate-200'}`}
+              >
+                <span className="font-mono text-[10px] font-black uppercase tracking-widest whitespace-nowrap" style={{ color }}>{term}</span>
+                <span className={`text-xs ${subText}`}>{def}</span>
+              </div>
+            ))}
+          </div>
+          <p className={`text-sm ${subText}`}>
+            That nanosecond is a deadline. Inside one single period, all the combinational logic
+            (gates with no memory) sitting between two memory elements must finish settling before
+            the next edge arrives.
+          </p>
+        </motion.div>
+
+        {/* Two edges */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
+          transition={{ delay: 0.25 }}
+          className={`p-6 rounded-3xl border ${cardBg} flex flex-col gap-4`}
+        >
+          <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest" style={{ color: EMERALD }}>
+            <TrendingUp size={12} /> Two edges · the vocabulary
+          </div>
+          <p className={`text-sm ${subText}`}>
+            Every clock cycle contains exactly two instants of change. The jump from 0 to 1 is
+            called the rising edge. The drop from 1 to 0 is called the falling edge.
+          </p>
+          <div className="flex flex-col gap-2">
+            <div className={`rounded-xl px-3 py-2 border flex items-center gap-3 ${isDarkMode ? 'bg-black/30 border-white/10' : 'bg-slate-50 border-slate-200'}`}>
+              <TrendingUp size={14} style={{ color: EMERALD }} />
+              <span className="font-mono text-[10px] font-black uppercase tracking-widest whitespace-nowrap" style={{ color: EMERALD }}>rising edge</span>
+              <span className={`text-xs ${subText}`}>0 to 1 - the jump up</span>
+            </div>
+            <div className={`rounded-xl px-3 py-2 border flex items-center gap-3 ${isDarkMode ? 'bg-black/30 border-white/10' : 'bg-slate-50 border-slate-200'}`}>
+              <TrendingDown size={14} style={{ color: AMBER }} />
+              <span className="font-mono text-[10px] font-black uppercase tracking-widest whitespace-nowrap" style={{ color: AMBER }}>falling edge</span>
+              <span className={`text-xs ${subText}`}>1 to 0 - the drop down</span>
+            </div>
+          </div>
+          <p className={`text-sm ${subText}`}>
+            An edge-triggered flip-flop copies its input at one chosen edge (the small triangle on
+            its symbol marks the clock pin) and ignores the input at every other moment. Listening
+            for one instant and ignoring all the rest is exactly what makes the update instant
+            precise.
+          </p>
+        </motion.div>
+
+        {/* Synchronous vs asynchronous */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
+          transition={{ delay: 0.3 }}
+          className={`p-6 rounded-3xl border ${cardBg} flex flex-col gap-4`}
+        >
+          <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest" style={{ color: AMBER }}>
+            <Workflow size={12} /> Sync vs async · formally
+          </div>
+          <div className={`rounded-xl px-3 py-3 border ${isDarkMode ? 'bg-black/30 border-white/10' : 'bg-slate-50 border-slate-200'}`}>
+            <span className="font-mono text-[10px] font-black uppercase tracking-widest block mb-1" style={{ color: EMERALD }}>synchronous</span>
+            <p className={`text-xs ${subText}`}>
+              Every memory element shares one clock and updates together on the same edge. Timing
+              stays predictable, because between any two ticks the circuit has a known amount of
+              time to settle. Almost every real chip is built this way.
+            </p>
+          </div>
+          <div className={`rounded-xl px-3 py-3 border ${isDarkMode ? 'bg-black/30 border-white/10' : 'bg-slate-50 border-slate-200'}`}>
+            <span className="font-mono text-[10px] font-black uppercase tracking-widest block mb-1" style={{ color: AMBER }}>asynchronous</span>
+            <p className={`text-xs ${subText}`}>
+              Changes ripple through the circuit whenever inputs change, with no shared tick at all.
+              Faster on paper, since nothing waits for a clock, but timing chaos in practice - so it
+              is reserved for special cases.
+            </p>
+          </div>
+          <p className={`text-sm ${subText}`}>
+            This is the same trade you flipped with the sync/async switch above: the clock costs a
+            little waiting and buys total order.
+          </p>
         </motion.div>
       </div>
     </div>

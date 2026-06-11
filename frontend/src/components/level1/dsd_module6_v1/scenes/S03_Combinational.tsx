@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Cpu, MousePointerClick, Ghost, Zap } from 'lucide-react';
+import { Cpu, MousePointerClick, Ghost, Zap, Hash, ListOrdered, Timer } from 'lucide-react';
 
 interface Props { isDarkMode: boolean; }
 type Bit = 0 | 1;
@@ -201,6 +201,73 @@ export const S03_Combinational: React.FC<Props> = ({ isDarkMode }) => {
         </motion.div>
       </div>
 
+      {/* ── standard theory · the numbers behind it ── */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+        className={`p-6 md:p-8 rounded-3xl border ${cardBg}`}
+      >
+        <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest mb-4" style={{ color: CYAN }}>
+          <Hash size={13} /> Standard theory · the numbers behind it
+        </div>
+
+        <div className="grid md:grid-cols-[1.6fr_1fr] gap-6 items-start">
+          <div className="space-y-3">
+            <p className={`text-sm leading-relaxed ${subText}`}>
+              A combinational circuit with <span className={`font-mono font-bold ${textColor}`}>n</span> inputs
+              has exactly <span className={`font-mono font-bold ${textColor}`}>2ⁿ</span> possible input
+              combinations - n = 2 gives 4, n = 3 gives 8, n = 4 gives 16. Its complete behaviour fits in one
+              truth table with 2ⁿ rows, and each row has exactly one fixed output.
+            </p>
+            <p className={`text-sm leading-relaxed ${subText}`}>
+              That is why a combinational circuit can always be fully described by a truth table or by a
+              Boolean expression - the two are just different ways of writing the same fixed mapping from
+              inputs to outputs.
+            </p>
+            <div className="flex flex-col gap-2 pt-1">
+              <div className="flex items-start gap-2">
+                <span className="px-2.5 py-0.5 rounded-full border font-mono text-[10px] whitespace-nowrap"
+                      style={{ borderColor: `${CYAN}55`, color: CYAN, background: `${CYAN}10` }}>
+                  truth table
+                </span>
+                <span className={`text-xs ${subText}`}>a list of every input combination together with the output the circuit must give for it.</span>
+              </div>
+              <div className="flex items-start gap-2">
+                <span className="px-2.5 py-0.5 rounded-full border font-mono text-[10px] whitespace-nowrap"
+                      style={{ borderColor: `${CYAN}55`, color: CYAN, background: `${CYAN}10` }}>
+                  Boolean expression
+                </span>
+                <span className={`text-xs ${subText}`}>a formula built from AND, OR and NOT, like Y = (A·B) + C above.</span>
+              </div>
+            </div>
+          </div>
+
+          <div className={`p-4 rounded-2xl border font-mono ${isDarkMode ? 'border-white/15' : 'border-slate-300'}`}>
+            <div className="text-[9px] uppercase tracking-widest mb-2" style={{ color: CYAN }}>
+              n inputs → 2ⁿ rows
+            </div>
+            <div className="grid grid-cols-2 gap-1 text-sm">
+              <div className="px-2 py-1.5 text-center font-black" style={{ color: CYAN }}>n</div>
+              <div className="px-2 py-1.5 text-center font-black" style={{ color: CYAN }}>2ⁿ</div>
+              {[[1, 2], [2, 4], [3, 8], [4, 16]].map(([nn, rows]) => {
+                const isThis = nn === 3;
+                return (
+                  <React.Fragment key={nn}>
+                    <div className={`px-2 py-1.5 text-center rounded-l ${textColor} ${isThis ? '' : 'opacity-50'}`}
+                         style={{ background: isThis ? `${CYAN}33` : 'transparent' }}>{nn}</div>
+                    <div className={`px-2 py-1.5 text-center rounded-r font-black ${textColor} ${isThis ? '' : 'opacity-50'}`}
+                         style={{ background: isThis ? `${CYAN}33` : 'transparent' }}>{rows}</div>
+                  </React.Fragment>
+                );
+              })}
+            </div>
+            <p className={`text-[10px] mt-2 ${subText}`}>
+              This machine has 3 inputs, so its whole life is the 8-row table on the right.
+            </p>
+          </div>
+        </div>
+      </motion.div>
+
       {/* ── history ghost panel ── */}
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
@@ -257,6 +324,62 @@ export const S03_Combinational: React.FC<Props> = ({ isDarkMode }) => {
         </p>
       </motion.div>
 
+      {/* ── standard theory · how engineers design one ── */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+        className={`p-6 md:p-8 rounded-3xl border ${cardBg}`}
+      >
+        <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest mb-2" style={{ color: AMBER }}>
+          <ListOrdered size={13} /> Standard theory · how engineers design one
+        </div>
+        <p className={`text-sm ${subText} mb-4 max-w-3xl`}>
+          Every combinational circuit, from this little lamp to the adder inside a CPU, is built by the
+          same four-step recipe.
+        </p>
+
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          {[
+            {
+              n: 1,
+              title: 'Specification',
+              body: 'Say in plain words what the circuit must do. Here: "light the lamp when A and B are both on, or when C is on."',
+            },
+            {
+              n: 2,
+              title: 'Truth table',
+              body: 'Write the required output for every one of the 2ⁿ input combinations. Nothing may be left undecided.',
+            },
+            {
+              n: 3,
+              title: 'Simplify',
+              body: 'Use Boolean algebra or a K-map (Karnaugh map, a grid method for shrinking expressions) - the skills from the earlier modules.',
+            },
+            {
+              n: 4,
+              title: 'Draw and wire',
+              body: 'Turn the simplified expression into gates and connect them. The drawing above is exactly this step for Y = (A·B) + C.',
+            },
+          ].map(step => (
+            <div
+              key={step.n}
+              className={`p-4 rounded-2xl border ${isDarkMode ? 'border-white/15' : 'border-slate-300'}`}
+            >
+              <div className="flex items-center gap-2 mb-2">
+                <span className="w-6 h-6 grid place-items-center rounded-full border-2 font-mono text-xs font-black"
+                      style={{ borderColor: AMBER, color: AMBER }}>
+                  {step.n}
+                </span>
+                <span className={`font-mono text-xs font-black uppercase tracking-widest ${textColor}`}>
+                  {step.title}
+                </span>
+              </div>
+              <p className={`text-xs leading-relaxed ${subText}`}>{step.body}</p>
+            </div>
+          ))}
+        </div>
+      </motion.div>
+
       {/* ── the one caption that matters ── */}
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
@@ -267,6 +390,26 @@ export const S03_Combinational: React.FC<Props> = ({ isDarkMode }) => {
         <Zap size={20} style={{ color: CYAN }} className="flex-shrink-0" />
         <p className={`text-sm md:text-base font-bold ${textColor}`}>
           The exact moment an input changes, the output follows. Nothing is stored.
+        </p>
+      </motion.div>
+
+      {/* ── standard theory · almost instant, not instant ── */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+        className="p-5 md:p-6 rounded-2xl border-2"
+        style={{ borderColor: `${AMBER}55`, background: `${AMBER}10` }}
+      >
+        <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest mb-2" style={{ color: AMBER }}>
+          <Timer size={13} /> Standard theory · almost instant, not instant
+        </div>
+        <p className={`text-sm leading-relaxed ${subText} max-w-3xl`}>
+          The fine print on "instantly": each gate needs a tiny time to respond, called its
+          <span className={`font-bold ${textColor}`}> propagation delay</span> - typically a fraction of a
+          nanosecond, where one nanosecond is 10⁻⁹ seconds. The output only settles after the signal has
+          crossed the slowest chain of gates from an input to the output. So "combinational" means no
+          memory and no clock input of its own - the logic settles between the ticks of the system
+          clock; it does not mean zero time.
         </p>
       </motion.div>
     </div>

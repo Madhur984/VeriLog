@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { GitBranch, MousePointerClick, RotateCcw, Zap, Database } from 'lucide-react';
+import { GitBranch, MousePointerClick, RotateCcw, Zap, Database, BookOpen, Boxes, Repeat } from 'lucide-react';
 
 interface Props { isDarkMode: boolean; }
 
@@ -243,6 +243,103 @@ export const S02_TwoFlavors: React.FC<Props> = ({ isDarkMode }) => {
           </p>
         </div>
       </motion.div>
+
+      {/* ── in textbook terms · formal definitions ── */}
+      <motion.section
+        initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+        className="space-y-4"
+      >
+        <div className="flex items-center gap-2 font-mono text-[10px] tracking-[0.4em] uppercase text-cyan-400">
+          <BookOpen size={14} /> In Textbook Terms
+        </div>
+        <div className="grid md:grid-cols-2 gap-4 items-stretch">
+          <div className={`p-6 rounded-2xl border ${cardBg} flex flex-col gap-3`}>
+            <span className="self-start px-3 py-1 rounded-full border font-mono text-[10px] font-black tracking-widest"
+                  style={{ borderColor: `${CYAN}55`, color: CYAN, background: `${CYAN}10` }}>
+              COMBINATIONAL CIRCUIT
+            </span>
+            <p className={`text-sm leading-relaxed ${subText}`}>
+              A <strong style={{ color: CYAN }}>combinational circuit</strong> is built from logic gates
+              only, with no storage anywhere. Its outputs at every moment are determined entirely by the
+              present combination of inputs - that combination is where the name comes from. The same
+              inputs always produce the same outputs, no matter what happened before.
+            </p>
+          </div>
+          <div className={`p-6 rounded-2xl border ${cardBg} flex flex-col gap-3`}>
+            <span className="self-start px-3 py-1 rounded-full border font-mono text-[10px] font-black tracking-widest"
+                  style={{ borderColor: `${EMERALD}55`, color: EMERALD, background: `${EMERALD}10` }}>
+              SEQUENTIAL CIRCUIT
+            </span>
+            <p className={`text-sm leading-relaxed ${subText}`}>
+              A <strong style={{ color: EMERALD }}>sequential circuit</strong> is built from logic gates
+              plus memory elements - storage devices - connected through a feedback path. Its outputs
+              depend on the present inputs AND the present state, meaning the value currently held in
+              memory. Identical inputs can therefore give different outputs at different times, because
+              the state may differ.
+            </p>
+          </div>
+        </div>
+      </motion.section>
+
+      {/* ── anatomy of the block diagram · five standard parts ── */}
+      <motion.section
+        initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.4 }}
+        className="space-y-4"
+      >
+        <div className="flex items-center gap-2 font-mono text-[10px] tracking-[0.4em] uppercase text-cyan-400">
+          <Boxes size={14} /> Anatomy of the Block Diagram
+        </div>
+        <div className={`p-6 md:p-8 rounded-3xl border ${cardBg} space-y-4`}>
+          <p className={`text-sm ${subText}`}>
+            Both machines above are drawn from the same five standard parts. The straight pipe uses only
+            the cyan three; the loop machine adds the emerald two.
+          </p>
+          <div className="grid gap-2">
+            {[
+              { term: 'INPUTS', role: 'signals arriving from outside the circuit', accent: CYAN },
+              { term: 'COMBINATIONAL LOGIC', role: 'the gate network that computes new values', accent: CYAN },
+              { term: 'OUTPUTS', role: 'the answers leaving the circuit', accent: CYAN },
+              { term: 'MEMORY ELEMENTS', role: 'storage that holds the state between updates', accent: EMERALD },
+              { term: 'FEEDBACK PATH', role: 'the wires that carry the stored state back into the logic', accent: EMERALD },
+            ].map(({ term, role, accent }) => (
+              <div
+                key={term}
+                className={`flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 p-3 rounded-2xl border ${
+                  isDarkMode ? 'border-white/10 bg-white/5' : 'border-slate-200 bg-slate-50'
+                }`}
+              >
+                <span className="shrink-0 sm:w-56 text-center px-3 py-1 rounded-full border font-mono text-[10px] font-black tracking-widest"
+                      style={{ borderColor: `${accent}55`, color: accent, background: `${accent}10` }}>
+                  {term}
+                </span>
+                <span className={`text-sm ${subText}`}>{role}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </motion.section>
+
+      {/* ── why the loop changes everything ── */}
+      <motion.section
+        initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.5 }}
+        className="space-y-4"
+      >
+        <div className="flex items-center gap-2 font-mono text-[10px] tracking-[0.4em] uppercase text-emerald-400">
+          <Repeat size={14} /> Why the Loop Changes Everything
+        </div>
+        <div className="p-6 md:p-8 rounded-3xl border-2" style={{ borderColor: `${EMERALD}55`, background: `${EMERALD}10` }}>
+          <p className={`text-sm leading-relaxed ${subText}`}>
+            The loop gives the circuit a <strong style={{ color: EMERALD }}>state</strong> - a stored
+            value that summarizes everything that has happened so far. State is the circuit's memory of
+            the past. The name <em>sequential</em> comes from the fact that the circuit steps through a
+            sequence of states in time: each new input moves it from the state it is in to the next one.
+            A combinational circuit has no sequence at all - only the present.
+          </p>
+        </div>
+      </motion.section>
     </div>
   );
 };

@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { supabase } from '../lib/supabase';
-import { startGuestSession, isAuthenticated } from '../lib/auth';
+import { supabase, SUPABASE_URL, SUPABASE_ANON_KEY } from '../lib/supabase';
+import { startGuestSession, getSession } from '../lib/auth';
 import { ArrowRight, CheckCircle2, Loader2, UserCircle2, Eye, EyeOff, HelpCircle } from 'lucide-react';
 import { useGamificationStore } from '../stores/gamificationStore';
 import { BrandMark } from '../components/Brand';
@@ -10,6 +10,19 @@ import { ThemeToggle } from '../components/ThemeToggle';
 import './AuthWorkstation.css';
 
 type AuthMode = 'SIGN_IN' | 'REGISTER' | 'RECOVER';
+
+// Supabase provider ids -> human labels. LinkedIn MUST be 'linkedin_oidc';
+// the plain 'linkedin' provider is deprecated and rejected by Supabase.
+type OAuthProvider = 'google' | 'linkedin_oidc' | 'github';
+const OAUTH_LABEL: Record<OAuthProvider, string> = {
+  google: 'Google',
+  linkedin_oidc: 'LinkedIn',
+  github: 'GitHub',
+};
+
+// Where to land after an OAuth round-trip (location.state does not survive
+// the full-page redirect to the provider, so it is stashed here).
+const POSTAUTH_KEY = 'postauth_redirect';
 
 // Rotating value props shown under the headline (sign-in / register).
 const TAGLINES = [
@@ -40,20 +53,83 @@ export const AuthWorkstation: React.FC = () => {
   const [guestName, setGuestName] = useState('');
   const [showGuest, setShowGuest] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [loadingStep, setLoadingStep] = useState<number>(0);
   const [authSuccess, setAuthSuccess] = useState(false);
   const [tagIdx, setTagIdx] = useState(0);
+  // Which OAuth providers the Supabase project actually has enabled.
+  // null = settings not loaded yet (or fetch failed) -> hide the OAuth block.
+  const [oauthEnabled, setOauthEnabled] = useState<{
+    google: boolean;
+    linkedin_oidc: boolean;
+    github: boolean;
+  } | null>(null);
 
   const emailValid = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email);
 
-  // Already signed in (real or guest)? The login screen isn't for you — go where
-  // you were headed (state.from), or your profile by default.
+  // True while the email/password form is mid-flight; lets the OAuth listener
+  // below stand down so the form flow keeps its own success animation.
+  const formBusyRef = useRef(false);
+
+  // Already signed in with a REAL account? The login screen isn't for you — go
+  // where you were headed (state.from), or your profile by default. Guests are
+  // deliberately allowed to stay: they come here to upgrade to a real account,
+  // and bouncing them back would ping-pong with ModuleGate's locked-route
+  // redirect. If supabase-js finished an OAuth return before this effect ran,
+  // honor the stashed POSTAUTH_KEY destination (and clean it up) too.
   useEffect(() => {
-    if (isAuthenticated()) {
+    if (getSession().kind === 'supabase') {
+      const stash = localStorage.getItem(POSTAUTH_KEY);
+      if (stash) localStorage.removeItem(POSTAUTH_KEY);
       const from = (location.state as { from?: string } | null)?.from;
-      navigate(from || '/profile', { replace: true });
+      navigate(from || stash || '/profile', { replace: true });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Ask GoTrue which OAuth providers are actually enabled so the buttons
+  // appear/disappear automatically with the dashboard config. Until the
+  // settings load (or if the fetch fails), the OAuth block stays hidden so a
+  // click can never land on a raw 400 page from a disabled provider.
+  useEffect(() => {
+    let cancelled = false;
+    fetch(`${SUPABASE_URL}/auth/v1/settings`, { headers: { apikey: SUPABASE_ANON_KEY } })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((json) => {
+        const external = json?.external as Record<string, unknown> | undefined;
+        if (cancelled || !external) return;
+        setOauthEnabled({
+          google: external.google === true,
+          linkedin_oidc: external.linkedin_oidc === true,
+          github: external.github === true,
+        });
+      })
+      .catch(() => {
+        /* leave null -> OAuth block stays hidden */
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  // Completes OAuth sign-ins. Google/LinkedIn/GitHub return here via a full-page
+  // redirect with the session in the URL; supabase-js parses it and fires
+  // SIGNED_IN, at which point we adopt the token, greet by name and move on.
+  useEffect(() => {
+    const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
+      if (formBusyRef.current) return;
+      if (event !== 'SIGNED_IN' || !session?.access_token) return;
+      localStorage.setItem('supabase_token', session.access_token);
+      const meta = (session.user?.user_metadata ?? {}) as Record<string, unknown>;
+      const name = String(meta.full_name || meta.name || session.user?.email || 'Explorer');
+      setFirstName(name.split(' ')[0]);
+      setHasSeenGreeting(false);
+      const dest = localStorage.getItem(POSTAUTH_KEY) || redirectTo;
+      localStorage.removeItem(POSTAUTH_KEY);
+      navigate(dest, { replace: true });
+    });
+    return () => sub.subscription.unsubscribe();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -129,7 +205,9 @@ export const AuthWorkstation: React.FC = () => {
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setNotice(null);
     setIsLoading(true);
+    formBusyRef.current = true;
 
     try {
       if (mode === 'RECOVER') {
@@ -143,6 +221,7 @@ export const AuthWorkstation: React.FC = () => {
         if (fullName.length < 3) {
           setError('Name must be at least 3 characters.');
           setIsLoading(false);
+          formBusyRef.current = false;
           return;
         }
         const siteUrl = import.meta.env.VITE_SITE_URL || window.location.origin;
@@ -162,8 +241,11 @@ export const AuthWorkstation: React.FC = () => {
           setAuthSuccess(true);
           setTimeout(() => navigate(redirectTo, { replace: true }), 1200);
         } else {
+          // No session means email confirmation is pending - that is a success
+          // state, so it goes in the calm notice box, not the error banner.
           setIsLoading(false);
-          setError('Account created! Check your email to verify, then sign in.');
+          formBusyRef.current = false;
+          setNotice('Account created! Check your email to verify, then sign in.');
         }
       } else {
         const { data, error: signInError } = await supabase.auth.signInWithPassword({ email, password });
@@ -179,6 +261,7 @@ export const AuthWorkstation: React.FC = () => {
           setTimeout(() => navigate(redirectTo, { replace: true }), 1200);
         } else {
           setIsLoading(false);
+          formBusyRef.current = false;
           setError('Could not establish a session. Please try again.');
         }
       }
@@ -186,6 +269,7 @@ export const AuthWorkstation: React.FC = () => {
       console.error('Auth Error details:', err);
       setError(err.message || 'Authentication failed. Please try again.');
       setIsLoading(false);
+      formBusyRef.current = false;
     }
   };
 
@@ -195,25 +279,30 @@ export const AuthWorkstation: React.FC = () => {
       return;
     }
     setError(null);
+    setNotice(null);
     startGuestSession(guestNameTrimmed);
     setFirstName(guestNameTrimmed.split(' ')[0]);
     setHasSeenGreeting(false);
     navigate(redirectTo, { replace: true });
   };
 
-  const handleOAuthLogin = async (provider: 'google' | 'linkedin' | 'github') => {
+  const handleOAuthLogin = async (provider: OAuthProvider) => {
     setError(null);
+    setNotice(null);
     setIsLoading(true);
     try {
       const siteUrl = import.meta.env.VITE_SITE_URL || window.location.origin;
+      // The provider round-trip is a full page reload; stash the destination
+      // and come back to /login, where the SIGNED_IN listener finishes up.
+      localStorage.setItem(POSTAUTH_KEY, redirectTo);
       const { error: oauthError } = await supabase.auth.signInWithOAuth({
         provider,
-        options: { redirectTo: `${siteUrl}/portal` },
+        options: { redirectTo: `${siteUrl}/login` },
       });
       if (oauthError) throw oauthError;
     } catch (err: any) {
-      console.error(`${provider} OAuth Error:`, err);
-      setError(err.message || `Failed to initiate ${provider} authentication.`);
+      console.error(`${OAUTH_LABEL[provider]} OAuth Error:`, err);
+      setError(err.message || `Could not start ${OAUTH_LABEL[provider]} sign-in.`);
       setIsLoading(false);
     }
   };
@@ -223,6 +312,13 @@ export const AuthWorkstation: React.FC = () => {
     'w-full rounded-xl px-4 py-3.5 text-[15px] outline-none transition-all bg-white border border-slate-300 text-slate-900 placeholder-slate-400 focus:border-slate-900 focus:ring-4 focus:ring-slate-900/[0.06] dark:bg-white/[0.04] dark:border-white/15 dark:text-white dark:placeholder-slate-500 dark:focus:border-white/40 dark:focus:ring-white/[0.07]';
   const oauthCls =
     'flex w-full items-center justify-center gap-2 rounded-full px-4 py-3 text-[14px] font-semibold transition-all active:scale-[0.98] bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 hover:border-slate-400 hover:shadow-sm dark:bg-white/[0.04] dark:border-white/15 dark:text-slate-200 dark:hover:bg-white/[0.08] dark:hover:border-white/25';
+
+  // OAuth buttons render only for providers the project has enabled; while the
+  // settings are unknown (null) everything stays hidden.
+  const showGoogle = oauthEnabled?.google === true;
+  const showLinkedIn = oauthEnabled?.linkedin_oidc === true;
+  const showGitHub = oauthEnabled?.github === true;
+  const anyOAuth = showGoogle || showLinkedIn || showGitHub;
 
   const headline =
     mode === 'SIGN_IN' ? 'Welcome back'
@@ -304,9 +400,10 @@ export const AuthWorkstation: React.FC = () => {
                   Loved by ECE students across India
                 </div>
 
-                {/* OAuth */}
-                {mode !== 'RECOVER' && (
+                {/* OAuth (only providers enabled in the Supabase dashboard) */}
+                {mode !== 'RECOVER' && anyOAuth && (
                   <div className="mt-7 space-y-3">
+                    {showGoogle && (
                     <button id="auth-google-oauth" type="button" onClick={() => handleOAuthLogin('google')} className={oauthCls}>
                       <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24">
                         <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -316,25 +413,32 @@ export const AuthWorkstation: React.FC = () => {
                       </svg>
                       Continue with Google
                     </button>
-                    <div className="grid grid-cols-2 gap-3">
-                      <button id="auth-linkedin-oauth" type="button" onClick={() => handleOAuthLogin('linkedin')} className={oauthCls}>
+                    )}
+                    {(showLinkedIn || showGitHub) && (
+                    <div className={`grid gap-3 ${showLinkedIn && showGitHub ? 'grid-cols-2' : 'grid-cols-1'}`}>
+                      {showLinkedIn && (
+                      <button id="auth-linkedin-oauth" type="button" onClick={() => handleOAuthLogin('linkedin_oidc')} className={oauthCls}>
                         <svg className="w-4 h-4 text-[#0A66C2] flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
                           <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
                         </svg>
                         LinkedIn
                       </button>
+                      )}
+                      {showGitHub && (
                       <button id="auth-github-oauth" type="button" onClick={() => handleOAuthLogin('github')} className={oauthCls}>
                         <svg className="w-4 h-4 flex-shrink-0 text-slate-900 dark:text-white" viewBox="0 0 24 24" fill="currentColor">
                           <path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.483 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.464-1.11-1.464-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.579.688.481C19.137 20.164 22 16.418 22 12c0-5.523-4.477-10-10-10z" />
                         </svg>
                         GitHub
                       </button>
+                      )}
                     </div>
+                    )}
                   </div>
                 )}
 
-                {/* Divider */}
-                {mode !== 'RECOVER' && (
+                {/* Divider (only when OAuth options are shown above the form) */}
+                {mode !== 'RECOVER' && anyOAuth && (
                   <div className="relative my-6 flex items-center justify-center">
                     <div className="absolute h-px w-full bg-slate-200 dark:bg-white/10" />
                     <span className="relative bg-white px-3 text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:bg-[#0A0B12] dark:text-slate-500">or</span>
@@ -342,7 +446,7 @@ export const AuthWorkstation: React.FC = () => {
                 )}
 
                 {/* Form */}
-                <form onSubmit={handleFormSubmit} className="space-y-3.5 text-left">
+                <form onSubmit={handleFormSubmit} className={`${mode !== 'RECOVER' && !anyOAuth ? 'mt-7 ' : ''}space-y-3.5 text-left`}>
                   {mode === 'REGISTER' && (
                     <input
                       id="auth-fullname" type="text" required value={fullName}
@@ -384,7 +488,7 @@ export const AuthWorkstation: React.FC = () => {
                       {mode === 'SIGN_IN' && (
                         <div className="text-right">
                           <button
-                            type="button" onClick={() => { setMode('RECOVER'); setError(null); }}
+                            type="button" onClick={() => { setMode('RECOVER'); setError(null); setNotice(null); }}
                             className="text-[13px] font-medium text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
                           >
                             Forgot password?
@@ -407,6 +511,15 @@ export const AuthWorkstation: React.FC = () => {
                         </div>
                       )}
                     </div>
+                  )}
+
+                  {notice && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }}
+                      className="rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-[13px] font-medium text-emerald-700 dark:border-emerald-500/25 dark:bg-emerald-500/10 dark:text-emerald-300"
+                    >
+                      {notice}
+                    </motion.div>
                   )}
 
                   {error && (
@@ -437,11 +550,11 @@ export const AuthWorkstation: React.FC = () => {
                 {/* Toggle */}
                 <p className="mt-6 text-center text-[14px] text-slate-500 dark:text-slate-400">
                   {mode === 'RECOVER' ? (
-                    <>Remembered it? <button type="button" onClick={() => { setMode('SIGN_IN'); setError(null); }} className="font-bold text-slate-900 underline underline-offset-2 dark:text-white">Sign in</button></>
+                    <>Remembered it? <button type="button" onClick={() => { setMode('SIGN_IN'); setError(null); setNotice(null); }} className="font-bold text-slate-900 underline underline-offset-2 dark:text-white">Sign in</button></>
                   ) : mode === 'SIGN_IN' ? (
-                    <>New here? <button type="button" onClick={() => { setMode('REGISTER'); setError(null); }} className="font-bold text-slate-900 underline underline-offset-2 dark:text-white">Create a profile</button></>
+                    <>New here? <button type="button" onClick={() => { setMode('REGISTER'); setError(null); setNotice(null); }} className="font-bold text-slate-900 underline underline-offset-2 dark:text-white">Create a profile</button></>
                   ) : (
-                    <>Existing user? <button type="button" onClick={() => { setMode('SIGN_IN'); setError(null); }} className="font-bold text-slate-900 underline underline-offset-2 dark:text-white">Sign in</button></>
+                    <>Existing user? <button type="button" onClick={() => { setMode('SIGN_IN'); setError(null); setNotice(null); }} className="font-bold text-slate-900 underline underline-offset-2 dark:text-white">Sign in</button></>
                   )}
                 </p>
 
@@ -528,7 +641,7 @@ export const AuthWorkstation: React.FC = () => {
                       </p>
                       {mode === 'RECOVER' && (
                         <button
-                          type="button" onClick={() => { setIsLoading(false); setMode('SIGN_IN'); setError(null); }}
+                          type="button" onClick={() => { setIsLoading(false); setMode('SIGN_IN'); setError(null); setNotice(null); }}
                           className="pt-1 text-xs font-bold text-[#EA580C] hover:underline"
                         >
                           ← Return to sign in

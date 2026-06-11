@@ -166,6 +166,44 @@ export function remainingFreeModules(): number {
     return Math.max(0, FREE_MODULE_LIMIT - getVisitedModules().length);
 }
 
+let bridgeStarted = false;
+
+/**
+ * The ONE bridge that keeps `supabase_token` in sync with the real Supabase
+ * session (runs from main.tsx at module load, before first render). The
+ * password flow writes the token itself, but OAuth, email-verification and
+ * password-recovery all return via a full-page redirect where only supabase-js
+ * sees the session - without this bridge the app would still treat the user as
+ * anonymous. Mirrors the token on every event that carries a session
+ * (SIGNED_IN, TOKEN_REFRESHED, USER_UPDATED, INITIAL_SESSION,
+ * PASSWORD_RECOVERY), clears it on SIGNED_OUT, and drops the guest flag when a
+ * real session is adopted. Idempotent - extra calls are no-ops.
+ */
+export function initAuthTokenBridge(): void {
+    if (bridgeStarted) return;
+    const ls = safeStorage();
+    if (!ls) return;
+    bridgeStarted = true;
+
+    const adopt = (token: string | null | undefined) => {
+        if (!token) return;
+        ls.setItem(SUPABASE_TOKEN_KEY, token);
+        // A real login supersedes any guest session.
+        ls.removeItem(GUEST_FLAG_KEY);
+    };
+
+    void supabase.auth.getSession().then(({ data }) => adopt(data.session?.access_token));
+
+    supabase.auth.onAuthStateChange((event, session) => {
+        if (event === 'SIGNED_OUT') {
+            ls.removeItem(SUPABASE_TOKEN_KEY);
+            return;
+        }
+        // SIGNED_IN, TOKEN_REFRESHED, USER_UPDATED, INITIAL_SESSION, PASSWORD_RECOVERY
+        adopt(session?.access_token);
+    });
+}
+
 export function clearSession(): void {
     const ls = safeStorage();
     if (!ls) return;

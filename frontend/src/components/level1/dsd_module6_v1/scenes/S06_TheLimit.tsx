@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { AlertTriangle, ArrowRight, XCircle } from 'lucide-react';
+import { AlertTriangle, ArrowRight, Binary, ScrollText, XCircle } from 'lucide-react';
 
 interface Props { isActive?: boolean; isDarkMode: boolean; }
 
@@ -297,6 +297,89 @@ export const S06_TheLimit: React.FC<Props> = ({ isActive = true, isDarkMode }) =
         </motion.div>
       </div>
 
+      {/* ── Formal statement: the limit as a boxed theorem ── */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
+        transition={{ delay: 0.7 }}
+        className="p-6 md:p-8 rounded-3xl border-2"
+        style={{ borderColor: ROSE, background: `${ROSE}11` }}
+      >
+        <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest mb-4" style={{ color: ROSE }}>
+          <ScrollText size={14} /> The limit · stated formally
+        </div>
+
+        <p className={`text-base md:text-lg font-black leading-relaxed ${textColor}`}>
+          A circuit whose output is a function of the present inputs only cannot count, cannot
+          recognise a sequence, and cannot hold a result. All three need information about the
+          past, and a combinational circuit stores none.
+        </p>
+
+        <p className={`mt-4 text-sm leading-relaxed ${subText} max-w-3xl`}>
+          This is not a flaw in any particular design - it follows directly from the definition.
+          The three demos above are the same theorem seen three times: counting needs the previous
+          total, recognising a pattern needs the previous symbols, and holding a value needs the
+          previous output. Take away the past and all three collapse together.
+        </p>
+
+        <div className={`mt-5 pt-4 border-t ${isDarkMode ? 'border-white/10' : 'border-slate-200'} grid gap-2`}>
+          {([
+            ['combinational circuit', 'a circuit whose outputs are fixed entirely by the inputs present at this instant; the same inputs always produce the same outputs'],
+            ['memory', 'any mechanism that lets information from an earlier moment influence the output now'],
+          ] as const).map(([term, def]) => (
+            <div key={term} className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+              <span className="font-mono text-[10px] uppercase tracking-widest font-bold shrink-0" style={{ color: ROSE }}>
+                {term}
+              </span>
+              <span className={`text-xs ${subText}`}>{def}</span>
+            </div>
+          ))}
+        </div>
+      </motion.div>
+
+      {/* ── Standard text: how much memory does counting need? ── */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
+        transition={{ delay: 0.8 }}
+        className={`p-6 md:p-8 rounded-3xl border ${cardBg}`}
+      >
+        <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest mb-3" style={{ color: CYAN }}>
+          <Binary size={14} /> How much memory does counting need?
+        </div>
+
+        <p className={`text-sm leading-relaxed ${subText} max-w-3xl`}>
+          Each stored bit doubles the number of different past situations a circuit can tell apart.
+          One bit separates 2 situations, two bits separate 4, and n bits separate 2ⁿ. To count up
+          to N, a circuit therefore needs at least log₂N bits of state - stored information that
+          survives from one moment to the next. Counting to 16 takes 4 bits because 2⁴ = 16, and
+          counting to 1000 takes 10 bits because 2¹⁰ = 1024.
+        </p>
+
+        {/* bits vs states row */}
+        <div className="mt-5 grid grid-cols-2 sm:grid-cols-4 gap-3">
+          {([
+            { bits: 1, states: 2, pow: '2¹' },
+            { bits: 2, states: 4, pow: '2²' },
+            { bits: 3, states: 8, pow: '2³' },
+            { bits: 4, states: 16, pow: '2⁴' },
+          ] as const).map(({ bits, states, pow }) => (
+            <div
+              key={bits}
+              className={`p-3 rounded-2xl border flex flex-col items-center gap-1 ${isDarkMode ? 'bg-white/5 border-white/10' : 'bg-slate-50 border-slate-200'}`}
+            >
+              <span className="font-mono text-[9px] uppercase tracking-widest" style={{ color: label }}>
+                {bits} bit{bits > 1 ? 's' : ''}
+              </span>
+              <span className="font-mono text-2xl font-black" style={{ color: CYAN }}>{states}</span>
+              <span className="font-mono text-[9px]" style={{ color: label }}>{pow} states</span>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-4 font-mono text-[11px] tracking-wide" style={{ color: label }}>
+          n bits → 2ⁿ distinguishable pasts · counting to N needs at least log₂N bits of state
+        </div>
+      </motion.div>
+
       {/* ── Closing: the way forward ── */}
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
@@ -333,6 +416,22 @@ export const S06_TheLimit: React.FC<Props> = ({ isActive = true, isDarkMode }) =
           />
           <text x="80" y="24" textAnchor="middle" fontSize="8" fontFamily="monospace" fill={label}>keep the bit</text>
         </svg>
+      </motion.div>
+
+      {/* ── Bridge · to Part III ── */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
+        transition={{ delay: 0.85 }}
+        className={`p-6 rounded-2xl border ${cardBg} flex flex-col sm:flex-row sm:items-baseline gap-2 sm:gap-6`}
+      >
+        <div className="font-mono text-[10px] uppercase tracking-widest shrink-0" style={{ color: EMERALD }}>
+          Bridge · to Part III
+        </div>
+        <p className={`text-sm md:text-base font-bold leading-relaxed ${textColor}`}>
+          The missing ingredient has a name: state - the information a circuit keeps about what has
+          already happened. Building a circuit that can hold state is exactly what the next chapters do.
+          <ArrowRight className="inline ml-2 align-middle" size={14} style={{ color: EMERALD }} />
+        </p>
       </motion.div>
     </div>
   );

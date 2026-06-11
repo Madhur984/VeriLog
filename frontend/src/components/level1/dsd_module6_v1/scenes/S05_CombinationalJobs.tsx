@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Boxes, Lightbulb, MousePointerClick, Shuffle, Sigma } from 'lucide-react';
+import { Binary, BookOpen, Boxes, Lightbulb, MousePointerClick, Shuffle, Sigma } from 'lucide-react';
 
 type Bit = 0 | 1;
 
@@ -31,8 +31,16 @@ export const S05_CombinationalJobs: React.FC<Props> = ({ isActive = true, isDark
   const textColor = isDarkMode ? 'text-white' : 'text-slate-900';
   const subText   = isDarkMode ? 'text-slate-300' : 'text-slate-600';
   const cardBg    = isDarkMode ? 'bg-white/5 border-white/10' : 'bg-white border-slate-200 shadow-xl';
+  const defBg     = isDarkMode ? 'bg-black/20 border-white/10' : 'bg-slate-50 border-slate-200';
   const dimWire   = isDarkMode ? '#475569' : '#cbd5e1';
   const panelFill = isDarkMode ? '#0a0e1a' : '#fff';
+
+  const TermChip: React.FC<{ t: string; color: string }> = ({ t, color }) => (
+    <span className="font-mono text-[10px] font-bold px-3 py-1.5 rounded-full border"
+          style={{ borderColor: `${color}55`, color, background: `${color}0d` }}>
+      {t}
+    </span>
+  );
 
   // ── ADDER state ──
   const [a1, setA1] = useState<Bit>(0);
@@ -135,6 +143,26 @@ export const S05_CombinationalJobs: React.FC<Props> = ({ isActive = true, isDark
             </div>
           </div>
         </div>
+
+        {/* Standard text · half adder and full adder */}
+        <div className={`mt-6 p-4 md:p-5 rounded-2xl border ${defBg}`}>
+          <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest mb-3" style={{ color: CYAN }}>
+            <BookOpen size={12} /> Standard text · half adder and full adder
+          </div>
+          <div className="flex flex-wrap gap-2 mb-3">
+            <TermChip t="Sum = A XOR B" color={CYAN} />
+            <TermChip t="Carry = A AND B" color={CYAN} />
+            <TermChip t="carry-in = full adder" color={CYAN} />
+          </div>
+          <p className={`text-sm leading-relaxed ${subText}`}>
+            A <span className={`font-semibold ${textColor}`}>half adder</span> is the smallest adding circuit: it adds two
+            single bits and produces a Sum bit (A XOR B) and a Carry bit (A AND B). A{' '}
+            <span className={`font-semibold ${textColor}`}>full adder</span> takes one extra input, a carry-in from the
+            column to its right, so it can add three bits at once. Chain full adders end to end, feeding each stage's
+            carry-out into the next stage's carry-in, and you can add whole multi-bit numbers - that chain is exactly
+            what is doing the math in the demo above.
+          </p>
+        </div>
       </motion.div>
 
       {/* ── JOB 02 · MUX · the star ──────────────────────────────── */}
@@ -207,6 +235,24 @@ export const S05_CombinationalJobs: React.FC<Props> = ({ isActive = true, isDark
             SELECT = {sel} · flip
           </button>
         </div>
+
+        {/* Standard text · multiplexer */}
+        <div className={`mt-5 p-4 md:p-5 rounded-2xl border ${defBg}`}>
+          <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest mb-3" style={{ color: AMBER }}>
+            <BookOpen size={12} /> Standard text · multiplexer (MUX)
+          </div>
+          <div className="flex flex-wrap gap-2 mb-3">
+            <TermChip t="2ⁿ data inputs" color={AMBER} />
+            <TermChip t="n select lines" color={AMBER} />
+            <TermChip t="1 output" color={AMBER} />
+          </div>
+          <p className={`text-sm leading-relaxed ${subText}`}>
+            A <span className={`font-semibold ${textColor}`}>multiplexer</span>, or MUX, is a data selector: a 2ⁿ-to-1
+            MUX uses n select lines to route exactly one of its 2ⁿ data inputs to its single output. The demo above is
+            the smallest case, a 2-to-1 MUX, where one select bit (n = 1) chooses between 2¹ = 2 inputs. Think of it as
+            a digital rotary switch: the select code is the knob position, and only the chosen lane gets through.
+          </p>
+        </div>
       </motion.div>
 
       {/* ── JOB 03 · DECODER ─────────────────────────────────────── */}
@@ -267,12 +313,71 @@ export const S05_CombinationalJobs: React.FC<Props> = ({ isActive = true, isDark
             })}
           </svg>
         </div>
+
+        {/* Standard text · decoder */}
+        <div className={`mt-5 p-4 md:p-5 rounded-2xl border ${defBg}`}>
+          <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest mb-3" style={{ color: EMERALD }}>
+            <BookOpen size={12} /> Standard text · decoder
+          </div>
+          <div className="flex flex-wrap gap-2 mb-3">
+            <TermChip t="n inputs → 2ⁿ outputs" color={EMERALD} />
+            <TermChip t="exactly one line high" color={EMERALD} />
+            <TermChip t="3-to-8 = one of 8 lines" color={EMERALD} />
+          </div>
+          <p className={`text-sm leading-relaxed ${subText}`}>
+            An <span className={`font-semibold ${textColor}`}>n-to-2ⁿ decoder</span> reads an n-bit binary code and
+            activates exactly one of its 2ⁿ output lines - the one whose number matches the code. The circuit above is
+            a 2-to-4 decoder: 2 input bits light one of 2² = 4 lamps, and a 3-to-8 decoder likewise turns on one of 8
+            lines. This pattern, where exactly one wire is high at a time, is called one-hot, and it is how a processor
+            picks out a single memory chip or register from an address.
+          </p>
+        </div>
+      </motion.div>
+
+      {/* ── Three job families ───────────────────────────────────── */}
+      <motion.div {...flow(3)} className={`p-6 md:p-8 rounded-3xl border ${cardBg}`}>
+        <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest mb-1" style={{ color: CYAN }}>
+          <Boxes size={13} /> Big picture · three job families
+        </div>
+        <h3 className={`text-xl md:text-2xl font-black mt-1 ${textColor}`}>
+          Every combinational block belongs to one of three families.
+        </h3>
+        <div className="grid md:grid-cols-3 gap-4 mt-5">
+          {[
+            {
+              Icon: Sigma, color: CYAN, name: 'Arithmetic',
+              members: 'adders, subtractors, comparators',
+              line: 'Circuits that compute with numbers: add them, subtract them, or report which of two numbers is bigger.',
+            },
+            {
+              Icon: Shuffle, color: AMBER, name: 'Data routing',
+              members: 'multiplexers, demultiplexers',
+              line: 'Circuits that steer data: a multiplexer picks one of many inputs, and a demultiplexer sends one input to one of many outputs.',
+            },
+            {
+              Icon: Binary, color: EMERALD, name: 'Code conversion',
+              members: 'decoders, encoders',
+              line: 'Circuits that translate between codes: a decoder expands a compact binary code into one-of-many lines, and an encoder compresses it back.',
+            },
+          ].map(({ Icon, color, name, members, line }) => (
+            <div key={name} className={`p-4 rounded-2xl border ${defBg}`}>
+              <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest" style={{ color }}>
+                <Icon size={12} /> {name}
+              </div>
+              <div className="font-mono text-[10px] mt-1.5" style={{ color, opacity: 0.75 }}>{members}</div>
+              <p className={`text-xs leading-relaxed mt-2 ${subText}`}>{line}</p>
+            </div>
+          ))}
+        </div>
+        <p className={`text-sm text-center mt-5 font-semibold ${textColor}`}>
+          Every one of them is pure combinational logic - truth table in, gates out, nothing remembered.
+        </p>
       </motion.div>
 
       {/* ── Common thread ────────────────────────────────────────── */}
-      <motion.div {...flow(3)} className={`p-6 rounded-3xl border ${cardBg}`}>
+      <motion.div {...flow(4)} className={`p-6 rounded-3xl border ${cardBg}`}>
         <div className="flex flex-wrap items-center justify-center gap-3">
-          {['no memory', 'no clock needed', 'Output = F(inputs right now)'].map((t) => (
+          {['no memory', 'no clock input of its own', 'Output = F(inputs right now)'].map((t) => (
             <span key={t} className="font-mono text-[11px] font-black px-4 py-2 rounded-full border-2"
                   style={{ borderColor: `${CYAN}55`, color: CYAN, background: `${CYAN}10` }}>
               {t}

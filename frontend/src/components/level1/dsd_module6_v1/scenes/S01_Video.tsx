@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Bookmark, ChevronDown, FileText, PlayCircle } from 'lucide-react';
+import { BookOpen, Bookmark, ChevronDown, Eye, FileText, PlayCircle, Quote } from 'lucide-react';
 
 interface Props { isActive?: boolean; isDarkMode: boolean; }
 
@@ -37,6 +37,26 @@ const CHAPTERS: Chapter[] = [
     words:
       'Put the two families together and you get a real computer. The combinational logic is the processor, doing instant math on whatever appears. The memory registers are the scoreboard, holding on to where things stand. And the clock is the conductor, telling everyone exactly when to move. Engineers call this a finite state machine, and it is how raw electrical currents become organized intelligence. One last question before you go: the digital watch on your wrist, is it combinational or sequential? It has to remember the time, so you already know the answer.',
   },
+];
+
+interface VocabEntry { term: string; def: string; }
+
+const VOCAB: VocabEntry[] = [
+  { term: 'logic gate', def: 'a tiny circuit that answers one yes/no question about its inputs' },
+  { term: 'combinational circuit', def: 'gates only - output decided by the inputs present right now' },
+  { term: 'sequential circuit', def: 'gates plus memory - output also depends on what happened before' },
+  { term: 'state', def: 'the information a circuit is currently remembering' },
+  { term: 'memory element', def: 'the part that holds a bit until told to change' },
+  { term: 'clock', def: 'the shared tick that tells every memory element when to update' },
+];
+
+// One viewing cue per chapter, index-matched to CHAPTERS above.
+const WATCH_FOR: string[] = [
+  'Watch for the opening question - how does a machine remember anything - and the split into two circuit families, one living in the present and one carrying a notebook.',
+  'Watch for the tea vendor at the stall: the cup he hands back depends only on what you gave him right now, with no memory of any earlier order.',
+  'Watch for the cricket scoreboard flipping from 100 to 104 - old score plus new runs is the moment past state and present input combine.',
+  'Watch for the two cross-wired gates that trap a single bit, and the clock acting as a metronome that decides exactly when the stored value may change.',
+  'Watch for the three roles coming together - processor, scoreboard and conductor - and the name engineers give the whole arrangement: a finite state machine.',
 ];
 
 const formatTime = (s: number) => {
@@ -92,6 +112,42 @@ export const S01_Video: React.FC<Props> = ({ isActive = true, isDarkMode }) => {
         </div>
       </section>
 
+      {/* Key vocabulary - read before watching */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={isActive ? { opacity: 1, y: 0 } : {}}
+        transition={{ delay: 0.05 }}
+        className={`p-5 rounded-2xl border ${cardBg}`}
+      >
+        <div className="flex items-center gap-2 mb-2">
+          <BookOpen size={14} className="text-cyan-400" />
+          <span className="font-mono text-[10px] uppercase tracking-widest text-cyan-400">
+            Before you watch · key vocabulary
+          </span>
+        </div>
+        <p className={`text-sm mb-4 ${subText}`}>
+          The narration uses these six terms freely. Skim them once now so nothing in the
+          video sounds like jargon - each one is defined in a single plain-language line.
+        </p>
+        <div className="grid sm:grid-cols-2 gap-2">
+          {VOCAB.map((v) => (
+            <div
+              key={v.term}
+              className={`flex flex-col gap-1 px-3.5 py-3 rounded-xl border ${
+                isDarkMode ? 'bg-white/5 border-white/10' : 'bg-slate-50 border-slate-200'
+              }`}
+            >
+              <span className={`font-mono font-bold text-[11px] uppercase tracking-widest ${
+                isDarkMode ? 'text-cyan-300' : 'text-cyan-600'
+              }`}>
+                {v.term}
+              </span>
+              <span className={`text-sm leading-relaxed ${subText}`}>{v.def}</span>
+            </div>
+          ))}
+        </div>
+      </motion.div>
+
       {/* Player */}
       <motion.div
         initial={{ opacity: 0, scale: 0.98 }}
@@ -141,6 +197,40 @@ export const S01_Video: React.FC<Props> = ({ isActive = true, isDarkMode }) => {
               <span className="opacity-50 mr-1.5">{formatTime(c.t)}</span>
               {c.title}
             </button>
+          ))}
+        </div>
+      </motion.div>
+
+      {/* Watch-for cues - one per chapter */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={isActive ? { opacity: 1, y: 0 } : {}}
+        transition={{ delay: 0.2 }}
+        className={`p-5 rounded-2xl border ${cardBg}`}
+      >
+        <div className="flex items-center gap-2 mb-4">
+          <Eye size={14} className="text-cyan-400" />
+          <span className="font-mono text-[10px] uppercase tracking-widest text-cyan-400">
+            Watch for these moments
+          </span>
+        </div>
+        <div className={`divide-y ${isDarkMode ? 'divide-white/10' : 'divide-slate-200'}`}>
+          {CHAPTERS.map((c, i) => (
+            <div key={c.t} className="flex items-start gap-3 py-3 first:pt-0 last:pb-0">
+              <span className={`flex-shrink-0 mt-0.5 px-2 py-0.5 rounded-full border font-mono text-[10px] tabular-nums ${
+                isDarkMode ? 'border-white/10 text-slate-400' : 'border-slate-200 text-slate-500'
+              }`}>
+                {formatTime(c.t)}
+              </span>
+              <div className="min-w-0">
+                <span className={`block font-mono font-bold text-[11px] uppercase tracking-widest mb-0.5 ${
+                  isDarkMode ? 'text-cyan-300' : 'text-cyan-600'
+                }`}>
+                  {c.title}
+                </span>
+                <span className={`text-sm leading-relaxed ${subText}`}>{WATCH_FOR[i]}</span>
+              </div>
+            </div>
           ))}
         </div>
       </motion.div>
@@ -234,6 +324,54 @@ export const S01_Video: React.FC<Props> = ({ isActive = true, isDarkMode }) => {
         Transcript written to match the narration beat for beat. Open a section to read along,
         or tap the play icon to jump the video to that moment.
       </p>
+
+      {/* Formal definitions to carry forward */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={isActive ? { opacity: 1, y: 0 } : {}}
+        transition={{ delay: 0.3 }}
+        className={`p-6 rounded-3xl border ${cardBg}`}
+      >
+        <div className="flex items-center gap-2 mb-2">
+          <Quote size={14} className="text-emerald-400" />
+          <span className="font-mono text-[10px] uppercase tracking-widest text-emerald-400">
+            After the video · two sentences to keep
+          </span>
+        </div>
+        <p className={`text-sm mb-4 ${subText}`}>
+          Everything in the lecture compresses into these two textbook definitions. They are the
+          standard wording you will meet in any digital design course, so keep them word for word.
+        </p>
+        <div className="space-y-3">
+          <div className={`pl-4 border-l-2 rounded-r-xl py-2 ${
+            isDarkMode ? 'border-emerald-500/60' : 'border-emerald-400'
+          }`}>
+            <span className={`block font-mono font-bold text-[11px] uppercase tracking-widest mb-1 ${
+              isDarkMode ? 'text-emerald-300' : 'text-emerald-600'
+            }`}>
+              Combinational
+            </span>
+            <p className={`text-sm leading-relaxed ${textColor}`}>
+              A combinational circuit is made of logic gates whose outputs at any moment are
+              determined entirely by the present combination of inputs.
+            </p>
+          </div>
+          <div className={`pl-4 border-l-2 rounded-r-xl py-2 ${
+            isDarkMode ? 'border-emerald-500/60' : 'border-emerald-400'
+          }`}>
+            <span className={`block font-mono font-bold text-[11px] uppercase tracking-widest mb-1 ${
+              isDarkMode ? 'text-emerald-300' : 'text-emerald-600'
+            }`}>
+              Sequential
+            </span>
+            <p className={`text-sm leading-relaxed ${textColor}`}>
+              A sequential circuit contains gates plus memory elements; its outputs depend on the
+              present inputs and on the stored state, so the same inputs can produce different
+              outputs at different times.
+            </p>
+          </div>
+        </div>
+      </motion.div>
     </div>
   );
 };

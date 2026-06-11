@@ -734,6 +734,22 @@ const L6_PATHS: PathOption[] = [
           { id: 'm8dsd11', label: 'Practice Arena',                    route: '/dsd/6/practice'      },
         ],
       },
+      {
+        id: 'm9dsd', label: 'The Half Adder · Module 07', subtitle: 'L7 · FACTS TO REAL BUILD · 11 STAGES', route: '/dsd/7/cover',
+        submodules: [
+          { id: 'm9dsd0',  label: 'Cover · The Half Adder',            route: '/dsd/7/cover'     },
+          { id: 'm9dsd1',  label: 'Definition & Truth Table',          route: '/dsd/7/basics'    },
+          { id: 'm9dsd2',  label: 'Video · Demystifying Half Adders',  route: '/dsd/7/video'     },
+          { id: 'm9dsd3',  label: 'The Marble Box',                    route: '/dsd/7/box'       },
+          { id: 'm9dsd4',  label: 'The Overflow Mechanism',            route: '/dsd/7/overflow'  },
+          { id: 'm9dsd5',  label: 'The Sum Wire · XOR',                route: '/dsd/7/xor'       },
+          { id: 'm9dsd6',  label: 'The Carry Wire · AND',              route: '/dsd/7/and'       },
+          { id: 'm9dsd7',  label: 'Wiring the Blueprint',              route: '/dsd/7/blueprint' },
+          { id: 'm9dsd8',  label: 'Why Only Half?',                    route: '/dsd/7/half'      },
+          { id: 'm9dsd9',  label: 'Practice Arena',                    route: '/dsd/7/practice'  },
+          { id: 'm9dsd10', label: 'Build It For Real · Workbench',     route: '/dsd/7/build'     },
+        ],
+      },
     ],
   },
   {

@@ -6,8 +6,55 @@
  */
 
 import { moduleIdFromPath } from './auth';
+import { supabase } from './supabase';
 
 const KEY = 'bfb_module_history';
+
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/**
+ * Best-effort mirror of a module open into public.module_history (see
+ * supabase/migrations/0002_user_data.sql). Signed-in users are keyed by their
+ * auth uid, guests by their guest_id (which is also guest_sessions.id).
+ * Fire-and-forget: any failure only logs a console warning.
+ */
+const lastSync: Record<string, number> = {};
+const SYNC_WINDOW_MS = 60_000;
+
+async function syncModuleOpen(moduleId: string, path: string): Promise<void> {
+  // Chapter flips inside a module re-trigger the gate; one write per page per
+  // minute is plenty for "where did they leave off" analytics.
+  const now = Date.now();
+  if (now - (lastSync[path] ?? 0) < SYNC_WINDOW_MS) return;
+  lastSync[path] = now;
+  try {
+    const { data } = await supabase.auth.getSession();
+    const user = data.session?.user;
+    if (user) {
+      const name = (user.user_metadata?.full_name as string) || user.email || '';
+      await supabase.rpc('record_module_open', {
+        p_owner_key: user.id,
+        p_owner_kind: 'user',
+        p_display_name: name,
+        p_module_id: moduleId,
+        p_last_path: path,
+      });
+      return;
+    }
+    const gid = localStorage.getItem('guest_id');
+    if (localStorage.getItem('guest_session') === 'true' && gid && UUID_RE.test(gid)) {
+      await supabase.rpc('record_module_open', {
+        p_owner_key: gid,
+        p_owner_kind: 'guest',
+        p_display_name: localStorage.getItem('guest_name') || '',
+        p_module_id: moduleId,
+        p_last_path: path,
+      });
+    }
+  } catch (e: any) {
+    console.warn('[module-history] db sync skipped:', e?.message ?? e);
+  }
+}
 
 /** Human labels for each counted module id (matches the portal tree). */
 export const MODULE_LABELS: Record<string, string> = {
@@ -23,6 +70,7 @@ export const MODULE_LABELS: Record<string, string> = {
   'dsd/4': 'Practice Arena',
   'dsd/5': 'Universal Gates',
   'dsd/6': 'Combinational & Sequential Circuits',
+  'dsd/7': 'The Half Adder',
   'basic-electronics/1': 'Physics of Control',
   'basic-electronics/2': 'Silicon, Doping & Carriers',
   'basic-electronics/3': 'The P-N Junction',
@@ -57,6 +105,7 @@ export function recordModuleHistory(pathname: string): void {
   } catch {
     /* ignore */
   }
+  void syncModuleOpen(id, pathname);
 }
 
 export interface ModuleHistoryItem {

@@ -7,11 +7,11 @@ import './index.css'
 // Side-effect import: installs the axios auth interceptor at startup so
 // every request automatically carries the active session token.
 import './lib/http'
-import { initSessionSync } from './lib/sessionSync'
+import { initAuthTokenBridge } from './lib/auth'
 
 // Bridge Supabase sessions (OAuth / email-verify / password-recovery redirects)
 // into the localStorage token the auth gate reads. Must run before first render.
-initSessionSync()
+initAuthTokenBridge()
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>

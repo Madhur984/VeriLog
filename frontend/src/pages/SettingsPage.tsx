@@ -37,17 +37,22 @@ export const SettingsPage: React.FC = () => {
     if (isGuest) return;
     let active = true;
     (async () => {
-      const { data } = await supabase.auth.getUser();
+      const { data, error } = await supabase.auth.getUser();
       if (!active) return;
-      if (data.user) {
-        setEmail(data.user.email ?? '');
-        const fullName = (data.user.user_metadata?.full_name as string) || '';
-        if (fullName) setName(fullName);
+      if (error || !data.user) {
+        // Stale Supabase session (e.g. expired refresh token): every save
+        // would fail, so clear it and send the user back to login.
+        clearSession();
+        navigate('/login', { replace: true });
+        return;
       }
+      setEmail(data.user.email ?? '');
+      const fullName = (data.user.user_metadata?.full_name as string) || '';
+      if (fullName) setName(fullName);
       setLoading(false);
     })();
     return () => { active = false; };
-  }, [isGuest]);
+  }, [isGuest, navigate]);
 
   const flash = (kind: 'ok' | 'err', msg: string) => {
     setNotice({ kind, msg });
@@ -78,9 +83,12 @@ export const SettingsPage: React.FC = () => {
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { flash('err', 'Enter a valid email.'); return; }
     setSavingEmail(true);
     try {
-      const { error } = await supabase.auth.updateUser({ email: email.trim() });
+      const { error } = await supabase.auth.updateUser(
+        { email: email.trim() },
+        { emailRedirectTo: `${import.meta.env.VITE_SITE_URL || window.location.origin}/settings` },
+      );
       if (error) throw error;
-      flash('ok', 'Check your inbox to confirm the new email.');
+      flash('ok', 'Confirmation links sent to both your current and new email. Open both to finish the change.');
     } catch (e: any) {
       flash('err', e?.message || 'Could not update your email.');
     } finally {
@@ -104,7 +112,13 @@ export const SettingsPage: React.FC = () => {
   };
 
   const logout = async () => {
-    try { await supabase.auth.signOut(); } catch { /* ignore */ }
+    try {
+      const { error } = await supabase.auth.signOut();
+      // On a network failure the server-side sign-out can fail while the local
+      // sb-* session survives; clear it locally so the boot bridge cannot
+      // silently sign the user back in on the next load.
+      if (error) { await supabase.auth.signOut({ scope: 'local' }); }
+    } catch { /* ignore */ }
     clearSession();
     navigate('/login', { replace: true });
   };
@@ -216,7 +230,7 @@ export const SettingsPage: React.FC = () => {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder={loading ? 'Loading…' : 'you@example.com'} disabled={loading}
                 />
-                <p className={`mt-2 text-[12px] ${subCls}`}>Changing this sends a confirmation link to the new address.</p>
+                <p className={`mt-2 text-[12px] ${subCls}`}>Changing this sends confirmation links to both your current and new address. You must open both to complete the change.</p>
                 <div className="mt-4">
                   <button onClick={saveEmail} disabled={savingEmail || loading} className={accentBtn}>
                     {savingEmail ? <Loader2 size={15} className="animate-spin" /> : <Check size={15} />} Update email

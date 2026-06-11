@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Scale, Zap, Database, Timer, Cpu, CheckCircle2, XCircle } from 'lucide-react';
+import { Scale, Zap, Database, Timer, Cpu, CheckCircle2, XCircle, Users, ArrowRight, BookOpen } from 'lucide-react';
 
 interface Props { isActive: boolean; isDarkMode: boolean; }
 
@@ -59,9 +59,11 @@ const ROWS: Row[] = [
   { label: 'Output depends on', combi: 'Present inputs only', seq: 'Present inputs + past state' },
   { label: 'Memory', combi: 'None', seq: 'Required - flip-flops, latches', combiLacks: true, seqHas: true },
   { label: 'Feedback loop', combi: 'Absent', seq: 'Present', combiLacks: true, seqHas: true },
-  { label: 'Clock', combi: 'Not required', seq: 'Essential - synchronous', combiLacks: true, seqHas: true },
+  { label: 'Clock', combi: 'No clock input - logic settles on its own between ticks', seq: 'One shared clock times every memory update', combiLacks: true, seqHas: true },
+  { label: 'Speed', combi: 'Output settles after gate delays only', seq: 'Output waits for the next clock tick' },
+  { label: 'Design tools', combi: 'Truth table + Boolean algebra', seq: 'State diagram + state table' },
   { label: 'Analogy', combi: 'Tea vendor', seq: 'Cricket scoreboard', mascots: true },
-  { label: 'Examples', combi: 'Adders, MUX, decoders', seq: 'Counters, registers, RAM', combiHas: true, seqHas: true },
+  { label: 'Building blocks', combi: 'Adders, MUX, decoders, encoders', seq: 'Latches, flip-flops, counters, registers, RAM', combiHas: true, seqHas: true },
 ];
 
 export const S10_FaceOff: React.FC<Props> = ({ isActive, isDarkMode }) => {
@@ -143,6 +145,53 @@ export const S10_FaceOff: React.FC<Props> = ({ isActive, isDarkMode }) => {
             </div>
           </motion.div>
         ))}
+      </motion.div>
+
+      {/* Teammates, not rivals */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
+        transition={{ delay: 0.45 }}
+        className={`p-6 sm:p-8 rounded-3xl border ${cardBg}`}
+      >
+        <div className="font-mono text-[10px] uppercase tracking-widest mb-4 flex items-center gap-2 text-violet-400">
+          <Users size={12} /> Teammates · not rivals
+        </div>
+        <h3 className={`text-xl md:text-2xl font-black mb-3 ${textColor}`}>
+          Real systems alternate the two.
+        </h3>
+        <p className={`text-sm leading-relaxed max-w-3xl ${subText}`}>
+          A block of combinational logic computes a result. A register - a small sequential
+          memory built from flip-flops - catches and holds that result at the clock tick, then
+          feeds it to the next stage of combinational logic. This compute-store-compute rhythm
+          is called the datapath, and it is the working core of every processor.
+        </p>
+
+        {/* Compute -> store -> compute rhythm chips */}
+        <div className="flex flex-wrap items-center gap-2 mt-5">
+          {[
+            { t: 'compute', c: CYAN },
+            { t: 'store', c: EMERALD },
+            { t: 'compute', c: CYAN },
+            { t: 'store', c: EMERALD },
+          ].map((s, i) => (
+            <React.Fragment key={`${s.t}-${i}`}>
+              {i > 0 && <ArrowRight size={14} className={`shrink-0 opacity-40 ${textColor}`} />}
+              <motion.span
+                initial={{ opacity: 0, scale: 0.7 }}
+                animate={isActive ? { opacity: 1, scale: 1 } : {}}
+                transition={{ delay: 0.6 + i * 0.15, type: 'spring', stiffness: 260, damping: 18 }}
+                className="px-3 py-1.5 rounded-full font-mono text-[9px] font-black uppercase tracking-widest"
+                style={{ background: `${s.c}1a`, color: s.c, border: `1px solid ${s.c}55` }}
+              >
+                {s.t}
+              </motion.span>
+            </React.Fragment>
+          ))}
+          <ArrowRight size={14} className={`shrink-0 opacity-40 ${textColor}`} />
+          <span className={`font-mono text-[9px] uppercase tracking-widest opacity-50 ${textColor}`}>
+            and so on, tick after tick
+          </span>
+        </div>
       </motion.div>
 
       {/* FSM symphony diagram */}
@@ -332,6 +381,50 @@ export const S10_FaceOff: React.FC<Props> = ({ isActive, isDarkMode }) => {
         >
           Raw electrical currents become organized intelligence.
         </motion.p>
+      </motion.div>
+
+      {/* One sentence each - the formal definitions */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
+        transition={{ delay: 0.9 }}
+        className="space-y-4"
+      >
+        <div className="font-mono text-[10px] uppercase tracking-widest flex items-center gap-2 text-violet-400">
+          <BookOpen size={12} /> One sentence each · the formal definitions
+        </div>
+        <div className="grid sm:grid-cols-2 gap-4">
+          <motion.div
+            initial={{ opacity: 0, x: -14 }} animate={isActive ? { opacity: 1, x: 0 } : {}}
+            transition={{ delay: 1.0, duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+            className={`p-5 sm:p-6 rounded-2xl border ${cardBg}`}
+          >
+            <span
+              className="inline-block px-3 py-1 rounded-full font-mono text-[9px] font-black uppercase tracking-widest mb-3"
+              style={{ background: `${CYAN}1a`, color: CYAN, border: `1px solid ${CYAN}55` }}
+            >
+              combinational
+            </span>
+            <p className={`text-sm leading-relaxed ${subText}`}>
+              Outputs determined entirely by present inputs.
+            </p>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, x: 14 }} animate={isActive ? { opacity: 1, x: 0 } : {}}
+            transition={{ delay: 1.1, duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+            className={`p-5 sm:p-6 rounded-2xl border ${cardBg}`}
+          >
+            <span
+              className="inline-block px-3 py-1 rounded-full font-mono text-[9px] font-black uppercase tracking-widest mb-3"
+              style={{ background: `${EMERALD}1a`, color: EMERALD, border: `1px solid ${EMERALD}55` }}
+            >
+              sequential
+            </span>
+            <p className={`text-sm leading-relaxed ${subText}`}>
+              Outputs determined by present inputs together with the stored state, updated in
+              step with a clock.
+            </p>
+          </motion.div>
+        </div>
       </motion.div>
     </div>
   );

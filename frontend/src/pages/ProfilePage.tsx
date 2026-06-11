@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Settings, Play, ChevronRight, Mail, Calendar, Clock, ShieldCheck, BookOpen } from 'lucide-react';
 import { supabase } from '../lib/supabase';
-import { getSession } from '../lib/auth';
+import { getSession, clearSession } from '../lib/auth';
 import { useColorScheme } from '../hooks/useColorScheme';
 import { getModuleHistory, getLastModule } from '../lib/moduleHistory';
 import { ThemeToggle } from '../components/ThemeToggle';
@@ -42,13 +42,19 @@ export const ProfilePage: React.FC = () => {
   useEffect(() => {
     if (session.kind !== 'supabase') return;
     let active = true;
-    supabase.auth.getUser().then(({ data }) => {
+    supabase.auth.getUser().then(({ data, error }) => {
       if (!active) return;
-      setUser(data.user ?? null);
+      if (error || !data.user) {
+        // Dead/expired session — send the user to a working sign-in instead of a hollow profile.
+        clearSession();
+        navigate('/login', { replace: true });
+        return;
+      }
+      setUser(data.user);
       setLoading(false);
     });
     return () => { active = false; };
-  }, [session.kind]);
+  }, [session.kind, navigate]);
 
   const name = (user?.user_metadata?.full_name as string) || session.displayName || 'Learner';
   const email = user?.email ?? null;

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Coffee, Flame, Ghost, MousePointerClick } from 'lucide-react';
+import { ArrowRight, BookOpen, Coffee, Equal, Flame, Ghost, MousePointerClick, Scale, Timer } from 'lucide-react';
 
 type Ing = 'milk' | 'leaves' | 'sugar';
 type Pot = Record<Ing, boolean>;
@@ -15,6 +15,34 @@ const CHIPS: { id: Ing; label: string; color: string }[] = [
   { id: 'milk',   label: 'Milk',       color: '#93c5fd' },
   { id: 'leaves', label: 'Tea leaves', color: '#34d399' },
   { id: 'sugar',  label: 'Sugar',      color: '#fbbf24' },
+];
+
+const MAPPING: { story: string; circuit: string; note: string }[] = [
+  {
+    story: 'Your order right now',
+    circuit: 'Present inputs',
+    note: 'The chips in the pot are the input signals: the only information the circuit is ever given. In a combinational circuit, "present" is the whole story - there is no other source of data.',
+  },
+  {
+    story: "The vendor's fixed recipe",
+    circuit: 'The Boolean function wired into the gates',
+    note: 'A Boolean function is a fixed rule that assigns exactly one output to every combination of inputs. In hardware it is not written down anywhere - it is the wiring of the logic gates (the tiny building blocks that compute AND, OR, NOT) itself.',
+  },
+  {
+    story: 'The cup handed back',
+    circuit: 'The output',
+    note: 'The result the circuit produces, computed from the present inputs and nothing else. Read the inputs, apply the function, hand over the answer.',
+  },
+  {
+    story: 'No notebook, no ledger',
+    circuit: 'No memory elements',
+    note: 'A memory element (a latch or a flip-flop) is a small circuit that stores a past value. A combinational circuit contains none, so it has nothing to remember with - past inputs simply cannot influence it.',
+  },
+  {
+    story: 'Every order treated fresh',
+    circuit: 'Same inputs, same output - every single time',
+    note: 'This repeatability is the defining property of combinational logic: the output is a function of the present inputs alone, so repeating the inputs always repeats the output.',
+  },
 ];
 
 const cupLook = (p: Pot): { color: string; name: string } => {
@@ -330,6 +358,91 @@ export const S04_TeaStall: React.FC<Props> = ({ isActive = true, isDarkMode }) =
         <p className={`text-xs text-center mt-5 ${subText}`}>
           No yesterday. No count of cups. Change the chips, brew again: the new cup never remembers the old one.
         </p>
+      </motion.div>
+
+      {/* ── Analogy to circuit · term by term ───────────────────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
+        transition={{ delay: 0.25 }}
+        className={`p-6 md:p-8 rounded-3xl border ${cardBg}`}
+      >
+        <div className="flex items-center gap-2 font-mono text-[10px] tracking-[0.4em] uppercase mb-3" style={{ color: ACCENT }}>
+          <BookOpen size={14} /> Analogy to circuit · term by term
+        </div>
+        <h3 className={`text-xl md:text-2xl font-black ${textColor} mb-2`}>
+          Every piece of the stall is a piece of the circuit.
+        </h3>
+        <p className={`text-sm max-w-3xl ${subText} mb-5`}>
+          The story is not just decoration. Each part of it maps directly onto a standard term used to
+          describe combinational circuits - circuits whose output depends only on their present inputs.
+        </p>
+        <div className="space-y-2.5">
+          {MAPPING.map((row, i) => (
+            <motion.div
+              key={row.circuit}
+              initial={{ opacity: 0, x: -10 }} animate={isActive ? { opacity: 1, x: 0 } : {}}
+              transition={{ delay: 0.35 + i * 0.06 }}
+              className={`p-4 rounded-2xl border ${isDarkMode ? 'bg-black/30 border-white/10' : 'bg-slate-50 border-slate-200'}`}
+            >
+              <div className="flex flex-wrap items-center gap-2">
+                <span className={`font-black text-sm ${textColor}`}>{row.story}</span>
+                <ArrowRight size={14} className="shrink-0" style={{ color: ACCENT }} />
+                <span
+                  className="font-mono text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-lg border"
+                  style={{ borderColor: `${ACCENT}55`, color: ACCENT, background: `${ACCENT}10` }}
+                >
+                  {row.circuit}
+                </span>
+              </div>
+              <p className={`text-xs mt-2 leading-relaxed ${subText}`}>{row.note}</p>
+            </motion.div>
+          ))}
+        </div>
+      </motion.div>
+
+      {/* ── Where the analogy ends ──────────────────────────────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
+        transition={{ delay: 0.3 }}
+        className={`p-6 md:p-8 rounded-3xl border ${cardBg}`}
+      >
+        <div className="flex items-center gap-2 font-mono text-[10px] tracking-[0.4em] uppercase mb-3" style={{ color: ACCENT }}>
+          <Scale size={14} /> Where the analogy ends
+        </div>
+        <h3 className={`text-xl md:text-2xl font-black ${textColor} mb-2`}>
+          Real circuits are faster and stricter than any vendor.
+        </h3>
+        <p className={`text-sm max-w-3xl ${subText} mb-5`}>
+          Analogies earn trust by admitting their limits. Two places where the tea stall and the silicon part ways:
+        </p>
+        <div className="grid sm:grid-cols-2 gap-3">
+          <div
+            className="p-5 rounded-2xl border-2"
+            style={{ borderColor: `${ACCENT}33`, background: `${ACCENT}08` }}
+          >
+            <div className="flex items-center gap-2 font-mono text-[10px] font-black uppercase tracking-widest mb-2" style={{ color: ACCENT }}>
+              <Timer size={13} /> Speed
+            </div>
+            <p className={`text-sm leading-relaxed ${subText}`}>
+              The vendor takes minutes per cup. A real combinational circuit settles in under a nanosecond -
+              one billionth (10⁻⁹) of a second. The only thing slowing it down is propagation delay: the short
+              time a signal needs to ripple through each gate on its way from input to output.
+            </p>
+          </div>
+          <div
+            className="p-5 rounded-2xl border-2"
+            style={{ borderColor: `${ACCENT}33`, background: `${ACCENT}08` }}
+          >
+            <div className="flex items-center gap-2 font-mono text-[10px] font-black uppercase tracking-widest mb-2" style={{ color: ACCENT }}>
+              <Equal size={13} /> No improvising
+            </div>
+            <p className={`text-sm leading-relaxed ${subText}`}>
+              A tired vendor might make today&apos;s chai a little sweeter. Gates never improvise: identical
+              inputs always produce the identical output, with no mood, no drift, and no exceptions. That
+              strictness is exactly what makes combinational logic dependable.
+            </p>
+          </div>
+        </div>
       </motion.div>
     </div>
   );

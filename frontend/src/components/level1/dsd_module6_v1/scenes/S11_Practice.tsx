@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Swords, CheckCircle2, XCircle, Trophy, ChevronRight, ChevronLeft, RotateCcw } from 'lucide-react';
+import { Swords, CheckCircle2, XCircle, Trophy, ChevronRight, ChevronLeft, RotateCcw, BookOpen } from 'lucide-react';
 
 interface Props { isActive: boolean; isDarkMode: boolean; }
 
@@ -120,6 +120,116 @@ const PROBLEMS: Problem[] = [
     explain:
       'Cross-wire plain gates so one output feeds the other input. The loop traps a bit and holds it. Memory emerges from memoryless parts.',
   },
+  {
+    id: 'p9',
+    badge: 'TRUTH TABLE',
+    badgeColor: '#fb923c',
+    prompt: 'A combinational circuit has 3 inputs. How many rows does its truth table need?',
+    options: [
+      '3 rows - one per input',
+      '6 rows - inputs times two',
+      '8 rows - one for every input combination',
+      '9 rows - inputs squared',
+    ],
+    correct: 2,
+    explain:
+      'A truth table lists every possible input combination next to the output it produces. With n inputs there are 2ⁿ combinations, and 2³ = 8, so the table needs 8 rows.',
+  },
+  {
+    id: 'p10',
+    badge: 'HALF ADDER',
+    badgeColor: '#818cf8',
+    prompt: 'A half adder adds two 1-bit numbers, A and B. Which formulas does it compute?',
+    options: [
+      'Sum = A AND B, Carry = A XOR B',
+      'Sum = A XOR B, Carry = A AND B',
+      'Sum = A OR B, Carry = A AND B',
+      'Sum = A NAND B, Carry = A OR B',
+    ],
+    correct: 1,
+    explain:
+      'XOR outputs 1 only when the two bits differ, which is exactly the sum digit. AND outputs 1 only when both bits are 1 - the one case where the addition spills over into a carry.',
+  },
+  {
+    id: 'p11',
+    badge: 'DECODER',
+    badgeColor: '#2dd4bf',
+    prompt: 'What does a 3-to-8 decoder do?',
+    options: [
+      'Compresses 8 input lines down to 3 outputs',
+      'Stores 8 bits using 3 flip-flops',
+      'For each 3-bit input code it activates exactly one of its 8 output lines',
+      'Adds two 3-bit numbers into an 8-bit result',
+    ],
+    correct: 2,
+    explain:
+      'A decoder is a translator. The 3-bit input is a number from 0 to 7, and the matching output line - one of 2³ = 8 - switches on while every other line stays off.',
+  },
+  {
+    id: 'p12',
+    badge: 'SR LATCH',
+    badgeColor: '#facc15',
+    prompt: 'In a basic SR latch, what does S = 0, R = 0 mean?',
+    options: [
+      'Set - the stored bit becomes 1',
+      'Reset - the stored bit becomes 0',
+      'Forbidden - the latch output becomes unpredictable',
+      'Hold - the loop keeps the bit it already stores',
+    ],
+    correct: 3,
+    explain:
+      'With neither Set nor Reset asserted, nothing pushes the loop in a new direction. The feedback just keeps recirculating the current bit - which is exactly what "remember" means.',
+  },
+  {
+    id: 'p13',
+    badge: 'LATCH VS FF',
+    badgeColor: '#e879f9',
+    prompt: 'What is the key difference between a latch and a flip-flop?',
+    options: [
+      'A latch stores 2 bits while a flip-flop stores only 1',
+      'A flip-flop updates only at a clock edge while a latch is transparent whenever its enable is on',
+      'A latch needs a clock but a flip-flop does not',
+      'There is no difference - the two names are interchangeable',
+    ],
+    correct: 1,
+    explain:
+      'A latch lets data flow straight through for as long as its enable signal is on - that open window is called transparency. A flip-flop samples its input only at the instant the clock edge arrives, which makes timing far easier to control.',
+  },
+  {
+    id: 'p14',
+    badge: 'CLOCK MATH',
+    badgeColor: '#60a5fa',
+    prompt: 'A processor clock runs at 1 GHz. How long is one clock period?',
+    options: ['1 s', '1 ms', '1 µs', '1 ns'],
+    correct: 3,
+    explain:
+      'Period is 1 divided by frequency. 1 GHz means 10⁹ cycles every second, so each cycle lasts 10⁻⁹ s - one nanosecond.',
+  },
+  {
+    id: 'p15',
+    badge: 'SYNCHRONOUS',
+    badgeColor: '#a3e635',
+    prompt: 'What makes a sequential circuit synchronous?',
+    options: [
+      'It runs at a frequency above 1 GHz',
+      'Each part updates the moment its own inputs change',
+      'All memory elements update together on a shared clock',
+      'It is built from latches instead of flip-flops',
+    ],
+    correct: 2,
+    explain:
+      'Synchronous means "on the same beat". One clock signal reaches every memory element, so all stored state changes at the same instant and no part of the circuit drifts out of step.',
+  },
+  {
+    id: 'p16',
+    badge: 'STATE EQUATION',
+    badgeColor: '#f87171',
+    prompt: 'In next state = F(present state, input), which term is what the memory holds right now?',
+    options: ['Next state', 'F, the logic function', 'Present state', 'Input'],
+    correct: 2,
+    explain:
+      'The present state is the value sitting inside the flip-flops at this moment. The logic F combines it with the fresh input to compute the next state, which gets stored on the next clock tick.',
+  },
 ];
 
 export const S11_Practice: React.FC<Props> = ({ isDarkMode }) => {
@@ -147,11 +257,12 @@ export const S11_Practice: React.FC<Props> = ({ isDarkMode }) => {
           Final Chapter · Practice Arena
         </div>
         <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>
-          Boss Drill - 8 Problems
+          Boss Drill - {PROBLEMS.length} Problems
         </h2>
         <p className={`text-base max-w-3xl ${subText}`}>
-          Now vs Then, the scoreboard, the tea stall, the trap and the clock.
-          Each question explains itself the instant you answer. Aim for 8/8.
+          Now vs Then, the scoreboard, the tea stall, the trap and the clock - plus truth tables,
+          adders, decoders, latches and clock math. Each question explains itself the instant you
+          answer. Aim for {PROBLEMS.length}/{PROBLEMS.length}.
         </p>
       </section>
 
@@ -322,6 +433,65 @@ export const S11_Practice: React.FC<Props> = ({ isDarkMode }) => {
         </motion.div>
       </AnimatePresence>
 
+      {/* Exam-sheet reference: standard definitions behind the drill */}
+      <section className={`p-8 rounded-3xl border ${cardBg}`}>
+        <div className="flex items-center gap-3 mb-2">
+          <div className="w-10 h-10 rounded-2xl bg-amber-500/15 border border-amber-400/40 flex items-center justify-center shrink-0">
+            <BookOpen size={18} className="text-amber-400" />
+          </div>
+          <div>
+            <div className="font-mono text-[10px] tracking-[0.4em] uppercase text-amber-400">
+              Reference · Exam Sheet
+            </div>
+            <h3 className={`text-lg font-black ${textColor}`}>The standard definitions behind every question</h3>
+          </div>
+        </div>
+        <p className={`text-sm mb-6 ${subText}`}>
+          These are the textbook statements the drill is testing. If a question tripped you up,
+          find its term here, read the definition once, then retry the question.
+        </p>
+        <div className="grid sm:grid-cols-2 gap-3">
+          {[
+            {
+              term: 'Combinational circuit',
+              def: 'A circuit whose outputs depend only on the present inputs. It stores nothing, so the same inputs always produce the same outputs. Examples: adders, multiplexers, decoders.',
+            },
+            {
+              term: 'Sequential circuit',
+              def: 'A circuit whose outputs depend on the present inputs and on stored state - a record of past inputs held in memory elements. Examples: counters, registers, RAM.',
+            },
+            {
+              term: 'Truth table',
+              def: 'A table listing every possible input combination next to the output each one produces. A circuit with n inputs needs 2ⁿ rows, so 2 inputs need 2² = 4 rows and 3 inputs need 2³ = 8.',
+            },
+            {
+              term: 'Clock period',
+              def: 'The duration of one full clock cycle, equal to 1 divided by the clock frequency. A 1 GHz clock completes 10⁹ cycles per second, so each cycle lasts 10⁻⁹ s, which is 1 ns.',
+            },
+            {
+              term: 'State equation',
+              def: 'next state = F(present state, input). The present state is what the memory holds right now; F is combinational logic that computes what to store on the next clock tick.',
+            },
+            {
+              term: 'Synchronous vs asynchronous',
+              def: 'In a synchronous circuit every memory element updates together on a shared clock edge. In an asynchronous circuit state can change the moment an input changes, with no common beat.',
+            },
+          ].map(row => (
+            <div
+              key={row.term}
+              className={`p-4 rounded-2xl border ${
+                isDarkMode ? 'bg-black/40 border-white/10' : 'bg-slate-50 border-slate-200'
+              }`}
+            >
+              <span className="inline-block px-2.5 py-1 mb-2 rounded-full font-mono text-[9px] font-black uppercase tracking-widest bg-amber-500/15 text-amber-400 border border-amber-400/40">
+                {row.term}
+              </span>
+              <p className={`text-[13px] leading-relaxed ${subText}`}>{row.def}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* Final-state callout */}
       {allDone && (
         <motion.div
@@ -336,7 +506,7 @@ export const S11_Practice: React.FC<Props> = ({ isDarkMode }) => {
           <h4 className={`text-xl font-black mb-2 ${textColor}`}>
             {score === PROBLEMS.length
               ? 'Flawless run - Boss defeated.'
-              : score >= 5
+              : score >= Math.ceil(PROBLEMS.length * 0.6)
                 ? `Solid run - ${score}/${PROBLEMS.length}. Review the misses, then advance.`
                 : `${score}/${PROBLEMS.length} - replay the chapters with the missed concepts before moving on.`}
           </h4>

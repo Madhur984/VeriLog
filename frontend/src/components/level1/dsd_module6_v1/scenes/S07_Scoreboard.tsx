@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Repeat, RotateCcw } from 'lucide-react';
+import { Repeat, RotateCcw, Sigma, Workflow } from 'lucide-react';
 
 interface Props { isActive?: boolean; isDarkMode: boolean; }
 
@@ -311,6 +311,102 @@ export const S07_Scoreboard: React.FC<Props> = ({ isActive = true, isDarkMode })
           </motion.div>
         ))}
       </div>
+
+      {/* ── Standard text: the state equation ── */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
+        transition={{ delay: 0.35 }}
+        className={`p-6 md:p-8 rounded-3xl border ${cardBg} space-y-5`}
+      >
+        <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest" style={{ color: CYAN }}>
+          <Sigma size={14} /> Standard text · The state equation
+        </div>
+
+        {/* the recurrence itself */}
+        <div className={`rounded-2xl border px-4 py-5 text-center space-y-2 ${isDarkMode ? 'border-white/10 bg-black/30' : 'border-slate-200 bg-slate-50'}`}>
+          <div className="font-mono text-base md:text-xl font-black tracking-wide">
+            <span style={{ color: CYAN }}>next state</span>
+            <span className={`${textColor} opacity-50`}> = F(</span>
+            <span style={{ color: EMERALD }}>present state</span>
+            <span className={`${textColor} opacity-50`}>, </span>
+            <span style={{ color: AMBER }}>present input</span>
+            <span className={`${textColor} opacity-50`}>)</span>
+          </div>
+          <div className="font-mono text-xs md:text-sm" style={{ color: label }}>
+            written compactly: <span style={{ color: CYAN }}>Sₜ₊₁</span> = F(<span style={{ color: EMERALD }}>Sₜ</span>, <span style={{ color: AMBER }}>Xₜ</span>)
+          </div>
+        </div>
+
+        <p className={`text-sm leading-relaxed ${subText}`}>
+          This recurrence is the rule the scoreboard obeys on every ball. F is the combine logic in the diagram
+          above - a fixed combinational block (logic with no memory of its own) that computes the same answer
+          every time it is given the same two values. Here F is addition, but swap in a different F and the same
+          loop becomes something new: this one equation is the heart of every counter, register, and processor
+          ever built.
+        </p>
+
+        {/* vocabulary rows */}
+        <div className="space-y-2.5">
+          {[
+            { term: 'Present state', sym: 'Sₜ', c: EMERALD, def: 'What the memory holds right now - the 154 already sitting on the board when the ball is bowled.' },
+            { term: 'Present input', sym: 'Xₜ', c: AMBER, def: 'What just arrived from outside - the umpire raising the +4 signal for a boundary.' },
+            { term: 'Next state', sym: 'Sₜ₊₁', c: CYAN, def: 'What the memory will hold after the update - 158, which loops back and serves as the present state for the next ball.' },
+          ].map((r) => (
+            <div
+              key={r.term}
+              className={`flex flex-wrap md:flex-nowrap items-start gap-3 p-3.5 rounded-2xl border ${isDarkMode ? 'border-white/10' : 'border-slate-200'}`}
+              style={{ background: `${r.c}08` }}
+            >
+              <span
+                className="shrink-0 px-2.5 py-1 rounded-md border font-mono text-[10px] font-bold uppercase tracking-widest"
+                style={{ borderColor: `${r.c}66`, color: r.c, background: `${r.c}12` }}
+              >
+                {r.term}
+              </span>
+              <span className="shrink-0 font-mono text-sm font-black pt-0.5" style={{ color: r.c }}>{r.sym}</span>
+              <p className={`text-sm ${subText}`}>{r.def}</p>
+            </div>
+          ))}
+        </div>
+      </motion.div>
+
+      {/* ── Note: this is a state machine ── */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
+        transition={{ delay: 0.45 }}
+        className="p-6 md:p-8 rounded-3xl border-2 space-y-3"
+        style={{ borderColor: `${AMBER}55`, background: `${AMBER}0d` }}
+      >
+        <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest" style={{ color: AMBER }}>
+          <Workflow size={14} /> Note · This is a state machine
+        </div>
+        <h3 className={`text-lg md:text-xl font-black ${textColor}`}>
+          You have just met a finite state machine.
+        </h3>
+        <p className={`text-sm leading-relaxed ${subText}`}>
+          A circuit that steps through states under a fixed rule is called a finite state machine (FSM) -
+          finite because its possible states can be listed out, machine because the rule never bends. The
+          scoreboard is one: its states are the possible scores, its input is the umpire's signal, and its
+          rule is addition. Recognising the FSM hiding inside a system is the single most useful skill in
+          sequential design.
+        </p>
+        <div className="flex flex-wrap gap-2 pt-1">
+          {[
+            { k: 'States', v: 'the possible scores', c: EMERALD },
+            { k: 'Input', v: "the umpire's signal", c: AMBER },
+            { k: 'Rule', v: 'addition', c: CYAN },
+          ].map((chip) => (
+            <span
+              key={chip.k}
+              className="px-2.5 py-1 rounded-md border font-mono text-[10px]"
+              style={{ borderColor: `${chip.c}66`, color: chip.c, background: `${chip.c}10` }}
+            >
+              <span className="font-bold uppercase tracking-widest">{chip.k}:</span>
+              <span className="opacity-80"> {chip.v}</span>
+            </span>
+          ))}
+        </div>
+      </motion.div>
 
       {/* ── Closing mantra ── */}
       <motion.div

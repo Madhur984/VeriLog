@@ -18,6 +18,15 @@ export const ResetPasswordPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
   const [hasSession, setHasSession] = useState<boolean | null>(null);
+  const [linkError, setLinkError] = useState<string | null>(null);
+
+  // Expired/used links land here with the error in the hash, e.g.
+  // #error=access_denied&error_code=otp_expired&error_description=... — surface it.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.hash.slice(1));
+    const desc = params.get('error_description');
+    if (desc) setLinkError(desc.replace(/\+/g, ' '));
+  }, []);
 
   // Confirm a recovery session actually exists (otherwise the link was stale).
   useEffect(() => {
@@ -30,6 +39,10 @@ export const ResetPasswordPage: React.FC = () => {
     });
     return () => { cancelled = true; sub.subscription.unsubscribe(); };
   }, []);
+
+  // No (or not-yet-confirmed) recovery session: lock the form so submitting
+  // can't surface a raw "Auth session missing!" error.
+  const formDisabled = hasSession !== true;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,7 +71,14 @@ export const ResetPasswordPage: React.FC = () => {
           </p>
         </div>
 
-        {hasSession === false && !done && (
+        {linkError && !done && (
+          <div className="bg-red-500/5 border border-red-500/20 text-red-400 text-xs font-mono p-3 rounded-xl">
+            {linkError}. Please{' '}
+            <button type="button" onClick={() => navigate('/login')} className="underline font-bold">request a new reset link</button>.
+          </div>
+        )}
+
+        {!linkError && hasSession === false && !done && (
           <div className="bg-amber-500/5 border border-amber-500/20 text-amber-400 text-xs font-mono p-3 rounded-xl">
             No active recovery session found. Open the reset link from your email again, or{' '}
             <button type="button" onClick={() => navigate('/login')} className="underline font-bold">request a new one</button>.
@@ -83,10 +103,11 @@ export const ResetPasswordPage: React.FC = () => {
                   type={show ? 'text' : 'password'}
                   required
                   minLength={6}
+                  disabled={formDisabled}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••••"
-                  className="w-full bg-[#03050a] border border-slate-800 rounded-xl pl-4 pr-11 py-3.5 text-slate-200 font-mono text-[15px] placeholder-slate-700"
+                  className="w-full bg-[#03050a] border border-slate-800 rounded-xl pl-4 pr-11 py-3.5 text-slate-200 font-mono text-[15px] placeholder-slate-700 disabled:opacity-50"
                 />
                 <button
                   type="button"
@@ -107,10 +128,11 @@ export const ResetPasswordPage: React.FC = () => {
                 type={show ? 'text' : 'password'}
                 required
                 minLength={6}
+                disabled={formDisabled}
                 value={confirm}
                 onChange={(e) => setConfirm(e.target.value)}
                 placeholder="••••••••••"
-                className="w-full bg-[#03050a] border border-slate-800 rounded-xl px-4 py-3.5 text-slate-200 font-mono text-[15px] placeholder-slate-700"
+                className="w-full bg-[#03050a] border border-slate-800 rounded-xl px-4 py-3.5 text-slate-200 font-mono text-[15px] placeholder-slate-700 disabled:opacity-50"
               />
             </div>
 
@@ -120,7 +142,7 @@ export const ResetPasswordPage: React.FC = () => {
 
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || formDisabled}
               className="w-full bg-white text-slate-950 font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 text-[15px] disabled:opacity-50"
             >
               {loading ? <Loader2 size={15} className="animate-spin" /> : <>Update password <ArrowRight size={15} /></>}
