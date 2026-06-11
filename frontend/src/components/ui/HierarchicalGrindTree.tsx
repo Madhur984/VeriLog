@@ -750,6 +750,21 @@ const L6_PATHS: PathOption[] = [
           { id: 'm9dsd10', label: 'Build It For Real · Workbench',     route: '/dsd/7/build'     },
         ],
       },
+      {
+        id: 'm10dsd', label: 'The Full Adder · Module 08', subtitle: 'L8 · TWO HALVES MAKE A WHOLE · 10 STAGES', route: '/dsd/8/cover',
+        submodules: [
+          { id: 'm10dsd0', label: 'Cover · The Full Adder',            route: '/dsd/8/cover'        },
+          { id: 'm10dsd1', label: 'The Functional Interface',          route: '/dsd/8/interface'    },
+          { id: 'm10dsd2', label: 'Video · The Full Adder',            route: '/dsd/8/video'        },
+          { id: 'm10dsd3', label: 'The Sum · Triple XOR',              route: '/dsd/8/sum'          },
+          { id: 'm10dsd4', label: 'The Carry · Majority Vote',         route: '/dsd/8/carry'        },
+          { id: 'm10dsd5', label: 'The Eight Rows',                    route: '/dsd/8/truth'        },
+          { id: 'm10dsd6', label: 'Half vs Full',                      route: '/dsd/8/evolution'    },
+          { id: 'm10dsd7', label: 'Two Halves Make a Whole',           route: '/dsd/8/architecture' },
+          { id: 'm10dsd8', label: 'Practice Arena',                    route: '/dsd/8/practice'     },
+          { id: 'm10dsd9', label: 'Build It For Real · Workbench',     route: '/dsd/8/build'        },
+        ],
+      },
     ],
   },
   {

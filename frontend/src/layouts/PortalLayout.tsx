@@ -17,9 +17,11 @@ export const PortalLayout = () => {
 
     return (
         <div className="w-full min-h-screen relative" style={{ background: 'transparent' }}>
-            {/* Persistent theme toggle — top-left on all portal pages, except ones with integrated toggles */}
+            {/* Persistent theme toggle — top-left on all portal pages, except ones with integrated
+                toggles. On phones the module engines put a hamburger in that exact corner (and ship
+                their own toggle inside the drawer sidebar), so hide it there to avoid the overlap. */}
             {!isSpecialPage && (
-                <div className="fixed top-4 left-4 z-[400]">
+                <div className={`fixed top-4 left-4 z-[400] ${isModule ? 'hidden lg:block' : ''}`}>
                     <ThemeToggle />
                 </div>
             )}

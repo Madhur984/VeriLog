@@ -24,7 +24,7 @@ const PATHS = [
   },
   {
     icon: Grid3x3, title: 'Digital System Design', tag: 'DSD', color: '#9333EA', base: '/dsd', startHere: false,
-    modules: ['Binary & Boolean Logic', 'K-Maps', 'Circuit Realisation', 'Practice Arena', 'Universal Gates', 'Combinational & Sequential', 'The Half Adder'],
+    modules: ['Binary & Boolean Logic', 'K-Maps', 'Circuit Realisation', 'Practice Arena', 'Universal Gates', 'Combinational & Sequential', 'The Half Adder', 'The Full Adder'],
   },
 ];
 
@@ -43,7 +43,7 @@ const MODULE_CARDS = PATHS.flatMap((p) =>
 
 const FACTS: Array<[string, string]> = [
   ['3', 'learning paths'],
-  ['18', 'interactive modules'],
+  ['19', 'interactive modules'],
   ['5', 'modules free, no account'],
   ['0', 'installs'],
 ];

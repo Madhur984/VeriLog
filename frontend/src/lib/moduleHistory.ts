@@ -71,6 +71,7 @@ export const MODULE_LABELS: Record<string, string> = {
   'dsd/5': 'Universal Gates',
   'dsd/6': 'Combinational & Sequential Circuits',
   'dsd/7': 'The Half Adder',
+  'dsd/8': 'The Full Adder',
   'basic-electronics/1': 'Physics of Control',
   'basic-electronics/2': 'Silicon, Doping & Carriers',
   'basic-electronics/3': 'The P-N Junction',

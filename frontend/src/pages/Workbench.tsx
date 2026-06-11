@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
 import { HalfAdderTutorial } from '../components/workbench/HalfAdderTutorial';
+import { FullAdderTutorial } from '../components/workbench/FullAdderTutorial';
 
 /**
  * /workbench - the live CircuitVerse editor (embed mode: no API auth needed;
@@ -19,7 +20,11 @@ import { HalfAdderTutorial } from '../components/workbench/HalfAdderTutorial';
  */
 export default function Workbench() {
   const [params, setParams] = useSearchParams();
-  const tutorial = params.get('tutorial') === 'half-adder';
+  const tutorialId = params.get('tutorial');
+  const Rail = tutorialId === 'full-adder' ? FullAdderTutorial
+    : tutorialId === 'half-adder' ? HalfAdderTutorial
+    : null;
+  const tutorial = Rail !== null;
   const [railOpen, setRailOpen] = useState(true);
 
   const closeTutorial = () => {
@@ -38,7 +43,7 @@ export default function Workbench() {
     />
   );
 
-  if (!tutorial) return frame;
+  if (!Rail) return frame;
 
   return (
     <div className="relative w-full h-[100svh] overflow-hidden">
@@ -50,7 +55,7 @@ export default function Workbench() {
           railOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
-        <HalfAdderTutorial onClose={closeTutorial} onMinimize={() => setRailOpen(false)} />
+        <Rail onClose={closeTutorial} onMinimize={() => setRailOpen(false)} />
       </div>
       {!railOpen && (
         <button
@@ -65,7 +70,7 @@ export default function Workbench() {
 
       {/* mobile: bottom sheet (the rail's own grab bar expands/collapses it) */}
       <div className="lg:hidden absolute bottom-0 inset-x-0 z-20 max-h-[60svh] flex flex-col justify-end">
-        <HalfAdderTutorial onClose={closeTutorial} />
+        <Rail onClose={closeTutorial} />
       </div>
     </div>
   );

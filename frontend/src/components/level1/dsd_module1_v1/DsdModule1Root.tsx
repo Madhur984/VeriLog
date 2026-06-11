@@ -1,16 +1,20 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useParams } from 'react-router-dom';
+import { useColorScheme } from '../../../hooks/useColorScheme';
 import { DsdModule1Engine } from './DsdModule1Engine';
 
 export const DsdModule1Root: React.FC = () => {
-  const [isDarkMode, setIsDarkMode] = useState(() => { try { return localStorage.getItem('bitforbytes_theme') !== 'light'; } catch { return true; } });
+  // Theme lives in the shared color-scheme store so the portal's floating toggle
+  // and the module's own sidebar toggle stay in sync and apply instantly.
+  const [scheme, toggleTheme] = useColorScheme();
+  const isDarkMode = scheme === 'dark';
   const { chapter } = useParams<{ chapter?: string }>();
 
   return (
     <div className={isDarkMode ? 'dark text-white' : 'light text-slate-900'}>
       <DsdModule1Engine
         isDarkMode={isDarkMode}
-        onThemeToggle={() => setIsDarkMode(!isDarkMode)}
+        onThemeToggle={toggleTheme}
         initialChapter={chapter}
       />
     </div>

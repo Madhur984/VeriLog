@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
+import { useColorScheme } from '../../../hooks/useColorScheme';
 import { Module2Engine } from './Module2Engine';
 import './module2.css';
 
 import { GlobalSignalState } from './types';
 
 export const Module2Root: React.FC = () => {
-  // Default to dark like every other module (was following the OS scheme via
-  // useColorScheme, which defaulted to light and leaked the choice globally).
-  const [isDarkMode, setIsDarkMode] = useState(() => { try { return localStorage.getItem('bitforbytes_theme') !== 'light'; } catch { return true; } });
-  const toggleTheme = () => setIsDarkMode((prev) => !prev);
+  // Theme lives in the shared color-scheme store (defaults to dark) so the
+  // portal's floating toggle and the module's own toggle stay in sync and
+  // apply instantly.
+  const [scheme, toggleTheme] = useColorScheme();
+  const isDarkMode = scheme === 'dark';
   const [time, setTime] = useState(0);
 
   // --- GLOBAL SYSTEM STATE ---
