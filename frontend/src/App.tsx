@@ -37,6 +37,10 @@ const Workbench = lazy(() => loadChunk(() => import('./pages/Workbench')));
 // Playgrounds & social
 const FSMPlayground = named(() => import('./pages/FSMPlayground'), 'FSMPlayground');
 const VerilogPlayground = named(() => import('./pages/VerilogPlayground'), 'VerilogPlayground');
+const AnalogyLibrary = named(() => import('./pages/AnalogyLibrary'), 'AnalogyLibrary');
+const VerilogLibrary = named(() => import('./pages/VerilogLibrary'), 'VerilogLibrary');
+const SiliconMap = named(() => import('./pages/SiliconMap'), 'SiliconMap');
+const PledgePage = named(() => import('./pages/PledgePage'), 'PledgePage');
 const SignalPlayground = named(() => import('./pages/SignalPlayground'), 'SignalPlayground');
 const LogicStudio = named(() => import('./pages/LogicStudio'), 'LogicStudio');
 const QuestsPage = named(() => import('./pages/QuestsPage'), 'QuestsPage');
@@ -98,6 +102,10 @@ function App() {
           <Route element={<PortalLayout />}>
             <Route path="/portal" element={<WorkstationHome />} />
             <Route path="/career-roadmap" element={<CareerRoadmapPage />} />
+            <Route path="/analogies" element={<AnalogyLibrary />} />
+            <Route path="/verilog-library" element={<VerilogLibrary />} />
+            <Route path="/silicon-map" element={<SiliconMap />} />
+            <Route path="/pledge" element={<PledgePage />} />
           </Route>
 
           {/* Course modules - first 5 free for anyone; 6th requires login */}

@@ -4,6 +4,7 @@ import {
   ArrowRight, Sun, Moon, Menu, X,
   Binary, Grid3x3, Zap,
   Check, Star, Cpu,
+  CircuitBoard, MousePointerClick, PlayCircle, Target, LineChart, Compass,
 } from 'lucide-react';
 import { BrandWordmark } from '../../components/Brand';
 import { SignalShowcase } from './SignalShowcase';
@@ -264,7 +265,8 @@ export const BrilliantHome: React.FC = () => {
   const heroRef = useRef<HTMLElement>(null);
   const boardRef = useRef<HTMLDivElement>(null);
   const pathRef = useRef<SVGPathElement>(null);
-  const dotRef = useRef<SVGCircleElement>(null);
+  const glowRef = useRef<SVGPathElement>(null);
+  const dotRef = useRef<SVGGElement>(null);
   const connectedRef = useRef(false);
   const [connected, setConnected] = useState(false);
   const [rail, setRail] = useState<{ w: number; h: number; d: string } | null>(null);
@@ -309,44 +311,49 @@ export const BrilliantHome: React.FC = () => {
 
   useEffect(() => {
     let raf = 0;
-    const tick = () => {
-      raf = 0;
+    let cur = -1; // smoothed progress, eased toward the scroll target every frame
+    // Path length is constant for a given rail geometry - measure it once,
+    // not on every frame (getTotalLength on a long curve is expensive).
+    let pathLen = 0;
+    try { pathLen = pathRef.current?.getTotalLength() ?? 0; } catch { /* not laid out yet */ }
+
+    const frame = () => {
+      raf = requestAnimationFrame(frame);
       const m = mainRef.current, bo = boardRef.current, p = pathRef.current;
       if (!m || !bo || !p) return;
       const startAbs = m.getBoundingClientRect().top + 78;
       const endAbs = bo.getBoundingClientRect().top + 8;
       const probe = window.innerHeight * 0.82;
       const span = Math.max(endAbs - startAbs, 1);
-      const prog = Math.min(1, Math.max(0, (probe - startAbs) / span));
-      p.style.strokeDashoffset = String(1 - prog);
+      const target = Math.min(1, Math.max(0, (probe - startAbs) / span));
+      if (cur < 0) cur = target; // first frame: no animation, just place it
+      const delta = target - cur;
+      if (Math.abs(delta) < 0.0004) return; // settled - skip all style writes
+      cur = Math.abs(delta) < 0.002 ? target : cur + delta * 0.14;
+      const offset = String(1 - cur);
+      p.style.strokeDashoffset = offset;
+      if (glowRef.current) glowRef.current.style.strokeDashoffset = offset;
       try {
-        const len = p.getTotalLength();
-        const pt = p.getPointAtLength(len * prog);
+        if (!pathLen) pathLen = p.getTotalLength();
+        const pt = p.getPointAtLength(pathLen * cur);
         const dot = dotRef.current;
         if (dot) {
-          dot.setAttribute('cx', String(pt.x));
-          dot.setAttribute('cy', String(pt.y));
-          dot.style.opacity = prog > 0.01 && prog < 0.995 ? '1' : '0';
+          dot.style.transform = `translate(${pt.x}px, ${pt.y}px)`;
+          dot.style.opacity = cur > 0.01 && cur < 0.99 ? '1' : '0';
         }
       } catch { /* path not laid out yet */ }
-      if (prog >= 0.995 && !connectedRef.current) {
+      if (cur >= 0.99 && !connectedRef.current) {
         connectedRef.current = true;
         setConnected(true);
       }
     };
-    const onScroll = () => { if (!raf) raf = requestAnimationFrame(tick); };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll);
-    tick();
-    return () => {
-      window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', onScroll);
-      if (raf) cancelAnimationFrame(raf);
-    };
+    raf = requestAnimationFrame(frame);
+    return () => cancelAnimationFrame(raf);
   }, [rail]);
 
   const navLinks = [
     ['Courses', '#courses'],
+    ['What you get', '#features'],
     ['How it works', '#how'],
     ['Why BitForBytes', '#why'],
   ] as const;
@@ -422,11 +429,12 @@ export const BrilliantHome: React.FC = () => {
               <span className="h-1.5 w-1.5 rounded-full bg-[var(--ac)]" /> Free to use, no account needed
             </div>
             <h1 className="text-[clamp(2.5rem,5.6vw,4.25rem)] font-extrabold leading-[1.05] tracking-tight">
-              Learn chip design<br />
-              <span className="text-[var(--ac-strong)] dark:text-[var(--ac-soft)]">by doing.</span>
+              Learn electronics<br />
+              <span className="text-[var(--ac-strong)] dark:text-[var(--ac-soft)]">backwards.</span>
             </h1>
             <p className="mt-5 max-w-md text-lg leading-relaxed text-slate-600 dark:text-slate-400">
-              Mess with real logic gates. Write your first Verilog. Work your way up to a CPU you put together yourself. It all happens in the browser.
+              Build the circuit first. Flip its inputs, watch it answer, and let the theory
+              click into place after your hands already know it. All in the browser.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <PrimaryBtn to={primaryTo}>{primaryLabel}</PrimaryBtn>
@@ -497,7 +505,7 @@ export const BrilliantHome: React.FC = () => {
                   </ul>
                   <div className="mt-auto flex items-center justify-between pt-6">
                     {comingSoon ? (
-                      <span className="text-sm font-semibold text-slate-400 dark:text-slate-500">Launching soon — stay tuned</span>
+                      <span className="text-sm font-semibold text-slate-400 dark:text-slate-500">Launching soon, stay tuned</span>
                     ) : (
                       <>
                         <span className="text-sm font-semibold" style={{ color }}>Start the path</span>
@@ -531,18 +539,49 @@ export const BrilliantHome: React.FC = () => {
         </Shell>
       </section>
 
+      {/* ── WHAT YOU GET ── */}
+      <section id="features" className="border-t border-slate-200/70 py-20 dark:border-white/10">
+        <Shell>
+          <div className="mx-auto max-w-2xl text-center">
+            <span className="text-[12px] font-bold uppercase tracking-[0.14em] text-[var(--ac-strong)] dark:text-[var(--ac-soft)]">What you get</span>
+            <h2 className="mt-3 text-[clamp(1.9rem,4vw,3rem)] font-extrabold leading-[1.1] tracking-tight">Everything between your first wire and real silicon.</h2>
+            <p className="mt-4 text-lg leading-relaxed text-slate-600 dark:text-slate-400">
+              Not videos with quizzes bolted on. A workbench, lessons and drills that all run live in the browser.
+            </p>
+          </div>
+          <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {([
+              [CircuitBoard, 'A real circuit workbench', 'A full simulator in your browser. Drop gates, pull wires, run it, with guided builds that walk you through the half adder and full adder part by part.'],
+              [MousePointerClick, 'Lessons you can poke', 'Every concept is a live widget: flip the inputs of a gate, drag a K-map grouping, step a carry through an adder. If you can read it, you can touch it.'],
+              [PlayCircle, 'Short videos, chaptered', 'Two-minute lectures with clickable chapter markers, plain-language vocabulary and read-along notes. Rewatch any beat in one tap.'],
+              [Target, 'Practice arenas', 'Every module ends in a boss drill: ten problems with instant, line-by-line walkthroughs the moment you answer.'],
+              [LineChart, 'Progress that follows you', 'The portal remembers every module you open and where you stopped, so you always resume mid-lesson, not from the cover page.'],
+              [Compass, 'A career roadmap', 'See where the skills lead: VLSI roles, the companies hiring for them, and the skill gaps between you and the job.'],
+            ] as Array<[React.FC<{ size?: number | string; className?: string }>, string, string]>).map(([Icon, title, body]) => (
+              <div key={title} className="relative z-30 rounded-3xl border border-slate-200 bg-white p-6 dark:border-white/10 dark:bg-[#13141C]">
+                <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[var(--ac-tint)] text-[var(--ac-strong)] dark:bg-[var(--ac-tint15)] dark:text-[var(--ac-soft)]">
+                  <Icon size={20} />
+                </span>
+                <h3 className="mt-4 text-[17px] font-bold leading-snug">{title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-400">{body}</p>
+              </div>
+            ))}
+          </div>
+        </Shell>
+      </section>
+
       {/* ── HOW IT WORKS ── */}
       <section id="how" className="border-y border-slate-200/70 bg-white/40 py-20 dark:border-white/10 dark:bg-white/[0.02]">
         <Shell>
           <div className="mx-auto max-w-2xl text-center">
             <span className="text-[12px] font-bold uppercase tracking-[0.14em] text-[var(--ac-strong)] dark:text-[var(--ac-soft)]">How it works</span>
-            <h2 className="mt-3 text-[clamp(1.9rem,4vw,3rem)] font-extrabold leading-[1.1] tracking-tight">Every lesson is something you do.</h2>
+            <h2 className="mt-3 text-[clamp(1.9rem,4vw,3rem)] font-extrabold leading-[1.1] tracking-tight">Backwards, on purpose.</h2>
           </div>
 
           <div className="relative mt-12 grid gap-10 md:grid-cols-3">
             <div aria-hidden className="absolute left-6 right-6 top-6 hidden border-t-2 border-dotted border-slate-300 md:block dark:border-white/15" />
             {([
-              ['01', 'Pick a path', 'Nineteen modules, first five free.',
+              ['01', 'Build it first', 'Real gates on a live canvas, before any lecture.',
                 <div key="v1" className="flex gap-2">
                   {[Binary, Zap, Grid3x3].map((I, i) => (
                     <span key={i} className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--ac-tint)] text-[var(--ac-strong)] dark:bg-[var(--ac-tint15)] dark:text-[var(--ac-soft)]">
@@ -550,14 +589,14 @@ export const BrilliantHome: React.FC = () => {
                     </span>
                   ))}
                 </div>],
-              ['02', 'Mess with it', 'The circuit answers instantly.',
+              ['02', 'Watch it answer', 'Flip the inputs. The circuit responds instantly.',
                 <div key="v2" className="flex items-center gap-2.5">
                   <span className="flex h-10 w-10 items-center justify-center rounded-xl border-2 border-[var(--ac)] bg-[var(--ac-tint)] font-mono text-sm font-bold text-[var(--ac-strong)] dark:text-[var(--ac-soft)]">1</span>
                   <span className="flex h-10 w-10 items-center justify-center rounded-xl border-2 border-slate-300 bg-white font-mono text-sm font-bold text-slate-400 dark:border-white/15 dark:bg-white/[0.04]">0</span>
                   <ArrowRight size={16} className="text-slate-400" />
                   <span className="h-10 w-10 rounded-full border-2 border-[var(--ac)] bg-[var(--ac)] shadow-[0_0_18px_var(--ac-glow)]" />
                 </div>],
-              ['03', 'Go from gates to Verilog', 'Real hardware code, in the browser.',
+              ['03', 'Then read the why', 'Theory lands easy once you have seen it work.',
                 <code key="v3" className="inline-block rounded-xl border border-slate-200 bg-white px-4 py-2.5 font-mono text-[13px] text-slate-700 dark:border-white/10 dark:bg-[#13141C] dark:text-slate-200">
                   assign y = a ^ b;
                 </code>],
@@ -630,7 +669,7 @@ export const BrilliantHome: React.FC = () => {
           </h2>
           <p className="mt-4 max-w-xl text-lg leading-relaxed text-slate-600 dark:text-slate-400">
             The trace running down this page is the same idea as a trace on a real PCB: one wire,
-            one bit. {connected ? 'It just reached the board — and the whole site switched to its powered-on colors.' : 'Scroll it all the way here and watch the board power up.'}
+            one bit. {connected ? 'It just reached the board, and the whole site switched to its powered-on colors.' : 'Scroll it all the way here and watch the board power up.'}
           </p>
 
           <div
@@ -657,6 +696,29 @@ export const BrilliantHome: React.FC = () => {
         </Shell>
       </section>
 
+      {/* ── FINAL CTA ── */}
+      <section className="pb-20">
+        <Shell>
+          <div className="relative z-30 overflow-hidden rounded-[2.5rem] bg-[var(--ac)] px-6 py-14 text-center text-white shadow-[0_30px_80px_-30px_var(--ac-glow)] sm:px-12">
+            <h2 className="mx-auto max-w-2xl text-[clamp(1.8rem,3.8vw,2.75rem)] font-extrabold leading-[1.1] tracking-tight">
+              Start with the first wire. The theory will catch up.
+            </h2>
+            <p className="mx-auto mt-4 max-w-xl text-lg leading-relaxed text-white/85">
+              Five modules free, no account, nothing to install. Open the workstation and build something in the next ten minutes.
+            </p>
+            <div className="mt-8 flex justify-center">
+              <Link
+                to={primaryTo}
+                className="group inline-flex items-center justify-center gap-2 rounded-full bg-white px-8 py-4 text-[16px] font-bold text-[var(--ac-strong)] shadow-lg transition-all hover:bg-slate-50 active:scale-[0.98]"
+              >
+                {primaryLabel}
+                <ArrowRight size={18} className="transition-transform group-hover:translate-x-0.5" />
+              </Link>
+            </div>
+          </div>
+        </Shell>
+      </section>
+
       {/* ── FOOTER ── */}
       <footer className="border-t border-slate-200/70 py-14 dark:border-white/10">
         <Shell className="grid grid-cols-2 gap-8 md:grid-cols-4">
@@ -665,9 +727,9 @@ export const BrilliantHome: React.FC = () => {
             <p className="mt-3 max-w-xs text-sm text-slate-500 dark:text-slate-400">Bits become logic. Logic becomes silicon. Free for anyone who wants to learn it.</p>
           </div>
           {[
-            ['Learn', [['Courses', '#courses'], ['How it works', '#how'], ['Career roadmap', LANDING_ROUTES.career]]],
-            ['Platform', [['Sign in', '/login'], ['Workstation', LANDING_ROUTES.workstation]]],
-            ['Community', [['GitHub', LANDING_ROUTES.github], ['Discord', LANDING_ROUTES.social.discord], ['Contact', LANDING_ROUTES.social.email]]],
+            ['Learn', [['Courses', '#courses'], ['Analogy Library', '/analogies'], ['Verilog Library', '/verilog-library'], ['Career roadmap', LANDING_ROUTES.career]]],
+            ['Platform', [['Sign in', '/login'], ['Workstation', LANDING_ROUTES.workstation], ['Silicon India Map', '/silicon-map']]],
+            ['Community', [['India ECE Pledge', '/pledge'], ['GitHub', LANDING_ROUTES.github], ['Discord', LANDING_ROUTES.social.discord], ['Contact', LANDING_ROUTES.social.email]]],
           ].map(([title, links]) => (
             <div key={title as string}>
               <h4 className="mb-3 text-[13px] font-bold uppercase tracking-wide text-slate-800 dark:text-slate-200">{title as string}</h4>
@@ -702,6 +764,19 @@ export const BrilliantHome: React.FC = () => {
         >
           {/* ghost track so the destination is visible before you get there */}
           <path d={rail.d} stroke="var(--ac)" strokeOpacity={0.14} strokeWidth={2.5} strokeDasharray="6 8" />
+          {/* soft glow understroke: a wide translucent stroke is far cheaper to
+              paint than an SVG drop-shadow filter over a page-tall layer */}
+          <path
+            ref={glowRef}
+            d={rail.d}
+            pathLength={1}
+            strokeDasharray="1"
+            strokeDashoffset={1}
+            stroke="var(--ac)"
+            strokeWidth={10}
+            strokeOpacity={0.22}
+            strokeLinecap="round"
+          />
           {/* the live signal, drawn by scrolling */}
           <path
             ref={pathRef}
@@ -712,10 +787,12 @@ export const BrilliantHome: React.FC = () => {
             stroke="var(--ac)"
             strokeWidth={3}
             strokeLinecap="round"
-            style={{ filter: 'drop-shadow(0 0 6px var(--ac-glow))' }}
           />
-          {/* the signal tip */}
-          <circle ref={dotRef} r={5} fill="var(--ac)" style={{ filter: 'drop-shadow(0 0 8px var(--ac))', opacity: 0 }} />
+          {/* the signal tip: halo ring + core instead of a filter */}
+          <g ref={dotRef} style={{ opacity: 0, transition: 'opacity 200ms linear' }}>
+            <circle r={11} fill="var(--ac)" opacity={0.25} />
+            <circle r={4.5} fill="var(--ac)" />
+          </g>
         </svg>
       )}
     </main>
