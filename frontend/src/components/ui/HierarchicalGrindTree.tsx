@@ -765,6 +765,18 @@ const L6_PATHS: PathOption[] = [
           { id: 'm10dsd9', label: 'Build It For Real · Workbench',     route: '/dsd/8/build'        },
         ],
       },
+      {
+        id: 'm11dsd', label: 'Recall & Prove · Module 09', subtitle: 'L9 · FLASH CARDS + DRILLS · 7 STAGES', route: '/dsd/9/cover',
+        submodules: [
+          { id: 'm11dsd0', label: 'Cover · Recall & Prove',            route: '/dsd/9/cover'         },
+          { id: 'm11dsd1', label: 'The Recall Deck · Flash Cards',     route: '/dsd/9/deck'          },
+          { id: 'm11dsd2', label: 'Combinational Drill',               route: '/dsd/9/combinational' },
+          { id: 'm11dsd3', label: 'Sequential Drill',                  route: '/dsd/9/sequential'    },
+          { id: 'm11dsd4', label: 'Adders Drill',                      route: '/dsd/9/adders'        },
+          { id: 'm11dsd5', label: 'Mixed Boss Round',                  route: '/dsd/9/boss'          },
+          { id: 'm11dsd6', label: 'The Cheatsheet',                    route: '/dsd/9/recap'         },
+        ],
+      },
     ],
   },
   {
