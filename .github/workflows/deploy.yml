@@ -1,0 +1,14 @@
+name: Deploy to clawdbot
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+concurrency:
+  group: clawdbot-deploy
+  cancel-in-progress: false
+jobs:
+  deploy:
+    runs-on: [ self-hosted, linux, clawdbot ]
+    steps:
+      - name: Build & restart bitforbytes.in
+        run: bash $HOME/deploy.sh
