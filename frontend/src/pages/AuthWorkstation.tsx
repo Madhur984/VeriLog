@@ -233,7 +233,14 @@ export const AuthWorkstation: React.FC = () => {
         if (signUpError) throw signUpError;
 
         const name = data.user?.user_metadata?.full_name || fullName || 'Explorer';
-        const token = data.session?.access_token;
+        let token = data.session?.access_token;
+        // Email confirmation is disabled, so a new account is usable instantly.
+        // If signUp didn't hand back a session, sign in directly - no "verify
+        // your email" step.
+        if (!token) {
+          const { data: signInData } = await supabase.auth.signInWithPassword({ email, password });
+          token = signInData.session?.access_token;
+        }
         if (token) {
           localStorage.setItem('supabase_token', token);
           setFirstName(name.split(' ')[0]);
@@ -241,11 +248,9 @@ export const AuthWorkstation: React.FC = () => {
           setAuthSuccess(true);
           setTimeout(() => navigate(redirectTo, { replace: true }), 1200);
         } else {
-          // No session means email confirmation is pending - that is a success
-          // state, so it goes in the calm notice box, not the error banner.
           setIsLoading(false);
           formBusyRef.current = false;
-          setNotice('Account created! Check your email to verify, then sign in.');
+          setNotice('Account created. You can sign in now.');
         }
       } else {
         const { data, error: signInError } = await supabase.auth.signInWithPassword({ email, password });
@@ -632,12 +637,12 @@ export const AuthWorkstation: React.FC = () => {
                     <CheckCircle2 size={16} className="mt-0.5 flex-shrink-0 text-emerald-600 dark:text-emerald-400" />
                     <div className="space-y-1">
                       <div className="text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
-                        {mode === 'RECOVER' ? 'Recovery link dispatched' : (authSuccess ? 'Signed in, redirecting...' : 'Check your email')}
+                        {mode === 'RECOVER' ? 'Recovery link dispatched' : (authSuccess ? 'Signed in, redirecting...' : 'Account created')}
                       </div>
                       <p className="font-sans text-xs leading-normal text-slate-500 dark:text-slate-400">
                         {mode === 'RECOVER'
                           ? 'We sent a password reset link to your email. Open it to recover your account.'
-                          : (authSuccess ? 'Your workspace is ready. Loading your dashboard now.' : 'We sent a verification link to your email. Open it to finish setting up your account.')}
+                          : (authSuccess ? 'Your workspace is ready. Loading your dashboard now.' : 'Your account is ready. You can sign in now.')}
                       </p>
                       {mode === 'RECOVER' && (
                         <button

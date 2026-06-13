@@ -3,6 +3,10 @@ import { useSearchParams } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
 import { HalfAdderTutorial } from '../components/workbench/HalfAdderTutorial';
 import { FullAdderTutorial } from '../components/workbench/FullAdderTutorial';
+import { RippleCarryTutorial } from '../components/workbench/RippleCarryTutorial';
+import { CarryLookAheadTutorial } from '../components/workbench/CarryLookAheadTutorial';
+import { ParallelPrefixTutorial } from '../components/workbench/ParallelPrefixTutorial';
+import { SerialAdderTutorial } from '../components/workbench/SerialAdderTutorial';
 
 /**
  * /workbench - the live CircuitVerse editor (embed mode: no API auth needed;
@@ -23,6 +27,10 @@ export default function Workbench() {
   const tutorialId = params.get('tutorial');
   const Rail = tutorialId === 'full-adder' ? FullAdderTutorial
     : tutorialId === 'half-adder' ? HalfAdderTutorial
+    : tutorialId === 'ripple-carry' ? RippleCarryTutorial
+    : tutorialId === 'carry-lookahead' ? CarryLookAheadTutorial
+    : tutorialId === 'parallel-prefix' ? ParallelPrefixTutorial
+    : tutorialId === 'serial-adder' ? SerialAdderTutorial
     : null;
   const tutorial = Rail !== null;
   const [railOpen, setRailOpen] = useState(true);

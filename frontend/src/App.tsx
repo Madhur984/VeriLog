@@ -72,6 +72,10 @@ const DsdModule6Root = named(() => import('./components/level1/dsd_module6_v1/Ds
 const DsdModule7Root = named(() => import('./components/level1/dsd_module7_v1/DsdModule7Root'), 'DsdModule7Root');
 const DsdModule8Root = named(() => import('./components/level1/dsd_module8_v1/DsdModule8Root'), 'DsdModule8Root');
 const DsdModule9Root = named(() => import('./components/level1/dsd_module9_v1/DsdModule9Root'), 'DsdModule9Root');
+const DsdModule10Root = named(() => import('./components/level1/dsd_module10_v1/DsdModule10Root'), 'DsdModule10Root');
+const DsdModule11Root = named(() => import('./components/level1/dsd_module11_v1/DsdModule11Root'), 'DsdModule11Root');
+const DsdModule12Root = named(() => import('./components/level1/dsd_module12_v1/DsdModule12Root'), 'DsdModule12Root');
+const DsdModule13Root = named(() => import('./components/level1/dsd_module13_v1/DsdModule13Root'), 'DsdModule13Root');
 const BeModule1Root = named(() => import('./components/level1/be_module1_v1/BeModule1Root'), 'BeModule1Root');
 const BeModule2Root = named(() => import('./components/level1/be_module2_v1/BeModule2Root'), 'BeModule2Root');
 const BeModule3Root = named(() => import('./components/level1/be_module3_v1/BeModule3Root'), 'BeModule3Root');
@@ -133,6 +137,14 @@ function App() {
             <Route path="/dsd/8/:chapter" element={<DsdModule8Root />} />
             <Route path="/dsd/9" element={<DsdModule9Root />} />
             <Route path="/dsd/9/:chapter" element={<DsdModule9Root />} />
+            <Route path="/dsd/10" element={<DsdModule10Root />} />
+            <Route path="/dsd/10/:chapter" element={<DsdModule10Root />} />
+            <Route path="/dsd/11" element={<DsdModule11Root />} />
+            <Route path="/dsd/11/:chapter" element={<DsdModule11Root />} />
+            <Route path="/dsd/12" element={<DsdModule12Root />} />
+            <Route path="/dsd/12/:chapter" element={<DsdModule12Root />} />
+            <Route path="/dsd/13" element={<DsdModule13Root />} />
+            <Route path="/dsd/13/:chapter" element={<DsdModule13Root />} />
             <Route path="/basic-electronics/1" element={<BeModule1Root />} />
             <Route path="/basic-electronics/1/:chapter" element={<BeModule1Root />} />
             <Route path="/basic-electronics/2" element={<BeModule2Root />} />
