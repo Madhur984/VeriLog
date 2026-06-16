@@ -52,9 +52,11 @@ export const S08_Circuit: React.FC<Props> = ({ isDarkMode }) => {
     return merge(l1[i].g, l1[i].p, l1[i - 2].g, l1[i - 2].p);
   });
 
-  // prefix-G at position i is the carry INTO bit i+1; carry into bit 0 is Cin
-  const carryInto = [cin, l2[0].g, l2[1].g, l2[2].g]; // C(-1..2) feeding bits 0..3
-  const cout = l2[3].g | (l2[3].p & cin); // carry out of the top bit (group propagate of Cin)
+  // carry out of bit i = G[i:0] OR (P[i:0] AND Cin); the prefix (G,P) at i combined with Cin
+  const carryOutOf = (i: number) => l2[i].g | (l2[i].p & cin);
+  // carry INTO bit i: bit 0 gets Cin, bit i (>0) gets the carry out of bit i-1
+  const carryInto = [cin, carryOutOf(0), carryOutOf(1), carryOutOf(2)]; // feeds bits 0..3
+  const cout = carryOutOf(3); // carry out of the top bit
 
   // ── post-processing: Si = Pi XOR C(i-1)
   const S = P.map((pi, i) => pi ^ carryInto[i]);

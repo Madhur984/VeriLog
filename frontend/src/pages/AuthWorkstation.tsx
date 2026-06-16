@@ -208,6 +208,9 @@ export const AuthWorkstation: React.FC = () => {
     setNotice(null);
     setIsLoading(true);
     formBusyRef.current = true;
+    // An email/password (or recovery) submit owns its own redirect; clear any
+    // stash left by an abandoned OAuth attempt so it can't override it.
+    localStorage.removeItem(POSTAUTH_KEY);
 
     try {
       if (mode === 'RECOVER') {
@@ -236,9 +239,11 @@ export const AuthWorkstation: React.FC = () => {
         let token = data.session?.access_token;
         // Email confirmation is disabled, so a new account is usable instantly.
         // If signUp didn't hand back a session, sign in directly - no "verify
-        // your email" step.
+        // your email" step. Surface a real sign-in error (e.g. confirmation
+        // actually IS on) instead of falling through to a misleading notice.
         if (!token) {
-          const { data: signInData } = await supabase.auth.signInWithPassword({ email, password });
+          const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+          if (signInError) throw signInError;
           token = signInData.session?.access_token;
         }
         if (token) {
@@ -285,6 +290,9 @@ export const AuthWorkstation: React.FC = () => {
     }
     setError(null);
     setNotice(null);
+    // Drop any destination stashed by an abandoned OAuth attempt so it can't
+    // hijack this guest redirect.
+    localStorage.removeItem(POSTAUTH_KEY);
     startGuestSession(guestNameTrimmed);
     setFirstName(guestNameTrimmed.split(' ')[0]);
     setHasSeenGreeting(false);
@@ -307,6 +315,8 @@ export const AuthWorkstation: React.FC = () => {
       if (oauthError) throw oauthError;
     } catch (err: any) {
       console.error(`${OAUTH_LABEL[provider]} OAuth Error:`, err);
+      // The redirect never happened; don't leave a dangling stash behind.
+      localStorage.removeItem(POSTAUTH_KEY);
       setError(err.message || `Could not start ${OAUTH_LABEL[provider]} sign-in.`);
       setIsLoading(false);
     }

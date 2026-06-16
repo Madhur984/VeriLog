@@ -361,7 +361,7 @@ export const BrilliantHome: React.FC = () => {
   return (
     <main
       ref={mainRef}
-      className="relative min-h-screen w-full text-slate-900 antialiased dark:text-slate-100 selection:bg-[var(--ac-tint25)]"
+      className="relative isolate min-h-screen w-full text-slate-900 antialiased dark:text-slate-100 selection:bg-[var(--ac-tint25)]"
       style={{
         ...(ACCENTS[connected ? 'cyan' : 'pink'] as React.CSSProperties),
         // one continuous accent gradient over the whole page: strongest at the very
@@ -752,11 +752,11 @@ export const BrilliantHome: React.FC = () => {
         </Shell>
       </footer>
 
-      {/* ── the scroll-driven signal trace (drawn above section backgrounds, never blocks clicks) ── */}
+      {/* ── the scroll-driven signal trace (sits in the page background behind all content, never blocks clicks) ── */}
       {rail && (
         <svg
           aria-hidden
-          className="pointer-events-none absolute left-0 top-0 z-20"
+          className="pointer-events-none absolute left-0 top-0 -z-10"
           style={{ width: '100%', height: rail.h }}
           viewBox={`0 0 ${rail.w} ${rail.h}`}
           preserveAspectRatio="none"

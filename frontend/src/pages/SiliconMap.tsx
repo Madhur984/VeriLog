@@ -22,18 +22,28 @@ const TRACKS: Record<Track, { label: string; route: string; color: string }> = {
   be:      { label: 'Basic Electronics',     route: '/basic-electronics/1',  color: '#60A5FA' },
 };
 
-interface City { id: string; name: string; x: number; y: number }
+// Equirectangular projection: real longitude/latitude -> SVG coordinates, so the
+// country outline and every city dot share one consistent geographic frame and
+// the cities always land in the right place. India spans roughly 68-97 E and
+// 8-37 N; the 13.8 vs 15 scale bakes in the cos(latitude) longitude correction.
+const project = (lng: number, lat: number): [number, number] => [
+  +((lng - 67) * 13.8).toFixed(1),
+  +((38 - lat) * 15).toFixed(1),
+];
 
+interface City { id: string; name: string; lng: number; lat: number }
+
+// Real city coordinates (lng, lat); projected to the map at render time.
 const CITIES: City[] = [
-  { id: 'ncr',       name: 'Delhi NCR (Noida)', x: 255, y: 152 },
-  { id: 'mohali',    name: 'Mohali',            x: 228, y: 108 },
-  { id: 'ahmedabad', name: 'Ahmedabad/Sanand',  x: 158, y: 255 },
-  { id: 'dholera',   name: 'Dholera',           x: 172, y: 282 },
-  { id: 'pune',      name: 'Pune',              x: 208, y: 335 },
-  { id: 'hyderabad', name: 'Hyderabad',         x: 282, y: 348 },
-  { id: 'bengaluru', name: 'Bengaluru',         x: 256, y: 452 },
-  { id: 'chennai',   name: 'Chennai',           x: 312, y: 462 },
-  { id: 'kolkata',   name: 'Kolkata',           x: 428, y: 228 },
+  { id: 'ncr',       name: 'Delhi NCR (Noida)', lng: 77.32, lat: 28.55 },
+  { id: 'mohali',    name: 'Mohali',            lng: 76.72, lat: 30.70 },
+  { id: 'ahmedabad', name: 'Ahmedabad/Sanand',  lng: 72.58, lat: 23.02 },
+  { id: 'dholera',   name: 'Dholera',           lng: 72.20, lat: 22.25 },
+  { id: 'pune',      name: 'Pune',              lng: 73.86, lat: 18.52 },
+  { id: 'hyderabad', name: 'Hyderabad',         lng: 78.49, lat: 17.39 },
+  { id: 'bengaluru', name: 'Bengaluru',         lng: 77.59, lat: 12.97 },
+  { id: 'chennai',   name: 'Chennai',           lng: 80.27, lat: 13.08 },
+  { id: 'kolkata',   name: 'Kolkata',           lng: 88.36, lat: 22.57 },
 ];
 
 interface Company {
@@ -63,12 +73,50 @@ const COMPANIES: Company[] = [
   { name: 'Western Digital',   cities: ['bengaluru', 'kolkata'],                     focus: 'Storage controllers and firmware',        roles: 60,  pkg: '₹13-24 LPA', skills: ['dsd', 'verilog'] },
 ];
 
-// crude but recognizable India silhouette
-const INDIA_PATH =
-  'M 196 36 L 232 58 L 245 96 L 286 104 L 322 92 L 356 112 L 402 138 L 452 128 ' +
-  'L 506 148 L 478 172 L 498 206 L 466 218 L 440 196 L 424 232 L 384 262 ' +
-  'L 338 330 L 318 412 L 296 492 L 270 556 L 246 496 L 222 418 L 200 342 ' +
-  'L 172 296 L 124 272 L 98 238 L 132 216 L 142 162 L 168 122 L 174 72 Z';
+// A real, geographically-projected outline of India. Each vertex is an actual
+// [lng, lat] point on the national boundary, run through the SAME projection as
+// the cities, then smoothed into a flowing coastline. Traced clockwise from the
+// northwest (Kashmir) -> Himalaya -> northeast -> east coast -> Kanyakumari (the
+// southern tip) -> west coast -> Gujarat -> Pakistan border -> back to Kashmir.
+const INDIA_BOUNDARY: [number, number][] = [
+  // north: Kashmir, along the Himalaya to Arunachal
+  [74.2, 34.5], [75.9, 35.5], [77.8, 35.3], [78.9, 34.2], [80.1, 32.6], [81.5, 30.3],
+  [83.4, 29.3], [85.6, 28.3], [88.1, 27.9], [89.7, 28.1], [91.7, 27.7], [94.2, 28.6],
+  [96.0, 28.3], [97.0, 27.6],
+  // northeast: down the Myanmar border
+  [96.0, 26.9], [95.0, 26.5], [94.5, 25.1], [94.1, 23.8], [93.3, 22.3],
+  // around Bangladesh, down to the Bengal coast
+  [92.1, 23.5], [91.1, 24.1], [89.8, 25.3], [88.3, 26.5], [88.0, 24.6], [88.7, 22.0],
+  // east coast down to the southern tip
+  [86.6, 21.0], [85.1, 19.6], [83.5, 18.0], [82.2, 16.6], [80.3, 15.6], [80.2, 13.3],
+  [79.9, 11.7], [79.3, 10.3], [78.1, 9.1], [77.5, 8.08],
+  // west coast up through Kerala and the Konkan to Mumbai
+  [76.3, 8.9], [75.6, 11.9], [74.4, 13.9], [73.7, 15.8], [73.1, 17.9], [72.9, 19.2],
+  // Gujarat: the Saurashtra peninsula and Kutch
+  [72.9, 20.6], [72.2, 21.5], [70.9, 20.8], [69.4, 21.8], [68.6, 23.0], [68.4, 23.9],
+  [70.8, 24.2],
+  // Pakistan border up through Rajasthan and Punjab back to Kashmir
+  [71.0, 27.2], [72.6, 28.9], [74.0, 30.2], [74.6, 32.6],
+];
+
+// Turn the boundary into a smooth closed path: quadratic curves through the
+// midpoint of each edge (real vertices as control points) read as a coastline
+// rather than a jagged polygon.
+function smoothClosedPath(pts: [number, number][]): string {
+  const mid = (a: [number, number], b: [number, number]): [number, number] =>
+    [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+  const n = pts.length;
+  const start = mid(pts[n - 1], pts[0]);
+  let d = `M ${start[0].toFixed(1)} ${start[1].toFixed(1)} `;
+  for (let i = 0; i < n; i++) {
+    const c = pts[i];
+    const m = mid(c, pts[(i + 1) % n]);
+    d += `Q ${c[0].toFixed(1)} ${c[1].toFixed(1)} ${m[0].toFixed(1)} ${m[1].toFixed(1)} `;
+  }
+  return d + 'Z';
+}
+
+const INDIA_PATH = smoothClosedPath(INDIA_BOUNDARY.map(([lng, lat]) => project(lng, lat)));
 
 const ACCENT = '#38BDF8';
 
@@ -172,24 +220,25 @@ export const SiliconMap: React.FC = () => {
         <div className="mt-10 grid gap-8 lg:grid-cols-2">
           {/* the map */}
           <div className={`rounded-3xl border p-4 sm:p-6 ${card}`}>
-            <svg viewBox="60 10 480 580" className="h-auto w-full" role="img" aria-label="Stylized map of India with semiconductor cities">
+            <svg viewBox="0 5 430 465" className="h-auto w-full" role="img" aria-label="Map of India with its semiconductor cities">
               <path d={INDIA_PATH} fill={dark ? 'rgba(56,189,248,0.06)' : 'rgba(56,189,248,0.08)'}
                     stroke={ACCENT} strokeWidth="2" strokeLinejoin="round" strokeOpacity={0.7} />
               {CITIES.map((c) => {
                 const roles = cityRoles(c.id);
                 if (roles === 0) return null;
+                const [cx, cy] = project(c.lng, c.lat);
                 const r = 6 + Math.min(12, roles / 90);
                 const active = activeCity === c.id;
                 return (
                   <g key={c.id} className="cursor-pointer" onClick={() => setActiveCity(active ? null : c.id)}>
-                    <circle cx={c.x} cy={c.y} r={r + 7} fill={ACCENT} opacity={active ? 0.28 : 0.12} />
-                    <circle cx={c.x} cy={c.y} r={r} fill={active ? ACCENT : dark ? '#0A0B12' : '#fff'}
+                    <circle cx={cx} cy={cy} r={r + 7} fill={ACCENT} opacity={active ? 0.28 : 0.12} />
+                    <circle cx={cx} cy={cy} r={r} fill={active ? ACCENT : dark ? '#0A0B12' : '#fff'}
                             stroke={ACCENT} strokeWidth="2.5" />
-                    <text x={c.x} y={c.y - r - 10} textAnchor="middle" fontSize="12" fontFamily="monospace"
+                    <text x={cx} y={cy - r - 10} textAnchor="middle" fontSize="12" fontFamily="monospace"
                           fontWeight="bold" fill={active ? ACCENT : dark ? '#94A3B8' : '#475569'}>
                       {c.name.split(' ')[0]}
                     </text>
-                    <text x={c.x} y={c.y + r + 16} textAnchor="middle" fontSize="10" fontFamily="monospace"
+                    <text x={cx} y={cy + r + 16} textAnchor="middle" fontSize="10" fontFamily="monospace"
                           fill={dark ? '#64748B' : '#94A3B8'}>
                       ~{roles} roles
                     </text>

@@ -174,10 +174,15 @@ let bridgeStarted = false;
  * password flow writes the token itself, but OAuth, email-verification and
  * password-recovery all return via a full-page redirect where only supabase-js
  * sees the session - without this bridge the app would still treat the user as
- * anonymous. Mirrors the token on every event that carries a session
- * (SIGNED_IN, TOKEN_REFRESHED, USER_UPDATED, INITIAL_SESSION,
- * PASSWORD_RECOVERY), clears it on SIGNED_OUT, and drops the guest flag when a
- * real session is adopted. Idempotent - extra calls are no-ops.
+ * anonymous. Mirrors the token on every event that carries a real-login session
+ * (SIGNED_IN, TOKEN_REFRESHED, USER_UPDATED, INITIAL_SESSION), clears it on
+ * SIGNED_OUT, and drops the guest flag when a real session is adopted.
+ *
+ * PASSWORD_RECOVERY is deliberately NOT adopted: that event carries a
+ * short-lived recovery session, not a real login. Persisting it would mark the
+ * browser as fully signed in the instant the reset link is opened, leaving a
+ * user who abandons the form (or clicks "request a new link") authenticated
+ * with a token they never meant to keep. Idempotent - extra calls are no-ops.
  */
 export function initAuthTokenBridge(): void {
     if (bridgeStarted) return;
@@ -199,7 +204,10 @@ export function initAuthTokenBridge(): void {
             ls.removeItem(SUPABASE_TOKEN_KEY);
             return;
         }
-        // SIGNED_IN, TOKEN_REFRESHED, USER_UPDATED, INITIAL_SESSION, PASSWORD_RECOVERY
+        // A recovery session is not a real login; let ResetPasswordPage handle it
+        // without persisting a token that would silently authenticate the browser.
+        if (event === 'PASSWORD_RECOVERY') return;
+        // SIGNED_IN, TOKEN_REFRESHED, USER_UPDATED, INITIAL_SESSION
         adopt(session?.access_token);
     });
 }

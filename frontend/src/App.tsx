@@ -13,6 +13,7 @@ import { TourOverlay } from './components/tour/TourOverlay';
 
 // Layout (eager - tiny, wraps every portal route)
 import { PortalLayout } from './layouts/PortalLayout';
+import { ScrollToTop } from './components/ScrollToTop';
 
 /**
  * Every route below is code-split via React.lazy, so the browser only downloads
@@ -92,6 +93,7 @@ function App() {
       <TransitionOverlay />
       <AppErrorBoundary>
       <TourProvider>
+      <ScrollToTop />
       <Suspense fallback={<RouteFallback />}>
         <Routes>
           {/* Landing / Auth - public */}

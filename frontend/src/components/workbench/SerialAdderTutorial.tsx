@@ -19,9 +19,9 @@ const CYCLES = [
   { cyc: 0, a: 1, b: 1, cin: 0, sum: 0, cout: 1, note: 'clear carry first' },
   { cyc: 1, a: 1, b: 0, cin: 1, sum: 0, cout: 1, note: 'carry remembered' },
   { cyc: 2, a: 0, b: 0, cin: 1, sum: 1, cout: 0, note: 'last carry spills out' },
-  { cyc: 0, a: 1, b: 1, cin: 0, sum: 0, cout: 1, note: 'B=001: bit 0 again' },
-  { cyc: 1, a: 0, b: 1, cin: 1, sum: 0, cout: 1, note: 'check 1+1+? path' },
-  { cyc: 2, a: 1, b: 0, cin: 0, sum: 1, cout: 0, note: 'clean 1+0+0' },
+  { cyc: 0, a: 1, b: 1, cin: 0, sum: 0, cout: 1, note: 'second sum: bit 0' },
+  { cyc: 1, a: 0, b: 1, cin: 1, sum: 0, cout: 1, note: 'carry chains in' },
+  { cyc: 2, a: 1, b: 0, cin: 1, sum: 0, cout: 1, note: 'carry still set' },
 ];
 
 const ROWS = CYCLES.length;
