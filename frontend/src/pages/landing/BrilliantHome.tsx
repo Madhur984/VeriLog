@@ -10,6 +10,7 @@ import { BrandWordmark } from '../../components/Brand';
 import { SignalShowcase } from './SignalShowcase';
 import { LANDING_ROUTES } from './landingRoutes';
 import { useIsAuthenticated } from '../../hooks/useIsAuthenticated';
+import { useColorScheme } from '../../hooks/useColorScheme';
 
 /* ── accent system ────────────────────────────────────────────────────────
  * The whole page runs on CSS variables instead of hardcoded colors. The page
@@ -236,28 +237,11 @@ export const BrilliantHome: React.FC = () => {
   const primaryTo = LANDING_ROUTES.workstation;
   const primaryLabel = authed ? 'Go to workstation' : 'Get started';
 
-  // Home page is light by default with a working dark toggle. We capture the
-  // user's saved app theme on mount and put it back when they leave, so the rest
-  // of the app keeps its own setting.
-  const [dark, setDark] = useState(false);
+  // One global theme: the home page follows the SAME shared color scheme as the
+  // rest of the site (system preference by default) instead of forcing its own.
+  const [scheme, toggleTheme] = useColorScheme();
+  const dark = scheme === 'dark';
   const [menuOpen, setMenuOpen] = useState(false);
-  const savedRef = useRef<string | null>(null);
-
-  useEffect(() => {
-    try { savedRef.current = localStorage.getItem('bitforbytes_theme') ?? 'dark'; } catch { savedRef.current = 'dark'; }
-    return () => {
-      const root = document.documentElement;
-      const prev = savedRef.current || 'dark';
-      if (prev === 'dark') { root.classList.add('dark'); root.classList.remove('light'); }
-      else { root.classList.add('light'); root.classList.remove('dark'); }
-    };
-  }, []);
-
-  useEffect(() => {
-    const root = document.documentElement;
-    if (dark) { root.classList.add('dark'); root.classList.remove('light'); }
-    else { root.classList.add('light'); root.classList.remove('dark'); }
-  }, [dark]);
 
   /* ── scroll signal: a trace drawn down the page that plugs into the board.
    * When it connects, the page accent flips pink → cyan (latched). */
@@ -386,7 +370,7 @@ export const BrilliantHome: React.FC = () => {
 
           <div className="flex items-center gap-2 sm:gap-4">
             <button
-              onClick={() => setDark((d) => !d)}
+              onClick={toggleTheme}
               aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'}
               className="rounded-full border border-slate-200 p-2 text-slate-600 transition-colors hover:bg-slate-100 dark:border-white/10 dark:text-slate-300 dark:hover:bg-white/5"
             >

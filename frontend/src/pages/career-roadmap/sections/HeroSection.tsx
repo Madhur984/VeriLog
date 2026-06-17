@@ -15,13 +15,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onCalibrate, onExplore
   const { x, y } = useMouseParallax();
   const primaryCTA = useMagneticButton(0.3);
 
-  const stats = [
-    { label: 'Domains', value: 13 },
-    { label: '₹8-50 LPA', value: 0, isCurrency: true },
-    { label: 'Companies', value: 10 },
-    { label: 'Questions', value: 30 },
-  ];
-
   return (
     <section id="hero" className="relative min-h-screen flex flex-col items-center justify-center pt-20 pb-24 overflow-hidden bg-observatory-bg">
       {/* Silicon Parallax Layers */}
@@ -95,25 +88,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onCalibrate, onExplore
             Explore Domains <span className="group-hover:translate-x-1 transition-transform inline-block">→</span>
           </button>
         </motion.div>
-
-        {/* Stats Row */}
-        <div className="mt-12 sm:mt-20 flex flex-wrap justify-center items-center gap-6 sm:gap-12">
-          {stats.map((stat, i) => (
-            <React.Fragment key={stat.label}>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-text-main mb-1">
-                  {stat.isCurrency ? '₹8-50 LPA' : stat.value}
-                </div>
-                <div className="text-[10px] font-mono text-text-dim uppercase tracking-widest">
-                  {stat.label}
-                </div>
-              </div>
-              {i < stats.length - 1 && (
-                <div className="hidden md:block w-px h-8 bg-border-soft" />
-              )}
-            </React.Fragment>
-          ))}
-        </div>
 
         <CareerWeather />
       </div>
