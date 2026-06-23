@@ -16,6 +16,8 @@ import {
   type SubScene,
 } from '../_subtractor/kit';
 import type { SubPage } from '../_subtractor/SubEngine';
+import { FullSubtractorCircuit } from '../_subtractor/circuit';
+import { WorkbenchCTA } from '../_subtractor/kit';
 import { CONTENT } from './content';
 
 const ACC = { I: '#38bdf8', II: '#f59e0b', III: '#fb7185', coins: '#34d399' };
@@ -283,44 +285,8 @@ const FullTruth: React.FC<{ isDarkMode: boolean; accent: string }> = ({ isDarkMo
   );
 };
 
-/* ── bespoke: two-half-subtractor circuit (S08) ── */
-const FullSubCircuit: React.FC<{ isDarkMode: boolean; accent: string }> = ({ isDarkMode, accent }) => {
-  const t = tone(isDarkMode);
-  return (
-    <Card isDarkMode={isDarkMode}>
-      <svg viewBox="0 0 560 240" className="mx-auto h-auto w-full max-w-2xl">
-        <text x="10" y="60" fontFamily="monospace" fontSize="15" fill={t.ink}>x</text>
-        <text x="10" y="92" fontFamily="monospace" fontSize="15" fill={t.ink}>y</text>
-        <text x="10" y="190" fontFamily="monospace" fontSize="15" fill={t.ink}>z</text>
-        <line x1="24" y1="55" x2="90" y2="55" stroke={t.ink} strokeWidth="2" />
-        <line x1="24" y1="88" x2="90" y2="88" stroke={t.ink} strokeWidth="2" />
-        <line x1="24" y1="185" x2="300" y2="185" stroke={t.ink} strokeWidth="2" />
-        <rect x="90" y="36" width="90" height="72" rx="12" fill={t.box} stroke={ACC.II} strokeWidth="2" />
-        <text x="135" y="68" fontFamily="monospace" fontSize="13" fill={ACC.II} textAnchor="middle">HALF</text>
-        <text x="135" y="86" fontFamily="monospace" fontSize="13" fill={ACC.II} textAnchor="middle">SUB 1</text>
-        <line x1="180" y1="55" x2="300" y2="55" stroke={t.ink} strokeWidth="2" />
-        <text x="218" y="46" fontFamily="monospace" fontSize="11" fill={t.ink}>x⊕y</text>
-        <line x1="180" y1="92" x2="430" y2="92" stroke={t.ink} strokeWidth="2" />
-        <line x1="430" y1="92" x2="430" y2="150" stroke={t.ink} strokeWidth="2" />
-        <rect x="300" y="36" width="90" height="72" rx="12" fill={t.box} stroke={accent} strokeWidth="2" />
-        <text x="345" y="68" fontFamily="monospace" fontSize="13" fill={accent} textAnchor="middle">HALF</text>
-        <text x="345" y="86" fontFamily="monospace" fontSize="13" fill={accent} textAnchor="middle">SUB 2</text>
-        <line x1="390" y1="55" x2="520" y2="55" stroke={t.ink} strokeWidth="2" />
-        <text x="528" y="60" fontFamily="monospace" fontSize="15" fill={ACC.coins}>D</text>
-        <line x1="390" y1="92" x2="410" y2="92" stroke={t.ink} strokeWidth="2" />
-        <line x1="410" y1="92" x2="410" y2="168" stroke={t.ink} strokeWidth="2" />
-        <rect x="410" y="150" width="80" height="56" rx="12" fill={t.box} stroke={ACC.III} strokeWidth="2" />
-        <text x="450" y="183" fontFamily="monospace" fontSize="13" fill={ACC.III} textAnchor="middle">OR</text>
-        <line x1="490" y1="178" x2="520" y2="178" stroke={t.ink} strokeWidth="2" />
-        <text x="528" y="183" fontFamily="monospace" fontSize="15" fill={ACC.III}>Bout</text>
-      </svg>
-      <p className={`mt-4 text-center text-[13px] ${t.sub}`}>
-        Two half subtractors chained, their two borrows joined by an{' '}
-        <span style={{ color: ACC.III }}>OR</span> - exactly the full adder's shape, in reverse.
-      </p>
-    </Card>
-  );
-};
+/* The two-half-subtractor schematic now lives in _subtractor/circuit.tsx as the
+   clean, interactive FullSubtractorCircuit (z correctly wired into HALF SUB 2). */
 
 /* ── bespoke: interactive ledger (S09 activity) ── */
 const FullSubActivity: React.FC<{ isDarkMode: boolean; accent: string; scene: SubScene }> = ({ isDarkMode, accent, scene }) => {
@@ -774,8 +740,10 @@ function componentFor(scene: SubScene): React.FC<any> {
     case 'circuit':
       return (p) => (
         <TheoryScene {...p} scene={scene}>
-          <FullSubCircuit isDarkMode={p.isDarkMode} accent={p.accent} />
+          <FullSubtractorCircuit isDarkMode={p.isDarkMode} accent={p.accent} />
           <RippleSection isDarkMode={p.isDarkMode} accent={p.accent} />
+          <WorkbenchCTA isDarkMode={p.isDarkMode} accent={p.accent} tutorial="full-subtractor"
+            titleEN="Build the full subtractor for real" titleHI="असली में full subtractor बनाइए" />
         </TheoryScene>
       );
     case 'activity':

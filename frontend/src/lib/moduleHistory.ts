@@ -89,6 +89,11 @@ export const MODULE_LABELS: Record<string, string> = {
   'basic-electronics/3': 'The P-N Junction',
   'basic-electronics/4': 'Rectifiers & Filters',
   'basic-electronics/5': 'Special-Purpose Diodes',
+  'basic-electronics/6': 'BJT Construction & Operation',
+  'basic-electronics/7': 'BJT DC Biasing',
+  'basic-electronics/8': 'BJT AC Analysis',
+  'basic-electronics/9': 'MOSFET Construction',
+  'basic-electronics/10': 'Transistors & JFETs',
 };
 
 export function moduleLabel(id: string): string {

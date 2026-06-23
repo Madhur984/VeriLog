@@ -40,13 +40,15 @@ interface ShellProps {
   isDarkMode: boolean;
   onThemeToggle: () => void;
   initialChapter?: string;
+  routeBase?: string;        // 'dsd' (default) | 'basic-electronics' - URL prefix for chapter sync
+  trackName?: string;        // sidebar track caption, default 'Digital System Design'
 }
 
 const Sidebar: React.FC<{
-  pages: SubPage[]; moduleNumber: string; moduleName: string; Icon: LucideIcon;
+  pages: SubPage[]; moduleNumber: string; moduleName: string; Icon: LucideIcon; trackName: string;
   current: number; isDarkMode: boolean; onChange: (i: number) => void;
   toggleTheme: () => void; theme: { primary: string; secondary: string; glow: string };
-}> = ({ pages, moduleNumber, moduleName, Icon, current, isDarkMode, onChange, toggleTheme, theme }) => {
+}> = ({ pages, moduleNumber, moduleName, Icon, trackName, current, isDarkMode, onChange, toggleTheme, theme }) => {
   const textColor = isDarkMode ? 'text-white' : 'text-slate-900';
   const borderColor = isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
   const progress = ((current + 1) / pages.length) * 100;
@@ -64,7 +66,7 @@ const Sidebar: React.FC<{
             <Icon size={20} />
           </div>
           <div>
-            <h2 className={`text-sm font-black tracking-tight ${textColor}`}>Digital System Design</h2>
+            <h2 className={`text-sm font-black tracking-tight ${textColor}`}>{trackName}</h2>
             <p className="text-[10px] uppercase font-mono tracking-widest font-bold transition-colors duration-500" style={{ color: theme.primary }}>
               Module {moduleNumber} · {moduleName}
             </p>
@@ -152,6 +154,7 @@ const Sidebar: React.FC<{
 
 export const SubModuleShell: React.FC<ShellProps> = ({
   moduleNumber, moduleName, Icon, pages, isDarkMode, onThemeToggle, initialChapter,
+  routeBase = 'dsd', trackName = 'Digital System Design',
 }) => {
   const navigate = useNavigate();
 
@@ -168,10 +171,10 @@ export const SubModuleShell: React.FC<ShellProps> = ({
   useEffect(() => {
     const id = pages[current]?.id;
     if (id) {
-      const target = `/dsd/${moduleNumber}/${id}`;
+      const target = `/${routeBase}/${moduleNumber}/${id}`;
       if (window.location.pathname !== target) navigate(target, { replace: true });
     }
-  }, [current, navigate, moduleNumber, pages]);
+  }, [current, navigate, moduleNumber, pages, routeBase]);
 
   useEffect(() => {
     if (initialChapter) {
@@ -218,7 +221,7 @@ export const SubModuleShell: React.FC<ShellProps> = ({
 
         <DrawerShell open={navOpen} onClose={() => setNavOpen(false)}>
           <Sidebar
-            pages={pages} moduleNumber={moduleNumber} moduleName={moduleName} Icon={Icon}
+            pages={pages} moduleNumber={moduleNumber} moduleName={moduleName} Icon={Icon} trackName={trackName}
             current={current} isDarkMode={isDarkMode}
             onChange={(i) => { setCurrent(i); setNavOpen(false); }}
             toggleTheme={onThemeToggle} theme={theme}

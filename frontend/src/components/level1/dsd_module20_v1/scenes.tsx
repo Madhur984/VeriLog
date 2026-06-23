@@ -15,6 +15,7 @@ import {
   type SubScene,
 } from '../_subtractor/kit';
 import type { SubPage } from '../_subtractor/SubEngine';
+import { BcdAdderCircuit } from '../_subtractor/circuit';
 import { CONTENT } from './content';
 
 const ACC = { I: '#38bdf8', II: '#f59e0b', III: '#fb7185', good: '#34d399' };
@@ -594,57 +595,9 @@ const BcdStateMatrix: React.FC<{ isDarkMode: boolean; accent: string }> = ({ isD
   );
 };
 
-/* ───────── bespoke: two-adder schematic (S06 circuit) ───────── */
-const BcdAdderCircuit: React.FC<{ isDarkMode: boolean; accent: string }> = ({ isDarkMode, accent }) => {
-  const t = tone(isDarkMode);
-  const ink = t.ink as string;
-  return (
-    <Card isDarkMode={isDarkMode}>
-      <svg viewBox="0 0 560 320" className="mx-auto h-auto w-full max-w-2xl">
-        {/* inputs */}
-        <text x="60" y="24" fontFamily="monospace" fontSize="13" fill={ACC.I} textAnchor="middle">A</text>
-        <text x="150" y="24" fontFamily="monospace" fontSize="13" fill={ACC.I} textAnchor="middle">B</text>
-        <text x="232" y="24" fontFamily="monospace" fontSize="12" fill={t.faint as string} textAnchor="middle">Cin</text>
-        <line x1="60" y1="30" x2="60" y2="58" stroke={ink} strokeWidth="2" />
-        <line x1="150" y1="30" x2="150" y2="58" stroke={ink} strokeWidth="2" />
-        <line x1="232" y1="30" x2="232" y2="58" stroke={ink} strokeWidth="2" />
-        {/* adder 1 */}
-        <rect x="30" y="58" width="230" height="52" rx="10" fill={t.box} stroke={accent} strokeWidth="2" />
-        <text x="145" y="90" fontFamily="monospace" fontSize="14" fill={accent} textAnchor="middle">4-BIT ADDER 1</text>
-        {/* outputs of adder 1 */}
-        <text x="300" y="80" fontFamily="monospace" fontSize="11" fill={ACC.II}>K</text>
-        <text x="120" y="132" fontFamily="monospace" fontSize="11" fill={ink}>Z8 Z4 Z2 Z1</text>
-        <line x1="260" y1="84" x2="330" y2="84" stroke={ACC.II} strokeWidth="2" />
-        <line x1="145" y1="110" x2="145" y2="138" stroke={ink} strokeWidth="2" />
-        {/* detection gates */}
-        <rect x="330" y="64" width="120" height="44" rx="8" fill={t.box} stroke={ACC.III} strokeWidth="2" />
-        <text x="390" y="82" fontFamily="monospace" fontSize="10" fill={ACC.III} textAnchor="middle">AND, AND, OR</text>
-        <text x="390" y="98" fontFamily="monospace" fontSize="9" fill={t.faint as string} textAnchor="middle">K + Z8Z4 + Z8Z2</text>
-        <line x1="330" y1="84" x2="330" y2="84" stroke={ACC.III} strokeWidth="2" />
-        {/* C signal down to adder 2 select */}
-        <text x="468" y="88" fontFamily="monospace" fontSize="11" fill={ACC.good}>C</text>
-        <line x1="450" y1="86" x2="490" y2="86" stroke={ACC.good} strokeWidth="2" />
-        <line x1="490" y1="86" x2="490" y2="206" stroke={ACC.good} strokeWidth="2" />
-        <line x1="490" y1="206" x2="360" y2="206" stroke={ACC.good} strokeWidth="2" />
-        <text x="430" y="200" fontFamily="monospace" fontSize="9" fill={ACC.good} textAnchor="middle">selects 0110 / 0000</text>
-        {/* adder 2 */}
-        <line x1="145" y1="138" x2="145" y2="180" stroke={ink} strokeWidth="2" />
-        <rect x="30" y="180" width="330" height="52" rx="10" fill={t.box} stroke={accent} strokeWidth="2" />
-        <text x="160" y="212" fontFamily="monospace" fontSize="14" fill={accent} textAnchor="middle">4-BIT ADDER 2  (+ 0110 / 0000)</text>
-        {/* final outputs */}
-        <line x1="160" y1="232" x2="160" y2="268" stroke={ink} strokeWidth="2" />
-        <text x="160" y="288" fontFamily="monospace" fontSize="12" fill={ACC.good} textAnchor="middle">S8 S4 S2 S1</text>
-        <line x1="360" y1="206" x2="392" y2="206" stroke={ACC.good} strokeWidth="0" />
-        <text x="408" y="170" fontFamily="monospace" fontSize="11" fill={ACC.II} textAnchor="middle">carry-out</text>
-        <line x1="360" y1="194" x2="408" y2="194" stroke={ACC.II} strokeWidth="2" />
-        <line x1="408" y1="194" x2="408" y2="176" stroke={ACC.II} strokeWidth="2" />
-      </svg>
-      <p className={`mt-3 text-center text-[13px] ${t.sub}`}>
-        Adder 1 sums, three gates compute <span style={{ color: ACC.good }}>C</span>, Adder 2 adds 6 or 0. Two adders, three gates.
-      </p>
-    </Card>
-  );
-};
+/* The two-adder schematic now lives in _subtractor/circuit.tsx as the clean,
+   interactive BcdAdderCircuit (a sum slider lights K, Z, the detection gates,
+   the C signal and the +6 correction path). */
 
 /* ───────── bespoke: full BCD adder demo (S07 activity) ───────── */
 const BcdAdderDemo: React.FC<{ isDarkMode: boolean; accent: string; scene: SubScene }> = ({ isDarkMode, accent, scene }) => {

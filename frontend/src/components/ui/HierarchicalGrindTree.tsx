@@ -455,7 +455,7 @@ const RootGem: React.FC<{ node: RootNode; index: number; onClick: () => void }> 
       role="button"
       tabIndex={isLocked ? -1 : 0}
       aria-disabled={isLocked}
-      aria-label={`${node.level} ${node.label}${isLocked ? ' — locked' : isDone ? ' — completed' : ''}`}
+      aria-label={`${node.level} ${node.label}${isLocked ? ' - locked' : isDone ? ' - completed' : ''}`}
       onClick={() => onClick()}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(); }
@@ -534,18 +534,6 @@ const RootGem: React.FC<{ node: RootNode; index: number; onClick: () => void }> 
         {node.tech}
       </div>
 
-      {!isLocked && (
-        <div className="mt-2 w-full max-w-[96px]">
-          <div className="relative h-[4px] rounded-full overflow-hidden" style={{ backgroundColor: isLight ? `${accent}33` : `${accent}22` }}>
-            <motion.div className="absolute left-0 top-0 h-full rounded-full"
-              style={{ backgroundColor: accent, boxShadow: `0 0 6px ${accent}` }}
-              initial={{ width: 0 }} animate={{ width: `${node.pct}%` }}
-              transition={{ duration: 0.9, delay: index * 0.08 + 0.3, ease: 'easeOut' }} />
-          </div>
-          <div className="mt-0.5 text-[10px] font-mono tabular-nums text-right"
-            style={{ color: isLight ? '#1D4ED8' : `${accent}88` }}>{node.pct}%</div>
-        </div>
-      )}
     </motion.div>
   );
 };
@@ -553,7 +541,7 @@ const RootGem: React.FC<{ node: RootNode; index: number; onClick: () => void }> 
 // ─── L6 PATH HIERARCHY ──────────────────────────────────────────────────────────
 interface SubmoduleOption { id: string; label: string; route: string }
 interface ModuleOption    { id: string; label: string; subtitle: string; route: string; submodules: SubmoduleOption[] }
-interface PathOption      { id: string; label: string; subtitle: string; color: string; modules: ModuleOption[] }
+interface PathOption      { id: string; label: string; subtitle: string; color: string; modules: ModuleOption[]; comingSoon?: boolean }
 
 const L6_PATHS: PathOption[] = [
   {
@@ -943,128 +931,131 @@ const L6_PATHS: PathOption[] = [
     ],
   },
   {
+    // Verilog track is being rebuilt - show a "Coming soon" placeholder instead
+    // of module entries until the new HDL content ships.
     id: 'verilog', label: 'Verilog', subtitle: 'HDL · SYNTHESIS', color: '#a78bfa',
-    modules: [
-      {
-        id: 'm5', label: 'Verilog Core', subtitle: 'L5 · HDL GATEWAY', route: '/module/5',
-        submodules: [
-          { id: 'm5s1', label: 'First Verilog', route: '/module/5' },
-          { id: 'm5s2', label: 'Modules', route: '/module/5' },
-          { id: 'm5s3', label: 'Testbenches', route: '/module/5' },
-          { id: 'm5s4', label: 'Clock Signal', route: '/module/5' },
-          { id: 'm5s5', label: 'Hierarchy', route: '/module/5' },
-        ],
-      },
-      {
-        id: 'm6', label: 'HDL Mastery', subtitle: 'L6 · SYNTHESIS LAYER', route: '/module/6',
-        submodules: [
-          { id: 'm6s1', label: 'Breaking Point', route: '/module/6/0' },
-          { id: 'm6s2', label: 'Industry Risk', route: '/module/6/2' },
-          { id: 'm6s3', label: 'What is HDL?', route: '/module/6/4' },
-          { id: 'm6s4', label: 'Abstraction Ladder', route: '/module/6/11' },
-          { id: 'm6s5', label: 'Synthesis Flow', route: '/module/6/13' },
-          { id: 'm6s6', label: 'First Contact', route: '/module/6/16' },
-          { id: 'm6s7', label: 'Testbench', route: '/module/6/17' },
-          { id: 'm6s8', label: 'AI Hardware', route: '/module/6/24' },
-        ],
-      },
-    ],
+    comingSoon: true,
+    modules: [],
   },
 ];
 
-const L6PathDropdown: React.FC<{ onPick: (route: string) => void }> = ({ onPick }) => {
+// Directional cross-slide for the module list when the active track changes.
+const TRACK_VARIANTS = {
+  enter:  (d: number) => ({ opacity: 0, x: d >= 0 ? 46 : -46 }),
+  center: { opacity: 1, x: 0 },
+  exit:   (d: number) => ({ opacity: 0, x: d >= 0 ? -46 : 46 }),
+};
+
+const L6PathSwitcher: React.FC<{ onPick: (route: string) => void }> = ({ onPick }) => {
   const [scheme] = useColorScheme();
   const isLight = scheme === 'light';
-  const [pathOpen, setPathOpen] = useState(false);
-  const [pathSel, setPathSel] = useState<PathOption>(L6_PATHS[0]);
+  const [selIdx, setSelIdx] = useState(0);
+  const [dir, setDir] = useState(0);              // -1 = slid left, +1 = slid right
   const [expandedId, setExpandedId] = useState<string | null>(null);
-  const pathRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const onDoc = (e: MouseEvent) => {
-      if (pathRef.current && !pathRef.current.contains(e.target as Node)) setPathOpen(false);
-    };
-    document.addEventListener('mousedown', onDoc);
-    return () => document.removeEventListener('mousedown', onDoc);
-  }, []);
-
+  const pathSel = L6_PATHS[selIdx];
   // Light mode darkens the shared path color so figures read on white.
   const accent = isLight ? darkenFigure(pathSel.color) : pathSel.color;
 
+  const pickTrack = (idx: number) => {
+    if (idx === selIdx) return;
+    setDir(idx > selIdx ? 1 : -1);
+    setSelIdx(idx);
+    setExpandedId(null);
+  };
+
   return (
     <div className="w-full max-w-[760px] flex flex-col items-stretch gap-5">
-      <div ref={pathRef} className="relative self-center w-full max-w-[420px]">
-        <button
-          type="button"
-          onClick={() => setPathOpen(o => !o)}
-          className={`w-full flex items-center justify-between px-4 py-3 rounded-sm border outline-none transition-all ${
-            isLight ? "bg-white border-slate-400 shadow-sm" : "bg-[#070810] border-white/10"
-          }`}
-          style={{
-            borderColor: pathOpen ? accent : (isLight ? '#94A3B8' : `${accent}55`),
-            boxShadow: pathOpen ? `0 0 14px ${accent}33` : 'none',
-          }}
-        >
-          <div className="flex items-center gap-3 text-left">
-            <motion.span className="w-1.5 h-1.5 rounded-full"
-              style={{ backgroundColor: accent, boxShadow: `0 0 6px ${accent}` }}
-              animate={{ opacity: [0.5, 1, 0.5] }} transition={{ duration: 2, repeat: Infinity }} />
-            <div>
-              <div className={`text-[14px] font-mono font-semibold ${isLight ? 'text-[#0F172A]' : 'text-white/90'}`}>{pathSel.label}</div>
-              <div className="text-[10px] font-mono tracking-[0.22em] uppercase" style={{ color: isLight ? '#334155' : `${accent}aa` }}>
-                {pathSel.subtitle} · {pathSel.modules.length} modules
-              </div>
-            </div>
-          </div>
-          <motion.span animate={{ rotate: pathOpen ? 180 : 0 }} transition={{ duration: 0.2 }}
-            className="text-[12px] font-mono" style={{ color: accent }}>▾</motion.span>
-        </button>
-
-        <AnimatePresence>
-          {pathOpen && (
-            <motion.ul
-              initial={{ opacity: 0, y: -4 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -4 }}
-              transition={{ duration: 0.16 }}
-              className={`absolute left-0 right-0 mt-2 rounded-sm border backdrop-blur-md overflow-hidden z-40 ${
-                isLight ? "bg-white border-slate-400 shadow-lg" : "bg-[#070810]/97 border-white/8"
-              }`}
-              style={{ borderColor: isLight ? '#94A3B8' : 'rgba(255,255,255,0.08)' }}
+      {/* ─── Segmented track switcher: one tap, sliding pill, no hidden menu ─── */}
+      <div
+        role="tablist"
+        aria-label="Learning track"
+        className={`relative self-center w-full max-w-[580px] grid grid-cols-3 gap-1 p-1.5 rounded-2xl border backdrop-blur-md ${
+          isLight ? 'bg-slate-100/80 border-slate-300' : 'bg-[#070810]/80 border-white/10'
+        }`}
+      >
+        {L6_PATHS.map((opt, idx) => {
+          const isActive = idx === selIdx;
+          const optColor = isLight ? darkenFigure(opt.color) : opt.color;
+          return (
+            <button
+              key={opt.id}
+              type="button"
+              role="tab"
+              aria-selected={isActive}
+              onClick={() => pickTrack(idx)}
+              className="relative px-2 py-2.5 rounded-xl outline-none transition-colors"
             >
-              {L6_PATHS.map(opt => {
-                const isActive = opt.id === pathSel.id;
-                const optColor = isLight ? darkenFigure(opt.color) : opt.color;
-                return (
-                  <li key={opt.id}>
-                    <button type="button"
-                      onClick={() => { setPathSel(opt); setExpandedId(null); setPathOpen(false); }}
-                      className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors ${
-                        isLight ? 'hover:bg-slate-50' : 'hover:bg-white/[0.04]'
-                      }`}
-                      style={{
-                        backgroundColor: isActive ? (isLight ? `${optColor}22` : `${opt.color}14`) : 'transparent',
-                        borderLeft: `2px solid ${isActive ? optColor : 'transparent'}`,
-                      }}>
-                      <span className="w-1 h-1 rounded-full" style={{ backgroundColor: optColor, boxShadow: `0 0 5px ${optColor}` }} />
-                      <div className="flex-1">
-                        <div className={`text-[14px] font-mono font-semibold ${isLight ? 'text-[#0F172A]' : 'text-white/90'}`}>{opt.label}</div>
-                        <div className="text-[10px] font-mono tracking-[0.22em] uppercase" style={{ color: isLight ? '#334155' : `${opt.color}aa` }}>
-                          {opt.subtitle} · {opt.modules.length} modules
-                        </div>
-                      </div>
-                      {isActive && <span className="text-[12px] font-mono" style={{ color: optColor }}>●</span>}
-                    </button>
-                  </li>
-                );
-              })}
-            </motion.ul>
-          )}
-        </AnimatePresence>
+              {/* the single pill physically slides from the old tab to the new one */}
+              {isActive && (
+                <motion.span
+                  layoutId="trackPill"
+                  className="absolute inset-0 rounded-xl"
+                  style={{
+                    backgroundColor: isLight ? '#FFFFFF' : `${opt.color}1c`,
+                    border: `1px solid ${isLight ? optColor : `${opt.color}66`}`,
+                    boxShadow: isLight ? '0 2px 10px rgba(15,23,42,0.14)' : `0 0 18px ${opt.color}22`,
+                  }}
+                  transition={{ type: 'spring', stiffness: 420, damping: 34 }}
+                />
+              )}
+              <span className="relative z-10 flex flex-col items-center gap-1 leading-tight">
+                <span className="flex items-center gap-1.5">
+                  <motion.span className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+                    style={{ backgroundColor: optColor, boxShadow: `0 0 6px ${optColor}` }}
+                    animate={isActive ? { opacity: [0.5, 1, 0.5] } : { opacity: 0.45 }}
+                    transition={{ duration: 2, repeat: Infinity }} />
+                  <span className="text-[12px] sm:text-[13px] font-mono font-semibold text-center"
+                    style={{ color: isActive ? (isLight ? '#0F172A' : '#fff') : (isLight ? '#475569' : 'rgba(255,255,255,0.55)') }}>
+                    {opt.label}
+                  </span>
+                </span>
+                <span className="text-[8px] sm:text-[9px] font-mono tracking-[0.16em] uppercase"
+                  style={{ color: isActive ? (isLight ? optColor : `${opt.color}cc`) : (isLight ? '#94A3B8' : 'rgba(255,255,255,0.3)') }}>
+                  {opt.comingSoon ? 'Coming soon' : `${opt.modules.length} modules`}
+                </span>
+              </span>
+            </button>
+          );
+        })}
       </div>
 
-      <ul className="w-full flex flex-col gap-3">
-        {pathSel.modules.map((mod, idx) => {
+      {/* active-track subtitle, fades on switch */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={pathSel.id + '-sub'}
+          initial={{ opacity: 0, y: -3 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 3 }}
+          transition={{ duration: 0.18 }}
+          className="self-center -mt-2 text-[10px] font-mono tracking-[0.26em] uppercase text-center"
+          style={{ color: isLight ? '#334155' : `${accent}aa` }}
+        >
+          {pathSel.subtitle}
+        </motion.div>
+      </AnimatePresence>
+
+      {/* ─── Module list: directional cross-slide as the track changes ─── */}
+      <AnimatePresence mode="wait" custom={dir}>
+        <motion.ul
+          key={pathSel.id}
+          custom={dir}
+          variants={TRACK_VARIANTS}
+          initial="enter" animate="center" exit="exit"
+          transition={{ duration: 0.26, ease: 'easeInOut' }}
+          className="w-full flex flex-col gap-3">
+        {pathSel.comingSoon ? (
+          <motion.li
+            initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}
+            className="flex flex-col items-center gap-3 rounded-2xl border p-12 text-center"
+            style={{
+              borderColor: isLight ? '#94A3B8' : 'rgba(255,255,255,0.1)',
+              background: isLight ? '#FFFFFF' : 'rgba(6,7,12,0.55)',
+            }}>
+            <div className="text-2xl font-black" style={{ color: isLight ? '#0F172A' : '#fff' }}>Coming soon</div>
+            <p className="max-w-md text-[14px] leading-relaxed" style={{ color: isLight ? '#475569' : 'rgba(255,255,255,0.6)' }}>
+              The Verilog track is being rebuilt. Modules, testbenches and synthesis labs are on the way - master the Basic Electronics and DSD tracks first.
+            </p>
+          </motion.li>
+        ) : pathSel.modules.map((mod, idx) => {
           const isOpen = expandedId === mod.id;
           const locked = isModuleLocked(mod.submodules[0]?.route ?? mod.route);
           return (
@@ -1160,7 +1151,8 @@ const L6PathDropdown: React.FC<{ onPick: (route: string) => void }> = ({ onPick 
             </motion.li>
           );
         })}
-      </ul>
+        </motion.ul>
+      </AnimatePresence>
     </div>
   );
 };
@@ -1211,7 +1203,7 @@ export const HierarchicalGrindTree: React.FC = () => {
             animate={{ opacity: [0.4, 1, 0.4] }} transition={{ duration: 2, repeat: Infinity }} />
           Choose your path
         </div>
-        <L6PathDropdown onPick={(route) => {
+        <L6PathSwitcher onPick={(route) => {
           if (isModuleLocked(route)) { navigate('/login', { state: { from: route } }); return; }
           navigate(route);
         }} />

@@ -15,6 +15,7 @@ import {
   type SubScene,
 } from '../_subtractor/kit';
 import type { SubPage } from '../_subtractor/SubEngine';
+import { WorkbenchCTA } from '../_subtractor/kit';
 import { CONTENT } from './content';
 
 const ACCENTS = { I: '#38bdf8', II: '#f59e0b', III: '#fb7185', good: '#34d399' };
@@ -613,7 +614,13 @@ function componentFor(scene: SubScene): React.FC<any> {
         </TheoryScene>
       );
     case 'circuit':
-      return (p) => <TheoryScene {...p} scene={scene}><HalfSubCircuit isDarkMode={p.isDarkMode} accent={p.accent} /></TheoryScene>;
+      return (p) => (
+        <TheoryScene {...p} scene={scene}>
+          <HalfSubCircuit isDarkMode={p.isDarkMode} accent={p.accent} />
+          <WorkbenchCTA isDarkMode={p.isDarkMode} accent={p.accent} tutorial="half-subtractor"
+            titleEN="Build the half subtractor for real" titleHI="असली में half subtractor बनाइए" />
+        </TheoryScene>
+      );
     case 'activity':
       return (p) => <HalfSubActivity {...p} scene={scene} />;
     case 'flashcards':

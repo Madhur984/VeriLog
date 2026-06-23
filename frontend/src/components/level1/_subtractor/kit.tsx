@@ -13,10 +13,11 @@
  * component owns its own theme state - that lives in the shared useColorScheme
  * store, exactly like the rest of the app.
  */
-import React, { createContext, useContext, useState, useCallback, useRef } from 'react';
+import React, { createContext, useContext, useState, useCallback, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Languages, BookOpen, FileText, PlayCircle, ChevronDown, RotateCw, Eye,
+  Languages, BookOpen, FileText, PlayCircle, ChevronDown, RotateCw, Eye, Wrench, ArrowRight,
 } from 'lucide-react';
 import { QuizArena, type Problem } from '../dsd_module9_v1/components/QuizArena';
 
@@ -326,6 +327,123 @@ export const StepThrough: React.FC<{
   );
 };
 
+/* ───────────────────────── binary hero ─────────────────────────── */
+// A living cover motif: a 5-bit odometer that counts up, every bit flipping in
+// 3D as it changes, the decimal value morphing, and a scanline sweeping across.
+// Pure binary - language-neutral - so it fits every module on the track, and it
+// quietly drills binary<->decimal fluency before a single word of theory. Tap
+// to pause; tap again to resume; tap while paused steps one value forward.
+
+export const BinaryHero: React.FC<{ isDarkMode: boolean; accent: string; bitWidth?: number }>
+  = ({ isDarkMode, accent, bitWidth = 5 }) => {
+  const t = tone(isDarkMode);
+  const max = 1 << bitWidth;
+  const [n, setN] = useState(5 % max);
+  const [playing, setPlaying] = useState(true);
+  useEffect(() => {
+    if (!playing) return;
+    const id = setInterval(() => setN((v) => (v + 1) % max), 1150);
+    return () => clearInterval(id);
+  }, [playing, max]);
+  const arr = Array.from({ length: bitWidth }, (_, i) => (n >> (bitWidth - 1 - i)) & 1);
+  return (
+    <button
+      type="button"
+      onClick={() => (playing ? setPlaying(false) : setN((v) => (v + 1) % max))}
+      onDoubleClick={() => setPlaying(true)}
+      title="tap to pause / step · double-tap to play"
+      className={`relative mx-auto block w-full max-w-2xl overflow-hidden rounded-3xl border p-6 text-left ${tone(isDarkMode).card}`}
+    >
+      {/* sweeping scanline */}
+      <motion.span aria-hidden className="pointer-events-none absolute inset-y-0 w-28"
+        style={{ background: `linear-gradient(90deg, transparent, ${accent}26, transparent)` }}
+        animate={{ x: ['-30%', '130%'] }} transition={{ duration: 2.6, repeat: Infinity, ease: 'linear' }} />
+      <div className="relative flex flex-wrap items-end justify-center gap-2 sm:gap-3">
+        {arr.map((b, i) => (
+          <div key={i} className="flex flex-col items-center gap-1">
+            <span className={`font-mono text-[9px] tabular-nums ${t.faint}`}>{1 << (bitWidth - 1 - i)}</span>
+            <div className="h-11 w-11 [perspective:600px]">
+              <motion.div key={b}
+                initial={{ rotateX: -90, opacity: 0 }} animate={{ rotateX: 0, opacity: 1 }} transition={{ duration: 0.3 }}
+                className="flex h-full w-full items-center justify-center rounded-xl font-mono text-xl font-black tabular-nums"
+                style={{ background: b ? accent : 'transparent', color: b ? '#000' : accent, border: `1.5px solid ${accent}${b ? '' : '55'}` }}>
+                {b}
+              </motion.div>
+            </div>
+          </div>
+        ))}
+        <span className={`mx-1 self-center font-mono text-2xl font-black ${t.faint}`}>=</span>
+        <div className="flex min-w-[2.5ch] items-center justify-center self-center overflow-hidden">
+          <AnimatePresence mode="popLayout">
+            <motion.span key={n} initial={{ y: 16, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -16, opacity: 0 }}
+              transition={{ duration: 0.3 }} className="font-mono text-4xl font-black tabular-nums" style={{ color: accent }}>
+              {n}
+            </motion.span>
+          </AnimatePresence>
+        </div>
+      </div>
+      <div className={`relative mt-3 text-center font-mono text-[10px] uppercase tracking-[0.3em] ${t.faint}`}>
+        {playing ? 'live · tap to pause' : 'paused · tap to step · dbl-tap to play'}
+      </div>
+    </button>
+  );
+};
+
+/* ───────────────────────── flow rail ───────────────────────────── */
+// "Bits -> logic -> result" - the one loop every module on this track shares.
+// Animated pulses travel the wires from the input pins through the logic block
+// to the output, so the recap leaves a moving mental model, not just a list.
+
+export const FlowRail: React.FC<{ isDarkMode: boolean; accent: string }>
+  = ({ isDarkMode, accent }) => {
+  const { lang } = useSubLang();
+  const t = tone(isDarkMode);
+  const dim = isDarkMode ? '#334155' : '#cbd5e1';
+  const box = isDarkMode ? '#0a0e1a' : '#ffffff';
+  const Pulse: React.FC<{ x1: number; y1: number; x2: number; y2: number; delay: number }> = ({ x1, y1, x2, y2, delay }) => (
+    <motion.circle r="4" fill={accent}
+      initial={{ cx: x1, cy: y1, opacity: 0 }}
+      animate={{ cx: [x1, x2], cy: [y1, y2], opacity: [0, 1, 1, 0] }}
+      transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut', delay }} />
+  );
+  return (
+    <Card isDarkMode={isDarkMode}>
+      <div className="mb-2 text-center font-mono text-[10px] uppercase tracking-[0.3em]" style={{ color: accent }}>
+        {lang === 'hi' ? 'bits → logic → नतीजा' : 'bits → logic → result'}
+      </div>
+      <svg viewBox="0 0 320 120" className="mx-auto w-full max-w-lg">
+        {/* wires */}
+        <line x1="58" y1="40" x2="124" y2="50" stroke={dim} strokeWidth="2.5" strokeLinecap="round" />
+        <line x1="58" y1="80" x2="124" y2="70" stroke={dim} strokeWidth="2.5" strokeLinecap="round" />
+        <line x1="196" y1="60" x2="262" y2="60" stroke={dim} strokeWidth="2.5" strokeLinecap="round" />
+        {/* traveling pulses */}
+        <Pulse x1={58} y1={40} x2={124} y2={50} delay={0} />
+        <Pulse x1={58} y1={80} x2={124} y2={70} delay={0.25} />
+        <Pulse x1={196} y1={60} x2={262} y2={60} delay={0.85} />
+        {/* input pins */}
+        {[{ y: 40, l: 'A' }, { y: 80, l: 'B' }].map((p) => (
+          <g key={p.l}>
+            <circle cx="40" cy={p.y} r="16" fill={box} stroke={accent} strokeWidth="2.5" />
+            <text x="40" y={p.y + 5} textAnchor="middle" fontFamily="monospace" fontSize="15" fontWeight="800" fill={accent}>{p.l}</text>
+          </g>
+        ))}
+        {/* logic block */}
+        <rect x="124" y="32" width="72" height="56" rx="12" fill={box} stroke={accent} strokeWidth="2.5" />
+        <text x="160" y="58" textAnchor="middle" fontFamily="monospace" fontSize="11" fontWeight="800" fill={accent}>LOGIC</text>
+        <text x="160" y="74" textAnchor="middle" fontFamily="monospace" fontSize="9" fill={dim}>gates</text>
+        {/* output node */}
+        <circle cx="284" cy="60" r="19" fill={accent} />
+        <text x="284" y="66" textAnchor="middle" fontFamily="monospace" fontSize="18" fontWeight="900" fill={box}>=</text>
+      </svg>
+      <p className={`mt-2 text-center text-[13px] ${t.sub}`}>
+        {lang === 'hi'
+          ? 'पूरे track का यही एक loop है - input bits दीजिए, gates को compute करने दीजिए, नतीजा पढ़िए।'
+          : 'Every page on this track is the same loop - drive the input bits, let the gates compute, read the result.'}
+      </p>
+    </Card>
+  );
+};
+
 /* ───────────────────────── generic scenes ──────────────────────── */
 
 interface SceneProps { isDarkMode: boolean; accent: string; scene: SubScene }
@@ -344,6 +462,7 @@ export const CoverScene: React.FC<SceneProps & { moduleTitle: string; moduleSubt
         <h1 className={`mx-auto mt-6 max-w-3xl text-4xl font-black tracking-tight sm:text-6xl ${t.text}`}>{moduleTitle}</h1>
         {moduleSubtitle && <p className={`mx-auto mt-4 max-w-2xl text-lg ${t.sub}`}>{moduleSubtitle}</p>}
       </div>
+      <BinaryHero isDarkMode={isDarkMode} accent={accent} />
       <Card isDarkMode={isDarkMode} className="mx-auto max-w-3xl">
         <Eyebrow accent={accent}>{lang === 'hi' ? 'इस module में' : 'In this module'}</Eyebrow>
         <div className="mt-4"><Bullets isDarkMode={isDarkMode} accent={accent} en={scene.theoryEN} hi={scene.theoryHI} /></div>
@@ -447,6 +566,7 @@ export const RecapScene: React.FC<SceneProps & { children?: React.ReactNode }>
       <Card isDarkMode={isDarkMode}>
         <Bullets isDarkMode={isDarkMode} accent={accent} en={scene.theoryEN} hi={scene.theoryHI} />
       </Card>
+      <FlowRail isDarkMode={isDarkMode} accent={accent} />
       {children}
     </SceneShell>
   );
@@ -523,6 +643,43 @@ export const QuizScene: React.FC<{
   return (
     <div key={lang}>
       <QuizArena isDarkMode={isDarkMode} accent={accent} tag={tag} title={title} intro={intro} problems={problems} />
+    </div>
+  );
+};
+
+/* ───────────────────────── workbench CTA ───────────────────────── */
+// "Build it for real" panel that launches the live CircuitVerse workbench with
+// the matching guided-build rail (/workbench?tutorial=<id>).
+
+export const WorkbenchCTA: React.FC<{
+  isDarkMode: boolean; accent: string; tutorial: string;
+  titleEN?: string; titleHI?: string; bodyEN?: string; bodyHI?: string;
+}> = ({ isDarkMode, accent, tutorial, titleEN, titleHI, bodyEN, bodyHI }) => {
+  const navigate = useNavigate();
+  const { lang } = useSubLang();
+  const t = tone(isDarkMode);
+  return (
+    <div className="rounded-3xl border p-6" style={{ borderColor: `${accent}55`, background: `${accent}0d` }}>
+      <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:text-left">
+        <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-2xl" style={{ background: `${accent}1a`, color: accent }}>
+          <Wrench size={26} />
+        </div>
+        <div className="flex-1">
+          <h3 className={`text-xl font-black ${t.text}`}>
+            {lang === 'hi' ? (titleHI ?? 'इसे असली में बनाइए') : (titleEN ?? 'Build it for real')}
+          </h3>
+          <p className={`mt-1 text-[14px] ${t.sub}`}>
+            {lang === 'hi'
+              ? (bodyHI ?? 'live CircuitVerse workbench खोलिए और यह circuit ख़ुद, कदम-दर-कदम बनाइए - हर row को असली hardware पर साबित कीजिए।')
+              : (bodyEN ?? 'Open the live CircuitVerse workbench and build this circuit yourself, step by step - then prove every row on real hardware.')}
+          </p>
+        </div>
+        <button onClick={() => navigate(`/workbench?tutorial=${tutorial}`)}
+          className="flex items-center gap-2 rounded-2xl px-6 py-3 font-black text-black transition-all active:scale-95"
+          style={{ background: accent, boxShadow: `0 10px 30px ${accent}33` }}>
+          {lang === 'hi' ? 'Workbench खोलें' : 'Open the workbench'} <ArrowRight size={18} />
+        </button>
+      </div>
     </div>
   );
 };

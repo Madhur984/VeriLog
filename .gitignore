@@ -53,3 +53,8 @@ ENV/
 # Generated audit reports
 reports/
 
+# Local scratch and source assets
+_scratch/
+src/be/
+
+

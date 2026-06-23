@@ -7,6 +7,8 @@ import { RippleCarryTutorial } from '../components/workbench/RippleCarryTutorial
 import { CarryLookAheadTutorial } from '../components/workbench/CarryLookAheadTutorial';
 import { ParallelPrefixTutorial } from '../components/workbench/ParallelPrefixTutorial';
 import { SerialAdderTutorial } from '../components/workbench/SerialAdderTutorial';
+import { HalfSubtractorTutorial } from '../components/workbench/HalfSubtractorTutorial';
+import { FullSubtractorTutorial } from '../components/workbench/FullSubtractorTutorial';
 
 /**
  * /workbench - the live CircuitVerse editor (embed mode: no API auth needed;
@@ -31,6 +33,8 @@ export default function Workbench() {
     : tutorialId === 'carry-lookahead' ? CarryLookAheadTutorial
     : tutorialId === 'parallel-prefix' ? ParallelPrefixTutorial
     : tutorialId === 'serial-adder' ? SerialAdderTutorial
+    : tutorialId === 'half-subtractor' ? HalfSubtractorTutorial
+    : tutorialId === 'full-subtractor' ? FullSubtractorTutorial
     : null;
   const tutorial = Rail !== null;
   const [railOpen, setRailOpen] = useState(true);
