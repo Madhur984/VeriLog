@@ -10,18 +10,18 @@ export const CONTENT = ({
       "kind": "cover",
       "subtitle": "Meet Adarsh - the traffic cop whose parking lot quietly performs one-bit binary subtraction.",
       "theoryEN": [
-        "This module teaches the Half Subtractor - the circuit that subtracts one bit from another.",
-        "Whole module runs on one story: Adarsh's parking lot, where empty spaces meet arriving cars.",
-        "Two outputs to track: D (Difference) - what's left on the ground, and B (Borrow) - the overflow car.",
-        "You will leave knowing two equations cold: D = x XOR y and B = x'·y.",
-        "Last stop: why this circuit is 'amnesic' - and why that flaw forces engineers to build the full subtractor."
+        "This module teaches the half subtractor, the small logic circuit that subtracts one binary bit from another. A bit is just a single binary digit that is either 0 or 1, and subtracting one bit from another is the smallest possible piece of the subtraction you already do on paper. Master this one column and the rest of binary subtraction is only repetition.",
+        "The whole module runs on a single story so the abstract symbols always point to something you can picture. Adarsh is a traffic cop who runs a tiny parking lot, where empty spaces meet arriving cars, and every event in that lot maps exactly onto a one-bit subtraction.",
+        "There are two outputs to keep your eye on. D, the Difference, is what is physically left on the ground after the cars and spaces have sorted themselves out, and B, the Borrow, is the overflow alarm that fires when a car shows up with nowhere to park.",
+        "By the end you will know two equations cold and understand why they are true, not just memorise them: D = x XOR y (Difference is 1 when the inputs differ) and B = x'.y (Borrow is 1 only when there is no space but a car arrives).",
+        "The last stop is the catch. This circuit is 'amnesic' because it has no way to remember a borrow handed to it from a neighbouring column, and that single flaw is exactly what forces engineers to build the bigger full subtractor in the next module."
       ],
       "theoryHI": [
-        "इस module में हम Half Subtractor सीखेंगे - वह circuit जो एक bit में से दूसरा bit घटाती है।",
-        "पूरा module एक ही कहानी पर चलता है: Adarsh की parking lot, जहाँ खाली जगहें और आती हुई गाड़ियाँ मिलती हैं।",
-        "दो outputs पर नज़र रखनी है: D (Difference) - ज़मीन पर जो बचता है, और B (Borrow) - overflow वाली गाड़ी।",
-        "अंत तक दो equations आपको ज़बानी याद होंगी: D = x XOR y और B = x'·y।",
-        "आख़िरी पड़ाव: यह circuit 'भुलक्कड़' (amnesic) क्यों है - और यही कमी engineers को full subtractor बनाने पर मजबूर करती है।"
+        "इस module में हम half subtractor सीखेंगे, वह छोटी logic circuit जो एक binary bit में से दूसरा bit घटाती है। bit बस एक binary digit है जो या तो 0 है या 1, और एक bit में से दूसरा घटाना उसी subtraction का सबसे छोटा टुकड़ा है जो आप कागज़ पर करते हैं। इस एक column को समझ लिया तो बाकी पूरी binary subtraction सिर्फ़ इसी की पुनरावृत्ति है।",
+        "पूरा module एक ही कहानी पर चलता है ताकि ये abstract symbols हमेशा किसी ठोस चीज़ की ओर इशारा करें। Adarsh एक traffic cop है जो एक नन्ही parking lot चलाता है, जहाँ खाली जगहें और आती हुई गाड़ियाँ मिलती हैं, और उस lot की हर घटना ठीक एक one-bit subtraction पर fit बैठती है।",
+        "दो outputs पर नज़र रखनी है। D, Difference, वह है जो गाड़ियों और जगहों के निपट जाने के बाद ज़मीन पर सचमुच बचता है, और B, Borrow, वह overflow अलार्म है जो तब बजता है जब गाड़ी आ जाए पर park करने को कोई जगह न हो।",
+        "अंत तक दो equations आपको ज़बानी याद होंगी और आप समझेंगे कि वे सच क्यों हैं, सिर्फ़ रटेंगे नहीं: D = x XOR y (Difference तब 1 जब दोनों inputs अलग हों) और B = x'.y (Borrow सिर्फ़ तब 1 जब जगह न हो पर गाड़ी आ जाए)।",
+        "आख़िरी पड़ाव है वह catch। यह circuit 'भुलक्कड़' (amnesic) है क्योंकि इसके पास पड़ोसी column से मिले borrow को याद रखने का कोई रास्ता नहीं, और यही एक कमी engineers को अगले module में बड़ा full subtractor बनाने पर मजबूर करती है।"
       ],
       "transcriptEN": "Welcome to Binary Parking Logic. Subtraction sounds harder than addition, but in binary it comes down to one tiny question repeated over and over: do these two bits match, and did I run out of room? To answer it we hire Adarsh, a traffic cop with a small parking lot. Empty spaces are one input, arriving cars are the other, and what happens in the lot - a car parks, a space sits empty, or a car has to be sent next door - is exactly what a half subtractor computes. By the end you'll read its two outputs, Difference and Borrow, as naturally as Adarsh reads his lot.",
       "transcriptHI": "Binary Parking Logic में आपका स्वागत है। घटाना (subtraction) जोड़ने से कठिन लगता है, पर binary में यह बार-बार दोहराए जाने वाले एक छोटे से सवाल पर आ टिकता है: क्या ये दो bits आपस में मेल खाते हैं, और क्या जगह ख़त्म हो गई? इसका जवाब देने के लिए हमने Adarsh को रखा है - एक traffic cop जिसकी एक छोटी parking lot है। खाली जगहें एक input हैं, आती गाड़ियाँ दूसरा input, और lot में जो होता है - गाड़ी park हो जाए, जगह खाली रह जाए, या गाड़ी को बग़ल वाले lot में भेजना पड़े - वही half subtractor निकालता है। अंत तक आप इसके दोनों outputs, Difference और Borrow, को उतनी ही सहजता से पढ़ेंगे जितनी सहजता से Adarsh अपनी lot पढ़ता है।",
@@ -33,18 +33,16 @@ export const CONTENT = ({
       "kind": "video",
       "subtitle": "A two-minute story: how a parking lot becomes a subtraction machine.",
       "theoryEN": [
-        "Video framing: a half subtractor takes two single bits, x and y, and computes x − y.",
-        "x is the minuend (the number you start with); y is the subtrahend (the number you take away).",
-        "The lot model: x = empty spaces available, y = cars arriving that want a space.",
-        "Two results come out: D = Difference (the on-the-ground result) and B = Borrow (did we run short?).",
-        "Watch for the one tricky case - 0 spaces but a car arrives - that's where Borrow lights up."
+        "Here is the whole idea before the video plays: a half subtractor takes two single bits, x and y, and computes x minus y. That is it - one column of subtraction, nothing more, and only four input combinations exist.",
+        "The two inputs have proper names worth learning now. x is the minuend, the number you start with and subtract from, and y is the subtrahend, the number you take away. In our lot, x is the empty spaces Adarsh has and y is the cars arriving that want those spaces.",
+        "Two results come out of the box. D is the Difference, the honest on-the-ground result after the dust settles, and B is the Borrow, a flag that answers the question 'did I run short of room?'.",
+        "Keep your eye on the one tricky case the video builds toward: zero spaces but a car still arrives. That is the only situation where Borrow lights up, and it is the entire reason the Borrow wire has to exist at all."
       ],
       "theoryHI": [
-        "Video का सार: half subtractor दो single bits, x और y, लेता है और x − y निकालता है।",
-        "x है minuend (वह संख्या जहाँ से शुरू करते हैं); y है subtrahend (वह संख्या जो घटाई जाती है)।",
-        "Lot का model: x = उपलब्ध खाली जगहें, y = आती हुई गाड़ियाँ जिन्हें जगह चाहिए।",
-        "दो results निकलते हैं: D = Difference (ज़मीनी नतीजा) और B = Borrow (क्या जगह कम पड़ गई?)।",
-        "एक tricky case पर ध्यान दें - 0 जगहें पर एक गाड़ी आ गई - यहीं Borrow जलता है।"
+        "Video चलने से पहले पूरा विचार यह है: half subtractor दो single bits, x और y, लेता है और x minus y निकालता है। बस इतना ही - subtraction का एक column, इससे ज़्यादा कुछ नहीं, और कुल चार ही input combinations होते हैं।",
+        "दोनों inputs के ठीक नाम अभी सीख लेने लायक हैं। x है minuend, वह संख्या जहाँ से शुरू करते हैं और जिसमें से घटाते हैं, और y है subtrahend, वह संख्या जो घटाई जाती है। हमारी lot में x है Adarsh की खाली जगहें और y है आती गाड़ियाँ जिन्हें वे जगहें चाहिए।",
+        "box से दो results निकलते हैं। D है Difference, धूल बैठ जाने के बाद का सच्चा ज़मीनी नतीजा, और B है Borrow, एक झंडी जो इस सवाल का जवाब देती है कि 'क्या मेरी जगह कम पड़ गई?'।",
+        "उस एक tricky case पर नज़र रखिए जिसकी ओर video बढ़ता है: शून्य जगहें पर फिर भी गाड़ी आ जाए। यही एकमात्र स्थिति है जहाँ Borrow जलता है, और यही पूरी वजह है कि Borrow wire का होना ज़रूरी है।"
       ],
       "transcriptEN": "Here's the whole idea in one breath. A half subtractor has two input wires, x and y, each carrying a single bit. It outputs x minus y. In subtraction language, x is the minuend - the amount you start with - and y is the subtrahend - the amount being taken away. Now picture Adarsh's lot. x is how many parking spaces are free, either zero or one. y is how many cars roll up to the gate, zero or one. The lot reports two things back to him. The Difference, D, is what's physically true on the ground afterwards. The Borrow, B, is a red flag that says: I didn't have room, so a car had to borrow a slot from the next lot down the road. Keep your eye on that last situation - zero free spaces and a car still arrives - because that single case is the entire reason Borrow exists.",
       "transcriptHI": "पूरा विचार एक साँस में। Half subtractor के दो input wires हैं, x और y, हर एक पर एक single bit। यह x minus y output करता है। Subtraction की भाषा में x है minuend - वह मात्रा जहाँ से शुरू करते हैं - और y है subtrahend - वह मात्रा जो घटाई जा रही है। अब Adarsh की lot की कल्पना कीजिए। x बताता है कितनी parking जगहें खाली हैं, या तो शून्य या एक। y बताता है कितनी गाड़ियाँ gate पर आती हैं, शून्य या एक। Lot उसे दो चीज़ें वापस बताती है। Difference, D, वह है जो बाद में ज़मीन पर सचमुच सच होता है। Borrow, B, एक लाल झंडी है जो कहती है: मेरे पास जगह नहीं थी, इसलिए एक गाड़ी को अगले lot से एक slot borrow करना पड़ा। उस आख़िरी स्थिति पर नज़र रखिए - शून्य खाली जगह पर फिर भी गाड़ी आ गई - क्योंकि यही एक case Borrow के होने की पूरी वजह है।",
@@ -56,20 +54,18 @@ export const CONTENT = ({
       "kind": "theory",
       "subtitle": "Pinning each symbol to something you can see in the lot.",
       "theoryEN": [
-        "x = Minuend = number of EMPTY parking spaces Adarsh has right now (0 or 1).",
-        "y = Subtrahend = number of CARS arriving that want a space (0 or 1).",
-        "D = Difference = the result on the ground: a space left empty, or a car newly parked.",
-        "B = Borrow = overflow: a car that found no room and had to borrow a space from the NEXT lot.",
-        "The operation is always x − y: spaces you have, minus cars that want them.",
-        "Everything in this module is one column, one bit each - no carrying anything in yet."
+        "Before any logic, let us nail each symbol to something you can literally point at in the lot, because once the symbols feel real the equations stop being scary. There are exactly four of them: two inputs, x and y, and two outputs, D and B.",
+        "x is the minuend, and in the lot it is the number of empty parking spaces Adarsh has right now. Because we work one bit at a time, x is always either 0 (no free space) or 1 (one free space). y is the subtrahend, the number of cars arriving that want a space, again 0 (no car) or 1 (one car).",
+        "The two outputs report what happened. D is the Difference, the result on the ground: either a space was left empty or a car newly parked, and D reads 1 whenever something is left over in this column. B is the Borrow, the overflow signal: it stands for a car that found no room and had to borrow a space from the next lot down the street.",
+        "The operation never changes - it is always x minus y, the spaces you have minus the cars that want them. If you have 1 space and 1 car, that is 1 minus 1 = 0 left over; if you have 0 spaces and 1 car, that is 0 minus 1, which cannot be done without borrowing.",
+        "One detail matters enormously and comes back to bite us at the very end: everything in this module is a single column, one bit of spaces against one bit of cars, with nothing carried IN from a previous column yet. Remember that the lot starts each morning with a clean slate and no debt handed to it."
       ],
       "theoryHI": [
-        "x = Minuend = इस समय Adarsh के पास कितनी खाली parking जगहें हैं (0 या 1)।",
-        "y = Subtrahend = कितनी गाड़ियाँ आ रही हैं जिन्हें जगह चाहिए (0 या 1)।",
-        "D = Difference = ज़मीन पर नतीजा: या तो एक जगह खाली रह गई, या एक गाड़ी नई park हुई।",
-        "B = Borrow = overflow: वह गाड़ी जिसे जगह नहीं मिली और जिसे अगले (NEXT) lot से एक जगह borrow करनी पड़ी।",
-        "operation हमेशा x − y है: आपके पास जितनी जगहें, उनमें से जितनी गाड़ियाँ चाहती हैं उतनी घटा दो।",
-        "इस module में सब कुछ एक ही column है, हर एक एक bit - अभी कोई borrow अंदर नहीं आ रहा।"
+        "किसी भी logic से पहले, हर symbol को lot की किसी ऐसी चीज़ से बाँध दें जिसे आप सचमुच उँगली से दिखा सकें, क्योंकि जैसे ही symbols असली लगने लगते हैं equations डरावने नहीं रहते। इनकी कुल संख्या ठीक चार है: दो inputs, x और y, और दो outputs, D और B।",
+        "x है minuend, और lot में यह इस समय Adarsh के पास खाली parking जगहों की संख्या है। चूँकि हम एक समय एक ही bit पर काम करते हैं, x हमेशा या तो 0 (कोई खाली जगह नहीं) या 1 (एक खाली जगह) होता है। y है subtrahend, आती गाड़ियों की संख्या जिन्हें जगह चाहिए, फिर 0 (कोई गाड़ी नहीं) या 1 (एक गाड़ी)।",
+        "दोनों outputs बताते हैं कि क्या हुआ। D है Difference, ज़मीन पर नतीजा: या तो एक जगह खाली रह गई या एक गाड़ी नई park हुई, और D तब 1 पढ़ता है जब इस column में कुछ बच जाए। B है Borrow, overflow का संकेत: यह उस गाड़ी को दर्शाता है जिसे जगह नहीं मिली और जिसे सड़क पर अगले lot से एक जगह borrow करनी पड़ी।",
+        "operation कभी नहीं बदलता - यह हमेशा x minus y है, आपके पास जितनी जगहें, उनमें से जितनी गाड़ियाँ चाहती हैं उतनी घटा दो। 1 जगह और 1 गाड़ी हो तो 1 minus 1 = 0 बचा; 0 जगहें और 1 गाड़ी हो तो 0 minus 1, जो borrow किए बिना हो ही नहीं सकता।",
+        "एक बात बेहद अहम है और अंत में यही हमें काटने वापस आती है: इस module में सब कुछ एक ही column है, जगहों का एक bit गाड़ियों के एक bit के सामने, और अभी पिछले column से कुछ भी अंदर (IN) pass नहीं हो रहा। याद रखिए कि lot हर सुबह साफ़ स्लेट से शुरू होती है, उस पर कोई पुराना कर्ज़ नहीं।"
       ],
       "transcriptEN": "Let's lock the four symbols to things you can point at. x, the minuend, is the empty spaces in the lot - zero or one. y, the subtrahend, is the cars showing up at the gate - zero or one. The whole machine computes x minus y, spaces minus cars. Out the other side come two numbers. D, the Difference, is the honest state of the lot afterwards - was a space left open, or did a car settle into one. B, the Borrow, is the alarm: it goes high only when the lot couldn't cope and a car had to be borrowed against the next lot over. Notice we are dealing with exactly one column of subtraction here - one bit of spaces, one bit of cars - and crucially, nothing is being passed IN from a previous column yet. Remember that detail; it comes back to bite us at the very end.",
       "transcriptHI": "चलिए चारों symbols को ऐसी चीज़ों से बाँध दें जिन्हें आप उँगली से दिखा सकें। x, minuend, lot की खाली जगहें हैं - शून्य या एक। y, subtrahend, gate पर आती गाड़ियाँ हैं - शून्य या एक। पूरी machine x minus y निकालती है, जगहें minus गाड़ियाँ। दूसरी तरफ़ से दो संख्याएँ निकलती हैं। D, Difference, बाद में lot की सच्ची स्थिति है - कोई जगह खुली रही, या कोई गाड़ी उसमें बैठ गई। B, Borrow, अलार्म है: यह तभी high होता है जब lot सँभाल नहीं पाई और एक गाड़ी को अगले lot के ख़िलाफ़ borrow करना पड़ा। ग़ौर कीजिए कि यहाँ हम subtraction के ठीक एक column से जूझ रहे हैं - जगहों का एक bit, गाड़ियों का एक bit - और सबसे अहम, अभी पिछले column से कुछ भी अंदर pass नहीं हो रहा। यह बात याद रखिए; अंत में यही हमें काटने वापस आती है।",
@@ -81,20 +77,18 @@ export const CONTENT = ({
       "kind": "theory",
       "subtitle": "Every possible morning at the lot, written in Adarsh's own logbook.",
       "theoryEN": [
-        "Quiet Day - 0 spaces, 0 cars (x=0, y=0): nothing happens. D=0, B=0.",
-        "Empty Spot - 1 space, 0 cars (x=1, y=0): a space sits open all day. D=1, B=0.",
-        "Perfect Match - 1 space, 1 car (x=1, y=1): the car parks neatly, lot is full and even. D=0, B=0.",
-        "The Catch - 0 spaces, 1 car (x=0, y=1): no room! The car borrows from the next lot. D=1, B=1.",
-        "Only one of four mornings ('The Catch') ever raises a Borrow - that asymmetry is the heart of subtraction.",
-        "Read every scenario as 'spaces minus cars', and D is just the leftover digit in this column."
+        "Because each input is just 0 or 1, Adarsh's lot can only ever face four different mornings, and he keeps every one of them in his logbook. Walking through all four is the fastest way to feel the whole circuit, since there is literally nothing else it can ever do.",
+        "The first morning is the Quiet Day: 0 spaces and 0 cars (x=0, y=0). Nobody comes and there is nothing to give, so the lot simply does nothing - the Difference is 0 and there is no Borrow. The second is the Empty Spot: 1 space but 0 cars (x=1, y=0). A free space just sits open glowing all day with no taker, so the Difference is 1 (a space is left over) and still no Borrow.",
+        "The third morning is the Perfect Match: 1 space and 1 car (x=1, y=1). The car slides neatly into the space, the lot ends full and perfectly even, so the Difference is 0 and there is no Borrow - this is the 1 minus 1 = 0 case. So far, three calm mornings.",
+        "The fourth is The Catch, the one Adarsh dreads: 0 spaces but a car still arrives (x=0, y=1). There is no room, yet the demand is real, so the car is borrowed against the next lot down the road. On the ground a car still needs placing, so the Difference is 1, and this is the single time the Borrow flag flies, B=1.",
+        "Notice the asymmetry that is the heart of subtraction: out of four mornings, only The Catch ever raises a Borrow. Read every scenario the same way, as 'spaces minus cars', and you will see that D is simply the leftover digit in this one column while B is the warning that you had to reach into the next column to pay your debt."
       ],
       "theoryHI": [
-        "Quiet Day - 0 जगहें, 0 गाड़ियाँ (x=0, y=0): कुछ नहीं होता। D=0, B=0।",
-        "Empty Spot - 1 जगह, 0 गाड़ियाँ (x=1, y=0): एक जगह दिन भर खुली रहती है। D=1, B=0।",
-        "Perfect Match - 1 जगह, 1 गाड़ी (x=1, y=1): गाड़ी सुथरे से park हो जाती है, lot भरी और बराबर। D=0, B=0।",
-        "The Catch - 0 जगहें, 1 गाड़ी (x=0, y=1): जगह नहीं! गाड़ी अगले lot से borrow करती है। D=1, B=1।",
-        "चार में से सिर्फ़ एक सुबह ('The Catch') कभी Borrow उठाती है - यही asymmetry subtraction का दिल है।",
-        "हर scenario को 'जगहें minus गाड़ियाँ' की तरह पढ़िए, और D बस इस column में बचा हुआ अंक है।"
+        "चूँकि हर input बस 0 या 1 है, Adarsh की lot कभी सिर्फ़ चार अलग-अलग सुबहों का ही सामना कर सकती है, और वह हर एक को अपने logbook में रखता है। चारों से गुज़रना पूरी circuit को महसूस करने का सबसे तेज़ तरीका है, क्योंकि इसके अलावा यह सचमुच कुछ कर ही नहीं सकती।",
+        "पहली सुबह है Quiet Day: 0 जगहें और 0 गाड़ियाँ (x=0, y=0)। कोई नहीं आता और देने को कुछ नहीं, इसलिए lot बस कुछ नहीं करती - Difference 0 और कोई Borrow नहीं। दूसरी है Empty Spot: 1 जगह पर 0 गाड़ियाँ (x=1, y=0)। एक खाली जगह बिना किसी लेने वाले के दिन भर चमकती बैठी रहती है, इसलिए Difference 1 (एक जगह बच गई) और फिर भी कोई Borrow नहीं।",
+        "तीसरी सुबह है Perfect Match: 1 जगह और 1 गाड़ी (x=1, y=1)। गाड़ी सुथरे से जगह में सरक जाती है, lot भरी और बिल्कुल बराबर ख़त्म होती है, इसलिए Difference 0 और कोई Borrow नहीं - यह 1 minus 1 = 0 वाला case है। अब तक तीन शांत सुबहें।",
+        "चौथी है The Catch, जिससे Adarsh डरता है: 0 जगहें पर फिर भी एक गाड़ी आ जाती है (x=0, y=1)। जगह नहीं है, फिर भी माँग असली है, इसलिए गाड़ी को सड़क पर अगले lot के ख़िलाफ़ borrow किया जाता है। ज़मीन पर अब भी एक गाड़ी को जगह चाहिए, इसलिए Difference 1, और यही अकेली बार है जब Borrow का झंडा लहराता है, B=1।",
+        "उस asymmetry पर ग़ौर कीजिए जो subtraction का दिल है: चार सुबहों में से सिर्फ़ The Catch ही कभी Borrow उठाती है। हर scenario को एक ही तरह 'जगहें minus गाड़ियाँ' की तरह पढ़िए, और आप देखेंगे कि D बस इस एक column में बचा हुआ अंक है जबकि B वह चेतावनी है कि अपना कर्ज़ चुकाने के लिए आपको अगले column में हाथ डालना पड़ा।"
       ],
       "transcriptEN": "Adarsh keeps a logbook, and there are only four mornings it can ever record. Morning one, the Quiet Day: no empty spaces, no cars. The lot does nothing, the difference is zero, no borrow. Morning two, the Empty Spot: one space free, no cars come. The space just sits there glowing all day - difference one, no borrow. Morning three, the Perfect Match: one free space, one car arrives, the car slides in and the lot is neatly full. The accounts balance, so difference is zero and again no borrow. And then morning four, the one Adarsh dreads - The Catch: zero free spaces, but a car still rolls up. There's no room. To honour the demand, the car is borrowed against the next lot down the street. On the ground a car still needs placing, so the difference reads one, and this time the borrow flag flies. Four mornings, and only The Catch ever borrows. Hold that thought.",
       "transcriptHI": "Adarsh एक logbook रखता है, और इसमें सिर्फ़ चार ही सुबहें दर्ज हो सकती हैं। पहली सुबह, Quiet Day: कोई खाली जगह नहीं, कोई गाड़ी नहीं। Lot कुछ नहीं करती, difference शून्य, कोई borrow नहीं। दूसरी सुबह, Empty Spot: एक जगह खाली, कोई गाड़ी नहीं आती। जगह बस दिन भर चमकती बैठी रहती है - difference एक, कोई borrow नहीं। तीसरी सुबह, Perfect Match: एक खाली जगह, एक गाड़ी आती है, गाड़ी अंदर सरक जाती है और lot सुथरे से भर जाती है। हिसाब बराबर हो जाता है, इसलिए difference शून्य और फिर कोई borrow नहीं। और फिर चौथी सुबह, जिससे Adarsh डरता है - The Catch: शून्य खाली जगह, पर फिर भी एक गाड़ी आ जाती है। जगह नहीं है। माँग पूरी करने के लिए गाड़ी को अगले lot के ख़िलाफ़ borrow किया जाता है। ज़मीन पर अब भी एक गाड़ी को जगह चाहिए, इसलिए difference एक पढ़ता है, और इस बार borrow का झंडा लहराता है। चार सुबहें, और सिर्फ़ The Catch ही कभी borrow करती है। यह बात पकड़े रखिए।",
@@ -106,22 +100,16 @@ export const CONTENT = ({
       "kind": "truth",
       "subtitle": "The four mornings compressed into one rigorous table.",
       "theoryEN": [
-        "Inputs x, y → Outputs D, B. Read each row as the subtraction x − y in one column.",
-        "x=0, y=0 → D=0, B=0  (Quiet Day).",
-        "x=1, y=0 → D=1, B=0  (Empty Spot).",
-        "x=1, y=1 → D=0, B=0  (Perfect Match).",
-        "x=0, y=1 → D=1, B=1  (The Catch - the only borrow).",
-        "Scan the D column: it's 1 exactly when x and y DIFFER - that's a XOR fingerprint.",
-        "Scan the B column: it's 1 in only one row, where x=0 and y=1 - remember that single row."
+        "Now we drop the story for a moment and write those same four mornings as a rigorous truth table, the engineer's standard tool. A truth table lists every possible input on the left and the matching outputs on the right, so two input columns (x and y) and two output columns (D and B) capture the entire behaviour with no story-telling left to argue about.",
+        "Read each row as the subtraction x minus y in a single column. The Quiet Day x=0, y=0 gives D=0, B=0; the Empty Spot x=1, y=0 gives D=1, B=0; the Perfect Match x=1, y=1 gives D=0, B=0; and The Catch x=0, y=1 gives D=1, B=1, the one and only borrow in the whole table.",
+        "Here is the trick experienced engineers always use: read each output column straight down on its own, ignoring the other one. Scan the D column and you will find it is 1 in exactly the two rows where x and y DIFFER and 0 where they agree - a wire that fires only on disagreement has a name, and that fingerprint is XOR.",
+        "Now scan the B column and you will find it is 1 in only a single solitary row, the one where x=0 and y=1. Burn that one row into memory and keep it strictly separate from the x=1, y=0 row, which is a common point of confusion but keeps Borrow firmly at 0 because having a spare space never forces you to borrow."
       ],
       "theoryHI": [
-        "Inputs x, y → Outputs D, B। हर row को एक column में x − y subtraction की तरह पढ़िए।",
-        "x=0, y=0 → D=0, B=0  (Quiet Day)।",
-        "x=1, y=0 → D=1, B=0  (Empty Spot)।",
-        "x=1, y=1 → D=0, B=0  (Perfect Match)।",
-        "x=0, y=1 → D=1, B=1  (The Catch - एकमात्र borrow)।",
-        "D column देखिए: यह ठीक तब 1 है जब x और y अलग (DIFFER) हों - यह XOR की पहचान है।",
-        "B column देखिए: यह सिर्फ़ एक row में 1 है, जहाँ x=0 और y=1 - वह अकेली row याद रखिए।"
+        "अब हम पल भर के लिए कहानी छोड़ कर उन्हीं चार सुबहों को एक सख़्त truth table के रूप में लिखते हैं, जो engineer का मानक औज़ार है। truth table बाईं ओर हर संभव input और दाईं ओर उससे मेल खाते outputs गिनाती है, इसलिए दो input columns (x और y) और दो output columns (D और B) पूरे व्यवहार को बिना किसी बहस की गुंजाइश के पकड़ लेते हैं।",
+        "हर row को एक column में x minus y subtraction की तरह पढ़िए। Quiet Day x=0, y=0 देता है D=0, B=0; Empty Spot x=1, y=0 देता है D=1, B=0; Perfect Match x=1, y=1 देता है D=0, B=0; और The Catch x=0, y=1 देता है D=1, B=1, जो पूरी table में एकमात्र borrow है।",
+        "अनुभवी engineers हमेशा यह तरकीब इस्तेमाल करते हैं: हर output column को दूसरे को नज़रअंदाज़ करते हुए अकेले नीचे तक पढ़िए। D column देखिए और आपको यह ठीक उन्हीं दो rows में 1 मिलेगा जहाँ x और y अलग (DIFFER) हैं और जहाँ वे सहमत हैं वहाँ 0 - जो wire सिर्फ़ असहमति पर जलती है उसका एक नाम है, और वह पहचान XOR है।",
+        "अब B column देखिए और आपको यह सिर्फ़ एक अकेली row में 1 मिलेगा, वही जहाँ x=0 और y=1। उस एक row को याद में गुदवा लीजिए और इसे x=1, y=0 वाली row से सख़्ती से अलग रखिए, जो आम उलझन की जगह है पर Borrow को मज़बूती से 0 पर रखती है क्योंकि फ़ालतू जगह होना आपको कभी borrow करने पर मजबूर नहीं करता।"
       ],
       "transcriptEN": "Now we drop the story and write the same four mornings as a hard truth table. Two input columns, x and y; two output columns, D and B. Row by row: zero, zero gives difference zero, borrow zero. One, zero gives difference one, borrow zero. One, one gives difference zero, borrow zero. And zero, one gives difference one, borrow one. Now do what an engineer always does - read down each output column on its own. Look at D: it is one in exactly the two rows where x and y disagree, and zero where they agree. A wire that fires only on disagreement has a name, and that name is XOR. Now look at B: it is high in a single solitary row, the one where x is zero and y is one. One row. Don't blur it with any other row - especially not with the x-equals-one, y-equals-zero row, which keeps B firmly at zero.",
       "transcriptHI": "अब हम कहानी छोड़ कर उन्हीं चार सुबहों को एक सख़्त truth table के रूप में लिखते हैं। दो input columns, x और y; दो output columns, D और B। row दर row: शून्य, शून्य देता है difference शून्य, borrow शून्य। एक, शून्य देता है difference एक, borrow शून्य। एक, एक देता है difference शून्य, borrow शून्य। और शून्य, एक देता है difference एक, borrow एक। अब वह कीजिए जो engineer हमेशा करता है - हर output column को अकेले नीचे तक पढ़िए। D देखिए: यह ठीक उन्हीं दो rows में एक है जहाँ x और y असहमत हैं, और जहाँ वे सहमत हैं वहाँ शून्य। जो wire सिर्फ़ असहमति पर जलती है उसका एक नाम है, और वह नाम है XOR। अब B देखिए: यह सिर्फ़ एक अकेली row में high है, वही जहाँ x शून्य और y एक है। एक row। इसे किसी और row से मत मिलाइए - ख़ासकर उस row से जहाँ x एक और y शून्य है, जो B को मज़बूती से शून्य पर रखती है।",
@@ -133,20 +121,16 @@ export const CONTENT = ({
       "kind": "theory",
       "subtitle": "Difference is 1 only when spaces and cars MISMATCH.",
       "theoryEN": [
-        "Equation: D = x XOR y. The Difference wire is a plain two-input XOR gate.",
-        "Meaning in the lot: D=1 only when spaces and cars MISMATCH (one present, the other not).",
-        "x=1, y=0 (space, no car) → mismatch → D=1: a space is left over this column.",
-        "x=0, y=1 (no space, a car) → mismatch → D=1: a car is still left to place this column.",
-        "x=0,y=0 and x=1,y=1 are MATCHES → D=0: nothing is left over in this column.",
-        "XOR is the universal 'are these two bits different?' detector - that's all Difference asks."
+        "The first output, the Difference, obeys a beautifully simple law: D = x XOR y. XOR (exclusive-OR) is a logic gate whose output is 1 only when its two inputs are different, so the entire Difference circuit is one plain two-input XOR gate and nothing else. In the lot this reads as 'the Difference is 1 only when spaces and cars MISMATCH', that is when one of them is present and the other is not.",
+        "Walk the two mismatch cases through the lot to see why. With x=1, y=0 (a space but no car) the inputs disagree, so D=1, because that empty space is genuinely left over in this column. With x=0, y=1 (no space but a car) they disagree again, so D=1 once more, because a car is still standing there needing to be placed.",
+        "Now the two match cases. With x=0, y=0 both are absent and they agree, so nothing is left over and D=0. With x=1, y=1 both are present, the car fills the space and they cancel out perfectly, so again D=0. In short, whenever the inputs agree, the Difference is 0.",
+        "The deep point is that the Difference never cares about which input is bigger or what 1 versus 0 means; it asks one single question, 'are these two bits different?'. That question is exactly what an XOR gate answers, which is the reason a single XOR gate is the complete Difference circuit, the same gate that produced the Sum in the half adder you may have met earlier."
       ],
       "theoryHI": [
-        "Equation: D = x XOR y। Difference wire एक सीधा-सादा two-input XOR gate है।",
-        "Lot में मतलब: D=1 सिर्फ़ तब जब जगहें और गाड़ियाँ मेल न खाएँ (MISMATCH) - एक मौजूद, दूसरा नहीं।",
-        "x=1, y=0 (जगह है, गाड़ी नहीं) → mismatch → D=1: इस column में एक जगह बच जाती है।",
-        "x=0, y=1 (जगह नहीं, गाड़ी है) → mismatch → D=1: इस column में एक गाड़ी अब भी जगह माँग रही है।",
-        "x=0,y=0 और x=1,y=1 दोनों MATCH हैं → D=0: इस column में कुछ नहीं बचता।",
-        "XOR सार्वभौमिक 'क्या ये दो bits अलग हैं?' detector है - Difference बस यही पूछता है।"
+        "पहला output, Difference, एक बेहद सरल नियम मानता है: D = x XOR y। XOR (exclusive-OR) एक logic gate है जिसका output सिर्फ़ तब 1 होता है जब उसके दोनों inputs अलग हों, इसलिए पूरी Difference circuit एक सीधा-सादा two-input XOR gate है, और कुछ नहीं। lot में इसका मतलब है 'Difference सिर्फ़ तब 1 है जब जगहें और गाड़ियाँ मेल न खाएँ (MISMATCH)', यानी जब एक मौजूद हो और दूसरा न हो।",
+        "क्यों, यह समझने के लिए दोनों mismatch cases को lot में चलाइए। x=1, y=0 (जगह है पर गाड़ी नहीं) में inputs असहमत हैं, इसलिए D=1, क्योंकि वह खाली जगह सचमुच इस column में बच जाती है। x=0, y=1 (जगह नहीं पर गाड़ी है) में वे फिर असहमत हैं, इसलिए D=1 दोबारा, क्योंकि एक गाड़ी अब भी वहाँ खड़ी जगह माँग रही है।",
+        "अब दोनों match cases। x=0, y=0 में दोनों ग़ैरहाज़िर हैं और सहमत हैं, इसलिए कुछ नहीं बचता और D=0। x=1, y=1 में दोनों मौजूद हैं, गाड़ी जगह भर देती है और वे ठीक-ठीक cancel हो जाते हैं, इसलिए फिर D=0। संक्षेप में, जब भी inputs सहमत हों, Difference 0 होता है।",
+        "गहरी बात यह है कि Difference को कभी परवाह नहीं कि कौन सा input बड़ा है या 1 बनाम 0 का क्या मतलब है; यह एक ही सवाल पूछता है, 'क्या ये दो bits अलग हैं?'। यही सवाल XOR gate जवाब देता है, इसीलिए एक अकेला XOR gate ही पूरी Difference circuit है - वही gate जिसने आपने पहले देखे half adder में Sum बनाया था।"
       ],
       "transcriptEN": "The first output, the Difference, has a beautifully simple law: D equals x XOR y. In plain words, the Difference is one only when the two inputs mismatch - when one of them is present and the other isn't. Walk it through the lot. A space but no car: mismatch, so D is one, because a leftover space remains in this column. No space but a car: also a mismatch, so D is one again, because a car is still left needing a slot. Now the matches. No space and no car - both absent, they agree, nothing is left, D is zero. A space and a car - both present, the car fills the space, they cancel, D is zero. So Difference never cares about the meaning of one versus zero; it only asks the single question, 'are these two bits different?' That question is precisely what an XOR gate answers, which is why one XOR gate is the entire Difference circuit.",
       "transcriptHI": "पहला output, Difference, का नियम बेहद सरल है: D बराबर है x XOR y। सीधे शब्दों में, Difference तभी एक होता है जब दोनों inputs mismatch करें - जब एक मौजूद हो और दूसरा न हो। इसे lot में चलाइए। जगह है पर गाड़ी नहीं: mismatch, तो D एक है, क्योंकि इस column में एक बची हुई जगह रह जाती है। जगह नहीं पर गाड़ी है: यह भी mismatch, तो फिर D एक, क्योंकि एक गाड़ी अब भी slot माँग रही है। अब matches। न जगह न गाड़ी - दोनों ग़ैरहाज़िर, वे सहमत हैं, कुछ नहीं बचता, D शून्य। जगह और गाड़ी दोनों - दोनों मौजूद, गाड़ी जगह भर देती है, वे cancel हो जाते हैं, D शून्य। तो Difference को कभी एक बनाम शून्य के मतलब की परवाह नहीं; यह बस एक सवाल पूछता है, 'क्या ये दो bits अलग हैं?' यही सवाल XOR gate जवाब देता है, इसीलिए एक XOR gate ही पूरी Difference circuit है।",
@@ -158,20 +142,16 @@ export const CONTENT = ({
       "kind": "theory",
       "subtitle": "Borrow fires ONLY when there are 0 spaces but a car arrives.",
       "theoryEN": [
-        "Equation: B = (NOT x) AND y, written x'·y. Note the NOT is on x, the spaces.",
-        "Borrow is 1 only in 'The Catch': x=0 (no spaces) AND y=1 (a car arrives).",
-        "In words: you must borrow precisely when you have nothing to give but are asked to give.",
-        "Build it from two parts: invert x to get x', then AND that with y.",
-        "Common trap: B is NOT x·y' (that would borrow on 'space, no car' - the Empty Spot - which is wrong).",
-        "Sanity check against the table: x'·y is 1 only at the single row x=0, y=1 - exactly where B should fire."
+        "Now the famous second output, the Borrow, and the one place where students slip. Its law is B = (NOT x) AND y, written x'.y, where x' (read 'x-prime') means NOT-x, the inverted value of x. The crucial detail is that the NOT sits on x, the spaces, not on y - get that backwards and the whole circuit is wrong.",
+        "Borrow is 1 in exactly one situation, The Catch: x=0 means there are no free spaces, and AND y=1 means a car arrives anyway. Put into human words, you are forced to borrow precisely when you have nothing left to give but someone is still demanding something from you - the very definition of going into debt.",
+        "You build it from two simple parts. First send x through a NOT gate (an inverter), which flips 0 into 1, to get x'; this is high exactly when the lot is empty. Then feed that x' and the original y into an AND gate, whose output is 1 only when both of its inputs are 1, giving B = x'.y.",
+        "Here is the trap to tattoo on your memory: the Borrow is NOT x.y' (x AND NOT-y). That wrong formula would raise a borrow on the Empty Spot morning - a space but no car - which is absurd, because you never borrow when you have room to spare. The easy sanity check is to test against the table: x'.y is 1 only at the single row x=0, y=1, which is exactly the one row where the real borrow should fire, so match the equation to that row and you can never get it backwards."
       ],
       "theoryHI": [
-        "Equation: B = (NOT x) AND y, यानी x'·y। ध्यान दें NOT, x यानी जगहों पर लगा है।",
-        "Borrow सिर्फ़ 'The Catch' में 1 है: x=0 (कोई जगह नहीं) AND y=1 (एक गाड़ी आती है)।",
-        "शब्दों में: borrow ठीक तब करना पड़ता है जब देने को कुछ न हो पर देने को कहा जाए।",
-        "इसे दो हिस्सों से बनाइए: x को invert करके x' पाइए, फिर उसे y के साथ AND कीजिए।",
-        "आम जाल (trap): B यह नहीं है x·y' (वह 'जगह है, गाड़ी नहीं' - Empty Spot - पर borrow कर देता, जो ग़लत है)।",
-        "Table से जाँच: x'·y सिर्फ़ अकेली row x=0, y=1 पर 1 है - ठीक वहीं जहाँ B को जलना चाहिए।"
+        "अब वह मशहूर दूसरा output, Borrow, और वही एक जगह जहाँ students फिसलते हैं। इसका नियम है B = (NOT x) AND y, यानी x'.y, जहाँ x' (पढ़िए 'x-prime') का मतलब है NOT-x, x का उलटा मान। अहम बात यह है कि NOT, x यानी जगहों पर बैठा है, y पर नहीं - इसे उलटा कर दिया तो पूरी circuit ग़लत हो जाती है।",
+        "Borrow ठीक एक स्थिति में 1 है, The Catch: x=0 का मतलब कोई खाली जगह नहीं, और AND y=1 का मतलब फिर भी एक गाड़ी आ जाती है। इंसानी भाषा में, borrow ठीक तब करना मजबूरी है जब देने को कुछ बचा न हो पर कोई फिर भी आपसे कुछ माँग रहा हो - यही तो कर्ज़ में जाने की परिभाषा है।",
+        "इसे दो सरल हिस्सों से बनाइए। पहले x को एक NOT gate (inverter) से भेजिए, जो 0 को 1 में पलट देता है, ताकि x' मिले; यह ठीक तब high होता है जब lot खाली हो। फिर उस x' और मूल y को एक AND gate में डालिए, जिसका output सिर्फ़ तब 1 होता है जब उसके दोनों inputs 1 हों, और इस तरह B = x'.y मिलता है।",
+        "अब वह जाल जिसे याद में गुदवा लीजिए: Borrow का formula x.y' (x AND NOT-y) नहीं है। वह ग़लत formula Empty Spot वाली सुबह पर borrow उठा देता - जगह है पर गाड़ी नहीं - जो बेतुका है, क्योंकि जब जगह फ़ालतू हो तो आप कभी borrow नहीं करते। आसान जाँच है table से मिलान: x'.y सिर्फ़ अकेली row x=0, y=1 पर 1 है, ठीक वही एकमात्र row जहाँ असली borrow जलना चाहिए, इसलिए equation को उस row से मिला लीजिए और आप इसे कभी उलटा नहीं करेंगे।"
       ],
       "transcriptEN": "Now the famous output - the Borrow - and the one place students slip. The law is B equals NOT-x AND y, written x-prime dot y. The NOT sits on x, the spaces, and this is not negotiable. Borrow is high in exactly one situation, The Catch: there are zero free spaces, x is zero, AND a car still arrives, y is one. Put it in human terms: you are forced to borrow precisely when you have nothing left to give but someone is still demanding. To build it, you take x, run it through a NOT gate to get x-prime, then feed x-prime and y into an AND gate. Now the trap, and please tattoo this on your memory: Borrow is NOT x AND NOT-y. That wrong formula, x dot y-prime, would raise a borrow on the Empty Spot morning - a space but no car - which is absurd; you never borrow when you have room to spare. Check it against the table: x-prime dot y is one in a single row, x zero and y one, and that is the only row where the real borrow ever fires. Match the equation to that one row and you can never get it backwards.",
       "transcriptHI": "अब वह मशहूर output - Borrow - और वही एक जगह जहाँ students फिसलते हैं। नियम है B बराबर NOT-x AND y, यानी x-prime dot y। NOT, x यानी जगहों पर बैठा है, और इसमें कोई समझौता नहीं। Borrow ठीक एक स्थिति में high है, The Catch: शून्य खाली जगहें हैं, x शून्य है, AND फिर भी एक गाड़ी आती है, y एक है। इंसानी भाषा में: borrow ठीक तब करना मजबूरी है जब देने को कुछ बचा न हो पर कोई फिर भी माँग रहा हो। इसे बनाने के लिए, x को एक NOT gate से गुज़ार कर x-prime पाइए, फिर x-prime और y को एक AND gate में डालिए। अब वह जाल, और कृपया इसे याद में गुदवा लीजिए: Borrow का formula x AND NOT-y नहीं है। वह ग़लत formula, x dot y-prime, Empty Spot वाली सुबह पर borrow उठा देता - जगह है पर गाड़ी नहीं - जो बेतुका है; जब जगह फ़ालतू हो तो आप कभी borrow नहीं करते। इसे table से मिलाइए: x-prime dot y अकेली row में एक है, x शून्य और y एक, और असली borrow सिर्फ़ उसी row पर जलता है। equation को उस एक row से मिला लीजिए, फिर आप इसे कभी उलटा नहीं करेंगे।",
@@ -183,20 +163,16 @@ export const CONTENT = ({
       "kind": "circuit",
       "subtitle": "Two gates, two wires: the complete half subtractor.",
       "theoryEN": [
-        "The whole circuit is just two outputs wired from the same two inputs x and y.",
-        "Difference path: x and y into one XOR gate → D = x ⊕ y.",
-        "Borrow path: x into a NOT gate → x', then x' and y into an AND gate → B = x'·y.",
-        "Total gate count: one XOR, one NOT (inverter), one AND. That's the full half subtractor.",
-        "Both paths share the same input wires x and y - they just read them differently.",
-        "Compare to the half adder (XOR for sum, AND for carry): the subtractor adds one inverter on x for the borrow."
+        "Time to draw the actual machine, and it is far smaller than the name suggests. The whole circuit is just the two outputs we derived, both wired from the very same pair of inputs x and y, which fan out into two independent little branches.",
+        "The top branch is the Difference path: route x and y straight into one XOR gate and its output is D = x XOR y, finished in a single gate. The bottom branch is the Borrow path: first send x through a NOT gate to get x', then feed that x' together with the original y into an AND gate, and its output is B = x'.y.",
+        "Count the hardware and the whole thing is tiny: one XOR, one NOT (an inverter), and one AND - three gates total, and you have built a complete half subtractor. Both branches read the same two input wires; they simply interpret them differently, one asking 'are they different?' and the other asking 'is it empty but demanded?'.",
+        "A memory hook ties it to addition: the half adder uses XOR for its sum and AND for its carry. The half subtractor reuses that very same XOR and AND, and the only structural change is the single NOT gate slipped onto x before the AND. In other words, add one inverter to an adder's carry logic and it becomes a subtractor's borrow logic."
       ],
       "theoryHI": [
-        "पूरी circuit बस दो outputs है, जो उन्हीं दो inputs x और y से wire किए गए हैं।",
-        "Difference path: x और y एक XOR gate में → D = x ⊕ y।",
-        "Borrow path: x एक NOT gate में → x', फिर x' और y एक AND gate में → B = x'·y।",
-        "कुल gate गिनती: एक XOR, एक NOT (inverter), एक AND। यही पूरा half subtractor है।",
-        "दोनों paths वही input wires x और y साझा करते हैं - बस उन्हें अलग ढंग से पढ़ते हैं।",
-        "Half adder से तुलना (sum के लिए XOR, carry के लिए AND): subtractor borrow के लिए x पर एक inverter जोड़ देता है।"
+        "अब असली machine बनाने का वक़्त, और यह नाम से कहीं छोटी है। पूरी circuit बस वही दो outputs है जो हमने निकाले, दोनों उन्हीं एक ही जोड़ी inputs x और y से wire किए गए, जो दो स्वतंत्र छोटी शाखाओं में बँट जाते हैं।",
+        "ऊपरी शाखा है Difference path: x और y को सीधे एक XOR gate में भेजिए और उसका output है D = x XOR y, एक ही gate में पूरा। निचली शाखा है Borrow path: पहले x को एक NOT gate से भेज कर x' पाइए, फिर उस x' को मूल y के साथ एक AND gate में डालिए, और उसका output है B = x'.y।",
+        "hardware गिनिए तो पूरी चीज़ नन्ही है: एक XOR, एक NOT (inverter), और एक AND - कुल तीन gates, और आपने पूरा half subtractor बना लिया। दोनों शाखाएँ वही दो input wires पढ़ती हैं; बस उन्हें अलग ढंग से समझती हैं, एक पूछती है 'क्या ये अलग हैं?' और दूसरी 'क्या खाली है पर माँगा गया है?'।",
+        "एक याद रखने का सूत्र इसे जोड़ से बाँधता है: half adder अपने sum के लिए XOR और carry के लिए AND इस्तेमाल करता है। half subtractor वही XOR और AND दोबारा वापरता है, और एकमात्र संरचनात्मक बदलाव है AND से पहले x पर खिसकाया गया वह एक NOT gate। दूसरे शब्दों में, adder की carry logic में एक inverter जोड़ दीजिए और वह subtractor की borrow logic बन जाती है।"
       ],
       "transcriptEN": "Time to draw the machine. It's smaller than you'd fear. Two inputs come in, x and y, and they fan out to two independent little circuits. The top branch is the Difference: route x and y straight into a single XOR gate, and its output is D. The bottom branch is the Borrow: first send x through a NOT gate to flip it into x-prime, then take that x-prime together with the original y into an AND gate, and its output is B. Count the hardware - one XOR, one inverter, one AND - three gates, and you've built a complete half subtractor. Here's a memory hook: it's almost identical to the half adder, which uses XOR for its sum and AND for its carry. The subtractor reuses the very same XOR and AND; the only structural difference is that single NOT gate slipped onto x before the AND. Add an inverter, and an adder's carry logic becomes a subtractor's borrow logic.",
       "transcriptHI": "अब machine बनाने का वक़्त। यह जितना डरते हैं उससे छोटी है। दो inputs आते हैं, x और y, और वे दो स्वतंत्र छोटी circuits में बँट जाते हैं। ऊपरी शाखा है Difference: x और y को सीधे एक XOR gate में भेजिए, और उसका output है D। निचली शाखा है Borrow: पहले x को एक NOT gate से भेज कर x-prime में पलटिए, फिर उस x-prime को मूल y के साथ एक AND gate में लीजिए, और उसका output है B। hardware गिनिए - एक XOR, एक inverter, एक AND - तीन gates, और आपने पूरा half subtractor बना लिया। एक याद रखने का सूत्र: यह लगभग half adder जैसा ही है, जो अपने sum के लिए XOR और carry के लिए AND इस्तेमाल करता है। Subtractor वही XOR और AND दोबारा वापरता है; एकमात्र संरचनात्मक अंतर है AND से पहले x पर खिसकाया गया वह एक NOT gate। एक inverter जोड़िए, और adder की carry logic, subtractor की borrow logic बन जाती है।",
@@ -271,20 +247,18 @@ export const CONTENT = ({
       "kind": "recap",
       "subtitle": "What you mastered - and the one flaw that demands a full subtractor.",
       "theoryEN": [
-        "Half subtractor computes x − y on one bit, outputting D = x⊕y and B = x'·y.",
-        "Difference fires on MISMATCH (XOR); Borrow fires ONLY at x=0, y=1 (The Catch).",
-        "Circuit = one XOR + one NOT-on-x + one AND. Three gates, two outputs.",
-        "The flaw: the half subtractor is 'amnesic' - it has no input for a borrow coming IN from a previous column.",
-        "Real multi-bit subtraction passes a borrow from column to column; a half subtractor can't accept one.",
-        "Next module: the FULL subtractor adds a borrow-in (Bin) so columns can be chained - curing the amnesia."
+        "Let us bank everything you now own. A half subtractor takes two single bits and computes x minus y on one column, handing back two wires: the Difference D = x XOR y, and the Borrow B = x'.y. Those two equations, plus knowing why each is true, are the whole lesson.",
+        "Reading them back through Adarsh's lot, the Difference fires whenever spaces and cars MISMATCH, which is the signature of an XOR gate, while the Borrow fires in one and only one case, x=0 with y=1, the dreaded Catch where no space exists yet a car still arrives. The hardware that does all this is just three gates: one XOR, one NOT placed on x, and one AND - clean, complete, done.",
+        "But here is the flaw that sends us straight to the next module. The half subtractor is 'amnesic': it can produce a borrow going OUT, but it has no input wire to accept a borrow coming IN from a previous column. It forgets that any column ever came before it.",
+        "That matters because real subtraction of multi-bit numbers works column by column, and the moment one column borrows, the very next column must accept that borrow as an input. Our amnesic half subtractor simply cannot take one, so it can never be chained to subtract numbers larger than a single bit.",
+        "The cure is the subject of the next module: the FULL subtractor adds a third input called the borrow-in (Bin), giving each column a place to receive the debt passed down from its neighbour. With that one extra wire the columns can finally be chained together, and the amnesia is gone."
       ],
       "theoryHI": [
-        "Half subtractor एक bit पर x − y निकालता है, outputs D = x⊕y और B = x'·y।",
-        "Difference MISMATCH पर जलता है (XOR); Borrow सिर्फ़ x=0, y=1 पर (The Catch)।",
-        "Circuit = एक XOR + x पर एक NOT + एक AND। तीन gates, दो outputs।",
-        "कमी: half subtractor 'भुलक्कड़' (amnesic) है - इसमें पिछले column से अंदर आते borrow के लिए कोई input नहीं है।",
-        "असली multi-bit subtraction borrow को column-दर-column pass करती है; half subtractor एक को स्वीकार ही नहीं कर सकता।",
-        "अगला module: FULL subtractor एक borrow-in (Bin) जोड़ता है ताकि columns chain हो सकें - amnesia का इलाज।"
+        "अब जो आपके पास है उसे जमा कर लें। half subtractor दो single bits लेता है और एक column पर x minus y निकालता है, दो wires लौटाते हुए: Difference D = x XOR y, और Borrow B = x'.y। ये दो equations, और हर एक के सच होने की वजह जानना, पूरा पाठ है।",
+        "इन्हें Adarsh की lot से दोबारा पढ़ें, तो Difference तब जलता है जब जगहें और गाड़ियाँ MISMATCH करें, जो XOR gate की पहचान है, जबकि Borrow सिर्फ़ और सिर्फ़ एक case में जलता है, x=0 और y=1, वही डरावना Catch जहाँ जगह नहीं है पर फिर भी गाड़ी आ जाती है। यह सब करने वाला hardware बस तीन gates है: एक XOR, x पर रखा एक NOT, और एक AND - साफ़, पूरा, ख़त्म।",
+        "पर यही वह कमी है जो हमें सीधे अगले module की ओर भेजती है। half subtractor 'भुलक्कड़' (amnesic) है: यह बाहर जाता (OUT) borrow तो पैदा कर सकता है, पर पिछले column से अंदर आते (IN) borrow को स्वीकार करने के लिए इसके पास कोई input wire नहीं है। यह भूल जाता है कि इससे पहले कोई column था भी।",
+        "यह इसलिए मायने रखता है क्योंकि multi-bit संख्याओं की असली subtraction column दर column चलती है, और जैसे ही एक column borrow करता है, ठीक अगले column को वह borrow एक input के रूप में स्वीकार करना ही पड़ता है। हमारा भुलक्कड़ half subtractor एक को ले ही नहीं सकता, इसलिए इसे एक bit से बड़ी संख्याओं को घटाने के लिए कभी chain नहीं किया जा सकता।",
+        "इसका इलाज अगले module का विषय है: FULL subtractor एक तीसरा input जोड़ता है जिसे borrow-in (Bin) कहते हैं, जो हर column को पड़ोसी से नीचे आया कर्ज़ लेने की जगह देता है। उस एक अतिरिक्त wire के साथ columns आख़िरकार आपस में chain हो सकते हैं, और amnesia ख़त्म हो जाती है।"
       ],
       "transcriptEN": "Let's bank what you own now. A half subtractor takes two single bits and computes x minus y, handing back two wires: the Difference, D equals x XOR y, high on mismatch; and the Borrow, B equals x-prime dot y, high in one and only one case - zero spaces yet a car arrives. The hardware is three gates: an XOR, a NOT on x, and an AND. Clean, complete, done. But here's the catch that sends us to the next module. Real subtraction of multi-bit numbers works column by column, and when one column borrows, the very next column must accept that borrow coming IN. Our half subtractor has no wire for that - it can produce a borrow-out, but it cannot receive a borrow-in. It is, in a word, amnesic: it forgets there was ever a column before it. To chain columns and subtract real numbers, we need a third input, a borrow-in, and that upgraded circuit is the full subtractor - exactly where we head next.",
       "transcriptHI": "अब जो आपके पास है उसे जमा कर लें। Half subtractor दो single bits लेता है और x minus y निकालता है, दो wires लौटाते हुए: Difference, D बराबर x XOR y, mismatch पर high; और Borrow, B बराबर x-prime dot y, सिर्फ़ और सिर्फ़ एक case में high - शून्य जगहें पर फिर भी गाड़ी आ जाए। hardware तीन gates है: एक XOR, x पर एक NOT, और एक AND। साफ़, पूरा, ख़त्म। पर यही वह catch है जो हमें अगले module की ओर भेजता है। multi-bit संख्याओं की असली subtraction column दर column चलती है, और जब एक column borrow करता है, तो ठीक अगले column को वह अंदर आता borrow स्वीकार करना ही पड़ता है। हमारे half subtractor में इसके लिए कोई wire नहीं - यह borrow-out पैदा कर सकता है, पर borrow-in ले नहीं सकता। यह, एक शब्द में, भुलक्कड़ (amnesic) है: यह भूल जाता है कि इससे पहले कोई column था भी। columns को chain करने और असली संख्याएँ घटाने के लिए हमें एक तीसरा input चाहिए, एक borrow-in, और वही उन्नत circuit है full subtractor - ठीक वहीं जहाँ हम आगे जाते हैं।",

@@ -584,6 +584,129 @@ const HalfSubActivity: React.FC<{ isDarkMode: boolean; accent: string; scene: Su
   );
 };
 
+/* ── bespoke: the "amnesia" worked example (recap) ──
+   A concrete 2-bit subtraction (10 - 01 = 2 - 1) done column by column. The
+   rightmost column borrows; the next column MUST consume that borrow-in, which
+   a plain half subtractor has no wire for. Every bit is computed in code. */
+const AmnesiaDemo: React.FC<{ isDarkMode: boolean; accent: string }> = ({ isDarkMode, accent }) => {
+  const { lang } = useSubLang();
+  const t = tone(isDarkMode);
+
+  // X = 10 (decimal 2), Y = 01 (decimal 1). Columns indexed 0 = LSB (rightmost).
+  const X = [1, 0]; // [bit1 (MSB), bit0 (LSB)]
+  const Y = [0, 1];
+
+  // column 0 (LSB): plain half subtractor, x=0,y=1 -> D=1, borrow-out=1
+  const x0 = X[1], y0 = Y[1];
+  const d0 = x0 ^ y0;             // 1
+  const bout0 = (x0 ^ 1) & y0;    // 1  (the borrow this column generates)
+
+  // column 1 (MSB): x=1,y=0, but a borrow of 1 arrives from column 0.
+  // Half subtractor result IGNORING the incoming borrow:
+  const dHalf = X[0] ^ Y[0];                 // 1  (wrong for the real subtraction)
+  // What a FULL subtractor would do, consuming borrow-in = bout0:
+  const bin1 = bout0;                        // 1
+  const dFull = X[0] ^ Y[0] ^ bin1;          // 0  (correct)
+
+  const result2 = `${dFull}${d0}`;           // "01" = decimal 1, the correct 2 - 1
+
+  const Chip: React.FC<{ v: number | string; label: string; color?: string }> = ({ v, label, color }) => (
+    <div className="flex flex-col items-center">
+      <span className="font-mono text-3xl font-black tabular-nums" style={{ color: color ?? (t.text as string) }}>{v}</span>
+      <span className={`mt-0.5 text-[10px] uppercase tracking-widest ${t.faint}`}>{label}</span>
+    </div>
+  );
+
+  const steps = [
+    {
+      label: lang === 'hi' ? 'सवाल: 10 - 01' : 'Problem: 10 - 01',
+      body: (
+        <div className="space-y-4">
+          <p className={`text-center text-[14px] ${t.sub}`}>
+            {lang === 'hi'
+              ? 'दो 2-bit संख्याएँ घटाइए: X = 10 (दशमलव 2) में से Y = 01 (दशमलव 1)। जवाब 1 होना चाहिए। हर column को एक अलग lot की तरह सोचिए।'
+              : 'Subtract two 2-bit numbers: X = 10 (decimal 2) minus Y = 01 (decimal 1). The answer must be 1. Treat each column as its own lot.'}
+          </p>
+          <div className="flex justify-center gap-8">
+            <Chip v={`${X[0]}${X[1]}`} label="X = 2" color={ACCENTS.I} />
+            <Chip v={`${Y[0]}${Y[1]}`} label="Y = 1" color={ACCENTS.III} />
+          </div>
+        </div>
+      ),
+    },
+    {
+      label: lang === 'hi' ? 'दायाँ column' : 'Right column',
+      body: (
+        <div className="space-y-4">
+          <p className={`text-center text-[14px] ${t.sub}`}>
+            {lang === 'hi'
+              ? `सबसे दायाँ column: x=${x0}, y=${y0}. यह ठीक The Catch है - 0 जगह पर गाड़ी। D=${d0}, और यह column एक borrow पैदा करता है (borrow-out=${bout0}).`
+              : `Rightmost column: x=${x0}, y=${y0}. This is exactly The Catch - 0 spaces, a car. D=${d0}, and this column generates a borrow (borrow-out=${bout0}).`}
+          </p>
+          <div className="flex justify-center gap-6">
+            <Chip v={d0} label="D (bit 0)" color={ACCENTS.II} />
+            <Chip v={bout0} label="borrow-out" color={ACCENTS.III} />
+          </div>
+        </div>
+      ),
+    },
+    {
+      label: lang === 'hi' ? 'बायाँ column - दिक़्क़त' : 'Left column - the snag',
+      body: (
+        <div className="space-y-4">
+          <p className={`text-center text-[14px] ${t.sub}`}>
+            {lang === 'hi'
+              ? `बायाँ column: x=${X[0]}, y=${Y[0]}. पर दाएँ column से borrow-in=${bin1} यहाँ आ रहा है! आधा subtractor इसे पढ़ ही नहीं सकता - वह सिर्फ़ x XOR y = ${dHalf} गिनेगा, जो ग़लत है।`
+              : `Left column: x=${X[0]}, y=${Y[0]}. But a borrow-in=${bin1} is arriving here from the right column! The half subtractor has no wire for it - it would only compute x XOR y = ${dHalf}, which is wrong.`}
+          </p>
+          <div className={`mx-auto flex max-w-sm items-center justify-center gap-3 rounded-2xl border px-4 py-3 ${t.soft}`}
+            style={{ borderColor: `${ACCENTS.III}66` }}>
+            <XIcon size={18} style={{ color: ACCENTS.III }} />
+            <span className={`text-[13px] ${t.text}`}>
+              {lang === 'hi' ? `half subtractor कहता है D=${dHalf} (अमान्य borrow-in भूल गया)` : `half subtractor says D=${dHalf} (the borrow-in was forgotten)`}
+            </span>
+          </div>
+        </div>
+      ),
+    },
+    {
+      label: lang === 'hi' ? 'इलाज: borrow-in' : 'The fix: borrow-in',
+      body: (
+        <div className="space-y-4">
+          <p className={`text-center text-[14px] ${t.sub}`}>
+            {lang === 'hi'
+              ? `अगर column borrow-in स्वीकार करे, तो D = x XOR y XOR borrow-in = ${X[0]} XOR ${Y[0]} XOR ${bin1} = ${dFull}. अब जवाब ${result2} (दशमलव ${parseInt(result2, 2)}) सही है!`
+              : `If the column accepts the borrow-in, then D = x XOR y XOR borrow-in = ${X[0]} XOR ${Y[0]} XOR ${bin1} = ${dFull}. Now the answer ${result2} (decimal ${parseInt(result2, 2)}) is correct!`}
+          </p>
+          <div className="flex items-center justify-center gap-3">
+            <div className={`flex items-center gap-2 rounded-2xl border px-4 py-3 ${t.soft}`} style={{ borderColor: `${ACCENTS.good}66` }}>
+              <Check size={18} style={{ color: ACCENTS.good }} />
+              <span className="font-mono text-2xl font-black" style={{ color: ACCENTS.good }}>{result2}</span>
+              <span className={`text-[12px] ${t.faint}`}>= {parseInt(result2, 2)}</span>
+            </div>
+          </div>
+          <p className={`text-center text-[12px] ${t.faint}`}>
+            {lang === 'hi'
+              ? 'यही तीसरा input (borrow-in) full subtractor जोड़ता है - अगले module में।'
+              : 'That third input (borrow-in) is exactly what the full subtractor adds - in the next module.'}
+          </p>
+        </div>
+      ),
+    },
+  ];
+
+  return (
+    <div className="space-y-3">
+      <p className={`text-center text-[13px] ${t.faint}`}>
+        {lang === 'hi'
+          ? 'देखिए amnesia असल में कैसे चोट करती है - एक 2-bit subtraction column-दर-column, हर bit code में गिना गया।'
+          : 'See the amnesia actually bite - a 2-bit subtraction worked column by column, every bit computed in code.'}
+      </p>
+      <StepThrough steps={steps} isDarkMode={isDarkMode} accent={accent} />
+    </div>
+  );
+};
+
 /* ── part assignment ── */
 const partAt = (i: number): string =>
   i <= 3 ? 'PART I · THE PARKING LOT'
@@ -634,7 +757,11 @@ function componentFor(scene: SubScene): React.FC<any> {
     case 'quiz':
       return (p) => <QuizScene isDarkMode={p.isDarkMode} accent={p.accent} quiz={CONTENT.quiz} badge="HALF SUB" tag="Practice · Half Subtractor" title={scene.label} intro={scene.subtitle ?? ''} />;
     case 'recap':
-      return (p) => <RecapScene {...p} scene={scene} />;
+      return (p) => (
+        <RecapScene {...p} scene={scene}>
+          <AmnesiaDemo isDarkMode={p.isDarkMode} accent={p.accent} />
+        </RecapScene>
+      );
     default: {
       const which = bespokeFor(scene);
       return (p) => (

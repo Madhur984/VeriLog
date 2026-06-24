@@ -23,6 +23,8 @@ const SRC_HI: string | undefined = '/videos/be6-bjt-construction-hi.mp4';
 
 const ACC = { entrance: '#38bdf8', corridor: '#f59e0b', hall: '#34d399', warn: '#fb7185' };
 const fmt = (n: number, d = 2) => (Number.isFinite(n) ? n.toFixed(d) : '-');
+const ibFmt = (mA: number) => mA * 1000;                       // mA -> uA for display
+const approxEq = (a: number, b: number) => Math.abs(a - b) < 1e-6;
 
 /* ── bespoke: NPN vs PNP toggle (morph symbol + carriers + arrow) ── */
 const NpnPnpToggle: React.FC<{ isDarkMode: boolean; accent: string }> = ({ isDarkMode, accent }) => {
@@ -204,61 +206,140 @@ const AlphaBetaLinker: React.FC<{ isDarkMode: boolean; accent: string }> = ({ is
   );
 };
 
-/* ── proof walk-through: KCL + alpha/beta definitions + conversion ── */
+/* ── proof walk-through: KCL + alpha/beta definitions + conversion ──
+   Every algebra step is shown, and the closing worked example computes its
+   numbers live (Ie, Ic, Ib, alpha, beta) so no result is ever hardcoded. */
 const GainProof: React.FC<{ isDarkMode: boolean; accent: string }> = ({ isDarkMode, accent }) => {
   const { lang } = useSubLang();
   const t = tone(isDarkMode);
   const mono = (s: string, c = accent) => <span className="font-mono font-black" style={{ color: c }}>{s}</span>;
 
+  // worked numbers computed live (never hardcoded). Pick a representative Ic, Ib.
+  const Ic = 1.98;                 // mA (collector current)
+  const Ib = 0.02;                 // mA (base current = 20 uA)
+  const Ie = Ic + Ib;             // mA, from KCL: Ie = Ic + Ib
+  const alphaN = Ic / Ie;         // alpha = Ic/Ie
+  const betaN = Ic / Ib;          // beta  = Ic/Ib
+  const alphaFromBeta = betaN / (betaN + 1);   // cross-check alpha = beta/(beta+1)
+  const betaFromAlpha = alphaN / (1 - alphaN); // cross-check beta  = alpha/(1-alpha)
+  const line = (s: string, c = accent) => <div className="font-mono text-[13px] font-black" style={{ color: c }}>{s}</div>;
+
   const steps = [
     {
-      label: lang === 'hi' ? 'KCL: transistor एक node' : 'KCL: the transistor as one node',
+      label: lang === 'hi' ? 'Step 1 - KCL: transistor एक node' : 'Step 1 - KCL: the transistor as one node',
       body: (
-        <p className={`text-[14px] leading-relaxed ${t.sub}`}>
-          {lang === 'hi'
-            ? <>BJT को एक node समझिए जिसके तीन terminals हैं - E, B, C। अंदर जाने वाली total current = बाहर जाने वाली total current, इसलिए {mono('Ie = Ic + Ib')}। लगभग सारे carriers पतले base को पार कर collector तक पहुँचते हैं; सिर्फ़ छोटा हिस्सा base से निकलता है।</>
-            : <>Treat the BJT as a single node with three terminals - E, B, C. Total current in equals total current out, so {mono('Ie = Ic + Ib')}. Nearly all carriers cross the thin base to the collector; only a small fraction exits as the base current.</>}
-        </p>
+        <div className="space-y-3">
+          <p className={`text-[14px] leading-relaxed ${t.sub}`}>
+            {lang === 'hi'
+              ? <>BJT को एक ही node मानिए जिसके तीन तार हैं - E, B, C। अंदर जाने वाली कुल current = बाहर जाने वाली कुल current (charge conserve होता है)। emitter पर current अंदर जाती है; collector और base पर बाहर निकलती है।</>
+              : <>Treat the whole BJT as one node with three wires - E, B, C. Total current in equals total current out, because charge is conserved. Current goes IN at the emitter and comes OUT at the collector and base.</>}
+          </p>
+          <div className={`rounded-xl px-4 py-3 ${t.soft} space-y-1`}>
+            {line('current in  =  current out')}
+            {line('Ie  =  Ic + Ib')}
+          </div>
+          <p className={`text-[13px] ${t.faint}`}>
+            {lang === 'hi'
+              ? <>यह हर region में, हर वक़्त सच है। चूँकि लगभग सारे carriers collector तक पहुँचते हैं, {mono('Ic')} सबसे बड़ी है और {mono('Ib')} सबसे छोटी।</>
+              : <>This holds in every region, at all times. Since nearly all carriers reach the collector, {mono('Ic')} is the largest and {mono('Ib')} is the smallest.</>}
+          </p>
+        </div>
       ),
     },
     {
-      label: lang === 'hi' ? 'alpha और beta की परिभाषा' : 'Define alpha and beta',
+      label: lang === 'hi' ? 'Step 2 - alpha और beta की परिभाषा' : 'Step 2 - define alpha and beta',
       body: (
-        <p className={`text-[14px] leading-relaxed ${t.sub}`}>
-          {lang === 'hi'
-            ? <>common-base gain {mono('alpha = Ic/Ie')} है (collected हुआ हिस्सा), जो हमेशा 1 से कम होता है क्योंकि Ic &lt; Ie। common-emitter gain {mono('beta = Ic/Ib')} है, यानी {mono('Ic = beta*Ib')}। base current ही वह छोटा leftover है जो बड़ी Ic को control करता है।</>
-            : <>The common-base gain is {mono('alpha = Ic/Ie')} (the fraction collected), always under 1 because Ic &lt; Ie. The common-emitter gain is {mono('beta = Ic/Ib')}, so {mono('Ic = beta*Ib')}. The base current is the small leftover that controls the large Ic.</>}
-        </p>
+        <div className="space-y-3">
+          <p className={`text-[14px] leading-relaxed ${t.sub}`}>
+            {lang === 'hi'
+              ? <>common-base gain {mono('alpha')} वह हिस्सा है जो collect होता है, और common-emitter gain {mono('beta')} बताती है कि Ic, Ib से कितनी गुना बड़ी है।</>
+              : <>The common-base gain {mono('alpha')} is the fraction that gets collected, and the common-emitter gain {mono('beta')} tells how many times bigger Ic is than Ib.</>}
+          </p>
+          <div className={`rounded-xl px-4 py-3 ${t.soft} space-y-1`}>
+            {line('alpha = Ic / Ie     (< 1, since Ic < Ie)', ACC.hall)}
+            {line('beta  = Ic / Ib     (so Ic = beta * Ib)', ACC.entrance)}
+          </div>
+        </div>
       ),
     },
     {
-      label: lang === 'hi' ? 'Ib को Ic के पदों में लिखो' : 'Write Ib in terms of Ic',
+      label: lang === 'hi' ? 'Step 3 - Ib को Ic के पदों में लिखो' : 'Step 3 - write Ib in terms of Ic',
       body: (
-        <p className={`text-[14px] leading-relaxed ${t.sub}`}>
-          {lang === 'hi'
-            ? <>{mono('beta = Ic/Ib')} से {mono('Ib = Ic/beta')}। इसे KCL में रखिए: {mono('Ie = Ic + Ic/beta = Ic*(beta+1)/beta')}।</>
-            : <>From {mono('beta = Ic/Ib')} we get {mono('Ib = Ic/beta')}. Substitute into KCL: {mono('Ie = Ic + Ic/beta = Ic*(beta+1)/beta')}.</>}
-        </p>
+        <div className="space-y-3">
+          <p className={`text-[14px] leading-relaxed ${t.sub}`}>
+            {lang === 'hi'
+              ? <>{mono('beta = Ic/Ib')} को पलटिए और KCL में रखिए। हर पद में {mono('Ic')} समान है।</>
+              : <>Rearrange {mono('beta = Ic/Ib')} and substitute into KCL. Every term shares a common {mono('Ic')}.</>}
+          </p>
+          <div className={`rounded-xl px-4 py-3 ${t.soft} space-y-1`}>
+            {line('beta = Ic / Ib   =>   Ib = Ic / beta')}
+            {line('Ie = Ic + Ib = Ic + Ic/beta')}
+            {line('Ie = Ic * (1 + 1/beta) = Ic * (beta + 1) / beta')}
+          </div>
+        </div>
       ),
     },
     {
-      label: lang === 'hi' ? 'alpha = beta/(beta+1) निकालो' : 'Form alpha = beta/(beta+1)',
+      label: lang === 'hi' ? 'Step 4 - alpha = beta/(beta+1)' : 'Step 4 - form alpha = beta/(beta+1)',
       body: (
-        <p className={`text-[14px] leading-relaxed ${t.sub}`}>
-          {lang === 'hi'
-            ? <>अब {mono('alpha = Ic/Ie = Ic / [Ic*(beta+1)/beta] = beta/(beta+1)')}। यही alpha का beta से रिश्ता है।</>
-            : <>Now {mono('alpha = Ic/Ie = Ic / [Ic*(beta+1)/beta] = beta/(beta+1)')}. That is alpha in terms of beta.</>}
-        </p>
+        <div className="space-y-3">
+          <p className={`text-[14px] leading-relaxed ${t.sub}`}>
+            {lang === 'hi'
+              ? <>अब {mono('alpha = Ic/Ie')} में Step 3 का {mono('Ie')} रखिए। {mono('Ic')} ऊपर-नीचे cancel हो जाता है।</>
+              : <>Now put the {mono('Ie')} from Step 3 into {mono('alpha = Ic/Ie')}. The {mono('Ic')} cancels top and bottom.</>}
+          </p>
+          <div className={`rounded-xl px-4 py-3 ${t.soft} space-y-1`}>
+            {line('alpha = Ic / Ie = Ic / [ Ic * (beta+1)/beta ]')}
+            {line('alpha = beta / (beta + 1)', ACC.hall)}
+          </div>
+        </div>
       ),
     },
     {
-      label: lang === 'hi' ? 'उल्टा करके beta = alpha/(1-alpha)' : 'Invert to beta = alpha/(1-alpha)',
+      label: lang === 'hi' ? 'Step 5 - उल्टा: beta = alpha/(1-alpha)' : 'Step 5 - invert: beta = alpha/(1-alpha)',
       body: (
-        <p className={`text-[14px] leading-relaxed ${t.sub}`}>
-          {lang === 'hi'
-            ? <>{mono('alpha*(beta+1) = beta')} {'=>'} {mono('alpha = beta*(1-alpha)')} {'=>'} {mono('beta = alpha/(1-alpha)')}. Check: alpha {'->'} 1 पर beta {'->'} infinity (छोटी Ib, विशाल Ic). यही amplification का गणितीय रूप है।</>
-            : <>{mono('alpha*(beta+1) = beta')} {'=>'} {mono('alpha = beta*(1-alpha)')} {'=>'} {mono('beta = alpha/(1-alpha)')}. Check: as alpha {'->'} 1, beta {'->'} infinity (tiny Ib, huge Ic). This is amplification in maths.</>}
-        </p>
+        <div className="space-y-3">
+          <p className={`text-[14px] leading-relaxed ${t.sub}`}>
+            {lang === 'hi'
+              ? <>Step 4 को beta के लिए हल कीजिए। cross-multiply करके पदों को इकट्ठा कीजिए।</>
+              : <>Solve Step 4 for beta. Cross-multiply, then gather the beta terms.</>}
+          </p>
+          <div className={`rounded-xl px-4 py-3 ${t.soft} space-y-1`}>
+            {line('alpha = beta/(beta+1)  =>  alpha*(beta+1) = beta')}
+            {line('alpha*beta + alpha = beta')}
+            {line('alpha = beta - alpha*beta = beta*(1 - alpha)')}
+            {line('beta = alpha / (1 - alpha)', ACC.entrance)}
+          </div>
+          <p className={`text-[13px] ${t.faint}`}>
+            {lang === 'hi'
+              ? <>जाँच: जैसे {mono('alpha -> 1')}, denominator {'->'} 0 तो {mono('beta -> infinity')} (छोटी Ib, विशाल Ic)। यही amplification का गणित है।</>
+              : <>Check: as {mono('alpha -> 1')}, the denominator {'->'} 0 so {mono('beta -> infinity')} (tiny Ib, huge Ic). That is amplification in maths.</>}
+          </p>
+        </div>
+      ),
+    },
+    {
+      label: lang === 'hi' ? 'Step 6 - संख्याओं से जाँच' : 'Step 6 - check with real numbers',
+      body: (
+        <div className="space-y-3">
+          <p className={`text-[14px] leading-relaxed ${t.sub}`}>
+            {lang === 'hi'
+              ? <>मान लीजिए {mono(`Ic = ${fmt(Ic)} mA`, ACC.hall)} और {mono(`Ib = ${fmt(ibFmt(Ib), 0)} uA`, ACC.corridor)}। बाक़ी सब ऊपर के formulas से निकलता है:</>
+              : <>Suppose {mono(`Ic = ${fmt(Ic)} mA`, ACC.hall)} and {mono(`Ib = ${fmt(ibFmt(Ib), 0)} uA`, ACC.corridor)}. Everything else follows from the formulas above:</>}
+          </p>
+          <div className={`rounded-xl px-4 py-3 ${t.soft} space-y-1`}>
+            {line(`Ie = Ic + Ib = ${fmt(Ic)} + ${fmt(Ib)} = ${fmt(Ie)} mA`)}
+            {line(`alpha = Ic/Ie = ${fmt(Ic)}/${fmt(Ie)} = ${fmt(alphaN, 4)}`, ACC.hall)}
+            {line(`beta  = Ic/Ib = ${fmt(Ic)}/${fmt(Ib)} = ${fmt(betaN, 1)}`, ACC.entrance)}
+            {line(`cross-check: beta/(beta+1) = ${fmt(alphaFromBeta, 4)} = alpha  ${approxEq(alphaFromBeta, alphaN) ? 'OK' : ''}`, ACC.hall)}
+            {line(`cross-check: alpha/(1-alpha) = ${fmt(betaFromAlpha, 1)} = beta  ${approxEq(betaFromAlpha, betaN) ? 'OK' : ''}`, ACC.entrance)}
+          </div>
+          <p className={`text-[13px] ${t.faint}`}>
+            {lang === 'hi'
+              ? <>दोनों conversions वही उत्तर देते हैं - alpha और beta एक ही device के दो रूप हैं।</>
+              : <>Both conversions return the same answer - alpha and beta are two faces of one device.</>}
+          </p>
+        </div>
       ),
     },
   ];

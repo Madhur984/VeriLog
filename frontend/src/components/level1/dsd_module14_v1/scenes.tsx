@@ -9,7 +9,7 @@ import { Plus, Minus, ArrowLeft, ArrowDown } from 'lucide-react';
 import {
   SceneShell, Eyebrow, Card, tone, useSubLang,
   CoverScene, TheoryScene, RecapScene, SubFlashCards, QuizScene,
-  StepThrough,
+  StepThrough, LiveGate,
   type SubScene,
 } from '../_subtractor/kit';
 import type { SubPage } from '../_subtractor/SubEngine';
@@ -441,6 +441,97 @@ const CarryVsBorrow: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
   );
 };
 
+/* ── bespoke: live gate mirror - the adder gates vs the subtractor gates ──
+   Toggle x and y and watch all four logic gates compute. Every value (sum,
+   diff, carry, borrow) is derived in code, never hardcoded, so the on-screen
+   numbers always agree with the equations in the prose. This is the visual the
+   "only the second gate changes" claim was missing. */
+const GateMirror: React.FC<{ isDarkMode: boolean; accent: string }> = ({ isDarkMode, accent }) => {
+  const { lang } = useSubLang();
+  const t = tone(isDarkMode);
+  const [x, setX] = useState(0);
+  const [y, setY] = useState(1);
+
+  // everything computed, nothing hardcoded
+  const main = x ^ y;          // Sum (adder) and Difference (subtractor) - the SHARED bit
+  const carry = x & y;         // half adder helper: a AND b
+  const borrow = (x ^ 1) & y;  // half subtractor helper: (NOT x) AND y
+
+  const Bit: React.FC<{ label: string; val: number; setVal: (v: number) => void; color: string }> =
+    ({ label, val, setVal, color }) => (
+      <button
+        onClick={() => setVal(val ^ 1)}
+        className="flex items-center gap-2 rounded-2xl border px-4 py-2 font-mono text-sm font-black transition-colors"
+        style={{ borderColor: `${color}66`, color: t.ink as string, background: `${color}12` }}
+      >
+        <span className={t.faint}>{label}</span>
+        <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-lg font-black tabular-nums"
+          style={{ background: val ? color : 'transparent', color: val ? '#000' : color, outline: `1.5px solid ${color}88` }}>
+          {val}
+        </span>
+      </button>
+    );
+
+  const Pane: React.FC<{ title: string; color: string; children: React.ReactNode; foot: string }> =
+    ({ title, color, children, foot }) => (
+      <div className={`flex-1 rounded-3xl border p-5 ${t.soft}`} style={{ borderColor: `${color}55` }}>
+        <div className="mb-3 text-center font-mono text-[11px] font-black uppercase tracking-widest" style={{ color }}>{title}</div>
+        <div className="space-y-4">{children}</div>
+        <p className={`mt-3 text-center font-mono text-[12px] ${t.sub}`}>{foot}</p>
+      </div>
+    );
+
+  return (
+    <Card isDarkMode={isDarkMode}>
+      <div className="mb-4 flex items-center justify-between gap-2">
+        <div className="font-mono text-[10px] uppercase tracking-[0.3em]" style={{ color: accent }}>
+          {lang === 'hi' ? 'इंटरैक्टिव · वही XOR, अलग helper gate' : 'Interactive · same XOR, different helper gate'}
+        </div>
+      </div>
+
+      {/* input toggles, shared by both circuits */}
+      <div className="mb-5 flex flex-wrap items-center justify-center gap-3">
+        <span className={`font-mono text-[11px] ${t.faint}`}>{lang === 'hi' ? 'inputs बदलिए:' : 'flip the inputs:'}</span>
+        <Bit label="x" val={x} setVal={setX} color="#38bdf8" />
+        <Bit label="y" val={y} setVal={setY} color="#fb7185" />
+      </div>
+
+      <div className="flex flex-col gap-4 sm:flex-row">
+        {/* ADDER side: Sum = x XOR y, Carry = x AND y */}
+        <Pane
+          title={lang === 'hi' ? 'HALF ADDER (जोड़)' : 'HALF ADDER (add)'}
+          color={ACC.good}
+          foot={`Sum = ${main} , Carry = ${carry}`}
+        >
+          <LiveGate type="XOR" a={x} b={y} isDarkMode={isDarkMode} accent={accent}
+            labelA="x" labelB="y" labelOut={lang === 'hi' ? 'Sum' : 'Sum'} colorOut={ACC.good} />
+          <LiveGate type="AND" a={x} b={y} isDarkMode={isDarkMode} accent={accent}
+            labelA="x" labelB="y" labelOut={lang === 'hi' ? 'Carry' : 'Carry'} colorOut={ACC.good} />
+        </Pane>
+
+        {/* SUBTRACTOR side: Diff = x XOR y, Borrow = (NOT x) AND y */}
+        <Pane
+          title={lang === 'hi' ? 'HALF SUBTRACTOR (घटाव)' : 'HALF SUBTRACTOR (subtract)'}
+          color={ACC.borrow}
+          foot={`Diff = ${main} , Borrow = ${borrow}`}
+        >
+          <LiveGate type="XOR" a={x} b={y} isDarkMode={isDarkMode} accent={accent}
+            labelA="x" labelB="y" labelOut={lang === 'hi' ? 'Diff' : 'Diff'} colorOut={ACC.borrow} />
+          {/* borrow takes NOT-x: show the inverter feeding the AND, so (NOT x) AND y is explicit */}
+          <LiveGate type="AND" a={x ^ 1} b={y} isDarkMode={isDarkMode} accent={accent}
+            labelA="NOT x" labelB="y" labelOut={lang === 'hi' ? 'Borrow' : 'Borrow'} colorOut={ACC.borrow} />
+        </Pane>
+      </div>
+
+      <p className={`mt-4 text-center text-[13px] ${t.sub}`}>
+        {lang === 'hi'
+          ? `इस समय x=${x}, y=${y}: Sum और Diff दोनों ${main} हैं (वही XOR). सिर्फ़ helper बदलता है - Carry=${carry} बनाम Borrow=${borrow}. x पर एक inverter ही पूरा फ़र्क़ है।`
+          : `Right now x=${x}, y=${y}: Sum and Diff are both ${main} (the very same XOR). Only the helper differs - Carry=${carry} vs Borrow=${borrow}. One inverter on x is the whole difference.`}
+      </p>
+    </Card>
+  );
+};
+
 const partAt = (i: number): string =>
   i <= 1 ? 'PART I · WARM UP'
     : i <= 3 ? 'PART II · THE BASICS'
@@ -472,7 +563,12 @@ function componentFor(scene: SubScene): React.FC<any> {
               <SubWalkthrough isDarkMode={p.isDarkMode} accent={p.accent} />
             </>
           )}
-          {scene.id === 'S03_BorrowVsCarry' && <CarryVsBorrow isDarkMode={p.isDarkMode} />}
+          {scene.id === 'S03_BorrowVsCarry' && (
+            <>
+              <GateMirror isDarkMode={p.isDarkMode} accent={p.accent} />
+              <CarryVsBorrow isDarkMode={p.isDarkMode} />
+            </>
+          )}
         </TheoryScene>
       );
   }

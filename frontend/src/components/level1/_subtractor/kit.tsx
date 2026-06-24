@@ -471,6 +471,25 @@ export const CoverScene: React.FC<SceneProps & { moduleTitle: string; moduleSubt
   );
 };
 
+/* Flowing theory prose (paragraphs, not bullet points). Each content item becomes
+   a paragraph; the first is emphasised. Reads like a textbook, not a checklist. */
+export const Prose: React.FC<{ isDarkMode: boolean; accent: string; en: string[]; hi?: string[] }>
+  = ({ isDarkMode, accent, en, hi }) => {
+  const { lang } = useSubLang();
+  const items = pickList(lang, en, hi);
+  const t = tone(isDarkMode);
+  return (
+    <div className="space-y-4">
+      {items.map((p, i) => (
+        <p key={i} className={`text-[15.5px] leading-[1.85] ${i === 0 ? `font-medium ${t.text}` : t.sub}`}>
+          {i === 0 && <span className="mr-2 inline-block h-3.5 w-1 translate-y-0.5 rounded-full" style={{ background: accent }} />}
+          {p}
+        </p>
+      ))}
+    </div>
+  );
+};
+
 export const TheoryScene: React.FC<SceneProps & { children?: React.ReactNode }>
   = ({ isDarkMode, accent, scene, children }) => {
   const t = tone(isDarkMode);
@@ -481,7 +500,7 @@ export const TheoryScene: React.FC<SceneProps & { children?: React.ReactNode }>
         {scene.subtitle && <h2 className={`text-3xl md:text-4xl font-black ${t.text}`}>{scene.subtitle}</h2>}
       </section>
       <Card isDarkMode={isDarkMode}>
-        <Bullets isDarkMode={isDarkMode} accent={accent} en={scene.theoryEN} hi={scene.theoryHI} />
+        <Prose isDarkMode={isDarkMode} accent={accent} en={scene.theoryEN} hi={scene.theoryHI} />
       </Card>
       {children}
     </SceneShell>
@@ -564,7 +583,7 @@ export const RecapScene: React.FC<SceneProps & { children?: React.ReactNode }>
         <h2 className={`text-3xl md:text-4xl font-black ${t.text}`}>{scene.label}</h2>
       </section>
       <Card isDarkMode={isDarkMode}>
-        <Bullets isDarkMode={isDarkMode} accent={accent} en={scene.theoryEN} hi={scene.theoryHI} />
+        <Prose isDarkMode={isDarkMode} accent={accent} en={scene.theoryEN} hi={scene.theoryHI} />
       </Card>
       <FlowRail isDarkMode={isDarkMode} accent={accent} />
       {children}

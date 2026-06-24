@@ -89,13 +89,11 @@ const BeModule2Root = named(() => import('./components/level1/be_module2_v1/BeMo
 const BeModule3Root = named(() => import('./components/level1/be_module3_v1/BeModule3Root'), 'BeModule3Root');
 const BeModule4Root = named(() => import('./components/level1/be_module4_v1/BeModule4Root'), 'BeModule4Root');
 const BeModule5Root = named(() => import('./components/level1/be_module5_v1/BeModule5Root'), 'BeModule5Root');
-/* be6-be10 transistor modules: build in progress - re-enabled once all files exist
 const BeModule6Root = named(() => import('./components/level1/be_module6_v1/BeModule6Root'), 'BeModule6Root');
 const BeModule7Root = named(() => import('./components/level1/be_module7_v1/BeModule7Root'), 'BeModule7Root');
 const BeModule8Root = named(() => import('./components/level1/be_module8_v1/BeModule8Root'), 'BeModule8Root');
 const BeModule9Root = named(() => import('./components/level1/be_module9_v1/BeModule9Root'), 'BeModule9Root');
 const BeModule10Root = named(() => import('./components/level1/be_module10_v1/BeModule10Root'), 'BeModule10Root');
-*/
 
 function App() {
   useEffect(() => {
@@ -185,7 +183,16 @@ function App() {
             <Route path="/basic-electronics/4/:chapter" element={<BeModule4Root />} />
             <Route path="/basic-electronics/5" element={<BeModule5Root />} />
             <Route path="/basic-electronics/5/:chapter" element={<BeModule5Root />} />
-            {/* be6-be10 transistor modules: build in progress - routes re-enabled once all files exist */}
+            <Route path="/basic-electronics/6" element={<BeModule6Root />} />
+            <Route path="/basic-electronics/6/:chapter" element={<BeModule6Root />} />
+            <Route path="/basic-electronics/7" element={<BeModule7Root />} />
+            <Route path="/basic-electronics/7/:chapter" element={<BeModule7Root />} />
+            <Route path="/basic-electronics/8" element={<BeModule8Root />} />
+            <Route path="/basic-electronics/8/:chapter" element={<BeModule8Root />} />
+            <Route path="/basic-electronics/9" element={<BeModule9Root />} />
+            <Route path="/basic-electronics/9/:chapter" element={<BeModule9Root />} />
+            <Route path="/basic-electronics/10" element={<BeModule10Root />} />
+            <Route path="/basic-electronics/10/:chapter" element={<BeModule10Root />} />
             <Route path="/module/4" element={<ModuleFour />} />
             <Route path="/module/5" element={<Module5Root />} />
             <Route path="/module/6" element={<ModuleSix />} />

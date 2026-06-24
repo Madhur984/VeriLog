@@ -250,6 +250,170 @@ const StabilityChecker: React.FC<{ isDarkMode: boolean; accent: string }> = ({ i
   );
 };
 
+/* ───────────────────────── proof: DC load line + two intercepts ────────────
+ * Full step-by-step derivation of Ic = (Vcc - Vce)/Rc straight from the
+ * collector-loop KVL, then both endpoints solved explicitly. Every number is
+ * computed here from Vcc and Rc - nothing hardcoded.
+ */
+const LoadLineProof: React.FC<{ isDarkMode: boolean; accent: string }> = ({ isDarkMode, accent }) => {
+  const { lang } = useSubLang();
+  const t = tone(isDarkMode);
+  const Vcc = 12, Rc = 2;            // V, kOhm
+  const icSat = Vcc / Rc;           // mA at Vce = 0
+  const vceCut = Vcc;               // V at Ic = 0
+  const slope = -1 / Rc;            // mA per V
+  const num = (s: string) => <b className="font-mono" style={{ color: accent }}>{s}</b>;
+  const steps = [
+    {
+      label: lang === 'hi' ? 'output loop पर KVL' : 'KVL around the output loop',
+      body: (
+        <p className={`text-[13px] ${t.sub}`}>
+          {lang === 'hi'
+            ? <>supply से Rc और transistor के आर-पार चलो: voltages जुड़कर supply बनते हैं, तो Vcc = Ic*Rc + Vce। (यहाँ emitter ground पर है, Re नहीं।)</>
+            : <>Walk from the supply through Rc and across the transistor; the drops add up to the supply, so Vcc = Ic*Rc + Vce. (Emitter at ground here, no Re.)</>}
+        </p>
+      ),
+    },
+    {
+      label: lang === 'hi' ? 'Ic के लिए हल करो' : 'Solve for Ic',
+      body: (
+        <p className={`text-[13px] ${t.sub}`}>
+          {lang === 'hi'
+            ? <>Ic*Rc = Vcc - Vce, तो Ic = (Vcc - Vce)/Rc। यही सीधी DC load line है, slope = -1/Rc = {num(fmt(slope) + ' mA/V')} (Vcc = {Vcc} V, Rc = {Rc} kΩ)।</>
+            : <>Ic*Rc = Vcc - Vce, so Ic = (Vcc - Vce)/Rc. This straight line is the DC load line, slope = -1/Rc = {num(fmt(slope) + ' mA/V')} (Vcc = {Vcc} V, Rc = {Rc} kΩ).</>}
+        </p>
+      ),
+    },
+    {
+      label: lang === 'hi' ? 'Saturation सिरा (Vce = 0)' : 'Saturation end (set Vce = 0)',
+      body: (
+        <p className={`text-[13px] ${t.sub}`}>
+          {lang === 'hi'
+            ? <>Vce = 0 रखो: Ic,sat = (Vcc - 0)/Rc = Vcc/Rc = {Vcc}/{Rc} = {num(fmt(icSat) + ' mA')}। यह load line का सबसे ऊँचा बिंदु (ऊपर-बाएँ) है।</>
+            : <>Put Vce = 0: Ic,sat = (Vcc - 0)/Rc = Vcc/Rc = {Vcc}/{Rc} = {num(fmt(icSat) + ' mA')}. This is the topmost point of the line (top-left).</>}
+        </p>
+      ),
+    },
+    {
+      label: lang === 'hi' ? 'Cutoff सिरा (Ic = 0)' : 'Cutoff end (set Ic = 0)',
+      body: (
+        <div className="space-y-2">
+          <p className={`text-[13px] ${t.sub}`}>
+            {lang === 'hi'
+              ? <>Ic = 0 रखो: 0 = (Vcc - Vce)/Rc का मतलब Vce = Vcc = {num(fmt(vceCut) + ' V')}। पूरी supply transistor पर दिखती है (नीचे-दाएँ)।</>
+              : <>Put Ic = 0: 0 = (Vcc - Vce)/Rc means Vce = Vcc = {num(fmt(vceCut) + ' V')}. The whole supply appears across the transistor (bottom-right).</>}
+          </p>
+          <p className={`text-center text-base font-black ${t.text}`}>
+            {lang === 'hi' ? 'load line' : 'load line'}: (<span style={{ color: accent }}>{fmt(vceCut)} V</span>, 0) {'->'} (0, <span style={{ color: accent }}>{fmt(icSat)} mA</span>)
+          </p>
+          <p className={`text-center text-[12px] ${t.faint}`}>
+            {lang === 'hi'
+              ? 'इन्हीं दो सिरों को जोड़ने वाली सीधी रेखा पर Q-point कहीं बैठता है।'
+              : 'The Q-point lives somewhere on the straight line joining these two ends.'}
+          </p>
+        </div>
+      ),
+    },
+  ];
+  return (
+    <Card isDarkMode={isDarkMode}>
+      <div className="mb-4 font-mono text-[11px] uppercase tracking-[0.3em]" style={{ color: accent }}>
+        {lang === 'hi' ? 'Proof: DC load line और दोनों सिरे' : 'Proof: DC load line and both intercepts'}
+      </div>
+      <StepThrough steps={steps} isDarkMode={isDarkMode} accent={accent} />
+    </Card>
+  );
+};
+
+/* ───────────────────────── proof: fixed-bias Q-point + beta drift ──────────
+ * Full step-by-step solve of Ib, Icq, Vceq from the two KVL loops, then the
+ * SAME circuit re-solved at +50% beta to show the Q-point bolting toward
+ * saturation. Every number computed here from Vcc/Rb/Rc/Vbe/beta.
+ */
+const FixedBiasProof: React.FC<{ isDarkMode: boolean; accent: string }> = ({ isDarkMode, accent }) => {
+  const { lang } = useSubLang();
+  const t = tone(isDarkMode);
+  const Vcc = 12, Vbe = 0.7, Rb = 470, Rc = 2, beta = 100;  // V, V, kOhm, kOhm, -
+  const Ib = (Vcc - Vbe) / Rb;          // mA   (V / kOhm)
+  const Icq = beta * Ib;                // mA
+  const Vceq = Vcc - Icq * Rc;          // V
+  // re-solve at +50% beta (Ib unchanged because Rb fixes it)
+  const beta2 = beta * 1.5;
+  const Icq2 = beta2 * Ib;
+  const Vceq2 = Vcc - Icq2 * Rc;
+  const icShiftPct = ((Icq2 - Icq) / Icq) * 100;
+  const vceShiftPct = ((Vceq2 - Vceq) / Vceq) * 100;
+  const num = (s: string) => <b className="font-mono" style={{ color: accent }}>{s}</b>;
+  const warn = (s: string) => <b className="font-mono" style={{ color: COL.warn }}>{s}</b>;
+  const steps = [
+    {
+      label: lang === 'hi' ? 'input loop पर KVL -> Ib' : 'KVL around the input loop -> Ib',
+      body: (
+        <p className={`text-[13px] ${t.sub}`}>
+          {lang === 'hi'
+            ? <>base loop: Vcc = Ib*Rb + Vbe, तो Ib = (Vcc - Vbe)/Rb = ({Vcc} - {Vbe})/{Rb} = {num(fmt(Ib, 4) + ' mA')}। ध्यान दें Ib में beta कहीं नहीं - इसे सिर्फ़ Rb तय करता है।</>
+            : <>Base loop: Vcc = Ib*Rb + Vbe, so Ib = (Vcc - Vbe)/Rb = ({Vcc} - {Vbe})/{Rb} = {num(fmt(Ib, 4) + ' mA')}. Note no beta appears in Ib - it is fixed by Rb alone.</>}
+        </p>
+      ),
+    },
+    {
+      label: lang === 'hi' ? 'Icq = beta*Ib' : 'Collector current Icq = beta*Ib',
+      body: (
+        <p className={`text-[13px] ${t.sub}`}>
+          {lang === 'hi'
+            ? <>transistor base current को beta गुना करता है: Icq = beta*Ib = {beta}*{fmt(Ib, 4)} = {num(fmt(Icq) + ' mA')}। यहीं beta पहली बार घुसता है।</>
+            : <>The transistor multiplies the base current by beta: Icq = beta*Ib = {beta}*{fmt(Ib, 4)} = {num(fmt(Icq) + ' mA')}. This is where beta first enters.</>}
+        </p>
+      ),
+    },
+    {
+      label: lang === 'hi' ? 'output loop पर KVL -> Vceq' : 'KVL around the output loop -> Vceq',
+      body: (
+        <div className="space-y-2">
+          <p className={`text-[13px] ${t.sub}`}>
+            {lang === 'hi'
+              ? <>collector loop: Vce = Vcc - Ic*Rc = {Vcc} - {fmt(Icq)}*{Rc} = {num(fmt(Vceq) + ' V')}।</>
+              : <>Collector loop: Vce = Vcc - Ic*Rc = {Vcc} - {fmt(Icq)}*{Rc} = {num(fmt(Vceq) + ' V')}.</>}
+          </p>
+          <p className={`text-center text-base font-black ${t.text}`}>
+            Q = (<span style={{ color: accent }}>{fmt(Vceq)} V</span>, <span style={{ color: accent }}>{fmt(Icq)} mA</span>)
+          </p>
+        </div>
+      ),
+    },
+    {
+      label: lang === 'hi' ? 'अब beta को +50% बढ़ाओ' : 'Now raise beta by +50%',
+      body: (
+        <div className="space-y-2">
+          <p className={`text-[13px] ${t.sub}`}>
+            {lang === 'hi'
+              ? <>Rb अब भी वही Ib देता है, पर beta {beta} {'->'} {beta2}: Icq = {beta2}*{fmt(Ib, 4)} = {warn(fmt(Icq2) + ' mA')}, और Vceq = {Vcc} - {fmt(Icq2)}*{Rc} = {warn(fmt(Vceq2) + ' V')}।</>
+              : <>Rb still gives the same Ib, but beta {beta} {'->'} {beta2}: Icq = {beta2}*{fmt(Ib, 4)} = {warn(fmt(Icq2) + ' mA')}, and Vceq = {Vcc} - {fmt(Icq2)}*{Rc} = {warn(fmt(Vceq2) + ' V')}.</>}
+          </p>
+          <p className={`text-[13px] ${t.sub}`}>
+            {lang === 'hi'
+              ? <>Ic में {warn(fmt(icShiftPct, 0) + '%')} बढ़त (ठीक beta जितनी) Vceq को {warn(fmt(vceShiftPct, 0) + '%')} गिरा देती है - Q-point saturation की ओर भागता है।</>
+              : <>A {warn(fmt(icShiftPct, 0) + '%')} jump in Ic (exactly the beta change) drives Vceq down by {warn(fmt(vceShiftPct, 0) + '%')} - the Q-point bolts toward saturation.</>}
+          </p>
+          <p className={`text-center text-[12px] ${t.faint}`}>
+            {lang === 'hi'
+              ? 'चूँकि Ib तय है, Ic = beta*Ib सीधे beta का अनुसरण करता है और कुछ भी पीछे नहीं धकेलता - यही fixed bias का घातक दोष है।'
+              : 'Since Ib is fixed, Ic = beta*Ib tracks beta one-for-one with nothing to push back - the fatal flaw of fixed bias.'}
+          </p>
+        </div>
+      ),
+    },
+  ];
+  return (
+    <Card isDarkMode={isDarkMode}>
+      <div className="mb-4 font-mono text-[11px] uppercase tracking-[0.3em]" style={{ color: accent }}>
+        {lang === 'hi' ? 'Proof: fixed-bias Q-point और beta-drift' : 'Proof: fixed-bias Q-point and its beta-drift'}
+      </div>
+      <StepThrough steps={steps} isDarkMode={isDarkMode} accent={accent} />
+    </Card>
+  );
+};
+
 /* ───────────────────────── proof: Thevenin solve (deck numbers) ────────────
  * StepThrough of the voltage-divider exact analysis with the spec deck values,
  * every number computed here from Vth/Rth/Re/beta - nothing hardcoded.
@@ -308,6 +472,23 @@ const TheveninProof: React.FC<{ isDarkMode: boolean; accent: string }> = ({ isDa
             ? <>Ic = beta*Ib = {num(fmt(Ic) + ' mA')}, Ie = (beta+1)*Ib = {num(fmt(Ie) + ' mA')} (Ie ~ Ic)।</>
             : <>Ic = beta*Ib = {num(fmt(Ic) + ' mA')}, Ie = (beta+1)*Ib = {num(fmt(Ie) + ' mA')} (Ie ~ Ic).</>}
         </p>
+      ),
+    },
+    {
+      label: lang === 'hi' ? 'beta क्यों निकल जाता है' : 'Why beta drops out',
+      body: (
+        <div className="space-y-2">
+          <p className={`text-[13px] ${t.sub}`}>
+            {lang === 'hi'
+              ? <>Ib को Ie में बदलो: Ie = (Vth - Vbe)/(Re + Rth/(beta+1)) = ({fmt(Vth)} - {Vbe})/({Re} + {fmt(Rth)}/{beta + 1}) = {num(fmt(Ie) + ' mA')}।</>
+              : <>Rewrite in terms of Ie: Ie = (Vth - Vbe)/(Re + Rth/(beta+1)) = ({fmt(Vth)} - {Vbe})/({Re} + {fmt(Rth)}/{beta + 1}) = {num(fmt(Ie) + ' mA')}.</>}
+          </p>
+          <p className={`text-[13px] ${t.sub}`}>
+            {lang === 'hi'
+              ? <>Rth/(beta+1) = {num(fmt(Rth / (beta + 1), 3) + ' kΩ')} जो Re = {Re} kΩ के सामने नगण्य है, तो Ie ~ (Vth - Vbe)/Re = {num(fmt((Vth - Vbe) / Re) + ' mA')} - beta ग़ायब।</>
+              : <>Rth/(beta+1) = {num(fmt(Rth / (beta + 1), 3) + ' kΩ')} is tiny next to Re = {Re} kΩ, so Ie ~ (Vth - Vbe)/Re = {num(fmt((Vth - Vbe) / Re) + ' mA')} - beta has vanished.</>}
+          </p>
+        </div>
       ),
     },
     {
@@ -480,11 +661,17 @@ function componentFor(scene: SubScene, i: number, n: number): React.FC<any> {
           )}
           {which === 'loadline' && (
             <div className="space-y-4">
+              <LoadLineProof isDarkMode={p.isDarkMode} accent={p.accent} />
               <LoadLineLab isDarkMode={p.isDarkMode} accent={p.accent} />
               <OutputCurves isDarkMode={p.isDarkMode} accent={p.accent} />
             </div>
           )}
-          {which === 'fixed' && <LoadLineLab isDarkMode={p.isDarkMode} accent={p.accent} />}
+          {which === 'fixed' && (
+            <div className="space-y-4">
+              <FixedBiasProof isDarkMode={p.isDarkMode} accent={p.accent} />
+              <LoadLineLab isDarkMode={p.isDarkMode} accent={p.accent} />
+            </div>
+          )}
           {which === 'flaw' && <BiasStability isDarkMode={p.isDarkMode} accent={p.accent} />}
           {which === 'divider' && (
             <div className="space-y-4">

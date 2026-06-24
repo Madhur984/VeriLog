@@ -117,7 +117,29 @@ const ControlShowdown: React.FC<{ isDarkMode: boolean; accent: string }> = ({ is
           note={lang === 'hi' ? 'reverse-biased gate केवल leakage खींचता है - Rin बहुत बड़ा।' : 'the reverse-biased gate draws only leakage - Rin is enormous.'}
         />
       </div>
-      <p className={`mt-4 text-center text-[13px] ${t.sub}`}>
+      {/* worked contrast: the defining equations + computed values, side by side */}
+      <div className="mt-4 grid gap-2 font-mono text-[12px] sm:grid-cols-2">
+        <div className={`rounded-lg px-3 py-2 ${t.soft}`}>
+          <div className="font-black" style={{ color: ACC.bjt }}>{lang === 'hi' ? 'BJT (current-controlled)' : 'BJT (current-controlled)'}</div>
+          <div className="mt-1">Ib = (Vin - Vbe)/Rs = ({fmt(Vin, 1)} - {Vbe})/{Rs}k = <b style={{ color: ACC.bjt }}>{fmt(ibUA, 1)} µA</b></div>
+          <div className="mt-0.5">Rin = Vin/Ib = <b style={{ color: ACC.bjt }}>{Number.isFinite(rinBJT) ? `${fmt(rinBJT / 1e3, 1)} kΩ` : '∞'}</b> {lang === 'hi' ? '(low Zin)' : '(low Zin)'}</div>
+        </div>
+        <div className={`rounded-lg px-3 py-2 ${t.soft}`}>
+          <div className="font-black" style={{ color: ACC.fet }}>{lang === 'hi' ? 'FET (voltage-controlled)' : 'FET (voltage-controlled)'}</div>
+          <div className="mt-1">Ig ≈ {lang === 'hi' ? 'leakage' : 'leakage'} = <b style={{ color: ACC.fet }}>{fmt(igNA, 1)} nA</b></div>
+          <div className="mt-0.5">Rin = Vin/Ig = <b style={{ color: ACC.fet }}>{fmt(rinFET / 1e6, 1)} MΩ</b> {lang === 'hi' ? '(very high Zin)' : '(very high Zin)'}</div>
+        </div>
+      </div>
+      <p className={`mt-3 text-center text-[13px] ${t.sub}`}>
+        {ibUA > 0
+          ? (lang === 'hi'
+            ? `यहाँ BJT का Ib microamps में है पर FET का Ig nanoamps में - लगभग ${fmt((ibUA * 1000) / igNA / 1000, 0)} हज़ार गुना कम current। इसीलिए FET का Rin BJT से ~${fmt(rinFET / rinBJT, 0)} गुना बड़ा है।`
+            : `Here the BJT draws Ib in microamps but the FET draws Ig in nanoamps - about ${fmt((ibUA * 1000) / igNA / 1000, 0)} thousand times less input current. That is why the FET Rin is ~${fmt(rinFET / rinBJT, 0)}x larger than the BJT Rin.`)
+          : (lang === 'hi'
+            ? 'Vin अभी Vbe (0.7V) से कम है, तो BJT अभी on नहीं हुआ (Ib=0)। Vin बढ़ाते ही BJT microamps खींचने लगेगा जबकि FET nanoamps पर टिका रहेगा।'
+            : 'Vin is still below Vbe (0.7V), so the BJT is not yet on (Ib=0). Raise Vin and the BJT starts drawing microamps while the FET stays in nanoamps.')}
+      </p>
+      <p className={`mt-3 text-center text-[13px] ${t.sub}`}>
         {lang === 'hi'
           ? 'Vin बढ़ाइए: BJT का Ib (µA) तेज़ी से चढ़ता है और Rin (kΩ) गिरता है; FET का Ig (nA) लगभग स्थिर रहता है और Rin (MΩ) टिका रहता है।'
           : 'Raise Vin: the BJT Ib (µA) climbs fast and its Rin (kΩ) falls; the FET Ig (nA) barely moves and its Rin (MΩ) holds.'}
@@ -264,6 +286,67 @@ const ShockleyDerivation: React.FC<{ isDarkMode: boolean; accent: string }> = ({
   );
 };
 
+/* ── proof: transconductance gm derived by differentiating Shockley ── */
+// Every step shown; the final gm0 is computed in code from the same Idss, Vp.
+const GmDerivation: React.FC<{ isDarkMode: boolean; accent: string }> = ({ isDarkMode, accent }) => {
+  const { lang } = useSubLang();
+  const t = tone(isDarkMode);
+  const Idss = 10, Vp = -4;                            // mA, V (matches the labs)
+  const gm0 = (-2 * Idss) / Vp;                        // mA/V, computed (= 5)
+  const mono = (s: string) => <span className="font-mono text-[13px] font-black" style={{ color: accent }}>{s}</span>;
+  const P: React.FC<{ children: React.ReactNode }> = ({ children }) => <p className={`text-[13px] leading-relaxed ${t.sub}`}>{children}</p>;
+
+  const steps = [
+    {
+      label: lang === 'hi' ? 'gm की परिभाषा' : 'Definition of gm',
+      body: <P>{lang === 'hi'
+        ? <>transconductance वह दर है जिससे drain current, gate voltage के साथ बदलता है: {mono('gm = dId/dVgs')}, Q-point पर evaluate किया गया। units siemens (A per V) हैं।</>
+        : <>Transconductance is the rate at which drain current changes with gate voltage: {mono('gm = dId/dVgs')}, evaluated at the Q-point. Its units are siemens (A per V).</>}</P>,
+    },
+    {
+      label: lang === 'hi' ? 'Shockley से शुरू करें' : 'Start from Shockley',
+      body: <P>{lang === 'hi'
+        ? <>हम पिछली derivation का नतीजा लेते हैं: {mono('Id = Idss(1 - Vgs/Vp)²')}। इसे Vgs के सापेक्ष differentiate करना है।</>
+        : <>Take the result of the previous derivation: {mono('Id = Idss(1 - Vgs/Vp)²')}. We must differentiate it with respect to Vgs.</>}</P>,
+    },
+    {
+      label: lang === 'hi' ? 'substitution u रखें' : 'Substitute u',
+      body: <P>{lang === 'hi'
+        ? <>{mono('u = (1 - Vgs/Vp)')} रखें। तो {mono('du/dVgs = -1/Vp')} (Idss और Vp constants हैं)। अब Id = Idss·u²।</>
+        : <>Let {mono('u = (1 - Vgs/Vp)')}. Then {mono('du/dVgs = -1/Vp')} (Idss and Vp are constants). Now Id = Idss·u².</>}</P>,
+    },
+    {
+      label: lang === 'hi' ? 'chain rule लगाएँ' : 'Apply the chain rule',
+      body: <P>{lang === 'hi'
+        ? <>{mono('dId/dVgs = Idss·2u·(du/dVgs) = Idss·2(1 - Vgs/Vp)·(-1/Vp)')}। समेटने पर {mono('gm = -(2·Idss/Vp)(1 - Vgs/Vp)')}।</>
+        : <>{mono('dId/dVgs = Idss·2u·(du/dVgs) = Idss·2(1 - Vgs/Vp)·(-1/Vp)')}. Collecting terms gives {mono('gm = -(2·Idss/Vp)(1 - Vgs/Vp)')}.</>}</P>,
+    },
+    {
+      label: lang === 'hi' ? 'Vgs=0 पर gm0' : 'Peak gm0 at Vgs=0',
+      body: <div className="space-y-2">
+        <P>{lang === 'hi'
+          ? <>Vgs=0 रखें: bracket = 1, तो {mono('gm0 = -2·Idss/Vp = 2·Idss/|Vp|')} (Vp&lt;0 होने से positive)। यहाँ Idss={Idss}mA, Vp={Vp}V देता है gm0 = 2·{Idss}/|{Vp}| = <b style={{ color: accent }}>{fmt(gm0, 1)} mA/V</b>।</>
+          : <>Set Vgs=0: the bracket = 1, so {mono('gm0 = -2·Idss/Vp = 2·Idss/|Vp|')} (positive, since Vp&lt;0). With Idss={Idss}mA, Vp={Vp}V this is gm0 = 2·{Idss}/|{Vp}| = <b style={{ color: accent }}>{fmt(gm0, 1)} mA/V</b>.</>}</P>
+        <P>{lang === 'hi'
+          ? <>Vgs=Vp रखें: bracket = 0, तो gm = 0 (channel pinched off, कोई gain नहीं)। एक compact रूप: {mono('gm = gm0·sqrt(Id/Idss)')}।</>
+          : <>Set Vgs=Vp: the bracket = 0, so gm = 0 (channel pinched off, no gain). A compact form: {mono('gm = gm0·sqrt(Id/Idss)')}.</>}</P>
+        <p className={`mt-2 rounded-lg px-3 py-2 text-center font-mono text-[13px] font-black ${t.soft}`} style={{ color: accent }}>
+          gm = -(2·Idss/Vp)(1 - Vgs/Vp)  ·  gm0 = 2·Idss/|Vp| = {fmt(gm0, 1)} mA/V
+        </p>
+      </div>,
+    },
+  ];
+
+  return (
+    <Card isDarkMode={isDarkMode}>
+      <div className="mb-3 font-mono text-[11px] uppercase tracking-[0.3em]" style={{ color: accent }}>
+        {lang === 'hi' ? 'Proof: gm = dId/dVgs' : 'Proof: gm = dId/dVgs'}
+      </div>
+      <StepThrough steps={steps} isDarkMode={isDarkMode} accent={accent} />
+    </Card>
+  );
+};
+
 /* ── bespoke: transconductance gm = slope of the transfer curve ── */
 // gm = -2*Idss/Vp*(1 - Vgs/Vp), computed live; the bar shrinks to 0 toward Vp.
 const GmLab: React.FC<{ isDarkMode: boolean; accent: string }> = ({ isDarkMode, accent }) => {
@@ -391,7 +474,12 @@ function componentFor(scene: SubScene, i: number, n: number): React.FC<any> {
               <ShockleyDerivation isDarkMode={p.isDarkMode} accent={p.accent} />
             </div>
           )}
-          {which === 'gm' && <GmLab isDarkMode={p.isDarkMode} accent={p.accent} />}
+          {which === 'gm' && (
+            <div className="space-y-4">
+              <GmLab isDarkMode={p.isDarkMode} accent={p.accent} />
+              <GmDerivation isDarkMode={p.isDarkMode} accent={p.accent} />
+            </div>
+          )}
         </TheoryScene>
       );
     }

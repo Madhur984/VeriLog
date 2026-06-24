@@ -715,6 +715,167 @@ const ComplementSubtractor: React.FC<{ isDarkMode: boolean; accent: string; scen
   );
 };
 
+/* ───────── bespoke: borrow ripple vs mirror+add (S02) ───────── */
+// Why borrowing is expensive, shown not just told. For a chosen decimal
+// subtraction the left panel replays the schoolbook borrow column by column and
+// counts how many borrows actually fire (the "ripple"); the right panel shows
+// the same problem solved as mirror + add with zero borrows. Every digit, every
+// borrow and the final answer are COMPUTED here, nothing is hardcoded.
+interface BorrowStep { col: number; top: number; bot: number; borrowIn: 0 | 1; effTop: number; borrowOut: 0 | 1; diff: number; }
+const traceBorrow = (a: number, b: number, width: number) => {
+  const aD = toDigits(a, 10, width);
+  const bD = toDigits(b, 10, width);
+  const steps: BorrowStep[] = [];
+  let borrow: 0 | 1 = 0;
+  // walk right-to-left (least significant first), like longhand subtraction
+  for (let i = width - 1; i >= 0; i--) {
+    const top = aD[i], bot = bD[i];
+    const borrowIn: 0 | 1 = borrow;
+    const effTop: number = top - borrowIn;
+    const needBorrow: 0 | 1 = effTop < bot ? 1 : 0;
+    const diff = needBorrow ? effTop + 10 - bot : effTop - bot;
+    steps.push({ col: i, top, bot, borrowIn, effTop, borrowOut: needBorrow, diff });
+    borrow = needBorrow;
+  }
+  const borrowCount = steps.filter((s) => s.borrowOut === 1).length;
+  const resultDigits = steps.slice().reverse().map((s) => s.diff); // back to MSB-first
+  return { aD, bD, steps, borrowCount, resultDigits };
+};
+
+const BorrowVsMirror: React.FC<{ isDarkMode: boolean; accent: string }> = ({ isDarkMode, accent }) => {
+  const { lang } = useSubLang();
+  const t = tone(isDarkMode);
+  const width = 5;
+  const presets: { a: number; b: number }[] = [
+    { a: 80000, b: 1 },     // every column borrows - worst case ripple
+    { a: 72532, b: 3250 },
+    { a: 50402, b: 9999 },
+  ];
+  const [p, setP] = useState(0);
+  const a = presets[p].a, b = presets[p].b;
+  const tr = traceBorrow(a, b, width);
+  const w = work('dec', a, b); // mirror + add path, all digits computed
+
+  const cell = (d: number | string, color: string, bg?: string, faded?: boolean, key?: React.Key) => (
+    <span key={key} className="flex h-8 w-8 items-center justify-center rounded-md font-mono text-sm font-black tabular-nums"
+      style={bg ? { background: bg, color: '#000' } : { color, opacity: faded ? 0.4 : 1, border: `1.5px solid ${color}55` }}>{d}</span>
+  );
+
+  return (
+    <Card isDarkMode={isDarkMode}>
+      <div className="mb-5 flex flex-wrap items-center gap-3">
+        <span className={`font-mono text-[11px] uppercase tracking-widest ${t.faint}`}>
+          {lang === 'hi' ? 'borrow ripple बनाम mirror + add' : 'borrow ripple vs mirror + add'}
+        </span>
+        <div className={`ml-auto flex items-center gap-1 rounded-full border p-1 ${t.soft}`}>
+          {presets.map((pp, i) => (
+            <button key={i} onClick={() => setP(i)}
+              className="rounded-full px-3 py-1 font-mono text-[11px] font-black tabular-nums transition-colors"
+              style={p === i ? { background: accent, color: '#000' } : { color: t.ink }}>
+              {pp.a} - {pp.b}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        {/* LEFT: schoolbook borrow, column by column */}
+        <div className={`rounded-2xl border p-4 ${t.soft}`} style={{ borderColor: `${ACC.III}44` }}>
+          <div className="mb-3 flex items-center gap-2">
+            <span className="text-lg font-black" style={{ color: ACC.III }}>{lang === 'hi' ? 'पुराना तरीक़ा: borrow' : 'The old way: borrow'}</span>
+          </div>
+          {/* digit grid MSB-first */}
+          <div className="space-y-1.5">
+            <div className="flex items-center gap-2">
+              <span className={`w-16 flex-shrink-0 font-mono text-[10px] ${t.faint}`}>A</span>
+              <div className="flex gap-1">{tr.aD.map((d, i) => cell(d, ACC.I, undefined, false, i))}</div>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className={`w-16 flex-shrink-0 font-mono text-[10px] ${t.faint}`}>- B</span>
+              <div className="flex gap-1">{tr.bD.map((d, i) => cell(d, ACC.II, undefined, false, i))}</div>
+            </div>
+            <div className="my-1 h-px w-full" style={{ background: `${ACC.III}33` }} />
+            <div className="flex items-center gap-2">
+              <span className={`w-16 flex-shrink-0 font-mono text-[10px] ${t.faint}`}>{lang === 'hi' ? 'जवाब' : 'result'}</span>
+              <div className="flex gap-1">{tr.resultDigits.map((d, i) => cell(d, ACC.III, `${ACC.III}22`, false, i))}</div>
+            </div>
+          </div>
+          {/* per-column borrow trace */}
+          <div className="mt-4 space-y-1.5">
+            {tr.steps.map((s, k) => (
+              <motion.div key={`${p}-${k}`} initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: k * 0.12 }}
+                className={`flex items-center gap-2 rounded-lg border px-2 py-1 font-mono text-[11px] ${t.card}`}
+                style={{ borderColor: s.borrowOut ? `${ACC.III}66` : `${t.ink}22` }}>
+                <span className={t.faint}>{lang === 'hi' ? 'col' : 'col'} {width - s.col}:</span>
+                <span style={{ color: ACC.I }}>{s.top}</span>
+                {s.borrowIn ? <span style={{ color: ACC.III }}>-1</span> : null}
+                <span className={t.faint}>-</span>
+                <span style={{ color: ACC.II }}>{s.bot}</span>
+                <ArrowRight size={11} className={t.faint} />
+                <span className="font-black" style={{ color: ACC.III }}>{s.diff}</span>
+                {s.borrowOut
+                  ? <span className="ml-auto rounded px-1.5 py-0.5 text-[10px] font-black" style={{ background: `${ACC.III}1a`, color: ACC.III }}>{lang === 'hi' ? 'borrow!' : 'borrow!'}</span>
+                  : <span className={`ml-auto text-[10px] ${t.faint}`}>{lang === 'hi' ? 'ठीक' : 'ok'}</span>}
+              </motion.div>
+            ))}
+          </div>
+          <p className="mt-3 text-center text-[13px] font-black" style={{ color: ACC.III }}>
+            {lang === 'hi'
+              ? <>{width} columns में से <b>{tr.borrowCount}</b> ने borrow किया - यही महँगी ripple है।</>
+              : <><b>{tr.borrowCount}</b> of {width} columns had to borrow - that is the costly ripple.</>}
+          </p>
+        </div>
+
+        {/* RIGHT: mirror + add, zero borrows */}
+        <div className={`rounded-2xl border p-4 ${t.soft}`} style={{ borderColor: `${ACC.good}44` }}>
+          <div className="mb-3 flex items-center gap-2">
+            <FlipHorizontal2 size={18} style={{ color: ACC.good }} />
+            <span className="text-lg font-black" style={{ color: ACC.good }}>{lang === 'hi' ? 'नया तरीक़ा: mirror + add' : 'The new way: mirror + add'}</span>
+          </div>
+          <div className="space-y-1.5">
+            <div className="flex items-center gap-2">
+              <span className={`w-24 flex-shrink-0 font-mono text-[10px] ${t.faint}`}>A</span>
+              <div className="flex gap-1">{w.aD.map((d, i) => cell(d, ACC.I, undefined, false, i))}</div>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className={`w-24 flex-shrink-0 font-mono text-[10px] ${t.faint}`}>{lang === 'hi' ? "+ mirror(B)" : '+ mirror(B)'}</span>
+              <div className="flex gap-1">{w.mir.map((d, i) => cell(d, ACC.good, `${ACC.good}22`, false, i))}</div>
+            </div>
+            <div className="my-1 h-px w-full" style={{ background: `${ACC.good}33` }} />
+            <div className="flex items-center gap-2">
+              <span className={`w-24 flex-shrink-0 font-mono text-[10px] ${t.faint}`}>{lang === 'hi' ? 'sum' : 'sum'}</span>
+              <div className="flex gap-1">
+                {w.carry ? cell('1', ACC.good, `${ACC.good}33`, false, 'lead') : null}
+                {w.sumLow.map((d, i) => cell(d, t.ink as string, undefined, false, i))}
+              </div>
+            </div>
+          </div>
+          <div className="mt-4 flex items-start gap-2">
+            <CornerLeftDown size={16} className="mt-0.5 flex-shrink-0" style={{ color: ACC.good }} />
+            <p className={`text-[12px] ${t.sub}`}>
+              {lang === 'hi'
+                ? <>mirror({w.b.toString().padStart(5, '0')}) = {w.mirVal}; {w.a} + {w.mirVal} = {w.rawSum}. end-around carry -&gt; <b style={{ color: ACC.good }}>{w.finalDigits.join('')}</b>.</>
+                : <>mirror({w.b.toString().padStart(5, '0')}) = {w.mirVal}; {w.a} + {w.mirVal} = {w.rawSum}. End-around carry -&gt; <b style={{ color: ACC.good }}>{w.finalDigits.join('')}</b>.</>}
+            </p>
+          </div>
+          <p className="mt-3 text-center text-[13px] font-black" style={{ color: ACC.good }}>
+            {lang === 'hi'
+              ? <><b>0</b> borrows - बस एक mirror और एक add।</>
+              : <><b>0</b> borrows - just one mirror and one add.</>}
+          </p>
+        </div>
+      </div>
+
+      <p className={`mt-4 text-center text-[13px] ${t.sub}`}>
+        {lang === 'hi'
+          ? <>दोनों रास्ते एक ही जवाब <b style={{ color: accent }}>{a - b}</b> देते हैं, पर borrow वाला रास्ता हर column को पिछले से बाँधता है, जबकि mirror वाला नहीं।</>
+          : <>Both paths reach the same answer <b style={{ color: accent }}>{a - b}</b>, but the borrow path chains every column to the one before it, while the mirror path does not.</>}
+      </p>
+    </Card>
+  );
+};
+
 /* ───────── part assignment ───────── */
 const partAt = (i: number): string =>
   i <= 2 ? 'PART I · THE PROBLEM'
@@ -723,6 +884,7 @@ const partAt = (i: number): string =>
 
 const bespokeFor = (scene: SubScene): React.ReactNode => {
   const key = scene.id.toLowerCase();
+  if (key.includes('whyborrow')) return 'whyborrow';
   if (key.includes('twofamilies')) return 'families';
   if (key.includes('themirror')) return 'mirror';
   if (key.includes('threesteps')) return 'recipe';
@@ -754,6 +916,7 @@ function componentFor(scene: SubScene): React.FC<any> {
       const which = bespokeFor(scene);
       return (p) => (
         <TheoryScene {...p} scene={scene}>
+          {which === 'whyborrow' && <BorrowVsMirror isDarkMode={p.isDarkMode} accent={p.accent} />}
           {which === 'families' && <FamiliesPanel isDarkMode={p.isDarkMode} />}
           {which === 'mirror' && (
             <>

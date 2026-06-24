@@ -299,78 +299,140 @@ const NmosPmosMirror: React.FC<{ isDarkMode: boolean; accent: string }> = ({ isD
 };
 
 /* ───────────────── Vt derivation (spec proofs.derivations) ────────── */
+// Every algebraic step from the spec proofs, shown line by line, and EVERY
+// number is computed here in code from one shared worked example so the reader
+// can check the arithmetic at each stage rather than trusting the closed form.
 const VtStepThrough: React.FC<{ isDarkMode: boolean; accent: string }> = ({ isDarkMode, accent }) => {
   const { lang } = useSubLang();
   const t = tone(isDarkMode);
   const mono = (s: string) => <span className="font-mono text-[13px] font-black" style={{ color: accent }}>{s}</span>;
+
+  // One shared worked example. Process numbers are deliberately round so the
+  // closed-form k comes out clean; the rest of the chain is pure arithmetic.
+  const mu = 0.06;        // electron mobility, m^2/(V·s)  (~600 cm^2/V·s)
+  const Cox = 5e-3;       // gate-oxide capacitance per area, F/m^2  (~ for a few-nm oxide)
+  const W = 10e-6, L = 1e-6;               // channel width / length, m
+  const k_SI = mu * Cox * (W / L);         // = mu*Cox*(W/L), A/V^2 (SI)
+  const k = k_SI * 1e3;                    // express in mA/V^2 for readable Id
+  const Vgs = 3, Vt = 1, Vds = 1.2;        // V (Vds is in triode since Vds < Vgs-Vt = 2)
+  const over = Vgs - Vt;                   // overdrive, V
+  const Vdsat = over;                      // pinch-off boundary, V
+  // triode integral evaluated:  INT_0^Vds (over - V) dV = over*Vds - Vds^2/2
+  const integ = over * Vds - (Vds * Vds) / 2;       // V^2
+  const IdTriode = k * integ;                        // mA
+  // saturation = triode evaluated at Vds = Vdsat, collapses to (k/2)*over^2
+  const IdSat = (k / 2) * over * over;               // mA
+  const IdTriodeAtSat = k * (over * Vdsat - (Vdsat * Vdsat) / 2); // mA, must equal IdSat
+  const num = (n: number, d = 3) => fmt(n, d);
+
   const steps = [
     {
-      label: lang === 'hi' ? 'structure + capacitor' : 'Structure + capacitor',
+      label: lang === 'hi' ? '1. structure + worked example' : '1. Structure + worked example',
       body: (
-        <p className={`text-[13px] ${t.sub}`}>
-          {lang === 'hi'
-            ? <>p-type substrate पर पतले SiO2 के ऊपर metal/poly gate; S और D, n+ regions। +VGS लगाने पर gate और channel एक parallel-plate capacitor बनाते हैं जिसका {mono('Cox = eps_ox / t_ox')} है।</>
-            : <>A metal/poly gate over thin SiO2 over a p-type substrate; S and D are n+ regions. Apply +VGS and the gate plus channel form a parallel-plate capacitor with {mono('Cox = eps_ox / t_ox')}.</>}
-        </p>
+        <div className={`space-y-2 text-[13px] ${t.sub}`}>
+          <p>
+            {lang === 'hi'
+              ? <>p-type substrate पर पतले SiO2 के ऊपर metal/poly gate; S और D, n+ regions। +VGS लगाने पर gate और channel एक parallel-plate capacitor बनाते हैं जिसका {mono('Cox = eps_ox / t_ox')} है।</>
+              : <>A metal/poly gate over thin SiO2 over a p-type substrate; S and D are n+ regions. Apply +VGS and the gate plus channel form a parallel-plate capacitor with {mono('Cox = eps_ox / t_ox')}.</>}
+          </p>
+          <p className={`rounded-lg px-3 py-2 font-mono text-[11.5px] ${t.soft}`}>
+            {lang === 'hi' ? 'इस proof में इस्तेमाल किए मान: ' : 'Values used throughout this proof: '}
+            mu = {mu} m²/Vs, Cox = {Cox} F/m², W/L = {W / L}, Vgs = {Vgs} V, Vt = {Vt} V, Vds = {Vds} V.
+          </p>
+        </div>
       ),
     },
     {
-      label: lang === 'hi' ? 'depletion फिर inversion' : 'Depletion then inversion',
+      label: lang === 'hi' ? '2. depletion फिर inversion' : '2. Depletion then inversion',
       body: (
         <p className={`text-[13px] ${t.sub}`}>
           {lang === 'hi'
             ? <>छोटा +VGS पहले holes को सतह से दूर धकेलता है (depletion region, अभी कोई mobile carrier नहीं)। VGS बढ़ने पर bands झुकते हैं और सतह invert हो जाती है: surface electron concentration = bulk hole concentration। Strong inversion पर {mono('phi_s = 2*phi_F')}, जहाँ {mono('phi_F = (kT/q)*ln(Na/ni)')}।</>
-            : <>A small +VGS first repels holes from the surface (a depletion region, no mobile carriers yet). As VGS rises, the bands bend until the surface inverts: surface electron concentration equals bulk hole concentration. Strong inversion is at {mono('phi_s = 2*phi_F')}, where {mono('phi_F = (kT/q)*ln(Na/ni)')}.</>}
+            : <>A small +VGS first repels holes from the surface (a depletion region, no mobile carriers yet). As VGS rises, the bands bend until the surface inverts: surface electron concentration equals bulk hole concentration. Strong inversion is reached at {mono('phi_s = 2*phi_F')}, where {mono('phi_F = (kT/q)*ln(Na/ni)')}.</>}
         </p>
       ),
     },
     {
-      label: lang === 'hi' ? 'threshold Vt' : 'Threshold Vt',
+      label: lang === 'hi' ? '3. threshold Vt' : '3. Threshold Vt',
       body: (
         <p className={`text-[13px] ${t.sub}`}>
           {lang === 'hi'
-            ? <>strong inversion तक पहुँचने वाला gate voltage ही threshold है: {mono('Vt = Vfb + 2*phi_F + Qdep/Cox')}, जहाँ Vfb flat-band voltage है और {mono('Qdep = sqrt(2*q*eps_si*Na*(2*phi_F))')} depletion charge per area।</>
-            : <>The gate voltage that reaches strong inversion is the threshold: {mono('Vt = Vfb + 2*phi_F + Qdep/Cox')}, where Vfb is the flat-band voltage and {mono('Qdep = sqrt(2*q*eps_si*Na*(2*phi_F))')} is the depletion charge per area.</>}
+            ? <>strong inversion तक पहुँचने वाला gate voltage ही threshold है: {mono('Vt = Vfb + 2*phi_F + Qdep/Cox')}, जहाँ Vfb flat-band voltage है और {mono('Qdep = sqrt(2*q*eps_si*Na*(2*phi_F))')} depletion charge per area। VGS &lt; Vt पर कोई inversion नहीं, तो {mono('Id = 0')} (cutoff)।</>
+            : <>The gate voltage that just reaches strong inversion is the threshold: {mono('Vt = Vfb + 2*phi_F + Qdep/Cox')}, where Vfb is the flat-band voltage and {mono('Qdep = sqrt(2*q*eps_si*Na*(2*phi_F))')} is the depletion charge per area. For VGS &lt; Vt there is no inversion, so {mono('Id = 0')} (cutoff).</>}
         </p>
       ),
     },
     {
-      label: lang === 'hi' ? 'channel charge' : 'Channel charge',
+      label: lang === 'hi' ? '4. channel charge Qn(y)' : '4. Channel charge Qn(y)',
       body: (
         <p className={`text-[13px] ${t.sub}`}>
           {lang === 'hi'
-            ? <>source (y=0) से drain (y=L) तक local potential V(y) के साथ, mobile inversion charge per area है {mono('Qn(y) = Cox*(VGS - Vt - V(y))')}; width W पर charge/length = {mono('W*Cox*(VGS - Vt - V(y))')}।</>
-            : <>With local potential V(y) from source (y=0) to drain (y=L), the mobile inversion charge per area is {mono('Qn(y) = Cox*(VGS - Vt - V(y))')}; over width W the charge per length is {mono('W*Cox*(VGS - Vt - V(y))')}.</>}
+            ? <>source (y=0) से drain (y=L) तक local potential V(y) के साथ, oxide capacitor पर voltage (VGS - V(y)) है और threshold के ऊपर वाला हिस्सा (VGS - Vt - V(y))। तो mobile inversion charge per area {mono('Qn(y) = Cox*(VGS - Vt - V(y))')}; width W पर charge/length = {mono('W*Cox*(VGS - Vt - V(y))')}।</>
+            : <>With local potential V(y) from source (y=0) to drain (y=L), the voltage across the oxide capacitor is (VGS - V(y)) and the part above threshold is (VGS - Vt - V(y)). So the mobile inversion charge per area is {mono('Qn(y) = Cox*(VGS - Vt - V(y))')}; over width W the charge per length is {mono('W*Cox*(VGS - Vt - V(y))')}.</>}
         </p>
       ),
     },
     {
-      label: lang === 'hi' ? 'triode law' : 'Triode law',
+      label: lang === 'hi' ? '5. triode: integrate' : '5. Triode: integrate',
       body: (
-        <p className={`text-[13px] ${t.sub}`}>
-          {lang === 'hi'
-            ? <>{mono('Id = mu*W*Cox*(VGS - Vt - V)*(dV/dy)')} को y: 0 to L और V: 0 to VDS पर integrate करने से मिलता है {mono('Id = k[(VGS-Vt)VDS - VDS^2/2]')}, जहाँ {mono('k = mu*Cox*(W/L)')}। बहुत छोटे VDS पर यह एक resistor है।</>
-            : <>Integrating {mono('Id = mu*W*Cox*(VGS - Vt - V)*(dV/dy)')} over y: 0 to L and V: 0 to VDS gives {mono('Id = k[(VGS-Vt)VDS - VDS^2/2]')}, with {mono('k = mu*Cox*(W/L)')}. For very small VDS this is a resistor.</>}
-        </p>
+        <div className={`space-y-2 text-[13px] ${t.sub}`}>
+          <p>
+            {lang === 'hi'
+              ? <>drift current {mono('Id = mu*W*Cox*(VGS - Vt - V)*(dV/dy)')}; Id channel भर में constant है, तो variables अलग कीजिए: {mono('Id*dy = mu*W*Cox*(VGS - Vt - V) dV')}। y: 0 to L और V: 0 to VDS पर integrate कीजिए।</>
+              : <>Drift current {mono('Id = mu*W*Cox*(VGS - Vt - V)*(dV/dy)')}; Id is constant along the channel, so separate variables: {mono('Id*dy = mu*W*Cox*(VGS - Vt - V) dV')}. Integrate y over 0 to L and V over 0 to VDS.</>}
+          </p>
+          <p className={`rounded-lg px-3 py-2 font-mono text-[11.5px] leading-relaxed ${t.soft}`}>
+            INT_0^Vds (Vgs-Vt - V) dV = (Vgs-Vt)·Vds - Vds²/2<br />
+            = ({over})·({Vds}) - ({Vds})²/2 = {num(over * Vds)} - {num((Vds * Vds) / 2)} = <b style={{ color: accent }}>{num(integ)} V²</b>
+          </p>
+        </div>
       ),
     },
     {
-      label: lang === 'hi' ? 'pinch-off + saturation' : 'Pinch-off + saturation',
+      label: lang === 'hi' ? '6. triode law Id' : '6. Triode law Id',
       body: (
-        <p className={`text-[13px] ${t.sub}`}>
-          {lang === 'hi'
-            ? <>Qn तब शून्य होता है जब V(y) = VGS - Vt, यानी channel drain पर pinch off होता है जब {mono('VDS = VGS - Vt')}। इसे triode law में रखने पर {mono('Id = (k/2)(VGS - Vt)^2')} - VDS से लगभग स्वतंत्र (एक आदर्श current source)।</>
-            : <>Qn vanishes where V(y) = VGS - Vt, i.e. the channel pinches off at the drain when {mono('VDS = VGS - Vt')}. Substituting into the triode law gives {mono('Id = (k/2)(VGS - Vt)^2')} - nearly independent of VDS (an ideal current source).</>}
-        </p>
+        <div className={`space-y-2 text-[13px] ${t.sub}`}>
+          <p>
+            {lang === 'hi'
+              ? <>Id·L = mu·W·Cox·[(VGS-Vt)VDS - VDS²/2]। दोनों तरफ़ L से भाग दीजिए और {mono('k = mu*Cox*(W/L)')} परिभाषित कीजिए: {mono('Id = k[(VGS-Vt)VDS - VDS^2/2]')}।</>
+              : <>Id·L = mu·W·Cox·[(VGS-Vt)VDS - VDS²/2]. Divide both sides by L and define {mono('k = mu*Cox*(W/L)')}: {mono('Id = k[(VGS-Vt)VDS - VDS^2/2]')}.</>}
+          </p>
+          <p className={`rounded-lg px-3 py-2 font-mono text-[11.5px] leading-relaxed ${t.soft}`}>
+            k = mu·Cox·(W/L) = {mu}·{Cox}·{W / L} = {num(k_SI, 4)} A/V² = <b style={{ color: accent }}>{num(k)} mA/V²</b><br />
+            Id = k · {num(integ)} = {num(k)} · {num(integ)} = <b style={{ color: accent }}>{num(IdTriode)} mA</b>
+          </p>
+        </div>
       ),
     },
     {
-      label: lang === 'hi' ? 'gate current = 0' : 'Gate current = 0',
+      label: lang === 'hi' ? '7. pinch-off + saturation' : '7. Pinch-off + saturation',
+      body: (
+        <div className={`space-y-2 text-[13px] ${t.sub}`}>
+          <p>
+            {lang === 'hi'
+              ? <>Qn तब शून्य होता है जब V(y) = VGS - Vt, यानी channel drain पर pinch off होता है जब {mono('VDS(sat) = VGS - Vt')} = {num(Vdsat, 2)} V। यह मान triode law में रखिए:</>
+              : <>Qn vanishes where V(y) = VGS - Vt, i.e. the channel pinches off at the drain when {mono('VDS(sat) = VGS - Vt')} = {num(Vdsat, 2)} V. Substitute this VDS into the triode law:</>}
+          </p>
+          <p className={`rounded-lg px-3 py-2 font-mono text-[11.5px] leading-relaxed ${t.soft}`}>
+            Id = k[(Vgs-Vt)·Vdsat - Vdsat²/2] = k[(Vgs-Vt)² - (Vgs-Vt)²/2] = (k/2)(Vgs-Vt)²<br />
+            = ({num(k)}/2)·({over})² = <b style={{ color: accent }}>{num(IdSat)} mA</b>
+            <span className={t.faint}> {' '}( triode-at-knee = {num(IdTriodeAtSat)} mA, equal ✓ )</span>
+          </p>
+          <p>
+            {lang === 'hi'
+              ? <>VDS &gt; VDS(sat) पर pinch-off बिंदु थोड़ा source की ओर खिसकता है पर conducting हिस्से पर voltage ~ VDS(sat) रहता है, इसलिए {mono('Id = (k/2)(VGS - Vt)^2')} VDS से लगभग स्वतंत्र (आदर्श current source)।</>
+              : <>For VDS &gt; VDS(sat) the pinch-off point creeps toward the source but the voltage across the conducting part stays ~ VDS(sat), so {mono('Id = (k/2)(VGS - Vt)^2')} stays nearly independent of VDS (an ideal current source).</>}
+          </p>
+        </div>
+      ),
+    },
+    {
+      label: lang === 'hi' ? '8. gate current = 0' : '8. Gate current = 0',
       body: (
         <p className={`text-[13px] ${t.sub}`}>
           {lang === 'hi'
-            ? <>gate को channel से एक insulating SiO2 अलग करता है; DC steady state में capacitor कोई current नहीं गुज़ारता, तो {mono('Ig ~ 0')} (सिर्फ़ fA-pA leakage)। यही MOSFET को voltage-controlled बनाता है, input resistance बहुत बड़ा।</>
-            : <>An insulating SiO2 separates gate from channel; in DC steady state a capacitor passes no current, so {mono('Ig ~ 0')} (only fA-pA leakage). That makes the MOSFET voltage-controlled with an enormous input resistance.</>}
+            ? <>gate को channel से एक insulating SiO2 अलग करता है; gate+channel एक capacitor है और DC steady state में capacitor कोई current नहीं गुज़ारता: {mono('Ig = Cox*A*(dVGS/dt) -> 0')} स्थिर VGS पर। तो {mono('Ig ~ 0')} (सिर्फ़ fA-pA leakage), MOSFET voltage-controlled, input resistance बहुत बड़ा। तुलना: BJT का base असली {mono('Ib = Ic/beta')} खींचता है।</>
+            : <>An insulating SiO2 separates gate from channel; gate+channel form a capacitor, and a capacitor passes no DC current: {mono('Ig = Cox*A*(dVGS/dt) -> 0')} at constant VGS. So {mono('Ig ~ 0')} (only fA-pA leakage), the MOSFET is voltage-controlled with an enormous input resistance. Contrast: a BJT base draws a real {mono('Ib = Ic/beta')}.</>}
         </p>
       ),
     },

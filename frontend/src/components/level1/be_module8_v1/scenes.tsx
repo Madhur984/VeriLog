@@ -249,6 +249,175 @@ const ReDerivation: React.FC<{ isDarkMode: boolean; accent: string }> = ({ isDar
   );
 };
 
+/* ───────── bespoke: transconductance gm = IC/VT = 1/re (StepThrough) ───────── */
+const GmDerivation: React.FC<{ isDarkMode: boolean; accent: string }> = ({ isDarkMode, accent }) => {
+  const { lang } = useSubLang();
+  const t = tone(isDarkMode);
+  // worked numbers: IC = 1 mA, VT = 26 mV => gm = 1/26 mA/mV = 38.5 mS, re = 26 Ohm
+  const IC = 1, VT = 26;                  // mA, mV
+  const gm = IC / VT;                     // mA/mV = S (since mA/mV = A/V)
+  const reVal = VT / IC;                  // Ohm
+  const mono = (s: string) => <span className="font-mono text-[13px] font-black" style={{ color: accent }}>{s}</span>;
+  const steps = [
+    {
+      label: lang === 'hi' ? 'collector current' : 'collector current law',
+      body: (
+        <p className={`text-[13px] ${t.sub}`}>
+          {lang === 'hi'
+            ? <>collector current भी उसी diode नियम का पालन करता है: {mono('IC ~ IS * exp(VBE/VT)')}।</>
+            : <>The collector current follows the same diode law: {mono('IC ~ IS * exp(VBE/VT)')}.</>}
+        </p>
+      ),
+    },
+    {
+      label: lang === 'hi' ? 'gm = slope' : 'gm is the slope',
+      body: (
+        <p className={`text-[13px] ${t.sub}`}>
+          {lang === 'hi'
+            ? <>transconductance वह slope है जो input voltage को output current में बदलती है: {mono('gm = dIC/dVBE')}।</>
+            : <>The transconductance is the slope that turns input voltage into output current: {mono('gm = dIC/dVBE')}.</>}
+        </p>
+      ),
+    },
+    {
+      label: lang === 'hi' ? 'differentiate' : 'differentiate',
+      body: (
+        <p className={`text-[13px] ${t.sub}`}>
+          {lang === 'hi'
+            ? <>{mono('dIC/dVBE = IS*exp(VBE/VT)/VT = IC/VT')}। तो {mono('gm = IC/VT')}।</>
+            : <>{mono('dIC/dVBE = IS*exp(VBE/VT)/VT = IC/VT')}, so {mono('gm = IC/VT')}.</>}
+        </p>
+      ),
+    },
+    {
+      label: lang === 'hi' ? 'link to re' : 'link to re',
+      body: (
+        <p className={`text-[13px] ${t.sub}`}>
+          {lang === 'hi'
+            ? <>चूँकि IC ~ IE (alpha ~ 1), {mono('gm = IC/VT ~ IE/VT = 1/re')}। यानी {mono('gm = 1/re')}।</>
+            : <>Since IC ~ IE (alpha ~ 1), {mono('gm = IC/VT ~ IE/VT = 1/re')}. In other words {mono('gm = 1/re')}.</>}
+        </p>
+      ),
+    },
+    {
+      label: lang === 'hi' ? 'plug in numbers' : 'plug in numbers',
+      body: (
+        <div className="space-y-2">
+          <p className={`text-[13px] ${t.sub}`}>
+            {lang === 'hi'
+              ? <>IC = {fmt(IC, 0)} mA, VT = {fmt(VT, 0)} mV रखने पर: {mono(`gm = ${IC}/${VT} = ${fmt(gm * 1000, 1)} mS`)} और {mono(`re = VT/IC = ${fmt(reVal, 0)} Ω`)}।</>
+              : <>With IC = {fmt(IC, 0)} mA and VT = {fmt(VT, 0)} mV: {mono(`gm = ${IC}/${VT} = ${fmt(gm * 1000, 1)} mS`)} and {mono(`re = VT/IC = ${fmt(reVal, 0)} Ω`)}.</>}
+          </p>
+          <p className={`text-center text-[12px] ${t.faint}`}>
+            {lang === 'hi'
+              ? 'जाँच: 1/re = 1/26 Ω = 38.5 mS, बिल्कुल gm के बराबर - दोनों एक ही चीज़ हैं।'
+              : 'Check: 1/re = 1/26 Ω = 38.5 mS, exactly gm - they are the same quantity.'}
+          </p>
+        </div>
+      ),
+    },
+  ];
+  return (
+    <Card isDarkMode={isDarkMode}>
+      <div className="mb-3 font-mono text-[11px] uppercase tracking-[0.3em]" style={{ color: accent }}>
+        {lang === 'hi' ? 'proof: gm = IC/VT = 1/re' : 'proof: gm = IC/VT = 1/re'}
+      </div>
+      <StepThrough steps={steps} isDarkMode={isDarkMode} accent={accent} />
+    </Card>
+  );
+};
+
+/* ───────── bespoke: full CE gain + Zi(base) derivation (StepThrough) ───────── */
+const GainDerivation: React.FC<{ isDarkMode: boolean; accent: string }> = ({ isDarkMode, accent }) => {
+  const { lang } = useSubLang();
+  const t = tone(isDarkMode);
+  // worked sample, every value computed: beta=150, IE=1 mA, Rc=3k, RL=6k
+  const beta = 150, IE = 1, VT = 26;      // -, mA, mV
+  const reVal = VT / IE;                  // Ohm
+  const Rc = 3, RL = 6;                   // kOhm
+  const rcRL = (Rc * RL) / (Rc + RL);     // kOhm
+  const Zb = beta * reVal;                // Ohm
+  const Av = -(rcRL * 1000) / reVal;      // unitless
+  const mono = (s: string) => <span className="font-mono text-[13px] font-black" style={{ color: accent }}>{s}</span>;
+  const steps = [
+    {
+      label: lang === 'hi' ? 'input resistance Zi(base)' : 'input resistance at the base',
+      body: (
+        <p className={`text-[13px] ${t.sub}`}>
+          {lang === 'hi'
+            ? <>re-model में B-E branch पर voltage {mono('vbe = ie*re')} है, और {mono('ie = (beta+1)*ib')}। तो base में देखने पर {mono('Zi(base) = vbe/ib = (beta+1)*re ~ beta*re')}।</>
+            : <>In the re-model the B-E branch carries {mono('vbe = ie*re')}, with {mono('ie = (beta+1)*ib')}. Looking into the base, {mono('Zi(base) = vbe/ib = (beta+1)*re ~ beta*re')}.</>}
+        </p>
+      ),
+    },
+    {
+      label: lang === 'hi' ? 'input voltage vi' : 'input voltage vi',
+      body: (
+        <p className={`text-[13px] ${t.sub}`}>
+          {lang === 'hi'
+            ? <>emitter पूरी तरह bypassed है (AC ground), तो पूरा input voltage beta*re पर पड़ता है: {mono('vi = ib*(beta*re)')}।</>
+            : <>The emitter is fully bypassed (an AC ground), so the whole input voltage sits across beta*re: {mono('vi = ib*(beta*re)')}.</>}
+        </p>
+      ),
+    },
+    {
+      label: lang === 'hi' ? 'output voltage vo' : 'output voltage vo',
+      body: (
+        <p className={`text-[13px] ${t.sub}`}>
+          {lang === 'hi'
+            ? <>collector current {mono('ic = beta*ib')}, output load {mono('Rc||RL')} से बहता है। current node को ground की ओर खींचता है, इसलिए minus: {mono('vo = -(beta*ib)*(Rc||RL)')}।</>
+            : <>The collector current {mono('ic = beta*ib')} flows through the output load {mono('Rc||RL')}. It pulls the node toward ground, hence the minus: {mono('vo = -(beta*ib)*(Rc||RL)')}.</>}
+        </p>
+      ),
+    },
+    {
+      label: lang === 'hi' ? 'divide -> Av' : 'divide -> Av',
+      body: (
+        <p className={`text-[13px] ${t.sub}`}>
+          {lang === 'hi'
+            ? <>{mono('Av = vo/vi = -(beta*ib)*(Rc||RL) / (ib*beta*re)')}। beta*ib कट जाता है: {mono('Av = -(Rc||RL)/re')}। चूँकि gm = 1/re, यह {mono('Av = -gm*(Rc||RL)')} भी है।</>
+            : <>{mono('Av = vo/vi = -(beta*ib)*(Rc||RL) / (ib*beta*re)')}. The beta*ib cancels: {mono('Av = -(Rc||RL)/re')}. Since gm = 1/re, this is also {mono('Av = -gm*(Rc||RL)')}.</>}
+        </p>
+      ),
+    },
+    {
+      label: lang === 'hi' ? 'the minus sign' : 'why the minus sign',
+      body: (
+        <p className={`text-[13px] ${t.sub}`}>
+          {lang === 'hi'
+            ? <>जब vi बढ़ता है, ib और ic बढ़ते हैं, Rc पर drop बढ़ता है, तो collector voltage गिरता है - input ऊपर, output नीचे। यही 180-degree phase inversion है।</>
+            : <>When vi rises, ib and ic rise, the drop across Rc rises, so the collector voltage falls - input up, output down. That is the mandatory 180-degree phase inversion.</>}
+        </p>
+      ),
+    },
+    {
+      label: lang === 'hi' ? 'plug in numbers' : 'plug in numbers',
+      body: (
+        <div className="space-y-2">
+          <p className={`text-[13px] ${t.sub}`}>
+            {lang === 'hi'
+              ? <>beta={fmt(beta, 0)}, IE={fmt(IE, 0)} mA -&gt; re={fmt(reVal, 0)} Ω, तो {mono(`Zi(base) = beta*re = ${fmt(Zb / 1000, 1)} kΩ`)}। Rc||RL = {fmt(rcRL, 1)} kΩ देता है {mono(`Av = -(${fmt(rcRL, 1)}k)/${fmt(reVal, 0)} = ${fmt(Av, 0)}`)}।</>
+              : <>beta={fmt(beta, 0)}, IE={fmt(IE, 0)} mA -&gt; re={fmt(reVal, 0)} Ω, so {mono(`Zi(base) = beta*re = ${fmt(Zb / 1000, 1)} kΩ`)}. With Rc||RL = {fmt(rcRL, 1)} kΩ, {mono(`Av = -(${fmt(rcRL, 1)}k)/${fmt(reVal, 0)} = ${fmt(Av, 0)}`)}.</>}
+          </p>
+          <p className={`text-center text-[12px] ${t.faint}`}>
+            {lang === 'hi'
+              ? 'यानी एक whisper करीब 77 गुना तेज़ और उल्टा निकलता है।'
+              : 'So a whisper comes out about 77 times louder and flipped upside-down.'}
+          </p>
+        </div>
+      ),
+    },
+  ];
+  return (
+    <Card isDarkMode={isDarkMode}>
+      <div className="mb-3 font-mono text-[11px] uppercase tracking-[0.3em]" style={{ color: accent }}>
+        {lang === 'hi' ? 'proof: Av = -(Rc||RL)/re & Zi(base) = beta*re' : 'proof: Av = -(Rc||RL)/re & Zi(base) = beta*re'}
+      </div>
+      <StepThrough steps={steps} isDarkMode={isDarkMode} accent={accent} />
+    </Card>
+  );
+};
+
 /* ───────── bespoke: the four h-parameters collapsing into the re model ───────── */
 const HtoReBridge: React.FC<{ isDarkMode: boolean; accent: string }> = ({ isDarkMode, accent }) => {
   const { lang } = useSubLang();
@@ -571,6 +740,7 @@ function componentFor(scene: SubScene, i: number, n: number): React.FC<any> {
             <div className="space-y-4">
               <ReBouncer isDarkMode={p.isDarkMode} accent={p.accent} />
               <ReDerivation isDarkMode={p.isDarkMode} accent={p.accent} />
+              <GmDerivation isDarkMode={p.isDarkMode} accent={p.accent} />
             </div>
           )}
           {which === 'bridge' && <HtoReBridge isDarkMode={p.isDarkMode} accent={p.accent} />}
@@ -582,6 +752,7 @@ function componentFor(scene: SubScene, i: number, n: number): React.FC<any> {
           )}
           {which === 'trinity' && (
             <div className="space-y-4">
+              <GainDerivation isDarkMode={p.isDarkMode} accent={p.accent} />
               <SmallSignalGain isDarkMode={p.isDarkMode} accent={p.accent} />
               <BypassToggle isDarkMode={p.isDarkMode} accent={p.accent} />
             </div>
