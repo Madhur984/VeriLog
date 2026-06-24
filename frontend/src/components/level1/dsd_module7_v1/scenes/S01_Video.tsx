@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { BookOpen, Bookmark, ChevronDown, Eye, FileText, PlayCircle, Quote } from 'lucide-react';
+import { CustomVideoPlayer, type VideoPlayerHandle } from '../../../ui/CustomVideoPlayer';
 
 interface Props { isActive?: boolean; isDarkMode: boolean; }
 
@@ -66,7 +67,7 @@ const formatTime = (s: number) => {
 };
 
 export const S01_Video: React.FC<Props> = ({ isActive = true, isDarkMode }) => {
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const videoRef = useRef<VideoPlayerHandle>(null);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [activeChapter, setActiveChapter] = useState(0);
@@ -81,12 +82,7 @@ export const S01_Video: React.FC<Props> = ({ isActive = true, isDarkMode }) => {
     setActiveChapter(idx);
   };
 
-  const seek = (t: number) => {
-    const v = videoRef.current;
-    if (!v) return;
-    v.currentTime = t;
-    v.play().catch(() => undefined);
-  };
+  const seek = (t: number) => videoRef.current?.seek(t);
 
   const toggle = (i: number) => setOpen((o) => o.map((v, j) => (j === i ? !v : v)));
 
@@ -161,14 +157,12 @@ export const S01_Video: React.FC<Props> = ({ isActive = true, isDarkMode }) => {
         animate={isActive ? { opacity: 1, scale: 1 } : {}}
         className={`relative rounded-3xl overflow-hidden border ${cardBg}`}
       >
-        <video
+        <CustomVideoPlayer
           ref={videoRef}
-          controls
-          preload="metadata"
           src="/videos/demystifying-half-adders.mp4"
-          className="w-full aspect-video bg-black"
-          onTimeUpdate={(e) => handleTimeUpdate(e.currentTarget.currentTime)}
-          onLoadedMetadata={(e) => setDuration(e.currentTarget.duration)}
+          accent="#22d3ee"
+          onTimeUpdate={handleTimeUpdate}
+          onLoadedMetadata={setDuration}
         />
       </motion.div>
 

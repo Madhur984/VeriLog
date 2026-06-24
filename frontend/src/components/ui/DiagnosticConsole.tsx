@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { UserRound, Settings, Code2, Compass, Command, type LucideIcon } from 'lucide-react';
 import { useColorScheme } from '../../hooks/useColorScheme';
 import { isAuthenticated } from '../../lib/auth';
 
 interface ConsoleButton {
   id: string;
-  icon: string;
+  Icon: LucideIcon;
   label: string;
   color: string;
   route?: string;
@@ -26,15 +27,11 @@ export const DiagnosticConsole: React.FC<DiagnosticConsoleProps> = ({
   const [activeBtn, setActiveBtn] = useState<string | null>(null);
 
   const BUTTONS: ConsoleButton[] = [
-    { id: 'profile',    icon: '◈',  label: 'My Profile',     color: '#6366f1', route: '/profile' },
-    { id: 'globe',      icon: '◉',  label: 'Globe',          color: '#3b82f6', route: '/' },
-    { id: 'gear',       icon: '⚙',  label: 'Settings',       color: '#2563eb', route: '/settings' },
-    { id: 'code',       icon: '<>', label: 'Code',           color: '#3b82f6', route: '/verilog-playground' },
-    { id: 'grind',      icon: '⬡',  label: 'Grind Status',   color: '#60a5fa', route: '/skill-tree' },
-    { id: 'resources',  icon: '≋',  label: 'Intel',          color: '#3b82f6', route: '/quests' },
-    { id: 'analytics',  icon: '▦',  label: 'Telemetry',      color: '#60a5fa', route: '/activities' },
-    { id: 'leaderboard',icon: '⊞',  label: 'Rankings',       color: '#3b82f6', route: '/community' },
-    { id: 'cmd',        icon: '⌘',  label: 'Command',        color: '#60a5fa', action: onCommandPaletteOpen },
+    { id: 'profile',     Icon: UserRound, label: 'My Profile', color: '#6366f1', route: '/profile' },
+    { id: 'gear',        Icon: Settings,  label: 'Settings',   color: '#2563eb', route: '/settings' },
+    { id: 'code',        Icon: Code2,     label: 'Code',       color: '#3b82f6', route: '/verilog-playground' },
+    { id: 'quests',      Icon: Compass,   label: 'Quests',     color: '#3b82f6', route: '/quests' },
+    { id: 'cmd',         Icon: Command,   label: 'Command',    color: '#60a5fa', action: onCommandPaletteOpen },
   ];
 
   const handleBtn = (btn: ConsoleButton) => {
@@ -156,31 +153,34 @@ export const DiagnosticConsole: React.FC<DiagnosticConsoleProps> = ({
               whileTap={{ scale: 0.94 }}
               whileHover={{ scale: 1.02 }}
             >
-              {/* Button LED */}
-              <motion.div
-                className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+              {/* Icon chip with a slow breathing glow */}
+              <motion.span
+                className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md"
                 style={{
-                  background: isLight ? darkenForLight(btn.color) : btn.color,
-                  boxShadow: isLight ? `0 0 3px ${darkenForLight(btn.color)}` : `0 0 5px ${btn.color}`,
+                  background: isLight ? `${darkenForLight(btn.color)}14` : `${btn.color}1f`,
+                  border: `1px solid ${isLight ? `${darkenForLight(btn.color)}40` : `${btn.color}33`}`,
                 }}
-                animate={{ opacity: [0.6, 1, 0.6] }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  delay: BUTTONS.indexOf(btn) * 0.25,
+                animate={{
+                  boxShadow: [
+                    `0 0 0px ${btn.color}00`,
+                    `0 0 7px ${btn.color}${isLight ? '33' : '44'}`,
+                    `0 0 0px ${btn.color}00`,
+                  ],
                 }}
-              />
-              <div>
-                <div
-                  className="text-[9px] font-black tracking-[0.15em] uppercase leading-none"
-                  style={{ color: isLight ? '#0F172A' : btn.color }}
-                >
-                  {btn.label}
-                </div>
-                <div className="text-[11px] font-mono mt-0.5" style={{ color: isLight ? '#334155' : 'rgba(255,255,255,0.55)' }}>
-                  {btn.icon}
-                </div>
-              </div>
+                transition={{ duration: 2.4, repeat: Infinity, delay: BUTTONS.indexOf(btn) * 0.25 }}
+              >
+                <btn.Icon
+                  size={15}
+                  strokeWidth={2.1}
+                  style={{ color: isLight ? darkenForLight(btn.color) : btn.color }}
+                />
+              </motion.span>
+              <span
+                className="text-[9px] font-black tracking-[0.08em] uppercase leading-tight"
+                style={{ color: isLight ? '#0F172A' : btn.color }}
+              >
+                {btn.label}
+              </span>
               {/* Press ripple */}
               {activeBtn === btn.id && (
                 <motion.div

@@ -1,6 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import {
+  Waves, Binary, Cpu, Grid3x3, Braces, Lock,
+  ChevronDown, ArrowRight, type LucideIcon,
+} from 'lucide-react';
 import { useColorScheme } from '../../hooks/useColorScheme';
 import { canOpenModule, moduleIdFromPath } from '../../lib/auth';
 
@@ -35,7 +39,7 @@ interface RootNode {
   tech: string;
   level: string;
   pct: number;
-  icon: string;
+  Icon: LucideIcon;
   color: [string, string];
   glow: string;
   route?: string;
@@ -49,7 +53,7 @@ const ROOT_NODES: RootNode[] = [
   {
     id: 'r1', label: 'Signals & Waves', fullLabel: 'Signal Foundations',
     description: 'Standard signals, analog vs digital, wave parameters, and the bridge to Verilog.',
-    tech: 'WAVE_FOUNDATION', level: 'L1', pct: 85, icon: '〜',
+    tech: 'WAVE_FOUNDATION', level: 'L1', pct: 85, Icon: Waves,
     color: ['#0e7490', '#22d3ee'], glow: '#22d3ee', route: '/module/1',
     gate: 'mux', status: 'done',
     children: [
@@ -62,7 +66,7 @@ const ROOT_NODES: RootNode[] = [
   {
     id: 'r2', label: 'Number Systems', fullLabel: 'Bases & Boolean',
     description: 'Decimal, binary, octal, hex, conversions, Boolean algebra, complements, and 7-segment.',
-    tech: 'NUMBER_SYSTEMS', level: 'L2', pct: 0, icon: '⊞',
+    tech: 'NUMBER_SYSTEMS', level: 'L2', pct: 0, Icon: Binary,
     color: ['#065f46', '#34d399'], glow: '#34d399', route: '/module/2',
     gate: 'or', status: 'active',
     children: [
@@ -76,7 +80,7 @@ const ROOT_NODES: RootNode[] = [
   {
     id: 'r4', label: 'Logic Gates', fullLabel: 'Universal Gates',
     description: 'Why gates, AND/OR/NOT, universal NAND/NOR, XOR/XNOR, gate discovery, and the mini ALU.',
-    tech: 'GATE_LOGIC', level: 'L3', pct: 0, icon: '⊃',
+    tech: 'GATE_LOGIC', level: 'L3', pct: 0, Icon: Cpu,
     color: ['#1e3a8a', '#60a5fa'], glow: '#60a5fa', route: '/module/3',
     gate: 'and', status: 'active',
     children: [
@@ -90,7 +94,7 @@ const ROOT_NODES: RootNode[] = [
   {
     id: 'r5', label: 'K-Maps', fullLabel: 'Karnaugh Reduction',
     description: "2/3/4-variable maps, grouping rules, don't-cares, POS, and the K-Map sandbox.",
-    tech: 'MAP_REDUCTION', level: 'L4', pct: 0, icon: '▦',
+    tech: 'MAP_REDUCTION', level: 'L4', pct: 0, Icon: Grid3x3,
     color: ['#9f1239', '#fb7185'], glow: '#fb7185', route: '/module/4',
     gate: 'xor', status: 'active',
     children: [
@@ -104,7 +108,7 @@ const ROOT_NODES: RootNode[] = [
   {
     id: 'r6', label: 'Verilog Core', fullLabel: 'HDL Synthesis Gateway',
     description: 'First Verilog, modules, testbenches, clock signals, hierarchy - gateway to L6 mastery.',
-    tech: 'HDL_GATEWAY', level: 'L5', pct: 0, icon: '≡',
+    tech: 'HDL_GATEWAY', level: 'L5', pct: 0, Icon: Braces,
     color: ['#4c1d95', '#c4b5fd'], glow: '#c4b5fd', route: '/module/5',
     gate: 'nand', status: 'active',
     children: [
@@ -252,7 +256,7 @@ interface GateProps {
   accent: string;
   isLocked: boolean;
   hovered: boolean;
-  icon: string;
+  Icon: LucideIcon;
 }
 
 const AnimatedPin: React.FC<{ x1: number; y1: number; x2: number; y2: number; color: string; delay?: number }> = ({
@@ -273,7 +277,7 @@ const AnimatedPin: React.FC<{ x1: number; y1: number; x2: number; y2: number; co
   );
 };
 
-const LogicGateShape: React.FC<GateProps> = ({ type, accent: accentRaw, isLocked, hovered, icon }) => {
+const LogicGateShape: React.FC<GateProps> = ({ type, accent: accentRaw, isLocked, hovered, Icon }) => {
   const [scheme] = useColorScheme();
   const isLight = scheme === 'light';
   // Light mode darkens the figure accent; dark mode passes through unchanged.
@@ -285,12 +289,21 @@ const LogicGateShape: React.FC<GateProps> = ({ type, accent: accentRaw, isLocked
   const strokeDash = isLocked ? '4 3' : undefined;
   const glow = hovered && !isLocked;
 
-  const iconEl = (cx: number, cy: number) => (
-    <text x={cx} y={cy} textAnchor="middle" dominantBaseline="middle"
-      fontFamily="monospace" fontSize="18" fill={isLocked ? (isLight ? '#475569' : '#334155') : accent}>
-      {isLocked ? '🔒' : icon}
-    </text>
-  );
+  // Crisp vector glyph (nested SVG), centred on (cx, cy). Lucide forwards x/y to
+  // the inner <svg>, so we offset by half its size to keep it centred.
+  const iconEl = (cx: number, cy: number, size = 21) => {
+    const Glyph = isLocked ? Lock : Icon;
+    return (
+      <Glyph
+        x={cx - size / 2}
+        y={cy - size / 2}
+        size={size}
+        color={isLocked ? (isLight ? '#64748B' : '#475569') : accent}
+        strokeWidth={2.1}
+        style={{ overflow: 'visible' }}
+      />
+    );
+  };
 
   if (type === 'mux') return (
     <svg width={80} height={64} viewBox="0 0 80 64"
@@ -312,7 +325,7 @@ const LogicGateShape: React.FC<GateProps> = ({ type, accent: accentRaw, isLocked
       {!isLocked && <AnimatedPin x1={60} y1={32} x2={76} y2={32} color={accent} delay={0.7} />}
       <text x={40} y={35} textAnchor="middle" fontFamily="monospace"
         fontSize={isLight ? 9 : 8} fill={isLight ? `${accent}aa` : `${accent}66`} letterSpacing="1">MUX</text>
-      {iconEl(40, 22)}
+      {iconEl(40, 18, 18)}
     </svg>
   );
 
@@ -449,9 +462,9 @@ const RootGem: React.FC<{ node: RootNode; index: number; onClick: () => void }> 
     <motion.div
       className="relative flex flex-col items-center w-[96px] sm:w-[120px] lg:w-[140px]"
       style={{ cursor: isLocked ? 'not-allowed' : 'pointer' }}
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.07, duration: 0.4, ease: 'easeOut' }}
+      initial={{ opacity: 0, y: 18, scale: 0.9 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ delay: index * 0.08, type: 'spring', stiffness: 190, damping: 20 }}
       role="button"
       tabIndex={isLocked ? -1 : 0}
       aria-disabled={isLocked}
@@ -481,11 +494,24 @@ const RootGem: React.FC<{ node: RootNode; index: number; onClick: () => void }> 
       </div>
 
       <div className="relative">
+        {/* Soft radial aura that blooms behind the gate on hover/focus */}
+        <motion.div aria-hidden className="absolute pointer-events-none rounded-full"
+          style={{
+            left: '50%', top: '46%', width: 124, height: 98, marginLeft: -62, marginTop: -49,
+            background: `radial-gradient(ellipse at center, ${accent}, transparent 68%)`,
+            filter: 'blur(24px)',
+          }}
+          animate={{
+            opacity: hovered && !isLocked ? (isLight ? 0.3 : 0.55) : 0,
+            scale: hovered && !isLocked ? 1.05 : 0.7,
+          }}
+          transition={{ duration: 0.4, ease: 'easeOut' }} />
         <HudTooltip text={node.description} color={accent} visible={hovered && !isLocked} />
-        <motion.div whileHover={!isLocked ? { scale: 1.05 } : {}} transition={{ duration: 0.25 }}
-          style={{ opacity: isLocked ? 0.4 : 1, transition: 'opacity 0.3s' }}>
+        <motion.div whileHover={!isLocked ? { scale: 1.07, y: -2 } : {}}
+          transition={{ type: 'spring', stiffness: 320, damping: 22 }}
+          style={{ position: 'relative', zIndex: 1, opacity: isLocked ? 0.4 : 1, transition: 'opacity 0.3s' }}>
           <LogicGateShape type={node.gate} accent={accent}
-            isLocked={isLocked} hovered={hovered} icon={node.icon} />
+            isLocked={isLocked} hovered={hovered} Icon={node.Icon} />
 
           {isDone && (
             <motion.div className={`absolute -top-1 -right-1 px-1 py-0.5 rounded-sm border ${
@@ -533,6 +559,16 @@ const RootGem: React.FC<{ node: RootNode; index: number; onClick: () => void }> 
       >
         {node.tech}
       </div>
+
+      {!isLocked && (isDone || node.pct > 0) && (
+        <div className="mt-2 h-[3px] w-10 overflow-hidden rounded-full"
+          style={{ background: isLight ? 'rgba(15,23,42,0.12)' : 'rgba(255,255,255,0.08)' }}>
+          <motion.div className="h-full rounded-full"
+            style={{ background: accent, boxShadow: `0 0 6px ${accent}` }}
+            initial={{ width: 0 }} animate={{ width: `${isDone ? 100 : node.pct}%` }}
+            transition={{ delay: index * 0.08 + 0.55, duration: 0.9, ease: [0.16, 1, 0.3, 1] }} />
+        </div>
+      )}
 
     </motion.div>
   );
@@ -1152,9 +1188,10 @@ const L6PathSwitcher: React.FC<{ onPick: (route: string) => void }> = ({ onPick 
           const locked = isModuleLocked(mod.submodules[0]?.route ?? mod.route);
           return (
             <motion.li key={mod.id}
-              initial={{ opacity: 0, y: 6 }}
+              initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.05, duration: 0.25 }}
+              whileHover={{ y: -2 }}
+              transition={{ delay: idx * 0.05, type: 'spring', stiffness: 260, damping: 24 }}
               className="rounded-md border overflow-hidden"
               style={{
                 borderColor: isOpen ? (isLight ? accent : `${accent}66`) : (isLight ? '#94A3B8' : 'rgba(255,255,255,0.08)'),
@@ -1164,10 +1201,10 @@ const L6PathSwitcher: React.FC<{ onPick: (route: string) => void }> = ({ onPick 
               }}>
               <button type="button"
                 onClick={() => setExpandedId(isOpen ? null : mod.id)}
-                className={`w-full flex items-center gap-4 px-4 py-3.5 text-left transition-colors ${
+                className={`group w-full flex items-center gap-4 px-4 py-3.5 text-left transition-colors ${
                   isLight ? 'hover:bg-slate-50' : 'hover:bg-white/[0.02]'
                 }`}>
-                <div className="flex-shrink-0 w-9 h-9 rounded-md flex items-center justify-center font-mono font-bold text-[15px]"
+                <div className="flex-shrink-0 w-9 h-9 rounded-md flex items-center justify-center font-mono font-bold text-[15px] transition-transform duration-200 group-hover:scale-110"
                   style={{
                     backgroundColor: isLight ? `${accent}26` : `${accent}1a`,
                     border: isLight ? `1px solid ${accent}66` : `1px solid ${accent}33`,
@@ -1198,13 +1235,13 @@ const L6PathSwitcher: React.FC<{ onPick: (route: string) => void }> = ({ onPick 
                   )}
                   <motion.div
                     animate={{ rotate: isOpen ? 180 : 0 }}
-                    transition={{ duration: 0.2 }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 28 }}
                     className="w-7 h-7 rounded-full flex items-center justify-center"
                     style={{
                       backgroundColor: isLight ? 'rgba(15,23,42,0.08)' : 'rgba(255,255,255,0.04)',
                       border: isLight ? '1px solid rgba(15,23,42,0.24)' : '1px solid rgba(255,255,255,0.08)',
                     }}>
-                    <span className={`text-[12px] ${isLight ? 'text-slate-700' : 'text-white/60'}`}>▾</span>
+                    <ChevronDown size={15} strokeWidth={2.4} className={isLight ? 'text-slate-700' : 'text-white/60'} />
                   </motion.div>
                 </div>
               </button>
@@ -1219,10 +1256,13 @@ const L6PathSwitcher: React.FC<{ onPick: (route: string) => void }> = ({ onPick 
                     style={{ borderTop: isLight ? '1px solid rgba(15,23,42,0.24)' : `1px solid ${accent}22` }}>
                     <ul className="flex flex-col">
                       {mod.submodules.map((sub, i) => (
-                        <li key={sub.id}>
+                        <motion.li key={sub.id}
+                          initial={{ opacity: 0, x: -8 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: i * 0.028, duration: 0.3, ease: [0.16, 1, 0.3, 1] }}>
                           <button type="button"
                             onClick={() => onPick(sub.route)}
-                            className={`w-full flex items-center gap-4 px-4 py-2.5 text-left border-l-2 transition-colors ${
+                            className={`group w-full flex items-center gap-4 px-4 py-2.5 text-left border-l-2 transition-colors ${
                               isLight ? 'hover:bg-slate-50' : 'hover:bg-white/[0.03]'
                             }`}
                             style={{ borderLeftColor: 'transparent' }}
@@ -1231,10 +1271,12 @@ const L6PathSwitcher: React.FC<{ onPick: (route: string) => void }> = ({ onPick 
                             <span className="flex-shrink-0 w-9 text-center text-[12px] font-mono tabular-nums" style={{ color: isLight ? '#334155' : `${accent}88` }}>
                               {idx + 1}.{String(i + 1).padStart(2, '0')}
                             </span>
-                            <span className={`flex-1 text-[14px] ${isLight ? 'text-slate-800' : 'text-white/80'}`}>{sub.label}</span>
-                            <span className="text-[13px] font-mono" style={{ color: isLight ? '#1D4ED8' : `${accent}aa` }}>→</span>
+                            <span className={`flex-1 text-[14px] transition-colors ${isLight ? 'text-slate-800 group-hover:text-slate-950' : 'text-white/80 group-hover:text-white'}`}>{sub.label}</span>
+                            <ArrowRight size={15} strokeWidth={2.2}
+                              className="transition-transform duration-200 group-hover:translate-x-1"
+                              style={{ color: isLight ? '#1D4ED8' : `${accent}aa` }} />
                           </button>
-                        </li>
+                        </motion.li>
                       ))}
                     </ul>
                   </motion.div>

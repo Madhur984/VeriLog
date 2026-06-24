@@ -13,13 +13,14 @@
  * component owns its own theme state - that lives in the shared useColorScheme
  * store, exactly like the rest of the app.
  */
-import React, { createContext, useContext, useState, useCallback, useRef, useEffect } from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Languages, BookOpen, FileText, PlayCircle, ChevronDown, RotateCw, Eye, Wrench, ArrowRight,
+  Languages, BookOpen, FileText, PlayCircle, ChevronDown, RotateCw, Wrench, ArrowRight,
 } from 'lucide-react';
 import { QuizArena, type Problem } from '../dsd_module9_v1/components/QuizArena';
+import { CustomVideoPlayer } from '../../ui/CustomVideoPlayer';
 
 /* ───────────────────────── content types ───────────────────────── */
 // These match the JSON the content workflow produced 1:1 (HI fields optional so
@@ -511,7 +512,6 @@ export const VideoScene: React.FC<SceneProps & { src?: string }>
   = ({ isDarkMode, accent, scene, src }) => {
   const { lang } = useSubLang();
   const t = tone(isDarkMode);
-  const videoRef = useRef<HTMLVideoElement>(null);
   const [open, setOpen] = useState(true);
   return (
     <SceneShell>
@@ -523,13 +523,7 @@ export const VideoScene: React.FC<SceneProps & { src?: string }>
 
       <motion.div className={`relative overflow-hidden rounded-3xl border ${t.card}`}>
         {src ? (
-          <video
-            ref={videoRef}
-            controls
-            preload="metadata"
-            src={src}
-            className="w-full aspect-video bg-black"
-          />
+          <CustomVideoPlayer key={src} src={src} accent={accent} className="rounded-3xl border-0" />
         ) : (
           <div className="flex aspect-video w-full items-center justify-center bg-black/90 text-center">
             <div>

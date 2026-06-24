@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { BookOpen, Bookmark, ChevronDown, Eye, FileText, FileDown, PlayCircle, Quote } from 'lucide-react';
+import { CustomVideoPlayer, type VideoPlayerHandle } from '../../../ui/CustomVideoPlayer';
 
 interface Props { isActive?: boolean; isDarkMode: boolean; }
 interface Chapter { t: number; title: string; words: string; }
@@ -35,14 +36,14 @@ const WATCH_FOR = [
 const formatTime = (s: number) => `${Math.floor(s / 60)}:${Math.floor(s % 60).toString().padStart(2, '0')}`;
 
 export const S02_Video: React.FC<Props> = ({ isActive = true, isDarkMode }) => {
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const videoRef = useRef<VideoPlayerHandle>(null);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [activeChapter, setActiveChapter] = useState(0);
   const [open, setOpen] = useState<boolean[]>(CHAPTERS.map((_, i) => i === 0));
 
   const handleTimeUpdate = (t: number) => { setCurrentTime(t); let idx = 0; for (let i = 0; i < CHAPTERS.length; i++) if (t >= CHAPTERS[i].t) idx = i; setActiveChapter(idx); };
-  const seek = (t: number) => { const v = videoRef.current; if (!v) return; v.currentTime = t; v.play().catch(() => undefined); };
+  const seek = (t: number) => videoRef.current?.seek(t);
   const toggle = (i: number) => setOpen((o) => o.map((v, j) => (j === i ? !v : v)));
 
   const textColor = isDarkMode ? 'text-white' : 'text-slate-900';
@@ -80,8 +81,8 @@ export const S02_Video: React.FC<Props> = ({ isActive = true, isDarkMode }) => {
       </motion.div>
 
       <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={isActive ? { opacity: 1, scale: 1 } : {}} className={`relative rounded-3xl overflow-hidden border ${cardBg}`}>
-        <video ref={videoRef} controls preload="metadata" src="/videos/parallel-prefix-adder.mp4" className="w-full aspect-video bg-black"
-               onTimeUpdate={(e) => handleTimeUpdate(e.currentTarget.currentTime)} onLoadedMetadata={(e) => setDuration(e.currentTarget.duration)} />
+        <CustomVideoPlayer ref={videoRef} src="/videos/parallel-prefix-adder.mp4" accent="#818cf8"
+               onTimeUpdate={handleTimeUpdate} onLoadedMetadata={setDuration} />
       </motion.div>
 
       <motion.div initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.15 }} className={`p-5 rounded-2xl border ${cardBg}`}>

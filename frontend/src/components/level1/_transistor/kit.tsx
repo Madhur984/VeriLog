@@ -10,7 +10,7 @@
  * with no digital (truth-table / gate) motifs. The analog interactives (load
  * lines, characteristic curves, small-signal gain, channels) live in analog.tsx.
  */
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BookOpen, FileText, PlayCircle, ChevronDown, type LucideIcon } from 'lucide-react';
 import {
@@ -21,6 +21,7 @@ import {
 } from '../_subtractor/kit';
 import { SubModuleShell, type SubPage } from '../_subtractor/SubEngine';
 import { TransistorSymbol } from './analog';
+import { CustomVideoPlayer } from '../../ui/CustomVideoPlayer';
 
 // re-export the shared bits so a module only imports from one place
 export {
@@ -106,7 +107,7 @@ export const VideoScene: React.FC<{
 
       <div className={`relative overflow-hidden rounded-3xl border ${t.card}`}>
         {src ? (
-          <video key={src} controls preload="metadata" src={src} className="aspect-video w-full bg-black" />
+          <CustomVideoPlayer key={src} src={src} accent={accent} className="rounded-3xl border-0" />
         ) : (
           <div className="flex aspect-video w-full items-center justify-center bg-black/90 text-center">
             <div>
