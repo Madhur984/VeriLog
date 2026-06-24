@@ -14,14 +14,16 @@ export const PortalLayout = () => {
 
     const isSpecialPage = location.pathname === '/career-roadmap';
     const isModule = MODULE_ROUTE.test(location.pathname);
+    // Pages whose own UI already ships a theme toggle (so the floating one would duplicate it).
+    const hasIntegratedToggle = location.pathname === '/portal';
 
     return (
         <div className="w-full min-h-screen relative" style={{ background: 'transparent' }}>
-            {/* Persistent theme toggle — top-left on all portal pages, except ones with integrated
-                toggles. On phones the module engines put a hamburger in that exact corner (and ship
-                their own toggle inside the drawer sidebar), so hide it there to avoid the overlap. */}
-            {!isSpecialPage && (
-                <div className={`fixed top-4 left-4 z-[400] ${isModule ? 'hidden lg:block' : ''}`}>
+            {/* Persistent theme toggle - top-left on portal pages. Course modules ship their own
+                dark/light toggle inside the drawer sidebar, so this floating one is hidden on every
+                module route to avoid a duplicate (and the overlap with the sidebar header). */}
+            {!isSpecialPage && !isModule && !hasIntegratedToggle && (
+                <div className="fixed top-4 left-4 z-[400]">
                     <ThemeToggle />
                 </div>
             )}
