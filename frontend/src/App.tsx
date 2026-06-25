@@ -52,6 +52,7 @@ const GatekeeperGame = named(() => import('./pages/GatekeeperGame'), 'Gatekeeper
 const AiLab = lazy(() => loadChunk(() => import('./pages/AiLab/AiLab')));
 const SiliconSecrets = named(() => import('./pages/SiliconSecrets'), 'SiliconSecrets');
 const ResetPasswordPage = named(() => import('./pages/ResetPasswordPage'), 'ResetPasswordPage');
+const VerifyEmailPage = named(() => import('./pages/VerifyEmailPage'), 'VerifyEmailPage');
 const SettingsPage = named(() => import('./pages/SettingsPage'), 'SettingsPage');
 const ProfilePage = named(() => import('./pages/ProfilePage'), 'ProfilePage');
 
@@ -111,6 +112,7 @@ function App() {
           {/* Landing / Auth - public */}
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/verify-email" element={<VerifyEmailPage />} />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
 
           {/* Account settings + profile — need a session (real or guest) */}

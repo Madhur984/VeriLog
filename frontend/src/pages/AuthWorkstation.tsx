@@ -227,35 +227,31 @@ export const AuthWorkstation: React.FC = () => {
           formBusyRef.current = false;
           return;
         }
-        const siteUrl = import.meta.env.VITE_SITE_URL || window.location.origin;
         const { data, error: signUpError } = await supabase.auth.signUp({
           email,
           password,
-          options: { data: { full_name: fullName }, emailRedirectTo: `${siteUrl}/portal` },
+          options: { data: { full_name: fullName } },
         });
         if (signUpError) throw signUpError;
 
         const name = data.user?.user_metadata?.full_name || fullName || 'Explorer';
-        let token = data.session?.access_token;
-        // Email confirmation is disabled, so a new account is usable instantly.
-        // If signUp didn't hand back a session, sign in directly - no "verify
-        // your email" step. Surface a real sign-in error (e.g. confirmation
-        // actually IS on) instead of falling through to a misleading notice.
-        if (!token) {
-          const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({ email, password });
-          if (signInError) throw signInError;
-          token = signInData.session?.access_token;
-        }
+        const token = data.session?.access_token;
         if (token) {
+          // Email confirmation disabled in the dashboard -> account usable now.
           localStorage.setItem('supabase_token', token);
           setFirstName(name.split(' ')[0]);
           setHasSeenGreeting(false);
           setAuthSuccess(true);
           setTimeout(() => navigate(redirectTo, { replace: true }), 1200);
-        } else {
+        } else if (data.user && (data.user.identities?.length ?? 0) === 0) {
+          // Enumeration-protected response: this email already has an account.
           setIsLoading(false);
           formBusyRef.current = false;
-          setNotice('Account created. You can sign in now.');
+          setError('This email is already registered. Try signing in instead.');
+        } else {
+          // Confirmation is ON: no session yet. Send the user to the dedicated
+          // page to enter the 6-digit code we just emailed them.
+          navigate('/verify-email', { replace: true, state: { email, fullName, from: redirectTo } });
         }
       } else {
         const { data, error: signInError } = await supabase.auth.signInWithPassword({ email, password });
