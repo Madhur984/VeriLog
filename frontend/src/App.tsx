@@ -37,7 +37,7 @@ const Workbench = lazy(() => loadChunk(() => import('./pages/Workbench')));
 
 // Playgrounds & social
 const FSMPlayground = named(() => import('./pages/FSMPlayground'), 'FSMPlayground');
-const VerilogPlayground = named(() => import('./pages/VerilogPlayground'), 'VerilogPlayground');
+const VerilogJudge = named(() => import('./pages/VerilogJudge'), 'VerilogJudge');
 const AnalogyLibrary = named(() => import('./pages/AnalogyLibrary'), 'AnalogyLibrary');
 const VerilogLibrary = named(() => import('./pages/VerilogLibrary'), 'VerilogLibrary');
 const SiliconMap = named(() => import('./pages/SiliconMap'), 'SiliconMap');
@@ -211,7 +211,7 @@ function App() {
             <Route path="/skill-tree" element={<SkillTree />} />
             <Route path="/hw-leetcode" element={<HardwareLeetCodePage />} />
             <Route path="/fsm" element={<FSMPlayground />} />
-            <Route path="/verilog-playground" element={<VerilogPlayground />} />
+            <Route path="/verilog-playground" element={<VerilogJudge />} />
             <Route path="/signal-playground" element={<SignalPlayground />} />
             <Route path="/logic-studio" element={<LogicStudio />} />
             <Route path="/quests" element={<QuestsPage />} />
