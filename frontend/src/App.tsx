@@ -85,6 +85,13 @@ const DsdModule17Root = named(() => import('./components/level1/dsd_module17_v1/
 const DsdModule18Root = named(() => import('./components/level1/dsd_module18_v1/DsdModule18Root'), 'DsdModule18Root');
 const DsdModule19Root = named(() => import('./components/level1/dsd_module19_v1/DsdModule19Root'), 'DsdModule19Root');
 const DsdModule20Root = named(() => import('./components/level1/dsd_module20_v1/DsdModule20Root'), 'DsdModule20Root');
+const DsdModule21Root = named(() => import('./components/level1/dsd_module21_v1/DsdModule21Root'), 'DsdModule21Root');
+const DsdModule22Root = named(() => import('./components/level1/dsd_module22_v1/DsdModule22Root'), 'DsdModule22Root');
+const DsdModule23Root = named(() => import('./components/level1/dsd_module23_v1/DsdModule23Root'), 'DsdModule23Root');
+const DsdModule24Root = named(() => import('./components/level1/dsd_module24_v1/DsdModule24Root'), 'DsdModule24Root');
+const DsdModule25Root = named(() => import('./components/level1/dsd_module25_v1/DsdModule25Root'), 'DsdModule25Root');
+const DsdModule26Root = named(() => import('./components/level1/dsd_module26_v1/DsdModule26Root'), 'DsdModule26Root');
+const DsdModule27Root = named(() => import('./components/level1/dsd_module27_v1/DsdModule27Root'), 'DsdModule27Root');
 const BeModule1Root = named(() => import('./components/level1/be_module1_v1/BeModule1Root'), 'BeModule1Root');
 const BeModule2Root = named(() => import('./components/level1/be_module2_v1/BeModule2Root'), 'BeModule2Root');
 const BeModule3Root = named(() => import('./components/level1/be_module3_v1/BeModule3Root'), 'BeModule3Root');
@@ -175,6 +182,20 @@ function App() {
             <Route path="/dsd/19/:chapter" element={<DsdModule19Root />} />
             <Route path="/dsd/20" element={<DsdModule20Root />} />
             <Route path="/dsd/20/:chapter" element={<DsdModule20Root />} />
+            <Route path="/dsd/21" element={<DsdModule21Root />} />
+            <Route path="/dsd/21/:chapter" element={<DsdModule21Root />} />
+            <Route path="/dsd/22" element={<DsdModule22Root />} />
+            <Route path="/dsd/22/:chapter" element={<DsdModule22Root />} />
+            <Route path="/dsd/23" element={<DsdModule23Root />} />
+            <Route path="/dsd/23/:chapter" element={<DsdModule23Root />} />
+            <Route path="/dsd/24" element={<DsdModule24Root />} />
+            <Route path="/dsd/24/:chapter" element={<DsdModule24Root />} />
+            <Route path="/dsd/25" element={<DsdModule25Root />} />
+            <Route path="/dsd/25/:chapter" element={<DsdModule25Root />} />
+            <Route path="/dsd/26" element={<DsdModule26Root />} />
+            <Route path="/dsd/26/:chapter" element={<DsdModule26Root />} />
+            <Route path="/dsd/27" element={<DsdModule27Root />} />
+            <Route path="/dsd/27/:chapter" element={<DsdModule27Root />} />
             <Route path="/basic-electronics/1" element={<BeModule1Root />} />
             <Route path="/basic-electronics/1/:chapter" element={<BeModule1Root />} />
             <Route path="/basic-electronics/2" element={<BeModule2Root />} />

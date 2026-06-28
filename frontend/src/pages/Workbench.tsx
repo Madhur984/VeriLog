@@ -9,6 +9,10 @@ import { ParallelPrefixTutorial } from '../components/workbench/ParallelPrefixTu
 import { SerialAdderTutorial } from '../components/workbench/SerialAdderTutorial';
 import { HalfSubtractorTutorial } from '../components/workbench/HalfSubtractorTutorial';
 import { FullSubtractorTutorial } from '../components/workbench/FullSubtractorTutorial';
+import {
+  Mux4to1Tutorial, Demux1to4Tutorial, Decoder2to4Tutorial, Encoder4to2Tutorial,
+  BinaryToGrayTutorial, NandUniversalTutorial, ArrayDividerCellTutorial,
+} from '../components/workbench/comboTutorials';
 
 /**
  * /workbench - the live CircuitVerse editor (embed mode: no API auth needed;
@@ -35,6 +39,13 @@ export default function Workbench() {
     : tutorialId === 'serial-adder' ? SerialAdderTutorial
     : tutorialId === 'half-subtractor' ? HalfSubtractorTutorial
     : tutorialId === 'full-subtractor' ? FullSubtractorTutorial
+    : tutorialId === 'mux-4to1' ? Mux4to1Tutorial
+    : tutorialId === 'demux-1to4' ? Demux1to4Tutorial
+    : tutorialId === 'decoder-2to4' ? Decoder2to4Tutorial
+    : tutorialId === 'encoder-4to2' ? Encoder4to2Tutorial
+    : tutorialId === 'binary-to-gray' ? BinaryToGrayTutorial
+    : tutorialId === 'nand-universal' ? NandUniversalTutorial
+    : tutorialId === 'array-divider-cell' ? ArrayDividerCellTutorial
     : null;
   const tutorial = Rail !== null;
   const [railOpen, setRailOpen] = useState(true);
