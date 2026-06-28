@@ -1,8 +1,7 @@
 /**
- * VerilogJudge - the Verilog bench: a visual hardware playground. Write Verilog
- * in the editor and a live gate-level schematic draws itself beside the code;
- * flip the input switches to watch current flow, then Run to grade the design
- * against an exhaustive truth table. Everything runs in the browser via miniSim.
+ * VerilogJudge - the BitforBytes Verilog bench. Write Verilog, watch the real
+ * Yosys-synthesized circuit draw itself beside the code (and probe it live), then
+ * Run to grade against an exhaustive truth table. Solid, energetic UI - no glass.
  */
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -11,15 +10,13 @@ import Editor, { type Monaco } from '@monaco-editor/react';
 import {
   ArrowLeft, Play, RotateCcw, Lightbulb, Eye, EyeOff, CheckCircle2, XCircle,
   AlertTriangle, ChevronDown, ChevronUp, Loader2, ChevronLeft, ChevronRight,
-  PanelLeftClose, PanelLeftOpen, Sun, Moon, BadgeCheck,
+  PanelLeftClose, PanelLeftOpen, Sun, Moon, BadgeCheck, Zap,
 } from 'lucide-react';
 import { useColorScheme } from '../hooks/useColorScheme';
 import { VERILOG_PROBLEMS, type VProblem } from '../data/verilogProblems';
 import { grade, type GradeResult } from '../engine/verilog/grade';
-import { compileVerilog } from '../engine/verilog/miniSim';
-import { buildSchematic, type Schematic } from '../engine/verilog/schematic';
-import { SchematicView } from '../components/verilog/SchematicView';
 import { SynthSchematicView } from '../components/verilog/SynthSchematicView';
+import type { Diag } from '../engine/verilog/diagnostics';
 
 const SOLVED_KEY = 'vj_solved_v1';
 const codeKey = (id: string) => `vj_code_${id}`;
@@ -28,10 +25,18 @@ const DIFF_COLOR: Record<VProblem['difficulty'], string> = {
   Easy: '#10b981', Medium: '#f59e0b', Hard: '#f43f5e',
 };
 
-// A small hand-drawn AND-gate mark - the bench's logo.
+/** First source line that mentions a signal (used when a warning has no line). */
+function lineOfSignal(code: string, signal: string): number | undefined {
+  const re = new RegExp(`(^|[^\\w])${signal}([^\\w]|$)`);
+  const lines = code.split('\n');
+  for (let i = 0; i < lines.length; i++) if (re.test(lines[i])) return i + 1;
+  return undefined;
+}
+
+// A chunky hand-drawn AND-gate mark - the bench's logo.
 const Monogram: React.FC = () => (
-  <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-emerald-500/30 bg-emerald-500/10">
-    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="1.7" strokeLinejoin="round" strokeLinecap="round">
+  <div className="relative flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500 shadow-[0_2px_0_#047857]">
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#04231a" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round">
       <path d="M7 5 H12 A7 7 0 0 1 12 19 H7 Z" />
       <path d="M3 9 H7 M3 15 H7 M19 12 H21.5" />
     </svg>
@@ -94,25 +99,14 @@ export const VerilogJudge: React.FC = () => {
   const [resultsOpen, setResultsOpen] = useState(false);
   const [passTotal, setPassTotal] = useState(0);
   const [celebrate, setCelebrate] = useState(false);
-  // Yosys is the main synthesizer; the quick interactive view is opt-in for
-  // basic single-bit designs. Choice persists across problems.
-  const [schematicMode, setSchematicMode] = useState<'live' | 'synth'>(() => {
-    try { return (localStorage.getItem('vj_schem_mode') as 'live' | 'synth') || 'synth'; } catch { return 'synth'; }
-  });
-  const setMode = (m: 'live' | 'synth') => { setSchematicMode(m); try { localStorage.setItem('vj_schem_mode', m); } catch { /* quota */ } };
   const runTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
-  // ── one compile feeds both the live schematic and the status bar ────────────
+  // debounced source feeds the live Yosys schematic
   const [debounced, setDebounced] = useState(code);
   useEffect(() => {
     const t = setTimeout(() => setDebounced(code), 240);
     return () => clearTimeout(t);
   }, [code]);
-  const compiled = useMemo(() => compileVerilog(debounced), [debounced]);
-  const schematic: Schematic | null = useMemo(
-    () => (compiled.ok ? buildSchematic(compiled.module) : null),
-    [compiled],
-  );
 
   const selectProblem = useCallback((id: string) => {
     setProblemId(id);
@@ -145,7 +139,7 @@ export const VerilogJudge: React.FC = () => {
       if (r.status === 'pass') {
         setPassTotal(r.total);
         setCelebrate(true);
-        setTimeout(() => setCelebrate(false), 2000);
+        setTimeout(() => setCelebrate(false), 2200);
         if (!solved.has(problem.id)) {
           const next = new Set(solved); next.add(problem.id);
           setSolved(next);
@@ -159,6 +153,28 @@ export const VerilogJudge: React.FC = () => {
   useEffect(() => { runRef.current = run; }, [run]);
   useEffect(() => () => { if (runTimer.current) clearTimeout(runTimer.current); }, []);
 
+  // Monaco handles so we can mark exactly which line/signal Yosys flagged.
+  const editorRef = useRef<Parameters<NonNullable<React.ComponentProps<typeof Editor>['onMount']>>[0] | null>(null);
+  const monacoRef = useRef<Monaco | null>(null);
+
+  const applyDiagnostics = useCallback((ds: Diag[]) => {
+    const monaco = monacoRef.current;
+    const model = editorRef.current?.getModel();
+    if (!monaco || !model) return;
+    const src = model.getValue();
+    const markers = ds.map((d) => {
+      const line = d.line ?? (d.signal ? lineOfSignal(src, d.signal) : undefined) ?? 1;
+      const text = model.getLineContent(line);
+      return {
+        severity: d.severity === 'error' ? monaco.MarkerSeverity.Error : monaco.MarkerSeverity.Warning,
+        message: d.message,
+        startLineNumber: line, endLineNumber: line,
+        startColumn: 1, endColumn: Math.max(2, text.length + 1),
+      };
+    });
+    monaco.editor.setModelMarkers(model, 'yosys', markers);
+  }, []);
+
   const resetCode = () => { onCodeChange(problem.starter); setDebounced(problem.starter); };
   const goto = (delta: number) => {
     const i = (problemIdx + delta + VERILOG_PROBLEMS.length) % VERILOG_PROBLEMS.length;
@@ -168,23 +184,13 @@ export const VerilogJudge: React.FC = () => {
   const solvedCount = solved.size;
   const statementParas = problem.statement.split('\n\n');
 
-  // schematic engine selection: Yosys (synth) is primary; Live is the instant
-  // interactive view, available only when the quick engine can elaborate the code.
-  const canLive = compiled.ok;
-  const showSynth = schematicMode === 'synth' || !canLive;
-  const schemToggle = (
-    <div className="flex items-center rounded-md border border-border-soft bg-bg-void p-0.5 font-mono text-[10px] font-black uppercase tracking-wide">
-      <button onClick={() => canLive && setMode('live')} disabled={!canLive}
-        title={canLive ? 'Instant interactive view (single-bit)' : 'Live view needs basic combinational code'}
-        className={`rounded px-2 py-0.5 transition-colors ${!showSynth ? 'bg-emerald-500/20 text-emerald-400' : canLive ? 'text-text-dim hover:text-text-main' : 'cursor-not-allowed text-text-dim/40'}`}>
-        Live
-      </button>
-      <button onClick={() => setMode('synth')} title="Full Yosys synthesizer - any valid Verilog"
-        className={`rounded px-2 py-0.5 transition-colors ${showSynth ? 'bg-indigo-500/20 text-indigo-400' : 'text-text-dim hover:text-text-main'}`}>
-        Synth
-      </button>
-    </div>
-  );
+  const statusDot = running ? 'bg-amber-500' : result ? (result.status === 'pass' ? 'bg-emerald-500' : 'bg-rose-500') : 'bg-text-dim';
+  const statusText = running ? 'running'
+    : result ? (result.status === 'pass' ? 'accepted' : result.status === 'error' ? 'compile error' : `${result.passed}/${result.total} passed`)
+      : 'ready';
+
+  // chunky energetic button base
+  const raised = 'transition-all hover:-translate-y-0.5 active:translate-y-0 active:shadow-none';
 
   return (
     <div className="flex min-h-[100svh] w-full flex-col overflow-y-auto bg-bg-void text-text-main lg:h-screen lg:overflow-hidden">
@@ -193,7 +199,7 @@ export const VerilogJudge: React.FC = () => {
         <button onClick={() => navigate('/portal')} title="Back to portal"
           className="flex h-9 items-center gap-1.5 rounded-lg px-2 text-text-dim transition-colors hover:bg-white/5 hover:text-text-main">
           <ArrowLeft className="h-4 w-4" />
-          <span className="hidden text-[13px] font-semibold lg:inline">Portal</span>
+          <span className="hidden text-[13px] font-bold lg:inline">Portal</span>
         </button>
 
         <Sep className="h-6" />
@@ -201,20 +207,20 @@ export const VerilogJudge: React.FC = () => {
         <div className="flex items-center gap-2.5">
           <Monogram />
           <div className="hidden leading-tight sm:block">
-            <div className="text-[14px] font-extrabold tracking-tight text-text-main">Verilog Bench</div>
-            <div className="font-mono text-[9px] uppercase tracking-[0.22em] text-text-dim">logic sandbox</div>
+            <div className="text-[14px] font-black tracking-tight text-text-main">Verilog Bench</div>
+            <div className="font-mono text-[9px] uppercase tracking-[0.22em] text-emerald-500/80">bitforbytes</div>
           </div>
         </div>
 
         {/* problem selector */}
         <div className="relative ml-1 sm:ml-2">
-          <div className="flex items-center rounded-lg border border-border-soft bg-bg-void">
+          <div className="flex items-center rounded-xl border-2 border-border-soft bg-bg-void">
             <button onClick={() => goto(-1)} title="Previous problem"
               className="flex h-9 w-7 items-center justify-center text-text-dim transition-colors hover:text-text-main">
               <ChevronLeft className="h-4 w-4" />
             </button>
             <button onClick={() => setPickerOpen((o) => !o)}
-              className="flex h-9 items-center gap-2 border-x border-border-soft px-2.5 text-[13px] font-semibold transition-colors hover:bg-white/5">
+              className="flex h-9 items-center gap-2 border-x-2 border-border-soft px-2.5 text-[13px] font-bold transition-colors hover:bg-white/5">
               <span className="h-2 w-2 shrink-0 rounded-full" style={{ background: DIFF_COLOR[problem.difficulty] }} />
               <span className="font-mono text-[12px] text-text-dim">{String(problem.number).padStart(2, '0')}</span>
               <span className="max-w-[34vw] truncate sm:max-w-[200px]">{problem.title}</span>
@@ -233,7 +239,7 @@ export const VerilogJudge: React.FC = () => {
                 <motion.ul
                   initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }}
                   transition={{ duration: 0.15 }}
-                  className="absolute left-6 top-full z-20 mt-1.5 max-h-[70vh] w-[290px] overflow-y-auto rounded-xl border border-border-soft bg-bg-elev p-1.5 shadow-2xl"
+                  className="absolute left-6 top-full z-20 mt-1.5 max-h-[70vh] w-[290px] overflow-y-auto rounded-xl border-2 border-border-soft bg-bg-elev p-1.5 shadow-xl"
                 >
                   {VERILOG_PROBLEMS.map((p) => {
                     const isSel = p.id === problem.id;
@@ -241,14 +247,14 @@ export const VerilogJudge: React.FC = () => {
                     return (
                       <li key={p.id}>
                         <button onClick={() => selectProblem(p.id)}
-                          className={`flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-[13px] transition-colors ${isSel ? 'bg-emerald-500/10 text-emerald-300' : 'hover:bg-white/5'}`}>
+                          className={`flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-[13px] transition-colors ${isSel ? 'bg-emerald-500/15 text-emerald-300' : 'hover:bg-white/5'}`}>
                           <span className="w-4 text-center">
                             {isSolved
                               ? <CheckCircle2 className="h-4 w-4 text-emerald-500" />
                               : <span className="font-mono text-text-dim">{p.number}</span>}
                           </span>
-                          <span className="flex-1 font-medium">{p.title}</span>
-                          <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: DIFF_COLOR[p.difficulty] }}>
+                          <span className="flex-1 font-bold">{p.title}</span>
+                          <span className="text-[10px] font-black uppercase tracking-wider" style={{ color: DIFF_COLOR[p.difficulty] }}>
                             {p.difficulty}
                           </span>
                         </button>
@@ -269,11 +275,11 @@ export const VerilogJudge: React.FC = () => {
                 <span key={p.id} className={`h-3.5 w-[5px] rounded-[1px] transition-colors ${solved.has(p.id) ? 'bg-emerald-500' : 'bg-border-soft'}`} />
               ))}
             </div>
-            <span className="font-mono text-[11px] text-text-dim">{solvedCount}/{VERILOG_PROBLEMS.length}</span>
+            <span className="font-mono text-[11px] font-bold text-text-dim">{solvedCount}/{VERILOG_PROBLEMS.length}</span>
           </div>
           <Sep className="hidden h-6 md:block" />
           <button onClick={toggleScheme} title={isLight ? 'Switch to dark mode' : 'Switch to light mode'}
-            className="flex h-8 w-8 items-center justify-center rounded-lg border border-border-soft text-text-dim transition-colors hover:text-text-main">
+            className="flex h-8 w-8 items-center justify-center rounded-lg border-2 border-border-soft text-text-dim transition-colors hover:text-text-main">
             {isLight ? <Sun className="h-4 w-4 text-amber-500" /> : <Moon className="h-4 w-4 text-cyan-400" />}
           </button>
         </div>
@@ -290,7 +296,7 @@ export const VerilogJudge: React.FC = () => {
               className="relative min-w-0 overflow-y-auto border-b border-border-soft p-5 lg:w-[360px] lg:border-b-0 lg:border-r lg:p-6"
             >
               <div className="mb-4 flex items-center justify-between">
-                <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-text-dim">Problem {String(problem.number).padStart(2, '0')}</span>
+                <span className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-500/80">Problem {String(problem.number).padStart(2, '0')}</span>
                 <button onClick={() => setProblemOpen(false)} title="Collapse panel"
                   className="hidden rounded-md p-1 text-text-dim hover:bg-white/5 hover:text-text-main lg:block">
                   <PanelLeftClose className="h-4 w-4" />
@@ -298,9 +304,9 @@ export const VerilogJudge: React.FC = () => {
               </div>
 
               <div className="mb-3 flex flex-wrap items-center gap-3">
-                <h2 className="text-xl font-extrabold tracking-tight lg:text-[22px]">{problem.title}</h2>
-                <span className="rounded-full px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wider"
-                  style={{ color: DIFF_COLOR[problem.difficulty], background: `${DIFF_COLOR[problem.difficulty]}1a` }}>
+                <h2 className="text-xl font-black tracking-tight lg:text-[22px]">{problem.title}</h2>
+                <span className="rounded-md px-2.5 py-0.5 text-[11px] font-black uppercase tracking-wider"
+                  style={{ color: DIFF_COLOR[problem.difficulty], background: `${DIFF_COLOR[problem.difficulty]}22` }}>
                   {problem.difficulty}
                 </span>
                 {solved.has(problem.id) && <CheckCircle2 className="h-5 w-5 text-emerald-500" />}
@@ -322,7 +328,7 @@ export const VerilogJudge: React.FC = () => {
               </div>
 
               <div className="mt-5">
-                <div className="mb-2 font-mono text-[10px] uppercase tracking-[0.2em] text-text-dim">Examples</div>
+                <div className="mb-2 font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-text-dim">Examples</div>
                 <div className="space-y-2">
                   {problem.examples.map((ex, i) => (
                     <div key={i} className="rounded-lg border border-border-soft bg-bg-elev px-3 py-2 font-mono text-[12px]">
@@ -338,12 +344,12 @@ export const VerilogJudge: React.FC = () => {
               <div className="mt-5 flex flex-wrap gap-2">
                 {problem.hint && (
                   <button onClick={() => setShowHint((s) => !s)}
-                    className="inline-flex items-center gap-1.5 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-1.5 text-[12px] font-semibold text-amber-500 transition-colors hover:bg-amber-500/15">
+                    className="inline-flex items-center gap-1.5 rounded-lg border-2 border-amber-500/40 bg-amber-500/10 px-3 py-1.5 text-[12px] font-bold text-amber-500 transition-colors hover:bg-amber-500/20">
                     <Lightbulb className="h-3.5 w-3.5" /> {showHint ? 'Hide hint' : 'Hint'}
                   </button>
                 )}
                 <button onClick={() => setShowSolution((s) => !s)}
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-border-soft px-3 py-1.5 text-[12px] font-semibold text-text-dim transition-colors hover:text-text-main">
+                  className="inline-flex items-center gap-1.5 rounded-lg border-2 border-border-soft px-3 py-1.5 text-[12px] font-bold text-text-dim transition-colors hover:text-text-main">
                   {showSolution ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
                   {showSolution ? 'Hide solution' : 'Solution'}
                 </button>
@@ -378,7 +384,7 @@ export const VerilogJudge: React.FC = () => {
         <section className="flex min-h-0 min-w-0 flex-col lg:overflow-hidden">
           {/* Toolbar */}
           <div className="flex shrink-0 items-center gap-3 border-b border-border-soft bg-bg-elev px-3 py-1.5">
-            <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-text-dim">design.sv</span>
+            <span className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-text-dim">design.sv</span>
             <span className="hidden items-center gap-1 font-mono text-[10px] text-text-dim/70 md:flex">
               <kbd className="rounded border border-border-soft px-1 py-px text-[9px]">Ctrl</kbd>
               <span>+</span>
@@ -387,18 +393,18 @@ export const VerilogJudge: React.FC = () => {
             </span>
             <div className="ml-auto flex items-center gap-2">
               <button onClick={resetCode} title="Reset to starter"
-                className="flex items-center gap-1.5 rounded-lg border border-border-soft px-2.5 py-1.5 text-[12px] font-semibold text-text-dim transition-colors hover:text-text-main">
+                className="flex items-center gap-1.5 rounded-lg border-2 border-border-soft px-2.5 py-1.5 text-[12px] font-bold text-text-dim transition-colors hover:text-text-main">
                 <RotateCcw className="h-3.5 w-3.5" /> Reset
               </button>
               <button onClick={run} disabled={running}
-                className="flex items-center gap-1.5 rounded-lg bg-emerald-500 px-4 py-1.5 text-[12px] font-bold text-black shadow-sm transition-all hover:bg-emerald-400 active:scale-95 disabled:opacity-60">
+                className={`flex items-center gap-1.5 rounded-xl bg-emerald-500 px-4 py-1.5 text-[12px] font-black uppercase tracking-wide text-black shadow-[0_3px_0_#047857] ${raised} hover:bg-emerald-400 disabled:opacity-60`}>
                 {running ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Play className="h-3.5 w-3.5" />}
                 {running ? 'Running' : 'Run'}
               </button>
             </div>
           </div>
 
-          {/* Editor | Schematic */}
+          {/* Editor | Synth schematic */}
           <div className="grid min-h-0 flex-1 grid-cols-1 lg:grid-cols-2">
             <div className="h-[44vh] min-h-[260px] lg:h-auto lg:min-h-0">
               <Editor
@@ -409,6 +415,8 @@ export const VerilogJudge: React.FC = () => {
                 onChange={onCodeChange}
                 beforeMount={registerVerilog}
                 onMount={(editor, monaco) => {
+                  editorRef.current = editor;
+                  monacoRef.current = monaco;
                   editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => runRef.current());
                 }}
                 options={{
@@ -425,37 +433,26 @@ export const VerilogJudge: React.FC = () => {
               />
             </div>
             <div className="h-[48vh] min-h-[300px] border-t border-border-soft lg:h-auto lg:min-h-0 lg:border-l lg:border-t-0">
-              {showSynth
-                ? <SynthSchematicView code={debounced} isLight={isLight} miniError={compiled.ok ? null : compiled.error} headerExtra={schemToggle} />
-                : <SchematicView schematic={schematic} error={null} isLight={isLight} headerExtra={schemToggle} />}
+              <SynthSchematicView code={debounced} isLight={isLight} onDiagnostics={applyDiagnostics} />
             </div>
           </div>
 
           {/* Results drawer */}
-          <ResultsDrawer
-            open={resultsOpen} setOpen={setResultsOpen}
-            result={result} problem={problem} running={running}
-          />
+          <ResultsDrawer open={resultsOpen} setOpen={setResultsOpen} result={result} problem={problem} running={running} />
         </section>
       </div>
 
       {/* ── Status bar ── */}
       <footer className="hidden h-7 shrink-0 items-center gap-2.5 border-t border-border-soft bg-bg-elev px-3 font-mono text-[11px] text-text-dim sm:flex">
-        <span className="flex items-center gap-1.5">
-          <span className={`h-1.5 w-1.5 rounded-full ${compiled.ok ? 'bg-emerald-500' : 'bg-amber-500'}`} />
-          {compiled.ok ? 'elaborates' : 'syntax error'}
+        <span className="flex items-center gap-1.5 font-bold">
+          <span className={`h-1.5 w-1.5 rounded-full ${statusDot}`} />
+          {statusText}
         </span>
-        {schematic && (
-          <>
-            <Sep />
-            <span>{schematic.gateCount} gate{schematic.gateCount === 1 ? '' : 's'}</span>
-            <Sep />
-            <span>{schematic.wires.length} net{schematic.wires.length === 1 ? '' : 's'}</span>
-          </>
-        )}
+        <Sep />
+        <span className="flex items-center gap-1 text-emerald-500/80"><Zap className="h-3 w-3" /> bitforbytes</span>
         <span className="ml-auto">{problem.inputs.length} in &middot; {problem.outputs.length} out</span>
         <Sep className="hidden md:block" />
-        <span className="hidden md:inline" style={{ color: DIFF_COLOR[problem.difficulty] }}>{problem.difficulty}</span>
+        <span className="hidden font-bold md:inline" style={{ color: DIFF_COLOR[problem.difficulty] }}>{problem.difficulty}</span>
         <Sep className="hidden lg:block" />
         <span className="hidden lg:inline">{isLight ? 'light' : 'dark'}</span>
       </footer>
@@ -485,7 +482,7 @@ const ResultsDrawer: React.FC<{
   return (
     <div className="shrink-0 border-t border-border-soft bg-bg-elev">
       <button onClick={() => setOpen(!open)} className="flex w-full items-center gap-2 px-3 py-2 text-left">
-        <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-text-dim">Console</span>
+        <span className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-text-dim">Console</span>
         <span className={`flex items-center gap-1.5 text-[12px] font-bold ${tone}`}>
           {running ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
             : passed ? <CheckCircle2 className="h-3.5 w-3.5" />
@@ -512,11 +509,11 @@ const ResultsDrawer: React.FC<{
 // ─── sub-components ──────────────────────────────────────────────────────────
 const PortCard: React.FC<{ label: string; names: string[]; accent: string }> = ({ label, names, accent }) => (
   <div className="rounded-lg border border-border-soft bg-bg-elev p-3">
-    <div className="mb-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-text-dim">{label}</div>
+    <div className="mb-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-text-dim">{label}</div>
     <div className="flex flex-wrap gap-1.5">
       {names.map((n) => (
-        <span key={n} className="rounded-md px-2 py-0.5 font-mono text-[12px] font-bold"
-          style={{ color: accent, background: `${accent}1a` }}>{n}</span>
+        <span key={n} className="rounded-md px-2 py-0.5 font-mono text-[12px] font-black"
+          style={{ color: accent, background: `${accent}22` }}>{n}</span>
       ))}
     </div>
   </div>
@@ -527,7 +524,7 @@ const ResultsPanel: React.FC<{ result: GradeResult | null; problem: VProblem; ru
     return <div className="flex items-center gap-2 p-4 text-[13px] text-text-dim"><Loader2 className="h-4 w-4 animate-spin" /> Compiling &amp; simulating every input combination...</div>;
   }
   if (!result) {
-    return <div className="p-4 text-[13px] leading-relaxed text-text-dim">Press <span className="font-semibold text-text-main">Run</span> to grade your module against every input combination. While you type, the schematic on the right shows exactly what your code builds.</div>;
+    return <div className="p-4 text-[13px] leading-relaxed text-text-dim">Hit <span className="font-bold text-text-main">Run</span> to grade your module against every input combination. As you type, the synthesized circuit on the right shows exactly what your code builds - poke its wires to see values flow.</div>;
   }
 
   if (result.status === 'error') {
@@ -545,7 +542,7 @@ const ResultsPanel: React.FC<{ result: GradeResult | null; problem: VProblem; ru
   const passed = result.status === 'pass';
   return (
     <div className="p-3">
-      <div className={`mb-3 flex items-center gap-2 rounded-lg px-3 py-2 text-[13px] font-bold ${passed ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'}`}>
+      <div className={`mb-3 flex items-center gap-2 rounded-lg px-3 py-2 text-[13px] font-black ${passed ? 'bg-emerald-500/15 text-emerald-400' : 'bg-rose-500/15 text-rose-400'}`}>
         {passed ? <CheckCircle2 className="h-4 w-4" /> : <XCircle className="h-4 w-4" />}
         {passed ? 'Accepted - all cases passed' : `${result.passed}/${result.total} test cases passed`}
       </div>
@@ -553,10 +550,10 @@ const ResultsPanel: React.FC<{ result: GradeResult | null; problem: VProblem; ru
         <table className="w-full border-collapse font-mono text-[12px]">
           <thead>
             <tr className="bg-bg-void text-text-dim">
-              {problem.inputs.map((c) => <th key={c} className="px-3 py-1.5 text-left font-semibold text-cyan-400">{c}</th>)}
-              {problem.outputs.map((c) => <th key={c} className="px-3 py-1.5 text-left font-semibold text-emerald-400">{c}</th>)}
-              <th className="px-3 py-1.5 text-left font-semibold">got</th>
-              <th className="px-3 py-1.5 text-center font-semibold">ok</th>
+              {problem.inputs.map((c) => <th key={c} className="px-3 py-1.5 text-left font-bold text-cyan-400">{c}</th>)}
+              {problem.outputs.map((c) => <th key={c} className="px-3 py-1.5 text-left font-bold text-emerald-400">{c}</th>)}
+              <th className="px-3 py-1.5 text-left font-bold">got</th>
+              <th className="px-3 py-1.5 text-center font-bold">ok</th>
             </tr>
           </thead>
           <tbody>
@@ -581,30 +578,45 @@ const ResultsPanel: React.FC<{ result: GradeResult | null; problem: VProblem; ru
   );
 };
 
-// ─── verified stamp (shown briefly on a pass) ────────────────────────────────
+// ─── BitforBytes Verified stamp (shown on a pass) ────────────────────────────
+const SPARKS = Array.from({ length: 14 }, (_, i) => i);
 const VerifiedStamp: React.FC<{ total: number }> = ({ total }) => (
   <motion.div
     initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
     className="pointer-events-none fixed inset-0 z-[100] grid place-items-center"
   >
+    {/* impact ring */}
     <motion.span
-      className="absolute h-40 w-40 rounded-full border-2 border-emerald-400"
-      initial={{ scale: 0.3, opacity: 0.6 }} animate={{ scale: 1.9, opacity: 0 }}
-      transition={{ duration: 0.9, ease: 'easeOut' }}
+      className="absolute h-44 w-44 rounded-full border-[3px] border-emerald-400"
+      initial={{ scale: 0.3, opacity: 0.7 }} animate={{ scale: 2, opacity: 0 }}
+      transition={{ duration: 0.85, ease: 'easeOut' }}
     />
+    {/* emerald sparks */}
+    {SPARKS.map((i) => {
+      const a = (i / SPARKS.length) * Math.PI * 2;
+      const shades = ['#34d399', '#10b981', '#6ee7b7', '#059669'];
+      return (
+        <motion.span key={i} className="absolute h-2 w-2 rounded-sm" style={{ background: shades[i % shades.length] }}
+          initial={{ x: 0, y: 0, opacity: 1, scale: 1 }}
+          animate={{ x: Math.cos(a) * (150 + (i % 4) * 24), y: Math.sin(a) * (150 + (i % 4) * 24), opacity: 0, scale: 0.4, rotate: 200 }}
+          transition={{ duration: 1.2, ease: 'easeOut' }} />
+      );
+    })}
+    {/* the stamp - solid, no glass */}
     <motion.div
-      initial={{ scale: 1.5, opacity: 0, rotate: 6 }}
-      animate={{ scale: 1, opacity: 1, rotate: -7 }}
+      initial={{ scale: 1.5, opacity: 0, rotate: 8 }}
+      animate={{ scale: 1, opacity: 1, rotate: [-6, -7, -5, -6] }}
       exit={{ scale: 1.1, opacity: 0 }}
-      transition={{ type: 'spring', stiffness: 360, damping: 15 }}
-      className="flex flex-col items-center gap-1 rounded-2xl border-[2.5px] border-dashed border-emerald-500 bg-bg-elev/85 px-7 py-4 backdrop-blur"
-      style={{ boxShadow: '0 0 0 4px rgba(16,185,129,0.12), 0 18px 50px rgba(0,0,0,0.4)' }}
+      transition={{ scale: { type: 'spring', stiffness: 340, damping: 14 }, rotate: { duration: 0.5 } }}
+      className="flex flex-col items-center gap-1 rounded-2xl border-[3px] border-emerald-500 bg-bg-elev px-7 py-4 shadow-[0_18px_50px_rgba(16,185,129,0.35)]"
     >
-      <div className="flex items-center gap-2 text-emerald-400">
-        <BadgeCheck className="h-7 w-7" />
-        <span className="text-2xl font-black uppercase tracking-[0.12em]">Verified</span>
+      <div className="flex items-center gap-2">
+        <BadgeCheck className="h-7 w-7 text-emerald-400" />
+        <span className="text-xl font-black uppercase tracking-tight">
+          <span className="text-emerald-400">BitforBytes</span> <span className="text-text-main">Verified</span>
+        </span>
       </div>
-      <span className="font-mono text-[10.5px] uppercase tracking-[0.25em] text-emerald-500/80">all {total} vectors pass</span>
+      <span className="font-mono text-[10.5px] font-bold uppercase tracking-[0.25em] text-emerald-500/80">all {total} vectors pass &middot; ship it</span>
     </motion.div>
   </motion.div>
 );

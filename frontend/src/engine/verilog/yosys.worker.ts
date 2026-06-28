@@ -5,6 +5,8 @@
  * into a `write_json` netlist. The big download happens once per session and is
  * reported back as progress events.
  */
+import { parseDiagnostics } from './diagnostics';
+
 const ctx = self as unknown as {
   postMessage: (message: unknown) => void;
   onmessage: ((e: MessageEvent<{ id: number; code: string }>) => void) | null;
@@ -55,12 +57,14 @@ ctx.onmessage = async (e: MessageEvent<{ id: number; code: string }>) => {
     });
     const out = files['out.json'];
     const json = typeof out === 'string' ? out : new TextDecoder().decode(out ?? new Uint8Array());
-    if (!json) { ctx.postMessage({ id, type: 'error', error: 'Synthesis produced no netlist.', log }); return; }
-    ctx.postMessage({ id, type: 'done', json });
+    const diagnostics = parseDiagnostics(log);
+    if (!json) { ctx.postMessage({ id, type: 'error', error: 'Synthesis produced no netlist.', diagnostics }); return; }
+    ctx.postMessage({ id, type: 'done', json, diagnostics });
   } catch (err) {
+    const diagnostics = parseDiagnostics(log);
     const tail = log.split('\n').filter(Boolean).slice(-8).join('\n');
-    const msg = tail || (err instanceof Error ? err.message : String(err));
-    ctx.postMessage({ id, type: 'error', error: msg, log });
+    const msg = diagnostics.find((d) => d.severity === 'error')?.message || tail || (err instanceof Error ? err.message : String(err));
+    ctx.postMessage({ id, type: 'error', error: msg, diagnostics });
   }
 };
 
