@@ -14,8 +14,10 @@ export const PortalLayout = () => {
 
     const isSpecialPage = location.pathname === '/career-roadmap';
     const isModule = MODULE_ROUTE.test(location.pathname);
-    // Pages whose own UI already ships a theme toggle (so the floating one would duplicate it).
-    const hasIntegratedToggle = location.pathname === '/portal';
+    // Pages whose own UI already ships a theme toggle (so the floating one would duplicate it
+    // or, worse, overlap their own header controls like the Verilog bench's back button).
+    const hasIntegratedToggle = location.pathname === '/portal'
+        || location.pathname === '/verilog-playground';
 
     return (
         <div className="w-full min-h-screen relative" style={{ background: 'transparent' }}>

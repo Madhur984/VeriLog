@@ -386,7 +386,7 @@ const slug = (s: string) => s.replace(/^S\d+_/, '').toLowerCase();
 function componentFor(scene: SubScene): React.FC<any> {
   switch (scene.kind) {
     case 'cover':
-      return (p) => <CoverScene {...p} scene={scene} moduleTitle={CONTENT.moduleTitle} moduleSubtitle={CONTENT.moduleSubtitle} kicker="Code Converters · Number Languages" />;
+      return (p) => <CoverScene {...p} scene={scene} moduleTitle={CONTENT.moduleTitle} moduleSubtitle={CONTENT.moduleSubtitle} kicker="Code Converters · Number Languages" hero={<CodeConverter isDarkMode={p.isDarkMode} accent={p.accent} />} />;
     case 'video':
       return (p) => <VideoScene {...p} scene={scene} src={SRC_EN} />;
     case 'flashcards':

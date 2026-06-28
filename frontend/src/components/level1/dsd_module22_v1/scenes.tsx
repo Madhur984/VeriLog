@@ -380,7 +380,7 @@ const bespokeFor = (scene: SubScene): string | null => {
 function componentFor(scene: SubScene, i: number, n: number): React.FC<any> {
   switch (scene.kind) {
     case 'cover':
-      return (p) => <CoverScene {...p} scene={scene} moduleTitle={CONTENT.moduleTitle} moduleSubtitle={CONTENT.moduleSubtitle} kicker="DEMUX · One Input, Many Lines" />;
+      return (p) => <CoverScene {...p} scene={scene} moduleTitle={CONTENT.moduleTitle} moduleSubtitle={CONTENT.moduleSubtitle} kicker="DEMUX · One Input, Many Lines" hero={<CourierScene isDarkMode={p.isDarkMode} accent={p.accent} />} />;
     case 'video':
       return (p) => <VideoScene {...p} scene={scene} src={SRC_EN} />;
     case 'flashcards':

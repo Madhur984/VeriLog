@@ -20,7 +20,7 @@
 export type Bit = 0 | 1;
 
 // ─── Expression AST ──────────────────────────────────────────────────────────
-type Expr =
+export type Expr =
   | { k: 'const'; v: Bit }
   | { k: 'id'; name: string }
   | { k: 'not'; a: Expr }

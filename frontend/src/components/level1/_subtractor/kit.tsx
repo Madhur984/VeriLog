@@ -131,7 +131,14 @@ export const Eyebrow: React.FC<{ accent: string; children: React.ReactNode }> = 
 );
 
 export const SceneShell: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <div className="max-w-6xl mx-auto space-y-10 py-2">{children}</div>
+  <motion.div
+    initial={{ opacity: 0, y: 14 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.4, ease: 'easeOut' }}
+    className="max-w-6xl mx-auto space-y-10 py-2"
+  >
+    {children}
+  </motion.div>
 );
 
 export const Card: React.FC<{ isDarkMode: boolean; className?: string; children: React.ReactNode; style?: React.CSSProperties }>
@@ -449,8 +456,8 @@ export const FlowRail: React.FC<{ isDarkMode: boolean; accent: string }>
 
 interface SceneProps { isDarkMode: boolean; accent: string; scene: SubScene }
 
-export const CoverScene: React.FC<SceneProps & { moduleTitle: string; moduleSubtitle?: string; kicker?: string }>
-  = ({ isDarkMode, accent, scene, moduleTitle, moduleSubtitle, kicker }) => {
+export const CoverScene: React.FC<SceneProps & { moduleTitle: string; moduleSubtitle?: string; kicker?: string; hero?: React.ReactNode }>
+  = ({ isDarkMode, accent, scene, moduleTitle, moduleSubtitle, kicker, hero }) => {
   const { lang } = useSubLang();
   const t = tone(isDarkMode);
   return (
@@ -463,7 +470,9 @@ export const CoverScene: React.FC<SceneProps & { moduleTitle: string; moduleSubt
         <h1 className={`mx-auto mt-6 max-w-3xl text-4xl font-black tracking-tight sm:text-6xl ${t.text}`}>{moduleTitle}</h1>
         {moduleSubtitle && <p className={`mx-auto mt-4 max-w-2xl text-lg ${t.sub}`}>{moduleSubtitle}</p>}
       </div>
-      <BinaryHero isDarkMode={isDarkMode} accent={accent} />
+      {/* The cover's signature visual: a module-relevant interactive when one is
+          supplied, otherwise the generic binary odometer (fits the arithmetic track). */}
+      {hero ?? <BinaryHero isDarkMode={isDarkMode} accent={accent} />}
       <Card isDarkMode={isDarkMode} className="mx-auto max-w-3xl">
         <Eyebrow accent={accent}>{lang === 'hi' ? 'इस module में' : 'In this module'}</Eyebrow>
         <div className="mt-4"><Bullets isDarkMode={isDarkMode} accent={accent} en={scene.theoryEN} hi={scene.theoryHI} /></div>
@@ -493,17 +502,40 @@ export const Prose: React.FC<{ isDarkMode: boolean; accent: string; en: string[]
 
 export const TheoryScene: React.FC<SceneProps & { children?: React.ReactNode }>
   = ({ isDarkMode, accent, scene, children }) => {
+  const { lang } = useSubLang();
   const t = tone(isDarkMode);
+  // React.Children.toArray drops false/null/undefined, so a scene that passes
+  // only unmatched `{cond && <viz/>}` expressions counts as having no visual -
+  // and we drop in a living fallback so NO page is ever a bare wall of text.
+  const kids = React.Children.toArray(children);
+  const hasVisual = kids.length > 0;
   return (
     <SceneShell>
-      <section className="space-y-3">
+      <section className="space-y-2">
         <Eyebrow accent={accent}>{scene.label}</Eyebrow>
         {scene.subtitle && <h2 className={`text-3xl md:text-4xl font-black ${t.text}`}>{scene.subtitle}</h2>}
       </section>
-      <Card isDarkMode={isDarkMode}>
+
+      {/* SEE IT FIRST - the interaction / visualisation leads every page */}
+      <div className="space-y-2">
+        <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.3em]" style={{ color: accent }}>
+          <span className="inline-flex h-1.5 w-1.5 animate-pulse rounded-full" style={{ background: accent }} />
+          {hasVisual ? (lang === 'hi' ? 'पहले खेलिए · interactive' : 'Play with it') : (lang === 'hi' ? 'देखिए' : 'See it move')}
+        </div>
+        <div className="space-y-6">{hasVisual ? kids : <FlowRail isDarkMode={isDarkMode} accent={accent} />}</div>
+      </div>
+
+      {/* THEN READ WHY - theory sits below as a calm reading block */}
+      <div className={`relative overflow-hidden rounded-3xl border p-6 sm:p-7 ${t.card}`}>
+        <span className="absolute inset-y-0 left-0 w-1" style={{ background: accent }} />
+        <div className="mb-3 flex items-center gap-2">
+          <BookOpen size={14} style={{ color: accent }} />
+          <span className="font-mono text-[10px] uppercase tracking-[0.3em]" style={{ color: accent }}>
+            {lang === 'hi' ? 'अब समझिए · the idea' : 'Now the idea'}
+          </span>
+        </div>
         <Prose isDarkMode={isDarkMode} accent={accent} en={scene.theoryEN} hi={scene.theoryHI} />
-      </Card>
-      {children}
+      </div>
     </SceneShell>
   );
 };
@@ -572,15 +604,16 @@ export const RecapScene: React.FC<SceneProps & { children?: React.ReactNode }>
   const t = tone(isDarkMode);
   return (
     <SceneShell>
-      <section className="space-y-3">
+      <section className="space-y-2">
         <Eyebrow accent={accent}>{lang === 'hi' ? 'सार · Recap' : 'Recap'}</Eyebrow>
         <h2 className={`text-3xl md:text-4xl font-black ${t.text}`}>{scene.label}</h2>
       </section>
-      <Card isDarkMode={isDarkMode}>
-        <Prose isDarkMode={isDarkMode} accent={accent} en={scene.theoryEN} hi={scene.theoryHI} />
-      </Card>
       <FlowRail isDarkMode={isDarkMode} accent={accent} />
       {children}
+      <div className={`relative overflow-hidden rounded-3xl border p-6 sm:p-7 ${t.card}`}>
+        <span className="absolute inset-y-0 left-0 w-1" style={{ background: accent }} />
+        <Prose isDarkMode={isDarkMode} accent={accent} en={scene.theoryEN} hi={scene.theoryHI} />
+      </div>
     </SceneShell>
   );
 };
