@@ -88,22 +88,36 @@ function bodyPath(kind: string): string {
   }
 }
 
-// ── wire ──────────────────────────────────────────────────────────────────────
+// ── wire (rounded orthogonal / Manhattan routing, like a real schematic) ──────
+function orthoPath(a: { x: number; y: number }, b: { x: number; y: number }): string {
+  if (Math.abs(a.y - b.y) < 0.6) return `M ${a.x},${a.y} H ${b.x}`;
+  const midX = (a.x + b.x) / 2;
+  const dir = b.y > a.y ? 1 : -1;
+  const r = Math.max(0, Math.min(7, Math.abs(midX - a.x), Math.abs(b.x - midX), Math.abs(b.y - a.y) / 2));
+  return [
+    `M ${a.x},${a.y}`,
+    `H ${midX - r}`,
+    `Q ${midX},${a.y} ${midX},${a.y + dir * r}`,
+    `V ${b.y - dir * r}`,
+    `Q ${midX},${b.y} ${midX + r},${b.y}`,
+    `H ${b.x}`,
+  ].join(' ');
+}
+
 const Wire: React.FC<{ a: { x: number; y: number }; b: { x: number; y: number }; v: Bit | null; pal: ReturnType<typeof palette> }>
   = ({ a, b, v, pal }) => {
-    const dx = Math.max(Math.abs(b.x - a.x) * 0.45, 26);
-    const d = `M ${a.x},${a.y} C ${a.x + dx},${a.y} ${b.x - dx},${b.y} ${b.x},${b.y}`;
+    const d = orthoPath(a, b);
     const color = v === 1 ? pal.on : v === null ? pal.unknown : pal.off;
     const live = v === 1;
     return (
       <g>
-        {live && <path d={d} fill="none" stroke={pal.onGlow} strokeWidth={5} strokeLinecap="round" opacity={0.25} />}
+        {live && <path d={d} fill="none" stroke={pal.onGlow} strokeWidth={5} strokeLinecap="round" strokeLinejoin="round" opacity={0.16} />}
         <path
           d={d} fill="none" stroke={color}
-          strokeWidth={live ? 2.4 : 1.6}
-          strokeLinecap="round"
-          strokeDasharray={v === null ? '4 4' : live ? '7 7' : undefined}
-          className={live ? 'vj-flow' : v === null ? 'vj-pulse' : undefined}
+          strokeWidth={live ? 2.1 : 1.5}
+          strokeLinecap="round" strokeLinejoin="round"
+          strokeDasharray={v === null ? '4 4' : undefined}
+          className={v === null ? 'vj-pulse' : undefined}
         />
       </g>
     );
@@ -199,7 +213,7 @@ const Glyph: React.FC<{
 // ── the panel ─────────────────────────────────────────────────────────────────
 type View = { x: number; y: number; w: number; h: number };
 
-export const SchematicView: React.FC<{ schematic: Schematic | null; error: string | null; isLight: boolean }> = ({ schematic, error, isLight }) => {
+export const SchematicView: React.FC<{ schematic: Schematic | null; error: string | null; isLight: boolean; headerExtra?: React.ReactNode }> = ({ schematic, error, isLight, headerExtra }) => {
   const pal = useMemo(() => palette(isLight), [isLight]);
 
   // probe values for the live inputs (default all 0)
@@ -217,6 +231,22 @@ export const SchematicView: React.FC<{ schematic: Schematic | null; error: strin
     () => (schematic ? evalSchematic(schematic, probe) : new Map<string, Bit | null>()),
     [schematic, probe],
   );
+
+  // driver pins that feed more than one sink - drawn as solder junction dots
+  const fanout = useMemo(() => {
+    if (!schematic) return [] as { id: string; x: number; y: number }[];
+    const counts = new Map<string, number>();
+    schematic.wires.forEach((w) => counts.set(w.from, (counts.get(w.from) ?? 0) + 1));
+    const out: { id: string; x: number; y: number }[] = [];
+    counts.forEach((c, id) => {
+      if (c < 2) return;
+      const n = schematic.byId.get(id);
+      if (!n) return;
+      const p = outPort(n);
+      out.push({ id, x: p.x, y: p.y });
+    });
+    return out;
+  }, [schematic]);
 
   const toggle = (name: string) => setProbe((p) => ({ ...p, [name]: (p[name] ? 0 : 1) as Bit }));
 
@@ -300,6 +330,7 @@ export const SchematicView: React.FC<{ schematic: Schematic | null; error: strin
         ) : (
           <span className="font-mono text-[11px] text-amber-500/90">no valid design</span>
         )}
+        {headerExtra}
 
         <div className="ml-auto flex items-center gap-0.5">
           {schematic && schematic.inputs.length > 0 && (
@@ -345,6 +376,11 @@ export const SchematicView: React.FC<{ schematic: Schematic | null; error: strin
                 const to = schematic.byId.get(w.to);
                 if (!from || !to) return null;
                 return <Wire key={i} a={outPort(from)} b={inPort(to, w.port)} v={values.get(w.from) ?? null} pal={pal} />;
+              })}
+              {/* solder dots where a net fans out to more than one sink */}
+              {fanout.map(({ id, x, y }) => {
+                const on = values.get(id) === 1;
+                return <circle key={`j-${id}`} cx={x} cy={y} r={3.2} fill={on ? pal.on : pal.ink} />;
               })}
               {schematic.nodes.map((n) => (
                 <Glyph key={n.id} node={n} v={values.get(n.id) ?? null} pal={pal} light={isLight}

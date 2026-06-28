@@ -53,10 +53,10 @@ export interface Schematic {
 }
 
 // ── layout constants ─────────────────────────────────────────────────────────
-const COL_GAP = 118;
-const ROW_GAP = 66;
-const MARGIN_X = 64;
-const MARGIN_Y = 52;
+const COL_GAP = 132;
+const ROW_GAP = 72;
+const MARGIN_X = 70;
+const MARGIN_Y = 56;
 
 const GATE_KINDS: SKind[] = ['buf', 'not', 'and', 'or', 'xor', 'xnor', 'nand', 'nor', 'mux'];
 

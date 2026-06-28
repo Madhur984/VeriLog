@@ -19,6 +19,9 @@ dist-ssr
 .env.local
 .env.production
 
+# Local MCP config (contains Hostinger API token)
+.mcp.json
+
 # Logs
 logs
 *.log

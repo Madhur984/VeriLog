@@ -24,6 +24,7 @@
         "@supabase/supabase-js": "^2.97.0",
         "@types/dagre": "^0.7.54",
         "@types/three": "^0.182.0",
+        "@yowasp/yosys": "^0.65.176-dev.1145",
         "animejs": "^3.2.2",
         "axios": "^1.6.7",
         "class-variance-authority": "^0.7.1",

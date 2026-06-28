@@ -19,6 +19,7 @@ import { grade, type GradeResult } from '../engine/verilog/grade';
 import { compileVerilog } from '../engine/verilog/miniSim';
 import { buildSchematic, type Schematic } from '../engine/verilog/schematic';
 import { SchematicView } from '../components/verilog/SchematicView';
+import { SynthSchematicView } from '../components/verilog/SynthSchematicView';
 
 const SOLVED_KEY = 'vj_solved_v1';
 const codeKey = (id: string) => `vj_code_${id}`;
@@ -93,6 +94,12 @@ export const VerilogJudge: React.FC = () => {
   const [resultsOpen, setResultsOpen] = useState(false);
   const [passTotal, setPassTotal] = useState(0);
   const [celebrate, setCelebrate] = useState(false);
+  // Yosys is the main synthesizer; the quick interactive view is opt-in for
+  // basic single-bit designs. Choice persists across problems.
+  const [schematicMode, setSchematicMode] = useState<'live' | 'synth'>(() => {
+    try { return (localStorage.getItem('vj_schem_mode') as 'live' | 'synth') || 'synth'; } catch { return 'synth'; }
+  });
+  const setMode = (m: 'live' | 'synth') => { setSchematicMode(m); try { localStorage.setItem('vj_schem_mode', m); } catch { /* quota */ } };
   const runTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   // ── one compile feeds both the live schematic and the status bar ────────────
@@ -160,6 +167,24 @@ export const VerilogJudge: React.FC = () => {
 
   const solvedCount = solved.size;
   const statementParas = problem.statement.split('\n\n');
+
+  // schematic engine selection: Yosys (synth) is primary; Live is the instant
+  // interactive view, available only when the quick engine can elaborate the code.
+  const canLive = compiled.ok;
+  const showSynth = schematicMode === 'synth' || !canLive;
+  const schemToggle = (
+    <div className="flex items-center rounded-md border border-border-soft bg-bg-void p-0.5 font-mono text-[10px] font-black uppercase tracking-wide">
+      <button onClick={() => canLive && setMode('live')} disabled={!canLive}
+        title={canLive ? 'Instant interactive view (single-bit)' : 'Live view needs basic combinational code'}
+        className={`rounded px-2 py-0.5 transition-colors ${!showSynth ? 'bg-emerald-500/20 text-emerald-400' : canLive ? 'text-text-dim hover:text-text-main' : 'cursor-not-allowed text-text-dim/40'}`}>
+        Live
+      </button>
+      <button onClick={() => setMode('synth')} title="Full Yosys synthesizer - any valid Verilog"
+        className={`rounded px-2 py-0.5 transition-colors ${showSynth ? 'bg-indigo-500/20 text-indigo-400' : 'text-text-dim hover:text-text-main'}`}>
+        Synth
+      </button>
+    </div>
+  );
 
   return (
     <div className="flex min-h-[100svh] w-full flex-col overflow-y-auto bg-bg-void text-text-main lg:h-screen lg:overflow-hidden">
@@ -400,7 +425,9 @@ export const VerilogJudge: React.FC = () => {
               />
             </div>
             <div className="h-[48vh] min-h-[300px] border-t border-border-soft lg:h-auto lg:min-h-0 lg:border-l lg:border-t-0">
-              <SchematicView schematic={schematic} error={compiled.ok ? null : compiled.error} isLight={isLight} />
+              {showSynth
+                ? <SynthSchematicView code={debounced} isLight={isLight} miniError={compiled.ok ? null : compiled.error} headerExtra={schemToggle} />
+                : <SchematicView schematic={schematic} error={null} isLight={isLight} headerExtra={schemToggle} />}
             </div>
           </div>
 

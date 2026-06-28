@@ -9,6 +9,16 @@ export default defineConfig({
             "@": path.resolve(__dirname, "./src"),
         },
     },
+    // The Yosys WASM engine references its 43 MB core via `new URL('./*.wasm',
+    // import.meta.url)`. Excluding it from dep pre-bundling lets Vite serve it
+    // through the main pipeline (so those asset URLs resolve in dev and the wasm
+    // is emitted in the build). It is dynamically imported inside an ES worker.
+    optimizeDeps: {
+        exclude: ['@yowasp/yosys', '@yowasp/runtime'],
+    },
+    worker: {
+        format: 'es',
+    },
     server: {
         // Forward /api/* to the Express backend so the frontend can call
         // same-origin URLs in dev (matches the production setup where a
