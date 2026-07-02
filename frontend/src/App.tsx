@@ -14,6 +14,9 @@ import { PortalLayout } from './layouts/PortalLayout';
 import { ScrollToTop } from './components/ScrollToTop';
 import { RouteTitle } from './components/RouteTitle';
 
+// Floating mascot (bottom-right, site-wide) — lazy so Rive's runtime stays off first paint
+const MascotWidget = lazy(() => loadChunk(() => import('./components/MascotWidget')));
+
 /**
  * Every route below is code-split via React.lazy, so the browser only downloads
  * the chunk for the page actually being opened (instead of the whole app in one
@@ -248,6 +251,10 @@ function App() {
           {/* Fallback — branded 404 with a clear way back (no silent redirect) */}
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
+      </Suspense>
+      {/* Floating Byte mascot, bottom-right on every page (renders nothing until /mascot.riv exists) */}
+      <Suspense fallback={null}>
+        <MascotWidget />
       </Suspense>
       </AppErrorBoundary>
     </TransitionProvider>

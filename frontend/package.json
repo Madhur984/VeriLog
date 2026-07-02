@@ -21,6 +21,7 @@
         "@popperjs/core": "^2.11.8",
         "@react-three/drei": "^9.122.0",
         "@react-three/fiber": "^8.18.0",
+        "@rive-app/react-canvas": "^4.29.4",
         "@supabase/supabase-js": "^2.97.0",
         "@types/dagre": "^0.7.54",
         "@types/three": "^0.182.0",
