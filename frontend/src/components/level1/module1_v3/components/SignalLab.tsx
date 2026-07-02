@@ -78,7 +78,7 @@ export const SignalLab: React.FC = () => {
         <motion.div 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center pointer-events-auto"
+          className="absolute inset-0 bg-black/60 flex items-center justify-center pointer-events-auto"
         >
           <div className="text-center">
             <h2 className="hero-text text-3xl mb-4">MASTERY ACHIEVED</h2>

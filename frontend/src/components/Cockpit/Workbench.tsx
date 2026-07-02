@@ -84,7 +84,7 @@ export const Workbench = () => {
             </div>
 
             {/* Component Tray Overlay */}
-            <div className="absolute bottom-10 left-1/2 -translate-x-1/2 bg-white/80 backdrop-blur-xl border border-slate-200 shadow-2xl rounded-[40px] p-4 flex gap-6">
+            <div className="absolute bottom-10 left-1/2 -translate-x-1/2 bg-bg-elev border-2 border-edge shadow-brutal rounded-[40px] p-4 flex gap-6">
                 {['BATTERY', 'LED', 'AND', 'OR'].map((type) => (
                     <button
                         key={type}

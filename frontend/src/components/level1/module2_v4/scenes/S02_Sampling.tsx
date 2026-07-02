@@ -148,7 +148,7 @@ export const S02_Sampling: React.FC<{ time: number; isDarkMode: boolean }> = ({ 
                     className="sr-only" aria-label="Adjust Signal Frequency"
                 />
                 {/* LIVE TELEMETRY PANEL */}
-                <div className={`absolute top-10 right-10 z-20 p-8 rounded-[2.5rem] border backdrop-blur-2xl ${isDarkMode ? 'bg-black/60 border-white/5 shadow-2xl' : 'bg-white/80 border-gray-100 shadow-xl'}`}>
+                <div className={`absolute top-10 right-10 z-20 p-8 rounded-[2.5rem] border ${isDarkMode ? 'bg-bg-elev border-white/5 shadow-neo' : 'bg-white border-gray-100 shadow-neo'}`}>
                     <div className="space-y-6 text-right">
                         <div className="space-y-1">
                             <span className={`text-[10px] font-mono uppercase tracking-[0.3em] font-black opacity-30 ${textColor}`}>Sampling Threshold</span>

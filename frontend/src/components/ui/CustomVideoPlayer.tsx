@@ -399,7 +399,7 @@ export const CustomVideoPlayer = forwardRef<VideoPlayerHandle, CustomVideoPlayer
               </button>
               {showRate && (
                 <div
-                  className="absolute bottom-full right-0 mb-2 flex flex-col rounded-lg border border-white/10 bg-black/90 p-1 backdrop-blur"
+                  className="absolute bottom-full right-0 mb-2 flex flex-col rounded-lg border-2 border-edge bg-bg-elev p-1 shadow-brutal-sm"
                   onMouseLeave={() => setShowRate(false)}
                 >
                   {SPEEDS.map((s) => (

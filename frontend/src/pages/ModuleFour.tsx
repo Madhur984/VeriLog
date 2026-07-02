@@ -49,7 +49,7 @@ const Sidebar: React.FC<{
   const progress = ((current + 1) / PAGES.length) * 100;
 
   return (
-    <div className={`w-[320px] h-full flex-shrink-0 border-r flex flex-col z-20 transition-all duration-700 relative ${isDarkMode ? 'bg-[#040200]/40 backdrop-blur-md' : 'bg-slate-50/40 backdrop-blur-md'}`} style={{ borderColor }}>
+    <div className={`w-[320px] h-full flex-shrink-0 border-r flex flex-col z-20 transition-all duration-700 relative ${isDarkMode ? 'bg-[#040200]' : 'bg-slate-50'}`} style={{ borderColor }}>
       <header className="p-10 border-b" style={{ borderColor }}>
         <div className="flex items-center gap-4">
           <div className="w-10 h-10 rounded-2xl bg-cyan-500 flex items-center justify-center text-black">

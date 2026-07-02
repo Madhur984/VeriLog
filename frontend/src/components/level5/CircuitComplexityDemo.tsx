@@ -99,7 +99,7 @@ export const CircuitComplexityDemo: React.FC<{ onComplete: () => void; isDarkMod
                 />
 
                 {/* Telemetry Panel */}
-                <div className={`absolute top-4 right-4 p-4 rounded-2xl border backdrop-blur-xl min-w-[200px] transition-colors duration-300 ${isDarkMode ? 'bg-slate-900/80 border-slate-700/50' : 'bg-white/80 border-slate-200/50 shadow-lg'}`}>
+                <div className={`absolute top-4 right-4 p-4 rounded-2xl border shadow-neo min-w-[200px] transition-colors duration-300 ${isDarkMode ? 'bg-slate-900 border-slate-700/50' : 'bg-white border-slate-200/50'}`}>
                     <div className="font-mono text-[10px] text-cyan-500 font-bold uppercase tracking-[0.15em] mb-4">Circuit Metrics</div>
                     <div className="grid grid-cols-[1fr_auto] gap-y-3 gap-x-4 font-mono text-xs">
                         <span className={isDarkMode ? 'text-slate-400' : 'text-slate-500'}>Total Gates</span>
@@ -118,10 +118,10 @@ export const CircuitComplexityDemo: React.FC<{ onComplete: () => void; isDarkMod
                     <motion.button
                         whileTap={{ scale: 0.95 }}
                         onClick={onComplete}
-                        className={`px-6 py-3 rounded-xl border font-mono text-xs font-black uppercase tracking-[0.15em] flex items-center gap-2 backdrop-blur-md transition-colors duration-300 ${
-                            isDarkMode 
-                            ? 'bg-cyan-500/10 border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/20' 
-                            : 'bg-cyan-50 border-cyan-200 text-cyan-600 hover:bg-cyan-100'
+                        className={`px-6 py-3 rounded-xl border-2 border-edge shadow-brutal-sm font-mono text-xs font-black uppercase tracking-[0.15em] flex items-center gap-2 transition-colors duration-300 ${
+                            isDarkMode
+                            ? 'bg-cyan-500/10 text-cyan-400 hover:bg-cyan-500/20'
+                            : 'bg-cyan-50 text-cyan-600 hover:bg-cyan-100'
                         }`}
                     >
                         PROCEED TO K-MAP <ArrowRight size={16} />

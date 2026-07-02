@@ -123,7 +123,7 @@ export const S05_Dither: React.FC<{ time: number; isDarkMode: boolean }> = ({ ti
                 />
 
                 {/* DITHER STATUS CONTROL */}
-                <div className={`absolute top-10 left-10 z-20 p-8 rounded-[2.5rem] border backdrop-blur-2xl ${isDarkMode ? 'bg-black/60 border-white/5 shadow-2xl' : 'bg-white/80 border-gray-100 shadow-xl'}`}>
+                <div className={`absolute top-10 left-10 z-20 p-8 rounded-[2.5rem] border ${isDarkMode ? 'bg-bg-elev border-white/5 shadow-neo' : 'bg-white border-gray-100 shadow-neo'}`}>
                     <div className="space-y-6">
                         <div className="space-y-1">
                             <span className={`text-[10px] font-mono uppercase tracking-[0.3em] font-black opacity-30 ${textColor}`}>Harmonic State</span>
@@ -213,7 +213,7 @@ export const S05_Dither: React.FC<{ time: number; isDarkMode: boolean }> = ({ ti
                     animate={{ rotate: shakeIntensity * 2 }}
                 >
                     <div className="absolute inset-0 border border-orange-500/30 rounded-full" />
-                    <div className="w-10 h-10 bg-orange-500/10 rounded-full flex items-center justify-center backdrop-blur-md border border-orange-500/20">
+                    <div className="w-10 h-10 bg-orange-500/10 rounded-full flex items-center justify-center border border-orange-500/20">
                          <Waves size={16} className={accentColor} />
                     </div>
                 </motion.div>

@@ -5,7 +5,7 @@ import type { NodeId } from '../../mure/core/SignalNode';
 import type { PortState } from '../../mure/core/Port';
 
 const T = {
-    card: 'rgba(13, 15, 22, 0.85)', surface: 'rgba(26, 29, 36, 0.9)', border: '#222633',
+    card: '#0D0F16', surface: '#1A1D24', border: '#222633',
     text: '#E5E7EB', muted: '#64748B', accent: '#00D4FF', success: '#10B981', warning: '#F59E0B',
     mono: "'JetBrains Mono', monospace",
 };
@@ -41,7 +41,7 @@ export const LogicInspector: React.FC<Props> = ({ selectedNodeId, nodeType, node
                     style={{
                         position: 'absolute', right: 24, top: 24, zIndex: 50,
                         width: 280, background: T.card, border: `1px solid ${T.border}`,
-                        borderRadius: 12, backdropFilter: 'blur(12px)', boxShadow: '0 12px 40px rgba(0,0,0,0.5)',
+                        borderRadius: 12, boxShadow: '0 12px 40px rgba(0,0,0,0.5)',
                         overflow: 'hidden', display: 'flex', flexDirection: 'column'
                     }}
                 >

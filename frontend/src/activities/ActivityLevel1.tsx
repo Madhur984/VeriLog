@@ -218,7 +218,7 @@ export const ActivityLevel1: React.FC<ActivityLevel1Props> = ({ onComplete }) =>
                            </div>
                            
                            {/* Step Indicator Overlay */}
-                           <div className="absolute top-8 left-8 flex items-center gap-2 px-6 py-3 bg-white/80 backdrop-blur-md rounded-full border border-slate-100 shadow-xl">
+                           <div className="absolute top-8 left-8 flex items-center gap-2 px-6 py-3 bg-white rounded-full border border-slate-100 shadow-xl">
                                <div className={cn("w-2 h-2 rounded-full", isCircuitClosed ? "bg-emerald-500" : "bg-sky-500 animate-pulse")} />
                                <span className="text-[10px] font-black text-slate-900 uppercase tracking-widest">Phase {step + 1} of 4</span>
                            </div>

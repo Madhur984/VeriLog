@@ -83,7 +83,7 @@ export const DroneMascot = ({ status, message }: DroneMascotProps) => {
 
             {/* Message Bubble */}
             {message && (
-                <div className="bg-panel/90 border border-signal-blue/50 text-signal-blue text-xs font-mono p-2 rounded-t-lg rounded-br-lg shadow-neon-blue backdrop-blur-sm animate-in fade-in slide-in-from-bottom-2">
+                <div className="bg-bg-elev border border-signal-blue/50 text-signal-blue text-xs font-mono p-2 rounded-t-lg rounded-br-lg shadow-neon-blue animate-in fade-in slide-in-from-bottom-2">
                     {message}
                 </div>
             )}

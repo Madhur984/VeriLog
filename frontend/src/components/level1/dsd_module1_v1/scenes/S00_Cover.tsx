@@ -18,7 +18,7 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
         className="relative rounded-3xl overflow-hidden border border-white/10 mx-auto max-w-3xl"
         style={{ background: '#fef9f0' }}
       >
-        <img
+        <img loading="lazy" decoding="async"
           src="/images/sketchbook/p01.webp"
           alt="The Architecture of a Decision - Ben as photographer and as protector"
           className="w-full block"

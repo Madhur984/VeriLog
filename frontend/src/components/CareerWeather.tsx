@@ -22,7 +22,7 @@ export const CareerWeather: React.FC = () => {
 
   return (
     <div className="mt-12 flex justify-center">
-      <div className="bg-observatory-surface/50 backdrop-blur-md border border-white/[0.04] rounded-full px-6 py-3 flex items-center gap-8 overflow-hidden min-w-[320px]">
+      <div className="bg-bg-elev border border-border-soft shadow-neo-sm rounded-full px-6 py-3 flex items-center gap-8 overflow-hidden min-w-[320px]">
         <AnimatePresence mode="wait">
           <motion.div
             key={index}

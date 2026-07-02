@@ -82,7 +82,7 @@ export const S03_WhatIsHDL: React.FC<{ isActive: boolean }> = ({ isActive }) => 
                 ))}
             </div>
 
-            <div className="p-8 bg-white/[0.02] border border-white/10 rounded-[35px] flex items-center justify-between backdrop-blur-md">
+            <div className="p-8 bg-bg-elev border border-border-soft rounded-[35px] flex items-center justify-between shadow-neo">
                 <div className="flex items-center gap-6">
                     <div className="w-10 h-10 rounded-xl bg-plasma-cyan/10 border border-plasma-cyan/30 flex items-center justify-center text-plasma-cyan">
                         <ShieldCheck size={20} />

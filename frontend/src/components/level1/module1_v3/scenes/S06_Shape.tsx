@@ -50,7 +50,7 @@ export const S06_Shape: React.FC = () => {
             </p>
         </div>
 
-        <div className="pointer-events-auto flex gap-2 bg-black/40 backdrop-blur-md p-2 rounded-sm border border-white/5">
+        <div className="pointer-events-auto flex gap-2 bg-bg-elev p-2 rounded-sm border-2 border-edge shadow-brutal-sm">
           {MODES.map((m) => (
             <button
               key={m.id}
@@ -67,7 +67,7 @@ export const S06_Shape: React.FC = () => {
         </div>
 
         {/* Unit Step vs Unit Impulse Expansion */}
-        <div className="pointer-events-auto grid grid-cols-1 md:grid-cols-2 gap-8 w-full mt-8 bg-black/60 p-8 rounded-sm border border-white/10 backdrop-blur-2xl">
+        <div className="pointer-events-auto grid grid-cols-1 md:grid-cols-2 gap-8 w-full mt-8 bg-bg-elev p-8 rounded-sm border border-border-soft shadow-neo">
             <div className="space-y-4 border-r border-white/5 pr-8 text-left">
                 <h4 className="micro-text text-v3-cyan font-black uppercase tracking-widest">The Unit Step</h4>
                 <p className="text-[10px] leading-relaxed text-white/40 italic">

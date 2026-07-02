@@ -81,7 +81,7 @@ export const S11_TimelessLogic: React.FC<{ isActive: boolean }> = ({ isActive })
                         </div>
                     </div>
 
-                    <div className="p-12 rounded-[50px] bg-white/[0.01] border border-white/5 backdrop-blur-md relative overflow-hidden group">
+                    <div className="p-12 rounded-[50px] bg-bg-elev border border-border-soft shadow-neo relative overflow-hidden group">
                         <div className="absolute top-0 right-0 p-8 opacity-5">
                             <Activity size={80} className="text-plasma-cyan" />
                         </div>
@@ -109,7 +109,7 @@ export const S11_TimelessLogic: React.FC<{ isActive: boolean }> = ({ isActive })
                 </div>
             </div>
 
-            <div className="mt-8 flex items-center justify-between p-6 bg-white/[0.02] border border-white/10 rounded-3xl backdrop-blur-md">
+            <div className="mt-8 flex items-center justify-between p-6 bg-bg-elev border border-border-soft rounded-3xl shadow-neo">
                 <div className="flex items-center gap-4">
                     <Share2 size={20} className="text-plasma-cyan" />
                     <div>

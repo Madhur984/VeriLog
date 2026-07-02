@@ -79,16 +79,13 @@ export class AppErrorBoundary extends Component<{ children: ReactNode }, State> 
     // A reload is in flight - show the same calm loading state, not an error.
     if (reloading) {
       return (
-        <div
-          className="min-h-[100svh] w-full flex items-center justify-center"
-          style={{ background: '#05070E' }}
-        >
+        <div className="min-h-[100svh] w-full flex items-center justify-center bg-bg-void">
           <div className="flex flex-col items-center gap-4">
             <div className="relative h-10 w-10">
-              <span className="absolute inset-0 rounded-full border-2" style={{ borderColor: 'rgba(34,211,238,0.18)' }} />
-              <span className="absolute inset-0 rounded-full border-2 border-transparent animate-spin" style={{ borderTopColor: '#22D3EE' }} />
+              <span className="absolute inset-0 rounded-full border-2 border-signal-core/20" />
+              <span className="absolute inset-0 rounded-full border-2 border-transparent border-t-signal-core animate-spin" />
             </div>
-            <span className="text-[11px] font-mono tracking-[0.3em] uppercase" style={{ color: '#475569' }}>
+            <span className="text-[11px] font-mono tracking-[0.3em] uppercase text-text-dim">
               Reconnecting
             </span>
           </div>
@@ -98,34 +95,23 @@ export class AppErrorBoundary extends Component<{ children: ReactNode }, State> 
 
     // Persistent / non-chunk error - manual recovery.
     return (
-      <div
-        className="min-h-[100svh] w-full flex items-center justify-center px-6"
-        style={{ background: '#05070E', color: '#cbd5e1' }}
-      >
+      <div className="min-h-[100svh] w-full flex items-center justify-center px-6 bg-bg-void text-text-sub">
         <div className="max-w-md w-full text-center flex flex-col items-center gap-5">
-          <div
-            className="h-12 w-12 rounded-2xl flex items-center justify-center"
-            style={{ background: 'rgba(34,211,238,0.08)', border: '1px solid rgba(34,211,238,0.25)' }}
-          >
+          <div className="brutal bg-bg-elev h-12 w-12 flex items-center justify-center">
             <span className="text-xl">⚠️</span>
           </div>
           <div className="space-y-2">
-            <h1 className="text-base font-mono tracking-[0.2em] uppercase text-white">
+            <h1 className="text-base font-black tracking-[0.2em] uppercase text-text-main">
               Something glitched
             </h1>
-            <p className="text-sm text-slate-400 leading-relaxed">
+            <p className="text-sm text-text-sub leading-relaxed">
               The page hit a snag while loading. Reloading usually clears it.
             </p>
           </div>
           <button
             type="button"
             onClick={this.handleReload}
-            className="mt-1 px-5 py-2.5 rounded-xl text-[11px] font-mono font-bold uppercase tracking-[0.2em] transition-colors"
-            style={{
-              background: 'rgba(34,211,238,0.12)',
-              border: '1px solid rgba(34,211,238,0.35)',
-              color: '#7DD3FC',
-            }}
+            className="brutal-btn mt-1 bg-signal-core text-bg-void px-5 py-2.5 text-[11px] font-mono font-bold uppercase tracking-[0.2em]"
           >
             Reload
           </button>

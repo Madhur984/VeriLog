@@ -27,11 +27,10 @@ export const AccentBadges = () => {
             transition={{ duration: 4.5 + i * 0.6, repeat: Infinity, ease: 'easeInOut', delay: i * 0.3 }}
             className="flex items-center gap-2 px-3.5 py-2 rounded-full text-[11px] font-semibold whitespace-nowrap"
             style={{
-              background: 'rgba(13,20,34,0.6)',
+              background: 'var(--bg-elev)',
               border: `1px solid ${color}33`,
               color: '#E2E8F0',
               boxShadow: `0 8px 24px rgba(0,0,0,0.35), 0 0 18px ${color}1f`,
-              backdropFilter: 'blur(8px)',
             }}
           >
             <Icon size={13} style={{ color }} />

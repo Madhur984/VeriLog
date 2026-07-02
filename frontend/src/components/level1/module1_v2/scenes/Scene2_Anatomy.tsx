@@ -104,7 +104,7 @@ export const Scene2_Anatomy: React.FC<Scene2AnatomyProps> = ({ onComplete, engin
         transition={{ delay: 0.9, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
         className="fixed bottom-0 w-full h-[35vh] flex justify-center p-12 z-50 pointer-events-none"
       >
-          <div className="w-full max-w-5xl flex gap-16 p-10 border border-white/5 bg-[#0A0A0A]/80 backdrop-blur-3xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] pointer-events-auto">
+          <div className="w-full max-w-5xl flex gap-16 p-10 border border-white/5 bg-[#0A0A0A] shadow-[0_20px_50px_rgba(0,0,0,0.5)] pointer-events-auto">
               <motion.div 
                 initial={{ opacity: 0.4 }}
                 animate={{ opacity: 1 }}

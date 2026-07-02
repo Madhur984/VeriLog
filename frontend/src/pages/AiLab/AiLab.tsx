@@ -44,7 +44,7 @@ export default function AiLab() {
                             </p>
                         </div>
 
-                        <div className="flex p-1 bg-white backdrop-blur-xl border border-slate-200 shadow-sm rounded-2xl">
+                        <div className="flex p-1 bg-white border-2 border-edge shadow-brutal-sm rounded-2xl">
                             {(['vision', 'voice'] as const).map((tab) => (
                                 <button
                                     key={tab}
@@ -116,7 +116,7 @@ export default function AiLab() {
                             </div>
 
                             <aside className="lg:col-span-4 space-y-6">
-                                <div className="p-8 bg-white backdrop-blur-md rounded-3xl border border-slate-200 shadow-sm space-y-6">
+                                <div className="p-8 bg-white rounded-3xl border border-border-soft shadow-neo space-y-6">
                                     <h3 className="text-lg font-bold flex items-center gap-2">
                                         <Activity className="w-5 h-5 text-sky-600" />
                                         Scanning Engine

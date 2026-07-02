@@ -217,7 +217,7 @@ const CareerRoadmapPage: React.FC = () => {
       <motion.div 
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="fixed top-4 sm:top-10 right-4 sm:right-8 z-[301] flex items-center gap-3 px-3.5 py-1.5 bg-observatory-surface/80 backdrop-blur-xl border border-border-soft rounded-full"
+        className="fixed top-4 sm:top-10 right-4 sm:right-8 z-[301] flex items-center gap-3 px-3.5 py-1.5 bg-bg-elev border-2 border-edge shadow-brutal-sm rounded-full"
       >
         <button
           onClick={toggleSfx}

@@ -220,7 +220,7 @@ export const S00_Intro: React.FC<{ time: number; isDarkMode: boolean }> = ({ tim
                 }}
                 onMouseUp={() => setIsFrozen(false)}
             >
-                <div className={`absolute top-10 left-10 right-10 z-10 p-8 rounded-[2.5rem] border backdrop-blur-3xl transition-all duration-700 ${isDarkMode ? 'bg-black/40 border-orange-500/20 shadow-2xl' : 'bg-white/70 border-gray-100 shadow-xl'}`}>
+                <div className={`absolute top-10 left-10 right-10 z-10 p-8 rounded-[2.5rem] border transition-all duration-700 ${isDarkMode ? 'bg-bg-elev border-orange-500/20 shadow-neo' : 'bg-white border-gray-100 shadow-neo'}`}>
                     <div className="flex justify-between items-start">
                         <div className="space-y-6">
                             <div className="space-y-1">

@@ -74,7 +74,7 @@ export const S04_WhyVerilog: React.FC<{ isActive: boolean }> = ({ isActive }) =>
                 ))}
             </div>
 
-            <div className="p-8 rounded-[40px] bg-burnished-copper/5 border border-burnished-copper/10 backdrop-blur-md flex items-center gap-8">
+            <div className="p-8 rounded-[40px] bg-bg-elev border border-border-soft shadow-neo flex items-center gap-8">
                  <div className="flex-shrink-0 w-20 h-20 rounded-[30px] border border-burnished-copper/20 flex items-center justify-center relative bg-black shadow-xl">
                     <div className="absolute inset-2 border border-dashed border-burnished-copper/10 rounded-full animate-spin-slow opacity-30" />
                     <Binary size={28} strokeWidth={1} className="text-burnished-copper" />

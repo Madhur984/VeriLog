@@ -29,7 +29,7 @@ export const S05_LockedDoors: React.FC<Props> = ({ isActive, isDarkMode }) => {
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         className={`relative rounded-3xl overflow-hidden border ${cardBg}`}
       >
-        <img src="/images/commuter/p05.webp" alt="Reverse bias - locked doors" className="w-full block aspect-[16/9] object-cover" />
+        <img loading="lazy" decoding="async" src="/images/commuter/p05.webp" alt="Reverse bias - locked doors" className="w-full block aspect-[16/9] object-cover" />
         <div className="absolute bottom-3 right-4 font-mono text-[9px] uppercase tracking-widest text-violet-200/80">
           Commuter Circuit · Reverse Bias
         </div>

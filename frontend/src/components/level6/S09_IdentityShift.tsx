@@ -45,7 +45,7 @@ export const S09_IdentityShift: React.FC<{ isActive: boolean }> = ({ isActive })
             </div>
 
             <div className="flex-1 flex flex-col justify-center gap-12">
-                <div className="p-10 rounded-[50px] border border-burnished-copper/10 bg-burnished-copper/5 relative group backdrop-blur-md shadow-inner">
+                <div className="p-10 rounded-[50px] border border-border-soft bg-bg-elev relative group shadow-neo">
                     <div className="absolute -top-10 -right-10 w-40 h-40 bg-burnished-copper/5 blur-[80px] rounded-full group-hover:bg-burnished-copper/10 transition-colors" />
                     
                     <div className="space-y-6 relative z-10">

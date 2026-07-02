@@ -32,7 +32,7 @@ export const TechnicalAudit: React.FC<TechnicalAuditProps> = ({
 }) => {
     const [isOpen, setIsOpen] = useState(showFullView);
     
-    const bg = isDarkMode ? 'bg-black/60 border-white/10 shadow-2xl backdrop-blur-3xl' : 'bg-white border-gray-100 shadow-xl';
+    const bg = isDarkMode ? 'bg-bg-elev border-white/10 shadow-neo' : 'bg-white border-gray-100 shadow-neo';
     const textColor = isDarkMode ? 'text-white' : 'text-gray-900';
     const subTextColor = isDarkMode ? 'text-white/40' : 'text-gray-500';
 

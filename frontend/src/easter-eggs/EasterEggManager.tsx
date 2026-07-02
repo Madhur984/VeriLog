@@ -281,7 +281,7 @@ export const EasterEggManager = () => {
               backgroundSize: '100% 4px',
             }}
           />
-          <div className="absolute top-4 left-4 bg-emerald-950/80 border border-emerald-500/30 text-emerald-400 text-[10px] font-mono px-3 py-1.5 rounded-md shadow-lg backdrop-blur-sm">
+          <div className="absolute top-4 left-4 bg-emerald-950 border border-emerald-500/30 text-emerald-400 text-[10px] font-mono px-3 py-1.5 rounded-md shadow-lg">
             📡 OSCILLOSCOPE TRIGGERED (CH-A: 50.0MHz)
           </div>
         </div>
@@ -355,9 +355,8 @@ export const EasterEggManager = () => {
             exit={{ opacity: 0, scale: 0.9 }}
             className="fixed top-18 right-8 z-[9998] flex flex-col gap-1.5 px-4 py-2.5 rounded-xl border border-rose-500/30 shadow-lg font-mono text-xs"
             style={{
-              background: 'rgba(244,63,94,0.1)',
+              background: '#2a0d15',
               color: '#fda4af',
-              backdropFilter: 'blur(8px)',
             }}
           >
             <div className="flex items-center gap-2">

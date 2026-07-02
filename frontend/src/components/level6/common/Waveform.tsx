@@ -8,7 +8,7 @@ export interface Signal {
 
 export const Waveform: React.FC<{ signals: Signal[], className?: string }> = ({ signals, className = "" }) => {
   return (
-    <div className={`bg-black/80 backdrop-blur-xl border border-white/10 p-6 md:p-8 rounded-[30px] w-full font-mono text-[10px] md:text-sm shadow-2xl ${className}`}>
+    <div className={`bg-bg-elev border border-border-soft p-6 md:p-8 rounded-[30px] w-full font-mono text-[10px] md:text-sm shadow-neo ${className}`}>
       {signals.map((sig, i) => (
         <div key={i} className="flex items-center gap-6 md:gap-8 mb-6 last:mb-0">
           <span className="w-16 md:w-24 text-plasma-cyan font-black uppercase tracking-widest truncate">{sig.name}</span>

@@ -314,7 +314,7 @@ export const CircuitCanvas: React.FC = () => {
                         </svg>
 
                         {/* Banner */}
-                        <div className="absolute top-8 left-1/2 -translate-x-1/2 px-8 py-3 bg-white/90 backdrop-blur-md border border-slate-100 rounded-full shadow-xl flex items-center gap-4">
+                        <div className="absolute top-8 left-1/2 -translate-x-1/2 px-8 py-3 bg-bg-elev border border-slate-100 rounded-full shadow-xl flex items-center gap-4">
                             <div className={cn("w-2 h-2 rounded-full", closed ? "bg-emerald-500 shadow-[0_0_8px_#10b981]" : "bg-sky-500 animate-pulse")} />
                             <span className="text-[10px] font-black text-slate-900 uppercase tracking-[0.2em]">
                                 {closed ? "Circuit Synchronized" : "Waiting for contact"}

@@ -72,7 +72,7 @@ export const S06A_Testbench: React.FC<{ isActive: boolean }> = ({ isActive }) =>
                             transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
                             className="absolute h-1 w-8 bg-emerald-400 rounded-full shadow-emerald-glow"
                         />
-                         <div className="absolute -top-6 micro-text text-emerald-400 uppercase font-black tracking-[0.3em] text-[8px] px-3 py-1 bg-black/50 backdrop-blur-sm border border-emerald-500/20 rounded-full">
+                         <div className="absolute -top-6 micro-text text-emerald-400 uppercase font-black tracking-[0.3em] text-[8px] px-3 py-1 bg-bg-elev border border-emerald-500/20 rounded-full">
                             TRANS_VECTORS
                         </div>
                     </div>
@@ -122,7 +122,7 @@ export const S06A_Testbench: React.FC<{ isActive: boolean }> = ({ isActive }) =>
                 </div>
             </div>
 
-            <div className="mt-auto flex items-center justify-between p-8 bg-white/[0.02] border border-white/10 rounded-[40px] backdrop-blur-md">
+            <div className="mt-auto flex items-center justify-between p-8 bg-bg-elev border border-border-soft rounded-[40px] shadow-neo">
                 <div className="flex items-center gap-6 text-left">
                     <div className="w-12 h-12 rounded-[15px] border border-emerald-500/30 flex items-center justify-center text-emerald-400 shadow-xl">
                         <Database size={22} />

@@ -39,7 +39,7 @@ export const S01_Video: React.FC<Props> = ({ isActive, isDarkMode }) => {
         className={`relative rounded-3xl overflow-hidden border ${cardBg} shadow-2xl`}
       >
         <CustomVideoPlayer src={VIDEO_SRC} accent="#22d3ee" />
-        <div className="absolute top-3 left-3 z-10 px-3 py-1 rounded-full bg-black/60 backdrop-blur border border-cyan-400/30 font-mono text-[10px] uppercase tracking-widest text-cyan-300 flex items-center gap-2 pointer-events-none">
+        <div className="absolute top-3 left-3 z-10 px-3 py-1 rounded-full bg-bg-elev border border-cyan-400/30 font-mono text-[10px] uppercase tracking-widest text-cyan-300 flex items-center gap-2 pointer-events-none">
           <Volume2 size={12} /> Logic to Hardware Pipeline
         </div>
       </motion.div>

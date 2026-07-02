@@ -55,9 +55,9 @@ export const FloatingCommandBar: React.FC<{ activeTab: string; onTabChange: (tab
       transition={{ duration: 0.35, ease: "easeInOut" }}
       className="fixed top-4 sm:top-10 left-1/2 -translate-x-1/2 z-[300]
                  flex items-center gap-0.5 sm:gap-1 px-2 sm:px-3 py-1.5 sm:py-2
-                 bg-observatory-surface/80 backdrop-blur-xl
-                 border border-border-soft rounded-full
-                 shadow-[0_0_0_1px_rgba(34,211,238,0.05),0_20px_40px_rgba(0,0,0,0.4)]
+                 bg-bg-elev
+                 border-2 border-edge rounded-full
+                 shadow-brutal-sm
                  max-w-[calc(100vw-16px)] overflow-x-auto scrollbar-hide"
     >
       <ThemeToggle variant="minimal" className="mr-1" />

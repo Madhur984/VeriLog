@@ -160,7 +160,7 @@ export const SimulatorCanvas = () => {
                 {/* Drop Overlay */}
                 <DragOverlay>
                     {dragActive ? (
-                        <div className="w-28 h-24 bg-sky-500/20 border-2 border-sky-500 border-dashed rounded-[24px] backdrop-blur-sm animate-pulse" />
+                        <div className="w-28 h-24 bg-sky-500/20 border-2 border-sky-500 border-dashed rounded-[24px] animate-pulse" />
                     ) : null}
                 </DragOverlay>
             </div>

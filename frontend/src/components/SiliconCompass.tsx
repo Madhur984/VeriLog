@@ -55,7 +55,7 @@ export const SiliconCompass: React.FC<{ onComplete?: () => void }> = ({ onComple
   const progress = (currentStep / 5) * 100;
 
   return (
-    <div className="fixed inset-0 z-[2000] flex items-center justify-center bg-bg-void/95 backdrop-blur-xl">
+    <div className="fixed inset-0 z-[2000] flex items-center justify-center bg-bg-void/95">
       <div className="relative w-full max-w-4xl px-6">
         
         {/* Progress Bar */}

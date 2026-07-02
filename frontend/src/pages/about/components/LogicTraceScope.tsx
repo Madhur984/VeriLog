@@ -623,7 +623,7 @@ export const LogicTraceScope: React.FC = () => {
             
             {/* Warning Alert Banner overlay for high-jitter or metastability glitch */}
             {(jitter > 0.45 || glitchActive) && (
-              <div className="absolute top-4 left-4 right-4 bg-rose-500/10 border border-rose-500/30 p-3 flex items-center gap-3 backdrop-blur-md z-30">
+              <div className="absolute top-4 left-4 right-4 bg-rose-950 border border-rose-500/30 p-3 flex items-center gap-3 z-30">
                 <AlertCircle className="text-rose-500 animate-pulse flex-shrink-0" size={16} />
                 <span className="text-[10px] text-rose-400 uppercase tracking-wide leading-tight">
                   {glitchActive 

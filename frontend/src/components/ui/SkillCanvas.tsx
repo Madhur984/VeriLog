@@ -237,10 +237,9 @@ export const SkillCanvas: React.FC = () => {
                             top: 20,
                             width: 280,
                             padding: 24,
-                            background: 'rgba(255, 255, 255, 0.95)',
+                            background: '#FFFFFF',
                             border: `1px solid ${DOMAIN_COLORS[hoveredSkill.domain]}20`,
                             borderRadius: 16,
-                            backdropFilter: 'blur(12px)',
                             zIndex: 100,
                             boxShadow: '0 12px 40px rgba(0,0,0,0.1)'
                         }}

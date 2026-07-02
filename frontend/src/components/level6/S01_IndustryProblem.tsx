@@ -68,7 +68,7 @@ export const S01_IndustryProblem: React.FC<{ isActive: boolean }> = ({ isActive 
                 ))}
             </div>
 
-            <div className="p-8 bg-white/[0.02] border border-white/10 rounded-[35px] flex items-center justify-between backdrop-blur-md">
+            <div className="p-8 bg-bg-elev border border-border-soft rounded-[35px] flex items-center justify-between shadow-neo">
                 <div className="flex items-center gap-6">
                     <div className="w-12 h-12 rounded-full border border-red-500/30 flex items-center justify-center text-red-500 animate-pulse">
                         <Binary size={22} />

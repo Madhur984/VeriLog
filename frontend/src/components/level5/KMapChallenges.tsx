@@ -197,10 +197,10 @@ export const KMapChallenges: React.FC<Props> = ({ onComplete, submitChallenge, c
                 <AnimatePresence>
                     {showResult && (
                         <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}
-                            className={`fixed top-[35%] left-1/2 -translate-x-1/2 z-[1000] border-2 rounded-[32px] p-10 text-center backdrop-blur-2xl shadow-2xl transition-all
-                                ${showResult.passed 
-                                    ? 'bg-emerald-50/90 dark:bg-emerald-950/90 border-emerald-500 shadow-emerald-500/20' 
-                                    : 'bg-rose-50/90 dark:bg-rose-950/90 border-rose-500 shadow-rose-500/20'}`}
+                            className={`fixed top-[35%] left-1/2 -translate-x-1/2 z-[1000] border-2 rounded-[32px] p-10 text-center shadow-2xl transition-all
+                                ${showResult.passed
+                                    ? 'bg-emerald-50 dark:bg-emerald-950 border-emerald-500 shadow-emerald-500/20'
+                                    : 'bg-rose-50 dark:bg-rose-950 border-rose-500 shadow-rose-500/20'}`}
                         >
                             {showResult.passed 
                                 ? <CheckCircle2 size={48} className="text-emerald-500 mx-auto mb-4" /> 

@@ -1,10 +1,23 @@
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { ArrowLeft, Menu, X, Home, Cpu, Map, BookOpen, Boxes, Wrench, User } from 'lucide-react';
 import { ThemeToggle } from '../components/ThemeToggle';
 import { useColorScheme } from '../hooks/useColorScheme';
+import { getRouteMeta } from '../lib/routeMeta';
 
-// Course-module routes that should show a quick "back to portal" control.
+// Course-module routes that ship their own drawer nav + get a "back to portal" control.
 const MODULE_ROUTE = /^\/(module|dsd|basic-electronics|sandbox)(\/|$)/;
+
+// Primary jump-to destinations for the persistent nav menu.
+const NAV_LINKS = [
+    { to: '/portal', label: 'Portal', icon: Home },
+    { to: '/verilog-playground', label: 'Verilog Playground', icon: Cpu },
+    { to: '/career-roadmap', label: 'Career Roadmap', icon: Map },
+    { to: '/analogies', label: 'Analogy Library', icon: BookOpen },
+    { to: '/verilog-library', label: 'Verilog Library', icon: Boxes },
+    { to: '/workbench', label: 'Workbench', icon: Wrench },
+    { to: '/profile', label: 'Profile', icon: User },
+];
 
 export const PortalLayout = () => {
     const location = useLocation();
@@ -12,37 +25,111 @@ export const PortalLayout = () => {
     const [scheme] = useColorScheme();
     const isLight = scheme === 'light';
 
+    const [menuOpen, setMenuOpen] = useState(false);
+    const clusterRef = useRef<HTMLDivElement>(null);
+
     const isSpecialPage = location.pathname === '/career-roadmap';
     const isModule = MODULE_ROUTE.test(location.pathname);
-    // Pages whose own UI already ships a theme toggle (so the floating one would duplicate it
-    // or, worse, overlap their own header controls like the Verilog bench's back button).
+    // Pages whose own UI already ships a header/theme toggle (portal hub, Verilog bench)
+    // so the floating nav cluster would duplicate or overlap their controls.
     const hasIntegratedToggle = location.pathname === '/portal'
         || location.pathname === '/verilog-playground';
+    const showNav = !isSpecialPage && !isModule && !hasIntegratedToggle;
+    const crumb = getRouteMeta(location.pathname);
+
+    // Close the menu on navigation.
+    useEffect(() => { setMenuOpen(false); }, [location.pathname]);
+
+    // Close on Escape or outside click.
+    useEffect(() => {
+        if (!menuOpen) return;
+        const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setMenuOpen(false); };
+        const onDown = (e: MouseEvent) => {
+            if (clusterRef.current && !clusterRef.current.contains(e.target as Node)) setMenuOpen(false);
+        };
+        window.addEventListener('keydown', onKey);
+        window.addEventListener('mousedown', onDown);
+        return () => {
+            window.removeEventListener('keydown', onKey);
+            window.removeEventListener('mousedown', onDown);
+        };
+    }, [menuOpen]);
 
     return (
         <div className="w-full min-h-screen relative" style={{ background: 'transparent' }}>
-            {/* Persistent theme toggle - top-left on portal pages. Course modules ship their own
-                dark/light toggle inside the drawer sidebar, so this floating one is hidden on every
-                module route to avoid a duplicate (and the overlap with the sidebar header). */}
-            {!isSpecialPage && !isModule && !hasIntegratedToggle && (
-                <div className="fixed top-4 left-4 z-[400]">
+            {/* Persistent nav cluster — top-left on browse/tool pages. Course modules ship
+                their own drawer + back button, and the portal hub / Verilog bench have their
+                own headers, so the cluster is hidden there to avoid duplicates/overlap. */}
+            {showNav && (
+                <nav aria-label="Primary" ref={clusterRef} className="fixed top-4 left-4 z-[400] flex items-center gap-2">
+                    <button
+                        onClick={() => navigate('/portal')}
+                        aria-label="Go to portal"
+                        className="brutal-btn inline-flex h-10 items-center gap-2 bg-bg-elev px-3 text-[13px] font-bold text-text-main"
+                    >
+                        <Home size={16} /> <span className="hidden sm:inline">Portal</span>
+                    </button>
+
+                    {/* Breadcrumb — Portal (button, above) > [section >] current page */}
+                    {crumb.label && crumb.label !== 'Portal' && (
+                        <div className="brutal hidden h-10 items-center gap-1.5 bg-bg-elev px-3 text-[12px] md:flex">
+                            {crumb.section && (
+                                <>
+                                    <span className="text-text-dim">{crumb.section}</span>
+                                    <span className="text-text-dim">/</span>
+                                </>
+                            )}
+                            <span className="font-bold text-text-main" aria-current="page">{crumb.label}</span>
+                        </div>
+                    )}
+
+                    <div className="relative">
+                        <button
+                            onClick={() => setMenuOpen((o) => !o)}
+                            aria-label="Open navigation menu"
+                            aria-expanded={menuOpen}
+                            className="brutal-btn inline-flex h-10 items-center gap-2 bg-bg-elev px-3 text-[13px] font-bold text-text-main"
+                        >
+                            {menuOpen ? <X size={16} /> : <Menu size={16} />}
+                            <span className="hidden sm:inline">Menu</span>
+                        </button>
+
+                        {menuOpen && (
+                            <div className="brutal absolute left-0 top-12 w-60 bg-bg-elev p-1.5">
+                                {NAV_LINKS.map(({ to, label, icon: Icon }) => {
+                                    const active = location.pathname === to;
+                                    return (
+                                        <button
+                                            key={to}
+                                            onClick={() => { navigate(to); setMenuOpen(false); }}
+                                            aria-current={active ? 'page' : undefined}
+                                            className={`flex w-full items-center gap-2.5 rounded px-3 py-2 text-left text-[13px] font-semibold transition-colors ${
+                                                active
+                                                    ? 'text-signal-core'
+                                                    : 'text-text-sub hover:bg-border-soft hover:text-text-main'
+                                            }`}
+                                        >
+                                            <Icon size={15} /> {label}
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        )}
+                    </div>
+
                     <ThemeToggle />
-                </div>
+                </nav>
             )}
 
-            {/* Back to portal — shown on every course module so you can always get home */}
+            {/* Back to portal — shown on every course module so you can always get home. */}
             {isModule && (
                 <button
                     onClick={() => navigate('/portal')}
                     aria-label="Back to portal"
-                    className="fixed top-4 right-4 z-[410] inline-flex items-center gap-2 rounded-full px-4 py-2 text-[13px] font-bold backdrop-blur-md transition-colors"
+                    className="brutal-btn fixed top-4 right-4 z-[410] inline-flex h-10 items-center gap-2 px-4 text-[13px] font-bold"
                     style={{
-                        background: isLight ? 'rgba(255,255,255,0.92)' : 'rgba(7,12,22,0.85)',
-                        border: isLight ? '1px solid #CBD5E1' : '1px solid rgba(59,130,246,0.35)',
+                        background: isLight ? '#FFFFFF' : 'var(--bg-elev)',
                         color: isLight ? '#0F172A' : '#DBEAFE',
-                        boxShadow: isLight
-                            ? '0 8px 22px rgba(15,23,42,0.12)'
-                            : '0 8px 22px rgba(0,0,0,0.5), 0 0 16px rgba(59,130,246,0.15)',
                     }}
                 >
                     <ArrowLeft size={16} /> Portal

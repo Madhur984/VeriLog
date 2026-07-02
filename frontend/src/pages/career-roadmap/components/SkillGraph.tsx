@@ -649,12 +649,12 @@ export const SkillGraph: React.FC<SkillGraphProps> = ({
       >
         {/* WebGL 3D Controls HUD */}
         <div className="absolute top-6 right-6 z-50 flex flex-col gap-4">
-          <div className="flex gap-2 p-1 bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/10 shadow-2xl">
+          <div className="flex gap-2 p-1 bg-bg-elev rounded-2xl border-2 border-edge shadow-brutal-sm">
             <button onClick={toggleFullscreen} className="p-3 text-slate-400 hover:text-white transition-all">
               {isFullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
             </button>
           </div>
-          <div className="p-4 bg-black/60 backdrop-blur-xl border border-white/5 rounded-2xl shadow-2xl space-y-2 pointer-events-none">
+          <div className="p-4 bg-bg-elev border border-white/5 rounded-2xl shadow-neo space-y-2 pointer-events-none">
             <div className="text-[9px] font-black text-cyan-400 uppercase tracking-widest flex items-center gap-2">
               <Sparkles size={11} /> 3D_CONSTELLATION
             </div>
@@ -698,7 +698,7 @@ export const SkillGraph: React.FC<SkillGraphProps> = ({
     >
       {/* 2D HUD */}
       <div className="absolute top-6 right-6 z-50 flex flex-col gap-4">
-        <div className="flex gap-1.5 p-1 bg-observatory-surface border border-border-soft rounded-2xl shadow-2xl backdrop-blur-md">
+        <div className="flex gap-1.5 p-1 bg-observatory-surface border-2 border-edge rounded-2xl shadow-brutal-sm">
           <button 
             onClick={() => setPhysicsOn(!physicsOn)} 
             className={`p-3 rounded-xl transition-all ${physicsOn ? "text-cyan-400 bg-cyan-400/10" : "text-text-dim hover:text-text-main"}`} 
@@ -737,7 +737,7 @@ export const SkillGraph: React.FC<SkillGraphProps> = ({
         </div>
         
         {/* Nodal Statistics */}
-        <div className="p-4 bg-observatory-surface border border-border-soft rounded-2xl shadow-2xl space-y-2 backdrop-blur-md pointer-events-none">
+        <div className="p-4 bg-observatory-surface border border-border-soft rounded-2xl shadow-neo space-y-2 pointer-events-none">
            <div className="text-[9px] font-black text-cyan-400 uppercase tracking-widest mb-1 flex items-center gap-2">
               <Sparkles size={11} /> SCAN_TELEMETRY
            </div>
@@ -748,7 +748,7 @@ export const SkillGraph: React.FC<SkillGraphProps> = ({
         </div>
       </div>
 
-      <div className="absolute top-6 left-6 z-50 flex items-center gap-3 bg-observatory-surface border border-border-soft rounded-2xl px-4 py-3 shadow-2xl backdrop-blur-md group/search">
+      <div className="absolute top-6 left-6 z-50 flex items-center gap-3 bg-observatory-surface border-2 border-edge rounded-2xl px-4 py-3 shadow-brutal-sm group/search">
         <Search size={16} className="text-cyan-400" />
         <input
           type="text"
@@ -923,7 +923,7 @@ export const SkillGraph: React.FC<SkillGraphProps> = ({
                             initial={{ opacity: 0, x: 10 }}
                             animate={{ opacity: 1, x: 122 }}
                             exit={{ opacity: 0, x: 10 }}
-                            className="absolute top-0 left-0 w-44 bg-observatory-surface border border-border-soft p-3 rounded-2xl shadow-3xl pointer-events-none z-[100] backdrop-blur-xl"
+                            className="absolute top-0 left-0 w-44 bg-observatory-surface border border-border-soft p-3 rounded-2xl shadow-neo pointer-events-none z-[100]"
                           >
                              <div className="text-[9px] font-black text-text-main mb-1.5 uppercase tracking-wide">{node.name}</div>
                              <div className="h-px w-full bg-border-soft mb-1.5" />
@@ -943,7 +943,7 @@ export const SkillGraph: React.FC<SkillGraphProps> = ({
             </TransformComponent>
 
              {/* View Scale Overlay */}
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-8 text-[8px] font-mono text-text-dim/60 bg-observatory-surface border border-border-soft px-8 py-2.5 rounded-full backdrop-blur-md z-50 shadow-2xl">
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-8 text-[8px] font-mono text-text-dim/60 bg-observatory-surface border-2 border-edge px-8 py-2.5 rounded-full z-50 shadow-brutal-sm">
                <div className="flex items-center gap-1.5">ZOOM: <span className="text-text-main font-black">{(state.scale * 100).toFixed(0)}%</span></div>
                <div className="h-3 w-px bg-border-soft" />
                <div className="flex items-center gap-1.5">ENGINE: <span className="text-cyan-400 font-black">DAGRE_2D</span></div>
@@ -960,7 +960,7 @@ export const SkillGraph: React.FC<SkillGraphProps> = ({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/85 backdrop-blur-xl z-[999] flex items-center justify-center p-4 font-mono"
+            className="fixed inset-0 bg-black/85 z-[999] flex items-center justify-center p-4 font-mono"
           >
             <motion.div
               initial={{ scale: 0.9, y: 20 }}

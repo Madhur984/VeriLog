@@ -3,10 +3,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
     Search, LayoutDashboard, Target, FlaskConical,
     BarChart3, Settings, Binary, X, ChevronRight,
-    BookOpen, Zap
+    BookOpen
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
-import { useTour } from '../tour/TourProvider';
 import { useColorScheme } from '../../hooks/useColorScheme';
 
 /* ─── Types ────────────────────────────────────────────────────────── */
@@ -34,13 +33,11 @@ export const CommandPalette: React.FC<CommandPaletteProps & { navigate: (path: s
     isOpen,
     onClose,
     navigate,
-    tourKey = 'digi_tour_done',
 }) => {
     const [query, setQuery] = useState('');
     const [selectedIdx, setSelectedIdx] = useState(0);
     const inputRef = useRef<HTMLInputElement>(null);
     const listRef = useRef<HTMLDivElement>(null);
-    const { start: startTour } = useTour();
     const [, toggleTheme] = useColorScheme();
 
     const ALL_COMMANDS: CommandItem[] = [
@@ -79,15 +76,6 @@ export const CommandPalette: React.FC<CommandPaletteProps & { navigate: (path: s
             group: 'Modules', action: () => { navigate('/portal'); onClose(); }
         },
         /* Actions */
-        {
-            id: 'act-tour', label: 'Start Onboarding Tour', description: 'Get a guided walkthrough', icon: Zap,
-            group: 'Actions', action: () => {
-                // Clear the legacy "done" flag and launch the route-aware tour.
-                localStorage.removeItem(tourKey);
-                onClose();
-                startTour();
-            }
-        },
         {
             id: 'act-darkmode', label: 'Toggle Theme', description: 'Switch light / dark mode', icon: BookOpen,
             group: 'Actions', action: () => {
@@ -163,7 +151,7 @@ export const CommandPalette: React.FC<CommandPaletteProps & { navigate: (path: s
                 <>
                     {/* Backdrop */}
                     <motion.div
-                        className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
+                        className="fixed inset-0 z-50 bg-black/60"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}

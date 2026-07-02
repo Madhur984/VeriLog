@@ -311,7 +311,7 @@ export const FlashCardDeck: React.FC<{ cards: DeckCard[]; isDarkMode: boolean }>
                   }`}
                 >
                   {/* faint corner watermark */}
-                  <img src="/logo.png" alt="" aria-hidden draggable={false}
+                  <img loading="lazy" decoding="async" src="/logo.png" alt="" aria-hidden draggable={false}
                        className="pointer-events-none absolute bottom-3 right-3 h-14 w-14 select-none"
                        style={{ opacity: dark ? 0.18 : 0.08, filter: dark ? 'brightness(0) invert(1)' : undefined }} />
                   <div className="flex items-center justify-between">
@@ -347,7 +347,7 @@ export const FlashCardDeck: React.FC<{ cards: DeckCard[]; isDarkMode: boolean }>
                   }`}
                   style={{ borderColor: `${c.color}55` }}
                 >
-                  <img src="/logo.png" alt="" aria-hidden draggable={false}
+                  <img loading="lazy" decoding="async" src="/logo.png" alt="" aria-hidden draggable={false}
                        className="pointer-events-none absolute bottom-3 right-3 h-14 w-14 select-none"
                        style={{ opacity: dark ? 0.18 : 0.08, filter: dark ? 'brightness(0) invert(1)' : undefined }} />
                   <h3 className="text-lg font-extrabold tracking-tight" style={{ color: c.color }}>{a.concept}</h3>

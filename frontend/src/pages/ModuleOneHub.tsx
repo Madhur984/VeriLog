@@ -21,7 +21,7 @@ export const ModuleOneHub: React.FC = () => {
                     initial={{ scale: 0.8, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ delay: 0.2, duration: 0.5 }}
-                    className="mb-12 w-16 h-16 border border-slate-200 bg-white rounded-2xl flex items-center justify-center shadow-sm backdrop-blur-sm"
+                    className="mb-12 w-16 h-16 border border-slate-200 bg-white rounded-2xl flex items-center justify-center shadow-sm"
                 >
                     <LinkIcon className="w-8 h-8 text-sky-600" />
                 </motion.div>

@@ -149,7 +149,7 @@ export const SettingsPage: React.FC = () => {
   return (
     <div className="min-h-[100svh] w-full font-sans transition-colors duration-300" style={{ background: pageBg }}>
       {/* Top bar */}
-      <div className="sticky top-0 z-20 flex items-center justify-between px-4 sm:px-8 py-4 backdrop-blur-md"
+      <div className="sticky top-0 z-20 flex items-center justify-between px-4 sm:px-8 py-4 bg-bg-elev"
         style={{ borderBottom: isLight ? '1px solid rgba(15,23,42,0.08)' : '1px solid rgba(255,255,255,0.06)' }}>
         <button
           onClick={() => navigate('/portal')}

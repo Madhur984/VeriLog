@@ -770,7 +770,7 @@ export const S05_LabActivity: React.FC<{ isActive: boolean; isDarkMode: boolean 
         <motion.button 
             whileHover={{ scale: 1.1, backgroundColor: 'rgba(255,255,255,0.1)' }} whileTap={{ scale: 0.9 }}
             onClick={() => goTo(slideIndex-1)} disabled={slideIndex===0} 
-            style={{ position: 'absolute', left: 24, top: '50%', transform: 'translateY(-50%)', background: 'rgba(0,0,0,0.5)', border: `1px solid ${C.borderLite}`, borderRadius: 16, width: 48, height: 48, display: 'flex', alignItems: 'center', justifyContent: 'center', color: slideIndex===0?'transparent':C.text, zIndex: 20, cursor: slideIndex===0?'default':'pointer', backdropFilter: 'blur(4px)', pointerEvents: slideIndex===0?'none':'auto' }}
+            style={{ position: 'absolute', left: 24, top: '50%', transform: 'translateY(-50%)', background: '#111111', border: `1px solid ${C.borderLite}`, borderRadius: 16, width: 48, height: 48, display: 'flex', alignItems: 'center', justifyContent: 'center', color: slideIndex===0?'transparent':C.text, zIndex: 20, cursor: slideIndex===0?'default':'pointer', pointerEvents: slideIndex===0?'none':'auto' }}
         >
             
         </motion.button>
@@ -778,7 +778,7 @@ export const S05_LabActivity: React.FC<{ isActive: boolean; isDarkMode: boolean 
         <motion.button 
             whileHover={{ scale: 1.1, backgroundColor: 'rgba(255,255,255,0.1)' }} whileTap={{ scale: 0.9 }}
             onClick={() => goTo(slideIndex+1)} disabled={slideIndex===SLIDE_COUNT-1} 
-            style={{ position: 'absolute', right: 24, top: '50%', transform: 'translateY(-50%)', background: 'rgba(0,0,0,0.5)', border: `1px solid ${C.borderLite}`, borderRadius: 16, width: 48, height: 48, display: 'flex', alignItems: 'center', justifyContent: 'center', color: slideIndex===SLIDE_COUNT-1?'transparent':C.text, zIndex: 20, cursor: slideIndex===SLIDE_COUNT-1?'default':'pointer', backdropFilter: 'blur(4px)', pointerEvents: slideIndex===SLIDE_COUNT-1?'none':'auto' }}
+            style={{ position: 'absolute', right: 24, top: '50%', transform: 'translateY(-50%)', background: '#111111', border: `1px solid ${C.borderLite}`, borderRadius: 16, width: 48, height: 48, display: 'flex', alignItems: 'center', justifyContent: 'center', color: slideIndex===SLIDE_COUNT-1?'transparent':C.text, zIndex: 20, cursor: slideIndex===SLIDE_COUNT-1?'default':'pointer', pointerEvents: slideIndex===SLIDE_COUNT-1?'none':'auto' }}
         >
             
         </motion.button>

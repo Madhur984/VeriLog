@@ -126,7 +126,7 @@ export const S03_Aliasing: React.FC<{ time: number; isDarkMode: boolean }> = ({ 
                     className="sr-only" aria-label="Adjust Signal Frequency"
                 />
                 {/* ALIAS REPORT PANEL */}
-                <div className={`absolute top-10 left-10 z-20 p-8 rounded-[2.5rem] border backdrop-blur-2xl ${isDarkMode ? 'bg-black/60 border-white/5 shadow-2xl' : 'bg-white/80 border-gray-100 shadow-xl'}`}>
+                <div className={`absolute top-10 left-10 z-20 p-8 rounded-[2.5rem] border ${isDarkMode ? 'bg-bg-elev border-white/5 shadow-neo' : 'bg-white border-gray-100 shadow-neo'}`}>
                     <div className="space-y-6">
                         <div className="space-y-1" role="alert" aria-live="polite">
                             <span className={`text-[10px] font-mono uppercase tracking-[0.3em] font-black opacity-30 ${textColor}`}>Anomaly Detection</span>

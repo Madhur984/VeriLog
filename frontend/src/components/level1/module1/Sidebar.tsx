@@ -59,7 +59,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   >
                     {/* TOOLTIP / LABEL */}
                     <div className={`
-                        absolute left-16 px-4 py-2 rounded-xl bg-black/90 backdrop-blur-xl border border-white/10 transition-all duration-300 pointer-events-none whitespace-nowrap
+                        absolute left-16 px-4 py-2 rounded-xl bg-black border border-white/10 transition-all duration-300 pointer-events-none whitespace-nowrap
                         ${isActive ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-2'}
                     `}>
                         <span className="text-[9px] font-mono font-bold uppercase tracking-[3px] text-white">

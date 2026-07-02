@@ -95,7 +95,7 @@ export const ComparisonBench: React.FC<ComparisonBenchProps> = ({ comparingIds, 
   };
 
   return (
-    <div className="fixed inset-0 z-[2100] flex items-center justify-center p-4 sm:p-8 bg-bg-void/95 backdrop-blur-2xl">
+    <div className="fixed inset-0 z-[2100] flex items-center justify-center p-4 sm:p-8 bg-bg-void/95">
       <motion.div
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}

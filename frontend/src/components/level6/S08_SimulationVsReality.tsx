@@ -98,7 +98,7 @@ export const S08_SimulationVsReality: React.FC<{ isActive: boolean }> = ({ isAct
                      </div>
                 </div>
 
-                <div className="w-full flex items-center justify-between p-8 bg-white/[0.02] border border-white/10 rounded-[40px] backdrop-blur-md">
+                <div className="w-full flex items-center justify-between p-8 bg-bg-elev border border-border-soft rounded-[40px] shadow-neo">
                     <div className="flex items-center gap-4">
                         <div className="w-12 h-12 rounded-xl bg-plasma-cyan/20 text-plasma-cyan flex items-center justify-center shadow-lg shadow-plasma-cyan/20">
                             <Timer size={24} />

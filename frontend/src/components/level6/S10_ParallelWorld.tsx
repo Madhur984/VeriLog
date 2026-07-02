@@ -71,7 +71,7 @@ export const S10_ParallelWorld: React.FC<{ isActive: boolean }> = ({ isActive })
             </div>
 
             <div className="flex-1 flex flex-col justify-center gap-12">
-                <div className="p-10 rounded-[50px] bg-white/[0.01] border border-white/5 backdrop-blur-md relative overflow-hidden">
+                <div className="p-10 rounded-[50px] bg-bg-elev border border-border-soft shadow-neo relative overflow-hidden">
                     <div className="absolute inset-0 bg-grid-white opacity-[0.02]" />
                     <Waveform signals={signals as any} className="mb-12 relative z-10" />
                     

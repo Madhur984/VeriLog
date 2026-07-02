@@ -166,8 +166,8 @@ export const S01_VideoLecture: React.FC<Props> = ({ isActive, isDarkMode }) => {
           transition={{ delay: 0.2 }}
           className={`p-6 rounded-3xl border ${cardBg} max-h-[680px] overflow-y-auto`}
         >
-          <div className="flex items-center gap-2 mb-5 sticky top-0 -mt-1 pt-1 pb-3 -mx-1 px-1 backdrop-blur-md"
-               style={{ background: isDarkMode ? 'rgba(2,1,0,0.7)' : 'rgba(255,255,255,0.85)' }}>
+          <div className="flex items-center gap-2 mb-5 sticky top-0 -mt-1 pt-1 pb-3 -mx-1 px-1"
+               style={{ background: isDarkMode ? 'var(--bg-elev)' : '#FFFFFF' }}>
             <FileText size={14} className="text-emerald-400" />
             <span className="font-mono text-[10px] uppercase tracking-widest text-emerald-400">
               Transcript

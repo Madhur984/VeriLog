@@ -173,7 +173,7 @@ export const SkillGraph: React.FC<SkillGraphProps> = ({ onNodeClick, unlockedNod
     <div ref={containerRef} className={`w-full ${isFullscreen ? "fixed inset-0 z-[100] bg-bg-void" : "h-[750px] bg-bg-base/40 border border-border-soft rounded-[2rem] shadow-[0_0_40px_rgba(0,0,0,0.15)]"} overflow-hidden relative transition-all duration-700 font-ui`}>
       {/* Neo-Brutalist HUD */}
       <div className="absolute top-8 right-8 z-50 flex flex-col gap-4">
-        <div className="flex gap-2 p-1.5 bg-bg-elev/80 backdrop-blur-xl rounded-2xl border border-border-soft shadow-2xl">
+        <div className="flex gap-2 p-1.5 bg-bg-elev rounded-2xl border-2 border-edge shadow-brutal-sm">
           <button onClick={() => setPhysicsOn(!physicsOn)} className={`p-3 rounded-xl transition-all ${physicsOn ? "text-plasma-cyan shadow-cyan-glow bg-plasma-cyan/10" : "text-text-dim hover:text-text-main"}`} title="Bio-Luminescence Flow"><Activity size={18} /></button>
           <button onClick={() => autoLayout("LR")} className="p-3 text-text-dim hover:text-plasma-cyan transition-all"><Layout size={18} /></button>
           <button onClick={() => setEditMode(!editMode)} className={`p-3 rounded-xl transition-all ${editMode ? "bg-plasma-cyan text-black" : "text-text-dim hover:text-plasma-cyan"}`}>{editMode ? <Unlock size={18} /> : <Lock size={18} />}</button>
@@ -182,7 +182,7 @@ export const SkillGraph: React.FC<SkillGraphProps> = ({ onNodeClick, unlockedNod
         </div>
         
         {/* Real-time Diagnostics HUD */}
-        <div className="p-4 bg-bg-elev/80 backdrop-blur-xl border border-border-soft rounded-2xl shadow-2xl space-y-3">
+        <div className="p-4 bg-bg-elev border border-border-soft rounded-2xl shadow-neo space-y-3">
            <div className="text-[10px] font-black text-plasma-cyan uppercase tracking-[0.2em] mb-2 flex items-center gap-2">
               <Sparkles size={12} /> TRAJECTORY_PULSE
            </div>
@@ -193,7 +193,7 @@ export const SkillGraph: React.FC<SkillGraphProps> = ({ onNodeClick, unlockedNod
         </div>
       </div>
 
-      <div className="absolute top-8 left-8 z-50 flex items-center gap-4 bg-bg-elev/80 border border-border-soft rounded-2xl px-5 py-4 backdrop-blur-xl shadow-2xl group/search">
+      <div className="absolute top-8 left-8 z-50 flex items-center gap-4 bg-bg-elev border-2 border-edge rounded-2xl px-5 py-4 shadow-brutal-sm group/search">
         <Search size={18} className="text-plasma-cyan group-focus-within/search:scale-125 transition-transform" />
         <input
           type="text"
@@ -336,7 +336,7 @@ export const SkillGraph: React.FC<SkillGraphProps> = ({ onNodeClick, unlockedNod
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 120 }}
                             exit={{ opacity: 0, x: 20 }}
-                            className="absolute top-0 left-0 w-48 bg-bg-elev/95 border border-border-soft p-4 rounded-2xl shadow-3xl pointer-events-none z-[100] backdrop-blur-xl"
+                            className="absolute top-0 left-0 w-48 bg-bg-elev border border-border-soft p-4 rounded-2xl shadow-neo pointer-events-none z-[100]"
                           >
                              <div className="text-[10px] font-black text-text-main mb-2 uppercase tracking-[0.1em]">{node.name}</div>
                              <div className="h-0.5 w-full bg-border-soft mb-2" />
@@ -356,7 +356,7 @@ export const SkillGraph: React.FC<SkillGraphProps> = ({ onNodeClick, unlockedNod
 
              {/* Tactical Minimap */}
             {showMinimap && (
-              <div className="absolute bottom-8 right-8 z-50 w-72 h-44 bg-bg-elev/80 border border-border-soft rounded-[1.5rem] overflow-hidden backdrop-blur-3xl shadow-3xl group/minimap">
+              <div className="absolute bottom-8 right-8 z-50 w-72 h-44 bg-bg-elev border border-border-soft rounded-[1.5rem] overflow-hidden shadow-neo group/minimap">
                 <div className="w-full h-full relative cursor-crosshair">
                    <svg width="100%" height="100%" viewBox="0 0 4000 3000" preserveAspectRatio="none">
                       {edges.map((e, i) => {
@@ -373,7 +373,7 @@ export const SkillGraph: React.FC<SkillGraphProps> = ({ onNodeClick, unlockedNod
             )}
             
             {/* View HUD */}
-            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-10 text-[9px] font-mono text-text-dim/60 bg-bg-elev/60 px-10 py-3 rounded-full border border-border-soft backdrop-blur-xl z-50">
+            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-10 text-[9px] font-mono text-text-dim/60 bg-bg-elev px-10 py-3 rounded-full border border-border-soft z-50">
                <div className="flex items-center gap-2">ZOOM: <span className="text-text-main font-black">{(state.scale * 100).toFixed(0)}%</span></div>
                <div className="h-3 w-px bg-border-soft" />
                <div className="flex items-center gap-2">ENGINE: <span className="text-plasma-cyan font-black">HYBRID_V4.2</span></div>

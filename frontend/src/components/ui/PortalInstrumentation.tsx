@@ -6,7 +6,7 @@ const AMBER = '#f97316';
 // ── GLOBAL STATUS HUD ────────────────────────────────────────────────────────
 export const GlobalStatusHUD: React.FC = () => {
     return (
-        <div className="flex gap-12 items-center px-8 py-3 bg-black/40 border border-orange-500/10 rounded-2xl backdrop-blur-xl">
+        <div className="flex gap-12 items-center px-8 py-3 bg-bg-elev border border-orange-500/10 rounded-2xl shadow-neo">
             <div className="flex flex-col">
                 <span className="text-[7px] font-black uppercase tracking-[0.3em] text-orange-500/40 mb-1">BitforBytes // CORE_STABILITY</span>
                 <div className="flex items-center gap-3">

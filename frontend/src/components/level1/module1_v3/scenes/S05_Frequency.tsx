@@ -18,7 +18,7 @@ export const S05_Frequency: React.FC = () => {
         />
 
         {/* NEW: The Periodic Table of Waves */}
-        <div className="pointer-events-auto grid grid-cols-2 lg:grid-cols-4 gap-4 w-full mt-12 bg-black/40 p-4 rounded-xl border border-white/5 backdrop-blur-sm">
+        <div className="pointer-events-auto grid grid-cols-2 lg:grid-cols-4 gap-4 w-full mt-12 bg-bg-elev p-4 rounded-xl border border-border-soft shadow-neo">
             {[
                 { label: "Ultra Low", desc: "0.1 - 10 Hz", use: "Seismic / EEG" },
                 { label: "Infrasonic", desc: "10 - 20 Hz", use: "Wind / Oceans" },
@@ -34,7 +34,7 @@ export const S05_Frequency: React.FC = () => {
         </div>
 
         {/* Fourier's Insight */}
-        <div className="pointer-events-auto mt-12 p-8 rounded-sm border border-white/10 bg-black/60 backdrop-blur-2xl">
+        <div className="pointer-events-auto mt-12 p-8 rounded-sm border border-border-soft bg-bg-elev shadow-neo">
             <h4 className="micro-text text-v3-cyan font-black uppercase tracking-widest mb-4">Fourier's Insight</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <p className="text-[10px] leading-relaxed text-white/40">

@@ -50,7 +50,7 @@ export const S01_Video: React.FC<SceneProps> = ({ isActive, isDarkMode, mode }) 
       >
         <CustomVideoPlayer src={videoSrc} accent={accent} />
         <div
-          className="absolute top-3 left-3 z-10 px-3 py-1 rounded-full bg-black/60 backdrop-blur border font-mono text-[10px] uppercase tracking-widest flex items-center gap-2 pointer-events-none"
+          className="absolute top-3 left-3 z-10 px-3 py-1 rounded-full bg-bg-elev border font-mono text-[10px] uppercase tracking-widest flex items-center gap-2 pointer-events-none"
           style={{ borderColor: `${accent}55`, color: accent }}
         >
           <Volume2 size={12} /> {title}

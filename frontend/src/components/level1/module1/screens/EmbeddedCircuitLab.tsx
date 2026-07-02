@@ -233,7 +233,7 @@ export const EmbeddedCircuitLab: React.FC<ScreenProps> = ({
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="absolute inset-x-[-20px] inset-y-[-20px] z-30 bg-white/60 backdrop-blur-md flex flex-col items-center justify-center p-12 text-center rounded-[48px] border-4 border-white shadow-2xl"
+                className="absolute inset-x-[-20px] inset-y-[-20px] z-30 bg-white flex flex-col items-center justify-center p-12 text-center rounded-[48px] border-4 border-white shadow-2xl"
             >
                 <div className="p-6 bg-sky-100 text-sky-500 rounded-full mb-6">
                     <Play className="ml-1" fill="currentColor" size={32} />

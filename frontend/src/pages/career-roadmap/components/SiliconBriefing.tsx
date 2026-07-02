@@ -25,10 +25,10 @@ export const SiliconBriefing: React.FC = () => {
   const headline = HEADLINES[index];
 
   return (
-    <div className={`fixed bottom-0 left-0 w-full z-[100] backdrop-blur-xl border-t h-16 flex items-center px-6 overflow-hidden ${
-      isLight 
-        ? 'bg-bg-elev/90 border-border-soft' 
-        : 'bg-black/90 border-cyan-400/30'
+    <div className={`fixed bottom-0 left-0 w-full z-[100] border-t h-16 flex items-center px-6 overflow-hidden ${
+      isLight
+        ? 'bg-bg-elev border-border-soft'
+        : 'bg-bg-elev border-cyan-400/30'
     }`}>
       <div className={`flex items-center gap-4 border-r pr-6 shrink-0 h-full ${isLight ? 'border-border-soft' : 'border-white/10'}`}>
         <Radio size={16} className={`animate-pulse ${isLight ? 'text-signal-core' : 'text-cyan-400'}`} />

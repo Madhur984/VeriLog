@@ -68,11 +68,11 @@ export const S05b_DieComparison: React.FC<{ isActive: boolean }> = ({ isActive }
                     </div>
                     
                     {/* Visual Callouts */}
-                    <div className="absolute -right-16 top-10 p-5 rounded-3xl bg-black border border-white/10 backdrop-blur-xl space-y-1 shadow-2xl group-hover:translate-x-4 transition-transform">
+                    <div className="absolute -right-16 top-10 p-5 rounded-3xl bg-bg-elev border border-border-soft space-y-1 shadow-neo group-hover:translate-x-4 transition-transform">
                         <div className="micro-text text-rose-500 font-black uppercase tracking-[0.2em] text-[9px]">Foundry Node</div>
                         <div className="hero-text text-xl text-white tracking-widest leading-none">TSMC 3NM</div>
                     </div>
-                    <div className="absolute -left-16 bottom-10 p-5 rounded-3xl bg-black border border-white/10 backdrop-blur-xl space-y-1 shadow-2xl group-hover:-translate-x-4 transition-transform">
+                    <div className="absolute -left-16 bottom-10 p-5 rounded-3xl bg-bg-elev border border-border-soft space-y-1 shadow-neo group-hover:-translate-x-4 transition-transform">
                         <div className="micro-text text-rose-500 font-black uppercase tracking-[0.2em] text-[9px]">Logic Density</div>
                         <div className="hero-text text-xl text-white tracking-widest leading-none">PRIME_X</div>
                     </div>
@@ -92,7 +92,7 @@ export const S05b_DieComparison: React.FC<{ isActive: boolean }> = ({ isActive }
                 </div>
             </div>
 
-            <div className="mt-8 flex items-center justify-between p-8 bg-white/[0.02] border border-white/10 rounded-[40px] backdrop-blur-md">
+            <div className="mt-8 flex items-center justify-between p-8 bg-bg-elev border border-border-soft rounded-[40px] shadow-neo">
                 <div className="flex items-center gap-6">
                     <div className="w-14 h-14 rounded-[20px] bg-rose-500/10 text-rose-500 flex items-center justify-center shadow-2xl shadow-rose-500/10 border border-rose-500/20 group hover:scale-110 transition-transform">
                         <Share2 size={24} />

@@ -39,13 +39,12 @@ export const ConceptOverlay: React.FC<ConceptOverlayProps> = ({
                         bottom: 100,
                         right: 24,
                         width: 320,
-                        background: 'rgba(13, 15, 22, 0.95)',
+                        background: 'var(--bg-elev)',
                         border: `1px solid ${themeColor}40`,
                         borderRadius: 8,
-                        padding: 20,
                         boxShadow: `0 8px 32px rgba(0, 0, 0, 0.4), 0 0 16px ${themeColor}10`,
+                        padding: 20,
                         zIndex: 1000,
-                        backdropFilter: 'blur(12px)',
                         pointerEvents: 'auto'
                     }}
                     className="theory-card-float"

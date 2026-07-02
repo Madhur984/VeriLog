@@ -410,7 +410,7 @@ export const DailyGallery: React.FC = () => (
                 className="group relative rounded-[4rem] bg-[#0A0C10] border border-white/5 transition-all overflow-hidden"
             >
                 <div className="aspect-square relative overflow-hidden">
-                    <img src={item.image} alt={item.title} className="w-full h-full object-cover opacity-40 group-hover:opacity-20 transition-all duration-700 group-hover:scale-110" />
+                    <img loading="lazy" decoding="async" src={item.image} alt={item.title} className="w-full h-full object-cover opacity-40 group-hover:opacity-20 transition-all duration-700 group-hover:scale-110" />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0A0C10] to-transparent" />
                     
                     {/* Depth Overlay */}
@@ -503,7 +503,7 @@ export const ConceptGate: React.FC<{
 }> = ({ title, onUnlock, isLocked }) => {
   if (!isLocked) return null;
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 z-50 flex items-center justify-center p-20 bg-black/95 backdrop-blur-3xl rounded-[5rem]">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 z-50 flex items-center justify-center p-20 bg-bg-void rounded-[5rem]">
       <div className="text-center space-y-16 max-w-xl">
         <div className="relative mx-auto w-32 h-32">
             <Activity size={100} className="text-orange-500 absolute inset-0 animate-ping opacity-20" />

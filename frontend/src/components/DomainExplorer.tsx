@@ -219,7 +219,7 @@ export const DomainExplorer: React.FC<DomainExplorerProps> = ({
               exit={{ y: 20, opacity: 0 }}
               className="sticky bottom-8 z-50 mx-auto w-full max-w-2xl"
             >
-               <div className={cn("backdrop-blur-xl rounded-2xl p-3 sm:p-4 shadow-2xl flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-0 justify-between border", isLight ? "bg-bg-elev/95 border-cyan-600/30" : "bg-[#0D0F12]/95 border-cyan-400/30")}>
+               <div className={cn("rounded-2xl p-3 sm:p-4 shadow-brutal-sm flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-0 justify-between border-2 border-edge", isLight ? "bg-bg-elev" : "bg-bg-elev")}>
                   <div className="flex flex-wrap gap-2 sm:gap-4">
                     {comparingIds.map(id => (
                       <div key={id} className={cn("flex items-center gap-2 px-3 py-1.5 rounded-lg min-w-0 border", isLight ? "bg-cyan-600/10 border-cyan-600/20" : "bg-cyan-400/10 border-cyan-400/20")}>

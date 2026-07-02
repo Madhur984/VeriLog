@@ -101,7 +101,7 @@ export const KMapGroupingLab: React.FC<Props> = ({ onComplete, onInvalidGroup, s
                         initial={{ opacity: 0, scale: 0.8, y: -20 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.8, y: -20 }}
-                        className="fixed top-[30%] left-1/2 -translate-x-1/2 z-[1000] bg-white dark:bg-slate-900 border-2 border-emerald-500 shadow-2xl shadow-emerald-500/20 rounded-[32px] p-8 flex items-center gap-8 backdrop-blur-xl"
+                        className="fixed top-[30%] left-1/2 -translate-x-1/2 z-[1000] bg-white dark:bg-slate-900 border-2 border-emerald-500 shadow-2xl shadow-emerald-500/20 rounded-[32px] p-8 flex items-center gap-8"
                     >
                         <div className="p-4 bg-emerald-50 dark:bg-emerald-500/10 rounded-2xl text-emerald-500">
                             <CheckCircle2 size={32} />
@@ -120,7 +120,7 @@ export const KMapGroupingLab: React.FC<Props> = ({ onComplete, onInvalidGroup, s
                         animate={{ opacity: 1, x: [0, -8, 8, -6, 6, 0] }}
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.4 }}
-                        className="fixed top-[30%] left-1/2 -translate-x-1/2 z-[1000] bg-white dark:bg-slate-900 border-2 border-rose-500 shadow-2xl shadow-rose-500/20 rounded-[32px] p-8 flex items-center gap-8 backdrop-blur-xl"
+                        className="fixed top-[30%] left-1/2 -translate-x-1/2 z-[1000] bg-white dark:bg-slate-900 border-2 border-rose-500 shadow-2xl shadow-rose-500/20 rounded-[32px] p-8 flex items-center gap-8"
                     >
                         <div className="p-4 bg-rose-50 dark:bg-rose-500/10 rounded-2xl text-rose-500">
                             <AlertTriangle size={32} />
@@ -138,7 +138,7 @@ export const KMapGroupingLab: React.FC<Props> = ({ onComplete, onInvalidGroup, s
                         initial={{ opacity: 0, scale: 0.6 }}
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed top-[30%] left-1/2 -translate-x-1/2 z-[1000] bg-white dark:bg-slate-900 border-4 border-sky-500 shadow-[0_0_80px_rgba(14,165,233,0.3)] rounded-[48px] p-12 flex flex-col items-center gap-6 backdrop-blur-2xl"
+                        className="fixed top-[30%] left-1/2 -translate-x-1/2 z-[1000] bg-white dark:bg-slate-900 border-4 border-sky-500 shadow-[0_0_80px_rgba(14,165,233,0.3)] rounded-[48px] p-12 flex flex-col items-center gap-6"
                     >
                         <div className="p-6 bg-sky-50 dark:bg-sky-500/10 rounded-full text-sky-500 shadow-inner">
                             <ShieldCheck size={48} />

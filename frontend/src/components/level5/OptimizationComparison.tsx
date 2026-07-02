@@ -128,7 +128,7 @@ export const OptimizationComparison: React.FC<{ onComplete: () => void; isDarkMo
 
             {/* Live Interactive Circuit */}
             <div className={`w-full h-[400px] rounded-3xl border relative overflow-hidden transition-all duration-300 ${isDarkMode ? 'bg-slate-950 border-emerald-500 shadow-[0_0_40px_rgba(16,185,129,0.1)]' : 'bg-slate-50 border-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.1)]'}`}>
-                <div className={`absolute top-4 left-4 z-10 px-3 py-1.5 rounded-md backdrop-blur-md border ${isDarkMode ? 'bg-slate-900/80 border-slate-700 text-slate-300' : 'bg-white/80 border-slate-200 text-slate-600'}`}>
+                <div className={`absolute top-4 left-4 z-10 px-3 py-1.5 rounded-md border-2 border-edge shadow-brutal-sm ${isDarkMode ? 'bg-slate-900 border-slate-700 text-slate-300' : 'bg-white border-slate-200 text-slate-600'}`}>
                     <span className="font-mono text-[10px] tracking-widest uppercase font-bold text-emerald-500">LIVE OPTIMIZED CIRCUIT: F = C</span>
                 </div>
 

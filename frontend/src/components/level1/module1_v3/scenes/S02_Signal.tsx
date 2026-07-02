@@ -38,7 +38,7 @@ export const S02_Signal: React.FC = () => {
           secondary="Signals classify change as discrete or continuous." 
         />
         {/* Signal Theory Comparison Table */}
-        <div className="pointer-events-auto mt-12 overflow-hidden rounded-sm border border-white/5 bg-black/40 backdrop-blur-xl">
+        <div className="pointer-events-auto mt-12 overflow-hidden rounded-sm border border-border-soft bg-bg-elev shadow-neo-sm">
             <table className="w-full text-left border-collapse">
                 <thead>
                     <tr className="border-b border-white/10 bg-white/5">
@@ -69,7 +69,7 @@ export const S02_Signal: React.FC = () => {
 
         {/* NEW: Signal Taxonomy & Classification */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12 pointer-events-auto">
-            <div className={`p-10 rounded-sm border backdrop-blur-3xl transition-all duration-700 hover:border-v3-cyan/40 ${isDarkMode ? 'bg-black/40 border-white/5 shadow-2xl shadow-black' : 'bg-white border-gray-100 shadow-xl'}`}>
+            <div className={`p-10 rounded-sm border shadow-neo transition-all duration-700 hover:border-v3-cyan/40 ${isDarkMode ? 'bg-bg-elev border-white/5' : 'bg-white border-gray-100'}`}>
                 <div className="flex items-center gap-4 mb-6">
                     <div className="w-10 h-10 rounded-sm bg-v3-cyan/10 flex items-center justify-center text-v3-cyan">🎲</div>
                     <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-v3-cyan">The Deterministic Duality</h4>
@@ -84,7 +84,7 @@ export const S02_Signal: React.FC = () => {
                 </div>
             </div>
 
-            <div className={`p-10 rounded-sm border backdrop-blur-3xl transition-all duration-700 hover:border-v3-cyan/40 ${isDarkMode ? 'bg-black/60 border-white/5 shadow-2xl' : 'bg-gray-50 border-gray-200'}`}>
+            <div className={`p-10 rounded-sm border shadow-neo transition-all duration-700 hover:border-v3-cyan/40 ${isDarkMode ? 'bg-bg-elev border-white/5' : 'bg-gray-50 border-gray-200'}`}>
                 <div className="flex items-center gap-4 mb-6">
                     <div className="w-10 h-10 rounded-sm bg-white/5 flex items-center justify-center text-white/40">⚡</div>
                     <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-white/40 hover:text-v3-cyan transition-colors">Physical Variation</h4>
@@ -155,7 +155,7 @@ export const S02_Signal: React.FC = () => {
                     formula: "X(f) = ∫ x(t)e^{-j2πft} dt"
                 }
             ].map((item, i) => (
-                <div key={i} className="p-8 rounded-sm bg-black/60 border border-white/5 backdrop-blur-xl group hover:border-v3-cyan/40 transition-all duration-500 hover:-translate-y-1">
+                <div key={i} className="p-8 rounded-sm bg-bg-elev border border-border-soft shadow-neo-sm group hover:border-v3-cyan/40 transition-all duration-500 hover:-translate-y-1">
                     <h4 className="micro-text text-v3-cyan mb-3 font-black uppercase tracking-[0.3em]">{item.title}</h4>
                     <p className="text-[10px] leading-relaxed text-white/40 font-medium mb-6 min-h-[4rem]">{item.desc}</p>
                     <div className="pt-6 border-t border-white/5">
@@ -165,7 +165,7 @@ export const S02_Signal: React.FC = () => {
             ))}
         </div>
 
-        <div className="pointer-events-auto p-10 rounded-sm bg-v3-cyan/5 border border-v3-cyan/20 backdrop-blur-xl group hover:bg-v3-cyan/10 transition-all duration-700">
+        <div className="pointer-events-auto p-10 rounded-sm bg-v3-cyan/5 border border-v3-cyan/20 shadow-neo group hover:bg-v3-cyan/10 transition-all duration-700">
              <p className="text-xs leading-relaxed text-white/40 text-center italic tracking-wide group-hover:text-white/60 transition-colors">
                 "In the digital bridge, symbols are the only currency. But before those symbols exist, <br/>
                 there is only the continuous, unrelenting pulse of the Analog world."

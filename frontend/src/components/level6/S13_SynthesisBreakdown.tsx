@@ -100,8 +100,8 @@ export const S13_SynthesisBreakdown: React.FC<{ isActive: boolean }> = ({ isActi
                         exit={{ opacity: 0, x: -20, filter: 'blur(10px)' }}
                         className="space-y-12"
                     >
-                        <div className="p-10 rounded-[50px] bg-white/[0.01] border border-white/5 backdrop-blur-md relative overflow-hidden group min-h-[380px] flex flex-col justify-end">
-                            <img 
+                        <div className="p-10 rounded-[50px] bg-bg-elev border border-border-soft shadow-neo relative overflow-hidden group min-h-[380px] flex flex-col justify-end">
+                            <img loading="lazy" decoding="async" 
                                 src="/assets/module5/synthesis.webp" 
                                 alt="Synthesis Map" 
                                 className="absolute inset-0 w-full h-full object-cover opacity-[0.08] group-hover:opacity-[0.15] transition-opacity duration-1000 grayscale group-hover:grayscale-0" 
@@ -143,7 +143,7 @@ export const S13_SynthesisBreakdown: React.FC<{ isActive: boolean }> = ({ isActi
                 </AnimatePresence>
             </div>
 
-            <div className="mt-8 flex items-center justify-between p-8 bg-white/[0.02] border border-white/10 rounded-[40px] backdrop-blur-md">
+            <div className="mt-8 flex items-center justify-between p-8 bg-bg-elev border border-border-soft rounded-[40px] shadow-neo">
                 <div className="flex items-center gap-4">
                     <Share2 size={20} className="text-plasma-cyan" />
                     <div>

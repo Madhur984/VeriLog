@@ -209,8 +209,8 @@ export const S10_Quiz: React.FC<Props> = ({ isActive, isDarkMode }) => {
       <motion.div
         initial={{ opacity: 0, y: 10 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.15 }}
-        className={`rounded-3xl border ${cardBg} p-5 flex items-center justify-between flex-wrap gap-4 sticky top-0 z-20 backdrop-blur`}
-        style={{ background: isDarkMode ? 'rgba(2,6,17,0.85)' : 'rgba(255,255,255,0.92)' }}
+        className={`rounded-3xl border ${cardBg} p-5 flex items-center justify-between flex-wrap gap-4 sticky top-0 z-20`}
+        style={{ background: isDarkMode ? 'var(--bg-elev)' : '#FFFFFF' }}
       >
         <div className="flex items-center gap-3">
           <Trophy size={18} style={{ color: allDone ? verdict.tone : '#facc15' }} />

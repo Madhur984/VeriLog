@@ -111,7 +111,7 @@ export const S02_AbstractionLadder: React.FC<{ isActive: boolean }> = ({ isActiv
                 </AnimatePresence>
             </div>
 
-            <div className="mt-8 flex items-center justify-between p-6 bg-white/[0.02] border border-white/10 rounded-[35px] backdrop-blur-md">
+            <div className="mt-8 flex items-center justify-between p-6 bg-bg-elev border border-border-soft rounded-[35px] shadow-neo">
                 <div className="flex items-center gap-4">
                     <Database size={18} className="text-plasma-cyan" />
                     <div className="text-left">

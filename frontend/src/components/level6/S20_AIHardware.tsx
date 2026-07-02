@@ -48,7 +48,7 @@ export const S20_AIHardware: React.FC<{ isActive: boolean }> = ({ isActive }) =>
         {/* Right Column: AI Architecture Diagnostic Dashboard */}
         <div className="space-y-8 relative w-full h-full">
             {/* Neural Matrix Engine Block */}
-            <div className="p-10 md:p-12 rounded-[60px] bg-plasma-cyan/5 border border-plasma-cyan/20 shadow-2xl relative overflow-hidden backdrop-blur-xl group">
+            <div className="p-10 md:p-12 rounded-[60px] bg-bg-elev border border-border-soft shadow-neo relative overflow-hidden group">
                 <div className="absolute top-0 right-0 p-10 opacity-10 text-plasma-cyan group-hover:scale-110 transition-transform duration-1000">
                     <Layers size={140} strokeWidth={1} />
                 </div>
@@ -117,7 +117,7 @@ export const S20_AIHardware: React.FC<{ isActive: boolean }> = ({ isActive }) =>
             {/* AI Generated NPU Preview */}
             <div className="p-1 rounded-[45px] bg-gradient-to-br from-plasma-cyan/30 via-white/5 to-transparent shadow-2xl relative overflow-hidden group">
                  <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black to-transparent z-10" />
-                 <img 
+                 <img loading="lazy" decoding="async" 
                     src="/assets/module5/npu.webp" 
                     alt="NPU Architecture" 
                     className="w-full h-48 object-cover rounded-[44px] opacity-60 group-hover:opacity-100 transition-opacity duration-1000 grayscale group-hover:grayscale-0 scale-105 group-hover:scale-100" 
@@ -129,7 +129,7 @@ export const S20_AIHardware: React.FC<{ isActive: boolean }> = ({ isActive }) =>
             </div>
 
             {/* Comparison Footer Card */}
-            <div className="p-8 rounded-[40px] bg-[#0A0A0B] border border-white/10 flex items-center gap-8 group backdrop-blur-lg">
+            <div className="p-8 rounded-[40px] bg-bg-elev border border-border-soft shadow-neo flex items-center gap-8 group">
                  <div className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center text-white/20 group-hover:text-plasma-cyan transition-colors">
                     <ShieldCheck size={20} />
                  </div>

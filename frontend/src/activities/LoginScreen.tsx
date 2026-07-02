@@ -10,7 +10,7 @@ export const LoginScreen: React.FC = () => {
             <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-slate-500/5 blur-[120px] rounded-full translate-y-1/2 -translate-x-1/2" />
 
             <div className="w-full max-w-md relative z-10 transition-all duration-700 animate-in fade-in slide-in-from-bottom-8">
-                <div className="bg-white/90 backdrop-blur-2xl p-10 rounded-[32px] border border-slate-200 shadow-2xl shadow-slate-200/50">
+                <div className="bg-white p-10 rounded-[32px] border border-slate-200 shadow-2xl shadow-slate-200/50">
                     <div className="text-center mb-10">
                         <div className="w-16 h-16 bg-sky-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg shadow-sky-500/20 rotate-3">
                             <span className="text-white font-heading font-black text-2xl">V</span>

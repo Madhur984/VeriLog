@@ -115,7 +115,7 @@ export const DrawerShell: React.FC<{
       <div
         aria-hidden
         onClick={onClose}
-        className={`lg:hidden fixed inset-0 z-40 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ${
+        className={`lg:hidden fixed inset-0 z-40 bg-black/60 transition-opacity duration-300 ${
           open ? 'opacity-100' : 'pointer-events-none opacity-0'
         }`}
       />

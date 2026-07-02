@@ -32,7 +32,7 @@ export const TrajectorySimulatorModal: React.FC<TrajectorySimulatorModalProps> =
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-matte-obsidian/90 backdrop-blur-md">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-matte-obsidian/90">
       <motion.div 
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}

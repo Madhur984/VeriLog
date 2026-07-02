@@ -21,7 +21,7 @@ endmodule`;
 
 export const S05_VerilogBridge: React.FC<Props> = ({ isDarkMode: _ }) => {
   return (
-    <div className="flex flex-col items-center justify-center min-h-[85vh] w-full max-w-6xl mx-auto relative px-8 py-20 rounded-[80px] border border-white/5 bg-black/40 backdrop-blur-3xl">
+    <div className="flex flex-col items-center justify-center min-h-[85vh] w-full max-w-6xl mx-auto relative px-8 py-20 rounded-[80px] border border-border-soft bg-bg-base shadow-neo">
 
       <motion.div
         initial={{ opacity: 0, scale: 0.92 }}
@@ -101,7 +101,7 @@ export const S05_VerilogBridge: React.FC<Props> = ({ isDarkMode: _ }) => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5, duration: 0.8 }}
-        className="z-20 p-12 rounded-[50px] bg-black/40 border border-white/5 backdrop-blur-xl shadow-2xl w-full max-w-3xl text-center space-y-8"
+        className="z-20 p-12 rounded-[50px] bg-bg-elev border border-border-soft shadow-neo w-full max-w-3xl text-center space-y-8"
       >
         <div className="flex justify-center gap-8 mb-4">
           {[

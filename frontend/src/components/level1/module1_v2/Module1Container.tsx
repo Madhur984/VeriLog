@@ -59,7 +59,7 @@ export const Module1Container: React.FC<Module1ContainerProps> = ({ children }) 
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.6, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        className="w-full h-[15vh] flex flex-col items-center justify-center border-b border-white/5 bg-black/20 backdrop-blur-xl z-[400] px-12"
+        className="w-full h-[15vh] flex flex-col items-center justify-center border-b border-white/5 bg-black z-[400] px-12"
       >
         <div className="w-full max-w-7xl flex justify-between items-center">
             <div className="flex flex-col gap-1">
@@ -105,7 +105,7 @@ export const Module1Container: React.FC<Module1ContainerProps> = ({ children }) 
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.9, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        className="w-full h-[12vh] border-t border-white/5 bg-black/40 backdrop-blur-2xl flex items-center justify-center z-[400]"
+        className="w-full h-[12vh] border-t border-white/5 bg-black flex items-center justify-center z-[400]"
       >
           <div className="w-full max-w-4xl flex justify-center items-center px-12 pointer-events-none">
                 <span className="text-[9px] font-mono text-white/10 tracking-[1em] uppercase select-none italic">

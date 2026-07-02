@@ -18,7 +18,7 @@ export const TrainingCockpitLayout: React.FC<CockpitLayoutProps> = ({
 
             <main className="flex-1 flex overflow-hidden">
                 {/* Left Pane: Mission Log */}
-                <section className="w-[20%] min-w-[250px] border-r border-slate-200 bg-white/80 backdrop-blur flex flex-col">
+                <section className="w-[20%] min-w-[250px] border-r border-slate-200 bg-bg-base flex flex-col">
                     {missionPanel}
                 </section>
 

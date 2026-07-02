@@ -38,19 +38,19 @@ export const S08_Control: React.FC = () => {
 
         {/* Filter Theory */}
         <div className="pointer-events-auto grid grid-cols-2 md:grid-cols-4 gap-4 w-full mt-8">
-            <div className="p-4 rounded-sm border border-white/5 bg-black/60 backdrop-blur-xl text-left border-t-v3-cyan/20">
+            <div className="p-4 rounded-sm border border-border-soft bg-bg-elev shadow-neo-sm text-left border-t-v3-cyan/20">
                 <h5 className="micro-text text-v3-cyan mb-1 font-black uppercase tracking-widest">Low Pass (LPF)</h5>
                 <p className="text-[8px] text-white/30 italic leading-relaxed">Blocks high frequencies. Used for anti-aliasing and smoothing noisy signals.</p>
             </div>
-            <div className="p-4 rounded-sm border border-white/5 bg-black/60 backdrop-blur-xl text-left border-t-white/10">
+            <div className="p-4 rounded-sm border border-border-soft bg-bg-elev shadow-neo-sm text-left border-t-white/10">
                 <h5 className="micro-text text-white/60 mb-1 font-black uppercase tracking-widest">High Pass (HPF)</h5>
                 <p className="text-[8px] text-white/30 italic leading-relaxed">Blocks DC and low Rumble. Essential for isolating fast transients or AC signals.</p>
             </div>
-            <div className="p-4 rounded-sm border border-white/5 bg-black/60 backdrop-blur-xl text-left border-t-[#f97316]/20">
+            <div className="p-4 rounded-sm border border-border-soft bg-bg-elev shadow-neo-sm text-left border-t-[#f97316]/20">
                 <h5 className="micro-text text-[#f97316] mb-1 font-black uppercase tracking-widest">Band Pass (BPF)</h5>
                 <p className="text-[8px] text-white/30 italic leading-relaxed">The "Radio Tuner." Isolates a specific bandwidth while killing everything else.</p>
             </div>
-            <div className="p-4 rounded-sm border border-white/5 bg-black/60 backdrop-blur-xl text-left border-t-red-500/20">
+            <div className="p-4 rounded-sm border border-border-soft bg-bg-elev shadow-neo-sm text-left border-t-red-500/20">
                 <h5 className="micro-text text-red-500/60 mb-1 font-black uppercase tracking-widest">Notch Filter</h5>
                 <p className="text-[8px] text-white/30 italic leading-relaxed">Precision surgery. Removes a pin-point frequency (like 60Hz power line hum).</p>
             </div>

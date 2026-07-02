@@ -114,7 +114,7 @@ export const ProfilePage: React.FC = () => {
       />
 
       {/* Top bar */}
-      <div className="sticky top-0 z-20 flex items-center justify-between px-4 sm:px-8 py-4 backdrop-blur-md"
+      <div className="sticky top-0 z-20 flex items-center justify-between px-4 sm:px-8 py-4 bg-bg-elev"
         style={{ borderBottom: isLight ? '1px solid rgba(15,23,42,0.08)' : '1px solid rgba(255,255,255,0.06)' }}>
         <button onClick={() => navigate('/portal')} className={pillBtn}><ArrowLeft size={16} /> Portal</button>
         <div className="flex items-center gap-2">

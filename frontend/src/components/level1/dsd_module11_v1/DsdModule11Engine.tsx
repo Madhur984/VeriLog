@@ -40,11 +40,11 @@ const Sidebar: React.FC<{
   theme: { primary: string; secondary: string; glow: string };
 }> = ({ current, isDarkMode, onChange, toggleTheme, theme }) => {
   const textColor = isDarkMode ? 'text-white' : 'text-slate-900';
-  const borderColor = isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
+  const borderColor = 'var(--border-soft)';
   const progress = ((current + 1) / PAGES.length) * 100;
 
   return (
-    <div className={`w-[320px] h-full flex-shrink-0 border-r flex flex-col z-20 transition-all duration-700 relative ${isDarkMode ? 'bg-[#040200]/40 backdrop-blur-md' : 'bg-slate-50/40 backdrop-blur-md'}`} style={{ borderColor }}>
+    <div className={`w-[320px] h-full flex-shrink-0 border-r-2 flex flex-col z-20 transition-all duration-700 relative ${isDarkMode ? 'bg-[#040200]' : 'bg-slate-50'}`} style={{ borderColor }}>
       <header className="p-10 border-b" style={{ borderColor }}>
         <div className="flex items-center gap-4">
           <div className="w-10 h-10 rounded-2xl bg-orange-400 flex items-center justify-center text-black"><ChefHat size={20} /></div>
@@ -72,7 +72,7 @@ const Sidebar: React.FC<{
                 </div>
               )}
               <button onClick={() => onChange(idx)}
-                className={`group relative w-full text-left p-4 rounded-2xl transition-all duration-500 flex items-start gap-4 ${isActive ? isDarkMode ? 'border' : 'bg-white border-slate-200 shadow-lg' : 'hover:bg-black/5 hover:translate-x-1'}`}
+                className={`group relative w-full text-left p-4 rounded-2xl transition-all duration-500 flex items-start gap-4 ${isActive ? isDarkMode ? 'border' : 'bg-white border-slate-200 shadow-brutal-sm' : 'hover:bg-black/5 hover:translate-x-1'}`}
                 style={{ backgroundColor: isActive && isDarkMode ? theme.glow : undefined, borderColor: isActive && isDarkMode ? `${theme.primary}33` : 'transparent' }}>
                 <div className={`mt-0.5 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black border transition-all duration-500 ${isDone || isActive ? 'text-black' : 'bg-transparent border-white/10 opacity-30'}`}
                   style={{ backgroundColor: isDone || isActive ? theme.primary : 'transparent', borderColor: isDone || isActive ? theme.primary : undefined }}>
@@ -98,7 +98,7 @@ const Sidebar: React.FC<{
             <motion.div animate={{ width: `${progress}%`, backgroundColor: theme.primary }} className="h-full" style={{ boxShadow: `0 0 10px ${theme.primary}` }} />
           </div>
         </div>
-        <button onClick={toggleTheme} className={`h-12 w-full rounded-2xl border flex items-center justify-center gap-3 text-[10px] font-black uppercase tracking-widest transition-all ${isDarkMode ? 'border-white/10 text-slate-400 hover:bg-white/5' : 'border-slate-200 text-slate-600 hover:bg-slate-100'}`}>
+        <button onClick={toggleTheme} className={`h-12 w-full rounded-2xl border-2 border-edge shadow-brutal-sm flex items-center justify-center gap-3 text-[10px] font-black uppercase tracking-widest transition-all ${isDarkMode ? 'border-white/10 text-slate-400 hover:bg-white/5' : 'border-slate-200 text-slate-600 hover:bg-slate-100'}`}>
           {isDarkMode ? <Sun size={14} /> : <Moon size={14} />}{isDarkMode ? 'Light Mode' : 'Dark Mode'}
         </button>
       </footer>
@@ -152,7 +152,7 @@ export const DsdModule11Engine: React.FC<{ isDarkMode: boolean; onThemeToggle: (
       </DrawerShell>
 
       <div className="flex-1 flex flex-col h-full overflow-hidden relative z-10">
-        <header className="h-16 lg:h-20 border-b flex items-center justify-between px-4 lg:px-12 z-10 gap-3" style={{ borderColor: isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }}>
+        <header className="h-16 lg:h-20 border-b flex items-center justify-between px-4 lg:px-12 z-10 gap-3" style={{ borderColor: 'var(--border-soft)' }}>
           <div className="flex items-center gap-3 min-w-0">
             <HamburgerButton isDarkMode={isDarkMode} onClick={() => setNavOpen(true)} />
             <div className="flex flex-col min-w-0">
@@ -177,7 +177,7 @@ export const DsdModule11Engine: React.FC<{ isDarkMode: boolean; onThemeToggle: (
           </AnimatePresence>
         </div>
 
-        <footer className="h-20 lg:h-24 border-t flex items-center justify-between px-4 lg:px-12 z-10 gap-3" style={{ borderColor: isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }}>
+        <footer className="h-20 lg:h-24 border-t flex items-center justify-between px-4 lg:px-12 z-10 gap-3" style={{ borderColor: 'var(--border-soft)' }}>
           <button onClick={() => { if (current === 0) navigate('/portal'); else go(-1); }} className="flex items-center gap-2 px-4 lg:px-8 py-3 rounded-2xl font-bold transition-all hover:bg-black/5 active:scale-95"><ArrowLeft size={18} /> Back</button>
           <div className="hidden sm:block text-center">
             <span className="text-[10px] font-mono uppercase tracking-widest opacity-30 block mb-1">Up Next</span>

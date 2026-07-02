@@ -180,7 +180,7 @@ export const S07_DholDrops: React.FC<Props> = ({ isActive, isDarkMode }) => {
             </svg>
 
             {/* Phase label */}
-            <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-black/60 backdrop-blur border border-pink-400/30 font-mono text-[10px] uppercase tracking-widest text-pink-300">
+            <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-bg-void border border-pink-400/30 font-mono text-[10px] uppercase tracking-widest text-pink-300">
               {phase === 'bonded' && 'Phase · bond intact'}
               {phase === 'breakaway' && 'Phase · breakaway'}
               {phase === 'hole' && 'Phase · hole formed'}

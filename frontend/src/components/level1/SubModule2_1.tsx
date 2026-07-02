@@ -201,8 +201,7 @@ export const SubModule2_1: React.FC = () => {
         zIndex: 99, height: 44,
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         padding: '0 32px',
-        background: isDark ? 'rgba(15, 23, 42, 0.85)' : 'rgba(255,255,255,0.92)',
-        backdropFilter: 'blur(12px)',
+        background: isDark ? '#0F172A' : '#FFFFFF',
         borderBottom: `1px solid ${T.border}`,
         transition: 'background-color 0.3s, border-color 0.3s',
       }}>

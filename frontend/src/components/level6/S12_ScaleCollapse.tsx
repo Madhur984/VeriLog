@@ -95,7 +95,7 @@ export const S12_ScaleCollapse: React.FC<{ isActive: boolean }> = ({ isActive })
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -20 }}
-                            className="bg-black/60 backdrop-blur-xl p-12 rounded-[50px] border border-white/10 shadow-2xl space-y-8 flex flex-col items-center max-w-lg w-full"
+                            className="bg-bg-elev p-12 rounded-[50px] border border-border-soft shadow-neo space-y-8 flex flex-col items-center max-w-lg w-full"
                         >
                             <div className="w-24 h-24 rounded-[30px] bg-plasma-cyan/10 border border-plasma-cyan/30 flex items-center justify-center text-plasma-cyan shadow-cyan-glow">
                                  {scale < 4 ? <Cpu size={40} /> : scale < 8 ? <Layers size={40} /> : <Binary size={40} />}
@@ -134,7 +134,7 @@ export const S12_ScaleCollapse: React.FC<{ isActive: boolean }> = ({ isActive })
                 </div>
             </div>
 
-            <div className="mt-8 flex items-center justify-between p-6 bg-white/[0.02] border border-white/10 rounded-3xl backdrop-blur-md">
+            <div className="mt-8 flex items-center justify-between p-6 bg-bg-elev border border-border-soft rounded-3xl shadow-neo">
                 <div className="flex items-center gap-4">
                     <Activity size={20} className="text-plasma-cyan" />
                     <div>

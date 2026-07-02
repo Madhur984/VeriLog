@@ -56,7 +56,7 @@ const Sidebar: React.FC<{
   return (
     <div
       className={`w-[320px] h-full flex-shrink-0 border-r flex flex-col z-20 transition-all duration-700 relative ${
-        isDarkMode ? 'bg-[#040200]/40 backdrop-blur-md' : 'bg-slate-50/40 backdrop-blur-md'
+        isDarkMode ? 'bg-[#040200]' : 'bg-slate-50'
       }`}
       style={{ borderColor }}
     >

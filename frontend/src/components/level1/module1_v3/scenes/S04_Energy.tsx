@@ -18,7 +18,7 @@ export const S04_Energy: React.FC = () => {
         />
 
         {/* NEW: The Power Scale (Logarithmic Reality) */}
-        <div className="pointer-events-auto grid grid-cols-1 md:grid-cols-2 gap-8 w-full mt-12 bg-black/40 p-6 rounded-xl border border-white/5 backdrop-blur-sm">
+        <div className="pointer-events-auto grid grid-cols-1 md:grid-cols-2 gap-8 w-full mt-12 bg-bg-elev p-6 rounded-xl border border-border-soft shadow-neo">
             <div className="space-y-4">
                 <h4 className="micro-text text-v3-cyan font-black italic tracking-widest uppercase text-left">Linear vs Log</h4>
                 <p className="text-[10px] text-white/40 leading-relaxed text-left">

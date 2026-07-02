@@ -112,7 +112,7 @@ export const S03b_OriginStory: React.FC<{ isActive: boolean }> = ({ isActive }) 
                     </div>
                 </div>
                 <div className="h-px w-full bg-white/5" />
-                <div className="flex items-center justify-between p-6 bg-white/[0.02] border border-white/10 rounded-3xl backdrop-blur-md">
+                <div className="flex items-center justify-between p-6 bg-bg-elev border border-border-soft rounded-3xl shadow-neo">
                     <div className="flex items-center gap-4">
                         <Clock size={18} className="text-amber-500" />
                         <span className="micro-text uppercase tracking-widest text-[11px] text-white/40">Pedigree Status: VERIFIED BY INDUSTRY TRENDS</span>

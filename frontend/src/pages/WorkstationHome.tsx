@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useGamificationStore } from '../stores/gamificationStore';
 import { CommandPalette } from '../components/ui/CommandPalette';
-import { OnboardingTour } from '../components/ui/OnboardingTour';
 import { RadialMenu } from '../components/ui/RadialMenu';
 import { useColorScheme } from '../hooks/useColorScheme';
 import { ThemeToggle } from '../components/ThemeToggle';
@@ -13,8 +12,6 @@ import { HierarchicalGrindTree } from '../components/ui/HierarchicalGrindTree';
 import { getSession } from '../lib/auth';
 import { getModuleHistory, getLastModule } from '../lib/moduleHistory';
 import { BookOpen, ArrowRight } from 'lucide-react';
-
-const getTourKey = (n: string | null) => `digi_tour_done_${n ?? 'guest'}`;
 
 // ─── PCB ISOMETRIC BACKGROUND ──────────────────────────────────────────────────
 // ─── PCB ISOMETRIC BACKGROUND ──────────────────────────────────────────────────
@@ -149,9 +146,8 @@ const ProfileCard: React.FC<{
       transition={{ delay: 1.2, duration: 0.6 }}
       className="fixed top-8 right-8 z-50 w-64 space-y-3.5 rounded-2xl p-4 cursor-pointer transition-all duration-300"
       style={{
-        background: isLight ? '#FFFFFF' : 'rgba(3,4,8,0.96)',
+        background: isLight ? '#FFFFFF' : 'var(--bg-elev)',
         border: isLight ? '1px solid #E2E8F0' : '1px solid rgba(59,130,246,0.18)',
-        backdropFilter: 'blur(20px)',
         boxShadow: isLight ? '0 12px 30px rgba(15,23,42,0.10)' : '0 20px 50px rgba(0,0,0,0.7)',
       }}
     >
@@ -207,7 +203,6 @@ export const WorkstationHome: React.FC = () => {
   
   const { firstName, checkStreak } = useGamificationStore();
   const [cmdOpen, setCmdOpen] = useState(false);
-  const [tourOpen, setTourOpen] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => { checkStreak(); }, [checkStreak]);
@@ -327,8 +322,7 @@ export const WorkstationHome: React.FC = () => {
         </div>
       </main>
 
-      <CommandPalette isOpen={cmdOpen} onClose={() => setCmdOpen(false)} navigate={navigate} tourKey={getTourKey(firstName)} />
-      <OnboardingTour isOpen={tourOpen} onClose={() => setTourOpen(false)} storageKey={getTourKey(firstName)} />
+      <CommandPalette isOpen={cmdOpen} onClose={() => setCmdOpen(false)} navigate={navigate} />
 
       {/* ── BOTTOM MASTER SCOPE ── */}
       {/* Oscilloscope Removed */}

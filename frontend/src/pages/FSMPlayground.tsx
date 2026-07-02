@@ -288,7 +288,6 @@ export function FSMPlayground() {
                             position: 'fixed', inset: 0, background: 'rgba(255,255,255,0.8)',
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
                             zIndex: 100,
-                            backdropFilter: 'blur(4px)',
                             padding: '16px',
                         }}
                         onClick={() => setShowExport(false)}

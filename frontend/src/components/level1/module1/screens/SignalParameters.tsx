@@ -156,7 +156,7 @@ export const SignalParameters: React.FC<ScreenProps & {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-[100] bg-white/95 backdrop-blur-xl flex items-center justify-center p-8"
+              className="fixed inset-0 z-[100] bg-white flex items-center justify-center p-8"
             >
               <motion.div 
                 key={theoryStep}

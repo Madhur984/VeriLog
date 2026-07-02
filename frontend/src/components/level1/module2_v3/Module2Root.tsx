@@ -273,7 +273,7 @@ export const Module2Root: React.FC = () => {
 
       {/* ── Main Content Area ── */}
       <div className="flex-1 h-full overflow-y-auto relative scroll-smooth" style={{ background: bgColor }}>
-        <nav className="sticky top-0 z-50 px-8 py-5 flex justify-between items-center border-b backdrop-blur-md" style={{ background: isDarkMode ? 'rgba(3,1,0,0.85)' : 'rgba(255,255,255,0.85)', borderColor }}>
+        <nav className="sticky top-0 z-50 px-8 py-5 flex justify-between items-center border-b" style={{ background: isDarkMode ? '#030100' : '#FFFFFF', borderColor }}>
           <div className="flex items-center gap-3">
             <span className={`font-mono font-semibold ${isDarkMode ? 'text-orange-500' : 'text-orange-600'}`}>M02</span>
             <span className={isDarkMode ? 'text-orange-900' : 'text-gray-300'}>·</span>

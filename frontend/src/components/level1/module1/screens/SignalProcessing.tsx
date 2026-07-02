@@ -37,7 +37,7 @@ export const SignalProcessing: React.FC<ScreenProps> = ({
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="absolute inset-0 z-30 bg-white/90 backdrop-blur-sm flex flex-col items-center justify-center p-8 text-center rounded-3xl border border-slate-100 shadow-xl"
+                className="absolute inset-0 z-30 bg-white flex flex-col items-center justify-center p-8 text-center rounded-3xl border border-slate-100 shadow-xl"
             >
                 <Binary className="text-sky-500 w-10 h-10 mb-4 animate-pulse" />
                 <h3 className="text-[10px] font-mono uppercase tracking-[0.3em] mb-2 text-slate-800">The Digital Bridge</h3>

@@ -126,7 +126,7 @@ export const SandboxModule5: React.FC = () => {
 
             {/* Visualizer Panel */}
             <div className="flex flex-col gap-6">
-                <div className="rounded-[40px] border border-border-soft bg-bg-elev/40 backdrop-blur-3xl p-10 flex flex-col items-center justify-center min-h-[400px] relative shadow-2xl overflow-hidden">
+                <div className="rounded-[40px] border border-border-soft bg-bg-elev p-10 flex flex-col items-center justify-center min-h-[400px] relative shadow-neo overflow-hidden">
                     <div className="absolute inset-0 opacity-[0.05] pointer-events-none">
                          <div className="grid grid-cols-10 grid-rows-10 h-full w-full">
                             {[...Array(100)].map((_, i) => <div key={i} className="border-[0.5px] border-cyan-500" />)}

@@ -29,7 +29,7 @@ export const S07_PTypeSquad: React.FC<Props> = ({ isActive, isDarkMode }) => {
           initial={{ opacity: 0, x: -20 }} animate={isActive ? { opacity: 1, x: 0 } : {}}
           className={`relative rounded-3xl overflow-hidden border ${cardBg}`}
         >
-          <img src="/images/semi/p08.webp" alt="P-Type 3-friend squad" className="w-full block aspect-[16/9] object-cover" />
+          <img loading="lazy" decoding="async" src="/images/semi/p08.webp" alt="P-Type 3-friend squad" className="w-full block aspect-[16/9] object-cover" />
           <div className="absolute bottom-3 right-4 font-mono text-[9px] uppercase tracking-widest text-fuchsia-200/80">
             Madhur&apos;s Lab · Page 08
           </div>

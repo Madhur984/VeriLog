@@ -49,7 +49,6 @@ export const KnowledgePanel = memo(({ node, onClose, isClosing }: KnowledgePanel
                 style={{
                     position: 'fixed', inset: 0, zIndex: 5000,
                     background: 'rgba(0,0,0,0.4)',
-                    backdropFilter: 'blur(2px)',
                     animation: isClosing ? 'none' : undefined,
                     opacity: isClosing ? 0 : 1,
                     transition: isClosing ? 'opacity 220ms ease-out' : 'opacity 280ms ease-in',

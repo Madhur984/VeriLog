@@ -44,7 +44,7 @@ export const SignalTransform: React.FC<ScreenProps> = ({
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="absolute inset-0 z-30 bg-white/95 backdrop-blur-sm flex flex-col items-center justify-center p-8 text-center rounded-2xl shadow-xl"
+                        className="absolute inset-0 z-30 bg-white flex flex-col items-center justify-center p-8 text-center rounded-2xl shadow-xl"
                     >
                         <BrainCircuit className="text-indigo-500 w-12 h-12 mb-4 animate-pulse" />
                         <h3 className="text-sm font-mono uppercase tracking-[0.3em] mb-2 text-slate-800">Phase Prediction</h3>

@@ -85,7 +85,7 @@ export const S00_BreakingPoint: React.FC<Props> = ({ isActive }) => {
                 <motion.div 
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="relative z-10 p-12 rounded-[60px] bg-white/[0.01] border border-white/10 backdrop-blur-3xl shadow-2xl flex flex-col items-center text-center gap-8 max-w-lg"
+                    className="relative z-10 p-12 rounded-[60px] bg-bg-elev border border-border-soft shadow-neo flex flex-col items-center text-center gap-8 max-w-lg"
                 >
                     <div className="w-20 h-20 rounded-[30px] bg-black border border-burnished-copper/40 flex items-center justify-center text-burnished-copper shadow-burnished-glow mb-2">
                         <AlertTriangle size={36} strokeWidth={1.5} />
@@ -113,7 +113,7 @@ export const S00_BreakingPoint: React.FC<Props> = ({ isActive }) => {
                 </motion.div>
             </div>
 
-            <div className="mt-8 flex items-center justify-between p-6 bg-white/[0.02] border border-white/10 rounded-3xl backdrop-blur-md w-full">
+            <div className="mt-8 flex items-center justify-between p-6 bg-bg-elev border border-border-soft rounded-3xl shadow-neo w-full">
                 <div className="flex items-center gap-4">
                     <Activity size={20} className="text-burnished-copper" />
                     <div>

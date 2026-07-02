@@ -207,8 +207,7 @@ const HudTooltip: React.FC<{ text: string; color: string; visible: boolean; alig
             bottom: 'calc(100% + 10px)',
             [align === 'left' ? 'left' : 'right']: 0,
             width: 210,
-            background: isLight ? 'rgba(255,255,255,0.97)' : 'rgba(5,8,18,0.88)',
-            backdropFilter: 'blur(14px)',
+            background: isLight ? '#FFFFFF' : 'var(--bg-elev)',
             borderRadius: 4,
             border: isLight ? '1px solid rgba(15,23,42,0.18)' : '1px solid rgba(255,255,255,0.07)',
             borderLeft: `2px solid ${color}`,
@@ -1229,8 +1228,8 @@ const L6PathSwitcher: React.FC<{ onPick: (route: string) => void }> = ({ onPick 
       <div
         role="tablist"
         aria-label="Learning track"
-        className={`relative self-center w-full max-w-[580px] grid grid-cols-3 gap-1 p-1.5 rounded-2xl border backdrop-blur-md ${
-          isLight ? 'bg-slate-100/80 border-slate-300' : 'bg-[#070810]/80 border-white/10'
+        className={`relative self-center w-full max-w-[580px] grid grid-cols-3 gap-1 p-1.5 rounded-2xl border-2 border-edge shadow-brutal-sm ${
+          isLight ? 'bg-slate-100' : 'bg-[#070810]'
         }`}
       >
         {L6_PATHS.map((opt, idx) => {
@@ -1429,8 +1428,8 @@ export const HierarchicalGrindTree: React.FC = () => {
 
   return (
     <div className="w-full h-full flex flex-col bg-transparent overflow-hidden relative">
-      <div className={`flex-shrink-0 w-full pt-6 pb-5 px-2 sm:px-4 lg:px-6 border-b backdrop-blur-md relative z-30 flex justify-center transition-colors duration-300 ${
-        isLight ? 'border-slate-300 bg-white/95' : 'border-white/10 bg-[#070810]/95'
+      <div className={`flex-shrink-0 w-full pt-6 pb-5 px-2 sm:px-4 lg:px-6 border-b relative z-30 flex justify-center transition-colors duration-300 ${
+        isLight ? 'border-slate-300 bg-white' : 'border-white/10 bg-[#070810]'
       }`}>
         <div className="w-full max-w-[900px] flex flex-col items-center">
           <div className="flex items-center justify-between w-full mb-5 px-1">

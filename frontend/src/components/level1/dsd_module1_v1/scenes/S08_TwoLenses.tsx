@@ -44,13 +44,13 @@ export const S08_TwoLenses: React.FC<Props> = ({ isActive, isDarkMode }) => {
       {/* Sketchbook references - blueprint matrix + the two-lens equality */}
       <div className="grid md:grid-cols-2 gap-5">
         <div className="rounded-3xl overflow-hidden border border-white/10" style={{ background: '#fef9f0' }}>
-          <img src="/images/sketchbook/p10.webp" alt="The Blueprint Matrix - SOP vs POS comparison" className="w-full block" />
+          <img loading="lazy" decoding="async" src="/images/sketchbook/p10.webp" alt="The Blueprint Matrix - SOP vs POS comparison" className="w-full block" />
           <div className="px-4 py-2 text-[10px] font-mono uppercase tracking-widest text-slate-700 bg-white/60">
             Sketchbook · the blueprint matrix
           </div>
         </div>
         <div className="rounded-3xl overflow-hidden border border-white/10" style={{ background: '#fef9f0' }}>
-          <img src="/images/sketchbook/p11.webp" alt="Two lenses, one logical truth" className="w-full block" />
+          <img loading="lazy" decoding="async" src="/images/sketchbook/p11.webp" alt="Two lenses, one logical truth" className="w-full block" />
           <div className="px-4 py-2 text-[10px] font-mono uppercase tracking-widest text-slate-700 bg-white/60">
             Sketchbook · paint the 1s = brick the 0s
           </div>

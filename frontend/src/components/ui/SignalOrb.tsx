@@ -51,7 +51,7 @@ export const SignalOrb: React.FC<SignalOrbProps> = ({
             animate={controls}
             className={cn(
                 "relative flex items-center justify-center rounded-full cursor-pointer touch-none",
-                "w-32 h-32 bg-sky-50/80 border border-sky-200/50 backdrop-blur-xl shadow-xl shadow-sky-600/10",
+                "w-32 h-32 bg-sky-50/80 border border-sky-200/50 shadow-xl shadow-sky-600/10",
                 className
             )}
         >

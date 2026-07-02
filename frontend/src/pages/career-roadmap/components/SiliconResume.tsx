@@ -325,7 +325,7 @@ export const SiliconResume: React.FC<SiliconResumeProps> = ({
 
       {/* Silicon Passport Modal Dialog */}
       {showPassport && (
-        <div className="fixed inset-0 bg-black/85 backdrop-blur-xl z-[999] flex flex-col items-center justify-center p-4 font-mono select-none">
+        <div className="fixed inset-0 bg-black/85 z-[999] flex flex-col items-center justify-center p-4 font-mono select-none">
           <div 
             id="silicon-passport-card"
             className="w-[340px] h-[520px] rounded-3xl bg-[#090b11] border-2 border-cyan-500/30 p-6 flex flex-col justify-between relative overflow-hidden shadow-[0_0_50px_rgba(6,182,212,0.15)] text-white uppercase tracking-wider"

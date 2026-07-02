@@ -28,7 +28,7 @@ export const S02_GoodBoyHostel: React.FC<Props> = ({ isActive, isDarkMode }) => 
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         className={`relative rounded-3xl overflow-hidden border ${cardBg}`}
       >
-        <img
+        <img loading="lazy" decoding="async"
           src="/images/semi/p02.webp"
           alt="Pure silicon - the good boy hostel"
           className="w-full block aspect-[16/9] object-cover"

@@ -170,7 +170,7 @@ export const SubModule1_3: React.FC<SubModuleProps> = ({ onComplete }) => {
                     <motion.div 
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        className="fixed inset-0 z-50 flex items-center justify-center bg-[#0B0F14]/90 backdrop-blur-md"
+                        className="fixed inset-0 z-50 flex items-center justify-center bg-[#0B0F14]/90"
                     >
                         <div className="bg-[#141B2D] border border-[#1E2332] p-12 rounded-[40px] text-center max-w-lg shadow-[0_0_100px_rgba(0,0,0,0.5)]">
                             <div className="w-20 h-20 bg-emerald-500 rounded-3xl mx-auto flex items-center justify-center text-[#0B0F14] mb-8 shadow-[0_0_30px_rgba(16,185,129,0.3)]">

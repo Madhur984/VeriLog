@@ -47,7 +47,7 @@ export const SignalPlayground = () => {
             </div>
 
             {/* Header - Glassmorphism */}
-            <header className="relative z-30 border-b border-slate-200 bg-white/80 backdrop-blur-xl px-4 py-3 lg:px-12 lg:py-5 flex items-center justify-between gap-3">
+            <header className="relative z-30 border-b border-slate-200 bg-white px-4 py-3 lg:px-12 lg:py-5 flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3 lg:space-x-6 min-w-0">
                     <button
                         onClick={() => navigate('/portal')}
@@ -87,7 +87,7 @@ export const SignalPlayground = () => {
 
                     {/* Left: Ms. Analog */}
                     <div className={cn(
-                        "group relative p-6 lg:p-10 rounded-2xl border transition-all duration-700 backdrop-blur-xl flex flex-col items-center shadow-xl space-y-6 lg:space-y-8",
+                        "group relative p-6 lg:p-10 rounded-2xl border transition-all duration-700 flex flex-col items-center shadow-neo space-y-6 lg:space-y-8",
                         isAnalogSynced
                             ? "bg-sky-50 border-sky-200 shadow-sky-500/10"
                             : "bg-white border-slate-200 shadow-slate-200/50 hover:border-sky-200"
@@ -182,7 +182,7 @@ export const SignalPlayground = () => {
 
                     {/* Right: Mr. Digital */}
                     <div className={cn(
-                        "group relative p-6 lg:p-10 rounded-2xl border transition-all duration-700 backdrop-blur-xl flex flex-col items-center shadow-xl space-y-6 lg:space-y-8",
+                        "group relative p-6 lg:p-10 rounded-2xl border transition-all duration-700 flex flex-col items-center shadow-neo space-y-6 lg:space-y-8",
                         digitalState
                             ? "bg-indigo-50 border-indigo-200 shadow-indigo-500/10"
                             : "bg-white border-slate-200 shadow-slate-200/50 hover:border-indigo-200"

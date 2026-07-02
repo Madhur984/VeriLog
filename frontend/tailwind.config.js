@@ -29,7 +29,10 @@ export default {
                 'accent-soft':   'var(--accent-soft)',
                 'accent-pink':   'var(--accent-pink)',
                 'border-soft':   'var(--border-soft)',
-                
+                'edge':          'var(--edge)',
+                'edge-strong':   'var(--edge-strong)',
+                'neo-bg':        'var(--neo-bg)',
+
                 // ════ SILICON OBSERVATORY v3.1 TOKENS ════
                 'observatory-bg': 'var(--observatory-bg)',
                 'observatory-surface': 'var(--observatory-surface)',
@@ -98,6 +101,15 @@ export default {
             boxShadow: {
                 'cyan-glow': '0 0 6px #00D4FF, 0 0 2px #00D4FF inset',
                 'observatory-glow': '0 0 24px rgba(34,211,238,0.35)',
+                // ── Hybrid design system: brutalist offset + neomorphic twin shadows ──
+                'brutal': '4px 4px 0 0 var(--brutal-sh)',
+                'brutal-sm': '3px 3px 0 0 var(--brutal-sh)',
+                'brutal-lg': '6px 6px 0 0 var(--brutal-sh)',
+                'brutal-xl': '8px 8px 0 0 var(--brutal-sh)',
+                // Tactile-brutalist reading surfaces now use the same hard blur-0 offset (smaller than controls)
+                'neo': '3px 3px 0 0 var(--brutal-sh)',
+                'neo-sm': '2px 2px 0 0 var(--brutal-sh)',
+                'neo-inset': 'inset 0 2px 6px rgba(0,0,0,0.35)',
             },
             transitionTimingFunction: {
                 'expo-out': 'cubic-bezier(0.16, 1, 0.3, 1)',

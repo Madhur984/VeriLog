@@ -31,6 +31,15 @@ export default defineConfig({
         },
     },
     build: {
+        // Heavy, route-only vendor chunks (three.js, pdf, monaco, graph libs, ...)
+        // were being <link rel="modulepreload">'d on first paint even though nothing
+        // in the initial shell uses them - three.js alone is ~886 kB. Drop them from
+        // the eager preload set; they still load on demand when their lazy route runs
+        // (via the runtime preload helper), so the first paint is far lighter.
+        modulePreload: {
+            resolveDependencies: (_filename, deps) =>
+                deps.filter((d) => !/vendor-(three|pdf|monaco|graph|dagre|gsap|anime|dnd|zoom|react-icons)/.test(d)),
+        },
         rollupOptions: {
             output: {
                 manualChunks(id) {
@@ -49,9 +58,12 @@ export default defineConfig({
                     if (f.includes('react-zoom-pan-pinch')) return 'vendor-zoom';
                     if (f.includes('react-icons')) return 'vendor-react-icons';
                     if (f.includes('framer-motion') || f.includes('/motion-dom/') || f.includes('/motion-utils/') || f.includes('motion/react')) return 'vendor-animation';
-                    // Keep icons in their own cacheable chunk (separate from the small
-                    // app entry chunk) so app-code changes don't re-download them.
-                    if (f.includes('lucide-react')) return 'vendor-icons';
+                    // lucide-react: DON'T force every icon into one eager mega-chunk
+                    // (the old `vendor-icons` was ~665 kB and got modulepreloaded on
+                    // first paint because the nav imports a few icons). Returning
+                    // undefined lets Rollup tree-split icons into the route chunks that
+                    // use them, so the entry only carries its handful.
+                    if (f.includes('lucide-react')) return;
                     if (f.includes('@supabase')) return 'vendor-supabase';
                     // Core React/runtime/router stays in the small upfront bundle.
                     return 'vendor-core';

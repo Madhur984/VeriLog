@@ -53,7 +53,7 @@ export const S03_Multiverse: React.FC<Props> = ({ isActive, isDarkMode }) => {
           className="rounded-3xl overflow-hidden border border-white/10"
           style={{ background: '#fef9f0' }}
         >
-          <img src="/images/sketchbook/p03.webp" alt="The 8-Day Multiverse hand-drawn truth table" className="w-full block" />
+          <img loading="lazy" decoding="async" src="/images/sketchbook/p03.webp" alt="The 8-Day Multiverse hand-drawn truth table" className="w-full block" />
         </motion.div>
       </div>
 

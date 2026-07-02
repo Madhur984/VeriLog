@@ -37,7 +37,7 @@ export const S07_BuildPOS: React.FC<Props> = ({ isActive, isDarkMode }) => {
           transition={{ delay: 0.1 }}
           className="rounded-3xl overflow-hidden border border-white/10" style={{ background: '#fef9f0' }}
         >
-          <img src="/images/sketchbook/p09.webp" alt="Sketchbook - chain of barricades for POS" className="w-full block" />
+          <img loading="lazy" decoding="async" src="/images/sketchbook/p09.webp" alt="Sketchbook - chain of barricades for POS" className="w-full block" />
         </motion.div>
       </div>
 

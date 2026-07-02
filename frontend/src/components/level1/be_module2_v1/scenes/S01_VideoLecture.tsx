@@ -76,7 +76,7 @@ export const S01_VideoLecture: React.FC<Props> = ({ isActive, isDarkMode }) => {
               onTimeUpdate={handleTimeUpdate}
               onLoadedMetadata={setDuration}
             />
-            <div className="absolute top-3 left-3 z-10 px-3 py-1 rounded-full bg-black/60 backdrop-blur border border-orange-400/30 font-mono text-[10px] uppercase tracking-widest text-orange-300 flex items-center gap-2 pointer-events-none">
+            <div className="absolute top-3 left-3 z-10 px-3 py-1 rounded-full bg-bg-void border border-orange-400/30 font-mono text-[10px] uppercase tracking-widest text-orange-300 flex items-center gap-2 pointer-events-none">
               <Volume2 size={12} /> English · Madhur way
             </div>
           </motion.div>
@@ -118,8 +118,8 @@ export const S01_VideoLecture: React.FC<Props> = ({ isActive, isDarkMode }) => {
           className={`p-6 rounded-3xl border ${cardBg} max-h-[680px] overflow-y-auto`}
         >
           <div
-            className="flex items-center gap-2 mb-5 sticky top-0 -mt-1 pt-1 pb-3 -mx-1 px-1 backdrop-blur-md"
-            style={{ background: isDarkMode ? 'rgba(8,6,3,0.8)' : 'rgba(255,255,255,0.85)' }}
+            className="flex items-center gap-2 mb-5 sticky top-0 -mt-1 pt-1 pb-3 -mx-1 px-1"
+            style={{ background: isDarkMode ? 'var(--bg-elev)' : '#FFFFFF' }}
           >
             <FileText size={14} className="text-orange-400" />
             <span className="font-mono text-[10px] uppercase tracking-widest text-orange-400">

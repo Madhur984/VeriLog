@@ -57,10 +57,10 @@ export const GlobalSalaryHeatmap: React.FC = () => {
         </motion.div>
 
         {/* Hotspots Selector Sidebar */}
-        <div className={`absolute top-4 left-4 z-20 flex flex-col gap-1.5 p-3 rounded-xl border backdrop-blur-xl transition-all pointer-events-auto ${
-          isLight 
-            ? 'bg-bg-elev/90 border-border-soft shadow-lg' 
-            : 'bg-[#0D0F12]/90 border-white/5 shadow-2xl'
+        <div className={`absolute top-4 left-4 z-20 flex flex-col gap-1.5 p-3 rounded-xl border-2 border-edge shadow-brutal-sm transition-all pointer-events-auto ${
+          isLight
+            ? 'bg-bg-elev'
+            : 'bg-bg-elev'
         }`}>
           <div className="text-[9px] font-mono text-text-dim uppercase tracking-widest border-b pb-1.5 mb-1" style={{ borderColor: isLight ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.05)' }}>
             Silicon Nodes
@@ -124,10 +124,10 @@ export const GlobalSalaryHeatmap: React.FC = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 10 }}
-              className={`absolute bottom-4 sm:bottom-8 right-2 sm:right-8 w-[min(18rem,calc(100%-1rem))] sm:w-80 backdrop-blur-md border p-4 sm:p-6 z-20 pointer-events-none ${
-                isLight 
-                  ? 'bg-bg-elev/90 border-signal-core/20 shadow-[0_0_30px_rgba(3,105,161,0.08)]' 
-                  : 'bg-black/80 border-cyan-400/30 shadow-[0_0_30px_rgba(34,211,238,0.1)]'
+              className={`absolute bottom-4 sm:bottom-8 right-2 sm:right-8 w-[min(18rem,calc(100%-1rem))] sm:w-80 border p-4 sm:p-6 z-20 pointer-events-none shadow-neo ${
+                isLight
+                  ? 'bg-bg-elev border-signal-core/20'
+                  : 'bg-bg-elev border-cyan-400/30'
               }`}
             >
               <div className="flex justify-between items-start mb-4">
@@ -162,8 +162,8 @@ export const GlobalSalaryHeatmap: React.FC = () => {
           {!activeSpot && (
             <motion.div 
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              className={`absolute bottom-4 sm:bottom-8 right-2 sm:right-8 w-[min(18rem,calc(100%-1rem))] sm:w-80 backdrop-blur-sm border p-4 sm:p-6 z-10 pointer-events-none ${
-                isLight ? 'bg-bg-elev/40 border-border-soft' : 'bg-black/40 border-white/5'
+              className={`absolute bottom-4 sm:bottom-8 right-2 sm:right-8 w-[min(18rem,calc(100%-1rem))] sm:w-80 border p-4 sm:p-6 z-10 pointer-events-none shadow-neo-sm ${
+                isLight ? 'bg-bg-elev border-border-soft' : 'bg-bg-elev border-white/5'
               }`}
             >
               <div className="w-8 h-8 rounded-full border border-dashed flex items-center justify-center animate-spin-slow mb-4" style={{ borderColor: `${accentColor}80` }}>

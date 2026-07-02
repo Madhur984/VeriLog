@@ -1012,11 +1012,10 @@ const Scene7: React.FC<SceneProps & { onUnlock: () => void }> = ({
               transition={{ duration: 1.2, repeat: 2 }}
               style={{
                 padding: '40px 64px',
-                background: 'rgba(10,10,11,0.92)',
+                background: '#0a0a0b',
                 border: `2px solid ${C.cyan}`,
                 borderRadius: 24,
                 textAlign: 'center',
-                backdropFilter: 'blur(20px)',
               }}
             >
               <div style={{ fontFamily: C.mono, fontSize: 13, color: C.cyan, letterSpacing: '0.3em', textTransform: 'uppercase' }}>

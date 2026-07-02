@@ -32,7 +32,7 @@ export const S11_Lab: React.FC = () => {
                 { label: "Coherence", val: stability > 0.9 ? "HIGH" : "SYNCING", col: stability > 0.9 ? "v3-cyan" : "white/20" },
                 { label: "Integrity", val: "L1-ACTIVE", col: "white/20" }
             ].map((m, i) => (
-                <div key={i} className={`px-8 py-4 rounded-sm bg-black/40 border border-${m.col}/20 backdrop-blur-md flex flex-col items-center`}>
+                <div key={i} className={`px-8 py-4 rounded-sm bg-bg-elev border border-${m.col}/20 shadow-neo-sm flex flex-col items-center`}>
                     <span className="text-[8px] opacity-40 uppercase tracking-widest mb-1">{m.label}</span>
                     <span className={`text-xs font-black text-${m.col}`}>{m.val}</span>
                 </div>

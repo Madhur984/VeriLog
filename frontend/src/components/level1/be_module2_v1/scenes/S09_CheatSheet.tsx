@@ -39,7 +39,7 @@ export const S09_CheatSheet: React.FC<Props> = ({ isActive, isDarkMode }) => {
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         className={`relative rounded-3xl overflow-hidden border ${cardBg}`}
       >
-        <img src="/images/semi/p11.webp" alt="N vs P cheat sheet" className="w-full block aspect-[16/9] object-cover" />
+        <img loading="lazy" decoding="async" src="/images/semi/p11.webp" alt="N vs P cheat sheet" className="w-full block aspect-[16/9] object-cover" />
         <div className="absolute bottom-3 right-4 font-mono text-[9px] uppercase tracking-widest text-violet-200/80">
           Madhur&apos;s Lab · Page 11
         </div>

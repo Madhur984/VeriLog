@@ -13,7 +13,7 @@ export const Module1Activity: React.FC = () => {
     return (
         <div className="w-full h-screen bg-slate-50 flex flex-col overflow-hidden">
             {/* Top Bar */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-white/80 backdrop-blur-md z-30 shrink-0">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-white z-30 shrink-0">
                 <button
                     onClick={() => navigate('/portal')}
                     className="flex items-center gap-2 text-slate-500 hover:text-slate-900 transition-colors text-sm"

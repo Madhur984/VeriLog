@@ -115,7 +115,7 @@ export const S05_VLSIConnection: React.FC<{ isActive: boolean }> = ({ isActive }
             </div>
 
             <div className="mt-8 p-1 bg-gradient-to-br from-white/20 via-white/5 to-transparent rounded-[45px] shadow-2xl relative overflow-hidden group">
-                <img 
+                <img loading="lazy" decoding="async" 
                     src="/assets/module5/wafer.webp" 
                     alt="Silicon Wafer Fabrication" 
                     className="w-full h-32 object-cover rounded-[44px] opacity-40 group-hover:opacity-80 transition-all duration-1000 grayscale group-hover:grayscale-0 scale-110 group-hover:scale-100" 
@@ -127,7 +127,7 @@ export const S05_VLSIConnection: React.FC<{ isActive: boolean }> = ({ isActive }
                 </div>
             </div>
 
-            <div className="mt-8 p-8 bg-white/[0.02] border border-white/10 rounded-[35px] flex items-center justify-between backdrop-blur-md">
+            <div className="mt-8 p-8 bg-bg-elev border border-border-soft rounded-[35px] flex items-center justify-between shadow-neo">
                 <div className="flex items-center gap-6">
                     <div className="w-12 h-12 rounded-full border border-plasma-cyan/30 flex items-center justify-center text-plasma-cyan shadow-cyan-glow">
                         <RefreshCcw size={22} className="animate-spin-slow" />

@@ -883,10 +883,10 @@ export const S13_LabActivity_v2: React.FC<{ isActive: boolean; isDarkMode: boole
 
         {/* Nav Arrows */}
         <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={() => goTo(slide - 1)} disabled={slide === 0}
-          style={{ position: 'absolute', left: 20, top: '50%', transform: 'translateY(-50%)', background: 'rgba(0,0,0,0.6)', border: `1px solid ${C.borderLite}`, borderRadius: 14, width: 44, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', color: slide === 0 ? 'transparent' : C.text, zIndex: 20, cursor: slide === 0 ? 'default' : 'pointer', backdropFilter: 'blur(4px)' }}
+          style={{ position: 'absolute', left: 20, top: '50%', transform: 'translateY(-50%)', background: '#111111', border: `1px solid ${C.borderLite}`, borderRadius: 14, width: 44, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', color: slide === 0 ? 'transparent' : C.text, zIndex: 20, cursor: slide === 0 ? 'default' : 'pointer' }}
         >←</motion.button>
         <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={() => goTo(slide + 1)} disabled={slide === TOTAL_SLIDES - 1}
-          style={{ position: 'absolute', right: 20, top: '50%', transform: 'translateY(-50%)', background: 'rgba(0,0,0,0.6)', border: `1px solid ${C.borderLite}`, borderRadius: 14, width: 44, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', color: slide === TOTAL_SLIDES - 1 ? 'transparent' : C.text, zIndex: 20, cursor: slide === TOTAL_SLIDES - 1 ? 'default' : 'pointer', backdropFilter: 'blur(4px)' }}
+          style={{ position: 'absolute', right: 20, top: '50%', transform: 'translateY(-50%)', background: '#111111', border: `1px solid ${C.borderLite}`, borderRadius: 14, width: 44, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', color: slide === TOTAL_SLIDES - 1 ? 'transparent' : C.text, zIndex: 20, cursor: slide === TOTAL_SLIDES - 1 ? 'default' : 'pointer' }}
         >→</motion.button>
 
         {/* Dot Nav */}

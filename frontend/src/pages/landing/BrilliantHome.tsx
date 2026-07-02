@@ -357,7 +357,7 @@ export const BrilliantHome: React.FC = () => {
     >
       {/* ── NAV · floating pill, brilliant.org style ── */}
       <header className="sticky top-4 z-50 px-4 sm:px-6">
-        <div className="mx-auto flex h-16 max-w-5xl items-center justify-between rounded-full border border-slate-200/70 bg-white/85 px-5 shadow-[0_12px_40px_-14px_rgba(15,23,42,0.25)] backdrop-blur-md dark:border-white/10 dark:bg-[#0A0B12]/85 dark:shadow-[0_12px_40px_-14px_rgba(0,0,0,0.8)] sm:px-7">
+        <div className="mx-auto flex h-16 max-w-5xl items-center justify-between rounded-full border border-slate-200/70 bg-white px-5 shadow-[0_12px_40px_-14px_rgba(15,23,42,0.25)] dark:border-white/10 dark:bg-[#0A0B12] dark:shadow-[0_12px_40px_-14px_rgba(0,0,0,0.8)] sm:px-7">
           <Link to="/" className="active-press">
             <BrandWordmark size={26} textClassName="text-base text-slate-900 dark:text-white" />
           </Link>
@@ -388,7 +388,7 @@ export const BrilliantHome: React.FC = () => {
           </div>
         </div>
         {menuOpen && (
-          <div className="mx-auto mt-2 max-w-5xl rounded-3xl border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-20px_rgba(15,23,42,0.3)] backdrop-blur-md dark:border-white/10 dark:bg-[#0A0B12]/95 md:hidden">
+          <div className="mx-auto mt-2 max-w-5xl rounded-3xl border-2 border-edge bg-white shadow-brutal-sm dark:bg-[#0A0B12] md:hidden">
             <div className="flex flex-col gap-1 px-4 py-3 text-[15px] font-semibold text-slate-700 dark:text-slate-200">
               {navLinks.map(([label, href]) => (
                 <a key={label} href={href} onClick={() => setMenuOpen(false)} className="rounded-xl px-3 py-2.5 hover:bg-slate-100 dark:hover:bg-white/5">{label}</a>

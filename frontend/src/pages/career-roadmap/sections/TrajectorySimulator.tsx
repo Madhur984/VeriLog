@@ -151,7 +151,7 @@ export const TrajectorySimulator: React.FC<TrajectorySimulatorProps> = ({ onReco
 
       <AnimatePresence>
         {showArchetype && (
-          <div className="fixed inset-0 z-[600] flex items-center justify-center bg-black/90 backdrop-blur-md p-6">
+          <div className="fixed inset-0 z-[600] flex items-center justify-center bg-black/90 p-6">
             <SiliconPersonalityEngine 
               choices={history.map(h => h.id)} 
               onComplete={() => setShowArchetype(false)} 

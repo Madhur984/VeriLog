@@ -110,7 +110,7 @@ export const S15_CostOfBug: React.FC<{ isActive: boolean }> = ({ isActive }) => 
                         exit={{ opacity: 0, scale: 1.05, filter: 'blur(10px)' }}
                         className="flex flex-col items-center gap-10 w-full"
                     >
-                        <div className={`w-40 h-40 rounded-[50px] flex items-center justify-center backdrop-blur-xl border-2 ${current.bg} ${current.border} ${current.color} shadow-2xl`}>
+                        <div className={`w-40 h-40 rounded-[50px] flex items-center justify-center border-2 ${current.bg} ${current.border} ${current.color} shadow-2xl`}>
                             <current.icon size={80} className={stage === 'error' ? 'animate-pulse' : ''} strokeWidth={1.5} />
                         </div>
 
@@ -149,7 +149,7 @@ export const S15_CostOfBug: React.FC<{ isActive: boolean }> = ({ isActive }) => 
                 )}
             </div>
 
-            <div className="mt-8 flex items-center justify-between p-6 bg-white/[0.02] border border-white/10 rounded-3xl backdrop-blur-md">
+            <div className="mt-8 flex items-center justify-between p-6 bg-bg-elev border border-border-soft rounded-3xl shadow-neo">
                 <div className="flex items-center gap-4">
                     <Activity size={20} className={current.color} />
                     <div>

@@ -117,7 +117,7 @@ const Sidebar: React.FC<{
   const progress = ((current + 1) / PAGES.length) * 100;
 
   return (
-    <div className={`w-[280px] h-full flex-shrink-0 border-r flex flex-col z-20 ${isDarkMode ? 'bg-black/40 backdrop-blur-3xl border-white/10' : 'bg-slate-50/80 backdrop-blur-3xl border-slate-200'}`}>
+    <div className={`w-[280px] h-full flex-shrink-0 border-r flex flex-col z-20 ${isDarkMode ? 'bg-black border-white/10' : 'bg-slate-50 border-slate-200'}`}>
       <header className="p-8 border-b border-white/5 flex items-center gap-4">
           <motion.div 
             whileHover={{ rotate: 180, scale: 1.1 }}
@@ -248,7 +248,7 @@ export const ModuleFive: React.FC = () => {
                 exit={{ opacity: 0 }}
                 className="fixed inset-0 z-[100] pointer-events-none flex items-center justify-center"
               >
-                  <div className="absolute inset-0 bg-white/5 backdrop-blur-sm" />
+                  <div className="absolute inset-0 bg-white/5" />
                   <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.4)_50%),linear-gradient(90deg,rgba(255,0,0,0.1),rgba(0,255,0,0.05),rgba(0,0,255,0.1))] bg-[length:100%_4px,6px_100%] opacity-20" />
                   <div className="relative flex flex-col items-center gap-4">
                       <div className="h-px w-64 bg-plasma-cyan animate-pulse" />
@@ -281,7 +281,7 @@ export const ModuleFive: React.FC = () => {
         animate={isTransitioning ? { x: [0, -2, 2, -2, 0], scale: [1, 0.99, 1] } : {}}
         className="flex-1 flex flex-col h-full overflow-hidden relative z-10"
       >
-        <header className="h-16 border-b border-white/10 backdrop-blur-xl flex items-center justify-between px-10 z-10 bg-black/40">
+        <header className="h-16 border-b border-white/10 flex items-center justify-between px-10 z-10 bg-bg-elev">
           <div className="flex items-center gap-6">
             <motion.h2 
                 key={page.label}
@@ -337,7 +337,7 @@ export const ModuleFive: React.FC = () => {
             <div className="h-32 w-px bg-gradient-to-b from-white/5 via-plasma-cyan/20 to-transparent self-end mr-3 opacity-30" />
         </div>
 
-        <footer className="h-20 border-t border-white/10 flex flex-col justify-center px-10 z-10 bg-black/60 backdrop-blur-2xl relative overflow-hidden group">
+        <footer className="h-20 border-t border-white/10 flex flex-col justify-center px-10 z-10 bg-bg-elev relative overflow-hidden group">
           <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-plasma-cyan/20 to-transparent" />
           
           {/* Terminal Sub-line */}

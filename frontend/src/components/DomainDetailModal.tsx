@@ -34,7 +34,7 @@ export const DomainDetailModal: React.FC<DomainDetailModalProps> = ({ domain, on
       exit={{ opacity: 0 }}
       transition={{ duration: 0.2 }}
       onClick={onClose}
-      className={cn("fixed inset-0 z-[1500] flex items-end justify-center sm:items-center p-0 sm:p-6 backdrop-blur-sm", isLight ? "bg-bg-void/40" : "bg-black/60")}
+      className={cn("fixed inset-0 z-[1500] flex items-end justify-center sm:items-center p-0 sm:p-6", isLight ? "bg-bg-void/40" : "bg-black/60")}
     >
       <motion.div
         onClick={(e) => e.stopPropagation()}

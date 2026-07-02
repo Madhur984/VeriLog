@@ -63,7 +63,7 @@ export const S17_HierarchyDepth: React.FC<{ isActive: boolean }> = ({ isActive }
                         className="flex flex-col items-center gap-10 relative z-10 w-full"
                     >
                         {/* Current Hierarchy Node */}
-                        <div className="p-12 rounded-[50px] bg-white/[0.01] border border-white/10 flex flex-col items-center gap-8 shadow-2xl backdrop-blur-xl group/node min-w-[320px]">
+                        <div className="p-12 rounded-[50px] bg-bg-elev border border-border-soft flex flex-col items-center gap-8 shadow-neo group/node min-w-[320px]">
                              <div className="w-24 h-24 rounded-[35px] bg-black border border-plasma-cyan/30 flex items-center justify-center text-plasma-cyan shadow-cyan-glow relative overflow-hidden">
                                 {depth === 0 ? <Cpu size={48} strokeWidth={1.5} /> : depth === 1 ? <HardDrive size={48} strokeWidth={1.5} /> : <Binary size={48} strokeWidth={1.5} />}
                              </div>

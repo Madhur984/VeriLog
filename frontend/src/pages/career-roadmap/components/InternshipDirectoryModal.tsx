@@ -13,7 +13,7 @@ export const InternshipDirectoryModal: React.FC<InternshipDirectoryModalProps> =
   const filtered = filter === 'all' ? internships : internships.filter(i => i.category === filter);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-matte-obsidian/80 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-matte-obsidian/80">
       <motion.div 
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}

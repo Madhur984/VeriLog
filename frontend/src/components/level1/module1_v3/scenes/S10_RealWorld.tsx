@@ -31,7 +31,7 @@ export const S10_RealWorld: React.FC = () => {
                 { label: "Financial", desc: "Stock prices and market trends-signals that encode the collective intent of global trade.", icon: "📊" },
                 { label: "Silicon", desc: "The rhythmic tick of a CPU clock and the high-speed data packets of the internet.", icon: "💾" }
             ].map((d, i) => (
-                <div key={i} className="p-6 rounded-sm bg-black/60 border border-white/5 backdrop-blur-xl group hover:border-v3-cyan/40 transition-all">
+                <div key={i} className="p-6 rounded-sm bg-bg-elev border border-border-soft shadow-neo-sm group hover:border-v3-cyan/40 transition-all">
                     <div className="text-2xl mb-4 grayscale group-hover:grayscale-0 transition-all">{d.icon}</div>
                     <h4 className="micro-text text-white mb-2 font-black uppercase tracking-widest">{d.label}</h4>
                     <p className="text-[10px] leading-relaxed text-white/40 font-medium">{d.desc}</p>
@@ -39,7 +39,7 @@ export const S10_RealWorld: React.FC = () => {
             ))}
         </div>
 
-        <div className="pointer-events-auto mt-12 px-8 py-6 rounded-sm bg-v3-cyan/5 border border-v3-cyan/20 backdrop-blur-xl text-center max-w-2xl">
+        <div className="pointer-events-auto mt-12 px-8 py-6 rounded-sm bg-v3-cyan/5 border border-v3-cyan/20 shadow-neo text-center max-w-2xl">
             <h5 className="micro-text text-v3-cyan mb-2 font-black uppercase tracking-widest">Architectural Insight</h5>
             <p className="text-[11px] font-mono text-white/50 leading-relaxed">
                 "Signal Processing is the art of extracting meaning from the noise of the universe. Every waveform we've studied-Energy, Frequency, Noise-converges here. In the next phase, we build the Bridge to translate these infinite flows into the finite calculations of Verilog."

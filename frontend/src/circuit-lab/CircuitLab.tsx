@@ -381,13 +381,12 @@ export function CircuitLab({ onCircuitComplete, standalone = true }: {
                         left: 0,
                         right: 0,
                         height: 36,
-                        background: 'rgba(7,15,26,0.9)',
+                        background: '#070F1A',
                         borderBottom: '1px solid rgba(0,191,255,0.08)',
                         display: 'flex',
                         alignItems: 'center',
                         padding: '0 20px',
                         zIndex: 5,
-                        backdropFilter: 'blur(8px)',
                     }}
                 >
                     <span style={{ color: '#1a4a6a', fontSize: 9, letterSpacing: 3 }}>
@@ -424,11 +423,10 @@ export function CircuitLab({ onCircuitComplete, standalone = true }: {
                         left: '50%',
                         transform: 'translateX(-50%)',
                         zIndex: 50,
-                        background: 'rgba(239,68,68,0.1)',
+                        background: '#1F1315',
                         border: '1px solid rgba(239,68,68,0.4)',
                         borderRadius: 8,
                         padding: '10px 20px',
-                        backdropFilter: 'blur(12px)',
                         alignItems: 'center',
                         gap: 12,
                         pointerEvents: 'none',

@@ -142,7 +142,7 @@ export const SiliconCabinet: React.FC<SiliconCabinetProps> = ({ unlockedBadgeIds
               <AnimatePresence>
                 {isHovered && isUnlocked && (
                     <motion.div 
-                      className="absolute inset-0 z-20 flex items-center justify-center bg-bg-void/80 backdrop-blur-[2px]"
+                      className="absolute inset-0 z-20 flex items-center justify-center bg-bg-void/80"
                     >
                       <motion.button 
                         onClick={() => downloadBadge(svgContent, badge.id)}

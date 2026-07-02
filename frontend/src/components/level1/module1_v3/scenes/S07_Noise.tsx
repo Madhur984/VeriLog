@@ -27,7 +27,7 @@ export const S07_Noise: React.FC = () => {
         />
 
         {/* NEW: Signal-to-Noise (SNR) Deep Dive */}
-        <div className="pointer-events-auto grid grid-cols-1 md:grid-cols-2 gap-8 w-full mt-12 bg-black/40 p-6 rounded-xl border border-white/5 backdrop-blur-sm">
+        <div className="pointer-events-auto grid grid-cols-1 md:grid-cols-2 gap-8 w-full mt-12 bg-bg-elev p-6 rounded-xl border border-border-soft shadow-neo">
             <div className="space-y-4">
                 <h4 className="micro-text text-v3-cyan font-black italic tracking-widest uppercase">The Signal Floor</h4>
                 <p className="text-[10px] text-white/40 leading-relaxed">
@@ -51,11 +51,11 @@ export const S07_Noise: React.FC = () => {
 
         {/* Colors of Noise */}
         <div className="pointer-events-auto grid grid-cols-1 md:grid-cols-2 gap-4 w-full mt-8">
-            <div className="p-6 rounded-sm border border-white/5 bg-black/60 backdrop-blur-xl">
+            <div className="p-6 rounded-sm border border-border-soft bg-bg-elev shadow-neo-sm">
                 <h5 className="micro-text text-white/60 mb-2 font-black uppercase tracking-widest text-left">White Noise</h5>
                 <p className="text-[9px] text-white/30 leading-relaxed italic text-left">Equal energy across all frequencies. Sounds like static or rain.</p>
             </div>
-            <div className="p-6 rounded-sm border border-white/5 bg-black/60 backdrop-blur-xl">
+            <div className="p-6 rounded-sm border border-border-soft bg-bg-elev shadow-neo-sm">
                 <h5 className="micro-text text-[#f97316] mb-2 font-black uppercase tracking-widest text-left">Pink Noise</h5>
                 <p className="text-[9px] text-white/30 leading-relaxed italic text-left">Energy decreases as frequency increases. Sounds more natural to the human ear.</p>
             </div>

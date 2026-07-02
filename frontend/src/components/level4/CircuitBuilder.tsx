@@ -161,9 +161,9 @@ export const CircuitBuilder: React.FC<Props> = ({ onComplete, hasCompleted }) =>
                         {/* Telemetry Panel */}
                         <div style={{
                             position: 'absolute', top: 20, right: 20,
-                            padding: '16px 20px', background: 'rgba(255,255,255,0.9)',
+                            padding: '16px 20px', background: T.card,
                             border: `1px solid ${T.border}`, borderRadius: 16,
-                            backdropFilter: 'blur(12px)', pointerEvents: 'none',
+                            pointerEvents: 'none',
                             minWidth: 200, boxShadow: '0 10px 15px -3px rgba(0,0,0,0.05)'
                         }}>
                             <div style={{ fontFamily: T.mono, fontSize: 10, color: T.accent, textTransform: 'uppercase', fontWeight: 800, letterSpacing: '0.1em', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8 }}>

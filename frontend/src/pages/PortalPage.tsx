@@ -569,7 +569,7 @@ const StudyPlanModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const [plan, setPlan] = useState<any>(null);
 
   return (
-    <div className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-md flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-4">
       <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="bg-solder-mask border border-plasma-cyan/30 rounded-[2.5rem] max-w-2xl w-full p-10 overflow-y-auto max-h-[90vh] shadow-cyan-glow">
         <div className="flex justify-between items-center mb-8">
            <div className="flex items-center gap-3">
@@ -750,7 +750,7 @@ const DomainDetailModal: React.FC<{ domain: Domain; onClose: () => void; isBookm
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-8 bg-black/90 backdrop-blur-md"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-8 bg-black/90"
       onClick={onClose}
     >
       <motion.div
@@ -1117,7 +1117,7 @@ export const PortalPage: React.FC = () => {
         <div className="absolute inset-0 bg-ghost-traces opacity-20" />
       </div>
 
-      <div className="sticky top-0 z-40 bg-black/80 backdrop-blur-md border-b border-ghost-trace">
+      <div className="sticky top-0 z-40 bg-bg-elev border-b border-ghost-trace">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center gap-2">
@@ -1152,7 +1152,7 @@ export const PortalPage: React.FC = () => {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="fixed inset-x-4 top-24 bottom-24 bg-matte-obsidian/95 border border-plasma-cyan/40 rounded-3xl z-50 p-8 shadow-2xl backdrop-blur-xl overflow-hidden flex flex-col"
+              className="fixed inset-x-4 top-24 bottom-24 bg-matte-obsidian border border-plasma-cyan/40 rounded-3xl z-50 p-8 shadow-neo overflow-hidden flex flex-col"
             >
               <div className="flex justify-between items-center mb-8">
                 <h2 className="text-2xl font-bold text-plasma-cyan flex items-center gap-3"><Columns /> Comparison Matrix</h2>

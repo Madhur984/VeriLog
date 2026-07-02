@@ -1,5 +1,5 @@
 import { useEffect, lazy, Suspense } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import { TransitionProvider } from './hooks/useTransitionController';
 import { TransitionOverlay } from './components/TransitionOverlay';
 import { migrateStorage } from './utils/storageMigration';
@@ -8,12 +8,11 @@ import { ModuleGate } from './components/ModuleGate';
 import { RouteFallback } from './components/RouteFallback';
 import { AppErrorBoundary } from './components/AppErrorBoundary';
 import { loadChunk } from './utils/loadChunk';
-import { TourProvider } from './components/tour/TourProvider';
-import { TourOverlay } from './components/tour/TourOverlay';
 
 // Layout (eager - tiny, wraps every portal route)
 import { PortalLayout } from './layouts/PortalLayout';
 import { ScrollToTop } from './components/ScrollToTop';
+import { RouteTitle } from './components/RouteTitle';
 
 /**
  * Every route below is code-split via React.lazy, so the browser only downloads
@@ -55,6 +54,7 @@ const ResetPasswordPage = named(() => import('./pages/ResetPasswordPage'), 'Rese
 const VerifyEmailPage = named(() => import('./pages/VerifyEmailPage'), 'VerifyEmailPage');
 const SettingsPage = named(() => import('./pages/SettingsPage'), 'SettingsPage');
 const ProfilePage = named(() => import('./pages/ProfilePage'), 'ProfilePage');
+const NotFoundPage = named(() => import('./pages/NotFoundPage'), 'NotFoundPage');
 
 // Modules (the heaviest chunks - three.js / monaco / scene graphs live here)
 const ModuleOne = named(() => import('./pages/ModuleOne'), 'ModuleOne');
@@ -112,7 +112,7 @@ function App() {
     <TransitionProvider>
       <TransitionOverlay />
       <AppErrorBoundary>
-      <TourProvider>
+      <RouteTitle />
       <ScrollToTop />
       <Suspense fallback={<RouteFallback />}>
         <Routes>
@@ -245,12 +245,10 @@ function App() {
             <Route path="/silicon-secrets" element={<SiliconSecrets />} />
           </Route>
 
-          {/* Fallback */}
-          <Route path="*" element={<Navigate to="/" replace />} />
+          {/* Fallback — branded 404 with a clear way back (no silent redirect) */}
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </Suspense>
-      <TourOverlay />
-      </TourProvider>
       </AppErrorBoundary>
     </TransitionProvider>
   );

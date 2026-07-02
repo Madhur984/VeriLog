@@ -100,7 +100,7 @@ export const AnalogDigital: React.FC<ScreenProps> = ({
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="absolute inset-0 z-30 bg-white/95 backdrop-blur-sm flex flex-col items-center justify-center p-8 text-center rounded-2xl"
+                        className="absolute inset-0 z-30 bg-white flex flex-col items-center justify-center p-8 text-center rounded-2xl"
                     >
                         <BrainCircuit className="text-indigo-500 w-10 h-10 mb-4 animate-pulse" />
                         <h3 className="text-xs font-mono uppercase tracking-[0.3em] mb-2 text-slate-800 font-bold">Sampling Prediction</h3>

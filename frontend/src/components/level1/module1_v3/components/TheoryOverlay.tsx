@@ -96,7 +96,7 @@ export const TheoryOverlay: React.FC = () => {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.35 }}
           className="fixed inset-0 z-[200] overflow-y-auto pointer-events-auto"
-          style={{ background: 'rgba(14,17,22,0.97)', backdropFilter: 'blur(16px)' }}
+          style={{ background: 'var(--bg-base)' }}
         >
           <div className="max-w-3xl mx-auto px-8 py-20 md:px-16 md:py-24">
 

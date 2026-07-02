@@ -199,17 +199,14 @@ export default function LandingPageContainer() {
       {/* Embedded Global Stylesheet Utilities for Elite Layout Components */}
       <style>{`
         .liquid-glass {
-          background: rgba(255, 255, 255, 0.01);
-          background-blend-mode: luminosity;
-          backdrop-filter: blur(24px);
-          -webkit-backdrop-filter: blur(24px);
+          background: var(--bg-elev);
           border: none;
           box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.08);
           position: relative;
           overflow: hidden;
         }
         .light .liquid-glass {
-          background: rgba(0, 0, 0, 0.01);
+          background: #FFFFFF;
           box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
         }
         .liquid-glass::before {
@@ -287,7 +284,7 @@ export default function LandingPageContainer() {
       <div className="absolute inset-0 micro-grid pointer-events-none z-0" />
 
       {/* STICKY TOP NAVIGATION BAR */}
-      <nav className="fixed top-0 left-0 w-full z-50 bg-white/80 dark:bg-[#03050a]/80 backdrop-blur-md border-b border-slate-200/60 dark:border-slate-900/60 px-6 py-4" role="navigation" aria-label="Main navigation">
+      <nav className="fixed top-0 left-0 w-full z-50 bg-bg-base border-b-2 border-edge px-6 py-4" role="navigation" aria-label="Main navigation">
         <div className="max-w-7xl mx-auto w-full flex items-center justify-between">
           <Link to="/" className="active-press">
             <BrandWordmark size={26} textClassName="text-base text-slate-900 dark:text-white" />

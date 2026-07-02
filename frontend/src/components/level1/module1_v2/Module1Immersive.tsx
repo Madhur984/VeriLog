@@ -105,7 +105,7 @@ export const Module1Immersive: React.FC = () => {
                                             initial={{ scale: 0, opacity: 0 }}
                                             animate={{ scale: [0, 4, 0], opacity: [0, 1, 0] }}
                                             transition={{ delay: 1.1, duration: 0.4 }}
-                                            className="fixed inset-0 bg-[#00FF41]/20 backdrop-blur-3xl"
+                                            className="fixed inset-0 bg-[#00FF41]/20"
                                         />
                                     </motion.div>
                                 )}

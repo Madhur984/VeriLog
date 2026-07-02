@@ -126,7 +126,7 @@ export const S06_FirstVerilog: React.FC<{ isActive: boolean }> = ({ isActive }) 
                 </AnimatePresence>
             </div>
 
-            <div className="mt-auto flex items-center justify-between p-8 bg-white/[0.02] border border-white/10 rounded-[40px] backdrop-blur-md">
+            <div className="mt-auto flex items-center justify-between p-8 bg-bg-elev border border-border-soft rounded-[40px] shadow-neo">
                 <div className="flex items-center gap-6">
                     <div className="w-12 h-12 rounded-[15px] border border-plasma-cyan/30 flex items-center justify-center text-plasma-cyan shadow-xl">
                         <Boxes size={22} />

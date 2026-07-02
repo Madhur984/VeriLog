@@ -44,7 +44,7 @@ export const S04_PathOfJoy: React.FC<Props> = ({ isActive, isDarkMode }) => {
           initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
           className="rounded-3xl overflow-hidden border border-white/10" style={{ background: '#fef9f0' }}
         >
-          <img src="/images/sketchbook/p04.webp" alt="Path of Joy - selecting the happy rows" className="w-full block" />
+          <img loading="lazy" decoding="async" src="/images/sketchbook/p04.webp" alt="Path of Joy - selecting the happy rows" className="w-full block" />
           <div className="px-4 py-2 text-[10px] font-mono uppercase tracking-widest text-slate-700 bg-white/60">
             Sketchbook · selecting m0, m1, m2, m4
           </div>
@@ -53,7 +53,7 @@ export const S04_PathOfJoy: React.FC<Props> = ({ isActive, isDarkMode }) => {
           initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
           className="rounded-3xl overflow-hidden border border-white/10" style={{ background: '#fef9f0' }}
         >
-          <img src="/images/sketchbook/p05.webp" alt="Anatomy of a minterm - puzzle metaphor" className="w-full block" />
+          <img loading="lazy" decoding="async" src="/images/sketchbook/p05.webp" alt="Anatomy of a minterm - puzzle metaphor" className="w-full block" />
           <div className="px-4 py-2 text-[10px] font-mono uppercase tracking-widest text-slate-700 bg-white/60">
             Sketchbook · the puzzle / snapshot rule
           </div>

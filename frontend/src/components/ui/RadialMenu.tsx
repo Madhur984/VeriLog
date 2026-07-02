@@ -91,7 +91,7 @@ const RadialSegment: React.FC<SegmentProps> = ({ label, icon, startAngle, endAng
       <motion.g style={{ pointerEvents: 'none' }}>
         <foreignObject x={iconPos.x - 45} y={iconPos.y - 35} width={90} height={75}>
           <div className="w-full h-full flex flex-col items-center justify-center gap-1.5 pt-1">
-            <div className={cn("w-10 h-10 rounded-xl border flex items-center justify-center transition-colors duration-300 relative overflow-hidden backdrop-blur-md",
+            <div className={cn("w-10 h-10 rounded-xl border flex items-center justify-center transition-colors duration-300 relative overflow-hidden",
               isActive
                 ? (isLight ? "bg-[#0369A1]/25 border-[#0369A1] text-[#0369A1] shadow-[0_0_15px_rgba(3,105,161,0.45)]" : "bg-blue-500/20 border-blue-400/50 shadow-[0_0_15px_rgba(59,130,246,0.5)] text-blue-300")
                 : isHovered
@@ -101,7 +101,7 @@ const RadialSegment: React.FC<SegmentProps> = ({ label, icon, startAngle, endAng
               <div className="absolute top-0 inset-x-0 h-1/2 bg-gradient-to-b from-white/10 to-transparent pointer-events-none" />
               {icon}
             </div>
-            <div className={cn("px-2 py-0.5 rounded-full border backdrop-blur-md transition-colors font-black tracking-widest uppercase font-mono shadow-xl",
+            <div className={cn("px-2 py-0.5 rounded-full border transition-colors font-black tracking-widest uppercase font-mono shadow-xl",
               isLight ? "text-[11px] border-[#0369A1]/40" : "text-[9px] border-white/5",
               isActive
                 ? (isLight ? "bg-[#0369A1]/20 text-[#0C4A6E] border-[#0369A1]/70 shadow-[0_0_10px_rgba(3,105,161,0.35)]" : "bg-blue-900/90 text-blue-300 shadow-[0_0_10px_rgba(59,130,246,0.3)]")

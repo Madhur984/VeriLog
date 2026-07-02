@@ -97,7 +97,7 @@ export const S14_FPGAvsASIC: React.FC<{ isActive: boolean }> = ({ isActive }) =>
                     </motion.div>
                 </AnimatePresence>
 
-                <div className={`p-8 rounded-[40px] bg-white/[0.02] border border-white/10 flex items-center justify-between backdrop-blur-md`}>
+                <div className={`p-8 rounded-[40px] bg-bg-elev border border-border-soft flex items-center justify-between shadow-neo`}>
                     <div className="flex items-center gap-6">
                         <div className={`w-16 h-16 rounded-[25px] flex items-center justify-center ${isAsic ? 'bg-burnished-copper/20 text-burnished-copper' : 'bg-plasma-cyan/20 text-plasma-cyan shadowed-glow'}`}>
                              {isAsic ? <ShieldAlert size={32} /> : <Activity size={32} />}
