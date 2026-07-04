@@ -343,30 +343,8 @@ export const AuthWorkstation: React.FC = () => {
     mode === 'SIGN_IN' ? 'Sign in' : mode === 'REGISTER' ? 'Sign up' : 'Send reset link';
 
   return (
-    <div className="auth-workstation-root relative w-full min-h-[100svh] bg-white text-slate-900 antialiased font-sans overflow-hidden dark:bg-[#0A0B12] dark:text-white selection:bg-[#F97316]/20">
-      {/* Soft ambience */}
-      <div className="pointer-events-none absolute -left-40 -top-32 h-[55vh] w-[55vh] rounded-full bg-[#F97316]/[0.06] blur-[130px] dark:bg-[#F97316]/10" />
-      <div className="pointer-events-none absolute -right-28 -bottom-24 h-[45vh] w-[45vh] rounded-full bg-[#6E7BFF]/[0.06] blur-[130px] dark:bg-[#4A57FF]/10" />
-
-      {/* Dotted texture — fades away behind the form so the centre stays clean */}
-      <div
-        className="pointer-events-none absolute inset-0 z-0 dark:hidden"
-        style={{
-          backgroundImage: 'radial-gradient(circle, rgba(15,23,42,0.07) 1px, transparent 1px)',
-          backgroundSize: '24px 24px',
-          WebkitMaskImage: 'radial-gradient(ellipse 60% 60% at center, transparent 35%, black 85%)',
-          maskImage: 'radial-gradient(ellipse 60% 60% at center, transparent 35%, black 85%)',
-        }}
-      />
-      <div
-        className="pointer-events-none absolute inset-0 z-0 hidden dark:block"
-        style={{
-          backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px)',
-          backgroundSize: '24px 24px',
-          WebkitMaskImage: 'radial-gradient(ellipse 60% 60% at center, transparent 35%, black 85%)',
-          maskImage: 'radial-gradient(ellipse 60% 60% at center, transparent 35%, black 85%)',
-        }}
-      />
+    <div className="auth-workstation-root relative w-full min-h-[100svh] bg-[#ECE8FB] text-slate-900 antialiased font-sans overflow-hidden dark:bg-[#0A0B12] dark:text-white selection:bg-[#F97316]/20">
+      {/* Ambience glow blobs + dotted texture removed — clean flat surface. */}
 
       {/* Theme toggle */}
       <div className="absolute top-4 right-4 z-20">
@@ -386,7 +364,6 @@ export const AuthWorkstation: React.FC = () => {
               >
                 {/* Logo + headline */}
                 <a href="/" className="relative mx-auto mb-6 block w-fit">
-                  <span className="pointer-events-none absolute inset-0 -z-10 animate-pulse rounded-full bg-[#4A57FF]/25 blur-xl" />
                   <BrandMark size={54} />
                 </a>
                 <h1 className="text-center text-[27px] font-extrabold leading-tight tracking-tight">

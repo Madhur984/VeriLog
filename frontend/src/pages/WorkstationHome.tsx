@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useGamificationStore } from '../stores/gamificationStore';
@@ -6,204 +6,174 @@ import { CommandPalette } from '../components/ui/CommandPalette';
 import { RadialMenu } from '../components/ui/RadialMenu';
 import { useColorScheme } from '../hooks/useColorScheme';
 import { ThemeToggle } from '../components/ThemeToggle';
-
-import { DiagnosticConsole } from '../components/ui/DiagnosticConsole';
-import { HierarchicalGrindTree } from '../components/ui/HierarchicalGrindTree';
+import { BrandMark } from '../components/Brand';
 import { getSession } from '../lib/auth';
-import { getModuleHistory, getLastModule } from '../lib/moduleHistory';
-import { BookOpen, ArrowRight } from 'lucide-react';
+import { getModuleHistory, getLastModule, MODULE_LABELS } from '../lib/moduleHistory';
+import {
+  Play, ArrowRight, ArrowUpRight, ChevronDown, Check, Command, Settings,
+  Wrench, Grid3x3, Cpu, Compass, Library, Map, BookOpen,
+  Binary, Zap, Boxes, type LucideIcon,
+} from 'lucide-react';
 
-// ─── PCB ISOMETRIC BACKGROUND ──────────────────────────────────────────────────
-// ─── PCB ISOMETRIC BACKGROUND ──────────────────────────────────────────────────
+/* ── Background: single-tone grid + slow "electric current" sweeps (GPU transform) ── */
 const PCBBackground: React.FC<{ isLight: boolean }> = ({ isLight }) => {
-  const [mouse, setMouse] = useState({ x: 0, y: 0 });
-  
+  const line = isLight ? '122,63,208' : '167,139,250';
   return (
-    <div 
-      className="absolute inset-0 overflow-hidden pointer-events-none"
-      onMouseMove={(e) => setMouse({ x: e.clientX, y: e.clientY })}
-    >
-      {/* Base darkfield */}
+    <div className="absolute inset-0 pointer-events-none overflow-hidden">
       <div
         className="absolute inset-0"
         style={{
-          background: isLight
-            ? 'radial-gradient(ellipse 120% 100% at 50% 0%, #FFFFFF 0%, #F3F5F8 80%)'
-            : 'radial-gradient(ellipse 120% 100% at 50% 0%, #0d1526 0%, #06090f 80%)'
+          backgroundImage:
+            `linear-gradient(rgba(${line},${isLight ? 0.06 : 0.05}) 1px, transparent 1px),` +
+            `linear-gradient(90deg, rgba(${line},${isLight ? 0.06 : 0.05}) 1px, transparent 1px)`,
+          backgroundSize: '34px 34px',
         }}
       />
-
-      {/* Kinetic Glow Follower */}
-      <div 
-        className="absolute w-[600px] h-[600px] rounded-full pointer-events-none opacity-20"
-        style={{
-          background: isLight
-            ? 'radial-gradient(circle, rgba(2, 132, 199, 0.22) 0%, transparent 70%)'
-            : 'radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%)',
-          left: mouse.x - 300,
-          top: mouse.y - 300,
-          filter: 'blur(40px)',
-          transition: 'left 0.1s ease-out, top 0.1s ease-out',
-        }}
-      />
-
-      {/* Fine grid */}
-      <div
-        className="absolute inset-0"
-        style={{
-          backgroundImage: isLight ? `
-            linear-gradient(rgba(15, 23, 42, 0.08) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(15, 23, 42, 0.08) 1px, transparent 1px),
-            linear-gradient(rgba(15, 23, 42, 0.04) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(15, 23, 42, 0.04) 1px, transparent 1px)
-          ` : `
-            linear-gradient(rgba(59, 130, 246, 0.05) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(59, 130, 246, 0.05) 1px, transparent 1px),
-            linear-gradient(rgba(59, 130, 246, 0.02) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(59, 130, 246, 0.02) 1px, transparent 1px)
-          `,
-          backgroundSize: '80px 80px, 80px 80px, 16px 16px, 16px 16px',
-        }}
-      />
-
-      {/* Gold circuit trace decoration */}
-      <svg className={`absolute inset-0 w-full h-full ${isLight ? 'opacity-[0.16]' : 'opacity-[0.07]'}`} xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <pattern id="gold-trace" x="0" y="0" width="200" height="200" patternUnits="userSpaceOnUse">
-            {/* Gold horizontal traces */}
-            <path d="M0,100 L60,100 L60,60 L100,60 L100,0" stroke={isLight ? "#0369A1" : "#3b82f6"} strokeWidth={isLight ? 1.75 : 1.5} fill="none" opacity={isLight ? 0.5 : 0.3} />
-            <path d="M200,100 L140,100 L140,140 L100,140 L100,200" stroke={isLight ? "#0369A1" : "#3b82f6"} strokeWidth={isLight ? 1.75 : 1.5} fill="none" opacity={isLight ? 0.5 : 0.3} />
-            {/* Indigo/Orange traces */}
-            <path d="M0,50 L30,50 L30,100 L80,100" stroke={isLight ? "#C2410C" : "#00D4FF"} strokeWidth={isLight ? 1.5 : 1} fill="none" opacity={isLight ? 0.45 : 0.2} />
-            <path d="M200,150 L170,150 L170,100 L120,100" stroke={isLight ? "#C2410C" : "#fb923c"} strokeWidth={isLight ? 1.5 : 1} fill="none" opacity={isLight ? 0.45 : 0.2} />
-            {/* Solder pads */}
-            <circle cx="60" cy="100" r="4" fill="none" stroke={isLight ? "#0369A1" : "#3b82f6"} strokeWidth={isLight ? 1.75 : 1.5} />
-            <circle cx="140" cy="100" r="4" fill="none" stroke={isLight ? "#0369A1" : "#3b82f6"} strokeWidth={isLight ? 1.75 : 1.5} />
-            <rect x="96" y="56" width="8" height="8" fill="none" stroke={isLight ? "#C2410C" : "#00D4FF"} strokeWidth={isLight ? 1.5 : 1} />
-            <rect x="96" y="136" width="8" height="8" fill="none" stroke={isLight ? "#C2410C" : "#fb923c"} strokeWidth={isLight ? 1.5 : 1} />
-          </pattern>
-        </defs>
-        <rect width="100%" height="100%" fill="url(#gold-trace)" />
-      </svg>
-
-      {/* Moving data packets */}
-      {Array.from({ length: 8 }).map((_, i) => (
-        <motion.div
-          key={i}
-          className="absolute"
-          style={{
-            width: 4,
-            height: 4,
-            borderRadius: '50%',
-            background: isLight
-              ? ['#0369A1', '#C2410C', '#047857', '#B45309', '#BE185D', '#0369A1', '#047857', '#0E7490'][i]
-              : ['#22d3ee', '#fb923c', '#34d399', '#fbbf24', '#fb7185', '#60a5fa', '#4ade80', '#f472b6'][i],
-            boxShadow: `0 0 6px ${
-              isLight
-                ? ['#0369A1', '#C2410C', '#047857', '#B45309', '#BE185D', '#0369A1', '#047857', '#0E7490'][i]
-                : ['#22d3ee', '#fb923c', '#34d399', '#fbbf24', '#fb7185', '#60a5fa', '#4ade80', '#f472b6'][i]
-            }`,
-            top: `${10 + i * 11}%`,
-          }}
-          animate={{
-            x: ['-2vw', '102vw'],
-            opacity: isLight ? [0, 0.6, 0.6, 0] : [0, 1, 1, 0],
-          }}
-          transition={{
-            duration: 6 + i * 1.5,
-            repeat: Infinity,
-            delay: i * 1.2,
-            ease: 'linear',
-          }}
-        />
-      ))}
+      <div className="absolute left-0 right-0 top-0 h-[2px] will-change-transform"
+        style={{ background: `linear-gradient(90deg, transparent, rgba(${line},${isLight ? 0.4 : 0.5}), transparent)`, animation: 'grid-current-y 8s linear infinite' }} />
+      <div className="absolute top-0 bottom-0 left-0 w-[2px] will-change-transform"
+        style={{ background: `linear-gradient(180deg, transparent, rgba(${line},${isLight ? 0.3 : 0.4}), transparent)`, animation: 'grid-current-x 11s linear infinite 1.2s' }} />
     </div>
   );
 };
 
-// ─── PROFILE TILE ──────────────────────────────────────────────────────────────
-// ─── PROFILE CARD ──────────────────────────────────────────────────────────────
-const ProfileCard: React.FC<{
-  name: string;
-  isLight: boolean;
-  onOpen: () => void;
-}> = ({ name, isLight, onOpen }) => {
-  // Real data only — account type + actual module activity.
-  const session = getSession();
-  const history = getModuleHistory();
-  const last = getLastModule();
-  const accountType = session.kind === 'guest' ? 'Guest learner' : 'Signed in';
+/* ── Square-wave rule — the page's signature divider ── */
+const WAVE_PATH = (() => {
+  let d = 'M0 9';
+  for (let x = 0; x < 1200; x += 24) d += ` H${x + 12} V1 H${x + 24} V9`;
+  return d;
+})();
+const SquareWave: React.FC<{ stroke: string }> = ({ stroke }) => (
+  <svg className="h-[10px] w-full" viewBox="0 0 1200 10" preserveAspectRatio="none" aria-hidden>
+    <path d={WAVE_PATH} fill="none" stroke={stroke} strokeWidth="1" opacity="0.55" vectorEffect="non-scaling-stroke" />
+  </svg>
+);
+
+/* ── Learning paths (canonical: lib/moduleHistory MODULE_LABELS) ── */
+interface PathDef { key: string; title: string; tagline: string; prefix: string; color: string; icon: LucideIcon; }
+const PATHS: PathDef[] = [
+  { key: 'foundation', title: 'Digital Logic & Verilog', tagline: 'Signals, gates, K-maps and Verilog — the foundation.', prefix: 'module/', color: '#2563EB', icon: Binary },
+  { key: 'be', title: 'Basic Electronics', tagline: 'From the physics of control to transistors.', prefix: 'basic-electronics/', color: '#EA580C', icon: Zap },
+  { key: 'dsd', title: 'Digital System Design', tagline: 'Boolean logic through adders, subtractors and beyond.', prefix: 'dsd/', color: '#9333EA', icon: Boxes },
+];
+
+interface ModItem { id: string; label: string; path: string; }
+const modulesFor = (prefix: string): ModItem[] =>
+  Object.keys(MODULE_LABELS)
+    .filter((k) => k.startsWith(prefix))
+    .sort((a, b) => (parseInt(a.split('/')[1], 10) || 0) - (parseInt(b.split('/')[1], 10) || 0))
+    .map((k) => ({ id: k, label: MODULE_LABELS[k], path: `/${k}` }));
+
+const TOTAL_MODULES = Object.keys(MODULE_LABELS).length;
+
+/* ── One path lane: giant numeral + signal tick-strip + expandable module chips ── */
+const PathLane: React.FC<{
+  path: PathDef; index: number; opened: Set<string>; lastId: string | null;
+  dim: string; faint: string; hairline: string; baseStroke: string;
+  onGo: (to: string) => void;
+}> = ({ path, index, opened, lastId, dim, faint, hairline, baseStroke, onGo }) => {
+  const [expand, setExpand] = useState(false);
+  const modules = modulesFor(path.prefix);
+  const openedCount = modules.filter((m) => opened.has(m.id)).length;
+  const pct = modules.length ? Math.round((openedCount / modules.length) * 100) : 0;
+  const started = openedCount > 0;
+  const resume = lastId ? modules.find((m) => m.id === lastId) : undefined;
+  // A started lane earns its numeral in the path's own colour — a quiet reward.
+  const numeralStroke = started ? `${path.color}59` : baseStroke;
 
   return (
-    <motion.div
-      data-tour="portal-profile"
-      onClick={onOpen}
-      whileHover={{ y: -2 }}
-      title="Open your profile"
-      role="button"
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ delay: 1.2, duration: 0.6 }}
-      className="fixed top-8 right-8 z-50 w-64 space-y-3.5 rounded-2xl p-4 cursor-pointer transition-all duration-300"
-      style={{
-        background: isLight ? '#FFFFFF' : 'var(--bg-elev)',
-        border: isLight ? '1px solid #E2E8F0' : '1px solid rgba(59,130,246,0.18)',
-        boxShadow: isLight ? '0 12px 30px rgba(15,23,42,0.10)' : '0 20px 50px rgba(0,0,0,0.7)',
-      }}
+    <div
+      className="px-5 py-6 transition-colors hover:bg-[var(--lane)] sm:px-7"
+      style={{ '--lane': `${path.color}0D` } as React.CSSProperties}
     >
-      {/* Identity — clean, no banner */}
-      <div className="flex items-center gap-3">
-        <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl text-base font-black text-white"
-          style={{ background: 'linear-gradient(135deg, #2563eb, #4F46E5)' }}>
-          {name.charAt(0).toUpperCase()}
-        </div>
-        <div className="min-w-0">
-          <div className={`truncate text-[15px] font-bold ${isLight ? 'text-slate-900' : 'text-white'}`}>{name}</div>
-          <div className="flex items-center gap-1.5">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-            <span className={`text-[12px] ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>{accountType}</span>
+      <div className="flex items-start gap-5">
+        <span
+          aria-hidden
+          className="hidden w-[104px] flex-shrink-0 select-none text-right text-[84px] font-extrabold leading-[0.8] tracking-tight lg:block"
+          style={{ WebkitTextStroke: `2px ${numeralStroke}`, color: 'transparent' }}
+        >
+          {String(index + 1).padStart(2, '0')}
+        </span>
+
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+            <span className="flex h-9 w-9 items-center justify-center rounded-md" style={{ background: `${path.color}1F`, color: path.color }}>
+              <path.icon size={18} />
+            </span>
+            <h3 className="text-[17px] font-bold leading-tight">{path.title}</h3>
+            <span className="ml-auto font-mono text-[11px] font-semibold uppercase tracking-[0.14em]" style={{ color: faint }}>
+              {openedCount} / {modules.length}
+            </span>
           </div>
+          <p className="mt-1.5 text-[13.5px] leading-snug" style={{ color: dim }}>{path.tagline}</p>
+
+          {/* Signal tick-strip — one tick per module */}
+          <div className="mt-4 flex items-center gap-3">
+            <div className="flex h-[9px] flex-1 gap-[3px]">
+              {modules.map((m) => (
+                <span
+                  key={m.id}
+                  title={m.label}
+                  className={`flex-1 rounded-[2px] ${m.id === lastId ? 'animate-pulse' : ''}`}
+                  style={{ background: opened.has(m.id) ? path.color : `${path.color}2E` }}
+                />
+              ))}
+            </div>
+            <span className="w-10 text-right font-mono text-[11px] font-bold tabular-nums" style={{ color: path.color }}>{pct}%</span>
+          </div>
+
+          <div className="mt-4 flex flex-wrap items-center gap-2">
+            <button
+              onClick={() => onGo(resume ? resume.path : (modules[0]?.path ?? '/portal'))}
+              className="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-[13px] font-bold text-white transition-transform hover:-translate-y-0.5"
+              style={{ background: path.color }}
+            >
+              <Play size={13} /> {started ? 'Continue' : 'Start'} <ArrowRight size={13} />
+            </button>
+            <button
+              onClick={() => setExpand((e) => !e)}
+              aria-expanded={expand}
+              className="inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-[13px] font-semibold transition-opacity hover:opacity-70"
+              style={{ color: dim }}
+            >
+              {expand ? 'Hide modules' : 'All modules'}
+              <ChevronDown size={15} className={`transition-transform ${expand ? 'rotate-180' : ''}`} />
+            </button>
+          </div>
+
+          {expand && (
+            <div className="mt-3 grid grid-cols-1 gap-1.5 sm:grid-cols-2">
+              {modules.map((m, i) => (
+                <button
+                  key={m.id}
+                  onClick={() => onGo(m.path)}
+                  className="group flex items-center gap-2.5 rounded-md border px-3 py-2 text-left transition-transform hover:-translate-y-0.5"
+                  style={{ borderColor: hairline }}
+                >
+                  <span className="w-6 flex-shrink-0 font-mono text-[11px] font-bold tabular-nums" style={{ color: path.color }}>
+                    {String(i + 1).padStart(2, '0')}
+                  </span>
+                  <span className="flex-1 truncate text-[13px] font-medium">{m.label}</span>
+                  {opened.has(m.id) && <Check size={14} className="flex-shrink-0 text-emerald-500" />}
+                  <ArrowRight size={13} className="flex-shrink-0 opacity-0 transition-opacity group-hover:opacity-100" style={{ color: dim }} />
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       </div>
-
-      {/* Modules opened */}
-      <div className="flex items-center justify-between border-t pt-3" style={{ borderColor: isLight ? '#EEF1F5' : 'rgba(255,255,255,0.06)' }}>
-        <span className={`flex items-center gap-1.5 text-[13px] font-medium ${isLight ? 'text-slate-600' : 'text-slate-300'}`}>
-          <BookOpen size={14} /> Modules opened
-        </span>
-        <span className={`text-[15px] font-extrabold tabular-nums ${isLight ? 'text-slate-900' : 'text-white'}`}>{history.length}</span>
-      </div>
-
-      {/* Continue */}
-      {last && (
-        <div>
-          <div className={`text-[10px] font-bold uppercase tracking-widest ${isLight ? 'text-slate-400' : 'text-slate-500'}`}>Continue</div>
-          <div className={`mt-0.5 truncate text-[13px] font-semibold ${isLight ? 'text-slate-800' : 'text-slate-200'}`}>{last.label}</div>
-        </div>
-      )}
-
-      {/* Footer */}
-      <div className="flex items-center justify-between border-t pt-3" style={{ borderColor: isLight ? '#EEF1F5' : 'rgba(255,255,255,0.06)' }}>
-        <div onClick={(e) => e.stopPropagation()}>
-          <ThemeToggle variant="minimal" />
-        </div>
-        <span className={`inline-flex items-center gap-1 text-[12px] font-bold ${isLight ? 'text-blue-700' : 'text-blue-400'}`}>
-          View profile <ArrowRight size={13} />
-        </span>
-      </div>
-    </motion.div>
+    </div>
   );
 };
 
-// ─── MAIN ──────────────────────────────────────────────────────────────────────
+/* ── MAIN — the workstation desk ────────────────────────────────────────────────── */
 export const WorkstationHome: React.FC = () => {
   const navigate = useNavigate();
   const [scheme] = useColorScheme();
   const isLight = scheme === 'light';
-  
+
   const { firstName, checkStreak } = useGamificationStore();
   const [cmdOpen, setCmdOpen] = useState(false);
-  const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => { checkStreak(); }, [checkStreak]);
   useEffect(() => {
@@ -215,117 +185,283 @@ export const WorkstationHome: React.FC = () => {
   }, []);
 
   const name = firstName ?? getSession().displayName ?? 'Learner';
+  const history = getModuleHistory();
+  const last = getLastModule();
+  const opened = new Set(history.map((h) => h.id));
+
+  // Resume ticket data — the last-opened module, its path, and what follows it.
+  const lastPrefix = last ? `${last.id.split('/')[0]}/` : null;
+  const lastPath = lastPrefix ? PATHS.find((p) => p.prefix === lastPrefix) : undefined;
+  const lastPathModules = lastPrefix ? modulesFor(lastPrefix) : [];
+  const lastIdx = last ? lastPathModules.findIndex((m) => m.id === last.id) : -1;
+  const upNext = lastIdx >= 0 ? lastPathModules[lastIdx + 1] : undefined;
+  const inPathOpened = lastPathModules.filter((m) => opened.has(m.id)).length;
+  const inPathPct = lastPathModules.length ? Math.round((inPathOpened / lastPathModules.length) * 100) : 0;
+
+  const ticket = last && lastPath
+    ? { color: lastPath.color, pathTitle: lastPath.title, module: last.label, to: last.path, pct: inPathPct, tag: 'Resume' }
+    : { color: '#7A3FD0', pathTitle: PATHS[0].title, module: MODULE_LABELS['module/1'], to: '/module/1', pct: 0, tag: 'Start here' };
+
+  const hour = new Date().getHours();
+  const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+  const dp = new Date().toDateString().split(' '); // ["Fri","Jul","04","2026"]
+  const dateLine = `${dp[0]} · ${dp[2]} ${dp[1]}`.toUpperCase();
+
+  /* pinned-board surfaces */
+  const panel: React.CSSProperties = {
+    background: isLight ? '#ECE8FB' : '#0A0F18',
+    border: isLight ? '2px solid #1B1436' : '1px solid rgba(148,163,184,0.14)',
+    boxShadow: isLight ? '5px 5px 0 0 #1B1436' : '0 18px 44px rgba(0,0,0,0.55)',
+    borderRadius: 8,
+  };
+  const chip: React.CSSProperties = { ...panel, boxShadow: isLight ? '3px 3px 0 0 #1B1436' : 'none' };
+  const dim = isLight ? '#4A3F63' : '#94A3B8';
+  const faint = isLight ? '#6B5E86' : '#64748B';
+  const hairline = isLight ? '#C9BEEA' : 'rgba(255,255,255,0.08)';
+  const baseStroke = isLight ? 'rgba(27,20,54,0.26)' : 'rgba(255,255,255,0.14)';
+
+  const BENCH = [
+    { label: 'Workbench', icon: Wrench, to: '/workbench' },
+    { label: 'K-Map Lab', icon: Grid3x3, to: '/kmap-lab' },
+    { label: 'Verilog Judge', icon: Cpu, to: '/verilog-playground' },
+  ];
+  const LIBRARY = [
+    { label: 'Analogy Library', icon: BookOpen, to: '/analogies' },
+    { label: 'Verilog Library', icon: Library, to: '/verilog-library' },
+    { label: 'Silicon Map', icon: Map, to: '/silicon-map' },
+    { label: 'Career Roadmap', icon: Compass, to: '/career-roadmap' },
+  ];
 
   return (
-    <div 
-      className="min-h-[100svh] lg:h-screen flex overflow-x-hidden overflow-y-auto lg:overflow-hidden font-sans transition-colors duration-300" 
-      style={{
-        backgroundColor: isLight ? '#F7F8FA' : '#04060A',
-        color: isLight ? 'var(--text-main)' : '#E2E8F0'
-      }}
+    <div
+      className="relative min-h-[100svh] w-full overflow-x-hidden font-sans transition-colors duration-300"
+      style={{ backgroundColor: isLight ? '#ECE8FB' : '#04060A', color: isLight ? 'var(--text-main)' : '#E2E8F0' }}
     >
-      {/* PCB substrate background with moving data packets */}
       <PCBBackground isLight={isLight} />
 
-      {/* Left radial nav - desktop only (the 360px dial is too large for phones) */}
-      <div className="hidden lg:block">
+      {/* Cyclic hologram — untouched, fixed bottom-left. */}
+      <div className="hidden xl:block">
         <RadialMenu />
       </div>
 
-      {/* Profile card - top right, desktop only */}
-      <div className="hidden lg:block">
-        <ProfileCard
-          name={name}
-          isLight={isLight}
-          onOpen={() => navigate('/profile')}
-        />
-      </div>
-
-      {/* Main scrollable canvas */}
-      <main
-        ref={scrollRef}
-        className="flex-1 min-w-0 max-w-full px-3 lg:pl-[76px] lg:pr-[280px] min-h-[100svh] lg:h-screen flex flex-col relative z-10 overflow-x-hidden overflow-y-visible lg:overflow-hidden"
-        style={{ color: isLight ? 'var(--text-main)' : '#E2E8F0' }}
-      >
-        <div className="flex-1 w-full flex flex-col items-start overflow-visible lg:overflow-hidden">
-          {/* ─ Top spacing ─ */}
-          <div className="flex-shrink-0 h-4 lg:h-6" />
-
-          {/* ─ Main platform with tree + console ─ */}
-          <div
-            className="flex-1 w-full flex flex-col lg:flex-row gap-6 lg:gap-20 justify-start items-stretch px-0 lg:px-6 overflow-visible lg:overflow-hidden pb-8 lg:pb-0"
-            style={{ maxWidth: 1400 }}
-          >
-            {/* Diagnostic console - desktop only (decorative telemetry; phone shows the tree full-screen) */}
-            <div className="hidden lg:flex w-auto flex-shrink-0 flex-col gap-6" style={{ marginLeft: 0 }}>
-              <DiagnosticConsole onCommandPaletteOpen={() => setCmdOpen(true)} />
-            </div>
-
-            {/* Holographic skill tree - center/right */}
-            <div
-              data-tour="portal-tree"
-              className="w-full flex-1 min-h-[68vh] lg:min-h-0 lg:h-full relative rounded-3xl flex flex-col overflow-hidden transition-all duration-300"
-              style={{
-                background: isLight
-                  ? 'linear-gradient(160deg, #FFFFFF 0%, #FFFFFF 100%)'
-                  : 'linear-gradient(160deg, rgba(4, 5, 9, 0.97) 0%, rgba(2, 3, 6, 1) 100%)',
-                border: isLight ? '1px solid #94A3B8' : '1px solid rgba(59, 130, 246, 0.1)',
-                boxShadow: isLight
-                  ? '0 12px 40px rgba(15, 23, 42, 0.12), 0 0 0 1px rgba(15, 23, 42, 0.10)'
-                  : [
-                      '0 40px 100px rgba(0,0,0,0.95)',
-                      '0 0 0 1px rgba(59, 130, 246, 0.05)',
-                      'inset 0 1px 1px rgba(255,255,255,0.02)',
-                    ].join(', '),
-              }}
-            >
-              <div className="w-full h-full overflow-hidden px-2 pt-3 sm:px-4 lg:px-10 lg:pt-10">
-                {/* Corner LED indicators */}
-                {[
-                  ['top-3 left-3', '#22d3ee', '#0E7490'],
-                  ['top-3 right-3', '#f97316', '#C2410C'],
-                  ['bottom-3 left-3', '#34d399', '#047857'],
-                  ['bottom-3 right-3', '#fbbf24', '#B45309'],
-                ].map(([pos, darkColor, lightColor], i) => {
-                  const color = isLight ? lightColor : darkColor;
-                  return (
-                  <motion.div
-                    key={i}
-                    className={`absolute ${pos} w-2 h-2 rounded-full z-20`}
-                    style={{ background: color, boxShadow: `0 0 10px ${color}` }}
-                    animate={{ opacity: [1, 0.2, 1] }}
-                    transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.4 }}
-                  />
-                  );
-                })}
-
-                {/* PCB grid overlay */}
-                <div
-                  className="absolute inset-0 rounded-3xl pointer-events-none opacity-20"
-                  style={{
-                    backgroundImage: isLight ? `
-                      linear-gradient(rgba(15, 23, 42, 0.08) 1px, transparent 1px),
-                      linear-gradient(90deg, rgba(15, 23, 42, 0.08) 1px, transparent 1px)
-                    ` : `
-                      linear-gradient(rgba(59, 130, 246, 0.07) 1px, transparent 1px),
-                      linear-gradient(90deg, rgba(59, 130, 246, 0.07) 1px, transparent 1px)
-                    `,
-                    backgroundSize: '24px 24px',
-                  }}
-                />
-
-                <HierarchicalGrindTree />
-              </div>
-            </div>
+      <div className="relative z-10">
+        {/* ── Top bar — quiet: brand, ⌘K, settings, theme, you ── */}
+        <header className="mx-auto flex w-full max-w-[1080px] items-center justify-between gap-3 px-4 py-4 sm:px-6">
+          <div className="flex items-center gap-2.5">
+            <BrandMark size={28} />
+            <span className="text-[16px] font-extrabold tracking-tight">
+              Bit<span style={{ color: '#7A3FD0' }}>For</span>Bytes
+            </span>
           </div>
 
-        </div>
-      </main>
+          <nav className="hidden items-center gap-6 md:flex" aria-label="Tools">
+            {BENCH.map((b) => (
+              <button
+                key={b.to}
+                onClick={() => navigate(b.to)}
+                className="font-mono text-[11px] font-bold uppercase tracking-[0.16em] transition-opacity hover:opacity-60"
+                style={{ color: dim }}
+              >
+                {b.label}
+              </button>
+            ))}
+          </nav>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setCmdOpen(true)}
+              title="Command palette (Ctrl+K)"
+              className="hidden items-center gap-1.5 px-2.5 py-1.5 font-mono text-[11px] font-bold sm:inline-flex"
+              style={chip}
+            >
+              <Command size={12} /> K
+            </button>
+            <button
+              onClick={() => navigate('/settings')}
+              aria-label="Settings"
+              className="flex h-9 w-9 items-center justify-center rounded-lg transition-opacity hover:opacity-70"
+              style={{ color: dim }}
+            >
+              <Settings size={17} />
+            </button>
+            <ThemeToggle variant="minimal" />
+            <button
+              onClick={() => navigate('/profile')}
+              title="Open your profile"
+              className="inline-flex items-center gap-2 px-2 py-1.5 transition-transform hover:-translate-y-0.5"
+              style={chip}
+            >
+              <span className="flex h-7 w-7 items-center justify-center rounded-md text-[13px] font-black text-white" style={{ background: '#4F46E5' }}>
+                {name.charAt(0).toUpperCase()}
+              </span>
+              <span className="hidden pr-1 text-[13px] font-bold lg:inline">{name}</span>
+            </button>
+          </div>
+        </header>
+
+        {/* Mobile tool strip (the header nav is desktop-only) */}
+        <nav className="flex gap-5 overflow-x-auto px-4 pb-3 md:hidden" aria-label="Tools">
+          {BENCH.map((b) => (
+            <button
+              key={b.to}
+              onClick={() => navigate(b.to)}
+              className="whitespace-nowrap font-mono text-[11px] font-bold uppercase tracking-[0.16em]"
+              style={{ color: dim }}
+            >
+              {b.label}
+            </button>
+          ))}
+        </nav>
+
+        {/* Signature rule under the header */}
+        <SquareWave stroke={hairline} />
+
+        <main className="mx-auto w-full max-w-[1080px] px-4 pb-32 sm:px-6">
+          {/* ── Hero: headline + resume ticket ── */}
+          <motion.section
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            className="mt-10 grid items-center gap-8 lg:mt-14 lg:grid-cols-[1fr_320px] lg:gap-12"
+          >
+            <div>
+              <p className="font-mono text-[11px] font-bold uppercase tracking-[0.22em]" style={{ color: faint }}>
+                {dateLine} — workstation
+              </p>
+              <h1 className="mt-3 text-[34px] font-extrabold leading-[1.05] tracking-tight sm:text-[46px]">
+                {greeting}, {name}<span style={{ color: '#7A3FD0' }}>.</span>
+              </h1>
+              <p className="mt-3 max-w-md text-[15px] leading-relaxed" style={{ color: dim }}>
+                Pick a lane. Build first — understand after.
+              </p>
+              <button
+                onClick={() => document.getElementById('paths')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+                className="mt-5 inline-flex items-center gap-1.5 text-[13.5px] font-semibold underline-offset-4 transition-opacity hover:opacity-70 hover:underline"
+                style={{ color: dim }}
+              >
+                Browse the three paths <ChevronDown size={14} />
+              </button>
+            </div>
+
+            {/* Resume ticket */}
+            <div className="relative overflow-hidden" style={panel}>
+              <span className="absolute inset-y-0 left-0 w-[5px]" style={{ background: ticket.color }} />
+              <div className="p-5 pl-6">
+                <p className="font-mono text-[10px] font-bold uppercase tracking-[0.2em]" style={{ color: faint }}>
+                  {ticket.tag} · {ticket.pathTitle}
+                </p>
+                <h2 className="mt-1.5 text-[17px] font-bold leading-snug">{ticket.module}</h2>
+
+                <div className="mt-3 flex items-center gap-2.5">
+                  <div className="h-[6px] flex-1 overflow-hidden rounded-full" style={{ background: `${ticket.color}26` }}>
+                    <div className="h-full rounded-full" style={{ width: `${ticket.pct}%`, background: ticket.color }} />
+                  </div>
+                  <span className="font-mono text-[10.5px] font-bold tabular-nums" style={{ color: ticket.color }}>{ticket.pct}%</span>
+                </div>
+
+                <div className="mt-4 border-t border-dashed pt-4" style={{ borderColor: hairline }}>
+                  <button
+                    onClick={() => navigate(ticket.to)}
+                    className="group inline-flex w-full items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-[14px] font-bold text-white transition-transform hover:-translate-y-0.5"
+                    style={{ background: ticket.color }}
+                  >
+                    <Play size={14} /> Open lesson
+                    <ArrowRight size={14} className="transition-transform group-hover:translate-x-0.5" />
+                  </button>
+                  <div className="mt-3 flex items-center justify-between font-mono text-[10px] font-semibold uppercase tracking-[0.14em]" style={{ color: faint }}>
+                    <span className="truncate">{upNext ? `Next · ${upNext.label}` : 'Fresh start'}</span>
+                    <span className="flex-shrink-0 pl-3 tabular-nums">{history.length}/{TOTAL_MODULES} opened</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.section>
+
+          {/* ── Paths: one board, three lanes ── */}
+          <motion.section
+            id="paths"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.07, ease: [0.16, 1, 0.3, 1] }}
+            className="mt-12 scroll-mt-6 overflow-hidden"
+            style={panel}
+          >
+            <div className="flex items-baseline justify-between px-5 pb-4 pt-6 sm:px-7">
+              <h2 className="text-[19px] font-bold tracking-tight">Your paths</h2>
+              <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.16em]" style={{ color: faint }}>
+                3 tracks · {TOTAL_MODULES} modules
+              </span>
+            </div>
+            {PATHS.map((p, i) => (
+              <React.Fragment key={p.key}>
+                <SquareWave stroke={hairline} />
+                <PathLane
+                  path={p}
+                  index={i}
+                  opened={opened}
+                  lastId={last?.id ?? null}
+                  dim={dim}
+                  faint={faint}
+                  hairline={hairline}
+                  baseStroke={baseStroke}
+                  onGo={navigate}
+                />
+              </React.Fragment>
+            ))}
+          </motion.section>
+
+          {/* ── Bench & library — one quiet strip, no duplication ── */}
+          <motion.section
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.14, ease: [0.16, 1, 0.3, 1] }}
+            className="mt-10 p-5 sm:p-6"
+            style={panel}
+          >
+            <div className="grid gap-6 md:grid-cols-[auto_1px_1fr] md:gap-8">
+              <div>
+                <p className="mb-2.5 font-mono text-[10px] font-bold uppercase tracking-[0.2em]" style={{ color: faint }}>Bench</p>
+                <div className="flex flex-wrap gap-2">
+                  {BENCH.map((b) => (
+                    <button
+                      key={b.to}
+                      onClick={() => navigate(b.to)}
+                      className="inline-flex items-center gap-2 rounded-lg border px-3.5 py-2.5 text-[13.5px] font-semibold transition-transform hover:-translate-y-0.5"
+                      style={{ borderColor: hairline }}
+                    >
+                      <b.icon size={15} style={{ color: '#7A3FD0' }} /> {b.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="hidden md:block" style={{ background: hairline }} />
+              <div>
+                <p className="mb-2.5 font-mono text-[10px] font-bold uppercase tracking-[0.2em]" style={{ color: faint }}>Library</p>
+                <div className="flex flex-wrap items-center gap-x-6 gap-y-2.5 pt-1.5">
+                  {LIBRARY.map((l) => (
+                    <button
+                      key={l.to}
+                      onClick={() => navigate(l.to)}
+                      className="inline-flex items-center gap-1.5 text-[13px] font-semibold transition-opacity hover:opacity-60"
+                      style={{ color: dim }}
+                    >
+                      <l.icon size={14} /> {l.label} <ArrowUpRight size={12} />
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </motion.section>
+
+          {/* ── Footer ── */}
+          <footer className="mt-14 flex items-center justify-between border-t pt-5 font-mono text-[11px]" style={{ borderColor: hairline, color: faint }}>
+            <span>© 2026 BitForBytes</span>
+            <span>made for students</span>
+          </footer>
+        </main>
+      </div>
 
       <CommandPalette isOpen={cmdOpen} onClose={() => setCmdOpen(false)} navigate={navigate} />
-
-      {/* ── BOTTOM MASTER SCOPE ── */}
-      {/* Oscilloscope Removed */}
     </div>
   );
 };

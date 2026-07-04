@@ -60,4 +60,10 @@ reports/
 _scratch/
 src/be/
 
+# Standalone "Coming Soon" waitlist page — deployed separately to Hostinger,
+# not part of the React app.
+bitforbytes-waitlist/
+bitforbytes-waitlist.zip
+bitforbytes-waitlist-deploy.zip
+
 

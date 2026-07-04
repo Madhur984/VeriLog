@@ -1,4 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Sans:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap');
+/* ── ONE type system site-wide: Space Grotesk (UI/headings) + JetBrains Mono (mono).
+   Same fonts as the BitForBytes waitlist page so the whole product reads as one brand. ── */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -77,12 +79,12 @@ html, body, #root {
     --accent-soft:   #FB923C;
     --accent-pink:   #EC4899;  /* 1% - peak success only */
 
-    /* GLOW SYSTEM (hint, not effect) */
-    --glow-signal: 0 0 8px rgba(125,211,252,0.35);
-    --signal-glow: rgba(125, 211, 252, 0.25);
-    --glow-orange: 0 0 6px rgba(249,115,22,0.35);
-    --glow-pink:   0 0 6px rgba(236,72,153,0.35);
-    --glow-subtle: 0 0 4px rgba(255,255,255,0.07);
+    /* GLOW SYSTEM — neutralised site-wide (clean, no halos / visual noise) */
+    --glow-signal: 0 0 0 0 transparent;
+    --signal-glow: transparent;
+    --glow-orange: 0 0 0 0 transparent;
+    --glow-pink:   0 0 0 0 transparent;
+    --glow-subtle: 0 0 0 0 transparent;
 
     /* NVG - NIGHT VISION GREEN (MILITARY TACTICAL) */
     --nvg-core:   #22C55E;
@@ -135,7 +137,7 @@ html, body, #root {
   .light,
   .light-theme {
     /* ===== 90% BASE (Neutral Workspace) ===== */
-    --bg-void: #EFF3F6;        /* Main background – drafting board slate-white */
+    --bg-void: #ECE8FB;        /* Main background – soft brand lavender (light mode) */
     --grid-line-opacity: 0.015;
     --bg-base: #F8FAFC;        /* Card surface – crisp paper off-white */
     --bg-elev: #FFFFFF;        /* Active panels, modals – pure white */
@@ -177,11 +179,11 @@ html, body, #root {
     --card-bg: var(--bg-base);
     --hover-bg: rgba(15, 23, 42, 0.04);
 
-    /* GLOW SYSTEM (reduced opacity for light mode: 0.25 instead of 0.35) */
-    --glow-signal: 0 0 8px rgba(3, 105, 161, 0.25);
-    --glow-orange: 0 0 6px rgba(234, 88, 12, 0.25);
-    --glow-pink:   0 0 6px rgba(219, 39, 119, 0.25);
-    --glow-subtle: 0 0 4px rgba(0, 0, 0, 0.03);
+    /* GLOW SYSTEM — neutralised (clean, no halos / visual noise) */
+    --glow-signal: 0 0 0 0 transparent;
+    --glow-orange: 0 0 0 0 transparent;
+    --glow-pink:   0 0 0 0 transparent;
+    --glow-subtle: 0 0 0 0 transparent;
 
     /* NVG - NIGHT VISION GREEN (tactical light mode override) */
     --nvg-core:   #16A34A;
@@ -236,12 +238,11 @@ html, body, #root {
     --muted-foreground:   215.4 16.3% 46.9%;
   }
 
+  /* Light body: flat surface — no dot/line grid (visual noise removed). */
   .light body,
   .light-theme body {
     background-color: var(--bg-void);
-    background-image: linear-gradient(rgba(15, 23, 42, var(--grid-line-opacity, 0.015)) 1px, transparent 1px),
-                      linear-gradient(90deg, rgba(15, 23, 42, var(--grid-line-opacity, 0.015)) 1px, transparent 1px);
-    background-size: 32px 32px;
+    background-image: none;
   }
 
   /* Light mode scrollbar */
@@ -273,14 +274,10 @@ html, body, #root {
   body {
     margin:   0;
     padding:  0;
-    background: radial-gradient(
-      circle at center,
-      var(--bg-elev) 0%,
-      var(--bg-base) 50%,
-      var(--bg-void) 100%
-    );
+    /* Flat, classy surface — no radial gradient, no grain (visual noise removed). */
+    background: var(--bg-void);
     color:      var(--text-main);
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: 'Space Grotesk', system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing:  antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
@@ -310,35 +307,35 @@ html, body, #root {
     mix-blend-mode: color-dodge;
   }
 
-  /* Global typography resets - minimal & professional */
-  .hero-text  { 
+  /* Global typography — ONE system: Space Grotesk (text) + JetBrains Mono (mono) */
+  .hero-text  {
     font-family: 'Space Grotesk', sans-serif;
     font-weight: 700;
-    letter-spacing: -0.04em;
-    color: var(--text-main); 
+    letter-spacing: -0.03em;
+    color: var(--text-main);
   }
-  
-  .body-text  { 
-    font-family: 'Inter', sans-serif;
+
+  .body-text  {
+    font-family: 'Space Grotesk', sans-serif;
     font-weight: 400;
     line-height: 1.6;
-    color: var(--text-sub); 
+    color: var(--text-sub);
   }
 
   .mono-text {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: 'JetBrains Mono', monospace;
     font-weight: 500;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
   }
 
-  .micro-text { 
-    font-family: 'Inter', sans-serif;
+  .micro-text {
+    font-family: 'JetBrains Mono', monospace;
     font-weight: 600;
     font-size: 10px;
-    letter-spacing: 0.2em;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: var(--text-dim); 
+    color: var(--text-dim);
   }
 
   /* Scrollbar - Dark Mode Default */
@@ -404,31 +401,14 @@ html, body, #root {
   backdrop-filter: none !important;
 }
 
-/* ═══════════════════════════════════════════════════════════════════════
-   GLOBAL GRAIN — a faint noise layer over the whole site breaks up the
-   sterile, over-perfect digital flatness (the tactile neo-brutalist touch).
-   Fixed, non-interactive, blended subtly; hidden for print.
-   ═══════════════════════════════════════════════════════════════════════ */
-body::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: 9997;
-  pointer-events: none;
-  opacity: 0.05;
-  mix-blend-mode: overlay;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
-  background-size: 140px 140px;
-}
-.light body::after,
-.light-theme body::after { opacity: 0.035; }
-@media print { body::after { display: none !important; } }
+/* GLOBAL GRAIN REMOVED — the site now uses clean, flat surfaces (no film-grain
+   noise layer), matching the BitForBytes waitlist page. */
 
 @layer components {
   /* ─── Neubrutalist controls: hard edge + solid blur-0 offset shadow + press-down ─── */
   .brutal {
     border: 2px solid var(--edge);
-    border-radius: 10px;
+    border-radius: 6px;
     background-color: var(--bg-elev);
     box-shadow: 4px 4px 0 0 var(--brutal-sh);
   }
@@ -438,7 +418,7 @@ body::after {
 
   .brutal-btn {
     border: 2px solid var(--edge);
-    border-radius: 10px;
+    border-radius: 6px;
     font-weight: 700;
     box-shadow: 3px 3px 0 0 var(--brutal-sh);
     transition: transform .08s ease, box-shadow .08s ease, background-color .15s ease;
@@ -450,20 +430,56 @@ body::after {
   .neo {
     background-color: var(--neo-bg);
     border: 2px solid var(--edge);
-    border-radius: 12px;
+    border-radius: 6px;
     box-shadow: 4px 4px 0 0 var(--brutal-sh);
   }
   .neo-sm {
     background-color: var(--neo-bg);
     border: 1.5px solid var(--edge);
-    border-radius: 10px;
+    border-radius: 5px;
     box-shadow: 3px 3px 0 0 var(--brutal-sh);
   }
   .neo-inset {
     background-color: var(--neo-bg);
     border: 1.5px solid var(--edge);
-    border-radius: 10px;
+    border-radius: 5px;
     box-shadow: inset 0 2px 6px rgba(0,0,0,0.35);
+  }
+
+  /* ─── Pinned-note / sticker surfaces — tactile "board" aesthetic (replaces curvy boxes) ───
+     Base .pinned = crisp near-square card + hard offset shadow. Add ONE accent:
+       .pinned-tape  → a strip of washi tape at the top
+       .pinned-pin   → a push-pin dot at the top
+     and optionally .pinned-tilt / .pinned-tilt-r for a hand-placed slight rotation. */
+  .pinned {
+    position: relative;
+    background-color: var(--neo-bg);
+    border: 2px solid var(--edge);
+    border-radius: 3px;
+    box-shadow: 4px 4px 0 0 var(--brutal-sh);
+  }
+  .pinned-tilt   { transform: rotate(-1.2deg); }
+  .pinned-tilt-r { transform: rotate(1.2deg); }
+  .pinned-tape::before {
+    content: '';
+    position: absolute;
+    top: -9px; left: 50%;
+    width: 58px; height: 16px;
+    transform: translateX(-50%) rotate(-3deg);
+    background: rgba(150, 130, 205, 0.22);
+    border: 1px dashed rgba(120, 90, 180, 0.40);
+    pointer-events: none;
+  }
+  .pinned-pin::before {
+    content: '';
+    position: absolute;
+    top: 8px; left: 50%;
+    width: 9px; height: 9px;
+    transform: translateX(-50%);
+    border-radius: 50%;
+    background: var(--signal-core);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.40), inset 0 1px 1px rgba(255,255,255,0.5);
+    pointer-events: none;
   }
 }
 
@@ -576,6 +592,10 @@ body.silicon-lottery-invert {
 .fifo-overflow-shake {
   animation: fifo-shake 0.6s ease-in-out infinite;
 }
+
+/* Moving "electric current" sweeps — pure transform (GPU-composited, no layout thrash). */
+@keyframes grid-current-y { from { transform: translateY(-4vh); } to { transform: translateY(104vh); } }
+@keyframes grid-current-x { from { transform: translateX(-4vw); } to { transform: translateX(104vw); } }
 
 /* Micro-grain analog CRT texture utility */
 .bg-grain {

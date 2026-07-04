@@ -6,7 +6,7 @@ export const KMapLabPage: React.FC = () => {
         <div className="min-h-[100svh] w-full bg-bg-void text-text-main flex flex-col overflow-y-auto lg:overflow-hidden lg:h-screen">
             <div className="flex items-center justify-between px-4 py-3 lg:px-6 lg:py-4 border-b border-border-soft bg-bg-elev shrink-0">
                 <div>
-                    <h1 className="text-base lg:text-xl font-bold bg-gradient-to-r from-sky-400 to-indigo-500 bg-clip-text text-transparent">
+                    <h1 className="text-base lg:text-xl font-bold text-sky-400">
                         K-Map Optimizer Lab
                     </h1>
                     <p className="text-xs text-text-dim font-mono mt-0.5">

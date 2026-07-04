@@ -69,9 +69,7 @@ export const ProfilePage: React.FC = () => {
   } catch { /* ignore */ }
 
   // ── theme tokens ──
-  const pageBg = isLight
-    ? 'radial-gradient(ellipse 120% 90% at 50% 0%, #FFFFFF 0%, #EEF1F6 75%)'
-    : 'radial-gradient(ellipse 120% 90% at 50% 0%, #0d1526 0%, #06090f 80%)';
+  const pageBg = isLight ? '#ECE8FB' : '#06090f';
   const card: React.CSSProperties = {
     background: isLight ? '#FFFFFF' : 'rgba(7,10,18,0.92)',
     border: isLight ? '1px solid #E5E7EB' : '1px solid rgba(59,130,246,0.16)',
@@ -102,16 +100,6 @@ export const ProfilePage: React.FC = () => {
 
   return (
     <div className="relative min-h-[100svh] w-full overflow-hidden font-sans transition-colors duration-300" style={{ background: pageBg }}>
-      {/* Dotted depth texture, fading toward the centre */}
-      <div
-        className="pointer-events-none absolute inset-0 z-0"
-        style={{
-          backgroundImage: `radial-gradient(circle, ${isLight ? 'rgba(15,23,42,0.06)' : 'rgba(255,255,255,0.05)'} 1px, transparent 1px)`,
-          backgroundSize: '26px 26px',
-          WebkitMaskImage: 'radial-gradient(ellipse 75% 55% at 50% 25%, transparent 25%, black 90%)',
-          maskImage: 'radial-gradient(ellipse 75% 55% at 50% 25%, transparent 25%, black 90%)',
-        }}
-      />
 
       {/* Top bar */}
       <div className="sticky top-0 z-20 flex items-center justify-between px-4 sm:px-8 py-4 bg-bg-elev"

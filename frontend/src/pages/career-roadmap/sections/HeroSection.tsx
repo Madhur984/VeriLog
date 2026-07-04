@@ -18,22 +18,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onCalibrate, onExplore
   return (
     <section id="hero" className="relative min-h-screen flex flex-col items-center justify-center pt-20 pb-24 overflow-hidden bg-observatory-bg">
       {/* Silicon Parallax Layers */}
-      <motion.div 
-        style={{ x: x * 4, y: y * 4 }}
-        className="absolute inset-0 opacity-[0.015] pointer-events-none"
-      >
-        <div className="absolute inset-0 bg-dot-grid" />
-      </motion.div>
-      
-      <motion.div 
-        style={{ x: x * 8, y: y * 8 }}
-        className="absolute inset-0 opacity-[0.01] pointer-events-none"
-      >
-        <div className="absolute inset-0 bg-ghost-traces" />
-      </motion.div>
-
-      {/* Gentle Radial Glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-signal-core/5 rounded-full blur-[120px] pointer-events-none" />
+      {/* Grid layers + radial glow removed — clean flat surface (parallax refs kept). */}
+      <motion.div style={{ x: x * 4, y: y * 4 }} className="absolute inset-0 pointer-events-none" />
+      <motion.div style={{ x: x * 8, y: y * 8 }} className="absolute inset-0 pointer-events-none" />
 
       {/* Hero Content */}
       <div className="relative z-10 max-w-4xl mx-auto text-center px-6">

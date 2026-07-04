@@ -84,8 +84,19 @@ export default {
                 'grid-line': 'var(--grid-line)',
             },
             fontFamily: {
-                ui: ['Inter', 'system-ui', 'sans-serif'],
-                mono: ['IBM Plex Mono', 'monospace'],
+                sans: ['Space Grotesk', 'system-ui', '-apple-system', 'sans-serif'],
+                ui: ['Space Grotesk', 'system-ui', 'sans-serif'],
+                mono: ['JetBrains Mono', 'IBM Plex Mono', 'ui-monospace', 'monospace'],
+            },
+            /* Less rounded, more editorial/classy — shrink the big radii site-wide
+               (rounded-full pills are intentionally left untouched). */
+            borderRadius: {
+                sm: '3px',
+                md: '5px',
+                lg: '6px',
+                xl: '8px',
+                '2xl': '10px',
+                '3xl': '12px',
             },
             backgroundImage: {
                 'dot-grid': `radial-gradient(var(--ghost-trace) 1px, transparent 1px)`,
@@ -99,8 +110,8 @@ export default {
                 'ghost-traces': '40px 40px',
             },
             boxShadow: {
-                'cyan-glow': '0 0 6px #00D4FF, 0 0 2px #00D4FF inset',
-                'observatory-glow': '0 0 24px rgba(34,211,238,0.35)',
+                'cyan-glow': '0 0 0 0 transparent',
+                'observatory-glow': '0 0 0 0 transparent',
                 // ── Hybrid design system: brutalist offset + neomorphic twin shadows ──
                 'brutal': '4px 4px 0 0 var(--brutal-sh)',
                 'brutal-sm': '3px 3px 0 0 var(--brutal-sh)',

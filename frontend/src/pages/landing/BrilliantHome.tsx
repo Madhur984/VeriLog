@@ -1,785 +1,642 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
-import {
-  ArrowRight, Sun, Moon, Menu, X,
-  Binary, Grid3x3, Zap,
-  Check, Star, Cpu,
-  CircuitBoard, MousePointerClick, PlayCircle, Target, LineChart, Compass,
-} from 'lucide-react';
-import { BrandWordmark } from '../../components/Brand';
-import { SignalShowcase } from './SignalShowcase';
-import { LANDING_ROUTES } from './landingRoutes';
-import { useIsAuthenticated } from '../../hooks/useIsAuthenticated';
+import React, { useState } from 'react';
+import { motion, useScroll } from 'framer-motion';
+import { Link, useNavigate } from 'react-router-dom';
+import { ArrowRight, ChevronDown, Check, Binary, Zap, Boxes, type LucideIcon } from 'lucide-react';
 import { useColorScheme } from '../../hooks/useColorScheme';
+import { ThemeToggle } from '../../components/ThemeToggle';
+import { BrandMark } from '../../components/Brand';
+import { MODULE_LABELS } from '../../lib/moduleHistory';
+import { isAuthenticated } from '../../lib/auth';
 
-/* ── accent system ────────────────────────────────────────────────────────
- * The whole page runs on CSS variables instead of hardcoded colors. The page
- * starts SAKURA PINK + white; when the scroll-driven signal trace reaches the
- * dev board at the bottom, the link "powers up" and the accent flips to LIGHT
- * BLUE + white (latched). No orange anywhere.
- */
-const ACCENTS = {
-  pink: {
-    '--ac': '#F472B6',
-    '--ac-strong': '#EC4899',
-    '--ac-soft': '#FBCFE8',
-    '--ac-glow': 'rgba(244,114,182,0.45)',
-    '--ac-tint': 'rgba(244,114,182,0.10)',
-    '--ac-tint15': 'rgba(244,114,182,0.15)',
-    '--ac-tint20': 'rgba(244,114,182,0.20)',
-    '--ac-tint25': 'rgba(244,114,182,0.25)',
-  },
-  cyan: {
-    '--ac': '#38BDF8',
-    '--ac-strong': '#0284C7',
-    '--ac-soft': '#BAE6FD',
-    '--ac-glow': 'rgba(56,189,248,0.45)',
-    '--ac-tint': 'rgba(56,189,248,0.10)',
-    '--ac-tint15': 'rgba(56,189,248,0.15)',
-    '--ac-tint20': 'rgba(56,189,248,0.20)',
-    '--ac-tint25': 'rgba(56,189,248,0.25)',
-  },
-} as const;
+/* ═══════════════════════════════════════════════════════════════════════════
+   BitForBytes — landing page.
+   Editorial + interactive: a byte you can flip, an XOR you can poke, a signal
+   rail that rides your scroll. Same visual language as the portal (lavender /
+   ink, hard offset shadows, square-wave rules, single-tone grid). All motion
+   is transform/opacity only — nothing here can lag.
+   ═══════════════════════════════════════════════════════════════════════════ */
 
-/* Scope palettes for the hero oscilloscope (dark card → brighter shades). */
-const SIGNAL_SAKURA = {
-  main: '#F9A8D4',
-  soft: '#F472B6',
-  bright: '#FBCFE8',
-  glow: 'rgba(244,114,182,0.4)',
-};
-const SIGNAL_SKY = {
-  main: '#7DD3FC',
-  soft: '#38BDF8',
-  bright: '#BAE6FD',
-  glow: 'rgba(56,189,248,0.4)',
-};
+/* ── shared bits ── */
+const BRAND = '#7A3FD0';
 
-/* ── data ─────────────────────────────────────────────────────────────── */
-
-// Source of truth: HierarchicalGrindTree. Update here if a module is added or renamed.
-const PATHS = [
-  {
-    icon: Binary, title: 'Digital Logic & Verilog', tag: 'Verilog', color: '#F472B6', base: '/module', startHere: false, comingSoon: true,
-    modules: ['Signals & Waves', 'Number Systems', 'Logic Gates', 'Karnaugh Maps', 'Verilog Core', 'Advanced Verilog'],
-  },
-  {
-    icon: Zap, title: 'Basic Electronics', tag: 'Electronics', color: '#2563EB', base: '/basic-electronics', startHere: true, comingSoon: false,
-    modules: ['Physics of Control', 'Silicon, Doping & Carriers', 'The P-N Junction', 'Rectifiers & Filters', 'Special-Purpose Diodes'],
-  },
-  {
-    icon: Grid3x3, title: 'Digital System Design', tag: 'DSD', color: '#9333EA', base: '/dsd', startHere: false, comingSoon: false,
-    modules: ['Binary & Boolean Logic', 'K-Maps', 'Circuit Realisation', 'Practice Arena', 'Universal Gates', 'Combinational & Sequential', 'The Half Adder', 'The Full Adder'],
-  },
-];
-
-const FACTS: Array<[string, string]> = [
-  ['3', 'learning paths'],
-  ['19', 'interactive modules'],
-  ['5', 'modules free, no account'],
-  ['0', 'installs'],
-];
-
-const TESTIMONIALS = [
-  { quote: 'K-maps finally made sense after one afternoon here. Once I could flip the inputs and watch the output change, it just clicked.', name: 'Aarav', role: '2nd year ECE' },
-  { quote: 'The Verilog labs feel like a game. I went from copy pasting code to actually writing an FSM that runs.', name: 'Meera', role: 'VLSI intern' },
-  { quote: 'Way better than sitting through slides. Building the datapath piece by piece is the first time architecture felt real to me.', name: 'Karthik', role: 'Final year ECE' },
-];
-
-/* ── small building blocks ───────────────────────────────────────────── */
-
-const Shell: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className = '' }) => (
-  <div className={`mx-auto w-full max-w-6xl px-5 sm:px-6 ${className}`}>{children}</div>
+const WAVE_PATH = (() => {
+  let d = 'M0 9';
+  for (let x = 0; x < 1200; x += 24) d += ` H${x + 12} V1 H${x + 24} V9`;
+  return d;
+})();
+const SquareWave: React.FC<{ stroke: string }> = ({ stroke }) => (
+  <svg className="h-[10px] w-full" viewBox="0 0 1200 10" preserveAspectRatio="none" aria-hidden>
+    <path d={WAVE_PATH} fill="none" stroke={stroke} strokeWidth="1" opacity="0.55" vectorEffect="non-scaling-stroke" />
+  </svg>
 );
 
-const PrimaryBtn: React.FC<{ to: string; children: React.ReactNode; className?: string }> = ({ to, children, className = '' }) => (
-  <Link
-    to={to}
-    className={`group inline-flex items-center justify-center gap-2 rounded-full bg-[var(--ac)] px-7 py-4 text-[16px] font-bold text-white shadow-[0_14px_38px_-12px_var(--ac-glow)] transition-all hover:bg-[var(--ac-strong)] active:scale-[0.98] ${className}`}
-  >
-    {children}
-    <ArrowRight size={18} className="transition-transform group-hover:translate-x-0.5" />
-  </Link>
-);
-
-/* ── live XOR demo (the "try it" artifact in the why band) ───────────── */
-
-const XOR_ROWS = [
-  { a: false, b: false, out: false },
-  { a: false, b: true, out: true },
-  { a: true, b: false, out: true },
-  { a: true, b: true, out: false },
-];
-
-const XorDemo: React.FC = () => {
-  const [a, setA] = useState(false);
-  const [b, setB] = useState(true);
-  const out = a !== b;
-
-  const toggleCls = (on: boolean) =>
-    `flex h-12 w-12 items-center justify-center rounded-xl border-2 font-mono text-lg font-bold transition-all active:scale-95 ${
-      on
-        ? 'border-[var(--ac)] bg-[var(--ac-tint)] text-[var(--ac-strong)] dark:text-[var(--ac-soft)]'
-        : 'border-slate-300 bg-white text-slate-400 dark:border-white/15 dark:bg-white/[0.04]'
-    }`;
-  const wireCls = (on: boolean) =>
-    on ? 'stroke-[var(--ac)] transition-colors duration-300' : 'stroke-slate-300 transition-colors duration-300 dark:stroke-white/20';
-
+const GridBackground: React.FC<{ isLight: boolean }> = ({ isLight }) => {
+  const line = isLight ? '122,63,208' : '167,139,250';
   return (
-    <div className="rounded-3xl border border-slate-200 bg-slate-50 p-6 sm:p-8 dark:border-white/10 dark:bg-white/[0.03]">
-      <div className="mb-6 flex items-center justify-between">
-        <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-slate-400">XOR gate</span>
-        <span className="rounded-full bg-[var(--ac-tint)] px-2 py-0.5 text-[10px] font-bold text-[var(--ac-strong)] dark:bg-[var(--ac-tint15)] dark:text-[var(--ac-soft)]">Live</span>
-      </div>
-
-      <div className="flex items-center justify-between gap-2 sm:gap-4">
-        <div className="flex flex-col gap-6">
-          <div>
-            <div className="mb-1 text-center font-mono text-[10px] text-slate-400">A</div>
-            <button aria-pressed={a} onClick={() => setA((v) => !v)} className={toggleCls(a)}>{a ? '1' : '0'}</button>
-          </div>
-          <div>
-            <div className="mb-1 text-center font-mono text-[10px] text-slate-400">B</div>
-            <button aria-pressed={b} onClick={() => setB((v) => !v)} className={toggleCls(b)}>{b ? '1' : '0'}</button>
-          </div>
-        </div>
-
-        <svg viewBox="0 0 200 96" className="h-24 w-full max-w-[200px]">
-          <path d="M0 24 H56" fill="none" strokeWidth={3} strokeLinecap="round" className={wireCls(a)} />
-          <path d="M0 72 H56" fill="none" strokeWidth={3} strokeLinecap="round" className={wireCls(b)} />
-          <path d="M128 48 H200" fill="none" strokeWidth={3} strokeLinecap="round" className={wireCls(out)} />
-          <rect x="56" y="12" width="72" height="72" rx="16" strokeWidth={2} className="fill-white stroke-slate-300 dark:fill-[#13141C] dark:stroke-white/15" />
-          <text x="92" y="53" textAnchor="middle" dominantBaseline="middle" className="fill-slate-700 font-mono text-sm font-bold dark:fill-slate-200">XOR</text>
-        </svg>
-
-        <div className="flex flex-col items-center gap-2">
-          <div className="font-mono text-[10px] text-slate-400">OUT</div>
-          <div
-            className={`h-12 w-12 rounded-full border-2 transition-all duration-300 ${
-              out
-                ? 'border-[var(--ac)] bg-[var(--ac)] shadow-[0_0_24px_var(--ac-glow)]'
-                : 'border-slate-300 bg-slate-200 dark:border-white/15 dark:bg-white/10'
-            }`}
-          />
-        </div>
-      </div>
-
-      <div className="mt-6 overflow-hidden rounded-xl border border-slate-200 font-mono text-xs dark:border-white/10">
-        <div className="grid grid-cols-3 bg-slate-100 px-3 py-1.5 text-center font-bold text-slate-500 dark:bg-white/5">
-          <span>A</span><span>B</span><span>OUT</span>
-        </div>
-        {XOR_ROWS.map((row) => {
-          const active = row.a === a && row.b === b;
-          return (
-            <div
-              key={`${row.a}${row.b}`}
-              className={`grid grid-cols-3 px-3 py-1.5 text-center transition-colors ${
-                active ? 'bg-[var(--ac-tint)] font-bold text-[var(--ac-strong)] dark:bg-[var(--ac-tint15)] dark:text-[var(--ac-soft)]' : 'text-slate-600 dark:text-slate-300'
-              }`}
-            >
-              <span>{row.a ? 1 : 0}</span><span>{row.b ? 1 : 0}</span><span>{row.out ? 1 : 0}</span>
-            </div>
-          );
-        })}
-      </div>
-
-      <p className="mt-4 text-center text-xs text-slate-400">Try it. This is what every lesson feels like.</p>
+    <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundImage:
+            `linear-gradient(rgba(${line},${isLight ? 0.055 : 0.045}) 1px, transparent 1px),` +
+            `linear-gradient(90deg, rgba(${line},${isLight ? 0.055 : 0.045}) 1px, transparent 1px)`,
+          backgroundSize: '34px 34px',
+        }}
+      />
+      <div className="absolute left-0 right-0 top-0 h-[2px] will-change-transform"
+        style={{ background: `linear-gradient(90deg, transparent, rgba(${line},0.4), transparent)`, animation: 'grid-current-y 9s linear infinite' }} />
     </div>
   );
 };
 
-/* ── the dev board the scroll-signal plugs into ──────────────────────── */
-
-const DevBoard: React.FC<{ connected: boolean }> = ({ connected }) => (
-  <svg viewBox="0 0 360 200" className="h-auto w-full" role="img" aria-label="BFB-01 dev board">
-    {/* board substrate */}
-    <rect x="8" y="14" width="344" height="172" rx="14" fill="#0F1626" stroke={connected ? 'var(--ac)' : 'rgba(255,255,255,0.14)'} strokeWidth="2" />
-    {/* mounting holes */}
-    {[[26, 32], [334, 32], [26, 168], [334, 168]].map(([x, y]) => (
-      <circle key={`${x}${y}`} cx={x} cy={y} r="6" fill="none" stroke="rgba(255,255,255,0.18)" strokeWidth="2" />
-    ))}
-    {/* input port J1 - where the page trace plugs in */}
-    <rect x="166" y="6" width="28" height="20" rx="4" fill="#0A0E1A" stroke={connected ? 'var(--ac)' : 'rgba(255,255,255,0.25)'} strokeWidth="2" />
-    <text x="180" y="40" textAnchor="middle" fontSize="9" fontFamily="monospace" fill={connected ? 'var(--ac)' : '#64748B'}>PORT J1</text>
-    {/* traces from J1 to the chip */}
-    <path d="M180 26 V58" fill="none" stroke={connected ? 'var(--ac)' : 'rgba(255,255,255,0.15)'} strokeWidth="2.5"
-          style={connected ? { filter: 'drop-shadow(0 0 5px var(--ac))' } : undefined} />
-    {/* the MCU */}
-    <rect x="130" y="58" width="100" height="76" rx="9" fill="#0A0E1A" stroke={connected ? 'var(--ac)' : 'rgba(255,255,255,0.3)'} strokeWidth="2"
-          style={connected ? { filter: 'drop-shadow(0 0 12px var(--ac-glow))' } : undefined} />
-    <text x="180" y="90" textAnchor="middle" fontSize="13" fontFamily="monospace" fontWeight="bold" fill={connected ? 'var(--ac)' : '#94A3B8'}>BFB-01</text>
-    <text x="180" y="108" textAnchor="middle" fontSize="8" fontFamily="monospace" fill="#64748B">LOGIC CORE</text>
-    {/* chip pins */}
-    {Array.from({ length: 6 }).map((_, i) => (
-      <g key={i}>
-        <line x1={138 + i * 17} y1="134" x2={138 + i * 17} y2="146" stroke="rgba(255,255,255,0.25)" strokeWidth="2.5" />
-        <line x1={138 + i * 17} y1="46" x2={138 + i * 17} y2="58" stroke="rgba(255,255,255,0.25)" strokeWidth="2.5" />
-      </g>
-    ))}
-    {/* side traces, light up when powered */}
-    <path d="M130 96 H66 V150 H110" fill="none" stroke={connected ? 'var(--ac)' : 'rgba(255,255,255,0.12)'} strokeWidth="2" />
-    <path d="M230 96 H296 V150 H250" fill="none" stroke={connected ? 'var(--ac)' : 'rgba(255,255,255,0.12)'} strokeWidth="2" />
-    {/* power LED */}
-    <circle cx="318" cy="96" r="7" fill={connected ? 'var(--ac)' : 'transparent'} stroke={connected ? 'var(--ac)' : 'rgba(255,255,255,0.3)'} strokeWidth="2"
-            style={connected ? { filter: 'drop-shadow(0 0 10px var(--ac))' } : undefined} />
-    <text x="318" y="118" textAnchor="middle" fontSize="8" fontFamily="monospace" fill={connected ? 'var(--ac)' : '#64748B'}>PWR</text>
-    {/* silkscreen */}
-    <text x="26" y="184" fontSize="8" fontFamily="monospace" fill="#475569">BITFORBYTES DEV BOARD · REV C</text>
-  </svg>
+/* Scroll-in reveal — transform/opacity only. */
+const Reveal: React.FC<{ children: React.ReactNode; delay?: number; className?: string }> = ({ children, delay = 0, className }) => (
+  <motion.div
+    className={className}
+    initial={{ opacity: 0, y: 26 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true, margin: '-70px' }}
+    transition={{ duration: 0.55, delay, ease: [0.16, 1, 0.3, 1] }}
+  >
+    {children}
+  </motion.div>
 );
 
-/* ── page ─────────────────────────────────────────────────────────────── */
+/* ── paths (single source of truth: lib/moduleHistory) ── */
+interface PathDef { title: string; tagline: string; prefix: string; color: string; icon: LucideIcon; to: string; badge?: string; }
+const PATHS: PathDef[] = [
+  { title: 'Digital Logic & Verilog', tagline: 'Signals, gates, K-maps, Verilog.', prefix: 'module/', color: '#2563EB', icon: Binary, to: '/module/1', badge: '5 free · no account' },
+  { title: 'Basic Electronics', tagline: 'Physics of control to transistors.', prefix: 'basic-electronics/', color: '#EA580C', icon: Zap, to: '/basic-electronics/1', badge: 'start here' },
+  { title: 'Digital System Design', tagline: 'Adders, subtractors and beyond.', prefix: 'dsd/', color: '#9333EA', icon: Boxes, to: '/dsd/1' },
+];
+const modulesFor = (prefix: string): string[] =>
+  Object.keys(MODULE_LABELS)
+    .filter((k) => k.startsWith(prefix))
+    .sort((a, b) => (parseInt(a.split('/')[1], 10) || 0) - (parseInt(b.split('/')[1], 10) || 0))
+    .map((k) => MODULE_LABELS[k]);
+const TOTAL_MODULES = Object.keys(MODULE_LABELS).length;
 
-export const BrilliantHome: React.FC = () => {
-  const authed = useIsAuthenticated();
-  // Everyone lands on the portal: visitors without an account can open any 5
-  // modules free there (ModuleGate enforces the limit; the rest show locked).
-  const primaryTo = LANDING_ROUTES.workstation;
-  const primaryLabel = authed ? 'Go to workstation' : 'Get started';
+const TESTIMONIALS = [
+  { quote: 'K-maps finally made sense after one afternoon here. Once I could flip the inputs and watch the output change, it just clicked.', name: 'Aarav', role: '2nd year ECE' },
+  { quote: 'The Verilog labs feel like a game. I went from copy-pasting code to actually writing an FSM that runs.', name: 'Meera', role: 'VLSI intern' },
+  { quote: 'Way better than sitting through slides. Building the datapath piece by piece is the first time architecture felt real to me.', name: 'Karthik', role: 'Final year ECE' },
+];
 
-  // One global theme: the home page follows the SAME shared color scheme as the
-  // rest of the site (system preference by default) instead of forcing its own.
-  const [scheme, toggleTheme] = useColorScheme();
-  const dark = scheme === 'dark';
-  const [menuOpen, setMenuOpen] = useState(false);
+/* ── THE BYTE — eight bits you can flip. 01000010 = 66 = 'B'. ── */
+const ByteFlipper: React.FC<{ panel: React.CSSProperties; dim: string; faint: string; hairline: string; isLight: boolean }> = ({ panel, dim, faint, hairline, isLight }) => {
+  const [bits, setBits] = useState<number[]>([0, 1, 0, 0, 0, 0, 1, 0]);
+  const value = bits.reduce((acc, b) => (acc << 1) | b, 0);
+  const printable = value >= 33 && value < 127;
+  const char = printable ? String.fromCharCode(value) : '·';
 
-  /* ── scroll signal: a trace drawn down the page that plugs into the board.
-   * When it connects, the page accent flips pink → cyan (latched). */
-  const mainRef = useRef<HTMLElement>(null);
-  const heroRef = useRef<HTMLElement>(null);
-  const boardRef = useRef<HTMLDivElement>(null);
-  const pathRef = useRef<SVGPathElement>(null);
-  const glowRef = useRef<SVGPathElement>(null);
-  const dotRef = useRef<SVGGElement>(null);
-  const connectedRef = useRef(false);
-  const [connected, setConnected] = useState(false);
-  const [rail, setRail] = useState<{ w: number; h: number; d: string } | null>(null);
-
-  const measure = useCallback(() => {
-    const m = mainRef.current, bo = boardRef.current;
-    if (!m || !bo) return;
-    const mr = m.getBoundingClientRect();
-    const br = bo.getBoundingClientRect();
-    const w = mr.width;
-    const h = m.offsetHeight;
-    // The trace meanders down the page's spine as a chain of S-curves, swinging
-    // left and right of center, then straightens for the final drop into PORT J1.
-    // Cards it crosses sit at z-30, so the signal threads underneath them.
-    const plugX = br.left + br.width / 2 - mr.left;
-    const startY = 78; // tucked under the floating pill nav (16px gap + 64px pill) - the line hangs from it
-    const plugY = br.top - mr.top + 8;
-    const amp = Math.min(w * 0.18, 170);
-    const approach = 110;                       // straight run into the plug
-    const span = Math.max(plugY - approach - startY, 1);
-    const waves = Math.max(2, Math.round(span / 650));
-    const segH = span / waves;
-    let d = `M ${plugX} ${startY}`;
-    for (let i = 0; i < waves; i++) {
-      const dir = i % 2 === 0 ? 1 : -1;
-      const y0 = startY + i * segH;
-      const y1 = startY + (i + 1) * segH;
-      d += ` C ${plugX + dir * amp} ${y0 + segH * 0.25}, ${plugX + dir * amp} ${y1 - segH * 0.25}, ${plugX} ${y1}`;
-    }
-    d += ` L ${plugX} ${plugY}`;
-    setRail({ w, h, d });
-  }, []);
-
-  useEffect(() => {
-    measure();
-    const m = mainRef.current;
-    const ro = new ResizeObserver(() => measure());
-    if (m) ro.observe(m);
-    window.addEventListener('resize', measure);
-    return () => { ro.disconnect(); window.removeEventListener('resize', measure); };
-  }, [measure]);
-
-  useEffect(() => {
-    let raf = 0;
-    let cur = -1; // smoothed progress, eased toward the scroll target every frame
-    // Path length is constant for a given rail geometry - measure it once,
-    // not on every frame (getTotalLength on a long curve is expensive).
-    let pathLen = 0;
-    try { pathLen = pathRef.current?.getTotalLength() ?? 0; } catch { /* not laid out yet */ }
-
-    const frame = () => {
-      raf = requestAnimationFrame(frame);
-      const m = mainRef.current, bo = boardRef.current, p = pathRef.current;
-      if (!m || !bo || !p) return;
-      const startAbs = m.getBoundingClientRect().top + 78;
-      const endAbs = bo.getBoundingClientRect().top + 8;
-      const probe = window.innerHeight * 0.82;
-      const span = Math.max(endAbs - startAbs, 1);
-      const target = Math.min(1, Math.max(0, (probe - startAbs) / span));
-      if (cur < 0) cur = target; // first frame: no animation, just place it
-      const delta = target - cur;
-      if (Math.abs(delta) < 0.0004) return; // settled - skip all style writes
-      cur = Math.abs(delta) < 0.002 ? target : cur + delta * 0.14;
-      const offset = String(1 - cur);
-      p.style.strokeDashoffset = offset;
-      if (glowRef.current) glowRef.current.style.strokeDashoffset = offset;
-      try {
-        if (!pathLen) pathLen = p.getTotalLength();
-        const pt = p.getPointAtLength(pathLen * cur);
-        const dot = dotRef.current;
-        if (dot) {
-          dot.style.transform = `translate(${pt.x}px, ${pt.y}px)`;
-          dot.style.opacity = cur > 0.01 && cur < 0.99 ? '1' : '0';
-        }
-      } catch { /* path not laid out yet */ }
-      if (cur >= 0.99 && !connectedRef.current) {
-        connectedRef.current = true;
-        setConnected(true);
-      }
-    };
-    raf = requestAnimationFrame(frame);
-    return () => cancelAnimationFrame(raf);
-  }, [rail]);
-
-  const navLinks = [
-    ['Courses', '#courses'],
-    ['What you get', '#features'],
-    ['How it works', '#how'],
-    ['Why BitForBytes', '#why'],
-  ] as const;
+  // A little square-wave portrait of the byte itself.
+  let wave = `M0 ${bits[0] ? 4 : 20}`;
+  bits.forEach((b, i) => {
+    const y = b ? 4 : 20;
+    wave += ` L${i * 20} ${y} L${(i + 1) * 20} ${y}`;
+  });
 
   return (
-    <main
-      ref={mainRef}
-      className="relative isolate min-h-screen w-full text-slate-900 antialiased dark:text-slate-100 selection:bg-[var(--ac-tint25)]"
-      style={{
-        ...(ACCENTS[connected ? 'cyan' : 'pink'] as React.CSSProperties),
-        // one continuous accent gradient over the whole page: strongest at the very
-        // top, airy through the middle, deepening again as the signal reaches the board
-        background: dark
-          ? 'linear-gradient(180deg, var(--ac-tint) 0%, transparent 24%, transparent 62%, var(--ac-tint) 100%), #0A0B12'
-          : 'linear-gradient(180deg, var(--ac-tint) 0%, transparent 24%, transparent 62%, var(--ac-tint) 88%, var(--ac-tint15) 100%), #ffffff',
-      }}
-    >
-      {/* ── NAV · floating pill, brilliant.org style ── */}
-      <header className="sticky top-4 z-50 px-4 sm:px-6">
-        <div className="mx-auto flex h-16 max-w-5xl items-center justify-between rounded-full border border-slate-200/70 bg-white px-5 shadow-[0_12px_40px_-14px_rgba(15,23,42,0.25)] dark:border-white/10 dark:bg-[#0A0B12] dark:shadow-[0_12px_40px_-14px_rgba(0,0,0,0.8)] sm:px-7">
-          <Link to="/" className="active-press">
-            <BrandWordmark size={26} textClassName="text-base text-slate-900 dark:text-white" />
-          </Link>
+    <div className="relative" style={panel}>
+      <span className="absolute inset-y-0 left-0 w-[5px]" style={{ background: BRAND }} />
+      <div className="p-5 pl-6 sm:p-6 sm:pl-7">
+        <p className="font-mono text-[10px] font-bold uppercase tracking-[0.22em]" style={{ color: faint }}>
+          Try it — flip a bit
+        </p>
 
-          <nav className="hidden items-center gap-8 text-[14px] font-semibold text-slate-600 dark:text-slate-300 md:flex">
-            {navLinks.map(([label, href]) => (
-              <a key={label} href={href} className="transition-colors hover:text-slate-900 dark:hover:text-white">{label}</a>
-            ))}
-          </nav>
-
-          <div className="flex items-center gap-2 sm:gap-4">
+        <div className="mt-4 grid grid-cols-8 gap-1.5 sm:gap-2">
+          {bits.map((b, i) => (
             <button
-              onClick={toggleTheme}
-              aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'}
-              className="rounded-full border border-slate-200 p-2 text-slate-600 transition-colors hover:bg-slate-100 dark:border-white/10 dark:text-slate-300 dark:hover:bg-white/5"
+              key={i}
+              onClick={() => setBits((prev) => prev.map((v, j) => (j === i ? 1 - v : v)))}
+              aria-label={`bit ${7 - i}, currently ${b}`}
+              className="flex h-12 items-center justify-center rounded-md border-2 font-mono text-[16px] font-bold transition-transform active:scale-90 sm:h-14"
+              style={{
+                borderColor: b ? BRAND : hairline,
+                background: b ? BRAND : 'transparent',
+                color: b ? '#fff' : dim,
+              }}
             >
-              {dark ? <Sun size={16} /> : <Moon size={16} />}
+              {b}
             </button>
-            {authed ? (
-              <Link to="/profile" className="hidden text-[14px] font-semibold text-slate-600 transition-colors hover:text-slate-900 dark:text-slate-300 dark:hover:text-white sm:inline">Profile</Link>
-            ) : (
-              <Link to="/login" className="hidden text-[14px] font-semibold text-slate-600 transition-colors hover:text-slate-900 dark:text-slate-300 dark:hover:text-white sm:inline">Sign in</Link>
-            )}
-            <Link to={primaryTo} className="hidden rounded-full bg-[var(--ac)] px-5 py-2.5 text-[14px] font-semibold text-white shadow-[0_8px_20px_-6px_var(--ac-glow)] transition-all hover:bg-[var(--ac-strong)] md:inline-flex">{primaryLabel}</Link>
-            <button onClick={() => setMenuOpen((o) => !o)} aria-label="Menu" className="rounded-full border border-slate-200 p-1.5 text-slate-600 dark:border-white/10 dark:text-slate-300 md:hidden">
-              {menuOpen ? <X size={18} /> : <Menu size={18} />}
-            </button>
+          ))}
+        </div>
+
+        <svg className="mt-4 h-6 w-full" viewBox="0 0 160 24" preserveAspectRatio="none" aria-hidden>
+          <path d={wave} fill="none" stroke={BRAND} strokeWidth="2" vectorEffect="non-scaling-stroke" />
+        </svg>
+
+        <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-1 font-mono text-[11px] font-semibold tabular-nums" style={{ color: dim }}>
+          <span>DEC {value}</span>
+          <span>HEX 0x{value.toString(16).toUpperCase().padStart(2, '0')}</span>
+          <span style={{ color: isLight ? '#1B1436' : '#E2E8F0' }}>ASCII {printable ? `'${char}'` : '—'}</span>
+        </div>
+
+        <p className="mt-3 border-t border-dashed pt-3 text-[12.5px] leading-relaxed" style={{ borderColor: hairline, color: dim }}>
+          {value === 66
+            ? <>01000010 is 66 — the letter <b>B</b>, as in Bytes. Every key you press does this.</>
+            : <>You just made {value}{printable ? <> — the character <b>{char}</b></> : ''}. That's all a byte is.</>}
+        </p>
+      </div>
+    </div>
+  );
+};
+
+/* ── XOR you can poke ── */
+const XorDemo: React.FC<{ panel: React.CSSProperties; dim: string; faint: string; hairline: string; isLight: boolean }> = ({ panel, dim, faint, hairline, isLight }) => {
+  const [a, setA] = useState(0);
+  const [b, setB] = useState(1);
+  const out = a ^ b;
+  const on = BRAND;
+  const off = isLight ? 'rgba(27,20,54,0.25)' : 'rgba(255,255,255,0.18)';
+  const rows: Array<[number, number, number]> = [[0, 0, 0], [0, 1, 1], [1, 0, 1], [1, 1, 0]];
+
+  const InputSwitch: React.FC<{ label: string; v: number; set: (n: number) => void }> = ({ label, v, set }) => (
+    <button
+      onClick={() => set(1 - v)}
+      className="flex items-center gap-2.5 rounded-lg border-2 px-3.5 py-2.5 font-mono text-[13px] font-bold transition-transform active:scale-95"
+      style={{ borderColor: v ? BRAND : hairline, color: v ? BRAND : dim }}
+    >
+      {label}
+      <span className="relative inline-flex h-5 w-9 items-center rounded-full transition-colors" style={{ background: v ? BRAND : off }}>
+        <span className={`absolute h-3.5 w-3.5 rounded-full bg-white transition-transform ${v ? 'translate-x-[18px]' : 'translate-x-[3px]'}`} />
+      </span>
+      {v}
+    </button>
+  );
+
+  return (
+    <div style={panel}>
+      <div className="p-5 sm:p-6">
+        <p className="font-mono text-[10px] font-bold uppercase tracking-[0.22em]" style={{ color: faint }}>
+          Live circuit · XOR
+        </p>
+
+        <div className="mt-4 flex flex-wrap items-center gap-3">
+          <InputSwitch label="A" v={a} set={setA} />
+          <InputSwitch label="B" v={b} set={setB} />
+        </div>
+
+        {/* gate drawing */}
+        <svg className="mt-4 w-full" viewBox="0 0 300 90" aria-hidden>
+          {/* input wires */}
+          <path d={`M0 30 H96`} stroke={a ? on : off} strokeWidth="2.5" fill="none" />
+          <path d={`M0 60 H96`} stroke={b ? on : off} strokeWidth="2.5" fill="none" />
+          {/* XOR body */}
+          <path d="M104 12 C 138 12, 164 26, 176 45 C 164 64, 138 78, 104 78 C 116 57, 116 33, 104 12 Z"
+            fill="none" stroke={isLight ? '#1B1436' : '#E2E8F0'} strokeWidth="2.5" />
+          <path d="M94 12 C 106 33, 106 57, 94 78" fill="none" stroke={isLight ? '#1B1436' : '#E2E8F0'} strokeWidth="2.5" />
+          {/* output wire + lamp */}
+          <path d="M176 45 H240" stroke={out ? on : off} strokeWidth="2.5" fill="none" />
+          <circle cx="262" cy="45" r="14" fill={out ? on : 'transparent'} stroke={out ? on : off} strokeWidth="2.5" />
+          <text x="262" y="49" textAnchor="middle" fontSize="12" fontFamily="JetBrains Mono, monospace" fontWeight="700" fill={out ? '#fff' : dim}>{out}</text>
+        </svg>
+
+        {/* truth table — the live row is marked */}
+        <div className="mt-2 overflow-hidden rounded-md border" style={{ borderColor: hairline }}>
+          <div className="grid grid-cols-3 border-b px-3 py-1.5 text-center font-mono text-[10px] font-bold uppercase tracking-[0.14em]" style={{ borderColor: hairline, color: faint }}>
+            <span>A</span><span>B</span><span>A ⊕ B</span>
+          </div>
+          {rows.map(([ra, rb, ro]) => {
+            const live = ra === a && rb === b;
+            return (
+              <div
+                key={`${ra}${rb}`}
+                className="grid grid-cols-3 px-3 py-1.5 text-center font-mono text-[12px] font-semibold tabular-nums"
+                style={{ background: live ? `${BRAND}1A` : 'transparent', color: live ? (isLight ? '#1B1436' : '#fff') : dim }}
+              >
+                <span>{ra}</span><span>{rb}</span><span style={live ? { color: BRAND } : undefined}>{ro}</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ═══ PAGE ═══ */
+export const BrilliantHome: React.FC = () => {
+  const navigate = useNavigate();
+  const [scheme] = useColorScheme();
+  const isLight = scheme === 'light';
+  const { scrollYProgress } = useScroll();
+  const authed = isAuthenticated();
+
+  const pageBg = isLight ? '#ECE8FB' : '#04060A';
+  const ink = isLight ? '#1B1436' : '#E2E8F0';
+  const dim = isLight ? '#4A3F63' : '#94A3B8';
+  const faint = isLight ? '#6B5E86' : '#64748B';
+  const hairline = isLight ? '#C9BEEA' : 'rgba(255,255,255,0.09)';
+  const panel: React.CSSProperties = {
+    background: isLight ? '#ECE8FB' : '#0A0F18',
+    border: isLight ? '2px solid #1B1436' : '1px solid rgba(148,163,184,0.15)',
+    boxShadow: isLight ? '5px 5px 0 0 #1B1436' : '0 18px 44px rgba(0,0,0,0.55)',
+    borderRadius: 8,
+  };
+  const numeralStroke = isLight ? 'rgba(27,20,54,0.28)' : 'rgba(255,255,255,0.15)';
+
+  // Facts as logic-analyzer channels — the waveform IS the number, in 8-bit binary.
+  const CHANNELS: Array<{ label: string; value: number }> = [
+    { label: 'learning paths', value: 3 },
+    { label: 'interactive modules', value: TOTAL_MODULES },
+    { label: 'free, no account', value: 5 },
+    { label: 'installs required', value: 0 },
+  ];
+  const toBits = (n: number) => Array.from({ length: 8 }, (_, i) => (n >> (7 - i)) & 1);
+  const bitsWave = (bits: number[]) => {
+    let d = `M0 ${bits[0] ? 4 : 20}`;
+    bits.forEach((b, i) => { const y = b ? 4 : 20; d += ` L${i * 20} ${y} L${(i + 1) * 20} ${y}`; });
+    return d;
+  };
+
+  const STEPS: Array<[string, string, string]> = [
+    ['Build', 'Drop gates, pull wires, run it. The circuit exists before the vocabulary does.', '01'],
+    ['Break', 'Flip inputs. Force a carry. Watch exactly where the signal bends — and why.', '02'],
+    ['Understand', 'Now the theory lands on something your hands already know. It sticks.', '03'],
+  ];
+
+  return (
+    <div
+      className="relative min-h-screen w-full overflow-x-hidden font-sans antialiased transition-colors duration-300"
+      style={{ background: pageBg, color: ink }}
+    >
+      <GridBackground isLight={isLight} />
+
+      {/* Scroll signal — a rail that charges up as you read (desktop). */}
+      <div className="fixed bottom-0 left-5 top-0 z-30 hidden w-[2px] xl:block" style={{ background: hairline }} aria-hidden>
+        <motion.div className="h-full w-full origin-top" style={{ scaleY: scrollYProgress, background: BRAND }} />
+      </div>
+
+      <div className="relative z-10">
+        {/* ── Header ── */}
+        <header className="sticky top-0 z-40" style={{ background: pageBg }}>
+          <div className="mx-auto flex w-full max-w-[1080px] items-center justify-between gap-3 px-4 py-4 sm:px-6">
+            <div className="flex items-center gap-2.5">
+              <BrandMark size={28} />
+              <span className="text-[16px] font-extrabold tracking-tight">
+                Bit<span style={{ color: BRAND }}>For</span>Bytes
+              </span>
+            </div>
+            <nav className="hidden items-center gap-6 md:flex" aria-label="Sections">
+              {[['Courses', '#courses'], ['Live demo', '#demo'], ['Method', '#how']].map(([label, href]) => (
+                <a key={href} href={href} className="font-mono text-[11px] font-bold uppercase tracking-[0.16em] transition-opacity hover:opacity-60" style={{ color: dim }}>
+                  {label}
+                </a>
+              ))}
+            </nav>
+            <div className="flex items-center gap-2.5">
+              <ThemeToggle variant="minimal" />
+              <Link
+                to={authed ? '/profile' : '/login'}
+                className="hidden text-[13px] font-semibold transition-opacity hover:opacity-70 sm:block"
+                style={{ color: dim }}
+              >
+                {authed ? 'Profile' : 'Sign in'}
+              </Link>
+              <button
+                onClick={() => navigate('/portal')}
+                className="rounded-lg px-4 py-2 text-[13.5px] font-bold text-white transition-transform hover:-translate-y-0.5"
+                style={{ background: BRAND }}
+              >
+                Get started
+              </button>
+            </div>
+          </div>
+          <SquareWave stroke={hairline} />
+        </header>
+
+        <div className="mx-auto w-full max-w-[1080px] px-4 sm:px-6">
+          {/* ── Hero: headline + the byte ── */}
+          <section className="grid items-center gap-10 pb-16 pt-12 sm:pt-16 lg:grid-cols-[1.15fr_1fr] lg:gap-14 lg:pb-24 lg:pt-24">
+            <div>
+              <motion.p
+                initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                className="font-mono text-[11px] font-bold uppercase tracking-[0.24em]" style={{ color: faint }}
+              >
+                Silicon, in the browser
+              </motion.p>
+              <motion.h1
+                initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55, delay: 0.06, ease: [0.16, 1, 0.3, 1] }}
+                className="mt-4 text-[44px] font-extrabold leading-[1.02] tracking-tight sm:text-[60px] lg:text-[68px]"
+              >
+                Learn electronics<br />
+                <span style={{ color: BRAND }}>backwards.</span>
+              </motion.h1>
+              <motion.p
+                initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
+                className="mt-5 max-w-md text-[15.5px] leading-relaxed" style={{ color: dim }}
+              >
+                Build the circuit first. Flip its inputs, watch it answer — the theory clicks
+                once your hands already know it.
+              </motion.p>
+              <motion.div
+                initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55, delay: 0.18, ease: [0.16, 1, 0.3, 1] }}
+                className="mt-8 flex flex-wrap items-center gap-4"
+              >
+                <button
+                  onClick={() => navigate('/portal')}
+                  className="group inline-flex items-center gap-2 rounded-lg px-6 py-3.5 text-[15px] font-bold text-white transition-transform hover:-translate-y-0.5"
+                  style={{ background: BRAND }}
+                >
+                  Get started <ArrowRight size={16} className="transition-transform group-hover:translate-x-0.5" />
+                </button>
+                <a
+                  href="#courses"
+                  className="inline-flex items-center gap-1.5 text-[13.5px] font-semibold underline-offset-4 transition-opacity hover:opacity-70 hover:underline"
+                  style={{ color: dim }}
+                >
+                  See the three paths <ChevronDown size={14} />
+                </a>
+              </motion.div>
+              <motion.p
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 0.3 }}
+                className="mt-6 font-mono text-[11px] font-semibold uppercase tracking-[0.16em]" style={{ color: faint }}
+              >
+                Free for every ECE student in India
+              </motion.p>
+            </div>
+
+            <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}>
+              <ByteFlipper panel={panel} dim={dim} faint={faint} hairline={hairline} isLight={isLight} />
+            </motion.div>
+          </section>
+        </div>
+
+        <SquareWave stroke={hairline} />
+
+        {/* ── Facts as a logic-analyzer readout — the waveform IS the number ── */}
+        <div className="mx-auto w-full max-w-[1080px] px-4 sm:px-6">
+          <div className="py-10">
+            <div className="space-y-1">
+              {CHANNELS.map(({ label, value }, i) => {
+                const bits = toBits(value);
+                const flat = value === 0;
+                return (
+                  <div key={label} className="flex items-center gap-4 py-2 sm:gap-6">
+                    <span className="w-[118px] flex-shrink-0 font-mono text-[10px] font-bold uppercase leading-tight tracking-[0.16em] sm:w-[168px] sm:text-[10.5px]" style={{ color: faint }}>
+                      {label}
+                    </span>
+                    <svg className="h-6 min-w-0 flex-1" viewBox="0 0 160 24" preserveAspectRatio="none" aria-hidden>
+                      <motion.path
+                        d={bitsWave(bits)}
+                        fill="none"
+                        stroke={flat ? hairline : BRAND}
+                        strokeWidth="2"
+                        vectorEffect="non-scaling-stroke"
+                        initial={{ pathLength: 0 }}
+                        whileInView={{ pathLength: 1 }}
+                        viewport={{ once: true, margin: '-40px' }}
+                        transition={{ duration: 0.9, delay: i * 0.12, ease: 'easeOut' }}
+                      />
+                    </svg>
+                    <span className="w-14 flex-shrink-0 text-right text-[24px] font-extrabold leading-none tabular-nums sm:w-16 sm:text-[28px]">
+                      {value}
+                    </span>
+                    <span className="hidden w-[86px] flex-shrink-0 text-right font-mono text-[10.5px] font-semibold tabular-nums sm:block" style={{ color: faint }}>
+                      {bits.join('')}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+            <p className="mt-5 text-center font-mono text-[10px] font-semibold uppercase tracking-[0.2em]" style={{ color: faint }}>
+              Every number here is just bits — these four included
+            </p>
           </div>
         </div>
-        {menuOpen && (
-          <div className="mx-auto mt-2 max-w-5xl rounded-3xl border-2 border-edge bg-white shadow-brutal-sm dark:bg-[#0A0B12] md:hidden">
-            <div className="flex flex-col gap-1 px-4 py-3 text-[15px] font-semibold text-slate-700 dark:text-slate-200">
-              {navLinks.map(([label, href]) => (
-                <a key={label} href={href} onClick={() => setMenuOpen(false)} className="rounded-xl px-3 py-2.5 hover:bg-slate-100 dark:hover:bg-white/5">{label}</a>
-              ))}
-              {authed ? (
-                <Link to="/profile" onClick={() => setMenuOpen(false)} className="rounded-xl px-3 py-2.5 hover:bg-slate-100 dark:hover:bg-white/5">Profile</Link>
-              ) : (
-                <Link to="/login" onClick={() => setMenuOpen(false)} className="rounded-xl px-3 py-2.5 hover:bg-slate-100 dark:hover:bg-white/5">Sign in</Link>
-              )}
-              <Link to={primaryTo} onClick={() => setMenuOpen(false)} className="mt-1 rounded-full bg-[var(--ac)] px-4 py-3 text-center text-white">{primaryLabel}</Link>
-            </div>
-          </div>
-        )}
-      </header>
 
-      {/* ── HERO ── */}
-      <section ref={heroRef} className="relative overflow-hidden">
-        <div className="pointer-events-none absolute -left-32 -top-32 h-[40rem] w-[40rem] rounded-full bg-[var(--ac-tint)] blur-[120px] dark:bg-[var(--ac-tint20)]" />
-        <Shell className="grid grid-cols-1 items-center gap-12 py-16 lg:grid-cols-2 lg:py-24">
-          <div>
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[var(--ac-tint20)] bg-[var(--ac-tint)] px-3 py-1.5 text-[12px] font-semibold text-[var(--ac-strong)] dark:border-[var(--ac-tint25)] dark:bg-[var(--ac-tint)] dark:text-[var(--ac-soft)]">
-              <span className="h-1.5 w-1.5 rounded-full bg-[var(--ac)]" /> Free to use, no account needed
-            </div>
-            <h1 className="text-[clamp(2.5rem,5.6vw,4.25rem)] font-extrabold leading-[1.05] tracking-tight">
-              Learn electronics<br />
-              <span className="text-[var(--ac-strong)] dark:text-[var(--ac-soft)]">backwards.</span>
-            </h1>
-            <p className="mt-5 max-w-md text-lg leading-relaxed text-slate-600 dark:text-slate-400">
-              Build the circuit first. Flip its inputs, watch it answer, and let the theory
-              click into place after your hands already know it. All in the browser.
-            </p>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <PrimaryBtn to={primaryTo}>{primaryLabel}</PrimaryBtn>
-              <a href="#courses" className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-300 bg-white px-6 py-4 text-[16px] font-semibold text-slate-800 transition-colors hover:border-slate-400 dark:border-white/15 dark:bg-white/[0.04] dark:text-slate-200 dark:hover:border-white/30">
-                See the courses
-              </a>
-            </div>
-            <div className="mt-8 flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
-              <span className="flex">{[0, 1, 2, 3, 4].map((i) => <Star key={i} size={15} className="fill-[var(--ac)] text-[var(--ac)]" />)}</span>
-              Free for every ECE student in India.
-            </div>
-          </div>
+        <SquareWave stroke={hairline} />
 
-          <div className="relative z-30 lg:pl-4">
-            <SignalShowcase accent={connected ? SIGNAL_SKY : SIGNAL_SAKURA} />
-          </div>
-        </Shell>
-      </section>
+        <div className="mx-auto w-full max-w-[1080px] px-4 sm:px-6">
+          {/* ── Courses ── */}
+          <section id="courses" className="scroll-mt-20 py-16 lg:py-24">
+            <Reveal>
+              <p className="font-mono text-[11px] font-bold uppercase tracking-[0.24em]" style={{ color: faint }}>Courses</p>
+              <h2 className="mt-2 text-[30px] font-extrabold leading-tight tracking-tight sm:text-[38px]">
+                From one bit to a whole chip.
+              </h2>
+            </Reveal>
 
-      {/* ── FACT BAR ── */}
-      <section className="border-y border-slate-200/70 bg-white/40 dark:border-white/10 dark:bg-white/[0.02]">
-        <Shell className="grid grid-cols-2 gap-y-3 py-6 text-center sm:flex sm:items-baseline sm:justify-center sm:gap-0 sm:divide-x sm:divide-slate-200 dark:sm:divide-white/10">
-          {FACTS.map(([n, label]) => (
-            <div key={label} className="px-6">
-              <span className="text-xl font-extrabold text-[var(--ac-strong)] dark:text-[var(--ac-soft)]">{n}</span>
-              <span className="ml-2 text-[13px] font-medium text-slate-500 dark:text-slate-400">{label}</span>
+            <div className="mt-12 grid gap-7 md:grid-cols-3 md:gap-5 lg:gap-7">
+              {PATHS.map((p, i) => {
+                const mods = modulesFor(p.prefix);
+                return (
+                  <Reveal key={p.prefix} delay={i * 0.08}>
+                    <div
+                      className={`pinned-tape relative flex h-full flex-col p-6 pt-8 ${i === 1 ? '' : i === 0 ? 'pinned-tilt' : 'pinned-tilt-r'}`}
+                      style={panel}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="flex h-10 w-10 items-center justify-center rounded-md" style={{ background: `${p.color}1F`, color: p.color }}>
+                          <p.icon size={19} />
+                        </span>
+                        {p.badge && (
+                          <span className="rounded-md border px-2 py-1 font-mono text-[9px] font-bold uppercase tracking-[0.14em]" style={{ borderColor: hairline, color: p.color }}>
+                            {p.badge}
+                          </span>
+                        )}
+                      </div>
+                      <h3 className="mt-4 text-[18px] font-bold leading-tight">{p.title}</h3>
+                      <p className="mt-1 text-[13px]" style={{ color: dim }}>{p.tagline}</p>
+
+                      {/* module tick-strip */}
+                      <div className="mt-4 flex h-[8px] gap-[3px]">
+                        {mods.map((_, j) => (
+                          <span key={j} className="flex-1 rounded-[2px]" style={{ background: `${p.color}33` }} />
+                        ))}
+                      </div>
+                      <p className="mt-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.16em]" style={{ color: faint }}>
+                        {mods.length} modules
+                      </p>
+
+                      <ul className="mt-4 flex-1 space-y-1.5">
+                        {mods.slice(0, 4).map((m) => (
+                          <li key={m} className="flex items-center gap-2 text-[13px]" style={{ color: dim }}>
+                            <Check size={13} style={{ color: p.color }} /> <span className="truncate">{m}</span>
+                          </li>
+                        ))}
+                        {mods.length > 4 && (
+                          <li className="pl-[21px] font-mono text-[11px] font-semibold" style={{ color: faint }}>
+                            + {mods.length - 4} more
+                          </li>
+                        )}
+                      </ul>
+
+                      <button
+                        onClick={() => navigate(p.to)}
+                        className="group mt-5 inline-flex items-center gap-2 text-[14px] font-bold transition-opacity hover:opacity-75"
+                        style={{ color: p.color }}
+                      >
+                        Start the path <ArrowRight size={15} className="transition-transform group-hover:translate-x-1" />
+                      </button>
+                    </div>
+                  </Reveal>
+                );
+              })}
             </div>
-          ))}
-        </Shell>
-      </section>
-
-      {/* ── LEARNING PATHS ── */}
-      <section id="courses" className="py-20">
-        <Shell>
-          <div className="mx-auto max-w-2xl text-center">
-            <span className="text-[12px] font-bold uppercase tracking-[0.14em] text-[var(--ac-strong)] dark:text-[var(--ac-soft)]">Courses</span>
-            <h2 className="mt-3 text-[clamp(1.9rem,4vw,3rem)] font-extrabold leading-[1.1] tracking-tight">From one bit to a whole chip.</h2>
-          </div>
-
-          <div className="mt-12 grid gap-6 md:grid-cols-3">
-            {PATHS.map(({ icon: Icon, title, tag, color, base, startHere, comingSoon, modules }) => {
-              const inner = (
-                <>
-                  <div className="flex items-center justify-between">
-                    <span className="flex h-12 w-12 items-center justify-center rounded-2xl" style={{ background: `${color}1A`, color }}>
-                      <Icon size={22} />
-                    </span>
-                    {comingSoon ? (
-                      <span className="rounded-full border border-slate-300 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-slate-400 dark:border-white/15 dark:text-slate-500">Coming soon</span>
-                    ) : startHere ? (
-                      <span className="rounded-full bg-[var(--ac)] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-white">Start here</span>
-                    ) : (
-                      <span className="text-[11px] font-bold uppercase tracking-wide" style={{ color }}>{tag}</span>
-                    )}
-                  </div>
-                  <h3 className="mt-5 text-xl font-extrabold leading-snug">{title}</h3>
-                  <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{modules.length} interactive modules</p>
-                  <ul className="mt-4 space-y-1.5 text-sm text-slate-600 dark:text-slate-300">
-                    {modules.slice(0, 4).map((mod) => (
-                      <li key={mod} className="flex items-center gap-2.5">
-                        <span className="h-1.5 w-1.5 flex-none rounded-full" style={{ background: color }} />
-                        {mod}
-                      </li>
-                    ))}
-                    {modules.length > 4 && (
-                      <li className="pl-4 text-slate-400 dark:text-slate-500">+ {modules.length - 4} more</li>
-                    )}
-                  </ul>
-                  <div className="mt-auto flex items-center justify-between pt-6">
-                    {comingSoon ? (
-                      <span className="text-sm font-semibold text-slate-400 dark:text-slate-500">Launching soon, stay tuned</span>
-                    ) : (
-                      <>
-                        <span className="text-sm font-semibold" style={{ color }}>Start the path</span>
-                        <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" style={{ color }} />
-                      </>
-                    )}
-                  </div>
-                </>
-              );
-              const cardCls = 'group relative z-30 flex flex-col rounded-3xl border border-slate-200 bg-white p-7 dark:border-white/10 dark:bg-[#13141C]';
-              return comingSoon ? (
-                <div key={base} className={`${cardCls} opacity-75`} aria-disabled>
-                  {inner}
-                </div>
-              ) : (
-                <Link
-                  key={base}
-                  to={`${base}/1`}
-                  className={`${cardCls} transition-all hover:-translate-y-1 hover:shadow-[0_24px_50px_-24px_rgba(15,23,42,0.25)] dark:hover:shadow-[0_24px_50px_-24px_rgba(0,0,0,0.8)]`}
-                >
-                  {inner}
+            <Reveal delay={0.1}>
+              <p className="mt-10 text-center text-[13.5px]" style={{ color: dim }}>
+                First five modules free, no account needed.
+                <Link to="/career-roadmap" className="ml-2 font-semibold underline-offset-4 hover:underline" style={{ color: BRAND }}>
+                  See where these skills lead
                 </Link>
-              );
-            })}
-          </div>
+              </p>
+            </Reveal>
+          </section>
+        </div>
 
-          <p className="mt-10 text-center text-sm text-slate-500 dark:text-slate-400">
-            First five modules free, no account needed.
-            <Link to={LANDING_ROUTES.career} className="ml-2 font-semibold text-[var(--ac-strong)] hover:underline dark:text-[var(--ac-soft)]">See where these skills lead</Link>
-          </p>
-        </Shell>
-      </section>
+        <SquareWave stroke={hairline} />
 
-      {/* ── WHAT YOU GET ── */}
-      <section id="features" className="border-t border-slate-200/70 py-20 dark:border-white/10">
-        <Shell>
-          <div className="mx-auto max-w-2xl text-center">
-            <span className="text-[12px] font-bold uppercase tracking-[0.14em] text-[var(--ac-strong)] dark:text-[var(--ac-soft)]">What you get</span>
-            <h2 className="mt-3 text-[clamp(1.9rem,4vw,3rem)] font-extrabold leading-[1.1] tracking-tight">Everything between your first wire and real silicon.</h2>
-            <p className="mt-4 text-lg leading-relaxed text-slate-600 dark:text-slate-400">
-              Not videos with quizzes bolted on. A workbench, lessons and drills that all run live in the browser.
-            </p>
-          </div>
-          <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {([
-              [CircuitBoard, 'A real circuit workbench', 'A full simulator in your browser. Drop gates, pull wires, run it, with guided builds that walk you through the half adder and full adder part by part.'],
-              [MousePointerClick, 'Lessons you can poke', 'Every concept is a live widget: flip the inputs of a gate, drag a K-map grouping, step a carry through an adder. If you can read it, you can touch it.'],
-              [PlayCircle, 'Short videos, chaptered', 'Two-minute lectures with clickable chapter markers, plain-language vocabulary and read-along notes. Rewatch any beat in one tap.'],
-              [Target, 'Practice arenas', 'Every module ends in a boss drill: ten problems with instant, line-by-line walkthroughs the moment you answer.'],
-              [LineChart, 'Progress that follows you', 'The portal remembers every module you open and where you stopped, so you always resume mid-lesson, not from the cover page.'],
-              [Compass, 'A career roadmap', 'See where the skills lead: VLSI roles, the companies hiring for them, and the skill gaps between you and the job.'],
-            ] as Array<[React.FC<{ size?: number | string; className?: string }>, string, string]>).map(([Icon, title, body]) => (
-              <div key={title} className="relative z-30 rounded-3xl border border-slate-200 bg-white p-6 dark:border-white/10 dark:bg-[#13141C]">
-                <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[var(--ac-tint)] text-[var(--ac-strong)] dark:bg-[var(--ac-tint15)] dark:text-[var(--ac-soft)]">
-                  <Icon size={20} />
-                </span>
-                <h3 className="mt-4 text-[17px] font-bold leading-snug">{title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-400">{body}</p>
-              </div>
-            ))}
-          </div>
-        </Shell>
-      </section>
-
-      {/* ── HOW IT WORKS ── */}
-      <section id="how" className="border-y border-slate-200/70 bg-white/40 py-20 dark:border-white/10 dark:bg-white/[0.02]">
-        <Shell>
-          <div className="mx-auto max-w-2xl text-center">
-            <span className="text-[12px] font-bold uppercase tracking-[0.14em] text-[var(--ac-strong)] dark:text-[var(--ac-soft)]">How it works</span>
-            <h2 className="mt-3 text-[clamp(1.9rem,4vw,3rem)] font-extrabold leading-[1.1] tracking-tight">Backwards, on purpose.</h2>
-          </div>
-
-          <div className="relative mt-12 grid gap-10 md:grid-cols-3">
-            <div aria-hidden className="absolute left-6 right-6 top-6 hidden border-t-2 border-dotted border-slate-300 md:block dark:border-white/15" />
-            {([
-              ['01', 'Build it first', 'Real gates on a live canvas, before any lecture.',
-                <div key="v1" className="flex gap-2">
-                  {[Binary, Zap, Grid3x3].map((I, i) => (
-                    <span key={i} className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--ac-tint)] text-[var(--ac-strong)] dark:bg-[var(--ac-tint15)] dark:text-[var(--ac-soft)]">
-                      <I size={18} />
-                    </span>
-                  ))}
-                </div>],
-              ['02', 'Watch it answer', 'Flip the inputs. The circuit responds instantly.',
-                <div key="v2" className="flex items-center gap-2.5">
-                  <span className="flex h-10 w-10 items-center justify-center rounded-xl border-2 border-[var(--ac)] bg-[var(--ac-tint)] font-mono text-sm font-bold text-[var(--ac-strong)] dark:text-[var(--ac-soft)]">1</span>
-                  <span className="flex h-10 w-10 items-center justify-center rounded-xl border-2 border-slate-300 bg-white font-mono text-sm font-bold text-slate-400 dark:border-white/15 dark:bg-white/[0.04]">0</span>
-                  <ArrowRight size={16} className="text-slate-400" />
-                  <span className="h-10 w-10 rounded-full border-2 border-[var(--ac)] bg-[var(--ac)] shadow-[0_0_18px_var(--ac-glow)]" />
-                </div>],
-              ['03', 'Then read the why', 'Theory lands easy once you have seen it work.',
-                <code key="v3" className="inline-block rounded-xl border border-slate-200 bg-white px-4 py-2.5 font-mono text-[13px] text-slate-700 dark:border-white/10 dark:bg-[#13141C] dark:text-slate-200">
-                  assign y = a ^ b;
-                </code>],
-            ] as Array<[string, string, string, React.ReactNode]>).map(([num, title, line, visual]) => (
-              <div key={num}>
-                <div className="relative z-10 flex h-12 w-12 items-center justify-center rounded-full border border-slate-200 bg-white font-mono text-sm font-bold text-[var(--ac-strong)] shadow-sm dark:border-white/10 dark:bg-[#13141C] dark:text-[var(--ac-soft)]">
-                  {num}
-                </div>
-                <h3 className="mt-5 text-lg font-bold">{title}</h3>
-                <div className="mt-4">{visual}</div>
-                <p className="mt-3 text-sm text-slate-500 dark:text-slate-400">{line}</p>
-              </div>
-            ))}
-          </div>
-        </Shell>
-      </section>
-
-      {/* ── WHY ── */}
-      <section id="why" className="py-20">
-        <Shell className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
-          <div>
-            <span className="text-[12px] font-bold uppercase tracking-[0.14em] text-[var(--ac-strong)] dark:text-[var(--ac-soft)]">Why it works</span>
-            <h2 className="mt-3 text-[clamp(1.8rem,3.6vw,2.75rem)] font-extrabold leading-[1.12] tracking-tight">Understand it. Don't just memorize it.</h2>
-            <p className="mt-4 text-lg leading-relaxed text-slate-600 dark:text-slate-400">
-              Reading about a gate is not the same as flipping its inputs. Try the one on the right.
-            </p>
-            <ul className="mt-6 space-y-3">
-              {['Live simulators in every lesson, not slides', 'Instant feedback on every answer', 'A clear route from basic electronics to Verilog'].map((t) => (
-                <li key={t} className="flex items-center gap-3 text-slate-700 dark:text-slate-300">
-                  <span className="flex h-6 w-6 flex-none items-center justify-center rounded-full bg-[var(--ac-tint)] text-[var(--ac-strong)] dark:bg-[var(--ac-tint15)] dark:text-[var(--ac-soft)]"><Check size={14} /></span>
-                  {t}
-                </li>
-              ))}
-            </ul>
-            <div className="mt-8"><PrimaryBtn to={primaryTo}>Start the first lesson</PrimaryBtn></div>
-          </div>
-          <XorDemo />
-        </Shell>
-      </section>
-
-      {/* ── TESTIMONIALS ── */}
-      <section className="border-t border-slate-200/70 bg-white/40 py-20 dark:border-white/10 dark:bg-white/[0.02]">
-        <Shell>
-          <div className="mx-auto max-w-2xl text-center">
-            <span className="text-[12px] font-bold uppercase tracking-[0.14em] text-[var(--ac-strong)] dark:text-[var(--ac-soft)]">From the students</span>
-            <h2 className="mt-3 text-[clamp(1.9rem,4vw,3rem)] font-extrabold leading-[1.1] tracking-tight">It just clicks.</h2>
-          </div>
-          <div className="mt-12 grid gap-6 md:grid-cols-3">
-            {TESTIMONIALS.map((t) => (
-              <figure key={t.name} className="relative z-30 rounded-2xl border border-slate-200 bg-white p-7 dark:border-white/10 dark:bg-[#13141C]">
-                <blockquote className="leading-relaxed text-slate-700 dark:text-slate-300">"{t.quote}"</blockquote>
-                <figcaption className="mt-5 flex items-center gap-3">
-                  <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--ac-tint)] text-sm font-bold text-[var(--ac-strong)] dark:bg-[var(--ac-tint15)] dark:text-[var(--ac-soft)]">{t.name[0]}</span>
-                  <span className="text-sm font-semibold">{t.name}<span className="font-normal text-slate-400">, {t.role}</span></span>
-                </figcaption>
-              </figure>
-            ))}
-          </div>
-        </Shell>
-      </section>
-
-      {/* ── THE BOARD · where the scroll-signal lands ── */}
-      <section className="relative border-t border-slate-200/70 py-24 dark:border-white/10">
-        <Shell className="flex flex-col items-center text-center">
-          <span className="flex items-center gap-2 text-[12px] font-bold uppercase tracking-[0.14em] text-[var(--ac-strong)] dark:text-[var(--ac-soft)]">
-            <Cpu size={14} /> {connected ? 'Link established' : 'Incoming signal'}
-          </span>
-          <h2 className="mt-3 max-w-2xl text-[clamp(1.9rem,4vw,3rem)] font-extrabold leading-[1.1] tracking-tight">
-            {connected ? 'Signal delivered. Board is live.' : 'Bring the signal home.'}
-          </h2>
-          <p className="mt-4 max-w-xl text-lg leading-relaxed text-slate-600 dark:text-slate-400">
-            The trace running down this page is the same idea as a trace on a real PCB: one wire,
-            one bit. {connected ? 'It just reached the board, and the whole site switched to its powered-on colors.' : 'Scroll it all the way here and watch the board power up.'}
-          </p>
-
-          <div
-            ref={boardRef}
-            className="mt-12 w-full max-w-md rounded-3xl border p-5 transition-all duration-500 sm:p-6"
-            style={{
-              background: '#0A0E1A',
-              borderColor: connected ? 'var(--ac)' : 'rgba(255,255,255,0.12)',
-              boxShadow: connected ? '0 30px 80px -30px var(--ac-glow)' : '0 30px 80px -40px rgba(0,0,0,0.5)',
-            }}
-          >
-            <DevBoard connected={connected} />
-            <div className="mt-3 flex items-center justify-between border-t border-white/10 pt-3 font-mono text-[10px] text-white/45">
-              <span>PORT J1 · <span style={{ color: connected ? 'var(--ac)' : undefined }}>{connected ? 'CONNECTED' : 'WAITING FOR SIGNAL'}</span></span>
-              <span>{connected ? 'PWR ON · 1 bit received' : 'PWR OFF'}</span>
-            </div>
-          </div>
-
-          {connected && (
-            <div className="mt-10">
-              <PrimaryBtn to={primaryTo}>Now build the real thing</PrimaryBtn>
-            </div>
-          )}
-        </Shell>
-      </section>
-
-      {/* ── FINAL CTA ── */}
-      <section className="pb-20">
-        <Shell>
-          <div className="relative z-30 overflow-hidden rounded-[2.5rem] bg-[var(--ac)] px-6 py-14 text-center text-white shadow-[0_30px_80px_-30px_var(--ac-glow)] sm:px-12">
-            <h2 className="mx-auto max-w-2xl text-[clamp(1.8rem,3.8vw,2.75rem)] font-extrabold leading-[1.1] tracking-tight">
-              Start with the first wire. The theory will catch up.
-            </h2>
-            <p className="mx-auto mt-4 max-w-xl text-lg leading-relaxed text-white/85">
-              Five modules free, no account, nothing to install. Open the workstation and build something in the next ten minutes.
-            </p>
-            <div className="mt-8 flex justify-center">
-              <Link
-                to={primaryTo}
-                className="group inline-flex items-center justify-center gap-2 rounded-full bg-white px-8 py-4 text-[16px] font-bold text-[var(--ac-strong)] shadow-lg transition-all hover:bg-slate-50 active:scale-[0.98]"
+        <div className="mx-auto w-full max-w-[1080px] px-4 sm:px-6">
+          {/* ── Live demo ── */}
+          <section id="demo" className="grid scroll-mt-20 items-center gap-10 py-16 lg:grid-cols-[1fr_1.05fr] lg:gap-14 lg:py-24">
+            <Reveal>
+              <p className="font-mono text-[11px] font-bold uppercase tracking-[0.24em]" style={{ color: faint }}>Live demo</p>
+              <h2 className="mt-2 text-[30px] font-extrabold leading-tight tracking-tight sm:text-[38px]">
+                Poke it. It answers.
+              </h2>
+              <p className="mt-4 max-w-md text-[15px] leading-relaxed" style={{ color: dim }}>
+                Every concept on this site is a live circuit, not a diagram. Here's the smallest
+                one we have — an XOR gate. Flip A and B and watch the lamp make up its mind.
+              </p>
+              <p className="mt-3 max-w-md text-[15px] leading-relaxed" style={{ color: dim }}>
+                When you can read this, you can read a half adder. That's lesson one.
+              </p>
+              <button
+                onClick={() => navigate('/workbench')}
+                className="group mt-6 inline-flex items-center gap-2 text-[14.5px] font-bold transition-opacity hover:opacity-75"
+                style={{ color: BRAND }}
               >
-                {primaryLabel}
-                <ArrowRight size={18} className="transition-transform group-hover:translate-x-0.5" />
-              </Link>
-            </div>
-          </div>
-        </Shell>
-      </section>
+                Open the full Workbench <ArrowRight size={15} className="transition-transform group-hover:translate-x-1" />
+              </button>
+            </Reveal>
+            <Reveal delay={0.1}>
+              <XorDemo panel={panel} dim={dim} faint={faint} hairline={hairline} isLight={isLight} />
+            </Reveal>
+          </section>
+        </div>
 
-      {/* ── FOOTER ── */}
-      <footer className="border-t border-slate-200/70 py-14 dark:border-white/10">
-        <Shell className="grid grid-cols-2 gap-8 md:grid-cols-4">
-          <div className="col-span-2 md:col-span-1">
-            <BrandWordmark size={24} textClassName="text-sm text-slate-900 dark:text-white" />
-            <p className="mt-3 max-w-xs text-sm text-slate-500 dark:text-slate-400">Bits become logic. Logic becomes silicon. Free for anyone who wants to learn it.</p>
-          </div>
-          {[
-            ['Learn', [['Courses', '#courses'], ['Analogy Library', '/analogies'], ['Verilog Library', '/verilog-library'], ['Career roadmap', LANDING_ROUTES.career]]],
-            ['Platform', [['Sign in', '/login'], ['Workstation', LANDING_ROUTES.workstation], ['Silicon India Map', '/silicon-map']]],
-            ['Community', [['India ECE Pledge', '/pledge'], ['GitHub', LANDING_ROUTES.github], ['Discord', LANDING_ROUTES.social.discord], ['Contact', LANDING_ROUTES.social.email]]],
-          ].map(([title, links]) => (
-            <div key={title as string}>
-              <h4 className="mb-3 text-[13px] font-bold uppercase tracking-wide text-slate-800 dark:text-slate-200">{title as string}</h4>
-              <ul className="space-y-2 text-sm text-slate-500 dark:text-slate-400">
-                {(links as [string, string][]).map(([label, href]) => (
-                  <li key={label}>
-                    {href.startsWith('/') ? (
-                      <Link to={href} className="transition-colors hover:text-[var(--ac-strong)] dark:hover:text-[var(--ac-soft)]">{label}</Link>
-                    ) : (
-                      <a href={href} className="transition-colors hover:text-[var(--ac-strong)] dark:hover:text-[var(--ac-soft)]">{label}</a>
-                    )}
-                  </li>
+        <SquareWave stroke={hairline} />
+
+        <div className="mx-auto w-full max-w-[1080px] px-4 sm:px-6">
+          {/* ── Method ── */}
+          <section id="how" className="scroll-mt-20 py-16 lg:py-24">
+            <Reveal>
+              <p className="font-mono text-[11px] font-bold uppercase tracking-[0.24em]" style={{ color: faint }}>Method</p>
+              <h2 className="mt-2 text-[30px] font-extrabold leading-tight tracking-tight sm:text-[38px]">
+                Backwards, on purpose.
+              </h2>
+            </Reveal>
+            <div className="mt-12 grid gap-10 md:grid-cols-3 md:gap-6">
+              {STEPS.map(([title, body, num], i) => (
+                <Reveal key={num} delay={i * 0.08}>
+                  <span
+                    className="block select-none text-[72px] font-extrabold leading-[0.85] tracking-tight"
+                    style={{ WebkitTextStroke: `2px ${numeralStroke}`, color: 'transparent' }}
+                  >
+                    {num}
+                  </span>
+                  <h3 className="mt-4 text-[19px] font-bold">{title}</h3>
+                  <p className="mt-2 text-[14px] leading-relaxed" style={{ color: dim }}>{body}</p>
+                </Reveal>
+              ))}
+            </div>
+          </section>
+        </div>
+
+        <SquareWave stroke={hairline} />
+
+        <div className="mx-auto w-full max-w-[1080px] px-4 sm:px-6">
+          {/* ── Students ── */}
+          <section className="py-16 lg:py-24">
+            <Reveal>
+              <p className="font-mono text-[11px] font-bold uppercase tracking-[0.24em]" style={{ color: faint }}>Students</p>
+              <h2 className="mt-2 text-[30px] font-extrabold leading-tight tracking-tight sm:text-[38px]">
+                Verbatim.
+              </h2>
+            </Reveal>
+            <div className="mt-12 grid gap-7 md:grid-cols-3 md:gap-5 lg:gap-7">
+              {TESTIMONIALS.map((t, i) => (
+                <Reveal key={t.name} delay={i * 0.08}>
+                  <figure className={`pinned-tape relative h-full p-6 pt-8 ${i === 0 ? 'pinned-tilt' : i === 2 ? 'pinned-tilt-r' : ''}`} style={panel}>
+                    <blockquote className="text-[14px] leading-relaxed" style={{ color: dim }}>
+                      “{t.quote}”
+                    </blockquote>
+                    <figcaption className="mt-5 flex items-center gap-3 border-t border-dashed pt-4" style={{ borderColor: hairline }}>
+                      <span className="flex h-9 w-9 items-center justify-center rounded-md text-sm font-black text-white" style={{ background: BRAND }}>
+                        {t.name[0]}
+                      </span>
+                      <span>
+                        <span className="block text-[13.5px] font-bold">{t.name}</span>
+                        <span className="block font-mono text-[10px] font-semibold uppercase tracking-[0.14em]" style={{ color: faint }}>{t.role}</span>
+                      </span>
+                    </figcaption>
+                  </figure>
+                </Reveal>
+              ))}
+            </div>
+          </section>
+        </div>
+
+        <SquareWave stroke={hairline} />
+
+        <div className="mx-auto w-full max-w-[1080px] px-4 sm:px-6">
+          {/* ── CTA ── */}
+          <section className="py-16 lg:py-24">
+            <Reveal>
+              <div className="relative overflow-hidden p-8 text-center sm:p-12" style={panel}>
+                <span className="absolute inset-x-0 top-0 h-[5px]" style={{ background: BRAND }} />
+                <p className="font-mono text-[11px] font-bold uppercase tracking-[0.24em]" style={{ color: faint }}>
+                  No installs · no card · no excuses
+                </p>
+                <h2 className="mx-auto mt-3 max-w-xl text-[30px] font-extrabold leading-tight tracking-tight sm:text-[40px]">
+                  Your first five modules are free.
+                </h2>
+                <p className="mx-auto mt-3 max-w-md text-[15px]" style={{ color: dim }}>
+                  Open the workstation, pick a lane, and flip your first real bit today.
+                </p>
+                <button
+                  onClick={() => navigate('/portal')}
+                  className="group mx-auto mt-8 inline-flex items-center gap-2 rounded-lg px-7 py-4 text-[16px] font-bold text-white transition-transform hover:-translate-y-0.5"
+                  style={{ background: BRAND }}
+                >
+                  Open the workstation <ArrowRight size={17} className="transition-transform group-hover:translate-x-0.5" />
+                </button>
+              </div>
+            </Reveal>
+          </section>
+
+          {/* ── Footer ── */}
+          <footer className="border-t pb-12 pt-8" style={{ borderColor: hairline }}>
+            <div className="flex flex-col items-center justify-between gap-5 sm:flex-row">
+              <div className="flex items-center gap-2">
+                <BrandMark size={22} />
+                <span className="font-mono text-[11px] font-semibold" style={{ color: faint }}>© 2026 BitForBytes · made for students</span>
+              </div>
+              <div className="flex items-center gap-6">
+                {[
+                  ['Discord', 'https://discord.gg/NugcR5UXp'],
+                  ['Instagram', 'https://www.instagram.com/bit_for_bytes/'],
+                  ['LinkedIn', 'https://www.linkedin.com/company/bitforbytes/'],
+                ].map(([label, href]) => (
+                  <a
+                    key={label}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-mono text-[11px] font-bold uppercase tracking-[0.14em] transition-opacity hover:opacity-60"
+                    style={{ color: dim }}
+                  >
+                    {label}
+                  </a>
                 ))}
-              </ul>
+              </div>
             </div>
-          ))}
-        </Shell>
-        <Shell className="mt-10 border-t border-slate-200/70 pt-6 text-[13px] text-slate-400 dark:border-white/10">
-          &copy; 2026 BitForBytes. Made for people who like to build.
-        </Shell>
-      </footer>
-
-      {/* ── the scroll-driven signal trace (sits in the page background behind all content, never blocks clicks) ── */}
-      {rail && (
-        <svg
-          aria-hidden
-          className="pointer-events-none absolute left-0 top-0 -z-10"
-          style={{ width: '100%', height: rail.h }}
-          viewBox={`0 0 ${rail.w} ${rail.h}`}
-          preserveAspectRatio="none"
-          fill="none"
-        >
-          {/* ghost track so the destination is visible before you get there */}
-          <path d={rail.d} stroke="var(--ac)" strokeOpacity={0.14} strokeWidth={2.5} strokeDasharray="6 8" />
-          {/* soft glow understroke: a wide translucent stroke is far cheaper to
-              paint than an SVG drop-shadow filter over a page-tall layer */}
-          <path
-            ref={glowRef}
-            d={rail.d}
-            pathLength={1}
-            strokeDasharray="1"
-            strokeDashoffset={1}
-            stroke="var(--ac)"
-            strokeWidth={10}
-            strokeOpacity={0.22}
-            strokeLinecap="round"
-          />
-          {/* the live signal, drawn by scrolling */}
-          <path
-            ref={pathRef}
-            d={rail.d}
-            pathLength={1}
-            strokeDasharray="1"
-            strokeDashoffset={1}
-            stroke="var(--ac)"
-            strokeWidth={3}
-            strokeLinecap="round"
-          />
-          {/* the signal tip: halo ring + core instead of a filter */}
-          <g ref={dotRef} style={{ opacity: 0, transition: 'opacity 200ms linear' }}>
-            <circle r={11} fill="var(--ac)" opacity={0.25} />
-            <circle r={4.5} fill="var(--ac)" />
-          </g>
-        </svg>
-      )}
-    </main>
+          </footer>
+        </div>
+      </div>
+    </div>
   );
 };
 

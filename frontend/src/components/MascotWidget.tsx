@@ -145,9 +145,14 @@ function guideFor(path: string): Guide {
   return GUIDES.find((g) => g.test(path)) ?? DEFAULT_GUIDE;
 }
 
+// Course-module routes ship a bottom footer bar (Back / Next). The mascot must
+// sit ABOVE that bar there so it never covers the Next button.
+const MODULE_ROUTE = /^\/(module|dsd|basic-electronics|sandbox)(\/|$)/;
+
 export default function MascotWidget() {
   const { pathname } = useLocation();
   const guide = useMemo(() => guideFor(pathname), [pathname]);
+  const inModule = MODULE_ROUTE.test(pathname);
 
   const [open, setOpen] = useState(true);
   const [idx, setIdx] = useState(0);
@@ -176,7 +181,11 @@ export default function MascotWidget() {
   };
 
   return (
-    <div className="pointer-events-none fixed bottom-4 right-4 z-[60] flex flex-col items-end gap-2">
+    <div
+      className={`pointer-events-none fixed right-4 z-[60] flex flex-col items-end gap-2 ${
+        inModule ? 'bottom-24 lg:bottom-28' : 'bottom-4'
+      }`}
+    >
       <AnimatePresence>
         {open && (
           <motion.div
@@ -221,7 +230,9 @@ export default function MascotWidget() {
         type="button"
         onClick={advance}
         aria-label="Byte the guide — click for a tip about this page"
-        className="pointer-events-auto h-32 w-28 rounded-2xl outline-none focus-visible:ring-2 focus-visible:ring-signal-bright sm:h-40 sm:w-36"
+        className={`pointer-events-auto rounded-2xl outline-none focus-visible:ring-2 focus-visible:ring-signal-bright ${
+          inModule ? 'h-20 w-[4.5rem] sm:h-24 sm:w-20' : 'h-32 w-28 sm:h-40 sm:w-36'
+        }`}
         whileHover={{ scale: 1.06 }}
         whileTap={{ scale: 0.94 }}
       >

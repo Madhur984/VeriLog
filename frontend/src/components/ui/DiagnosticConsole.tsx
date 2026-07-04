@@ -58,16 +58,9 @@ export const DiagnosticConsole: React.FC<DiagnosticConsoleProps> = ({
       <div
         className="relative rounded-2xl overflow-hidden"
         style={{
-          background: isLight
-            ? 'linear-gradient(145deg, #FFFFFF 0%, #FFFFFF 40%, #F8FAFC 100%)'
-            : 'linear-gradient(145deg, #0a0f1a 0%, #05080c 40%, #020408 100%)',
-          border: isLight ? '1px solid #94A3B8' : '1px solid rgba(59, 130, 246, 0.15)',
-          boxShadow: isLight ? [
-            '0 10px 30px rgba(15,23,42,0.16)',
-            '0 0 0 1px rgba(15,23,42,0.16)',
-            'inset 0 1px 1px rgba(255,255,255,0.8)',
-            'inset 0 -1px 1px rgba(0,0,0,0.05)',
-          ].join(', ') : [
+          background: isLight ? '#ECE8FB' : '#04060A',
+          border: isLight ? '2px solid #1B1436' : '1px solid rgba(59, 130, 246, 0.15)',
+          boxShadow: isLight ? '4px 4px 0 0 #1B1436' : [
             '0 20px 60px rgba(0,0,0,0.9)',
             '0 0 0 1px rgba(255,255,255,0.04)',
             'inset 0 1px 1px rgba(255,255,255,0.06)',
@@ -100,12 +93,12 @@ export const DiagnosticConsole: React.FC<DiagnosticConsoleProps> = ({
           <div className="flex items-center gap-2">
             <motion.div
               className="w-2 h-2 rounded-full"
-              style={{ background: '#3b82f6', boxShadow: '0 0 6px #3b82f6' }}
-              animate={{ opacity: [1, 0.3, 1] }}
-              transition={{ duration: 1.2, repeat: Infinity }}
+              style={{ background: '#3b82f6' }}
+              animate={{ opacity: [1, 0.45, 1] }}
+              transition={{ duration: 2.6, repeat: Infinity }}
             />
-            <span className="text-[9px] font-black tracking-[0.35em] uppercase" style={{ color: isLight ? '#1E40AF' : '#3b82f680' }}>
-              BitforBytes // READY
+            <span className="text-[11px] font-bold tracking-wide" style={{ color: isLight ? '#1E40AF' : '#94A3B8' }}>
+              Workstation
             </span>
           </div>
           <div className="flex gap-1.5">
@@ -160,14 +153,6 @@ export const DiagnosticConsole: React.FC<DiagnosticConsoleProps> = ({
                   background: isLight ? `${darkenForLight(btn.color)}14` : `${btn.color}1f`,
                   border: `1px solid ${isLight ? `${darkenForLight(btn.color)}40` : `${btn.color}33`}`,
                 }}
-                animate={{
-                  boxShadow: [
-                    `0 0 0px ${btn.color}00`,
-                    `0 0 7px ${btn.color}${isLight ? '33' : '44'}`,
-                    `0 0 0px ${btn.color}00`,
-                  ],
-                }}
-                transition={{ duration: 2.4, repeat: Infinity, delay: BUTTONS.indexOf(btn) * 0.25 }}
               >
                 <btn.Icon
                   size={15}
@@ -195,20 +180,7 @@ export const DiagnosticConsole: React.FC<DiagnosticConsoleProps> = ({
           ))}
         </div>
 
-        {/* Bottom data readout row */}
-        <div
-          className="flex items-center justify-between px-4 py-2"
-          style={{
-            borderTop: isLight ? '1px solid rgba(15, 23, 42, 0.16)' : '1px solid rgba(255,255,255,0.05)',
-            background: isLight ? '#F1F5F9' : 'rgba(0,0,0,0.3)',
-          }}
-        >
-          {['CPU 43%', 'MEM 1.2G', 'NET OK'].map((stat, i) => (
-            <div key={i} className="text-[9px] font-mono" style={{ color: isLight ? '#334155' : '#334155' }}>
-              {stat}
-            </div>
-          ))}
-        </div>
+        {/* Fake CPU/MEM/NET telemetry removed — no gamey readout. */}
 
         {/* Side LED strip (right edge) */}
         <div className="absolute right-0 top-6 bottom-6 w-1 flex flex-col justify-around">

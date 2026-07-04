@@ -281,7 +281,6 @@ export const DsdModule1Engine: React.FC<{
           </div>
           <div className="hidden md:flex items-center gap-8">
             <div className="text-right">
-              <div className="text-[8px] font-mono uppercase tracking-widest opacity-30">Story // Lab</div>
               <div className="text-[10px] font-mono mt-0.5">{page.subtitle}</div>
             </div>
             <div className="text-sm font-mono opacity-20">{current + 1} / {PAGES.length}</div>

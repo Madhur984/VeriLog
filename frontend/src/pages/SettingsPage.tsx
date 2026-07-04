@@ -124,9 +124,7 @@ export const SettingsPage: React.FC = () => {
   };
 
   // ── theme tokens ──
-  const pageBg = isLight
-    ? 'radial-gradient(ellipse 120% 90% at 50% 0%, #DDE4EC 0%, #EEF1F5 75%)'
-    : 'radial-gradient(ellipse 120% 90% at 50% 0%, #0d1526 0%, #06090f 80%)';
+  const pageBg = isLight ? '#ECE8FB' : '#06090f';
   const cardStyle: React.CSSProperties = {
     background: isLight ? 'rgba(255,255,255,0.96)' : 'rgba(7,10,18,0.92)',
     border: isLight ? '1px solid #CBD5E1' : '1px solid rgba(59,130,246,0.18)',

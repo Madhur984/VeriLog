@@ -254,8 +254,7 @@ export const RadialMenu: React.FC = () => {
         willChange: 'transform',
       }}
     >
-       {/* Ambient Bloom Area */}
-       <div className={isLight ? "absolute inset-0 bg-[#0369A1]/25 rounded-full blur-[80px] scale-150" : "absolute inset-0 bg-blue-500/10 rounded-full blur-[80px] scale-150"} />
+       {/* Ambient bloom removed — blur-[80px] glow wash was GPU-expensive (lag). */}
        
        {/* Base entry & hover backward tilt animation wrapper */}
        <motion.div

@@ -65,9 +65,7 @@ const Sidebar: React.FC<{
 
   return (
     <div
-      className={`w-[320px] h-full flex-shrink-0 border-r-2 flex flex-col z-20 transition-all duration-700 relative ${
-        isDarkMode ? 'bg-bg-base' : 'bg-slate-50'
-      }`}
+      className="w-[320px] h-full flex-shrink-0 border-r-2 flex flex-col z-20 transition-all duration-700 relative bg-transparent"
       style={{ borderColor }}
     >
       <header className="p-10 border-b" style={{ borderColor }}>
@@ -188,7 +186,11 @@ export const BeModule1Engine: React.FC<{
   }, [initialChapter]);
 
   const [current, setCurrent] = useState(findInitial);
-  const [navOpen, setNavOpen] = useState(false);
+  // Sidebar defaults OPEN on desktop (visible, pushes content) and CLOSED on phones
+  // (content full-width; the hamburger opens it as an overlay).
+  const [navOpen, setNavOpen] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia('(min-width: 1024px)').matches
+  );
   const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -264,7 +266,7 @@ export const BeModule1Engine: React.FC<{
           style={{ borderColor: 'var(--border-soft)' }}
         >
           <div className="flex items-center gap-3 min-w-0">
-            <HamburgerButton isDarkMode={isDarkMode} onClick={() => setNavOpen(true)} />
+            <HamburgerButton isDarkMode={isDarkMode} onClick={() => setNavOpen(o => !o)} />
             <div className="flex flex-col min-w-0">
               <span className="text-[10px] font-mono uppercase tracking-[0.4em] font-bold transition-colors duration-500" style={{ color: theme.primary }}>
                 {page.part}
@@ -274,7 +276,6 @@ export const BeModule1Engine: React.FC<{
           </div>
           <div className="hidden md:flex items-center gap-8">
             <div className="text-right">
-              <div className="text-[8px] font-mono uppercase tracking-widest opacity-30">Story // Lab</div>
               <div className="text-[10px] font-mono mt-0.5">{page.subtitle}</div>
             </div>
             <div className="text-sm font-mono opacity-20">{current + 1} / {PAGES.length}</div>

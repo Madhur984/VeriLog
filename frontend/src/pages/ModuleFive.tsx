@@ -260,12 +260,8 @@ export const ModuleFive: React.FC = () => {
       </AnimatePresence>
 
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-          <motion.div 
-            style={{ x: springX, y: springY }}
-            className="absolute inset-0 bg-blueprint-grid bg-[length:70px_70px] opacity-[0.12]" 
-          />
-          <div className="absolute inset-0 bg-dot-grid opacity-15" />
-          
+          <motion.div style={{ x: springX, y: springY }} className="absolute inset-0" />
+
           <DataFlux />
 
           {/* Vivid ambient glow that shifts with page */}

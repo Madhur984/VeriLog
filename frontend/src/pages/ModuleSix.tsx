@@ -175,9 +175,7 @@ export const ModuleSix: React.FC = () => {
     <div className={`flex h-screen overflow-hidden ${isDarkMode ? 'bg-matte-obsidian text-oscilloscope-trace' : 'bg-bg-void text-text-main'} relative`}>
       {/* Global Engineering Aesthetics */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-         <div className="absolute inset-0 bg-dot-grid opacity-30" />
-         <div className="absolute inset-0 bg-blueprint-grid bg-[length:40px_40px] opacity-20" />
-         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(0,212,255,0.03),transparent_70%)]" />
+         {/* Background grid + glow layers removed — clean flat surface. */}
       </div>
       
       <DrawerShell open={navOpen} onClose={() => setNavOpen(false)}>
