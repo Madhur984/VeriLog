@@ -135,7 +135,7 @@ export const S05_Dither: React.FC<{ time: number; isDarkMode: boolean }> = ({ ti
                             onClick={() => setDitherEnabled(!ditherEnabled)}
                             aria-pressed={ditherEnabled}
                             aria-label="Toggle Dither"
-                            className={`w-full py-4 rounded-2xl border flex items-center justify-center gap-3 transition-all ${ditherEnabled ? 'bg-orange-500 text-white border-orange-500 shadow-lg shadow-orange-500/20' : 'bg-white/5 border-white/10 text-white hover:bg-white/10'}`}
+                            className={`w-full py-4 rounded-2xl border flex items-center justify-center gap-3 transition-all ${ditherEnabled ? 'bg-orange-500 text-white border-orange-500 shadow-lg shadow-orange-500/20' : 'bg-slate-50 dark:bg-white/5 border-slate-200 dark:border-white/10 text-slate-900 dark:text-white hover:bg-slate-100 dark:hover:bg-white/10'}`}
                         >
                             <Zap size={16} fill={ditherEnabled ? 'white' : 'none'} />
                             <span className="text-[10px] font-black uppercase tracking-widest">
@@ -149,7 +149,7 @@ export const S05_Dither: React.FC<{ time: number; isDarkMode: boolean }> = ({ ti
                                  {[1, 0, 1, 0, 1].map((b, i) => (
                                      <motion.div 
                                         key={i} 
-                                        className={`w-2 h-3 rounded-sm ${b ? 'bg-orange-500/40' : 'bg-white/5'}`}
+                                        className={`w-2 h-3 rounded-sm ${b ? 'bg-orange-500/40' : 'bg-slate-200 dark:bg-white/5'}`}
                                         animate={ditherEnabled ? { opacity: [0.2, 1, 0.2], backgroundColor: ["#f97316", "#ffffff", "#f97316"] } : {}}
                                         transition={{ repeat: Infinity, duration: 0.1 * (i + 1) }}
                                      />

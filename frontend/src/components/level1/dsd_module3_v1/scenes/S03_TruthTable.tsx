@@ -109,7 +109,7 @@ export const S03_TruthTable: React.FC<Props> = ({ isActive, isDarkMode }) => {
                         ? 'bg-orange-400/20 border border-orange-400/60'
                         : isMin
                           ? 'bg-emerald-500/10'
-                          : 'bg-white/[0.02]'
+                          : (isDarkMode ? 'bg-white/[0.02]' : 'bg-slate-50')
                     }`}
                   >
                     m{row.idx}
@@ -130,7 +130,7 @@ export const S03_TruthTable: React.FC<Props> = ({ isActive, isDarkMode }) => {
                             ? 'bg-orange-400/15 border-y border-orange-400/40'
                             : isMin && k === 'f'
                               ? 'bg-emerald-500/15'
-                              : 'bg-white/[0.02]'
+                              : (isDarkMode ? 'bg-white/[0.02]' : 'bg-slate-50')
                         } ${isLast ? 'rounded-r-md' : ''}`}
                       >
                         <span

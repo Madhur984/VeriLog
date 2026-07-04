@@ -12,10 +12,10 @@ const SHAPES: Array<{ size: string; cells: number; vars: string; }> = [
   { size: '4×4', cells: 16, vars: 'F = 1 always' },
 ];
 
-const Mini: React.FC<{ rows: number; cols: number; lit?: boolean[][] }> = ({ rows, cols, lit }) => (
+const Mini: React.FC<{ rows: number; cols: number; lit?: boolean[][]; isDarkMode: boolean }> = ({ rows, cols, lit, isDarkMode }) => (
   <div
     className="grid gap-0.5 p-1.5 rounded"
-    style={{ background: 'rgba(0,0,0,0.25)', gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`, gridTemplateRows: `repeat(${rows}, minmax(0, 1fr))` }}
+    style={{ background: isDarkMode ? 'rgba(0,0,0,0.25)' : 'rgba(0,0,0,0.05)', gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`, gridTemplateRows: `repeat(${rows}, minmax(0, 1fr))` }}
   >
     {Array.from({ length: rows * cols }).map((_, i) => {
       const r = Math.floor(i / cols);
@@ -26,8 +26,8 @@ const Mini: React.FC<{ rows: number; cols: number; lit?: boolean[][] }> = ({ row
           key={i}
           className="aspect-square rounded-sm"
           style={{
-            background: isLit ? 'rgba(252,211,77,0.6)' : 'rgba(255,255,255,0.05)',
-            border: '1px solid rgba(255,255,255,0.1)',
+            background: isLit ? 'rgba(252,211,77,0.6)' : isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.9)',
+            border: isDarkMode ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(0,0,0,0.12)',
             boxShadow: isLit ? '0 0 6px rgba(252,211,77,0.5)' : undefined,
           }}
         />
@@ -110,7 +110,7 @@ export const S06_Wings: React.FC<Props> = ({ isActive, isDarkMode }) => {
           <div className="grid grid-cols-2 gap-4">
             {allowedExamples.map((ex) => (
               <div key={ex.label} className="space-y-2">
-                <Mini rows={ex.rows} cols={ex.cols} lit={ex.lit} />
+                <Mini rows={ex.rows} cols={ex.cols} lit={ex.lit} isDarkMode={isDarkMode} />
                 <div className={`text-xs font-mono text-center ${subText}`}>{ex.label}</div>
               </div>
             ))}
@@ -136,7 +136,7 @@ export const S06_Wings: React.FC<Props> = ({ isActive, isDarkMode }) => {
           <div className="grid grid-cols-2 gap-4">
             {illegalExamples.map((ex) => (
               <div key={ex.label} className="space-y-2 relative">
-                <Mini rows={ex.rows} cols={ex.cols} lit={ex.lit} />
+                <Mini rows={ex.rows} cols={ex.cols} lit={ex.lit} isDarkMode={isDarkMode} />
                 <div className="absolute top-1 right-1 w-6 h-6 rounded-full bg-rose-500/80 flex items-center justify-center text-white text-xs font-black">
                   ✕
                 </div>

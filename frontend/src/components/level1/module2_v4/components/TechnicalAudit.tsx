@@ -43,7 +43,7 @@ export const TechnicalAudit: React.FC<TechnicalAuditProps> = ({
                 className={`w-full p-6 md:p-8 rounded-[2rem] border flex items-center justify-between transition-all duration-500 group ${bg} ${isOpen ? 'border-orange-500/40 ring-1 ring-orange-500/10' : 'hover:border-orange-500/30'}`}
             >
                 <div className="flex items-center gap-5 md:gap-7">
-                    <div className={`p-4 rounded-xl border transition-all duration-500 ${isOpen ? 'bg-orange-500 text-white border-orange-500 shadow-[0_0_20px_rgba(249,115,22,0.4)]' : 'bg-white/5 border-white/5 group-hover:bg-white/10'}`}>
+                    <div className={`p-4 rounded-xl border transition-all duration-500 ${isOpen ? 'bg-orange-500 text-white border-orange-500 shadow-[0_0_20px_rgba(249,115,22,0.4)]' : 'bg-slate-100 dark:bg-white/5 border-slate-200 dark:border-white/5 group-hover:bg-slate-200 dark:group-hover:bg-white/10'}`}>
                         <Terminal size={18} />
                     </div>
                     <div className="text-left">
@@ -136,7 +136,7 @@ export const TechnicalAudit: React.FC<TechnicalAuditProps> = ({
 
                             {/* ADVANCED SECTION (Optional) */}
                             {specs.advanced && (
-                                <div className="md:col-span-2 pt-12 border-t border-dashed border-white/10 space-y-10 relative z-10">
+                                <div className="md:col-span-2 pt-12 border-t border-dashed border-slate-200 dark:border-white/10 space-y-10 relative z-10">
                                     <div className="text-center">
                                         <span className={`text-[10px] font-mono uppercase tracking-[0.8em] font-black ${subTextColor} opacity-40`}>Advanced Engineering Specs</span>
                                     </div>

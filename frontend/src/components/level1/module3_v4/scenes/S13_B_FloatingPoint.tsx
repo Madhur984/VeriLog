@@ -150,7 +150,7 @@ export const S13_B_FloatingPoint: React.FC<Props> = ({ isActive, isDarkMode }) =
               </div>
 
               {/* Live Result Display */}
-              <div className="w-full grid md:grid-cols-2 gap-8 items-center border-t border-white/5 pt-10">
+              <div className={`w-full grid md:grid-cols-2 gap-8 items-center border-t pt-10 ${isDarkMode ? 'border-white/5' : 'border-slate-200'}`}>
                   <div className="space-y-4">
                       <div className="flex items-center gap-2">
                           <Calculator size={16} className="text-sky-500" />
@@ -170,7 +170,7 @@ export const S13_B_FloatingPoint: React.FC<Props> = ({ isActive, isDarkMode }) =
                       </div>
                   </div>
 
-                  <div className="space-y-4 p-6 rounded-2xl bg-black/20 border border-white/5 font-mono">
+                  <div className={`space-y-4 p-6 rounded-2xl border font-mono ${isDarkMode ? 'bg-black/20 border-white/5' : 'bg-slate-100 border-slate-200'}`}>
                       <div className="flex items-center gap-2 opacity-40 text-[10px] uppercase tracking-widest">
                           <Percent size={12} /> Live Formula
                       </div>
@@ -179,7 +179,7 @@ export const S13_B_FloatingPoint: React.FC<Props> = ({ isActive, isDarkMode }) =
                           <span style={{ color: COLORS.exp }}> 2^({result.type === 'normal' ? `${(bits.slice(1,6).reduce((a,b,i)=>a+b*Math.pow(2,4-i),0))} - 15` : (result.type === 'subnormal' ? '-14' : '...')})</span> x 
                           <span style={{ color: COLORS.mant }}> ({result.type === 'normal' ? (1 + bits.slice(6).reduce((a,b,i)=>a+b*Math.pow(2,-(i+1)),0)).toFixed(4) : (bits.slice(6).reduce((a,b,i)=>a+b*Math.pow(2,-(i+1)),0)).toFixed(4)})</span>
                       </div>
-                      <div className="text-[10px] opacity-30 mt-2 border-t border-white/5 pt-2 italic">
+                      <div className={`text-[10px] opacity-30 mt-2 border-t pt-2 italic ${isDarkMode ? 'border-white/5' : 'border-slate-200'}`}>
                           Standard: IEEE 754-2008 Half-Precision
                       </div>
                   </div>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useColorScheme } from '../../../hooks/useColorScheme';
 import { Module2Engine } from './Module2Engine';
 import './module2.css';
@@ -41,7 +41,7 @@ export const Module2Root: React.FC = () => {
 
   return (
     <div className={`h-screen w-full overflow-hidden ${isDarkMode ? 'bg-[#030100]' : 'bg-white'}`}>
-        {/* Night-vision tactical overlay removed — clean flat surface. */}
+        {/* Night-vision tactical overlay removed â€” clean flat surface. */}
 
         <Module2Engine 
             isDarkMode={isDarkMode}

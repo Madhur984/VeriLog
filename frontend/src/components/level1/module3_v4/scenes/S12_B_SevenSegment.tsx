@@ -119,7 +119,7 @@ export const S12_B_SevenSegment: React.FC<Props> = ({ isActive, isDarkMode }) =>
                         className={`px-4 py-1.5 rounded-full border text-[9px] font-black uppercase tracking-widest transition-all
                             ${isManual 
                                 ? 'bg-amber-500/20 border-amber-500 text-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.2)]' 
-                                : `bg-white/5 border-white/10 text-slate-500 hover:border-${accent}`}`}
+                                : `${isDarkMode ? 'bg-white/5 border-white/10' : 'bg-slate-100 border-slate-200'} text-slate-500 hover:border-${accent}`}`}
                       >
                           {isManual ? 'Manual Override ON' : 'Auto Decode Mode'}
                       </button>

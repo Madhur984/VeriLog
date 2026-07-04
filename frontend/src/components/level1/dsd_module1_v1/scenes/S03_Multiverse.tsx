@@ -50,7 +50,7 @@ export const S03_Multiverse: React.FC<Props> = ({ isActive, isDarkMode }) => {
         <motion.div
           initial={{ opacity: 0, scale: 0.97 }} animate={isActive ? { opacity: 1, scale: 1 } : {}}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="rounded-3xl overflow-hidden border border-white/10"
+          className={`rounded-3xl overflow-hidden border ${isDarkMode ? 'border-white/10' : 'border-slate-200'}`}
           style={{ background: '#fef9f0' }}
         >
           <img loading="lazy" decoding="async" src="/images/sketchbook/p03.webp" alt="The 8-Day Multiverse hand-drawn truth table" className="w-full block" />

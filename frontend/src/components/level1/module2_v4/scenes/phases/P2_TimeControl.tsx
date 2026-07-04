@@ -9,7 +9,8 @@ export const P2_TimeControl: React.FC<{
     state: GlobalSignalState;
     time: number;
     onUpdate: (patch: Partial<GlobalSignalState>) => void;
-}> = ({ state, time, onUpdate }) => {
+    isDarkMode?: boolean;
+}> = ({ state, time, onUpdate, isDarkMode = true }) => {
     const { metrics } = SignalEngine(state, time, 800, 300);
 
     return (
@@ -19,11 +20,11 @@ export const P2_TimeControl: React.FC<{
                     <div className="h-px w-20 bg-red-500/40" />
                     <span className="text-[11px] font-black font-mono tracking-[0.5em] text-red-500 uppercase">Subsystem_Temporal</span>
                 </div>
-                <h1 className="text-[12rem] font-black italic tracking-tighter leading-[0.8] text-white uppercase">
-                    Temporal <br/> 
+                <h1 className={`text-[12rem] font-black italic tracking-tighter leading-[0.8] uppercase ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
+                    Temporal <br/>
                     <span className="text-red-500">Clash</span>.
                 </h1>
-                <p className="text-3xl font-medium opacity-40 text-white max-w-4xl leading-relaxed italic">
+                <p className={`text-3xl font-medium max-w-4xl leading-relaxed italic ${isDarkMode ? 'opacity-40 text-white' : 'text-slate-600'}`}>
                     Digital signals achieve <span className="text-red-500 font-bold">Noise Immunity</span> by ignoring small voltage fluctuations, but they are vulnerable to time-domain errors.
                 </p>
             </header>
@@ -54,17 +55,17 @@ export const P2_TimeControl: React.FC<{
                 <div className="space-y-10">
                     <SpectrumAnalyzer state={state} />
                     
-                    <div className={`p-12 rounded-[5rem] border transition-all duration-700 relative overflow-hidden ${metrics.aliasing ? 'bg-red-500/10 border-red-500 shadow-[0_40px_100px_rgba(239,68,68,0.2)]' : 'bg-[#0A0C10] border-white/5'}`}>
+                    <div className={`p-12 rounded-[5rem] border transition-all duration-700 relative overflow-hidden ${metrics.aliasing ? 'bg-red-500/10 border-red-500 shadow-[0_40px_100px_rgba(239,68,68,0.2)]' : (isDarkMode ? 'bg-[#0A0C10] border-white/5' : 'bg-slate-50 border-slate-200')}`}>
                         <div className="flex items-center gap-6 mb-8 relative z-10">
-                            <div className={`p-5 rounded-3xl ${metrics.aliasing ? 'bg-red-500 text-black shadow-lg shadow-red-500/30' : 'bg-white/5 text-white/20'}`}>
+                            <div className={`p-5 rounded-3xl ${metrics.aliasing ? 'bg-red-500 text-black shadow-lg shadow-red-500/30' : (isDarkMode ? 'bg-white/5 text-white/20' : 'bg-slate-100 text-slate-400')}`}>
                                 {metrics.aliasing ? <Ghost size={32} /> : <ShieldAlert size={32} />}
                             </div>
                             <div className="flex flex-col">
-                                <h4 className="text-3xl font-black italic text-white uppercase tracking-tighter">Nyquist Check</h4>
-                                <span className="text-[9px] font-mono text-white/20 uppercase tracking-widest">Fs &gt; 2 * Fmax Requirement</span>
+                                <h4 className={`text-3xl font-black italic uppercase tracking-tighter ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Nyquist Check</h4>
+                                <span className={`text-[9px] font-mono uppercase tracking-widest ${isDarkMode ? 'text-white/20' : 'text-slate-400'}`}>Fs &gt; 2 * Fmax Requirement</span>
                             </div>
                         </div>
-                        <p className="text-lg font-medium text-white/40 leading-relaxed italic relative z-10">
+                        <p className={`text-lg font-medium leading-relaxed italic relative z-10 ${isDarkMode ? 'text-white/40' : 'text-slate-600'}`}>
                             {metrics.aliasing 
                                 ? "Violation detected. High frequencies are masquerading as low ones. This information loss is mathematically IRREVERSIBLE."
                                 : "The Nyquist-Shannon sampling theorem is satisfied. The analog signal can theoretically be perfectly reconstructed."}

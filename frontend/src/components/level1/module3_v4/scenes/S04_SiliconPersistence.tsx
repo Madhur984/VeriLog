@@ -59,7 +59,7 @@ export const S04_SiliconPersistence: React.FC<Props> = ({ isActive, isDarkMode }
                 <p className={`text-sm mb-6 ${textColor} leading-relaxed`}>
                     This is the atom of memory. It captures the input <strong>D</strong> only at the exact moment the <strong>Clock</strong> clicks (rising edge).
                 </p>
-                <pre className={`font-mono text-[10px] sm:text-[11px] leading-relaxed ${textColor} bg-black/20 p-4 rounded-xl`}>
+                <pre className={`font-mono text-[10px] sm:text-[11px] leading-relaxed ${textColor} ${isDarkMode ? 'bg-black/20' : 'bg-slate-100'} p-4 rounded-xl`}>
 {`Clock:  ____
 Data:   ______
         |

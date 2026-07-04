@@ -50,7 +50,7 @@ export const S02_PicnicPhysics: React.FC<Props> = ({ isActive, isDarkMode }) => 
         <motion.div
           initial={{ opacity: 0, x: 20 }} animate={isActive ? { opacity: 1, x: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="rounded-3xl overflow-hidden border border-white/10"
+          className={`rounded-3xl overflow-hidden border ${isDarkMode ? 'border-white/10' : 'border-slate-200'}`}
           style={{ background: '#fef9f0' }}
         >
           <img loading="lazy" decoding="async" src="/images/sketchbook/p02.webp" alt="Variables and the rule of the day" className="w-full block" />

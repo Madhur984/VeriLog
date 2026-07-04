@@ -48,7 +48,7 @@ export const S08_FlowDuel: React.FC<Props> = ({ isActive, isDarkMode }) => {
             <span className="font-mono text-[11px] text-orange-300 font-bold">Electron flow → (physical movement)</span>
             <Car className="text-orange-300" size={14} />
           </div>
-          <div className="relative h-12 rounded-xl bg-black/40 border border-orange-400/40 overflow-hidden">
+          <div className="relative h-12 rounded-xl bg-slate-900 dark:bg-black/40 border border-orange-400/40 overflow-hidden">
             {Array.from({ length: 6 }).map((_, i) => (
               <motion.div
                 key={i}
@@ -68,7 +68,7 @@ export const S08_FlowDuel: React.FC<Props> = ({ isActive, isDarkMode }) => {
             <span className="font-mono text-[11px] text-fuchsia-300 font-bold">Hole flow ← (apparent movement = conventional current)</span>
             <Car className="text-fuchsia-300 -scale-x-100" size={14} />
           </div>
-          <div className="relative h-12 rounded-xl bg-black/40 border border-fuchsia-400/40 overflow-hidden">
+          <div className="relative h-12 rounded-xl bg-slate-900 dark:bg-black/40 border border-fuchsia-400/40 overflow-hidden">
             {Array.from({ length: 4 }).map((_, i) => (
               <motion.div
                 key={i}

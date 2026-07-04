@@ -48,7 +48,7 @@ export const S04_WaveParameters: React.FC<{ isDarkMode: boolean }> = ({ isDarkMo
                 <div className="h-px w-full bg-slate-500/10 mb-4" />
                 <p className={`text-[10px] font-mono uppercase tracking-widest opacity-40`}>{param.tech}</p>
               </div>
-              <div className="mt-auto bg-black/20 rounded-2xl p-4">
+              <div className="mt-auto bg-slate-900 dark:bg-black/20 rounded-2xl p-4">
                 <SineWaveSmall 
                   color={param.color} 
                   speed={param.name === 'Frequency' ? 0.08 : param.name === 'Phase' ? 0.03 : 0.05} 
@@ -72,7 +72,7 @@ export const S04_WaveParameters: React.FC<{ isDarkMode: boolean }> = ({ isDarkMo
         <div className={`rounded-[3rem] p-12 text-center border overflow-hidden ${isDarkMode ? 'bg-slate-950/20 border-slate-800' : 'bg-slate-50 border-slate-200'}`}>
           <div className="text-[10px] font-mono font-black uppercase tracking-[0.6em] mb-12 opacity-30">The Universal Formula</div>
           
-          <div className="inline-block p-10 rounded-3xl bg-black/40 border-2 border-cyan-500/20 mb-12">
+          <div className="inline-block p-10 rounded-3xl bg-slate-900 dark:bg-black/40 border-2 border-cyan-500/20 mb-12">
             <p className="text-4xl font-mono tracking-widest text-cyan-500 md:text-6xl flex items-center justify-center gap-2">
               x(t) = A cos(ωt + θ)
             </p>
@@ -86,7 +86,7 @@ export const S04_WaveParameters: React.FC<{ isDarkMode: boolean }> = ({ isDarkMo
               { id: 't', label: 'Time', desc: 'Life moving forward. Without time, there is no signal.' },
               { id: 'θ', label: 'Phase', desc: 'The starting offset at t=0.' },
             ].map(item => (
-              <div key={item.id} className="p-5 rounded-2xl bg-black/20 border border-white/5 group hover:border-cyan-500/30 transition-all">
+              <div key={item.id} className="p-5 rounded-2xl bg-slate-100 dark:bg-black/20 border border-slate-200 dark:border-white/5 group hover:border-cyan-500/30 transition-all">
                 <div className="flex items-center gap-3 mb-2">
                   <span className="w-7 h-7 rounded bg-cyan-500/20 flex items-center justify-center font-mono text-cyan-500 font-bold">{item.id}</span>
                   <span className="text-sm font-bold opacity-80 uppercase tracking-widest">{item.label}</span>

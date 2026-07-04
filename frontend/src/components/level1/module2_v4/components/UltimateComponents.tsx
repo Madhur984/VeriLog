@@ -111,21 +111,21 @@ export const KineticText: React.FC<{ text: string }> = ({ text }) => {
 export const InsightPanel: React.FC<{ title: string; content: string; career?: string }> = ({ title, content, career }) => {
     const [isOpen, setIsOpen] = useState(false);
     return (
-        <div className={`transition-all duration-700 rounded-[3rem] overflow-hidden ${isOpen ? 'bg-orange-500/10 border border-orange-500/20 p-10' : 'bg-white/5 border border-white/5 p-6'}`}>
+        <div className={`transition-all duration-700 rounded-[3rem] overflow-hidden ${isOpen ? 'bg-orange-500/10 border border-orange-500/20 p-10' : 'bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/5 p-6'}`}>
             <button 
                 onClick={() => setIsOpen(!isOpen)}
                 className="w-full flex items-center justify-between group"
             >
                 <div className="flex items-center gap-4">
-                    <div className={`p-3 rounded-2xl transition-all ${isOpen ? 'bg-orange-500 text-black' : 'bg-white/10 text-white/40'}`}>
+                    <div className={`p-3 rounded-2xl transition-all ${isOpen ? 'bg-orange-500 text-black' : 'bg-slate-200 dark:bg-white/10 text-slate-500 dark:text-white/40'}`}>
                         <BookOpen size={16} />
                     </div>
                     <div className="flex flex-col items-start">
-                        <span className="text-[9px] font-black uppercase tracking-[0.3em] text-white/20">Optional // Deep_Dive</span>
-                        <span className={`text-[13px] font-black uppercase tracking-tighter transition-colors ${isOpen ? 'text-white' : 'text-white/40 group-hover:text-white'}`}>{title}</span>
+                        <span className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-400 dark:text-white/20">Optional // Deep_Dive</span>
+                        <span className={`text-[13px] font-black uppercase tracking-tighter transition-colors ${isOpen ? 'text-slate-900 dark:text-white' : 'text-slate-500 dark:text-white/40 group-hover:text-slate-900 dark:group-hover:text-white'}`}>{title}</span>
                     </div>
                 </div>
-                <div className={`transition-transform duration-500 ${isOpen ? 'rotate-90 text-orange-500' : 'text-white/10'}`}>
+                <div className={`transition-transform duration-500 ${isOpen ? 'rotate-90 text-orange-500' : 'text-slate-400 dark:text-white/10'}`}>
                     <ChevronRight size={20} />
                 </div>
             </button>
@@ -136,11 +136,11 @@ export const InsightPanel: React.FC<{ title: string; content: string; career?: s
                         className="overflow-hidden"
                     >
                         <div className="pt-8 space-y-6">
-                            <p className="text-sm font-medium leading-relaxed italic text-white/60">{content}</p>
+                            <p className="text-sm font-medium leading-relaxed italic text-slate-600 dark:text-white/60">{content}</p>
                             {career && (
-                                <div className="flex items-center gap-3 pt-6 border-t border-white/5">
-                                    <div className="px-3 py-1 bg-white/5 rounded-lg text-[8px] font-black text-[#00D4FF] uppercase tracking-widest">Career_Path</div>
-                                    <span className="text-[10px] font-bold text-white/30 italic">{career}</span>
+                                <div className="flex items-center gap-3 pt-6 border-t border-slate-200 dark:border-white/5">
+                                    <div className="px-3 py-1 bg-slate-100 dark:bg-white/5 rounded-lg text-[8px] font-black text-[#00D4FF] uppercase tracking-widest">Career_Path</div>
+                                    <span className="text-[10px] font-bold text-slate-500 dark:text-white/30 italic">{career}</span>
                                 </div>
                             )}
                         </div>
@@ -692,11 +692,11 @@ export const InteractiveQuiz: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode 
                 </div>
                 <div className="space-y-4">
                     <h3 className={`text-4xl font-black italic tracking-tighter ${textColor}`}>Mastery Attained</h3>
-                    <p className="text-white/40 text-lg font-medium italic">
+                    <p className="text-slate-500 dark:text-white/40 text-lg font-medium italic">
                         You have successfully navigated the Digital Bridge. All core concepts are synchronized.
                     </p>
                 </div>
-                <div className="pt-8 border-t border-white/5">
+                <div className="pt-8 border-t border-slate-200 dark:border-white/5">
                     <div className="flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-[0.5em] text-[#00D4FF]">
                         Clearance Level: Elite Engineering
                     </div>

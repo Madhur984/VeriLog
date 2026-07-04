@@ -75,7 +75,7 @@ export const S10_Conclusion: React.FC<Props> = ({ isActive, isDarkMode }) => {
       <motion.div
         initial={{ opacity: 0, y: 20 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.2 }}
-        className="rounded-3xl overflow-hidden border border-white/10 mx-auto max-w-3xl"
+        className={`rounded-3xl overflow-hidden border mx-auto max-w-3xl ${isDarkMode ? 'border-white/10' : 'border-slate-200'}`}
         style={{ background: '#fef9f0' }}
       >
         <img loading="lazy" decoding="async" src="/images/sketchbook/p12.webp" alt="The Architecture of Logic - final page" className="w-full block" />

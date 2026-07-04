@@ -52,7 +52,7 @@ export const S06_LogicBridge: React.FC<Props> = ({ isActive, isDarkMode, onEnter
                         </div>
                     ))}
                 </div>
-                <div className="mt-8 pt-8 border-t border-white/5">
+                <div className={`mt-8 pt-8 border-t ${isDarkMode ? 'border-white/5' : 'border-slate-200'}`}>
                     <pre className={`text-[10px] opacity-40 leading-tight ${textColor}`}>
 {`[ ABSTRACT INTEL ]
        [^]

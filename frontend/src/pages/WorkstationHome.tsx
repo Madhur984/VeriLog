@@ -52,7 +52,7 @@ const SquareWave: React.FC<{ stroke: string }> = ({ stroke }) => (
 /* ── Learning paths (canonical: lib/moduleHistory MODULE_LABELS) ── */
 interface PathDef { key: string; title: string; tagline: string; prefix: string; color: string; icon: LucideIcon; }
 const PATHS: PathDef[] = [
-  { key: 'foundation', title: 'Digital Logic & Verilog', tagline: 'Signals, gates, K-maps and Verilog — the foundation.', prefix: 'module/', color: '#2563EB', icon: Binary },
+  { key: 'foundation', title: 'Foundation', tagline: 'Digital logic & Verilog — signals, gates, K-maps.', prefix: 'module/', color: '#2563EB', icon: Binary },
   { key: 'be', title: 'Basic Electronics', tagline: 'From the physics of control to transistors.', prefix: 'basic-electronics/', color: '#EA580C', icon: Zap },
   { key: 'dsd', title: 'Digital System Design', tagline: 'Boolean logic through adders, subtractors and beyond.', prefix: 'dsd/', color: '#9333EA', icon: Boxes },
 ];

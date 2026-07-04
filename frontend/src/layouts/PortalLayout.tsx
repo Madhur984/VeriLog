@@ -126,13 +126,19 @@ export const PortalLayout = () => {
                 <button
                     onClick={() => navigate('/portal')}
                     aria-label="Back to portal"
-                    className="brutal-btn fixed top-4 right-4 z-[410] inline-flex h-10 items-center gap-2 px-4 text-[13px] font-bold"
+                    className="group fixed top-4 right-4 z-[410] inline-flex h-10 items-center gap-2 rounded-md border-2 px-4 font-mono text-[11px] font-bold uppercase tracking-[0.14em] transition-transform duration-150 hover:-translate-y-0.5 active:translate-y-0"
                     style={{
-                        background: isLight ? '#FFFFFF' : 'var(--bg-elev)',
-                        color: isLight ? '#0F172A' : '#DBEAFE',
+                        // Translucent surface so it sits on ANY module background
+                        // (each module tints its dark bg differently) instead of
+                        // fighting it with its own color.
+                        background: isLight ? '#FFFFFF' : 'rgba(255,255,255,0.06)',
+                        color: isLight ? '#1B1436' : '#E2E8F0',
+                        borderColor: isLight ? '#1B1436' : 'rgba(255,255,255,0.22)',
+                        boxShadow: isLight ? '4px 4px 0 0 #1B1436' : '4px 4px 0 0 rgba(0,0,0,0.5)',
                     }}
                 >
-                    <ArrowLeft size={16} /> Portal
+                    <ArrowLeft size={15} className="transition-transform duration-150 group-hover:-translate-x-0.5" />
+                    Portal
                 </button>
             )}
 

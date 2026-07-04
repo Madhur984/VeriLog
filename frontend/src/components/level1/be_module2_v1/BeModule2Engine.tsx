@@ -183,7 +183,7 @@ export const BeModule2Engine: React.FC<{
   }, [initialChapter]);
 
   const [current, setCurrent] = useState(findInitial);
-  const [navOpen, setNavOpen] = useState(false);
+  const [navOpen, setNavOpen] = useState(() => window.matchMedia('(min-width: 1024px)').matches);
   const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -230,19 +230,6 @@ export const BeModule2Engine: React.FC<{
 
   return (
     <div className={`flex h-screen overflow-hidden transition-colors duration-700 relative ${isDarkMode ? 'bg-[#080603]' : 'bg-white'}`}>
-      {isDarkMode && (
-        <div className="absolute inset-0 pointer-events-none opacity-[0.18] overflow-hidden z-0">
-          <motion.div
-            animate={{ background: `radial-gradient(circle, ${theme.primary} 0%, transparent 70%)` }}
-            className="absolute -top-[10%] -left-[10%] w-[70vw] h-[70vw] rounded-full blur-[120px]"
-          />
-          <motion.div
-            animate={{ background: `radial-gradient(circle, ${theme.secondary} 0%, transparent 70%)` }}
-            className="absolute bottom-[0%] -right-[10%] w-[60vw] h-[60vw] rounded-full blur-[100px]"
-          />
-        </div>
-      )}
-
       <DrawerShell open={navOpen} onClose={() => setNavOpen(false)}>
         <Sidebar
           current={current}
@@ -259,7 +246,7 @@ export const BeModule2Engine: React.FC<{
           style={{ borderColor: 'var(--border-soft)' }}
         >
           <div className="flex items-center gap-3 min-w-0">
-            <HamburgerButton isDarkMode={isDarkMode} onClick={() => setNavOpen(true)} />
+            <HamburgerButton isDarkMode={isDarkMode} onClick={() => setNavOpen(o => !o)} />
             <div className="flex flex-col min-w-0">
               <span className="text-[10px] font-mono uppercase tracking-[0.4em] font-bold transition-colors duration-500" style={{ color: theme.primary }}>
                 {page.part}

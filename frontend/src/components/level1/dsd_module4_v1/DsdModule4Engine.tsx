@@ -89,7 +89,7 @@ const Sidebar: React.FC<{
             >
               <div
                 className={`mt-0.5 w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-black border transition-all duration-500 ${
-                  isDone || isActive ? 'text-black' : 'bg-transparent border-white/10 opacity-30'
+                  isDone || isActive ? 'text-black' : `bg-transparent ${isDarkMode ? 'border-white/10' : 'border-slate-300'} opacity-30`
                 }`}
                 style={{
                   backgroundColor: isDone || isActive ? accent : 'transparent',
@@ -127,7 +127,7 @@ const Sidebar: React.FC<{
               {Math.round(progress)}%
             </span>
           </div>
-          <div className="h-1 w-full bg-slate-900 rounded-full overflow-hidden">
+          <div className={`h-1 w-full ${isDarkMode ? 'bg-slate-900' : 'bg-slate-200'} rounded-full overflow-hidden`}>
             <motion.div
               animate={{ width: `${progress}%`, backgroundColor: theme.primary }}
               className="h-full"
@@ -164,7 +164,7 @@ export const DsdModule4Engine: React.FC<{
   }, [initialChapter]);
 
   const [current, setCurrent] = useState(findInitial);
-  const [navOpen, setNavOpen] = useState(false);
+  const [navOpen, setNavOpen] = useState(() => window.matchMedia('(min-width: 1024px)').matches);
   const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -209,19 +209,6 @@ export const DsdModule4Engine: React.FC<{
 
   return (
     <div className={`flex h-screen overflow-hidden transition-colors duration-700 relative ${isDarkMode ? 'bg-[#01040c]' : 'bg-white'}`}>
-      {isDarkMode && (
-        <div className="absolute inset-0 pointer-events-none opacity-[0.18] overflow-hidden z-0">
-          <motion.div
-            animate={{ background: `radial-gradient(circle, ${theme.primary} 0%, transparent 70%)` }}
-            className="absolute -top-[10%] -left-[10%] w-[70vw] h-[70vw] rounded-full blur-[120px]"
-          />
-          <motion.div
-            animate={{ background: `radial-gradient(circle, ${theme.secondary} 0%, transparent 70%)` }}
-            className="absolute bottom-[0%] -right-[10%] w-[60vw] h-[60vw] rounded-full blur-[100px]"
-          />
-        </div>
-      )}
-
       <DrawerShell open={navOpen} onClose={() => setNavOpen(false)}>
         <Sidebar
           current={current}
@@ -237,7 +224,7 @@ export const DsdModule4Engine: React.FC<{
           style={{ borderColor: 'var(--border-soft)' }}
         >
           <div className="flex items-center gap-3 min-w-0">
-            <HamburgerButton isDarkMode={isDarkMode} onClick={() => setNavOpen(true)} />
+            <HamburgerButton isDarkMode={isDarkMode} onClick={() => setNavOpen(o => !o)} />
             <div className="flex flex-col min-w-0">
               <span className="text-[10px] font-mono uppercase tracking-[0.4em] font-bold transition-colors duration-500" style={{ color: theme.primary }}>
                 {page.step}

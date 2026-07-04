@@ -181,15 +181,15 @@ export const S01_Interface: React.FC<Props> = ({ isDarkMode }) => {
             <div className="flex items-center gap-2">
               <button onClick={() => setStep(s => Math.max(0, s - 1))} disabled={step === 0}
                       className={`flex items-center gap-1 px-4 py-2 rounded-xl border font-mono text-xs font-black uppercase tracking-widest transition-all ${
-                        step === 0 ? 'opacity-30 cursor-not-allowed border-white/5'
+                        step === 0 ? `opacity-30 cursor-not-allowed ${isDarkMode ? 'border-white/5' : 'border-slate-200'}`
                           : isDarkMode ? 'border-white/10 hover:border-cyan-400' : 'border-slate-200 hover:border-cyan-400'
                       } ${textColor}`}>
                 <ChevronLeft size={14} /> back
               </button>
               <button onClick={() => setStep(s => Math.min(STEPS.length - 1, s + 1))} disabled={step === STEPS.length - 1}
                       className={`flex items-center gap-1 px-4 py-2 rounded-xl border-2 font-mono text-xs font-black uppercase tracking-widest transition-all ${
-                        step === STEPS.length - 1 ? 'opacity-30 cursor-not-allowed border-white/5 ' + textColor
-                          : 'border-cyan-400 text-cyan-300 hover:bg-cyan-500/10'
+                        step === STEPS.length - 1 ? `opacity-30 cursor-not-allowed ${isDarkMode ? 'border-white/5' : 'border-slate-200'} ` + textColor
+                          : isDarkMode ? 'border-cyan-400 text-cyan-300 hover:bg-cyan-500/10' : 'border-cyan-500 text-cyan-700 hover:bg-cyan-500/10'
                       }`}>
                 next <ChevronRight size={14} />
               </button>

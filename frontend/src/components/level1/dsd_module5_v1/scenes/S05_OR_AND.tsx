@@ -303,7 +303,7 @@ export const S05_OR_AND: React.FC<SceneProps> = ({ isActive, isDarkMode, mode })
                 <th className={`py-2 px-2 text-center text-[10px] uppercase tracking-widest`} style={{ color: accent }}>
                   Stage 2 · invert
                 </th>
-                <th className={`py-2 px-2 text-center text-[10px] uppercase tracking-widest text-emerald-300`}>
+                <th className={`py-2 px-2 text-center text-[10px] uppercase tracking-widest ${isDarkMode ? 'text-emerald-300' : 'text-emerald-600'}`}>
                   Y · {easyName}
                 </th>
               </tr>
@@ -324,7 +324,7 @@ export const S05_OR_AND: React.FC<SceneProps> = ({ isActive, isDarkMode, mode })
                     <td className={`py-2 px-2 text-center ${rb ? textColor : 'opacity-50'}`}>{rb}</td>
                     <td className={`py-2 px-2 text-center ${s1 ? textColor : 'opacity-50'}`}>{s1}</td>
                     <td className={`py-2 px-2 text-center opacity-60`}>{s1 === 1 ? 0 : 1}</td>
-                    <td className={`py-2 px-2 text-center font-black ${out ? 'text-emerald-300' : 'opacity-50'}`}>{out}</td>
+                    <td className={`py-2 px-2 text-center font-black ${out ? (isDarkMode ? 'text-emerald-300' : 'text-emerald-600') : 'opacity-50'}`}>{out}</td>
                   </motion.tr>
                 );
               })}
@@ -396,7 +396,7 @@ export const S05_OR_AND: React.FC<SceneProps> = ({ isActive, isDarkMode, mode })
                 <th className={`py-2 px-2 text-center text-[10px] uppercase tracking-widest`} style={{ color: accent }}>
                   Final · {mode === 'nand' ? '(A′·B′)′' : '(A′+B′)′'}
                 </th>
-                <th className={`py-2 px-2 text-center text-[10px] uppercase tracking-widest text-emerald-300`}>
+                <th className={`py-2 px-2 text-center text-[10px] uppercase tracking-widest ${isDarkMode ? 'text-emerald-300' : 'text-emerald-600'}`}>
                   Y · {hardName}
                 </th>
               </tr>
@@ -421,7 +421,7 @@ export const S05_OR_AND: React.FC<SceneProps> = ({ isActive, isDarkMode, mode })
                     <td className={`py-2 px-2 text-center ${ran ? textColor : 'opacity-50'}`}>{ran}</td>
                     <td className={`py-2 px-2 text-center ${rbn ? textColor : 'opacity-50'}`}>{rbn}</td>
                     <td className={`py-2 px-2 text-center ${out ? textColor : 'opacity-50'}`}>{out}</td>
-                    <td className={`py-2 px-2 text-center font-black ${out ? 'text-emerald-300' : 'opacity-50'}`}>{out}</td>
+                    <td className={`py-2 px-2 text-center font-black ${out ? (isDarkMode ? 'text-emerald-300' : 'text-emerald-600') : 'opacity-50'}`}>{out}</td>
                   </motion.tr>
                 );
               })}

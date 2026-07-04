@@ -47,7 +47,7 @@ export const S02_TheCast: React.FC<Props> = ({ isActive, isDarkMode }) => {
             <div className="p-3 bg-sky-500/10 font-mono text-[10px] uppercase tracking-widest text-sky-300">
               N-Type · the commuter platform
             </div>
-            <div className="relative h-32 bg-black/30 overflow-hidden">
+            <div className="relative h-32 bg-slate-900 dark:bg-black/30 overflow-hidden">
               {Array.from({ length: 24 }).map((_, i) => (
                 <motion.div
                   key={i}
@@ -71,7 +71,7 @@ export const S02_TheCast: React.FC<Props> = ({ isActive, isDarkMode }) => {
             <div className="p-3 bg-orange-500/10 font-mono text-[10px] uppercase tracking-widest text-orange-300">
               P-Type · the empty train
             </div>
-            <div className="relative h-32 bg-black/30 overflow-hidden">
+            <div className="relative h-32 bg-slate-900 dark:bg-black/30 overflow-hidden">
               {Array.from({ length: 18 }).map((_, i) => (
                 <motion.div
                   key={i}

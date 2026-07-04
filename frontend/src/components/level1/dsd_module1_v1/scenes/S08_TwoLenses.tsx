@@ -43,13 +43,13 @@ export const S08_TwoLenses: React.FC<Props> = ({ isActive, isDarkMode }) => {
 
       {/* Sketchbook references - blueprint matrix + the two-lens equality */}
       <div className="grid md:grid-cols-2 gap-5">
-        <div className="rounded-3xl overflow-hidden border border-white/10" style={{ background: '#fef9f0' }}>
+        <div className={`rounded-3xl overflow-hidden border ${isDarkMode ? 'border-white/10' : 'border-slate-200'}`} style={{ background: '#fef9f0' }}>
           <img loading="lazy" decoding="async" src="/images/sketchbook/p10.webp" alt="The Blueprint Matrix - SOP vs POS comparison" className="w-full block" />
           <div className="px-4 py-2 text-[10px] font-mono uppercase tracking-widest text-slate-700 bg-white/60">
             Sketchbook · the blueprint matrix
           </div>
         </div>
-        <div className="rounded-3xl overflow-hidden border border-white/10" style={{ background: '#fef9f0' }}>
+        <div className={`rounded-3xl overflow-hidden border ${isDarkMode ? 'border-white/10' : 'border-slate-200'}`} style={{ background: '#fef9f0' }}>
           <img loading="lazy" decoding="async" src="/images/sketchbook/p11.webp" alt="Two lenses, one logical truth" className="w-full block" />
           <div className="px-4 py-2 text-[10px] font-mono uppercase tracking-widest text-slate-700 bg-white/60">
             Sketchbook · paint the 1s = brick the 0s
@@ -111,7 +111,7 @@ export const S08_TwoLenses: React.FC<Props> = ({ isActive, isDarkMode }) => {
                 className={`w-12 h-12 rounded-xl font-mono text-2xl font-black border-2 transition-all ${
                   trial[name] === 1
                     ? 'bg-fuchsia-500/20 border-fuchsia-400 text-fuchsia-300'
-                    : 'bg-white/5 border-white/20 text-slate-400'
+                    : isDarkMode ? 'bg-white/5 border-white/20 text-slate-400' : 'bg-slate-100 border-slate-300 text-slate-500'
                 }`}
               >
                 {trial[name]}

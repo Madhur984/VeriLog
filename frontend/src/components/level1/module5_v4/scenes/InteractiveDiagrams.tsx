@@ -15,7 +15,7 @@ const Btn: React.FC<{
     onClick={onClick}
     className={`rounded-md border font-mono uppercase tracking-[0.18em] transition-all duration-150 ${
       size === 'sm' ? 'text-[10px] px-2.5 py-1' : 'text-[11px] px-3 py-1.5'
-    } ${active ? 'text-black' : 'text-white/80 hover:text-white hover:bg-white/5'}`}
+    } ${active ? 'text-black' : 'text-slate-600 dark:text-white/80 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5'}`}
     style={{
       borderColor: active ? accent : 'rgba(255,255,255,0.15)',
       backgroundColor: active ? accent : 'transparent',
@@ -44,7 +44,7 @@ const Bit: React.FC<{ accent: string; value: 0 | 1; label?: string; size?: numbe
     >
       {value}
     </div>
-    {label && <span className="text-[9px] font-mono text-white/55 tracking-widest">{label}</span>}
+    {label && <span className="text-[9px] font-mono text-slate-600 dark:text-white/55 tracking-widest">{label}</span>}
   </div>
 );
 
@@ -101,7 +101,7 @@ export const AnimatedClock: React.FC<Props> = ({ accent }) => {
         </text>
       </svg>
 
-      <div className="flex items-center gap-4 text-[11px] font-mono text-white/70">
+      <div className="flex items-center gap-4 text-[11px] font-mono text-slate-600 dark:text-white/70">
         <Btn accent={accent} onClick={() => setRunning(r => !r)} active={running}>
           {running ? '❚❚ pause' : '▶ play'}
         </Btn>
@@ -401,7 +401,7 @@ export const InteractiveFlipFlop: React.FC<Props> = ({ accent }) => {
         {/* Output */}
         <div className="flex flex-col items-center gap-1.5">
           <Bit accent={accent} value={q ? 0 : 1 as 0 | 1} label="Q̅" />
-          <span className="text-[9px] font-mono text-white/40">complement</span>
+          <span className="text-[9px] font-mono text-slate-500 dark:text-white/40">complement</span>
         </div>
       </div>
 
@@ -424,7 +424,7 @@ export const InteractiveFlipFlop: React.FC<Props> = ({ accent }) => {
         </svg>
       </div>
 
-      <div className="text-[10px] font-mono text-white/45 tracking-widest">
+      <div className="text-[10px] font-mono text-slate-500 dark:text-white/45 tracking-widest">
         try → toggle D · click CLK · then PRE / CLR (asynchronous)
       </div>
     </div>
@@ -506,7 +506,7 @@ export const InteractiveHalfAdder: React.FC<Props> = ({ accent }) => {
           <Bit accent={accent} value={sum} label="sum" />
           <Bit accent={accent} value={carry} label="carry" />
         </div>
-        <div className="text-[10px] font-mono text-white/55">
+        <div className="text-[10px] font-mono text-slate-600 dark:text-white/55">
           sum = a ⊕ b · carry = a · b
         </div>
       </div>
@@ -573,7 +573,7 @@ export const InteractiveMux: React.FC<Props> = ({ accent }) => {
         <Btn accent={accent} onClick={() => setA(a ? 0 : 1)} active={a === 1}>a = {a}</Btn>
         <Btn accent={accent} onClick={() => setB(b ? 0 : 1)} active={b === 1}>b = {b}</Btn>
         <Btn accent={accent} onClick={() => setSel(sel ? 0 : 1)} active={sel === 1}>sel = {sel}</Btn>
-        <span className="text-[11px] font-mono text-white/55">y = sel ? a : b</span>
+        <span className="text-[11px] font-mono text-slate-600 dark:text-white/55">y = sel ? a : b</span>
       </div>
     </div>
   );

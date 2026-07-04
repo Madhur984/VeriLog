@@ -36,7 +36,8 @@ export const P4_SystemConversion: React.FC<{
     state: GlobalSignalState;
     onUpdate: (patch: Partial<GlobalSignalState>) => void;
     time: number;
-}> = ({ state, onUpdate, time }) => {
+    isDarkMode?: boolean;
+}> = ({ state, onUpdate, time, isDarkMode = true }) => {
     const [activeId, setActiveId] = useState(SCENARIOS[0].id);
     const scene = SCENARIOS.find(s => s.id === activeId)!;
     const { metrics } = SignalEngine(state, time, 800, 300);
@@ -53,11 +54,11 @@ export const P4_SystemConversion: React.FC<{
                     <div className="h-px w-20 bg-purple-500/40" />
                     <span className="text-[11px] font-black font-mono tracking-[0.5em] text-purple-500 uppercase">Master_Guide // Series_04</span>
                 </div>
-                <h1 className="text-[12rem] font-black italic tracking-tighter leading-[0.8] text-white uppercase">
-                    System <br/> 
+                <h1 className={`text-[12rem] font-black italic tracking-tighter leading-[0.8] uppercase ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
+                    System <br/>
                     <span className="text-purple-500">Bridges</span>.
                 </h1>
-                <p className="text-3xl font-medium opacity-40 text-white max-w-4xl leading-relaxed italic">
+                <p className={`text-3xl font-medium max-w-4xl leading-relaxed italic ${isDarkMode ? 'opacity-40 text-white' : 'text-slate-600'}`}>
                     Real-world systems are <span className="text-purple-500 font-bold">Mixed-Signal</span>. We use ADCs to capture the world and DACs to speak back to it, bridging the language of physics and the language of logic.
                 </p>
             </header>
@@ -68,14 +69,14 @@ export const P4_SystemConversion: React.FC<{
                         <button
                             key={s.id}
                             onClick={() => setActiveId(s.id)}
-                            className={`group flex items-center gap-10 p-12 rounded-[5rem] border transition-all text-left relative overflow-hidden ${activeId === s.id ? 'bg-white/[0.03] border-white/10' : 'bg-transparent border-transparent hover:bg-white/[0.01] opacity-40'}`}
+                            className={`group flex items-center gap-10 p-12 rounded-[5rem] border transition-all text-left relative overflow-hidden ${activeId === s.id ? (isDarkMode ? 'bg-white/[0.03] border-white/10' : 'bg-slate-100 border-slate-200 shadow-sm') : (isDarkMode ? 'bg-transparent border-transparent hover:bg-white/[0.01] opacity-40' : 'bg-transparent border-transparent hover:bg-slate-50 opacity-50')}`}
                         >
-                            <div className={`p-8 rounded-[2.5rem] transition-all ${activeId === s.id ? 'bg-white text-black' : 'bg-white/5 text-white/20'}`}>
+                            <div className={`p-8 rounded-[2.5rem] transition-all ${activeId === s.id ? (isDarkMode ? 'bg-white text-black' : 'bg-slate-900 text-white') : (isDarkMode ? 'bg-white/5 text-white/20' : 'bg-slate-100 text-slate-400')}`}>
                                 {s.icon}
                             </div>
                             <div className="flex-1">
-                                <h4 className="text-3xl font-black italic text-white uppercase tracking-tighter">{s.title}</h4>
-                                <span className="text-[10px] font-mono text-white/20 uppercase tracking-[0.3em] mt-1 block">CONVERSION_BRIDGE_00{SCENARIOS.indexOf(s)+1}</span>
+                                <h4 className={`text-3xl font-black italic uppercase tracking-tighter ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{s.title}</h4>
+                                <span className={`text-[10px] font-mono uppercase tracking-[0.3em] mt-1 block ${isDarkMode ? 'text-white/20' : 'text-slate-400'}`}>CONVERSION_BRIDGE_00{SCENARIOS.indexOf(s)+1}</span>
                             </div>
                             {isSuccess && activeId === s.id && (
                                 <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="p-4 bg-green-500 rounded-full text-black shadow-lg shadow-green-500/40">
@@ -85,12 +86,12 @@ export const P4_SystemConversion: React.FC<{
                         </button>
                     ))}
 
-                    <div className="p-16 rounded-[6rem] bg-black border border-white/5 space-y-8 relative overflow-hidden group">
+                    <div className={`p-16 rounded-[6rem] space-y-8 relative overflow-hidden group ${isDarkMode ? 'bg-black border border-white/5' : 'bg-slate-50 border border-slate-200'}`}>
                         <div className="flex items-center gap-4 text-purple-500 mb-4">
                             <ShieldAlert size={24} />
                             <span className="text-[10px] font-mono font-black uppercase tracking-[0.5em]">Hardware_Requirement</span>
                         </div>
-                        <p className="text-2xl font-medium text-white/60 italic leading-relaxed">
+                        <p className={`text-2xl font-medium italic leading-relaxed ${isDarkMode ? 'text-white/60' : 'text-slate-600'}`}>
                             {scene.description}
                         </p>
                     </div>

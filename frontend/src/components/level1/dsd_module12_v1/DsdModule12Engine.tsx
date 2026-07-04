@@ -74,7 +74,7 @@ const Sidebar: React.FC<{
               <button onClick={() => onChange(idx)}
                 className={`group relative w-full text-left p-4 rounded-2xl transition-all duration-500 flex items-start gap-4 ${isActive ? isDarkMode ? 'border' : 'bg-white border-slate-200 shadow-brutal-sm' : 'hover:bg-black/5 hover:translate-x-1'}`}
                 style={{ backgroundColor: isActive && isDarkMode ? theme.glow : undefined, borderColor: isActive && isDarkMode ? `${theme.primary}33` : 'transparent' }}>
-                <div className={`mt-0.5 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black border transition-all duration-500 ${isDone || isActive ? 'text-black' : 'bg-transparent border-white/10 opacity-30'}`}
+                <div className={`mt-0.5 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black border transition-all duration-500 ${isDone || isActive ? 'text-black' : `bg-transparent opacity-30 ${isDarkMode ? 'border-white/10' : 'border-slate-300'}`}`}
                   style={{ backgroundColor: isDone || isActive ? theme.primary : 'transparent', borderColor: isDone || isActive ? theme.primary : undefined }}>
                   {isDone ? '✓' : idx + 1}
                 </div>
@@ -94,7 +94,7 @@ const Sidebar: React.FC<{
             <span className="text-[10px] font-mono uppercase tracking-[0.2em] opacity-40">Progress</span>
             <span className="text-sm font-black transition-colors duration-500" style={{ color: theme.primary }}>{Math.round(progress)}%</span>
           </div>
-          <div className="h-1 w-full bg-slate-900 rounded-full overflow-hidden">
+          <div className={`h-1 w-full rounded-full overflow-hidden ${isDarkMode ? 'bg-slate-900' : 'bg-slate-200'}`}>
             <motion.div animate={{ width: `${progress}%`, backgroundColor: theme.primary }} className="h-full" style={{ boxShadow: `0 0 10px ${theme.primary}` }} />
           </div>
         </div>

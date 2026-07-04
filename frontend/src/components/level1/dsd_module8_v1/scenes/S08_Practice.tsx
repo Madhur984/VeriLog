@@ -228,11 +228,11 @@ export const S08_Practice: React.FC<Props> = ({ isDarkMode }) => {
                 onClick={() => setIdx(i)}
                 className={`w-8 h-8 rounded-lg font-mono text-xs font-black border transition-all ${
                   i === idx
-                    ? 'border-violet-400 bg-violet-500/20 text-violet-300'
+                    ? isDarkMode ? 'border-violet-400 bg-violet-500/20 text-violet-300' : 'border-violet-400 bg-violet-500/20 text-violet-700'
                     : c
-                      ? 'border-emerald-400/60 bg-emerald-500/10 text-emerald-300'
+                      ? isDarkMode ? 'border-emerald-400/60 bg-emerald-500/10 text-emerald-300' : 'border-emerald-400/60 bg-emerald-500/10 text-emerald-700'
                       : w
-                        ? 'border-rose-400/60 bg-rose-500/10 text-rose-300'
+                        ? isDarkMode ? 'border-rose-400/60 bg-rose-500/10 text-rose-300' : 'border-rose-400/60 bg-rose-500/10 text-rose-700'
                         : isDarkMode
                           ? 'border-white/10 text-slate-400 hover:border-violet-400'
                           : 'border-slate-200 text-slate-500 hover:border-violet-400'
@@ -297,11 +297,11 @@ export const S08_Practice: React.FC<Props> = ({ isDarkMode }) => {
                   }}
                   className={`text-left px-5 py-4 rounded-2xl font-mono text-sm border-2 transition-all ${
                     show && correct
-                      ? 'bg-emerald-500/15 border-emerald-400 text-emerald-200'
+                      ? isDarkMode ? 'bg-emerald-500/15 border-emerald-400 text-emerald-200' : 'bg-emerald-500/15 border-emerald-500 text-emerald-800'
                       : show && picked && !correct
-                        ? 'bg-rose-500/15 border-rose-400 text-rose-200'
+                        ? isDarkMode ? 'bg-rose-500/15 border-rose-400 text-rose-200' : 'bg-rose-500/15 border-rose-500 text-rose-800'
                         : picked
-                          ? 'bg-violet-500/15 border-violet-400 text-violet-200'
+                          ? isDarkMode ? 'bg-violet-500/15 border-violet-400 text-violet-200' : 'bg-violet-500/15 border-violet-500 text-violet-800'
                           : isDarkMode
                             ? 'bg-white/5 border-white/10 text-slate-300 hover:border-violet-400'
                             : 'bg-white border-slate-200 text-slate-700 hover:border-violet-400'
@@ -343,7 +343,7 @@ export const S08_Practice: React.FC<Props> = ({ isDarkMode }) => {
               disabled={idx === 0}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-mono font-black uppercase tracking-widest border ${
                 idx === 0
-                  ? 'opacity-30 cursor-not-allowed border-white/5'
+                  ? `opacity-30 cursor-not-allowed ${isDarkMode ? 'border-white/5' : 'border-slate-200'}`
                   : isDarkMode
                     ? 'border-white/10 hover:border-violet-400'
                     : 'border-slate-200 hover:border-violet-400'
@@ -356,7 +356,7 @@ export const S08_Practice: React.FC<Props> = ({ isDarkMode }) => {
               disabled={idx === PROBLEMS.length - 1}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-mono font-black uppercase tracking-widest border ${
                 idx === PROBLEMS.length - 1
-                  ? 'opacity-30 cursor-not-allowed border-white/5'
+                  ? `opacity-30 cursor-not-allowed ${isDarkMode ? 'border-white/5' : 'border-slate-200'}`
                   : isDarkMode
                     ? 'border-violet-400/40 hover:border-violet-400 text-violet-300'
                     : 'border-violet-300 hover:border-violet-400 text-violet-700'

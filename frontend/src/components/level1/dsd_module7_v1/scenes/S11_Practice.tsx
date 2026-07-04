@@ -343,7 +343,7 @@ export const S11_Practice: React.FC<Props> = ({ isDarkMode }) => {
               disabled={idx === 0}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-mono font-black uppercase tracking-widest border ${
                 idx === 0
-                  ? 'opacity-30 cursor-not-allowed border-white/5'
+                  ? 'opacity-30 cursor-not-allowed border-slate-200 dark:border-white/5'
                   : isDarkMode
                     ? 'border-white/10 hover:border-amber-400'
                     : 'border-slate-200 hover:border-amber-400'
@@ -356,7 +356,7 @@ export const S11_Practice: React.FC<Props> = ({ isDarkMode }) => {
               disabled={idx === PROBLEMS.length - 1}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-mono font-black uppercase tracking-widest border ${
                 idx === PROBLEMS.length - 1
-                  ? 'opacity-30 cursor-not-allowed border-white/5'
+                  ? 'opacity-30 cursor-not-allowed border-slate-200 dark:border-white/5'
                   : isDarkMode
                     ? 'border-amber-400/40 hover:border-amber-400 text-amber-300'
                     : 'border-amber-300 hover:border-amber-400 text-amber-700'

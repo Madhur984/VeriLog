@@ -115,7 +115,7 @@ const Sidebar: React.FC<{
               >
                 <div
                   className={`mt-0.5 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black border transition-all duration-500 ${
-                    isDone || isActive ? 'text-black' : 'bg-transparent border-white/10 opacity-30'
+                    isDone || isActive ? 'text-black' : 'bg-transparent border-slate-300 dark:border-white/10 opacity-30'
                   }`}
                   style={{
                     backgroundColor: isDone || isActive ? theme.primary : 'transparent',
@@ -237,19 +237,6 @@ export const BeModule1Engine: React.FC<{
 
   return (
     <div className={`flex h-screen overflow-hidden transition-colors duration-700 relative ${isDarkMode ? 'bg-[#020100]' : 'bg-white'}`}>
-      {isDarkMode && (
-        <div className="absolute inset-0 pointer-events-none opacity-[0.15] overflow-hidden z-0">
-          <motion.div
-            animate={{ background: `radial-gradient(circle, ${theme.primary} 0%, transparent 70%)` }}
-            className="absolute -top-[10%] -left-[10%] w-[70vw] h-[70vw] rounded-full blur-[120px]"
-          />
-          <motion.div
-            animate={{ background: `radial-gradient(circle, ${theme.secondary} 0%, transparent 70%)` }}
-            className="absolute bottom-[0%] -right-[10%] w-[60vw] h-[60vw] rounded-full blur-[100px]"
-          />
-        </div>
-      )}
-
       <DrawerShell open={navOpen} onClose={() => setNavOpen(false)}>
         <Sidebar
           current={current}

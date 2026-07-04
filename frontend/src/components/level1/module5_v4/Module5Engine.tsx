@@ -255,7 +255,7 @@ const Sidebar: React.FC<{
                 }}
               >
                 <div
-                  className={`mt-0.5 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black border transition-all duration-500 ${isDone || isActive ? 'text-black' : 'bg-transparent border-white/10 opacity-30'}`}
+                  className={`mt-0.5 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black border transition-all duration-500 ${isDone || isActive ? 'text-black' : 'bg-transparent border-slate-200 dark:border-white/10 opacity-30'}`}
                   style={{
                     backgroundColor: (isDone || isActive) ? theme.primary : 'transparent',
                     borderColor: (isDone || isActive) ? theme.primary : undefined

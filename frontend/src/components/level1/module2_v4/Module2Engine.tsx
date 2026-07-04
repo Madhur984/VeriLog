@@ -91,7 +91,7 @@ const Sidebar: React.FC<{
               onClick={() => onChange(idx)}
               className={`group relative w-full text-left p-4 rounded-2xl transition-all duration-500 flex items-start gap-4 ${isActive ? (isDarkMode ? 'bg-cyan-500/10 border-cyan-500/30' : 'bg-white border-slate-200 shadow-lg') : 'hover:bg-black/5 hover:translate-x-1'}`}
             >
-              <div className={`mt-0.5 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black border transition-all ${isDone ? 'bg-cyan-500 border-cyan-500 text-black' : isActive ? 'bg-cyan-500 border-cyan-500 text-black' : 'bg-transparent border-white/10 opacity-30'}`}>
+              <div className={`mt-0.5 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black border transition-all ${isDone ? 'bg-cyan-500 border-cyan-500 text-black' : isActive ? 'bg-cyan-500 border-cyan-500 text-black' : 'bg-transparent border-slate-300 dark:border-white/10 opacity-30'}`}>
                 {isDone ? '✓' : idx + 1}
               </div>
               <div className="flex-1 min-w-0">

@@ -92,7 +92,7 @@ const Sidebar: React.FC<{
 
   return (
     <div className={`w-[280px] h-full flex-shrink-0 border-r flex flex-col z-20 ${isDarkMode ? 'bg-black border-white/10' : 'bg-slate-50 border-slate-200'}`}>
-      <header className="p-8 border-b border-white/5 flex items-center gap-4">
+      <header className="p-8 border-b border-slate-200 dark:border-white/5 flex items-center gap-4">
           <div className="w-10 h-10 rounded-xl bg-plasma-cyan flex items-center justify-center text-black shadow-cyan-glow">
             <Activity size={20} />
           </div>
@@ -111,19 +111,19 @@ const Sidebar: React.FC<{
             <React.Fragment key={page.id}>
               <button 
                 onClick={() => onChange(idx)} 
-                className={`w-full text-left p-3.5 rounded-2xl transition-all duration-300 flex items-center gap-4 ${isActive ? 'bg-white/5 border border-white/10 shadow-lg' : 'hover:bg-white/5 opacity-40 hover:opacity-100'}`}
+                className={`w-full text-left p-3.5 rounded-2xl transition-all duration-300 flex items-center gap-4 ${isActive ? 'bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 shadow-lg' : 'hover:bg-slate-100 dark:hover:bg-white/5 opacity-40 hover:opacity-100'}`}
               >
                 <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[9px] font-black border transition-all ${isDone || isActive ? 'text-black' : 'opacity-20'}`} style={{ backgroundColor: (isDone || isActive) ? primary : 'transparent', borderColor: (isDone || isActive) ? primary : undefined }}>
                   {isDone ? '✓' : idx + 1}
                 </div>
-                <h3 className={`text-[12px] font-bold truncate ${isActive ? 'text-white' : 'text-slate-400'}`}>{page.label}</h3>
+                <h3 className={`text-[12px] font-bold truncate ${isActive ? 'text-slate-900 dark:text-white' : 'text-slate-400'}`}>{page.label}</h3>
               </button>
             </React.Fragment>
           );
         })}
       </nav>
 
-      <footer className="p-8 border-t border-white/5 space-y-6">
+      <footer className="p-8 border-t border-slate-200 dark:border-white/5 space-y-6">
         <div className="space-y-4">
           <div className="flex justify-between items-end">
             <span className="text-[9px] font-mono uppercase tracking-[0.2em] opacity-40">Progress</span>
@@ -189,7 +189,7 @@ export const ModuleSix: React.FC = () => {
       </DrawerShell>
       
       <div className="flex-1 flex flex-col h-full overflow-hidden relative z-10">
-        <header className="h-16 border-b border-white/10 flex items-center justify-between px-4 lg:px-10 z-10 bg-bg-elev gap-3">
+        <header className="h-16 border-b border-slate-200 dark:border-white/10 flex items-center justify-between px-4 lg:px-10 z-10 bg-bg-elev gap-3">
           <div className="flex items-center gap-3 min-w-0">
             <HamburgerButton isDarkMode={isDarkMode} onClick={() => setNavOpen(true)} />
             <h2 className="text-base lg:text-lg font-black tracking-tight truncate">{page.label}</h2>
@@ -219,7 +219,7 @@ export const ModuleSix: React.FC = () => {
             {[
                 { label: 'LOGIC_UTIL', val: '42.8%', color: 'text-plasma-cyan' },
                 { label: 'THERMAL_PK', val: '54°C', color: 'text-burnished-copper' },
-                { label: 'ENTROPY_LV', val: '0.002', color: 'text-white/20' },
+                { label: 'ENTROPY_LV', val: '0.002', color: 'text-slate-400 dark:text-white/20' },
                 { label: 'NEURAL_ST', val: 'LOCKED', color: 'text-plasma-cyan' },
             ].map((stat, i) => (
                 <motion.div 

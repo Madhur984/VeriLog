@@ -212,7 +212,7 @@ export const S11_Complements: React.FC<Props> = ({ isActive, isDarkMode }) => {
                   <div className="mt-2">1. Find <span className="text-emerald-400">2's complement of B</span></div>
                   <div>2. Add it to A</div>
                   <div>3. Discard the carry-out</div>
-                  <div className="mt-4 p-4 rounded-xl bg-black/20 border border-emerald-500/20">
+                  <div className={`mt-4 p-4 rounded-xl border border-emerald-500/20 ${isDarkMode ? 'bg-black/20' : 'bg-white/70'}`}>
                     <div className="opacity-50 mb-2">Example: 5 − 3 in 4-bit</div>
                     <div>5 = <span className="text-sky-400">0101</span>, 3 = <span className="text-sky-400">0011</span></div>
                     <div>2's comp of 3 = <span className="text-emerald-400">1101</span></div>
@@ -315,7 +315,7 @@ export const S11_Complements: React.FC<Props> = ({ isActive, isDarkMode }) => {
 
       {/* Comparison Table */}
       <div className={`rounded-3xl border overflow-hidden ${isDarkMode ? 'bg-white/5 border-white/10' : 'bg-white border-gray-200 shadow-xl'}`}>
-        <div className="p-6 border-b border-white/5 flex items-center gap-3">
+        <div className={`p-6 border-b flex items-center gap-3 ${isDarkMode ? 'border-white/5' : 'border-gray-100'}`}>
           <RefreshCw size={16} className="text-sky-500" />
           <h4 className={`font-mono text-xs uppercase tracking-widest ${textColor}`}>4-Bit Signed Number Table</h4>
         </div>

@@ -349,7 +349,9 @@ export const S02_Video: React.FC<Props> = ({ isActive = true, isDarkMode }) => {
         <a
           href="/docs/full-adder-architecture.pdf"
           download="Full_Adder_Architecture.pdf"
-          className="px-5 py-3 rounded-xl border-2 border-violet-400 text-violet-300 font-mono text-xs font-black uppercase tracking-widest hover:bg-violet-500/10 transition-all active:scale-95"
+          className={`px-5 py-3 rounded-xl border-2 font-mono text-xs font-black uppercase tracking-widest hover:bg-violet-500/10 transition-all active:scale-95 ${
+            isDarkMode ? 'border-violet-400 text-violet-300' : 'border-violet-500 text-violet-700'
+          }`}
         >
           Download PDF
         </a>

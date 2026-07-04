@@ -162,8 +162,8 @@ export const S05_KMap: React.FC<Props> = ({ isActive, isDarkMode }) => {
                         key={col}
                         className={`relative h-20 rounded-xl border-2 grid place-items-center font-mono font-black overflow-hidden`}
                         animate={{
-                          backgroundColor: showVal && isOne ? 'rgba(52,211,153,0.20)' : 'rgba(0,0,0,0.20)',
-                          borderColor: showVal && isOne ? '#34d399' : 'rgba(255,255,255,0.10)',
+                          backgroundColor: showVal && isOne ? 'rgba(52,211,153,0.20)' : (isDarkMode ? 'rgba(0,0,0,0.20)' : 'rgba(15,23,42,0.05)'),
+                          borderColor: showVal && isOne ? '#34d399' : (isDarkMode ? 'rgba(255,255,255,0.10)' : 'rgba(15,23,42,0.15)'),
                           boxShadow: showVal && isOne ? '0 0 25px rgba(52,211,153,0.35)' : 'none',
                           scale: showVal && isOne ? [1, 1.08, 1] : 1,
                         }}
@@ -302,7 +302,7 @@ export const S05_KMap: React.FC<Props> = ({ isActive, isDarkMode }) => {
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ delay: 0.3, type: 'spring' }}
-                className="rounded-xl p-3 bg-black/30 text-center"
+                className={`rounded-xl p-3 ${isDarkMode ? 'bg-black/30' : 'bg-white'} text-center`}
               >
                 <span className={`font-mono text-3xl font-black ${textColor}`}>A</span>
               </motion.div>
@@ -324,7 +324,7 @@ export const S05_KMap: React.FC<Props> = ({ isActive, isDarkMode }) => {
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ delay: 0.6, type: 'spring' }}
-                className="rounded-xl p-3 bg-black/30 text-center"
+                className={`rounded-xl p-3 ${isDarkMode ? 'bg-black/30' : 'bg-white'} text-center`}
               >
                 <span className={`font-mono text-3xl font-black ${textColor}`}>BC</span>
               </motion.div>

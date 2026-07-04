@@ -15,7 +15,7 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
       <motion.div
         initial={{ opacity: 0, scale: 0.96 }} animate={isActive ? { opacity: 1, scale: 1 } : {}}
         transition={{ duration: 0.7 }}
-        className="relative rounded-3xl overflow-hidden border border-white/10 mx-auto max-w-3xl"
+        className={`relative rounded-3xl overflow-hidden border mx-auto max-w-3xl ${isDarkMode ? 'border-white/10' : 'border-slate-200'}`}
         style={{ background: '#fef9f0' }}
       >
         <img loading="lazy" decoding="async"

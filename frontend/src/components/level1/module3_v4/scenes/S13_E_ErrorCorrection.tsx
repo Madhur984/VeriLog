@@ -130,7 +130,7 @@ export const S13_E_ErrorCorrection: React.FC<Props> = ({ isActive, isDarkMode })
                                 whileHover={{ y: -2 }}
                                 whileTap={{ scale: 0.95 }}
                                 className={`w-14 h-16 rounded-2xl border-2 flex items-center justify-center text-xl font-black transition-all
-                                    ${b ? 'bg-sky-500 border-sky-400 text-white shadow-[0_0_20px_rgba(14,165,233,0.3)]' : 'bg-white/5 border-white/10 text-slate-500'}`}
+                                    ${b ? 'bg-sky-500 border-sky-400 text-white shadow-[0_0_20px_rgba(14,165,233,0.3)]' : 'bg-slate-50 dark:bg-white/5 border-slate-200 dark:border-white/10 text-slate-500'}`}
                               >
                                   {b}
                               </motion.button>
@@ -182,7 +182,7 @@ export const S13_E_ErrorCorrection: React.FC<Props> = ({ isActive, isDarkMode })
                             className={`flex-1 py-4 rounded-xl border-2 font-mono text-sm font-black transition-all
                                 ${noiseIdx === i 
                                     ? 'bg-red-500 border-red-400 text-white animate-pulse' 
-                                    : 'bg-black/10 border-white/5 text-white/40 hover:border-red-500/30'}`}
+                                    : 'bg-slate-100 dark:bg-black/10 border-slate-200 dark:border-white/5 text-slate-500 dark:text-white/40 hover:border-red-500/30'}`}
                           >
                               {b}
                           </motion.button>

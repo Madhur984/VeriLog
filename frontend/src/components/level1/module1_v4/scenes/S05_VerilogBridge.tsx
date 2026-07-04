@@ -113,13 +113,13 @@ export const S05_VerilogBridge: React.FC<Props> = ({ isDarkMode: _ }) => {
               <div className="w-10 h-10 rounded-2xl bg-plasma-cyan/10 border border-plasma-cyan/20 flex items-center justify-center">
                 <Icon size={18} className="text-plasma-cyan" />
               </div>
-              <span className="hero-text text-xs text-white uppercase">{label}</span>
-              <span className="micro-text text-white/30 normal-case">{sub}</span>
+              <span className="hero-text text-xs text-slate-900 dark:text-white uppercase">{label}</span>
+              <span className="micro-text text-slate-500 dark:text-white/30 normal-case">{sub}</span>
             </div>
           ))}
         </div>
 
-        <p className="hero-text text-3xl md:text-5xl leading-tight text-white uppercase">
+        <p className="hero-text text-3xl md:text-5xl leading-tight text-slate-900 dark:text-white uppercase">
           Design the intelligence.<br />
           <span className="text-plasma-cyan">Master the hardware.</span>
         </p>

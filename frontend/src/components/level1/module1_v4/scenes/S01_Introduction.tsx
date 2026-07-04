@@ -36,13 +36,13 @@ export const S01_Introduction: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
             <div className="space-y-3">
               <p className="text-[10px] font-mono uppercase tracking-widest opacity-40">Analog Stream (Continuous)</p>
-              <div className="rounded-2xl bg-black/40 overflow-hidden">
+              <div className="rounded-2xl bg-slate-900 dark:bg-black/40 overflow-hidden">
                 <AnalogWave color="#22d3ee" />
               </div>
             </div>
             <div className="space-y-3">
               <p className="text-[10px] font-mono uppercase tracking-widest opacity-40">Digital Stream (Discrete)</p>
-              <div className="rounded-2xl bg-black/40 overflow-hidden">
+              <div className="rounded-2xl bg-slate-900 dark:bg-black/40 overflow-hidden">
                 <DigitalWave color="#a78bfa" complexity={1} />
               </div>
             </div>

@@ -36,7 +36,7 @@ const Figure: React.FC<{ children: React.ReactNode; caption?: string }> = ({ chi
   <figure className="w-full flex flex-col items-center my-4">
     {children}
     {caption && (
-      <figcaption className="mt-3 text-[11px] font-mono tracking-[0.2em] uppercase text-white/40 text-center">
+      <figcaption className="mt-3 text-[11px] font-mono tracking-[0.2em] uppercase text-slate-500 dark:text-white/40 text-center">
         {caption}
       </figcaption>
     )}
@@ -204,7 +204,7 @@ export const SceneParallel: React.FC<SceneProps> = ({ accent }) => (
     </Figure>
 
     <Callout accent={accent} label="Hard rule">
-      A signal must have <strong className="text-white">exactly one driver.</strong> Two always blocks writing the same
+      A signal must have <strong className="text-slate-900 dark:text-white">exactly one driver.</strong> Two always blocks writing the same
       reg is a synthesis error.
     </Callout>
   </StudyScene>
@@ -315,7 +315,7 @@ always @(negedge clk) q <= d;`}
     </Section>
 
     <Callout accent={accent}>
-      In a single design, pick <strong className="text-white">one edge</strong> and use it everywhere. Mixed-edge logic
+      In a single design, pick <strong className="text-slate-900 dark:text-white">one edge</strong> and use it everywhere. Mixed-edge logic
       is legal but doubles the clock-tree balancing work and is a common source of timing closure pain.
     </Callout>
   </StudyScene>
@@ -393,7 +393,7 @@ end`}
     </Section>
 
     <Callout accent={accent} label="Convention">
-      <code className="text-white">_n</code> suffix marks an active-low signal (asserted when 0). Asynchronous resets
+      <code className="text-slate-900 dark:text-white">_n</code> suffix marks an active-low signal (asserted when 0). Asynchronous resets
       are usually active-low so a floating wire (pulled up) is the inactive state.
     </Callout>
   </StudyScene>
@@ -458,7 +458,7 @@ gtkwave dump.vcd                                  # view`}
     </Section>
 
     <Callout accent={accent}>
-      Start with iverilog + GTKWave. Move to <strong className="text-white">Verilator</strong> once your testbenches
+      Start with iverilog + GTKWave. Move to <strong className="text-slate-900 dark:text-white">Verilator</strong> once your testbenches
       need to run millions of cycles per night.
     </Callout>
   </StudyScene>

@@ -213,7 +213,7 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
         transition={{ delay: 0.9 }}
         className={`text-center text-xs font-mono uppercase tracking-[0.3em] ${subText}`}
       >
-        Press <kbd className="px-2 py-1 rounded bg-black/20 text-[10px]">→</kbd> to begin · 14 chapters · ~35 min
+        Press <kbd className={`px-2 py-1 rounded ${isDarkMode ? 'bg-black/20' : 'bg-slate-200'} text-[10px]`}>→</kbd> to begin · 14 chapters · ~35 min
       </motion.div>
     </div>
   );

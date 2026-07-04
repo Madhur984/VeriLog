@@ -95,7 +95,7 @@ export const S08_TurnstileMatrix: React.FC<Props> = ({ isActive, isDarkMode }) =
         <div className="overflow-x-auto">
           <div className="grid grid-cols-[1.1fr_1fr_1fr_1fr_1.2fr] gap-px bg-emerald-500/20 min-w-[700px]">
             {['State', 'Voltage (V_D)', 'Depletion Width', 'Train Analogy', 'Current (I_D)'].map((h) => (
-              <div key={h} className="p-3 bg-black/60 font-mono text-[10px] uppercase tracking-widest text-emerald-300">
+              <div key={h} className="p-3 bg-slate-800 dark:bg-black/60 font-mono text-[10px] uppercase tracking-widest text-emerald-300">
                 {h}
               </div>
             ))}

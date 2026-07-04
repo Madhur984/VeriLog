@@ -158,7 +158,7 @@ export const S13_D_MemoryHorizon: React.FC<Props> = ({ isActive, isDarkMode }) =
                                       <span className={`text-[9px] opacity-60 font-mono ${textColor}`}>{DATA_SPECS[type].size} Bytes</span>
                                   </div>
                               </div>
-                              <div className={`w-6 h-6 rounded-full flex items-center justify-center bg-white/5 border border-white/10 text-[10px] ${textColor}`}>+</div>
+                              <div className={`w-6 h-6 rounded-full flex items-center justify-center bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-[10px] ${textColor}`}>+</div>
                           </motion.button>
                       ))}
                   </div>
@@ -166,7 +166,7 @@ export const S13_D_MemoryHorizon: React.FC<Props> = ({ isActive, isDarkMode }) =
 
               <div className={`p-6 rounded-3xl border ${cardBg}`}>
                   <h3 className={`font-mono text-[10px] uppercase tracking-widest mb-6 opacity-40 ${textColor}`}>System Config</h3>
-                  <div className="flex bg-black/20 p-1 rounded-xl">
+                  <div className="flex bg-slate-100 dark:bg-black/20 p-1 rounded-xl">
                       {['big', 'little'].map(e => (
                           <button
                             key={e}

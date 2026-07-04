@@ -59,7 +59,7 @@ export const AnalogWave: React.FC<WaveProps> = ({
 
   return (
     <div className="relative w-full group h-[100px]">
-      <div className="absolute top-2 left-4 z-20 pointer-events-none">
+      <div className="absolute top-2 left-4 z-20 pointer-events-none text-white">
           <div className="text-[8px] font-mono uppercase tracking-widest opacity-40">{label}</div>
           <div className="text-xs font-mono font-bold">{(baseAmp * 2).toFixed(1)}<span className="text-[8px] ml-1 opacity-30">{unit}</span></div>
       </div>
@@ -92,7 +92,7 @@ export const DigitalWave: React.FC<WaveProps & { complexity?: number }> = ({
 
   return (
     <div className="relative w-full group h-[100px]">
-       <div className="absolute top-2 left-4 z-20 pointer-events-none">
+       <div className="absolute top-2 left-4 z-20 pointer-events-none text-white">
           <div className="text-[8px] font-mono uppercase tracking-widest opacity-40">{label}</div>
           <div className="text-xs font-mono font-bold">{bitSequence.slice(0, 4).join('')}</div>
       </div>
@@ -284,21 +284,21 @@ export const InsightPanel: React.FC<{ title: string; content: string; career?: s
     const [isOpen, setIsOpen] = useState(false);
 
     return (
-        <div className={`transition-all duration-700 rounded-3xl overflow-hidden ${isOpen ? (isDark ? 'bg-slate-900/50 border border-slate-700/50 p-6' : 'bg-slate-50 border border-slate-200 p-6') : 'bg-white/5 border border-white/5 p-4'}`}>
+        <div className={`transition-all duration-700 rounded-3xl overflow-hidden ${isOpen ? (isDark ? 'bg-slate-900/50 border border-slate-700/50 p-6' : 'bg-slate-50 border border-slate-200 p-6') : (isDark ? 'bg-white/5 border border-white/5 p-4' : 'bg-slate-100 border border-slate-200 p-4')}`}>
             <button 
                 onClick={() => setIsOpen(!isOpen)}
                 className="w-full flex items-center justify-between group"
             >
                 <div className="flex items-center gap-4">
-                    <div className={`p-2.5 rounded-xl transition-all ${isOpen ? 'bg-cyan-500 text-black' : 'bg-white/10 text-white/40'}`}>
+                    <div className={`p-2.5 rounded-xl transition-all ${isOpen ? 'bg-cyan-500 text-black' : (isDark ? 'bg-white/10 text-white/40' : 'bg-slate-200 text-slate-500')}`}>
                         <BookOpen size={14} />
                     </div>
                     <div className="flex flex-col items-start">
                         <span className="text-[8px] font-black uppercase tracking-[0.3em] opacity-30">Analytical // Deep_Dive</span>
-                        <span className={`text-xs font-black uppercase tracking-widest transition-colors ${isOpen ? (isDark ? 'text-white' : 'text-slate-900') : 'text-white/40 group-hover:text-white'}`}>{title}</span>
+                        <span className={`text-xs font-black uppercase tracking-widest transition-colors ${isOpen ? (isDark ? 'text-white' : 'text-slate-900') : (isDark ? 'text-white/40 group-hover:text-white' : 'text-slate-500 group-hover:text-slate-900')}`}>{title}</span>
                     </div>
                 </div>
-                <div className={`transition-transform duration-500 ${isOpen ? 'rotate-90 text-cyan-500' : 'text-white/10'}`}>
+                <div className={`transition-transform duration-500 ${isOpen ? 'rotate-90 text-cyan-500' : (isDark ? 'text-white/10' : 'text-slate-300')}`}>
                     <ChevronRight size={18} />
                 </div>
             </button>
@@ -313,7 +313,7 @@ export const InsightPanel: React.FC<{ title: string; content: string; career?: s
                         <div className="pt-6 space-y-4">
                             <p className={`text-sm leading-relaxed opacity-80 ${isDark ? 'text-slate-200' : 'text-slate-600'}`}>{content}</p>
                             {career && (
-                                <div className="flex items-center gap-3 pt-4 border-t border-white/5">
+                                <div className={`flex items-center gap-3 pt-4 border-t ${isDark ? 'border-white/5' : 'border-slate-200'}`}>
                                     <div className="px-2 py-0.5 bg-cyan-500/10 rounded text-[8px] font-black text-cyan-500 uppercase tracking-widest">Career</div>
                                     <span className={`text-[10px] font-bold italic opacity-40 ${isDark ? 'text-white' : 'text-slate-900'}`}>{career}</span>
                                 </div>
@@ -413,7 +413,7 @@ export const SignalTypeCard: React.FC<{
         {badge}
       </span>
     </div>
-    <div className="rounded-xl h-[100px] overflow-hidden flex items-center justify-center bg-black/20">
+    <div className={`rounded-xl h-[100px] overflow-hidden flex items-center justify-center ${isDark ? 'bg-black/20' : 'bg-slate-900'}`}>
       {wave}
     </div>
     <p className={`text-sm leading-relaxed opacity-70 ${isDark ? 'text-slate-200' : 'text-gray-600'}`}>{description}</p>
@@ -432,7 +432,7 @@ export const ComparisonConsole: React.FC<{ isDark: boolean }> = ({ isDark }) => 
     return (
         <div className={`w-full rounded-3xl overflow-hidden p-8 space-y-8 border transition-all duration-500 ${isDark ? 'bg-slate-900/30 border-white/5' : 'bg-slate-50 border-black/5'}`}>
             <div className="flex items-center gap-4">
-                <div className="p-3 bg-white/5 rounded-xl text-white/40">
+                <div className="p-3 bg-slate-200 dark:bg-white/5 rounded-xl text-slate-500 dark:text-white/40">
                     <Scale size={20} />
                 </div>
                 <div className="flex flex-col">

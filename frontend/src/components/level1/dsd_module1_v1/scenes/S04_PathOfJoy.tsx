@@ -42,7 +42,7 @@ export const S04_PathOfJoy: React.FC<Props> = ({ isActive, isDarkMode }) => {
       <div className="grid md:grid-cols-2 gap-5">
         <motion.div
           initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-          className="rounded-3xl overflow-hidden border border-white/10" style={{ background: '#fef9f0' }}
+          className={`rounded-3xl overflow-hidden border ${isDarkMode ? 'border-white/10' : 'border-slate-200'}`} style={{ background: '#fef9f0' }}
         >
           <img loading="lazy" decoding="async" src="/images/sketchbook/p04.webp" alt="Path of Joy - selecting the happy rows" className="w-full block" />
           <div className="px-4 py-2 text-[10px] font-mono uppercase tracking-widest text-slate-700 bg-white/60">
@@ -51,7 +51,7 @@ export const S04_PathOfJoy: React.FC<Props> = ({ isActive, isDarkMode }) => {
         </motion.div>
         <motion.div
           initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
-          className="rounded-3xl overflow-hidden border border-white/10" style={{ background: '#fef9f0' }}
+          className={`rounded-3xl overflow-hidden border ${isDarkMode ? 'border-white/10' : 'border-slate-200'}`} style={{ background: '#fef9f0' }}
         >
           <img loading="lazy" decoding="async" src="/images/sketchbook/p05.webp" alt="Anatomy of a minterm - puzzle metaphor" className="w-full block" />
           <div className="px-4 py-2 text-[10px] font-mono uppercase tracking-widest text-slate-700 bg-white/60">

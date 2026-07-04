@@ -96,7 +96,7 @@ export const S07_Recap: React.FC<Props> = ({ isActive, isDarkMode }) => {
             <span className="opacity-60">m{currentRow} highlighted</span>
           </div>
           <div className="font-mono text-[11px] space-y-0.5">
-            <div className="grid grid-cols-5 opacity-50 border-b border-white/5 pb-1 mb-1">
+            <div className={`grid grid-cols-5 opacity-50 border-b ${isDarkMode ? 'border-white/5' : 'border-slate-200'} pb-1 mb-1`}>
               <span className="text-center">#</span>
               <span className="text-center">A</span>
               <span className="text-center">B</span>
@@ -139,7 +139,7 @@ export const S07_Recap: React.FC<Props> = ({ isActive, isDarkMode }) => {
           <div className="font-mono text-[10px] uppercase tracking-widest text-amber-300 mb-3">② Algebra · live</div>
           <div className={`font-mono text-base space-y-3`}>
             <div className={textColor}>F(A,B,C) = A + B·C</div>
-            <div className="h-px bg-white/10" />
+            <div className={`h-px ${isDarkMode ? 'bg-white/10' : 'bg-slate-200'}`} />
             <div className={`text-xs ${subText}`}>Substitute current inputs:</div>
             <div className={`text-xl font-black ${textColor}`}>
               F = <span style={{ color: a ? '#22c55e' : '#ef4444' }}>{a}</span>
@@ -190,10 +190,10 @@ export const S07_Recap: React.FC<Props> = ({ isActive, isDarkMode }) => {
                         scale: isCurrent ? 1.15 : 1,
                         background: isCurrent
                           ? 'rgba(167,139,250,0.40)'
-                          : isOne ? 'rgba(34,197,94,0.20)' : 'rgba(0,0,0,0.20)',
+                          : isOne ? 'rgba(34,197,94,0.20)' : (isDarkMode ? 'rgba(0,0,0,0.20)' : 'rgba(15,23,42,0.05)'),
                         borderColor: isCurrent
                           ? '#a78bfa'
-                          : isOne ? 'rgba(34,197,94,0.6)' : 'rgba(255,255,255,0.10)',
+                          : isOne ? 'rgba(34,197,94,0.6)' : (isDarkMode ? 'rgba(255,255,255,0.10)' : 'rgba(15,23,42,0.15)'),
                         boxShadow: isCurrent ? '0 0 15px rgba(167,139,250,0.7)' : 'none',
                       }}
                       className="text-center py-2 rounded border-2 font-black"

@@ -128,11 +128,11 @@ Result: 11001`}
                 animate={isActive ? { opacity: 1, y: 0 } : {}}
                 className={`overflow-hidden rounded-3xl border ${isDarkMode ? 'bg-white/5 border-white/10' : 'bg-white border-gray-100 shadow-xl'}`}
             >
-                <div className="p-6 border-b border-white/5 flex items-center gap-3">
+                <div className={`p-6 border-b flex items-center gap-3 ${isDarkMode ? 'border-white/5' : 'border-slate-200'}`}>
                     <ArrowLeftRight size={16} className="text-sky-500" />
                     <h4 className={`font-mono text-xs uppercase tracking-widest ${textColor}`}>Master Conversion Chart (0-15)</h4>
                 </div>
-                <div className="grid grid-cols-2 sm:grid-cols-4 divide-x divide-white/5 font-mono text-[11px]">
+                <div className={`grid grid-cols-2 sm:grid-cols-4 divide-x font-mono text-[11px] ${isDarkMode ? 'divide-white/5' : 'divide-slate-200'}`}>
                     <div className="p-4 space-y-2">
                         <div className="opacity-40 uppercase mb-2">Decimal</div>
                         {[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15].map(v => <div key={v} className={textColor}>{v}</div>)}

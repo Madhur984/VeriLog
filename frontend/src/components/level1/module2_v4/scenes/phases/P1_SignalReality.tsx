@@ -8,7 +8,8 @@ export const P1_SignalReality: React.FC<{
     state: GlobalSignalState;
     time: number;
     onUpdate: (patch: Partial<GlobalSignalState>) => void;
-}> = ({ state, time, onUpdate }) => {
+    isDarkMode?: boolean;
+}> = ({ state, time, onUpdate, isDarkMode = true }) => {
     const { metrics } = SignalEngine(state, time, 800, 300);
 
     return (
@@ -18,11 +19,11 @@ export const P1_SignalReality: React.FC<{
                     <div className="h-px w-20 bg-orange-500/40" />
                     <span className="text-[11px] font-black font-mono tracking-[0.5em] text-orange-500 uppercase">System_Genesis</span>
                 </div>
-                <h1 className="text-[12rem] font-black italic tracking-tighter leading-[0.8] text-white uppercase">
-                    Analog <br/> 
+                <h1 className={`text-[12rem] font-black italic tracking-tighter leading-[0.8] uppercase ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
+                    Analog <br/>
                     <span className="text-orange-500">Realities</span>.
                 </h1>
-                <p className="text-3xl font-medium opacity-40 text-white max-w-4xl leading-relaxed italic">
+                <p className={`text-3xl font-medium max-w-4xl leading-relaxed italic ${isDarkMode ? 'opacity-40 text-white' : 'text-slate-600'}`}>
                     The real world is <span className="text-orange-500 font-bold">Analog</span>. It is defined by continuous-time and continuous-amplitude voltage fluxes, preserving the infinite resolution of nature.
                 </p>
             </header>
@@ -61,10 +62,10 @@ export const P1_SignalReality: React.FC<{
 
             <div className="space-y-24">
                 <div className="flex flex-col items-center gap-8 text-center">
-                    <div className="h-px w-40 bg-white/10" />
+                    <div className={`h-px w-40 ${isDarkMode ? 'bg-white/10' : 'bg-slate-200'}`} />
                     <div className="space-y-2">
-                        <h3 className="text-[12px] font-black italic text-white/30 uppercase tracking-[1em]">Physical_Phenomena_Log</h3>
-                        <p className="text-sm font-medium text-white/20 italic">Preserving the unbroken line of reality before digitization</p>
+                        <h3 className={`text-[12px] font-black italic uppercase tracking-[1em] ${isDarkMode ? 'text-white/30' : 'text-slate-500'}`}>Physical_Phenomena_Log</h3>
+                        <p className={`text-sm font-medium italic ${isDarkMode ? 'text-white/20' : 'text-slate-400'}`}>Preserving the unbroken line of reality before digitization</p>
                     </div>
                 </div>
                 <DailyGallery />

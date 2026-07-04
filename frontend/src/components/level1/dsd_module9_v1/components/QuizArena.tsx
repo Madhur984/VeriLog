@@ -97,9 +97,9 @@ export const QuizArena: React.FC<Props> = ({ isDarkMode, accent, tag, title, int
                   i === idx
                     ? 'text-white'
                     : c
-                      ? 'border-emerald-400/60 bg-emerald-500/10 text-emerald-300'
+                      ? `border-emerald-400/60 bg-emerald-500/10 ${isDarkMode ? 'text-emerald-300' : 'text-emerald-700'}`
                       : w
-                        ? 'border-rose-400/60 bg-rose-500/10 text-rose-300'
+                        ? `border-rose-400/60 bg-rose-500/10 ${isDarkMode ? 'text-rose-300' : 'text-rose-700'}`
                         : isDarkMode
                           ? 'border-white/10 text-slate-400 hover:border-[var(--qa)]'
                           : 'border-slate-200 text-slate-500 hover:border-[var(--qa)]'
@@ -162,9 +162,13 @@ export const QuizArena: React.FC<Props> = ({ isDarkMode, accent, tag, title, int
                 : 'bg-white border-slate-200 text-slate-700 hover:border-[var(--qa)]';
               let style: React.CSSProperties | undefined;
               if (show && correct) {
-                cls = 'bg-emerald-500/15 border-emerald-400 text-emerald-200';
+                cls = isDarkMode
+                  ? 'bg-emerald-500/15 border-emerald-400 text-emerald-200'
+                  : 'bg-emerald-500/15 border-emerald-500 text-emerald-700';
               } else if (show && picked && !correct) {
-                cls = 'bg-rose-500/15 border-rose-400 text-rose-200';
+                cls = isDarkMode
+                  ? 'bg-rose-500/15 border-rose-400 text-rose-200'
+                  : 'bg-rose-500/15 border-rose-500 text-rose-700';
               } else if (picked) {
                 cls = 'border-2';
                 style = { background: `${accent}26`, borderColor: accent, color: accent };
@@ -215,7 +219,7 @@ export const QuizArena: React.FC<Props> = ({ isDarkMode, accent, tag, title, int
               disabled={idx === 0}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-mono font-black uppercase tracking-widest border ${
                 idx === 0
-                  ? 'opacity-30 cursor-not-allowed border-white/5'
+                  ? 'opacity-30 cursor-not-allowed border-slate-200 dark:border-white/5'
                   : isDarkMode
                     ? 'border-white/10 hover:border-[var(--qa)]'
                     : 'border-slate-200 hover:border-[var(--qa)]'
@@ -228,7 +232,7 @@ export const QuizArena: React.FC<Props> = ({ isDarkMode, accent, tag, title, int
               disabled={idx === problems.length - 1}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-mono font-black uppercase tracking-widest border ${
                 idx === problems.length - 1
-                  ? 'opacity-30 cursor-not-allowed border-white/5'
+                  ? 'opacity-30 cursor-not-allowed border-slate-200 dark:border-white/5'
                   : 'hover:border-[var(--qa)]'
               }`}
               style={idx === problems.length - 1 ? undefined : { borderColor: `${accent}66`, color: accent }}

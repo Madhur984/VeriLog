@@ -70,7 +70,7 @@ const KMap4: React.FC<{
                 className={`relative h-14 rounded-lg border-2 grid place-items-center font-mono text-sm font-black ${
                   isOne ? 'bg-emerald-500/20 border-emerald-400 text-emerald-200 shadow-[0_0_15px_rgba(52,211,153,0.3)]'
                         : isDC ? 'bg-amber-500/15 border-amber-400/60 text-amber-300'
-                              : `bg-black/20 border-white/10 ${textColor}`
+                              : `${isDarkMode ? 'bg-black/20 border-white/10' : 'bg-slate-100 border-slate-200'} ${textColor}`
                 }`}
               >
                 <span>{isOne ? 1 : isDC ? 'X' : 0}</span>

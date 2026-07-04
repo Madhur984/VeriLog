@@ -484,7 +484,7 @@ export const S13_PracticeArena: React.FC<Props> = ({ isActive, isDarkMode }) => 
         </div>
 
         {/* Progress bar */}
-        <div className="h-1 rounded-full bg-black/20 overflow-hidden mb-6">
+        <div className={`h-1 rounded-full ${isDarkMode ? 'bg-black/20' : 'bg-slate-200'} overflow-hidden mb-6`}>
           <motion.div
             animate={{ width: `${(Object.keys(answers).length / QUIZ.length) * 100}%` }}
             className="h-full bg-rose-400"

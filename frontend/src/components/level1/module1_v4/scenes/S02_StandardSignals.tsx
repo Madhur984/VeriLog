@@ -29,14 +29,14 @@ export const S02_StandardSignals: React.FC<{ isDarkMode: boolean }> = ({ isDarkM
                 Equation: u(t) = 1 for t ≥ 0, else 0
               </div>
             </div>
-            <div className="rounded-2xl p-8 border h-48 flex items-center justify-center relative overflow-hidden bg-black/40" style={{ borderColor }}>
+            <div className="rounded-2xl p-8 border h-48 flex items-center justify-center relative overflow-hidden bg-slate-900 dark:bg-black/40" style={{ borderColor }}>
               <LocalMouseArea render={(x, y) => <StepWave color="#10b981" mouseX={x} mouseY={y} />} />
             </div>
           </div>
 
           {/* Unit Ramp */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-             <div className="rounded-2xl p-8 border h-48 flex items-center justify-center relative overflow-hidden bg-black/40 order-2 md:order-1" style={{ borderColor }}>
+             <div className="rounded-2xl p-8 border h-48 flex items-center justify-center relative overflow-hidden bg-slate-900 dark:bg-black/40 order-2 md:order-1" style={{ borderColor }}>
               <LocalMouseArea render={(x, y) => <RampWave color="#fb7185" mouseX={x} mouseY={y} />} />
             </div>
             <div className="space-y-4 order-1 md:order-2">
@@ -67,7 +67,7 @@ export const S02_StandardSignals: React.FC<{ isDarkMode: boolean }> = ({ isDarkM
                 Equation: δ(t) = ∞ at t=0, Area = 1
               </div>
             </div>
-            <div className="rounded-2xl p-8 border h-48 flex items-center justify-center relative overflow-hidden bg-black/40" style={{ borderColor }}>
+            <div className="rounded-2xl p-8 border h-48 flex items-center justify-center relative overflow-hidden bg-slate-900 dark:bg-black/40" style={{ borderColor }}>
                <LocalMouseArea render={(x, y) => <ImpulseWave color="#06b6d4" mouseX={x} mouseY={y} />} />
             </div>
           </div>

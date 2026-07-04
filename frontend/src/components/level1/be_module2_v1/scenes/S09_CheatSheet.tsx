@@ -52,13 +52,13 @@ export const S09_CheatSheet: React.FC<Props> = ({ isActive, isDarkMode }) => {
         className={`rounded-3xl border ${cardBg} overflow-hidden`}
       >
         <div className="grid grid-cols-[1.2fr_1.5fr_1.5fr] gap-px bg-violet-500/20">
-          <div className="p-4 bg-black/60 font-mono text-[10px] uppercase tracking-widest text-violet-300">
+          <div className="p-4 bg-slate-900 dark:bg-black/60 font-mono text-[10px] uppercase tracking-widest text-violet-300">
             Feature
           </div>
-          <div className="p-4 bg-black/60 font-mono text-[10px] uppercase tracking-widest text-orange-300">
+          <div className="p-4 bg-slate-900 dark:bg-black/60 font-mono text-[10px] uppercase tracking-widest text-orange-300">
             N-Type
           </div>
-          <div className="p-4 bg-black/60 font-mono text-[10px] uppercase tracking-widest text-fuchsia-300">
+          <div className="p-4 bg-slate-900 dark:bg-black/60 font-mono text-[10px] uppercase tracking-widest text-fuchsia-300">
             P-Type
           </div>
 

@@ -274,7 +274,7 @@ export const S06_Dual_XOR: React.FC<SceneProps> = ({ isActive, isDarkMode, mode 
                 {['A', 'B', 'N1', 'N2', 'N3'].map((h) => (
                   <th key={h} className={`py-2 px-2 text-center text-[10px] uppercase tracking-widest`} style={{ color: accent }}>{h}</th>
                 ))}
-                <th className={`py-2 px-2 text-center text-[10px] uppercase tracking-widest text-emerald-300`}>
+                <th className={`py-2 px-2 text-center text-[10px] uppercase tracking-widest ${isDarkMode ? 'text-emerald-300' : 'text-emerald-600'}`}>
                   Y · {mode === 'nand' ? 'A ⊕ B' : '(A ⊕ B)′'}
                 </th>
               </tr>
@@ -296,7 +296,7 @@ export const S06_Dual_XOR: React.FC<SceneProps> = ({ isActive, isDarkMode, mode 
                     <td className={`py-2 px-2 text-center ${n1 ? textColor : 'opacity-50'}`}>{n1}</td>
                     <td className={`py-2 px-2 text-center ${n2 ? textColor : 'opacity-50'}`}>{n2}</td>
                     <td className={`py-2 px-2 text-center ${n3 ? textColor : 'opacity-50'}`}>{n3}</td>
-                    <td className={`py-2 px-2 text-center font-black ${n4 ? 'text-emerald-300' : 'opacity-50'}`}>
+                    <td className={`py-2 px-2 text-center font-black ${n4 ? (isDarkMode ? 'text-emerald-300' : 'text-emerald-600') : 'opacity-50'}`}>
                       {n4} {matchExpected ? '' : '⚠'}
                     </td>
                   </tr>

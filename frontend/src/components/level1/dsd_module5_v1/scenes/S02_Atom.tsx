@@ -117,7 +117,7 @@ export const S02_Atom: React.FC<SceneProps> = ({ isActive, isDarkMode, mode }) =
           <div className="grid grid-cols-3 gap-1 font-mono text-sm">
             <div className="px-3 py-2 text-center font-black" style={{ color: accent }}>A</div>
             <div className="px-3 py-2 text-center font-black" style={{ color: accent }}>B</div>
-            <div className="px-3 py-2 text-center font-black text-emerald-300">Y</div>
+            <div className={`px-3 py-2 text-center font-black ${isDarkMode ? 'text-emerald-300' : 'text-emerald-600'}`}>Y</div>
             {truth.map((r) => {
               const isCurrent = r.a === a && r.b === b;
               return (
@@ -132,7 +132,7 @@ export const S02_Atom: React.FC<SceneProps> = ({ isActive, isDarkMode, mode }) =
                   >{r.b}</motion.div>
                   <motion.div
                     animate={{ background: isCurrent ? `${accent}33` : 'transparent', scale: isCurrent ? 1.04 : 1 }}
-                    className={`px-3 py-2 text-center rounded-r font-black ${r.y ? 'text-emerald-300' : 'opacity-50'}`}
+                    className={`px-3 py-2 text-center rounded-r font-black ${r.y ? (isDarkMode ? 'text-emerald-300' : 'text-emerald-600') : 'opacity-50'}`}
                   >{r.y}</motion.div>
                 </React.Fragment>
               );

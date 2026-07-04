@@ -118,7 +118,7 @@ export const S07_ADCArchitecture: React.FC<{ isDarkMode: boolean }> = ({ isDarkM
                   </div>
 
                   {/* PERFORMANCE GAUGES */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-12 pt-10 border-t border-dashed border-white/10">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-12 pt-10 border-t border-dashed border-slate-200 dark:border-white/10">
                        {[
                            { label: "Speed / Latency", val: current.speed, icon: Zap },
                            { label: "Bit Resolution", val: current.resolution, icon: Activity },
@@ -132,7 +132,7 @@ export const S07_ADCArchitecture: React.FC<{ isDarkMode: boolean }> = ({ isDarkM
                                    </div>
                                    <span>{g.val}%</span>
                                </div>
-                               <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                               <div className="h-1.5 w-full bg-slate-100 dark:bg-white/5 rounded-full overflow-hidden">
                                    <motion.div 
                                         initial={{ width: 0 }} 
                                         animate={{ width: `${g.val}%` }} 

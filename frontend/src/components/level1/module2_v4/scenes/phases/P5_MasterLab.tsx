@@ -9,7 +9,8 @@ export const P5_MasterLab: React.FC<{
     state: GlobalSignalState;
     onUpdate: (patch: Partial<GlobalSignalState>) => void;
     time: number;
-}> = ({ state, onUpdate, time }) => {
+    isDarkMode?: boolean;
+}> = ({ state, onUpdate, time, isDarkMode = true }) => {
     const { metrics } = SignalEngine(state, time, 800, 300);
     const [isForging, setIsForging] = useState(false);
 
@@ -26,11 +27,11 @@ export const P5_MasterLab: React.FC<{
                 <div className="inline-flex items-center gap-4 px-6 py-2 rounded-full border border-green-500/20 bg-green-500/5 text-[11px] font-mono font-black uppercase tracking-[0.5em] text-green-500">
                     BitforBytes // MASTER_SUMMARY_AUDIT
                 </div>
-                <h1 className="text-[12rem] font-black italic tracking-tighter leading-[0.8] text-white uppercase">
-                    The <br/> 
+                <h1 className={`text-[12rem] font-black italic tracking-tighter leading-[0.8] uppercase ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
+                    The <br/>
                     <span className="text-green-500">Forge</span>.
                 </h1>
-                <p className="text-3xl font-medium opacity-40 text-white max-w-4xl leading-relaxed italic">
+                <p className={`text-3xl font-medium max-w-4xl leading-relaxed italic ${isDarkMode ? 'opacity-40 text-white' : 'text-slate-600'}`}>
                     Final Takeaway: Real-world systems are a mix of bothDomains. Leverage the robustness of <span className="text-green-500 font-bold">Digital</span> and the nuance of <span className="text-orange-500 font-bold">Analog</span> through the essential bridges of ADC/DAC conversion.
                 </p>
             </header>

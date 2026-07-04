@@ -13,19 +13,19 @@ export const Eyebrow: React.FC<{ accent: string; children: React.ReactNode }> = 
 );
 
 export const SceneTitle: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-white leading-tight">
+  <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-slate-900 dark:text-white leading-tight">
     {children}
   </h1>
 );
 
 export const Lead: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <p className="text-lg md:text-xl text-white/80 leading-relaxed font-light max-w-3xl">
+  <p className="text-lg md:text-xl text-slate-600 dark:text-white/80 leading-relaxed font-light max-w-3xl">
     {children}
   </p>
 );
 
 export const Body: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className = '' }) => (
-  <p className={`text-base text-white/65 leading-relaxed max-w-3xl ${className}`}>
+  <p className={`text-base text-slate-600 dark:text-white/65 leading-relaxed max-w-3xl ${className}`}>
     {children}
   </p>
 );
@@ -63,7 +63,7 @@ export const CodeBlock: React.FC<{ accent: string; lang?: string; code: string }
 export const KeyPoints: React.FC<{ accent: string; points: string[] }> = ({ accent, points }) => (
   <ul className="space-y-2 max-w-3xl">
     {points.map((p, i) => (
-      <li key={i} className="flex items-start gap-3 text-[14px] text-white/75 leading-relaxed">
+      <li key={i} className="flex items-start gap-3 text-[14px] text-slate-600 dark:text-white/75 leading-relaxed">
         <span
           className="mt-2 w-1.5 h-1.5 rounded-sm flex-shrink-0"
           style={{ backgroundColor: accent }}
@@ -76,10 +76,10 @@ export const KeyPoints: React.FC<{ accent: string; points: string[] }> = ({ acce
 
 export const TwoColumn: React.FC<{ left: React.ReactNode; right: React.ReactNode }> = ({ left, right }) => (
   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl">
-    <div className="rounded-lg border border-white/10 bg-white/[0.02] p-5 space-y-2">
+    <div className="rounded-lg border border-slate-200 bg-slate-50 dark:border-white/10 dark:bg-white/[0.02] p-5 space-y-2">
       {left}
     </div>
-    <div className="rounded-lg border border-white/10 bg-white/[0.02] p-5 space-y-2">
+    <div className="rounded-lg border border-slate-200 bg-slate-50 dark:border-white/10 dark:bg-white/[0.02] p-5 space-y-2">
       {right}
     </div>
   </div>
@@ -87,13 +87,13 @@ export const TwoColumn: React.FC<{ left: React.ReactNode; right: React.ReactNode
 
 export const Callout: React.FC<{ accent: string; label?: string; children: React.ReactNode }> = ({ accent, label = 'Key Insight', children }) => (
   <div
-    className="rounded-lg border-l-2 pl-4 py-3 max-w-3xl bg-white/[0.02]"
+    className="rounded-lg border-l-2 pl-4 py-3 max-w-3xl bg-slate-50 dark:bg-white/[0.02]"
     style={{ borderColor: accent }}
   >
     <div className="text-[10px] font-mono tracking-[0.2em] uppercase mb-1.5" style={{ color: accent }}>
       {label}
     </div>
-    <div className="text-[14px] text-white/80 leading-relaxed">{children}</div>
+    <div className="text-[14px] text-slate-700 dark:text-white/80 leading-relaxed">{children}</div>
   </div>
 );
 

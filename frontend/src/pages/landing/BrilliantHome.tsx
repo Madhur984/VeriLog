@@ -65,7 +65,7 @@ const Reveal: React.FC<{ children: React.ReactNode; delay?: number; className?: 
 /* ── paths (single source of truth: lib/moduleHistory) ── */
 interface PathDef { title: string; tagline: string; prefix: string; color: string; icon: LucideIcon; to: string; badge?: string; }
 const PATHS: PathDef[] = [
-  { title: 'Digital Logic & Verilog', tagline: 'Signals, gates, K-maps, Verilog.', prefix: 'module/', color: '#2563EB', icon: Binary, to: '/module/1', badge: '5 free · no account' },
+  { title: 'Foundation', tagline: 'Digital logic & Verilog, from gates up.', prefix: 'module/', color: '#2563EB', icon: Binary, to: '/module/1', badge: '5 free · no account' },
   { title: 'Basic Electronics', tagline: 'Physics of control to transistors.', prefix: 'basic-electronics/', color: '#EA580C', icon: Zap, to: '/basic-electronics/1', badge: 'start here' },
   { title: 'Digital System Design', tagline: 'Adders, subtractors and beyond.', prefix: 'dsd/', color: '#9333EA', icon: Boxes, to: '/dsd/1' },
 ];

@@ -812,7 +812,7 @@ const ProblemCard: React.FC<{ p: ProblemConfig; isDarkMode: boolean }> = ({ p, i
                                 <li key={j} className={subText}>{a}</li>
                               ))}
                             </ul>
-                            <div className={`mt-2 pt-2 border-t border-white/10 font-mono text-lg font-black ${textColor}`}>
+                            <div className={`mt-2 pt-2 border-t ${isDarkMode ? 'border-white/10' : 'border-slate-300'} font-mono text-lg font-black ${textColor}`}>
                               ⇒ {le.result}
                             </div>
                           </motion.div>
