@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Hourglass, TrendingUp, Scale, AlertTriangle } from 'lucide-react';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive?: boolean; isDarkMode: boolean }
 
@@ -69,7 +70,8 @@ export const S05_Delay: React.FC<Props> = ({ isDarkMode }) => {
       </div>
 
       {/* the formula + interactive scaling */}
-      <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} className={`p-6 md:p-8 rounded-3xl border ${cardBg}`}>
+      <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} className={`relative p-6 md:p-8 rounded-3xl border ${cardBg}`}>
+        <TryItYourself corner label="Pick a width" />
         <div className="text-center mb-6">
           <div className="font-mono text-[10px] uppercase tracking-widest" style={{ color: AMBER }}>The scaling problem</div>
           <div className={`mt-2 font-mono text-2xl md:text-3xl font-black ${textColor}`}>

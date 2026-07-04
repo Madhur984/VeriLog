@@ -52,7 +52,7 @@ export const S01_Introduction: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode
 
       {/* --- DEFINITION --- */}
       <section>
-        <div className={`rounded-[2.5rem] p-10 border relative overflow-hidden`} style={{ background: isDarkMode ? 'rgba(34,211,238,0.03)' : 'rgba(34,211,238,0.05)', borderColor: isDarkMode ? 'rgba(34,211,238,0.1)' : 'rgba(34,211,238,0.2)' }}>
+        <div className="relative">
           <h2 className={`text-2xl font-black mb-6 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>The Core Concept</h2>
           <div className="space-y-6 text-lg leading-relaxed opacity-80">
             <p>

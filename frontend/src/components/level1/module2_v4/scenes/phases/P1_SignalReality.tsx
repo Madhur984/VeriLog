@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { InteractiveInstrument, CircuitBench, EngineeringHUD, DailyGallery, KineticText, ComparisonConsole, InsightPanel } from '../../components/UltimateComponents';
 import { GlobalSignalState } from '../../types';
 import { SignalEngine } from '../../SignalEngine';
+import { TryItYourself } from '../../../../ui/TryItYourself';
 
 export const P1_SignalReality: React.FC<{
     state: GlobalSignalState;
@@ -30,7 +31,8 @@ export const P1_SignalReality: React.FC<{
 
             <div className="grid grid-cols-1 2xl:grid-cols-2 gap-20 items-start">
                 <div className="space-y-12">
-                     <InteractiveInstrument 
+                     <TryItYourself />
+                     <InteractiveInstrument
                         state={state} onUpdate={onUpdate} time={time}
                         mapping={{
                             x: { label: "FREQUENCY_TARGET", key: "frequency", min: 1, max: 8, unit: "Hz" },

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Zap, BookOpen, AlertTriangle } from 'lucide-react';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive?: boolean; isDarkMode: boolean }
 
@@ -43,6 +44,8 @@ export const S07_Xor: React.FC<Props> = ({ isDarkMode }) => {
           and watch it light only when the inputs disagree.
         </p>
       </section>
+
+      <div><TryItYourself /></div>
 
       <div className="grid lg:grid-cols-[1.5fr_1fr] gap-6 items-start">
         {/* ── playground ── */}

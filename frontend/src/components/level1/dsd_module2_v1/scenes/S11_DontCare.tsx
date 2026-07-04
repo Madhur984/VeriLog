@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Wrench, Sparkles, ToggleLeft, ToggleRight } from 'lucide-react';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive: boolean; isDarkMode: boolean; }
 
@@ -48,8 +49,9 @@ export const S11_DontCare: React.FC<Props> = ({ isActive, isDarkMode }) => {
       {/* Toggle + visualization */}
       <motion.div
         initial={{ opacity: 0, y: 12 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
-        className={`p-6 rounded-3xl border ${cardBg}`}
+        className={`relative p-6 rounded-3xl border ${cardBg}`}
       >
+        <TryItYourself corner />
         <div className="flex items-center justify-between flex-wrap gap-4 mb-6">
           <div>
             <div className="font-mono text-[10px] uppercase tracking-widest text-violet-400">Madhur&apos;s decision</div>

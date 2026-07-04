@@ -28,6 +28,7 @@ import {
   InteractiveMux,
   AnimatedHDLPipeline,
 } from './InteractiveDiagrams';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface SceneProps { accent: string }
 
@@ -119,6 +120,7 @@ export const SceneFirstVerilog: React.FC<SceneProps> = ({ accent }) => (
     title="Your First Verilog Module"
     lead="A module is the basic unit of design. Below: a half-adder, eight lines of code, two gates."
   >
+    <TryItYourself />
     <Figure caption="Try it - toggle a and b, watch the wires light up and the outputs update">
       <InteractiveHalfAdder accent={accent} />
     </Figure>
@@ -217,6 +219,7 @@ export const SceneCombinational: React.FC<SceneProps> = ({ accent }) => (
     title="Combinational Logic"
     lead="No memory. Output is a pure function of the current inputs."
   >
+    <TryItYourself />
     <Figure caption="Toggle a, b, and sel - the active path lights up, y updates instantly">
       <InteractiveMux accent={accent} />
     </Figure>
@@ -251,6 +254,7 @@ export const SceneWhatIsClock: React.FC<SceneProps> = ({ accent }) => (
     title="What is a Clock?"
     lead="A periodic square wave that paces every flip-flop on the chip - the heartbeat of digital design."
   >
+    <TryItYourself />
     <Figure caption="Live clock - drag the slider to change period, watch frequency update">
       <AnimatedClock accent={accent} />
     </Figure>
@@ -275,6 +279,7 @@ export const SceneEdgeVsLevel: React.FC<SceneProps> = ({ accent }) => (
     title="Edge-Triggered vs Level-Triggered"
     lead="Two ways a storage element can listen to its control signal - the difference between a latch and a flip-flop."
   >
+    <TryItYourself />
     <Figure caption="Auto-playing - shaded windows show when the latch is transparent; dots mark flip-flop sampling">
       <AnimatedLevelVsEdge accent={accent} />
     </Figure>
@@ -299,6 +304,7 @@ export const ScenePosedge: React.FC<SceneProps> = ({ accent }) => (
     title="Positive Edge Triggering"
     lead="`always @(posedge clk)` says: sample d on the low → high transition of clk, ignore everything else."
   >
+    <TryItYourself />
     <Figure caption="Cursor sweeps live - a flash highlights each sampling instant on q">
       <AnimatedPosedge accent={accent} />
     </Figure>
@@ -353,6 +359,7 @@ export const SceneResetPreset: React.FC<SceneProps> = ({ accent }) => (
     title="Reset · Clear · Preset"
     lead="Control inputs that force a flip-flop into a known state regardless of D and CLK - essential for power-up and recovery."
   >
+    <TryItYourself />
     <Figure caption="Try it - toggle D, click CLK to advance, then PRE / CLR (asynchronous)">
       <InteractiveFlipFlop accent={accent} />
     </Figure>

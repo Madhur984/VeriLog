@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Coins, BatteryCharging, Calculator } from 'lucide-react';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive: boolean; isDarkMode: boolean; }
 
@@ -104,6 +105,7 @@ export const S10_PayingToll: React.FC<Props> = ({ isActive, isDarkMode }) => {
       </motion.div>
 
       {/* Voltage slider + numeric panel */}
+      <TryItYourself label="Drag the voltage" />
       <motion.div
         initial={{ opacity: 0, y: 12 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.1 }}

@@ -16,6 +16,7 @@ import {
   type SubScene,
 } from '../_subtractor/kit';
 import { ShannonExpander, NandUniversal } from '../_combo/blocks';
+import { TryItYourself } from '../../ui/TryItYourself';
 import type { SubPage } from '../_subtractor/SubEngine';
 import { CONTENT } from './content';
 
@@ -365,7 +366,12 @@ function componentFor(scene: SubScene, i: number, n: number): React.FC<any> {
         </SceneShell>
       );
     case 'quiz':
-      return (p) => <QuizScene isDarkMode={p.isDarkMode} accent={p.accent} quiz={CONTENT.quiz} badge="UNIVERSAL LOGIC" tag="Practice · Universal Logic & Shannon" title={scene.label} intro={scene.subtitle ?? ''} />;
+      return (p) => (
+        <>
+          <TryItYourself />
+          <QuizScene isDarkMode={p.isDarkMode} accent={p.accent} quiz={CONTENT.quiz} badge="UNIVERSAL LOGIC" tag="Practice · Universal Logic & Shannon" title={scene.label} intro={scene.subtitle ?? ''} />
+        </>
+      );
     case 'recap':
       return (p) => (
         <RecapScene {...p} scene={scene}>
@@ -392,6 +398,7 @@ function componentFor(scene: SubScene, i: number, n: number): React.FC<any> {
     case 'build':
       return (p) => (
         <TheoryScene {...p} scene={scene}>
+          <TryItYourself />
           <NandUniversal isDarkMode={p.isDarkMode} accent={p.accent} />
           <WorkbenchCTA isDarkMode={p.isDarkMode} accent={p.accent} tutorial="nand-universal"
             titleEN="Build the Universal Logic & Shannon for real"
@@ -406,16 +413,17 @@ function componentFor(scene: SubScene, i: number, n: number): React.FC<any> {
         <TheoryScene {...p} scene={scene}>
           {which === 'nand' && (
             <div className="space-y-6">
+              <TryItYourself />
               <NandUniversal isDarkMode={p.isDarkMode} accent={p.accent} />
               <GateCountTable isDarkMode={p.isDarkMode} accent={p.accent} />
             </div>
           )}
-          {which === 'orbuild' && <OrFromNand isDarkMode={p.isDarkMode} accent={p.accent} />}
-          {which === 'nor' && <NorUniversal isDarkMode={p.isDarkMode} accent={p.accent} />}
-          {which === 'shannon-intro' && <ShannonExpander isDarkMode={p.isDarkMode} accent={p.accent} />}
-          {which === 'derivation' && <ShannonDerivation isDarkMode={p.isDarkMode} accent={p.accent} />}
-          {which === 'shannon-mux' && <ShannonExpander isDarkMode={p.isDarkMode} accent={p.accent} />}
-          {which === 'tree' && <MuxTreeSizer isDarkMode={p.isDarkMode} accent={p.accent} />}
+          {which === 'orbuild' && <div><TryItYourself /><OrFromNand isDarkMode={p.isDarkMode} accent={p.accent} /></div>}
+          {which === 'nor' && <div><TryItYourself /><NorUniversal isDarkMode={p.isDarkMode} accent={p.accent} /></div>}
+          {which === 'shannon-intro' && <div><TryItYourself /><ShannonExpander isDarkMode={p.isDarkMode} accent={p.accent} /></div>}
+          {which === 'derivation' && <div><TryItYourself /><ShannonDerivation isDarkMode={p.isDarkMode} accent={p.accent} /></div>}
+          {which === 'shannon-mux' && <div><TryItYourself /><ShannonExpander isDarkMode={p.isDarkMode} accent={p.accent} /></div>}
+          {which === 'tree' && <div><TryItYourself /><MuxTreeSizer isDarkMode={p.isDarkMode} accent={p.accent} /></div>}
         </TheoryScene>
       );
     }

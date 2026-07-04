@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { RefreshCw, ChevronRight } from 'lucide-react';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive: boolean; isDarkMode: boolean; }
 
@@ -146,6 +147,7 @@ export const S11_Complements: React.FC<Props> = ({ isActive, isDarkMode }) => {
       </section>
 
       {/* Type Selector */}
+      <TryItYourself />
       <div className="flex flex-wrap gap-3 justify-center">
         {(Object.keys(COMP_INFO) as CompType[]).map(t => (
           <motion.button

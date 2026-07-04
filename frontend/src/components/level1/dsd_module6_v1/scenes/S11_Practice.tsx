@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Swords, CheckCircle2, XCircle, Trophy, ChevronRight, ChevronLeft, RotateCcw, BookOpen } from 'lucide-react';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive: boolean; isDarkMode: boolean; }
 
@@ -320,6 +321,7 @@ export const S11_Practice: React.FC<Props> = ({ isDarkMode }) => {
       </div>
 
       {/* Active problem */}
+      <TryItYourself label="Try it yourself" />
       <AnimatePresence mode="wait">
         <motion.div
           key={current.id}

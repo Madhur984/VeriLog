@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { CircuitBoard, Hammer, ArrowRight, Clock } from 'lucide-react';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive?: boolean; isDarkMode: boolean }
 
@@ -112,7 +113,8 @@ export const S08_Circuit: React.FC<Props> = ({ isDarkMode }) => {
       </div>
 
       {/* ── THE CARRY CHAIN: four full-adder blocks in a row ── */}
-      <div className={`p-6 md:p-8 rounded-3xl border ${cardBg}`}>
+      <div className={`relative p-6 md:p-8 rounded-3xl border ${cardBg}`}>
+        <TryItYourself corner label="Flip the input pads" />
         <div className="font-mono text-[10px] uppercase tracking-widest mb-4" style={{ color: EMERALD }}>
           The chain · c0 &rarr; c1 &rarr; c2 &rarr; c3 &rarr; c4
         </div>

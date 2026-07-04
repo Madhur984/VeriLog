@@ -4,6 +4,7 @@ import { InteractiveInstrument, EngineeringHUD, KineticText, InsightPanel } from
 import { GlobalSignalState } from '../../types';
 import { SignalEngine } from '../../SignalEngine';
 import { Dna, Zap } from 'lucide-react';
+import { TryItYourself } from '../../../../ui/TryItYourself';
 
 export const P3_ValuePrecision: React.FC<{
     state: GlobalSignalState;
@@ -31,7 +32,8 @@ export const P3_ValuePrecision: React.FC<{
 
             <div className="grid grid-cols-1 2xl:grid-cols-2 gap-20">
                 <div className="space-y-12">
-                    <InteractiveInstrument 
+                    <TryItYourself />
+                    <InteractiveInstrument
                         state={state} onUpdate={onUpdate} time={time}
                         mapping={{
                             x: { label: "RESOLUTION (N-Bits)", key: "bitDepth", min: 1, max: 24, unit: "Bits" },

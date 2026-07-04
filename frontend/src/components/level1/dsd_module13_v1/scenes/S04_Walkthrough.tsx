@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Play, Pause, StepForward, RotateCcw, ChevronLeft, Clock, CheckCircle2 } from 'lucide-react';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive?: boolean; isDarkMode: boolean }
 
@@ -142,6 +143,7 @@ export const S04_Walkthrough: React.FC<Props> = ({ isDarkMode }) => {
       </div>
 
       {/* the machine */}
+      <TryItYourself />
       <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}
                   className={`p-6 md:p-8 rounded-3xl border ${cardBg}`}>
         <div className="grid lg:grid-cols-[1fr_auto_1fr] gap-6 items-center">

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, ChevronRight, ChevronDown, CheckCircle2, MousePointerClick, Cpu, Droplets, Thermometer, Bell } from 'lucide-react';
 import { CleanCircuit, PosCircuit, lit, not, term, type Bit, type Term, type CleanInput, type Lit } from './_CleanCircuit';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive: boolean; isDarkMode: boolean; }
 
@@ -400,6 +401,8 @@ export const S02_Reverse: React.FC<Props> = ({ isActive, isDarkMode }) => {
           K-Map only helps if the circuit is in long form - many of these are already short.
         </div>
       </motion.div>
+
+      <div><TryItYourself /></div>
 
       <div className="space-y-6">
         {PROBLEMS.map((p) => (

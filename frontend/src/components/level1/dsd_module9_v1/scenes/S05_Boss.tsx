@@ -1,5 +1,6 @@
 import React from 'react';
 import { QuizArena, Problem } from '../components/QuizArena';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive?: boolean; isDarkMode: boolean }
 
@@ -139,7 +140,9 @@ const PROBLEMS: Problem[] = [
 ];
 
 export const S05_Boss: React.FC<Props> = ({ isDarkMode }) => (
-  <QuizArena
+  <div className="max-w-6xl mx-auto">
+    <TryItYourself />
+    <QuizArena
     isDarkMode={isDarkMode}
     accent={ACCENT}
     tag="Chapter 06 · Mixed Boss Round"
@@ -147,7 +150,8 @@ export const S05_Boss: React.FC<Props> = ({ isDarkMode }) => (
     intro="No topic labels to lean on. These ten questions shuffle combinational, sequential and adders together - and several force you to connect them, the way they actually combine inside a real datapath. Aim for a clean sweep."
     problems={PROBLEMS}
     closer="Boss cleared. Hit the cheatsheet to lock in the one-page summary, share the deck, then take it to the workbench."
-  />
+    />
+  </div>
 );
 
 export default S05_Boss;

@@ -1,5 +1,6 @@
 import React from 'react';
 import { QuizArena, Problem, ReferenceRow } from '../../dsd_module9_v1/components/QuizArena';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive?: boolean; isDarkMode: boolean }
 
@@ -138,16 +139,21 @@ const REFERENCE: ReferenceRow[] = [
 ];
 
 export const S06_Practice: React.FC<Props> = ({ isDarkMode }) => (
-  <QuizArena
-    isDarkMode={isDarkMode}
-    accent={ACCENT}
-    tag="Chapter 07 · Practice Arena"
-    title="Boss Drill"
-    intro="The definition, the one full adder, the carry flip-flop, N cycles, the trade-off and the toll-booth mapping - every beat of the module is in here. Each question explains itself the instant you answer. Aim for 10/10."
-    problems={PROBLEMS}
-    reference={REFERENCE}
-    closer="One chapter left: the cheatsheet, the Verilog, and where to take this next."
-  />
+  <div className="space-y-3">
+    <div className="max-w-3xl mx-auto px-4">
+      <TryItYourself />
+    </div>
+    <QuizArena
+      isDarkMode={isDarkMode}
+      accent={ACCENT}
+      tag="Chapter 07 · Practice Arena"
+      title="Boss Drill"
+      intro="The definition, the one full adder, the carry flip-flop, N cycles, the trade-off and the toll-booth mapping - every beat of the module is in here. Each question explains itself the instant you answer. Aim for 10/10."
+      problems={PROBLEMS}
+      reference={REFERENCE}
+      closer="One chapter left: the cheatsheet, the Verilog, and where to take this next."
+    />
+  </div>
 );
 
 export default S06_Practice;

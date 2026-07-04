@@ -4,6 +4,7 @@ import { SignalEngine, SignalConfig } from '../SignalEngine';
 import { Timer, AlertTriangle, Cpu, Ruler, Activity, Zap, Terminal, Sliders, Minimize2, Maximize2 } from 'lucide-react';
 
 import { TechnicalAudit } from '../components/TechnicalAudit';
+import { TryItYourself } from '../../../ui/TryItYourself';
 import { useModule2Audio } from '../hooks/useModule2Audio';
 
 /**
@@ -109,6 +110,7 @@ export const S02_Sampling: React.FC<{ time: number; isDarkMode: boolean }> = ({ 
       </header>
 
       <div className="relative group">
+            <TryItYourself corner />
             {/* Interaction Instructions */}
             <AnimatePresence>
                 {isIdle && (

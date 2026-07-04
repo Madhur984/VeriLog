@@ -240,7 +240,7 @@ export const S03_HostelMetaphor: React.FC<Props> = ({ isActive, isDarkMode }) =>
       <motion.div
         initial={{ opacity: 0, y: 12 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.5 }}
-        className={`p-6 rounded-3xl border ${cardBg} text-center`}
+        className="text-center max-w-3xl mx-auto"
       >
         <p className={`text-base leading-relaxed ${textColor}`}>
           Once you see <strong className="text-amber-300">rooms</strong> instead of rows and{' '}

@@ -21,6 +21,7 @@ import {
 } from '../_transistor/kit';
 import { TransistorSymbol, MosfetChannel, Slider } from '../_transistor/analog';
 import type { SubPage } from '../_transistor/kit';
+import { TryItYourself } from '../../../components/ui/TryItYourself';
 import { CONTENT } from './content';
 
 const SRC_EN: string | undefined = '/videos/be9-mosfet-en.mp4';
@@ -507,16 +508,25 @@ function componentFor(scene: SubScene): React.FC<any> {
     default:
       return (p) => (
         <TheoryScene {...p} scene={scene}>
-          {/s02_|s05_|gatecurrentzero/.test(key) && <GateCurrentZero isDarkMode={p.isDarkMode} accent={p.accent} />}
-          {/s03_|s06_|s07_|depletion|enhancement|family/.test(key) && <EnhDepToggle isDarkMode={p.isDarkMode} accent={p.accent} />}
-          {/s04_|stack/.test(key) && <MosfetChannel isDarkMode={p.isDarkMode} accent={p.accent} />}
+          {/s02_|s05_|gatecurrentzero/.test(key) && (
+            <div className="space-y-2"><TryItYourself /><GateCurrentZero isDarkMode={p.isDarkMode} accent={p.accent} /></div>
+          )}
+          {/s03_|s06_|s07_|depletion|enhancement|family/.test(key) && (
+            <div className="space-y-2"><TryItYourself /><EnhDepToggle isDarkMode={p.isDarkMode} accent={p.accent} /></div>
+          )}
+          {/s04_|stack/.test(key) && (
+            <div className="space-y-2"><TryItYourself /><MosfetChannel isDarkMode={p.isDarkMode} accent={p.accent} /></div>
+          )}
           {/s08_|inversion/.test(key) && (
             <div className="space-y-4">
+              <TryItYourself />
               <MosfetChannel isDarkMode={p.isDarkMode} accent={p.accent} />
               <VtStepThrough isDarkMode={p.isDarkMode} accent={p.accent} />
             </div>
           )}
-          {/s09_|region|operating/.test(key) && <RegionIndicator isDarkMode={p.isDarkMode} accent={p.accent} />}
+          {/s09_|region|operating/.test(key) && (
+            <div className="space-y-2"><TryItYourself /><RegionIndicator isDarkMode={p.isDarkMode} accent={p.accent} /></div>
+          )}
           {/s10_|diagnostic|matrix|pmos/.test(key) && <NmosPmosMirror isDarkMode={p.isDarkMode} accent={p.accent} />}
         </TheoryScene>
       );

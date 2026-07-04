@@ -5,6 +5,7 @@ import {
   Hammer, Crosshair, ClipboardList, ListChecks, Rocket, Trophy,
   MousePointerClick, ToggleLeft, Cpu, Lightbulb, Cable, Zap, ArrowRight, Merge,
 } from 'lucide-react';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive?: boolean; isDarkMode: boolean }
 
@@ -129,8 +130,9 @@ export const S09_Build: React.FC<Props> = ({ isDarkMode }) => {
         {/* target schematic */}
         <motion.div
           initial={{ opacity: 0, x: -16 }} animate={{ opacity: 1, x: 0 }}
-          className={`lg:col-span-3 p-6 md:p-8 rounded-3xl border ${cardBg} flex flex-col gap-4`}
+          className={`relative lg:col-span-3 p-6 md:p-8 rounded-3xl border ${cardBg} flex flex-col gap-4`}
         >
+          <TryItYourself corner />
           <div className="flex items-center justify-between gap-2 flex-wrap">
             <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest" style={{ color: VIOLET }}>
               <Crosshair size={13} /> The Target

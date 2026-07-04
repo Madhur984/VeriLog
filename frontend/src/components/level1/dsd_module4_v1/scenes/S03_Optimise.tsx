@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Grid3x3, ChevronRight, ChevronDown, CheckCircle2, Lightbulb } from 'lucide-react';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive: boolean; isDarkMode: boolean; }
 
@@ -459,6 +460,8 @@ export const S03_Optimise: React.FC<Props> = ({ isActive, isDarkMode }) => {
           group only if some cell is still left uncovered.
         </div>
       </motion.div>
+
+      <div><TryItYourself /></div>
 
       <div className="space-y-6">
         {PROBLEMS.map((p) => (

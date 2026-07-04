@@ -16,6 +16,7 @@ import {
 } from '../_transistor/kit';
 import { TransistorSymbol, SmallSignalGain, Slider } from '../_transistor/analog';
 import type { SubPage } from '../_transistor/kit';
+import { TryItYourself } from '../../ui/TryItYourself';
 import { CONTENT } from './content';
 
 const SRC_EN: string | undefined = '/videos/be8-bjt-ac-en.mp4';
@@ -734,10 +735,16 @@ function componentFor(scene: SubScene, i: number, n: number): React.FC<any> {
       const which = bespokeFor(scene);
       return (p) => (
         <TheoryScene {...p} scene={scene}>
-          {which === 'superposition' && <SuperpositionViz isDarkMode={p.isDarkMode} accent={p.accent} />}
+          {which === 'superposition' && (
+            <div className="space-y-2">
+              <TryItYourself />
+              <SuperpositionViz isDarkMode={p.isDarkMode} accent={p.accent} />
+            </div>
+          )}
           {which === 'hybrid' && <HtoReBridge isDarkMode={p.isDarkMode} accent={p.accent} />}
           {which === 'remodel' && (
             <div className="space-y-4">
+              <TryItYourself />
               <ReBouncer isDarkMode={p.isDarkMode} accent={p.accent} />
               <ReDerivation isDarkMode={p.isDarkMode} accent={p.accent} />
               <GmDerivation isDarkMode={p.isDarkMode} accent={p.accent} />
@@ -746,6 +753,7 @@ function componentFor(scene: SubScene, i: number, n: number): React.FC<any> {
           {which === 'bridge' && <HtoReBridge isDarkMode={p.isDarkMode} accent={p.accent} />}
           {which === 'transform' && (
             <div className="space-y-4">
+              <TryItYourself />
               <CouplingCapViz isDarkMode={p.isDarkMode} accent={p.accent} />
               <CEAmplifierSchematic isDarkMode={p.isDarkMode} accent={p.accent} />
             </div>

@@ -1,5 +1,6 @@
 import React from 'react';
 import { QuizArena, Problem, ReferenceRow } from '../components/QuizArena';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive?: boolean; isDarkMode: boolean }
 
@@ -116,7 +117,9 @@ const REFERENCE: ReferenceRow[] = [
 ];
 
 export const S02_Combinational: React.FC<Props> = ({ isDarkMode }) => (
-  <QuizArena
+  <div className="max-w-6xl mx-auto">
+    <TryItYourself />
+    <QuizArena
     isDarkMode={isDarkMode}
     accent={ACCENT}
     tag="Chapter 03 · Combinational Drill"
@@ -125,7 +128,8 @@ export const S02_Combinational: React.FC<Props> = ({ isDarkMode }) => (
     problems={PROBLEMS}
     reference={REFERENCE}
     closer="Combinational is the 'now'. Next up is the 'then' - sequential logic, where the circuit finally gets to remember."
-  />
+    />
+  </div>
 );
 
 export default S02_Combinational;

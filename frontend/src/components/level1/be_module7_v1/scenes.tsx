@@ -23,6 +23,7 @@ import {
   TransistorSymbol, LoadLineLab, OutputCurves, BiasStability, Slider,
 } from '../_transistor/analog';
 import type { SubPage } from '../_transistor/kit';
+import { TryItYourself } from '../../ui/TryItYourself';
 import { CONTENT } from './content';
 
 const SRC_EN: string | undefined = '/videos/be7-bjt-biasing-en.mp4';
@@ -71,7 +72,8 @@ const QPointSwing: React.FC<{ isDarkMode: boolean; accent: string }> = ({ isDark
 
   return (
     <Card isDarkMode={isDarkMode}>
-      <div className="mb-3 font-mono text-[11px] uppercase tracking-[0.3em]" style={{ color: accent }}>
+      <TryItYourself />
+      <div className="mb-3 mt-3 font-mono text-[11px] uppercase tracking-[0.3em]" style={{ color: accent }}>
         {lang === 'hi' ? 'Q-point बहुत ऊँचा / सही / बहुत नीचा' : 'Q-point too high / just right / too low'}
       </div>
       <div className="grid gap-5 md:grid-cols-[320px_1fr]">

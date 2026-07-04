@@ -14,6 +14,7 @@ import {
   type SubScene,
 } from '../_subtractor/kit';
 import type { SubPage } from '../_subtractor/SubEngine';
+import { TryItYourself } from '../../ui/TryItYourself';
 import { CONTENT } from './content';
 
 const ACC = { I: '#38bdf8', II: '#f59e0b', III: '#fb7185', good: '#34d399' };
@@ -551,15 +552,22 @@ function componentFor(scene: SubScene): React.FC<any> {
       const which = bespokeFor(scene);
       return (p) => (
         <TheoryScene {...p} scene={scene}>
-          {which === 'deception' && <DeceptionViz isDarkMode={p.isDarkMode} accent={p.accent} />}
+          {which === 'deception' && (
+            <div className="space-y-3">
+              <TryItYourself />
+              <DeceptionViz isDarkMode={p.isDarkMode} accent={p.accent} />
+            </div>
+          )}
           {which === 'twos' && (
             <div className="space-y-4">
+              <TryItYourself />
               <TwosComplementDemo isDarkMode={p.isDarkMode} accent={p.accent} />
               <SubtractStepThrough isDarkMode={p.isDarkMode} accent={p.accent} />
             </div>
           )}
           {which === 'mode' && (
             <div className="space-y-4">
+              <TryItYourself />
               <ModeSwitchIllustration isDarkMode={p.isDarkMode} accent={p.accent} />
               <ModeBitDemo isDarkMode={p.isDarkMode} accent={p.accent} />
               <UnifiedMatrix isDarkMode={p.isDarkMode} accent={p.accent} />
@@ -567,6 +575,7 @@ function componentFor(scene: SubScene): React.FC<any> {
           )}
           {which === 'addsub' && (
             <div className="space-y-4">
+              <TryItYourself />
               <ShapeShifterDoor isDarkMode={p.isDarkMode} accent={p.accent} />
               <AdderSubtractorDemo isDarkMode={p.isDarkMode} accent={p.accent} />
             </div>

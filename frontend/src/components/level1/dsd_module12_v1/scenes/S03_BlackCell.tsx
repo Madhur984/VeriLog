@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { GitMerge } from 'lucide-react';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive?: boolean; isDarkMode: boolean }
 
@@ -43,7 +44,8 @@ export const S03_BlackCell: React.FC<Props> = ({ isDarkMode }) => {
         </p>
       </motion.section>
 
-      <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} className={`p-6 md:p-8 rounded-3xl border ${cardBg}`}>
+      <TryItYourself label="Toggle the inputs" />
+      <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} className={`relative p-6 md:p-8 rounded-3xl border ${cardBg}`}>
         <div className="grid lg:grid-cols-2 gap-8 items-center">
           {/* inputs / outputs */}
           <div>

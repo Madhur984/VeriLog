@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ScrollText, Crown, Lightbulb } from 'lucide-react';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive: boolean; isDarkMode: boolean; }
 
@@ -48,8 +49,9 @@ export const S08_Manifest: React.FC<Props> = ({ isActive, isDarkMode }) => {
         {/* Plotting grid (interactive) */}
         <motion.div
           initial={{ opacity: 0, y: 12 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
-          className={`p-6 rounded-3xl border ${cardBg}`}
+          className={`relative p-6 rounded-3xl border ${cardBg}`}
         >
+          <TryItYourself corner />
           <div className="flex items-center gap-2 mb-4">
             <Crown size={14} className="text-amber-400" />
             <span className="font-mono text-[10px] uppercase tracking-widest text-amber-400">

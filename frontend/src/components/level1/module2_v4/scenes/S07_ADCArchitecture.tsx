@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Cpu, Zap, Layers, RefreshCw, Terminal, Activity, Database, CheckCircle2, AlertCircle } from 'lucide-react';
 
 import { TechnicalAudit } from '../components/TechnicalAudit';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 /**
  * S07_ADCArchitecture: SILICON REALITY (ELITE VERSION)
@@ -66,6 +67,7 @@ export const S07_ADCArchitecture: React.FC<{ isDarkMode: boolean }> = ({ isDarkM
       </header>
 
       {/* INTERACTIVE ARCHITECTURE HUB */}
+      <TryItYourself />
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 mt-10">
           {/* Selector Tabs */}
           <div className="lg:col-span-4 flex flex-col gap-4">

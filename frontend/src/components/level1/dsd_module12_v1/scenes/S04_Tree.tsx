@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Network, Play, Pause, StepForward, RotateCcw, CheckCircle2 } from 'lucide-react';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive?: boolean; isDarkMode: boolean }
 
@@ -57,7 +58,8 @@ export const S04_Tree: React.FC<Props> = ({ isDarkMode }) => {
       </motion.section>
 
       {/* the tree */}
-      <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} className={`p-6 md:p-8 rounded-3xl border overflow-x-auto ${cardBg}`}>
+      <TryItYourself label="Step through the tree" />
+      <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} className={`relative p-6 md:p-8 rounded-3xl border overflow-x-auto ${cardBg}`}>
         <div className="flex items-center justify-between mb-3">
           <span className="font-mono text-[10px] uppercase tracking-widest" style={{ color: INDIGO }}>8-bit prefix tree (Kogge-Stone)</span>
           <span className="font-mono text-xs" style={{ color: done ? EMERALD : INDIGO }}>
@@ -120,7 +122,8 @@ export const S04_Tree: React.FC<Props> = ({ isDarkMode }) => {
       </motion.div>
 
       {/* width scaling */}
-      <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} className={`p-6 rounded-3xl border ${cardBg}`}>
+      <TryItYourself label="Change the width" />
+      <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} className={`relative p-6 rounded-3xl border ${cardBg}`}>
         <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
           <span className="font-mono text-[10px] uppercase tracking-widest" style={{ color: INDIGO }}>Levels needed as the adder gets wider</span>
           <div className="flex gap-2">

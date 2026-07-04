@@ -1,5 +1,6 @@
 import React from 'react';
 import { QuizArena, Problem, ReferenceRow } from '../components/QuizArena';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive?: boolean; isDarkMode: boolean }
 
@@ -122,7 +123,9 @@ const REFERENCE: ReferenceRow[] = [
 ];
 
 export const S04_Adders: React.FC<Props> = ({ isDarkMode }) => (
-  <QuizArena
+  <div className="max-w-6xl mx-auto">
+    <TryItYourself />
+    <QuizArena
     isDarkMode={isDarkMode}
     accent={ACCENT}
     tag="Chapter 05 · Adders Drill"
@@ -131,7 +134,8 @@ export const S04_Adders: React.FC<Props> = ({ isDarkMode }) => (
     problems={PROBLEMS}
     reference={REFERENCE}
     closer="That is the adder story end to end. One round left: the Mixed Boss draws from all three topics at once."
-  />
+    />
+  </div>
 );
 
 export default S04_Adders;

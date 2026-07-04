@@ -4,6 +4,7 @@ import { InteractiveInstrument, EngineeringHUD, SpectrumAnalyzer, KineticText, I
 import { GlobalSignalState } from '../../types';
 import { SignalEngine } from '../../SignalEngine';
 import { Ghost, ShieldAlert } from 'lucide-react';
+import { TryItYourself } from '../../../../ui/TryItYourself';
 
 export const P2_TimeControl: React.FC<{
     state: GlobalSignalState;
@@ -31,7 +32,8 @@ export const P2_TimeControl: React.FC<{
 
             <div className="grid grid-cols-1 2xl:grid-cols-3 gap-20">
                 <div className="2xl:col-span-2 space-y-12">
-                    <InteractiveInstrument 
+                    <TryItYourself />
+                    <InteractiveInstrument
                         state={state} onUpdate={onUpdate} time={time}
                         mapping={{
                             x: { label: "SAMPLING_CLOCK (Fs)", key: "sampleRate", min: 4, max: 128, unit: "Hz" },

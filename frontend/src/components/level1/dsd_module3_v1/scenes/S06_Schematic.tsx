@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Cpu, MousePointerClick } from 'lucide-react';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive: boolean; isDarkMode: boolean; }
 
@@ -72,6 +73,7 @@ export const S06_Schematic: React.FC<Props> = ({ isActive, isDarkMode }) => {
       </motion.div>
 
       {/* Live circuit */}
+      <TryItYourself />
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.15 }}

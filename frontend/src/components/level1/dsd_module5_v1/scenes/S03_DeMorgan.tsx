@@ -154,7 +154,7 @@ export const S03_DeMorgan: React.FC<SceneProps> = ({ isActive, isDarkMode, mode 
       <motion.div
         initial={{ opacity: 0 }} animate={isActive ? { opacity: 1 } : {}}
         transition={{ delay: 0.5 }}
-        className={`p-6 rounded-3xl border ${cardBg}`}
+        className="py-2"
       >
         <h3 className={`text-lg font-black ${textColor} mb-2`}>Why this is the secret weapon</h3>
         <p className={`text-sm ${subText}`}>

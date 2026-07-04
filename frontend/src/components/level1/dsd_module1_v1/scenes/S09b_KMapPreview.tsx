@@ -196,7 +196,7 @@ export const S09b_KMapPreview: React.FC<Props> = ({ isActive, isDarkMode }) => {
       <motion.div
         initial={{ opacity: 0 }} animate={isActive ? { opacity: 1 } : {}}
         transition={{ delay: 0.6 }}
-        className={`p-6 rounded-3xl border ${cardBg}`}
+        className="px-1"
       >
         <p className={`text-sm leading-relaxed ${textColor}`}>
           <strong className="text-fuchsia-400">Looking ahead:</strong> the next module spends its

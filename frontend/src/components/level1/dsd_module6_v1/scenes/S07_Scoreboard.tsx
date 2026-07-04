@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Repeat, RotateCcw, Sigma, Workflow } from 'lucide-react';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive?: boolean; isDarkMode: boolean; }
 
@@ -121,6 +122,7 @@ export const S07_Scoreboard: React.FC<Props> = ({ isActive = true, isDarkMode })
       </section>
 
       {/* ── Live demo card ── */}
+      <TryItYourself />
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         className={`p-6 md:p-8 rounded-3xl border ${cardBg} space-y-6`}

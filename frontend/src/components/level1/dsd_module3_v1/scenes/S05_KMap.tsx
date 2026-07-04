@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Grid3x3, Lightbulb, ArrowDown, Play, Pause, RotateCcw } from 'lucide-react';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive: boolean; isDarkMode: boolean; }
 
@@ -55,6 +56,7 @@ export const S05_KMap: React.FC<Props> = ({ isActive, isDarkMode }) => {
       </section>
 
       {/* Phase controls */}
+      <TryItYourself />
       <div className="flex items-center gap-2 flex-wrap">
         {PHASES.map((p, i) => (
           <button

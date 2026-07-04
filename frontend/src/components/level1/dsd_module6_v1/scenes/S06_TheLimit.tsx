@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { AlertTriangle, ArrowRight, Binary, ScrollText, XCircle } from 'lucide-react';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive?: boolean; isDarkMode: boolean; }
 
@@ -237,8 +238,9 @@ export const S06_TheLimit: React.FC<Props> = ({ isActive = true, isDarkMode }) =
         <motion.div
           initial={{ opacity: 0, y: -28 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
           transition={{ delay: 0.55, type: 'spring', stiffness: 130, damping: 14 }}
-          className={`p-6 rounded-3xl border ${cardBg} flex flex-col gap-4`}
+          className={`relative p-6 rounded-3xl border ${cardBg} flex flex-col gap-4`}
         >
+          <TryItYourself corner />
           <div className="flex items-center gap-2">
             <XCircle size={18} style={{ color: ROSE }} />
             <span className={`font-black ${textColor}`}>Cannot hold a value</span>

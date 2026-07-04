@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Box, MousePointerClick, CheckCircle2, Lock } from 'lucide-react';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive?: boolean; isDarkMode: boolean }
 
@@ -55,6 +56,8 @@ export const S02_RuleBox: React.FC<Props> = ({ isDarkMode }) => {
           Sum. The tray is the Carry.
         </p>
       </section>
+
+      <div><TryItYourself /></div>
 
       <div className="grid lg:grid-cols-[1.5fr_1fr] gap-6 items-start">
         {/* ── machine ── */}

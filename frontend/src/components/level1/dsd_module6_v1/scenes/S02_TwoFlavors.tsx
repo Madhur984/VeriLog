@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { GitBranch, MousePointerClick, RotateCcw, Zap, Database, BookOpen, Boxes, Repeat } from 'lucide-react';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isDarkMode: boolean; }
 
@@ -40,6 +41,8 @@ export const S02_TwoFlavors: React.FC<Props> = ({ isDarkMode }) => {
           Click both machines. The top one reacts and forgets. The bottom one reacts and remembers.
         </p>
       </section>
+
+      <TryItYourself />
 
       <div className="grid lg:grid-cols-2 gap-6 items-stretch">
         {/* ── REACT TO NOW · combinational ── */}

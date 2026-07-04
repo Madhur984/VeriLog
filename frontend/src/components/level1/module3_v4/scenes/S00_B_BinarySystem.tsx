@@ -4,6 +4,7 @@ import { Zap, Binary } from 'lucide-react';
 import { GridCountingSystem } from '../components/GridCountingSystem';
 import { playBitTone } from '../../../../utils/synesthesiaEngine';
 import { useBinaryStore } from '../../../../stores/binaryStore';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive: boolean; isDarkMode: boolean; }
 
@@ -137,6 +138,7 @@ export const S00_B_BinarySystem: React.FC<Props> = ({ isActive, isDarkMode }) =>
       </div>
 
       {/* Interactive Converter */}
+      <TryItYourself />
       <BinaryConverter isDarkMode={isDarkMode} />
 
       {/* Worked Example 1101 */}

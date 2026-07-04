@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Binary, BookOpen, Boxes, Lightbulb, MousePointerClick, Shuffle, Sigma } from 'lucide-react';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 type Bit = 0 | 1;
 
@@ -80,6 +81,7 @@ export const S05_CombinationalJobs: React.FC<Props> = ({ isActive = true, isDark
       </section>
 
       {/* ── JOB 01 · ADDER ───────────────────────────────────────── */}
+      <TryItYourself />
       <motion.div {...flow(0)} className={`p-6 md:p-8 rounded-3xl border ${cardBg}`}>
         <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest mb-1" style={{ color: CYAN }}>
           <Sigma size={13} /> Job 01 · Adder · math the instant you flip a bit
@@ -166,6 +168,7 @@ export const S05_CombinationalJobs: React.FC<Props> = ({ isActive = true, isDark
       </motion.div>
 
       {/* ── JOB 02 · MUX · the star ──────────────────────────────── */}
+      <TryItYourself />
       <motion.div {...flow(1)} className={`p-6 md:p-8 rounded-3xl border-2 ${isDarkMode ? 'bg-white/5' : 'bg-white shadow-xl'}`}
         style={{ borderColor: `${AMBER}55` }}>
         <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest mb-1" style={{ color: AMBER }}>
@@ -256,6 +259,7 @@ export const S05_CombinationalJobs: React.FC<Props> = ({ isActive = true, isDark
       </motion.div>
 
       {/* ── JOB 03 · DECODER ─────────────────────────────────────── */}
+      <TryItYourself />
       <motion.div {...flow(2)} className={`p-6 md:p-8 rounded-3xl border ${cardBg}`}>
         <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest mb-1" style={{ color: EMERALD }}>
           <Lightbulb size={13} /> Job 03 · Decoder · binary code in, exactly one line on

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Lock, MousePointerClick, Clock, BookOpen, Scale, ArrowLeftRight } from 'lucide-react';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 type Bit = 0 | 1;
 type Pulse = 'set' | 'reset' | null;
@@ -95,8 +96,9 @@ export const S08_TrapMemory: React.FC<Props> = ({ isActive = true, isDarkMode })
         {/* Live SR latch */}
         <motion.div
           initial={{ opacity: 0, x: -16 }} animate={isActive ? { opacity: 1, x: 0 } : {}}
-          className={`p-6 md:p-8 rounded-3xl border ${cardBg} flex flex-col gap-4`}
+          className={`relative p-6 md:p-8 rounded-3xl border ${cardBg} flex flex-col gap-4`}
         >
+          <TryItYourself corner />
           <div className="font-mono text-[10px] uppercase tracking-widest" style={{ color: CYAN }}>
             Live circuit · SR latch · 2 cross-coupled NOR gates
           </div>

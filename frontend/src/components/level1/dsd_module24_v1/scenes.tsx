@@ -16,6 +16,7 @@ import {
   type SubScene,
 } from '../_subtractor/kit';
 import { EncoderViz, BitToggle } from '../_combo/blocks';
+import { TryItYourself } from '../../ui/TryItYourself';
 import type { SubPage } from '../_subtractor/SubEngine';
 import { CONTENT } from './content';
 
@@ -392,9 +393,15 @@ function componentFor(scene: SubScene, i: number, n: number): React.FC<any> {
       const which = bespokeFor(scene);
       return (p) => (
         <TheoryScene {...p} scene={scene}>
-          {which === 'viz' && <EncoderViz isDarkMode={p.isDarkMode} accent={p.accent} />}
+          {which === 'viz' && (
+            <div className="space-y-3">
+              <TryItYourself />
+              <EncoderViz isDarkMode={p.isDarkMode} accent={p.accent} />
+            </div>
+          )}
           {which === 'core' && (
             <div className="space-y-6">
+              <TryItYourself />
               <SimpleEncoderGates isDarkMode={p.isDarkMode} accent={p.accent} />
               <EncoderViz isDarkMode={p.isDarkMode} accent={p.accent} />
             </div>
@@ -407,6 +414,7 @@ function componentFor(scene: SubScene, i: number, n: number): React.FC<any> {
           )}
           {which === 'priority' && (
             <div className="space-y-6">
+              <TryItYourself />
               <PriorityGates isDarkMode={p.isDarkMode} accent={p.accent} />
               <EncoderViz isDarkMode={p.isDarkMode} accent={p.accent} />
             </div>

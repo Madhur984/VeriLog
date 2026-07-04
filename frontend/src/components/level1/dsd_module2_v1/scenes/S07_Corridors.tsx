@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Compass, RotateCcw, Sparkles } from 'lucide-react';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive: boolean; isDarkMode: boolean; }
 
@@ -58,8 +59,9 @@ export const S07_Corridors: React.FC<Props> = ({ isActive, isDarkMode }) => {
       {/* Stage controller */}
       <motion.div
         initial={{ opacity: 0, y: 12 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
-        className={`p-6 rounded-3xl border ${cardBg} flex items-center justify-between flex-wrap gap-4`}
+        className={`relative p-6 rounded-3xl border ${cardBg} flex items-center justify-between flex-wrap gap-4`}
       >
+        <TryItYourself corner />
         <div className="flex items-center gap-3">
           <RotateCcw size={16} className="text-emerald-400" />
           <div>

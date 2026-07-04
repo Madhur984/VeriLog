@@ -16,6 +16,7 @@ import {
   LiveGate, TruthTable, WorkbenchCTA, type SubScene,
 } from '../_subtractor/kit';
 import { ArrayDividerViz, BitToggle } from '../_combo/blocks';
+import { TryItYourself } from '../../ui/TryItYourself';
 import type { SubPage } from '../_subtractor/SubEngine';
 import { CONTENT } from './content';
 
@@ -425,8 +426,18 @@ function componentFor(scene: SubScene, i: number, n: number): React.FC<any> {
       const which = bespokeFor(scene);
       return (p) => (
         <TheoryScene {...p} scene={scene}>
-          {which === 'chocolate' && <ChocolateRounds isDarkMode={p.isDarkMode} accent={p.accent} />}
-          {which === 'cell' && <CellRouter isDarkMode={p.isDarkMode} accent={p.accent} />}
+          {which === 'chocolate' && (
+            <div className="relative">
+              <TryItYourself corner />
+              <ChocolateRounds isDarkMode={p.isDarkMode} accent={p.accent} />
+            </div>
+          )}
+          {which === 'cell' && (
+            <div className="relative">
+              <TryItYourself corner />
+              <CellRouter isDarkMode={p.isDarkMode} accent={p.accent} />
+            </div>
+          )}
           {which === 'fullsub' && <FullSubTable isDarkMode={p.isDarkMode} accent={p.accent} />}
           {which === 'mux' && (
             <div className="space-y-6">
@@ -447,17 +458,33 @@ function componentFor(scene: SubScene, i: number, n: number): React.FC<any> {
                   </div>
                 </div>
               </Card>
-              <CellRouter isDarkMode={p.isDarkMode} accent={p.accent} />
+              <div className="relative">
+                <TryItYourself corner />
+                <CellRouter isDarkMode={p.isDarkMode} accent={p.accent} />
+              </div>
             </div>
           )}
           {which === 'array' && (
             <div className="space-y-6">
-              <ArrayGrid isDarkMode={p.isDarkMode} accent={p.accent} />
+              <div className="relative">
+                <TryItYourself corner />
+                <ArrayGrid isDarkMode={p.isDarkMode} accent={p.accent} />
+              </div>
               <DerivationSteps isDarkMode={p.isDarkMode} accent={p.accent} />
             </div>
           )}
-          {which === 'readout' && <ArrayDividerViz isDarkMode={p.isDarkMode} accent={p.accent} />}
-          {which === 'sizing' && <ArraySizer isDarkMode={p.isDarkMode} accent={p.accent} />}
+          {which === 'readout' && (
+            <div className="relative">
+              <TryItYourself corner />
+              <ArrayDividerViz isDarkMode={p.isDarkMode} accent={p.accent} />
+            </div>
+          )}
+          {which === 'sizing' && (
+            <div className="relative">
+              <TryItYourself corner />
+              <ArraySizer isDarkMode={p.isDarkMode} accent={p.accent} />
+            </div>
+          )}
           {which === 'build' && (
             <WorkbenchCTA
               isDarkMode={p.isDarkMode} accent={p.accent}

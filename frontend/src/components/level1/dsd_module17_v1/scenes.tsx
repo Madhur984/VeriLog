@@ -19,6 +19,7 @@ import type { SubPage } from '../_subtractor/SubEngine';
 import { FullSubtractorCircuit } from '../_subtractor/circuit';
 import { WorkbenchCTA } from '../_subtractor/kit';
 import { CONTENT } from './content';
+import { TryItYourself } from '../../ui/TryItYourself';
 
 const ACC = { I: '#38bdf8', II: '#f59e0b', III: '#fb7185', coins: '#34d399' };
 
@@ -219,6 +220,7 @@ const LogicViz: React.FC<{ isDarkMode: boolean; accent: string }> = ({ isDarkMod
 
   return (
     <div className="space-y-4">
+      <div className="flex justify-center"><TryItYourself /></div>
       <div className="flex justify-center gap-3">
         <Toggle label="x · wallet" val={x} on={() => setX((v) => v ^ 1)} icon={<Wallet size={12} />} color={ACC.coins} />
         <Toggle label="y · bill" val={y} on={() => setY((v) => v ^ 1)} icon={<FileText size={12} />} color={ACC.II} />
@@ -310,6 +312,8 @@ const FullSubActivity: React.FC<{ isDarkMode: boolean; accent: string; scene: Su
         <Eyebrow accent={accent}>{scene.label}</Eyebrow>
         {scene.subtitle && <h2 className={`text-3xl md:text-4xl font-black ${t.text}`}>{scene.subtitle}</h2>}
       </section>
+
+      <div className="flex justify-center"><TryItYourself /></div>
 
       <div className="grid grid-cols-3 gap-3 sm:max-w-xl sm:mx-auto">
         <Toggle label="Wallet (x)" val={x} on={() => setX((v) => v ^ 1)} icon={<Wallet size={12} />} />
@@ -488,6 +492,7 @@ const ColumnStepThrough: React.FC<{ isDarkMode: boolean; accent: string }> = ({ 
 
   return (
     <div className="space-y-4">
+      <div className="flex justify-center"><TryItYourself /></div>
       <div className="flex flex-wrap justify-center gap-3">
         <Toggle label="x · wallet" val={x} on={() => setX((v) => v ^ 1)} icon={<Wallet size={12} />} color={ACC.coins} />
         <Toggle label="y · bill" val={y} on={() => setY((v) => v ^ 1)} icon={<FileText size={12} />} color={ACC.II} />
@@ -568,6 +573,8 @@ const RippleSubtractor4Bit: React.FC<{ isDarkMode: boolean; accent: string }> = 
           {lang === 'hi' ? '4-bit ripple: A - B' : '4-bit ripple: A - B'}
         </span>
       </div>
+
+      <div className="mb-4 flex justify-center"><TryItYourself /></div>
 
       {/* number pickers */}
       <div className="mb-5 flex flex-wrap items-center justify-center gap-6">
@@ -740,6 +747,7 @@ function componentFor(scene: SubScene): React.FC<any> {
     case 'circuit':
       return (p) => (
         <TheoryScene {...p} scene={scene}>
+          <div className="flex justify-center"><TryItYourself /></div>
           <FullSubtractorCircuit isDarkMode={p.isDarkMode} accent={p.accent} />
           <RippleSection isDarkMode={p.isDarkMode} accent={p.accent} />
           <WorkbenchCTA isDarkMode={p.isDarkMode} accent={p.accent} tutorial="full-subtractor"

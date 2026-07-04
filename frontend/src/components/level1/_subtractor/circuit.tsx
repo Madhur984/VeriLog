@@ -9,6 +9,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Card, tone, useSubLang } from './kit';
+import { TryItYourself } from '../../ui/TryItYourself';
 
 const ON = '#34d399';                                   // a wire carrying 1
 const off = (dark: boolean) => (dark ? '#3f4a5e' : '#cbd5e1'); // a wire carrying 0
@@ -65,6 +66,7 @@ export const HalfSubtractorCircuit: React.FC<{ isDarkMode: boolean; accent: stri
 
   return (
     <Card isDarkMode={isDarkMode}>
+      <TryItYourself />
       <div className="mb-4 flex justify-center gap-3">
         <InToggle label={lang === 'hi' ? 'x · जगह' : 'x · spaces'} v={x} on={() => setX((v) => v ^ 1)} color={NOTC} dark={isDarkMode} />
         <InToggle label={lang === 'hi' ? 'y · गाड़ी' : 'y · cars'} v={y} on={() => setY((v) => v ^ 1)} color={ANDC} dark={isDarkMode} />
@@ -126,6 +128,7 @@ export const FullSubtractorCircuit: React.FC<{ isDarkMode: boolean; accent: stri
 
   return (
     <Card isDarkMode={isDarkMode}>
+      <TryItYourself />
       <div className="mb-4 flex justify-center gap-3">
         <InToggle label="x · wallet" v={x} on={() => setX((v) => v ^ 1)} color={coins} dark={isDarkMode} />
         <InToggle label="y · bill" v={y} on={() => setY((v) => v ^ 1)} color={HS} dark={isDarkMode} />
@@ -191,6 +194,7 @@ export const BcdAdderCircuit: React.FC<{ isDarkMode: boolean; accent: string }> 
 
   return (
     <Card isDarkMode={isDarkMode}>
+      <TryItYourself />
       <div className="mb-4 flex items-center gap-3">
         <span className={`font-mono text-[12px] ${t.faint}`}>{lang === 'hi' ? 'कच्चा sum' : 'raw sum A+B+Cin'}</span>
         <input type="range" min={0} max={19} value={sum} onChange={(e) => setSum(parseInt(e.target.value, 10))} className="flex-1" style={{ accentColor: accent }} />

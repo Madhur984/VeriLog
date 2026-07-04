@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { CircuitBoard, Hammer, Zap } from 'lucide-react';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive?: boolean; isDarkMode: boolean }
 
@@ -97,7 +98,8 @@ export const S08_Circuit: React.FC<Props> = ({ isDarkMode }) => {
       </motion.section>
 
       {/* ── stage A: pre-processing equations ── */}
-      <div className={`p-6 md:p-8 rounded-3xl border ${cardBg}`}>
+      <TryItYourself label="Click the A / B pads and Cin" />
+      <div className={`relative p-6 md:p-8 rounded-3xl border ${cardBg}`}>
         <div className="font-mono text-[10px] uppercase tracking-widest mb-4" style={{ color: EMERALD }}>
           Stage A · Pre-processing (one cell per bit)
         </div>

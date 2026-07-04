@@ -1,5 +1,6 @@
 import React from 'react';
 import { StepWave, RampWave, ImpulseWave, LocalMouseArea } from '../components/Module1Components';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 export const S02_StandardSignals: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
   const borderColor = isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.1)';
@@ -30,6 +31,7 @@ export const S02_StandardSignals: React.FC<{ isDarkMode: boolean }> = ({ isDarkM
               </div>
             </div>
             <div className="rounded-2xl p-8 border h-48 flex items-center justify-center relative overflow-hidden bg-slate-900 dark:bg-black/40" style={{ borderColor }}>
+              <TryItYourself corner />
               <LocalMouseArea render={(x, y) => <StepWave color="#10b981" mouseX={x} mouseY={y} />} />
             </div>
           </div>
@@ -37,6 +39,7 @@ export const S02_StandardSignals: React.FC<{ isDarkMode: boolean }> = ({ isDarkM
           {/* Unit Ramp */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
              <div className="rounded-2xl p-8 border h-48 flex items-center justify-center relative overflow-hidden bg-slate-900 dark:bg-black/40 order-2 md:order-1" style={{ borderColor }}>
+              <TryItYourself corner />
               <LocalMouseArea render={(x, y) => <RampWave color="#fb7185" mouseX={x} mouseY={y} />} />
             </div>
             <div className="space-y-4 order-1 md:order-2">
@@ -68,6 +71,7 @@ export const S02_StandardSignals: React.FC<{ isDarkMode: boolean }> = ({ isDarkM
               </div>
             </div>
             <div className="rounded-2xl p-8 border h-48 flex items-center justify-center relative overflow-hidden bg-slate-900 dark:bg-black/40" style={{ borderColor }}>
+               <TryItYourself corner />
                <LocalMouseArea render={(x, y) => <ImpulseWave color="#06b6d4" mouseX={x} mouseY={y} />} />
             </div>
           </div>

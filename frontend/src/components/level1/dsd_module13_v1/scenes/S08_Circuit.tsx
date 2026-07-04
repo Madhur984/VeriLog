@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { CircuitBoard, RotateCcw, StepForward, Clock, Hammer, ArrowRight } from 'lucide-react';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive?: boolean; isDarkMode: boolean }
 
@@ -130,6 +131,7 @@ export const S08_Circuit: React.FC<Props> = ({ isDarkMode }) => {
       </section>
 
       {/* ── interactive schematic ── */}
+      <TryItYourself />
       <div className={`p-6 md:p-8 rounded-3xl border ${cardBg}`}>
         <div className="flex items-center justify-between flex-wrap gap-3 mb-5">
           <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-widest" style={{ color: EMERALD }}>

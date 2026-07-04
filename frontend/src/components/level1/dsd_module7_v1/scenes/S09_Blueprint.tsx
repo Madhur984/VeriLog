@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { DraftingCompass, ChevronLeft, ChevronRight, Box, Hammer } from 'lucide-react';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive?: boolean; isDarkMode: boolean }
 
@@ -57,6 +58,7 @@ export const S09_Blueprint: React.FC<Props> = ({ isDarkMode }) => {
       </section>
 
       {/* ── builder ── */}
+      <div><TryItYourself /></div>
       <div className={`p-6 md:p-8 rounded-3xl border ${cardBg}`}>
         {/* step header */}
         <div className="flex items-center justify-between flex-wrap gap-3 mb-4">

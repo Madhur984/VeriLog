@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Hammer, ShieldCheck, BadgeAlert, Repeat } from 'lucide-react';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive: boolean; isDarkMode: boolean; }
 
@@ -82,7 +83,8 @@ export const S04_GrayCode: React.FC<Props> = ({ isActive, isDarkMode }) => {
       </section>
 
       {/* Phase toggle */}
-      <div className={`p-4 rounded-2xl border ${cardBg} flex items-center justify-between flex-wrap gap-4`}>
+      <div className={`relative p-4 rounded-2xl border ${cardBg} flex items-center justify-between flex-wrap gap-4`}>
+        <TryItYourself corner />
         <div className="flex items-center gap-3">
           <Repeat size={16} className="text-amber-400" />
           <div className="font-mono text-[10px] uppercase tracking-widest text-amber-400">

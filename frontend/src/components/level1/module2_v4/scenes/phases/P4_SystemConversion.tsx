@@ -4,6 +4,7 @@ import { GlobalSignalState } from '../../types';
 import { SignalEngine } from '../../SignalEngine';
 import { InteractiveInstrument, EngineeringHUD, KineticText, LogicReadout } from '../../components/UltimateComponents';
 import { Heart, Car, Wifi, ShieldAlert, CheckCircle, Target, Boxes, Zap } from 'lucide-react';
+import { TryItYourself } from '../../../../ui/TryItYourself';
 
 const SCENARIOS = [
     {
@@ -98,7 +99,8 @@ export const P4_SystemConversion: React.FC<{
                 </div>
 
                 <div className="space-y-12">
-                     <InteractiveInstrument 
+                     <TryItYourself />
+                     <InteractiveInstrument
                         state={state} onUpdate={onUpdate} time={time}
                         mapping={{
                             x: { label: "SYSTEM_LATENCY", key: "sampleRate", min: 4, max: 128, unit: "ms" },

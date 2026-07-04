@@ -16,6 +16,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { tone, useSubLang } from '../_subtractor/kit';
+import { TryItYourself } from '../../ui/TryItYourself';
 
 const fmt = (n: number, d = 2) => (Number.isFinite(n) ? n.toFixed(d) : '-');
 
@@ -144,7 +145,8 @@ export const LoadLineLab: React.FC<{ isDarkMode: boolean; accent: string }> = ({
   const Y = (ic: number) => H - pb - (ic / icSat) * (H - pt - pb);
 
   return (
-    <div className={`rounded-3xl border p-5 ${t.card}`}>
+    <div className={`relative rounded-3xl border p-5 ${t.card}`}>
+      <TryItYourself corner />
       <div className="mb-3 font-mono text-[11px] uppercase tracking-[0.3em]" style={{ color: accent }}>
         {lang === 'hi' ? 'DC load line + Q-point' : 'DC load line + Q-point'}
       </div>
@@ -268,7 +270,8 @@ export const SmallSignalGain: React.FC<{ isDarkMode: boolean; accent: string }> 
   };
 
   return (
-    <div className={`rounded-3xl border p-5 ${t.card}`}>
+    <div className={`relative rounded-3xl border p-5 ${t.card}`}>
+      <TryItYourself corner />
       <div className="mb-3 font-mono text-[11px] uppercase tracking-[0.3em]" style={{ color: accent }}>
         {lang === 'hi' ? 're-model voltage gain' : 're-model voltage gain'}
       </div>
@@ -321,7 +324,8 @@ export const MosfetChannel: React.FC<{ isDarkMode: boolean; accent: string }> = 
   const chan = Math.min(1, over / 3);           // 0..1 channel thickness
 
   return (
-    <div className={`rounded-3xl border p-5 ${t.card}`}>
+    <div className={`relative rounded-3xl border p-5 ${t.card}`}>
+      <TryItYourself corner />
       <div className="mb-3 font-mono text-[11px] uppercase tracking-[0.3em]" style={{ color: accent }}>
         {lang === 'hi' ? 'Channel कैसे बनता है' : 'Forming the channel'}
       </div>
@@ -405,7 +409,8 @@ export const BiasStability: React.FC<{ isDarkMode: boolean; accent: string }> = 
   );
 
   return (
-    <div className={`rounded-3xl border p-5 ${t.card}`}>
+    <div className={`relative rounded-3xl border p-5 ${t.card}`}>
+      <TryItYourself corner />
       <div className="mb-3 font-mono text-[11px] uppercase tracking-[0.3em]" style={{ color: accent }}>
         {lang === 'hi' ? 'β बदलिए - कौन सा bias टिकता है?' : 'Sweep β - which bias holds?'}
       </div>
@@ -440,7 +445,8 @@ export const JfetTransfer: React.FC<{ isDarkMode: boolean; accent: string }> = (
   for (let v = Vp; v <= 0; v += 0.1) pts.push(`${X(v)},${Y(Idss * (1 - v / Vp) ** 2)}`);
 
   return (
-    <div className={`rounded-3xl border p-5 ${t.card}`}>
+    <div className={`relative rounded-3xl border p-5 ${t.card}`}>
+      <TryItYourself corner />
       <div className="mb-3 font-mono text-[11px] uppercase tracking-[0.3em]" style={{ color: accent }}>
         {lang === 'hi' ? 'JFET transfer curve (Shockley)' : 'JFET transfer curve (Shockley)'}
       </div>

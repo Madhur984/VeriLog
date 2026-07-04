@@ -5,6 +5,7 @@ import {
   Hammer, Crosshair, ClipboardList, ListChecks, Rocket, Trophy,
   MousePointerClick, ToggleLeft, Cpu, Lightbulb, Cable, Zap, ArrowRight,
 } from 'lucide-react';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive?: boolean; isDarkMode: boolean }
 
@@ -185,6 +186,7 @@ export const S12_Build: React.FC<Props> = ({ isDarkMode }) => {
           <div className={`flex items-center gap-2 text-xs font-mono ${subText}`}>
             <MousePointerClick size={12} /> Try it here first · the same blueprint from Chapter 08, A and B fan out to BOTH gates
           </div>
+          <div><TryItYourself /></div>
           <div className="flex items-center gap-3 flex-wrap">
             {inputToggle('A', a, () => setA(v => !v))}
             {inputToggle('B', b, () => setB(v => !v))}

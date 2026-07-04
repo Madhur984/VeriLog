@@ -1,5 +1,6 @@
 import React from 'react';
 import { InteractiveQuiz } from '../components/UltimateComponents';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 export const S09_KnowledgeGate: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
   return (
@@ -16,6 +17,7 @@ export const S09_KnowledgeGate: React.FC<{ isDarkMode: boolean }> = ({ isDarkMod
             </p>
       </header>
 
+      <TryItYourself />
       <div className="w-full">
         <InteractiveQuiz isDarkMode={isDarkMode} />
       </div>

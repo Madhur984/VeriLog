@@ -8,6 +8,7 @@
  */
 import React, { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive: boolean; isDarkMode: boolean; }
 
@@ -415,6 +416,7 @@ export const S00_F_UniversalConverter: React.FC<Props> = ({ isActive, isDarkMode
       </section>
 
       {/* 4 Input Boxes */}
+      <TryItYourself />
       <motion.div
         initial={{ opacity: 0, y: 20 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         className="grid grid-cols-1 md:grid-cols-2 gap-6"

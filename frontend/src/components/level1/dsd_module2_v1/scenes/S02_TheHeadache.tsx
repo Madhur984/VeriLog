@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { AlertTriangle, ScrollText, Zap } from 'lucide-react';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive: boolean; isDarkMode: boolean; }
 
@@ -96,8 +97,9 @@ export const S02_TheHeadache: React.FC<Props> = ({ isActive, isDarkMode }) => {
         <motion.div
           initial={{ opacity: 0, y: 12 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
           transition={{ delay: 0.1 }}
-          className={`p-6 rounded-3xl border ${cardBg} space-y-4`}
+          className={`relative p-6 rounded-3xl border ${cardBg} space-y-4`}
         >
+          <TryItYourself corner />
           <div className="flex items-center gap-2">
             <Zap size={14} className="text-rose-400" />
             <span className="font-mono text-[10px] uppercase tracking-widest text-rose-400">Algebra grind · step by step</span>

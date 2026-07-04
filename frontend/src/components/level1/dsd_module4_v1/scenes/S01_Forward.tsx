@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Target, ChevronRight, ChevronDown, CheckCircle2, Lightbulb, Coffee, Plane, Lock, PackageCheck, MousePointerClick } from 'lucide-react';
 import { CleanCircuit, lit, not, term, type Bit, type Term, type CleanInput } from './_CleanCircuit';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive: boolean; isDarkMode: boolean; }
 
@@ -960,6 +961,8 @@ export const S01_Forward: React.FC<Props> = ({ isActive, isDarkMode }) => {
           drops only one. Overlapping loops are free - never split a loop just to avoid overlap.
         </div>
       </motion.div>
+
+      <div><TryItYourself /></div>
 
       <div className="space-y-6">
         {PROBLEMS.map((p) => (

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { CircuitBoard, Hammer, Zap, ArrowRight } from 'lucide-react';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive?: boolean; isDarkMode: boolean }
 
@@ -166,7 +167,8 @@ export const S08_Circuit: React.FC<Props> = ({ isDarkMode }) => {
       </div>
 
       {/* ── the interactive schematic ── */}
-      <div className={`p-4 md:p-6 rounded-3xl border ${cardBg}`}>
+      <div className={`relative p-4 md:p-6 rounded-3xl border ${cardBg}`}>
+        <TryItYourself corner />
         <div className="grid grid-cols-3 text-center mb-2">
           <span className="font-mono text-[10px] uppercase tracking-widest" style={{ color: EMERALD }}>(a) P / G generator</span>
           <span className="font-mono text-[10px] uppercase tracking-widest" style={{ color: VIOLET }}>(b) carry look-ahead unit</span>

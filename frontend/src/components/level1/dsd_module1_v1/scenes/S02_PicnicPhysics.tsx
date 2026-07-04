@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Cloud, Bug, Wind, ThumbsUp, ThumbsDown, Brain } from 'lucide-react';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive: boolean; isDarkMode: boolean; }
 
@@ -58,6 +59,7 @@ export const S02_PicnicPhysics: React.FC<Props> = ({ isActive, isDarkMode }) => 
       </div>
 
       {/* Variable cards (interactive toggles) */}
+      <TryItYourself label="Tap the tiles" />
       <div className="grid md:grid-cols-3 gap-5">
         {VARS.map((v, i) => {
           const value = state[v.key];

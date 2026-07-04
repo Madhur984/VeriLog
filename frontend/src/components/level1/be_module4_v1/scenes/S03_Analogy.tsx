@@ -165,7 +165,6 @@ export const S03_Analogy: React.FC<Props> = ({ isActive, isDarkMode }) => {
       <motion.div
         initial={{ opacity: 0 }} animate={isActive ? { opacity: 1 } : {}}
         transition={{ delay: 0.6 }}
-        className={`p-6 rounded-2xl border ${cardBg}`}
       >
         <p className={`text-sm ${subText}`}>
           <strong className="text-cyan-300">Memorise this table.</strong> When a circuit confuses

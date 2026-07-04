@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Atom, MousePointerClick } from 'lucide-react';
 import type { SceneProps } from '../types';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 type Bit = 0 | 1;
 
@@ -43,6 +44,7 @@ export const S02_Atom: React.FC<SceneProps> = ({ isActive, isDarkMode, mode }) =
         <p className={`text-base max-w-3xl ${subText}`}>{subtitle}</p>
       </section>
 
+      <TryItYourself />
       <div className="grid lg:grid-cols-[1fr_1fr] gap-6 items-stretch">
         {/* Live symbol with input toggles */}
         <motion.div

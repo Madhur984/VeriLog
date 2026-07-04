@@ -4,6 +4,7 @@ import { SignalEngine, SignalConfig } from '../SignalEngine';
 import { Ghost, AlertTriangle, Zap, Terminal, Activity, Sliders, Volume2, Maximize2 } from 'lucide-react';
 import { useModule2Audio } from '../hooks/useModule2Audio';
 import { TechnicalAudit } from '../components/TechnicalAudit';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 /**
  * S03_Aliasing: FREQUENCY GHOSTS (ELITE VERSION)
@@ -88,6 +89,7 @@ export const S03_Aliasing: React.FC<{ time: number; isDarkMode: boolean }> = ({ 
       </header>
 
       <div className="relative group">
+            <TryItYourself corner />
             <AnimatePresence>
                 {isIdle && (
                     <motion.div 

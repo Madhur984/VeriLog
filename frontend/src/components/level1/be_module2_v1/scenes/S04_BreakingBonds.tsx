@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Flame, Zap, ArrowRight } from 'lucide-react';
+import { TryItYourself } from '../../../../components/ui/TryItYourself';
 
 interface Props { isActive: boolean; isDarkMode: boolean; }
 
@@ -59,6 +60,7 @@ export const S04_BreakingBonds: React.FC<Props> = ({ isActive, isDarkMode }) => 
       </div>
 
       {/* Interactive carrier counter */}
+      <TryItYourself />
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.2 }}
@@ -139,7 +141,7 @@ export const S04_BreakingBonds: React.FC<Props> = ({ isActive, isDarkMode }) => 
 
       <motion.div
         initial={{ opacity: 0 }} animate={isActive ? { opacity: 1 } : {}}
-        className={`p-6 rounded-3xl border ${cardBg}`}
+        className="max-w-3xl"
       >
         <p className={`text-sm ${subText}`}>
           <strong className="text-orange-300">Reality check:</strong> 1.5 × 10¹⁰ carriers/cm³

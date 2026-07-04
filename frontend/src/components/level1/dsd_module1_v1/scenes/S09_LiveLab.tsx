@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { FlaskConical, Zap, RefreshCw, Calculator, Trophy, Cpu } from 'lucide-react';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive: boolean; isDarkMode: boolean; }
 
@@ -67,6 +68,7 @@ export const S09_LiveLab: React.FC<Props> = ({ isActive, isDarkMode }) => {
       </section>
 
       {/* Preset toolbar */}
+      <TryItYourself label="Design your own function" />
       <div className="flex flex-wrap gap-3 items-center">
         <span className={`font-mono text-[10px] uppercase tracking-widest ${subText}`}>presets:</span>
         {[

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Vote, MousePointerClick } from 'lucide-react';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive?: boolean; isDarkMode: boolean }
 
@@ -78,6 +79,7 @@ export const S04_Carry: React.FC<Props> = ({ isDarkMode }) => {
       </section>
 
       {/* interactive majority circuit */}
+      <TryItYourself />
       <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}
                   className={`p-6 md:p-8 rounded-3xl border ${cardBg}`}>
         <div className={`flex items-center gap-2 text-xs font-mono mb-4 ${subText}`}>
@@ -131,7 +133,7 @@ export const S04_Carry: React.FC<Props> = ({ isDarkMode }) => {
 
       {/* why it works */}
       <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}
-                  className={`p-6 rounded-3xl border ${cardBg}`}>
+                  className="py-2">
         <div className="font-mono text-[10px] uppercase tracking-widest mb-4" style={{ color: EMERALD }}>
           Why "any two" is exactly right
         </div>

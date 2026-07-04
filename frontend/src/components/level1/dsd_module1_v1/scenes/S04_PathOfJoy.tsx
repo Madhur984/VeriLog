@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Camera, PuzzleIcon, Search, GraduationCap, CheckCircle2, XCircle, RefreshCw } from 'lucide-react';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive: boolean; isDarkMode: boolean; }
 
@@ -61,6 +62,7 @@ export const S04_PathOfJoy: React.FC<Props> = ({ isActive, isDarkMode }) => {
       </div>
 
       {/* Row picker */}
+      <TryItYourself label="Pick a happy row" />
       <div className="flex flex-wrap gap-3">
         {HAPPY.map((r, i) => (
           <button
@@ -192,6 +194,7 @@ export const S04_PathOfJoy: React.FC<Props> = ({ isActive, isDarkMode }) => {
       </motion.div>
 
       {/* Drill assessment */}
+      <TryItYourself label="Test yourself" />
       <MintermDrill isDarkMode={isDarkMode} />
     </div>
   );

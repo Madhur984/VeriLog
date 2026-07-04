@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Zap, Clock } from 'lucide-react';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive?: boolean; isDarkMode: boolean }
 
@@ -63,6 +64,7 @@ export const S04_Carries: React.FC<Props> = ({ isDarkMode }) => {
       </motion.section>
 
       {/* operands */}
+      <TryItYourself />
       <div className={`p-5 rounded-3xl border flex flex-wrap items-center justify-between gap-4 ${cardBg}`}>
         <div className="flex items-center gap-2 flex-wrap">
           <span className={`font-mono text-[10px] uppercase tracking-widest ${subText}`}>Operands</span>

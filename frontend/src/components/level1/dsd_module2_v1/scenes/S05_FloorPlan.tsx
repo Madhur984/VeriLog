@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Map, MousePointerClick } from 'lucide-react';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive: boolean; isDarkMode: boolean; }
 
@@ -61,8 +62,9 @@ export const S05_FloorPlan: React.FC<Props> = ({ isActive, isDarkMode }) => {
       <div className="grid lg:grid-cols-[1.4fr_1fr] gap-8">
         <motion.div
           initial={{ opacity: 0, y: 12 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
-          className={`p-6 rounded-3xl border ${cardBg}`}
+          className={`relative p-6 rounded-3xl border ${cardBg}`}
         >
+          <TryItYourself corner />
           <div className="flex items-center gap-2 mb-4">
             <MousePointerClick size={14} className="text-amber-400" />
             <span className="font-mono text-[10px] uppercase tracking-widest text-amber-400">Hover any room to inspect</span>

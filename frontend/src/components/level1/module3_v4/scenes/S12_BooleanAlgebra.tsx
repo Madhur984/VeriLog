@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FlaskConical, CheckCircle, XCircle, RefreshCw } from 'lucide-react';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive: boolean; isDarkMode: boolean; }
 
@@ -101,6 +102,7 @@ export const S12_BooleanAlgebra: React.FC<Props> = ({ isActive, isDarkMode }) =>
       </section>
 
       {/* Tab selector */}
+      <TryItYourself />
       <div className="flex gap-3 justify-center flex-wrap">
         {(['laws', 'gates', 'sop'] as const).map(tab => (
           <motion.button

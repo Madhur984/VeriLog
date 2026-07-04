@@ -16,6 +16,7 @@ import {
 } from '../_subtractor/kit';
 import type { SubPage } from '../_subtractor/SubEngine';
 import { DemuxViz, BitToggle } from '../_combo/blocks';
+import { TryItYourself } from '../../ui/TryItYourself';
 import { CONTENT } from './content';
 
 const SRC_EN: string | undefined = '/videos/dsd22-demux.mp4';
@@ -390,25 +391,33 @@ function componentFor(scene: SubScene, i: number, n: number): React.FC<any> {
             <Eyebrow accent={p.accent}>{scene.label}</Eyebrow>
             {scene.subtitle && <h2 className={`text-3xl md:text-4xl font-black ${tone(p.isDarkMode).text}`}>{scene.subtitle}</h2>}
           </section>
-          <SubFlashCards isDarkMode={p.isDarkMode} accent={p.accent} cards={CONTENT.flashcards} />
+          <div className="relative">
+            <TryItYourself corner />
+            <SubFlashCards isDarkMode={p.isDarkMode} accent={p.accent} cards={CONTENT.flashcards} />
+          </div>
         </SceneShell>
       );
     case 'quiz':
-      return (p) => <QuizScene isDarkMode={p.isDarkMode} accent={p.accent} quiz={CONTENT.quiz} badge="DEMUX" tag="Practice · Demultiplexer" title={scene.label} intro={scene.subtitle ?? ''} />;
+      return (p) => (
+        <div className="relative">
+          <TryItYourself corner />
+          <QuizScene isDarkMode={p.isDarkMode} accent={p.accent} quiz={CONTENT.quiz} badge="DEMUX" tag="Practice · Demultiplexer" title={scene.label} intro={scene.subtitle ?? ''} />
+        </div>
+      );
     case 'recap':
       return (p) => <RecapScene {...p} scene={scene} />;
     default: {
       const which = bespokeFor(scene);
       return (p) => (
         <TheoryScene {...p} scene={scene}>
-          {which === 'courier' && <CourierScene isDarkMode={p.isDarkMode} accent={p.accent} />}
-          {which === 'sizing' && <DemuxViz isDarkMode={p.isDarkMode} accent={p.accent} outputs={8} />}
-          {which === 'routing' && <DemuxViz isDarkMode={p.isDarkMode} accent={p.accent} outputs={4} />}
-          {which === 'onetotwo' && <OneToTwoGates isDarkMode={p.isDarkMode} accent={p.accent} />}
-          {which === 'onetofour' && <OneToFourBuild isDarkMode={p.isDarkMode} accent={p.accent} />}
-          {which === 'truth' && <OneToFourBuild isDarkMode={p.isDarkMode} accent={p.accent} />}
+          {which === 'courier' && <><TryItYourself /><CourierScene isDarkMode={p.isDarkMode} accent={p.accent} /></>}
+          {which === 'sizing' && <><TryItYourself /><DemuxViz isDarkMode={p.isDarkMode} accent={p.accent} outputs={8} /></>}
+          {which === 'routing' && <><TryItYourself /><DemuxViz isDarkMode={p.isDarkMode} accent={p.accent} outputs={4} /></>}
+          {which === 'onetotwo' && <><TryItYourself /><OneToTwoGates isDarkMode={p.isDarkMode} accent={p.accent} /></>}
+          {which === 'onetofour' && <><TryItYourself /><OneToFourBuild isDarkMode={p.isDarkMode} accent={p.accent} /></>}
+          {which === 'truth' && <><TryItYourself /><OneToFourBuild isDarkMode={p.isDarkMode} accent={p.accent} /></>}
           {which === 'mirror' && <MuxDemuxMirror isDarkMode={p.isDarkMode} accent={p.accent} />}
-          {which === 'proofs' && <ProofsWalkthrough isDarkMode={p.isDarkMode} accent={p.accent} />}
+          {which === 'proofs' && <><TryItYourself /><ProofsWalkthrough isDarkMode={p.isDarkMode} accent={p.accent} /></>}
           {which === 'build' && (
             <WorkbenchCTA isDarkMode={p.isDarkMode} accent={p.accent} tutorial="demux-1to4"
               titleEN="Build the Demultiplexer (DEMUX) for real"

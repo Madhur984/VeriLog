@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useBinaryStore } from '../../../../stores/binaryStore';
 import { playBitTone } from '../../../../utils/synesthesiaEngine';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive: boolean; isDarkMode: boolean; }
 
@@ -110,6 +111,7 @@ export const S00_D_HexSystem: React.FC<Props> = ({ isActive, isDarkMode }) => {
       </div>
 
       {/* Dual Interactive Converter */}
+      <TryItYourself />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Hex -> Decimal */}
         <div className={`p-8 rounded-3xl border ${cardBg}`}>

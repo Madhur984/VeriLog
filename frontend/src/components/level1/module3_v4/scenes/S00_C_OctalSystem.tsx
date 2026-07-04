@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { useBinaryStore } from '../../../../stores/binaryStore';
 import { playBitTone } from '../../../../utils/synesthesiaEngine';
 import { GridCountingSystem } from '../components/GridCountingSystem';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive: boolean; isDarkMode: boolean; }
 
@@ -111,6 +112,7 @@ export const S00_C_OctalSystem: React.FC<Props> = ({ isActive, isDarkMode }) => 
       </div>
 
       {/* Interactive Decimal -> Octal Converter */}
+      <TryItYourself />
       <div className={`p-8 rounded-[2rem] border ${isDarkMode ? 'bg-emerald-500/5 border-emerald-500/20' : 'bg-emerald-50 border-emerald-100 shadow-xl'}`}>
         <h3 className={`font-mono text-xs uppercase tracking-widest mb-2 text-center ${subTextColor}`}>
           Successive Division - Decimal -{'>'} Octal

@@ -4,6 +4,7 @@ import {
   Trophy, BrainCircuit, CheckCircle2, XCircle, Sparkles, RefreshCw,
   Zap, Target, Calculator,
 } from 'lucide-react';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive: boolean; isDarkMode: boolean; }
 
@@ -259,6 +260,8 @@ export const S12_PracticeArena: React.FC<Props> = ({ isActive, isDarkMode }) => 
           ))}
         </div>
       </section>
+
+      <TryItYourself label="Answer, drag & solve" />
 
       {/* ─────────── Activity 1 · MCQ ─────────── */}
       <motion.div

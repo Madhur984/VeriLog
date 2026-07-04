@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Layers, Share2, RotateCw } from 'lucide-react';
 import { FlashCardDeck, DeckCard } from '../components/FlashCardDeck';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive?: boolean; isDarkMode: boolean }
 
@@ -183,6 +184,7 @@ export const S01_Deck: React.FC<Props> = ({ isDarkMode }) => {
       </motion.div>
 
       {/* the deck */}
+      <TryItYourself />
       <FlashCardDeck cards={CARDS} isDarkMode={isDarkMode} />
     </div>
   );

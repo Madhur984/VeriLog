@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Box, ArrowDownToLine, ArrowUpFromLine, ChevronRight, ChevronLeft, RotateCcw } from 'lucide-react';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive?: boolean; isDarkMode: boolean }
 
@@ -120,6 +121,7 @@ export const S01_Interface: React.FC<Props> = ({ isDarkMode }) => {
       </motion.div>
 
       {/* interactive column-addition stepper: why the third wire exists */}
+      <TryItYourself />
       <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}
                   className={`p-6 md:p-8 rounded-3xl border ${cardBg}`}>
         <div className="font-mono text-[10px] uppercase tracking-widest mb-1" style={{ color: ROSE }}>

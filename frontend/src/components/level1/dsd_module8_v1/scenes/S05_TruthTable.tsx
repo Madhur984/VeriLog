@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Table2, MousePointerClick, Lightbulb } from 'lucide-react';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive?: boolean; isDarkMode: boolean }
 
@@ -72,6 +73,7 @@ export const S05_TruthTable: React.FC<Props> = ({ isDarkMode }) => {
       </section>
 
       {/* interactive table */}
+      <TryItYourself />
       <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}
                   className={`p-6 md:p-8 rounded-3xl border ${cardBg}`}>
         <div className={`flex items-center gap-2 text-xs font-mono mb-4 ${subText}`}>

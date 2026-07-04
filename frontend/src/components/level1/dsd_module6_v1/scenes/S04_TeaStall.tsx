@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowRight, BookOpen, Coffee, Equal, Flame, Ghost, MousePointerClick, Scale, Timer } from 'lucide-react';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 type Ing = 'milk' | 'leaves' | 'sugar';
 type Pot = Record<Ing, boolean>;
@@ -102,6 +103,7 @@ export const S04_TeaStall: React.FC<Props> = ({ isActive = true, isDarkMode }) =
       </section>
 
       {/* ── The stall ───────────────────────────────────────────── */}
+      <TryItYourself />
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         className={`p-6 md:p-8 rounded-3xl border ${cardBg} relative overflow-hidden`}

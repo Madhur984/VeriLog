@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Info, Calculator, Percent, FastForward } from 'lucide-react';
 import { useBinaryStore } from '../../../../stores/binaryStore';
 import { playBitTone } from '../../../../utils/synesthesiaEngine';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive: boolean; isDarkMode: boolean; }
 
@@ -115,6 +116,7 @@ export const S13_B_FloatingPoint: React.FC<Props> = ({ isActive, isDarkMode }) =
       </div>
 
       {/* Main Register */}
+      <TryItYourself />
       <div className={`p-10 rounded-[2.5rem] border ${cardBg}`}>
           <div className="flex flex-col items-center gap-10">
               

@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { CognitiveCheckpoint, CheckpointScene } from '../../../level3/CognitiveCheckpoint';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props {
   isActive: boolean;
@@ -36,6 +37,7 @@ export const S08_KnowledgeGate: React.FC<Props> = ({ isActive, isDarkMode }) => 
             </div>
 
             <div className="w-full relative flex flex-col items-center">
+                <TryItYourself />
                 <CognitiveCheckpoint scene="numbersystems" onComplete={() => console.log('Gate Passed')} />
                 
                 <motion.div 

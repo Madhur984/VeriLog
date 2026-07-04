@@ -4,6 +4,7 @@ import { GlobalSignalState } from '../../types';
 import { SignalEngine } from '../../SignalEngine';
 import { InteractiveInstrument, EngineeringHUD, KineticText } from '../../components/UltimateComponents';
 import { ShieldCheck, Zap, Terminal, Activity, Lock, Unlock, BookOpen } from 'lucide-react';
+import { TryItYourself } from '../../../../ui/TryItYourself';
 
 export const P5_MasterLab: React.FC<{
     state: GlobalSignalState;
@@ -38,7 +39,8 @@ export const P5_MasterLab: React.FC<{
 
             <div className="grid grid-cols-1 2xl:grid-cols-3 gap-20">
                 <div className="2xl:col-span-2">
-                    <InteractiveInstrument 
+                    <TryItYourself />
+                    <InteractiveInstrument
                         state={state} onUpdate={onUpdate} time={time}
                         mapping={{
                             x: { label: "NYQUIST_FS", key: "sampleRate", min: 4, max: 128, unit: "Hz" },

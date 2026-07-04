@@ -16,6 +16,7 @@ import {
 } from '../_subtractor/kit';
 import type { SubPage } from '../_subtractor/SubEngine';
 import { BcdAdderCircuit } from '../_subtractor/circuit';
+import { TryItYourself } from '../../ui/TryItYourself';
 import { CONTENT } from './content';
 
 const ACC = { I: '#38bdf8', II: '#f59e0b', III: '#fb7185', good: '#34d399' };
@@ -89,6 +90,7 @@ const OdometerWheel: React.FC<{ isDarkMode: boolean; accent: string }> = ({ isDa
 
   return (
     <Card isDarkMode={isDarkMode}>
+      <div className="mb-3 flex justify-center"><TryItYourself /></div>
       <div className="mb-4 flex items-center justify-center gap-2">
         <Gauge size={18} style={{ color: accent }} />
         <span className={`font-mono text-[12px] uppercase tracking-widest ${t.faint}`}>{lang === 'hi' ? 'rolling 4-bit wheel' : 'rolling 4-bit wheel'}</span>
@@ -203,6 +205,7 @@ const DetectFormula: React.FC<{ isDarkMode: boolean; accent: string }> = ({ isDa
 
   return (
     <Card isDarkMode={isDarkMode}>
+      <div className="mb-3 flex justify-center"><TryItYourself /></div>
       <div className="mb-4 flex items-center gap-3">
         <span className={`font-mono text-[12px] ${t.faint}`}>raw sum</span>
         <input type="range" min={0} max={19} value={sum} onChange={(e) => setSum(parseInt(e.target.value, 10))}
@@ -377,6 +380,7 @@ const PhaseWalkthrough: React.FC<{ isDarkMode: boolean; accent: string }> = ({ i
 
   return (
     <Card isDarkMode={isDarkMode}>
+      <div className="mb-3 flex justify-center"><TryItYourself /></div>
       <div className="mb-4 flex flex-wrap items-center justify-center gap-2">
         <span className={`font-mono text-[11px] uppercase tracking-widest ${t.faint}`}>{lang === 'hi' ? 'preset चुनिए' : 'pick a preset'}</span>
         {PRESETS.map((p, k) => (
@@ -540,7 +544,12 @@ const DetectReasoning: React.FC<{ isDarkMode: boolean; accent: string }> = ({ is
     },
   ];
 
-  return <StepThrough steps={steps} isDarkMode={isDarkMode} accent={accent} />;
+  return (
+    <div className="space-y-3">
+      <div className="flex justify-center"><TryItYourself /></div>
+      <StepThrough steps={steps} isDarkMode={isDarkMode} accent={accent} />
+    </div>
+  );
 };
 
 /* ───────── bespoke: BCD state matrix (S05 truth) - now with a computed, exhaustive 0..19 map ───────── */
@@ -636,6 +645,7 @@ const BcdAdderDemo: React.FC<{ isDarkMode: boolean; accent: string; scene: SubSc
       </section>
 
       <Card isDarkMode={isDarkMode}>
+        <div className="mb-3 flex justify-center"><TryItYourself /></div>
         <div className="flex flex-wrap items-end justify-center gap-6">
           <Stepper label="A" val={A} set={setA} max={9} color={ACC.I} />
           <span className="pb-2 text-2xl font-black" style={{ color: t.faint }}>+</span>
@@ -717,7 +727,7 @@ function componentFor(scene: SubScene): React.FC<any> {
     case 'truth':
       return (p) => <TheoryScene {...p} scene={scene}><BcdStateMatrix isDarkMode={p.isDarkMode} accent={p.accent} /></TheoryScene>;
     case 'circuit':
-      return (p) => <TheoryScene {...p} scene={scene}><BcdAdderCircuit isDarkMode={p.isDarkMode} accent={p.accent} /></TheoryScene>;
+      return (p) => <TheoryScene {...p} scene={scene}><div className="mb-3 flex justify-center"><TryItYourself /></div><BcdAdderCircuit isDarkMode={p.isDarkMode} accent={p.accent} /></TheoryScene>;
     case 'activity':
       return (p) => (
         <>
@@ -730,11 +740,17 @@ function componentFor(scene: SubScene): React.FC<any> {
         <SceneShell>
           <section className="space-y-3"><Eyebrow accent={p.accent}>{scene.label}</Eyebrow>
             {scene.subtitle && <h2 className={`text-3xl md:text-4xl font-black ${tone(p.isDarkMode).text}`}>{scene.subtitle}</h2>}</section>
+          <TryItYourself />
           <SubFlashCards isDarkMode={p.isDarkMode} accent={p.accent} cards={CONTENT.flashcards} />
         </SceneShell>
       );
     case 'quiz':
-      return (p) => <QuizScene isDarkMode={p.isDarkMode} accent={p.accent} quiz={CONTENT.quiz} badge="BCD ADDER" tag="Practice · BCD Adder" title={scene.label} intro={scene.subtitle ?? ''} />;
+      return (p) => (
+        <div className="space-y-3">
+          <div className="flex justify-center"><TryItYourself /></div>
+          <QuizScene isDarkMode={p.isDarkMode} accent={p.accent} quiz={CONTENT.quiz} badge="BCD ADDER" tag="Practice · BCD Adder" title={scene.label} intro={scene.subtitle ?? ''} />
+        </div>
+      );
     case 'recap':
       return (p) => <RecapScene {...p} scene={scene} />;
     default: {

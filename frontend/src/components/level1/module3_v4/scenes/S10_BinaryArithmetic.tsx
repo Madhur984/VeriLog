@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Zap } from 'lucide-react';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive: boolean; isDarkMode: boolean; }
 
@@ -95,6 +96,7 @@ export const S10_BinaryArithmetic: React.FC<Props> = ({ isActive, isDarkMode }) 
       </div>
 
       {/* Interactive Adder */}
+      <TryItYourself />
       <div className={`p-8 md:p-12 rounded-[2rem] border relative overflow-hidden ${isDarkMode ? 'bg-sky-500/5 border-sky-500/20' : 'bg-sky-50 border-sky-200 shadow-2xl'}`}>
         <h3 className={`font-mono text-xs uppercase tracking-widest mb-10 text-center ${isDarkMode ? 'text-sky-400' : 'text-sky-600'}`}>
           Click Bits to Toggle - Live Ripple Carry Adder

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Target, Check, X, Repeat, Trophy, Timer, Flame } from 'lucide-react';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive: boolean; isDarkMode: boolean; }
 
@@ -203,6 +204,7 @@ export const S09_PracticeArena: React.FC<Props> = ({ isActive, isDarkMode }) => 
       </section>
 
       {/* DRILL 1 */}
+      <TryItYourself />
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         className={`p-8 rounded-3xl border ${cardBg}`}

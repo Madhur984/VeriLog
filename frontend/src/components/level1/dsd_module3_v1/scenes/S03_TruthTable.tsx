@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Table, Crosshair, MousePointerClick } from 'lucide-react';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive: boolean; isDarkMode: boolean; }
 type Bit = 0 | 1;
@@ -79,6 +80,7 @@ export const S03_TruthTable: React.FC<Props> = ({ isActive, isDarkMode }) => {
         </div>
       </motion.div>
 
+      <TryItYourself />
       <div className="grid lg:grid-cols-[1.3fr_1fr] gap-8 items-start">
         {/* Truth table */}
         <motion.div

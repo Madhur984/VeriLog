@@ -3,6 +3,7 @@ import { motion, AnimatePresence, useSpring } from 'framer-motion';
 import { SignalEngine, SignalConfig } from '../SignalEngine';
 import { Zap, ShieldCheck, Activity, Terminal, Waves, Volume2, Maximize2 } from 'lucide-react';
 import { TechnicalAudit } from '../components/TechnicalAudit';
+import { TryItYourself } from '../../../ui/TryItYourself';
 import { useModule2Audio } from '../hooks/useModule2Audio';
 
 /**
@@ -93,6 +94,7 @@ export const S05_Dither: React.FC<{ time: number; isDarkMode: boolean }> = ({ ti
       </header>
 
       <div className="relative group">
+            <TryItYourself corner />
             {/* Interaction Instructions */}
             <AnimatePresence>
                 {isIdle && (

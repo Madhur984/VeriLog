@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ShieldCheck, Zap, AlertCircle, RefreshCw, Radio, HardDrive } from 'lucide-react';
 import { useBinaryStore } from '../../../../stores/binaryStore';
 import { playBitTone } from '../../../../utils/synesthesiaEngine';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive: boolean; isDarkMode: boolean; }
 
@@ -110,6 +111,7 @@ export const S13_E_ErrorCorrection: React.FC<Props> = ({ isActive, isDarkMode })
           </div>
       </div>
 
+      <TryItYourself />
       <div className="grid lg:grid-cols-2 gap-8 items-stretch">
           {/* Encoder Side */}
           <div className="space-y-6">

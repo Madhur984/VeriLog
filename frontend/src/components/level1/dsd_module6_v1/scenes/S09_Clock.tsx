@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Activity, BookOpen, MousePointerClick, Timer, TrendingDown, TrendingUp, Workflow } from 'lucide-react';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 type Bit = 0 | 1;
 type Mode = 'sync' | 'async';
@@ -104,6 +105,7 @@ export const S09_Clock: React.FC<Props> = ({ isActive = true, isDarkMode }) => {
       </section>
 
       {/* Live scope */}
+      <TryItYourself />
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         className={`p-6 md:p-8 rounded-3xl border ${cardBg} flex flex-col gap-5`}

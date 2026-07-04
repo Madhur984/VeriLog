@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { CheckCircle2, BadgeCheck, MousePointerClick, Sparkles } from 'lucide-react';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive: boolean; isDarkMode: boolean; }
 type Bit = 0 | 1;
@@ -38,6 +39,7 @@ export const S07_Recap: React.FC<Props> = ({ isActive, isDarkMode }) => {
       </section>
 
       {/* Sync controller */}
+      <TryItYourself />
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         className={`p-6 rounded-3xl border ${cardBg}`}

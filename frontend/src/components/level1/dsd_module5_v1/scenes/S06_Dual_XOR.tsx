@@ -323,7 +323,7 @@ export const S06_Dual_XOR: React.FC<SceneProps> = ({ isActive, isDarkMode, mode 
       <motion.div
         initial={{ opacity: 0, y: 14 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.55 }}
-        className={`p-6 rounded-2xl border ${cardBg}`}
+        className="py-2"
       >
         <div className="font-mono text-[10px] uppercase tracking-widest mb-2" style={{ color: accent }}>
           The +1 step

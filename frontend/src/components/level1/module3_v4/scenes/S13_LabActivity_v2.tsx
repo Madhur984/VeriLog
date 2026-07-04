@@ -14,6 +14,7 @@
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 // ── Constants ─────────────────────────────────────────────────
 const C = {
@@ -835,7 +836,8 @@ export const S13_LabActivity_v2: React.FC<{ isActive: boolean; isDarkMode: boole
   ];
 
   return (
-    <div className="w-full flex justify-center items-center py-16 px-4">
+    <div className="w-full flex flex-col items-center gap-4 py-16 px-4">
+      <TryItYourself />
       <div style={{ width: '100%', maxWidth: 1100, minHeight: 680, background: C.bg, color: C.text, fontFamily: C.sans, position: 'relative', overflow: 'hidden', borderRadius: 32, border: `1px solid ${C.border}`, boxShadow: '0 24px 80px rgba(0,0,0,0.85)' }}>
 
         {/* Progress Bar */}

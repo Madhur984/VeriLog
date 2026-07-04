@@ -17,6 +17,7 @@ import {
 } from '../_subtractor/kit';
 import type { SubPage } from '../_subtractor/SubEngine';
 import { MuxViz } from '../_combo/blocks';
+import { TryItYourself } from '../../ui/TryItYourself';
 import { CONTENT } from './content';
 
 const ACC = { I: '#38bdf8', II: '#f59e0b', III: '#fb7185', good: '#34d399' };
@@ -646,7 +647,12 @@ function componentFor(scene: SubScene, i: number, n: number): React.FC<any> {
         </SceneShell>
       );
     case 'quiz':
-      return (p) => <QuizScene isDarkMode={p.isDarkMode} accent={p.accent} quiz={CONTENT.quiz} badge="MUX" tag="Practice · Multiplexer" title={scene.label} intro={scene.subtitle ?? ''} />;
+      return (p) => (
+        <div className="relative">
+          <TryItYourself corner />
+          <QuizScene isDarkMode={p.isDarkMode} accent={p.accent} quiz={CONTENT.quiz} badge="MUX" tag="Practice · Multiplexer" title={scene.label} intro={scene.subtitle ?? ''} />
+        </div>
+      );
     case 'recap':
       return (p) => (
         <>
@@ -660,32 +666,51 @@ function componentFor(scene: SubScene, i: number, n: number): React.FC<any> {
         <TheoryScene {...p} scene={scene}>
           {which === 'trackswitch' && (
             <div className="space-y-6">
+              <TryItYourself />
               <TrackSwitch isDarkMode={p.isDarkMode} accent={p.accent} />
               <MuxViz isDarkMode={p.isDarkMode} accent={p.accent} inputs={4} />
             </div>
           )}
           {which === 'mux' && (
             <div className="space-y-6">
+              <TryItYourself />
               <MuxViz isDarkMode={p.isDarkMode} accent={p.accent} inputs={4} />
               <MuxViz isDarkMode={p.isDarkMode} accent={p.accent} inputs={2} />
             </div>
           )}
           {which === 'twogates' && (
             <div className="space-y-6">
+              <TryItYourself />
               <TwoToOneGates isDarkMode={p.isDarkMode} accent={p.accent} />
               <TwoWorked isDarkMode={p.isDarkMode} accent={p.accent} />
             </div>
           )}
           {which === 'fourgates' && (
             <div className="space-y-6">
+              <TryItYourself />
               <MintermMap isDarkMode={p.isDarkMode} accent={p.accent} />
               <MuxViz isDarkMode={p.isDarkMode} accent={p.accent} inputs={4} />
               <FourWorked isDarkMode={p.isDarkMode} accent={p.accent} />
             </div>
           )}
-          {which === 'lut' && <LutLoader isDarkMode={p.isDarkMode} accent={p.accent} />}
-          {which === 'xorlut' && <LutLoader isDarkMode={p.isDarkMode} accent={p.accent} />}
-          {which === 'enablecascade' && <EnableCascade isDarkMode={p.isDarkMode} accent={p.accent} />}
+          {which === 'lut' && (
+            <div className="space-y-6">
+              <TryItYourself />
+              <LutLoader isDarkMode={p.isDarkMode} accent={p.accent} />
+            </div>
+          )}
+          {which === 'xorlut' && (
+            <div className="space-y-6">
+              <TryItYourself />
+              <LutLoader isDarkMode={p.isDarkMode} accent={p.accent} />
+            </div>
+          )}
+          {which === 'enablecascade' && (
+            <div className="space-y-6">
+              <TryItYourself />
+              <EnableCascade isDarkMode={p.isDarkMode} accent={p.accent} />
+            </div>
+          )}
           {which === 'build' && (
             <WorkbenchCTA isDarkMode={p.isDarkMode} accent={p.accent} tutorial="mux-4to1"
               titleEN="Build the Multiplexer (MUX) for real"

@@ -4,6 +4,7 @@ import {
   Trophy, Target, BrainCircuit, Wrench, CheckCircle2, XCircle, Sparkles, RefreshCw,
   Zap, Hammer, Crown, Flame,
 } from 'lucide-react';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive: boolean; isDarkMode: boolean; }
 
@@ -416,6 +417,8 @@ export const S13_PracticeArena: React.FC<Props> = ({ isActive, isDarkMode }) => 
           Six activities to lock in Madhur&apos;s craft. Cycle through them in any order - quiz, hunt, match,
           rapid-fire, build, and spot. Every activity is graded live.
         </p>
+
+        <TryItYourself />
 
         {/* Activity index strip */}
         <div className="grid grid-cols-2 md:grid-cols-6 gap-3 pt-4">

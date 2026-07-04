@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Flame, ArrowRightCircle } from 'lucide-react';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive?: boolean; isDarkMode: boolean }
 
@@ -53,6 +54,7 @@ export const S03_GP: React.FC<Props> = ({ isDarkMode }) => {
       </div>
 
       {/* interactive table */}
+      <TryItYourself />
       <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} className={`p-6 md:p-8 rounded-3xl border overflow-x-auto ${cardBg}`}>
         <table className="w-full min-w-[520px] text-center font-mono">
           <thead>

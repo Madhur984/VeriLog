@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Shield, Construction, AlertTriangle, GraduationCap, CheckCircle2, XCircle, RefreshCw } from 'lucide-react';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive: boolean; isDarkMode: boolean; }
 
@@ -55,6 +56,7 @@ export const S06_PathOfCaution: React.FC<Props> = ({ isDarkMode }) => {
       </div>
 
       {/* Disaster picker */}
+      <TryItYourself label="Pick a disaster row" />
       <div className="flex flex-wrap gap-3">
         {SAD.map((r, i) => (
           <button
@@ -201,6 +203,7 @@ export const S06_PathOfCaution: React.FC<Props> = ({ isDarkMode }) => {
       </motion.div>
 
       {/* Drill */}
+      <TryItYourself label="Test yourself" />
       <MaxtermDrill isDarkMode={isDarkMode} />
     </div>
   );

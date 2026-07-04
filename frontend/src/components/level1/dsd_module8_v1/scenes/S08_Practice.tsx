@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Swords, CheckCircle2, XCircle, Trophy, ChevronRight, ChevronLeft, RotateCcw, BookOpen } from 'lucide-react';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive?: boolean; isDarkMode: boolean; }
 
@@ -202,6 +203,7 @@ export const S08_Practice: React.FC<Props> = ({ isDarkMode }) => {
       </section>
 
       {/* Score banner */}
+      <TryItYourself />
       <div className={`p-5 rounded-3xl border flex items-center justify-between gap-4 flex-wrap ${cardBg}`}>
         <div className="flex items-center gap-4">
           <div className="w-14 h-14 rounded-2xl bg-violet-500/15 border border-violet-400/40 flex items-center justify-center">

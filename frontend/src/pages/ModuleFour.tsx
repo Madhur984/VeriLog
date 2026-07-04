@@ -8,6 +8,7 @@ import { useColorScheme } from '../hooks/useColorScheme';
 // --- Scene Components ---
 import { IntroTheory, TwoVarTheory, ThreeVarTheory, FourVarTheory, GroupingRulesTheory, DontCareTheory, POSTheory } from '../components/level5/KMapTheory';
 import { KMapLab } from './kmap-lab';
+import { TryItYourself } from '../components/ui/TryItYourself';
 
 // --- Types ---
 interface Page {
@@ -28,7 +29,7 @@ const PAGES: Page[] = [
   { id: 'rules',       part: 'PART III · RULES OF GROUPING', partNum: 4, label: 'Grouping Logic', subtitle: 'The 7 Laws of essential prime implicants.',  accentHex: '#0369a1', Component: GroupingRulesTheory },
   { id: 'dont-cares',  part: 'PART III · RULES OF GROUPING', partNum: 4, label: "Don't Care Cells",    subtitle: 'Using X to maximize simplification efficiency.',       accentHex: '#075985', Component: DontCareTheory },
   { id: 'pos',         part: 'PART IV · POS SYSTEM',         partNum: 4, label: 'Product of Sums',     subtitle: 'The mirror image: circling logical zeros.',       accentHex: '#0ea5e9', Component: POSTheory },
-  { id: 'lab',         part: 'PART V · INTERACTIVE LAB',     partNum: 4, label: 'K-Map Sandbox',       subtitle: 'Interactive K-Map Optimization Laboratory.',   accentHex: '#10b981',    Component: () => <div className="mt-2 h-[80vh] w-full rounded-2xl overflow-hidden border border-slate-200 dark:border-white/10 shadow-[0_0_40px_rgba(0,212,255,0.15)]"><div className="w-full h-full overflow-y-auto"><KMapLab /></div></div> },
+  { id: 'lab',         part: 'PART V · INTERACTIVE LAB',     partNum: 4, label: 'K-Map Sandbox',       subtitle: 'Interactive K-Map Optimization Laboratory.',   accentHex: '#10b981',    Component: () => <div className="mt-2"><TryItYourself /><div className="h-[80vh] w-full rounded-2xl overflow-hidden border border-slate-200 dark:border-white/10 shadow-[0_0_40px_rgba(0,212,255,0.15)]"><div className="w-full h-full overflow-y-auto"><KMapLab /></div></div></div> },
 ];
 
 const getPartTheme = (part: string) => {

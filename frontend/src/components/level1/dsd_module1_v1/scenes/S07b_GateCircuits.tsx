@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Cpu, Zap, ToggleRight } from 'lucide-react';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive: boolean; isDarkMode: boolean; }
 
@@ -91,6 +92,7 @@ export const S07b_GateCircuits: React.FC<Props> = ({ isActive, isDarkMode }) => 
       </section>
 
       {/* Input toggles */}
+      <TryItYourself label="Flip the inputs" />
       <div className={`p-6 rounded-3xl border ${cardBg}`}>
         <div className="flex items-center gap-2 mb-5">
           <ToggleRight size={14} className="text-cyan-400" />

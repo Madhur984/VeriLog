@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowDown, Zap } from 'lucide-react';
 import type { SceneProps } from '../types';
+import { TryItYourself } from '../../../ui/TryItYourself';
 type Bit = 0 | 1;
 
 export const S04_NOT: React.FC<SceneProps> = ({ isActive, isDarkMode, mode }) => {
@@ -34,6 +35,7 @@ export const S04_NOT: React.FC<SceneProps> = ({ isActive, isDarkMode, mode }) =>
         </p>
       </section>
 
+      <TryItYourself />
       <div className="grid lg:grid-cols-[1fr_1fr] gap-6 items-stretch">
         {/* Live circuit */}
         <motion.div

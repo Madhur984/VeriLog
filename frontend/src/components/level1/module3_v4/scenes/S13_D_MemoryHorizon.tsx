@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Database, Cpu, Layers, HardDrive, Package, Trash2 } from 'lucide-react';
 import { useBinaryStore } from '../../../../stores/binaryStore';
 import { playBitTone } from '../../../../utils/synesthesiaEngine';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive: boolean; isDarkMode: boolean; }
 
@@ -133,6 +134,7 @@ export const S13_D_MemoryHorizon: React.FC<Props> = ({ isActive, isDarkMode }) =
           </div>
       </div>
 
+      <TryItYourself />
       <div className="grid lg:grid-cols-12 gap-8">
           {/* Pallette Column */}
           <div className="lg:col-span-3 space-y-4">

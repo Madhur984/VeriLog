@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Trophy, ChevronRight, ChevronDown, CheckCircle2, Lightbulb, Hash, Car, MousePointerClick } from 'lucide-react';
 import { CleanCircuit, lit, not, term, type Bit, type Term, type CleanInput } from './_CleanCircuit';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive: boolean; isDarkMode: boolean; }
 
@@ -444,6 +445,8 @@ export const S04_Boss: React.FC<Props> = ({ isActive, isDarkMode }) => {
           wrap-around group.
         </div>
       </motion.div>
+
+      <div><TryItYourself /></div>
 
       <div className="space-y-6">
         {PROBLEMS.map((p) => (

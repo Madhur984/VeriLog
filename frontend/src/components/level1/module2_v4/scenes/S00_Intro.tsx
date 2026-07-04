@@ -4,6 +4,7 @@ import { SignalEngine, SignalConfig } from '../SignalEngine';
 import { Activity, Radio, Minimize2, Maximize2, Zap, Sliders, Cpu, Terminal, ArrowRight } from 'lucide-react';
 
 import { TechnicalAudit } from '../components/TechnicalAudit';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 // --- Static Assets ---
 const LOG_MESSAGES = [
@@ -182,6 +183,7 @@ export const S00_Intro: React.FC<{ time: number; isDarkMode: boolean }> = ({ tim
         </div>
 
         <div className="relative group">
+            <TryItYourself corner />
             <AnimatePresence>
                 {isIdle && (
                     <motion.div 

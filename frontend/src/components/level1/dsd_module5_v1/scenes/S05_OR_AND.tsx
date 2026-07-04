@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Layers, MousePointerClick } from 'lucide-react';
 import type { SceneProps } from '../types';
+import { TryItYourself } from '../../../ui/TryItYourself';
 type Bit = 0 | 1;
 
 export const S05_OR_AND: React.FC<SceneProps> = ({ isActive, isDarkMode, mode }) => {
@@ -96,6 +97,7 @@ export const S05_OR_AND: React.FC<SceneProps> = ({ isActive, isDarkMode, mode })
       </section>
 
       {/* Live input pads */}
+      <TryItYourself />
       <motion.div
         initial={{ opacity: 0, y: 14 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         className={`p-6 rounded-3xl border ${cardBg}`}

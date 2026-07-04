@@ -16,6 +16,7 @@ import {
 } from '../_subtractor/kit';
 import type { SubPage } from '../_subtractor/SubEngine';
 import { CodeConverter, BitToggle } from '../_combo/blocks';
+import { TryItYourself } from '../../ui/TryItYourself';
 import { CONTENT } from './content';
 
 const SRC_EN: string | undefined = '/videos/dsd25-code-converters.mp4';
@@ -396,34 +397,53 @@ function componentFor(scene: SubScene): React.FC<any> {
             <Eyebrow accent={p.accent}>{scene.label}</Eyebrow>
             {scene.subtitle && <h2 className={`text-3xl md:text-4xl font-black ${tone(p.isDarkMode).text}`}>{scene.subtitle}</h2>}
           </section>
+          <TryItYourself />
           <SubFlashCards isDarkMode={p.isDarkMode} accent={p.accent} cards={CONTENT.flashcards} />
         </SceneShell>
       );
     case 'quiz':
-      return (p) => <QuizScene isDarkMode={p.isDarkMode} accent={p.accent} quiz={CONTENT.quiz} badge="CODE CONVERTERS" tag="Practice · Code Converters" title={scene.label} intro={scene.subtitle ?? ''} />;
+      return (p) => (
+        <>
+          <TryItYourself />
+          <QuizScene isDarkMode={p.isDarkMode} accent={p.accent} quiz={CONTENT.quiz} badge="CODE CONVERTERS" tag="Practice · Code Converters" title={scene.label} intro={scene.subtitle ?? ''} />
+        </>
+      );
     case 'recap':
       return (p) => <RecapScene {...p} scene={scene}><RecapSources isDarkMode={p.isDarkMode} accent={p.accent} /></RecapScene>;
     default: {
       const which = bespokeFor(scene);
       return (p) => (
         <TheoryScene {...p} scene={scene}>
-          {which === 'converter' && <CodeConverter isDarkMode={p.isDarkMode} accent={p.accent} />}
+          {which === 'converter' && (
+            <>
+              <TryItYourself />
+              <CodeConverter isDarkMode={p.isDarkMode} accent={p.accent} />
+            </>
+          )}
           {which === 'bin2gray' && (
             <div className="space-y-6">
+              <TryItYourself />
               <Bin2GrayCascade isDarkMode={p.isDarkMode} accent={p.accent} />
               <CodeConverter isDarkMode={p.isDarkMode} accent={p.accent} />
             </div>
           )}
-          {which === 'gray2bin' && <Gray2BinWalk isDarkMode={p.isDarkMode} accent={p.accent} />}
+          {which === 'gray2bin' && (
+            <>
+              <TryItYourself />
+              <Gray2BinWalk isDarkMode={p.isDarkMode} accent={p.accent} />
+            </>
+          )}
           {which === 'whygray' && <CounterRace isDarkMode={p.isDarkMode} accent={p.accent} />}
           {which === 'bcdxs3' && (
             <div className="space-y-6">
+              <TryItYourself />
               <BcdXs3Map isDarkMode={p.isDarkMode} accent={p.accent} />
               <CodeConverter isDarkMode={p.isDarkMode} accent={p.accent} />
             </div>
           )}
           {which === 'matrix' && (
             <div className="space-y-6">
+              <TryItYourself />
               <MasterMatrix isDarkMode={p.isDarkMode} accent={p.accent} />
               <ConverterProofs isDarkMode={p.isDarkMode} accent={p.accent} />
             </div>

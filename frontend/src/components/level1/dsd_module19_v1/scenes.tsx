@@ -16,6 +16,7 @@ import {
   type SubScene,
 } from '../_subtractor/kit';
 import type { SubPage } from '../_subtractor/SubEngine';
+import { TryItYourself } from '../../ui/TryItYourself';
 import { CONTENT } from './content';
 
 const ACC = { I: '#38bdf8', II: '#f59e0b', III: '#fb7185', good: '#34d399' };
@@ -88,6 +89,7 @@ const TensCalc: React.FC<{ isDarkMode: boolean; accent: string; scene: SubScene 
         {scene.subtitle && <h2 className={`text-3xl md:text-4xl font-black ${t.text}`}>{scene.subtitle}</h2>}
       </section>
 
+      <TryItYourself />
       <Card isDarkMode={isDarkMode}>
         <div className="mb-5 flex flex-wrap items-end gap-4">
           <NumIn label="A · minuend" val={a} set={setA} color={ACC.I} />

@@ -16,6 +16,7 @@ import {
 } from '../_transistor/kit';
 import { TransistorSymbol, JfetTransfer, Slider } from '../_transistor/analog';
 import type { SubPage } from '../_transistor/kit';
+import { TryItYourself } from '../../ui/TryItYourself';
 import { CONTENT } from './content';
 
 const SRC_EN: string | undefined = undefined;

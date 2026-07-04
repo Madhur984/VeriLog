@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { RotateCcw, Waves, BookOpen } from 'lucide-react';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive?: boolean; isDarkMode: boolean }
 
@@ -38,6 +39,7 @@ export const S04_Overflow: React.FC<Props> = ({ isDarkMode }) => {
       </section>
 
       {/* ── the payoff animation ── */}
+      <div><TryItYourself /></div>
       <div className={`p-6 md:p-8 rounded-3xl border ${cardBg}`}>
         <svg viewBox="0 0 460 300" className="w-full max-w-2xl mx-auto h-auto">
           <defs>
@@ -162,7 +164,7 @@ export const S04_Overflow: React.FC<Props> = ({ isDarkMode }) => {
       </div>
 
       {/* ── standard theory ── */}
-      <div className={`p-6 rounded-3xl border ${cardBg}`}>
+      <div className="px-1">
         <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest mb-3" style={{ color: ROSE }}>
           <BookOpen size={13} /> Standard theory · what just happened
         </div>

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShieldCheck, Eye, KeyRound, Siren, Lock, Unlock, Zap } from 'lucide-react';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive: boolean; isDarkMode: boolean; }
 type Bit = 0 | 1;
@@ -35,6 +36,7 @@ export const S02_Vault: React.FC<Props> = ({ isActive, isDarkMode }) => {
       </section>
 
       {/* Interactive vault visual */}
+      <TryItYourself />
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         className={`p-8 rounded-3xl border ${cardBg} relative overflow-hidden`}
@@ -239,7 +241,7 @@ export const S02_Vault: React.FC<Props> = ({ isActive, isDarkMode }) => {
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.4 }}
-        className={`p-8 rounded-3xl border ${cardBg} space-y-4`}
+        className="space-y-4"
       >
         <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-orange-400">In one sentence</div>
         <h3 className={`text-2xl font-black ${textColor}`}>

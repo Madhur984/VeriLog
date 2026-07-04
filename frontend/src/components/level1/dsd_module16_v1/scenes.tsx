@@ -16,6 +16,7 @@ import {
 } from '../_subtractor/kit';
 import type { SubPage } from '../_subtractor/SubEngine';
 import { WorkbenchCTA } from '../_subtractor/kit';
+import { TryItYourself } from '../../ui/TryItYourself';
 import { CONTENT } from './content';
 
 const ACCENTS = { I: '#38bdf8', II: '#f59e0b', III: '#fb7185', good: '#34d399' };
@@ -533,6 +534,8 @@ const HalfSubActivity: React.FC<{ isDarkMode: boolean; accent: string; scene: Su
         {scene.subtitle && <h2 className={`text-3xl md:text-4xl font-black ${t.text}`}>{scene.subtitle}</h2>}
       </section>
 
+      <div className="flex justify-center"><TryItYourself /></div>
+
       <div className="grid grid-cols-2 gap-4 sm:max-w-md sm:mx-auto">
         <Toggle label={lang === 'hi' ? 'खाली जगह (x)' : 'spaces (x)'} val={x} on={() => setX((v) => v ^ 1)} icon={<Square size={13} />} />
         <Toggle label={lang === 'hi' ? 'गाड़ियाँ (y)' : 'cars (y)'} val={y} on={() => setY((v) => v ^ 1)} icon={<Car size={13} />} />
@@ -731,14 +734,17 @@ function componentFor(scene: SubScene): React.FC<any> {
     case 'truth':
       return (p) => (
         <TheoryScene {...p} scene={scene}>
+          <TryItYourself />
           <TruthBuilder isDarkMode={p.isDarkMode} accent={p.accent} />
           <HalfTruth isDarkMode={p.isDarkMode} accent={p.accent} />
+          <TryItYourself />
           <DeriveEquations isDarkMode={p.isDarkMode} accent={p.accent} />
         </TheoryScene>
       );
     case 'circuit':
       return (p) => (
         <TheoryScene {...p} scene={scene}>
+          <TryItYourself />
           <HalfSubCircuit isDarkMode={p.isDarkMode} accent={p.accent} />
           <WorkbenchCTA isDarkMode={p.isDarkMode} accent={p.accent} tutorial="half-subtractor"
             titleEN="Build the half subtractor for real" titleHI="असली में half subtractor बनाइए" />
@@ -759,6 +765,7 @@ function componentFor(scene: SubScene): React.FC<any> {
     case 'recap':
       return (p) => (
         <RecapScene {...p} scene={scene}>
+          <TryItYourself />
           <AmnesiaDemo isDarkMode={p.isDarkMode} accent={p.accent} />
         </RecapScene>
       );
@@ -768,8 +775,8 @@ function componentFor(scene: SubScene): React.FC<any> {
         <TheoryScene {...p} scene={scene}>
           {which === 'vars' && <VariableMap isDarkMode={p.isDarkMode} />}
           {which === 'scenarios' && <ScenarioGrid isDarkMode={p.isDarkMode} />}
-          {which === 'diff' && <DifferenceViz isDarkMode={p.isDarkMode} accent={p.accent} />}
-          {which === 'borrow' && <BorrowViz isDarkMode={p.isDarkMode} accent={p.accent} />}
+          {which === 'diff' && <><TryItYourself /><DifferenceViz isDarkMode={p.isDarkMode} accent={p.accent} /></>}
+          {which === 'borrow' && <><TryItYourself /><BorrowViz isDarkMode={p.isDarkMode} accent={p.accent} /></>}
         </TheoryScene>
       );
     }

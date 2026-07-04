@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Cpu, Clipboard, ArrowRight } from 'lucide-react';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive?: boolean; isDarkMode: boolean }
 
@@ -57,6 +58,7 @@ export const S03_Architecture: React.FC<Props> = ({ isDarkMode }) => {
       </motion.section>
 
       {/* interactive booth */}
+      <TryItYourself />
       <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}
                   className={`p-6 md:p-8 rounded-3xl border ${cardBg}`}>
         <div className="grid lg:grid-cols-2 gap-8 items-center">

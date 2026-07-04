@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Music, Snowflake, Flame } from 'lucide-react';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive: boolean; isDarkMode: boolean; }
 
@@ -126,6 +127,7 @@ export const S06_GarbaMatrix: React.FC<Props> = ({ isActive, isDarkMode }) => {
       </section>
 
       {/* Toggle: room temp vs absolute zero */}
+      <TryItYourself label="Flip the temperature" />
       <div className={`p-4 rounded-2xl border ${cardBg} flex items-center justify-between flex-wrap gap-4`}>
         <div className="flex items-center gap-3">
           {frozen ? <Snowflake size={16} className="text-sky-400" /> : <Flame size={16} className="text-pink-400" />}
@@ -214,9 +216,9 @@ export const S06_GarbaMatrix: React.FC<Props> = ({ isActive, isDarkMode }) => {
       <motion.div
         initial={{ opacity: 0, y: 12 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.2 }}
-        className={`p-6 rounded-3xl border ${cardBg} text-center`}
+        className="text-center"
       >
-        <p className={`text-base leading-relaxed ${textColor}`}>
+        <p className={`text-base leading-relaxed max-w-3xl mx-auto ${textColor}`}>
           The Garba is the foundation of every silicon device on Earth. Now flip the toggle back to{' '}
           <strong className="text-pink-300">Room Temp</strong> and watch the next chapter - when the dhol
           drops, dancers break loose and the magic begins.

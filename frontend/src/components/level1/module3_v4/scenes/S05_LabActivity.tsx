@@ -15,6 +15,7 @@ import {
   motion,
   AnimatePresence,
 } from 'framer-motion';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 // 
 // TYPES
@@ -714,10 +715,11 @@ export const S05_LabActivity: React.FC<{ isActive: boolean; isDarkMode: boolean 
   const LABELS = ['Signal', 'States', 'Positions', 'Synthesis', 'Decrypt', 'Routers', 'Override', 'Core'];
 
   return (
-    <div onClick={resume} className="w-full flex justify-center items-center py-20 px-4">
-      <div 
-        style={{ 
-            width: '100%', maxWidth: 1100, height: 740, 
+    <div onClick={resume} className="w-full flex flex-col items-center gap-4 py-20 px-4">
+      <TryItYourself />
+      <div
+        style={{
+            width: '100%', maxWidth: 1100, height: 740,
             background: C.bg, color: C.text, fontFamily: C.sans, 
             position: 'relative', overflow: 'hidden', borderRadius: 32, 
             border: `1px solid ${C.border}`, boxShadow: '0 20px 60px rgba(0,0,0,0.8)' 

@@ -17,6 +17,7 @@ import {
 } from '../_subtractor/kit';
 import type { SubPage } from '../_subtractor/SubEngine';
 import { DecoderViz, BitToggle } from '../_combo/blocks';
+import { TryItYourself } from '../../ui/TryItYourself';
 import { CONTENT } from './content';
 
 const SRC_EN: string | undefined = '/videos/dsd23-decoders.mp4';
@@ -476,30 +477,37 @@ function componentFor(scene: SubScene, i: number, n: number): React.FC<any> {
             <Eyebrow accent={p.accent}>{scene.label}</Eyebrow>
             {scene.subtitle && <h2 className={`text-3xl md:text-4xl font-black ${tone(p.isDarkMode).text}`}>{scene.subtitle}</h2>}
           </section>
+          <TryItYourself />
           <SubFlashCards isDarkMode={p.isDarkMode} accent={p.accent} cards={CONTENT.flashcards} />
         </SceneShell>
       );
     case 'quiz':
-      return (p) => <QuizScene isDarkMode={p.isDarkMode} accent={p.accent} quiz={CONTENT.quiz} badge="DECODER" tag="Practice · Decoders" title={scene.label} intro={scene.subtitle ?? ''} />;
+      return (p) => (
+        <div>
+          <TryItYourself />
+          <QuizScene isDarkMode={p.isDarkMode} accent={p.accent} quiz={CONTENT.quiz} badge="DECODER" tag="Practice · Decoders" title={scene.label} intro={scene.subtitle ?? ''} />
+        </div>
+      );
     case 'recap':
       return (p) => <RecapScene {...p} scene={scene}><SourcesPanel isDarkMode={p.isDarkMode} accent={p.accent} /></RecapScene>;
     default: {
       const which = bespokeFor(scene);
       return (p) => (
         <TheoryScene {...p} scene={scene}>
-          {which === 'decoder2' && <DecoderViz isDarkMode={p.isDarkMode} accent={p.accent} bits={2} />}
+          {which === 'decoder2' && (<><TryItYourself /><DecoderViz isDarkMode={p.isDarkMode} accent={p.accent} bits={2} /></>)}
           {which === 'rollcall' && (
             <div className="space-y-6">
+              <TryItYourself />
               <RollCall isDarkMode={p.isDarkMode} accent={p.accent} />
               <DecoderViz isDarkMode={p.isDarkMode} accent={p.accent} bits={2} />
             </div>
           )}
-          {which === 'gates' && <GateBuild isDarkMode={p.isDarkMode} accent={p.accent} />}
-          {which === 'decoder3' && <DecoderViz isDarkMode={p.isDarkMode} accent={p.accent} bits={3} />}
-          {which === 'demux' && <DecoderViz isDarkMode={p.isDarkMode} accent={p.accent} bits={2} />}
-          {which === 'polarity' && <PolarityTables isDarkMode={p.isDarkMode} accent={p.accent} />}
-          {which === 'function' && <FunctionBuilder isDarkMode={p.isDarkMode} accent={p.accent} />}
-          {which === 'proofs' && <Derivations isDarkMode={p.isDarkMode} accent={p.accent} />}
+          {which === 'gates' && (<><TryItYourself /><GateBuild isDarkMode={p.isDarkMode} accent={p.accent} /></>)}
+          {which === 'decoder3' && (<><TryItYourself /><DecoderViz isDarkMode={p.isDarkMode} accent={p.accent} bits={3} /></>)}
+          {which === 'demux' && (<><TryItYourself /><DecoderViz isDarkMode={p.isDarkMode} accent={p.accent} bits={2} /></>)}
+          {which === 'polarity' && (<><TryItYourself /><PolarityTables isDarkMode={p.isDarkMode} accent={p.accent} /></>)}
+          {which === 'function' && (<><TryItYourself /><FunctionBuilder isDarkMode={p.isDarkMode} accent={p.accent} /></>)}
+          {which === 'proofs' && (<><TryItYourself label="Step through the proof" /><Derivations isDarkMode={p.isDarkMode} accent={p.accent} /></>)}
           {which === 'build' && (
             <WorkbenchCTA isDarkMode={p.isDarkMode} accent={p.accent} tutorial="decoder-2to4"
               titleEN="Build the 2-to-4 decoder for real"

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Flame, Zap, Circle as CircleIcon } from 'lucide-react';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive: boolean; isDarkMode: boolean; }
 
@@ -55,6 +56,7 @@ export const S07_DholDrops: React.FC<Props> = ({ isActive, isDarkMode }) => {
       </section>
 
       {/* Temperature slider */}
+      <TryItYourself label="Drag to heat the lattice" />
       <motion.div
         initial={{ opacity: 0, y: 12 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         className={`p-6 rounded-3xl border ${cardBg}`}
@@ -225,9 +227,9 @@ export const S07_DholDrops: React.FC<Props> = ({ isActive, isDarkMode }) => {
       <motion.div
         initial={{ opacity: 0, y: 12 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.2 }}
-        className={`p-6 rounded-3xl border ${cardBg} text-center`}
+        className="text-center"
       >
-        <p className={`text-sm leading-relaxed ${textColor}`}>
+        <p className={`text-sm leading-relaxed max-w-3xl mx-auto ${textColor}`}>
           At 300 K (room temperature) a sugar-cube of pure Silicon contains approximately{' '}
           <strong className="text-pink-300 font-mono">1.5 × 10¹⁰ free electrons / cm³</strong> - a number
           with eleven zeros, yet still tiny compared to the 5 × 10²² atoms in the same cube. That ratio

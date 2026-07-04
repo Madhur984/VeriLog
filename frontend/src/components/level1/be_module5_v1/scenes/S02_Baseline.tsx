@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Power, Shield, Sun as SunIcon, Aperture, Baby } from 'lucide-react';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive: boolean; isDarkMode: boolean; }
 type Bias = 'forward' | 'reverse';
@@ -58,6 +59,7 @@ export const S02_Baseline: React.FC<Props> = ({ isActive, isDarkMode }) => {
       </motion.div>
 
       {/* Interactive baseline diode */}
+      <TryItYourself />
       <motion.div
         initial={{ opacity: 0, scale: 0.98 }} animate={isActive ? { opacity: 1, scale: 1 } : {}}
         transition={{ delay: 0.15 }}
@@ -171,7 +173,7 @@ export const S02_Baseline: React.FC<Props> = ({ isActive, isDarkMode }) => {
       <motion.div
         initial={{ opacity: 0, y: 12 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.5 }}
-        className={`rounded-3xl border ${cardBg} p-6 text-sm ${subText}`}
+        className={`text-sm ${subText}`}
       >
         <div className="font-mono text-[10px] uppercase tracking-widest text-cyan-300 mb-2">Plain English</div>
         Standard diode = a door that opens one way. Specialist diodes = the same door re-purposed:

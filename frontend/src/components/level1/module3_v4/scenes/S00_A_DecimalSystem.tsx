@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { useBinaryStore } from '../../../../stores/binaryStore';
 import { playBitTone } from '../../../../utils/synesthesiaEngine';
 import { GridCountingSystem } from '../components/GridCountingSystem';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive: boolean; isDarkMode: boolean; }
 
@@ -91,6 +92,7 @@ export const S00_A_DecimalSystem: React.FC<Props> = ({ isActive, isDarkMode }) =
       </div>
 
       {/* Interactive Builder */}
+      <TryItYourself />
       <div className={`p-8 rounded-[2rem] border ${cardBg}`}>
         <h3 className={`font-mono text-xs uppercase tracking-widest mb-2 text-center ${subTextColor}`}>
           Interactive Builder - Adjust Each Digit

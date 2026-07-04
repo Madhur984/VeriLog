@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link as LinkIcon } from 'lucide-react';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive?: boolean; isDarkMode: boolean }
 
@@ -60,6 +61,7 @@ export const S03_Build: React.FC<Props> = ({ isDarkMode }) => {
       </motion.section>
 
       {/* operands */}
+      <div><TryItYourself label="Toggle the bits" /></div>
       <div className={`p-5 rounded-3xl border flex flex-wrap items-center gap-x-8 gap-y-4 ${cardBg}`}>
         <div className="flex items-center gap-3">
           <span className="font-mono text-xs font-black w-8" style={{ color: SKY }}>A</span>

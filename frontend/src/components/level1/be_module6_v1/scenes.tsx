@@ -15,6 +15,7 @@ import {
 } from '../_transistor/kit';
 import { TransistorSymbol, OutputCurves, Slider } from '../_transistor/analog';
 import type { SubPage } from '../_transistor/kit';
+import { TryItYourself } from '../../ui/TryItYourself';
 import { CONTENT } from './content';
 
 // be6 video sources (see BUILD_SPEC): English cut not yet produced.
@@ -430,11 +431,17 @@ function componentFor(scene: SubScene, i: number, n: number): React.FC<any> {
         <SceneShell>
           <section className="space-y-3"><Eyebrow accent={p.accent}>{scene.label}</Eyebrow>
             {scene.subtitle && <h2 className={`text-3xl md:text-4xl font-black ${tone(p.isDarkMode).text}`}>{scene.subtitle}</h2>}</section>
+          <div className="mb-2"><TryItYourself label="Flip the cards" /></div>
           <SubFlashCards isDarkMode={p.isDarkMode} accent={p.accent} cards={CONTENT.flashcards} />
         </SceneShell>
       );
     case 'quiz':
-      return (p) => <QuizScene isDarkMode={p.isDarkMode} accent={p.accent} quiz={CONTENT.quiz} badge="THE MALL" tag="Practice · BJT Construction" title={scene.label} intro={scene.subtitle ?? ''} />;
+      return (p) => (
+        <SceneShell>
+          <div className="mb-2"><TryItYourself label="Take the quiz" /></div>
+          <QuizScene isDarkMode={p.isDarkMode} accent={p.accent} quiz={CONTENT.quiz} badge="THE MALL" tag="Practice · BJT Construction" title={scene.label} intro={scene.subtitle ?? ''} />
+        </SceneShell>
+      );
     case 'recap':
       return (p) => (
         <RecapScene {...p} scene={scene}>

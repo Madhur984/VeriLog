@@ -17,6 +17,7 @@ import {
   type SubScene,
 } from '../_subtractor/kit';
 import type { SubPage } from '../_subtractor/SubEngine';
+import { TryItYourself } from '../../ui/TryItYourself';
 import { CONTENT } from './content';
 
 const ACC = { I: '#38bdf8', II: '#f59e0b', III: '#fb7185', good: '#34d399' };
@@ -899,27 +900,44 @@ function componentFor(scene: SubScene): React.FC<any> {
     case 'video':
       return (p) => <VideoScene {...p} scene={scene} src="/videos/complements-explained.mp4" />;
     case 'activity':
-      return (p) => <ComplementSubtractor {...p} scene={scene} />;
+      return (p) => (
+        <div className="relative">
+          <TryItYourself corner />
+          <ComplementSubtractor {...p} scene={scene} />
+        </div>
+      );
     case 'flashcards':
       return (p) => (
         <SceneShell>
           <section className="space-y-3"><Eyebrow accent={p.accent}>{scene.label}</Eyebrow>
             {scene.subtitle && <h2 className={`text-3xl md:text-4xl font-black ${tone(p.isDarkMode).text}`}>{scene.subtitle}</h2>}</section>
+          <TryItYourself />
           <SubFlashCards isDarkMode={p.isDarkMode} accent={p.accent} cards={CONTENT.flashcards} />
         </SceneShell>
       );
     case 'quiz':
-      return (p) => <QuizScene isDarkMode={p.isDarkMode} accent={p.accent} quiz={CONTENT.quiz} badge="COMPLEMENTS" tag="Practice · Complements" title={scene.label} intro={scene.subtitle ?? ''} />;
+      return (p) => (
+        <div className="relative">
+          <TryItYourself corner />
+          <QuizScene isDarkMode={p.isDarkMode} accent={p.accent} quiz={CONTENT.quiz} badge="COMPLEMENTS" tag="Practice · Complements" title={scene.label} intro={scene.subtitle ?? ''} />
+        </div>
+      );
     case 'recap':
       return (p) => <RecapScene {...p} scene={scene} />;
     default: {
       const which = bespokeFor(scene);
       return (p) => (
         <TheoryScene {...p} scene={scene}>
-          {which === 'whyborrow' && <BorrowVsMirror isDarkMode={p.isDarkMode} accent={p.accent} />}
+          {which === 'whyborrow' && (
+            <>
+              <TryItYourself />
+              <BorrowVsMirror isDarkMode={p.isDarkMode} accent={p.accent} />
+            </>
+          )}
           {which === 'families' && <FamiliesPanel isDarkMode={p.isDarkMode} />}
           {which === 'mirror' && (
             <>
+              <TryItYourself />
               <MirrorReflection isDarkMode={p.isDarkMode} accent={p.accent} />
               <MirrorMachine isDarkMode={p.isDarkMode} accent={p.accent} />
             </>
@@ -927,12 +945,14 @@ function componentFor(scene: SubScene): React.FC<any> {
           {which === 'recipe' && (
             <>
               <RecipeStrip isDarkMode={p.isDarkMode} accent={p.accent} />
+              <TryItYourself />
               <RecipeWalkthrough isDarkMode={p.isDarkMode} accent={p.accent} />
             </>
           )}
           {which === 'fork' && (
             <>
               <SignFork isDarkMode={p.isDarkMode} />
+              <TryItYourself />
               <CarryDecisionTree isDarkMode={p.isDarkMode} accent={p.accent} />
             </>
           )}

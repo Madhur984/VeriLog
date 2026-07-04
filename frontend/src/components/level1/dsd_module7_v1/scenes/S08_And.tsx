@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { CircuitBoard, MousePointerClick, BadgeCheck, Box, Sigma, Table2 } from 'lucide-react';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive?: boolean; isDarkMode: boolean }
 
@@ -71,6 +72,7 @@ export const S08_And: React.FC<Props> = ({ isDarkMode }) => {
       </section>
 
       {/* ── interactive playground ── */}
+      <div><TryItYourself /></div>
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
         className={`p-6 md:p-8 rounded-3xl border ${cardBg} space-y-6`}

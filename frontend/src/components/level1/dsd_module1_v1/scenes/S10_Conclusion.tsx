@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Award, CheckCircle2, XCircle, ArrowRight, BookOpen } from 'lucide-react';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive: boolean; isDarkMode: boolean; }
 
@@ -102,6 +103,7 @@ export const S10_Conclusion: React.FC<Props> = ({ isActive, isDarkMode }) => {
       </div>
 
       {/* Knowledge gate */}
+      <TryItYourself label="Answer to check yourself" />
       <motion.div
         initial={{ opacity: 0, y: 20 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.4 }}

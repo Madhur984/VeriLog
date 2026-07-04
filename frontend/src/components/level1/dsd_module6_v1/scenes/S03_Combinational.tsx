@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Cpu, MousePointerClick, Ghost, Zap, Hash, ListOrdered, Timer } from 'lucide-react';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isDarkMode: boolean; }
 type Bit = 0 | 1;
@@ -60,6 +61,8 @@ export const S03_Combinational: React.FC<Props> = ({ isDarkMode }) => {
           using only what the switches say right now.
         </p>
       </section>
+
+      <TryItYourself />
 
       <div className="grid lg:grid-cols-[1.6fr_1fr] gap-6 items-stretch">
         {/* ── the F(inputs) machine ── */}

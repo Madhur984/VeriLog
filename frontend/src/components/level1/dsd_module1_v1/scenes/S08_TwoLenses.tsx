@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Eye, ArrowLeftRight, CheckCircle2 } from 'lucide-react';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive: boolean; isDarkMode: boolean; }
 
@@ -90,6 +91,7 @@ export const S08_TwoLenses: React.FC<Props> = ({ isActive, isDarkMode }) => {
       </motion.div>
 
       {/* Live equivalence verifier */}
+      <TryItYourself label="Toggle any input" />
       <motion.div
         initial={{ opacity: 0, y: 20 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.3 }}

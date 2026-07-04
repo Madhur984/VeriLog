@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Briefcase, Shield, Star, Users } from 'lucide-react';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive: boolean; isDarkMode: boolean; }
 
@@ -78,6 +79,8 @@ export const S04_SiliconFranchise: React.FC<Props> = ({ isActive, isDarkMode }) 
           role below to see who they are and what they do.
         </p>
       </section>
+
+      <TryItYourself label="Click any role or shell" />
 
       <div className="grid lg:grid-cols-[1.2fr_1fr] gap-8">
         {/* Interactive atom diagram */}

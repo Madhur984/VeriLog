@@ -13,6 +13,7 @@ import {
   type SubScene,
 } from '../_subtractor/kit';
 import type { SubPage } from '../_subtractor/SubEngine';
+import { TryItYourself } from '../../ui/TryItYourself';
 import { CONTENT } from './content';
 
 const ACC = { good: '#34d399', borrow: '#fb7185', accent: '#38bdf8' };
@@ -560,11 +561,13 @@ function componentFor(scene: SubScene): React.FC<any> {
             <>
               <BorrowExample isDarkMode={p.isDarkMode} accent={p.accent} />
               <SubRulesCard isDarkMode={p.isDarkMode} accent={p.accent} />
+              <TryItYourself />
               <SubWalkthrough isDarkMode={p.isDarkMode} accent={p.accent} />
             </>
           )}
           {scene.id === 'S03_BorrowVsCarry' && (
             <>
+              <TryItYourself />
               <GateMirror isDarkMode={p.isDarkMode} accent={p.accent} />
               <CarryVsBorrow isDarkMode={p.isDarkMode} />
             </>

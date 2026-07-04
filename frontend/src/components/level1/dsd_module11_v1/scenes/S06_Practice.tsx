@@ -1,5 +1,6 @@
 import React from 'react';
 import { QuizArena, Problem, ReferenceRow } from '../../dsd_module9_v1/components/QuizArena';
+import { TryItYourself } from '../../../ui/TryItYourself';
 
 interface Props { isActive?: boolean; isDarkMode: boolean }
 
@@ -148,7 +149,9 @@ const REFERENCE: ReferenceRow[] = [
 ];
 
 export const S06_Practice: React.FC<Props> = ({ isDarkMode }) => (
-  <QuizArena
+  <div className="max-w-6xl mx-auto">
+    <TryItYourself />
+    <QuizArena
     isDarkMode={isDarkMode}
     accent={ACCENT}
     tag="Chapter 07 · Practice Arena"
@@ -157,7 +160,8 @@ export const S06_Practice: React.FC<Props> = ({ isDarkMode }) => (
     problems={PROBLEMS}
     reference={REFERENCE}
     closer="One chapter left: the cheatsheet, the Verilog, and the door to the parallel prefix adder."
-  />
+    />
+  </div>
 );
 
 export default S06_Practice;
