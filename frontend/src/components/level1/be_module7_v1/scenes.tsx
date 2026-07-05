@@ -141,6 +141,7 @@ const FeedbackLoop: React.FC<{ isDarkMode: boolean; accent: string }> = ({ isDar
 
   return (
     <Card isDarkMode={isDarkMode}>
+      <TryItYourself />
       <div className="mb-3 flex items-center justify-between">
         <span className="font-mono text-[11px] uppercase tracking-[0.3em]" style={{ color: accent }}>
           {lang === 'hi' ? 'Re negative-feedback loop' : 'Re negative-feedback loop'}
@@ -205,6 +206,7 @@ const StabilityChecker: React.FC<{ isDarkMode: boolean; accent: string }> = ({ i
 
   return (
     <Card isDarkMode={isDarkMode}>
+      <TryItYourself />
       <div className="mb-3 font-mono text-[11px] uppercase tracking-[0.3em]" style={{ color: accent }}>
         {lang === 'hi' ? 'Stability condition: beta*Re >= 10*R2' : 'Stability condition: beta*Re >= 10*R2'}
       </div>

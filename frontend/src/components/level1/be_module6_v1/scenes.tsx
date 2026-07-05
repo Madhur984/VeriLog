@@ -453,7 +453,12 @@ function componentFor(scene: SubScene, i: number, n: number): React.FC<any> {
       return (p) => (
         <TheoryScene {...p} scene={scene}>
           {/* NPN vs PNP toggle */}
-          {/npn|pnp|dichotomy/.test(key) && <NpnPnpToggle isDarkMode={p.isDarkMode} accent={p.accent} />}
+          {/npn|pnp|dichotomy/.test(key) && (
+            <div className="space-y-2">
+              <TryItYourself label="Toggle NPN / PNP" />
+              <NpnPnpToggle isDarkMode={p.isDarkMode} accent={p.accent} />
+            </div>
+          )}
           {/* depletion / junction engine - show both symbol + a forward/reverse note via current split is not ideal; use symbol */}
           {/junction|depletion|bias engine/.test(key) && (
             <Card isDarkMode={p.isDarkMode} className="text-center">
@@ -469,6 +474,7 @@ function componentFor(scene: SubScene, i: number, n: number): React.FC<any> {
               <Card isDarkMode={p.isDarkMode} className="text-center">
                 <div className="flex justify-center"><TransistorSymbol kind="npn" accent={p.accent} isDarkMode={p.isDarkMode} size={130} /></div>
               </Card>
+              <TryItYourself label="Drag the sliders" />
               <CurrentSplit isDarkMode={p.isDarkMode} accent={p.accent} />
             </div>
           )}
@@ -477,10 +483,16 @@ function componentFor(scene: SubScene, i: number, n: number): React.FC<any> {
           {/* output characteristics: the kit curves */}
           {/output|character|curve/.test(key) && <OutputCurves isDarkMode={p.isDarkMode} accent={p.accent} />}
           {/* alpha & beta: the coupled linker */}
-          {/alpha|beta|amplification factor/.test(key) && <AlphaBetaLinker isDarkMode={p.isDarkMode} accent={p.accent} />}
+          {/alpha|beta|amplification factor/.test(key) && (
+            <div className="space-y-2">
+              <TryItYourself label="Drag the sliders" />
+              <AlphaBetaLinker isDarkMode={p.isDarkMode} accent={p.accent} />
+            </div>
+          )}
           {/* synthesis: walk the proof */}
           {/synthesis|inevitab/.test(key) && (
             <div className="space-y-4">
+              <TryItYourself label="Explore & step through" />
               <CurrentSplit isDarkMode={p.isDarkMode} accent={p.accent} />
               <GainProof isDarkMode={p.isDarkMode} accent={p.accent} />
             </div>

@@ -467,16 +467,28 @@ function componentFor(scene: SubScene, i: number, n: number): React.FC<any> {
       return (p) => (
         <TheoryScene {...p} scene={scene}>
           {which === 'symbols' && <SymbolContrast isDarkMode={p.isDarkMode} accent={p.accent} />}
-          {which === 'showdown' && <ControlShowdown isDarkMode={p.isDarkMode} accent={p.accent} />}
-          {which === 'pincher' && <HosePincher isDarkMode={p.isDarkMode} accent={p.accent} />}
+          {which === 'showdown' && (
+            <>
+              <TryItYourself />
+              <ControlShowdown isDarkMode={p.isDarkMode} accent={p.accent} />
+            </>
+          )}
+          {which === 'pincher' && (
+            <>
+              <TryItYourself />
+              <HosePincher isDarkMode={p.isDarkMode} accent={p.accent} />
+            </>
+          )}
           {which === 'shockley' && (
             <div className="space-y-4">
+              <TryItYourself />
               <JfetTransfer isDarkMode={p.isDarkMode} accent={p.accent} />
               <ShockleyDerivation isDarkMode={p.isDarkMode} accent={p.accent} />
             </div>
           )}
           {which === 'gm' && (
             <div className="space-y-4">
+              <TryItYourself />
               <GmLab isDarkMode={p.isDarkMode} accent={p.accent} />
               <GmDerivation isDarkMode={p.isDarkMode} accent={p.accent} />
             </div>

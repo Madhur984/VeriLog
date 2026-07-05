@@ -760,12 +760,18 @@ function componentFor(scene: SubScene, i: number, n: number): React.FC<any> {
           )}
           {which === 'trinity' && (
             <div className="space-y-4">
+              <TryItYourself />
               <GainDerivation isDarkMode={p.isDarkMode} accent={p.accent} />
               <SmallSignalGain isDarkMode={p.isDarkMode} accent={p.accent} />
               <BypassToggle isDarkMode={p.isDarkMode} accent={p.accent} />
             </div>
           )}
-          {which === 'loading' && <LoadingAndMatrix isDarkMode={p.isDarkMode} accent={p.accent} />}
+          {which === 'loading' && (
+            <div className="space-y-4">
+              <TryItYourself />
+              <LoadingAndMatrix isDarkMode={p.isDarkMode} accent={p.accent} />
+            </div>
+          )}
         </TheoryScene>
       );
     }

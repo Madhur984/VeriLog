@@ -419,9 +419,19 @@ function componentFor(scene: SubScene, i: number, n: number): React.FC<any> {
               <EncoderViz isDarkMode={p.isDarkMode} accent={p.accent} />
             </div>
           )}
-          {which === 'valid' && <EncoderViz isDarkMode={p.isDarkMode} accent={p.accent} />}
+          {which === 'valid' && (
+            <div className="space-y-3">
+              <TryItYourself />
+              <EncoderViz isDarkMode={p.isDarkMode} accent={p.accent} />
+            </div>
+          )}
           {which === 'table' && <PriorityTruthTable isDarkMode={p.isDarkMode} accent={p.accent} />}
-          {which === 'family' && <EncoderViz isDarkMode={p.isDarkMode} accent={p.accent} />}
+          {which === 'family' && (
+            <div className="space-y-3">
+              <TryItYourself />
+              <EncoderViz isDarkMode={p.isDarkMode} accent={p.accent} />
+            </div>
+          )}
           {which === 'build' && (
             <div className="space-y-6">
               <WorkbenchCTA isDarkMode={p.isDarkMode} accent={p.accent} tutorial="encoder-4to2"
