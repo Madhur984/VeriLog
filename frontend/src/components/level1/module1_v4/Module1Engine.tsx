@@ -8,7 +8,6 @@ import { S01_Introduction } from './scenes/S01_Introduction';
 import { S02_StandardSignals } from './scenes/S02_StandardSignals';
 import { S03_AnalogVsDigital } from './scenes/S03_AnalogVsDigital';
 import { S04_WaveParameters } from './scenes/S04_WaveParameters';
-import { S05_VerilogBridge } from './scenes/S05_VerilogBridge';
 
 interface Page {
   id: string;
@@ -48,13 +47,6 @@ const PAGES: Page[] = [
     subtitle: 'Amplitude, frequency, and phase of a sine wave.',
     accentHex: '#22d3ee',
     Component: S04_WaveParameters,
-  },
-  {
-    id: 'verilog', part: 'PART IV · NEXT STEPS', partNum: 4,
-    label: 'The Verilog Bridge',
-    subtitle: 'A first look at Verilog, the hardware language.',
-    accentHex: '#0891b2',
-    Component: S05_VerilogBridge,
   },
 ];
 

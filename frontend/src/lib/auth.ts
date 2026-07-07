@@ -115,7 +115,7 @@ export function startGuestSession(name: string = 'Guest'): SessionInfo {
  * Normalize any module route to a single module identity so chapter/sub-routes
  * don't each consume a free slot.
  *   /dsd/1/cover    -> 'dsd/1'
- *   /module/6/3     -> 'module/6'
+ *   /module/5/3     -> 'module/5'
  *   /module/1/1     -> 'module/1'
  *   /sandbox/verilog-> null   (not a counted module; always free)
  */

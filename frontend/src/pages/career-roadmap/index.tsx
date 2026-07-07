@@ -34,7 +34,7 @@ const CareerRoadmapPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-bg-void text-text-main">
       {/* Self-contained top bar: Portal back · section nav · theme toggle */}
-      <div className="sticky top-0 z-30 bg-bg-void/90 backdrop-blur border-b-2 border-edge">
+      <div className="sticky top-0 z-30 bg-bg-void border-b-2 border-edge">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center gap-3">
           <button
             onClick={() => navigate('/portal')}

@@ -30,7 +30,7 @@ export const OUTLOOK: Record<string, { label: string; cls: string }> = {
 export const RangeBar: React.FC<{ min: number; max: number; scaleMax?: number; accent?: string }> = ({
   min, max, scaleMax = 100, accent = 'bg-signal-core',
 }) => (
-  <div className="relative h-2.5 w-full bg-bg-void border border-edge/40 overflow-hidden">
+  <div className="relative h-2.5 w-full bg-bg-void border border-border-soft overflow-hidden">
     <div
       className={`absolute top-0 bottom-0 ${accent}`}
       style={{ left: `${(min / scaleMax) * 100}%`, width: `${Math.max(((max - min) / scaleMax) * 100, 1.5)}%` }}

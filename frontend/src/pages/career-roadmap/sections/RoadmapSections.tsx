@@ -94,7 +94,7 @@ export const CompaniesBoard: React.FC = () => {
             key={c.id}
             onClick={() => setFilter(c.id)}
             className={`font-mono text-[11px] uppercase tracking-wider px-3 py-1.5 border-2 transition-colors ${
-              filter === c.id ? 'bg-text-main text-bg-base border-edge' : 'bg-bg-base text-text-sub border-edge/40 hover:border-edge'
+              filter === c.id ? 'bg-text-main text-bg-base border-edge' : 'bg-bg-base text-text-sub border-border-soft hover:border-edge'
             }`}
           >
             {c.name}
@@ -149,7 +149,7 @@ export const OpportunitiesBoard: React.FC = () => (
               : f.status === 'Under construction' ? 'bg-accent-orange text-white'
               : 'bg-bg-elev text-text-sub border border-edge';
             return (
-              <div key={f.name} className="flex items-start justify-between gap-3 border-b border-edge/30 pb-2.5 last:border-0 last:pb-0">
+              <div key={f.name} className="flex items-start justify-between gap-3 border-b border-border-soft pb-2.5 last:border-0 last:pb-0">
                 <div className="min-w-0">
                   <div className="font-bold text-text-main text-sm">{f.name} <span className="font-normal text-text-dim">· {f.where}</span></div>
                   <div className="text-xs text-text-dim">{f.type}</div>
@@ -201,7 +201,7 @@ export const StudentPathSection: React.FC = () => (
     />
 
     <div className="relative">
-      <div className="absolute left-[15px] top-2 bottom-2 w-0.5 bg-edge/40 hidden sm:block" />
+      <div className="absolute left-[15px] top-2 bottom-2 w-0.5 bg-border-soft hidden sm:block" />
       <div className="space-y-5">
         {studentPath.map((p, i) => (
           <motion.div key={p.year} {...reveal} transition={{ ...reveal.transition, delay: i * 0.05 }} className="relative sm:pl-12">

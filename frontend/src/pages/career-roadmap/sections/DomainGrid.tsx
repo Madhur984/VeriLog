@@ -54,7 +54,7 @@ export const DomainGrid: React.FC = () => {
                 <div className="mt-4 flex items-center justify-between">
                   <div className="flex items-center gap-1">
                     {Array.from({ length: 5 }).map((_, k) => (
-                      <span key={k} className={`h-2 w-2 ${k < d.difficulty ? 'bg-text-main' : 'bg-edge/25'}`} />
+                      <span key={k} className={`h-2 w-2 ${k < d.difficulty ? 'bg-text-main' : 'bg-border-soft'}`} />
                     ))}
                     <span className="ml-2 font-mono text-[10px] text-text-dim uppercase tracking-wider">difficulty</span>
                   </div>
@@ -76,7 +76,7 @@ export const DomainGrid: React.FC = () => {
                         <div className="font-mono text-[10px] uppercase tracking-widest text-signal-core mb-2">Core skills</div>
                         <div className="flex flex-wrap gap-2">
                           {d.coreSkills.map((s) => (
-                            <span key={s} className="text-xs font-medium px-2 py-1 bg-bg-elev border border-edge/50 text-text-sub">{s}</span>
+                            <span key={s} className="text-xs font-medium px-2 py-1 bg-bg-elev border border-border-soft text-text-sub">{s}</span>
                           ))}
                         </div>
                       </div>

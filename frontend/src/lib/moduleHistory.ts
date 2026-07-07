@@ -63,7 +63,6 @@ export const MODULE_LABELS: Record<string, string> = {
   'module/3': 'Logic Gates',
   'module/4': 'Karnaugh Maps',
   'module/5': 'Verilog Core',
-  'module/6': 'Advanced Verilog',
   'dsd/1': 'Binary & Boolean Logic',
   'dsd/2': 'K-Maps · Architect of Logic',
   'dsd/3': 'Circuit Realisation',

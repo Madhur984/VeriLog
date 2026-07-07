@@ -52,7 +52,7 @@ interface RootNode {
 const ROOT_NODES: RootNode[] = [
   {
     id: 'r1', label: 'Signals & Waves', fullLabel: 'Signal Foundations',
-    description: 'Standard signals, analog vs digital, wave parameters, and the bridge to Verilog.',
+    description: 'Standard signals, analog vs digital, and wave parameters.',
     tech: 'WAVE_FOUNDATION', level: 'L1', pct: 85, Icon: Waves,
     color: ['#0e7490', '#22d3ee'], glow: '#22d3ee', route: '/module/1',
     gate: 'mux', status: 'done',
@@ -60,7 +60,6 @@ const ROOT_NODES: RootNode[] = [
       { id: 'r1c1', label: 'Standard Signals', pct: 100, color: '#22d3ee', icon: '⚡' },
       { id: 'r1c2', label: 'Analog vs Digital', pct: 100, color: '#38bdf8', icon: '↺' },
       { id: 'r1c3', label: 'Wave Parameters', pct: 100, color: '#0ea5e9', icon: '∿' },
-      { id: 'r1c4', label: 'Verilog Bridge', pct: 80, color: '#7dd3fc', icon: '≋' },
     ],
   },
   {

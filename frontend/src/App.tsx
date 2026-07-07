@@ -64,7 +64,6 @@ const ModuleOne = named(() => import('./pages/ModuleOne'), 'ModuleOne');
 const ModuleTwo = named(() => import('./pages/ModuleTwo'), 'ModuleTwo');
 const ModuleThree = named(() => import('./pages/ModuleThree'), 'ModuleThree');
 const ModuleFour = named(() => import('./pages/ModuleFour'), 'ModuleFour');
-const ModuleSix = named(() => import('./pages/ModuleSix'), 'ModuleSix');
 const SandboxModule5 = named(() => import('./pages/SandboxModule5'), 'SandboxModule5');
 const Module1Root = named(() => import('./components/level1/module1_v4/Module1Root'), 'Module1Root');
 const Module5Root = named(() => import('./components/level1/module5_v4/Module5Root'), 'Module5Root');
@@ -221,8 +220,6 @@ function App() {
             <Route path="/basic-electronics/10/:chapter" element={<BeModule10Root />} />
             <Route path="/module/4" element={<ModuleFour />} />
             <Route path="/module/5" element={<Module5Root />} />
-            <Route path="/module/6" element={<ModuleSix />} />
-            <Route path="/module/6/:index" element={<ModuleSix />} />
             <Route path="/sandbox/verilog" element={<SandboxModule5 />} />
           </Route>
 

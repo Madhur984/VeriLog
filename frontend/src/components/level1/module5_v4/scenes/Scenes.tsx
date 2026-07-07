@@ -531,8 +531,8 @@ export const SceneIdentity: React.FC<SceneProps> = ({ accent }) => (
     </Figure>
 
     <Callout accent={accent} label="What's next">
-      Module 6 (L6 · Synthesis Layer) - abstraction levels, VLSI flow, FPGA vs ASIC, modern accelerators. You now have
-      the language; the next module shows you the system.
+      You now have the language. Take it further in the Digital System Design track — adders, multiplexers, decoders
+      and real combinational &amp; sequential circuits — where this RTL mindset becomes working hardware.
     </Callout>
   </StudyScene>
 );

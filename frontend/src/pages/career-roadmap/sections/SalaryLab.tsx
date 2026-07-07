@@ -26,7 +26,7 @@ export const SalaryLab: React.FC = () => (
               </div>
               <span className="font-mono text-sm font-bold text-text-main shrink-0">₹{s.min}–{s.max}L</span>
             </div>
-            <div className="relative h-6 w-full bg-bg-void border border-edge/40">
+            <div className="relative h-6 w-full bg-bg-void border border-border-soft">
               <motion.div
                 initial={{ scaleX: 0 }}
                 whileInView={{ scaleX: 1 }}
@@ -68,7 +68,7 @@ export const SalaryLab: React.FC = () => (
         <p className="text-xs text-text-dim mb-4">Indicative gross annual pay (entry → senior), {AS_OF}.</p>
         <div className="space-y-3">
           {globalPay.map((g) => (
-            <div key={g.country} className="border-b border-edge/30 pb-3 last:border-0 last:pb-0">
+            <div key={g.country} className="border-b border-border-soft pb-3 last:border-0 last:pb-0">
               <div className="flex items-center justify-between gap-3">
                 <span className="font-medium text-text-main"><span className="mr-2">{g.flag}</span>{g.country}</span>
                 <span className="font-mono text-xs text-text-sub shrink-0">{g.currency} {g.entry} → {g.senior}</span>
