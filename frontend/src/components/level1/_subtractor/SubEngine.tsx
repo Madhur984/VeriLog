@@ -232,7 +232,7 @@ export const SubModuleShell: React.FC<ShellProps> = ({
           <header className="h-16 lg:h-20 border-b flex items-center justify-between px-4 lg:px-12 z-10 gap-3"
             style={{ borderColor: isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }}>
             <div className="flex items-center gap-3 min-w-0">
-              <HamburgerButton isDarkMode={isDarkMode} onClick={() => setNavOpen(true)} />
+              <HamburgerButton isDarkMode={isDarkMode} onClick={() => setNavOpen(o => !o)} />
               <div className="flex flex-col min-w-0">
                 <span className="text-[10px] font-mono uppercase tracking-[0.4em] font-bold transition-colors duration-500" style={{ color: theme.primary }}>
                   {page.part}

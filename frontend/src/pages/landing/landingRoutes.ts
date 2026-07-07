@@ -28,12 +28,10 @@ export const LANDING_ROUTES = {
   digitalDesign: '/dsd/1',
   /** Basic Electronics track entry (module 1, Physics of Control). */
   basicElectronics: '/basic-electronics/1',
-  /** Career roadmap, Explore tab (domains, companies). */
-  career: '/career-roadmap?tab=explore',
-  /** Career roadmap, Skills tab (skill-gap radar). */
-  careerSkills: '/career-roadmap?tab=skills',
-  /** Career roadmap, About tab (story, team, mission). */
-  about: '/career-roadmap?tab=about',
+  /** Career roadmap (domains, salaries, companies, opportunities, path). */
+  career: '/career-roadmap',
+  /** Career roadmap, jump to the domains + skills section. */
+  careerSkills: '/career-roadmap#domains',
   /** Auth / sign-in screen. */
   login: '/login',
   /** The signed-in hub (portal). Shown instead of sign-in once a session exists. */

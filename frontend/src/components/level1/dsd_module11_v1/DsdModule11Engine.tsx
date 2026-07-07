@@ -154,7 +154,7 @@ export const DsdModule11Engine: React.FC<{ isDarkMode: boolean; onThemeToggle: (
       <div className="flex-1 flex flex-col h-full overflow-hidden relative z-10">
         <header className="h-16 lg:h-20 border-b flex items-center justify-between px-4 lg:px-12 z-10 gap-3" style={{ borderColor: 'var(--border-soft)' }}>
           <div className="flex items-center gap-3 min-w-0">
-            <HamburgerButton isDarkMode={isDarkMode} onClick={() => setNavOpen(true)} />
+            <HamburgerButton isDarkMode={isDarkMode} onClick={() => setNavOpen(o => !o)} />
             <div className="flex flex-col min-w-0">
               <span className="text-[10px] font-mono uppercase tracking-[0.4em] font-bold transition-colors duration-500" style={{ color: theme.primary }}>{page.part}</span>
               <h2 className="text-base lg:text-xl font-bold tracking-tight truncate">{page.label}</h2>

@@ -294,7 +294,6 @@ export default function LandingPageContainer() {
             <a href="#curriculum" onClick={(e) => scrollToSection(e, 'curriculum')} className="hover:text-slate-900 dark:hover:text-white transition-colors">Curriculum</a>
             <a href="#playground" onClick={(e) => scrollToSection(e, 'playground')} className="hover:text-slate-900 dark:hover:text-white transition-colors">Playground</a>
             <a href="#diagnostics" onClick={(e) => scrollToSection(e, 'diagnostics')} className="hover:text-slate-900 dark:hover:text-white transition-colors">Documentation</a>
-            <Link to={LANDING_ROUTES.about} className="hover:text-slate-900 dark:hover:text-white transition-colors">About Us</Link>
           </div>
 
           <div className="flex items-center gap-3 sm:gap-5">
@@ -328,7 +327,6 @@ export default function LandingPageContainer() {
                 <a href="#curriculum" onClick={(e) => scrollToSection(e, 'curriculum')} className="py-2 hover:text-slate-900 dark:hover:text-white transition-colors">Curriculum</a>
                 <a href="#playground" onClick={(e) => scrollToSection(e, 'playground')} className="py-2 hover:text-slate-900 dark:hover:text-white transition-colors">Playground</a>
                 <a href="#diagnostics" onClick={(e) => scrollToSection(e, 'diagnostics')} className="py-2 hover:text-slate-900 dark:hover:text-white transition-colors">Documentation</a>
-                <Link to={LANDING_ROUTES.about} onClick={() => setMobileMenuOpen(false)} className="py-2 hover:text-slate-900 dark:hover:text-white transition-colors">About Us</Link>
                 <Link to={primaryTo} onClick={() => setMobileMenuOpen(false)} className="mt-2 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 px-4 py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors text-center active-press">
                   {primaryLabel}
                 </Link>
@@ -664,7 +662,6 @@ export default function LandingPageContainer() {
                   <li><a href="#curriculum" className="hover:text-[#4A57FF] transition-colors">&gt;_ Curriculum</a></li>
                   <li><a href="#playground" className="hover:text-[#4A57FF] transition-colors">&gt;_ Playground</a></li>
                   <li><a href="#diagnostics" className="hover:text-[#4A57FF] transition-colors">&gt;_ Documentation</a></li>
-                  <li><Link to={LANDING_ROUTES.about} className="hover:text-[#4A57FF] transition-colors">&gt;_ About Us</Link></li>
                 </ul>
               </div>
               <div>

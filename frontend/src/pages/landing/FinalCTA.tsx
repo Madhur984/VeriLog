@@ -79,7 +79,6 @@ export const FinalCTATerminal: React.FC = () => {
             <li><a href="#curriculum-section" className="hover:text-[#22D3EE]">&gt;_ Curriculum</a></li>
             <li><a href="#documentation-section" className="hover:text-[#22D3EE]">&gt;_ Documentation</a></li>
             <li><Link to={LANDING_ROUTES.career} className="hover:text-[#22D3EE]">&gt;_ University Access</Link></li>
-            <li><Link to={LANDING_ROUTES.about} className="hover:text-[#22D3EE]">&gt;_ About Us</Link></li>
           </ul>
         </div>
 

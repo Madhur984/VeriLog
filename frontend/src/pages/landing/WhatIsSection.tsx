@@ -37,15 +37,6 @@ export const WhatIsSection = () => {
                 Custom-built by ECE architects to establish practical engineering foundations.
               </p>
             </div>
-            <div>
-              <Link
-                to={LANDING_ROUTES.about}
-                className="inline-flex items-center gap-1.5 text-sm font-semibold transition-colors text-[#22D3EE] hover:text-[#5ce1e6]"
-                aria-label="Read our documentation story"
-              >
-                Read our story →
-              </Link>
-            </div>
           </motion.div>
 
           {/* Right Column: Minimalist Gate Preview Container */}

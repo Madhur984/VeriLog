@@ -253,7 +253,7 @@ export const DsdModule10Engine: React.FC<{
           style={{ borderColor: 'var(--border-soft)' }}
         >
           <div className="flex items-center gap-3 min-w-0">
-            <HamburgerButton isDarkMode={isDarkMode} onClick={() => setNavOpen(true)} />
+            <HamburgerButton isDarkMode={isDarkMode} onClick={() => setNavOpen(o => !o)} />
             <div className="flex flex-col min-w-0">
               <span className="text-[10px] font-mono uppercase tracking-[0.4em] font-bold transition-colors duration-500" style={{ color: theme.primary }}>
                 {page.part}

@@ -230,7 +230,6 @@ export const LandingFooter = () => {
                 { label: 'Start learning', to: LANDING_ROUTES.firstModule },
                 { label: 'Explore career paths', to: LANDING_ROUTES.career },
                 { label: 'Assess skill gaps', to: LANDING_ROUTES.careerSkills },
-                { label: 'Our story & team', to: LANDING_ROUTES.about },
               ].map((l) => (
                 <Link
                   key={l.label}

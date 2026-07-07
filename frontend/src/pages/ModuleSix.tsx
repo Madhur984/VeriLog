@@ -191,7 +191,7 @@ export const ModuleSix: React.FC = () => {
       <div className="flex-1 flex flex-col h-full overflow-hidden relative z-10">
         <header className="h-16 border-b border-slate-200 dark:border-white/10 flex items-center justify-between px-4 lg:px-10 z-10 bg-bg-elev gap-3">
           <div className="flex items-center gap-3 min-w-0">
-            <HamburgerButton isDarkMode={isDarkMode} onClick={() => setNavOpen(true)} />
+            <HamburgerButton isDarkMode={isDarkMode} onClick={() => setNavOpen(o => !o)} />
             <h2 className="text-base lg:text-lg font-black tracking-tight truncate">{page.label}</h2>
           </div>
           <div className="text-right text-[10px] font-mono opacity-20 uppercase tracking-widest">
