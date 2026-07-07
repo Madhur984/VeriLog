@@ -2,6 +2,7 @@ import React, { useEffect, useMemo } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { moduleIdFromPath, canOpenModule, recordModuleVisit } from '../lib/auth';
 import { recordModuleHistory } from '../lib/moduleHistory';
+import { enterModule, leaveModule } from '../lib/engagement';
 
 /**
  * Gate for course-module routes.
@@ -28,12 +29,21 @@ export const ModuleGate: React.FC<{ children?: React.ReactNode }> = ({ children 
 
     // Count the visit only after we've decided to allow it, and record the
     // exact page so the profile can offer "continue where you left off".
+    // enterModule also drives per-module screen-time tracking: it keeps one
+    // timing session across sub-pages of the same module and starts a fresh one
+    // when the module changes (see lib/engagement).
     useEffect(() => {
         if (moduleId && allowed) {
             recordModuleVisit(moduleId);
             recordModuleHistory(location.pathname);
+            enterModule(moduleId, location.pathname);
+        } else {
+            leaveModule();
         }
     }, [moduleId, allowed, location.pathname]);
+
+    // Leaving the whole module area (this gate unmounts) finalises the timer.
+    useEffect(() => () => { leaveModule(); }, []);
 
     if (moduleId && !allowed) {
         return (
