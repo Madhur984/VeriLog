@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import AssistantPanel from './AssistantPanel';
 
 /**
  * "Byte" — the BitForBytes guide mascot.
@@ -199,6 +200,7 @@ export default function MascotWidget() {
   const reduce = !!useReducedMotion();
 
   const [open, setOpen] = useState(true);
+  const [chatOpen, setChatOpen] = useState(false);
   const [idx, setIdx] = useState(0);
   const [hovered, setHovered] = useState(false);
   const [typed, setTyped] = useState('');
@@ -257,13 +259,14 @@ export default function MascotWidget() {
     : { scaleX: [1, 1, 0.62, 0.92, 1, 1], opacity: [0.32, 0.32, 0.14, 0.28, 0.32, 0.32] };
 
   return (
+    <>
     <div
       className={`pointer-events-none fixed right-4 z-[60] flex flex-col items-end gap-2 ${
         inModule ? 'bottom-24 lg:bottom-28' : 'bottom-4'
       }`}
     >
       <AnimatePresence>
-        {open && (
+        {open && !chatOpen && (
           <motion.div
             key={pathname}
             initial={{ opacity: 0, y: 12, scale: 0.94 }}
@@ -321,6 +324,14 @@ export default function MascotWidget() {
                 {idx < guide.tips.length - 1 ? 'Next ›' : 'Got it ✓'}
               </button>
             </div>
+
+            <button
+              type="button"
+              onClick={() => setChatOpen(true)}
+              className="mt-2 w-full rounded-lg border-2 border-edge-strong bg-signal-bright/10 py-1.5 text-[11px] font-bold uppercase tracking-wide text-signal-bright transition-colors hover:bg-signal-bright/20"
+            >
+              💬 Ask Byte anything
+            </button>
 
             {/* speech-bubble tail pointing down toward the mascot */}
             <span className="absolute -bottom-[7px] right-9 h-3 w-3 rotate-45 border-b-2 border-r-2 border-edge-strong bg-bg-elev" />
@@ -380,10 +391,10 @@ export default function MascotWidget() {
         >
           <motion.button
             type="button"
-            onClick={advance}
+            onClick={() => setChatOpen(true)}
             onHoverStart={() => setHovered(true)}
             onHoverEnd={() => setHovered(false)}
-            aria-label="Byte the guide — click for a tip about this page"
+            aria-label="Byte the guide — click to chat with the AI study buddy"
             className="pointer-events-auto h-full w-full rounded-2xl outline-none focus-visible:ring-2 focus-visible:ring-signal-bright"
             whileHover={{ scale: 1.07 }}
             whileTap={{ scale: 0.92, rotate: -3 }}
@@ -400,5 +411,7 @@ export default function MascotWidget() {
         </motion.div>
       </div>
     </div>
+    <AssistantPanel open={chatOpen} onClose={() => setChatOpen(false)} pathname={pathname} inModule={inModule} />
+    </>
   );
 }

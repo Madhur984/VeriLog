@@ -4,11 +4,15 @@ import { motion } from 'framer-motion';
 import { ArrowLeft, User, Mail, Lock, LogOut, Check, Loader2, ShieldAlert } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { getSession, clearSession } from '../lib/auth';
-import { useColorScheme } from '../hooks/useColorScheme';
 import { ThemeToggle } from '../components/ThemeToggle';
 
 /**
  * Account settings — wired from the "Settings" tile in the portal DiagnosticConsole.
+ *
+ * Restyled to the BitForBytes neo-brutalist system (lavender substrate, white
+ * cards with thick ink borders + hard offset shadows, purple accents, Space
+ * Grotesk + JetBrains Mono) to match the login / "Coming Soon" pages. Theming is
+ * handled purely by Tailwind `dark:` variants off the `.dark` class on <html>.
  *
  * Real Supabase users can change their display name, email and password, and sign
  * out. Guests (no real account) get their local display name plus a prompt to make
@@ -16,8 +20,6 @@ import { ThemeToggle } from '../components/ThemeToggle';
  */
 export const SettingsPage: React.FC = () => {
   const navigate = useNavigate();
-  const [scheme] = useColorScheme();
-  const isLight = scheme === 'light';
 
   const session = getSession();
   const isGuest = session.kind === 'guest';
@@ -123,49 +125,38 @@ export const SettingsPage: React.FC = () => {
     navigate('/login', { replace: true });
   };
 
-  // ── theme tokens ──
-  const pageBg = isLight ? '#ECE8FB' : '#06090f';
-  const cardStyle: React.CSSProperties = {
-    background: isLight ? 'rgba(255,255,255,0.96)' : 'rgba(7,10,18,0.92)',
-    border: isLight ? '1px solid #CBD5E1' : '1px solid rgba(59,130,246,0.18)',
-    boxShadow: isLight
-      ? '0 18px 44px rgba(15,23,42,0.10), 0 0 0 1px rgba(15,23,42,0.04)'
-      : '0 24px 60px rgba(0,0,0,0.7), inset 0 1px 1px rgba(255,255,255,0.03)',
-  };
-  const labelCls = `text-[11px] font-black uppercase tracking-[0.2em] ${isLight ? 'text-slate-500' : 'text-slate-400'}`;
-  const inputCls = `mt-2 w-full rounded-xl px-4 py-3 text-[15px] font-medium outline-none transition-colors ${
-    isLight
-      ? 'bg-slate-50 border border-slate-300 text-slate-900 focus:border-sky-500 focus:bg-white'
-      : 'bg-white/[0.04] border border-white/10 text-slate-100 focus:border-blue-500'
-  }`;
-  const accentBtn = `inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-[14px] font-bold transition-all active:scale-[0.98] disabled:opacity-60 ${
-    isLight ? 'bg-sky-600 text-white hover:bg-sky-700' : 'bg-blue-600 text-white hover:bg-blue-500'
-  }`;
-  const headingCls = isLight ? 'text-slate-900' : 'text-white';
-  const subCls = isLight ? 'text-slate-500' : 'text-slate-400';
+  // ── neo-brutalist class fragments (light + dark) ──
+  const cardCls =
+    'rounded-[18px] border-[3px] border-[#1B1436] bg-white shadow-[6px_6px_0_#1B1436] dark:border-[#07040F] dark:bg-[#151030] dark:shadow-[6px_6px_0_#7A3FD0]';
+  const inputCls =
+    'mt-2 w-full rounded-xl border-[2.5px] border-[#1B1436] bg-white px-4 py-3 text-[15px] font-medium text-[#1B1436] placeholder-[#8B7FB0] shadow-[3px_3px_0_#1B1436] outline-none transition-colors focus:border-[#7A3FD0] disabled:opacity-60 dark:border-[#07040F] dark:bg-[#0F0B1E] dark:text-white dark:placeholder-[#7A6DA0] dark:shadow-[3px_3px_0_#7A3FD0] dark:focus:border-[#B98BFF]';
+  const accentBtn =
+    'inline-flex items-center justify-center gap-2 rounded-xl border-[2.5px] border-[#1B1436] bg-[#7A3FD0] px-5 py-2.5 text-[14px] font-bold text-white shadow-[4px_4px_0_#1B1436] transition-transform hover:-translate-x-[2px] hover:-translate-y-[2px] hover:shadow-[6px_6px_0_#1B1436] active:translate-x-[1px] active:translate-y-[1px] active:shadow-[2px_2px_0_#1B1436] disabled:pointer-events-none disabled:opacity-60 dark:border-[#07040F] dark:shadow-[4px_4px_0_#3A2064]';
+  const labelCls = 'font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-[#6B5E86] dark:text-[#8E80B4]';
+  const headingCls = 'text-[#1B1436] dark:text-white';
+  const subCls = 'text-[#4A3F63] dark:text-[#B9AEDA]';
+  const iconCls = 'text-[#7A3FD0] dark:text-[#B98BFF]';
 
   return (
-    <div className="min-h-[100svh] w-full font-sans transition-colors duration-300" style={{ background: pageBg }}>
+    <div className="relative min-h-[100svh] w-full overflow-x-hidden bg-[#F1ECFF] font-sans text-[#1B1436] transition-colors duration-300 dark:bg-[#0F0B1E] dark:text-white">
+      {/* Soft top glow (matches the login / coming-soon substrate). */}
+      <div className="pointer-events-none fixed inset-x-0 top-0 h-[760px] bg-[radial-gradient(1200px_720px_at_50%_-12%,#E7DEFF,transparent_62%)] dark:bg-[radial-gradient(1200px_760px_at_50%_-14%,#241A45,transparent_60%)]" />
+
       {/* Top bar */}
-      <div className="sticky top-0 z-20 flex items-center justify-between px-4 sm:px-8 py-4 bg-bg-elev"
-        style={{ borderBottom: isLight ? '1px solid rgba(15,23,42,0.08)' : '1px solid rgba(255,255,255,0.06)' }}>
+      <div className="sticky top-0 z-20 flex items-center justify-between border-b-[3px] border-[#1B1436] bg-[#F1ECFF]/85 px-4 py-4 backdrop-blur-md dark:border-[#07040F] dark:bg-[#0F0B1E]/85 sm:px-8">
         <button
           onClick={() => navigate('/portal')}
-          className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-[13px] font-bold transition-colors ${
-            isLight
-              ? 'bg-white border border-slate-300 text-slate-700 hover:bg-slate-100'
-              : 'bg-white/[0.05] border border-white/10 text-slate-200 hover:bg-white/10'
-          }`}
+          className="inline-flex items-center gap-2 rounded-xl border-[2.5px] border-[#1B1436] bg-white px-4 py-2 text-[13px] font-bold text-[#1B1436] shadow-[3px_3px_0_#1B1436] transition-transform hover:-translate-x-[2px] hover:-translate-y-[2px] hover:shadow-[5px_5px_0_#1B1436] active:translate-x-[1px] active:translate-y-[1px] active:shadow-[1px_1px_0_#1B1436] dark:border-[#07040F] dark:bg-[#1B1440] dark:text-white dark:shadow-[3px_3px_0_#7A3FD0] dark:hover:shadow-[5px_5px_0_#7A3FD0]"
         >
           <ArrowLeft size={16} /> Portal
         </button>
         <ThemeToggle variant="minimal" />
       </div>
 
-      <div className="mx-auto w-full max-w-2xl px-4 sm:px-8 py-10">
+      <div className="relative z-10 mx-auto w-full max-w-2xl px-4 py-10 sm:px-8">
         <motion.h1
           initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-          className={`text-3xl font-extrabold tracking-tight ${headingCls}`}
+          className={`text-3xl font-bold tracking-tight ${headingCls}`}
         >
           Settings
         </motion.h1>
@@ -177,10 +168,10 @@ export const SettingsPage: React.FC = () => {
         {notice && (
           <motion.div
             initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }}
-            className={`mt-5 flex items-center gap-2 rounded-xl px-4 py-3 text-[14px] font-semibold ${
+            className={`mt-5 flex items-center gap-2 rounded-xl border-[2.5px] border-[#1B1436] px-4 py-3 text-[14px] font-semibold shadow-[4px_4px_0_#1B1436] dark:border-[#07040F] ${
               notice.kind === 'ok'
-                ? (isLight ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-emerald-500/10 text-emerald-300 border border-emerald-500/25')
-                : (isLight ? 'bg-rose-50 text-rose-700 border border-rose-200' : 'bg-rose-500/10 text-rose-300 border border-rose-500/25')
+                ? 'bg-[#E7FBEA] text-[#1B1436] dark:bg-[#12331F] dark:text-emerald-200 dark:shadow-[4px_4px_0_#0FB6D6]'
+                : 'bg-[#FDE7EA] text-[#B00020] dark:bg-[#3A1420] dark:text-red-300 dark:shadow-[4px_4px_0_#FF7A1A]'
             }`}
           >
             {notice.kind === 'ok' ? <Check size={16} /> : <ShieldAlert size={16} />}
@@ -189,7 +180,7 @@ export const SettingsPage: React.FC = () => {
         )}
 
         {isGuest && (
-          <div className="mt-5 rounded-2xl p-5" style={cardStyle}>
+          <div className={`mt-5 p-5 ${cardCls}`}>
             <div className={`text-[15px] font-bold ${headingCls}`}>Make it permanent</div>
             <p className={`mt-1 text-[14px] ${subCls}`}>
               Create a real account to save your progress, unlock every module, and sign in from any device.
@@ -200,9 +191,9 @@ export const SettingsPage: React.FC = () => {
 
         <div className="mt-6 space-y-5">
           {/* Display name */}
-          <section className="rounded-2xl p-5 sm:p-6" style={cardStyle}>
+          <section className={`p-5 sm:p-6 ${cardCls}`}>
             <div className="flex items-center gap-2">
-              <User size={18} className={isLight ? 'text-sky-600' : 'text-blue-400'} />
+              <User size={18} className={iconCls} />
               <h2 className={`text-[16px] font-bold ${headingCls}`}>Display name</h2>
             </div>
             <label className={`mt-4 block ${labelCls}`}>Name</label>
@@ -217,9 +208,9 @@ export const SettingsPage: React.FC = () => {
           {/* Email + password — real accounts only */}
           {!isGuest && (
             <>
-              <section className="rounded-2xl p-5 sm:p-6" style={cardStyle}>
+              <section className={`p-5 sm:p-6 ${cardCls}`}>
                 <div className="flex items-center gap-2">
-                  <Mail size={18} className={isLight ? 'text-sky-600' : 'text-blue-400'} />
+                  <Mail size={18} className={iconCls} />
                   <h2 className={`text-[16px] font-bold ${headingCls}`}>Email</h2>
                 </div>
                 <label className={`mt-4 block ${labelCls}`}>Email address</label>
@@ -236,9 +227,9 @@ export const SettingsPage: React.FC = () => {
                 </div>
               </section>
 
-              <section className="rounded-2xl p-5 sm:p-6" style={cardStyle}>
+              <section className={`p-5 sm:p-6 ${cardCls}`}>
                 <div className="flex items-center gap-2">
-                  <Lock size={18} className={isLight ? 'text-sky-600' : 'text-blue-400'} />
+                  <Lock size={18} className={iconCls} />
                   <h2 className={`text-[16px] font-bold ${headingCls}`}>Password</h2>
                 </div>
                 <label className={`mt-4 block ${labelCls}`}>New password</label>
@@ -256,9 +247,9 @@ export const SettingsPage: React.FC = () => {
           )}
 
           {/* Session */}
-          <section className="rounded-2xl p-5 sm:p-6" style={cardStyle}>
+          <section className={`p-5 sm:p-6 ${cardCls}`}>
             <div className="flex items-center gap-2">
-              <LogOut size={18} className={isLight ? 'text-rose-600' : 'text-rose-400'} />
+              <LogOut size={18} className="text-[#E23A5E] dark:text-[#FF6B8A]" />
               <h2 className={`text-[16px] font-bold ${headingCls}`}>{isGuest ? 'Guest session' : 'Sign out'}</h2>
             </div>
             <p className={`mt-2 text-[14px] ${subCls}`}>
@@ -268,11 +259,7 @@ export const SettingsPage: React.FC = () => {
             </p>
             <button
               onClick={logout}
-              className={`mt-4 inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-[14px] font-bold transition-colors ${
-                isLight
-                  ? 'bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100'
-                  : 'bg-rose-500/10 text-rose-300 border border-rose-500/25 hover:bg-rose-500/20'
-              }`}
+              className="mt-4 inline-flex items-center gap-2 rounded-xl border-[2.5px] border-[#1B1436] bg-[#FF6B6B] px-5 py-2.5 text-[14px] font-bold text-white shadow-[4px_4px_0_#1B1436] transition-transform hover:-translate-x-[2px] hover:-translate-y-[2px] hover:shadow-[6px_6px_0_#1B1436] active:translate-x-[1px] active:translate-y-[1px] active:shadow-[2px_2px_0_#1B1436] dark:border-[#07040F] dark:shadow-[4px_4px_0_#5A1A1A]"
             >
               <LogOut size={15} /> {isGuest ? 'Exit guest session' : 'Log out'}
             </button>
