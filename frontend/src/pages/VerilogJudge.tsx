@@ -8,13 +8,14 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import Editor, { type Monaco } from '@monaco-editor/react';
 import {
-  ArrowLeft, Play, RotateCcw, Lightbulb, Eye, EyeOff, CheckCircle2, XCircle,
+  ArrowLeft, Play, RotateCcw, Lightbulb, CheckCircle2, XCircle,
   AlertTriangle, ChevronDown, ChevronUp, Loader2, ChevronLeft, ChevronRight,
   PanelLeftClose, PanelLeftOpen, Sun, Moon, BadgeCheck, Zap,
 } from 'lucide-react';
 import { useColorScheme } from '../hooks/useColorScheme';
-import { VERILOG_PROBLEMS, type VProblem } from '../data/verilogProblems';
+import { VERILOG_PROBLEMS, isSeq, type VProblem, type AnyProblem } from '../data/verilogProblems';
 import { grade, type GradeResult } from '../engine/verilog/grade';
+import { compileVerilog, simulate, type Bit } from '../engine/verilog/miniSim';
 import { SynthSchematicView } from '../components/verilog/SynthSchematicView';
 import type { Diag } from '../engine/verilog/diagnostics';
 
@@ -35,7 +36,7 @@ function lineOfSignal(code: string, signal: string): number | undefined {
 
 // A chunky hand-drawn AND-gate mark - the bench's logo.
 const Monogram: React.FC = () => (
-  <div className="relative flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500 shadow-[0_2px_0_#047857]">
+  <div className="relative flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500 shadow-[0_2px_10px_rgba(16,185,129,0.35)]">
     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#04231a" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round">
       <path d="M7 5 H12 A7 7 0 0 1 12 19 H7 Z" />
       <path d="M3 9 H7 M3 15 H7 M19 12 H21.5" />
@@ -79,6 +80,28 @@ const loadSolved = (): Set<string> => {
   catch { return new Set(); }
 };
 
+// Every topic tag across the bank — powers the topic index/filter in the picker.
+const ALL_TOPICS = Array.from(new Set(VERILOG_PROBLEMS.flatMap((p) => p.tags))).sort();
+
+// ── daily solve streak (localStorage) ──
+const STREAK_KEY = 'vj_streak_v1';
+const dayStamp = (offsetDays = 0) => new Date(Date.now() - offsetDays * 86400000).toISOString().slice(0, 10);
+interface Streak { count: number; last: string }
+const loadStreak = (): Streak => {
+  try { const s = JSON.parse(localStorage.getItem(STREAK_KEY) || 'null'); if (s && typeof s.count === 'number') return s; }
+  catch { /* ignore */ }
+  return { count: 0, last: '' };
+};
+/** Bump the streak on a solve: +1 if yesterday, reset to 1 if a gap, unchanged if already today. */
+const bumpStreak = (prev: Streak): Streak => {
+  const t = dayStamp(0);
+  if (prev.last === t) return prev;
+  const count = prev.last === dayStamp(1) ? prev.count + 1 : 1;
+  const next = { count, last: t };
+  try { localStorage.setItem(STREAK_KEY, JSON.stringify(next)); } catch { /* quota */ }
+  return next;
+};
+
 export const VerilogJudge: React.FC = () => {
   const navigate = useNavigate();
   const [scheme, toggleScheme] = useColorScheme();
@@ -92,9 +115,15 @@ export const VerilogJudge: React.FC = () => {
   const [result, setResult] = useState<GradeResult | null>(null);
   const [running, setRunning] = useState(false);
   const [showHint, setShowHint] = useState(false);
-  const [showSolution, setShowSolution] = useState(false);
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [search, setSearch] = useState('');
+  const [diffFilter, setDiffFilter] = useState<'All' | VProblem['difficulty']>('All');
   const [solved, setSolved] = useState<Set<string>>(loadSolved);
+  const [streak, setStreak] = useState<Streak>(loadStreak);
+  const [topicFilter, setTopicFilter] = useState<string | null>(null);
+  const [customIn, setCustomIn] = useState<Record<string, Bit>>({});
+  const [customOut, setCustomOut] = useState<Record<string, Bit> | null>(null);
+  const [customErr, setCustomErr] = useState<string | null>(null);
   const [problemOpen, setProblemOpen] = useState(true);
   const [resultsOpen, setResultsOpen] = useState(false);
   const [passTotal, setPassTotal] = useState(0);
@@ -117,7 +146,9 @@ export const VerilogJudge: React.FC = () => {
     setResult(null);
     setResultsOpen(false);
     setShowHint(false);
-    setShowSolution(false);
+    setCustomOut(null);
+    setCustomErr(null);
+    setCustomIn({});
     setPickerOpen(false);
   }, []);
 
@@ -140,6 +171,7 @@ export const VerilogJudge: React.FC = () => {
         setPassTotal(r.total);
         setCelebrate(true);
         setTimeout(() => setCelebrate(false), 2200);
+        setStreak((s) => bumpStreak(s));
         if (!solved.has(problem.id)) {
           const next = new Set(solved); next.add(problem.id);
           setSolved(next);
@@ -176,12 +208,35 @@ export const VerilogJudge: React.FC = () => {
   }, []);
 
   const resetCode = () => { onCodeChange(problem.starter); setDebounced(problem.starter); };
+
+  // Custom "Run": simulate the student's design on ONE user-chosen input vector
+  // (no grading). Combinational only — same miniSim the grader uses.
+  const runCustom = useCallback(() => {
+    setCustomErr(null); setCustomOut(null);
+    const c = compileVerilog(code);
+    if (!c.ok) { setCustomErr(c.error); return; }
+    const inp: Record<string, Bit> = {};
+    problem.inputs.forEach((n) => { inp[n] = (customIn[n] ?? 0) as Bit; });
+    try {
+      const full = simulate(c.module, inp);
+      const out: Record<string, Bit> = {};
+      problem.outputs.forEach((o) => { out[o] = full[o]; });
+      setCustomOut(out);
+    } catch (e) { setCustomErr((e as Error).message); }
+  }, [code, problem, customIn]);
   const goto = (delta: number) => {
     const i = (problemIdx + delta + VERILOG_PROBLEMS.length) % VERILOG_PROBLEMS.length;
     selectProblem(VERILOG_PROBLEMS[i].id);
   };
 
   const solvedCount = solved.size;
+  const filtered = VERILOG_PROBLEMS.filter((p) => {
+    const q = search.trim().toLowerCase();
+    const matchQ = !q || p.title.toLowerCase().includes(q) || p.tags.some((t) => t.toLowerCase().includes(q));
+    const matchD = diffFilter === 'All' || p.difficulty === diffFilter;
+    const matchT = !topicFilter || p.tags.includes(topicFilter);
+    return matchQ && matchD && matchT;
+  });
   const statementParas = problem.statement.split('\n\n');
 
   const statusDot = running ? 'bg-amber-500' : result ? (result.status === 'pass' ? 'bg-emerald-500' : 'bg-rose-500') : 'bg-text-dim';
@@ -193,7 +248,12 @@ export const VerilogJudge: React.FC = () => {
   const raised = 'transition-all hover:-translate-y-0.5 active:translate-y-0 active:shadow-none';
 
   return (
-    <div className="flex min-h-[100svh] w-full flex-col overflow-y-auto bg-bg-void text-text-main lg:h-screen lg:overflow-hidden">
+    <div
+      className="flex min-h-[100svh] w-full flex-col overflow-y-auto bg-bg-void text-text-main lg:h-screen lg:overflow-hidden"
+      // De-purple: on this page the light-mode background is a neutral IDE slate,
+      // not the global lavender. Dark mode is already neutral.
+      style={isLight ? ({ ['--bg-void']: '#E9EDF3' } as React.CSSProperties) : undefined}
+    >
       {/* ── Header ── */}
       <header className="relative z-30 flex h-14 shrink-0 items-center gap-2.5 border-b border-border-soft bg-bg-elev px-3 lg:px-4">
         <button onClick={() => navigate('/portal')} title="Back to portal"
@@ -207,20 +267,20 @@ export const VerilogJudge: React.FC = () => {
         <div className="flex items-center gap-2.5">
           <Monogram />
           <div className="hidden leading-tight sm:block">
-            <div className="text-[14px] font-black tracking-tight text-text-main">Verilog Bench</div>
+            <div className="text-[14px] font-bold tracking-tight text-text-main">Verilog Bench</div>
             <div className="font-mono text-[9px] uppercase tracking-[0.22em] text-emerald-500/80">bitforbytes</div>
           </div>
         </div>
 
         {/* problem selector */}
         <div className="relative ml-1 sm:ml-2">
-          <div className="flex items-center rounded-xl border-2 border-border-soft bg-bg-void">
+          <div className="flex items-center rounded-xl border border-border-soft bg-bg-void">
             <button onClick={() => goto(-1)} title="Previous problem"
               className="flex h-9 w-7 items-center justify-center text-text-dim transition-colors hover:text-text-main">
               <ChevronLeft className="h-4 w-4" />
             </button>
             <button onClick={() => setPickerOpen((o) => !o)}
-              className="flex h-9 items-center gap-2 border-x-2 border-border-soft px-2.5 text-[13px] font-bold transition-colors hover:bg-white/5">
+              className="flex h-9 items-center gap-2 border-x border-border-soft px-2.5 text-[13px] font-bold transition-colors hover:bg-white/5">
               <span className="h-2 w-2 shrink-0 rounded-full" style={{ background: DIFF_COLOR[problem.difficulty] }} />
               <span className="font-mono text-[12px] text-text-dim">{String(problem.number).padStart(2, '0')}</span>
               <span className="max-w-[34vw] truncate sm:max-w-[200px]">{problem.title}</span>
@@ -236,32 +296,67 @@ export const VerilogJudge: React.FC = () => {
             {pickerOpen && (
               <>
                 <div className="fixed inset-0 z-10" onClick={() => setPickerOpen(false)} />
-                <motion.ul
+                <motion.div
                   initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }}
                   transition={{ duration: 0.15 }}
-                  className="absolute left-6 top-full z-20 mt-1.5 max-h-[70vh] w-[290px] overflow-y-auto rounded-xl border-2 border-border-soft bg-bg-elev p-1.5 shadow-xl"
+                  className="absolute left-6 top-full z-20 mt-1.5 flex max-h-[78vh] w-[330px] flex-col overflow-hidden rounded-xl border border-border-soft bg-bg-elev shadow-xl"
                 >
-                  {VERILOG_PROBLEMS.map((p) => {
-                    const isSel = p.id === problem.id;
-                    const isSolved = solved.has(p.id);
-                    return (
-                      <li key={p.id}>
-                        <button onClick={() => selectProblem(p.id)}
-                          className={`flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-[13px] transition-colors ${isSel ? 'bg-emerald-500/15 text-emerald-300' : 'hover:bg-white/5'}`}>
-                          <span className="w-4 text-center">
-                            {isSolved
-                              ? <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-                              : <span className="font-mono text-text-dim">{p.number}</span>}
-                          </span>
-                          <span className="flex-1 font-bold">{p.title}</span>
-                          <span className="text-[10px] font-black uppercase tracking-wider" style={{ color: DIFF_COLOR[p.difficulty] }}>
-                            {p.difficulty}
-                          </span>
+                  {/* search + difficulty filters */}
+                  <div className="shrink-0 border-b border-border-soft p-2.5">
+                    <input
+                      value={search} onChange={(e) => setSearch(e.target.value)} autoFocus
+                      placeholder="Search problems or tags…"
+                      className="w-full rounded-lg border border-border-soft bg-bg-void px-2.5 py-1.5 text-[12px] text-text-main outline-none placeholder:text-text-dim focus:border-emerald-500"
+                    />
+                    <div className="mt-2 flex items-center gap-1">
+                      {(['All', 'Easy', 'Medium', 'Hard'] as const).map((d) => (
+                        <button key={d} onClick={() => setDiffFilter(d)}
+                          className={`rounded-md px-2 py-1 text-[10px] font-bold uppercase tracking-wide transition-colors ${diffFilter === d ? 'bg-emerald-500 text-black' : 'bg-white/5 text-text-dim hover:text-text-main'}`}>
+                          {d}
                         </button>
-                      </li>
-                    );
-                  })}
-                </motion.ul>
+                      ))}
+                      <span className="ml-auto font-mono text-[10px] text-text-dim">{filtered.length}/{VERILOG_PROBLEMS.length}</span>
+                    </div>
+                    <div className="mt-2 flex flex-wrap gap-1">
+                      <button onClick={() => setTopicFilter(null)}
+                        className={`rounded-md px-1.5 py-0.5 text-[10px] font-bold transition-colors ${!topicFilter ? 'bg-cyan-500/20 text-cyan-300' : 'bg-white/5 text-text-dim hover:text-text-main'}`}>
+                        all topics
+                      </button>
+                      {ALL_TOPICS.map((t) => (
+                        <button key={t} onClick={() => setTopicFilter((cur) => (cur === t ? null : t))}
+                          className={`rounded-md px-1.5 py-0.5 font-mono text-[10px] transition-colors ${topicFilter === t ? 'bg-cyan-500/20 text-cyan-300' : 'bg-white/5 text-text-dim hover:text-text-main'}`}>
+                          {t}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  {/* filtered list */}
+                  <ul className="min-h-0 flex-1 overflow-y-auto p-1.5">
+                    {filtered.length === 0 && (
+                      <li className="px-2.5 py-8 text-center text-[12px] text-text-dim">No problems match.</li>
+                    )}
+                    {filtered.map((p) => {
+                      const isSel = p.id === problem.id;
+                      const isSolved = solved.has(p.id);
+                      return (
+                        <li key={p.id}>
+                          <button onClick={() => selectProblem(p.id)}
+                            className={`flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-[13px] transition-colors ${isSel ? 'bg-emerald-500/15 text-emerald-300' : 'hover:bg-white/5'}`}>
+                            <span className="w-4 text-center">
+                              {isSolved
+                                ? <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                                : <span className="font-mono text-text-dim">{p.number}</span>}
+                            </span>
+                            <span className="flex-1 truncate font-bold">{p.title}</span>
+                            <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: DIFF_COLOR[p.difficulty] }}>
+                              {p.difficulty}
+                            </span>
+                          </button>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </motion.div>
               </>
             )}
           </AnimatePresence>
@@ -277,9 +372,15 @@ export const VerilogJudge: React.FC = () => {
             </div>
             <span className="font-mono text-[11px] font-bold text-text-dim">{solvedCount}/{VERILOG_PROBLEMS.length}</span>
           </div>
+          {streak.count > 0 && (
+            <div className="hidden items-center gap-1 sm:flex" title={`${streak.count}-day solving streak`}>
+              <span className="text-[13px] leading-none">🔥</span>
+              <span className="font-mono text-[11px] font-bold text-amber-500">{streak.count}</span>
+            </div>
+          )}
           <Sep className="hidden h-6 md:block" />
           <button onClick={toggleScheme} title={isLight ? 'Switch to dark mode' : 'Switch to light mode'}
-            className="flex h-8 w-8 items-center justify-center rounded-lg border-2 border-border-soft text-text-dim transition-colors hover:text-text-main">
+            className="flex h-8 w-8 items-center justify-center rounded-lg border border-border-soft text-text-dim transition-colors hover:text-text-main">
             {isLight ? <Sun className="h-4 w-4 text-amber-500" /> : <Moon className="h-4 w-4 text-cyan-400" />}
           </button>
         </div>
@@ -304,8 +405,8 @@ export const VerilogJudge: React.FC = () => {
               </div>
 
               <div className="mb-3 flex flex-wrap items-center gap-3">
-                <h2 className="text-xl font-black tracking-tight lg:text-[22px]">{problem.title}</h2>
-                <span className="rounded-md px-2.5 py-0.5 text-[11px] font-black uppercase tracking-wider"
+                <h2 className="text-xl font-bold tracking-tight lg:text-[22px]">{problem.title}</h2>
+                <span className="rounded-md px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wider"
                   style={{ color: DIFF_COLOR[problem.difficulty], background: `${DIFF_COLOR[problem.difficulty]}22` }}>
                   {problem.difficulty}
                 </span>
@@ -318,7 +419,7 @@ export const VerilogJudge: React.FC = () => {
                 ))}
               </div>
 
-              <div className="space-y-3 text-[14px] leading-relaxed text-text-dim">
+              <div className="space-y-3.5 text-[14px] leading-[1.7] text-text-dim">
                 {statementParas.map((para, i) => <p key={i} dangerouslySetInnerHTML={{ __html: mdInline(para) }} />)}
               </div>
 
@@ -341,30 +442,19 @@ export const VerilogJudge: React.FC = () => {
                 </div>
               </div>
 
-              <div className="mt-5 flex flex-wrap gap-2">
-                {problem.hint && (
+              {problem.hint && (
+                <div className="mt-5 flex flex-wrap gap-2">
                   <button onClick={() => setShowHint((s) => !s)}
                     className="inline-flex items-center gap-1.5 rounded-lg border-2 border-amber-500/40 bg-amber-500/10 px-3 py-1.5 text-[12px] font-bold text-amber-500 transition-colors hover:bg-amber-500/20">
                     <Lightbulb className="h-3.5 w-3.5" /> {showHint ? 'Hide hint' : 'Hint'}
                   </button>
-                )}
-                <button onClick={() => setShowSolution((s) => !s)}
-                  className="inline-flex items-center gap-1.5 rounded-lg border-2 border-border-soft px-3 py-1.5 text-[12px] font-bold text-text-dim transition-colors hover:text-text-main">
-                  {showSolution ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
-                  {showSolution ? 'Hide solution' : 'Solution'}
-                </button>
-              </div>
+                </div>
+              )}
               <AnimatePresence>
                 {showHint && problem.hint && (
                   <motion.p initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
                     className="mt-3 overflow-hidden rounded-lg bg-amber-500/5 px-3 py-2 text-[13px] text-amber-200/90"
                     dangerouslySetInnerHTML={{ __html: mdInline(problem.hint) }} />
-                )}
-                {showSolution && (
-                  <motion.pre initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
-                    className="mt-3 overflow-x-auto rounded-lg border border-border-soft bg-bg-elev p-3 font-mono text-[12px] text-text-main">
-                    {problem.solution}
-                  </motion.pre>
                 )}
               </AnimatePresence>
             </motion.section>
@@ -389,20 +479,50 @@ export const VerilogJudge: React.FC = () => {
               <kbd className="rounded border border-border-soft px-1 py-px text-[9px]">Ctrl</kbd>
               <span>+</span>
               <kbd className="rounded border border-border-soft px-1 py-px text-[9px]">Enter</kbd>
-              <span className="ml-0.5">run</span>
+              <span className="ml-0.5">submit</span>
             </span>
             <div className="ml-auto flex items-center gap-2">
               <button onClick={resetCode} title="Reset to starter"
-                className="flex items-center gap-1.5 rounded-lg border-2 border-border-soft px-2.5 py-1.5 text-[12px] font-bold text-text-dim transition-colors hover:text-text-main">
+                className="flex items-center gap-1.5 rounded-lg border border-border-soft px-2.5 py-1.5 text-[12px] font-bold text-text-dim transition-colors hover:text-text-main">
                 <RotateCcw className="h-3.5 w-3.5" /> Reset
               </button>
               <button onClick={run} disabled={running}
-                className={`flex items-center gap-1.5 rounded-xl bg-emerald-500 px-4 py-1.5 text-[12px] font-black uppercase tracking-wide text-black shadow-[0_3px_0_#047857] ${raised} hover:bg-emerald-400 disabled:opacity-60`}>
+                className={`flex items-center gap-1.5 rounded-xl bg-emerald-500 px-4 py-1.5 text-[12px] font-bold uppercase tracking-wide text-black shadow-[0_4px_14px_rgba(16,185,129,0.35)] ${raised} hover:bg-emerald-400 disabled:opacity-60`}>
                 {running ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Play className="h-3.5 w-3.5" />}
-                {running ? 'Running' : 'Run'}
+                {running ? 'Judging' : 'Submit'}
               </button>
             </div>
           </div>
+
+          {/* Custom-run bar (combinational problems only): try one input vector without grading */}
+          {!isSeq(problem) && (
+          <div className="flex shrink-0 flex-wrap items-center gap-1.5 border-b border-border-soft bg-bg-void px-3 py-1.5 text-[11px]">
+            <span className="font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-text-dim">Custom run</span>
+            {problem.inputs.map((n) => {
+              const v = customIn[n] ?? 0;
+              return (
+                <button key={n} onClick={() => setCustomIn((s) => ({ ...s, [n]: (v ? 0 : 1) as Bit }))} title={`toggle ${n}`}
+                  className="flex items-center gap-1 rounded-md border border-border-soft px-2 py-0.5 font-mono transition-colors hover:border-emerald-500">
+                  <span className="text-cyan-400">{n}</span>
+                  <span className={v ? 'font-bold text-emerald-400' : 'text-text-dim'}>{v}</span>
+                </button>
+              );
+            })}
+            <button onClick={runCustom}
+              className="rounded-md bg-emerald-500/15 px-2.5 py-0.5 font-bold text-emerald-400 transition-colors hover:bg-emerald-500/25">
+              Run &rsaquo;
+            </button>
+            {customErr && <span className="font-mono text-rose-400">{customErr}</span>}
+            {customOut && !customErr && (
+              <span className="ml-1 font-mono text-text-dim">
+                &rarr;
+                {problem.outputs.map((o) => (
+                  <span key={o} className="ml-2"><span className="text-emerald-400">{o}</span>=<span className="font-bold text-text-main">{customOut[o]}</span></span>
+                ))}
+              </span>
+            )}
+          </div>
+          )}
 
           {/* Editor | Synth schematic */}
           <div className="grid min-h-0 flex-1 grid-cols-1 lg:grid-cols-2">
@@ -466,7 +586,7 @@ export const VerilogJudge: React.FC = () => {
 // ─── results drawer ──────────────────────────────────────────────────────────
 const ResultsDrawer: React.FC<{
   open: boolean; setOpen: (b: boolean) => void;
-  result: GradeResult | null; problem: VProblem; running: boolean;
+  result: GradeResult | null; problem: AnyProblem; running: boolean;
 }> = ({ open, setOpen, result, problem, running }) => {
   const passed = result?.status === 'pass';
   const summary = running ? 'Compiling & simulating...'
@@ -512,19 +632,19 @@ const PortCard: React.FC<{ label: string; names: string[]; accent: string }> = (
     <div className="mb-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-text-dim">{label}</div>
     <div className="flex flex-wrap gap-1.5">
       {names.map((n) => (
-        <span key={n} className="rounded-md px-2 py-0.5 font-mono text-[12px] font-black"
+        <span key={n} className="rounded-md px-2 py-0.5 font-mono text-[12px] font-bold"
           style={{ color: accent, background: `${accent}22` }}>{n}</span>
       ))}
     </div>
   </div>
 );
 
-const ResultsPanel: React.FC<{ result: GradeResult | null; problem: VProblem; running: boolean }> = ({ result, problem, running }) => {
+const ResultsPanel: React.FC<{ result: GradeResult | null; problem: AnyProblem; running: boolean }> = ({ result, problem, running }) => {
   if (running) {
     return <div className="flex items-center gap-2 p-4 text-[13px] text-text-dim"><Loader2 className="h-4 w-4 animate-spin" /> Compiling &amp; simulating every input combination...</div>;
   }
   if (!result) {
-    return <div className="p-4 text-[13px] leading-relaxed text-text-dim">Hit <span className="font-bold text-text-main">Run</span> to grade your module against every input combination. As you type, the synthesized circuit on the right shows exactly what your code builds - poke its wires to see values flow.</div>;
+    return <div className="p-4 text-[13px] leading-relaxed text-text-dim">Hit <span className="font-bold text-text-main">Submit</span> to grade your module against the full test set. As you type, the synthesized circuit on the right shows exactly what your code builds - poke its wires to see values flow.</div>;
   }
 
   if (result.status === 'error') {
@@ -538,20 +658,25 @@ const ResultsPanel: React.FC<{ result: GradeResult | null; problem: VProblem; ru
     );
   }
 
-  const cols = [...problem.inputs, ...problem.outputs];
   const passed = result.status === 'pass';
+  const seq = isSeq(problem);
+  const inCols = isSeq(problem) ? (problem.reset ? [problem.reset, ...problem.dataInputs] : problem.dataInputs) : problem.inputs;
+  const outCols = problem.outputs;
   return (
     <div className="p-3">
-      <div className={`mb-3 flex items-center gap-2 rounded-lg px-3 py-2 text-[13px] font-black ${passed ? 'bg-emerald-500/15 text-emerald-400' : 'bg-rose-500/15 text-rose-400'}`}>
+      <div className={`mb-3 flex items-center gap-2 rounded-lg px-3 py-2 text-[13px] font-bold ${passed ? 'bg-emerald-500/15 text-emerald-400' : 'bg-rose-500/15 text-rose-400'}`}>
         {passed ? <CheckCircle2 className="h-4 w-4" /> : <XCircle className="h-4 w-4" />}
-        {passed ? 'Accepted - all cases passed' : `${result.passed}/${result.total} test cases passed`}
+        {passed
+          ? (seq ? 'Accepted - every clock cycle matched' : 'Accepted - all cases passed')
+          : `${result.passed}/${result.total} ${seq ? 'cycles' : 'cases'} passed`}
       </div>
       <div className="overflow-x-auto rounded-lg border border-border-soft">
         <table className="w-full border-collapse font-mono text-[12px]">
           <thead>
             <tr className="bg-bg-void text-text-dim">
-              {problem.inputs.map((c) => <th key={c} className="px-3 py-1.5 text-left font-bold text-cyan-400">{c}</th>)}
-              {problem.outputs.map((c) => <th key={c} className="px-3 py-1.5 text-left font-bold text-emerald-400">{c}</th>)}
+              {seq && <th className="px-3 py-1.5 text-left font-bold">cyc</th>}
+              {inCols.map((c) => <th key={c} className="px-3 py-1.5 text-left font-bold text-cyan-400">{c}</th>)}
+              {outCols.map((c) => <th key={c} className="px-3 py-1.5 text-left font-bold text-emerald-400">{c}</th>)}
               <th className="px-3 py-1.5 text-left font-bold">got</th>
               <th className="px-3 py-1.5 text-center font-bold">ok</th>
             </tr>
@@ -559,10 +684,11 @@ const ResultsPanel: React.FC<{ result: GradeResult | null; problem: VProblem; ru
           <tbody>
             {result.rows.map((row, i) => (
               <tr key={i} className={`border-t border-border-soft ${row.pass ? '' : 'bg-rose-500/[0.06]'}`}>
-                {problem.inputs.map((c) => <td key={c} className="px-3 py-1 text-cyan-300">{row.in[c]}</td>)}
-                {problem.outputs.map((c) => <td key={c} className="px-3 py-1 text-emerald-300">{row.expected[c]}</td>)}
+                {seq && <td className="px-3 py-1 text-text-dim">{row.cycle}</td>}
+                {inCols.map((c) => <td key={c} className="px-3 py-1 text-cyan-300">{row.in[c] ?? 0}</td>)}
+                {outCols.map((c) => <td key={c} className="px-3 py-1 text-emerald-300">{row.expected[c]}</td>)}
                 <td className="px-3 py-1">
-                  {row.got ? cols.filter((c) => problem.outputs.includes(c)).map((c) => (
+                  {row.got ? outCols.map((c) => (
                     <span key={c} className={row.got![c] === row.expected[c] ? 'text-text-dim' : 'font-bold text-rose-400'}>{row.got![c]} </span>
                   )) : <span className="text-rose-400">x</span>}
                 </td>
@@ -578,45 +704,30 @@ const ResultsPanel: React.FC<{ result: GradeResult | null; problem: VProblem; ru
   );
 };
 
-// ─── BitforBytes Verified stamp (shown on a pass) ────────────────────────────
-const SPARKS = Array.from({ length: 14 }, (_, i) => i);
+// ─── "Accepted" confirmation (shown on a pass) — sharp + restrained ─────────
 const VerifiedStamp: React.FC<{ total: number }> = ({ total }) => (
   <motion.div
     initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
     className="pointer-events-none fixed inset-0 z-[100] grid place-items-center"
   >
-    {/* impact ring */}
+    {/* one clean pulse ring */}
     <motion.span
-      className="absolute h-44 w-44 rounded-full border-[3px] border-emerald-400"
-      initial={{ scale: 0.3, opacity: 0.7 }} animate={{ scale: 2, opacity: 0 }}
-      transition={{ duration: 0.85, ease: 'easeOut' }}
+      className="absolute h-36 w-56 rounded-2xl border border-emerald-400/60"
+      initial={{ scale: 0.7, opacity: 0.5 }} animate={{ scale: 1.5, opacity: 0 }}
+      transition={{ duration: 0.7, ease: 'easeOut' }}
     />
-    {/* emerald sparks */}
-    {SPARKS.map((i) => {
-      const a = (i / SPARKS.length) * Math.PI * 2;
-      const shades = ['#34d399', '#10b981', '#6ee7b7', '#059669'];
-      return (
-        <motion.span key={i} className="absolute h-2 w-2 rounded-sm" style={{ background: shades[i % shades.length] }}
-          initial={{ x: 0, y: 0, opacity: 1, scale: 1 }}
-          animate={{ x: Math.cos(a) * (150 + (i % 4) * 24), y: Math.sin(a) * (150 + (i % 4) * 24), opacity: 0, scale: 0.4, rotate: 200 }}
-          transition={{ duration: 1.2, ease: 'easeOut' }} />
-      );
-    })}
-    {/* the stamp - solid, no glass */}
     <motion.div
-      initial={{ scale: 1.5, opacity: 0, rotate: 8 }}
-      animate={{ scale: 1, opacity: 1, rotate: [-6, -7, -5, -6] }}
-      exit={{ scale: 1.1, opacity: 0 }}
-      transition={{ scale: { type: 'spring', stiffness: 340, damping: 14 }, rotate: { duration: 0.5 } }}
-      className="flex flex-col items-center gap-1 rounded-2xl border-[3px] border-emerald-500 bg-bg-elev px-7 py-4 shadow-[0_18px_50px_rgba(16,185,129,0.35)]"
+      initial={{ scale: 0.92, opacity: 0, y: 6 }}
+      animate={{ scale: 1, opacity: 1, y: 0 }}
+      exit={{ scale: 0.98, opacity: 0 }}
+      transition={{ type: 'spring', stiffness: 380, damping: 24 }}
+      className="flex flex-col items-center gap-1.5 rounded-2xl border border-emerald-500/50 bg-bg-elev px-8 py-5 shadow-[0_20px_60px_-12px_rgba(16,185,129,0.45)]"
     >
-      <div className="flex items-center gap-2">
-        <BadgeCheck className="h-7 w-7 text-emerald-400" />
-        <span className="text-xl font-black uppercase tracking-tight">
-          <span className="text-emerald-400">BitforBytes</span> <span className="text-text-main">Verified</span>
-        </span>
+      <div className="flex items-center gap-2.5">
+        <BadgeCheck className="h-6 w-6 text-emerald-400" />
+        <span className="text-[19px] font-bold tracking-tight text-emerald-400">Accepted</span>
       </div>
-      <span className="font-mono text-[10.5px] font-bold uppercase tracking-[0.25em] text-emerald-500/80">all {total} vectors pass &middot; ship it</span>
+      <span className="font-mono text-[10px] font-bold uppercase tracking-[0.24em] text-text-dim">All {total} test cases passed · BitForBytes</span>
     </motion.div>
   </motion.div>
 );

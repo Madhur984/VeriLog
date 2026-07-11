@@ -41,7 +41,7 @@ export type CompileResult =
   | { ok: false; error: string };
 
 // ─── helpers ─────────────────────────────────────────────────────────────────
-const stripComments = (src: string): string =>
+export const stripComments = (src: string): string =>
   src.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/\/\/[^\n]*/g, ' ');
 
 const BASE: Record<string, number> = { b: 2, o: 8, d: 10, h: 16 };
@@ -83,7 +83,7 @@ function lexExpr(s: string): ETok[] {
   return toks;
 }
 
-function parseExpr(src: string): Expr {
+export function parseExpr(src: string): Expr {
   const toks = lexExpr(src);
   let p = 0;
   const peek = () => toks[p];
@@ -267,7 +267,7 @@ export function compileVerilog(src: string): CompileResult {
 }
 
 // ─── evaluation ──────────────────────────────────────────────────────────────
-function evalExpr(e: Expr, vals: Map<string, Bit>): Bit | null {
+export function evalExpr(e: Expr, vals: Map<string, Bit>): Bit | null {
   if (e.k === 'const') return e.v;
   if (e.k === 'id') return vals.has(e.name) ? vals.get(e.name)! : null;
   if (e.k === 'not') { const a = evalExpr(e.a, vals); return a === null ? null : ((~a) & 1) as Bit; }

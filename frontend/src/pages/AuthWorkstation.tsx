@@ -344,15 +344,15 @@ export const AuthWorkstation: React.FC = () => {
 
   // ── neo-brutalist class fragments (light + dark) ──
   const inputCls =
-    'w-full rounded-xl border-[2.5px] border-[#1B1436] bg-white px-4 py-3 text-[15px] text-[#1B1436] placeholder-[#8B7FB0] shadow-[3px_3px_0_#1B1436] outline-none transition-colors focus:border-[#7A3FD0] dark:border-[#07040F] dark:bg-[#0F0B1E] dark:text-white dark:placeholder-[#7A6DA0] dark:shadow-[3px_3px_0_#7A3FD0] dark:focus:border-[#B98BFF]';
+    'w-full rounded-xl border-[2.5px] border-[#1B1436] bg-white px-4 py-3 text-[15px] text-[#1B1436] placeholder-[#8B7FB0] shadow-[3px_3px_0_#1B1436] outline-none transition-colors focus:border-[#7A3FD0] dark:border-[#4A3D7A] dark:bg-[#0F0B1E] dark:text-white dark:placeholder-[#7A6DA0] dark:shadow-[3px_3px_0_#7A3FD0] dark:focus:border-[#B98BFF]';
   const oauthCls =
-    'flex w-full items-center justify-center gap-2 rounded-xl border-[2.5px] border-[#1B1436] bg-white px-4 py-2.5 text-[14px] font-bold text-[#1B1436] shadow-[3px_3px_0_#1B1436] transition-transform hover:-translate-x-[2px] hover:-translate-y-[2px] hover:shadow-[5px_5px_0_#1B1436] active:translate-x-[1px] active:translate-y-[1px] active:shadow-[1px_1px_0_#1B1436] dark:border-[#07040F] dark:bg-[#1B1440] dark:text-white dark:shadow-[3px_3px_0_#7A3FD0] dark:hover:shadow-[5px_5px_0_#7A3FD0] dark:active:shadow-[1px_1px_0_#7A3FD0]';
+    'flex w-full items-center justify-center gap-2 rounded-xl border-[2.5px] border-[#1B1436] bg-white px-4 py-2.5 text-[14px] font-bold text-[#1B1436] shadow-[3px_3px_0_#1B1436] transition-transform hover:-translate-x-[2px] hover:-translate-y-[2px] hover:shadow-[5px_5px_0_#1B1436] active:translate-x-[1px] active:translate-y-[1px] active:shadow-[1px_1px_0_#1B1436] dark:border-[#4A3D7A] dark:bg-[#1B1440] dark:text-white dark:shadow-[3px_3px_0_#7A3FD0] dark:hover:shadow-[5px_5px_0_#7A3FD0] dark:active:shadow-[1px_1px_0_#7A3FD0]';
   const submitCls =
-    'group/sub mt-1 flex w-full items-center justify-center gap-2 rounded-xl border-[2.5px] border-[#1B1436] bg-[#7A3FD0] py-3.5 text-[15px] font-bold text-white shadow-[4px_4px_0_#1B1436] transition-transform hover:-translate-x-[2px] hover:-translate-y-[2px] hover:shadow-[6px_6px_0_#1B1436] active:translate-x-[1px] active:translate-y-[1px] active:shadow-[2px_2px_0_#1B1436] dark:border-[#07040F] dark:shadow-[4px_4px_0_#3A2064]';
+    'group/sub mt-1 flex w-full items-center justify-center gap-2 rounded-xl border-[2.5px] border-[#1B1436] bg-[#7A3FD0] py-3.5 text-[15px] font-bold text-white shadow-[4px_4px_0_#1B1436] transition-transform hover:-translate-x-[2px] hover:-translate-y-[2px] hover:shadow-[6px_6px_0_#1B1436] active:translate-x-[1px] active:translate-y-[1px] active:shadow-[2px_2px_0_#1B1436] dark:border-[#4A3D7A] dark:shadow-[4px_4px_0_#3A2064]';
   const cardCls =
-    'relative rounded-[20px] border-[3px] border-[#1B1436] bg-white shadow-[6px_6px_0_#1B1436] dark:border-[#07040F] dark:bg-[#151030] dark:shadow-[6px_6px_0_#7A3FD0]';
+    'relative rounded-[20px] border-[3px] border-[#1B1436] bg-white shadow-[6px_6px_0_#1B1436] dark:border-[#4A3D7A] dark:bg-[#151030] dark:shadow-[6px_6px_0_#7A3FD0]';
   const chipCls =
-    'grid place-items-center overflow-hidden border-[2.5px] border-[#1B1436] bg-white shadow-[4px_4px_0_#1B1436] dark:border-[#07040F] dark:shadow-[4px_4px_0_#7A3FD0]';
+    'grid place-items-center overflow-hidden border-[2.5px] border-[#1B1436] bg-white shadow-[4px_4px_0_#1B1436] dark:border-[#4A3D7A] dark:shadow-[4px_4px_0_#7A3FD0]';
 
   // OAuth buttons render only for providers the project has enabled; while the
   // settings are unknown (null) everything stays hidden.
@@ -397,10 +397,10 @@ export const AuthWorkstation: React.FC = () => {
 
       {/* Decorative floating sticker shapes in the empty margins (desktop only). */}
       <div aria-hidden className="pointer-events-none absolute inset-0 z-0 hidden overflow-hidden md:block">
-        <span className="nb-float absolute left-[8%] top-[16%] h-12 w-12 rounded-2xl border-[3px] border-[#1B1436] bg-[#FFE24D] shadow-[4px_4px_0_#1B1436] dark:border-[#07040F]" style={{ animationDelay: '0s' }} />
-        <span className="nb-float absolute right-[9%] top-[24%] h-10 w-10 rounded-full border-[3px] border-[#1B1436] bg-[#0FB6D6] shadow-[4px_4px_0_#1B1436] dark:border-[#07040F]" style={{ animationDelay: '1.2s' }} />
-        <span className="nb-float absolute left-[13%] bottom-[16%] h-11 w-11 rounded-2xl border-[3px] border-[#1B1436] bg-[#FF7A1A] shadow-[4px_4px_0_#1B1436] dark:border-[#07040F]" style={{ animationDelay: '0.6s' }} />
-        <span className="nb-float absolute right-[12%] bottom-[22%] h-9 w-9 rounded-lg border-[3px] border-[#1B1436] bg-[#9A54E6] shadow-[4px_4px_0_#1B1436] dark:border-[#07040F]" style={{ animationDelay: '1.8s' }} />
+        <span className="nb-float absolute left-[8%] top-[16%] h-12 w-12 rounded-2xl border-[3px] border-[#1B1436] bg-[#FFE24D] shadow-[4px_4px_0_#1B1436] dark:border-[#4A3D7A]" style={{ animationDelay: '0s' }} />
+        <span className="nb-float absolute right-[9%] top-[24%] h-10 w-10 rounded-full border-[3px] border-[#1B1436] bg-[#0FB6D6] shadow-[4px_4px_0_#1B1436] dark:border-[#4A3D7A]" style={{ animationDelay: '1.2s' }} />
+        <span className="nb-float absolute left-[13%] bottom-[16%] h-11 w-11 rounded-2xl border-[3px] border-[#1B1436] bg-[#FF7A1A] shadow-[4px_4px_0_#1B1436] dark:border-[#4A3D7A]" style={{ animationDelay: '0.6s' }} />
+        <span className="nb-float absolute right-[12%] bottom-[22%] h-9 w-9 rounded-lg border-[3px] border-[#1B1436] bg-[#9A54E6] shadow-[4px_4px_0_#1B1436] dark:border-[#4A3D7A]" style={{ animationDelay: '1.8s' }} />
       </div>
 
       <main className="relative z-10 flex min-h-[100svh] items-center justify-center px-5 py-14">
@@ -542,7 +542,7 @@ export const AuthWorkstation: React.FC = () => {
                             </div>
                             <div className="grid grid-cols-4 gap-1.5">
                               {[0, 1, 2, 3].map((index) => (
-                                <div key={index} className="h-2 rounded-full border-[1.5px] border-[#1B1436] bg-white transition-all duration-300 dark:border-[#07040F] dark:bg-[#0F0B1E]"
+                                <div key={index} className="h-2 rounded-full border-[1.5px] border-[#1B1436] bg-white transition-all duration-300 dark:border-[#4A3D7A] dark:bg-[#0F0B1E]"
                                   style={{ backgroundColor: index < strengthScore ? strengthColor : undefined }} />
                               ))}
                             </div>
@@ -554,7 +554,7 @@ export const AuthWorkstation: React.FC = () => {
                     {notice && (
                       <motion.div
                         initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }}
-                        className="rounded-xl border-[2.5px] border-[#1B1436] bg-[#E7FBEA] px-3 py-2.5 text-[13px] font-semibold text-[#1B1436] shadow-[3px_3px_0_#1B1436] dark:border-[#07040F] dark:bg-[#12331F] dark:text-emerald-200 dark:shadow-[3px_3px_0_#0FB6D6]"
+                        className="rounded-xl border-[2.5px] border-[#1B1436] bg-[#E7FBEA] px-3 py-2.5 text-[13px] font-semibold text-[#1B1436] shadow-[3px_3px_0_#1B1436] dark:border-[#4A3D7A] dark:bg-[#12331F] dark:text-emerald-200 dark:shadow-[3px_3px_0_#0FB6D6]"
                       >
                         {notice}
                       </motion.div>
@@ -563,7 +563,7 @@ export const AuthWorkstation: React.FC = () => {
                     {error && (
                       <motion.div
                         initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }}
-                        className="auth-error-shake rounded-xl border-[2.5px] border-[#1B1436] bg-[#FDE7EA] px-3 py-2.5 text-[13px] font-semibold text-[#B00020] shadow-[3px_3px_0_#1B1436] dark:border-[#07040F] dark:bg-[#3A1420] dark:text-red-300 dark:shadow-[3px_3px_0_#FF7A1A]"
+                        className="auth-error-shake rounded-xl border-[2.5px] border-[#1B1436] bg-[#FDE7EA] px-3 py-2.5 text-[13px] font-semibold text-[#B00020] shadow-[3px_3px_0_#1B1436] dark:border-[#4A3D7A] dark:bg-[#3A1420] dark:text-red-300 dark:shadow-[3px_3px_0_#FF7A1A]"
                       >
                         {error}
                       </motion.div>
@@ -631,7 +631,7 @@ export const AuthWorkstation: React.FC = () => {
                 {/* Trust stats */}
                 <div className="mt-6 grid grid-cols-3 gap-3">
                   {STATS.map((s) => (
-                    <div key={s.l} className="rounded-xl border-[2.5px] border-[#1B1436] bg-white px-2 py-3 text-center shadow-[3px_3px_0_#1B1436] dark:border-[#07040F] dark:bg-[#151030] dark:shadow-[3px_3px_0_#7A3FD0]">
+                    <div key={s.l} className="rounded-xl border-[2.5px] border-[#1B1436] bg-white px-2 py-3 text-center shadow-[3px_3px_0_#1B1436] dark:border-[#4A3D7A] dark:bg-[#151030] dark:shadow-[3px_3px_0_#7A3FD0]">
                       <div className="font-mono text-[22px] font-bold leading-none tabular-nums" style={{ color: s.c }}>{s.n}</div>
                       <div className="mt-1.5 font-mono text-[10px] font-bold uppercase tracking-widest text-[#6B5E86] dark:text-[#8E80B4]">{s.l}</div>
                     </div>
@@ -643,7 +643,7 @@ export const AuthWorkstation: React.FC = () => {
                   {SOCIALS.map((s) => (
                     <a
                       key={s.label} href={s.href} target="_blank" rel="noopener noreferrer" aria-label={s.label}
-                      className={`grid h-10 w-10 place-items-center rounded-xl border-[2.5px] border-[#1B1436] bg-white text-[#1B1436] shadow-[3px_3px_0_#1B1436] transition-transform hover:-translate-x-[2px] hover:-translate-y-[2px] hover:shadow-[5px_5px_0_#1B1436] active:translate-x-[1px] active:translate-y-[1px] dark:border-[#07040F] dark:bg-[#1B1440] dark:text-white dark:shadow-[3px_3px_0_#7A3FD0] ${s.hoverCls}`}
+                      className={`grid h-10 w-10 place-items-center rounded-xl border-[2.5px] border-[#1B1436] bg-white text-[#1B1436] shadow-[3px_3px_0_#1B1436] transition-transform hover:-translate-x-[2px] hover:-translate-y-[2px] hover:shadow-[5px_5px_0_#1B1436] active:translate-x-[1px] active:translate-y-[1px] dark:border-[#4A3D7A] dark:bg-[#1B1440] dark:text-white dark:shadow-[3px_3px_0_#7A3FD0] ${s.hoverCls}`}
                     >
                       {s.icon}
                     </a>
@@ -688,7 +688,7 @@ export const AuthWorkstation: React.FC = () => {
                   {loadingStep === initializationLogs.length - 1 && (
                     <motion.div
                       initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }}
-                      className={`mt-6 flex items-start gap-3 rounded-xl border-[2.5px] border-[#1B1436] bg-[#E7FBEA] p-4 text-sm shadow-[3px_3px_0_#1B1436] dark:border-[#07040F] dark:bg-[#12331F] dark:shadow-[3px_3px_0_#0FB6D6] ${authSuccess ? 'success-card' : ''}`}
+                      className={`mt-6 flex items-start gap-3 rounded-xl border-[2.5px] border-[#1B1436] bg-[#E7FBEA] p-4 text-sm shadow-[3px_3px_0_#1B1436] dark:border-[#4A3D7A] dark:bg-[#12331F] dark:shadow-[3px_3px_0_#0FB6D6] ${authSuccess ? 'success-card' : ''}`}
                     >
                       <CheckCircle2 size={16} className="mt-0.5 flex-shrink-0 text-emerald-600 dark:text-emerald-400" />
                       <div className="space-y-1">

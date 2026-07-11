@@ -109,14 +109,14 @@ export const AssistantPanel: React.FC<Props> = ({ open, onClose, pathname, inMod
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 20, scale: 0.96 }}
           transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
-          className={`pointer-events-auto fixed right-4 z-[70] flex w-[min(92vw,380px)] flex-col overflow-hidden rounded-[20px] border-[3px] border-[#1B1436] bg-[#F1ECFF] font-sans shadow-[6px_6px_0_#1B1436] dark:border-[#07040F] dark:bg-[#0F0B1E] dark:shadow-[6px_6px_0_#7A3FD0] ${
+          className={`pointer-events-auto fixed right-4 z-[70] flex w-[min(92vw,380px)] flex-col overflow-hidden rounded-[20px] border-[3px] border-[#1B1436] bg-[#F1ECFF] font-sans shadow-[6px_6px_0_#1B1436] dark:border-[#4A3D7A] dark:bg-[#0F0B1E] dark:shadow-[6px_6px_0_#7A3FD0] ${
             inModule ? 'bottom-24 lg:bottom-28' : 'bottom-4'
           }`}
           style={{ height: 'min(72vh, 540px)' }}
         >
           {/* Header */}
-          <div className="flex items-center gap-3 border-b-[3px] border-[#1B1436] bg-white px-4 py-3 dark:border-[#07040F] dark:bg-[#151030]">
-            <span className="grid h-10 w-10 place-items-center overflow-hidden rounded-xl border-[2.5px] border-[#1B1436] bg-[#F1ECFF] shadow-[3px_3px_0_#1B1436] dark:border-[#07040F] dark:bg-[#1B1440] dark:shadow-[3px_3px_0_#7A3FD0]">
+          <div className="flex items-center gap-3 border-b-[3px] border-[#1B1436] bg-white px-4 py-3 dark:border-[#4A3D7A] dark:bg-[#1B1540]">
+            <span className="grid h-10 w-10 place-items-center overflow-hidden rounded-xl border-[2.5px] border-[#1B1436] bg-[#F1ECFF] shadow-[3px_3px_0_#1B1436] dark:border-[#4A3D7A] dark:bg-[#1B1440] dark:shadow-[3px_3px_0_#7A3FD0]">
               <img src={FACE} alt="Byte" draggable={false} className="h-8 w-8 select-none object-contain" />
             </span>
             <div className="min-w-0 flex-1">
@@ -127,7 +127,7 @@ export const AssistantPanel: React.FC<Props> = ({ open, onClose, pathname, inMod
             </div>
             <button
               type="button" onClick={onClose} aria-label="Close assistant"
-              className="grid h-8 w-8 place-items-center rounded-lg border-[2.5px] border-[#1B1436] bg-white text-[#1B1436] shadow-[2px_2px_0_#1B1436] transition-transform hover:-translate-y-[1px] active:translate-y-[1px] dark:border-[#07040F] dark:bg-[#1B1440] dark:text-white dark:shadow-[2px_2px_0_#7A3FD0]"
+              className="grid h-8 w-8 place-items-center rounded-lg border-[2.5px] border-[#1B1436] bg-white text-[#1B1436] shadow-[2px_2px_0_#1B1436] transition-transform hover:-translate-y-[1px] active:translate-y-[1px] dark:border-[#4A3D7A] dark:bg-[#1B1440] dark:text-white dark:shadow-[2px_2px_0_#7A3FD0]"
             >
               <X size={16} />
             </button>
@@ -138,10 +138,10 @@ export const AssistantPanel: React.FC<Props> = ({ open, onClose, pathname, inMod
             {visible.map((m, i) => (
               <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                 <div
-                  className={`max-w-[85%] whitespace-pre-wrap rounded-2xl border-[2.5px] border-[#1B1436] px-3.5 py-2.5 text-[13.5px] leading-relaxed shadow-[3px_3px_0_#1B1436] dark:border-[#07040F] dark:shadow-[3px_3px_0_#7A3FD0] ${
+                  className={`max-w-[85%] whitespace-pre-wrap rounded-2xl border-[2.5px] border-[#1B1436] px-3.5 py-2.5 text-[13.5px] leading-relaxed shadow-[3px_3px_0_#1B1436] dark:border-[#4A3D7A] dark:shadow-[3px_3px_0_#7A3FD0] ${
                     m.role === 'user'
                       ? 'bg-[#7A3FD0] font-medium text-white'
-                      : 'bg-white text-[#1B1436] dark:bg-[#151030] dark:text-[#E9E4FA]'
+                      : 'bg-white text-[#1B1436] dark:bg-[#1B1540] dark:text-[#E9E4FA]'
                   }`}
                 >
                   {m.content}
@@ -151,7 +151,7 @@ export const AssistantPanel: React.FC<Props> = ({ open, onClose, pathname, inMod
 
             {waiting && (
               <div className="flex justify-start">
-                <div className="flex items-center gap-1.5 rounded-2xl border-[2.5px] border-[#1B1436] bg-white px-4 py-3 shadow-[3px_3px_0_#1B1436] dark:border-[#07040F] dark:bg-[#151030] dark:shadow-[3px_3px_0_#7A3FD0]">
+                <div className="flex items-center gap-1.5 rounded-2xl border-[2.5px] border-[#1B1436] bg-white px-4 py-3 shadow-[3px_3px_0_#1B1436] dark:border-[#4A3D7A] dark:bg-[#1B1540] dark:shadow-[3px_3px_0_#7A3FD0]">
                   {[0, 1, 2].map((d) => (
                     <motion.span
                       key={d}
@@ -170,7 +170,7 @@ export const AssistantPanel: React.FC<Props> = ({ open, onClose, pathname, inMod
                 {SUGGESTIONS.map((s) => (
                   <button
                     key={s} type="button" onClick={() => send(s)}
-                    className="rounded-full border-[2px] border-[#1B1436] bg-white px-3 py-1.5 text-[12px] font-semibold text-[#1B1436] shadow-[2px_2px_0_#1B1436] transition-transform hover:-translate-y-[1px] active:translate-y-[1px] dark:border-[#07040F] dark:bg-[#1B1440] dark:text-white dark:shadow-[2px_2px_0_#7A3FD0]"
+                    className="rounded-full border-[2px] border-[#1B1436] bg-white px-3 py-1.5 text-[12px] font-semibold text-[#1B1436] shadow-[2px_2px_0_#1B1436] transition-transform hover:-translate-y-[1px] active:translate-y-[1px] dark:border-[#4A3D7A] dark:bg-[#1B1440] dark:text-white dark:shadow-[2px_2px_0_#7A3FD0]"
                   >
                     {s}
                   </button>
@@ -182,18 +182,18 @@ export const AssistantPanel: React.FC<Props> = ({ open, onClose, pathname, inMod
           {/* Composer */}
           <form
             onSubmit={(e) => { e.preventDefault(); send(input); }}
-            className="flex items-center gap-2 border-t-[3px] border-[#1B1436] bg-white px-3 py-3 dark:border-[#07040F] dark:bg-[#151030]"
+            className="flex items-center gap-2 border-t-[3px] border-[#1B1436] bg-white px-3 py-3 dark:border-[#4A3D7A] dark:bg-[#1B1540]"
           >
             <input
               ref={inputRef}
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Ask Byte anything…"
-              className="min-w-0 flex-1 rounded-xl border-[2.5px] border-[#1B1436] bg-white px-3.5 py-2.5 text-[14px] text-[#1B1436] placeholder-[#8B7FB0] shadow-[2px_2px_0_#1B1436] outline-none focus:border-[#7A3FD0] dark:border-[#07040F] dark:bg-[#0F0B1E] dark:text-white dark:placeholder-[#7A6DA0] dark:shadow-[2px_2px_0_#7A3FD0] dark:focus:border-[#B98BFF]"
+              className="min-w-0 flex-1 rounded-xl border-[2.5px] border-[#1B1436] bg-white px-3.5 py-2.5 text-[14px] text-[#1B1436] placeholder-[#8B7FB0] shadow-[2px_2px_0_#1B1436] outline-none focus:border-[#7A3FD0] dark:border-[#4A3D7A] dark:bg-[#0F0B1E] dark:text-white dark:placeholder-[#7A6DA0] dark:shadow-[2px_2px_0_#7A3FD0] dark:focus:border-[#B98BFF]"
             />
             <button
               type="submit" disabled={busy || !input.trim()} aria-label="Send"
-              className="grid h-10 w-10 flex-shrink-0 place-items-center rounded-xl border-[2.5px] border-[#1B1436] bg-[#7A3FD0] text-white shadow-[3px_3px_0_#1B1436] transition-transform hover:-translate-y-[2px] active:translate-y-[1px] disabled:pointer-events-none disabled:opacity-40 dark:border-[#07040F] dark:shadow-[3px_3px_0_#3A2064]"
+              className="grid h-10 w-10 flex-shrink-0 place-items-center rounded-xl border-[2.5px] border-[#1B1436] bg-[#7A3FD0] text-white shadow-[3px_3px_0_#1B1436] transition-transform hover:-translate-y-[2px] active:translate-y-[1px] disabled:pointer-events-none disabled:opacity-40 dark:border-[#4A3D7A] dark:shadow-[3px_3px_0_#3A2064]"
             >
               <Send size={16} />
             </button>

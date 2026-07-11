@@ -127,11 +127,11 @@ export const SettingsPage: React.FC = () => {
 
   // ── neo-brutalist class fragments (light + dark) ──
   const cardCls =
-    'rounded-[18px] border-[3px] border-[#1B1436] bg-white shadow-[6px_6px_0_#1B1436] dark:border-[#07040F] dark:bg-[#151030] dark:shadow-[6px_6px_0_#7A3FD0]';
+    'rounded-[18px] border-[3px] border-[#1B1436] bg-white shadow-[6px_6px_0_#1B1436] dark:border-[#4A3D7A] dark:bg-[#151030] dark:shadow-[6px_6px_0_#7A3FD0]';
   const inputCls =
-    'mt-2 w-full rounded-xl border-[2.5px] border-[#1B1436] bg-white px-4 py-3 text-[15px] font-medium text-[#1B1436] placeholder-[#8B7FB0] shadow-[3px_3px_0_#1B1436] outline-none transition-colors focus:border-[#7A3FD0] disabled:opacity-60 dark:border-[#07040F] dark:bg-[#0F0B1E] dark:text-white dark:placeholder-[#7A6DA0] dark:shadow-[3px_3px_0_#7A3FD0] dark:focus:border-[#B98BFF]';
+    'mt-2 w-full rounded-xl border-[2.5px] border-[#1B1436] bg-white px-4 py-3 text-[15px] font-medium text-[#1B1436] placeholder-[#8B7FB0] shadow-[3px_3px_0_#1B1436] outline-none transition-colors focus:border-[#7A3FD0] disabled:opacity-60 dark:border-[#4A3D7A] dark:bg-[#0F0B1E] dark:text-white dark:placeholder-[#7A6DA0] dark:shadow-[3px_3px_0_#7A3FD0] dark:focus:border-[#B98BFF]';
   const accentBtn =
-    'inline-flex items-center justify-center gap-2 rounded-xl border-[2.5px] border-[#1B1436] bg-[#7A3FD0] px-5 py-2.5 text-[14px] font-bold text-white shadow-[4px_4px_0_#1B1436] transition-transform hover:-translate-x-[2px] hover:-translate-y-[2px] hover:shadow-[6px_6px_0_#1B1436] active:translate-x-[1px] active:translate-y-[1px] active:shadow-[2px_2px_0_#1B1436] disabled:pointer-events-none disabled:opacity-60 dark:border-[#07040F] dark:shadow-[4px_4px_0_#3A2064]';
+    'inline-flex items-center justify-center gap-2 rounded-xl border-[2.5px] border-[#1B1436] bg-[#7A3FD0] px-5 py-2.5 text-[14px] font-bold text-white shadow-[4px_4px_0_#1B1436] transition-transform hover:-translate-x-[2px] hover:-translate-y-[2px] hover:shadow-[6px_6px_0_#1B1436] active:translate-x-[1px] active:translate-y-[1px] active:shadow-[2px_2px_0_#1B1436] disabled:pointer-events-none disabled:opacity-60 dark:border-[#4A3D7A] dark:shadow-[4px_4px_0_#3A2064]';
   const labelCls = 'font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-[#6B5E86] dark:text-[#8E80B4]';
   const headingCls = 'text-[#1B1436] dark:text-white';
   const subCls = 'text-[#4A3F63] dark:text-[#B9AEDA]';
@@ -143,10 +143,10 @@ export const SettingsPage: React.FC = () => {
       <div className="pointer-events-none fixed inset-x-0 top-0 h-[760px] bg-[radial-gradient(1200px_720px_at_50%_-12%,#E7DEFF,transparent_62%)] dark:bg-[radial-gradient(1200px_760px_at_50%_-14%,#241A45,transparent_60%)]" />
 
       {/* Top bar */}
-      <div className="sticky top-0 z-20 flex items-center justify-between border-b-[3px] border-[#1B1436] bg-[#F1ECFF]/85 px-4 py-4 backdrop-blur-md dark:border-[#07040F] dark:bg-[#0F0B1E]/85 sm:px-8">
+      <div className="sticky top-0 z-20 flex items-center justify-between border-b-[3px] border-[#1B1436] bg-[#F1ECFF]/85 px-4 py-4 backdrop-blur-md dark:border-[#4A3D7A] dark:bg-[#0F0B1E]/85 sm:px-8">
         <button
           onClick={() => navigate('/portal')}
-          className="inline-flex items-center gap-2 rounded-xl border-[2.5px] border-[#1B1436] bg-white px-4 py-2 text-[13px] font-bold text-[#1B1436] shadow-[3px_3px_0_#1B1436] transition-transform hover:-translate-x-[2px] hover:-translate-y-[2px] hover:shadow-[5px_5px_0_#1B1436] active:translate-x-[1px] active:translate-y-[1px] active:shadow-[1px_1px_0_#1B1436] dark:border-[#07040F] dark:bg-[#1B1440] dark:text-white dark:shadow-[3px_3px_0_#7A3FD0] dark:hover:shadow-[5px_5px_0_#7A3FD0]"
+          className="inline-flex items-center gap-2 rounded-xl border-[2.5px] border-[#1B1436] bg-white px-4 py-2 text-[13px] font-bold text-[#1B1436] shadow-[3px_3px_0_#1B1436] transition-transform hover:-translate-x-[2px] hover:-translate-y-[2px] hover:shadow-[5px_5px_0_#1B1436] active:translate-x-[1px] active:translate-y-[1px] active:shadow-[1px_1px_0_#1B1436] dark:border-[#4A3D7A] dark:bg-[#1B1440] dark:text-white dark:shadow-[3px_3px_0_#7A3FD0] dark:hover:shadow-[5px_5px_0_#7A3FD0]"
         >
           <ArrowLeft size={16} /> Portal
         </button>
@@ -168,7 +168,7 @@ export const SettingsPage: React.FC = () => {
         {notice && (
           <motion.div
             initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }}
-            className={`mt-5 flex items-center gap-2 rounded-xl border-[2.5px] border-[#1B1436] px-4 py-3 text-[14px] font-semibold shadow-[4px_4px_0_#1B1436] dark:border-[#07040F] ${
+            className={`mt-5 flex items-center gap-2 rounded-xl border-[2.5px] border-[#1B1436] px-4 py-3 text-[14px] font-semibold shadow-[4px_4px_0_#1B1436] dark:border-[#4A3D7A] ${
               notice.kind === 'ok'
                 ? 'bg-[#E7FBEA] text-[#1B1436] dark:bg-[#12331F] dark:text-emerald-200 dark:shadow-[4px_4px_0_#0FB6D6]'
                 : 'bg-[#FDE7EA] text-[#B00020] dark:bg-[#3A1420] dark:text-red-300 dark:shadow-[4px_4px_0_#FF7A1A]'
@@ -259,7 +259,7 @@ export const SettingsPage: React.FC = () => {
             </p>
             <button
               onClick={logout}
-              className="mt-4 inline-flex items-center gap-2 rounded-xl border-[2.5px] border-[#1B1436] bg-[#FF6B6B] px-5 py-2.5 text-[14px] font-bold text-white shadow-[4px_4px_0_#1B1436] transition-transform hover:-translate-x-[2px] hover:-translate-y-[2px] hover:shadow-[6px_6px_0_#1B1436] active:translate-x-[1px] active:translate-y-[1px] active:shadow-[2px_2px_0_#1B1436] dark:border-[#07040F] dark:shadow-[4px_4px_0_#5A1A1A]"
+              className="mt-4 inline-flex items-center gap-2 rounded-xl border-[2.5px] border-[#1B1436] bg-[#FF6B6B] px-5 py-2.5 text-[14px] font-bold text-white shadow-[4px_4px_0_#1B1436] transition-transform hover:-translate-x-[2px] hover:-translate-y-[2px] hover:shadow-[6px_6px_0_#1B1436] active:translate-x-[1px] active:translate-y-[1px] active:shadow-[2px_2px_0_#1B1436] dark:border-[#4A3D7A] dark:shadow-[4px_4px_0_#5A1A1A]"
             >
               <LogOut size={15} /> {isGuest ? 'Exit guest session' : 'Log out'}
             </button>
