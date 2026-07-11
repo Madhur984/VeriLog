@@ -3,10 +3,57 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
 import { domains } from '../data/careerData';
 import { SectionHead, OUTLOOK, RangeBar, reveal } from './RoadmapUI';
+import { AcronymTooltip } from '../components/AcronymTooltip';
+
+const ECE_GLOSSARY: Record<string, { term: string, definition: string, analogy: string }> = {
+  "RTL": { term: "RTL", definition: "Register Transfer Level", analogy: "Like writing code to describe how data moves between storage registers in a microchip." },
+  "STA": { term: "STA", definition: "Static Timing Analysis", analogy: "Checking if all electrical signals reach their destinations on the chip before the clock ticks." },
+  "UVM": { term: "UVM", definition: "Universal Verification Methodology", analogy: "A standardized blueprint for building rigorous tests to find bugs in chip designs." },
+  "ASIC": { term: "ASIC", definition: "Application-Specific Integrated Circuit", analogy: "A microchip custom-designed for a single specific purpose, like Bitcoin mining or AI acceleration." },
+  "VLSI": { term: "VLSI", definition: "Very Large Scale Integration", analogy: "The technology of packing billions of transistors onto a single silicon chip." },
+  "EDA": { term: "EDA", definition: "Electronic Design Automation", analogy: "Software tools used to design and test complex circuits (like AutoCAD but for billions of transistors)." },
+  "DV": { term: "DV", definition: "Design Verification", analogy: "The testing phase that ensures a virtual chip design behaves exactly as intended before it is manufactured." }
+};
+
+const renderWithTooltips = (text: string) => {
+  const parts = text.split(/(\b\w+\b)/);
+  return parts.map((part, index) => {
+    const upper = part.toUpperCase();
+    if (ECE_GLOSSARY[upper]) {
+      const g = ECE_GLOSSARY[upper];
+      return (
+        <AcronymTooltip key={index} term={g.term} definition={g.definition} analogy={g.analogy}>
+          {part}
+        </AcronymTooltip>
+      );
+    }
+    return part;
+  });
+};
+
+interface DomainGridProps {
+  highlightedDomainId?: string | null;
+  openDomainId?: string | null;
+  onOpenDomain?: (id: string | null) => void;
+  onFocusSkillNode?: (nodeId: string) => void;
+}
 
 /** Ten ECE domains as expandable cards: pay band, difficulty, skills, roadmap. */
-export const DomainGrid: React.FC = () => {
-  const [open, setOpen] = useState<string | null>(null);
+export const DomainGrid: React.FC<DomainGridProps> = ({
+  highlightedDomainId,
+  openDomainId,
+  onOpenDomain,
+  onFocusSkillNode,
+}) => {
+  const [localOpen, setLocalOpen] = useState<string | null>(null);
+  const open = openDomainId !== undefined ? openDomainId : localOpen;
+  const setOpen = onOpenDomain !== undefined ? onOpenDomain : setLocalOpen;
+
+  React.useEffect(() => {
+    if (highlightedDomainId) {
+      setOpen(highlightedDomainId);
+    }
+  }, [highlightedDomainId, setOpen]);
 
   return (
     <section id="domains" className="max-w-6xl mx-auto px-4 sm:px-6 py-16 sm:py-24 scroll-mt-24">
@@ -19,13 +66,18 @@ export const DomainGrid: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         {domains.map((d, i) => {
           const isOpen = open === d.id;
+          const isHighlighted = d.id === highlightedDomainId;
           const ol = OUTLOOK[d.outlook];
           return (
             <motion.div
               key={d.id}
               {...reveal}
               transition={{ ...reveal.transition, delay: (i % 2) * 0.05 }}
-              className="bg-bg-base border-2 border-edge shadow-brutal"
+              className={`bg-bg-base border-2 shadow-brutal transition-all ${
+                isHighlighted 
+                  ? 'border-[#14B8A6] shadow-[0_0_20px_rgba(20,184,166,0.25)]' 
+                  : 'border-edge'
+              }`}
             >
               <button onClick={() => setOpen(isOpen ? null : d.id)} className="w-full text-left p-5 sm:p-6">
                 <div className="flex items-start justify-between gap-3">
@@ -33,10 +85,17 @@ export const DomainGrid: React.FC = () => {
                     <div className="font-mono text-[10px] uppercase tracking-widest text-text-dim mb-1">{d.tagline}</div>
                     <h3 className="text-xl font-bold text-text-main">{d.name}</h3>
                   </div>
-                  <span className={`shrink-0 font-mono text-[10px] uppercase tracking-wider px-2 py-1 ${ol.cls}`}>{ol.label}</span>
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    {isHighlighted && (
+                      <span className="font-mono text-[9px] uppercase tracking-wider px-2 py-1 bg-[#14B8A6]/20 border border-[#14B8A6] text-[#14B8A6] font-bold animate-pulse">
+                        IDEAL MATCH
+                      </span>
+                    )}
+                    <span className={`font-mono text-[10px] uppercase tracking-wider px-2 py-1 ${ol.cls}`}>{ol.label}</span>
+                  </div>
                 </div>
 
-                <p className="mt-3 text-sm text-text-sub leading-relaxed">{d.what}</p>
+                <p className="mt-3 text-sm text-text-sub leading-relaxed">{renderWithTooltips(d.what)}</p>
 
                 <div className="mt-4 grid grid-cols-2 gap-4">
                   <div>
@@ -73,13 +132,39 @@ export const DomainGrid: React.FC = () => {
                   >
                     <div className="p-5 sm:p-6 space-y-4">
                       <div>
-                        <div className="font-mono text-[10px] uppercase tracking-widest text-signal-core mb-2">Core skills</div>
+                        <div className="flex justify-between items-center mb-2">
+                          <div className="font-mono text-[10px] uppercase tracking-widest text-signal-core">Core skills</div>
+                          {onFocusSkillNode && (
+                            <button
+                              onClick={() => {
+                                const skillMap: Record<string, string> = {
+                                  vlsi: 'vlsi',
+                                  dv: 'verilog',
+                                  pd: 'vlsi',
+                                  analog: 'basic_electronics',
+                                  embedded: 'embedded',
+                                  wireless: 'wireless',
+                                  power: 'power',
+                                  'comp-arch': 'verilog',
+                                  eda: 'vlsi',
+                                  iot: 'embedded'
+                                };
+                                const nodeId = skillMap[d.id] || 'basic_electronics';
+                                onFocusSkillNode(nodeId);
+                              }}
+                              className="font-mono text-[9px] uppercase tracking-wider text-teal-400 hover:text-teal-300 transition-colors cursor-pointer"
+                            >
+                              [ View in Skill Graph ↗ ]
+                            </button>
+                          )}
+                        </div>
                         <div className="flex flex-wrap gap-2">
                           {d.coreSkills.map((s) => (
-                            <span key={s} className="text-xs font-medium px-2 py-1 bg-bg-elev border border-border-soft text-text-sub">{s}</span>
+                            <span key={s} className="text-xs font-medium px-2 py-1 bg-bg-elev border border-border-soft text-text-sub">{renderWithTooltips(s)}</span>
                           ))}
                         </div>
                       </div>
+
                       <div>
                         <div className="font-mono text-[10px] uppercase tracking-widest text-signal-core mb-2">Tools of the trade</div>
                         <div className="flex flex-wrap gap-x-4 gap-y-1">
@@ -94,7 +179,7 @@ export const DomainGrid: React.FC = () => {
                           {d.roadmap.map((r, idx) => (
                             <li key={r} className="flex gap-3 text-sm text-text-sub">
                               <span className="font-mono text-xs text-text-dim shrink-0">{String(idx + 1).padStart(2, '0')}</span>
-                              {r}
+                              {renderWithTooltips(r)}
                             </li>
                           ))}
                         </ol>

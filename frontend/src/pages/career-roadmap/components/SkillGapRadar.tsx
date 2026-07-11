@@ -2,6 +2,33 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ShieldAlert, Zap, CheckCircle2 } from 'lucide-react';
 import { useColorScheme } from '../../../hooks/useColorScheme';
+import { AcronymTooltip } from './AcronymTooltip';
+
+const ECE_GLOSSARY: Record<string, { term: string, definition: string, analogy: string }> = {
+  "RTL": { term: "RTL", definition: "Register Transfer Level", analogy: "Like writing code to describe how data moves between storage registers in a microchip." },
+  "STA": { term: "STA", definition: "Static Timing Analysis", analogy: "Checking if all electrical signals reach their destinations on the chip before the clock ticks." },
+  "UVM": { term: "UVM", definition: "Universal Verification Methodology", analogy: "A standardized blueprint for building rigorous tests to find bugs in chip designs." },
+  "ASIC": { term: "ASIC", definition: "Application-Specific Integrated Circuit", analogy: "A microchip custom-designed for a single specific purpose, like Bitcoin mining or AI acceleration." },
+  "VLSI": { term: "VLSI", definition: "Very Large Scale Integration", analogy: "The technology of packing billions of transistors onto a single silicon chip." },
+  "EDA": { term: "EDA", definition: "Electronic Design Automation", analogy: "Software tools used to design and test complex circuits." },
+  "DV": { term: "DV", definition: "Design Verification", analogy: "The testing phase that ensures a virtual chip design behaves exactly as intended before it is manufactured." }
+};
+
+const renderWithTooltips = (text: string) => {
+  const parts = text.split(/(\b\w+\b)/);
+  return parts.map((part, index) => {
+    const upper = part.toUpperCase();
+    if (ECE_GLOSSARY[upper]) {
+      const g = ECE_GLOSSARY[upper];
+      return (
+        <AcronymTooltip key={index} term={g.term} definition={g.definition} analogy={g.analogy}>
+          {part}
+        </AcronymTooltip>
+      );
+    }
+    return part;
+  });
+};
 
 interface RadarAxis {
   label: string;
@@ -88,6 +115,7 @@ interface SkillGapRadarProps {
   activeCompany?: string;
   setActiveCompany?: (company: string) => void;
   masteredNodes?: string[];
+  quizScores?: Record<string, number>;
 }
 
 export const SkillGapRadar: React.FC<SkillGapRadarProps> = ({
@@ -403,7 +431,7 @@ export const SkillGapRadar: React.FC<SkillGapRadarProps> = ({
                   <div key={axis.label} className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3 bg-white/[0.01] border border-white/5 rounded-lg">
                     <div className="space-y-1">
                       <div className="text-[10px] font-bold text-white uppercase tracking-wider">{axis.label} GAP Remediation</div>
-                      <div className="text-[9px] text-slate-400 leading-normal uppercase">{action.desc}</div>
+                      <div className="text-[9px] text-slate-400 leading-normal uppercase">{renderWithTooltips(action.desc)}</div>
                     </div>
                     <a
                       href={action.route}
@@ -421,10 +449,11 @@ export const SkillGapRadar: React.FC<SkillGapRadarProps> = ({
         {/* Adaptive Execution Estimator */}
         <div className={`border rounded-xl p-5 mt-6 ${isLight ? 'bg-bg-elev border-border-soft' : 'bg-[#0D0F12] border-white/5'}`}>
           <div className="flex justify-between items-center text-xs font-mono text-text-dim mb-3">
-            <span>INTENSITY ADJUSTER</span>
+            <label htmlFor="intensity-slider">INTENSITY ADJUSTER</label>
             <span className={`font-bold ${isLight ? 'text-signal-core' : 'text-[#22D3EE]'}`}>{studyHours} HRS/DAY</span>
           </div>
           <input
+            id="intensity-slider"
             type="range" min="1" max="5" value={studyHours}
             onChange={(e) => setStudyHours(Number(e.target.value))}
             className={`w-full h-1 rounded-lg cursor-pointer ${isLight ? 'accent-[#0369A1] bg-ghost-trace' : 'accent-[#22D3EE] bg-slate-800'}`}

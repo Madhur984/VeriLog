@@ -10,10 +10,19 @@ const ROLE_PRESETS = [
   { label: 'Software / EDA', ctc: 900000 },
 ];
 
-export const FiscalMatrix: React.FC = () => {
+interface FiscalMatrixProps {
+  initialRoleIndex?: number;
+  onFocusSkillNode?: (nodeId: string) => void;
+}
+
+export const FiscalMatrix: React.FC<FiscalMatrixProps> = ({ initialRoleIndex = 0, onFocusSkillNode }) => {
   const [savingsRate, setSavingsRate] = useState(30);
-  const [activeRole, setActiveRole] = useState(0);
-  const targetCorpus = 30000000; // 3Cr
+  const [activeRole, setActiveRole] = useState(initialRoleIndex);
+  const [targetCorpus, setTargetCorpus] = useState(30000000);
+
+  React.useEffect(() => {
+    setActiveRole(initialRoleIndex);
+  }, [initialRoleIndex]);
   const ctc = ROLE_PRESETS[activeRole].ctc;
   
   // Simplified math
@@ -47,21 +56,46 @@ export const FiscalMatrix: React.FC = () => {
               </div>
 
               {/* Role Selector */}
-              <div className="flex flex-wrap gap-2">
-                {ROLE_PRESETS.map((role, i) => (
-                  <button
-                    key={role.label}
-                    onClick={() => setActiveRole(i)}
-                    className={`px-3 py-1.5 text-[9px] font-mono uppercase tracking-widest border rounded-full transition-all ${
-                      activeRole === i
-                        ? 'bg-signal-core border-signal-core text-bg-void font-bold'
-                        : 'border-border-soft text-text-dim hover:border-text-dim hover:text-text-sub'
-                    }`}
-                  >
-                    {role.label}
-                  </button>
-                ))}
+              <div className="space-y-3">
+                <div className="flex flex-wrap gap-2">
+                  {ROLE_PRESETS.map((role, i) => (
+                    <button
+                      key={role.label}
+                      onClick={() => setActiveRole(i)}
+                      className={`px-3 py-1.5 text-[9px] font-mono uppercase tracking-widest border rounded-full transition-all ${
+                        activeRole === i
+                          ? 'bg-signal-core border-signal-core text-bg-void font-bold'
+                          : 'border-border-soft text-text-dim hover:border-text-dim hover:text-text-sub'
+                      }`}
+                    >
+                      {role.label}
+                    </button>
+                  ))}
+                </div>
+                
+                {onFocusSkillNode && (
+                  <div className="flex justify-start">
+                    <button
+                      onClick={() => {
+                        const roleToNode: Record<string, string> = {
+                          'VLSI Design': 'vlsi',
+                          'Embedded Systems': 'embedded',
+                          'RF / Wireless': 'wireless',
+                          'Software / EDA': 'verilog',
+                        };
+                        const activeLabel = ROLE_PRESETS[activeRole].label;
+                        if (roleToNode[activeLabel]) {
+                          onFocusSkillNode(roleToNode[activeLabel]);
+                        }
+                      }}
+                      className="text-[9px] font-mono uppercase tracking-widest text-teal-400 hover:text-teal-300 transition-colors cursor-pointer"
+                    >
+                      [ Analyze skill requirements in Graph ↗ ]
+                    </button>
+                  </div>
+                )}
               </div>
+
 
               <div className="space-y-6">
                 {components.map((comp, i) => (
@@ -95,7 +129,25 @@ export const FiscalMatrix: React.FC = () => {
                 <div className="text-center py-6">
                   <div className="text-[10px] font-mono text-text-dim uppercase tracking-widest mb-1">Estimated Freedom Age</div>
                   <div className="text-5xl font-bold text-signal-core">{freedomAge}</div>
-                  <div className="text-[9px] font-mono text-text-dim uppercase mt-2 tracking-widest">Target Corpus: ₹3Cr</div>
+                  <div className="text-[9px] font-mono text-text-dim uppercase mt-2 tracking-widest">Target Corpus: ₹{(targetCorpus / 10000000).toFixed(1)}Cr</div>
+                </div>
+
+                <div className="space-y-3">
+                  <div className="flex justify-between text-[10px] font-mono text-text-dim uppercase">
+                    <span>Target Corpus</span>
+                    <span className="text-text-main">₹{(targetCorpus / 10000000).toFixed(1)}Cr</span>
+                  </div>
+                  <label htmlFor="corpus-slider" className="sr-only">Target corpus amount</label>
+                  <input
+                    id="corpus-slider"
+                    type="range"
+                    min="5000000"
+                    max="100000000"
+                    step="5000000"
+                    value={targetCorpus}
+                    onChange={(e) => setTargetCorpus(parseInt(e.target.value))}
+                    className="w-full h-1 bg-border-soft rounded-full appearance-none accent-signal-core cursor-pointer"
+                  />
                 </div>
 
                 <div className="space-y-3">
@@ -114,7 +166,7 @@ export const FiscalMatrix: React.FC = () => {
                     className="w-full h-1 bg-border-soft rounded-full appearance-none accent-signal-core cursor-pointer"
                   />
                   <p className="text-[9px] font-mono text-text-dim uppercase leading-relaxed">
-                    At ₹7.5L CTC, saving {savingsRate}% = ₹{(ctc * (savingsRate / 100)).toLocaleString()}/yr invested at 12% CAGR.
+                    At ₹{(ctc / 100000).toFixed(1)}L CTC, saving {savingsRate}% = ₹{(ctc * (savingsRate / 100)).toLocaleString('en-IN')}/yr invested at 12% CAGR.
                   </p>
                 </div>
               </div>

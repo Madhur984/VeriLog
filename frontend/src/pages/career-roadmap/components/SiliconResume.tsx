@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { FileDown, CheckCircle, Sparkles, Cpu, CircuitBoard, Zap } from 'lucide-react';
+import { getSession } from '../../../lib/auth';
 import { useColorScheme } from '../../../hooks/useColorScheme';
 import { BADGE_DEFINITIONS } from '../../../data/badgeDefinitions';
 import jsPDF from 'jspdf';
@@ -9,12 +10,25 @@ import { sfx } from '../utils/sfx';
 interface SiliconResumeProps {
   unlockedBadgeIds?: string[];
   masteredNodes?: string[];
+  userName?: string;
+  onFocusSkillNode?: (nodeId: string) => void;
 }
 
 export const SiliconResume: React.FC<SiliconResumeProps> = ({ 
   unlockedBadgeIds = [], 
-  masteredNodes: propMasteredNodes 
+  masteredNodes: propMasteredNodes,
+  userName: propUserName,
+  onFocusSkillNode,
 }) => {
+  const resolvedUserName = useMemo(() => {
+    if (propUserName) return propUserName;
+    try {
+      const session = getSession();
+      return session?.displayName || 'Your Name';
+    } catch {
+      return 'Your Name';
+    }
+  }, [propUserName]);
   const [scheme] = useColorScheme();
   const isLight = scheme === 'light';
   const [activeTemplate, setActiveTemplate] = useState('india');
@@ -64,10 +78,10 @@ export const SiliconResume: React.FC<SiliconResumeProps> = ({
     : defaultBadges;
 
   const resumeData = {
-    name: "KRITEN SINGHAL",
-    contact: "k.singhal@bitforbytes.in | +91 XXXXXXXXXX | Ghaziabad, UP",
-    links: "github.com/kriten | linkedin.com/in/kriten",
-    summary: "ECE 3rd-year student focusing on logic optimization, RTL architecture, and hardware synthesis. Winner and Team Lead of Smart India Hackathon 2025 (Hardware Edition). Dedicated to building highly structured architecture prototypes.",
+    name: resolvedUserName.toUpperCase(),
+    contact: "your.email@example.com | +91 XXXXXXXXXX | Your City, State",
+    links: "github.com/yourusername | linkedin.com/in/yourusername",
+    summary: "ECE student focusing on logic optimization, RTL architecture, and hardware synthesis. Dedicated to building structured architecture prototypes and mastering the silicon stack.",
     skills: skillsList,
     badges: unlockedBadges,
     projects: [
@@ -151,7 +165,8 @@ export const SiliconResume: React.FC<SiliconResumeProps> = ({
       y += splitDesc.length * 12 + 12;
     });
     
-    doc.save(`Silicon_Resume_${activeTemplate}.pdf`);
+    const safeName = resolvedUserName.replace(/[^a-zA-Z0-9]/g, '_');
+    doc.save(`Silicon_Resume_${safeName}_${activeTemplate}.pdf`);
     sfx.playSuccess();
   };
 
@@ -174,7 +189,8 @@ export const SiliconResume: React.FC<SiliconResumeProps> = ({
       });
       const dataUrl = canvas.toDataURL('image/png');
       const link = document.createElement('a');
-      link.download = `Silicon_Passport_Kriten.png`;
+      const safeName = resolvedUserName.replace(/[^a-zA-Z0-9]/g, '_');
+      link.download = `Silicon_Passport_${safeName}.png`;
       link.href = dataUrl;
       link.click();
       sfx.playSuccess();
@@ -292,9 +308,63 @@ export const SiliconResume: React.FC<SiliconResumeProps> = ({
 
           <div className="mt-4">
             <h3 className="text-xs font-bold font-mono tracking-wider text-slate-900 border-b border-slate-200 pb-0.5 mb-1">TECHNICAL MATRICES</h3>
-            <p className="text-xs text-slate-700 leading-relaxed">
-              <strong>Hardware Description / Architectures: </strong> {resumeData.skills.join(', ')}
-            </p>
+            <div className="text-xs text-slate-700 leading-relaxed mt-1 flex flex-wrap gap-x-1.5 gap-y-1 items-center">
+              <strong className="mr-1">Hardware Description / Architectures:</strong>
+              {resumeData.skills.map((skill, index) => {
+                const normalized = skill.toLowerCase().trim();
+                
+                // Map skills to corresponding graph nodes
+                const skillNodeMapping: Record<string, string> = {
+                  'basic electronics': 'basic_electronics',
+                  'digital logic': 'digital_logic',
+                  'digital circuit design': 'digital_logic',
+                  'verilog': 'verilog',
+                  'systemverilog': 'verilog',
+                  'systemverilog / verilog': 'verilog',
+                  'vlsi': 'vlsi',
+                  'vlsi design': 'vlsi',
+                  'fsm synthesis': 'vlsi',
+                  'sta timing optimization': 'vlsi',
+                  'embedded': 'embedded',
+                  'embedded systems': 'embedded',
+                  'signal': 'signal_processing',
+                  'signal processing': 'signal_processing',
+                  'wireless': 'wireless',
+                  'wireless comm': 'wireless',
+                  'rf': 'rf',
+                  'rf & microwave': 'rf',
+                  'power': 'power',
+                  'power electronics': 'power',
+                  'control': 'control',
+                  'control systems': 'control',
+                  'defense': 'defense',
+                  'defense & aerospace': 'defense',
+                  'photonics': 'photonics',
+                  'medical': 'medical',
+                  'medical electronics': 'medical',
+                };
+
+                const nodeId = skillNodeMapping[normalized] || null;
+                const isClickable = nodeId && onFocusSkillNode;
+
+                return (
+                  <span key={skill} className="inline-flex items-center">
+                    {isClickable ? (
+                      <button
+                        onClick={() => onFocusSkillNode(nodeId)}
+                        className="text-slate-800 hover:text-teal-600 font-semibold border-b border-dashed border-slate-400 hover:border-teal-500 cursor-pointer transition-colors"
+                        title={`Click to view ${skill} in Skill Graph`}
+                      >
+                        {skill}
+                      </button>
+                    ) : (
+                      <span>{skill}</span>
+                    )}
+                    {index < resumeData.skills.length - 1 && <span className="ml-1">,</span>}
+                  </span>
+                );
+              })}
+            </div>
           </div>
 
           <div className="mt-4">
@@ -354,8 +424,8 @@ export const SiliconResume: React.FC<SiliconResumeProps> = ({
                 <div className="absolute -bottom-1 -right-1 w-2.5 h-2.5 bg-green-500 rounded-full border border-black animate-pulse" />
               </div>
               <div className="space-y-1">
-                <div className="text-[13px] font-black text-white leading-tight">KRITEN SINGHAL</div>
-                <div className="text-[8px] text-[#F59E0B] font-bold">L3 ASIC ARCHITECT</div>
+                <div className="text-[13px] font-black text-white leading-tight">{resolvedUserName.toUpperCase()}</div>
+                <div className="text-[8px] text-[#F59E0B] font-bold">ECE ENGINEER</div>
                 <div className="text-[7px] text-slate-400 leading-normal">BitforBytes Academy</div>
               </div>
             </div>

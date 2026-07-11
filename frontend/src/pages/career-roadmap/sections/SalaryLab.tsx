@@ -5,8 +5,20 @@ import { SectionHead, reveal } from './RoadmapUI';
 
 const SCALE = 100; // ₹LPA axis maximum
 
+interface SalaryLabProps {
+  onFocusSkillNode?: (nodeId: string) => void;
+}
+
+const premiumSkillMap: Record<string, string> = {
+  "Floorplanning & P&R": "vlsi",
+  "UVM verification": "verilog",
+  "STA & Timing Closure": "vlsi",
+  "Embedded C / RTOS": "embedded",
+  "Tcl / python automation": "verilog"
+};
+
 /** India pay-by-stage bar chart + skill premiums + a global comparison. */
-export const SalaryLab: React.FC = () => (
+export const SalaryLab: React.FC<SalaryLabProps> = ({ onFocusSkillNode }) => (
   <section id="salaries" className="max-w-6xl mx-auto px-4 sm:px-6 py-16 sm:py-24 scroll-mt-24">
     <SectionHead
       kicker="The money, honestly"
@@ -55,7 +67,17 @@ export const SalaryLab: React.FC = () => (
             <div key={p.skill} className="flex items-start gap-3">
               <span className="font-mono text-sm font-bold text-accent-orange whitespace-nowrap pt-0.5">+₹{p.delta[0]}–{p.delta[1]}L</span>
               <div className="min-w-0">
-                <div className="text-sm font-medium text-text-main">{p.skill}</div>
+                <div className="flex items-center gap-2">
+                  <div className="text-sm font-medium text-text-main">{p.skill}</div>
+                  {onFocusSkillNode && premiumSkillMap[p.skill] && (
+                    <button
+                      onClick={() => onFocusSkillNode(premiumSkillMap[p.skill])}
+                      className="font-mono text-[9px] uppercase tracking-wider text-teal-400 hover:text-teal-300 transition-colors cursor-pointer"
+                    >
+                      [ View Node ↗ ]
+                    </button>
+                  )}
+                </div>
                 <div className="text-xs text-text-dim">{p.why}</div>
               </div>
             </div>
@@ -81,3 +103,4 @@ export const SalaryLab: React.FC = () => (
     </div>
   </section>
 );
+
