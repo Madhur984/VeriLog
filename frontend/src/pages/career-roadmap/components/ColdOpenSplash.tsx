@@ -18,7 +18,7 @@ export const ColdOpenSplash: React.FC<ColdOpenSplashProps> = ({ onComplete }) =>
       handleComplete();
     }, 4500); // 4.5 seconds cold open
 
-    const handleKeyDown = (e: KeyboardEvent) => {
+    const handleKeyDown = () => {
       handleComplete();
     };
 

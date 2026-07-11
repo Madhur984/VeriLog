@@ -60,7 +60,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onCalibrate, onExplore
           className="flex flex-col sm:flex-row flex-wrap justify-center items-center gap-3 sm:gap-6 relative z-20 px-4 sm:px-0 mt-10 sm:mt-14 mb-16 sm:mb-20"
         >
           <button
-            ref={primaryCTA.ref as any}
+            ref={primaryCTA.ref as React.RefObject<HTMLButtonElement>}
             onMouseMove={primaryCTA.onMouseMove}
             onMouseLeave={primaryCTA.onMouseLeave}
             onClick={() => onCalibrate?.(50)}

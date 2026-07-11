@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { FileDown, CheckCircle, Sparkles, Cpu, CircuitBoard, Zap } from 'lucide-react';
+import { FileDown, Sparkles, Cpu, CircuitBoard, Zap } from 'lucide-react';
 import { getSession } from '../../../lib/auth';
 import { useColorScheme } from '../../../hooks/useColorScheme';
 import { BADGE_DEFINITIONS } from '../../../data/badgeDefinitions';
@@ -244,26 +244,16 @@ export const SiliconResume: React.FC<SiliconResumeProps> = ({
             </div>
           </div>
 
-          {/* Automated Quality Diagnostic Readout */}
-          <div className={`border rounded-xl p-5 space-y-4 ${isLight ? 'bg-bg-elev border-border-soft' : 'bg-[#0D0F12] border-white/5'}`}>
+          {/* Static Quality Readout */}
+          <div className={`border rounded-xl p-5 space-y-3 ${isLight ? 'bg-bg-elev border-border-soft' : 'bg-[#0D0F12] border-white/5'}`}>
             <div className={`flex justify-between items-center border-b pb-3 ${isLight ? 'border-border-soft' : 'border-white/5'}`}>
-              <span className="text-xs font-mono text-text-dim">ATS VALIDATION STREAM</span>
-              <span className={`text-xs font-mono font-bold ${isLight ? 'text-emerald-700' : 'text-[#10B981]'}`}>PASS RATE: 98%</span>
+              <span className="text-xs font-mono text-text-dim">RESUME QUALITY</span>
+              <span className={`text-xs font-mono font-bold ${isLight ? 'text-emerald-700' : 'text-[#10B981]'}`}>ATS OPTIMIZED</span>
             </div>
-            
-            <div className="space-y-3 text-[11px] font-mono leading-relaxed">
-              <div className="flex items-start gap-2 text-text-sub">
-                <CheckCircle size={14} className={`shrink-0 mt-0.5 ${isLight ? 'text-emerald-700' : 'text-[#10B981]'}`} />
-                <span>Structural verification successful: Zero table grids, graphical frames, or unreadable fonts detected.</span>
-              </div>
-              <div className="flex items-start gap-2 text-text-sub">
-                <CheckCircle size={14} className={`shrink-0 mt-0.5 ${isLight ? 'text-emerald-700' : 'text-[#10B981]'}`} />
-                <span>Keyword parsing match: Found core tags: <code className={isLight ? 'text-signal-core' : 'text-[#22D3EE]'}>Verilog</code>, <code className={isLight ? 'text-signal-core' : 'text-[#22D3EE]'}>RTL</code>, and <code className={isLight ? 'text-signal-core' : 'text-[#22D3EE]'}>STA</code>.</span>
-              </div>
-              <div className="flex items-start gap-2 text-text-dim">
-                <Sparkles size={14} className="text-[#F59E0B] shrink-0 mt-0.5" />
-                <span>Recommendation: Fill 1 more RTL timing node to pass Nvidia parsing algorithms completely.</span>
-              </div>
+            <div className="space-y-1.5 text-[11px] font-mono text-text-sub">
+              <div>Template: <span className="text-text-main font-bold">{activeTemplate === 'india' ? 'India Standard' : 'Global LaTeX'}</span></div>
+              <div>Skills detected: <span className="text-text-main font-bold">{skillsList.length}</span></div>
+              <div>Verified badges: <span className="text-text-main font-bold">{unlockedBadges.length}</span></div>
             </div>
           </div>
         </div>
@@ -396,24 +386,23 @@ export const SiliconResume: React.FC<SiliconResumeProps> = ({
       {/* Silicon Passport Modal Dialog */}
       {showPassport && (
         <div className="fixed inset-0 bg-black/85 z-[999] flex flex-col items-center justify-center p-4 font-mono select-none">
-          <div 
+          <div
             id="silicon-passport-card"
-            className="w-[340px] h-[520px] rounded-3xl bg-[#090b11] border-2 border-cyan-500/30 p-6 flex flex-col justify-between relative overflow-hidden shadow-[0_0_50px_rgba(6,182,212,0.15)] text-white uppercase tracking-wider"
+            className="w-[340px] h-[520px] rounded-2xl bg-[#090b11] border border-[#14B8A6]/30 p-6 flex flex-col justify-between relative overflow-hidden text-white"
           >
-            {/* Holographic PCB grid lines backdrop */}
-            <div className="absolute inset-0 opacity-10 pointer-events-none bg-[linear-gradient(to_right,#0ea5e9_1px,transparent_1px),linear-gradient(to_bottom,#0ea5e9_1px,transparent_1px)] bg-[size:20px_20px]" />
-            <div className="absolute top-0 right-0 w-28 h-28 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none" />
+            {/* Teal accent stripe */}
+            <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-[#14B8A6]/80 via-[#14B8A6] to-transparent" />
 
             {/* Header */}
             <div className="flex justify-between items-start border-b border-white/10 pb-3.5 z-10">
               <div className="space-y-0.5">
-                <div className="text-[10px] font-black text-cyan-400 tracking-widest flex items-center gap-1.5">
-                  <Cpu size={12} /> BFB_SILICON_BOARD
+                <div className="text-[10px] font-black text-[#14B8A6] tracking-widest flex items-center gap-1.5">
+                  <Cpu size={12} /> SILICON PASSPORT
                 </div>
-                <div className="text-[6px] text-slate-500 font-bold">VERIFIED HARDWARE ENGINEER IDENTITY</div>
+                <div className="text-[9px] text-slate-500">BitforBytes Verified Engineer</div>
               </div>
-              <div className="text-[7px] text-slate-400 bg-white/5 border border-white/10 px-2 py-0.5 rounded font-bold">
-                ID: BFB-K1-9F3E
+              <div className="text-[9px] text-slate-400 font-mono">
+                {new Date().getFullYear()}
               </div>
             </div>
 
@@ -432,17 +421,13 @@ export const SiliconResume: React.FC<SiliconResumeProps> = ({
 
             {/* Stats list */}
             <div className="space-y-3 z-10 border-t border-b border-white/5 py-4 my-2">
-              <div className="flex justify-between text-[8px]">
-                <span className="text-slate-500">COGNITIVE MASTERY:</span>
-                <span className="text-cyan-400 font-black">78% SYNTHESIS LEVEL</span>
+              <div className="flex justify-between text-[9px]">
+                <span className="text-slate-400">Skills mastered</span>
+                <span className="text-[#14B8A6] font-black">{masteredNodes.length} verified</span>
               </div>
-              <div className="flex justify-between text-[8px]">
-                <span className="text-slate-500">ACTIVE NODES SECURED:</span>
-                <span className="text-[#10B981] font-black">{masteredNodes.length} VERIFIED BLOCKS</span>
-              </div>
-              <div className="flex justify-between text-[8px]">
-                <span className="text-slate-500">CURRENT BADGES:</span>
-                <span className="text-slate-300 font-black">{unlockedBadges.length} DEPLOYED</span>
+              <div className="flex justify-between text-[9px]">
+                <span className="text-slate-400">Badges earned</span>
+                <span className="text-slate-300 font-black">{unlockedBadges.length} deployed</span>
               </div>
             </div>
 

@@ -19,6 +19,7 @@ export const FiscalMatrix: React.FC<FiscalMatrixProps> = ({ initialRoleIndex = 0
   const [savingsRate, setSavingsRate] = useState(30);
   const [activeRole, setActiveRole] = useState(initialRoleIndex);
   const [targetCorpus, setTargetCorpus] = useState(30000000);
+  const [showFreedomSim, setShowFreedomSim] = useState(false);
 
   React.useEffect(() => {
     setActiveRole(initialRoleIndex);
@@ -119,57 +120,65 @@ export const FiscalMatrix: React.FC<FiscalMatrixProps> = ({ initialRoleIndex = 0
           </div>
 
           <div className="w-full md:w-96 space-y-6">
-            <div className="p-5 sm:p-8 bg-observatory-bg border border-border-soft rounded-2xl space-y-6">
-              <h3 className="text-xs font-mono font-bold text-text-main uppercase tracking-widest flex items-center gap-2">
-                <TrendingUp size={14} className="text-signal-core" />
-                Freedom Age Simulator
-              </h3>
-              
-              <div className="space-y-4">
-                <div className="text-center py-6">
-                  <div className="text-[10px] font-mono text-text-dim uppercase tracking-widest mb-1">Estimated Freedom Age</div>
-                  <div className="text-5xl font-bold text-signal-core">{freedomAge}</div>
-                  <div className="text-[9px] font-mono text-text-dim uppercase mt-2 tracking-widest">Target Corpus: ₹{(targetCorpus / 10000000).toFixed(1)}Cr</div>
-                </div>
+            {/* Freedom Age Simulator — collapsed by default */}
+            <div className="border border-border-soft rounded-2xl overflow-hidden">
+              <button
+                onClick={() => setShowFreedomSim(v => !v)}
+                className="w-full flex justify-between items-center px-5 py-4 bg-observatory-bg text-xs font-mono uppercase tracking-widest text-text-sub hover:text-text-main transition-colors cursor-pointer"
+              >
+                <span className="flex items-center gap-2"><TrendingUp size={13} className="text-signal-core" /> Freedom Age Simulator</span>
+                <span className="text-text-dim">{showFreedomSim ? '−' : '+'}</span>
+              </button>
 
-                <div className="space-y-3">
-                  <div className="flex justify-between text-[10px] font-mono text-text-dim uppercase">
-                    <span>Target Corpus</span>
-                    <span className="text-text-main">₹{(targetCorpus / 10000000).toFixed(1)}Cr</span>
-                  </div>
-                  <label htmlFor="corpus-slider" className="sr-only">Target corpus amount</label>
-                  <input
-                    id="corpus-slider"
-                    type="range"
-                    min="5000000"
-                    max="100000000"
-                    step="5000000"
-                    value={targetCorpus}
-                    onChange={(e) => setTargetCorpus(parseInt(e.target.value))}
-                    className="w-full h-1 bg-border-soft rounded-full appearance-none accent-signal-core cursor-pointer"
-                  />
-                </div>
+              {showFreedomSim && (
+                <div className="p-5 sm:p-8 bg-observatory-bg border-t border-border-soft space-y-6">
+                  <div className="space-y-4">
+                    <div className="text-center py-6">
+                      <div className="text-[10px] font-mono text-text-dim uppercase tracking-widest mb-1">Estimated Freedom Age</div>
+                      <div className="text-5xl font-bold text-signal-core">{freedomAge}</div>
+                      <div className="text-[9px] font-mono text-text-dim uppercase mt-2 tracking-widest">Target Corpus: ₹{(targetCorpus / 10000000).toFixed(1)}Cr</div>
+                    </div>
 
-                <div className="space-y-3">
-                  <div className="flex justify-between text-[10px] font-mono text-text-dim uppercase">
-                    <span>Savings Rate</span>
-                    <span className="text-text-main">{savingsRate}%</span>
+                    <div className="space-y-3">
+                      <div className="flex justify-between text-[10px] font-mono text-text-dim uppercase">
+                        <span>Target Corpus</span>
+                        <span className="text-text-main">₹{(targetCorpus / 10000000).toFixed(1)}Cr</span>
+                      </div>
+                      <label htmlFor="corpus-slider" className="sr-only">Target corpus amount</label>
+                      <input
+                        id="corpus-slider"
+                        type="range"
+                        min="5000000"
+                        max="100000000"
+                        step="5000000"
+                        value={targetCorpus}
+                        onChange={(e) => setTargetCorpus(parseInt(e.target.value))}
+                        className="w-full h-1 bg-border-soft rounded-full appearance-none accent-signal-core cursor-pointer"
+                      />
+                    </div>
+
+                    <div className="space-y-3">
+                      <div className="flex justify-between text-[10px] font-mono text-text-dim uppercase">
+                        <span>Savings Rate</span>
+                        <span className="text-text-main">{savingsRate}%</span>
+                      </div>
+                      <label htmlFor="savings-slider" className="sr-only">Savings rate percentage</label>
+                      <input
+                        id="savings-slider"
+                        type="range"
+                        min="10"
+                        max="70"
+                        value={savingsRate}
+                        onChange={(e) => setSavingsRate(parseInt(e.target.value))}
+                        className="w-full h-1 bg-border-soft rounded-full appearance-none accent-signal-core cursor-pointer"
+                      />
+                      <p className="text-[9px] font-mono text-text-dim uppercase leading-relaxed">
+                        At ₹{(ctc / 100000).toFixed(1)}L CTC, saving {savingsRate}% = ₹{(ctc * (savingsRate / 100)).toLocaleString('en-IN')}/yr invested at 12% CAGR.
+                      </p>
+                    </div>
                   </div>
-                  <label htmlFor="savings-slider" className="sr-only">Savings rate percentage</label>
-                  <input 
-                    id="savings-slider"
-                    type="range" 
-                    min="10" 
-                    max="70" 
-                    value={savingsRate}
-                    onChange={(e) => setSavingsRate(parseInt(e.target.value))}
-                    className="w-full h-1 bg-border-soft rounded-full appearance-none accent-signal-core cursor-pointer"
-                  />
-                  <p className="text-[9px] font-mono text-text-dim uppercase leading-relaxed">
-                    At ₹{(ctc / 100000).toFixed(1)}L CTC, saving {savingsRate}% = ₹{(ctc * (savingsRate / 100)).toLocaleString('en-IN')}/yr invested at 12% CAGR.
-                  </p>
                 </div>
-              </div>
+              )}
             </div>
 
             <div className="p-6 bg-signal-core/5 border border-signal-core/20 rounded-2xl">

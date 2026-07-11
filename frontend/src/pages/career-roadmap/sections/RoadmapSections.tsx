@@ -49,7 +49,7 @@ export const MarketPulse: React.FC = () => (
       sub="Not hype — numbers. Every figure below is dated and linked to its source."
     />
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-      {marketStats.map((s, i) => {
+      {marketStats.slice(3, 6).map((s, i) => {
         const src = sourceById(s.sourceId);
         return (
           <motion.div
@@ -262,8 +262,8 @@ export const StudentPathSection: React.FC = () => (
                 <div className="absolute right-0 top-0 bottom-0 w-24 bg-grid-pattern opacity-[0.03] pointer-events-none" />
                 
                 <div className="flex items-baseline gap-3 mb-4 flex-wrap">
-                  <span className={`font-mono text-[10px] uppercase tracking-widest px-2.5 py-1 rounded bg-[#0D0F12] border border-white/5 font-bold ${config.color}`}>
-                    {config.layerName} ({p.year})
+                  <span className={`font-mono text-xs uppercase tracking-wide px-2.5 py-1 rounded bg-[#0D0F12] border border-white/5 font-bold ${config.color}`}>
+                    {config.layerName} · {p.year}
                   </span>
                   <h3 className="text-xl font-bold text-text-main">{p.title}</h3>
                 </div>

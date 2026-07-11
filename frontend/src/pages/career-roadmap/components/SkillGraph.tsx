@@ -11,7 +11,7 @@ import { sfx } from "../utils/sfx";
 import {
   CircuitBoard, Cpu, Wifi, Radio, Zap, Move3d, Shield, Eye, TrendingUp,
   Lock, Unlock, RefreshCw, Maximize2, Minimize2, Search,
-  Layout, Sparkles, Activity
+  Layout, Activity
 } from "lucide-react";
 
 // ---------- Types ----------
@@ -199,14 +199,14 @@ const QUIZ_QUESTIONS: Record<string, QuizQuestion[]> = {
 
 // ---------- Error Boundary for 3D Fallback ----------
 class WebGLErrorBoundary extends React.Component<{ fallback: React.ReactNode; children: React.ReactNode }, { hasError: boolean }> {
-  constructor(props: any) {
+  constructor(props: { fallback: React.ReactNode; children: React.ReactNode }) {
     super(props);
     this.state = { hasError: false };
   }
   static getDerivedStateFromError() {
     return { hasError: true };
   }
-  componentDidCatch(error: any, errorInfo: any) {
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     console.error("WebGL Render Error, falling back to 2D:", error, errorInfo);
   }
   render() {
@@ -377,7 +377,7 @@ const ThreeDGraphScene: React.FC<{
   selectedCompany: string | null;
   masteredNodes: Set<string>;
   onNodeClick?: (nodeId: string) => void;
-  requirements: any;
+  requirements: { required: string[]; preferred: string[] } | null;
   isLight: boolean;
   physicsOn: boolean;
 }> = ({ nodes, edges, selectedCompany, masteredNodes, onNodeClick, requirements, isLight, physicsOn }) => {
@@ -466,21 +466,6 @@ interface SkillGraphProps {
   nodeVisitHistory?: string[] | null;
 }
 
-const APPEARS_IN_MAP: Record<string, string[]> = {
-  basic_electronics: ["EXPLORE: Analog", "FINANCIALS: VLSI Design"],
-  digital_logic: ["EXPLORE: RTL Design", "PORTFOLIO: Technical Matrices"],
-  verilog: ["EXPLORE: RTL Design", "FINANCIALS: Software/EDA", "PORTFOLIO: Technical Matrices"],
-  vlsi: ["EXPLORE: Physical Design", "FINANCIALS: VLSI Design", "PORTFOLIO: Technical Matrices"],
-  embedded: ["EXPLORE: Embedded Systems", "FINANCIALS: Embedded Systems", "PORTFOLIO: Technical Matrices"],
-  signal_processing: ["EXPLORE: Wireless Comm", "PORTFOLIO: Technical Matrices"],
-  wireless: ["EXPLORE: Wireless & 5G/6G", "FINANCIALS: RF / Wireless", "PORTFOLIO: Technical Matrices"],
-  rf: ["EXPLORE: Wireless & 5G/6G", "FINANCIALS: RF / Wireless", "PORTFOLIO: Technical Matrices"],
-  power: ["EXPLORE: Power & EV", "PORTFOLIO: Technical Matrices"],
-  control: ["EXPLORE: Control Systems", "PORTFOLIO: Technical Matrices"],
-  medical: ["EXPLORE: Medical Electronics", "PORTFOLIO: Technical Matrices"],
-  photonics: ["EXPLORE: Photonics", "PORTFOLIO: Technical Matrices"],
-  defense: ["EXPLORE: Defense & Aerospace", "PORTFOLIO: Technical Matrices"]
-};
 
 const getRawNodeId = (id: string | null): string | null => {
   if (!id) return null;
@@ -520,7 +505,7 @@ export const SkillGraph: React.FC<SkillGraphProps> = ({
   const [searchTerm, setSearchTerm] = useState("");
   const [physicsOn, setPhysicsOn] = useState(true);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
-  const [showCuriosityTrail, setShowCuriosityTrail] = useState(true);
+  const [showCuriosityTrail, setShowCuriosityTrail] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
   // ---------- Quiz Gate State & Handlers ----------
@@ -789,15 +774,17 @@ export const SkillGraph: React.FC<SkillGraphProps> = ({
           </button>
         </div>
         
-        {/* Nodal Statistics */}
-        <div className="p-4 bg-observatory-surface border border-border-soft rounded-2xl shadow-neo space-y-2 pointer-events-none">
-           <div className="text-[9px] font-black text-cyan-400 uppercase tracking-widest mb-1 flex items-center gap-2">
-              <Sparkles size={11} /> SCAN_TELEMETRY
-           </div>
-           <div className="space-y-1 font-mono text-[8px] text-text-dim">
-              <div className="flex justify-between gap-6 uppercase"><span>Active Path</span> <span className="text-cyan-400">{activePath.upstream.size + activePath.downstream.size} Nodes</span></div>
-              <div className="flex justify-between gap-6 uppercase"><span>Mastered</span> <span className="text-green-400">{masteredNodes.size} Nodes</span></div>
-           </div>
+        {/* Node statistics — clean stat row below toolbar */}
+        <div className="px-4 pt-2 pb-1 flex items-center gap-6 font-mono text-[9px] text-text-dim uppercase tracking-widest pointer-events-none">
+          <span>{nodes.length} nodes</span>
+          <span className="h-3 w-px bg-border-soft" />
+          <span className="text-green-400">{masteredNodes.size} mastered</span>
+          {(hoveredId || focusedNodeId) && activePath && (
+            <>
+              <span className="h-3 w-px bg-border-soft" />
+              <span className="text-cyan-400">{activePath.upstream.size + activePath.downstream.size} in path</span>
+            </>
+          )}
         </div>
       </div>
 
@@ -1009,14 +996,14 @@ export const SkillGraph: React.FC<SkillGraphProps> = ({
                         </div>
                       </button>
 
-                      {/* Interactive Diagnostics Tooltip */}
+                      {/* Simplified node tooltip */}
                       <AnimatePresence>
                         {(hoveredId === node.id || activeFocusRawId === node.id) && (
                           <motion.div
                             initial={{ opacity: 0, x: 10 }}
                             animate={{ opacity: 1, x: 122 }}
                             exit={{ opacity: 0, x: 10 }}
-                            className="absolute top-0 left-0 w-52 bg-observatory-surface border border-border-soft p-3 rounded-2xl shadow-neo z-[100]"
+                            className="absolute top-0 left-0 w-44 bg-observatory-surface border border-border-soft p-3 rounded-2xl shadow-neo pointer-events-none z-[100]"
                           >
                              <div className="text-[9px] font-black text-text-main mb-1.5 uppercase tracking-wide flex justify-between items-center">
                                <span>{node.name}</span>
@@ -1026,22 +1013,11 @@ export const SkillGraph: React.FC<SkillGraphProps> = ({
                              </div>
                              <div className="h-px w-full bg-border-soft mb-1.5" />
                              <div className="space-y-1 font-mono text-[7px] text-text-dim">
-                                <div className="uppercase">Demand Scalar: <span className="text-cyan-400">{node.demandIntensity}/10</span></div>
-                                <div className="uppercase">Prerequisites: <span className="text-orange-400">{node.prerequisites.length || "ROOT"}</span></div>
-                                <div className="uppercase">Status: <span className={isMastered ? "text-green-400" : "text-amber-500"}>{isMastered ? "MASTERED" : "UNLOCKED"}</span></div>
-                                
-                                {APPEARS_IN_MAP[node.id] && (
-                                  <div className="mt-2 pt-1.5 border-t border-border-soft/60">
-                                    <div className="text-[6px] text-text-dim uppercase tracking-wider font-bold mb-1">Appears In:</div>
-                                    <div className="flex flex-wrap gap-1">
-                                      {APPEARS_IN_MAP[node.id].map(loc => (
-                                        <span key={loc} className="text-[5px] bg-[#14B8A6]/10 border border-[#14B8A6]/20 text-[#14B8A6] px-1 py-0.5 rounded uppercase font-bold">{loc}</span>
-                                      ))}
-                                    </div>
-                                  </div>
+                                <div className="uppercase">Status: <span className={isMastered ? "text-green-400" : "text-amber-500"}>{isMastered ? "MASTERED" : "NOT YET"}</span></div>
+                                {node.prerequisites.length > 0 && (
+                                  <div className="uppercase text-text-dim/70">Requires: {node.prerequisites.length} skill{node.prerequisites.length > 1 ? 's' : ''}</div>
                                 )}
-
-                                <div className="italic leading-normal text-text-dim/60 mt-1.5">[ CLICK_TO_TOGGLE_MASTERY ]</div>
+                                <div className="italic text-text-dim/50 mt-1">Click to toggle mastery</div>
                              </div>
                           </motion.div>
                         )}

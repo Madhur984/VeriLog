@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { DataTerminal } from './DataTerminal';
 import { useColorScheme } from '../../../hooks/useColorScheme';
@@ -39,7 +39,7 @@ export const TechnicalTerminal: React.FC<TechnicalTerminalProps> = ({ onUpdateQu
   }, [domain, qIndex]);
 
   useEffect(() => {
-    let timer: any;
+    let timer: ReturnType<typeof setInterval>;
     if (!feedback) {
       timer = setInterval(() => {
         setStress(s => Math.min(100, s + 1));
@@ -104,7 +104,7 @@ export const TechnicalTerminal: React.FC<TechnicalTerminalProps> = ({ onUpdateQu
                 {Object.keys(QUESTION_BANK).map(d => (
                   <button 
                     key={d} 
-                    onClick={() => { setDomain(d as any); setQIndex(0); setAnswer(''); setFeedback(null); setStress(20); }}
+                    onClick={() => { setDomain(d as keyof typeof QUESTION_BANK); setQIndex(0); setAnswer(''); setFeedback(null); setStress(20); }}
                     className={`text-[10px] uppercase tracking-widest px-2 py-1 ${
                       domain === d 
                         ? (isLight ? 'bg-signal-core text-white font-bold' : 'bg-cyan-400 text-black font-bold') 
@@ -147,7 +147,7 @@ export const TechnicalTerminal: React.FC<TechnicalTerminalProps> = ({ onUpdateQu
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
                         e.preventDefault();
-                        handleSubmit(e as any);
+                        handleSubmit(e as React.FormEvent);
                       }
                     }}
                     className={`w-full h-32 bg-transparent border p-3 text-sm focus:outline-none resize-none custom-scrollbar ${

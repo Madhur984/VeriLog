@@ -30,7 +30,7 @@ export const InternshipDirectoryModal: React.FC<InternshipDirectoryModalProps> =
               {['all', 'india', 'international', 'research'].map((f) => (
                 <button
                   key={f}
-                  onClick={() => setFilter(f as any)}
+                  onClick={() => setFilter(f as Internship['category'] | 'all')}
                   className={`
                     px-4 py-1.5 font-mono text-[10px] uppercase tracking-widest border
                     ${filter === f 

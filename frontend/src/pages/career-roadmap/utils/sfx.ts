@@ -16,7 +16,7 @@ class SoundEffects {
   private initCtx() {
     if (!this.ctx && typeof window !== 'undefined') {
       try {
-        this.ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+        this.ctx = new (window.AudioContext || (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext)();
       } catch (e) {
         console.warn('AudioContext not supported in this browser', e);
       }

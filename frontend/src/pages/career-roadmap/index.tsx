@@ -1,22 +1,19 @@
 import React, { useState, useEffect, useMemo, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, ArrowDown, Unlock, School, Flag, HelpCircle } from 'lucide-react';
+import { ArrowLeft, Unlock, School, Flag, HelpCircle } from 'lucide-react';
 import { ThemeToggle } from '../../components/ThemeToggle';
 import { FloatingCommandBar } from '../../components/FloatingCommandBar';
 
 // Core Sections & Data
-import { MarketPulse, CompaniesBoard, OpportunitiesBoard, StudentPathSection, AlumniPathwaysSection } from './sections/RoadmapSections';
+import { RoadmapHero, MarketPulse, CompaniesBoard, OpportunitiesBoard, StudentPathSection, AlumniPathwaysSection } from './sections/RoadmapSections';
 import { DomainGrid } from './sections/DomainGrid';
 import { SalaryLab } from './sections/SalaryLab';
-import { SOURCES, AS_OF, marketStats, domains } from './data/careerData';
+import { SOURCES, AS_OF, domains } from './data/careerData';
 import { useCareerState } from './hooks/useCareerState';
 import { getSession } from '../../lib/auth';
-import { motion } from 'framer-motion';
-import { reveal } from './sections/RoadmapUI';
 import { DiagnosticModal } from './components/DiagnosticModal';
-import { ColdOpenSplash } from './components/ColdOpenSplash';
 
-// Lazy loaded interactive telemetry components
+// Lazy loaded interactive components
 const SkillGapRadar = React.lazy(() =>
   import('./components/SkillGapRadar').then((m) => ({ default: m.SkillGapRadar }))
 );
@@ -39,157 +36,14 @@ const TrajectorySimulator = React.lazy(() =>
   import('./sections/TrajectorySimulator').then((m) => ({ default: m.TrajectorySimulator }))
 );
 
-const NAV = [
-  { id: 'market', label: 'Opportunity' },
-  { id: 'domains', label: 'Domains' },
-  { id: 'salaries', label: 'Salaries' },
-  { id: 'companies', label: 'Companies' },
-  { id: 'opportunities', label: 'Openings' },
-  { id: 'path', label: 'The Path' },
-];
-
 const TabLoading: React.FC = () => (
   <div className="max-w-6xl mx-auto px-6 py-32 flex flex-col items-center justify-center space-y-4">
     <div className="w-10 h-10 border-4 border-[#14B8A6] border-t-transparent rounded-full animate-spin" />
     <span className="font-mono text-[10px] text-text-dim uppercase tracking-wider animate-pulse">
-      Loading Silicon telemetry...
+      Loading...
     </span>
   </div>
 );
-
-/* ── 2-Tap Personalization Flow ────────────────────────────────────────── */
-interface PersonalizationFlowProps {
-  onSelectPrefs: (prefs: { stage: string; domain: string }) => void;
-  currentPrefs: { stage: string; domain: string } | null;
-}
-
-const PersonalizationFlow: React.FC<PersonalizationFlowProps> = ({ onSelectPrefs, currentPrefs }) => {
-  const [stage, setStage] = useState<string | null>(currentPrefs?.stage || null);
-  const [domain, setDomain] = useState<string | null>(currentPrefs?.domain || null);
-
-  const stages = [
-    { id: 'foundation', label: '1st / 2nd Year', desc: 'Foundations & Digital Logic' },
-    { id: 'specializing', label: '3rd Year', desc: 'Core Specializing & Internships' },
-    { id: 'placement', label: '4th Year', desc: 'Placements & Core Jobs' },
-    { id: 'pivot', label: 'Graduate', desc: 'Alumni / Pivot to Core ECE' },
-  ];
-
-  const domainsList = [
-    { id: 'vlsi', label: 'Digital Design & RTL', desc: 'Verilog, FSMs, Microarch' },
-    { id: 'dv', label: 'Verification (UVM/DV)', desc: 'SystemVerilog, UVM, Testbenches' },
-    { id: 'pd', label: 'Physical Design & STA', desc: 'Timing Analysis, Synthesis, Layout' },
-    { id: 'embedded', label: 'Embedded & IoT', desc: 'Firmware, MCUs, RTOS, C' },
-    { id: 'eda', label: 'Software / EDA Tools', desc: 'CAD Algorithms, Scripting, Tcl' },
-  ];
-
-  const handleSelectStage = (id: string) => {
-    setStage(id);
-    if (domain) {
-      onSelectPrefs({ stage: id, domain });
-    }
-  };
-
-  const handleSelectDomain = (id: string) => {
-    setDomain(id);
-    if (stage) {
-      onSelectPrefs({ stage, domain: id });
-    }
-  };
-
-  const handleReset = () => {
-    setStage(null);
-    setDomain(null);
-    onSelectPrefs({ stage: '', domain: '' });
-  };
-
-  return (
-    <div className="max-w-4xl mx-auto px-6 py-6 mb-10 bg-bg-elev border-2 border-edge shadow-brutal">
-      <div className="flex justify-between items-center mb-6">
-        <div>
-          <h3 className="text-xl font-bold uppercase tracking-tight text-text-main">
-            Personalize Your Roadmap
-          </h3>
-          <p className="text-[9px] text-text-dim font-mono uppercase tracking-wider mt-1">
-            2-Tap Customization Engine
-          </p>
-        </div>
-        {(stage || domain) && (
-          <button
-            onClick={handleReset}
-            className="text-[10px] font-mono uppercase text-[#F59E0B] hover:underline cursor-pointer"
-          >
-            Clear Preferences
-          </button>
-        )}
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* Step 1: Career Stage */}
-        <div className="space-y-3">
-          <span className="font-mono text-[9px] text-[#14B8A6] uppercase tracking-widest block">
-            STEP 01: SELECT YOUR STAGE
-          </span>
-          <div className="grid grid-cols-1 gap-2">
-            {stages.map((s) => {
-              const active = stage === s.id;
-              return (
-                <button
-                  key={s.id}
-                  onClick={() => handleSelectStage(s.id)}
-                  className={`w-full text-left p-3 border-2 transition-all font-mono flex flex-col justify-center cursor-pointer ${
-                    active
-                      ? 'border-[#14B8A6] bg-[#14B8A6]/5 text-text-main'
-                      : 'border-border-soft hover:border-edge text-text-sub hover:text-text-main bg-bg-base'
-                  }`}
-                >
-                  <span className="text-xs font-bold uppercase">{s.label}</span>
-                  <span className="text-[9px] text-text-dim uppercase mt-0.5">{s.desc}</span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Step 2: Target Domain */}
-        <div className="space-y-3">
-          <span className="font-mono text-[9px] text-[#14B8A6] uppercase tracking-widest block">
-            STEP 02: SELECT TARGET INTEREST
-          </span>
-          <div className="grid grid-cols-1 gap-2">
-            {domainsList.map((d) => {
-              const active = domain === d.id;
-              return (
-                <button
-                  key={d.id}
-                  onClick={() => handleSelectDomain(d.id)}
-                  className={`w-full text-left p-3 border-2 transition-all font-mono flex flex-col justify-center cursor-pointer ${
-                    active
-                      ? 'border-[#14B8A6] bg-[#14B8A6]/5 text-text-main'
-                      : 'border-border-soft hover:border-edge text-text-sub hover:text-text-main bg-bg-base'
-                  }`}
-                >
-                  <span className="text-xs font-bold uppercase">{d.label}</span>
-                  <span className="text-[9px] text-text-dim uppercase mt-0.5">{d.desc}</span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-
-      {stage && domain && (
-        <div className="mt-6 pt-4 border-t border-dashed border-edge flex items-center justify-between text-xs font-mono">
-          <span className="text-[#14B8A6] uppercase font-bold tracking-wider animate-pulse">
-            ✓ Dashboard Customization Applied
-          </span>
-          <span className="text-text-dim uppercase text-[10px]">
-            Targeting: {domainsList.find((dl) => dl.id === domain)?.label}
-          </span>
-        </div>
-      )}
-    </div>
-  );
-};
 
 /* ── About Tab ─────────────────────────────────────────────────────────── */
 const AboutTab: React.FC = () => {
@@ -271,56 +125,16 @@ const AboutTab: React.FC = () => {
   );
 };
 
-/* ── Custom Roadmap Hero ──────────────────────────────────────────────── */
-interface CustomRoadmapHeroProps {
-  prefs: { stage: string; domain: string } | null;
-  onSelectPrefs: (prefs: { stage: string; domain: string }) => void;
-}
-
-const CustomRoadmapHero: React.FC<CustomRoadmapHeroProps> = ({ prefs, onSelectPrefs }) => (
-  <section className="relative max-w-6xl mx-auto px-4 sm:px-6 pt-10 pb-8">
-    <motion.div {...reveal}>
-      <div className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.25em] text-signal-core mb-5">
-        <span className="h-2 w-2 bg-signal-core animate-gentle-pulse" /> Career roadmap · updated {AS_OF}
-      </div>
-      <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-text-main leading-[1.02]">
-        Your ECE degree is a<br /><span className="text-signal-core">ticket into silicon.</span>
-      </h1>
-      <p className="mt-4 mb-8 max-w-2xl text-base sm:text-lg text-text-sub leading-relaxed">
-        The world is short a million chip engineers, and India is building fabs for the first time.
-        This is the honest map — the domains, the real pay, who’s hiring, and the exact route from first year to first offer.
-      </p>
-    </motion.div>
-
-    {/* Personalization Section Prominently Featured at Top */}
-    <PersonalizationFlow currentPrefs={prefs} onSelectPrefs={onSelectPrefs} />
-
-    {/* Static statistics moved down below personalization flow */}
-    <motion.div {...reveal} transition={{ ...reveal.transition, delay: 0.1 }} className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
-      {marketStats.slice(0, 3).map((s) => (
-        <div key={s.id} className="bg-bg-base border-2 border-edge shadow-brutal p-5">
-          <div className="text-2xl sm:text-3xl font-bold text-text-main">{s.value}</div>
-          <div className="text-sm font-medium text-text-sub mt-1">{s.label}</div>
-        </div>
-      ))}
-    </motion.div>
-
-    <div className="mt-10 flex items-center gap-2 font-mono text-[11px] uppercase tracking-widest text-text-dim">
-      <ArrowDown size={14} className="animate-bounce" /> Scroll to explore
-    </div>
-  </section>
-);
-
 /* ── Beginner Skills View ────────────────────────────────────────────── */
 const BeginnerSkillsView: React.FC<{ domain: string }> = ({ domain }) => {
   const domainName = domains.find(d => d.id === domain)?.name || "ASIC/VLSI";
   return (
     <div className="max-w-4xl mx-auto px-6 py-12 bg-bg-elev border-2 border-edge shadow-brutal space-y-8 mt-10">
       <div className="space-y-2">
-        <span className="font-mono text-[10px] text-teal-400 uppercase tracking-widest block">BEGINNER WORKSPACE</span>
+        <span className="font-mono text-[10px] text-teal-400 uppercase tracking-widest block">SIMPLE VIEW</span>
         <h3 className="text-2xl font-bold text-text-main uppercase">Essential Skills for {domainName}</h3>
         <p className="text-text-sub text-sm leading-relaxed">
-          We have simplified the technical telemetry radar to help you focus on the absolute fundamentals. Learn these in order.
+          Core fundamentals to focus on first. Switch to Advanced mode to see the interactive skill graph and radar.
         </p>
       </div>
 
@@ -354,10 +168,6 @@ const BeginnerSkillsView: React.FC<{ domain: string }> = ({ domain }) => {
           </p>
         </div>
       </div>
-
-      <div className="p-4 bg-amber-500/5 border border-amber-500/20 rounded-lg text-center text-xs text-amber-500 font-mono">
-        💡 Advanced 3D Interactive Skill Graph and Quantization Radar are hidden. Toggle "Telemetry Mode" in the header to view them.
-      </div>
     </div>
   );
 };
@@ -367,7 +177,7 @@ const BeginnerFinancialsView: React.FC = () => {
   return (
     <div className="max-w-4xl mx-auto px-6 py-12 bg-bg-elev border-2 border-edge shadow-brutal space-y-8 mt-10">
       <div className="space-y-2">
-        <span className="font-mono text-[10px] text-teal-400 uppercase tracking-widest block">BEGINNER WORKSPACE</span>
+        <span className="font-mono text-[10px] text-teal-400 uppercase tracking-widest block">SIMPLE VIEW</span>
         <h3 className="text-2xl font-bold text-text-main uppercase">ECE Salary & Market Overview</h3>
         <p className="text-text-sub text-sm leading-relaxed">
           ECE salary profiles have the highest slope in engineering. While software starting pay can be flat, core chip engineering pay compounds rapidly as you ship more silicon tape-outs.
@@ -414,10 +224,6 @@ const BeginnerFinancialsView: React.FC = () => {
           Hardware mistakes are extremely expensive (a bad chip tape-out costs millions to re-manufacture). Companies pay a high premium for verified engineers who can design bug-free silicon.
         </p>
       </div>
-
-      <div className="p-4 bg-amber-500/5 border border-amber-500/20 rounded-lg text-center text-xs text-amber-500 font-mono">
-        💡 Global Salary Heatmap and Interactive Compound curves are hidden. Toggle "Telemetry Mode" in the header to view them.
-      </div>
     </div>
   );
 };
@@ -427,7 +233,7 @@ const BeginnerPortfolioView: React.FC = () => {
   return (
     <div className="max-w-4xl mx-auto px-6 py-12 bg-bg-elev border-2 border-edge shadow-brutal space-y-8 mt-10">
       <div className="space-y-2">
-        <span className="font-mono text-[10px] text-teal-400 uppercase tracking-widest block">BEGINNER WORKSPACE</span>
+        <span className="font-mono text-[10px] text-teal-400 uppercase tracking-widest block">SIMPLE VIEW</span>
         <h3 className="text-2xl font-bold text-text-main uppercase">ECE Resume Building Guide</h3>
         <p className="text-text-sub text-sm leading-relaxed">
           To land interviews at top product semiconductor companies (like Intel, NVIDIA, Qualcomm), your resume needs to focus on physical hardware accomplishments rather than simple software projects.
@@ -463,10 +269,6 @@ const BeginnerPortfolioView: React.FC = () => {
           </div>
         </div>
       </div>
-
-      <div className="p-4 bg-amber-500/5 border border-amber-500/20 rounded-lg text-center text-xs text-amber-500 font-mono">
-        💡 ATS Validation compiler and PDF resume exporter are hidden. Toggle "Telemetry Mode" in the header to view them.
-      </div>
     </div>
   );
 };
@@ -476,16 +278,8 @@ const CareerRoadmapPage: React.FC = () => {
   const navigate = useNavigate();
   const careerState = useCareerState();
   const [activeTab, setActiveTab] = useState<string>('explore');
-  const [viewMode, setViewMode] = useState<'telemetry' | 'beginner'>('telemetry');
+  const [viewMode, setViewMode] = useState<'advanced' | 'simple'>('advanced');
   const [isDiagnosticOpen, setIsDiagnosticOpen] = useState<boolean>(false);
-  const [showSplash, setShowSplash] = useState(false);
-
-  useEffect(() => {
-    const played = sessionStorage.getItem('bfb_cold_open_played');
-    if (!played) {
-      setShowSplash(true);
-    }
-  }, []);
 
   const handleFocusSkillNode = (nodeId: string) => {
     setActiveTab('skills');
@@ -498,7 +292,7 @@ const CareerRoadmapPage: React.FC = () => {
     try {
       const saved = localStorage.getItem('bfb_career_prefs');
       return saved ? JSON.parse(saved) : null;
-    } catch (e) {
+    } catch {
       return null;
     }
   });
@@ -543,7 +337,7 @@ const CareerRoadmapPage: React.FC = () => {
     try {
       const session = getSession();
       return session?.displayName || 'Guest User';
-    } catch (e) {
+    } catch {
       return 'Guest User';
     }
   }, []);
@@ -557,15 +351,7 @@ const CareerRoadmapPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-bg-void text-text-main pb-28">
-      {showSplash && (
-        <ColdOpenSplash
-          onComplete={() => {
-            sessionStorage.setItem('bfb_cold_open_played', 'true');
-            setShowSplash(false);
-          }}
-        />
-      )}
-      {/* Sticky Top Navigation Shell */}
+      {/* Sticky Top Navigation — minimal: back + view toggle + theme */}
       <div className="sticky top-0 z-30 bg-bg-void border-b-2 border-edge">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center gap-3">
           <button
@@ -576,37 +362,24 @@ const CareerRoadmapPage: React.FC = () => {
             <ArrowLeft size={14} /> <span className="hidden sm:inline">Portal</span>
           </button>
 
-          {activeTab === 'explore' && (
-            <nav aria-label="Sections" className="flex-1 flex gap-1.5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-              {NAV.map((n) => (
-                <button
-                  key={n.id}
-                  onClick={() => jump(n.id)}
-                  className="whitespace-nowrap font-mono text-[11px] uppercase tracking-wider px-3 py-1.5 text-text-sub hover:text-text-main hover:bg-bg-base border-2 border-transparent hover:border-edge transition-colors rounded-full cursor-pointer"
-                >
-                  {n.label}
-                </button>
-              ))}
-            </nav>
-          )}
-          {activeTab !== 'explore' && <div className="flex-1" />}
+          <div className="flex-1" />
 
           <div className="flex items-center gap-3 shrink-0">
             <button
-              onClick={() => setViewMode(viewMode === 'telemetry' ? 'beginner' : 'telemetry')}
+              onClick={() => setViewMode(viewMode === 'advanced' ? 'simple' : 'advanced')}
               className="brutal-btn h-9 px-3 flex items-center gap-1.5 bg-bg-elev font-mono text-[11px] uppercase tracking-wider text-text-main font-bold cursor-pointer border-2 border-edge"
-              title="Toggle between simplified content and advanced developer charts"
+              title="Toggle between simple and advanced view"
             >
-              <span className={viewMode === 'beginner' ? 'text-teal-400 font-extrabold' : 'text-text-dim'}>Beginner</span>
+              <span className={viewMode === 'simple' ? 'text-teal-400 font-extrabold' : 'text-text-dim'}>Simple</span>
               <span className="text-text-dim">/</span>
-              <span className={viewMode === 'telemetry' ? 'text-teal-400 font-extrabold' : 'text-text-dim'}>Telemetry</span>
+              <span className={viewMode === 'advanced' ? 'text-teal-400 font-extrabold' : 'text-text-dim'}>Advanced</span>
             </button>
             <ThemeToggle />
           </div>
         </div>
       </div>
 
-      {/* Floating Tab Navigation Trigger */}
+      {/* Floating Tab Navigation */}
       <FloatingCommandBar activeTab={activeTab} onTabChange={setActiveTab} />
 
       {/* Main Tab Views */}
@@ -615,20 +388,20 @@ const CareerRoadmapPage: React.FC = () => {
 
         {activeTab === 'explore' && (
           <div className="space-y-4">
-            <CustomRoadmapHero prefs={careerPrefs} onSelectPrefs={handleSelectPrefs} />
-            
-            {/* Interactive Diagnostic Matcher CTA */}
-            <div className="max-w-6xl mx-auto px-4 sm:px-6 mb-6">
-              <div className="bg-bg-elev border-2 border-edge shadow-brutal p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div className="space-y-1 text-left">
-                  <div className="font-mono text-[10px] text-teal-400 uppercase tracking-widest font-bold">Unsure about your specialization?</div>
-                  <h4 className="text-base font-bold text-text-main uppercase font-sans">Let our interactive diagnostic match you with the perfect hardware track.</h4>
-                </div>
+            {/* Restored original RoadmapHero as clean page opener */}
+            <RoadmapHero />
+
+            {/* Domain grid with inline diagnostic CTA */}
+            <div className="max-w-6xl mx-auto px-4 sm:px-6">
+              <div className="flex items-center justify-between gap-4 mb-6 py-3 border-b border-border-soft/50">
+                <span className="font-mono text-[10px] text-text-dim uppercase tracking-widest">
+                  10 ECE domains · click to expand
+                </span>
                 <button
                   onClick={() => setIsDiagnosticOpen(true)}
-                  className="brutal-btn bg-teal-500/10 hover:bg-teal-500/25 border-teal-500 text-teal-400 font-mono text-[11px] uppercase tracking-widest px-4 py-2.5 font-bold cursor-pointer flex items-center gap-2"
+                  className="inline-flex items-center gap-1.5 font-mono text-[11px] text-teal-400 hover:text-teal-300 transition-colors cursor-pointer"
                 >
-                  <HelpCircle size={14} /> Help Me Choose
+                  <HelpCircle size={13} /> Help me find my domain →
                 </button>
               </div>
             </div>
@@ -644,23 +417,15 @@ const CareerRoadmapPage: React.FC = () => {
         )}
 
         {activeTab === 'skills' && (
-          viewMode === 'beginner' ? (
+          viewMode === 'simple' ? (
             <BeginnerSkillsView domain={careerPrefs?.domain || 'vlsi'} />
           ) : (
             <div className="space-y-12">
               <Suspense fallback={<TabLoading />}>
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-10">
-                  <div className="space-y-2 mb-8">
-                    <h2 className="text-4xl font-mono font-bold text-text-main tracking-tighter uppercase">
-                      Silicon <span className="text-[#14B8A6]">Radar</span>
-                    </h2>
-                    <p className="text-text-dim font-mono text-xs uppercase tracking-widest">
-                      Interactive Quantization & Remediation Plans
-                    </p>
-                  </div>
-                  <SkillGapRadar 
-                    activeCompany={radarCompany} 
-                    setActiveCompany={setRadarCompany} 
+                  <SkillGapRadar
+                    activeCompany={radarCompany}
+                    setActiveCompany={setRadarCompany}
                     masteredNodes={careerState.unlockedNodes}
                     quizScores={careerState.quizScores}
                   />
@@ -690,26 +455,18 @@ const CareerRoadmapPage: React.FC = () => {
         )}
 
         {activeTab === 'financials' && (
-          viewMode === 'beginner' ? (
+          viewMode === 'simple' ? (
             <BeginnerFinancialsView />
           ) : (
             <div className="space-y-12">
               <Suspense fallback={<TabLoading />}>
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-10">
-                  <div className="space-y-2 mb-8">
-                    <h2 className="text-4xl font-mono font-bold text-text-main tracking-tighter uppercase">
-                      Silicon <span className="text-amber-500">Heatmap</span>
-                    </h2>
-                    <p className="text-text-dim font-mono text-xs uppercase tracking-widest">
-                      Real-time Global Purchasing Power Parity Index
-                    </p>
-                  </div>
                   <GlobalSalaryHeatmap />
                 </div>
-                
-                <FiscalMatrixSection 
-                  country={careerState.fiscalPrefs.country} 
-                  expYears={careerState.fiscalPrefs.expYears} 
+
+                <FiscalMatrixSection
+                  country={careerState.fiscalPrefs.country}
+                  expYears={careerState.fiscalPrefs.expYears}
                   onPrefsChange={(country, exp) => careerState.setFiscalPrefs(country, exp)}
                 />
 
@@ -722,18 +479,10 @@ const CareerRoadmapPage: React.FC = () => {
         )}
 
         {activeTab === 'portfolio' && (
-          viewMode === 'beginner' ? (
+          viewMode === 'simple' ? (
             <BeginnerPortfolioView />
           ) : (
             <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-10 space-y-8">
-              <div className="space-y-2">
-                <h2 className="text-4xl font-mono font-bold text-text-main tracking-tighter uppercase">
-                  Silicon <span className="text-teal-400">Resume</span>
-                </h2>
-                <p className="text-text-dim font-mono text-xs uppercase tracking-widest">
-                  Interactive, verified resume export system
-                </p>
-              </div>
               <Suspense fallback={<TabLoading />}>
                 <SiliconResume masteredNodes={careerState.unlockedNodes} userName={resolvedUserName} onFocusSkillNode={handleFocusSkillNode} />
               </Suspense>
