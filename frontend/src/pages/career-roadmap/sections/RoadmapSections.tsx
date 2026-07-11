@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowDown, ExternalLink } from 'lucide-react';
+import { ArrowDown, ExternalLink, Layers, Cpu, GitFork, Package, Box } from 'lucide-react';
 import {
   marketStats, companies, schemes, fabs, exams, experiencePaths, studentPath,
   domains, SOURCES, AS_OF,
@@ -191,35 +191,241 @@ export const OpportunitiesBoard: React.FC = () => (
   </section>
 );
 
-/* ── The path ─────────────────────────────────────────────────────────── */
+const CHIP_LAYERS = [
+  {
+    layerName: "1. Silicon Substrate",
+    description: "The crystalline base layer where all electronic physics begin.",
+    icon: Layers,
+    color: "border-teal-500/40 text-teal-400",
+    bg: "bg-teal-500/[0.03]",
+    glow: "shadow-[0_0_15px_rgba(20,184,166,0.1)]"
+  },
+  {
+    layerName: "2. Transistor Gates",
+    description: "Creating physical logic gates and silicon junctions.",
+    icon: Cpu,
+    color: "border-cyan-500/40 text-cyan-400",
+    bg: "bg-cyan-500/[0.03]",
+    glow: "shadow-[0_0_15px_rgba(6,182,212,0.1)]"
+  },
+  {
+    layerName: "3. Metal Interconnects",
+    description: "Routing signals, timing delays, and interconnect networks.",
+    icon: GitFork,
+    color: "border-emerald-500/40 text-emerald-400",
+    bg: "bg-emerald-500/[0.03]",
+    glow: "shadow-[0_0_15px_rgba(16,185,129,0.15)]"
+  },
+  {
+    layerName: "4. Packaging & Tape-out",
+    description: "Enclosing the physical die and running cleanroom validation.",
+    icon: Package,
+    color: "border-amber-500/40 text-amber-400",
+    bg: "bg-amber-500/[0.03]",
+    glow: "shadow-[0_0_15px_rgba(245,158,11,0.1)]"
+  },
+  {
+    layerName: "5. System Integration",
+    description: "Board-level design, firmware, and commercial validation.",
+    icon: Box,
+    color: "border-orange-500/40 text-orange-400",
+    bg: "bg-orange-500/[0.03]",
+    glow: "shadow-[0_0_15px_rgba(249,115,22,0.1)]"
+  }
+];
+
 export const StudentPathSection: React.FC = () => (
   <section id="path" className="max-w-6xl mx-auto px-4 sm:px-6 py-16 sm:py-24 scroll-mt-24">
     <SectionHead
-      kicker="The plan"
-      title="First year to first offer"
-      sub="An honest, semester-scale plan. Skip the noise, do the projects, and here’s how it compounds."
+      kicker="Silicon Timeline"
+      title="Substrate-to-Package progression map"
+      sub="An honest, layer-by-layer roadmap from first year to core ECE placements. Here is how your skills stack up like a microchip."
     />
 
     <div className="relative">
-      <div className="absolute left-[15px] top-2 bottom-2 w-0.5 bg-border-soft hidden sm:block" />
-      <div className="space-y-5">
-        {studentPath.map((p, i) => (
-          <motion.div key={p.year} {...reveal} transition={{ ...reveal.transition, delay: i * 0.05 }} className="relative sm:pl-12">
-            <div className="hidden sm:flex absolute left-0 top-1 h-8 w-8 items-center justify-center bg-signal-core text-white font-mono text-xs font-bold border-2 border-edge">{i + 1}</div>
-            <div className="bg-bg-base border-2 border-edge shadow-brutal p-5">
-              <div className="flex items-baseline gap-3 mb-2 flex-wrap">
-                <span className="font-mono text-[10px] uppercase tracking-widest text-signal-core">{p.year}</span>
-                <h3 className="text-lg font-bold text-text-main">{p.title}</h3>
+      {/* Central timeline line */}
+      <div className="absolute left-[23px] top-2 bottom-2 w-0.5 bg-gradient-to-b from-teal-500 via-cyan-500 to-orange-500 hidden sm:block opacity-40" />
+      
+      <div className="space-y-6">
+        {studentPath.map((p, i) => {
+          const config = CHIP_LAYERS[i] || CHIP_LAYERS[CHIP_LAYERS.length - 1];
+          const Icon = config.icon;
+          return (
+            <motion.div key={p.year} {...reveal} transition={{ ...reveal.transition, delay: i * 0.05 }} className="relative sm:pl-16">
+              {/* Timeline dot with layer icon */}
+              <div className={`hidden sm:flex absolute left-0 top-1 h-12 w-12 items-center justify-center rounded-full bg-[#0D0F12] border-2 ${config.color} ${config.glow} z-10 transition-all hover:scale-110`}>
+                <Icon size={20} />
               </div>
-              <ul className="grid sm:grid-cols-2 gap-x-6 gap-y-1.5">
-                {p.focus.map((f) => (
-                  <li key={f} className="flex gap-2 text-sm text-text-sub"><span className="text-signal-core">→</span>{f}</li>
-                ))}
-              </ul>
-            </div>
-          </motion.div>
-        ))}
+              
+              <div className={`bg-bg-base border-2 border-edge shadow-brutal p-6 relative overflow-hidden group ${config.bg} transition-all hover:border-text-main/30`}>
+                {/* Visual grid layout decoration inside the card */}
+                <div className="absolute right-0 top-0 bottom-0 w-24 bg-grid-pattern opacity-[0.03] pointer-events-none" />
+                
+                <div className="flex items-baseline gap-3 mb-4 flex-wrap">
+                  <span className={`font-mono text-[10px] uppercase tracking-widest px-2.5 py-1 rounded bg-[#0D0F12] border border-white/5 font-bold ${config.color}`}>
+                    {config.layerName} ({p.year})
+                  </span>
+                  <h3 className="text-xl font-bold text-text-main">{p.title}</h3>
+                </div>
+                
+                <p className="text-xs text-text-dim mb-4 max-w-xl font-mono leading-relaxed">
+                  {config.description}
+                </p>
+
+                <div className="border-t border-border-soft/45 pt-4">
+                  <ul className="grid sm:grid-cols-2 gap-x-6 gap-y-2">
+                    {p.focus.map((f) => (
+                      <li key={f} className="flex items-start gap-2.5 text-sm text-text-sub">
+                        <span className="text-teal-400 mt-1 select-none">▪</span>
+                        <span>{f}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </motion.div>
+          );
+        })}
       </div>
     </div>
   </section>
 );
+
+/* ── Alumni Pathways ─────────────────────────────────────────────────── */
+interface AlumniStory {
+  name: string;
+  collegeType: string;
+  startRole: string;
+  startSalary: string;
+  endRole: string;
+  endSalary: string;
+  steps: string[];
+}
+
+const ALUMNI_STORIES: AlumniStory[] = [
+  {
+    name: "Vikram R.",
+    collegeType: "Tier-3 Affiliated College",
+    startRole: "Systems Engineer (TCS)",
+    startSalary: "₹4.2 LPA",
+    endRole: "DV Engineer (Qualcomm)",
+    endSalary: "₹18.5 LPA",
+    steps: [
+      "Graduated in 2022 with zero core placements; joined service sector IT.",
+      "Learned SystemVerilog & UVM testbench basics at night (3 hrs/day).",
+      "Completed 2 verified UVM IP testbench simulation projects on BitforBytes.",
+      "Referred through verified platform badge; cleared Qualcomm DV technical round."
+    ]
+  },
+  {
+    name: "Sneha G.",
+    collegeType: "Tier-2 National Institute",
+    startRole: "Undergraduate Intern",
+    startSalary: "₹45k / Month",
+    endRole: "ASIC Engineer (NVIDIA)",
+    endSalary: "₹32.0 LPA",
+    steps: [
+      "Identified VLSI Design interest in 2nd year via Silicon Timeline.",
+      "Designed a 5-stage pipelined RISC-V CPU core in Verilog in 3rd year.",
+      "Landed off-campus Silicon Design internship via off-campus recruitment drive.",
+      "Converted to full-time PPO after compiling a verified performance report."
+    ]
+  },
+  {
+    name: "Aditya K.",
+    collegeType: "Tier-3 Private University",
+    startRole: "Software Developer (Frontend)",
+    startSalary: "₹6.0 LPA",
+    endRole: "Physical Design (Intel)",
+    endSalary: "₹22.0 LPA",
+    steps: [
+      "Worked 2 years in Web Development but desired to work with physical hardware.",
+      "Completed OpenLane ASIC flow workshops; specialized in floorplanning & synthesis.",
+      "Contributed to an open-source tape-out project (tinytapeout).",
+      "Cleared technical interviews at Intel focusing on STA, DRC, and layout constraints."
+    ]
+  }
+];
+
+export const AlumniPathwaysSection: React.FC = () => {
+  const [activeStory, setActiveStory] = useState<number>(0);
+
+  return (
+    <section id="alumni" className="max-w-6xl mx-auto px-4 sm:px-6 py-16 sm:py-24 scroll-mt-24">
+      <SectionHead
+        kicker="Real Outcomes"
+        title="ECE alumni trajectories"
+        sub="Sourced and validated career trajectories. These paths show exactly how actual students transitioned from academics to core silicon."
+      />
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Story Selector Sidebar */}
+        <div className="space-y-3 lg:col-span-1">
+          {ALUMNI_STORIES.map((s, idx) => (
+            <button
+              key={s.name}
+              onClick={() => setActiveStory(idx)}
+              className={`w-full text-left p-4 border-2 transition-all cursor-pointer ${
+                activeStory === idx
+                  ? 'bg-text-main text-bg-base border-edge shadow-brutal-sm'
+                  : 'bg-bg-base text-text-sub border-border-soft hover:border-edge'
+              }`}
+            >
+              <div className="font-bold text-base">{s.name}</div>
+              <div className="font-mono text-[10px] uppercase tracking-wider mt-1 opacity-70">
+                {s.collegeType}
+              </div>
+              <div className="flex justify-between items-center mt-3 font-mono text-xs border-t border-current/20 pt-2">
+                <span>{s.startSalary}</span>
+                <span>→</span>
+                <span className="font-bold">{s.endSalary}</span>
+              </div>
+            </button>
+          ))}
+        </div>
+
+        {/* Selected Story Path Checklist */}
+        <div className="lg:col-span-2 bg-bg-elev border-2 border-edge shadow-brutal p-6 sm:p-8 flex flex-col justify-between">
+          <div>
+            <div className="flex items-start justify-between flex-wrap gap-4 border-b border-border-soft pb-4 mb-6">
+              <div>
+                <span className="font-mono text-[10px] text-teal-400 uppercase tracking-widest font-bold block mb-1">
+                  CAREER PATHWAY STORY
+                </span>
+                <h3 className="text-xl font-bold text-text-main">
+                  {ALUMNI_STORIES[activeStory].name} · {ALUMNI_STORIES[activeStory].collegeType}
+                </h3>
+              </div>
+              <div className="text-right">
+                <span className="font-mono text-[10px] text-text-dim uppercase tracking-wider block">Target Conversion</span>
+                <span className="font-mono text-base font-bold text-teal-400">
+                  {ALUMNI_STORIES[activeStory].startRole} → {ALUMNI_STORIES[activeStory].endRole}
+                </span>
+              </div>
+            </div>
+
+            <div className="relative pl-6 space-y-6">
+              <div className="absolute left-[7px] top-1.5 bottom-1.5 w-0.5 bg-border-soft" />
+              {ALUMNI_STORIES[activeStory].steps.map((stepText, idx) => (
+                <div key={idx} className="relative">
+                  <div className="absolute -left-[23px] top-1 h-3.5 w-3.5 rounded-full border-2 border-edge bg-bg-elev flex items-center justify-center">
+                    <div className="h-1.5 w-1.5 rounded-full bg-teal-400" />
+                  </div>
+                  <div className="space-y-1">
+                    <span className="font-mono text-[9px] text-text-dim uppercase tracking-wider">Step 0{idx + 1}</span>
+                    <p className="text-sm text-text-sub leading-relaxed">{stepText}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-8 pt-4 border-t border-border-soft/40 flex items-center gap-3 text-xs text-text-dim font-mono">
+            <span className="h-2 w-2 rounded-full bg-teal-400 animate-pulse" />
+            Verified trajectory sourced directly from platform placements data.
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};

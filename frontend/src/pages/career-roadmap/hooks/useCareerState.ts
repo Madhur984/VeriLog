@@ -108,8 +108,22 @@ export function useCareerState() {
     }
   };
 
+  const [focusedNodeId, setFocusedNodeId] = useState<string | null>(null);
+  const [nodeVisitHistory, setNodeVisitHistory] = useState<string[]>([]);
+
+  const addToVisitHistory = (itemId: string) => {
+    setNodeVisitHistory(prev => {
+      if (prev[prev.length - 1] === itemId) return prev;
+      return [...prev, itemId];
+    });
+  };
+
   return {
     ...state,
+    focusedNodeId,
+    setFocusedNodeId,
+    nodeVisitHistory,
+    addToVisitHistory,
     unlockNode,
     updateQuizScore,
     recordSimulation,
@@ -119,3 +133,4 @@ export function useCareerState() {
     loadFromShareLink
   };
 }
+

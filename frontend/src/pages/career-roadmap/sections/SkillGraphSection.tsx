@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { domains } from '../data/domains';
+import { domains } from '../data/careerData';
 import { DataTerminal } from '../components/DataTerminal';
 import { MasteryBadge } from '../components/MasteryBadge';
 import { MasteryQuizModal } from '../components/MasteryQuizModal';
@@ -10,15 +10,19 @@ import { COMPANY_SKILL_MAP } from '../../../data/companySkillMap';
 interface SkillGraphSectionProps {
   unlockedNodes: string[];
   quizScores: Record<string, number>;
-  onUnlockNode: (id: string) => void;
   onUpdateScore: (domainId: string, score: number) => void;
+  focusedNodeId: string | null;
+  setFocusedNodeId: (id: string | null) => void;
+  nodeVisitHistory: string[];
 }
 
 export const SkillGraphSection: React.FC<SkillGraphSectionProps> = ({
   unlockedNodes,
   quizScores,
-  onUnlockNode: _onUnlockNode,
-  onUpdateScore
+  onUpdateScore,
+  focusedNodeId,
+  setFocusedNodeId,
+  nodeVisitHistory
 }) => {
   const [activeDomain, setActiveDomain] = useState(domains[0]);
   const [showQuiz, setShowQuiz] = useState(false);
@@ -26,6 +30,12 @@ export const SkillGraphSection: React.FC<SkillGraphSectionProps> = ({
   const [viewMode, setViewMode] = useState<'list' | 'graph'>('list');
 
   const unlockedNodesSet = useMemo(() => new Set(unlockedNodes), [unlockedNodes]);
+
+  React.useEffect(() => {
+    if (focusedNodeId) {
+      setViewMode('graph');
+    }
+  }, [focusedNodeId]);
 
   return (
     <section id="skill-graph" className="py-24 px-6 max-w-7xl mx-auto space-y-12 scroll-mt-32">
@@ -178,6 +188,9 @@ export const SkillGraphSection: React.FC<SkillGraphSectionProps> = ({
             <SkillGraph 
               selectedCompany={selectedCompany}
               masteredNodes={unlockedNodesSet}
+              focusedNodeId={focusedNodeId}
+              setFocusedNodeId={setFocusedNodeId}
+              nodeVisitHistory={nodeVisitHistory}
             />
             {selectedCompany && (
               <SkillGapSummary 

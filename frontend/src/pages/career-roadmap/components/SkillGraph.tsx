@@ -47,7 +47,7 @@ const groupColors: Record<number, string> = {
   1: "#FF5F1F", // Foundation (Orange)
   2: "#00D4FF", // Core (Cyan)
   3: "#FFDC00", // Bridge (Yellow)
-  4: "#B10DC9", // Specialization (Purple)
+  4: "#10B981", // Specialization (Emerald)
 };
 
 const defaultPositions: Record<string, { x: number; y: number }> = {
@@ -224,7 +224,7 @@ const ThreeDNode: React.FC<{
   isActive: boolean;
   color: string;
   onClick: () => void;
-}> = ({ node, isMastered, isRequired, isPreferred, isActive, color, onClick }) => {
+}> = ({ node, isMastered, isRequired, isActive, color, onClick }) => {
   const meshRef = useRef<THREE.Mesh>(null);
   const [hovered, setHovered] = useState(false);
 
@@ -461,14 +461,44 @@ interface SkillGraphProps {
   onNodeClick?: (nodeId: string) => void;
   viewMode?: "2D" | "3D";
   onDragCount?: (count: number) => void;
+  focusedNodeId?: string | null;
+  setFocusedNodeId?: (id: string | null) => void;
+  nodeVisitHistory?: string[] | null;
 }
+
+const APPEARS_IN_MAP: Record<string, string[]> = {
+  basic_electronics: ["EXPLORE: Analog", "FINANCIALS: VLSI Design"],
+  digital_logic: ["EXPLORE: RTL Design", "PORTFOLIO: Technical Matrices"],
+  verilog: ["EXPLORE: RTL Design", "FINANCIALS: Software/EDA", "PORTFOLIO: Technical Matrices"],
+  vlsi: ["EXPLORE: Physical Design", "FINANCIALS: VLSI Design", "PORTFOLIO: Technical Matrices"],
+  embedded: ["EXPLORE: Embedded Systems", "FINANCIALS: Embedded Systems", "PORTFOLIO: Technical Matrices"],
+  signal_processing: ["EXPLORE: Wireless Comm", "PORTFOLIO: Technical Matrices"],
+  wireless: ["EXPLORE: Wireless & 5G/6G", "FINANCIALS: RF / Wireless", "PORTFOLIO: Technical Matrices"],
+  rf: ["EXPLORE: Wireless & 5G/6G", "FINANCIALS: RF / Wireless", "PORTFOLIO: Technical Matrices"],
+  power: ["EXPLORE: Power & EV", "PORTFOLIO: Technical Matrices"],
+  control: ["EXPLORE: Control Systems", "PORTFOLIO: Technical Matrices"],
+  medical: ["EXPLORE: Medical Electronics", "PORTFOLIO: Technical Matrices"],
+  photonics: ["EXPLORE: Photonics", "PORTFOLIO: Technical Matrices"],
+  defense: ["EXPLORE: Defense & Aerospace", "PORTFOLIO: Technical Matrices"]
+};
+
+const getRawNodeId = (id: string | null): string | null => {
+  if (!id) return null;
+  if (defaultPositions[id]) return id;
+  const key = Object.keys(SKILL_MAP_IDS).find(k => SKILL_MAP_IDS[k] === id);
+  if (key) return key;
+  return id;
+};
 
 export const SkillGraph: React.FC<SkillGraphProps> = ({
   selectedCompany,
   masteredNodes,
   onNodeClick,
   viewMode = "2D",
-  onDragCount
+  onDragCount,
+  focusedNodeId = null,
+  setFocusedNodeId,
+  nodeVisitHistory = []
 }) => {
   const [scheme] = useColorScheme();
   const isLight = scheme === "light";
@@ -490,6 +520,7 @@ export const SkillGraph: React.FC<SkillGraphProps> = ({
   const [searchTerm, setSearchTerm] = useState("");
   const [physicsOn, setPhysicsOn] = useState(true);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const [showCuriosityTrail, setShowCuriosityTrail] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
 
   // ---------- Quiz Gate State & Handlers ----------
@@ -515,6 +546,10 @@ export const SkillGraph: React.FC<SkillGraphProps> = ({
     }
 
     if (!node || !mappedId) return;
+
+    if (setFocusedNodeId) {
+      setFocusedNodeId(mappedId);
+    }
 
     if (masteredNodes.has(mappedId)) {
       if (onNodeClick) {
@@ -561,7 +596,8 @@ export const SkillGraph: React.FC<SkillGraphProps> = ({
 
   // ---------- Path Logic ----------
   const activePath = useMemo(() => {
-    if (!hoveredId) return { upstream: new Set<string>(), downstream: new Set<string>() };
+    const targetId = hoveredId || getRawNodeId(focusedNodeId);
+    if (!targetId) return { upstream: new Set<string>(), downstream: new Set<string>() };
     
     const upstream = new Set<string>();
     const findUpstream = (id: string) => {
@@ -587,10 +623,10 @@ export const SkillGraph: React.FC<SkillGraphProps> = ({
       });
     };
 
-    findUpstream(hoveredId);
-    findDownstream(hoveredId);
+    findUpstream(targetId);
+    findDownstream(targetId);
     return { upstream, downstream };
-  }, [hoveredId, nodes]);
+  }, [hoveredId, focusedNodeId, nodes]);
 
   // ---------- Persistence ----------
   useEffect(() => {
@@ -691,6 +727,16 @@ export const SkillGraph: React.FC<SkillGraphProps> = ({
     );
   }
 
+  const visitedNodeCoords = useMemo(() => {
+    if (!nodeVisitHistory || nodeVisitHistory.length === 0) return [];
+    return nodeVisitHistory
+      .map(mappedId => {
+        const rawId = Object.keys(SKILL_MAP_IDS).find(key => SKILL_MAP_IDS[key] === mappedId) || mappedId;
+        return nodes.find(n => n.id === rawId);
+      })
+      .filter((n): n is GraphNode => !!n);
+  }, [nodeVisitHistory, nodes]);
+
   return (
     <div 
       ref={containerRef} 
@@ -726,6 +772,13 @@ export const SkillGraph: React.FC<SkillGraphProps> = ({
             title="Reset Positions"
           >
             <RefreshCw size={16} />
+          </button>
+          <button 
+            onClick={() => setShowCuriosityTrail(!showCuriosityTrail)} 
+            className={`p-3 rounded-xl transition-all ${showCuriosityTrail ? "text-emerald-400 bg-emerald-400/10" : "text-text-dim hover:text-emerald-400"}`} 
+            title="Toggle Curiosity Trail"
+          >
+            <Activity size={16} className="rotate-95" />
           </button>
           <button 
             onClick={toggleFullscreen} 
@@ -773,19 +826,49 @@ export const SkillGraph: React.FC<SkillGraphProps> = ({
               <div className="relative" style={{ width: 3000, height: 2000 }}>
                 {/* SVG Connections Layer */}
                 <svg className="absolute inset-0 w-full h-full pointer-events-none">
+                  {/* Curiosity Trail */}
+                  {showCuriosityTrail && visitedNodeCoords.length >= 2 && (
+                    <g>
+                      {visitedNodeCoords.map((coord, idx) => {
+                        if (idx === 0) return null;
+                        const prev = visitedNodeCoords[idx - 1];
+                        const path = getBezierPath(prev, coord);
+                        return (
+                          <g key={`curiosity-trail-${idx}`}>
+                            <path
+                              d={path}
+                              fill="none"
+                              stroke="#10B981"
+                              strokeWidth={3}
+                              strokeDasharray="6 4"
+                              opacity={0.7}
+                              className="transition-all duration-300"
+                            />
+                            <circle r={4} fill="#10B981" opacity={0.9}>
+                              <animateMotion dur="2.5s" repeatCount="indefinite" path={path} />
+                            </circle>
+                          </g>
+                        );
+                      })}
+                    </g>
+                  )}
+
                   {edges.map((edge, idx) => {
                     const from = nodes.find(n => n.id === edge.from);
                     const to = nodes.find(n => n.id === edge.to);
                     if (!from || !to) return null;
                     const path = getBezierPath(from, to);
                     
-                    const isPartOfActivePath = (hoveredId === edge.from && activePath.downstream.has(edge.to)) || 
-                                              (hoveredId === edge.to && activePath.upstream.has(edge.from));
+                    const targetHighlightId = hoveredId || getRawNodeId(focusedNodeId);
+                    const isPartOfActivePath = targetHighlightId && (
+                      (targetHighlightId === edge.from && activePath.downstream.has(edge.to)) || 
+                      (targetHighlightId === edge.to && activePath.upstream.has(edge.from))
+                    );
                     
                     const isCompanyPrereq = requirements && 
                       (requirements.required.includes(SKILL_MAP_IDS[edge.from]) || requirements.required.includes(SKILL_MAP_IDS[edge.to]));
 
-                    const isFaint = hoveredId && !isPartOfActivePath;
+                    const isFaint = targetHighlightId && !isPartOfActivePath;
                     const edgeColor = isCompanyPrereq ? '#F59E0B' : groupColors[from.group];
 
                     return (
@@ -821,8 +904,11 @@ export const SkillGraph: React.FC<SkillGraphProps> = ({
                   
                   const isHighlighted = searchTerm && node.name.toLowerCase().includes(searchTerm.toLowerCase());
                   const isDragging = draggingId === node.id;
-                  const isInActivePath = hoveredId === node.id || activePath.upstream.has(node.id) || activePath.downstream.has(node.id);
-                  const isDimmed = (hoveredId && !isInActivePath) || !isActive;
+                  
+                  const activeFocusRawId = getRawNodeId(focusedNodeId);
+                  const targetHighlightId = hoveredId || activeFocusRawId;
+                  const isInActivePath = !targetHighlightId || targetHighlightId === node.id || activePath.upstream.has(node.id) || activePath.downstream.has(node.id);
+                  const isDimmed = !isInActivePath || !isActive;
                   
                   return (
                     <motion.div
@@ -836,15 +922,22 @@ export const SkillGraph: React.FC<SkillGraphProps> = ({
                       }}
                       onMouseEnter={() => setHoveredId(node.id)}
                       onMouseLeave={() => setHoveredId(null)}
-                      style={{ position: "absolute", left: node.x - 56, top: node.y - 56, zIndex: isInActivePath ? 40 : 10 }}
+                      style={{ 
+                        position: "absolute", 
+                        left: node.x - 56, 
+                        top: node.y - 56, 
+                        zIndex: isInActivePath ? 40 : 10,
+                      }}
                       animate={{
                          scale: isDragging ? 1.15 : isInActivePath ? 1.08 : 1,
-                         opacity: isDimmed ? 0.2 : 1,
-                         y: physicsOn && !isDragging ? [0, -8, 0] : 0
+                         opacity: isDimmed ? 0.25 : 1,
+                         y: physicsOn && !isDragging ? [0, -8, 0] : 0,
+                         filter: isDimmed ? 'blur(1.5px)' : 'blur(0px)',
                       }}
                       transition={{
                          y: { duration: 5 + Math.random() * 3, repeat: Infinity, ease: "easeInOut" },
-                         opacity: { duration: 0.3 }
+                         opacity: { duration: 0.3 },
+                         filter: { duration: 0.3 }
                       }}
                     >
                       <button
@@ -918,19 +1011,36 @@ export const SkillGraph: React.FC<SkillGraphProps> = ({
 
                       {/* Interactive Diagnostics Tooltip */}
                       <AnimatePresence>
-                        {hoveredId === node.id && (
+                        {(hoveredId === node.id || activeFocusRawId === node.id) && (
                           <motion.div
                             initial={{ opacity: 0, x: 10 }}
                             animate={{ opacity: 1, x: 122 }}
                             exit={{ opacity: 0, x: 10 }}
-                            className="absolute top-0 left-0 w-44 bg-observatory-surface border border-border-soft p-3 rounded-2xl shadow-neo pointer-events-none z-[100]"
+                            className="absolute top-0 left-0 w-52 bg-observatory-surface border border-border-soft p-3 rounded-2xl shadow-neo z-[100]"
                           >
-                             <div className="text-[9px] font-black text-text-main mb-1.5 uppercase tracking-wide">{node.name}</div>
+                             <div className="text-[9px] font-black text-text-main mb-1.5 uppercase tracking-wide flex justify-between items-center">
+                               <span>{node.name}</span>
+                               {activeFocusRawId === node.id && (
+                                 <span className="text-[6px] bg-teal-500/20 text-teal-400 border border-teal-500/30 px-1 py-0.5 rounded font-mono uppercase tracking-widest font-bold animate-pulse">Focused</span>
+                               )}
+                             </div>
                              <div className="h-px w-full bg-border-soft mb-1.5" />
                              <div className="space-y-1 font-mono text-[7px] text-text-dim">
                                 <div className="uppercase">Demand Scalar: <span className="text-cyan-400">{node.demandIntensity}/10</span></div>
                                 <div className="uppercase">Prerequisites: <span className="text-orange-400">{node.prerequisites.length || "ROOT"}</span></div>
                                 <div className="uppercase">Status: <span className={isMastered ? "text-green-400" : "text-amber-500"}>{isMastered ? "MASTERED" : "UNLOCKED"}</span></div>
+                                
+                                {APPEARS_IN_MAP[node.id] && (
+                                  <div className="mt-2 pt-1.5 border-t border-border-soft/60">
+                                    <div className="text-[6px] text-text-dim uppercase tracking-wider font-bold mb-1">Appears In:</div>
+                                    <div className="flex flex-wrap gap-1">
+                                      {APPEARS_IN_MAP[node.id].map(loc => (
+                                        <span key={loc} className="text-[5px] bg-[#14B8A6]/10 border border-[#14B8A6]/20 text-[#14B8A6] px-1 py-0.5 rounded uppercase font-bold">{loc}</span>
+                                      ))}
+                                    </div>
+                                  </div>
+                                )}
+
                                 <div className="italic leading-normal text-text-dim/60 mt-1.5">[ CLICK_TO_TOGGLE_MASTERY ]</div>
                              </div>
                           </motion.div>

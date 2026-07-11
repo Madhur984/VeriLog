@@ -88,6 +88,8 @@ export const marketStats: MarketStat[] = [
  * 2. DOMAINS — where the work actually is
  * ──────────────────────────────────────────────────────────────────────── */
 
+export interface DomainResource { name: string; url: string }
+
 export interface Domain {
   id: string;
   name: string;
@@ -100,6 +102,13 @@ export interface Domain {
   coreSkills: string[];
   tools: string[];
   roadmap: string[];
+  /* Fields merged from the former domains.ts — used by SkillGraphSection */
+  description: string;
+  growth: string;
+  salary: string;
+  tags: string[];
+  skills: string[];
+  resources: DomainResource[];
 }
 
 export const domains: Domain[] = [
@@ -110,6 +119,10 @@ export const domains: Domain[] = [
     coreSkills: ['Verilog / SystemVerilog', 'Digital logic & FSMs', 'Computer architecture', 'Static timing (STA)', 'Low-power design'],
     tools: ['Synopsys VCS', 'Cadence Genus', 'Design Compiler', 'Git + Tcl/Python'],
     roadmap: ['Digital logic & Boolean algebra', 'Verilog → SystemVerilog', 'Computer architecture', 'Synthesis & timing', 'A tape-out-style project'],
+    description: 'The heart of the semiconductor industry. Designing the chips that power everything from AI to space probes.',
+    growth: '+22% YoY', salary: '₹8-18 LPA', tags: ['RTL', 'Verilog', 'ASIC', 'FPGA'],
+    skills: ['Verilog', 'SystemVerilog', 'UVM', 'Scripting (Python/Tcl)', 'CMOS Fundamentals'],
+    resources: [{ name: 'VLSI System Design (VSD)', url: '#' }, { name: 'NPTEL: VLSI Design', url: '#' }, { name: 'Verilog on EDA Playground', url: '#' }]
   },
   {
     id: 'dv', name: 'Design Verification', tagline: 'Prove the chip works before it ships',
@@ -118,6 +131,10 @@ export const domains: Domain[] = [
     coreSkills: ['SystemVerilog', 'UVM', 'Constrained-random & coverage', 'Assertions (SVA)', 'Debugging discipline'],
     tools: ['UVM', 'Synopsys VCS', 'Cadence Xcelium', 'Verdi / SimVision'],
     roadmap: ['Verilog basics', 'SystemVerilog for verification', 'UVM methodology', 'Coverage & assertions', 'Verify a real IP block'],
+    description: 'Ensuring silicon correctness before tape-out. The most-hired VLSI role in India.',
+    growth: '+20% YoY', salary: '₹8-16 LPA', tags: ['UVM', 'SystemVerilog', 'Assertions', 'Coverage'],
+    skills: ['SystemVerilog', 'UVM', 'SVA', 'Coverage-Driven Verification', 'Debugging'],
+    resources: [{ name: 'Verification Academy', url: '#' }, { name: 'ChipVerify', url: '#' }, { name: 'NPTEL: Verification', url: '#' }]
   },
   {
     id: 'pd', name: 'Physical Design & STA', tagline: 'From netlist to silicon layout',
@@ -126,6 +143,10 @@ export const domains: Domain[] = [
     coreSkills: ['Floorplanning & P&R', 'Static timing analysis', 'Clock tree synthesis', 'Physical verification', 'Tcl scripting'],
     tools: ['Cadence Innovus', 'Synopsys ICC2 / PrimeTime', 'StarRC', 'Calibre'],
     roadmap: ['CMOS & standard cells', 'Timing fundamentals', 'Place & route flow', 'Signoff (DRC/LVS/STA)', 'Block-level PD project'],
+    description: 'Turning netlists into manufacturable silicon layouts with timing closure.',
+    growth: '+18% YoY', salary: '₹7-15 LPA', tags: ['P&R', 'STA', 'CTS', 'DRC/LVS'],
+    skills: ['Floorplanning', 'STA', 'Clock Tree Synthesis', 'Physical Verification', 'Tcl'],
+    resources: [{ name: 'VLSI Expert PD', url: '#' }, { name: 'PrimeTime Documentation', url: '#' }, { name: 'OpenROAD', url: '#' }]
   },
   {
     id: 'analog', name: 'Analog & Mixed-Signal', tagline: 'The bridge to the real world',
@@ -134,6 +155,10 @@ export const domains: Domain[] = [
     coreSkills: ['Circuit intuition', 'Semiconductor devices', 'Noise & feedback', 'Layout awareness', 'SPICE'],
     tools: ['Cadence Virtuoso', 'Spectre', 'ADS', 'MATLAB'],
     roadmap: ['Network analysis', 'MOSFET device physics', 'Single-stage amplifiers', 'Data converters / PLLs', 'A full analog block'],
+    description: 'Mastering the continuous world. Designing precision circuits that interface with the physical world.',
+    growth: '+15% YoY', salary: '₹14-40 LPA', tags: ['Op-Amps', 'ADC/DAC', 'PLL', 'SPICE'],
+    skills: ['SPICE Simulation', 'Cadence Virtuoso', 'Circuit Intuition', 'Noise Analysis', 'Layout Design'],
+    resources: [{ name: 'Razavi Electronics (YouTube)', url: '#' }, { name: 'Analog Devices Wiki', url: '#' }, { name: 'TI Precision Labs', url: '#' }]
   },
   {
     id: 'embedded', name: 'Embedded Systems', tagline: 'Where code meets hardware',
@@ -142,6 +167,10 @@ export const domains: Domain[] = [
     coreSkills: ['Embedded C / C++', 'Microcontroller architecture', 'RTOS', 'I2C / SPI / UART', 'Debugging with a scope'],
     tools: ['ARM Cortex-M', 'FreeRTOS / Zephyr', 'STM32 / ESP32', 'JTAG / logic analyzer'],
     roadmap: ['C for embedded', 'Microcontroller peripherals', 'RTOS concepts', 'Device drivers', 'A connected-device project'],
+    description: 'Bridging code and hardware. Developing the firmware and OS for specialized hardware systems.',
+    growth: '+18% YoY', salary: '₹6-22 LPA', tags: ['C/C++', 'RTOS', 'Firmware', 'IoT'],
+    skills: ['Embedded C', 'C++', 'FreeRTOS', 'I2C/SPI/UART', 'ARM Cortex-M'],
+    resources: [{ name: 'FastBit Embedded Brain Academy', url: '#' }, { name: 'Embedded.com', url: '#' }, { name: 'Quantum Leaps (State Machines)', url: '#' }]
   },
   {
     id: 'wireless', name: 'Wireless & 5G/6G', tagline: 'The physics of connectivity',
@@ -150,6 +179,10 @@ export const domains: Domain[] = [
     coreSkills: ['Communication theory', 'Digital signal processing', '5G NR fundamentals', 'MATLAB modelling', 'Fixed-point implementation'],
     tools: ['MATLAB / Simulink', 'Python', 'C for DSP', 'Vector signal analyzers'],
     roadmap: ['Signals & systems', 'DSP', 'Digital communications', '5G NR / baseband', 'A modem-block model'],
+    description: 'Architecting the future of connectivity. Implementing complex communication protocols on silicon.',
+    growth: '+25% YoY', salary: '₹10-28 LPA', tags: ['5G', 'RF', 'DSP', 'Modems'],
+    skills: ['MATLAB', 'DSP Algorithms', 'Wireless Comm', 'RF Basics', 'System Modeling'],
+    resources: [{ name: 'Wireless Pi', url: '#' }, { name: '3GPP Specifications', url: '#' }, { name: 'IEEE Communications Society', url: '#' }]
   },
   {
     id: 'power', name: 'Power Electronics & EV', tagline: 'Move energy efficiently',
@@ -158,6 +191,10 @@ export const domains: Domain[] = [
     coreSkills: ['Power semiconductor devices', 'Converter topologies', 'Control loops', 'Thermal design', 'BMS architecture'],
     tools: ['PSIM / PLECS', 'Simulink', 'SiC / GaN MOSFETs', 'Bench power tools'],
     roadmap: ['Power semiconductors', 'DC-DC / DC-AC topologies', 'Control theory', 'Battery & BMS', 'A working converter'],
+    description: 'Driving the green revolution. Efficient energy conversion for EVs and renewable energy grids.',
+    growth: '+30% YoY', salary: '₹8-25 LPA', tags: ['EV', 'SiC/GaN', 'Inverters', 'BMS'],
+    skills: ['PSIM/Simulink', 'Power MOSFETs/IGBTs', 'Thermal Design', 'Control Theory', 'Magnetics'],
+    resources: [{ name: 'PES University', url: '#' }, { name: 'Infineon Academy', url: '#' }, { name: 'Power Electronics News', url: '#' }]
   },
   {
     id: 'comp-arch', name: 'Computer Architecture', tagline: 'Design the brains',
@@ -166,6 +203,10 @@ export const domains: Domain[] = [
     coreSkills: ['ISA & pipelines (RISC-V)', 'Caches & memory', 'Performance modelling', 'RTL design', 'Parallelism'],
     tools: ['gem5', 'RISC-V toolchain', 'C++', 'Python'],
     roadmap: ['Computer organisation', 'Pipelining & hazards', 'Cache hierarchies', 'Out-of-order / accelerators', 'A pipelined core in RTL'],
+    description: 'Designing the brains of computation. CPU/GPU micro-architecture, ISA design, and memory hierarchies.',
+    growth: '+20% YoY', salary: '₹15-45 LPA', tags: ['CPU', 'GPU', 'RISC-V', 'Cache'],
+    skills: ['Gem5 Simulation', 'RISC-V Assembly', 'Performance Modeling', 'RTL Design', 'Compiler Awareness'],
+    resources: [{ name: 'Computer Architecture: A Quantitative Approach (H&P)', url: '#' }, { name: 'RISC-V Foundation', url: '#' }, { name: 'Onur Mutlu Lectures', url: '#' }]
   },
   {
     id: 'semi-mfg', name: 'Semiconductor Manufacturing', tagline: 'Build the chips, in India',
@@ -174,6 +215,10 @@ export const domains: Domain[] = [
     coreSkills: ['Semiconductor physics', 'Cleanroom processing', 'Yield & defect analysis', 'Statistical process control', 'Metrology'],
     tools: ['TCAD', 'SPC tools', 'Inspection / metrology', 'Data analysis'],
     roadmap: ['Device physics', 'Fabrication steps', 'Lithography & etch', 'Yield & SPC', 'A fab/ATMP internship'],
+    description: 'Building the foundries of the future. Process engineering, yield optimization, and next-gen node development.',
+    growth: '+35% YoY', salary: '₹10-30 LPA', tags: ['Fab', 'Lithography', 'Yield', 'Process'],
+    skills: ['TCAD', 'Process Integration', 'Defect Analysis', 'SPC/SQC', 'Equipment Engineering'],
+    resources: [{ name: 'TSMC University', url: '#' }, { name: 'SEMI Academy', url: '#' }, { name: 'Solid State Technology', url: '#' }]
   },
   {
     id: 'eda', name: 'EDA / CAD', tagline: 'Build the tools that build chips',
@@ -182,7 +227,35 @@ export const domains: Domain[] = [
     coreSkills: ['C++ / Python', 'Algorithms & data structures', 'Graph & computational geometry', 'Compiler basics', 'VLSI fundamentals'],
     tools: ['C++', 'Python', 'OpenROAD / Yosys', 'LLVM'],
     roadmap: ['Strong DSA in C++', 'VLSI design flow', 'Logic synthesis algorithms', 'Placement & routing', 'Contribute to open EDA'],
+    description: 'Building the tools that build chips. EDA algorithm development, physical design automation, and verification engines.',
+    growth: '+18% YoY', salary: '₹12-35 LPA', tags: ['Synthesis', 'P&R', 'Simulation', 'Algorithms'],
+    skills: ['C++/Python', 'Algorithms & Data Structures', 'Compiler Design', 'Computational Geometry', 'VLSI Fundamentals'],
+    resources: [{ name: 'Cadence University', url: '#' }, { name: 'Synopsys Learning Center', url: '#' }, { name: 'EDA Algorithm Research Papers', url: '#' }]
   },
+  {
+    id: 'automotive', name: 'Automotive Electronics', tagline: 'The future of intelligent vehicles',
+    fresherLpa: [6, 14], seniorLpa: [20, 40], outlook: 'hot', difficulty: 4,
+    what: 'Sensor fusion, ADAS, functional safety and V2X — the electronics backbone of autonomous and electric vehicles. India\'s auto-electronics workforce is scaling fast.',
+    coreSkills: ['AUTOSAR', 'CAN / LIN protocols', 'ISO 26262 functional safety', 'Sensor fusion', 'Embedded C++'],
+    tools: ['Vector CANoe', 'Simulink', 'dSPACE', 'ETAS INCA'],
+    roadmap: ['Automotive protocols (CAN/LIN)', 'ISO 26262 functional safety', 'ADAS sensor fusion', 'V2X communication', 'EV powertrain control'],
+    description: 'Engineering the next generation of intelligent vehicles. Sensor fusion, ADAS, and functional safety.',
+    growth: '+28% YoY', salary: '₹8-28 LPA', tags: ['ADAS', 'V2X', 'CAN', 'ISO-26262'],
+    skills: ['AUTOSAR', 'CAN Protocol', 'Functional Safety', 'Simulink', 'Embedded C++'],
+    resources: [{ name: 'Vector Academy', url: '#' }, { name: 'NXP Automotive Training', url: '#' }, { name: 'SAE International', url: '#' }]
+  },
+  {
+    id: 'quantum', name: 'Quantum Computing', tagline: 'The frontier of computation',
+    fresherLpa: [12, 25], seniorLpa: [30, 70], outlook: 'steady', difficulty: 5,
+    what: 'Quantum hardware engineering, cryo-electronics and error correction. A research-heavy frontier role with outsized long-term potential.',
+    coreSkills: ['Quantum mechanics', 'Cryogenic electronics', 'Error correction', 'RF/Microwave engineering', 'Statistical mechanics'],
+    tools: ['Qiskit / Cirq', 'Cryogenic design tools', 'RF instruments', 'Python'],
+    roadmap: ['Quantum mechanics foundations', 'Qubit technologies', 'Quantum error correction', 'Cryogenic electronics', 'Quantum algorithms'],
+    description: 'The frontier of computation. Quantum hardware engineering, cryo-electronics, and error correction.',
+    growth: '+40% YoY', salary: '₹18-50 LPA', tags: ['Qubits', 'Cryogenics', 'Error Correction', 'Research'],
+    skills: ['Qiskit/Cirq', 'Cryogenic Design', 'RF/Microwave Engineering', 'Statistical Mechanics', 'Python'],
+    resources: [{ name: 'IBM Quantum Learning', url: '#' }, { name: 'MIT OpenCourseWare: Quantum', url: '#' }, { name: 'Google Quantum AI', url: '#' }]
+  }
 ];
 
 /* ────────────────────────────────────────────────────────────────────────
