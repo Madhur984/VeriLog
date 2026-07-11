@@ -12,7 +12,8 @@ const ECE_GLOSSARY: Record<string, { term: string, definition: string, analogy: 
   "ASIC": { term: "ASIC", definition: "Application-Specific Integrated Circuit", analogy: "A microchip custom-designed for a single specific purpose, like Bitcoin mining or AI acceleration." },
   "VLSI": { term: "VLSI", definition: "Very Large Scale Integration", analogy: "The technology of packing billions of transistors onto a single silicon chip." },
   "EDA": { term: "EDA", definition: "Electronic Design Automation", analogy: "Software tools used to design and test complex circuits (like AutoCAD but for billions of transistors)." },
-  "DV": { term: "DV", definition: "Design Verification", analogy: "The testing phase that ensures a virtual chip design behaves exactly as intended before it is manufactured." }
+  "DV": { term: "DV", definition: "Design Verification", analogy: "The testing phase that ensures a virtual chip design behaves exactly as intended before it is manufactured." },
+  "CAD": { term: "CAD", definition: "Computer-Aided Design", analogy: "Software tools used to design physical microchip layouts, schematic capture, and mechanical casings." }
 };
 
 const renderWithTooltips = (text: string) => {

@@ -72,7 +72,7 @@ const ClockCard = React.forwardRef<HTMLDivElement, {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
-        className="p-6 bg-observatory-surface border border-white/[0.08] rounded-2xl space-y-4"
+        className="p-6 bg-bg-elev border-2 border-edge shadow-brutal-sm space-y-4"
       >
         {/* ... rest of editing UI ... */}
         <div className="flex justify-between items-center mb-6">
@@ -162,7 +162,7 @@ const ClockCard = React.forwardRef<HTMLDivElement, {
     <motion.div
       ref={ref}
       layout
-      className="p-6 bg-observatory-surface border border-white/[0.08] rounded-2xl relative group"
+      className="p-6 bg-bg-elev border-2 border-edge shadow-brutal-sm relative group"
     >
       <button 
         onClick={onEdit}

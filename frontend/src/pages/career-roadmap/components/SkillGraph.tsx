@@ -11,7 +11,7 @@ import { sfx } from "../utils/sfx";
 import {
   CircuitBoard, Cpu, Wifi, Radio, Zap, Move3d, Shield, Eye, TrendingUp,
   Lock, Unlock, RefreshCw, Maximize2, Minimize2, Search,
-  Layout, Activity
+  Layout, Activity, Sparkles
 } from "lucide-react";
 
 // ---------- Types ----------
@@ -467,6 +467,61 @@ interface SkillGraphProps {
 }
 
 
+const NODE_APPEARANCES: Record<string, { label: string; tab: string }[]> = {
+  basic_electronics: [
+    { label: 'Embedded Systems', tab: 'FINANCIALS' },
+    { label: 'Analog & Mixed-Signal', tab: 'EXPLORE' },
+    { label: 'Embedded Systems', tab: 'EXPLORE' }
+  ],
+  digital_logic: [
+    { label: 'VLSI Design', tab: 'FINANCIALS' },
+    { label: 'Embedded Systems', tab: 'FINANCIALS' },
+    { label: 'Software / EDA', tab: 'FINANCIALS' },
+    { label: 'Resume Badges', tab: 'PORTFOLIO' },
+    { label: 'RTL Design & VLSI', tab: 'EXPLORE' }
+  ],
+  verilog: [
+    { label: 'VLSI Design', tab: 'FINANCIALS' },
+    { label: 'Software / EDA', tab: 'FINANCIALS' },
+    { label: 'Resume Skills', tab: 'PORTFOLIO' },
+    { label: 'Design Verification', tab: 'EXPLORE' }
+  ],
+  vlsi: [
+    { label: 'VLSI Design', tab: 'FINANCIALS' },
+    { label: 'Resume Badges', tab: 'PORTFOLIO' },
+    { label: 'Physical Design & STA', tab: 'EXPLORE' }
+  ],
+  embedded: [
+    { label: 'Embedded Systems', tab: 'FINANCIALS' },
+    { label: 'Embedded Systems', tab: 'EXPLORE' }
+  ],
+  wireless: [
+    { label: 'RF / Wireless', tab: 'FINANCIALS' },
+    { label: 'Wireless & 5G/6G', tab: 'EXPLORE' }
+  ],
+  rf: [
+    { label: 'RF / Wireless', tab: 'FINANCIALS' },
+    { label: 'Wireless & 5G/6G', tab: 'EXPLORE' }
+  ],
+  signal_processing: [
+    { label: 'RF / Wireless', tab: 'FINANCIALS' },
+    { label: 'Wireless & 5G/6G', tab: 'EXPLORE' }
+  ],
+  control: [
+    { label: 'Software / EDA', tab: 'FINANCIALS' },
+    { label: 'Power Electronics & EV', tab: 'EXPLORE' }
+  ],
+  power: [
+    { label: 'Power Electronics & EV', tab: 'EXPLORE' }
+  ],
+  defense: [
+    { label: 'Defense & Aerospace', tab: 'EXPLORE' }
+  ],
+  photonics: [
+    { label: 'Silicon Photonics', tab: 'EXPLORE' }
+  ]
+};
+
 const getRawNodeId = (id: string | null): string | null => {
   if (!id) return null;
   if (defaultPositions[id]) return id;
@@ -487,6 +542,7 @@ export const SkillGraph: React.FC<SkillGraphProps> = ({
 }) => {
   const [scheme] = useColorScheme();
   const isLight = scheme === "light";
+  const transformRef = useRef<any>(null);
 
   const [nodes, setNodes] = useState<GraphNode[]>(() => {
     const saved = localStorage.getItem("bfb_skill_graph_positions_v2");
@@ -497,6 +553,20 @@ export const SkillGraph: React.FC<SkillGraphProps> = ({
       y: positions[n.id]?.y ?? defaultPositions[n.id].y,
     }));
   });
+
+  useEffect(() => {
+    if (focusedNodeId && transformRef.current) {
+      const rawId = getRawNodeId(focusedNodeId);
+      const node = nodes.find(n => n.id === rawId);
+      if (node) {
+        setTimeout(() => {
+          if (transformRef.current) {
+            transformRef.current.zoomToElement(`node-cell-${node.id}`, 1.25, 900, "easeOut");
+          }
+        }, 120);
+      }
+    }
+  }, [focusedNodeId, nodes]);
 
   const [editMode, setEditMode] = useState(false);
   const [draggingId, setDraggingId] = useState<string | null>(null);
@@ -800,6 +870,7 @@ export const SkillGraph: React.FC<SkillGraphProps> = ({
       </div>
 
       <TransformWrapper
+        ref={transformRef}
         initialScale={0.7}
         minScale={0.2}
         maxScale={2.5}
@@ -813,6 +884,16 @@ export const SkillGraph: React.FC<SkillGraphProps> = ({
               <div className="relative" style={{ width: 3000, height: 2000 }}>
                 {/* SVG Connections Layer */}
                 <svg className="absolute inset-0 w-full h-full pointer-events-none">
+                  <defs>
+                    <filter id="green-glow" x="-20%" y="-20%" width="140%" height="140%">
+                      <feGaussianBlur stdDeviation="4" result="blur" />
+                      <feMerge>
+                        <feMergeNode in="blur" />
+                        <feMergeNode in="SourceGraphic" />
+                      </feMerge>
+                    </filter>
+                  </defs>
+                  
                   {/* Curiosity Trail */}
                   {showCuriosityTrail && visitedNodeCoords.length >= 2 && (
                     <g>
@@ -822,16 +903,27 @@ export const SkillGraph: React.FC<SkillGraphProps> = ({
                         const path = getBezierPath(prev, coord);
                         return (
                           <g key={`curiosity-trail-${idx}`}>
+                            {/* Ambient Glow Underlay */}
                             <path
                               d={path}
                               fill="none"
                               stroke="#10B981"
-                              strokeWidth={3}
+                              strokeWidth={8}
+                              opacity={0.25}
+                              filter="url(#green-glow)"
+                              className="animate-pulse"
+                            />
+                            {/* Sharp Dashed Core */}
+                            <path
+                              d={path}
+                              fill="none"
+                              stroke="#10B981"
+                              strokeWidth={3.5}
                               strokeDasharray="6 4"
-                              opacity={0.7}
+                              opacity={0.85}
                               className="transition-all duration-300"
                             />
-                            <circle r={4} fill="#10B981" opacity={0.9}>
+                            <circle r={4.5} fill="#34D399" filter="url(#green-glow)">
                               <animateMotion dur="2.5s" repeatCount="indefinite" path={path} />
                             </circle>
                           </g>
@@ -900,6 +992,7 @@ export const SkillGraph: React.FC<SkillGraphProps> = ({
                   return (
                     <motion.div
                       key={node.id}
+                      id={`node-cell-${node.id}`}
                       drag={editMode}
                       dragMomentum={false}
                       onDragStart={() => setDraggingId(node.id)}
@@ -1019,6 +1112,20 @@ export const SkillGraph: React.FC<SkillGraphProps> = ({
                                 )}
                                 <div className="italic text-text-dim/50 mt-1">Click to toggle mastery</div>
                              </div>
+                             
+                             {NODE_APPEARANCES[node.id] && (
+                               <div className="mt-2.5 pt-2 border-t border-border-soft/30">
+                                 <div className="text-[6.5px] text-teal-450 uppercase tracking-widest font-black mb-1">Appears In:</div>
+                                 <ul className="space-y-1 text-[6.5px] text-text-dim font-mono">
+                                   {NODE_APPEARANCES[node.id].map((app, idx) => (
+                                     <li key={idx} className="flex justify-between items-center gap-1.5">
+                                       <span className="truncate max-w-[95px]">{app.label}</span>
+                                       <span className="text-[5.5px] px-1 py-0.2 bg-white/5 border border-border-soft/40 text-teal-350 rounded shrink-0">{app.tab}</span>
+                                     </li>
+                                   ))}
+                                 </ul>
+                               </div>
+                             )}
                           </motion.div>
                         )}
                       </AnimatePresence>

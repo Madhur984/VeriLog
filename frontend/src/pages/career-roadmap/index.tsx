@@ -12,6 +12,11 @@ import { SOURCES, AS_OF, domains } from './data/careerData';
 import { useCareerState } from './hooks/useCareerState';
 import { getSession } from '../../lib/auth';
 import { DiagnosticModal } from './components/DiagnosticModal';
+import { ColdOpenSplash } from './components/ColdOpenSplash';
+import { PersonalizationFlow } from './components/PersonalizationFlow';
+import { CareerWeather } from '../../components/CareerWeather';
+import { MissionClock } from '../../components/MissionClock';
+import { BiometricCalibration } from '../../components/BiometricCalibration';
 
 // Lazy loaded interactive components
 const SkillGapRadar = React.lazy(() =>
@@ -280,6 +285,14 @@ const CareerRoadmapPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>('explore');
   const [viewMode, setViewMode] = useState<'advanced' | 'simple'>('advanced');
   const [isDiagnosticOpen, setIsDiagnosticOpen] = useState<boolean>(false);
+  const [showSplash, setShowSplash] = useState<boolean>(() => {
+    try {
+      return sessionStorage.getItem('bfb_cold_open_played') !== 'true';
+    } catch {
+      return true;
+    }
+  });
+  const [isRecalibrating, setIsRecalibrating] = useState<boolean>(false);
 
   const handleFocusSkillNode = (nodeId: string) => {
     setActiveTab('skills');
@@ -342,6 +355,22 @@ const CareerRoadmapPage: React.FC = () => {
     }
   }, []);
 
+  const getStageLabel = (stageId: string) => {
+    if (stageId === 'foundation') return '1st / 2nd Year';
+    if (stageId === 'specializing') return '3rd Year';
+    if (stageId === 'placement') return '4th Year';
+    if (stageId === 'pivot') return 'Graduate / Alumni';
+    return stageId;
+  };
+  const getDomainLabel = (domainId: string) => {
+    if (domainId === 'vlsi') return 'Digital Design & RTL';
+    if (domainId === 'dv') return 'Verification (UVM/DV)';
+    if (domainId === 'pd') return 'Physical Design & STA';
+    if (domainId === 'embedded') return 'Embedded & IoT';
+    if (domainId === 'eda') return 'Software / EDA Tools';
+    return domainId;
+  };
+
   const jump = (id: string) => {
     const el = document.getElementById(id);
     if (el) {
@@ -350,65 +379,236 @@ const CareerRoadmapPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-bg-void text-text-main pb-28">
-      {/* Sticky Top Navigation — minimal: back + view toggle + theme */}
-      <div className="sticky top-0 z-30 bg-bg-void border-b-2 border-edge">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center gap-3">
-          <button
-            onClick={() => navigate('/portal')}
-            aria-label="Back to portal"
-            className="brutal-btn inline-flex h-9 items-center gap-1.5 bg-bg-elev px-3 text-[12px] font-bold text-text-main shrink-0 cursor-pointer"
-          >
-            <ArrowLeft size={14} /> <span className="hidden sm:inline">Portal</span>
-          </button>
-
-          <div className="flex-1" />
-
-          <div className="flex items-center gap-3 shrink-0">
+    <>
+      {showSplash && <ColdOpenSplash onComplete={() => setShowSplash(false)} />}
+      <div className="min-h-screen bg-bg-void text-text-main pb-28">
+        {/* Sticky Top Navigation — minimal: back + view toggle + theme */}
+        <div className="sticky top-0 z-30 bg-bg-void border-b-2 border-edge">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center gap-3">
             <button
-              onClick={() => setViewMode(viewMode === 'advanced' ? 'simple' : 'advanced')}
-              className="brutal-btn h-9 px-3 flex items-center gap-1.5 bg-bg-elev font-mono text-[11px] uppercase tracking-wider text-text-main font-bold cursor-pointer border-2 border-edge"
-              title="Toggle between simple and advanced view"
+              onClick={() => navigate('/portal')}
+              aria-label="Back to portal"
+              className="brutal-btn inline-flex h-9 items-center gap-1.5 bg-bg-elev px-3 text-[12px] font-bold text-text-main shrink-0 cursor-pointer"
             >
-              <span className={viewMode === 'simple' ? 'text-teal-400 font-extrabold' : 'text-text-dim'}>Simple</span>
-              <span className="text-text-dim">/</span>
-              <span className={viewMode === 'advanced' ? 'text-teal-400 font-extrabold' : 'text-text-dim'}>Advanced</span>
+              <ArrowLeft size={14} /> <span className="hidden sm:inline">Portal</span>
             </button>
-            <ThemeToggle />
+
+            <div className="flex-1" />
+
+            <div className="flex items-center gap-3 shrink-0">
+              <button
+                onClick={() => setViewMode(viewMode === 'advanced' ? 'simple' : 'advanced')}
+                className="brutal-btn h-9 px-3 flex items-center gap-1.5 bg-bg-elev font-mono text-[11px] uppercase tracking-wider text-text-main font-bold cursor-pointer border-2 border-edge"
+                title="Toggle between Beginner and Telemetry mode"
+              >
+                <span className={viewMode === 'simple' ? 'text-teal-400 font-extrabold' : 'text-text-dim'}>Beginner</span>
+                <span className="text-text-dim">/</span>
+                <span className={viewMode === 'advanced' ? 'text-teal-400 font-extrabold' : 'text-text-dim'}>Telemetry</span>
+              </button>
+              <ThemeToggle />
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Floating Tab Navigation */}
-      <FloatingCommandBar activeTab={activeTab} onTabChange={setActiveTab} />
+        {/* Floating Tab Navigation */}
+        <FloatingCommandBar activeTab={activeTab} onTabChange={setActiveTab} />
 
-      {/* Main Tab Views */}
-      <main className="relative">
-        {activeTab === 'about' && <AboutTab />}
+        {/* Main Tab Views */}
+        <main className="relative">
+          {activeTab === 'about' && <AboutTab />}
 
-        {activeTab === 'explore' && (
-          <div className="space-y-4">
-            {/* Restored original RoadmapHero as clean page opener */}
-            <RoadmapHero />
+          {activeTab === 'explore' && (
+            <div className="space-y-4">
+              {/* Restored original RoadmapHero as clean page opener */}
+              <RoadmapHero onStartDiagnostic={() => setIsDiagnosticOpen(true)} />
 
-            {/* Domain grid with inline diagnostic CTA */}
-            <div className="max-w-6xl mx-auto px-4 sm:px-6">
-              <div className="flex items-center justify-between gap-4 mb-6 py-3 border-b border-border-soft/50">
-                <span className="font-mono text-[10px] text-text-dim uppercase tracking-widest">
-                  10 ECE domains · click to expand
-                </span>
-                <button
-                  onClick={() => setIsDiagnosticOpen(true)}
-                  className="inline-flex items-center gap-1.5 font-mono text-[11px] text-teal-400 hover:text-teal-300 transition-colors cursor-pointer"
-                >
-                  <HelpCircle size={13} /> Help me find my domain →
-                </button>
+              {/* Personalization / Onboarding Calibration Flow */}
+              {(!careerPrefs || isRecalibrating) ? (
+                <PersonalizationFlow
+                  currentPrefs={careerPrefs}
+                  onSelectPrefs={(prefs) => {
+                    handleSelectPrefs(prefs);
+                    setIsRecalibrating(false);
+                  }}
+                />
+              ) : (
+                <div className="max-w-6xl mx-auto px-4 sm:px-6 mb-6">
+                  <div className="bg-bg-elev border-2 border-edge shadow-brutal p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div className="flex items-center gap-3">
+                      <div className="h-2.5 w-2.5 rounded-full bg-teal-400 animate-gentle-pulse" />
+                      <span className="font-mono text-xs text-text-sub uppercase">
+                        SIGNAL PATHWAY CALIBRATED: <span className="text-text-main font-bold">{getStageLabel(careerPrefs.stage).toUpperCase()}</span> Specializing in <span className="text-teal-400 font-bold">{getDomainLabel(careerPrefs.domain).toUpperCase()}</span>
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => setIsRecalibrating(true)}
+                      className="brutal-btn h-8 px-3 flex items-center bg-bg-base font-mono text-[10px] uppercase tracking-wider text-text-main font-bold border-2 border-edge cursor-pointer"
+                    >
+                      Recalibrate
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Silicon Telemetry & Targeting Panel / Simple Insights */}
+              {viewMode === 'advanced' ? (
+                <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 scroll-mt-24">
+                  <div className="flex items-center justify-between gap-4 mb-6 py-3 border-b border-border-soft/50">
+                    <span className="font-mono text-[10px] text-text-dim uppercase tracking-widest">
+                      SILICON TELEMETRY & TARGETING DECK
+                    </span>
+                    <span className="font-mono text-[10px] text-teal-400 animate-gentle-pulse">
+                      SYSTEM ACTIVE
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div className="lg:col-span-2 space-y-6">
+                      <div className="bg-bg-elev border-2 border-edge shadow-brutal p-6">
+                        <h3 className="font-mono text-xs uppercase tracking-widest text-signal-core mb-4">NEURAL SIGNAL PATHWAY SYNC</h3>
+                        <BiometricCalibration />
+                      </div>
+                      <div className="bg-bg-elev border-2 border-edge shadow-brutal p-6 flex flex-col justify-between">
+                        <div>
+                          <h3 className="font-mono text-xs uppercase tracking-widest text-signal-core mb-4">SILICON DEMAND WEATHER</h3>
+                          <p className="text-xs text-text-sub leading-normal mb-4">
+                            Real-time industrial demand shifts across major ECE design sectors.
+                          </p>
+                        </div>
+                        <CareerWeather />
+                      </div>
+                    </div>
+                    <div className="bg-bg-elev border-2 border-edge shadow-brutal p-6">
+                      <h3 className="font-mono text-xs uppercase tracking-widest text-signal-core mb-4">MISSION TARGET CLOCKS</h3>
+                      <MissionClock />
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6">
+                  <div className="bg-bg-elev border-2 border-edge shadow-brutal p-6 sm:p-8 space-y-6">
+                    <div className="border-b border-border-soft/50 pb-4">
+                      <span className="font-mono text-[10px] text-teal-400 uppercase tracking-widest block mb-1">
+                        BEGINNER GUIDE
+                      </span>
+                      <h3 className="text-2xl font-bold text-text-main uppercase">
+                        ECE Core Industry Highlights
+                      </h3>
+                      <p className="text-text-sub text-sm leading-relaxed mt-1">
+                        High-level insights to help beginners navigate the Indian semiconductor landscape.
+                      </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-4">
+                        <div className="flex gap-3 items-start">
+                          <span className="text-teal-400 mt-1 select-none">▪</span>
+                          <div>
+                            <h4 className="font-bold text-text-main text-sm">India Fab Renaissance</h4>
+                            <p className="text-xs text-text-sub leading-relaxed mt-0.5">
+                              The India Semiconductor Mission (ISM) with a ₹76,000 Cr outlay is funding major manufacturing fabs (like Tata-PSMC in Dholera) and OSAT plants, creating 300,000+ core jobs.
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="flex gap-3 items-start">
+                          <span className="text-teal-400 mt-1 select-none">▪</span>
+                          <div>
+                            <h4 className="font-bold text-text-main text-sm">Product MNC vs. IT Services</h4>
+                            <p className="text-xs text-text-sub leading-relaxed mt-0.5">
+                              Silicon product companies (NVIDIA, Qualcomm, Intel) pay freshers ₹8–18 LPA starting salary, compounding rapidly compared to standard service sector software roles.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="space-y-4">
+                        <div className="flex gap-3 items-start">
+                          <span className="text-teal-400 mt-1 select-none">▪</span>
+                          <div>
+                            <h4 className="font-bold text-text-main text-sm">The Skill Shortage</h4>
+                            <p className="text-xs text-text-sub leading-relaxed mt-0.5">
+                              A severe shortage of VLSI design and verification engineers means companies hire on demonstrated competence. Verifying small designs on the platform is highly valued.
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="flex gap-3 items-start">
+                          <span className="text-teal-400 mt-1 select-none">▪</span>
+                          <div>
+                            <h4 className="font-bold text-text-main text-sm">No-Fluff Roadmap</h4>
+                            <p className="text-xs text-text-sub leading-relaxed mt-0.5">
+                              Start with basic Digital Logic (gates, Boolean algebra) and progress to Verilog RTL. Practice design verification (UVM/DV) or Physical Design (STA) once core logic is solid.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Domain grid with inline diagnostic CTA */}
+              <div className="max-w-6xl mx-auto px-4 sm:px-6">
+                <div className="flex items-center justify-between gap-4 mb-6 py-3 border-b border-border-soft/50">
+                  <span className="font-mono text-[10px] text-text-dim uppercase tracking-widest">
+                    10 ECE domains · click to expand
+                  </span>
+                  <button
+                    onClick={() => setIsDiagnosticOpen(true)}
+                    className="inline-flex items-center gap-1.5 font-mono text-[11px] text-teal-400 hover:text-teal-300 transition-colors cursor-pointer"
+                  >
+                    <HelpCircle size={13} /> Help me find my domain →
+                  </button>
+                </div>
               </div>
-            </div>
 
             <MarketPulse />
             <DomainGrid highlightedDomainId={careerPrefs?.domain || null} onFocusSkillNode={handleFocusSkillNode} />
-            <SalaryLab onFocusSkillNode={handleFocusSkillNode} />
+            
+            {viewMode === 'advanced' ? (
+              <SalaryLab onFocusSkillNode={handleFocusSkillNode} />
+            ) : (
+              <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
+                <div className="bg-bg-elev border-2 border-edge shadow-brutal p-6 sm:p-8 space-y-4">
+                  <div>
+                    <span className="font-mono text-[10px] text-teal-400 uppercase tracking-widest block mb-1">
+                      SIMPLE SALARY SUMMARY
+                    </span>
+                    <h3 className="text-2xl font-bold text-text-main uppercase">
+                      Silicon Compensation Bands
+                    </h3>
+                    <p className="text-text-sub text-sm leading-relaxed mt-1">
+                      A summary of ECE salary trajectories across product and service sectors in India.
+                    </p>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 border-t border-border-soft/45">
+                    <div className="space-y-1">
+                      <span className="font-mono text-[10px] text-text-dim uppercase tracking-wider block">IT / EDA Services Entry</span>
+                      <span className="text-xl font-bold text-text-main block">₹4.0L – ₹10.0L <span className="text-xs font-normal text-text-dim">/ year</span></span>
+                      <p className="text-xs text-text-dim leading-relaxed">
+                        Wide entry gates at services companies or smaller design houses.
+                      </p>
+                    </div>
+                    <div className="space-y-1">
+                      <span className="font-mono text-[10px] text-teal-400 uppercase tracking-wider block">Product MNC Entry</span>
+                      <span className="text-xl font-bold text-text-main block">₹8.0L – ₹15.0L <span className="text-xs font-normal text-text-dim">/ year</span></span>
+                      <p className="text-xs text-text-dim leading-relaxed">
+                        Qualcomm, Intel, SSIR. High standards, rewarding candidates with solid fundamentals.
+                      </p>
+                    </div>
+                    <div className="space-y-1">
+                      <span className="font-mono text-[10px] text-accent-orange uppercase tracking-wider block">Elite Core Product Entry</span>
+                      <span className="text-xl font-bold text-text-main block">₹15.0L – ₹30.0L <span className="text-xs font-normal text-text-dim">/ year</span></span>
+                      <p className="text-xs text-text-dim leading-relaxed">
+                        Apple, NVIDIA, Google TPU teams. Highly competitive; requires stellar design portfolios.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <CompaniesBoard />
             <OpportunitiesBoard />
             <StudentPathSection />
@@ -519,7 +719,8 @@ const CareerRoadmapPage: React.FC = () => {
           jump('domains');
         }}
       />
-    </div>
+      </div>
+    </>
   );
 };
 

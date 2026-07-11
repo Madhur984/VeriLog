@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowDown, ExternalLink, Layers, Cpu, GitFork, Package, Box } from 'lucide-react';
+import { ArrowDown, ExternalLink, Layers, Cpu, GitFork, Package, Box, HelpCircle } from 'lucide-react';
 import {
   marketStats, companies, schemes, fabs, exams, experiencePaths, studentPath,
   domains, SOURCES, AS_OF,
@@ -9,8 +9,12 @@ import { SectionHead, reveal } from './RoadmapUI';
 
 const sourceById = (id: string) => SOURCES.find((s) => s.id === id);
 
+interface RoadmapHeroProps {
+  onStartDiagnostic?: () => void;
+}
+
 /* ── Hero ─────────────────────────────────────────────────────────────── */
-export const RoadmapHero: React.FC = () => (
+export const RoadmapHero: React.FC<RoadmapHeroProps> = ({ onStartDiagnostic }) => (
   <section className="relative max-w-6xl mx-auto px-4 sm:px-6 pt-14 sm:pt-20 pb-8">
     <motion.div {...reveal}>
       <div className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.25em] text-signal-core mb-5">
@@ -23,6 +27,14 @@ export const RoadmapHero: React.FC = () => (
         The world is short a million chip engineers, and India is building fabs for the first time.
         This is the honest map — the domains, the real pay, who’s hiring, and the exact route from first year to first offer.
       </p>
+      {onStartDiagnostic && (
+        <button
+          onClick={onStartDiagnostic}
+          className="brutal-btn mt-6 inline-flex h-11 items-center gap-2 bg-teal-400 text-bg-base px-6 text-sm font-bold uppercase tracking-wider cursor-pointer shadow-brutal transition-transform hover:-translate-y-0.5"
+        >
+          <HelpCircle size={16} /> Help Me Choose My Domain
+        </button>
+      )}
     </motion.div>
 
     <motion.div {...reveal} transition={{ ...reveal.transition, delay: 0.1 }} className="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -198,15 +210,15 @@ const CHIP_LAYERS = [
     icon: Layers,
     color: "border-teal-500/40 text-teal-400",
     bg: "bg-teal-500/[0.03]",
-    glow: "shadow-[0_0_15px_rgba(20,184,166,0.1)]"
+    glow: "shadow-[0_0_15px_rgba(20,184,166,0.15)]"
   },
   {
-    layerName: "2. Transistor Gates",
+    layerName: "2. Active Transistors",
     description: "Creating physical logic gates and silicon junctions.",
     icon: Cpu,
     color: "border-cyan-500/40 text-cyan-400",
     bg: "bg-cyan-500/[0.03]",
-    glow: "shadow-[0_0_15px_rgba(6,182,212,0.1)]"
+    glow: "shadow-[0_0_15px_rgba(6,182,212,0.15)]"
   },
   {
     layerName: "3. Metal Interconnects",
@@ -217,12 +229,12 @@ const CHIP_LAYERS = [
     glow: "shadow-[0_0_15px_rgba(16,185,129,0.15)]"
   },
   {
-    layerName: "4. Packaging & Tape-out",
+    layerName: "4. Packaging",
     description: "Enclosing the physical die and running cleanroom validation.",
     icon: Package,
     color: "border-amber-500/40 text-amber-400",
     bg: "bg-amber-500/[0.03]",
-    glow: "shadow-[0_0_15px_rgba(245,158,11,0.1)]"
+    glow: "shadow-[0_0_15px_rgba(245,158,11,0.15)]"
   },
   {
     layerName: "5. System Integration",
@@ -230,7 +242,7 @@ const CHIP_LAYERS = [
     icon: Box,
     color: "border-orange-500/40 text-orange-400",
     bg: "bg-orange-500/[0.03]",
-    glow: "shadow-[0_0_15px_rgba(249,115,22,0.1)]"
+    glow: "shadow-[0_0_15px_rgba(249,115,22,0.15)]"
   }
 ];
 
@@ -242,45 +254,66 @@ export const StudentPathSection: React.FC = () => (
       sub="An honest, layer-by-layer roadmap from first year to core ECE placements. Here is how your skills stack up like a microchip."
     />
 
-    <div className="relative">
-      {/* Central timeline line */}
-      <div className="absolute left-[23px] top-2 bottom-2 w-0.5 bg-gradient-to-b from-teal-500 via-cyan-500 to-orange-500 hidden sm:block opacity-40" />
-      
-      <div className="space-y-6">
+    <div className="max-w-4xl mx-auto">
+      {/* Continuous layered microchip stack */}
+      <div className="flex flex-col">
         {studentPath.map((p, i) => {
           const config = CHIP_LAYERS[i] || CHIP_LAYERS[CHIP_LAYERS.length - 1];
           const Icon = config.icon;
-          return (
-            <motion.div key={p.year} {...reveal} transition={{ ...reveal.transition, delay: i * 0.05 }} className="relative sm:pl-16">
-              {/* Timeline dot with layer icon */}
-              <div className={`hidden sm:flex absolute left-0 top-1 h-12 w-12 items-center justify-center rounded-full bg-[#0D0F12] border-2 ${config.color} ${config.glow} z-10 transition-all hover:scale-110`}>
-                <Icon size={20} />
-              </div>
-              
-              <div className={`bg-bg-base border-2 border-edge shadow-brutal p-6 relative overflow-hidden group ${config.bg} transition-all hover:border-text-main/30`}>
-                {/* Visual grid layout decoration inside the card */}
-                <div className="absolute right-0 top-0 bottom-0 w-24 bg-grid-pattern opacity-[0.03] pointer-events-none" />
-                
-                <div className="flex items-baseline gap-3 mb-4 flex-wrap">
-                  <span className={`font-mono text-xs uppercase tracking-wide px-2.5 py-1 rounded bg-[#0D0F12] border border-white/5 font-bold ${config.color}`}>
-                    {config.layerName} · {p.year}
-                  </span>
-                  <h3 className="text-xl font-bold text-text-main">{p.title}</h3>
-                </div>
-                
-                <p className="text-xs text-text-dim mb-4 max-w-xl font-mono leading-relaxed">
-                  {config.description}
-                </p>
+          const isFirst = i === 0;
+          const isLast = i === studentPath.length - 1;
+          const viaColorHex = i === 0 ? '#14B8A6' : i === 1 ? '#06B6D4' : i === 2 ? '#10B981' : i === 3 ? '#F59E0B' : '#F97316';
 
-                <div className="border-t border-border-soft/45 pt-4">
-                  <ul className="grid sm:grid-cols-2 gap-x-6 gap-y-2">
-                    {p.focus.map((f) => (
-                      <li key={f} className="flex items-start gap-2.5 text-sm text-text-sub">
-                        <span className="text-teal-400 mt-1 select-none">▪</span>
-                        <span>{f}</span>
-                      </li>
-                    ))}
-                  </ul>
+          return (
+            <motion.div
+              key={p.year}
+              {...reveal}
+              transition={{ ...reveal.transition, delay: i * 0.05 }}
+              className="relative"
+            >
+              {/* Stacked Layer Card */}
+              <div className={`bg-bg-base border-2 ${isFirst ? 'rounded-t-2xl' : 'border-t-0'} ${isLast ? 'rounded-b-2xl' : ''} border-edge p-6 sm:p-8 relative overflow-hidden group ${config.bg} transition-all hover:border-text-main/30`}>
+                
+                {/* Visual grid layout decoration inside the card */}
+                <div className="absolute right-0 top-0 bottom-0 w-32 bg-grid-pattern opacity-[0.04] pointer-events-none" />
+                
+                {/* Via interconnect styling between layers */}
+                {!isLast && (
+                  <div 
+                    className="absolute left-[38px] sm:left-[46px] bottom-0 w-1 h-4 z-20 translate-y-1/2 opacity-60" 
+                    style={{ backgroundColor: viaColorHex }}
+                  />
+                )}
+
+                <div className="flex items-start gap-4 sm:gap-6">
+                  {/* Layer Icon representing microchip layer */}
+                  <div className={`flex h-12 w-12 sm:h-14 sm:w-14 shrink-0 items-center justify-center rounded-xl bg-[#0D0F12] border-2 ${config.color} ${config.glow} transition-all group-hover:scale-105 z-10`}>
+                    <Icon size={22} className="sm:w-6 sm:h-6" />
+                  </div>
+
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-baseline gap-3 mb-2 flex-wrap">
+                      <span className={`font-mono text-[10px] uppercase tracking-wider px-2 py-0.5 rounded bg-[#0D0F12] border border-white/5 font-bold ${config.color}`}>
+                        {config.layerName} · {p.year}
+                      </span>
+                      <h3 className="text-lg sm:text-xl font-bold text-text-main">{p.title}</h3>
+                    </div>
+                    
+                    <p className="text-xs sm:text-sm text-text-dim mb-4 max-w-2xl font-mono leading-relaxed">
+                      {config.description}
+                    </p>
+
+                    <div className="border-t border-border-soft/45 pt-4">
+                      <ul className="grid sm:grid-cols-2 gap-x-6 gap-y-2">
+                        {p.focus.map((f) => (
+                          <li key={f} className="flex items-start gap-2.5 text-sm text-text-sub">
+                            <span className="text-teal-400 mt-1 select-none">▪</span>
+                            <span>{f}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
                 </div>
               </div>
             </motion.div>
@@ -347,7 +380,21 @@ const ALUMNI_STORIES: AlumniStory[] = [
   }
 ];
 
-export const AlumniPathwaysSection: React.FC = () => {
+interface AlumniPathwaysSectionProps {
+  onSelectDomain?: (domainId: string) => void;
+}
+
+const getDomainFromRole = (role: string): string => {
+  const r = role.toLowerCase();
+  if (r.includes('dv') || r.includes('verification')) return 'dv';
+  if (r.includes('asic') || r.includes('vlsi') || r.includes('design')) return 'vlsi';
+  if (r.includes('physical') || r.includes('pd') || r.includes('sta')) return 'pd';
+  if (r.includes('embedded')) return 'embedded';
+  if (r.includes('eda') || r.includes('cad')) return 'eda';
+  return 'vlsi';
+};
+
+export const AlumniPathwaysSection: React.FC<AlumniPathwaysSectionProps> = ({ onSelectDomain }) => {
   const [activeStory, setActiveStory] = useState<number>(0);
 
   return (
@@ -396,11 +443,23 @@ export const AlumniPathwaysSection: React.FC = () => {
                   {ALUMNI_STORIES[activeStory].name} · {ALUMNI_STORIES[activeStory].collegeType}
                 </h3>
               </div>
-              <div className="text-right">
+              <div className="text-right flex flex-col items-end">
                 <span className="font-mono text-[10px] text-text-dim uppercase tracking-wider block">Target Conversion</span>
-                <span className="font-mono text-base font-bold text-teal-400">
-                  {ALUMNI_STORIES[activeStory].startRole} → {ALUMNI_STORIES[activeStory].endRole}
-                </span>
+                <button
+                  onClick={() => {
+                    if (onSelectDomain) {
+                      const domainId = getDomainFromRole(ALUMNI_STORIES[activeStory].endRole);
+                      onSelectDomain(domainId);
+                    }
+                  }}
+                  className="font-mono text-xs sm:text-sm font-bold text-teal-400 hover:text-teal-300 transition-colors text-right flex flex-col items-end cursor-pointer group"
+                  title="Click to highlight this ECE domain in the grid"
+                >
+                  <span>{ALUMNI_STORIES[activeStory].startRole} → {ALUMNI_STORIES[activeStory].endRole}</span>
+                  <span className="text-[9px] text-text-dim group-hover:text-teal-400 transition-colors uppercase tracking-wider font-normal mt-1">
+                    [ View Domain Grid ↗ ]
+                  </span>
+                </button>
               </div>
             </div>
 

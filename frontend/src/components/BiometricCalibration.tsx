@@ -15,7 +15,7 @@ export const BiometricCalibration: React.FC = () => {
 
   return (
     <div 
-      className="relative w-full h-40 rounded-2xl overflow-hidden bg-observatory-surface border border-white/[0.06] cursor-pointer"
+      className="relative w-full h-40 overflow-hidden bg-bg-elev border-2 border-edge shadow-brutal-sm cursor-pointer"
       onClick={state === 'idle' ? startCalibration : undefined}
     >
       <AnimatePresence mode="wait">

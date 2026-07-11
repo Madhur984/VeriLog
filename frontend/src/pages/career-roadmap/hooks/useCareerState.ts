@@ -109,7 +109,14 @@ export function useCareerState() {
   };
 
   const [focusedNodeId, setFocusedNodeId] = useState<string | null>(null);
-  const [nodeVisitHistory, setNodeVisitHistory] = useState<string[]>([]);
+  const [nodeVisitHistory, setNodeVisitHistory] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem('bfb_curiosity_trail_v2');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
 
   const addToVisitHistory = (itemId: string) => {
     setNodeVisitHistory(prev => {
@@ -117,6 +124,20 @@ export function useCareerState() {
       return [...prev, itemId];
     });
   };
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('bfb_curiosity_trail_v2', JSON.stringify(nodeVisitHistory));
+    } catch (e) {
+      console.error('Error saving curiosity trail:', e);
+    }
+  }, [nodeVisitHistory]);
+
+  useEffect(() => {
+    if (focusedNodeId) {
+      addToVisitHistory(focusedNodeId);
+    }
+  }, [focusedNodeId]);
 
   return {
     ...state,

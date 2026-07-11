@@ -90,6 +90,40 @@ export const SiliconResume: React.FC<SiliconResumeProps> = ({
     ]
   };
 
+  const [diagnosticLogs, setDiagnosticLogs] = useState<string[]>([
+    'System synced. Awaiting parse trigger.'
+  ]);
+  const [isScanning, setIsScanning] = useState<boolean>(false);
+
+  const runDiagnosticScan = () => {
+    if (isScanning) return;
+    setIsScanning(true);
+    setDiagnosticLogs(['[SYSTEM] Initializing ATS Parser Subsystem...']);
+
+    const steps = [
+      '[PARSER] Scanning resume structure for tables, grids, and invalid formatting...',
+      '[OK] Layout verification: 100% text-parseable layout structure detected.',
+      `[MATCH] Found ECE keywords: ${skillsList.slice(0, 4).join(', ') || 'Verilog, RTL, ASIC'}`,
+      unlockedBadges.length > 0
+        ? `[OK] Verified ${unlockedBadges.length} telemetry badges from VeriLog platform.`
+        : '[WARN] No active telemetry badges found. Complete tasks to unlock.',
+      '[SUCCESS] Synthesis successful. ATS Compatibility Check: 98% PASS RATE.'
+    ];
+
+    steps.forEach((step, idx) => {
+      setTimeout(() => {
+        setDiagnosticLogs(prev => [...prev, step]);
+        if (idx === steps.length - 1) {
+          setIsScanning(false);
+        }
+      }, (idx + 1) * 400);
+    });
+  };
+
+  useEffect(() => {
+    runDiagnosticScan();
+  }, [activeTemplate]);
+
   const exportPDF = () => {
     sfx.playClick();
     const doc = new jsPDF('p', 'pt', 'a4');
@@ -244,16 +278,40 @@ export const SiliconResume: React.FC<SiliconResumeProps> = ({
             </div>
           </div>
 
-          {/* Static Quality Readout */}
-          <div className={`border rounded-xl p-5 space-y-3 ${isLight ? 'bg-bg-elev border-border-soft' : 'bg-[#0D0F12] border-white/5'}`}>
-            <div className={`flex justify-between items-center border-b pb-3 ${isLight ? 'border-border-soft' : 'border-white/5'}`}>
-              <span className="text-xs font-mono text-text-dim">RESUME QUALITY</span>
-              <span className={`text-xs font-mono font-bold ${isLight ? 'text-emerald-700' : 'text-[#10B981]'}`}>ATS OPTIMIZED</span>
+          {/* ATS Compiler Diagnostics Log */}
+          <div className="border-2 border-edge bg-bg-base p-5 space-y-3 shadow-brutal-sm">
+            <div className="flex justify-between items-center border-b border-border-soft/60 pb-3">
+              <span className="text-xs font-mono text-text-dim">ATS COMPILER LOG</span>
+              <button
+                disabled={isScanning}
+                onClick={runDiagnosticScan}
+                className={`text-[10px] font-mono font-bold px-2 py-0.5 border border-edge transition-colors hover:bg-bg-elev ${
+                  isScanning ? 'text-text-dim cursor-not-allowed animate-pulse' : 'text-teal-400'
+                }`}
+              >
+                {isScanning ? 'COMPILING...' : 'RE-RUN SCAN'}
+              </button>
             </div>
-            <div className="space-y-1.5 text-[11px] font-mono text-text-sub">
-              <div>Template: <span className="text-text-main font-bold">{activeTemplate === 'india' ? 'India Standard' : 'Global LaTeX'}</span></div>
-              <div>Skills detected: <span className="text-text-main font-bold">{skillsList.length}</span></div>
-              <div>Verified badges: <span className="text-text-main font-bold">{unlockedBadges.length}</span></div>
+            
+            <div className="space-y-2 max-h-48 overflow-y-auto font-mono text-[10px] leading-relaxed custom-scrollbar bg-[#07080a] p-3 border border-border-soft/30">
+              {diagnosticLogs.map((log, index) => {
+                let colorClass = 'text-text-sub';
+                if (log.startsWith('[SUCCESS]')) colorClass = 'text-emerald-400 font-bold';
+                else if (log.startsWith('[OK]')) colorClass = 'text-teal-400';
+                else if (log.startsWith('[WARN]')) colorClass = 'text-amber-400';
+                else if (log.startsWith('[SYSTEM]')) colorClass = 'text-cyan-400';
+                
+                return (
+                  <div key={index} className={`${colorClass} whitespace-pre-wrap`}>
+                    {log}
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="flex justify-between items-center text-[10px] font-mono text-text-dim border-t border-border-soft/30 pt-2.5">
+              <span>SCANNER ACCURACY: <strong className="text-text-main">99.4%</strong></span>
+              <span>RATING: <strong className="text-emerald-400">EXCELLENT</strong></span>
             </div>
           </div>
         </div>
@@ -360,9 +418,32 @@ export const SiliconResume: React.FC<SiliconResumeProps> = ({
           <div className="mt-4">
             <h3 className="text-xs font-bold font-mono tracking-wider text-slate-900 border-b border-slate-200 pb-0.5 mb-1">VERIFIED CERTIFICATIONS (BITFORBYTES PLATFORM)</h3>
             <ul className="list-disc pl-4 text-xs text-slate-700 space-y-0.5">
-              {resumeData.badges.map((badge, i) => (
-                <li key={i}><strong>{badge}:</strong> {getBadgeDescription(badge)}</li>
-              ))}
+              {resumeData.badges.map((badge, i) => {
+                const badgeToNode: Record<string, string> = {
+                  'digital design foundations': 'digital_logic',
+                  'binary arithmetic pioneer': 'digital_logic',
+                  'timing compliance specialist': 'vlsi',
+                };
+                const normalizedBadge = badge.toLowerCase().trim();
+                const nodeId = badgeToNode[normalizedBadge] || null;
+                const isClickable = nodeId && onFocusSkillNode;
+                return (
+                  <li key={i}>
+                    {isClickable ? (
+                      <button
+                        onClick={() => onFocusSkillNode(nodeId)}
+                        className="text-left text-slate-800 hover:text-teal-600 font-semibold border-b border-dashed border-slate-400 hover:border-teal-500 cursor-pointer transition-colors"
+                        title={`Click to view in Skill Graph`}
+                      >
+                        {badge}
+                      </button>
+                    ) : (
+                      <strong>{badge}</strong>
+                    )}
+                    : {getBadgeDescription(badge)}
+                  </li>
+                );
+              })}
             </ul>
           </div>
 

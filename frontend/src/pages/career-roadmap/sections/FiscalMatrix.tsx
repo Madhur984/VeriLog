@@ -4,10 +4,10 @@ import { SectionWrapper } from '../../../components/SectionWrapper';
 import { TrendingUp, ShieldCheck } from 'lucide-react';
 
 const ROLE_PRESETS = [
-  { label: 'VLSI Design', ctc: 1200000 },
-  { label: 'Embedded Systems', ctc: 750000 },
-  { label: 'RF / Wireless', ctc: 1000000 },
-  { label: 'Software / EDA', ctc: 900000 },
+  { label: 'VLSI Design', ctc: 1200000, skills: ['vlsi-design', 'verilog', 'digital-logic'] },
+  { label: 'Embedded Systems', ctc: 750000, skills: ['embedded-systems', 'digital-logic', 'basic-electronics'] },
+  { label: 'RF / Wireless', ctc: 1000000, skills: ['rf-microwave', 'wireless-comm', 'signal-processing'] },
+  { label: 'Software / EDA', ctc: 900000, skills: ['verilog', 'digital-logic', 'control-systems'] },
 ];
 
 interface FiscalMatrixProps {
@@ -57,13 +57,13 @@ export const FiscalMatrix: React.FC<FiscalMatrixProps> = ({ initialRoleIndex = 0
               </div>
 
               {/* Role Selector */}
-              <div className="space-y-3">
+              <div className="space-y-4">
                 <div className="flex flex-wrap gap-2">
                   {ROLE_PRESETS.map((role, i) => (
                     <button
                       key={role.label}
                       onClick={() => setActiveRole(i)}
-                      className={`px-3 py-1.5 text-[9px] font-mono uppercase tracking-widest border rounded-full transition-all ${
+                      className={`px-3 py-1.5 text-[9px] font-mono uppercase tracking-widest border rounded-full transition-all cursor-pointer ${
                         activeRole === i
                           ? 'bg-signal-core border-signal-core text-bg-void font-bold'
                           : 'border-border-soft text-text-dim hover:border-text-dim hover:text-text-sub'
@@ -75,24 +75,35 @@ export const FiscalMatrix: React.FC<FiscalMatrixProps> = ({ initialRoleIndex = 0
                 </div>
                 
                 {onFocusSkillNode && (
-                  <div className="flex justify-start">
-                    <button
-                      onClick={() => {
-                        const roleToNode: Record<string, string> = {
-                          'VLSI Design': 'vlsi',
-                          'Embedded Systems': 'embedded',
-                          'RF / Wireless': 'wireless',
-                          'Software / EDA': 'verilog',
+                  <div className="p-3 bg-white/[0.02] border border-border-soft rounded-xl space-y-2">
+                    <span className="text-[9px] font-mono text-text-dim uppercase tracking-widest block">
+                      Required Skill Interconnects (Click to inspect in Graph):
+                    </span>
+                    <div className="flex flex-wrap gap-1.5">
+                      {ROLE_PRESETS[activeRole].skills.map((skillId) => {
+                        const skillLabels: Record<string, string> = {
+                          'vlsi-design': 'VLSI DESIGN',
+                          'verilog': 'VERILOG/VHDL',
+                          'digital-logic': 'DIGITAL LOGIC',
+                          'embedded-systems': 'EMBEDDED SYSTEMS',
+                          'basic-electronics': 'BASIC ELECTRONICS',
+                          'rf-microwave': 'RF & MICROWAVE',
+                          'wireless-comm': 'WIRELESS COMM',
+                          'signal-processing': 'SIGNAL PROCESSING',
+                          'control-systems': 'CONTROL SYSTEMS'
                         };
-                        const activeLabel = ROLE_PRESETS[activeRole].label;
-                        if (roleToNode[activeLabel]) {
-                          onFocusSkillNode(roleToNode[activeLabel]);
-                        }
-                      }}
-                      className="text-[9px] font-mono uppercase tracking-widest text-teal-400 hover:text-teal-300 transition-colors cursor-pointer"
-                    >
-                      [ Analyze skill requirements in Graph ↗ ]
-                    </button>
+                        return (
+                          <button
+                            key={skillId}
+                            onClick={() => onFocusSkillNode(skillId)}
+                            className="px-2 py-0.5 bg-teal-400/5 hover:bg-teal-400/10 border border-teal-500/20 hover:border-teal-400 text-teal-450 hover:text-teal-400 text-[8.5px] font-mono uppercase rounded transition-all cursor-pointer flex items-center gap-1"
+                          >
+                            <span>{skillLabels[skillId] || skillId.toUpperCase()}</span>
+                            <span className="text-[7px]">↗</span>
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
                 )}
               </div>

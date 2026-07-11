@@ -16,10 +16,12 @@ export const ColdOpenSplash: React.FC<ColdOpenSplashProps> = ({ onComplete }) =>
 
     const timer = setTimeout(() => {
       handleComplete();
-    }, 4500); // 4.5 seconds cold open
+    }, 3500); // 3.5 seconds cold open (within 3-5s requirement)
 
-    const handleKeyDown = () => {
-      handleComplete();
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') {
+        handleComplete();
+      }
     };
 
     const handleClick = () => {
@@ -41,7 +43,7 @@ export const ColdOpenSplash: React.FC<ColdOpenSplashProps> = ({ onComplete }) =>
     sessionStorage.setItem('bfb_cold_open_played', 'true');
     setTimeout(() => {
       onComplete();
-    }, 500); // fade duration
+    }, 700); // fade duration
   };
 
   // Generate lightweight ambient nodes for layout rotation
@@ -67,8 +69,8 @@ export const ColdOpenSplash: React.FC<ColdOpenSplashProps> = ({ onComplete }) =>
 
   return (
     <div 
-      className={`fixed inset-0 z-[9999] bg-[#07080a] flex flex-col items-center justify-center font-mono select-none transition-opacity duration-500 ${
-        isFading ? 'opacity-0 pointer-events-none' : 'opacity-100'
+      className={`fixed inset-0 z-[9999] bg-[#07080a] flex flex-col items-center justify-center font-mono select-none transition-all duration-700 ease-out ${
+        isFading ? 'opacity-0 scale-[1.08] pointer-events-none' : 'opacity-100 scale-100'
       }`}
     >
       {/* Slow spinning ambient network graph */}
