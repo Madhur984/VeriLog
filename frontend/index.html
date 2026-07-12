@@ -2,31 +2,106 @@
 <html lang="en">
 
 <head>
-    <!-- Google tag (gtag.js) -->
+    <!-- Google tag (gtag.js) with Consent Mode v2 -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-7N30XJZM51"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
+      // Default to DENIED before anything loads. The cookie banner (ConsentBanner)
+      // flips analytics_storage to 'granted' only after the visitor accepts, so no
+      // analytics cookies are set without consent.
+      gtag('consent', 'default', {
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied',
+        analytics_storage: 'denied',
+        wait_for_update: 500
+      });
       gtag('js', new Date());
       gtag('config', 'G-7N30XJZM51');
     </script>
+
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/logo.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>BitForBytes | Learn Digital Design</title>
-    <link rel="manifest" href="/manifest.json" />
-    <meta name="theme-color" content="#2E32FF" />
-    <link rel="apple-touch-icon" href="/logo.png" />
-    <meta name="description" content="BitForBytes - Free, interactive VLSI and digital design learning for every ECE student in India. From bits to bytes, from gates to chips." />
+
+    <!-- Primary meta (SeoManager overrides these per-route at runtime) -->
+    <title>BitForBytes — Learn to Design Real Chips | Free VLSI &amp; Digital Design</title>
+    <meta name="description" content="Free, interactive VLSI and digital-design learning for every ECE student. 90+ hands-on labs — from logic gates to a working CPU, Verilog, and chip design. No installs." />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="author" content="BitForBytes" />
     <meta name="application-name" content="BitForBytes" />
-    <meta property="og:title" content="BitForBytes | Learn Digital Design" />
-    <meta property="og:description" content="BitForBytes - Free, interactive VLSI and digital design learning for every ECE student in India. From bits to bytes, from gates to chips." />
+    <link rel="canonical" href="https://bitforbytes.in/" />
+
+    <!-- Icons / PWA -->
+    <link rel="icon" type="image/png" href="/logo.png" />
+    <link rel="apple-touch-icon" href="/logo.png" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#7A3FD0" />
+
+    <!-- Open Graph -->
     <meta property="og:site_name" content="BitForBytes" />
-    <meta property="og:image" content="/logo.png" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://bitforbytes.in/" />
+    <meta property="og:title" content="BitForBytes — Learn to Design Real Chips" />
+    <meta property="og:description" content="Free, interactive VLSI and digital-design learning for every ECE student. 90+ hands-on labs — from logic gates to a working CPU. Learn by building, no installs." />
+    <meta property="og:image" content="https://bitforbytes.in/og-cover.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="BitForBytes — learn to design real chips" />
+    <meta property="og:locale" content="en_IN" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@bitforbyte_" />
+    <meta name="twitter:title" content="BitForBytes — Learn to Design Real Chips" />
+    <meta name="twitter:description" content="Free, interactive VLSI and digital-design learning for every ECE student. 90+ hands-on labs. Learn by building, no installs." />
+    <meta name="twitter:image" content="https://bitforbytes.in/og-cover.png" />
+
+    <!-- Structured data (SeoManager keeps this element in sync) -->
+    <script type="application/ld+json" id="ld-site">
+    [
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "BitForBytes",
+        "url": "https://bitforbytes.in/",
+        "logo": "https://bitforbytes.in/logo.png",
+        "description": "Free, interactive VLSI and digital-design learning for every ECE student.",
+        "sameAs": [
+          "https://x.com/bitforbyte_",
+          "https://www.linkedin.com/company/bitforbytes",
+          "https://www.instagram.com/bitforbytes"
+        ]
+      },
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "BitForBytes",
+        "url": "https://bitforbytes.in/"
+      }
+    ]
+    </script>
 </head>
 
 <body>
     <div id="root"></div>
+
+    <noscript>
+      <div style="max-width:640px;margin:12vh auto;padding:0 24px;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:#1B1436;text-align:center;">
+        <h1 style="font-size:28px;margin:0 0 12px;">BitForBytes — learn to design real chips</h1>
+        <p style="font-size:16px;line-height:1.6;color:#4A4560;margin:0 0 18px;">
+          Free, interactive VLSI and digital-design learning for every ECE student — 90+ hands-on labs, from logic gates to a working CPU. This app needs JavaScript enabled. Explore:
+        </p>
+        <p style="font-size:15px;line-height:2;">
+          <a href="/career-roadmap">VLSI Career Roadmap</a> &middot;
+          <a href="/portal">Course Portal</a> &middot;
+          <a href="/verilog-playground">Verilog Judge</a> &middot;
+          <a href="/kmap-lab">K-Map Solver</a> &middot;
+          <a href="/module/1">Start Module 1</a>
+        </p>
+      </div>
+    </noscript>
+
     <script type="module" src="/src/main.tsx"></script>
 </body>
 

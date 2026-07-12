@@ -7,6 +7,7 @@ import React, {
   useState,
 } from 'react';
 import { Play, Pause, Volume2, VolumeX, Maximize, RotateCcw, RotateCw, Gauge } from 'lucide-react';
+import { mediaUrl } from '../../lib/media';
 
 export interface VideoPlayerHandle {
   seek: (t: number) => void;
@@ -246,8 +247,8 @@ export const CustomVideoPlayer = forwardRef<VideoPlayerHandle, CustomVideoPlayer
       >
         <video
           ref={videoRef}
-          src={src}
-          poster={poster}
+          src={mediaUrl(src)}
+          poster={mediaUrl(poster)}
           preload={preload}
           playsInline
           className="w-full h-full block bg-black"

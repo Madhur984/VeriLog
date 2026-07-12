@@ -12,7 +12,8 @@ import { loadChunk } from './utils/loadChunk';
 // Layout (eager - tiny, wraps every portal route)
 import { PortalLayout } from './layouts/PortalLayout';
 import { ScrollToTop } from './components/ScrollToTop';
-import { RouteTitle } from './components/RouteTitle';
+import { SeoManager } from './components/SeoManager';
+import { ConsentBanner } from './components/ConsentBanner';
 
 // Floating mascot (bottom-right, site-wide) — lazy so Rive's runtime stays off first paint
 const MascotWidget = lazy(() => loadChunk(() => import('./components/MascotWidget')));
@@ -44,6 +45,8 @@ const AnalogyLibrary = named(() => import('./pages/AnalogyLibrary'), 'AnalogyLib
 const VerilogLibrary = named(() => import('./pages/VerilogLibrary'), 'VerilogLibrary');
 const SiliconMap = named(() => import('./pages/SiliconMap'), 'SiliconMap');
 const PledgePage = named(() => import('./pages/PledgePage'), 'PledgePage');
+const PrivacyPolicyPage = named(() => import('./pages/PrivacyPolicyPage'), 'PrivacyPolicyPage');
+const TermsPage = named(() => import('./pages/TermsPage'), 'TermsPage');
 const SignalPlayground = named(() => import('./pages/SignalPlayground'), 'SignalPlayground');
 const LogicStudio = named(() => import('./pages/LogicStudio'), 'LogicStudio');
 const QuestsPage = named(() => import('./pages/QuestsPage'), 'QuestsPage');
@@ -114,7 +117,7 @@ function App() {
     <TransitionProvider>
       <TransitionOverlay />
       <AppErrorBoundary>
-      <RouteTitle />
+      <SeoManager />
       <ScrollToTop />
       <Suspense fallback={<RouteFallback />}>
         <Routes>
@@ -136,6 +139,13 @@ function App() {
             <Route path="/verilog-library" element={<VerilogLibrary />} />
             <Route path="/silicon-map" element={<SiliconMap />} />
             <Route path="/pledge" element={<PledgePage />} />
+            <Route path="/privacy" element={<PrivacyPolicyPage />} />
+            <Route path="/terms" element={<TermsPage />} />
+            {/* Flagship interactive tools — public so search engines can index them
+                and anonymous visitors can try them (no personal data, localStorage only) */}
+            <Route path="/verilog-playground" element={<VerilogJudge />} />
+            <Route path="/workbench" element={<Workbench />} />
+            <Route path="/kmap-lab" element={<KMapLabPage />} />
           </Route>
 
           {/* Course modules - first 5 free for anyone; 6th requires login */}
@@ -226,13 +236,10 @@ function App() {
           {/* App tools & social - require a session (real or guest) */}
           <Route element={<RequireAuth><PortalLayout /></RequireAuth>}>
             <Route path="/portfolio" element={<EngineeringPortfolio />} />
-            <Route path="/workbench" element={<Workbench />} />
-            <Route path="/kmap-lab" element={<KMapLabPage />} />
             <Route path="/boss-arena" element={<BossArena />} />
             <Route path="/skill-tree" element={<SkillTree />} />
             <Route path="/hw-leetcode" element={<HardwareLeetCodePage />} />
             <Route path="/fsm" element={<FSMPlayground />} />
-            <Route path="/verilog-playground" element={<VerilogJudge />} />
             <Route path="/signal-playground" element={<SignalPlayground />} />
             <Route path="/logic-studio" element={<LogicStudio />} />
             <Route path="/quests" element={<QuestsPage />} />
@@ -253,6 +260,8 @@ function App() {
       <Suspense fallback={null}>
         <MascotWidget />
       </Suspense>
+      {/* Cookie-consent banner (Google Consent Mode v2) — shows once until answered */}
+      <ConsentBanner />
       </AppErrorBoundary>
     </TransitionProvider>
   );

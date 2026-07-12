@@ -1,21 +1,32 @@
 {
-  "name": "VeriLog Career Portal",
-  "short_name": "ECE Pokedex",
-  "description": "The mission-critical professional instrument for Electronics & Communication Engineers.",
+  "name": "BitForBytes — Learn to Design Real Chips",
+  "short_name": "BitForBytes",
+  "description": "Free, interactive VLSI and digital-design learning for every ECE student. 90+ hands-on labs, from logic gates to a working CPU.",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
-  "theme_color": "#00D4FF",
-  "background_color": "#0A0A0B",
+  "theme_color": "#7A3FD0",
+  "background_color": "#F1ECFF",
+  "lang": "en",
+  "categories": ["education", "productivity"],
   "icons": [
     {
-      "src": "https://img.icons8.com/color/512/processor.png",
+      "src": "/logo.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
-      "src": "https://img.icons8.com/color/512/processor.png",
+      "src": "/logo.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }

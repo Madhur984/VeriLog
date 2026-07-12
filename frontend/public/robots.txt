@@ -1,0 +1,12 @@
+# BitForBytes — https://bitforbytes.in
+User-agent: *
+Allow: /
+
+# Private / utility pages (redirect to login or hold personal data)
+Disallow: /login
+Disallow: /verify-email
+Disallow: /reset-password
+Disallow: /profile
+Disallow: /settings
+
+Sitemap: https://bitforbytes.in/sitemap.xml

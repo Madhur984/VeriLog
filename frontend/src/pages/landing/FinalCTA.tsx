@@ -90,8 +90,8 @@ export const FinalCTATerminal: React.FC = () => {
                 &gt;_ GitHub Source
               </a>
             </li>
-            <li><span className="text-slate-600 font-mono">&gt;_ Terms of Service</span></li>
-            <li><span className="text-slate-600 font-mono">&gt;_ Privacy Policy</span></li>
+            <li><Link to="/terms" className="text-slate-500 hover:text-[#10B981] font-mono">&gt;_ Terms of Service</Link></li>
+            <li><Link to="/privacy" className="text-slate-500 hover:text-[#10B981] font-mono">&gt;_ Privacy Policy</Link></li>
             <li>
               <a href={LANDING_ROUTES.social.email} className="hover:text-[#10B981] font-mono">
                 &gt;_ Contact Email

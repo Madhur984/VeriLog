@@ -1,0 +1,81 @@
+# BitForBytes — single-page-app routing for Apache / LiteSpeed (Hostinger)
+# React Router owns the URLs; the server must hand every unknown path to
+# index.html so deep links (e.g. /career-roadmap, /verilog-playground) load
+# instead of 404-ing. Real files on disk (sitemap.xml, robots.txt, /assets/*,
+# images, video) are served directly and are NOT rewritten.
+
+# Don't expose directory listings for any folder that lacks an index.
+Options -Indexes
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # Never rewrite a request that maps to a real file or directory.
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # Prerendered per-route SEO HTML: serve /career-roadmap -> career-roadmap.html
+  # directly (no redirect, clean URL) when that file exists. Non-prerendered
+  # routes fall through to the SPA shell below.
+  RewriteCond %{DOCUMENT_ROOT}/$1.html -f
+  RewriteRule ^(.+?)/?$ $1.html [L]
+
+  # Everything else -> the SPA entry point.
+  RewriteRule ^ index.html [L]
+</IfModule>
+
+# ---- MIME types ----
+<IfModule mod_mime.c>
+  AddType application/xml .xml
+  AddType application/wasm .wasm
+  AddType image/webp .webp
+  AddType image/avif .avif
+  AddType font/woff2 .woff2
+  AddType text/vtt .vtt
+</IfModule>
+
+# ---- Compression (text assets only; media is already compressed) ----
+<IfModule mod_brotli.c>
+  AddOutputFilterByType BROTLI_COMPRESS text/html text/css text/plain text/xml text/javascript application/javascript application/json application/xml image/svg+xml application/wasm text/vtt
+</IfModule>
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml text/javascript application/javascript application/json application/xml image/svg+xml application/wasm text/vtt
+</IfModule>
+
+# ---- Cache policy ----
+<IfModule mod_expires.c>
+  ExpiresActive On
+  # HTML + sitemap stay fresh so deploys and edits show up quickly.
+  ExpiresByType text/html "access plus 0 seconds"
+  ExpiresByType application/xml "access plus 1 hour"
+  # Long-lived, versioned/static assets.
+  ExpiresByType text/css "access plus 1 year"
+  ExpiresByType application/javascript "access plus 1 year"
+  ExpiresByType application/wasm "access plus 1 year"
+  ExpiresByType font/woff2 "access plus 1 year"
+  ExpiresByType image/png "access plus 1 month"
+  ExpiresByType image/jpeg "access plus 1 month"
+  ExpiresByType image/webp "access plus 1 month"
+  ExpiresByType image/avif "access plus 1 month"
+  ExpiresByType image/svg+xml "access plus 1 month"
+  ExpiresByType image/x-icon "access plus 1 month"
+  ExpiresByType video/mp4 "access plus 1 month"
+  ExpiresByType text/vtt "access plus 1 week"
+</IfModule>
+
+<IfModule mod_headers.c>
+  # Content-hashed build assets never change under the same name -> cache hard.
+  <FilesMatch "\.(?:js|css|woff2|wasm)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  # Media can be cached but not treated as immutable (filenames aren't hashed).
+  <FilesMatch "\.(?:mp4|webp|avif|png|jpe?g|svg)$">
+    Header set Cache-Control "public, max-age=2592000"
+  </FilesMatch>
+  # Never cache the app shell.
+  <FilesMatch "^(index\.html)?$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+</IfModule>

@@ -668,8 +668,8 @@ export default function LandingPageContainer() {
                 <h4 className={`font-semibold mb-3 uppercase text-[11px] ${isDarkMode ? 'text-slate-400' : 'text-slate-800'}`}>// Platform</h4>
                 <ul className={`space-y-2 ${isDarkMode ? 'text-[#8E9AA8]' : 'text-slate-600'}`}>
                   <li><a href={LANDING_ROUTES.github} target="_blank" rel="noopener noreferrer" className="hover:text-[#4A57FF] transition-colors">&gt;_ GitHub Source</a></li>
-                  <li><span className="hover:text-[#4A57FF] transition-colors">&gt;_ Terms of Service</span></li>
-                  <li><span className="hover:text-[#4A57FF] transition-colors">&gt;_ Privacy Policy</span></li>
+                  <li><Link to="/terms" className="hover:text-[#4A57FF] transition-colors">&gt;_ Terms of Service</Link></li>
+                  <li><Link to="/privacy" className="hover:text-[#4A57FF] transition-colors">&gt;_ Privacy Policy</Link></li>
                   <li><a href={LANDING_ROUTES.social.email} className="hover:text-[#4A57FF] transition-colors">&gt;_ Contact Email</a></li>
                 </ul>
               </div>

@@ -19,6 +19,8 @@ const EXACT: Record<string, RouteMeta> = {
     '/verilog-library': { label: 'Verilog Library' },
     '/silicon-map': { label: 'Silicon Map' },
     '/pledge': { label: 'Pledge' },
+    '/privacy': { label: 'Privacy Policy', section: 'Legal' },
+    '/terms': { label: 'Terms of Service', section: 'Legal' },
     '/portfolio': { label: 'Portfolio' },
     '/workbench': { label: 'Workbench' },
     '/kmap-lab': { label: 'K-Map Lab' },
@@ -58,7 +60,7 @@ export function getRouteMeta(pathname: string): RouteMeta {
     return { label: '' };
 }
 
-const APP_NAME = 'BitforBytes';
+const APP_NAME = 'BitForBytes';
 
 export function pageTitle(pathname: string): string {
     const { label, section } = getRouteMeta(pathname);

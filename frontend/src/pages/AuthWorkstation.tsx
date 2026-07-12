@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { supabase, SUPABASE_URL, SUPABASE_ANON_KEY } from '../lib/supabase';
 import { startGuestSession, getSession } from '../lib/auth';
 import { ArrowRight, CheckCircle2, Loader2, UserCircle2, Eye, EyeOff, HelpCircle } from 'lucide-react';
@@ -578,7 +578,10 @@ export const AuthWorkstation: React.FC = () => {
                   {/* Fine print (register) */}
                   {mode === 'REGISTER' && (
                     <p className="mt-3 text-[12px] leading-relaxed text-[#6B5E86] dark:text-[#8E80B4]">
-                      By clicking Sign up, you agree to our Terms and Privacy Policy.
+                      By clicking Sign up, you agree to our{' '}
+                      <Link to="/terms" className="font-semibold text-[#7A3FD0] underline underline-offset-2 dark:text-[#B98BFF]">Terms</Link>
+                      {' '}and{' '}
+                      <Link to="/privacy" className="font-semibold text-[#7A3FD0] underline underline-offset-2 dark:text-[#B98BFF]">Privacy Policy</Link>.
                     </p>
                   )}
 
@@ -651,7 +654,12 @@ export const AuthWorkstation: React.FC = () => {
                 </div>
 
                 <footer className="mt-5 text-center font-mono text-[12px] text-[#6B5E86] dark:text-[#8E80B4]">
-                  © 2026 BitForBytes · learn to design real chips
+                  <div className="flex items-center justify-center gap-3">
+                    <Link to="/privacy" className="hover:text-[#7A3FD0] dark:hover:text-white transition-colors">Privacy</Link>
+                    <span aria-hidden="true">·</span>
+                    <Link to="/terms" className="hover:text-[#7A3FD0] dark:hover:text-white transition-colors">Terms</Link>
+                  </div>
+                  <div className="mt-2">© 2026 BitForBytes · learn to design real chips</div>
                 </footer>
               </motion.div>
             ) : (

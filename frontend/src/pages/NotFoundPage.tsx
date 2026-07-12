@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Home, ArrowLeft } from 'lucide-react';
 
@@ -5,9 +6,19 @@ import { Home, ArrowLeft } from 'lucide-react';
  * Branded 404. Replaces the old silent redirect-to-home so a mistyped or dead
  * URL explains itself and always offers a clear way back. Token-based, so it
  * adapts to light/dark automatically, and uses the neo-brutalist system.
+ *
+ * A client SPA can't emit a real 404 status, so it explicitly marks the page
+ * noindex — search engines drop it instead of treating it as a soft-404.
  */
 export const NotFoundPage = () => {
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const meta = document.head.querySelector<HTMLMetaElement>('meta[name="robots"]');
+        const prev = meta?.getAttribute('content') ?? null;
+        if (meta) meta.setAttribute('content', 'noindex, follow');
+        return () => { if (meta && prev !== null) meta.setAttribute('content', prev); };
+    }, []);
 
     return (
         <main className="min-h-[100svh] w-full flex items-center justify-center px-6 bg-bg-void text-text-main">
