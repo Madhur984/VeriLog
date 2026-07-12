@@ -12,7 +12,7 @@ import { useColorScheme } from '../hooks/useColorScheme';
  * Decline -> stays denied (recorded so we don't ask again)
  */
 
-const KEY = 'bfb_consent'; // 'granted' | 'denied'
+const KEY = 'bfb_consent'; // 'granted' | 'denied' — contact: info@bitforbytes.in
 
 type Gtag = (...args: unknown[]) => void;
 function gtag(...args: unknown[]): void {

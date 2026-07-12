@@ -4,7 +4,7 @@ import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import AssistantPanel from './AssistantPanel';
 
 /**
- * "Byte" — the BitForBytes guide mascot.
+ * "DUMMY" — the BitForBytes guide mascot.
  *
  * A living little character in the bottom-right corner of every page. The
  * full-body monkey (`public/mascot/body.png`) idles with a gentle breathing
@@ -37,7 +37,7 @@ const GUIDES: Guide[] = [
     title: 'Welcome',
     mood: 'excited',
     tips: [
-      "Hi, I'm Byte! ⚡ Welcome to BitForBytes — learn to design real chips, from zero.",
+      "Hi, I'm DUMMY! ⚡ Welcome to BitForBytes — learn to design real chips, from zero.",
       'Everything here is hands-on: you build actual logic, not just read theory.',
       'Hit “Get started” to open the workstation and pick your first module.',
     ],
@@ -148,10 +148,10 @@ const GUIDES: Guide[] = [
 
 const DEFAULT_GUIDE: Guide = {
   test: () => true,
-  title: 'Byte the Guide',
+  title: 'DUMMY the Guide',
   mood: 'happy',
   tips: [
-    "Need a hand? I'm Byte — I'll pop up with tips wherever you go.",
+    "Need a hand? I'm DUMMY — I'll pop up with tips wherever you go.",
     "Click me any time for a hint about the page you're on.",
   ],
 };
@@ -253,7 +253,7 @@ export default function MascotWidget() {
     : { y: [0, -4, 0, -3, 0], rotate: [0, -1.6, 0, 1.6, 0], scale: [1, 1.015, 1, 1.015, 1] };
   const hopAnim = reduce ? undefined : { y: [0, 0, -22, -3, 0, 0] };
   const hopTimes = [0, 0.5, 0.66, 0.8, 0.9, 1];
-  // Shadow squashes when grounded, shrinks/fades as Byte leaves the floor.
+  // Shadow squashes when grounded, shrinks/fades as DUMMY leaves the floor.
   const shadowAnim = reduce
     ? undefined
     : { scaleX: [1, 1, 0.62, 0.92, 1, 1], opacity: [0.32, 0.32, 0.14, 0.28, 0.32, 0.32] };
@@ -330,7 +330,7 @@ export default function MascotWidget() {
               onClick={() => setChatOpen(true)}
               className="mt-2 w-full rounded-lg border-2 border-edge-strong bg-signal-bright/10 py-1.5 text-[11px] font-bold uppercase tracking-wide text-signal-bright transition-colors hover:bg-signal-bright/20"
             >
-              💬 Ask Byte anything
+              💬 Ask DUMMY anything
             </button>
 
             {/* speech-bubble tail pointing down toward the mascot */}
@@ -394,14 +394,14 @@ export default function MascotWidget() {
             onClick={() => setChatOpen(true)}
             onHoverStart={() => setHovered(true)}
             onHoverEnd={() => setHovered(false)}
-            aria-label="Byte the guide — click to chat with the AI study buddy"
+            aria-label="DUMMY the guide — click to chat with the AI study buddy"
             className="pointer-events-auto h-full w-full rounded-2xl outline-none focus-visible:ring-2 focus-visible:ring-signal-bright"
             whileHover={{ scale: 1.07 }}
             whileTap={{ scale: 0.92, rotate: -3 }}
           >
             <motion.img
               src={BODY_SRC}
-              alt="Byte the mascot"
+              alt="DUMMY the mascot"
               draggable={false}
               animate={idleAnim}
               transition={reduce ? undefined : { duration: 4.2, repeat: Infinity, ease: 'easeInOut' }}

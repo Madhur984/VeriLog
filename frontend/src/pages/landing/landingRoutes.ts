@@ -14,7 +14,7 @@
  */
 export const SOCIAL_LINKS = {
   discord: 'https://discord.gg/mvKfBGmCc',
-  email: 'mailto:bitforbyte.in@gmail.com',
+  email: 'mailto:info@bitforbytes.in',
   twitter: 'https://x.com/bitforbyte_',
   instagram: 'https://www.instagram.com/bit_for_bytes',
   reddit: 'https://www.reddit.com/u/Constant_Prize4232',

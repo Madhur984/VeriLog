@@ -22,7 +22,7 @@ const SECTIONS: LegalSection[] = [
     bullets: [
       'You may use BitForBytes as a guest (progress is stored in your browser) or by creating an account with email or a supported provider (Google, LinkedIn, GitHub).',
       'You agree to provide accurate information and to keep your account credentials secure. You are responsible for activity that happens under your account.',
-      'Notify us promptly at hello@bitforbytes.in if you believe your account has been accessed without authorization.',
+      'Notify us promptly at info@bitforbytes.in if you believe your account has been accessed without authorization.',
     ],
   },
   {
@@ -118,7 +118,7 @@ const SECTIONS: LegalSection[] = [
   {
     id: 'contact',
     heading: 'Contact us',
-    paras: ['Questions about these Terms? Email us at hello@bitforbytes.in.'],
+    paras: ['Questions about these Terms? Email us at info@bitforbytes.in.'],
   },
 ];
 

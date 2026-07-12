@@ -1,5 +1,5 @@
 // Builds a short, human-readable description of the page the student is on, so
-// Byte (the assistant Edge Function) can ground its summaries and answers in
+// DUMMY (the assistant Edge Function) can ground its summaries and answers in
 // what's actually on screen. Route map first, then whatever the live DOM tells
 // us (tab title + main heading).
 

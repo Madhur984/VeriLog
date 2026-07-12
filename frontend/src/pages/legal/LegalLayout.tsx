@@ -108,7 +108,7 @@ export const LegalLayout: React.FC<LegalLayoutProps> = ({ eyebrow, title, update
             <div className={`mt-4 rounded-xl border-[2px] ${rule} border-dashed p-5`}>
               <p className={`text-[14px] leading-relaxed ${sub}`}>
                 Questions about this document? Email{' '}
-                <a href="mailto:hello@bitforbytes.in" className="font-semibold underline underline-offset-2" style={{ color: ACCENT }}>hello@bitforbytes.in</a>.
+                <a href="mailto:info@bitforbytes.in" className="font-semibold underline underline-offset-2" style={{ color: ACCENT }}>info@bitforbytes.in</a>.
                 {' '}See also our{' '}
                 <Link to={sibling.to} className="font-semibold underline underline-offset-2" style={{ color: ACCENT }}>{sibling.label}</Link>.
               </p>

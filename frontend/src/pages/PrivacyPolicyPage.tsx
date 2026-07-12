@@ -19,7 +19,7 @@ const SECTIONS: LegalSection[] = [
       'Guest sessions: if you continue as a guest, we store a display name you choose and a randomly generated device identifier in your browser so your progress can be saved locally and associated with anonymous usage.',
       'Learning and usage data: which modules and lessons you open, your progress, quiz/judge results, and the amount of time you spend engaging with a module (screen-time/engagement).',
       'Waitlist: if you joined the launch waitlist, we store the email address you provided.',
-      'AI assistant content: the messages you send to our in-app assistant ("Byte") and a summary of the page you are on, so it can answer your questions (see the "AI assistant" section).',
+      'AI assistant content: the messages you send to our in-app assistant ("DUMMY") and a summary of the page you are on, so it can answer your questions (see the "AI assistant" section).',
       'Technical and analytics data: standard information such as device type, browser, approximate location, and interactions, collected through cookies and Google Analytics.',
     ],
   },
@@ -47,7 +47,7 @@ const SECTIONS: LegalSection[] = [
   },
   {
     id: 'ai-assistant',
-    heading: 'The AI assistant ("Byte")',
+    heading: 'The AI assistant ("DUMMY")',
     paras: [
       'When you use the in-app assistant, the messages you send and a short summary of the page you are viewing are sent to a third-party AI model provider (currently Hugging Face) to generate a response. Your API keys and account credentials are never shared with the AI provider.',
       'Please do not share sensitive personal information, passwords, or confidential data in your messages to the assistant. Treat its answers as educational assistance, not professional advice.',
@@ -76,7 +76,7 @@ const SECTIONS: LegalSection[] = [
     heading: 'Your rights & choices',
     paras: [
       'Depending on where you live (including under the EU/UK GDPR and India\'s Digital Personal Data Protection Act, 2023), you may have the right to access, correct, export, or delete your personal information, to withdraw consent, and to object to or restrict certain processing.',
-      'To exercise any of these rights, email us at hello@bitforbytes.in and we will respond within a reasonable time. You can also clear locally stored data by clearing your browser storage, and opt out of analytics as described above.',
+      'To exercise any of these rights, email us at info@bitforbytes.in and we will respond within a reasonable time. You can also clear locally stored data by clearing your browser storage, and opt out of analytics as described above.',
     ],
   },
   {
@@ -111,7 +111,7 @@ const SECTIONS: LegalSection[] = [
     id: 'contact',
     heading: 'Contact us',
     paras: [
-      'If you have questions or requests about this Privacy Policy or your personal information, email us at hello@bitforbytes.in.',
+      'If you have questions or requests about this Privacy Policy or your personal information, email us at info@bitforbytes.in.',
     ],
   },
 ];

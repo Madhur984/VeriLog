@@ -16,10 +16,10 @@ interface Props {
 }
 
 const SUGGESTIONS = ['Summarise this page', 'Give me a hint', 'Explain this simply', 'What should I learn next?'];
-const FALLBACK = "Hey, I'm Byte ⚡ — ask me anything about this page or the curriculum!";
+const FALLBACK = "Hey, I'm DUMMY ⚡ — ask me anything about this page or the curriculum!";
 
 /**
- * Byte's chat panel — a neo-brutalist assistant window that opens from the
+ * DUMMY's chat panel — a neo-brutalist assistant window that opens from the
  * mascot. On open it streams an AI summary of the current page; students can
  * then ask curriculum questions. All model calls go through the `assistant`
  * Edge Function (Hugging Face key stays server-side) and stream token-by-token.
@@ -117,11 +117,11 @@ export const AssistantPanel: React.FC<Props> = ({ open, onClose, pathname, inMod
           {/* Header */}
           <div className="flex items-center gap-3 border-b-[3px] border-[#1B1436] bg-white px-4 py-3 dark:border-[#4A3D7A] dark:bg-[#1B1540]">
             <span className="grid h-10 w-10 place-items-center overflow-hidden rounded-xl border-[2.5px] border-[#1B1436] bg-[#F1ECFF] shadow-[3px_3px_0_#1B1436] dark:border-[#4A3D7A] dark:bg-[#1B1440] dark:shadow-[3px_3px_0_#7A3FD0]">
-              <img src={FACE} alt="Byte" draggable={false} className="h-8 w-8 select-none object-contain" />
+              <img src={FACE} alt="DUMMY" draggable={false} className="h-8 w-8 select-none object-contain" />
             </span>
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-1.5 text-[15px] font-bold text-[#1B1436] dark:text-white">
-                Byte <Sparkles size={13} className="text-[#FF7A1A]" />
+                DUMMY <Sparkles size={13} className="text-[#FF7A1A]" />
               </div>
               <div className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#6B5E86] dark:text-[#8E80B4]">AI study buddy</div>
             </div>
@@ -188,7 +188,7 @@ export const AssistantPanel: React.FC<Props> = ({ open, onClose, pathname, inMod
               ref={inputRef}
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Ask Byte anything…"
+              placeholder="Ask DUMMY anything…"
               className="min-w-0 flex-1 rounded-xl border-[2.5px] border-[#1B1436] bg-white px-3.5 py-2.5 text-[14px] text-[#1B1436] placeholder-[#8B7FB0] shadow-[2px_2px_0_#1B1436] outline-none focus:border-[#7A3FD0] dark:border-[#4A3D7A] dark:bg-[#0F0B1E] dark:text-white dark:placeholder-[#7A6DA0] dark:shadow-[2px_2px_0_#7A3FD0] dark:focus:border-[#B98BFF]"
             />
             <button

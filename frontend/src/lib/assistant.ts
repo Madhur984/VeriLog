@@ -1,4 +1,4 @@
-// Byte's client — talks to the `assistant` Supabase Edge Function, which proxies
+// DUMMY's client — talks to the `assistant` Supabase Edge Function, which proxies
 // Hugging Face server-side (the HF key never touches the browser) and STREAMS
 // tokens back as Server-Sent Events. See supabase/functions/assistant/index.ts.
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from './supabase';
@@ -12,7 +12,7 @@ export interface AssistantMsg {
 }
 
 /**
- * Ask Byte, streaming. `onDelta` fires for each token chunk as it arrives;
+ * Ask DUMMY, streaming. `onDelta` fires for each token chunk as it arrives;
  * the promise resolves with the full text. `mode: 'summary'` produces a short
  * page overview; `mode: 'chat'` answers with the conversation + pageContext.
  */

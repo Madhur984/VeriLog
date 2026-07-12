@@ -40,7 +40,7 @@ export const LandingFooter = () => {
 
     if (social.id === 'email') {
       e.preventDefault();
-      navigator.clipboard.writeText('bitforbyte.in@gmail.com');
+      navigator.clipboard.writeText('info@bitforbytes.in');
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     }
@@ -99,7 +99,7 @@ export const LandingFooter = () => {
             </div>
             <div>
               <p className="font-bold text-[#22D3EE]">Easter Egg Unlocked!</p>
-              <p className="text-xs text-slate-400">Silicon Patron badge activated. Byte is proud! 🕷️</p>
+              <p className="text-xs text-slate-400">Silicon Patron badge activated. DUMMY is proud! 🕷️</p>
             </div>
             <button
               onClick={() => setBadgeUnlocked(false)}
@@ -146,7 +146,7 @@ export const LandingFooter = () => {
                       }}
                     >
                       <div className="font-bold mb-1 text-[10px] uppercase tracking-wider text-cyan-500">
-                        Byte says:
+                        DUMMY says:
                       </div>
                       <div>
                         {socialItems[hoveredIdx].id === 'email' && copied
