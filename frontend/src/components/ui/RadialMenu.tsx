@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, useMotionValue, useTransform, useSpring } from 'framer-motion';
-import { Globe, LayoutGrid, Database, Trophy, Settings, Briefcase } from 'lucide-react';
+import { Globe, LayoutGrid, Database, BookOpen, Gavel, Briefcase } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { cn } from '../../lib/utils';
 import { useColorScheme } from '../../hooks/useColorScheme';
@@ -201,8 +201,9 @@ export const RadialMenu: React.FC = () => {
   useEffect(() => {
      const path = location.pathname;
      if (path.includes('/workbench')) setActiveId('grid');
-     else if (path.includes('/boss-arena')) setActiveId('leaderboards');
-     else if (path.includes('/portfolio')) setActiveId('settings');
+     else if (path.includes('/analogies')) setActiveId('analog');
+     else if (path.includes('/verilog-playground') || path.includes('/hw-leetcode')) setActiveId('verilog');
+     else if (path.includes('/kmap-lab')) setActiveId('lab');
      else if (path.includes('/career-roadmap')) setActiveId('career');
      else setActiveId('overview');
   }, [location.pathname]);
@@ -232,8 +233,8 @@ export const RadialMenu: React.FC = () => {
     { id: 'grid', label: 'Workbench', icon: <LayoutGrid size={18} strokeWidth={2} />, path: '/workbench' },
     { id: 'career', label: 'Career Roadmap', icon: <Briefcase size={18} strokeWidth={2} />, path: '/career-roadmap' },
     { id: 'lab', label: 'K-Map Lab', icon: <Database size={18} strokeWidth={2} />, path: '/kmap-lab' },
-    { id: 'leaderboards', label: 'Boss Arena', icon: <Trophy size={18} strokeWidth={2} />, path: '/boss-arena' },
-    { id: 'leetcode', label: 'HW LeetCode', icon: <Settings size={18} strokeWidth={2} />, path: '/hw-leetcode' }
+    { id: 'analog', label: 'Analog Library', icon: <BookOpen size={18} strokeWidth={2} />, path: '/analogies' },
+    { id: 'verilog', label: 'Verilog Judge', icon: <Gavel size={18} strokeWidth={2} />, path: '/verilog-playground' }
   ];
 
   const gap = 3.5;

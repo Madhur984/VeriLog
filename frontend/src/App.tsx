@@ -256,7 +256,7 @@ function App() {
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </Suspense>
-      {/* Floating DUMMY mascot, bottom-right on every page (renders nothing until /mascot.riv exists) */}
+      {/* Floating VoltMonkey mascot, bottom-right on every page (renders nothing until /mascot.riv exists) */}
       <Suspense fallback={null}>
         <MascotWidget />
       </Suspense>

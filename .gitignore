@@ -60,6 +60,10 @@ reports/
 _scratch/
 src/be/
 
+# Yosys WASM engine is served from node_modules at /yowasp/* in dev and copied
+# into dist/yowasp on build by the bfb-yowasp-assets Vite plugin — nothing to
+# commit (dist/ is already ignored; node_modules holds the pinned source).
+
 # Standalone "Coming Soon" waitlist page — deployed separately to Hostinger,
 # not part of the React app.
 bitforbytes-waitlist/

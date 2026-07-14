@@ -4,7 +4,7 @@ import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import AssistantPanel from './AssistantPanel';
 
 /**
- * "DUMMY" — the BitForBytes guide mascot.
+ * "VoltMonkey" — the BitForBytes guide mascot.
  *
  * A living little character in the bottom-right corner of every page. The
  * full-body monkey (`public/mascot/body.png`) idles with a gentle breathing
@@ -26,7 +26,17 @@ const BASE = import.meta.env.BASE_URL;
 const asset = (name: string) => `${BASE}mascot/${name}.png`;
 const BODY_SRC = asset('body');
 
-type Mood = 'happy' | 'excited' | 'thinking' | 'focused' | 'surprised' | 'wink';
+type Mood =
+  | 'happy'
+  | 'excited'
+  | 'thinking'
+  | 'focused'
+  | 'surprised'
+  | 'wink'
+  | 'motivated'
+  | 'confident'
+  | 'confused'
+  | 'achiever';
 
 type Guide = { test: (path: string) => boolean; title: string; mood: Mood; tips: string[] };
 
@@ -35,9 +45,9 @@ const GUIDES: Guide[] = [
   {
     test: (p) => p === '/',
     title: 'Welcome',
-    mood: 'excited',
+    mood: 'motivated',
     tips: [
-      "Hi, I'm DUMMY! ⚡ Welcome to BitForBytes — learn to design real chips, from zero.",
+      "Hi, I'm VoltMonkey! ⚡ Welcome to BitForBytes — learn to design real chips, from zero.",
       'Everything here is hands-on: you build actual logic, not just read theory.',
       'Hit “Get started” to open the workstation and pick your first module.',
     ],
@@ -45,7 +55,7 @@ const GUIDES: Guide[] = [
   {
     test: (p) => p.startsWith('/portal'),
     title: 'Your Workstation',
-    mood: 'happy',
+    mood: 'confident',
     tips: [
       'This is your Workstation — every module, lab and tool lives here.',
       "The first modules are free. Green checks show what you've finished.",
@@ -109,8 +119,8 @@ const GUIDES: Guide[] = [
   },
   {
     test: (p) => p.startsWith('/verilog-playground') || p.startsWith('/hw-leetcode'),
-    title: 'Hardware LeetCode',
-    mood: 'focused',
+    title: 'Verilog Judge',
+    mood: 'confident',
     tips: [
       'Write Verilog, run it against test cases, get instant feedback.',
       'Start with the single-bit combinational problems, then level up.',
@@ -123,13 +133,21 @@ const GUIDES: Guide[] = [
     tips: ['No wrong answers here — just signals to poke at and understand.'],
   },
   {
-    test: (p) =>
-      p.startsWith('/boss-arena') || p.startsWith('/gatekeeper-game') || p.startsWith('/debug-mission'),
-    title: 'Challenge Mode',
-    mood: 'surprised',
+    test: (p) => p.startsWith('/boss-arena'),
+    title: 'Boss Arena',
+    mood: 'motivated',
     tips: [
-      "These test everything you've learned. Deep breath — you've got this. ⚡",
+      "This tests everything you've learned. Deep breath — you've got this. ⚡",
       'Read the brief twice, sketch it, then build. Speed comes later.',
+    ],
+  },
+  {
+    test: (p) => p.startsWith('/gatekeeper-game') || p.startsWith('/debug-mission'),
+    title: 'Debug Challenge',
+    mood: 'confused',
+    tips: [
+      "Something's off in this circuit — your job is to hunt it down. 🔍",
+      'Trace the signal step by step; the bug hides where you assume it works.',
     ],
   },
   {
@@ -141,17 +159,17 @@ const GUIDES: Guide[] = [
   {
     test: (p) => p.startsWith('/profile') || p.startsWith('/settings'),
     title: 'Your Progress',
-    mood: 'wink',
+    mood: 'achiever',
     tips: ['Your streaks, finished modules and saved work all live here.'],
   },
 ];
 
 const DEFAULT_GUIDE: Guide = {
   test: () => true,
-  title: 'DUMMY the Guide',
+  title: 'VoltMonkey the Guide',
   mood: 'happy',
   tips: [
-    "Need a hand? I'm DUMMY — I'll pop up with tips wherever you go.",
+    "Need a hand? I'm VoltMonkey — I'll pop up with tips wherever you go.",
     "Click me any time for a hint about the page you're on.",
   ],
 };
@@ -253,7 +271,7 @@ export default function MascotWidget() {
     : { y: [0, -4, 0, -3, 0], rotate: [0, -1.6, 0, 1.6, 0], scale: [1, 1.015, 1, 1.015, 1] };
   const hopAnim = reduce ? undefined : { y: [0, 0, -22, -3, 0, 0] };
   const hopTimes = [0, 0.5, 0.66, 0.8, 0.9, 1];
-  // Shadow squashes when grounded, shrinks/fades as DUMMY leaves the floor.
+  // Shadow squashes when grounded, shrinks/fades as VoltMonkey leaves the floor.
   const shadowAnim = reduce
     ? undefined
     : { scaleX: [1, 1, 0.62, 0.92, 1, 1], opacity: [0.32, 0.32, 0.14, 0.28, 0.32, 0.32] };
@@ -330,7 +348,7 @@ export default function MascotWidget() {
               onClick={() => setChatOpen(true)}
               className="mt-2 w-full rounded-lg border-2 border-edge-strong bg-signal-bright/10 py-1.5 text-[11px] font-bold uppercase tracking-wide text-signal-bright transition-colors hover:bg-signal-bright/20"
             >
-              💬 Ask DUMMY anything
+              💬 Ask VoltMonkey anything
             </button>
 
             {/* speech-bubble tail pointing down toward the mascot */}
@@ -394,14 +412,14 @@ export default function MascotWidget() {
             onClick={() => setChatOpen(true)}
             onHoverStart={() => setHovered(true)}
             onHoverEnd={() => setHovered(false)}
-            aria-label="DUMMY the guide — click to chat with the AI study buddy"
+            aria-label="VoltMonkey the guide — click to chat with the AI study buddy"
             className="pointer-events-auto h-full w-full rounded-2xl outline-none focus-visible:ring-2 focus-visible:ring-signal-bright"
             whileHover={{ scale: 1.07 }}
             whileTap={{ scale: 0.92, rotate: -3 }}
           >
             <motion.img
               src={BODY_SRC}
-              alt="DUMMY the mascot"
+              alt="VoltMonkey the mascot"
               draggable={false}
               animate={idleAnim}
               transition={reduce ? undefined : { duration: 4.2, repeat: Infinity, ease: 'easeInOut' }}

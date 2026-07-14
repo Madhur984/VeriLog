@@ -99,7 +99,7 @@ export const LandingFooter = () => {
             </div>
             <div>
               <p className="font-bold text-[#22D3EE]">Easter Egg Unlocked!</p>
-              <p className="text-xs text-slate-400">Silicon Patron badge activated. DUMMY is proud! 🕷️</p>
+              <p className="text-xs text-slate-400">Silicon Patron badge activated. VoltMonkey is proud! 🕷️</p>
             </div>
             <button
               onClick={() => setBadgeUnlocked(false)}
@@ -146,7 +146,7 @@ export const LandingFooter = () => {
                       }}
                     >
                       <div className="font-bold mb-1 text-[10px] uppercase tracking-wider text-cyan-500">
-                        DUMMY says:
+                        VoltMonkey says:
                       </div>
                       <div>
                         {socialItems[hoveredIdx].id === 'email' && copied

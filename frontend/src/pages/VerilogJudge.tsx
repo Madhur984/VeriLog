@@ -19,6 +19,54 @@ import { compileVerilog, simulate, type Bit } from '../engine/verilog/miniSim';
 import { SynthSchematicView } from '../components/verilog/SynthSchematicView';
 import type { Diag } from '../engine/verilog/diagnostics';
 
+/**
+ * Drag-to-resize a panel dimension, persisted to localStorage. `min`/`max` may
+ * be numbers or functions (e.g. window-relative), so a split can't push a
+ * neighbouring panel off-screen. Returns the size and a pointer-down handler to
+ * spread onto a divider element.
+ */
+function useResizable(
+  key: string,
+  initial: number,
+  min: number | (() => number),
+  max: number | (() => number),
+  axis: 'x' | 'y',
+  dir: 1 | -1 = 1,
+) {
+  const lo = () => (typeof min === 'function' ? min() : min);
+  const hi = () => (typeof max === 'function' ? max() : max);
+  const clamp = (v: number) => Math.max(lo(), Math.min(hi(), v));
+  const [size, setSize] = useState<number>(() => {
+    const s = Number(typeof window !== 'undefined' ? window.localStorage.getItem(key) : NaN);
+    return Number.isFinite(s) ? clamp(s) : initial;
+  });
+  useEffect(() => { try { window.localStorage.setItem(key, String(size)); } catch { /* ignore */ } }, [key, size]);
+  useEffect(() => {
+    const onResize = () => setSize((s) => clamp(s));
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  const onPointerDown = useCallback((e: React.PointerEvent) => {
+    e.preventDefault();
+    const p0 = axis === 'x' ? e.clientX : e.clientY;
+    const s0 = size;
+    const move = (ev: PointerEvent) => setSize(clamp(s0 + dir * ((axis === 'x' ? ev.clientX : ev.clientY) - p0)));
+    const up = () => {
+      document.removeEventListener('pointermove', move);
+      document.removeEventListener('pointerup', up);
+      document.body.style.userSelect = '';
+      document.body.style.cursor = '';
+    };
+    document.addEventListener('pointermove', move);
+    document.addEventListener('pointerup', up);
+    document.body.style.userSelect = 'none';
+    document.body.style.cursor = axis === 'x' ? 'col-resize' : 'row-resize';
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [size, axis, dir]);
+  return [size, onPointerDown] as const;
+}
+
 const SOLVED_KEY = 'vj_solved_v1';
 const codeKey = (id: string) => `vj_code_${id}`;
 
@@ -129,6 +177,12 @@ export const VerilogJudge: React.FC = () => {
   const [passTotal, setPassTotal] = useState(0);
   const [celebrate, setCelebrate] = useState(false);
   const runTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+
+  // Drag-resizable panels (desktop): problem-panel width, editor↔schematic split,
+  // and console height. Persisted; clamped so no panel can be squeezed away.
+  const [problemW, dragProblem] = useResizable('bfb_vj_problem_w', 360, 260, () => Math.min(680, window.innerWidth * 0.5), 'x', 1);
+  const [editorW, dragEditor] = useResizable('bfb_vj_editor_w', 560, 320, () => window.innerWidth - 420, 'x', 1);
+  const [consoleH, dragConsole] = useResizable('bfb_vj_console_h', 260, 140, () => window.innerHeight * 0.7, 'y', -1);
 
   // debounced source feeds the live Yosys schematic
   const [debounced, setDebounced] = useState(code);
@@ -252,7 +306,12 @@ export const VerilogJudge: React.FC = () => {
       className="flex min-h-[100svh] w-full flex-col overflow-y-auto bg-bg-void text-text-main lg:h-screen lg:overflow-hidden"
       // De-purple: on this page the light-mode background is a neutral IDE slate,
       // not the global lavender. Dark mode is already neutral.
-      style={isLight ? ({ ['--bg-void']: '#E9EDF3' } as React.CSSProperties) : undefined}
+      style={{
+        ...(isLight ? { ['--bg-void']: '#E9EDF3' } : {}),
+        ['--vj-pw']: `${problemW}px`,
+        ['--vj-ew']: `${editorW}px`,
+        ['--vj-ch']: `${consoleH}px`,
+      } as React.CSSProperties}
     >
       {/* ── Header ── */}
       <header className="relative z-30 flex h-14 shrink-0 items-center gap-2.5 border-b border-border-soft bg-bg-elev px-3 lg:px-4">
@@ -394,8 +453,14 @@ export const VerilogJudge: React.FC = () => {
             <motion.section
               key="problem"
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              className="relative min-w-0 overflow-y-auto border-b border-border-soft p-5 lg:w-[360px] lg:border-b-0 lg:border-r lg:p-6"
+              className="relative min-w-0 overflow-y-auto border-b border-border-soft p-5 lg:w-[var(--vj-pw)] lg:border-b-0 lg:border-r lg:p-6"
             >
+              {/* drag to resize the problem panel (desktop) */}
+              <div
+                onPointerDown={dragProblem}
+                title="Drag to resize"
+                className="absolute right-0 top-0 z-20 hidden h-full w-1.5 cursor-col-resize transition-colors hover:bg-emerald-500/50 lg:block"
+              />
               <div className="mb-4 flex items-center justify-between">
                 <span className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-500/80">Problem {String(problem.number).padStart(2, '0')}</span>
                 <button onClick={() => setProblemOpen(false)} title="Collapse panel"
@@ -441,6 +506,14 @@ export const VerilogJudge: React.FC = () => {
                   ))}
                 </div>
               </div>
+
+              {/* Always-on reference timing for clocked problems — study the clock
+                  before/while coding, independent of any run. */}
+              {isSeq(problem) && (
+                <div className="mt-5">
+                  <SeqWaveform problem={problem} heading="Expected timing" />
+                </div>
+              )}
 
               {problem.hint && (
                 <div className="mt-5 flex flex-wrap gap-2">
@@ -525,8 +598,14 @@ export const VerilogJudge: React.FC = () => {
           )}
 
           {/* Editor | Synth schematic */}
-          <div className="grid min-h-0 flex-1 grid-cols-1 lg:grid-cols-2">
-            <div className="h-[44vh] min-h-[260px] lg:h-auto lg:min-h-0">
+          <div className="grid min-h-0 flex-1 grid-cols-1 lg:grid-cols-[var(--vj-ew)_1fr]">
+            <div className="relative h-[44vh] min-h-[260px] lg:h-auto lg:min-h-0">
+              {/* drag to resize editor vs schematic (desktop) */}
+              <div
+                onPointerDown={dragEditor}
+                title="Drag to resize"
+                className="absolute right-0 top-0 z-20 hidden h-full w-1.5 cursor-col-resize transition-colors hover:bg-emerald-500/50 lg:block"
+              />
               <Editor
                 height="100%"
                 language="verilog"
@@ -558,7 +637,7 @@ export const VerilogJudge: React.FC = () => {
           </div>
 
           {/* Results drawer */}
-          <ResultsDrawer open={resultsOpen} setOpen={setResultsOpen} result={result} problem={problem} running={running} />
+          <ResultsDrawer open={resultsOpen} setOpen={setResultsOpen} result={result} problem={problem} running={running} onResizeStart={dragConsole} />
         </section>
       </div>
 
@@ -587,7 +666,8 @@ export const VerilogJudge: React.FC = () => {
 const ResultsDrawer: React.FC<{
   open: boolean; setOpen: (b: boolean) => void;
   result: GradeResult | null; problem: AnyProblem; running: boolean;
-}> = ({ open, setOpen, result, problem, running }) => {
+  onResizeStart: (e: React.PointerEvent) => void;
+}> = ({ open, setOpen, result, problem, running, onResizeStart }) => {
   const passed = result?.status === 'pass';
   const summary = running ? 'Compiling & simulating...'
     : !result ? 'Run to grade your design'
@@ -601,6 +681,14 @@ const ResultsDrawer: React.FC<{
 
   return (
     <div className="shrink-0 border-t border-border-soft bg-bg-elev">
+      {/* drag to resize the console height (desktop) */}
+      {open && (
+        <div
+          onPointerDown={onResizeStart}
+          title="Drag to resize"
+          className="hidden h-1.5 w-full cursor-row-resize transition-colors hover:bg-emerald-500/50 lg:block"
+        />
+      )}
       <button onClick={() => setOpen(!open)} className="flex w-full items-center gap-2 px-3 py-2 text-left">
         <span className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-text-dim">Console</span>
         <span className={`flex items-center gap-1.5 text-[12px] font-bold ${tone}`}>
@@ -616,7 +704,7 @@ const ResultsDrawer: React.FC<{
       <AnimatePresence initial={false}>
         {open && (
           <motion.div initial={{ height: 0 }} animate={{ height: 'auto' }} exit={{ height: 0 }} className="overflow-hidden">
-            <div className="max-h-[34vh] overflow-y-auto border-t border-border-soft">
+            <div className="max-h-[42vh] overflow-y-auto border-t border-border-soft lg:max-h-none lg:h-[var(--vj-ch)]">
               <ResultsPanel result={result} problem={problem} running={running} />
             </div>
           </motion.div>
@@ -639,17 +727,148 @@ const PortCard: React.FC<{ label: string; names: string[]; accent: string }> = (
   </div>
 );
 
+/**
+ * SeqWaveform — a digital timing diagram for the sequential (flip-flop) tier.
+ *
+ * Reading a column of 0s and 1s makes it very hard to feel the *clock*. This
+ * draws the actual waves so the edge-triggered story is obvious:
+ *   • clk rises in the middle of every cycle (▲) — that is the sampling instant.
+ *   • data inputs (and reset) are held across the whole cycle, so they are
+ *     stable through the rising edge that samples them.
+ *   • registered outputs change exactly ON the ▲ — the value captured at the
+ *     edge appears right after it and holds until the next edge.
+ * The GOLDEN timing is computed straight from the problem, so it renders even
+ * before a run, on a compile error, or on a wrong answer. When a graded result
+ * is available the student's own output is overlaid dashed in red and the
+ * mismatching cycles are banded, so where their waveform diverges is visible.
+ */
+const SeqWaveform: React.FC<{ problem: AnyProblem; rows?: GradeResult['rows'] | null; heading?: string }> = ({ problem, rows, heading }) => {
+  if (!isSeq(problem) || problem.vectors.length === 0) return null;
+
+  const N = problem.vectors.length;
+  const LW = 68;   // left label gutter
+  const W = 48;    // per-cycle width
+  const ROW = 38;  // per-signal row height (tall enough for a value digit)
+  const AXIS = 22; // top strip for cycle numbers + ▲
+
+  // Golden next-state sequence — independent of the student's code.
+  let gState: Record<string, Bit> = {};
+  for (const r of problem.regOutputs) gState[r] = 0;
+  const expected = problem.vectors.map((vec) => { const nx = problem.step(gState, vec); gState = nx; return nx; });
+
+  const got = rows && rows.length === N ? rows : null;
+  const failCycles = new Set<number>();
+  if (got) got.forEach((r, i) => { if (!r.pass) failCycles.add(i); });
+  const fail = failCycles.size > 0;
+
+  const bit = (v: Bit | undefined) => (v ? 1 : 0);
+  type Sig = { label: string; color: string; kind: 'clk' | 'level' | 'reg'; dashed?: boolean; values: number[] };
+  const sigs: Sig[] = [];
+  sigs.push({ label: problem.clock, color: '#f59e0b', kind: 'clk', values: [] });
+  if (problem.reset) sigs.push({ label: problem.reset, color: '#fb7185', kind: 'level', values: problem.vectors.map((v) => bit(v[problem.reset!])) });
+  for (const d of problem.dataInputs) sigs.push({ label: d, color: '#22d3ee', kind: 'level', values: problem.vectors.map((v) => bit(v[d])) });
+  for (const o of problem.regOutputs) sigs.push({ label: o, color: '#10b981', kind: 'reg', values: expected.map((e) => bit(e[o])) });
+  if (fail && got) for (const o of problem.regOutputs) sigs.push({ label: `${o} (yours)`, color: '#f43f5e', kind: 'reg', dashed: true, values: got.map((r) => (r.got ? bit(r.got[o]) : 0)) });
+
+  const totalW = LW + N * W + 10;
+  const totalH = AXIS + sigs.length * ROW + 8;
+  const xAt = (i: number) => LW + i * W;
+  const toPts = (pts: number[][]) => pts.map((p) => `${p[0]},${p[1]}`).join(' ');
+
+  const rowPoints = (s: Sig, hi: number, lo: number): number[][] => {
+    const lv = (v: number) => (v ? hi : lo);
+    const pts: number[][] = [];
+    if (s.kind === 'clk') {
+      for (let i = 0; i < N; i++) {
+        const x0 = xAt(i), xm = x0 + W / 2, x1 = xAt(i + 1);
+        pts.push([x0, lo], [xm, lo], [xm, hi], [x1, hi]);
+      }
+    } else if (s.kind === 'reg') {
+      // registered: starts at 0, transitions at each mid-cycle rising edge
+      let prev = 0;
+      pts.push([xAt(0), lv(prev)]);
+      for (let i = 0; i < N; i++) {
+        const xm = xAt(i) + W / 2;
+        pts.push([xm, lv(prev)], [xm, lv(s.values[i])]);
+        prev = s.values[i];
+      }
+      pts.push([xAt(N), lv(prev)]);
+    } else {
+      // level: held across the whole cycle, transitions at cycle boundaries
+      for (let i = 0; i < N; i++) { const y = lv(s.values[i]); pts.push([xAt(i), y], [xAt(i + 1), y]); }
+    }
+    return pts;
+  };
+
+  return (
+    <div className="mb-3 rounded-lg border border-border-soft bg-bg-void/40 p-3">
+      <div className="mb-1.5 flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
+        <span className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-text-dim">{heading ?? 'Timing diagram'}</span>
+        <span className="font-mono text-[10px] text-text-dim"><span className="text-amber-500">▲</span> rising edge — inputs sampled, outputs update · 0/1 shown per cycle</span>
+      </div>
+      <div className="overflow-x-auto">
+        <svg width={totalW} height={totalH} className="text-text-dim" role="img" aria-label="Clock timing diagram">
+          {/* mismatch bands + per-cycle rising-edge guides */}
+          {Array.from({ length: N }, (_, i) => {
+            const xm = xAt(i) + W / 2;
+            const bad = failCycles.has(i);
+            return (
+              <g key={`g${i}`}>
+                {bad && <rect x={xAt(i)} y={AXIS} width={W} height={totalH - AXIS - 4} fill="#f43f5e" opacity={0.08} />}
+                <line x1={xm} y1={AXIS} x2={xm} y2={totalH - 4} stroke={bad ? '#f43f5e' : 'currentColor'} strokeOpacity={bad ? 0.45 : 0.12} strokeWidth={1} strokeDasharray="3 3" />
+                <text x={xm} y={AXIS - 8} textAnchor="middle" className="fill-current" fontSize={10} opacity={0.6}>{i}</text>
+                <text x={xm} y={AXIS - 0.5} textAnchor="middle" fontSize={9} fill="#f59e0b">▲</text>
+              </g>
+            );
+          })}
+          {/* signals */}
+          {sigs.map((s, r) => {
+            const yTop = AXIS + r * ROW;
+            const hi = yTop + 9, lo = yTop + ROW - 11;
+            const digitY = yTop + ROW / 2 + 1;
+            // reg values settle after the mid-cycle edge → label their held half;
+            // level/input values hold the whole cycle → label the cell centre.
+            const digitX = (i: number) => xAt(i) + (s.kind === 'reg' ? W * 0.75 : W / 2);
+            return (
+              <g key={s.label}>
+                <text x={LW - 10} y={yTop + ROW / 2} textAnchor="end" dominantBaseline="middle" fontSize={11} fill={s.color} className="font-mono font-bold">{s.label}</text>
+                <line x1={LW} y1={lo} x2={xAt(N)} y2={lo} stroke="currentColor" strokeOpacity={0.1} strokeWidth={1} />
+                <polyline points={toPts(rowPoints(s, hi, lo))} fill="none" stroke={s.color} strokeWidth={2} strokeLinejoin="round" strokeLinecap="round" strokeDasharray={s.dashed ? '4 3' : undefined} opacity={s.dashed ? 0.95 : 1} />
+                {s.kind !== 'clk' && s.values.map((v, i) => (
+                  <text key={i} x={digitX(i)} y={digitY} textAnchor="middle" dominantBaseline="middle" fontSize={11} fontWeight={700} fill={s.color} className="font-mono">{v}</text>
+                ))}
+              </g>
+            );
+          })}
+        </svg>
+      </div>
+    </div>
+  );
+};
+
 const ResultsPanel: React.FC<{ result: GradeResult | null; problem: AnyProblem; running: boolean }> = ({ result, problem, running }) => {
+  const seq = isSeq(problem);
+  // The timing diagram shows the golden clock behaviour for every sequential
+  // problem — before a run, on a compile error, and on a wrong answer — with the
+  // student's trace overlaid only once it has been graded.
+  const wave = seq ? <SeqWaveform problem={problem} rows={result && result.status !== 'error' ? result.rows : null} /> : null;
+
   if (running) {
     return <div className="flex items-center gap-2 p-4 text-[13px] text-text-dim"><Loader2 className="h-4 w-4 animate-spin" /> Compiling &amp; simulating every input combination...</div>;
   }
   if (!result) {
-    return <div className="p-4 text-[13px] leading-relaxed text-text-dim">Hit <span className="font-bold text-text-main">Submit</span> to grade your module against the full test set. As you type, the synthesized circuit on the right shows exactly what your code builds - poke its wires to see values flow.</div>;
+    return (
+      <div className="p-3">
+        {wave}
+        <p className="px-1 pt-1 text-[13px] leading-relaxed text-text-dim">Hit <span className="font-bold text-text-main">Submit</span> to grade your module against the full test set. As you type, the synthesized circuit on the right shows exactly what your code builds - poke its wires to see values flow.</p>
+      </div>
+    );
   }
 
   if (result.status === 'error') {
     return (
-      <div className="p-4">
+      <div className="p-3">
+        {wave}
         <div className="mb-2 flex items-center gap-2 text-[13px] font-bold text-rose-400">
           <AlertTriangle className="h-4 w-4" /> Compile error
         </div>
@@ -659,7 +878,6 @@ const ResultsPanel: React.FC<{ result: GradeResult | null; problem: AnyProblem; 
   }
 
   const passed = result.status === 'pass';
-  const seq = isSeq(problem);
   const inCols = isSeq(problem) ? (problem.reset ? [problem.reset, ...problem.dataInputs] : problem.dataInputs) : problem.inputs;
   const outCols = problem.outputs;
   return (
@@ -670,6 +888,7 @@ const ResultsPanel: React.FC<{ result: GradeResult | null; problem: AnyProblem; 
           ? (seq ? 'Accepted - every clock cycle matched' : 'Accepted - all cases passed')
           : `${result.passed}/${result.total} ${seq ? 'cycles' : 'cases'} passed`}
       </div>
+      {wave}
       <div className="overflow-x-auto rounded-lg border border-border-soft">
         <table className="w-full border-collapse font-mono text-[12px]">
           <thead>

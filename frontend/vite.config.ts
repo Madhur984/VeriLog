@@ -1,7 +1,7 @@
 import { defineConfig, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
-import { readFileSync, writeFileSync } from 'fs'
+import { readFileSync, writeFileSync, cpSync, existsSync, mkdirSync, createReadStream } from 'fs'
 import { getSeo, routeJsonLd, SITE } from './src/lib/seo'
 
 /**
@@ -108,17 +108,71 @@ function prerenderMetaPlugin(): Plugin {
   }
 }
 
+/**
+ * Serve the self-hosted Yosys WASM engine at `/yowasp/*`.
+ *
+ * The engine's `gen/bundle.js` resolves its 43 MB core and sidecar files via
+ * `new URL('./yosys.core.wasm', import.meta.url)`, so the worker must load it by
+ * a plain URL (not `import('@yowasp/yosys')`, which drags the wasm through Vite's
+ * transform and serves it with a MIME the browser rejects as a module script).
+ *
+ * The files can't live in `public/` either: Vite's transform middleware
+ * intercepts any `.js` request that resolves into `public/` and refuses it
+ * ("should not be imported from source code"). So instead:
+ *   - DEV: a middleware registered BEFORE Vite's transform middleware streams
+ *     `/yowasp/*` straight out of node_modules with the right Content-Type.
+ *   - BUILD: the engine is copied into `dist/yowasp/` so the same URLs resolve.
+ * `import.meta.url` inside the bundle then resolves to `/yowasp/bundle.js`, and
+ * its wasm siblings fetch as ordinary static assets in dev and prod alike.
+ */
+function yowaspAssetsPlugin(): Plugin {
+  const gen = path.resolve(__dirname, 'node_modules/@yowasp/yosys/gen')
+  const MIME: Record<string, string> = {
+    '.js': 'text/javascript',
+    '.wasm': 'application/wasm',
+    '.tar': 'application/x-tar',
+    '.map': 'application/json',
+  }
+  return {
+    name: 'bfb-yowasp-assets',
+    configureServer(server) {
+      server.middlewares.use((req, res, next) => {
+        const urlPath = (req.url || '').split('?')[0]
+        if (!urlPath.startsWith('/yowasp/')) return next()
+        const file = path.resolve(gen, urlPath.slice('/yowasp/'.length))
+        if (!file.startsWith(gen + path.sep) || !existsSync(file)) return next()
+        res.setHeader('Content-Type', MIME[path.extname(file)] || 'application/octet-stream')
+        res.setHeader('Cache-Control', 'no-cache')
+        createReadStream(file).pipe(res)
+      })
+    },
+    closeBundle() {
+      try {
+        if (!existsSync(path.join(gen, 'bundle.js'))) return
+        const out = path.resolve(__dirname, 'dist/yowasp')
+        mkdirSync(out, { recursive: true })
+        cpSync(gen, out, { recursive: true })
+        // eslint-disable-next-line no-console
+        console.log('[bfb-yowasp-assets] emitted Yosys engine -> dist/yowasp')
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.warn('[bfb-yowasp-assets] emit skipped:', e)
+      }
+    },
+  }
+}
+
 export default defineConfig({
-    plugins: [react(), prerenderMetaPlugin()],
+    plugins: [react(), prerenderMetaPlugin(), yowaspAssetsPlugin()],
     resolve: {
         alias: {
             "@": path.resolve(__dirname, "./src"),
         },
     },
-    // The Yosys WASM engine references its 43 MB core via `new URL('./*.wasm',
-    // import.meta.url)`. Excluding it from dep pre-bundling lets Vite serve it
-    // through the main pipeline (so those asset URLs resolve in dev and the wasm
-    // is emitted in the build). It is dynamically imported inside an ES worker.
+    // The Yosys WASM engine is loaded by static URL from public/yowasp (see
+    // yowaspAssetsPlugin + yosys.worker.ts), not imported through Vite, so it
+    // never reaches dep pre-bundling. Keep the exclude as a guard in case any
+    // transitive code references the bare specifier.
     optimizeDeps: {
         exclude: ['@yowasp/yosys', '@yowasp/runtime'],
     },

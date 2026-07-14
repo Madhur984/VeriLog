@@ -25,13 +25,25 @@ type RunYosys = (
 let runYosys: RunYosys | null = null;
 let loading: Promise<RunYosys> | null = null;
 
+// The self-hosted Yosys ESM bundle is copied out of node_modules into
+// `public/yowasp/` by the bfb-yowasp-assets Vite plugin, and loaded here by
+// static URL rather than by importing '@yowasp/yosys'. That keeps Vite from
+// rewriting the engine's `new URL('./yosys.core.wasm', import.meta.url)` sidecar
+// references — in dev those were served with a wasm/empty MIME type and the
+// browser rejected them as module scripts ("Strict MIME type checking …"),
+// which broke the code→schematic synthesis. Loading the bundle from a plain
+// static path makes `import.meta.url` resolve to /yowasp/bundle.js, so its
+// siblings fetch as normal static assets (correct MIME) in dev and prod alike.
+const BUNDLE_URL = '/yowasp/bundle.js';
+
 function loadEngine(): Promise<RunYosys> {
   if (runYosys) return Promise.resolve(runYosys);
   if (!loading) {
-    // Vite serves this through its pipeline (optimizeDeps.exclude), so the
-    // engine's `new URL('./yosys.core.wasm', import.meta.url)` resolves correctly.
-    loading = import('@yowasp/yosys')
-      .then((mod) => { runYosys = mod.runYosys as unknown as RunYosys; return runYosys!; })
+    loading = import(/* @vite-ignore */ BUNDLE_URL)
+      .then((mod: { runYosys?: unknown }) => {
+        runYosys = mod.runYosys as unknown as RunYosys;
+        return runYosys!;
+      })
       .catch((e: unknown) => { loading = null; throw e; });
   }
   return loading;

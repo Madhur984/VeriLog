@@ -1,6 +1,6 @@
 // Supabase Edge Function: `assistant`
 // ---------------------------------------------------------------------------
-// DUMMY's brain. Proxies chat to Hugging Face so the HF key NEVER reaches the
+// VoltMonkey's brain. Proxies chat to Hugging Face so the HF key NEVER reaches the
 // browser (it lives as the `HF_API_KEY` secret) and STREAMS tokens back.
 //
 // 402 fix: HF's auto provider randomly lands on paid providers → 402 once the
@@ -55,7 +55,7 @@ function rateLimited(ip: string): boolean {
   return recent.length > RL_MAX;
 }
 
-const SYSTEM = `You are **DUMMY** ⚡, the AI study buddy for **BitForBytes** — an interactive platform where students (mostly ECE / engineering students in India) learn to design real chips from zero.
+const SYSTEM = `You are **VoltMonkey** ⚡, the AI study buddy for **BitForBytes** — an interactive platform where students (mostly ECE / engineering students in India) learn to design real chips from zero.
 
 WHAT BITFORBYTES TEACHES (use this to answer "what is this / what next"):
 • Foundation modules — signals (analog vs digital), number systems (binary/hex, 2's complement), logic gates, Boolean algebra, K-maps, working toward building a CPU.
@@ -128,7 +128,7 @@ Deno.serve(async (req: Request) => {
 
       if (hf.ok && hf.body) {
         return new Response(hf.body, {
-          headers: { ...CORS, 'Content-Type': 'text/event-stream; charset=utf-8', 'Cache-Control': 'no-cache', 'X-DUMMY-Model': model },
+          headers: { ...CORS, 'Content-Type': 'text/event-stream; charset=utf-8', 'Cache-Control': 'no-cache', 'X-VoltMonkey-Model': model },
         });
       }
       last = { status: hf.status, detail: (await hf.text().catch(() => '')).slice(0, 300), model };
