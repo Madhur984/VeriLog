@@ -222,7 +222,7 @@ export const SubModuleShell: React.FC<ShellProps> = ({
         </DrawerShell>
 
         <div className="flex-1 flex flex-col h-full overflow-hidden relative z-10">
-          <header className="h-16 lg:h-20 border-b flex items-center justify-between px-4 lg:px-12 z-10 gap-3"
+          <header className="h-16 lg:h-20 border-b flex items-center justify-between pl-4 pr-16 lg:px-12 z-10 gap-3"
             style={{ borderColor: isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }}>
             <div className="flex items-center gap-3 min-w-0">
               <HamburgerButton isDarkMode={isDarkMode} onClick={() => setNavOpen(o => !o)} />

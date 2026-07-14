@@ -33,7 +33,7 @@ export const S02_GoodBoyHostel: React.FC<Props> = ({ isActive, isDarkMode }) => 
           alt="Pure silicon - the good boy hostel"
           className="w-full block aspect-[16/9] object-cover"
         />
-        <div className="absolute bottom-3 right-4 font-mono text-[9px] uppercase tracking-widest text-orange-200/80">
+        <div className="hidden sm:block absolute bottom-3 right-4 font-mono text-[9px] uppercase tracking-widest text-orange-200/80">
           Madhur&apos;s Lab · Page 02
         </div>
       </motion.div>

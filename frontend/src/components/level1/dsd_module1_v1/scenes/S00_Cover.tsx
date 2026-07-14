@@ -24,7 +24,7 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
           className="w-full block"
         />
         <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
-        <div className="absolute bottom-3 right-4 font-mono text-[9px] uppercase tracking-widest text-white/80">
+        <div className="hidden sm:block absolute bottom-3 right-4 font-mono text-[9px] uppercase tracking-widest text-white/80">
           Ben Bitdiddle's Sketchbook · Page 01
         </div>
       </motion.div>

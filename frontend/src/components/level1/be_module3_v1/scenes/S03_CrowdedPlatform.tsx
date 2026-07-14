@@ -29,7 +29,7 @@ export const S03_CrowdedPlatform: React.FC<Props> = ({ isActive, isDarkMode }) =
         className={`relative rounded-3xl overflow-hidden border ${cardBg}`}
       >
         <img loading="lazy" decoding="async" src="/images/commuter/p03.webp" alt="No bias - the crowded platform" className="w-full block aspect-[16/9] object-cover" />
-        <div className="absolute bottom-3 right-4 font-mono text-[9px] uppercase tracking-widest text-amber-200/80">
+        <div className="hidden sm:block absolute bottom-3 right-4 font-mono text-[9px] uppercase tracking-widest text-amber-200/80">
           Commuter Circuit · No Bias
         </div>
       </motion.div>

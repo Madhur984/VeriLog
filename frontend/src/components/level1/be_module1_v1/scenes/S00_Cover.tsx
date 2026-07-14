@@ -103,7 +103,7 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
           }}
         />
         <div className="absolute inset-0 flex items-center">
-          <div className="flex-1 px-12">
+          <div className="flex-1 px-6 md:px-12">
             <h2 className="text-4xl md:text-5xl font-black text-orange-300 leading-none drop-shadow-[0_0_20px_rgba(249,115,22,0.4)]">
               THE PHYSICS
             </h2>
@@ -124,7 +124,7 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
             </motion.div>
           </div>
         </div>
-        <div className="absolute bottom-3 right-4 font-mono text-[9px] uppercase tracking-widest text-orange-200/70">
+        <div className="hidden sm:block absolute bottom-3 right-4 font-mono text-[9px] uppercase tracking-widest text-orange-200/70">
           The Pure-State Atelier · Page 01
         </div>
       </motion.div>

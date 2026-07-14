@@ -66,7 +66,7 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
             </svg>
           </div>
         </div>
-        <div className="absolute bottom-3 right-4 font-mono text-[9px] uppercase tracking-widest text-amber-200/70">
+        <div className="hidden sm:block absolute bottom-3 right-4 font-mono text-[9px] uppercase tracking-widest text-amber-200/70">
           Madhur’s Sketchbook · Page 01
         </div>
       </motion.div>

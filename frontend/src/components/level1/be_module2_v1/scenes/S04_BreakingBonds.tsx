@@ -33,7 +33,7 @@ export const S04_BreakingBonds: React.FC<Props> = ({ isActive, isDarkMode }) => 
         className={`relative rounded-3xl overflow-hidden border ${cardBg}`}
       >
         <img loading="lazy" decoding="async" src="/images/semi/p04.webp" alt="Breaking covalent bonds" className="w-full block aspect-[16/9] object-cover" />
-        <div className="absolute bottom-3 right-4 font-mono text-[9px] uppercase tracking-widest text-orange-200/80">
+        <div className="hidden sm:block absolute bottom-3 right-4 font-mono text-[9px] uppercase tracking-widest text-orange-200/80">
           Madhur&apos;s Lab · Page 04
         </div>
       </motion.div>

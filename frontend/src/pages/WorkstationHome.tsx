@@ -277,6 +277,22 @@ export const WorkstationHome: React.FC = () => {
         <DigitalClock isLight={isLight} />
       </div>
 
+      {/* Profile chip pinned to the far top-right corner on wide screens —
+          mirrors the clock pinned far-left. Below xl it stays in the header. */}
+      <div className="absolute right-5 top-5 z-20 hidden xl:block">
+        <button
+          onClick={() => navigate('/profile')}
+          title="Open your profile"
+          className="inline-flex items-center gap-2 px-2 py-1.5 transition-transform hover:-translate-y-0.5"
+          style={chip}
+        >
+          <span className="flex h-7 w-7 items-center justify-center rounded-md text-[13px] font-black text-white" style={{ background: '#4F46E5' }}>
+            {name.charAt(0).toUpperCase()}
+          </span>
+          <span className="pr-1 text-[13px] font-bold">{name}</span>
+        </button>
+      </div>
+
       {/* Cyclic hologram — fixed bottom-left. */}
       <div className="hidden xl:block">
         <RadialMenu />
@@ -329,7 +345,7 @@ export const WorkstationHome: React.FC = () => {
             <button
               onClick={() => navigate('/profile')}
               title="Open your profile"
-              className="inline-flex items-center gap-2 px-2 py-1.5 transition-transform hover:-translate-y-0.5"
+              className="inline-flex items-center gap-2 px-2 py-1.5 transition-transform hover:-translate-y-0.5 xl:hidden"
               style={chip}
             >
               <span className="flex h-7 w-7 items-center justify-center rounded-md text-[13px] font-black text-white" style={{ background: '#4F46E5' }}>

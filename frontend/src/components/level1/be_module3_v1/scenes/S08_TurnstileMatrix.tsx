@@ -170,7 +170,7 @@ export const S08_TurnstileMatrix: React.FC<Props> = ({ isActive, isDarkMode }) =
         className={`relative rounded-3xl overflow-hidden border ${cardBg}`}
       >
         <img loading="lazy" decoding="async" src="/images/commuter/p12.webp" alt="The ultimate commuter turnstile" className="w-full block aspect-[16/9] object-cover" />
-        <div className="absolute bottom-3 right-4 font-mono text-[9px] uppercase tracking-widest text-emerald-200/80">
+        <div className="hidden sm:block absolute bottom-3 right-4 font-mono text-[9px] uppercase tracking-widest text-emerald-200/80">
           Commuter Circuit · The Diode Symbol
         </div>
       </motion.div>

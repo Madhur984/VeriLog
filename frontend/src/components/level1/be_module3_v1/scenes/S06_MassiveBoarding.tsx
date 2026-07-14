@@ -60,7 +60,7 @@ export const S06_MassiveBoarding: React.FC<Props> = ({ isActive, isDarkMode }) =
         className={`relative rounded-3xl overflow-hidden border ${cardBg}`}
       >
         <img loading="lazy" decoding="async" src="/images/commuter/p07.webp" alt="Forward bias - massive boarding" className="w-full block aspect-[16/9] object-cover" />
-        <div className="absolute bottom-3 right-4 font-mono text-[9px] uppercase tracking-widest text-violet-200/80">
+        <div className="hidden sm:block absolute bottom-3 right-4 font-mono text-[9px] uppercase tracking-widest text-violet-200/80">
           Commuter Circuit · Forward Bias
         </div>
       </motion.div>

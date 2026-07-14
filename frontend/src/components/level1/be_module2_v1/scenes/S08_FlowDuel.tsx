@@ -29,7 +29,7 @@ export const S08_FlowDuel: React.FC<Props> = ({ isActive, isDarkMode }) => {
         className={`relative rounded-3xl overflow-hidden border ${cardBg}`}
       >
         <img loading="lazy" decoding="async" src="/images/semi/p10.webp" alt="Electron flow vs hole flow" className="w-full block aspect-[16/9] object-cover" />
-        <div className="absolute bottom-3 right-4 font-mono text-[9px] uppercase tracking-widest text-amber-200/80">
+        <div className="hidden sm:block absolute bottom-3 right-4 font-mono text-[9px] uppercase tracking-widest text-amber-200/80">
           Madhur&apos;s Lab · Page 10
         </div>
       </motion.div>

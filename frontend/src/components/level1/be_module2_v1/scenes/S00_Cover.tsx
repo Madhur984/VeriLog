@@ -23,7 +23,7 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
           className="absolute inset-0 w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#080603] via-transparent to-transparent opacity-80" />
-        <div className="absolute bottom-3 right-4 font-mono text-[9px] uppercase tracking-widest text-orange-200/80">
+        <div className="hidden sm:block absolute bottom-3 right-4 font-mono text-[9px] uppercase tracking-widest text-orange-200/80">
           Madhur&apos;s Lab · Page 01
         </div>
       </motion.div>

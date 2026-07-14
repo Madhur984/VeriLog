@@ -262,7 +262,7 @@ export const Module3Engine: React.FC<{
       </DrawerShell>
       
       <div className="flex-1 flex flex-col h-full overflow-hidden relative z-10">
-        <header className="h-16 lg:h-20 border-b flex items-center justify-between px-4 lg:px-12 z-10 gap-3" style={{ borderColor: 'var(--border-soft)' }}>
+        <header className="h-16 lg:h-20 border-b flex items-center justify-between pl-4 pr-16 lg:px-12 z-10 gap-3" style={{ borderColor: 'var(--border-soft)' }}>
           <div className="flex items-center gap-3 min-w-0">
             <HamburgerButton isDarkMode={isDarkMode} onClick={() => setNavOpen(o => !o)} />
             <div className="flex flex-col min-w-0">
