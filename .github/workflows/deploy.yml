@@ -1,14 +1,51 @@
-name: Deploy to clawdbot
+name: Build & Deploy to Hostinger
+
+# Runs on GitHub's own cloud runner (no self-hosted runner needed).
+# It builds the frontend, then rsyncs the whole dist/ (app + all videos) into
+# bitforbytes.in's public_html over SSH/SFTP. rsync is incremental: the first
+# run uploads everything (incl. the 1.3 GB of video); later pushes send only
+# what changed.
+#
+# Required repo secrets (Settings > Secrets and variables > Actions):
+#   SFTP_HOST = 46.202.142.103
+#   SFTP_PORT = 65002
+#   SFTP_USER = u849937788
+#   SFTP_PASS = <your Hostinger SSH password>
+
 on:
   push:
     branches: [ main ]
   workflow_dispatch:
+
 concurrency:
-  group: clawdbot-deploy
+  group: hostinger-deploy
   cancel-in-progress: false
+
 jobs:
-  deploy:
-    runs-on: [ self-hosted, linux, clawdbot ]
+  build-deploy:
+    runs-on: ubuntu-latest
     steps:
-      - name: Build & restart bitforbytes.in
-        run: bash $HOME/deploy.sh
+      - name: Checkout (incl. videos)
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install & build
+        working-directory: frontend
+        run: |
+          npm install
+          npm run build
+
+      - name: Rsync dist/ to Hostinger public_html
+        env:
+          SSHPASS: ${{ secrets.SFTP_PASS }}
+        run: |
+          sudo apt-get update && sudo apt-get install -y sshpass rsync
+          sshpass -e rsync -rvz --chmod=D755,F644 \
+            -e "ssh -p ${{ secrets.SFTP_PORT }} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=25" \
+            frontend/dist/ \
+            "${{ secrets.SFTP_USER }}@${{ secrets.SFTP_HOST }}:domains/bitforbytes.in/public_html/"
+          echo "Deploy step finished."
