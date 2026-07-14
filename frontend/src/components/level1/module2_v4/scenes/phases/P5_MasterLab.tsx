@@ -25,9 +25,6 @@ export const P5_MasterLab: React.FC<{
     return (
         <div className="flex flex-col gap-32 w-full max-w-none mx-auto">
             <header className="space-y-10 text-center flex flex-col items-center">
-                <div className="inline-flex items-center gap-4 px-6 py-2 rounded-full border border-green-500/20 bg-green-500/5 text-[11px] font-mono font-black uppercase tracking-[0.5em] text-green-500">
-                    BitforBytes // MASTER_SUMMARY_AUDIT
-                </div>
                 <h1 className={`text-[12rem] font-black italic tracking-tighter leading-[0.8] uppercase ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
                     The <br/>
                     <span className="text-green-500">Forge</span>.

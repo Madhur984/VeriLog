@@ -6,7 +6,7 @@ const toBinary = (str: string) =>
     c.charCodeAt(0).toString(2).padStart(8, '0')
   ).join(' ');
 
-const BINARY_TEXT = toBinary('BitforBytes') + ' | ' + toBinary('BitforBytes');
+const BINARY_TEXT = toBinary('BitForBytes') + ' | ' + toBinary('BitForBytes');
 
 export const BinaryStrip = () => {
   const trackRef = useRef<HTMLDivElement>(null);

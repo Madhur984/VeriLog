@@ -2,6 +2,8 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Activity, Moon, Sun, ArrowRight, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { ModuleComplete } from '../../ui/ModuleComplete';
+import { MODULE_LABELS } from '../../../lib/moduleHistory';
 import { DrawerShell, HamburgerButton } from '../_shared/MobileDrawer';
 
 // --- Scene Components ---
@@ -96,7 +98,6 @@ const Sidebar: React.FC<{
               </div>
               <div className="flex-1 min-w-0">
                 <h3 className={`text-[13px] font-bold truncate ${isActive ? 'text-cyan-500' : isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>{page.label}</h3>
-                <div className={`text-[9px] mt-1 font-mono uppercase tracking-widest truncate opacity-30`}>{page.part}</div>
               </div>
             </button>
           );
@@ -131,6 +132,7 @@ export const Module2Engine: React.FC<{
 }> = ({ isDarkMode, onThemeToggle, state, onUpdate, time }) => {
   const navigate = useNavigate();
   const [current, setCurrent] = useState(0);
+  const [done, setDone] = useState(false);
   const [navOpen, setNavOpen] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
 
@@ -165,13 +167,11 @@ export const Module2Engine: React.FC<{
           <div className="flex items-center gap-3 min-w-0">
             <HamburgerButton isDarkMode={isDarkMode} onClick={() => setNavOpen(o => !o)} />
             <div className="flex flex-col min-w-0">
-              <span className="text-[10px] font-mono uppercase tracking-[0.4em] text-cyan-500 font-bold">{page.part}</span>
               <h2 className="text-base lg:text-xl font-bold tracking-tight truncate">{page.label}</h2>
             </div>
           </div>
           <div className="hidden md:flex items-center gap-8">
              <div className="text-right">
-                <div className="text-[8px] font-mono uppercase tracking-widest opacity-30">Analytical // Context</div>
                 <div className="text-[10px] font-mono mt-0.5">{page.subtitle}</div>
              </div>
              <div className="text-sm font-mono opacity-20">{current + 1} / {PAGES.length}</div>
@@ -207,13 +207,24 @@ export const Module2Engine: React.FC<{
           </div>
 
           <button
-            onClick={() => { if (current === PAGES.length - 1) { navigate('/portal'); } else { go(1); } }}
+            onClick={() => { if (current === PAGES.length - 1) { setDone(true); } else { go(1); } }}
             className="flex items-center gap-2 px-5 lg:px-10 py-3 rounded-2xl font-black text-black transition-all active:scale-95 bg-cyan-500 shadow-xl shadow-cyan-500/20 hover:shadow-cyan-500/40"
           >
             {current === PAGES.length - 1 ? 'Complete' : 'Next Step'} <ArrowRight size={18} />
           </button>
         </footer>
       </div>
+
+      {done && (
+        <ModuleComplete
+          isDark={isDarkMode}
+          moduleTitle={MODULE_LABELS['module/2'] ?? 'this module'}
+          accent="#06B6D4"
+          topics={Array.from(new Set(PAGES.map((p) => p.label)))}
+          onPortal={() => navigate('/portal')}
+          next={{ label: MODULE_LABELS['module/3'] ?? 'Module 3', onGo: () => navigate('/module/3') }}
+        />
+      )}
     </div>
   );
 };

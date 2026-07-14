@@ -63,9 +63,6 @@ export const S00_Cover: React.FC<SceneProps> = ({ isActive, isDarkMode, mode }) 
         initial={{ opacity: 0, y: 20 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         className="space-y-5"
       >
-        <div className="flex items-center gap-2 font-mono text-[10px] tracking-[0.4em] uppercase" style={{ color: accent }}>
-          <Layers size={14} /> Module 05 · Universal Gate Construction
-        </div>
         <h1 className={`text-5xl md:text-7xl font-black ${textColor} tracking-tight leading-[0.95]`}>
           {mode === 'nand' ? 'Every gate' : 'Every gate'}<br />
           <span style={{ color: accent }}>from one {mode.toUpperCase()}.</span>

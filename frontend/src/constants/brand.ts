@@ -3,8 +3,8 @@
 // Import from here - never hardcode brand name elsewhere.
 
 export const BRAND = {
-  name: 'BitforBytes',
-  nameDisplay: 'BitforBytes',    // Bit + for + Bytes
+  name: 'BitForBytes',
+  nameDisplay: 'BitForBytes',    // Bit + for + Bytes
   nameMono: 'BITFORBYTES',       // for monospace/all-caps contexts
   nameShort: 'BFB',              // abbreviation
   taglinePrimary: 'From bits to bytes. From gates to chips.',
@@ -17,7 +17,7 @@ export const BRAND = {
   year: '2026',
   footerCopy: 'Made with intent, not investment.',
   metaDescription:
-    'BitforBytes - Free, interactive VLSI and digital design learning ' +
+    'BitForBytes - Free, interactive VLSI and digital design learning ' +
     'for every ECE student in India. From bits to bytes, from gates to chips.',
   url: 'https://bitforbytes.in',    // future domain
   localUrl: 'http://localhost:5173',

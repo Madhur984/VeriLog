@@ -143,7 +143,7 @@ export const DiagnosticModal: React.FC<DiagnosticModalProps> = ({ isOpen, onClos
             </div>
 
             <div className="mt-8 pt-4 border-t border-white/10 flex justify-between items-center text-[10px] font-mono text-slate-500 uppercase tracking-wider">
-              <span>BitforBytes Silicon Engine</span>
+              <span>BitForBytes Silicon Engine</span>
               <span>Step {step} of 3</span>
             </div>
           </motion.div>

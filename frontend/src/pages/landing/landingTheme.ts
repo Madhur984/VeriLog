@@ -2,7 +2,7 @@
  * Shared design tokens for the redesigned landing page.
  *
  * Direction: "Duotone Split" - the page alternates LIGHT and DARK section bands
- * down the scroll, keeping the BitforBytes cyan as the through-line accent.
+ * down the scroll, keeping the BitForBytes cyan as the through-line accent.
  * Simple, visual, GenZ-native; one signature motif (SignalWave) is retained.
  */
 export const LANDING_THEME = {

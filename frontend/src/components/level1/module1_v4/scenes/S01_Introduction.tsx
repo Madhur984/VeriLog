@@ -10,7 +10,6 @@ export const S01_Introduction: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode
       {/* --- HERO --- */}
       <section className="relative">
         <div className="flex flex-col gap-2 mb-8">
-          <span className="text-[10px] font-mono uppercase tracking-[0.5em] text-cyan-500 font-black">Module 01 // Signals &amp; Waves</span>
           <h1 className="text-5xl md:text-7xl font-black leading-none tracking-tight">
             <KineticText text="Signals" className={isDarkMode ? 'text-cyan-500' : 'text-cyan-600'} />
             <br />

@@ -29,12 +29,6 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
       </motion.div>
 
       <section className="text-center space-y-6 relative">
-        <motion.span
-          initial={{ opacity: 0, y: -10 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
-          className="font-mono text-[10px] tracking-[0.4em] uppercase text-orange-400 block"
-        >
-          Basic Electronics · Module 2 · The Diode
-        </motion.span>
         <motion.h1
           initial={{ opacity: 0, scale: 0.95 }} animate={isActive ? { opacity: 1, scale: 1 } : {}}
           transition={{ duration: 0.6 }}

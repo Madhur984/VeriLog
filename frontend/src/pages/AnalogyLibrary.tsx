@@ -10,12 +10,15 @@ import { useColorScheme } from '../hooks/useColorScheme';
  * fallback on desktop.
  */
 
-type CatId = 'gates' | 'seq' | 'timing' | 'cpu' | 'cmos' | 'flow';
+type CatId = 'number' | 'gates' | 'comb' | 'seq' | 'timing' | 'device' | 'cpu' | 'cmos' | 'flow';
 
 const CATEGORIES: Array<{ id: CatId; label: string; color: string }> = [
+  { id: 'number', label: 'Number Systems',   color: '#F97316' },
   { id: 'gates',  label: 'Logic Gates',      color: '#F472B6' },
+  { id: 'comb',   label: 'Combinational',    color: '#818CF8' },
   { id: 'seq',    label: 'Sequential Logic', color: '#A78BFA' },
   { id: 'timing', label: 'Timing',           color: '#F59E0B' },
+  { id: 'device', label: 'Devices',          color: '#2DD4BF' },
   { id: 'cpu',    label: 'CPU & Architecture', color: '#22D3EE' },
   { id: 'cmos',   label: 'CMOS & Physical',  color: '#34D399' },
   { id: 'flow',   label: 'VLSI Flow',        color: '#60A5FA' },
@@ -220,6 +223,173 @@ const ANALOGIES: Analogy[] = [
     why: 'Once the factory starts pouring the foundation you cannot move a wall. Every review happens before this moment because nothing can happen after it.',
     chips: 'A leading-edge mask set costs millions of dollars. A bug found after tapeout means a respin: new masks, new money, months lost.',
   },
+
+  // ── number systems (Foundation & DSD) ──
+  {
+    id: 'binary', concept: 'Binary', category: 'number',
+    analogy: 'A row of light switches — each is either OFF (0) or ON (1), and their pattern spells out a number.',
+    definition: 'Base-2: the only digits are 0 and 1, and each position is the next power of two (…8, 4, 2, 1).',
+    why: 'Every switch is one bit. Read the ON switches by their place values and add them up, and the number comes right back — exactly how a chip stores every value.',
+    chips: 'The only language transistors speak: a high voltage is 1, a low voltage is 0. Every number, pixel and instruction is ultimately a binary pattern.',
+  },
+  {
+    id: 'hex', concept: 'Hexadecimal', category: 'number',
+    analogy: 'Shorthand for binary — one symbol stands in for a whole group of four bits.',
+    definition: 'Base-16, using 0–9 then A–F. Each hex digit maps to exactly four binary bits (a nibble).',
+    why: 'Writing 1111 1010 is easy to miscount; "FA" is the same value four times shorter, so engineers read memory and registers in hex.',
+    chips: 'Memory addresses, register dumps, MAC addresses and colour codes are all written in hex because it lines up cleanly with bytes.',
+  },
+  {
+    id: 'octal', concept: 'Octal', category: 'number',
+    analogy: 'Bundling bits into groups of three instead of four.',
+    definition: 'Base-8, digits 0–7. Each octal digit maps to exactly three binary bits.',
+    why: 'Three-bit grouping suited early machines whose word sizes were multiples of three; today hex usually wins, but the grouping trick is identical.',
+    chips: 'Unix file permissions (chmod 755) are octal — each digit is three permission bits for owner, group and others.',
+  },
+  {
+    id: 'twos', concept: "Two's complement", category: 'number',
+    analogy: 'A car odometer rolling backwards past zero to show a negative reading.',
+    definition: 'The standard way to store signed integers: to negate a value, invert every bit and add 1.',
+    why: 'Rolling 0000 back one step gives 1111 = −1, so ordinary addition hardware handles positive and negative numbers with no special case.',
+    chips: "Every CPU's integer ALU uses two's complement, which is why subtraction is just \"add the negated number\".",
+  },
+  {
+    id: 'bcd', concept: 'BCD', category: 'number',
+    analogy: 'Giving each decimal digit its own little box instead of converting the whole number to binary.',
+    definition: 'Binary-Coded Decimal: each decimal digit 0–9 is stored in its own 4-bit group.',
+    why: 'Keeping the digits separate avoids messy binary-to-decimal conversion when all you want is to light up a display.',
+    chips: 'Digital clocks, calculators and seven-segment displays use BCD so each digit drives one display directly.',
+  },
+  {
+    id: 'gray', concept: 'Gray code', category: 'number',
+    analogy: 'Stepping stones where only one foot ever moves at a time — no mid-air stumble.',
+    definition: 'A binary ordering where consecutive values differ in exactly one bit.',
+    why: 'If a value is read while it is changing, only one bit is ever in flux, so the reading is at worst off by one — never random garbage.',
+    chips: 'Rotary encoders and the pointers in asynchronous FIFOs use Gray code to cross safely between clock domains.',
+  },
+
+  // ── combinational building blocks (DSD) ──
+  {
+    id: 'boolalg', concept: 'Boolean algebra', category: 'comb',
+    analogy: 'The grammar of logic — a few rewrite rules that tidy any tangled condition.',
+    definition: 'The algebra of 0/1 with AND, OR and NOT, plus laws (De Morgan, distribution, absorption) for reshaping expressions.',
+    why: 'Just as grammar rewrites a clumsy sentence into a clean one, these laws collapse a big logic expression into a smaller, cheaper circuit.',
+    chips: 'Every synthesis tool runs on Boolean algebra to shrink your Verilog into the fewest gates.',
+  },
+  {
+    id: 'kmap', concept: 'Karnaugh map', category: 'comb',
+    analogy: 'A seating chart that puts neighbours together so a pattern jumps out and you cancel the redundancy.',
+    definition: 'A grid that lays out a truth table so adjacent cells differ by one variable; grouping adjacent 1s gives the minimal expression.',
+    why: 'Terms sitting next to each other differ in just one input, so they can be merged — the map makes those merges visible at a glance.',
+    chips: 'A hand tool for small functions and the intuition behind the automatic minimizers inside every synthesis flow.',
+  },
+  {
+    id: 'hadd', concept: 'Half adder', category: 'comb',
+    analogy: 'Adding two single coins: you get a result digit and maybe a carry into the next column.',
+    definition: 'Adds two 1-bit numbers, producing Sum = A XOR B and Carry = A AND B.',
+    why: 'Two 1s make "10": the sum bit is 0 and you carry a 1 — exactly like carrying in decimal addition.',
+    chips: 'The first building block of every arithmetic unit; chain them and you can add any width.',
+  },
+  {
+    id: 'fadd', concept: 'Full adder', category: 'comb',
+    analogy: 'Adding a column that also has a carry coming in from the column to its right.',
+    definition: 'Adds three bits — A, B and carry-in — to produce a sum and a carry-out.',
+    why: 'Real addition must accept the carry from the previous column, which a half adder cannot; the full adder takes all three inputs.',
+    chips: 'The repeating cell of every multi-bit adder, multiplier and ALU on the chip.',
+  },
+  {
+    id: 'rca', concept: 'Ripple-carry adder', category: 'comb',
+    analogy: 'A bucket brigade passing the carry down the line, one person at a time.',
+    definition: "Full adders chained so each stage's carry-out feeds the next stage's carry-in.",
+    why: 'Simple to build, but the top bit cannot settle until the carry has rippled through every stage below it — so it is slow for wide numbers.',
+    chips: 'Fine for narrow adds; wide datapaths switch to faster carry schemes to hit timing.',
+  },
+  {
+    id: 'cla', concept: 'Carry-lookahead adder', category: 'comb',
+    analogy: 'Predicting all the carries in advance instead of waiting for the brigade to pass them along.',
+    definition: 'Computes each carry directly from the inputs using "generate" and "propagate" terms, in parallel.',
+    why: 'By working out up front whether each column will make or pass a carry, every sum bit can resolve at nearly the same time.',
+    chips: 'The classic fast adder; parallel-prefix variants (Kogge-Stone, Brent-Kung) push the idea to the widest datapaths.',
+  },
+  {
+    id: 'mux', concept: 'Multiplexer', category: 'comb',
+    analogy: 'A railway switch (points) that selects which single track the train continues on.',
+    definition: 'Routes one of several data inputs to a single output, chosen by the select lines.',
+    why: 'The select lines throw the points: n select bits choose among 2ⁿ inputs, all sharing one output wire.',
+    chips: 'Everywhere — bus selection, choosing an ALU result, and building arbitrary logic ("mux-based logic").',
+  },
+  {
+    id: 'demux', concept: 'Demultiplexer', category: 'comb',
+    analogy: 'A mail sorter sending one incoming letter to exactly one of many pigeonholes.',
+    definition: 'The inverse of a mux: routes one input to one of several outputs, chosen by select lines.',
+    why: 'The address on the letter (the select lines) picks the single destination; every other output stays idle.',
+    chips: 'Distributing a data stream, and the output stage of address decoders that enable one block at a time.',
+  },
+  {
+    id: 'decoder', concept: 'Decoder', category: 'comb',
+    analogy: 'A row of numbered mailboxes where an address lights up exactly one box.',
+    definition: 'Turns an n-bit input code into 2ⁿ outputs, with exactly one active for each code.',
+    why: 'Each unique input pattern is wired to fire a single output line — that is how an address selects one thing out of many.',
+    chips: 'Memory row/column selection and instruction decoding both hang off decoders.',
+  },
+  {
+    id: 'encoder', concept: 'Encoder', category: 'comb',
+    analogy: 'A quiz buzzer that reports which one of many buttons was pressed as a number.',
+    definition: 'The inverse of a decoder: converts an active input line into its binary code (a priority encoder picks the highest).',
+    why: 'Many separate signals are compressed into a compact binary index — the "which one?" answered in the fewest bits.',
+    chips: 'Interrupt controllers encode which of dozens of lines is asking for attention into an interrupt number.',
+  },
+  {
+    id: 'comparator', concept: 'Comparator', category: 'comb',
+    analogy: 'A balance scale telling you which pan is heavier, or that the two are equal.',
+    definition: 'Compares two binary numbers and outputs greater-than, less-than or equal.',
+    why: 'Scanning from the top bit down, the first place where they differ decides the winner; if none differ, they are equal.',
+    chips: 'Address-match logic, sorting networks and the branch conditions inside a CPU all lean on comparators.',
+  },
+  {
+    id: 'subtractor', concept: 'Subtractor', category: 'comb',
+    analogy: 'Adding a debt instead of subtracting — owing someone 3 is the same as adding −3.',
+    definition: "Subtracts using addition: A − B = A + (two's complement of B).",
+    why: 'Rather than build separate subtract hardware, flip B\'s bits and add 1, then reuse the very same adder.',
+    chips: 'ALUs almost never carry a dedicated subtractor — they negate and reuse the adder, saving huge area.',
+  },
+
+  // ── devices (Basic Electronics) ──
+  {
+    id: 'diode', concept: 'Diode', category: 'device',
+    analogy: 'A one-way valve for current: it flows freely one way and is blocked the other.',
+    definition: 'A PN junction that conducts when forward-biased and blocks when reverse-biased.',
+    why: 'The junction only lets charge cross in one direction, like a valve that opens with flow one way and slams shut against the other.',
+    chips: 'Rectification, clamps against voltage spikes, and the ESD diodes guarding every chip pin.',
+  },
+  {
+    id: 'rectifier', concept: 'Rectifier', category: 'device',
+    analogy: 'A turnstile that only lets people through one way, turning a churning crowd into an orderly line.',
+    definition: 'A diode circuit that converts alternating current (AC) into direct current (DC).',
+    why: 'AC swings both positive and negative; the diodes pass only one polarity (or fold the other up), leaving current that flows one way.',
+    chips: 'Every phone charger and power supply starts with a rectifier turning wall AC into the DC electronics need.',
+  },
+  {
+    id: 'zener', concept: 'Zener diode', category: 'device',
+    analogy: 'A pressure-relief valve that holds a steady pressure no matter how hard you push.',
+    definition: 'A diode built to conduct in reverse at a precise breakdown voltage, clamping the voltage across it.',
+    why: 'Past its Zener voltage it happily passes current to hold that voltage fixed, venting the excess like a relief valve.',
+    chips: 'Simple voltage references and over-voltage protection; the same idea underlies on-chip references.',
+  },
+  {
+    id: 'bjt', concept: 'BJT', category: 'device',
+    analogy: 'A tap where a small effort from your hand controls a big flow of water.',
+    definition: 'Bipolar Junction Transistor: a small base current controls a much larger collector-to-emitter current (current-controlled).',
+    why: 'A tiny trickle into the base opens a wide channel for the main current — a small cause steering a large effect, which is amplification.',
+    chips: 'Analog amplifiers, RF and power stages; digital logic instead uses the voltage-controlled MOSFET.',
+  },
+  {
+    id: 'mosfet', concept: 'MOSFET', category: 'device',
+    analogy: 'A voltage-operated sluice gate — hold a voltage on the gate and the channel opens, drawing almost no effort to keep it there.',
+    definition: 'A transistor whose gate voltage (not current) creates a conducting channel between source and drain.',
+    why: 'The insulated gate steers the channel purely with an electric field, so it sips almost no current to stay switched — ideal for dense, low-power logic.',
+    chips: 'The workhorse of all digital chips: billions of NMOS and PMOS MOSFETs form every CMOS gate.',
+  },
 ];
 
 /* ── share image generation (1080x1080 canvas) ──────────────────────── */
@@ -322,7 +492,7 @@ async function renderCardImage(a: Analogy): Promise<Blob> {
 }
 
 const captionFor = (a: Analogy) =>
-  `Finally understood ${a.concept} through BitforBytes. ${a.analogy}`;
+  `Finally understood ${a.concept} through BitForBytes. ${a.analogy}`;
 
 /* ── page ────────────────────────────────────────────────────────────── */
 

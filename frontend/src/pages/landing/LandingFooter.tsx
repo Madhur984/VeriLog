@@ -267,7 +267,7 @@ export const LandingFooter = () => {
         </div>
 
         <div className="pt-6 flex flex-col sm:flex-row justify-between items-center gap-3 text-[11px]" style={{ borderTop: '1px solid var(--border-soft)', color: 'var(--text-dim)' }}>
-          <span>© {new Date().getFullYear()} BitforBytes. Free for students.</span>
+          <span>© {new Date().getFullYear()} BitForBytes. Free for students.</span>
           <span>Made with intent, not investment.</span>
         </div>
       </div>

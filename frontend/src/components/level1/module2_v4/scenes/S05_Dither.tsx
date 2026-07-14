@@ -80,9 +80,6 @@ export const S05_Dither: React.FC<{ time: number; isDarkMode: boolean }> = ({ ti
   return (
     <div className="flex flex-col gap-12 max-w-6xl mx-auto mb-32">
       <header className="space-y-6 text-left">
-        <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full border text-[10px] font-black uppercase tracking-widest ${isDarkMode ? 'bg-orange-500/10 border-orange-500/20 text-orange-500' : 'bg-orange-50 border-orange-200 text-orange-600'}`}>
-            Level 02.05 // The Noise Cure
-        </div>
         <div className="space-y-4">
             <h2 className={`text-6xl font-black italic tracking-tighter leading-tight ${textColor}`}>
               Grainy <span className={accentColor}>Truth</span>

@@ -57,13 +57,6 @@ export const S00_AbsoluteIntro: React.FC<{ onComplete: () => void }> = ({ onComp
           transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
           className="relative z-10 text-center px-10"
         >
-          <motion.div 
-             className="mb-4 inline-block px-4 py-1 rounded-full border border-white/10 bg-white/5 text-[9px] font-mono tracking-[0.4em] uppercase opacity-40"
-             animate={{ color: current.color }}
-          >
-             Biological_Input // Sync_{index + 1}
-          </motion.div>
-          
           <h2 className={`text-5xl md:text-8xl font-black tracking-tighter uppercase leading-none ${current.highlight ? 'drop-shadow-2xl' : 'opacity-80 text-white'}`} style={{ color: current.highlight ? current.color : undefined }}>
             {current.text}
           </h2>

@@ -34,7 +34,7 @@ export const FinalCTATerminal: React.FC = () => {
         </h2>
 
         <p className="text-slate-400 text-sm md:text-base max-w-[65ch] mx-auto leading-relaxed">
-          Join thousands of engineering students and developers who use our application workspace. BitforBytes guides you through every layer of the processor stack with free, browser-based environments.
+          Join thousands of engineering students and developers who use our application workspace. BitForBytes guides you through every layer of the processor stack with free, browser-based environments.
         </p>
 
         {/* Conversion CTA Group - Matte boundary button */}
@@ -70,7 +70,7 @@ export const FinalCTATerminal: React.FC = () => {
           <p className="text-slate-500 text-xs leading-relaxed font-sans max-w-xs">
             Signals become logic. Logic becomes systems. Free, open-access digital design and VLSI education.
           </p>
-          <div className="text-[10px] text-slate-600">&copy; 2026 BitforBytes. All rights reserved. Aligned to ISM 2.0.</div>
+          <div className="text-[10px] text-slate-600">&copy; 2026 BitForBytes. All rights reserved. Aligned to ISM 2.0.</div>
         </div>
 
         <div className="md:col-span-3 space-y-3">

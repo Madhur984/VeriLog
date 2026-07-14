@@ -294,7 +294,6 @@ export const InsightPanel: React.FC<{ title: string; content: string; career?: s
                         <BookOpen size={14} />
                     </div>
                     <div className="flex flex-col items-start">
-                        <span className="text-[8px] font-black uppercase tracking-[0.3em] opacity-30">Analytical // Deep_Dive</span>
                         <span className={`text-xs font-black uppercase tracking-widest transition-colors ${isOpen ? (isDark ? 'text-white' : 'text-slate-900') : (isDark ? 'text-white/40 group-hover:text-white' : 'text-slate-500 group-hover:text-slate-900')}`}>{title}</span>
                     </div>
                 </div>
@@ -436,7 +435,6 @@ export const ComparisonConsole: React.FC<{ isDark: boolean }> = ({ isDark }) => 
                     <Scale size={20} />
                 </div>
                 <div className="flex flex-col">
-                    <span className="text-[8px] font-black uppercase tracking-[0.4em] opacity-30">Domain_Comparison // Analysis</span>
                     <h3 className={`text-xl font-black italic uppercase tracking-tighter ${isDark ? 'text-white' : 'text-slate-900'}`}>System Arbitrage</h3>
                 </div>
             </div>

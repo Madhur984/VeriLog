@@ -31,12 +31,6 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
 
       {/* Hero */}
       <section className="text-center space-y-6 relative">
-        <motion.span
-          initial={{ opacity: 0, y: -10 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
-          className="font-mono text-[10px] tracking-[0.4em] uppercase text-rose-400 block"
-        >
-          DSD · Module 1 · The Architecture of a Decision
-        </motion.span>
         <motion.h1
           initial={{ opacity: 0, scale: 0.95 }} animate={isActive ? { opacity: 1, scale: 1 } : {}}
           transition={{ duration: 0.6 }}

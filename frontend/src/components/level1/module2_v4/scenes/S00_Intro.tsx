@@ -144,11 +144,7 @@ export const S00_Intro: React.FC<{ time: number; isDarkMode: boolean }> = ({ tim
         }}
       >
         <div className="space-y-12 text-left">
-            <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full border text-[10px] font-black uppercase tracking-widest ${isDarkMode ? 'bg-orange-500/10 border-orange-500/20 text-orange-500' : 'bg-orange-50 border-orange-200 text-orange-600'}`}>
-                Module 02 // The Digital Bridge
-            </div>
-            
-            <motion.div 
+            <motion.div
                 initial={{ opacity: 0, x: -20 }} 
                 animate={{ opacity: 1, x: 0 }}
                 className="space-y-8"

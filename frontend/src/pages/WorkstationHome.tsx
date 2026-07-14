@@ -49,6 +49,40 @@ const SquareWave: React.FC<{ stroke: string }> = ({ stroke }) => (
   </svg>
 );
 
+/* ── Live digital clock (top-left). The accent is NOT hover-driven: it builds
+   with the clock itself — the hue drifts slowly across the day and the colour
+   saturates as each minute fills, so the tint quietly deepens over time. ── */
+const DigitalClock: React.FC<{ isLight: boolean }> = ({ isLight }) => {
+  const [now, setNow] = useState(() => new Date());
+  useEffect(() => {
+    const id = window.setInterval(() => setNow(new Date()), 1000);
+    return () => window.clearInterval(id);
+  }, []);
+  const pad = (n: number) => String(n).padStart(2, '0');
+  const h = now.getHours(), m = now.getMinutes(), s = now.getSeconds();
+  const dpc = now.toDateString().split(' ');                 // ["Tue","Jul","15","2026"]
+  const dateStr = `${dpc[0]} · ${dpc[2]} ${dpc[1]}`.toUpperCase();
+  const dayFrac = (h * 3600 + m * 60 + s) / 86400;           // 0→1 across the day
+  const minuteFrac = (m * 60 + s) / 3600;                    // 0→1 across the hour
+  const hue = 258 + dayFrac * 66;                            // violet → magenta
+  const accent = `hsl(${Math.round(hue)}, ${Math.round(48 + minuteFrac * 44)}%, ${isLight ? 46 : 66}%)`;
+  const ink = isLight ? '#1B1436' : '#E2E8F0';
+  const faint = isLight ? '#6B5E86' : '#64748B';
+  const track = isLight ? '#C9BEEA' : 'rgba(255,255,255,0.08)';
+  return (
+    <div className="flex flex-col leading-none" aria-label={`Local time ${pad(h)}:${pad(m)}`}>
+      <span className="font-mono text-[8px] font-bold uppercase tracking-[0.2em]" style={{ color: faint }}>{dateStr}</span>
+      <span className="mt-1 font-mono text-[15px] font-extrabold tabular-nums tracking-tight" style={{ color: ink }}>
+        {pad(h)}<span style={{ color: accent }}>:</span>{pad(m)}<span style={{ color: accent }}>:{pad(s)}</span>
+      </span>
+      {/* colour "adds over the time": the bar fills through each minute */}
+      <span className="mt-1 h-[2px] w-full overflow-hidden rounded-full" style={{ background: track }}>
+        <span className="block h-full rounded-full transition-[width] duration-1000 ease-linear" style={{ width: `${minuteFrac * 100}%`, background: accent }} />
+      </span>
+    </div>
+  );
+};
+
 /* ── Learning paths (canonical: lib/moduleHistory MODULE_LABELS) ── */
 interface PathDef { key: string; title: string; tagline: string; prefix: string; color: string; icon: LucideIcon; }
 const PATHS: PathDef[] = [
@@ -204,8 +238,6 @@ export const WorkstationHome: React.FC = () => {
 
   const hour = new Date().getHours();
   const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
-  const dp = new Date().toDateString().split(' '); // ["Fri","Jul","04","2026"]
-  const dateLine = `${dp[0]} · ${dp[2]} ${dp[1]}`.toUpperCase();
 
   /* pinned-board surfaces */
   const panel: React.CSSProperties = {
@@ -239,7 +271,13 @@ export const WorkstationHome: React.FC = () => {
     >
       <PCBBackground isLight={isLight} />
 
-      {/* Cyclic hologram — untouched, fixed bottom-left. */}
+      {/* Live clock pinned to the far top-left corner on wide screens (sits in
+          the page margin beside the centered content — as left as it can go). */}
+      <div className="absolute left-5 top-5 z-20 hidden xl:block">
+        <DigitalClock isLight={isLight} />
+      </div>
+
+      {/* Cyclic hologram — fixed bottom-left. */}
       <div className="hidden xl:block">
         <RadialMenu />
       </div>
@@ -247,7 +285,10 @@ export const WorkstationHome: React.FC = () => {
       <div className="relative z-10">
         {/* ── Top bar — quiet: brand, ⌘K, settings, theme, you ── */}
         <header className="mx-auto flex w-full max-w-[1080px] items-center justify-between gap-3 px-4 py-4 sm:px-6">
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-3">
+            {/* clock inline on md/lg; pinned to the far-left margin on xl+ (below) */}
+            <div className="hidden sm:block xl:hidden"><DigitalClock isLight={isLight} /></div>
+            <span className="hidden h-9 w-px sm:block xl:hidden" style={{ background: hairline }} />
             <BrandMark size={28} />
             <span className="text-[16px] font-extrabold tracking-tight">
               Bit<span style={{ color: '#7A3FD0' }}>For</span>Bytes
@@ -325,15 +366,9 @@ export const WorkstationHome: React.FC = () => {
             className="mt-10 grid items-center gap-8 lg:mt-14 lg:grid-cols-[1fr_320px] lg:gap-12"
           >
             <div>
-              <p className="font-mono text-[11px] font-bold uppercase tracking-[0.22em]" style={{ color: faint }}>
-                {dateLine} — workstation
-              </p>
-              <h1 className="mt-3 text-[34px] font-extrabold leading-[1.05] tracking-tight sm:text-[46px]">
+              <h1 className="text-[34px] font-extrabold leading-[1.05] tracking-tight sm:text-[46px]">
                 {greeting}, {name}<span style={{ color: '#7A3FD0' }}>.</span>
               </h1>
-              <p className="mt-3 max-w-md text-[15px] leading-relaxed" style={{ color: dim }}>
-                Pick a lane. Build first — understand after.
-              </p>
               <button
                 onClick={() => document.getElementById('paths')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
                 className="mt-5 inline-flex items-center gap-1.5 text-[13.5px] font-semibold underline-offset-4 transition-opacity hover:opacity-70 hover:underline"

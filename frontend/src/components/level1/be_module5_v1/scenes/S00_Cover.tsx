@@ -53,9 +53,6 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
         initial={{ opacity: 0, y: 20 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         className="space-y-5"
       >
-        <div className="flex items-center gap-2 font-mono text-[10px] tracking-[0.4em] uppercase text-yellow-300">
-          <Sparkles size={14} /> Module 05 · The Neon Diode Gala
-        </div>
         <h1 className={`text-5xl md:text-7xl font-black ${textColor} tracking-tight leading-[0.95]`}>
           Special-purpose<br />
           <span className="text-yellow-300">diodes.</span>

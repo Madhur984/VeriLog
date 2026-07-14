@@ -44,7 +44,7 @@ export const EasterEggManager = () => {
     // Unlock global prints console NAND art on mount
     console.log(
       `%c
-   VeriLog / BitforBytes Logic Gate Board
+   VeriLog / BitForBytes Logic Gate Board
    
          A ───[\\   
                |  >o─── OUT (NAND)

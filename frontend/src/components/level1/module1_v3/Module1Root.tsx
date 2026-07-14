@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useColorScheme } from '../../../hooks/useColorScheme';
 import { useModule1Audio } from './hooks/useModule1Audio';
 
-// ── Interactive Animated SVG Waveforms (BitforBytes v7 TACTICAL EDITION) ──────
+// ── Interactive Animated SVG Waveforms (BitForBytes v7 TACTICAL EDITION) ──────
 
 interface WaveProps {
   color?: string;
@@ -406,7 +406,7 @@ const SignalHook: React.FC<{ onComplete: () => void; isDark: boolean }> = ({ onC
   );
 };
 
-// ── ELITE BitforBytes COMPONENTS ───────────────────────────────────────────────
+// ── ELITE BitForBytes COMPONENTS ───────────────────────────────────────────────
 
 export const KineticText: React.FC<{ text: string; className?: string }> = ({ text, className }) => {
     const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789//_";

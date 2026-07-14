@@ -25,7 +25,7 @@ export const LogoWordmark = ({
         lineHeight: 1,
         ...style,
       }}
-      aria-label="BitforBytes"
+      aria-label="BitForBytes"
     >
       <span style={{ color: '#F1F5F9' }}>Bit</span>
       <span style={{ color: '#475569', fontWeight: 400 }}>for</span>

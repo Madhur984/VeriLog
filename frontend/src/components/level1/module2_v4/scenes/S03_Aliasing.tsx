@@ -77,9 +77,6 @@ export const S03_Aliasing: React.FC<{ time: number; isDarkMode: boolean }> = ({ 
   return (
     <div className="flex flex-col gap-12 max-w-6xl mx-auto mb-32 text-left">
       <header className="space-y-6">
-        <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full border text-[10px] font-black uppercase tracking-widest ${isDarkMode ? 'bg-red-500/10 border-red-500/20 text-red-500' : 'bg-red-50 border-red-200 text-red-600'}`}>
-            Level 02.03 // Frequency Ghosts
-        </div>
         <h2 className={`text-7xl font-black italic tracking-tighter ${textColor}`}>
           Frequency <span className="text-red-500">Ghosts</span>
         </h2>

@@ -7,7 +7,7 @@ import { getModuleHistory } from '../lib/moduleHistory';
 /**
  * The Silicon India Map: a stylized, interactive map of India's semiconductor
  * ecosystem. Click a city to see who designs chips there, what roles look
- * like, and which BitforBytes skills those roles lean on. If you have opened
+ * like, and which BitForBytes skills those roles lean on. If you have opened
  * modules, the map highlights the companies your progress matches.
  *
  * Honesty note: role counts and packages are indicative snapshots compiled
@@ -159,7 +159,7 @@ export const SiliconMap: React.FC = () => {
 
   const share = async () => {
     const caption =
-      "India's semiconductor job map: which companies hire ECE, in which city, and the skills each role leans on. BitforBytes breaks it down.";
+      "India's semiconductor job map: which companies hire ECE, in which city, and the skills each role leans on. BitForBytes breaks it down.";
     try {
       if (navigator.share) {
         await navigator.share({ text: caption, url: window.location.href });
@@ -188,7 +188,7 @@ export const SiliconMap: React.FC = () => {
             Where India designs its chips.
           </h1>
           <p className={`mt-4 text-lg leading-relaxed ${sub}`}>
-            Tap a city to see who builds silicon there, what roles pay, and which BitforBytes
+            Tap a city to see who builds silicon there, what roles pay, and which BitForBytes
             track each role leans on.
           </p>
           <button

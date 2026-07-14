@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Activity, Moon, Sun, ArrowRight, ArrowLeft } from 'lucide-react';
 import { DrawerShell, HamburgerButton } from '../components/level1/_shared/MobileDrawer';
 import { useNavigate } from 'react-router-dom';
+import { ModuleComplete } from '../components/ui/ModuleComplete';
+import { MODULE_LABELS } from '../lib/moduleHistory';
 import { useColorScheme } from '../hooks/useColorScheme';
 
 // --- Scene Components ---
@@ -73,21 +75,9 @@ const Sidebar: React.FC<{
         {PAGES.map((page, idx) => {
           const isActive = current === idx;
           const isDone = idx < current;
-          const showHeader = idx === 0 || PAGES[idx - 1].part !== page.part;
 
           return (
-            <React.Fragment key={page.id}>
-              {showHeader && (
-                <div className="pt-8 pb-3 px-4 first:pt-0">
-                  <div className="flex items-center gap-3">
-                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-sky-500/60 whitespace-nowrap">
-                      {page.part}
-                    </span>
-                    <div className="h-[1px] w-full bg-sky-500/10" />
-                  </div>
-                </div>
-              )}
-              <button 
+            <button
                 onClick={() => onChange(idx)} 
                 className={`group relative w-full text-left p-4 rounded-2xl transition-all duration-500 flex items-start gap-4 ${isActive ? (isDarkMode ? 'border transition-colors' : 'bg-white border-slate-200 shadow-lg') : 'hover:bg-black/5 hover:translate-x-1'}`}
                 style={{ 
@@ -114,7 +104,6 @@ const Sidebar: React.FC<{
                   <p className="text-[9px] mt-0.5 opacity-40 font-medium truncate">{page.subtitle}</p>
                 </div>
               </button>
-            </React.Fragment>
           );
         })}
       </nav>
@@ -144,6 +133,7 @@ const Sidebar: React.FC<{
 
 export const ModuleThree: React.FC = () => {
   const [current, setCurrent] = useState(0);
+  const [done, setDone] = useState(false);
   const [scheme, toggleTheme] = useColorScheme();
   const isDarkMode = scheme === 'dark';
   const [navOpen, setNavOpen] = useState(false);
@@ -198,7 +188,6 @@ export const ModuleThree: React.FC = () => {
           <div className="flex items-center gap-3 min-w-0">
             <HamburgerButton isDarkMode={isDarkMode} onClick={() => setNavOpen(o => !o)} />
             <div className="flex flex-col min-w-0">
-              <span className="text-[10px] font-mono uppercase tracking-[0.4em] font-bold transition-colors duration-500 truncate" style={{ color: theme.primary }}>{page.part}</span>
               <h2 className="text-base lg:text-xl font-bold tracking-tight truncate">{page.label}</h2>
             </div>
           </div>
@@ -240,7 +229,7 @@ export const ModuleThree: React.FC = () => {
           </div>
 
           <button
-            onClick={() => { if (current === PAGES.length - 1) { navigate('/portal'); } else { go(1); } }}
+            onClick={() => { if (current === PAGES.length - 1) { setDone(true); } else { go(1); } }}
             className="flex items-center gap-3 px-5 lg:px-10 py-3 rounded-2xl font-black text-black transition-all duration-500 active:scale-95 shadow-xl"
             style={{
               backgroundColor: theme.primary,
@@ -251,6 +240,17 @@ export const ModuleThree: React.FC = () => {
           </button>
         </footer>
       </div>
+
+      {done && (
+        <ModuleComplete
+          isDark={isDarkMode}
+          moduleTitle={MODULE_LABELS['module/3'] ?? 'this module'}
+          accent={theme.primary}
+          topics={Array.from(new Set(PAGES.map((p) => p.label)))}
+          onPortal={() => navigate('/portal')}
+          next={{ label: MODULE_LABELS['module/4'] ?? 'Module 4', onGo: () => navigate('/module/4') }}
+        />
+      )}
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Network, ArrowRight, Zap, Cpu } from 'lucide-react';
+import { ArrowRight, Zap, Cpu } from 'lucide-react';
 
 interface Props { isActive?: boolean; isDarkMode: boolean }
 
@@ -27,9 +27,6 @@ export const S00_Cover: React.FC<Props> = ({ isDarkMode }) => {
   return (
     <div className="max-w-6xl mx-auto space-y-12 py-4">
       <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-4 text-center">
-        <div className="flex items-center justify-center gap-2 font-mono text-[10px] tracking-[0.4em] uppercase" style={{ color: INDIGO }}>
-          <Network size={14} /> DSD Module 12 · The Parallel Prefix Adder
-        </div>
         <h1 className={`text-4xl md:text-6xl font-black tracking-tight ${textColor}`}>
           Compute carries in a <span style={{ color: INDIGO }}>tree.</span>
         </h1>

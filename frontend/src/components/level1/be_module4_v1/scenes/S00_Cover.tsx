@@ -69,9 +69,6 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
         initial={{ opacity: 0, y: 20 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         className="space-y-5"
       >
-        <div className="flex items-center gap-2 font-mono text-[10px] tracking-[0.4em] uppercase text-cyan-400">
-          <Waves size={14} /> Module 04 · Rectifiers &amp; Filters
-        </div>
         <h1 className={`text-5xl md:text-7xl font-black ${textColor} tracking-tight leading-[0.95]`}>
           Rectifiers<br />
           <span className="text-cyan-400">&amp; Filters.</span>

@@ -264,7 +264,7 @@ const AboutTab: React.FC = () => {
           What engineers do best - we build.
         </h3>
         <p className="text-text-sub text-sm leading-relaxed max-w-xl mx-auto">
-          BitforBytes is our contribution to India's semiconductor decade. By mapping physical logic skills, verifications, and compensation trajectories, we turn ambition into design competence.
+          BitForBytes is our contribution to India's semiconductor decade. By mapping physical logic skills, verifications, and compensation trajectories, we turn ambition into design competence.
         </p>
       </div>
     </div>

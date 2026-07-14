@@ -103,7 +103,6 @@ export const S02_Signal: React.FC = () => {
             
             <div className="max-w-2xl space-y-8 relative z-10">
                 <div className="space-y-2">
-                    <span className="text-[9px] font-mono font-black uppercase tracking-[0.6em] text-v3-cyan/60 italic">Deep Theory // 0x42</span>
                     <h3 className="text-3xl font-black italic tracking-tighter text-white">The Language of <span className="text-v3-cyan">Change</span></h3>
                 </div>
 

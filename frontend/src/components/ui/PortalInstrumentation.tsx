@@ -8,7 +8,7 @@ export const GlobalStatusHUD: React.FC = () => {
     return (
         <div className="flex gap-12 items-center px-8 py-3 bg-bg-elev border border-orange-500/10 rounded-2xl shadow-neo">
             <div className="flex flex-col">
-                <span className="text-[7px] font-black uppercase tracking-[0.3em] text-orange-500/40 mb-1">BitforBytes // CORE_STABILITY</span>
+                <span className="text-[7px] font-black uppercase tracking-[0.3em] text-orange-500/40 mb-1">BitForBytes // CORE_STABILITY</span>
                 <div className="flex items-center gap-3">
                     <Activity size={12} className="text-orange-500" />
                     <span className="text-[14px] font-mono font-black text-orange-500">99.98%</span>

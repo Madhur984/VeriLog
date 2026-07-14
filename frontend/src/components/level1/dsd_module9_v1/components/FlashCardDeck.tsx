@@ -188,7 +188,7 @@ async function renderCardImage(a: DeckCard): Promise<Blob> {
 }
 
 const captionFor = (a: DeckCard) =>
-  `Finally understood ${a.concept} through BitforBytes. ${a.analogy}`;
+  `Finally understood ${a.concept} through BitForBytes. ${a.analogy}`;
 
 /* ── component ───────────────────────────────────────────────────────── */
 

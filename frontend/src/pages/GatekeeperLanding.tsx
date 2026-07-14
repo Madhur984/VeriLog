@@ -5,7 +5,7 @@ import { ArrowRight, Terminal, Activity, Zap, Cpu } from "lucide-react";
 import './BfbGateway.css';
 
 /**
- * BitforBytes SYSTEM INITIALIZATION EXPERIENCE
+ * BitForBytes SYSTEM INITIALIZATION EXPERIENCE
  * "The system awakens."
  */
 
@@ -126,13 +126,13 @@ const useSystemAudio = () => {
 // 2. BOOT TERMINAL (Char-by-Char)
 // ----------------------------------------------------------------------
 const BOOT_LOGS = [
-  "BitforBytes BOOT SEQUENCE INITIATED...",
+  "BitForBytes BOOT SEQUENCE INITIATED...",
   "CHECKING CORE SYSTEMS...",
   "MEMORY: [ OK ] 64GB ALLOCATED",
   "SIGNAL ENGINE: [ ONLINE ]",
   "INPUT STREAM: [ DETECTED ]",
   "NEURAL_MAP: [ SYNCED ]",
-  "BitforBytes READY"
+  "BitForBytes READY"
 ];
 
 const BootTerminal: React.FC<{ onComplete: () => void; playClick: () => void }> = ({ onComplete, playClick }) => {
@@ -227,7 +227,7 @@ export const GatekeeperLanding: React.FC = () => {
 
   // Phase Controller
   useEffect(() => {
-    document.title = "BitforBytes | Learn Digital Design";
+    document.title = "BitForBytes | Learn Digital Design";
     const t1 = setTimeout(() => setPhase("booting"), 800); // Phase 1 -> 2
     return () => clearTimeout(t1);
   }, []);
@@ -331,7 +331,7 @@ export const GatekeeperLanding: React.FC = () => {
         >
           {/* TOP NAV */}
           <header className="flex justify-between items-start">
-            <div className="system-tag-large">[ BitforBytes SYSTEM ]</div>
+            <div className="system-tag-large">[ BitForBytes SYSTEM ]</div>
             <div className="flex gap-10">
               <div className="radar-scope hidden md:block" />
               <div className="text-xs font-mono text-white/40 hover:text-white cursor-pointer tracking-widest transition-colors" onClick={() => navigate('/login')}>
@@ -346,7 +346,7 @@ export const GatekeeperLanding: React.FC = () => {
               className={`flex flex-col items-center ${glitch ? 'glitch-text' : ''}`}
             >
               <h1 className="hero-title-v2">
-                <span className="signal-gradient">BitforBytes</span>
+                <span className="signal-gradient">BitForBytes</span>
               </h1>
               <div className="hero-punchline">
                 Master the Signal.<br />
@@ -364,7 +364,7 @@ export const GatekeeperLanding: React.FC = () => {
               whileTap={{ scale: 0.98 }}
             >
               <span className="relative z-10 flex items-center gap-4">
-                {"> "} ENTER BitforBytes <ArrowRight className="group-hover:translate-x-2 transition-transform" />
+                {"> "} ENTER BitForBytes <ArrowRight className="group-hover:translate-x-2 transition-transform" />
               </span>
             </motion.button>
           </main>

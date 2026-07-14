@@ -162,10 +162,6 @@ export const CoverScene: React.FC<SceneProps & { moduleTitle: string; moduleSubt
   return (
     <SceneShell>
       <div className="text-center">
-        <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-[11px] font-black uppercase tracking-[0.3em]"
-          style={{ background: `${accent}1a`, color: accent, border: `1px solid ${accent}44` }}>
-          {kicker ?? 'Basic Electronics · Transistors'}
-        </div>
         <h1 className={`mx-auto mt-6 max-w-3xl text-4xl font-black tracking-tight sm:text-6xl ${t.text}`}>{moduleTitle}</h1>
         {moduleSubtitle && <p className={`mx-auto mt-4 max-w-2xl text-lg ${t.sub}`}>{moduleSubtitle}</p>}
       </div>

@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Moon, Sun, ArrowRight, ArrowLeft } from 'lucide-react';
 import { DrawerShell, HamburgerButton } from '../_shared/MobileDrawer';
+import { ModuleComplete } from '../../ui/ModuleComplete';
+import { MODULE_LABELS } from '../../../lib/moduleHistory';
 
 import { S00_Cover }       from './scenes/S00_Cover';
 import { S01_Video }       from './scenes/S01_Video';
@@ -172,6 +174,7 @@ export const BeModule5Engine: React.FC<{
   }, [initialChapter]);
 
   const [current, setCurrent] = useState(findInitial);
+  const [done, setDone] = useState(false);
   const [navOpen, setNavOpen] = useState(() => window.matchMedia('(min-width: 1024px)').matches);
   const contentRef = useRef<HTMLDivElement>(null);
 
@@ -229,9 +232,6 @@ export const BeModule5Engine: React.FC<{
           <div className="flex items-center gap-3 min-w-0">
             <HamburgerButton isDarkMode={isDarkMode} onClick={() => setNavOpen(o => !o)} />
             <div className="flex flex-col min-w-0">
-              <span className="text-[10px] font-mono uppercase tracking-[0.4em] font-bold transition-colors duration-500" style={{ color: theme.primary }}>
-                {page.step}
-              </span>
               <h2 className="text-base lg:text-xl font-bold tracking-tight truncate">{page.label}</h2>
             </div>
           </div>
@@ -276,7 +276,7 @@ export const BeModule5Engine: React.FC<{
             </span>
           </div>
           <button
-            onClick={() => { if (current === PAGES.length - 1) { navigate('/portal'); } else { go(1); } }}
+            onClick={() => { if (current === PAGES.length - 1) { setDone(true); } else { go(1); } }}
             className="flex items-center gap-3 px-5 lg:px-10 py-2.5 rounded-xl font-black text-black transition-all duration-500 active:scale-95 shadow-xl"
             style={{
               backgroundColor: theme.primary,
@@ -287,6 +287,17 @@ export const BeModule5Engine: React.FC<{
           </button>
         </footer>
       </div>
+
+      {done && (
+        <ModuleComplete
+          isDark={isDarkMode}
+          moduleTitle={MODULE_LABELS['basic-electronics/5'] ?? 'this module'}
+          accent={theme.primary}
+          topics={Array.from(new Set(PAGES.map((p) => p.label)))}
+          onPortal={() => navigate('/portal')}
+          next={{ label: MODULE_LABELS['basic-electronics/6'] ?? 'Next module', onGo: () => navigate('/basic-electronics/6') }}
+        />
+      )}
     </div>
   );
 };

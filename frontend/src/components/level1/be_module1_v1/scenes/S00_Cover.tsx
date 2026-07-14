@@ -104,7 +104,6 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
         />
         <div className="absolute inset-0 flex items-center">
           <div className="flex-1 px-12">
-            <div className="font-mono text-[10px] tracking-[0.4em] uppercase text-orange-300/80 mb-2">Module 01 · Section A</div>
             <h2 className="text-4xl md:text-5xl font-black text-orange-300 leading-none drop-shadow-[0_0_20px_rgba(249,115,22,0.4)]">
               THE PHYSICS
             </h2>
@@ -132,12 +131,6 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
 
       {/* Hero copy */}
       <section className="text-center space-y-6 relative">
-        <motion.span
-          initial={{ opacity: 0, y: -10 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
-          className="font-mono text-[10px] tracking-[0.4em] uppercase text-orange-400 block"
-        >
-          Basic Electronics · Module 1 · The Physics of Control
-        </motion.span>
         <motion.h1
           initial={{ opacity: 0, scale: 0.95 }} animate={isActive ? { opacity: 1, scale: 1 } : {}}
           transition={{ duration: 0.6 }}

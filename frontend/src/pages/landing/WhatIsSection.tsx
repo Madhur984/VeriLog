@@ -31,7 +31,7 @@ export const WhatIsSection = () => {
                 Traditional engineering curricula often leave students stuck in abstract whiteboard derivations, disconnected from the physical tools and systems used in the semiconductor industry. Real chip design demands tool fluency, hands-on RTL prototyping, and rigorous clock domain validation.
               </p>
               <p>
-                BitforBytes closes this engineering gap by providing a visual, browser-based runtime workspace. Every module translates theoretical circuit math into simulated, interactive reality: toggle inputs, observe logic propagation times, and test structural synthesis rules in real time.
+                BitForBytes closes this engineering gap by providing a visual, browser-based runtime workspace. Every module translates theoretical circuit math into simulated, interactive reality: toggle inputs, observe logic propagation times, and test structural synthesis rules in real time.
               </p>
               <p className="text-[12px] italic text-slate-500">
                 Custom-built by ECE architects to establish practical engineering foundations.

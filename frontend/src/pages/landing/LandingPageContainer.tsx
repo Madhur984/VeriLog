@@ -136,7 +136,7 @@ export default function LandingPageContainer() {
 
   // ENHANCEMENT 4: SEO Meta Infrastructure
   useEffect(() => {
-    document.title = 'BitforBytes — Interactive VLSI & Digital Design Education';
+    document.title = 'BitForBytes — Interactive VLSI & Digital Design Education';
     let meta = document.querySelector('meta[name="description"]');
     if (!meta) {
       meta = document.createElement('meta');
@@ -144,7 +144,7 @@ export default function LandingPageContainer() {
       document.head.appendChild(meta);
     }
     meta.setAttribute('content', 'Learn digital design, Verilog HDL, and VLSI physical layout through free, interactive browser-based simulation tools. From Boolean foundations to silicon timing.');
-    return () => { document.title = 'BitforBytes'; };
+    return () => { document.title = 'BitForBytes'; };
   }, []);
 
   // ENHANCEMENT 5: Smooth Scroll Navigation Handler
@@ -460,7 +460,7 @@ export default function LandingPageContainer() {
             Bridge the gap between math derivations and actual silicon.
           </h2>
           <p className="text-sm text-slate-650 dark:text-[#8E9AA8] leading-relaxed">
-            Traditional engineering curricula often leave students stuck in abstract whiteboard derivations, disconnected from the physical tools and systems used in the semiconductor industry. BitforBytes tethers physical concepts directly to a visually accurate logic gate environment.
+            Traditional engineering curricula often leave students stuck in abstract whiteboard derivations, disconnected from the physical tools and systems used in the semiconductor industry. BitForBytes tethers physical concepts directly to a visually accurate logic gate environment.
           </p>
         </div>
         <div className="lg:col-span-6 bg-white dark:bg-[#090e1a] border border-slate-200 dark:border-slate-900 rounded-xl p-6 flex flex-col justify-center items-center min-h-[200px]">
@@ -636,7 +636,7 @@ export default function LandingPageContainer() {
             </span>
           </h2>
           <p className={`text-xs md:text-sm max-w-[60ch] mx-auto leading-relaxed ${isDarkMode ? 'text-slate-400' : 'text-slate-650'}`}>
-            Join thousands of engineering students and developers who use our application workspace. BitforBytes guides you through every layer of the processor stack with free, browser-based environments.
+            Join thousands of engineering students and developers who use our application workspace. BitForBytes guides you through every layer of the processor stack with free, browser-based environments.
           </p>
           <div className="flex justify-center gap-3 font-mono text-[11px]">
             <Link to={primaryTo} className="bg-[#2E32FF] text-white font-bold px-6 py-3 rounded-lg hover:bg-[#1E22E0] transition-colors text-center active-press">{primaryLabel}</Link>
@@ -653,7 +653,7 @@ export default function LandingPageContainer() {
               <p className={`text-xs leading-relaxed font-sans max-w-xs ${isDarkMode ? 'text-[#8E9AA8]' : 'text-slate-650'}`}>
                 Signals become logic. Logic becomes systems. Free, open-access digital design and VLSI education.
               </p>
-              <p className="text-[10px] font-mono text-slate-550 dark:text-[#8E9AA8]">&copy; 2026 BitforBytes. All rights reserved. Aligned to ISM 2.0.</p>
+              <p className="text-[10px] font-mono text-slate-550 dark:text-[#8E9AA8]">&copy; 2026 BitForBytes. All rights reserved. Aligned to ISM 2.0.</p>
             </div>
             <div className="md:col-span-7 grid grid-cols-2 sm:grid-cols-3 gap-6 font-mono text-[10px] tracking-wider">
               <div>

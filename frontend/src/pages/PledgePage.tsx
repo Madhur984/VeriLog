@@ -39,7 +39,7 @@ export const PledgePage: React.FC = () => {
 
   const sharePledge = async () => {
     const caption =
-      "I took the India ECE Pledge on BitforBytes: I am building India's semiconductor future. One module at a time.";
+      "I took the India ECE Pledge on BitForBytes: I am building India's semiconductor future. One module at a time.";
     try {
       if (navigator.share) {
         await navigator.share({ text: caption, url: window.location.href });
@@ -135,7 +135,7 @@ export const PledgePage: React.FC = () => {
               The Alumni Wall
             </h2>
             <p className={`mt-3 text-base leading-relaxed ${sub}`}>
-              Real outcomes only. As BitforBytes students land roles, their stories go up
+              Real outcomes only. As BitForBytes students land roles, their stories go up
               here, name, college, company, tracks completed. The wall is just opening,
               and the founding spots are empty on purpose: one of them is yours.
             </p>

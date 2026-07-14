@@ -51,10 +51,6 @@ export const P4_SystemConversion: React.FC<{
     return (
         <div className="flex flex-col gap-32 w-full max-w-none mx-auto">
             <header className="space-y-10">
-                <div className="flex items-center gap-4">
-                    <div className="h-px w-20 bg-purple-500/40" />
-                    <span className="text-[11px] font-black font-mono tracking-[0.5em] text-purple-500 uppercase">Master_Guide // Series_04</span>
-                </div>
                 <h1 className={`text-[12rem] font-black italic tracking-tighter leading-[0.8] uppercase ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
                     System <br/>
                     <span className="text-purple-500">Bridges</span>.

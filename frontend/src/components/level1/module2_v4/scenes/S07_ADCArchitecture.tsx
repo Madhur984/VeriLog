@@ -55,9 +55,6 @@ export const S07_ADCArchitecture: React.FC<{ isDarkMode: boolean }> = ({ isDarkM
   return (
     <div className="flex flex-col gap-16 max-w-6xl mx-auto mb-32 text-left">
       <header className="space-y-6">
-        <div className={`px-3 py-1 rounded-full border text-[10px] font-black uppercase tracking-widest inline-flex ${isDarkMode ? 'bg-orange-500/10 border-orange-500/20 text-orange-500' : 'bg-orange-50 border-orange-200 text-orange-600 font-bold'}`}>
-            Level 02.07 // Silicon Reality
-        </div>
         <h2 className={`text-7xl font-black italic tracking-tighter ${textColor}`}>
           The <span className={accentColor}>Physical</span> Bridge
         </h2>
@@ -112,7 +109,6 @@ export const S07_ADCArchitecture: React.FC<{ isDarkMode: boolean }> = ({ isDarkM
 
               <div className="space-y-10 flex-1 relative z-10">
                   <div className="space-y-4">
-                      <div className={`text-[10px] font-mono uppercase tracking-[0.3em] font-black ${current.color}`}>Technical Brief // Phase {selected === 'flash' ? 1 : selected === 'sar' ? 2 : 3}</div>
                       <h3 className={`text-5xl font-black italic tracking-tighter ${textColor}`}>{current.title}</h3>
                       <p className={`text-xl font-medium leading-relaxed pr-10 ${subTextColor}`}>
                           {current.desc}

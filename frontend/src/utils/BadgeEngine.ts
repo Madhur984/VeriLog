@@ -72,7 +72,7 @@ export const generateBadgeSVG = (badge: BadgeDefinition, userId: string, theme?:
   
   <text x="150" y="278" text-anchor="middle" font-family="monospace"
         font-size="7" fill="${colors.primary}" opacity="0.3" letter-spacing="3">
-    BitforBytes VERIFIED
+    BitForBytes VERIFIED
   </text>
 </svg>`;
 };

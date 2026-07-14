@@ -219,7 +219,7 @@ export const PremiumHeroWorkspace: React.FC = () => {
 
       {/* Pure Corporate-SaaS Footer Row */}
       <div className="max-w-7xl mx-auto w-full px-6 md:px-8 border-t border-slate-900/60 py-6 flex flex-col sm:flex-row items-center justify-between text-[11px] font-mono text-slate-500 z-10 gap-2">
-        <div>&copy; 2026 BitforBytes Inc. Aligned with India Semiconductor Mission.</div>
+        <div>&copy; 2026 BitForBytes Inc. Aligned with India Semiconductor Mission.</div>
         <div className="flex gap-4">
           <Link to="/terms" className="hover:text-slate-300">Terms</Link>
           <Link to="/privacy" className="hover:text-slate-300">Privacy</Link>

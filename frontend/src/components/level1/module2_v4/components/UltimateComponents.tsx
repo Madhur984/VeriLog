@@ -121,7 +121,6 @@ export const InsightPanel: React.FC<{ title: string; content: string; career?: s
                         <BookOpen size={16} />
                     </div>
                     <div className="flex flex-col items-start">
-                        <span className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-400 dark:text-white/20">Optional // Deep_Dive</span>
                         <span className={`text-[13px] font-black uppercase tracking-tighter transition-colors ${isOpen ? 'text-slate-900 dark:text-white' : 'text-slate-500 dark:text-white/40 group-hover:text-slate-900 dark:group-hover:text-white'}`}>{title}</span>
                     </div>
                 </div>
@@ -167,7 +166,6 @@ export const ComparisonConsole: React.FC = () => {
                     <Scale size={24} />
                 </div>
                 <div className="flex flex-col">
-                    <span className="text-[10px] font-black uppercase tracking-[0.4em] text-white/30">Head-to-Head // Comparison</span>
                     <h3 className="text-3xl font-black italic text-white uppercase tracking-tighter">Domain Arbitrage</h3>
                 </div>
             </div>
@@ -308,12 +306,12 @@ export const InteractiveInstrument: React.FC<{
 
       {/* Industrial Axis Labels */}
       <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 pointer-events-none">
-          <div className="text-[9px] font-black uppercase tracking-[0.4em] text-white/30 whitespace-nowrap">EXT_COORD_X // {mapping.x.label}</div>
+          <div className="text-[9px] font-black uppercase tracking-[0.4em] text-white/30 whitespace-nowrap">{mapping.x.label}</div>
           <div className="text-4xl font-black italic text-white font-mono tracking-tighter tabular-nums">{state[mapping.x.key] as any}<span className="text-xs ml-1 opacity-20 uppercase">{mapping.x.unit}</span></div>
       </div>
 
       <div className="absolute top-1/2 left-10 -translate-y-1/2 flex flex-col items-center gap-1 pointer-events-none rotate-[-90deg]">
-          <div className="text-[9px] font-black uppercase tracking-[0.4em] text-white/30 whitespace-nowrap">EXT_COORD_Y // {mapping.y.label}</div>
+          <div className="text-[9px] font-black uppercase tracking-[0.4em] text-white/30 whitespace-nowrap">{mapping.y.label}</div>
           <div className="text-4xl font-black italic text-white font-mono tracking-tighter tabular-nums">{state[mapping.y.key] as any}<span className="text-xs ml-1 opacity-20 uppercase">{mapping.y.unit}</span></div>
       </div>
 
@@ -335,7 +333,6 @@ export const InteractiveInstrument: React.FC<{
               <Activity size={20} className="text-[#00D4FF] animate-pulse" />
           </div>
           <div className="flex flex-col">
-              <span className="text-[10px] font-black uppercase tracking-[0.4em] text-white/30">Inst_ID // RX-2025</span>
               <span className="text-[9px] font-mono text-[#00D4FF]"><KineticText text="PROBE_SYNC_ACTIVE" /></span>
           </div>
       </div>
@@ -348,7 +345,6 @@ export const LogicReadout: React.FC<{ metrics: any }> = ({ metrics }) => (
         <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at center, #00D4FF 1px, transparent 1px)', backgroundSize: '12px 12px' }} />
         <div className="flex justify-between items-center relative z-10">
             <div className="flex flex-col">
-                <span className="text-[10px] font-black uppercase text-white/30 tracking-[0.4em]">Internal_State // Logic_Stream</span>
                 <span className="text-[9px] font-mono text-[#00D4FF] uppercase tracking-widest">Live_Decomposition</span>
             </div>
             <div className="p-3 bg-[#00D4FF]/10 rounded-xl border border-[#00D4FF]/20">
@@ -573,7 +569,6 @@ export const SpectrumAnalyzer: React.FC<{ state: GlobalSignalState }> = ({ state
         <div className="p-10 rounded-[4rem] bg-[#0A0C10] border border-white/5 space-y-8 shadow-2xl">
             <div className="flex justify-between items-center">
                 <div className="flex flex-col">
-                    <span className="text-[10px] font-black uppercase text-white/30 tracking-[0.3em]">Freq_Domain // Analyser</span>
                     <span className="text-[9px] font-mono text-[#00D4FF]"><KineticText text="FFT_SCAN_ACTIVE" /></span>
                 </div>
                 <div className={`px-4 py-2 rounded-xl text-[10px] font-black italic uppercase tracking-widest ${state.sampleRate / 2 < state.frequency ? 'bg-red-500/10 text-red-500 border border-red-500/40' : 'bg-green-500/10 text-green-500 border border-green-500/40'}`}>

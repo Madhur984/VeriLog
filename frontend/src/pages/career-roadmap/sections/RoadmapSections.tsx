@@ -313,7 +313,7 @@ const ALUMNI_STORIES: AlumniStory[] = [
     steps: [
       "Graduated in 2022 with zero core placements; joined service sector IT.",
       "Learned SystemVerilog & UVM testbench basics at night (3 hrs/day).",
-      "Completed 2 verified UVM IP testbench simulation projects on BitforBytes.",
+      "Completed 2 verified UVM IP testbench simulation projects on BitForBytes.",
       "Referred through verified platform badge; cleared Qualcomm DV technical round."
     ]
   },

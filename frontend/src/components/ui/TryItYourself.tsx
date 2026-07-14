@@ -53,7 +53,7 @@ export function TryItYourself({ label = 'Try it yourself', corner = false, tilt 
       className={[
         'pointer-events-auto z-20 inline-flex select-none items-center gap-1.5 rounded-[4px] border-2 px-2.5 py-1',
         'font-mono text-[11px] font-bold uppercase tracking-[0.12em]',
-        corner ? 'absolute -right-2 -top-3' : '',
+        corner ? 'absolute right-2 top-2' : '',
         className,
       ].join(' ')}
       style={{ background: bg, color: ink, borderColor: edge, boxShadow: shadow }}

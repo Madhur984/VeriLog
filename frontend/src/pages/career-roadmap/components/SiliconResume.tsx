@@ -85,7 +85,7 @@ export const SiliconResume: React.FC<SiliconResumeProps> = ({
     skills: skillsList,
     badges: unlockedBadges,
     projects: [
-      { name: "BitforBytes Core Scrollytelling Simulator", desc: "Engineered browser-native 60fps structural clock domain simulator and physics-accurate transmission line trace graph components from absolute scratch using React & TypeScript layout arrays." },
+      { name: "BitForBytes Core Scrollytelling Simulator", desc: "Engineered browser-native 60fps structural clock domain simulator and physics-accurate transmission line trace graph components from absolute scratch using React & TypeScript layout arrays." },
       { name: "Smart India Hackathon 2025 Winning Hardware Node", desc: "Designed and fabricated an on-edge indigenous firmware hardware subsystem block. Managed structural validation schemas and timing analysis profiles under extreme stress limits." }
     ]
   };
@@ -426,7 +426,7 @@ export const SiliconResume: React.FC<SiliconResumeProps> = ({
               <div className="space-y-1">
                 <div className="text-[13px] font-black text-white leading-tight">{resolvedUserName.toUpperCase()}</div>
                 <div className="text-[8px] text-[#F59E0B] font-bold">ECE ENGINEER</div>
-                <div className="text-[7px] text-slate-400 leading-normal">BitforBytes Academy</div>
+                <div className="text-[7px] text-slate-400 leading-normal">BitForBytes Academy</div>
               </div>
             </div>
 

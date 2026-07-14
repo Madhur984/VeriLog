@@ -1,6 +1,5 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Layers } from 'lucide-react';
 
 interface Props { isActive?: boolean; isDarkMode: boolean; }
 
@@ -295,9 +294,6 @@ export const S00_Cover: React.FC<Props> = ({ isActive = true, isDarkMode }) => {
         animate={isActive ? { opacity: 1, y: 0 } : {}}
         className="space-y-5"
       >
-        <div className="flex items-center gap-2 font-mono text-[10px] tracking-[0.4em] uppercase" style={{ color: CYAN }}>
-          <Layers size={14} /> DSD Module 06
-        </div>
         <h1 className={`text-5xl md:text-7xl font-black ${textColor} tracking-tight leading-[0.95]`}>
           The Logic of<br />
           <span style={{ color: CYAN }}>Now</span> and <span style={{ color: AMBER }}>Then</span>.

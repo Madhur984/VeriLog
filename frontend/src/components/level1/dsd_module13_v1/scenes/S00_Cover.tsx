@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Route, ArrowRight, Clock, Cpu } from 'lucide-react';
+import { ArrowRight, Clock, Cpu } from 'lucide-react';
 
 interface Props { isActive?: boolean; isDarkMode: boolean }
 
@@ -29,9 +29,6 @@ export const S00_Cover: React.FC<Props> = ({ isDarkMode }) => {
     <div className="max-w-6xl mx-auto space-y-12 py-4">
       {/* ── Title block ── */}
       <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-4 text-center">
-        <div className="flex items-center justify-center gap-2 font-mono text-[10px] tracking-[0.4em] uppercase" style={{ color: SKY }}>
-          <Route size={14} /> DSD Module 13 · The Serial Adder
-        </div>
         <h1 className={`text-4xl md:text-6xl font-black tracking-tight ${textColor}`}>
           Trade <span style={{ color: SKY }}>time</span> for <span style={{ color: EMERALD }}>space.</span>
         </h1>

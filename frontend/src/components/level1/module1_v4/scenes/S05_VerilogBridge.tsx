@@ -31,9 +31,6 @@ export const S05_VerilogBridge: React.FC<Props> = ({ isDarkMode: _ }) => {
       >
         {/* LEFT - Text */}
         <div className="space-y-8 text-left">
-          <p className="micro-text text-plasma-cyan opacity-60">
-            Phase_Conclusion // Gateway_01
-          </p>
           <h1 className="hero-text text-6xl md:text-8xl leading-[0.85] text-plasma-cyan shadow-cyan-glow uppercase">
             THE<br />VERILOG<br />BRIDGE.
           </h1>

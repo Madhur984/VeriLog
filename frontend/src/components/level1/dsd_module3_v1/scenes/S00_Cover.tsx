@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { ShieldCheck, Table, Sigma, Grid3x3, Cpu, ArrowRight, PlayCircle } from 'lucide-react';
+import { Table, Sigma, Grid3x3, Cpu, ArrowRight, PlayCircle } from 'lucide-react';
 
 interface Props { isActive: boolean; isDarkMode: boolean; }
 
@@ -59,9 +59,6 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
         initial={{ opacity: 0, y: 20 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         className="space-y-6"
       >
-        <div className="flex items-center gap-2 font-mono text-[10px] tracking-[0.4em] uppercase text-sky-400">
-          <ShieldCheck size={14} /> Module 03 · Circuit Realisation
-        </div>
         <h1 className={`text-5xl md:text-7xl font-black ${textColor} tracking-tight leading-[0.95]`}>
           From Truth<br />
           <span className="text-sky-400">to Hardware.</span>
