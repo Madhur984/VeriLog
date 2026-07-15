@@ -45,6 +45,18 @@ const NOINDEX_EXACT = new Set([
   '/settings',
 ]);
 
+// Login-gated routes: an anonymous crawler is redirected to /login, so these
+// would otherwise index as thin "sign in" pages and dilute the public ones.
+// Keep them out of the index (they're also excluded from the sitemap) so
+// Google's crawl budget & ranking focus on the strong, public pages.
+const GATED_PREFIX = /^\/(dsd|basic-electronics)\//;
+const GATED_EXACT = new Set([
+  '/module/6', '/boss-arena', '/fsm', '/hw-leetcode', '/logic-studio',
+  '/signal-playground', '/quests', '/activities', '/community', '/debug-mission',
+  '/gatekeeper-game', '/ai-lab', '/silicon-secrets', '/portfolio', '/skill-tree',
+]);
+const isGated = (path: string): boolean => GATED_PREFIX.test(path) || GATED_EXACT.has(path);
+
 // Hand-tuned title + description for every public, indexable route.
 const ROUTE: Record<string, { title: string; description: string }> = {
   '/': {
@@ -156,7 +168,7 @@ export function getSeo(pathname: string): SeoData {
       canonical,
       image: SITE.ogImage,
       type: 'article',
-      robots: INDEX,
+      robots: isGated(path) ? NOINDEX : INDEX,
       section: meta.section,
       label: meta.label,
     };
@@ -186,7 +198,7 @@ export function siteJsonLd(): Record<string, unknown>[] {
       sameAs: [
         'https://x.com/bitforbyte_',
         'https://www.linkedin.com/company/bitforbytes',
-        'https://www.instagram.com/bitforbytes',
+        'https://www.instagram.com/bit_for_bytes',
       ],
     },
     {

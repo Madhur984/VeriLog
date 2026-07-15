@@ -1187,13 +1187,6 @@ const L6_PATHS: PathOption[] = [
       },
     ],
   },
-  {
-    // Verilog track is being rebuilt - show a "Coming soon" placeholder instead
-    // of module entries until the new HDL content ships.
-    id: 'verilog', label: 'Verilog', subtitle: 'HDL · SYNTHESIS', color: '#a78bfa',
-    comingSoon: true,
-    modules: [],
-  },
 ];
 
 // Directional cross-slide for the module list when the active track changes.
