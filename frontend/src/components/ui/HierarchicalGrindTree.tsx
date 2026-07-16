@@ -575,7 +575,7 @@ const RootGem: React.FC<{ node: RootNode; index: number; onClick: () => void }> 
 // ─── L6 PATH HIERARCHY ──────────────────────────────────────────────────────────
 interface SubmoduleOption { id: string; label: string; route: string }
 interface ModuleOption    { id: string; label: string; subtitle: string; route: string; submodules: SubmoduleOption[] }
-interface PathOption      { id: string; label: string; subtitle: string; color: string; modules: ModuleOption[]; comingSoon?: boolean }
+interface PathOption      { id: string; label: string; subtitle: string; color: string; modules: ModuleOption[] }
 
 const L6_PATHS: PathOption[] = [
   {
@@ -1262,7 +1262,7 @@ const L6PathSwitcher: React.FC<{ onPick: (route: string) => void }> = ({ onPick 
                 </span>
                 <span className="text-[8px] sm:text-[9px] font-mono tracking-[0.16em] uppercase"
                   style={{ color: isActive ? (isLight ? optColor : `${opt.color}cc`) : (isLight ? '#94A3B8' : 'rgba(255,255,255,0.3)') }}>
-                  {opt.comingSoon ? 'Coming soon' : `${opt.modules.length} modules`}
+                  {`${opt.modules.length} modules`}
                 </span>
               </span>
             </button>
@@ -1292,20 +1292,7 @@ const L6PathSwitcher: React.FC<{ onPick: (route: string) => void }> = ({ onPick 
           initial="enter" animate="center" exit="exit"
           transition={{ duration: 0.26, ease: 'easeInOut' }}
           className="w-full flex flex-col gap-3">
-        {pathSel.comingSoon ? (
-          <motion.li
-            initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}
-            className="flex flex-col items-center gap-3 rounded-2xl border p-12 text-center"
-            style={{
-              borderColor: isLight ? '#94A3B8' : 'rgba(255,255,255,0.1)',
-              background: isLight ? '#FFFFFF' : 'rgba(6,7,12,0.55)',
-            }}>
-            <div className="text-2xl font-black" style={{ color: isLight ? '#0F172A' : '#fff' }}>Coming soon</div>
-            <p className="max-w-md text-[14px] leading-relaxed" style={{ color: isLight ? '#475569' : 'rgba(255,255,255,0.6)' }}>
-              The Verilog track is being rebuilt. Modules, testbenches and synthesis labs are on the way - master the Basic Electronics and DSD tracks first.
-            </p>
-          </motion.li>
-        ) : pathSel.modules.map((mod, idx) => {
+        {pathSel.modules.map((mod, idx) => {
           const isOpen = expandedId === mod.id;
           const locked = isModuleLocked(mod.submodules[0]?.route ?? mod.route);
           return (
