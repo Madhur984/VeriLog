@@ -9,4 +9,29 @@ Disallow: /reset-password
 Disallow: /profile
 Disallow: /settings
 
+# AI / LLM crawlers are explicitly welcome. The wildcard above already allows
+# them; these named groups exist so the permission is unambiguous to crawlers
+# that look for their own user-agent before falling back to *.
+User-agent: GPTBot
+User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
+User-agent: ClaudeBot
+User-agent: Claude-User
+User-agent: Claude-SearchBot
+User-agent: anthropic-ai
+User-agent: PerplexityBot
+User-agent: Perplexity-User
+User-agent: Google-Extended
+User-agent: CCBot
+User-agent: Applebot-Extended
+User-agent: meta-externalagent
+User-agent: Bytespider
+User-agent: cohere-ai
+Allow: /
+Disallow: /login
+Disallow: /verify-email
+Disallow: /reset-password
+Disallow: /profile
+Disallow: /settings
+
 Sitemap: https://bitforbytes.in/sitemap.xml
