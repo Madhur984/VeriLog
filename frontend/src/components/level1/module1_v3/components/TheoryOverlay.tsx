@@ -59,7 +59,7 @@ const GraphBlock: React.FC<{ type: GraphType; amplitude?: number; frequency?: nu
 const QUESTIONS = [
   {
     id: 'q1', label: 'Q1 // CONCEPTUAL',
-    question: 'What defines a signal at its fundamental level?',
+    question: 'What defines a signal at its basic level?',
     options: ['VARIATION', 'CONSTANCY', 'VOID'],
     correct: 'VARIATION',
     type: 'choice' as const,

@@ -27,10 +27,10 @@ export const P5_MasterLab: React.FC<{
             <header className="space-y-10 text-center flex flex-col items-center">
                 <h1 className={`text-[12rem] font-black italic tracking-tighter leading-[0.8] uppercase ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
                     The <br/>
-                    <span className="text-green-500">Forge</span>.
+                    <span className="text-green-500">Workshop</span>.
                 </h1>
                 <p className={`text-3xl font-medium max-w-4xl leading-relaxed italic ${isDarkMode ? 'opacity-40 text-white' : 'text-slate-600'}`}>
-                    Final Takeaway: Real-world systems are a mix of bothDomains. Leverage the robustness of <span className="text-green-500 font-bold">Digital</span> and the nuance of <span className="text-orange-500 font-bold">Analog</span> through the essential bridges of ADC/DAC conversion.
+                    Final Takeaway: Real-world systems are a mix of bothDomains. Use the reliability of <span className="text-green-500 font-bold">Digital</span> and the detail of <span className="text-orange-500 font-bold">Analog</span> through the essential bridges of ADC/DAC conversion.
                 </p>
             </header>
 
@@ -67,7 +67,7 @@ export const P5_MasterLab: React.FC<{
                             <ul className="text-lg font-medium text-white/40 leading-relaxed italic space-y-4">
                                 <li>• Continuous resolution preserved via <span className="text-green-500">92%+ Fidelity</span></li>
                                 <li>• No information loss to <span className="text-red-500">Aliasing</span> (Nyquist-Shannon active)</li>
-                                <li>• Robust data storage via <span className="text-[#00D4FF]">16-bit Precision</span></li>
+                                <li>• Reliable data storage via <span className="text-[#00D4FF]">16-bit Precision</span></li>
                             </ul>
                         </div>
                         

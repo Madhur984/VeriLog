@@ -527,7 +527,7 @@ const ProofsWalkthrough: React.FC<{ isDarkMode: boolean; accent: string }> = ({ 
     {
       label: lang === 'hi' ? 'Shannon expansion' : 'Shannon expansion',
       body: body(
-        "Take F(x, rest). Cofactors F0 = F(0, rest), F1 = F(1, rest). Claim F = x'.F0 + x.F1. Case x=0: RHS = 1.F0 + 0.F1 = F0 = F. Case x=1: RHS = 0.F0 + 1.F1 = F1 = F. Both match. Compare to Y = S'.I0 + S.I1: a 2-to-1 MUX with select=x, I0=F0, I1=F1 realizes any F.",
+        "Take F(x, rest). Cofactors F0 = F(0, rest), F1 = F(1, rest). Claim F = x'.F0 + x.F1. Case x=0: RHS = 1.F0 + 0.F1 = F0 = F. Case x=1: RHS = 0.F0 + 1.F1 = F1 = F. Both match. Compare to Y = S'.I0 + S.I1: a 2-to-1 MUX with select=x, I0=F0, I1=F1 builds any F.",
         "F(x, rest) लीजिए। Cofactors F0 = F(0, rest), F1 = F(1, rest)। दावा F = x'.F0 + x.F1। Case x=0: RHS = 1.F0 + 0.F1 = F0 = F। Case x=1: RHS = 0.F0 + 1.F1 = F1 = F। दोनों मेल खाते हैं। Y = S'.I0 + S.I1 से तुलना: select=x, I0=F0, I1=F1 वाला 2-to-1 MUX किसी भी F को साकार करता है।",
         "F = x'.F0 + x.F1"),
     },
@@ -589,8 +589,8 @@ const ProofsSection: React.FC<{ isDarkMode: boolean; accent: string }> = ({ isDa
         </h2>
         <p className={`max-w-2xl text-[14px] ${t.sub}`}>
           {lang === 'hi'
-            ? 'truth-table से 2:1 और 4:1, n selects का सामान्यीकरण, Shannon expansion, MUX-as-LUT, cascading, enable और NAND-only realization - सब काग़ज़ पर।'
-            : 'From the truth table to the 2:1 and 4:1, the n-select generalization, Shannon expansion, MUX-as-LUT, cascading, enable, and NAND-only realization - all on paper.'}
+            ? 'truth-table से 2:1 और 4:1, n selects का सामान्यीकरण, Shannon expansion, MUX-as-LUT, cascading, enable और NAND-only build - सब काग़ज़ पर।'
+            : 'From the truth table to the 2:1 and 4:1, the n-select generalization, Shannon expansion, MUX-as-LUT, cascading, enable, and NAND-only build - all on paper.'}
         </p>
       </section>
       <ProofsWalkthrough isDarkMode={isDarkMode} accent={accent} />

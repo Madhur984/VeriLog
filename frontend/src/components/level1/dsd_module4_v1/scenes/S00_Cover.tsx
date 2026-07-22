@@ -7,7 +7,7 @@ interface Props { isActive: boolean; isDarkMode: boolean; }
 const DRILL_SETS = [
   {
     Icon: Cpu,
-    title: 'Forward Synthesis',
+    title: 'Forward Build',
     count: '4 problems',
     desc: 'Story → Truth Table → Equation → Smallest Circuit. Real-world examples.',
     accent: '#fbbf24',

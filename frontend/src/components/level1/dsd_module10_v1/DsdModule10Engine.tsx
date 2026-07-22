@@ -9,6 +9,7 @@ import { MODULE_LABELS } from '../../../lib/moduleHistory';
 import { S00_Cover }    from './scenes/S00_Cover';
 import { S01_Analogy }  from './scenes/S01_Analogy';
 import { S02_Video }    from './scenes/S02_Video';
+import { S01b_Facts }   from './scenes/S01b_Facts';
 import { S03_Build }    from './scenes/S03_Build';
 import { S04_Ripple }   from './scenes/S04_Ripple';
 import { S05_Delay }    from './scenes/S05_Delay';
@@ -28,6 +29,7 @@ const PAGES: Page[] = [
   { id: 'cover',    part: 'PART I · THE BRIEF',      label: 'The Ripple-Carry Adder', subtitle: 'Cover · chain the adders, pass the carry.',        Component: S00_Cover },
   { id: 'analogy',  part: 'PART I · THE BRIEF',      label: 'The Digital Relay',      subtitle: 'The carry is a baton in a relay race.',            Component: S01_Analogy },
   { id: 'video',    part: 'PART I · THE BRIEF',      label: 'Video · Ripple Carry',   subtitle: 'Watch · the baton handed down the line.',          Component: S02_Video },
+  { id: 'facts',    part: 'PART I · THE BRIEF',      label: 'The Facts First',        subtitle: 'Plain-English basics · what a ripple adder is.',   Component: S01b_Facts },
   { id: 'build',    part: 'PART II · THE MECHANISM', label: 'Building the Relay Team', subtitle: 'Wire N full adders carry to carry.',               Component: S03_Build },
   { id: 'ripple',   part: 'PART II · THE MECHANISM', label: 'Watch the Carry Ripple', subtitle: 'Step the wavefront · see the delay stack up.',      Component: S04_Ripple },
   { id: 'delay',    part: 'PART II · THE MECHANISM', label: 'The Cost of Waiting',    subtitle: 'Propagation delay · 2·N·ΔG · the scaling problem.', Component: S05_Delay },

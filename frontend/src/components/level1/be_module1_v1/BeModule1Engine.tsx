@@ -29,8 +29,8 @@ interface Page {
 }
 
 const PAGES: Page[] = [
-  { id: 'cover',     part: 'PART I · OVERTURE',         label: 'The Physics of Control',        subtitle: 'Cover · the quest begins.',                          Component: S00_Cover },
-  { id: 'video',     part: 'PART I · OVERTURE',         label: 'Video Lecture',                 subtitle: 'Illustrated lecture · video + transcript.',          Component: S01_VideoLecture },
+  { id: 'cover',     part: 'PART I · INTRODUCTION',         label: 'The Physics of Control',        subtitle: 'Cover · the quest begins.',                          Component: S00_Cover },
+  { id: 'video',     part: 'PART I · INTRODUCTION',         label: 'Video Lecture',                 subtitle: 'Illustrated lecture · video + transcript.',          Component: S01_VideoLecture },
   { id: 'quest',     part: 'PART II · THE PLAYERS',     label: 'The Quest for Control',         subtitle: 'Conductor · Insulator · Semiconductor.',             Component: S02_QuestForControl },
   { id: 'lineup',    part: 'PART II · THE PLAYERS',     label: 'The Starting Lineup',           subtitle: 'Si · Ge · GaAs trading cards.',                      Component: S03_StartingLineup },
   { id: 'franchise', part: 'PART III · THE FRANCHISE',  label: 'The Silicon Franchise',         subtitle: 'Atomic structure as a sports team.',                 Component: S04_SiliconFranchise },

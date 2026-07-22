@@ -87,7 +87,7 @@ export const TechnicalAudit: React.FC<TechnicalAuditProps> = ({
                                         <div className="p-2 rounded-lg bg-orange-500/10">
                                             <Info size={12} className={accentColor} />
                                         </div>
-                                        <span className={`text-[10px] font-mono uppercase tracking-[0.2em] font-black ${accentColor}`}>Core Essence</span>
+                                        <span className={`text-[10px] font-mono uppercase tracking-[0.2em] font-black ${accentColor}`}>Core Idea</span>
                                     </div>
                                     <p className={`text-base md:text-lg font-medium leading-relaxed ${textColor}`}>
                                         {specs.concept}

@@ -252,14 +252,14 @@ export const CONTENT: SubContent = {
       theoryEN: [
         'We measure how good a transistor is at amplifying using two numbers, alpha and beta. The more useful of the two is beta (sometimes written as the Greek letter or just called the current gain). Beta is simply the collector current divided by the base current: beta = Ic / Ib. For real transistors beta is usually somewhere between 50 and over 400. A beta of 100, for example, means the collector current is 100 times the base current.',
         'The second number is alpha, which we already met. Alpha is the collector current divided by the emitter current: alpha = Ic / Ie. Because almost all of the emitter current reaches the collector, alpha is always just a little less than one, typically about 0.99. Alpha can never reach one exactly, because some current always peels off into the base.',
-        'Alpha and beta are two views of the same device, so they must be linked, and they are. You can convert between them with two formulas: beta = alpha / (1 - alpha) and alpha = beta / (beta + 1). We will work through where these come from on the synthesis page, deriving every step. For now, notice the key behaviour: as alpha creeps closer and closer to one, the bottom of the beta formula (1 - alpha) gets tiny, and so beta shoots up to very large values.',
+        'Alpha and beta are two views of the same device, so they must be linked, and they are. You can convert between them with two formulas: beta = alpha / (1 - alpha) and alpha = beta / (beta + 1). We will work through where these come from on the summary page, deriving every step. For now, notice the key behaviour: as alpha creeps closer and closer to one, the bottom of the beta formula (1 - alpha) gets tiny, and so beta shoots up to very large values.',
         'This is the whole point of the device in one line. A high beta means that a featherweight base current is controlling a heavyweight collector current. A few microamps in at the base produce a few milliamps out at the collector. That multiplication is exactly what we mean by amplification.',
         'In the mall picture, beta answers a simple question: for every single shopper who turns off into the side corridor, how many shoppers make it all the way through to the receiving hall? If beta is 100, then one shopper in the corridor corresponds to a hundred shoppers reaching the hall.',
       ],
       theoryHI: [
         'एक transistor amplify करने में कितना अच्छा है यह हम दो numbers, alpha और beta, से नापते हैं। इन दोनों में ज़्यादा काम का है beta (इसे current gain भी कहते हैं)। beta बस collector current बँटा base current है: beta = Ic / Ib। असली transistors में beta आमतौर पर 50 से 400 के ऊपर के बीच होता है। मिसाल के लिए beta का 100 होना मतलब collector current, base current की 100 गुना है।',
         'दूसरा number alpha है, जिससे हम पहले मिल चुके हैं। alpha collector current बँटा emitter current है: alpha = Ic / Ie। चूँकि लगभग पूरी emitter current collector तक पहुँचती है, alpha हमेशा एक से थोड़ा ही कम होता है, आमतौर पर लगभग 0.99। alpha कभी ठीक एक तक नहीं पहुँच सकता, क्योंकि कुछ current हमेशा base में मुड़ जाती है।',
-        'alpha और beta एक ही device के दो नज़रिए हैं, इसलिए इन्हें जुड़ा होना ही चाहिए, और ये जुड़े हैं। आप इनके बीच दो formulas से बदल सकते हैं: beta = alpha / (1 - alpha) और alpha = beta / (beta + 1)। ये कहाँ से आते हैं यह हम synthesis वाले page पर हर step के साथ निकालेंगे। फ़िलहाल मुख्य behaviour पर ध्यान दीजिए: जैसे-जैसे alpha एक के और क़रीब रेंगता है, beta वाले formula का निचला हिस्सा (1 - alpha) बहुत छोटा हो जाता है, और इसलिए beta बहुत बड़े values तक उछल जाता है।',
+        'alpha और beta एक ही device के दो नज़रिए हैं, इसलिए इन्हें जुड़ा होना ही चाहिए, और ये जुड़े हैं। आप इनके बीच दो formulas से बदल सकते हैं: beta = alpha / (1 - alpha) और alpha = beta / (beta + 1)। ये कहाँ से आते हैं यह हम summary वाले page पर हर step के साथ निकालेंगे। फ़िलहाल मुख्य behaviour पर ध्यान दीजिए: जैसे-जैसे alpha एक के और क़रीब रेंगता है, beta वाले formula का निचला हिस्सा (1 - alpha) बहुत छोटा हो जाता है, और इसलिए beta बहुत बड़े values तक उछल जाता है।',
         'यही पूरे device की बात एक लाइन में है। ऊँचा beta मतलब एक हल्की-फुल्की base current एक भारी collector current को control कर रही है। base पर कुछ microamps अंदर, collector पर कुछ milliamps बाहर पैदा कर देते हैं। यही गुणा (multiplication) ही वह चीज़ है जिसे हम amplification कहते हैं।',
         'mall की तस्वीर में, beta एक सरल सवाल का जवाब देता है: बग़ल के corridor में मुड़ने वाले हर एक shopper के बदले, कितने shoppers पूरे रास्ते receiving hall तक पहुँचते हैं? अगर beta 100 है, तो corridor में एक shopper के बराबर सौ shoppers hall तक पहुँचते हैं।',
       ],
@@ -272,7 +272,7 @@ export const CONTENT: SubContent = {
     },
     {
       id: 'S10_Synthesis',
-      label: 'Synthesis: Why Amplification Is Inevitable',
+      label: 'Summary: Why Amplification Is Inevitable',
       kind: 'theory',
       subtitle: 'Geometry + biasing + charge conservation',
       theoryEN: [
@@ -294,7 +294,7 @@ export const CONTENT: SubContent = {
       transcriptHI:
         'थोड़ा पीछे हटिए तो पूरी बात inevitable हो जाती है। पहला, geometry: base इतना पतला और इतना lightly doped है कि injected carriers समय रहते recombine ही नहीं कर सकते - उन्हें आगे जाते रहना है। दूसरा, biasing: forward emitter-base junction carriers को अंदर बाढ़ की तरह भरता है, और reverse collector-base junction उन्हें collector में sweep कर देता है। तीसरा, maths: इसलिए beta = Ic/Ib। amplification कोई trick नहीं, geometry, biasing और charge का conservation है।',
       visualNote:
-        'A three-panel synthesis: thin-base geometry (Physical Constraint), a bottleneck funnel of carriers (Operational Biasing), and beta = Ic/Ib (Mathematical Inevitability), chained by arrows. Walk the KCL/alpha-beta proof here.',
+        'A three-panel summary: thin-base geometry (Physical Constraint), a bottleneck funnel of carriers (Operational Biasing), and beta = Ic/Ib (Mathematical Inevitability), chained by arrows. Walk the KCL/alpha-beta proof here.',
     },
     {
       id: 'S11_Flashcards',

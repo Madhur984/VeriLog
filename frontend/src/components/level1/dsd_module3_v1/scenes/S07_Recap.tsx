@@ -281,9 +281,9 @@ export const S07_Recap: React.FC<Props> = ({ isActive, isDarkMode }) => {
           </span>
         </div>
         <p className={`text-base ${subText} mb-6 max-w-3xl`}>
-          Digital logic design fuses the rigorous truth of mathematics with the practical
+          Digital logic design fuses the precise truth of mathematics with the practical
           constraints of physical engineering. By mastering the four-stage pipeline, you transform
-          raw binary requirements into elegant, unyielding hardware.
+          raw binary requirements into clean, reliable hardware.
         </p>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
           {[

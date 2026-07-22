@@ -936,7 +936,7 @@ export const S01_Forward: React.FC<Props> = ({ isActive, isDarkMode }) => {
         className="space-y-3"
       >
         <div className="flex items-center gap-2 font-mono text-[10px] tracking-[0.4em] uppercase text-rose-400">
-          <Target size={14} /> Drill Set 01 · Forward Synthesis
+          <Target size={14} /> Drill Set 01 · Forward Build
         </div>
         <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>
           Story → Circuit. Four products to design from scratch.

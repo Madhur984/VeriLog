@@ -27,7 +27,7 @@ export const S05_ArithmeticSynthesis: React.FC<Props> = ({ isActive, isDarkMode 
                 animate={isActive ? { opacity: 1 } : {}}
                 className={`font-mono text-[10px] tracking-[0.4em] uppercase ${subTextColor} block mb-4`}
             >
-                6. Arithmetic Synthesis -- Logic is Mathematics
+                6. Building Arithmetic -- Logic is Mathematics
             </motion.span>
             <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>The Adder Evolution</h2>
             <p className={`text-lg max-w-2xl mx-auto opacity-70 ${textColor}`}>
@@ -72,7 +72,7 @@ B (1) [ AND ] Carry (1)
                     <div className="px-3 py-1 rounded-full bg-sky-500 text-white font-mono text-[10px] font-black uppercase">Recursive</div>
                 </div>
                 <p className="text-sm opacity-70 mb-6 leading-relaxed">
-                    The fundamental building block. Adds two bits <strong>plus</strong> a carry-in from the previous bit.
+                    The basic building block. Adds two bits <strong>plus</strong> a carry-in from the previous bit.
                 </p>
                 <div className={`p-4 rounded-xl font-mono text-[10px] mb-6 ${isDarkMode ? 'bg-black/60 text-white' : 'bg-white border border-sky-100 shadow-sm'}`}>
 {`A   

@@ -173,7 +173,7 @@ export const S01_VideoLecture: React.FC<Props> = ({ isActive, isDarkMode }) => {
         <div className="flex items-center gap-2 font-mono text-[10px] tracking-[0.4em] uppercase text-amber-400">
           <PlayCircle size={14} /> Chapter 01 · Video Lecture
         </div>
-        <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>The Logic Labyrinth</h2>
+        <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>The Logic Maze</h2>
         <p className={`text-base max-w-3xl ${subText}`}>
           Madhur&apos;s full architectural walkthrough - pick your language above the player. The
           <strong> English</strong> track narrates the story end-to-end; the <strong>हिंदी</strong> track gives the same
@@ -330,7 +330,7 @@ export const S01_VideoLecture: React.FC<Props> = ({ isActive, isDarkMode }) => {
 
       <p className={`text-[10px] font-mono opacity-50 ${subText}`}>
         Two synchronised tracks. The English video is <em>The K-Map Puzzle</em>; the Hindi video is
-        <em> The Logic Labyrinth</em>. Switching language preserves your scrub position when possible.
+        <em> The Logic Maze</em>. Switching language preserves your scrub position when possible.
       </p>
     </div>
   );

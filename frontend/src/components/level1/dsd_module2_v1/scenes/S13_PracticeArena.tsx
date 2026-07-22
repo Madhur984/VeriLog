@@ -1136,7 +1136,7 @@ export const S13_PracticeArena: React.FC<Props> = ({ isActive, isDarkMode }) => 
         <Sparkles className="mx-auto text-amber-400 mb-3" size={20} />
         <div className="font-mono text-[10px] uppercase tracking-widest text-amber-400 mb-2">Module Complete</div>
         <p className={`text-base leading-relaxed ${textColor}`}>
-          You&apos;ve walked the entire labyrinth - gray-coded grid, power-of-two wings, the torus, the manifest, the
+          You&apos;ve walked the entire maze - gray-coded grid, power-of-two wings, the torus, the manifest, the
           four operations, the don&apos;t-care loophole, the masterclass and the boss drill.{' '}
           <strong className="text-amber-300">Madhur tips his hat.</strong>
         </p>

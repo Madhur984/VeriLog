@@ -150,7 +150,7 @@ export const S00_Intro: React.FC<{ time: number; isDarkMode: boolean }> = ({ tim
                 className="space-y-8"
             >
                 <h1 className={`text-[clamp(3.5rem,10vw,8rem)] font-black italic tracking-tighter leading-[0.8] ${textColor}`}>
-                  The <span className={accentColor}>Essence</span> <br/>of Flow
+                  What <span className={accentColor}>Flow</span> <br/>Really Is
                 </h1>
                 
                 <div className="space-y-6">

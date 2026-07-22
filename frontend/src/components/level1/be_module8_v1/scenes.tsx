@@ -611,7 +611,7 @@ const LoadingAndMatrix: React.FC<{ isDarkMode: boolean; accent: string }> = ({ i
       </Card>
       <Card isDarkMode={isDarkMode}>
         <div className="mb-3 font-mono text-[11px] uppercase tracking-[0.3em]" style={{ color: accent }}>
-          {lang === 'hi' ? 'synthesis matrix' : 'synthesis matrix'}
+          {lang === 'hi' ? 'summary table' : 'summary table'}
         </div>
         <div className="overflow-hidden rounded-xl border" style={{ borderColor: `${accent}33` }}>
           <div className="grid grid-cols-4 font-mono text-[11px] font-black" style={{ background: `${accent}1a`, color: accent }}>

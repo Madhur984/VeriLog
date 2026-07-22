@@ -9,6 +9,7 @@ import { MODULE_LABELS } from '../../../lib/moduleHistory';
 import { S00_Cover }        from './scenes/S00_Cover';
 import { S01_Analogy }      from './scenes/S01_Analogy';
 import { S02_Video }        from './scenes/S02_Video';
+import { S01b_Facts }       from './scenes/S01b_Facts';
 import { S03_Architecture } from './scenes/S03_Architecture';
 import { S04_Walkthrough }  from './scenes/S04_Walkthrough';
 import { S05_Timing }       from './scenes/S05_Timing';
@@ -28,6 +29,7 @@ const PAGES: Page[] = [
   { id: 'cover',        part: 'PART I · THE BRIEF',        label: 'The Serial Adder',     subtitle: 'Cover · trade time for space.',                     Component: S00_Cover },
   { id: 'analogy',      part: 'PART I · THE BRIEF',        label: 'The Highway of Logic', subtitle: 'Eight lanes vs one lane · the toll-booth map.',     Component: S01_Analogy },
   { id: 'video',        part: 'PART I · THE BRIEF',        label: 'Video · Serial Adders', subtitle: 'Watch · the single lane in motion.',               Component: S02_Video },
+  { id: 'facts',        part: 'PART I · THE BRIEF',        label: 'The Facts First',      subtitle: 'Plain-English basics · one adder, one flip-flop.',  Component: S01b_Facts },
   { id: 'architecture', part: 'PART II · THE MECHANISM',   label: 'The Datapath',         subtitle: 'One full adder, one flip-flop, a carry loop.',      Component: S03_Architecture },
   { id: 'walkthrough',  part: 'PART II · THE MECHANISM',   label: 'Live Serial Addition', subtitle: 'Step the clock · watch bits add one at a time.',    Component: S04_Walkthrough },
   { id: 'timing',       part: 'PART II · THE MECHANISM',   label: 'Time vs Space',        subtitle: 'N bits = N cycles · parallel vs serial.',           Component: S05_Timing },

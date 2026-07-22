@@ -26,7 +26,7 @@ interface Page {
 
 // 8 chapters · one tight pipeline from spec to silicon · F = A + BC
 const PAGES: Page[] = [
-  { id: 'cover',     step: 'Open',     label: 'From Truth to Hardware',      subtitle: 'A simple case study in circuit realisation.',     Component: S00_Cover },
+  { id: 'cover',     step: 'Open',     label: 'From Truth to Hardware',      subtitle: 'A simple case study in circuit building.',     Component: S00_Cover },
   { id: 'video',     step: 'Lecture',  label: 'Watch the pipeline',          subtitle: 'Visual walkthrough · 1 video · 4 stages.',         Component: S01_Video },
   { id: 'facts',     step: 'Basics',   label: 'The Facts First',             subtitle: 'The 5-step recipe in plain English + the example.', Component: S01b_Facts },
   { id: 'vault',     step: 'Step 1',   label: 'The Server Vault',            subtitle: 'Three inputs · one output F · the brief.',         Component: S02_Vault },
@@ -70,7 +70,7 @@ const Sidebar: React.FC<{
           <div>
             <h2 className={`text-sm font-black tracking-tight ${textColor}`}>Digital System Design</h2>
             <p className="text-[10px] uppercase font-mono tracking-widest font-bold transition-colors duration-500" style={{ color: theme.primary }}>
-              Module 03 · Circuit Realisation
+              Module 03 · Circuit Building
             </p>
           </div>
         </div>

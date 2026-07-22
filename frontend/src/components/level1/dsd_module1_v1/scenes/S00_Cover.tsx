@@ -36,7 +36,7 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
           transition={{ duration: 0.6 }}
           className={`text-5xl md:text-7xl font-black tracking-tight leading-[0.95] ${textColor}`}
         >
-          Demystifying Boolean<br />
+          Boolean Made Simple<br />
           <span className="bg-gradient-to-r from-sky-400 via-cyan-300 to-rose-400 bg-clip-text text-transparent">
             Canonical Forms
           </span>

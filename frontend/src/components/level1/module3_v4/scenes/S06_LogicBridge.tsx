@@ -72,7 +72,7 @@ export const S06_LogicBridge: React.FC<Props> = ({ isActive, isDarkMode, onEnter
                 >
                     <div className="flex items-center gap-4 text-sky-500">
                         <div className="w-1 h-10 bg-sky-500 rounded-full" />
-                        <h3 className="text-2xl font-black italic">The Grand Synthesis</h3>
+                        <h3 className="text-2xl font-black italic">Putting It All Together</h3>
                     </div>
                     <p className={`text-sm opacity-60 leading-relaxed ${textColor}`}>
                         A single logic gate is trivial. But billions of them, organized into <strong>Hierarchies</strong>, create the modern world. You have seen how a voltage threshold becomes a bit, how bits become numbers, and how numbers become calculations.

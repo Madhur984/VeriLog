@@ -104,7 +104,7 @@ const PROBLEMS: Problem[] = [
     ],
     correct: 0,
     explain:
-      'A full decoder produces one line per input combination (every minterm). To realise any function, simply OR together the decoder lines for the rows where the output should be 1. It is the sum-of-minterms form turned into hardware.',
+      'A full decoder produces one line per input combination (every minterm). To build any function, simply OR together the decoder lines for the rows where the output should be 1. It is the sum-of-minterms form turned into hardware.',
   },
 ];
 
@@ -113,7 +113,7 @@ const REFERENCE: ReferenceRow[] = [
   { term: 'Multiplexer', def: 'An N-to-1 selector with ceil(log2 N) select lines. Routes one chosen data input to the output. 2:1 MUX: Y = S̄·D0 + S·D1.' },
   { term: 'Decoder', def: 'An n-to-2^n circuit that drives exactly one output high (one-hot) for each input code. Expands a compact code into select lines.' },
   { term: 'Priority encoder', def: 'Collapses a one-hot or many-hot input into the binary index of the highest-priority active line, breaking ties by rank.' },
-  { term: 'Minterm realisation', def: 'A decoder emits every minterm as a one-hot line; ORing the lines where the function is 1 realises any Boolean function.' },
+  { term: 'Minterm realisation', def: 'A decoder emits every minterm as a one-hot line; ORing the lines where the function is 1 builds any Boolean function.' },
 ];
 
 export const S02_Combinational: React.FC<Props> = ({ isDarkMode }) => (

@@ -75,7 +75,7 @@ const PAGES: Page[] = [
   {
     id: 'module-thinking', part: 'PART II · WRITING VERILOG', partNum: 2,
     label: 'Module Thinking',
-    subtitle: 'Encapsulation: black-box interfaces, internal logic.',
+    subtitle: 'Bundling (hiding the details): black-box interfaces, internal logic.',
     accentHex: '#10b981',
     Component: SceneModuleThinking,
   },

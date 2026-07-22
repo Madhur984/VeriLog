@@ -277,7 +277,7 @@ export const CONTENT: SubContent = {
     },
     {
       id: 'S11_Synthesis',
-      label: 'Synthesis: Fixed-Bias vs Voltage-Divider Bias',
+      label: 'Summary: Fixed-Bias vs Voltage-Divider Bias',
       kind: 'theory',
       subtitle: 'One hand vs a bolted pivot - which holds the vibe?',
       theoryEN: [

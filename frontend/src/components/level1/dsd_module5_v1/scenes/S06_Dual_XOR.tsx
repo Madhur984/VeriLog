@@ -25,7 +25,7 @@ export const S06_Dual_XOR: React.FC<SceneProps> = ({ isActive, isDarkMode, mode 
   const builds = mode === 'nand'
     ? [
         { title: 'NOR · Level 3', count: 4, eq: 'Y = (A + B)′', note: 'Build OR (3 NANDs), then push it through a tied-NAND inverter. Total: 4 NANDs.' },
-        { title: 'XOR · Level 4', count: 4, eq: 'Y = A·B′ + A′·B', note: 'The "cross-weave" - an elegant 4-NAND symmetry. No separate NOT gates needed for the inputs.' },
+        { title: 'XOR · Level 4', count: 4, eq: 'Y = A·B′ + A′·B', note: 'The "cross-weave" - a clean 4-NAND symmetry. No separate NOT gates needed for the inputs.' },
         { title: 'XNOR · Level 4', count: 5, eq: 'Y = (A ⊕ B)′', note: 'XOR followed by one more tied-NAND inverter. Outputs 1 only when A and B are equal.' },
       ]
     : [
@@ -152,7 +152,7 @@ export const S06_Dual_XOR: React.FC<SceneProps> = ({ isActive, isDarkMode, mode 
         </h2>
         <p className={`text-base max-w-3xl ${subText}`}>
           {mode === 'nand'
-            ? 'Once we own AND and OR, the rest is bookkeeping. NOR = OR + NOT (4 NANDs). XOR has its own elegant cross-weave shape. XNOR is XOR + one final inverter.'
+            ? 'Once we own AND and OR, the rest is bookkeeping. NOR = OR + NOT (4 NANDs). XOR has its own neat cross-weave shape. XNOR is XOR + one final inverter.'
             : 'Once we own AND and OR, the rest is bookkeeping. NAND = AND + NOT (4 NORs). XNOR is the natural symmetric construction. XOR is XNOR + one final inverter.'}
         </p>
       </section>

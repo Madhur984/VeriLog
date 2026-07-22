@@ -54,8 +54,8 @@ const PAGES: Page[] = [
     Component: P4_SystemConversion,
   },
   {
-    id: 'mastery', part: 'PHASE V · THE FORGE', partNum: 5,
-    label: 'Engineering Forge',
+    id: 'mastery', part: 'PHASE V · THE WORKSHOP', partNum: 5,
+    label: 'Engineering Workshop',
     subtitle: 'Ultimate Mastery Audit: Configure the perfect capture.',
     accentHex: '#0369a1',
     Component: P5_MasterLab,

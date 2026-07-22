@@ -343,7 +343,7 @@ export const S02_Video: React.FC<Props> = ({ isActive = true, isDarkMode }) => {
           </div>
           <p className={`text-sm ${subText}`}>
             Seven slides - interface, both formulas, the half-vs-full comparison, and the
-            modular synthesis. The exact material this module is built from, good for revision.
+            modular build. The exact material this module is built from, good for revision.
           </p>
         </div>
         <a

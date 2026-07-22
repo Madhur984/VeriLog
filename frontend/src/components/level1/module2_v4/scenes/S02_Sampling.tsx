@@ -327,7 +327,7 @@ export const S02_Sampling: React.FC<{ time: number; isDarkMode: boolean }> = ({ 
                       <div className={`mt-20 p-10 rounded-[2.5rem] italic leading-relaxed text-[1rem] ${isDarkMode ? 'bg-orange-500/5 text-white/40' : 'bg-orange-50 text-gray-600'}`}>
                           <p>
                             To reconstruct x(t), we must recover X(ω) from Y(ω). This is possible only when there is **no overlapping** 
-                            between the cycles of Y(ω)-the fundamental condition of the Nyquist-Shannon Theorem.
+                            between the cycles of Y(ω)-the basic condition of the Nyquist-Shannon Theorem.
                           </p>
                       </div>
                   </div>

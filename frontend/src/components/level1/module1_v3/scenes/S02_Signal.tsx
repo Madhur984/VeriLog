@@ -61,7 +61,7 @@ export const S02_Signal: React.FC = () => {
                     <tr className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
                         <td className="p-4 border-r border-white/5 font-bold text-white/30 tracking-widest uppercase">Interference</td>
                         <td className="p-4 text-v3-cyan/80">Additive Noise (Irreversible)</td>
-                        <td className="p-4 italic">Error Correction (Robust)</td>
+                        <td className="p-4 italic">Error Correction (Reliable)</td>
                     </tr>
                 </tbody>
             </table>

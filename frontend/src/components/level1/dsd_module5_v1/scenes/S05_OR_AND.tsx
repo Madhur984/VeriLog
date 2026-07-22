@@ -181,7 +181,7 @@ export const S05_OR_AND: React.FC<SceneProps> = ({ isActive, isDarkMode, mode })
         className={`p-8 rounded-3xl border ${cardBg}`}
       >
         <div className="font-mono text-[10px] uppercase tracking-widest mb-3" style={{ color: accent }}>
-          {hardName} = {mode === 'nand' ? '(A + B)' : '(A · B)'} · built with {hardCount} {mode.toUpperCase()}s · De Morgan synthesis
+          {hardName} = {mode === 'nand' ? '(A + B)' : '(A · B)'} · built with {hardCount} {mode.toUpperCase()}s · De Morgan build
         </div>
         <svg viewBox="0 0 720 280" className="w-full h-auto">
           {/* Layout:
@@ -345,7 +345,7 @@ export const S05_OR_AND: React.FC<SceneProps> = ({ isActive, isDarkMode, mode })
         className={`p-8 rounded-3xl border ${cardBg}`}
       >
         <div className="font-mono text-[10px] uppercase tracking-widest mb-3" style={{ color: accent }}>
-          Theory · De Morgan synthesis
+          Theory · De Morgan build
         </div>
         <h3 className={`text-2xl font-black ${textColor} mb-4`}>
           Invert each input, then combine.

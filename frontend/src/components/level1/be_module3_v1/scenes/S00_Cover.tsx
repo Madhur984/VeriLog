@@ -19,7 +19,7 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
       >
         <img loading="lazy" decoding="async"
           src="/images/commuter/p01.webp"
-          alt="The Commuter Circuit - P-N junction demystified"
+          alt="The Commuter Circuit - P-N junction explained simply"
           className="absolute inset-0 w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#020812] via-transparent to-transparent opacity-80" />

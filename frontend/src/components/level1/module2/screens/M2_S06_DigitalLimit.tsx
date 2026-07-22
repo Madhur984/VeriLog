@@ -77,7 +77,7 @@ export const M2_S06_DigitalLimit: React.FC<M2ScreenProps> = ({ triggerHaptic, up
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
           style={{ padding: '12px 16px', border: `1px solid ${T.error}30`, borderRadius: 2, background: `${T.error}06` }}>
           <p style={{ fontFamily: T.mono, fontSize: 10, color: T.error, margin: 0 }}>
-            {bits === 1 ? '⚠ 1-bit: only HIGH or LOW. All nuance is gone.' : '⚠ 2-bit: only 4 levels. Severe aliasing distortion.'}
+            {bits === 1 ? '⚠ 1-bit: only HIGH or LOW. All detail is gone.' : '⚠ 2-bit: only 4 levels. Severe aliasing distortion.'}
           </p>
         </motion.div>
       )}

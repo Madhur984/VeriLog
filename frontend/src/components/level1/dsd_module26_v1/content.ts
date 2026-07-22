@@ -78,7 +78,7 @@ export const CONTENT = ({
       kind: 'theory',
       subtitle: 'A functionally complete gate can build every Boolean function with no other gate type.',
       theoryEN: [
-        "A gate is called UNIVERSAL, or functionally complete, when copies of just that one gate, wired together, can realize ANY Boolean function with no other gate type needed at all. This is the campsite test for our Swiss Army knife: if the knife alone can handle every job, you can leave every other tool at home.",
+        "A gate is called UNIVERSAL, or functionally complete, when copies of just that one gate, wired together, can build ANY Boolean function with no other gate type needed at all. This is the campsite test for our Swiss Army knife: if the knife alone can handle every job, you can leave every other tool at home.",
         "The two classic universal gates are NAND and NOR. NAND computes NAND(A,B) = (A.B)', meaning 'AND then invert', and NOR computes NOR(A,B) = (A+B)', meaning 'OR then invert'. Each one, all by itself, is enough to build NOT, AND, OR, XOR and everything beyond, which is what makes it universal.",
         "The reason a single universal gate matters so much is manufacturing. A chip fabrication plant would rather stamp out ONE repeated transistor pattern millions of times than juggle a dozen different gate designs. Building everything from one cell drastically simplifies the process, lowers the total transistor count and shrinks the standard-cell library the designer has to verify.",
         "There is a bonus in CMOS, the silicon technology behind almost every chip. NAND and NOR are naturally inverting gates, so they fall out of CMOS with the fewest transistors. A plain AND or OR is actually a NAND or NOR followed by an extra inverter, so the universal gates are literally cheaper in silicon than the gates they replace.",
@@ -130,14 +130,14 @@ export const CONTENT = ({
       kind: 'theory',
       subtitle: "Draw the wires: OR = NAND(A',B') with two inverters - DeMorgan in silicon.",
       theoryEN: [
-        "Folding the knife out is one thing; drawing the actual wires is another, and a hardware engineer must be able to do both. On this page we draw the gate-level realization of the OR-from-NAND construction, because it is the richest of the three - it shows DeMorgan turning AND-logic into OR-logic right on the schematic.",
+        "Folding the knife out is one thing; drawing the actual wires is another, and a hardware engineer must be able to do both. On this page we draw the gate-level build of the OR-from-NAND construction, because it is the richest of the three - it shows DeMorgan turning AND-logic into OR-logic right on the schematic.",
         "Recall the identity we are building: OR(A,B) = (A'.B')'. Read it from the inside out. First invert A to get A' and invert B to get B'. Then AND those two inverted signals and invert the result. That final 'AND then invert' is exactly one NAND, and the two inversions in front are two more NANDs with their inputs shorted - three NANDs in total.",
         "The picture below shows it computing live. Two NAND-inverters produce ia = A' and ib = B'. Those feed a third NAND whose output is Y = (A'.B')' = A + B. Because each input arrives already inverted, this third gate is often drawn as a NAND with two little bubbles on its input wires, which is the standard 'bubbled-input NAND = OR' symbol you will see on real schematics.",
         "It pays to read the same construction through DeMorgan, because that is the law making it work: (A'.B')' = A + B says that inverting the inputs flips an AND into an OR. So a NAND, which is an AND with an output bubble, becomes an OR the moment you also bubble its inputs. The bubbles 'slide' from output to inputs and the gate changes personality.",
         "Toggle A and B in the live gates below and watch the chain compute. When either input is 1, its inverter drops to 0, the final NAND sees at least one 0 on its inputs, and its output goes high - exactly OR behaviour. This is the gate-level proof that the Swiss-army claim is real silicon, not just algebra."
       ],
       theoryHI: [
-        "knife को खोलना एक बात है; असली wires बनाना दूसरी, और एक hardware engineer को दोनों आने चाहिए। इस page पर हम OR-from-NAND construction की gate-level realization बनाते हैं, क्योंकि यह तीनों में सबसे समृद्ध है - यह DeMorgan को AND-logic से OR-logic में बदलते हुए ठीक schematic पर दिखाता है।",
+        "knife को खोलना एक बात है; असली wires बनाना दूसरी, और एक hardware engineer को दोनों आने चाहिए। इस page पर हम OR-from-NAND construction का gate-level circuit बनाते हैं, क्योंकि यह तीनों में सबसे समृद्ध है - यह DeMorgan को AND-logic से OR-logic में बदलते हुए ठीक schematic पर दिखाता है।",
         "जो identity हम बना रहे हैं उसे याद कीजिए: OR(A,B) = (A'.B')'। इसे अंदर से बाहर पढ़िए। पहले A को invert करके A' पाइए और B को invert करके B' पाइए। फिर उन दो inverted signals को AND कीजिए और नतीजे को invert कीजिए। वह आख़िरी 'AND फिर invert' ठीक एक NAND है, और आगे की दो inversions दो और NANDs हैं जिनके inputs जुड़े हैं - कुल तीन NANDs।",
         "नीचे की तस्वीर इसे live गिनते दिखाती है। दो NAND-inverters बनाते हैं ia = A' और ib = B'। वे एक तीसरे NAND को feed करते हैं जिसका output है Y = (A'.B')' = A + B। चूँकि हर input पहले से inverted आता है, यह तीसरा gate अक्सर एक NAND के रूप में बनाया जाता है जिसके input wires पर दो छोटे bubbles हों, जो standard 'bubbled-input NAND = OR' चिह्न है जिसे आप असली schematics पर देखेंगे।",
         "उसी construction को DeMorgan से पढ़ना फ़ायदेमंद है, क्योंकि वही नियम इसे काम करवाता है: (A'.B')' = A + B कहता है कि inputs को invert करना एक AND को OR में पलट देता है। तो एक NAND, जो output bubble वाला AND है, OR बन जाता है जैसे ही आप उसके inputs को भी bubble कर दें। bubbles output से inputs की ओर 'सरक' जाते हैं और gate का स्वभाव बदल जाता है।",
@@ -185,7 +185,7 @@ export const CONTENT = ({
         "Now the second hero, and the second analogy. Shannon's expansion theorem (first written by Boole in 1854, often credited to Shannon) takes ANY Boolean function of N variables, isolates just ONE variable x, and exposes a hidden IF-THEN-ELSE structure that was inside the function all along. That structure is our traffic intersection.",
         "Read the theorem as a decision at a fork in the road: IF x = 0 THEN evaluate F with x set to 0, ELSE (x = 1) evaluate F with x set to 1. The traffic light is the single variable x; the two roads waiting beyond the fork are the two simplified versions of the function.",
         "In standard sum-of-products form the theorem is F = x'.F0 + x.F1. Here F0 is 'F with x forced to 0' and F1 is 'F with x forced to 1'. When x = 0 the x' term switches on and routes you to F0; when x = 1 the x term switches on and routes you to F1. The algebra is doing exactly what the intersection does.",
-        "F0 and F1 have a name: they are the COFACTORS of F with respect to x. The crucial point is that each cofactor is a function of the REMAINING variables only - x has been removed from it, because we already decided x's value at the fork. The two roads are simpler than the junction you came from.",
+        "F0 and F1 have a name: they are the COFACTORS of F with respect to x. The key point is that each cofactor is a function of the REMAINING variables only - x has been removed from it, because we already decided x's value at the fork. The two roads are simpler than the junction you came from.",
         "There is also a dual, product-of-sums form: F = (x' + F1).(x + F0). It describes the very same decomposition from the OR-of-ANDs side instead of the AND-of-ORs side, and it is handy when you would rather build the circuit out of OR gates. Both forms reconstruct the original function exactly - we will prove that on the next page."
       ],
       theoryHI: [
@@ -413,7 +413,7 @@ export const CONTENT = ({
         'They only work inside multiplexers'
       ],
       answerIndex: 1,
-      explainEN: 'Universal = functionally complete: a NAND-only (or NOR-only) net realizes every Boolean function, with no other gate type needed.',
+      explainEN: 'Universal = functionally complete: a NAND-only (or NOR-only) net builds every Boolean function, with no other gate type needed.',
       explainHI: 'Universal = functionally complete: एक NAND-only (या NOR-only) net हर Boolean function बनाता है, बिना किसी दूसरे gate type के।'
     },
     {

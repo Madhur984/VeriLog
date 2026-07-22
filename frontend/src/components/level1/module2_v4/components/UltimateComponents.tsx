@@ -475,7 +475,7 @@ export const CircuitBench: React.FC<{
 
         <div className="p-8 rounded-[3rem] bg-white/[0.02] border border-white/5">
             <p className="text-[11px] font-medium italic text-white/30 leading-loose">
-                "Analog is reality. It is the unbroken flow of energy before the first threshold is crossed. Measurements are Continuous-Time and Continuous-Amplitude, preserving infinite nuance."
+                "Analog is reality. It is the unbroken flow of energy before the first threshold is crossed. Measurements are Continuous-Time and Continuous-Amplitude, preserving infinite detail."
             </p>
         </div>
 
@@ -686,7 +686,7 @@ export const InteractiveQuiz: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode 
                     <CheckCircle2 className="text-green-500" size={40} />
                 </div>
                 <div className="space-y-4">
-                    <h3 className={`text-4xl font-black italic tracking-tighter ${textColor}`}>Mastery Attained</h3>
+                    <h3 className={`text-4xl font-black italic tracking-tighter ${textColor}`}>You Did It</h3>
                     <p className="text-slate-500 dark:text-white/40 text-lg font-medium italic">
                         You have successfully navigated the Digital Bridge. All core concepts are synchronized.
                     </p>

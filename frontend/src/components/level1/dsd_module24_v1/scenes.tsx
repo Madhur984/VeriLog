@@ -289,8 +289,8 @@ const DerivationWalkthrough: React.FC<{ isDarkMode: boolean; accent: string }> =
             hi={<>Shannon: कोई भी F = x'.F0 + x.F1, जहाँ F0 = F|x=0 और F1 = F|x=1। A0 को सबसे ऊँचे variable D3 के बारे में expand कीजिए। D3 = 1 पर हर 1xxx row में A0 = 1, तो F1 = 1। D3 = 0 पर यह नीचे वाली sub-encoder में सिमट जाती है, F0 = D1.D2'।</>} />
           <Eq>A0 = D3'.(D1.D2') + D3.1 = D3 + D1.D2'</Eq>
           <P
-            en={<>Identical to the don't-care result - so the priority structure is literally a nested Shannon cofactor, a 2:1 select on D3. The same Y = S'.I0 + S.I1 rule that synthesizes a 2:1 MUX.</>}
-            hi={<>don't-care नतीजे जैसा ही - तो priority structure सचमुच एक nested Shannon cofactor है, D3 पर एक 2:1 select। वही Y = S'.I0 + S.I1 नियम जो एक 2:1 MUX synthesize करता है।</>} />
+            en={<>Identical to the don't-care result - so the priority structure is literally a nested Shannon cofactor, a 2:1 select on D3. The same Y = S'.I0 + S.I1 rule that builds a 2:1 MUX.</>}
+            hi={<>don't-care नतीजे जैसा ही - तो priority structure सचमुच एक nested Shannon cofactor है, D3 पर एक 2:1 select। वही Y = S'.I0 + S.I1 नियम जो एक 2:1 MUX बनाता है।</>} />
         </div>
       ),
     },
@@ -303,8 +303,8 @@ const DerivationWalkthrough: React.FC<{ isDarkMode: boolean; accent: string }> =
             hi={<>NAND(a,b) = (a.b)' functionally complete है। NOT: दोनों inputs जोड़िए, NAND(a,a) = a' (1 gate)। AND: NAND(NAND(a,b), NAND(a,b)) (2 gates)। OR: De Morgan से, a + b = (a'.b')', तो OR = NAND(NAND(a,a), NAND(b,b)) (3 gates)।</>} />
           <Eq>NOT=1 · AND=2 · OR=3 NAND gates</Eq>
           <P
-            en={<>So A1 = D3 + D2 is 3 NANDs; A0 = D3 + D1.D2' needs an inverter + AND + OR; V is an OR tree. The whole priority encoder is fully NAND-realizable - exactly how CMOS standard cells build it.</>}
-            hi={<>तो A1 = D3 + D2 3 NANDs है; A0 = D3 + D1.D2' को एक inverter + AND + OR चाहिए; V एक OR tree है। पूरी priority encoder पूरी तरह NAND-realizable है - ठीक वैसे जैसे CMOS standard cells इसे बनाते हैं।</>} />
+            en={<>So A1 = D3 + D2 is 3 NANDs; A0 = D3 + D1.D2' needs an inverter + AND + OR; V is an OR tree. The whole priority encoder can be built purely from NANDs - exactly how CMOS standard cells build it.</>}
+            hi={<>तो A1 = D3 + D2 3 NANDs है; A0 = D3 + D1.D2' को एक inverter + AND + OR चाहिए; V एक OR tree है। पूरी priority encoder पूरी तरह सिर्फ़ NANDs से बन सकती है - ठीक वैसे जैसे CMOS standard cells इसे बनाते हैं।</>} />
         </div>
       ),
     },

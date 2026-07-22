@@ -14,7 +14,7 @@ export const M2_S03_Naming: React.FC<M2ScreenProps> = ({ triggerHaptic }) => {
           Where do they hide?
         </h2>
         <p className="font-mono text-xs text-[#8A8A99] tracking-widest">
-          Explore how these signals manifest in your everyday existence.
+          Explore how these signals show up in your everyday existence.
         </p>
       </div>
 

@@ -57,13 +57,13 @@ export const S07_Architecture: React.FC<Props> = ({ isDarkMode }) => {
       {/* header */}
       <section className="space-y-3">
         <div className="flex items-center gap-2 font-mono text-[10px] tracking-[0.4em] uppercase text-emerald-400">
-          <Blocks size={14} /> Chapter 08 · System Synthesis
+          <Blocks size={14} /> Chapter 08 · System Building
         </div>
         <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>
           Two halves make a whole.
         </h2>
         <p className={`text-base max-w-3xl ${subText}`}>
-          A complete full adder is elegantly constructed by cascading discrete operational
+          A complete full adder is neatly built by cascading discrete operational
           blocks you already own: <strong style={{ color: CYAN }}>Half Adder 1</strong> computes
           the partial sum and partial carry of A and B,{' '}
           <strong style={{ color: AMBER }}>Half Adder 2</strong> integrates Cin with the partial

@@ -149,7 +149,7 @@ export const S10_FinalBlueprint: React.FC<Props> = ({ isActive, isDarkMode }) =>
           Y = B′D′ + CD′ + A′B′C′ + ABC′D
         </div>
         <div className={`text-sm mt-4 max-w-2xl mx-auto ${subText}`}>
-          Eight minterms, four wings, one elegant blueprint. The K-Map turned a brittle algebraic grind into a
+          Eight minterms, four wings, one clean blueprint. The K-Map turned an error-prone algebraic grind into a
           <strong> visual hunt</strong> for the largest legal rectangles.
         </div>
       </motion.div>

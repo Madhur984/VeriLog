@@ -201,7 +201,7 @@ export const S10_Conclusion: React.FC<Props> = ({ isActive, isDarkMode }) => {
             { term: 'ΠM  (Pi-M)',       color: '#f59e0b', def: 'Shorthand: list the row indices where F = 0.' },
             { term: 'Complement (X′)',  color: '#a78bfa', def: "The opposite Boolean value. 1 becomes 0, 0 becomes 1. Also written X̄ or NOT X." },
             { term: "DeMorgan's Theorem",color: '#e879f9',def: '(X + Y)′ = X′ · Y′ and (X · Y)′ = X′ + Y′. Bridges SOP and POS.' },
-            { term: 'Two-level circuit', color: '#22d3ee',def: 'Any signal traverses at most two gates from input to output. Both canonical forms are two-level.' },
+            { term: 'Two-level circuit', color: '#22d3ee',def: 'Any signal passes through at most two gates from input to output. Both canonical forms are two-level.' },
             { term: 'Truth Table',      color: '#0ea5e9', def: 'Tabular enumeration of every input combination paired with the function output.' },
             { term: 'Karnaugh Map',     color: '#ec4899', def: 'Re-arrangement of the truth table into a 2D grid where adjacent cells differ in one variable. Foundation of the next module.' },
           ].map(g => (

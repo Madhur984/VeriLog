@@ -9,6 +9,7 @@ import { MODULE_LABELS } from '../../../lib/moduleHistory';
 import { S00_Cover }    from './scenes/S00_Cover';
 import { S01_Analogy }  from './scenes/S01_Analogy';
 import { S02_Video }    from './scenes/S02_Video';
+import { S01b_Facts }   from './scenes/S01b_Facts';
 import { S03_GP }       from './scenes/S03_GP';
 import { S04_Carries }  from './scenes/S04_Carries';
 import { S05_Compare }  from './scenes/S05_Compare';
@@ -22,6 +23,7 @@ const PAGES: Page[] = [
   { id: 'cover',    part: 'PART I · THE BRIEF',      label: 'Carry Look-Ahead',     subtitle: "Cover · don't wait for the carry, predict it.",    Component: S00_Cover },
   { id: 'analogy',  part: 'PART I · THE BRIEF',      label: 'The Master Chef',      subtitle: 'The waiter vs the chef · Generate & Propagate.',   Component: S01_Analogy },
   { id: 'video',    part: 'PART I · THE BRIEF',      label: 'Video · Look-Ahead',   subtitle: 'Watch · the end of the ripple delay.',             Component: S02_Video },
+  { id: 'facts',    part: 'PART I · THE BRIEF',      label: 'The Facts First',      subtitle: 'Plain-English basics · Generate, Propagate & speed.', Component: S01b_Facts },
   { id: 'gp',       part: 'PART II · THE MECHANISM', label: 'Generate & Propagate', subtitle: 'G = A·B, P = A⊕B · read off each column.',         Component: S03_GP },
   { id: 'carries',  part: 'PART II · THE MECHANISM', label: 'Predicting Every Carry', subtitle: 'The parallel carry equations, evaluated live.',   Component: S04_Carries },
   { id: 'compare',  part: 'PART II · THE MECHANISM', label: 'Speed vs Cost',        subtitle: '11 vs 32 delays · a faster, bigger kitchen.',       Component: S05_Compare },

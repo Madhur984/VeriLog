@@ -18,7 +18,7 @@ const captionFor = (r: typeof ROWS[number]) => {
   if (issues.length === 0) return 'Sunny, calm, bug-free';
   if (issues.length === 1) return `Just ${issues[0].toLowerCase()}`;
   if (issues.length === 2) return `${issues[0]} + ${issues[1]} = Ruin`;
-  return 'Apocalypse';
+  return 'Total disaster';
 };
 
 export const S03_Multiverse: React.FC<Props> = ({ isActive, isDarkMode }) => {

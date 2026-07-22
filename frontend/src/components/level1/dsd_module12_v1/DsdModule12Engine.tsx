@@ -9,6 +9,7 @@ import { MODULE_LABELS } from '../../../lib/moduleHistory';
 import { S00_Cover }      from './scenes/S00_Cover';
 import { S01_Concept }    from './scenes/S01_Concept';
 import { S02_Video }      from './scenes/S02_Video';
+import { S01b_Facts }     from './scenes/S01b_Facts';
 import { S03_BlackCell }  from './scenes/S03_BlackCell';
 import { S04_Tree }       from './scenes/S04_Tree';
 import { S05_Topologies } from './scenes/S05_Topologies';
@@ -22,6 +23,7 @@ const PAGES: Page[] = [
   { id: 'cover',      part: 'PART I · THE BRIEF',      label: 'Parallel Prefix Adder', subtitle: 'Cover · compute carries in a tree.',                Component: S00_Cover },
   { id: 'concept',    part: 'PART I · THE BRIEF',      label: 'The Tournament of Carries', subtitle: 'Run a bracket · block Generate & Propagate.',     Component: S01_Concept },
   { id: 'video',      part: 'PART I · THE BRIEF',      label: 'Video · Parallel Prefix', subtitle: 'Watch · logarithmic carry computation.',           Component: S02_Video },
+  { id: 'facts',      part: 'PART I · THE BRIEF',      label: 'The Facts First',       subtitle: 'Plain-English basics · the carry tree & topologies.', Component: S01b_Facts },
   { id: 'blackcell',  part: 'PART II · THE MECHANISM', label: 'The Black Cell',        subtitle: 'One repeated cell merges two blocks.',              Component: S03_BlackCell },
   { id: 'tree',       part: 'PART II · THE MECHANISM', label: 'The Prefix Network',    subtitle: 'Step the tree · span doubles each level.',          Component: S04_Tree },
   { id: 'topologies', part: 'PART II · THE MECHANISM', label: 'Phases & Topologies',   subtitle: 'Kogge-Stone, Brent-Kung, Ladner-Fischer.',          Component: S05_Topologies },

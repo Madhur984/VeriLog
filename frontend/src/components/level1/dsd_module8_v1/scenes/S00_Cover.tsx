@@ -101,7 +101,7 @@ export const S00_Cover: React.FC<Props> = ({ isDarkMode }) => {
         </div>
         <p className={`mt-4 text-sm text-center max-w-2xl mx-auto ${subText}`}>
           First the interface - what goes in, what comes out. Then the two formulas that govern
-          it, all eight truth-table rows, and the elegant trick of building it from two half
+          it, all eight truth-table rows, and the neat trick of building it from two half
           adders. Finally:
           <Hammer size={13} className="inline mx-1 -mt-0.5" style={{ color: VIOLET }} />
           you wire a <strong style={{ color: VIOLET }}>real full adder</strong> in the live circuit

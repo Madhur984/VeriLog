@@ -63,7 +63,7 @@ export const S04_WaveParameters: React.FC<{ isDarkMode: boolean }> = ({ isDarkMo
         <InsightPanel 
           isDark={isDarkMode}
           title="The Natural Oscillator"
-          content="The Sine wave isn't just math; it represents pure circular motion. In electronics, oscillators use this fundamental physics to generate steady timing pulses and carrier waves for communication."
+          content="The Sine wave isn't just math; it represents pure circular motion. In electronics, oscillators use this basic physics to generate steady timing pulses and carrier waves for communication."
           career="RF Engineer // Analog Designer"
         />
       </section>

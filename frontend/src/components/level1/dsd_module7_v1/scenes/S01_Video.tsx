@@ -102,7 +102,7 @@ export const S01_Video: React.FC<Props> = ({ isActive = true, isDarkMode }) => {
         <div className="flex items-center gap-2 font-mono text-[10px] tracking-[0.4em] uppercase text-cyan-400">
           <PlayCircle size={14} /> Chapter 03 · Video Lecture
         </div>
-        <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>Demystifying Half Adders</h2>
+        <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>Half Adders Made Simple</h2>
         <p className={`text-base max-w-3xl ${subText}`}>
           Two minutes, one question: how does a microchip actually do math? The video walks the
           whole arc - definition, truth table, gates, and the one missing wire. Use the chapter

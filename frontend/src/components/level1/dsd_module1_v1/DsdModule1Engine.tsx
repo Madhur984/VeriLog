@@ -31,9 +31,9 @@ interface Page {
 }
 
 const PAGES: Page[] = [
-  { id: 'cover',    part: 'PART I · OVERTURE',         label: 'The Architecture of a Decision', subtitle: 'Cover · meet the optimist & pessimist.',          Component: S00_Cover },
-  { id: 'video',    part: 'PART I · OVERTURE',         label: "Ben's Boolean Picnic",            subtitle: 'Illustrated lecture · video + transcript.',       Component: S01_VideoLecture },
-  { id: 'facts',    part: 'PART I · OVERTURE',         label: 'The Facts First',                 subtitle: 'Plain-English basics · SOP, POS & a worked example.', Component: S01b_Facts },
+  { id: 'cover',    part: 'PART I · INTRODUCTION',         label: 'The Architecture of a Decision', subtitle: 'Cover · meet the optimist & pessimist.',          Component: S00_Cover },
+  { id: 'video',    part: 'PART I · INTRODUCTION',         label: "Ben's Boolean Picnic",            subtitle: 'Illustrated lecture · video + transcript.',       Component: S01_VideoLecture },
+  { id: 'facts',    part: 'PART I · INTRODUCTION',         label: 'The Facts First',                 subtitle: 'Plain-English basics · SOP, POS & a worked example.', Component: S01b_Facts },
   { id: 'physics',  part: 'PART II · THE STORY',       label: 'Physics of a Perfect Picnic',     subtitle: 'Three variables · the rule of the day.',          Component: S02_PicnicPhysics },
   { id: 'multi',    part: 'PART II · THE STORY',       label: 'The 8-Day Multiverse',            subtitle: 'Truth table · all eight parallel mornings.',      Component: S03_Multiverse },
   { id: 'minterm',  part: 'PART III · OPTIMIST · SOP', label: 'Path of Joy · Minterm Anatomy',   subtitle: 'Snapshot one happy universe at a time.',          Component: S04_PathOfJoy },

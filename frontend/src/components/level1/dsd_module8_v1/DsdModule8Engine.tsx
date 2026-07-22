@@ -26,14 +26,14 @@ interface Page {
 }
 
 const PAGES: Page[] = [
-  { id: 'cover',        part: 'PART I · THE INTERFACE',    label: 'The Full Adder',               subtitle: 'Cover · logic, architecture and synthesis.',          Component: S00_Cover },
+  { id: 'cover',        part: 'PART I · THE INTERFACE',    label: 'The Full Adder',               subtitle: 'Cover · logic, architecture and building.',          Component: S00_Cover },
   { id: 'interface',    part: 'PART I · THE INTERFACE',    label: 'The Functional Interface',     subtitle: '3 inputs, 2 outputs - the complete contract.',        Component: S01_Interface },
   { id: 'video',        part: 'PART I · THE INTERFACE',    label: 'Video - The Full Adder',       subtitle: 'Watch · the missing wire gets connected.',            Component: S02_Video },
   { id: 'sum',          part: 'PART II · THE LOGIC',       label: 'The Sum: Triple XOR',          subtitle: 'S = A ⊕ B ⊕ Cin · odd ones light it.',                Component: S03_Sum },
   { id: 'carry',        part: 'PART II · THE LOGIC',       label: 'The Carry: Majority Vote',     subtitle: 'Cout = AB + ACin + BCin · any two fire it.',          Component: S04_Carry },
   { id: 'truth',        part: 'PART II · THE LOGIC',       label: 'The Eight Rows',               subtitle: 'Every case of A + B + Cin, proven live.',             Component: S05_TruthTable },
   { id: 'evolution',    part: 'PART III · THE ARCHITECTURE', label: 'Half vs Full',               subtitle: 'Why the half adder had to grow a third wire.',        Component: S06_Evolution },
-  { id: 'architecture', part: 'PART III · THE ARCHITECTURE', label: 'Two Halves Make a Whole',    subtitle: 'HA1 + HA2 + OR · the modular synthesis.',             Component: S07_Architecture },
+  { id: 'architecture', part: 'PART III · THE ARCHITECTURE', label: 'Two Halves Make a Whole',    subtitle: 'HA1 + HA2 + OR · the modular build.',             Component: S07_Architecture },
   { id: 'practice',     part: 'PART IV · THE PAYOFF',      label: 'Practice Arena',               subtitle: 'Ten problems with instant walkthroughs.',             Component: S08_Practice },
   { id: 'build',        part: 'PART IV · THE PAYOFF',      label: 'Build It For Real',            subtitle: 'Mission · wire a full adder in the live workbench.',  Component: S09_Build },
 ];

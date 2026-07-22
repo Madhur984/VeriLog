@@ -709,7 +709,7 @@ export const Module1Root: React.FC = () => {
       <div className="w-[300px] flex-shrink-0 border-r flex flex-col z-10 overflow-y-auto" style={{ background: sidebarBg, borderColor }}>
         <div className="p-8 border-b" style={{ borderColor }}>
           <h2 className={`text-lg font-bold ${textColor}`}>Signal Theory</h2>
-          <p className={`text-[10px] mt-2 font-mono uppercase tracking-widest ${isDarkMode ? 'text-orange-500/60' : 'text-orange-600'}`}>Fundamental Module</p>
+          <p className={`text-[10px] mt-2 font-mono uppercase tracking-widest ${isDarkMode ? 'text-orange-500/60' : 'text-orange-600'}`}>Basic Module</p>
         </div>
 
         <div className="p-8">
@@ -1049,7 +1049,7 @@ export const Module1Root: React.FC = () => {
               <InsightPanel 
                 isDark={isDarkMode}
                 title="The Mathematical Oscillator"
-                content="Physics is fundamentally periodic. The cosine function isn't just a math trick; it represents the projection of circular motion (rotation) onto a linear axis. In electronics, we use this to describe how voltage oscillates over time."
+                content="Physics is periodic at its core. The cosine function isn't just a math trick; it represents the projection of circular motion (rotation) onto a linear axis. In electronics, we use this to describe how voltage oscillates over time."
                 career="DSP Engineer // Analog IC Designer"
               />
 
@@ -1202,7 +1202,7 @@ export const Module1Root: React.FC = () => {
               <div className={`p-8 rounded-3xl border ${isDarkMode ? 'bg-orange-950/10 border-orange-500' : 'bg-orange-100 border-orange-200'}`}>
                 <div className="w-12 h-12 rounded-2xl bg-orange-500 flex items-center justify-center text-2xl mb-4">⚡</div>
                 <h3 className="text-xl font-bold mb-2">Two Ways</h3>
-                <p className="text-sm opacity-80 font-bold">This leads to two fundamental types: Analog and Digital.</p>
+                <p className="text-sm opacity-80 font-bold">This leads to two basic types: Analog and Digital.</p>
               </div>
             </div>
           </section>
@@ -1278,7 +1278,7 @@ export const Module1Root: React.FC = () => {
                 </div>
                 <p className="text-lg font-medium text-violet-500">Discrete Representation</p>
                 <p className={`leading-relaxed ${isDarkMode ? 'text-orange-200/70' : 'text-gray-600'}`}>
-                   A digital signal is <strong>discrete</strong> in time and amplitude. It uses specific values (Binary) to represent information, making it robust and easy to handle.
+                   A digital signal is <strong>discrete</strong> in time and amplitude. It uses specific values (Binary) to represent information, making it reliable and easy to handle.
                 </p>
                 <div className="flex gap-4">
                    <div className={`flex-1 p-3 rounded-xl text-center border font-mono ${isDarkMode ? 'border-violet-900/50 bg-violet-950/30 text-violet-400' : 'border-violet-200 bg-violet-50 text-violet-700'}`}>
@@ -1304,7 +1304,7 @@ export const Module1Root: React.FC = () => {
                    <span className="text-violet-500">✔</span> Advantages
                 </h3>
                 <ul className="space-y-3 text-sm opacity-80">
-                  <li>• Strong noise immunity (Robust)</li>
+                  <li>• Strong noise immunity (Reliable)</li>
                   <li>• Reliable storage, copying, and transmission</li>
                   <li>• No cumulative degradation</li>
                 </ul>

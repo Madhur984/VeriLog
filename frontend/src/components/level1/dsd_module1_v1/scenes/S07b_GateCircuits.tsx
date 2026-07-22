@@ -322,8 +322,8 @@ export const S07b_GateCircuits: React.FC<Props> = ({ isActive, isDarkMode }) => 
           </span>
         </div>
         <ul className={`space-y-2 text-sm leading-relaxed ${subText}`}>
-          <li>• Both circuits are <strong>two-level</strong> - every signal traverses at most two gates between input and output. This bounds the propagation delay.</li>
-          <li>• A NAND-only or NOR-only realisation is always possible by inserting bubble pairs (DeMorgan in silicon). NAND chips are the cheapest building blocks on a real PCB.</li>
+          <li>• Both circuits are <strong>two-level</strong> - every signal passes through at most two gates between input and output. This bounds the propagation delay.</li>
+          <li>• A NAND-only or NOR-only build is always possible by inserting bubble pairs (DeMorgan in silicon). NAND chips are the cheapest building blocks on a real PCB.</li>
           <li>• Identical truth tables, different gate counts: pick whichever form yields the smaller bill of materials. K-Map minimisation in the next module shrinks both further.</li>
         </ul>
       </motion.div>

@@ -29,7 +29,7 @@ interface Page {
 const PAGES: Page[] = [
   { id: 'cover',     part: 'PART I · THE FACTS',           label: 'The Half Adder',                   subtitle: 'Cover · what it is and where this module goes.',     Component: S00_Cover },
   { id: 'basics',    part: 'PART I · THE FACTS',           label: 'Definition & Truth Table',         subtitle: '2 inputs, 2 outputs, 4 rows, 2 formulas.',           Component: S01_Basics },
-  { id: 'video',     part: 'PART I · THE FACTS',           label: 'Video - Demystifying Half Adders', subtitle: 'Watch · binary addition in two minutes.',            Component: S01_Video },
+  { id: 'video',     part: 'PART I · THE FACTS',           label: 'Video - Half Adders Made Simple', subtitle: 'Watch · binary addition in two minutes.',            Component: S01_Video },
   { id: 'box',       part: 'PART II · THE MARBLE BOX',     label: 'The Marble Box',                   subtitle: 'Intuition · drop marbles into a bowl that fits one.', Component: S02_RuleBox },
   { id: 'overflow',  part: 'PART II · THE MARBLE BOX',     label: 'The Overflow Mechanism',           subtitle: '1 + 1 = 10 · the push into the carry tray.',         Component: S04_Overflow },
   { id: 'xor',       part: 'PART III · INTO SILICON',      label: 'The Sum Wire: XOR',                subtitle: 'Lights for exactly one. S = A ⊕ B.',                 Component: S07_Xor },

@@ -36,8 +36,8 @@ export const S00_Cover: React.FC<SceneProps> = ({ isActive, isDarkMode, mode }) 
   const accent = mode === 'nand' ? '#22d3ee' : '#fb923c';
 
   const subheading = mode === 'nand'
-    ? 'Every fundamental logic gate, constructed from a single NAND atom.'
-    : 'Every fundamental logic gate, constructed from a single NOR atom.';
+    ? 'Every basic logic gate, constructed from a single NAND atom.'
+    : 'Every basic logic gate, constructed from a single NOR atom.';
 
   const counts = mode === 'nand'
     ? [

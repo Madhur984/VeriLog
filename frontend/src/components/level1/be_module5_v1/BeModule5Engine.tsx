@@ -38,7 +38,7 @@ const PAGES: Page[] = [
   { id: 'led-spec',  step: 'LED · 2',  label: 'Spectrum · Material Dependency', subtitle: 'GaN blue · GaP green · GaAsP red.',           Component: S06_LedSpectrum },
   { id: 'photo-ckt', step: 'Photo · 1',label: 'Reverse-Bias Photodiode',        subtitle: 'Light → current · dark current floor.',       Component: S07_PhotoCircuit},
   { id: 'photo-resp',step: 'Photo · 2',label: 'I-V vs Illumination',            subtitle: 'fc levels · nanosecond response.',            Component: S08_PhotoResp   },
-  { id: 'matrix',    step: 'Summary',  label: 'Diode Synthesis Matrix',         subtitle: 'Side-by-side comparison · all three VIPs.',   Component: S09_Matrix      },
+  { id: 'matrix',    step: 'Summary',  label: 'Diode Summary Table',         subtitle: 'Side-by-side comparison · all three VIPs.',   Component: S09_Matrix      },
   { id: 'quiz',      step: 'Final',    label: 'Self-Check Quiz · 10 questions', subtitle: 'Lock in your understanding before moving on.', Component: S10_Quiz        },
 ];
 

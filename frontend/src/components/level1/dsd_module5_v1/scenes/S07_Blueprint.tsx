@@ -42,7 +42,7 @@ export const S07_Blueprint: React.FC<SceneProps> = ({ isActive, isDarkMode, mode
         </h2>
         <p className={`text-base max-w-3xl ${subText}`}>
           Every Boolean operation on 2 variables - and by extension, every Boolean function of any
-          arity - can be physically realised using one repeated cell. Below is the complete
+          arity - can be physically built using one repeated cell. Below is the complete
           construction matrix.
         </p>
       </section>
@@ -113,7 +113,7 @@ export const S07_Blueprint: React.FC<SceneProps> = ({ isActive, isDarkMode, mode
           Q.E.D.
         </div>
         <p className={`text-base ${textColor} max-w-2xl mx-auto`}>
-          Every Boolean operation can be physically realised using a single manufacturing
+          Every Boolean operation can be physically built using a single manufacturing
           blueprint. <strong style={{ color: accent }}>{mode.toUpperCase()}</strong> is universal.
         </p>
       </motion.div>

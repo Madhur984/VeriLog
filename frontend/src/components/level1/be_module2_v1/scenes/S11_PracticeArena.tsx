@@ -425,7 +425,7 @@ export const S11_PracticeArena: React.FC<Props> = ({ isActive, isDarkMode }) => 
         {!running && !sDone && (
           <div className="text-center py-10 relative z-10">
             <p className={`text-sm ${subText} mb-5 max-w-md mx-auto`}>
-              {SPEED_QS.length} fundamentals, shuffled · forty-five seconds. No question repeats inside a run.
+              {SPEED_QS.length} basics, shuffled · forty-five seconds. No question repeats inside a run.
             </p>
             <button
               onClick={sStart}

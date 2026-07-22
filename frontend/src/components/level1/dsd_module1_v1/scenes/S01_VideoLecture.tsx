@@ -23,7 +23,7 @@ const CHAPTERS: Chapter[] = [
   { t: 235, title: 'The Path of Caution - Targeting the Zeros',
     line: 'The pessimist flips the lens. Instead of celebrating the ones he barricades the zeros: rows M3, M5, M6, M7. Maxterms wear an uppercase M. Each barricade is a wall the design must NOT crash into.' },
   { t: 282, title: 'Anatomy of a Maxterm',
-    line: 'Row 7 is the apocalypse: rain, ants, and wind all attacking. The barricade reads R-prime OR A-prime OR W-prime. Notice the inversion - wherever the variable was a one we complement it, because one is the dangerous state we are trying to escape.' },
+    line: 'Row 7 is the worst case: rain, ants, and wind all attacking. The barricade reads R-prime OR A-prime OR W-prime. Notice the inversion - wherever the variable was a one we complement it, because one is the dangerous state we are trying to escape.' },
   { t: 328, title: 'Building the Canonical Product of Sums',
     line: 'AND every maxterm together to build the canonical POS. E equals barricade three AND five AND six AND seven - Pi M of three, five, six, seven. Every barricade must hold or the day collapses.' },
   { t: 372, title: 'Two Lenses, One Truth',

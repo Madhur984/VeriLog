@@ -271,7 +271,7 @@ export const S03_Aliasing: React.FC<{ time: number; isDarkMode: boolean }> = ({ 
           showFullView={true}
           specs={{
               concept: "Frequency Ghosts: If you sample too slowly, high frequencies 'pretend' to be low frequencies. This creates false signals that weren’t there.",
-              physical: "Permanent Damage: Once aliasing happens, you cannot fix it. The data is fundamentally corrupted. The high frequency energy has 'folded' into a lower band.",
+              physical: "Permanent Damage: Once aliasing happens, you cannot fix it. The data is corrupted at its core. The high frequency energy has 'folded' into a lower band.",
               formal: "Nyquist Rate: You must sample at more than twice the signal's frequency (Fs > 2f) to keep the ghosts away.",
               insight: "The Anti-Aliasing Filter: To prevent this, engineers use a filter to 'cut off' high frequencies before they reach the sampler. It's better to lose some treble than to gain a ghost.",
               advanced: [

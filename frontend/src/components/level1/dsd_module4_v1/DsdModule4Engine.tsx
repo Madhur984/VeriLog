@@ -24,7 +24,7 @@ interface Page {
 // Drill arena · 6 chapters · zero teaching, all practice
 const PAGES: Page[] = [
   { id: 'arena',     step: 'Open',         label: 'Practice Arena',           subtitle: '5 drill sets · 12 problems · zero lectures.',          Component: S00_Cover },
-  { id: 'forward',   step: 'Drill 01',     label: 'Forward Synthesis',        subtitle: '4 scenarios · spec → minimised circuit.',              Component: S01_Forward },
+  { id: 'forward',   step: 'Drill 01',     label: 'Forward Build',        subtitle: '4 scenarios · spec → minimised circuit.',              Component: S01_Forward },
   { id: 'reverse',   step: 'Drill 02',     label: 'Reverse Engineering',      subtitle: '3 schematics · circuit → equation.',                   Component: S02_Reverse },
   { id: 'optimise',  step: 'Drill 03',     label: 'K-Map Optimisation',       subtitle: '3 minimisation drills · with don\'t-cares.',           Component: S03_Optimise },
   { id: 'boss',      step: 'Drill 04',     label: 'Boss Round',               subtitle: '2 heavyweight problems · BCD decoder + 4-var.',        Component: S04_Boss },

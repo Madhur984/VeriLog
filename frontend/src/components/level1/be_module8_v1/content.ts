@@ -248,29 +248,29 @@ export const CONTENT = ({
     },
     {
       id: 'S09_EarlyAndLoading',
-      label: 'The Early Effect, Loading & Synthesis',
+      label: 'The Early Effect, Loading & Summary',
       kind: 'theory',
       subtitle: 'ro, source and load loading, and the master matrix',
       theoryEN: [
         'Our gain formula assumed the transistor was a perfect controlled current source, but real transistors leak a little. As the collector-emitter voltage rises, the collector current creeps up slightly too, an effect called the Early effect, and we model it with an internal output resistance ro = (VA + VCEQ)/ICQ, where VA is the Early voltage. Because ro sits across the output, it parallels the collector load and trims the gain a touch, giving Av = -(RC||ro)/re. Since ro is usually large, this is only a small correction.',
         'There is also loss at the very entrance, called source loading. A real signal source has its own internal resistance Rs, and this Rs together with the amplifier\'s input impedance Zi forms a voltage divider. The result is that the voltage that actually reaches the base, Vi, is a little smaller than the open source voltage Vs. In the club, this is the crowd at the door soaking up part of the whisper before it even gets inside.',
         'There is a matching loss at the exit, called output loading. The load resistor RL sits in parallel with the collector resistor RC, and a parallel combination is always smaller than either resistor alone, so the effective collector load drops. The loaded gain Av_L = -(RC||RL)/re is therefore always less than the ideal no-load gain. This is the room\'s crowd soaking up part of the broadcast.',
-        'It helps to collect the standard results in one place, a kind of synthesis matrix. For a fixed-bias stage the answers are Zi = RB||beta*re, Zo = RC, and Av = -RC/re.',
+        'It helps to collect the standard results in one place, a kind of summary table. For a fixed-bias stage the answers are Zi = RB||beta*re, Zo = RC, and Av = -RC/re.',
         'For voltage-divider bias they are Zi = R1||R2||beta*re, Zo = RC, and Av = -RC/re, the same gain but with the two bias resistors in parallel at the input. For an unbypassed-emitter stage they become Zi = RB||beta*(re+RE), Zo = RC, and Av = -RC/(re+RE), showing once more how leaving RE in the signal path raises Zi but lowers the gain.',
       ],
       theoryHI: [
         'हमारे gain formula ने माना था कि transistor एक perfect controlled current source है, पर असली transistors थोड़ा leak करते हैं। जैसे-जैसे collector-emitter voltage बढ़ता है, collector current भी थोड़ा सरककर बढ़ता है, इस असर को Early effect कहते हैं, और हम इसे एक internal output resistance ro = (VA + VCEQ)/ICQ से model करते हैं, जहाँ VA Early voltage है। चूँकि ro output के आर-पार बैठता है, यह collector load के parallel में आकर gain को थोड़ा कम कर देता है, जिससे Av = -(RC||ro)/re। चूँकि ro आमतौर पर बड़ा होता है, यह बस एक छोटा सुधार है।',
         'एकदम प्रवेश पर भी नुक़सान होता है, जिसे source loading कहते हैं। एक असली signal source का अपना internal resistance Rs होता है, और यह Rs, amplifier के input impedance Zi के साथ मिलकर एक voltage divider बना देता है। नतीजा यह कि जो voltage असल में base तक पहुँचता है, Vi, खुले source voltage Vs से थोड़ा छोटा होता है। club में यह door पर खड़ी भीड़ है जो whisper के अंदर पहुँचने से पहले ही उसका कुछ हिस्सा सोख लेती है।',
         'निकास पर भी मिलता-जुलता नुक़सान होता है, जिसे output loading कहते हैं। load resistor RL, collector resistor RC के parallel में बैठता है, और parallel combination हमेशा अकेले किसी भी resistor से छोटा होता है, तो effective collector load गिर जाता है। इसलिए loaded gain Av_L = -(RC||RL)/re हमेशा ideal no-load gain से कम होता है। यह कमरे की भीड़ है जो broadcast का कुछ हिस्सा सोख लेती है।',
-        'मानक नतीजों को एक जगह इकट्ठा करना मददगार है, एक तरह का synthesis matrix। fixed-bias stage के लिए जवाब हैं Zi = RB||beta*re, Zo = RC, और Av = -RC/re।',
+        'मानक नतीजों को एक जगह इकट्ठा करना मददगार है, एक तरह का summary table। fixed-bias stage के लिए जवाब हैं Zi = RB||beta*re, Zo = RC, और Av = -RC/re।',
         'voltage-divider bias के लिए ये हैं Zi = R1||R2||beta*re, Zo = RC, और Av = -RC/re, वही gain पर input पर दोनों bias resistors parallel में। unbypassed-emitter stage के लिए ये बन जाते हैं Zi = RB||beta*(re+RE), Zo = RC, और Av = -RC/(re+RE), जो एक बार फिर दिखाते हैं कि RE को signal path में छोड़ना Zi बढ़ाता है पर gain घटाता है।',
       ],
       transcriptEN:
-        'ro from the Early effect and the source/load dividers all trim the gain; the synthesis matrix tabulates Zi, Zo, Av for the three configs.',
+        'ro from the Early effect and the source/load dividers all trim the gain; the summary table tabulates Zi, Zo, Av for the three configs.',
       transcriptHI:
-        'Early effect से ro और source/load dividers सब gain को कम करते हैं; synthesis matrix तीनों configs के लिए Zi, Zo, Av tabulate करता है।',
+        'Early effect से ro और source/load dividers सब gain को कम करते हैं; summary table तीनों configs के लिए Zi, Zo, Av tabulate करता है।',
       visualNote:
-        'A loading lab with Rs and RL sliders showing Vi < Vs and RC||RL shrinking the load, plus a synthesis-matrix table for the three CE configurations.',
+        'A loading lab with Rs and RL sliders showing Vi < Vs and RC||RL shrinking the load, plus a summary table for the three CE configurations.',
     },
     {
       id: 'S10_Flashcards',

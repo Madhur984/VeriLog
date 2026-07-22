@@ -122,7 +122,7 @@ const DigitalSignalLab: React.FC = () => {
             <div className="flex justify-between items-center px-4">
                 <div className="flex items-center gap-3">
                     <Workflow className="text-orange-500" size={16} />
-                    <span className="text-[10px] uppercase font-bold tracking-widest text-orange-500/60">Lab: Signal Forge v2.1</span>
+                    <span className="text-[10px] uppercase font-bold tracking-widest text-orange-500/60">Lab: Signal Workshop v2.1</span>
                 </div>
                 {showAliasingAlert && (
                     <motion.div animate={{ opacity: [1, 0, 1] }} className="flex items-center gap-2 text-red-500 text-[9px] font-bold">
@@ -223,7 +223,7 @@ export const Module2Root: React.FC = () => {
     { id: 'sampling', label: 'Sampling Flipbooks' },
     { id: 'quantization', label: 'Rounding Steps' },
     { id: 'equation', label: 'The 2x Rule' },
-    { id: 'lab', label: 'Lab: Signal Forge' },
+    { id: 'lab', label: 'Lab: Signal Workshop' },
     { id: 'archive', label: 'Research Library' },
     { id: 'noise', label: 'Zero-Loss Storage' },
     { id: 'questions', label: 'Final Check' },
@@ -444,7 +444,7 @@ export const Module2Root: React.FC = () => {
                      <div className="p-10 rounded-3xl bg-orange-500 text-black space-y-4 shadow-xl">
                         <h3 className="text-xl font-black uppercase italic">Quantization Noise</h3>
                         <p className="text-xs font-bold leading-relaxed opacity-80">
-                            When we round a measurement, we lose the "in-between" data. This lost data doesn't just disappear-it manifests as a grainy hiss called Quantization Noise.
+                            When we round a measurement, we lose the "in-between" data. This lost data doesn't just disappear-it shows up as a grainy hiss called Quantization Noise.
                         </p>
                         <div className="p-4 bg-black rounded-xl font-mono text-[9px] space-y-1">
                             <div className="flex justify-between"><span>Micro-Reality:</span><span className="text-orange-500">0.50032v</span></div>
@@ -459,7 +459,7 @@ export const Module2Root: React.FC = () => {
             {/* THE LAB */}
             <section id="lab" className="space-y-12">
                  <div className="flex flex-col gap-4 text-center items-center">
-                    <h2 className={`text-4xl font-extrabold italic ${isDarkMode ? 'text-orange-100' : 'text-gray-900'}`}><span className="text-orange-500">The</span> Signal Forge</h2>
+                    <h2 className={`text-4xl font-extrabold italic ${isDarkMode ? 'text-orange-100' : 'text-gray-900'}`}><span className="text-orange-500">The</span> Signal Workshop</h2>
                     <div className="h-[2px] w-24 bg-orange-500/20" />
                  </div>
                  <DigitalSignalLab />

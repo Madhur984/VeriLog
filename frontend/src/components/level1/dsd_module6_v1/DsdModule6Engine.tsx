@@ -8,6 +8,7 @@ import { MODULE_LABELS } from '../../../lib/moduleHistory';
 
 import { S00_Cover }              from './scenes/S00_Cover';
 import { S01_Video }              from './scenes/S01_Video';
+import { S01b_Facts }             from './scenes/S01b_Facts';
 import { S02_TwoFlavors }         from './scenes/S02_TwoFlavors';
 import { S03_Combinational }      from './scenes/S03_Combinational';
 import { S04_TeaStall }           from './scenes/S04_TeaStall';
@@ -30,6 +31,7 @@ interface Page {
 const PAGES: Page[] = [
   { id: 'cover',         part: 'PART I · TWO FLAVORS', label: 'The Logic of Now and Then',       subtitle: 'Cover · machines that compute vs machines that remember.', Component: S00_Cover },
   { id: 'video',         part: 'PART I · TWO FLAVORS', label: 'Video - How Machines Remember',   subtitle: 'Watch · the dual nature of computing.',                    Component: S01_Video },
+  { id: 'facts',         part: 'PART I · TWO FLAVORS', label: 'The Facts First',                 subtitle: 'Plain-English basics · combinational vs sequential.',      Component: S01b_Facts },
   { id: 'flavors',       part: 'PART I · TWO FLAVORS', label: 'Two Flavors of Logic',            subtitle: 'Straight pipe vs loop with a memory box.',                 Component: S02_TwoFlavors },
   { id: 'combinational', part: 'PART II · THE NOW',    label: 'Prisoners of the Present',        subtitle: 'Output = F(present inputs). No history.',                  Component: S03_Combinational },
   { id: 'teastall',      part: 'PART II · THE NOW',    label: 'The Memoryless Tea Vendor',       subtitle: 'A cup from exactly what is handed over now.',              Component: S04_TeaStall },

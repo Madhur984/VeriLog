@@ -796,7 +796,7 @@ const Slide8: React.FC = () => (
 
     <p style={{ fontFamily: C.mono, fontSize: 13, color: C.muted, lineHeight: 1.8, maxWidth: 480 }}>
       You've decoded the language of machines. From number systems to Boolean logic,
-      these fundamentals power every processor, every gate, every line of hardware description.
+      these basics power every processor, every gate, every line of hardware description.
     </p>
   </div>
 );

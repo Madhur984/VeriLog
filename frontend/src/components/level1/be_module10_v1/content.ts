@@ -277,7 +277,7 @@ export const CONTENT: SubContent = {
     },
     {
       id: 'S10_Synthesis',
-      label: 'Architectural Synthesis - Why It Matters',
+      label: 'Architectural Summary - Why It Matters',
       kind: 'theory',
       subtitle: 'The JFET wins wherever you must not load the input',
       theoryEN: [
@@ -441,7 +441,7 @@ export const CONTENT: SubContent = {
   ],
   quiz: [
     {
-      questionEN: 'What fundamentally distinguishes a BJT from a FET in terms of control?',
+      questionEN: 'What is the basic difference between a BJT and a FET in terms of control?',
       questionHI: 'Control के लिहाज़ से BJT को FET से मूल रूप से क्या अलग करता है?',
       options: [
         'BJT is voltage-controlled; FET is current-controlled',

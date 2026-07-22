@@ -96,7 +96,7 @@ export const S01_WhyBinary: React.FC<Props> = ({ isActive, isDarkMode }) => {
         >
           1. The Pulse of Logic - Why Binary?
         </motion.span>
-        <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>The Fundamental Choice</h2>
+        <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>The Basic Choice</h2>
         <p className={`text-lg max-w-2xl mx-auto opacity-70 ${textColor}`}>
           At the heart of every computer is a simple, powerful idea: <span className={subTextColor}>represent information using only two symbols, 0 and 1</span>.
         </p>
@@ -186,7 +186,7 @@ export const S01_WhyBinary: React.FC<Props> = ({ isActive, isDarkMode }) => {
                 <tr className={`border-t ${isDarkMode ? 'border-white/5' : 'border-gray-100'}`}>
                     <td className="p-6 font-bold">Storage</td>
                     <td className="p-6 opacity-60">Fragile (magnetic tape degrades)</td>
-                    <td className="p-6 font-bold text-sky-500">Robust (perfect copies)</td>
+                    <td className="p-6 font-bold text-sky-500">Reliable (perfect copies)</td>
                 </tr>
                 <tr className={`border-t ${isDarkMode ? 'border-white/5' : 'border-gray-100'}`}>
                     <td className="p-6 font-bold">Computation</td>

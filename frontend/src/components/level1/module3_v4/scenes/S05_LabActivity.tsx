@@ -450,7 +450,7 @@ const Scene4: React.FC<SceneProps & { bits: number[], onToggle: (i: number) => v
   const decimal = bitsToDecimal(bits);
   const weights = [8, 4, 2, 1];
   return (
-    <SceneShell title="Synthesis." micro="Trigger bits. Watch the decimal accumulation.">
+    <SceneShell title="Building." micro="Trigger bits. Watch the decimal accumulation.">
       <div style={{ display: 'flex', gap: 20, justifyContent: 'center' }}>
         {bits.map((b, i) => (
           <BitBlock key={i} value={b} weight={weights[i]} proMode={proMode} onToggle={() => onToggle(i)} />
@@ -712,7 +712,7 @@ export const S05_LabActivity: React.FC<{ isActive: boolean; isDarkMode: boolean 
     (p) => <Scene8 {...p} />,
   ];
 
-  const LABELS = ['Signal', 'States', 'Positions', 'Synthesis', 'Decrypt', 'Routers', 'Override', 'Core'];
+  const LABELS = ['Signal', 'States', 'Positions', 'Building', 'Decrypt', 'Routers', 'Override', 'Core'];
 
   return (
     <div onClick={resume} className="w-full flex flex-col items-center gap-4 py-20 px-4">

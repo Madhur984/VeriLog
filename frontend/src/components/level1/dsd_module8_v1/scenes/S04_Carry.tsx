@@ -74,7 +74,7 @@ export const S04_Carry: React.FC<Props> = ({ isDarkMode }) => {
           The Carry-out evaluates to TRUE if <strong style={{ color: AMBER }}>any two - or all
           three - inputs are TRUE</strong>. It is the Boolean <em>majority function</em>: three
           AND gates each watch one pair of inputs, and an OR gate reports the moment any pair
-          fires. Foundational AND/OR logic, identifying calculation overflow.
+          fires. Basic AND/OR logic, identifying calculation overflow.
         </p>
       </section>
 
