@@ -206,19 +206,24 @@ export const CustomVideoPlayer = forwardRef<VideoPlayerHandle, CustomVideoPlayer
     };
 
     // Keyboard controls when the player (or a child) is focused.
+    // Every key the player owns must call stopPropagation as well as
+    // preventDefault: module engines attach a global window keydown listener
+    // that advances the whole chapter on ArrowLeft/ArrowRight. Without
+    // stopPropagation, pressing an arrow while the video (or one of its control
+    // buttons) is focused both seeks the video AND skips the module. Stopping
+    // propagation here keeps arrows scoped to the player. Bare `return` for keys
+    // we don't own so they still reach the module (e.g. arrow chapter nav when
+    // the player isn't focused).
     const onKeyDown = (e: React.KeyboardEvent) => {
       switch (e.key) {
         case ' ':
         case 'k':
-          e.preventDefault();
           togglePlay();
           break;
         case 'ArrowLeft':
-          e.preventDefault();
           skip(-5);
           break;
         case 'ArrowRight':
-          e.preventDefault();
           skip(5);
           break;
         case 'm':
@@ -228,8 +233,10 @@ export const CustomVideoPlayer = forwardRef<VideoPlayerHandle, CustomVideoPlayer
           toggleFullscreen();
           break;
         default:
-          break;
+          return;
       }
+      e.preventDefault();
+      e.stopPropagation();
     };
 
     const progressPct = duration > 0 ? (current / duration) * 100 : 0;

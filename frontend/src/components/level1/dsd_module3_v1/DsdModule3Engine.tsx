@@ -8,6 +8,7 @@ import { MODULE_LABELS } from '../../../lib/moduleHistory';
 
 import { S00_Cover }      from './scenes/S00_Cover';
 import { S01_Video }      from './scenes/S01_Video';
+import { S01b_Facts }     from './scenes/S01b_Facts';
 import { S02_Vault }      from './scenes/S02_Vault';
 import { S03_TruthTable } from './scenes/S03_TruthTable';
 import { S04_Minterms }   from './scenes/S04_Minterms';
@@ -27,6 +28,7 @@ interface Page {
 const PAGES: Page[] = [
   { id: 'cover',     step: 'Open',     label: 'From Truth to Hardware',      subtitle: 'A simple case study in circuit realisation.',     Component: S00_Cover },
   { id: 'video',     step: 'Lecture',  label: 'Watch the pipeline',          subtitle: 'Visual walkthrough · 1 video · 4 stages.',         Component: S01_Video },
+  { id: 'facts',     step: 'Basics',   label: 'The Facts First',             subtitle: 'The 5-step recipe in plain English + the example.', Component: S01b_Facts },
   { id: 'vault',     step: 'Step 1',   label: 'The Server Vault',            subtitle: 'Three inputs · one output F · the brief.',         Component: S02_Vault },
   { id: 'truth',     step: 'Step 2',   label: 'Define the truth table',      subtitle: '8 rows · 5 active states · F = Σm(3,4,5,6,7).',    Component: S03_TruthTable },
   { id: 'minterms',  step: 'Step 3',   label: 'Extract minterms · SOP',      subtitle: 'Each F=1 row → product term · OR them all.',       Component: S04_Minterms },
@@ -35,7 +37,7 @@ const PAGES: Page[] = [
   { id: 'recap',     step: 'Closing',  label: 'Three views · one truth',     subtitle: 'Truth table = SOP = K-Map = schematic.',           Component: S07_Recap },
 ];
 
-const ACCENTS = ['#0ea5e9', '#22d3ee', '#fb923c', '#fbbf24', '#facc15', '#a78bfa', '#fb7185', '#22c55e'];
+const ACCENTS = ['#0ea5e9', '#22d3ee', '#38bdf8', '#fb923c', '#fbbf24', '#facc15', '#a78bfa', '#fb7185', '#22c55e'];
 
 const themeFor = (idx: number) => {
   const c = ACCENTS[idx] ?? '#22d3ee';

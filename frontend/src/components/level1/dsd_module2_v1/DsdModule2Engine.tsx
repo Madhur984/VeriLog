@@ -8,6 +8,7 @@ import { MODULE_LABELS } from '../../../lib/moduleHistory';
 
 import { S00_Cover }            from './scenes/S00_Cover';
 import { S01_VideoLecture }     from './scenes/S01_VideoLecture';
+import { S01b_Facts }           from './scenes/S01b_Facts';
 import { S02_TheHeadache }      from './scenes/S02_TheHeadache';
 import { S03_HostelMetaphor }   from './scenes/S03_HostelMetaphor';
 import { S04_GrayCode }         from './scenes/S04_GrayCode';
@@ -32,6 +33,7 @@ interface Page {
 const PAGES: Page[] = [
   { id: 'cover',      part: 'PART I · OVERTURE',         label: 'The Architect of Logic',       subtitle: 'Cover · meet Madhur, the Hostel Warden.',           Component: S00_Cover },
   { id: 'video',      part: 'PART I · OVERTURE',         label: 'The Logic Labyrinth',          subtitle: 'Bilingual lecture · English / हिंदी + transcripts.', Component: S01_VideoLecture },
+  { id: 'facts',      part: 'PART I · OVERTURE',         label: 'The Facts First',              subtitle: 'Plain-English basics · what a K-map does + an example.', Component: S01b_Facts },
   { id: 'headache',   part: 'PART II · THE PROBLEM',     label: 'The 16-Row Headache',          subtitle: 'Why algebra alone is brittle for 4 variables.',     Component: S02_TheHeadache },
   { id: 'hostel',     part: 'PART II · THE PROBLEM',     label: 'Madhur’s Hostel Metaphor', subtitle: 'The Logic Translator · five core mappings.',        Component: S03_HostelMetaphor },
   { id: 'gray',       part: 'PART III · THE GRID',       label: 'Rule 1 · Gray Code Walls',     subtitle: 'One bit-flip = one shared wall.',                   Component: S04_GrayCode },
