@@ -43,6 +43,7 @@ const FSMPlayground = named(() => import('./pages/FSMPlayground'), 'FSMPlaygroun
 const VerilogJudge = named(() => import('./pages/VerilogJudge'), 'VerilogJudge');
 const AnalogyLibrary = named(() => import('./pages/AnalogyLibrary'), 'AnalogyLibrary');
 const VerilogLibrary = named(() => import('./pages/VerilogLibrary'), 'VerilogLibrary');
+const InterviewPrep = lazy(() => loadChunk(() => import('./pages/InterviewPrep')));
 const SiliconMap = named(() => import('./pages/SiliconMap'), 'SiliconMap');
 const PledgePage = named(() => import('./pages/PledgePage'), 'PledgePage');
 const PrivacyPolicyPage = named(() => import('./pages/PrivacyPolicyPage'), 'PrivacyPolicyPage');
@@ -137,6 +138,7 @@ function App() {
             <Route path="/career-roadmap" element={<CareerRoadmapPage />} />
             <Route path="/analogies" element={<AnalogyLibrary />} />
             <Route path="/verilog-library" element={<VerilogLibrary />} />
+            <Route path="/interview-prep" element={<InterviewPrep />} />
             <Route path="/silicon-map" element={<SiliconMap />} />
             <Route path="/pledge" element={<PledgePage />} />
             <Route path="/privacy" element={<PrivacyPolicyPage />} />

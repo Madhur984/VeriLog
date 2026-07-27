@@ -1,6 +1,6 @@
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
-import { ArrowLeft, Menu, X, Home, Cpu, Map, BookOpen, Boxes, Wrench, User } from 'lucide-react';
+import { ArrowLeft, Menu, X, Home, Cpu, Map, BookOpen, Boxes, Wrench, User, ClipboardList, Grid3x3 } from 'lucide-react';
 import { ThemeToggle } from '../components/ThemeToggle';
 import { useColorScheme } from '../hooks/useColorScheme';
 import { getRouteMeta } from '../lib/routeMeta';
@@ -8,15 +8,33 @@ import { getRouteMeta } from '../lib/routeMeta';
 // Course-module routes that ship their own drawer nav + get a "back to portal" control.
 const MODULE_ROUTE = /^\/(module|dsd|basic-electronics|sandbox)(\/|$)/;
 
-// Primary jump-to destinations for the persistent nav menu.
-const NAV_LINKS = [
-    { to: '/portal', label: 'Portal', icon: Home },
-    { to: '/verilog-playground', label: 'Verilog Playground', icon: Cpu },
-    { to: '/career-roadmap', label: 'Career Roadmap', icon: Map },
-    { to: '/analogies', label: 'Analogy Library', icon: BookOpen },
-    { to: '/verilog-library', label: 'Verilog Library', icon: Boxes },
-    { to: '/workbench', label: 'Workbench', icon: Wrench },
-    { to: '/profile', label: 'Profile', icon: User },
+// Primary jump-to destinations for the nav menu, grouped so the menu reads as
+// clear sections (Learn / Practice / Account) rather than one long list.
+const NAV_GROUPS: { heading: string; links: { to: string; label: string; icon: typeof Home }[] }[] = [
+    {
+        heading: 'Learn',
+        links: [
+            { to: '/portal', label: 'Course Portal', icon: Home },
+            { to: '/career-roadmap', label: 'Career Roadmap', icon: Map },
+            { to: '/analogies', label: 'Analogy Library', icon: BookOpen },
+            { to: '/verilog-library', label: 'Verilog Library', icon: Boxes },
+        ],
+    },
+    {
+        heading: 'Practice',
+        links: [
+            { to: '/verilog-playground', label: 'Verilog Judge', icon: Cpu },
+            { to: '/interview-prep', label: 'Interview Prep', icon: ClipboardList },
+            { to: '/workbench', label: 'Circuit Workbench', icon: Wrench },
+            { to: '/kmap-lab', label: 'K-Map Lab', icon: Grid3x3 },
+        ],
+    },
+    {
+        heading: 'Account',
+        links: [
+            { to: '/profile', label: 'Profile', icon: User },
+        ],
+    },
 ];
 
 export const PortalLayout = () => {
@@ -95,24 +113,31 @@ export const PortalLayout = () => {
                         </button>
 
                         {menuOpen && (
-                            <div className="brutal absolute left-0 top-12 w-60 bg-bg-elev p-1.5">
-                                {NAV_LINKS.map(({ to, label, icon: Icon }) => {
-                                    const active = location.pathname === to;
-                                    return (
-                                        <button
-                                            key={to}
-                                            onClick={() => { navigate(to); setMenuOpen(false); }}
-                                            aria-current={active ? 'page' : undefined}
-                                            className={`flex w-full items-center gap-2.5 rounded px-3 py-2 text-left text-[13px] font-semibold transition-colors ${
-                                                active
-                                                    ? 'text-signal-core'
-                                                    : 'text-text-sub hover:bg-border-soft hover:text-text-main'
-                                            }`}
-                                        >
-                                            <Icon size={15} /> {label}
-                                        </button>
-                                    );
-                                })}
+                            <div className="brutal absolute left-0 top-12 w-64 bg-bg-elev p-1.5">
+                                {NAV_GROUPS.map((group, gi) => (
+                                    <div key={group.heading} className={gi > 0 ? 'mt-1 border-t border-border-soft pt-1' : ''}>
+                                        <p className="px-3 pb-1 pt-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-text-dim">
+                                            {group.heading}
+                                        </p>
+                                        {group.links.map(({ to, label, icon: Icon }) => {
+                                            const active = location.pathname === to;
+                                            return (
+                                                <button
+                                                    key={to}
+                                                    onClick={() => { navigate(to); setMenuOpen(false); }}
+                                                    aria-current={active ? 'page' : undefined}
+                                                    className={`flex w-full items-center gap-2.5 rounded px-3 py-2 text-left text-[13px] font-semibold transition-colors ${
+                                                        active
+                                                            ? 'text-signal-core'
+                                                            : 'text-text-sub hover:bg-border-soft hover:text-text-main'
+                                                    }`}
+                                                >
+                                                    <Icon size={15} /> {label}
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                ))}
                             </div>
                         )}
                     </div>

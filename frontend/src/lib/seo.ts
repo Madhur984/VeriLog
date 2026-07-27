@@ -94,6 +94,11 @@ const ROUTE: Record<string, { title: string; description: string }> = {
     description:
       'A reference library of Verilog patterns and examples — from basic gates to finite state machines — with copy-ready code for students learning HDL.',
   },
+  '/interview-prep': {
+    title: 'VLSI Interview Questions & Answers — Digital Design & Verilog | BitForBytes',
+    description:
+      'A free bank of common VLSI and digital-design interview questions with clear answers — setup/hold time, FSMs, blocking vs non-blocking, K-maps, adders and more. Filter by topic and difficulty. Real prep, not "coming soon".',
+  },
   '/analogies': {
     title: 'Digital-Design Analogies — Make Hard Concepts Click | BitForBytes',
     description:

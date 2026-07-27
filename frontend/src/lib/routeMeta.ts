@@ -17,6 +17,7 @@ const EXACT: Record<string, RouteMeta> = {
     '/career-roadmap': { label: 'Career Roadmap' },
     '/analogies': { label: 'Analogy Library' },
     '/verilog-library': { label: 'Verilog Library' },
+    '/interview-prep': { label: 'Interview Prep' },
     '/silicon-map': { label: 'Silicon Map' },
     '/pledge': { label: 'Pledge' },
     '/privacy': { label: 'Privacy Policy', section: 'Legal' },
