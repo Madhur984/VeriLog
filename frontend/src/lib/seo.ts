@@ -18,7 +18,7 @@ export const SITE = {
   /** 1200x630 share card shipped from /public. */
   ogImage: 'https://bitforbytes.in/og-cover.png',
   defaultDescription:
-    'Free, interactive VLSI and digital-design learning for every ECE student. 90+ hands-on labs — from logic gates to a working CPU. Learn by building, no installs.',
+    'BitForBytes is a free VLSI and digital-design education platform for ECE students. Learn and practice Verilog, RTL and digital logic in your browser — 90+ interactive labs, an online Verilog judge, and a semiconductor career roadmap. No installs.',
 } as const;
 
 export interface SeoData {
@@ -60,34 +60,34 @@ const isGated = (path: string): boolean => GATED_PREFIX.test(path) || GATED_EXAC
 // Hand-tuned title + description for every public, indexable route.
 const ROUTE: Record<string, { title: string; description: string }> = {
   '/': {
-    title: 'BitForBytes — Learn to Design Real Chips | Free VLSI & Digital Design',
+    title: 'BitForBytes — VLSI & Digital Design Education Platform | Learn Verilog, Build a Chip-Design Career',
     description:
-      'Free, interactive VLSI and digital-design learning for every ECE student. 90+ hands-on labs — from logic gates to a working CPU, Verilog, and chip design. No installs.',
+      'The free VLSI and hardware education platform for ECE students. Learn and practice Verilog, RTL and digital design in your browser — 90+ interactive labs, an online Verilog judge, K-map and circuit tools, and a semiconductor career roadmap. No installs.',
   },
   '/career-roadmap': {
-    title: 'VLSI & Chip-Design Career Roadmap 2026 | BitForBytes',
+    title: 'VLSI & Semiconductor Career Roadmap 2026 | BitForBytes',
     description:
-      'A sourced 2026 roadmap into VLSI, chip design, and semiconductor careers — the roles, skills, and the exact path from ECE student to design engineer.',
+      'A sourced 2026 roadmap into VLSI, chip design and semiconductor careers — the roles (RTL design, verification, physical design), the skills, and the exact path from ECE student to design engineer.',
   },
   '/portal': {
-    title: 'Course Portal — 90+ Interactive Chip-Design Labs | BitForBytes',
+    title: 'Course Portal — VLSI & Digital-Design Curriculum | BitForBytes',
     description:
-      'Browse the full BitForBytes curriculum: digital system design, basic electronics, Verilog, and interactive labs. Learn by building, not memorizing.',
+      'The full BitForBytes VLSI curriculum: digital system design, Verilog, basic electronics and 90+ hands-on labs — the foundation for RTL design, verification and a semiconductor career. Learn by building.',
   },
   '/verilog-playground': {
-    title: 'Verilog Judge — Practice Verilog Online (Hardware LeetCode) | BitForBytes',
+    title: 'Verilog Judge — Practice Verilog Online for VLSI Interviews | BitForBytes',
     description:
-      'Write, run, and auto-grade Verilog in your browser. A LeetCode-style judge for hardware with combinational + sequential problems and a live schematic. No setup.',
+      'Write, run and auto-grade Verilog in your browser. A LeetCode-style judge for hardware with combinational + sequential problems to sharpen your RTL skills and prep for VLSI interviews. No setup.',
   },
   '/workbench': {
     title: 'Circuit Workbench — Build & Simulate Logic Circuits Online | BitForBytes',
     description:
-      'A free in-browser circuit builder and simulator with guided digital-logic builds. Design gates, adders, and full circuits — no downloads.',
+      'A free in-browser circuit builder and simulator for digital-logic and VLSI practice, with guided builds. Design gates, adders and full circuits — no downloads.',
   },
   '/kmap-lab': {
     title: 'Karnaugh Map Solver — Interactive K-Map Minimizer | BitForBytes',
     description:
-      'Minimize Boolean expressions with an interactive Karnaugh map. Enter a truth table and watch the grouped prime implicants and simplified logic appear, step by step.',
+      'Minimize Boolean expressions with an interactive Karnaugh map — an essential digital-design and VLSI skill. Enter a truth table and watch the grouped prime implicants and simplified logic appear, step by step.',
   },
   '/verilog-library': {
     title: 'Verilog Snippet Library — Patterns & Examples | BitForBytes',
@@ -128,12 +128,12 @@ const ROUTE: Record<string, { title: string; description: string }> = {
 // Per-section copy for the course-module route families (/module, /dsd, /basic-electronics).
 const SECTION_DESC: Record<string, string> = {
   Foundations:
-    'A free, interactive foundations module in the BitForBytes chip-design curriculum — learn by building, with hands-on labs and no installs.',
+    'A free, interactive foundations module in the BitForBytes VLSI curriculum — digital logic and Verilog basics for ECE students, taught with hands-on labs and no installs.',
   'Digital System Design':
-    'A hands-on Digital System Design module — adders, multiplexers, finite state machines and more, taught with interactive labs and Verilog on BitForBytes.',
+    'A hands-on Digital System Design module — adders, multiplexers, finite state machines and more: the RTL and digital-design core of a VLSI career, taught with interactive labs and Verilog on BitForBytes.',
   'Basic Electronics':
-    'A hands-on Basic Electronics module — diodes, BJTs, MOSFETs and more, taught with interactive analog labs on BitForBytes.',
-  Sandbox: 'An open Verilog sandbox to experiment with HDL in the browser on BitForBytes.',
+    'A hands-on Basic Electronics module — diodes, BJTs, MOSFETs and more: the device physics behind VLSI, taught with interactive analog labs on BitForBytes.',
+  Sandbox: 'An open Verilog sandbox to write and simulate HDL in the browser — practice RTL for VLSI on BitForBytes.',
 };
 
 /** Resolve the full SEO record for a route. */
@@ -190,11 +190,12 @@ export function siteJsonLd(): Record<string, unknown>[] {
   return [
     {
       '@context': 'https://schema.org',
-      '@type': 'Organization',
+      '@type': 'EducationalOrganization',
       name: SITE.name,
       url: SITE.origin + '/',
       logo: SITE.origin + '/logo.png',
-      description: SITE.defaultDescription,
+      description:
+        'BitForBytes is a free VLSI and digital-design education platform helping ECE students learn Verilog and digital design and build toward a semiconductor career.',
       sameAs: [
         'https://x.com/bitforbyte_',
         'https://www.linkedin.com/company/bitforbytes',
