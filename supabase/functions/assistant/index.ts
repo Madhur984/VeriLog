@@ -1,48 +1,62 @@
 // Supabase Edge Function: `assistant`
 // ---------------------------------------------------------------------------
 // VoltMonkey's brain. Proxies chat to an LLM so the provider key NEVER reaches
-// the browser (it lives as a Supabase secret) and STREAMS tokens back.
+// the browser (keys live as Supabase secrets) and STREAMS tokens back.
 //
-// MULTI-PROVIDER: prefers Groq (has a real free tier) when GROQ_API_KEY is set,
-// and falls back to Hugging Face when HF_API_KEY is set. Both are OpenAI-
-// compatible, so the browser streaming client is unchanged. We walk a FALLBACK
-// CHAIN across every configured provider × model — the first 2xx wins; any
-// 4xx/5xx (e.g. HF 402 "credits depleted") skips to the next.
+// MULTI-PROVIDER: works with whichever free/paid LLM key you can get. Every
+// provider below is OpenAI-compatible, so the browser streaming client is
+// unchanged. The function walks a FALLBACK CHAIN across every provider you've
+// given a key for (× its models) — the first 2xx wins; any 4xx/5xx (e.g. HF 402
+// "credits depleted", or a daily-limit 429) skips to the next. Stack 2-3 free
+// keys and the bot is effectively always up.
 //
-// Why: HF's free Inference-Providers credits drain quickly and then every model
-// returns 402. Groq's free tier keeps the bot alive at no cost. Set the
-// GROQ_API_KEY secret (free key from https://console.groq.com/keys) and the bot
-// switches to Groq automatically.
+// Set ONE OR MORE of these secrets (only providers with a key are tried):
+//   GROQ_API_KEY        console.groq.com/keys        (free, fast)
+//   GEMINI_API_KEY      aistudio.google.com/apikey   (free, uses a Google acct)
+//   OPENROUTER_API_KEY  openrouter.ai/keys           (free :free models, 1 key)
+//   CEREBRAS_API_KEY    cloud.cerebras.ai            (free, 1M tokens/day)
+//   MISTRAL_API_KEY     console.mistral.ai           (free, 1B tokens/month)
+//   HF_API_KEY          huggingface.co               (tiny free credit; drains)
+// Optional per-provider model overrides: <PROVIDER>_MODELS (comma-separated).
 //
 // Diagnostics: GET .../assistant?diag=1 pings every configured provider+model
 // with a 1-token request and returns each one's HTTP status + a short error
-// snippet (never the key), so an operator can see exactly what's failing.
+// snippet (never the key), so you can see exactly what's working.
 //
-// Secrets: GROQ_API_KEY and/or HF_API_KEY (at least one required).
-// Optional: GROQ_MODELS, HF_MODELS (comma-separated overrides). verify_jwt=false.
-// CORS restricted to BitForBytes origins + a light per-IP rate limit.
+// verify_jwt = false. CORS restricted to BitForBytes origins + per-IP rate limit.
 // ---------------------------------------------------------------------------
-
-const GROQ_KEY = Deno.env.get('GROQ_API_KEY') ?? '';
-const HF_KEY = Deno.env.get('HF_API_KEY') ?? '';
-
-const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
-const HF_URL = 'https://router.huggingface.co/v1/chat/completions';
 
 const splitCsv = (s: string) => s.split(',').map((x) => x.trim()).filter(Boolean);
 
-const GROQ_MODELS = splitCsv(Deno.env.get('GROQ_MODELS') ?? 'llama-3.3-70b-versatile,llama-3.1-8b-instant');
-const HF_MODELS = splitCsv(Deno.env.get('HF_MODELS') ??
-  'meta-llama/Llama-3.3-70B-Instruct:novita,meta-llama/Llama-3.1-8B-Instruct:novita,meta-llama/Llama-3.3-70B-Instruct,Qwen/Qwen2.5-7B-Instruct');
+// Provider registry. Order = fallback preference (only keyed ones are used).
+const PROVIDERS: { name: string; url: string; keyEnv: string; modelsEnv: string; defaults: string }[] = [
+  { name: 'groq',       url: 'https://api.groq.com/openai/v1/chat/completions',                    keyEnv: 'GROQ_API_KEY',       modelsEnv: 'GROQ_MODELS',       defaults: 'llama-3.3-70b-versatile,llama-3.1-8b-instant' },
+  { name: 'cerebras',   url: 'https://api.cerebras.ai/v1/chat/completions',                        keyEnv: 'CEREBRAS_API_KEY',   modelsEnv: 'CEREBRAS_MODELS',   defaults: 'llama-3.3-70b,llama3.1-8b' },
+  { name: 'gemini',     url: 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions', keyEnv: 'GEMINI_API_KEY', modelsEnv: 'GEMINI_MODELS',   defaults: 'gemini-2.0-flash,gemini-1.5-flash' },
+  { name: 'openrouter', url: 'https://openrouter.ai/api/v1/chat/completions',                      keyEnv: 'OPENROUTER_API_KEY', modelsEnv: 'OPENROUTER_MODELS', defaults: 'meta-llama/llama-3.3-70b-instruct:free,mistralai/mistral-7b-instruct:free' },
+  { name: 'mistral',    url: 'https://api.mistral.ai/v1/chat/completions',                         keyEnv: 'MISTRAL_API_KEY',    modelsEnv: 'MISTRAL_MODELS',    defaults: 'mistral-small-latest,open-mistral-nemo' },
+  { name: 'hf',         url: 'https://router.huggingface.co/v1/chat/completions',                  keyEnv: 'HF_API_KEY',         modelsEnv: 'HF_MODELS',         defaults: 'meta-llama/Llama-3.3-70B-Instruct:novita,meta-llama/Llama-3.1-8B-Instruct:novita,Qwen/Qwen2.5-7B-Instruct' },
+];
 
 interface Attempt { provider: string; url: string; key: string; model: string }
 
 // Build the ordered list of (provider, model) attempts from whatever keys exist.
 function attempts(): Attempt[] {
   const out: Attempt[] = [];
-  if (GROQ_KEY) for (const model of GROQ_MODELS) out.push({ provider: 'groq', url: GROQ_URL, key: GROQ_KEY, model });
-  if (HF_KEY) for (const model of HF_MODELS) out.push({ provider: 'hf', url: HF_URL, key: HF_KEY, model });
+  for (const p of PROVIDERS) {
+    const key = Deno.env.get(p.keyEnv) ?? '';
+    if (!key) continue;
+    for (const model of splitCsv(Deno.env.get(p.modelsEnv) ?? p.defaults)) {
+      out.push({ provider: p.name, url: p.url, key, model });
+    }
+  }
   return out;
+}
+
+function configured(): Record<string, boolean> {
+  const o: Record<string, boolean> = {};
+  for (const p of PROVIDERS) o[p.name] = !!Deno.env.get(p.keyEnv);
+  return o;
 }
 
 const ALLOWED_ORIGINS = new Set([
@@ -128,10 +142,9 @@ Deno.serve(async (req: Request) => {
     if (url.searchParams.get('diag') !== '1') {
       return json({ ok: true, hint: 'POST to chat; GET ?diag=1 for a health check.' });
     }
-    const list = attempts();
-    const results = await Promise.all(list.map(probe));
+    const results = await Promise.all(attempts().map(probe));
     return json({
-      providers: { groq: !!GROQ_KEY, hf: !!HF_KEY },
+      providers: configured(),
       working: results.filter((r) => r.ok).map((r) => `${r.provider}:${r.model}`),
       results,
     });
@@ -141,7 +154,7 @@ Deno.serve(async (req: Request) => {
 
   try {
     const list = attempts();
-    if (!list.length) throw new Error('No LLM key configured — set the GROQ_API_KEY (or HF_API_KEY) secret on the function.');
+    if (!list.length) throw new Error('No LLM key configured — set one of GROQ_API_KEY / GEMINI_API_KEY / OPENROUTER_API_KEY / CEREBRAS_API_KEY / MISTRAL_API_KEY / HF_API_KEY as a function secret.');
 
     const ip = (req.headers.get('x-forwarded-for') ?? '').split(',')[0].trim() || 'unknown';
     if (rateLimited(ip)) return json({ error: "Whoa, slow down a sec ⚡ — you've asked a lot very fast. Try again in a minute." }, 429);
