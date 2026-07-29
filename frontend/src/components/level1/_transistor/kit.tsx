@@ -142,7 +142,7 @@ export const VideoScene: React.FC<{
         <AnimatePresence>
           {open && (
             <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
-              <p className={`px-5 pb-5 text-[14px] leading-relaxed ${t.sub}`}>{pick(lang, scene.transcriptEN, scene.transcriptHI)}</p>
+              <p className={`px-5 pb-5 text-[15px] leading-relaxed ${t.sub}`}>{pick(lang, scene.transcriptEN, scene.transcriptHI)}</p>
             </motion.div>
           )}
         </AnimatePresence>
@@ -184,7 +184,7 @@ export const Prose: React.FC<{ isDarkMode: boolean; accent: string; en: string[]
   return (
     <div className="space-y-4">
       {items.map((p, i) => (
-        <p key={i} className={`text-[15.5px] leading-[1.85] ${i === 0 ? `font-medium ${t.text}` : t.sub}`}>
+        <p key={i} className={`text-[17px] leading-[1.85] ${i === 0 ? `font-medium ${t.text}` : t.sub}`}>
           {i === 0 && <span className="mr-2 inline-block h-3.5 w-1 translate-y-0.5 rounded-full" style={{ background: accent }} />}
           {p}
         </p>

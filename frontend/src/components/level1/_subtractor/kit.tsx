@@ -157,7 +157,7 @@ export const Bullets: React.FC<{ isDarkMode: boolean; accent: string; en: string
       {items.map((it, i) => (
         <li key={i} className="flex items-start gap-3">
           <span className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full" style={{ background: accent }} />
-          <span className={`text-[15px] leading-relaxed ${t.sub}`}>{it}</span>
+          <span className={`text-[16px] leading-relaxed ${t.sub}`}>{it}</span>
         </li>
       ))}
     </ul>
@@ -177,7 +177,7 @@ export const TranscriptPanel: React.FC<{ isDarkMode: boolean; accent: string; en
           {lang === 'hi' ? 'विवरण · Transcript' : 'Transcript'}
         </span>
       </div>
-      <p className={`text-[14px] leading-relaxed ${t.sub}`}>{pick(lang, en, hi)}</p>
+      <p className={`text-[15px] leading-relaxed ${t.sub}`}>{pick(lang, en, hi)}</p>
     </div>
   );
 };
@@ -197,7 +197,7 @@ export const TruthTable: React.FC<{
           <thead>
             <tr>
               {headers.map((h, i) => (
-                <th key={i} className="px-4 py-3 text-[13px] font-black"
+                <th key={i} className="px-4 py-3 text-[14px] font-black"
                   style={{ color: accent, borderBottom: `2px solid ${accent}55` }}>{h}</th>
               ))}
             </tr>
@@ -207,7 +207,7 @@ export const TruthTable: React.FC<{
               <tr key={ri} style={r.highlight ? { background: `${accent}14` } : undefined}>
                 {r.cells.map((c, ci) => (
                   <td key={ci}
-                    className={`px-4 py-2.5 text-[15px] ${ci < headers.length - 2 ? t.faint : t.text} ${r.highlight ? 'font-black' : 'font-bold'}`}
+                    className={`px-4 py-2.5 text-[16px] ${ci < headers.length - 2 ? t.faint : t.text} ${r.highlight ? 'font-black' : 'font-bold'}`}
                     style={{ borderTop: isDarkMode ? '1px solid rgba(255,255,255,0.05)' : '1px solid rgba(0,0,0,0.05)' }}>
                     {c}
                   </td>
@@ -443,7 +443,7 @@ export const FlowRail: React.FC<{ isDarkMode: boolean; accent: string }>
         <circle cx="284" cy="60" r="19" fill={accent} />
         <text x="284" y="66" textAnchor="middle" fontFamily="monospace" fontSize="18" fontWeight="900" fill={box}>=</text>
       </svg>
-      <p className={`mt-2 text-center text-[13px] ${t.sub}`}>
+      <p className={`mt-2 text-center text-[14px] ${t.sub}`}>
         {lang === 'hi'
           ? 'पूरे track का यही एक loop है - input bits दीजिए, gates को compute करने दीजिए, नतीजा पढ़िए।'
           : 'Every page on this track is the same loop - drive the input bits, let the gates compute, read the result.'}
@@ -487,7 +487,7 @@ export const Prose: React.FC<{ isDarkMode: boolean; accent: string; en: string[]
   return (
     <div className="space-y-4">
       {items.map((p, i) => (
-        <p key={i} className={`text-[15.5px] leading-[1.85] ${i === 0 ? `font-medium ${t.text}` : t.sub}`}>
+        <p key={i} className={`text-[17px] leading-[1.85] ${i === 0 ? `font-medium ${t.text}` : t.sub}`}>
           {i === 0 && <span className="mr-2 inline-block h-3.5 w-1 translate-y-0.5 rounded-full" style={{ background: accent }} />}
           {p}
         </p>
@@ -585,7 +585,7 @@ export const VideoScene: React.FC<SceneProps & { src?: string }>
           {open && (
             <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }}
               className="overflow-hidden">
-              <p className={`px-5 pb-5 text-[14px] leading-relaxed ${t.sub}`}>{pick(lang, scene.transcriptEN, scene.transcriptHI)}</p>
+              <p className={`px-5 pb-5 text-[15px] leading-relaxed ${t.sub}`}>{pick(lang, scene.transcriptEN, scene.transcriptHI)}</p>
             </motion.div>
           )}
         </AnimatePresence>
@@ -651,7 +651,7 @@ export const SubFlashCards: React.FC<{ isDarkMode: boolean; accent: string; card
                 <div className="font-mono text-[10px] uppercase tracking-widest" style={{ color: accent }}>
                   {lang === 'hi' ? 'असली logic' : 'The real logic'}
                 </div>
-                <p className={`mt-3 text-[14px] leading-relaxed ${t.text}`}>{pick(lang, c.backEN, c.backHI)}</p>
+                <p className={`mt-3 text-[15px] leading-relaxed ${t.text}`}>{pick(lang, c.backEN, c.backHI)}</p>
                 <div className={`mt-auto flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest ${t.faint}`}>
                   <RotateCw size={12} /> {lang === 'hi' ? 'वापस पलटें' : 'tap to flip back'}
                 </div>
@@ -710,7 +710,7 @@ export const WorkbenchCTA: React.FC<{
           <h3 className={`text-xl font-black ${t.text}`}>
             {lang === 'hi' ? (titleHI ?? 'इसे असली में बनाइए') : (titleEN ?? 'Build it for real')}
           </h3>
-          <p className={`mt-1 text-[14px] ${t.sub}`}>
+          <p className={`mt-1 text-[15px] ${t.sub}`}>
             {lang === 'hi'
               ? (bodyHI ?? 'live CircuitVerse workbench खोलिए और यह circuit ख़ुद, कदम-दर-कदम बनाइए - हर row को असली hardware पर साबित कीजिए।')
               : (bodyEN ?? 'Open the live CircuitVerse workbench and build this circuit yourself, step by step - then prove every row on real hardware.')}

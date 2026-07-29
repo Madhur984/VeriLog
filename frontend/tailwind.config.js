@@ -88,6 +88,19 @@ export default {
                 ui: ['Space Grotesk', 'system-ui', 'sans-serif'],
                 mono: ['JetBrains Mono', 'IBM Plex Mono', 'ui-monospace', 'monospace'],
             },
+            /* Site-wide readability bump. Most body text uses text-sm / text-xs,
+               which at Tailwind's defaults (14px / 12px) read too small. Enlarge
+               the small-to-mid range one notch each for comfortable reading.
+               2xl/3xl+ are intentionally left at defaults so headings/hero titles
+               keep their tuned sizes and don't overflow cards. Font size and
+               spacing use separate scales, so layouts are unaffected. */
+            fontSize: {
+                xs:   ['0.8125rem', '1.15rem'],  // 13px  (was 12)
+                sm:   ['0.9375rem', '1.4rem'],   // 15px  (was 14)
+                base: ['1.0625rem', '1.65rem'],  // 17px  (was 16)
+                lg:   ['1.1875rem', '1.8rem'],   // 19px  (was 18)
+                xl:   ['1.3125rem', '1.85rem'],  // 21px  (was 20)
+            },
             /* Less rounded, more editorial/classy — shrink the big radii site-wide
                (rounded-full pills are intentionally left untouched). */
             borderRadius: {
