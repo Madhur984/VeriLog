@@ -9,7 +9,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
-  ZoomIn, ZoomOut, Maximize2, Loader2, AlertTriangle, RefreshCw, Layers, Clock, RotateCcw, Eraser,
+  ZoomIn, ZoomOut, Maximize2, Loader2, AlertTriangle, RefreshCw, Layers, Clock, RotateCcw, Eraser, Info, X,
 } from 'lucide-react';
 import { synthesize, type SynthProgress } from '../../engine/verilog/yosysClient';
 import type { Diag } from '../../engine/verilog/diagnostics';
@@ -272,12 +272,13 @@ export const SynthSchematicView: React.FC<{
   const [err, setErr] = useState<string | null>(null);
   const [diags, setDiags] = useState<Diag[]>([]);
   const [prog, setProg] = useState<SynthProgress | null>(null);
+  const [showDiags, setShowDiags] = useState(false);
   const reqRef = useRef(0);
   const onDiagRef = useRef(onDiagnostics);
   useEffect(() => { onDiagRef.current = onDiagnostics; });
 
   const runSynth = useCallback((src: string) => {
-    setPhase('running'); setErr(null);
+    setPhase('running'); setErr(null); setShowDiags(false);
     const myReq = ++reqRef.current;
     synthesize(src, (p) => { if (myReq === reqRef.current) setProg(p); }).then((r) => {
       if (myReq !== reqRef.current) return;
@@ -299,6 +300,8 @@ export const SynthSchematicView: React.FC<{
   const downloading = prog && prog.total > 0 && prog.done < prog.total;
   const pct = downloading ? Math.round((prog!.done / prog!.total) * 100) : 0;
   const warnings = diags.filter((d) => d.severity === 'warning');
+  const notes = diags.filter((d) => d.severity === 'note');
+  const hasDiags = warnings.length > 0 || notes.length > 0;
 
   return (
     <div className="relative flex h-full min-h-0 w-full flex-col bg-bg-void">
@@ -311,10 +314,23 @@ export const SynthSchematicView: React.FC<{
             {schem.stats.regs > 0 && <> &middot; {schem.stats.regs} reg{schem.stats.regs === 1 ? '' : 's'}</>}
           </span>
         )}
-        {phase === 'ready' && warnings.length > 0 && (
-          <span className="flex items-center gap-1 rounded-full bg-amber-500/10 px-2 py-0.5 font-mono text-[10.5px] font-bold text-amber-500">
-            <AlertTriangle className="h-3 w-3" /> {warnings.length} warning{warnings.length === 1 ? '' : 's'}
-          </span>
+        {phase === 'ready' && hasDiags && (
+          <button
+            onClick={() => setShowDiags((v) => !v)}
+            title={showDiags ? 'Hide synthesis notes' : 'Show synthesis notes'}
+            className={`flex items-center gap-1.5 rounded-full px-2 py-0.5 font-mono text-[10.5px] font-bold transition-colors ${
+              warnings.length > 0
+                ? 'bg-amber-500/10 text-amber-500 hover:bg-amber-500/20'
+                : 'bg-white/5 text-text-dim hover:bg-white/10'
+            } ${showDiags ? 'ring-1 ring-inset ring-border-soft' : ''}`}
+          >
+            {warnings.length > 0 && (
+              <span className="flex items-center gap-1"><AlertTriangle className="h-3 w-3" /> {warnings.length} warning{warnings.length === 1 ? '' : 's'}</span>
+            )}
+            {notes.length > 0 && (
+              <span className="flex items-center gap-1"><Info className="h-3 w-3" /> {notes.length} note{notes.length === 1 ? '' : 's'}</span>
+            )}
+          </button>
         )}
         {headerExtra}
         {phase === 'ready' && (
@@ -348,7 +364,10 @@ export const SynthSchematicView: React.FC<{
             <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-rose-500/30 bg-rose-500/10"><AlertTriangle className="h-6 w-6 text-rose-400" /></div>
             <p className="text-[13px] font-semibold text-text-main">Could not build the circuit</p>
             <div className="max-h-44 max-w-md space-y-1.5 overflow-auto">
-              {(diags.length ? diags : [{ severity: 'error', message: err ?? 'Synthesis failed.' } as Diag]).map((d, i) => <DiagRow key={i} d={d} />)}
+              {(() => {
+                const shown = diags.filter((d) => d.severity !== 'note');
+                return shown.length ? shown : [{ severity: 'error', message: err ?? 'Synthesis failed.' } as Diag];
+              })().map((d, i) => <DiagRow key={i} d={d} />)}
             </div>
             <button onClick={() => runSynth(code)} className="flex items-center gap-2 rounded-lg border border-border-soft px-3 py-1.5 text-[12px] font-semibold text-text-dim hover:text-text-main">
               <RefreshCw className="h-3.5 w-3.5" /> Try again
@@ -359,9 +378,28 @@ export const SynthSchematicView: React.FC<{
         {phase === 'ready' && schem && (
           <>
             <Canvas s={schem} sim={sim} pal={pal} />
-            {warnings.length > 0 && (
-              <div className="absolute inset-x-0 top-0 max-h-[36%] overflow-auto border-b border-amber-500/20 bg-bg-elev p-2">
-                {warnings.map((d, i) => <DiagRow key={i} d={d} />)}
+            {/* Diagnostics are collapsed by default (schematic stays clean) and
+                open into a dismissible popover — not a strip that covers the diagram. */}
+            {showDiags && hasDiags && (
+              <div className="absolute left-2 top-2 z-20 max-h-[62%] w-[min(94%,560px)] overflow-auto rounded-xl border border-border-soft bg-bg-elev/95 shadow-xl backdrop-blur-sm">
+                <div className="sticky top-0 flex items-center justify-between border-b border-border-soft bg-bg-elev/95 px-3 py-1.5 backdrop-blur-sm">
+                  <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-text-dim">Synthesis notes</span>
+                  <button onClick={() => setShowDiags(false)} title="Close" className="flex h-6 w-6 items-center justify-center rounded-md text-text-dim hover:bg-white/5 hover:text-text-main">
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+                <div className="space-y-0.5 p-1.5">
+                  {warnings.map((d, i) => <DiagRow key={`w${i}`} d={d} />)}
+                  {notes.length > 0 && (
+                    <>
+                      {warnings.length > 0 && <div className="my-1 border-t border-border-soft/60" />}
+                      <p className="px-2 pb-0.5 pt-1 font-mono text-[9px] uppercase tracking-widest text-text-dim/70">
+                        Informational &middot; not problems with your design
+                      </p>
+                      {notes.map((d, i) => <DiagRow key={`n${i}`} d={d} />)}
+                    </>
+                  )}
+                </div>
               </div>
             )}
           </>
@@ -372,12 +410,16 @@ export const SynthSchematicView: React.FC<{
 };
 
 const DiagRow: React.FC<{ d: Diag }> = ({ d }) => {
-  const isErr = d.severity === 'error';
+  const tone =
+    d.severity === 'error' ? { text: 'text-rose-300', accent: 'text-rose-400' }
+    : d.severity === 'warning' ? { text: 'text-amber-300/90', accent: 'text-amber-500' }
+    : { text: 'text-text-dim', accent: 'text-text-dim/80' }; // note
+  const Icon = d.severity === 'note' ? Info : AlertTriangle;
   return (
-    <div className={`flex items-start gap-2 rounded-md px-2 py-1 text-left font-mono text-[11.5px] leading-relaxed ${isErr ? 'text-rose-300' : 'text-amber-300/90'}`}>
-      <AlertTriangle className={`mt-0.5 h-3.5 w-3.5 shrink-0 ${isErr ? 'text-rose-400' : 'text-amber-500'}`} />
+    <div className={`flex items-start gap-2 rounded-md px-2 py-1 text-left font-mono text-[11.5px] leading-relaxed ${tone.text}`}>
+      <Icon className={`mt-0.5 h-3.5 w-3.5 shrink-0 ${tone.accent}`} />
       <span>
-        {d.line != null && <span className={isErr ? 'text-rose-400' : 'text-amber-500'}>L{d.line} </span>}
+        {d.line != null && <span className={tone.accent}>L{d.line} </span>}
         {d.signal && <span className="text-text-main">[{d.signal}] </span>}
         {d.message}
       </span>

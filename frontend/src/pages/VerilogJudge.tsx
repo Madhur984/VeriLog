@@ -248,7 +248,9 @@ export const VerilogJudge: React.FC = () => {
     const model = editorRef.current?.getModel();
     if (!monaco || !model) return;
     const src = model.getValue();
-    const markers = ds.map((d) => {
+    // Benign 'note' diagnostics (e.g. array inferred as flip-flops) must not
+    // mark the editor — they aren't design problems and the squiggles read as errors.
+    const markers = ds.filter((d) => d.severity !== 'note').map((d) => {
       const line = d.line ?? (d.signal ? lineOfSignal(src, d.signal) : undefined) ?? 1;
       const text = model.getLineContent(line);
       return {
