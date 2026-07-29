@@ -48,10 +48,13 @@ export const PortalLayout = () => {
 
     const isSpecialPage = location.pathname === '/career-roadmap';
     const isModule = MODULE_ROUTE.test(location.pathname);
-    // Pages whose own UI already ships a header/theme toggle (portal hub, Verilog bench)
-    // so the floating nav cluster would duplicate or overlap their controls.
+    // Pages whose own UI already ships a top bar / theme toggle, so the floating
+    // nav cluster would duplicate or overlap their own controls. (Profile and
+    // Settings each render their own sticky bar with a Portal button + toggle.)
     const hasIntegratedToggle = location.pathname === '/portal'
-        || location.pathname === '/verilog-playground';
+        || location.pathname === '/verilog-playground'
+        || location.pathname === '/profile'
+        || location.pathname === '/settings';
     const showNav = !isSpecialPage && !isModule && !hasIntegratedToggle;
     const crumb = getRouteMeta(location.pathname);
 
