@@ -13,11 +13,19 @@ export type ASTNode =
 
 type Token =
   | { kind: 'VAR'; value: string }
-  | { kind: 'NOT' }
+  | { kind: 'NOT' }       // postfix complement:  A'
+  | { kind: 'NOTPRE' }    // prefix complement:   !A, ~A
   | { kind: 'OR' }
   | { kind: 'LPAREN' }
   | { kind: 'RPAREN' }
   | { kind: 'EOF' };
+
+// Characters people actually type for "complement". Postfix (’ ´ ` after a var)
+// and prefix (! ~ ¬ before a var) are both accepted; +/| are OR; * . & · and
+// whitespace act as (implicit) AND separators and are otherwise ignored.
+const POSTFIX_NOT = new Set(["'", '’', '‘', '´', '`']);
+const PREFIX_NOT = new Set(['!', '~', '¬']);
+const OR_CHARS = new Set(['+', '|']);
 
 function tokenize(expr: string): Token[] {
   const tokens: Token[] = [];
@@ -28,10 +36,13 @@ function tokenize(expr: string): Token[] {
     if (/[A-E]/i.test(ch)) {
       tokens.push({ kind: 'VAR', value: ch.toUpperCase() });
       i++;
-    } else if (ch === "'") {
+    } else if (POSTFIX_NOT.has(ch)) {
       tokens.push({ kind: 'NOT' });
       i++;
-    } else if (ch === '+') {
+    } else if (PREFIX_NOT.has(ch)) {
+      tokens.push({ kind: 'NOTPRE' });
+      i++;
+    } else if (OR_CHARS.has(ch)) {
       tokens.push({ kind: 'OR' });
       i++;
     } else if (ch === '(') {
@@ -41,7 +52,7 @@ function tokenize(expr: string): Token[] {
       tokens.push({ kind: 'RPAREN' });
       i++;
     } else {
-      i++; // skip unknown
+      i++; // skip unknown (treated as an AND separator, e.g. A*B or A.B)
     }
   }
   tokens.push({ kind: 'EOF' });
@@ -59,6 +70,11 @@ class Parser {
   }
 
   private peek(): Token {
+    return this.tokens[this.pos];
+  }
+
+  /** The next unconsumed token — used to confirm the whole input was parsed. */
+  remaining(): Token {
     return this.tokens[this.pos];
   }
 
@@ -100,13 +116,16 @@ class Parser {
     return { type: 'AND', inputs: factors };
   }
 
-  /** factor = atom ("'")* */
+  /** factor = ("!"|"~")* atom ("'")* */
   parseFactor(): ASTNode {
+    let prefixNots = 0;
+    while (this.peek().kind === 'NOTPRE') { this.consume(); prefixNots++; }
     let node = this.parseAtom();
     while (this.peek().kind === 'NOT') {
       this.consume();
       node = { type: 'NOT', input: node };
     }
+    for (let k = 0; k < prefixNots; k++) node = { type: 'NOT', input: node };
     return node;
   }
 
@@ -137,8 +156,67 @@ export function parseBoolean(expr: string): ASTNode | null {
   try {
     const tokens = tokenize(trimmed);
     const parser = new Parser(tokens);
-    return parser.parseExpr();
+    const ast = parser.parseExpr();
+    // Reject anything the parser didn't fully consume (e.g. "A B +").
+    if (parser.remaining().kind !== 'EOF') return null;
+    return ast;
   } catch {
     return null;
   }
+}
+
+// --------------- Evaluation ---------------
+
+/** Collect every variable name that appears in the AST. */
+export function collectVars(ast: ASTNode, acc: Set<string> = new Set()): Set<string> {
+  switch (ast.type) {
+    case 'VAR': acc.add(ast.name); break;
+    case 'NOT': collectVars(ast.input, acc); break;
+    case 'AND':
+    case 'OR': ast.inputs.forEach((i) => collectVars(i, acc)); break;
+  }
+  return acc;
+}
+
+/** Evaluate the AST for a given variable assignment (missing vars read as 0). */
+export function evaluateAST(ast: ASTNode, env: Record<string, boolean>): boolean {
+  switch (ast.type) {
+    case 'VAR': return env[ast.name] === true;
+    case 'NOT': return !evaluateAST(ast.input, env);
+    case 'AND': return ast.inputs.every((i) => evaluateAST(i, env));
+    case 'OR': return ast.inputs.some((i) => evaluateAST(i, env));
+  }
+}
+
+const VAR_ORDER = ['A', 'B', 'C', 'D', 'E'];
+
+/**
+ * Turn a Boolean expression into the list of minterm indices where it is 1,
+ * evaluated over `numVars` variables (A = most-significant bit). Returns null
+ * if the expression cannot be parsed.
+ */
+export function expressionToMinterms(expr: string, numVars: number): number[] | null {
+  const ast = parseBoolean(expr);
+  if (!ast) return null;
+  const vars = VAR_ORDER.slice(0, numVars);
+  const minterms: number[] = [];
+  const total = 1 << numVars;
+  for (let m = 0; m < total; m++) {
+    const env: Record<string, boolean> = {};
+    for (let i = 0; i < numVars; i++) {
+      env[vars[i]] = ((m >> (numVars - 1 - i)) & 1) === 1;
+    }
+    if (evaluateAST(ast, env)) minterms.push(m);
+  }
+  return minterms;
+}
+
+/** How many variables an expression needs (from the highest letter used, A..E). */
+export function inferNumVars(ast: ASTNode): number {
+  let hi = -1;
+  collectVars(ast).forEach((v) => {
+    const idx = VAR_ORDER.indexOf(v);
+    if (idx > hi) hi = idx;
+  });
+  return Math.min(5, Math.max(2, hi + 1));
 }

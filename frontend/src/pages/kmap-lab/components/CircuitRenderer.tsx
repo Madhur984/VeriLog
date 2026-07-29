@@ -15,8 +15,10 @@ export const CircuitRenderer: React.FC = () => {
   const { numVars, minterms, dontCares, solType } = useStore();
   const svgRef = useRef<SVGSVGElement>(null);
 
-  // Pan state
+  // Pan + zoom state (the SVG fits the whole circuit by default; these let the
+  // user inspect a large diagram without it being clipped).
   const [pan, setPan] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
   const [dragging, setDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
 
@@ -47,6 +49,11 @@ export const CircuitRenderer: React.FC = () => {
     setPan({ x: e.clientX - dragStart.x, y: e.clientY - dragStart.y });
   };
   const onMouseUp = () => setDragging(false);
+  const onWheel = (e: React.WheelEvent) => {
+    e.preventDefault();
+    setZoom((z) => Math.min(3, Math.max(0.4, z - e.deltaY * 0.0015)));
+  };
+  const resetView = () => { setPan({ x: 0, y: 0 }); setZoom(1); };
 
   // ── Empty states ─────────────────────────────────────────────
   if (minterms.length === 0) return null;
@@ -73,21 +80,22 @@ export const CircuitRenderer: React.FC = () => {
           </div>
         </div>
         <button
-          onClick={() => setPan({ x: 0, y: 0 })}
+          onClick={resetView}
           className="text-xs font-bold uppercase tracking-widest text-text-dim hover:text-accent-orange transition-colors px-3 py-1.5 rounded-lg border border-border-soft hover:border-accent-orange/30"
         >
-          Reset view
+          Fit view
         </button>
       </div>
 
       {/* Canvas */}
       <div
         className="relative w-full overflow-hidden rounded-2xl border border-border-soft bg-bg-base/30"
-        style={{ height: 'clamp(220px, 45vw, 360px)', cursor: dragging ? 'grabbing' : 'grab' }}
+        style={{ height: 'clamp(300px, 52vw, 480px)', cursor: dragging ? 'grabbing' : 'grab' }}
         onMouseDown={onMouseDown}
         onMouseMove={onMouseMove}
         onMouseUp={onMouseUp}
         onMouseLeave={onMouseUp}
+        onWheel={onWheel}
       >
         {/* Dot-grid background */}
         <div
@@ -118,51 +126,57 @@ export const CircuitRenderer: React.FC = () => {
           </div>
         )}
 
-        {/* SVG Circuit */}
+        {/* SVG Circuit — fills the box and fits the whole diagram (meet), so it's
+            never clipped. pan/zoom apply to an inner group for inspection. */}
         {circuit && !isTrivial && (
           <svg
             ref={svgRef}
-            width={canvasSize.width}
-            height={canvasSize.height}
+            width="100%"
+            height="100%"
             viewBox={`0 0 ${canvasSize.width} ${canvasSize.height}`}
-            style={{ transform: `translate(${pan.x}px, ${pan.y}px)`, transition: dragging ? 'none' : 'transform 0.15s ease' }}
-            className="absolute top-0 left-0"
+            preserveAspectRatio="xMidYMid meet"
+            className="absolute inset-0"
           >
             <WireGlowFilter />
 
-            {/* Wires - drawn first so they're under the gates */}
-            {circuit.wires.map((wire, i) => {
-              const fromNode = circuit.nodes.find(n => n.id === wire.fromId);
-              const toNode = circuit.nodes.find(n => n.id === wire.toId);
-              if (!fromNode || !toNode) return null;
+            <g
+              transform={`translate(${pan.x} ${pan.y}) scale(${zoom})`}
+              style={{ transition: dragging ? 'none' : 'transform 0.12s ease' }}
+            >
+              {/* Wires - drawn first so they're under the gates */}
+              {circuit.wires.map((wire, i) => {
+                const fromNode = circuit.nodes.find(n => n.id === wire.fromId);
+                const toNode = circuit.nodes.find(n => n.id === wire.toId);
+                if (!fromNode || !toNode) return null;
 
-              const fromPort = getOutputPort(fromNode.type, fromNode.x, fromNode.y);
-              // Find which input index this wire connects to on toNode
-              const toInputIndex = toNode.inputIds.indexOf(wire.fromId);
-              const toPorts = getInputPorts(toNode.type, toNode.x, toNode.y, toNode.inputIds.length);
-              const toPort = toPorts[toInputIndex] ?? { x: toNode.x - 26, y: toNode.y };
+                const fromPort = getOutputPort(fromNode.type, fromNode.x, fromNode.y);
+                // Find which input index this wire connects to on toNode
+                const toInputIndex = toNode.inputIds.indexOf(wire.fromId);
+                const toPorts = getInputPorts(toNode.type, toNode.x, toNode.y, toNode.inputIds.length);
+                const toPort = toPorts[toInputIndex] ?? { x: toNode.x - 26, y: toNode.y };
 
-              return (
-                <Wire
-                  key={i}
-                  x1={fromPort.x}
-                  y1={fromPort.y}
-                  x2={toPort.x}
-                  y2={toPort.y}
+                return (
+                  <Wire
+                    key={i}
+                    x1={fromPort.x}
+                    y1={fromPort.y}
+                    x2={toPort.x}
+                    y2={toPort.y}
+                  />
+                );
+              })}
+
+              {/* Gates */}
+              {circuit.nodes.map(node => (
+                <GateShape
+                  key={node.id}
+                  type={node.type}
+                  x={node.x}
+                  y={node.y}
+                  label={node.label}
                 />
-              );
-            })}
-
-            {/* Gates */}
-            {circuit.nodes.map(node => (
-              <GateShape
-                key={node.id}
-                type={node.type}
-                x={node.x}
-                y={node.y}
-                label={node.label}
-              />
-            ))}
+              ))}
+            </g>
           </svg>
         )}
 
