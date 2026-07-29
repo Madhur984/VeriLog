@@ -44,8 +44,36 @@ jobs:
           SSHPASS: ${{ secrets.SFTP_PASS }}
         run: |
           sudo apt-get update && sudo apt-get install -y sshpass rsync
-          sshpass -e rsync -rvz --chmod=D755,F644 \
-            -e "ssh -p ${{ secrets.SFTP_PORT }} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=25" \
-            frontend/dist/ \
-            "${{ secrets.SFTP_USER }}@${{ secrets.SFTP_HOST }}:domains/bitforbytes.in/public_html/"
+
+          # Hostinger shared-hosting SSH occasionally drops connections from
+          # cloud (Azure) runner IPs, surfacing as "Connection timed out" /
+          # rsync exit 255. A single attempt makes the whole deploy fail on a
+          # transient drop, so retry up to 5 times with backoff, plus SSH
+          # keepalives and an rsync stall timeout.
+          SSH_OPTS="-p ${{ secrets.SFTP_PORT }} \
+            -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
+            -o ConnectTimeout=60 -o ServerAliveInterval=15 -o ServerAliveCountMax=4"
+
+          ok=0
+          for i in 1 2 3 4 5; do
+            echo "::group::rsync attempt $i/5"
+            if sshpass -e rsync -rvz --partial --timeout=180 --chmod=D755,F644 \
+                 -e "ssh $SSH_OPTS" \
+                 frontend/dist/ \
+                 "${{ secrets.SFTP_USER }}@${{ secrets.SFTP_HOST }}:domains/bitforbytes.in/public_html/"; then
+              ok=1; echo "::endgroup::"; break
+            fi
+            echo "::endgroup::"
+            if [ "$i" -lt 5 ]; then
+              wait=$((i * 20))
+              echo "Attempt $i failed (transient SSH/rsync error). Retrying in ${wait}s..."
+              sleep "$wait"
+            fi
+          done
+
+          if [ "$ok" -ne 1 ]; then
+            echo "Deploy failed after 5 attempts. If this persists, SSH is likely" \
+                 "blocked/disabled server-side (see hPanel > Advanced > SSH Access)."
+            exit 1
+          fi
           echo "Deploy step finished."
