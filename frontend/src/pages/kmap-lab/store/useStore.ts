@@ -72,8 +72,10 @@ export const useStore = create<AppState>((set, get) => ({
     const ast = parseBoolean(source);
     if (!ast) return { ok: false, error: 'Could not parse that — use variables A–E, ’ for NOT, + for OR (e.g. A’BC + AB’).' };
 
-    // Size the map to the highest variable used so it matches the expression.
-    const numVars = inferNumVars(ast);
+    // Keep the currently-selected map size, only growing it if the expression
+    // uses a higher variable than the current map has. This way "A + B" fills
+    // the map you picked (e.g. 4 vars) instead of silently shrinking it to 2.
+    const numVars = Math.max(get().numVars, inferNumVars(ast));
     const vars = ['A', 'B', 'C', 'D', 'E'].slice(0, numVars);
     const total = 1 << numVars;
     const cellValues: Record<number, Value> = {};

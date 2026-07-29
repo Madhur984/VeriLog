@@ -79,7 +79,7 @@ export const PortalLayout = () => {
                 their own drawer + back button, and the portal hub / Verilog bench have their
                 own headers, so the cluster is hidden there to avoid duplicates/overlap. */}
             {showNav && (
-                <nav aria-label="Primary" ref={clusterRef} className="fixed top-4 left-4 z-[400] flex items-center gap-2">
+                <nav aria-label="Primary" ref={clusterRef} className="fixed top-4 left-4 z-[400] flex items-center gap-3.5">
                     <button
                         onClick={() => navigate('/portal')}
                         aria-label="Go to portal"
