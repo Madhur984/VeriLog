@@ -34,7 +34,7 @@ export const QuestsPage = () => {
     const { xp, streak } = useGamificationStore();
 
     return (
-        <div className="flex flex-col gap-6 pb-20">
+        <div className="flex flex-col gap-6 pb-20 pt-20">
             <div className="bg-gradient-to-r from-sky-500 to-blue-600 rounded-2xl p-5 sm:p-8 text-white flex justify-between items-center shadow-[0_6px_0_0_#0369a1]">
                 <div>
                     <h1 className="text-xl sm:text-2xl font-bold font-heading mb-2">Daily Quests</h1>

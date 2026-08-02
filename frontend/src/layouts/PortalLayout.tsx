@@ -8,6 +8,22 @@ import { getRouteMeta } from '../lib/routeMeta';
 // Course-module routes that ship their own drawer nav + get a "back to portal" control.
 const MODULE_ROUTE = /^\/(module|dsd|basic-electronics|sandbox)(\/|$)/;
 
+// Routes whose page already renders its OWN top bar (a back/exit button and/or
+// title, sometimes a theme toggle). On these the fixed floating nav cluster
+// would sit on top of that bar and its text would bleed through the pill gaps,
+// so we suppress the floating nav and let the page's own bar be the chrome.
+// (Every route here was verified to ship its own back/exit navigation.)
+const INTEGRATED_TOOLBAR_ROUTES = new Set<string>([
+    '/portal', '/verilog-playground', '/profile', '/settings',
+    '/hw-leetcode', '/signal-playground', '/boss-arena', '/skill-tree',
+    '/fsm', '/logic-studio', '/community', '/gatekeeper-game',
+    '/portfolio',
+    // /workbench embeds CircuitVerse, which owns all four corners (tabs, toolbar,
+    // element/property panels); the floating nav overlapped its top-left tab bar.
+    // Workbench ships its own bottom-left Portal + Guided Builds launcher instead.
+    '/workbench',
+]);
+
 // Primary jump-to destinations for the nav menu, grouped so the menu reads as
 // clear sections (Learn / Practice / Account) rather than one long list.
 const NAV_GROUPS: { heading: string; links: { to: string; label: string; icon: typeof Home }[] }[] = [
@@ -48,13 +64,11 @@ export const PortalLayout = () => {
 
     const isSpecialPage = location.pathname === '/career-roadmap';
     const isModule = MODULE_ROUTE.test(location.pathname);
-    // Pages whose own UI already ships a top bar / theme toggle, so the floating
-    // nav cluster would duplicate or overlap their own controls. (Profile and
-    // Settings each render their own sticky bar with a Portal button + toggle.)
-    const hasIntegratedToggle = location.pathname === '/portal'
-        || location.pathname === '/verilog-playground'
-        || location.pathname === '/profile'
-        || location.pathname === '/settings';
+    // Pages whose own UI already ships a top bar, so the floating nav would
+    // duplicate/overlap their controls (see INTEGRATED_TOOLBAR_ROUTES). The
+    // /debug-mission/:id detail pages carry their own "Back to Studio" bar too.
+    const hasIntegratedToggle = INTEGRATED_TOOLBAR_ROUTES.has(location.pathname)
+        || location.pathname.startsWith('/debug-mission');
     const showNav = !isSpecialPage && !isModule && !hasIntegratedToggle;
     const crumb = getRouteMeta(location.pathname);
 
@@ -154,7 +168,8 @@ export const PortalLayout = () => {
                 <button
                     onClick={() => navigate('/portal')}
                     aria-label="Back to portal"
-                    className="group fixed top-4 right-4 z-[410] inline-flex h-10 items-center gap-2 rounded-md border-2 px-3 lg:px-4 font-mono text-[11px] font-bold uppercase tracking-[0.14em] transition-transform duration-150 hover:-translate-y-0.5 active:translate-y-0"
+                    title="Back to portal"
+                    className="group fixed top-4 right-4 z-[410] inline-flex h-10 w-10 items-center justify-center rounded-md border-2 font-mono text-[11px] font-bold uppercase tracking-[0.14em] transition-transform duration-150 hover:-translate-y-0.5 active:translate-y-0"
                     style={{
                         // Translucent surface so it sits on ANY module background
                         // (each module tints its dark bg differently) instead of
@@ -165,8 +180,7 @@ export const PortalLayout = () => {
                         boxShadow: isLight ? '4px 4px 0 0 #1B1436' : '4px 4px 0 0 rgba(0,0,0,0.5)',
                     }}
                 >
-                    <ArrowLeft size={15} className="transition-transform duration-150 group-hover:-translate-x-0.5" />
-                    <span className="hidden lg:inline">Portal</span>
+                    <ArrowLeft size={16} className="transition-transform duration-150 group-hover:-translate-x-0.5" />
                 </button>
             )}
 

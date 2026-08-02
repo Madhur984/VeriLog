@@ -26,7 +26,7 @@ export default function AiLab() {
             <div className="absolute -top-24 -left-24 w-96 h-96 bg-sky-500/5 blur-[120px] rounded-full" />
             <div className="absolute top-1/2 -right-24 w-80 h-80 bg-indigo-500/5 blur-[100px] rounded-full" />
 
-            <div className="relative z-10 max-w-7xl mx-auto px-6 py-12">
+            <div className="relative z-10 max-w-7xl mx-auto px-6 pb-12 pt-20">
                 {/* Header Section */}
                 <header className="mb-12 space-y-4">
                     <div className="flex items-center gap-3 text-cyan-400 mb-2">

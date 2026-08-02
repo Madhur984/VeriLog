@@ -42,7 +42,7 @@ export const LegalLayout: React.FC<LegalLayoutProps> = ({ eyebrow, title, update
 
   return (
     <div className={`min-h-screen w-full pb-24 ${dark ? 'bg-[#0C0918]' : 'bg-[#F1ECFF]'} ${text}`}>
-      <div className="mx-auto max-w-5xl px-5 pt-16 sm:px-6">
+      <div className="mx-auto max-w-5xl px-5 pt-20 sm:px-6">
         <Link
           to="/"
           className={`inline-flex items-center gap-1.5 font-mono text-[12px] font-semibold ${faint} hover:text-[#7A3FD0] transition-colors`}

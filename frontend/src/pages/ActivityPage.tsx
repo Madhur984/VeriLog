@@ -15,7 +15,8 @@ export const ActivityPage = () => {
     }, [id]);
 
     return (
-        <div className="w-full min-h-[100svh]">
+        <div className="w-full min-h-[100svh] pt-16">
+            {/* pt-16 keeps the canvas header clear of the fixed floating nav. */}
             {/* Logic to initialize simulator based on activity data would go here */}
             {/* For now, render the generic canvas */}
             <SimulatorCanvas />

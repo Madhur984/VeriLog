@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { ChevronLeft, GraduationCap, ChevronDown } from 'lucide-react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
+import { ChevronLeft, GraduationCap, ChevronDown, Home } from 'lucide-react';
 import { HalfAdderTutorial } from '../components/workbench/HalfAdderTutorial';
 import { FullAdderTutorial } from '../components/workbench/FullAdderTutorial';
 import { RippleCarryTutorial } from '../components/workbench/RippleCarryTutorial';
@@ -52,6 +52,7 @@ const TUTORIALS: { id: string; label: string }[] = [
 ];
 
 export default function Workbench() {
+  const navigate = useNavigate();
   const [params, setParams] = useSearchParams();
   const tutorialId = params.get('tutorial');
   const [menuOpen, setMenuOpen] = useState(false);
@@ -102,7 +103,15 @@ export default function Workbench() {
   // Floating "Guided Builds" launcher — bottom-left so it never collides with
   // PortalLayout's top nav, the right-side rail, or the bottom-right mascot.
   const launcher = (
-    <div className="fixed bottom-4 left-4 z-[380] hidden lg:block">
+    <div className="fixed bottom-4 left-4 z-[380] flex items-end gap-2">
+      {/* Back to portal — /workbench hides the top floating nav (it overlapped
+          CircuitVerse's own top-left tab bar), so "home" lives down here, clear
+          of the simulator's toolbars and the bottom-right mascot. */}
+      <button onClick={() => navigate('/portal')} aria-label="Back to portal"
+        className="brutal-btn inline-flex h-10 items-center gap-2 bg-bg-elev px-3 text-[13px] font-bold text-text-main">
+        <Home size={16} /> <span className="hidden sm:inline">Portal</span>
+      </button>
+      <div className="relative hidden lg:block">
       {menuOpen && <div className="fixed inset-0 z-0" onClick={() => setMenuOpen(false)} />}
       {menuOpen && (
         <ul className="absolute bottom-full left-0 z-10 mb-2 max-h-[60vh] w-[248px] overflow-y-auto rounded-xl border-2 border-border-soft bg-bg-elev p-1.5 shadow-2xl">
@@ -130,6 +139,7 @@ export default function Workbench() {
         <span className="max-w-[180px] truncate">{tutorial ? activeLabel : 'Guided Builds'}</span>
         <ChevronDown size={14} className={`text-text-dim transition-transform ${menuOpen ? 'rotate-180' : ''}`} />
       </button>
+      </div>
     </div>
   );
 

@@ -312,7 +312,7 @@ export const DsdModule5Engine: React.FC<{
       <div className="flex-1 flex flex-col h-full overflow-hidden relative z-10">
         {/* Header with mode toggle (visible on every page) */}
         <header
-          className="border-b flex items-center justify-between px-4 lg:px-12 py-4 z-10 gap-6 flex-wrap"
+          className="border-b flex items-center justify-between px-4 lg:pl-12 lg:pr-20 py-4 z-10 gap-6 flex-wrap"
           style={{ borderColor: 'var(--border-soft)' }}
         >
           <div className="flex items-center gap-3 min-w-0">

@@ -247,7 +247,7 @@ export const DsdModule1Engine: React.FC<{
 
       <div className="flex-1 flex flex-col h-full overflow-hidden relative z-10">
         <header
-          className="h-16 lg:h-20 border-b flex items-center justify-between pl-4 pr-16 lg:px-12 z-10 gap-3"
+          className="h-16 lg:h-20 border-b flex items-center justify-between pl-4 pr-16 lg:pl-12 lg:pr-20 z-10 gap-3"
           style={{ borderColor: 'var(--border-soft)' }}
         >
           <div className="flex items-center gap-3 min-w-0">
