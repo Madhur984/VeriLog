@@ -7,10 +7,16 @@ name: Build & Deploy to Hostinger
 # what changed.
 #
 # Required repo secrets (Settings > Secrets and variables > Actions):
-#   SFTP_HOST = 46.202.142.103
 #   SFTP_PORT = 65002
 #   SFTP_USER = u849937788
 #   SFTP_PASS = <your Hostinger SSH password>
+#
+# NOTE (2026-08-02): Hostinger moved this account to a NEW server IP
+# (46.202.183.228, per hPanel > Advanced > SSH Access). The old SFTP_HOST secret
+# still pointed at the retired 46.202.142.103, which is why deploys timed out.
+# The current IP is pinned inline below (it's public, not a credential); update
+# the inline value if hPanel ever shows a different SSH IP. The SFTP_HOST secret
+# is no longer used.
 
 on:
   push:
@@ -60,7 +66,7 @@ jobs:
             if sshpass -e rsync -rvz --partial --timeout=180 --chmod=D755,F644 \
                  -e "ssh $SSH_OPTS" \
                  frontend/dist/ \
-                 "${{ secrets.SFTP_USER }}@${{ secrets.SFTP_HOST }}:domains/bitforbytes.in/public_html/"; then
+                 "${{ secrets.SFTP_USER }}@46.202.183.228:domains/bitforbytes.in/public_html/"; then
               ok=1; echo "::endgroup::"; break
             fi
             echo "::endgroup::"
