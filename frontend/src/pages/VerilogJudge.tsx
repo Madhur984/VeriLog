@@ -251,7 +251,11 @@ export const VerilogJudge: React.FC = () => {
     // Benign 'note' diagnostics (e.g. array inferred as flip-flops) must not
     // mark the editor — they aren't design problems and the squiggles read as errors.
     const markers = ds.filter((d) => d.severity !== 'note').map((d) => {
-      const line = d.line ?? (d.signal ? lineOfSignal(src, d.signal) : undefined) ?? 1;
+      const rawLine = d.line ?? (d.signal ? lineOfSignal(src, d.signal) : undefined) ?? 1;
+      // Diagnostics come from a slightly older (debounced) source, so a line can
+      // be out of range if the user just deleted lines — clamp so getLineContent
+      // never throws (which would freeze the schematic mid-callback).
+      const line = Math.min(Math.max(1, rawLine), model.getLineCount());
       const text = model.getLineContent(line);
       return {
         severity: d.severity === 'error' ? monaco.MarkerSeverity.Error : monaco.MarkerSeverity.Warning,

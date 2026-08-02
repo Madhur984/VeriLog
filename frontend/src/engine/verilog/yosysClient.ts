@@ -28,8 +28,27 @@ let runsSinceSpawn = 0;
 const pending = new Map<number, {
   resolve: (r: SynthResult) => void;
   onProgress?: (p: SynthProgress) => void;
-  timer: ReturnType<typeof setTimeout>;
+  timer?: ReturnType<typeof setTimeout>;
 }>();
+
+// (Re)arm the per-run wedge timer. Reset on each progress event so the one-time
+// ~43MB engine DOWNLOAD isn't counted against the synthesis budget — the timer
+// then measures actual (post-download) synthesis time and only fires if the
+// engine truly wedges on a run.
+function armWedgeTimer(id: number) {
+  const entry = pending.get(id);
+  if (!entry) return;
+  clearTimeout(entry.timer);
+  entry.timer = setTimeout(() => {
+    settle(id, {
+      ok: false,
+      error: `Synthesis timed out after ${RUN_TIMEOUT_MS / 1000}s — the design may be too large or contain a synthesis loop. Try simplifying it.`,
+      diagnostics: [],
+    });
+    failAllPending('Synthesis engine was reset after a timeout — please run again.');
+    recycle();
+  }, RUN_TIMEOUT_MS);
+}
 
 function settle(id: number, r: SynthResult) {
   const entry = pending.get(id);
@@ -66,6 +85,7 @@ function spawnWorker(): Worker {
     if (!entry) return;
     if (type === 'progress') {
       entry.onProgress?.({ done: e.data.done ?? 0, total: e.data.total ?? 0 });
+      armWedgeTimer(id); // still downloading — don't let the download eat the timeout
       return;
     }
     if (type === 'done') {
@@ -93,18 +113,8 @@ export function synthesize(code: string, onProgress?: (p: SynthProgress) => void
   const w = ensureWorker();
   const id = ++seq;
   return new Promise<SynthResult>((resolve) => {
-    const timer = setTimeout(() => {
-      // The (synchronous) engine wedged. Resolve this run as a timeout, fail any
-      // runs queued behind it (the worker is about to die), then respawn clean.
-      settle(id, {
-        ok: false,
-        error: `Synthesis timed out after ${RUN_TIMEOUT_MS / 1000}s — the design may be too large or contain a synthesis loop. Try simplifying it.`,
-        diagnostics: [],
-      });
-      failAllPending('Synthesis engine was reset after a timeout — please run again.');
-      recycle();
-    }, RUN_TIMEOUT_MS);
-    pending.set(id, { resolve, onProgress, timer });
+    pending.set(id, { resolve, onProgress });
+    armWedgeTimer(id); // reset on each progress event (see armWedgeTimer)
     w.postMessage({ id, code });
   });
 }

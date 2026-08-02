@@ -108,7 +108,7 @@ export default function Workbench() {
           CircuitVerse's own top-left tab bar), so "home" lives down here, clear
           of the simulator's toolbars and the bottom-right mascot. */}
       <button onClick={() => navigate('/portal')} aria-label="Back to portal"
-        className="brutal-btn inline-flex h-10 items-center gap-2 bg-bg-elev px-3 text-[13px] font-bold text-text-main">
+        className="brutal-btn relative z-10 inline-flex h-10 items-center gap-2 bg-bg-elev px-3 text-[13px] font-bold text-text-main">
         <Home size={16} /> <span className="hidden sm:inline">Portal</span>
       </button>
       <div className="relative hidden lg:block">
