@@ -79,7 +79,6 @@ const RadialSegment: React.FC<SegmentProps> = React.memo(({
       aria-label={label}
       aria-current={isActive ? 'page' : undefined}
       tabIndex={0}
-      title={`Navigate to ${label}`}
       onClick={onClick}
       onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(); } }}
       onMouseEnter={() => setIsHovered(true)}
@@ -92,6 +91,7 @@ const RadialSegment: React.FC<SegmentProps> = React.memo(({
       style={{ originX: '160px', originY: '160px', cursor: 'pointer', outline: 'none' }}
       className="group focus-visible:outline-none"
     >
+      <title>{`Navigate to ${label}`}</title>
       {/* 3D Depth Extrusion Base */}
       <motion.path
         d={basePath}
