@@ -38,7 +38,10 @@ concurrency:
 
 jobs:
   build-deploy:
-    runs-on: ubuntu-latest
+    # Pinned to 22.04 (a separate hosted-runner pool) because ubuntu-latest (24.04)
+    # was congested and jobs sat minutes on "waiting for a hosted runner to come
+    # online". If 22.04 ever lags too, ubuntu-latest is the usual default.
+    runs-on: ubuntu-22.04
     # Backstop so a hung SSH/rsync can't pin the runner (or the concurrency group)
     # indefinitely; the whole build+deploy comfortably finishes well under this.
     timeout-minutes: 30
