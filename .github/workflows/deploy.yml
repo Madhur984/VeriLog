@@ -23,13 +23,22 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+# A new push should PREEMPT a stuck/hung deploy, not queue behind it. With
+# cancel-in-progress:false a single hung run (e.g. rsync retrying against a dead
+# host) holds this group forever and every later push sits "waiting for a runner".
+# cancel-in-progress:true cancels the older in-flight run so the newest push wins
+# immediately — safe here because rsync is idempotent + incremental, so the final
+# run always fully syncs public_html regardless of what a cancelled run left.
 concurrency:
   group: hostinger-deploy
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   build-deploy:
     runs-on: ubuntu-latest
+    # Backstop so a hung SSH/rsync can't pin the runner (or the concurrency group)
+    # indefinitely; the whole build+deploy comfortably finishes well under this.
+    timeout-minutes: 30
     steps:
       - name: Checkout (incl. videos)
         uses: actions/checkout@v4
