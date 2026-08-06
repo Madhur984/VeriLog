@@ -1,0 +1,25 @@
+# Minimal diagnostic workflow. Its ONLY job is to prove whether GitHub will hand
+# this account an ubuntu-latest runner at all. If this ~10-second job also sits
+# "queued / waiting for a runner", the blocker is account-level (Actions minutes
+# / runner supply), not deploy.yml — and no deploy workflow can run until that's
+# resolved (make the repo public, or add a payment method + spending limit).
+# If it goes green in seconds, the problem is specific to deploy.yml instead.
+name: CI smoke test
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths:
+      - '.github/workflows/ci-smoke.yml'
+
+jobs:
+  hello:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Prove the runner is online
+        run: |
+          echo "Runner picked up the job."
+          echo "OS: $(uname -a)"
+          echo "If you can read this in the Actions log, GitHub-hosted runners work."
