@@ -1,5 +1,5 @@
 import React from 'react';
-import { Compass, ExternalLink, ArrowRight, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Compass, ExternalLink, ArrowRight, CheckCircle2, AlertCircle, MapPin, Link2 } from 'lucide-react';
 import {
   useChatNavigation,
   parseNavigationPayload,
@@ -67,25 +67,68 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
     );
   }
 
-  // Helper for singular vs plural countdown text
   const countdownText = countdown === 1 ? '1 second' : `${countdown} seconds`;
+  const destinationUrl = resolvedPath?.url || navPayload.path;
 
-  // 2. Render Navigation Action Card with Live Progress Bar Toast
+  const handleCardKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      navigateNow();
+    }
+  };
+
+  // 2. Render Accessible Navigation Action Card with Clickable Hyperlink Icons
   return (
     <div className="my-2 flex justify-start">
-      <div className="w-[88%] space-y-2.5 rounded-2xl border-[2.5px] border-[#1B1436] bg-white p-4 shadow-[4px_4px_0_#1B1436] dark:border-[#4A3D7A] dark:bg-[#1B1540] dark:shadow-[4px_4px_0_#7A3FD0]">
-        
-        {/* Navigation Heading & Path */}
-        <div className="flex items-start gap-2.5 font-bold text-[#1B1436] dark:text-white">
-          <Compass size={20} className="mt-0.5 flex-shrink-0 text-[#7A3FD0] dark:text-[#B98BFF]" />
-          <div>
-            <div className="text-[14px] leading-snug">
-              {navPayload.message || `Taking you to ${navPayload.path}...`}
-            </div>
-            <div className="mt-0.5 font-mono text-[11px] text-[#6B5E86] dark:text-[#8E80B4]">
-              Target: <span className="underline">{navPayload.path}</span>
+      <div
+        tabIndex={0}
+        role="region"
+        aria-label={`Navigation suggestion to ${destinationUrl}`}
+        className="group relative w-[90%] space-y-2.5 rounded-2xl border-[2.5px] border-[#1B1436] bg-white p-4 shadow-[4px_4px_0_#1B1436] outline-none focus:ring-2 focus:ring-[#7A3FD0] dark:border-[#4A3D7A] dark:bg-[#1B1540] dark:shadow-[4px_4px_0_#7A3FD0]"
+      >
+        {/* Card Header & Clickable Navigation Link */}
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex items-start gap-2.5">
+            {/* Clickable MapPin / Compass Icon */}
+            <button
+              type="button"
+              onClick={navigateNow}
+              title={`Navigate to ${destinationUrl}`}
+              aria-label={`Navigate to ${destinationUrl}`}
+              className="grid h-8 w-8 flex-shrink-0 place-items-center rounded-xl border-[2px] border-[#1B1436] bg-[#F1ECFF] text-[#7A3FD0] shadow-[2px_2px_0_#1B1436] transition-transform hover:scale-105 active:scale-95 dark:border-[#4A3D7A] dark:bg-[#2A1F52] dark:text-[#B98BFF]"
+            >
+              <MapPin size={16} />
+            </button>
+
+            <div className="min-w-0 flex-1">
+              <div className="text-[14px] font-bold leading-snug text-[#1B1436] dark:text-white">
+                {navPayload.message || `Taking you to ${navPayload.path}...`}
+              </div>
+              
+              {/* Tooltip / Secondary Target Path link */}
+              <button
+                type="button"
+                onClick={navigateNow}
+                title={`Click to open ${destinationUrl}`}
+                aria-label={`Open route ${destinationUrl}`}
+                className="mt-1 inline-flex items-center gap-1 font-mono text-[11.5px] font-semibold text-[#7A3FD0] hover:underline dark:text-[#B98BFF]"
+              >
+                <Link2 size={13} />
+                <span>{destinationUrl}</span>
+              </button>
             </div>
           </div>
+
+          {/* Top-Right Direct Navigation Arrow Button */}
+          <button
+            type="button"
+            onClick={navigateNow}
+            aria-label={`Navigate to ${destinationUrl}`}
+            title={`Navigate to ${destinationUrl}`}
+            className="grid h-8 w-8 flex-shrink-0 place-items-center rounded-xl border-[2px] border-[#1B1436] bg-[#7A3FD0] text-white shadow-[2px_2px_0_#1B1436] transition-all hover:translate-x-0.5 hover:bg-[#6832BD] active:translate-y-0.5 dark:border-[#4A3D7A] dark:shadow-[2px_2px_0_#3A2064]"
+          >
+            {resolvedPath?.isExternal ? <ExternalLink size={15} /> : <ArrowRight size={15} />}
+          </button>
         </div>
 
         {/* Confidence Indicator */}
@@ -102,14 +145,13 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
         {isLowConfidence && !redirected && (
           <div className="flex items-center gap-1.5 rounded-lg bg-amber-50 px-2.5 py-1.5 text-[12px] font-medium text-amber-700 dark:bg-amber-950/40 dark:text-amber-300">
             <AlertCircle size={14} />
-            <span>Low confidence match — auto-navigation disabled. Click below to proceed.</span>
+            <span>Low confidence match — click the icon above or button below to navigate manually.</span>
           </div>
         )}
 
         {/* Animated Progress Countdown Toast */}
         {isAutoNavigating && (
           <div className="relative overflow-hidden rounded-xl border border-[#7A3FD0]/30 bg-[#F1ECFF] p-2.5 text-[12px] font-bold text-[#7A3FD0] shadow-sm dark:border-[#B98BFF]/30 dark:bg-[#2A1F52] dark:text-[#B98BFF]">
-            {/* Top progress bar track */}
             <div
               className="absolute left-0 top-0 h-1 bg-[#7A3FD0] transition-all duration-1000 ease-linear dark:bg-[#B98BFF]"
               style={{ width: `${progressPct}%` }}
@@ -139,15 +181,18 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
         {redirected && (
           <div className="flex items-center gap-1.5 text-[12px] font-bold text-emerald-600 dark:text-emerald-400">
             <CheckCircle2 size={16} />
-            <span>Navigating now...</span>
+            <span>Navigating to {destinationUrl}...</span>
           </div>
         )}
 
-        {/* Manual Action Button */}
+        {/* Manual Fallback Action Button */}
         <div className="flex items-center gap-2 pt-1">
           <button
             type="button"
             onClick={navigateNow}
+            onKeyDown={handleCardKeyDown}
+            aria-label={`Go to ${destinationUrl}`}
+            title={`Navigate to ${destinationUrl}`}
             className="flex items-center gap-1.5 rounded-xl border-[2px] border-[#1B1436] bg-[#7A3FD0] px-4 py-2 text-[12.5px] font-bold text-white shadow-[2px_2px_0_#1B1436] transition-transform hover:-translate-y-[1px] active:translate-y-[1px] dark:border-[#4A3D7A] dark:shadow-[2px_2px_0_#3A2064]"
           >
             <span>Go there</span>
