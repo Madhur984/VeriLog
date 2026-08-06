@@ -98,10 +98,10 @@ const RadialSegment: React.FC<SegmentProps> = React.memo(({
         className={cn(
           "transition-colors duration-300 pointer-events-none",
           isActive
-            ? (isLight ? "fill-[#7A3FD0]/20" : "fill-cyan-950/90")
+            ? (isLight ? "fill-[#7A3FD0]/[0.34]" : "fill-cyan-950/90")
             : isHovered
-              ? (isLight ? "fill-[#7A3FD0]/[0.12]" : "fill-blue-950/90")
-              : (isLight ? "fill-slate-200/80" : "fill-[#020617]/90")
+              ? (isLight ? "fill-[#7A3FD0]/[0.24]" : "fill-blue-950/90")
+              : (isLight ? "fill-[#7A3FD0]/[0.18]" : "fill-[#020617]/90")
         )}
       />
 
@@ -111,12 +111,12 @@ const RadialSegment: React.FC<SegmentProps> = React.memo(({
         className={cn(
           "transition-colors duration-300 group-focus-visible:stroke-amber-400 group-focus-visible:stroke-2",
           isFlashing
-            ? (isLight ? "fill-white stroke-[#7A3FD0]/60 stroke-2" : "fill-cyan-800 stroke-white stroke-2")
+            ? (isLight ? "fill-[#7A3FD0]/40 stroke-[#7A3FD0]/60 stroke-2" : "fill-cyan-800 stroke-white stroke-2")
             : isActive
-              ? (isLight ? "fill-[#7A3FD0]/[0.15] stroke-[#7A3FD0] stroke-2" : "fill-cyan-900/80 stroke-cyan-400 stroke-2")
+              ? (isLight ? "fill-[#7A3FD0]/[0.32] stroke-[#7A3FD0] stroke-2" : "fill-cyan-900/80 stroke-cyan-400 stroke-2")
               : isHovered
-                ? (isLight ? "fill-[#7A3FD0]/[0.10] stroke-[#7A3FD0]/55 stroke-[1.5]" : "fill-blue-900/60 stroke-blue-400 stroke-[1.5]")
-                : (isLight ? "fill-white/80 stroke-slate-300 stroke-1" : "fill-slate-900/85 stroke-slate-700/60 stroke-1")
+                ? (isLight ? "fill-[#7A3FD0]/[0.24] stroke-[#7A3FD0]/60 stroke-[1.5]" : "fill-blue-900/60 stroke-blue-400 stroke-[1.5]")
+                : (isLight ? "fill-[#7A3FD0]/[0.16] stroke-[#7A3FD0]/40 stroke-1" : "fill-slate-900/85 stroke-slate-700/60 stroke-1")
         )}
         style={{
           filter: isFlashing
@@ -161,7 +161,7 @@ const RadialSegment: React.FC<SegmentProps> = React.memo(({
                 ? (isLight ? "bg-[#7A3FD0] text-white border-[#7A3FD0]/55 shadow-[0_0_14px_rgba(122,63,208,0.5)] ring-2 ring-[#7A3FD0]/40" : "bg-cyan-500/20 border-cyan-400 text-cyan-300 shadow-[0_0_18px_rgba(34,211,238,0.5)] ring-2 ring-cyan-400/50 animate-[pulse_2.5s_ease-in-out_infinite]")
                 : isHovered
                   ? (isLight ? "bg-[#7A3FD0]/10 border-[#7A3FD0]/55 text-[#7A3FD0] shadow-md" : "bg-blue-500/20 border-blue-400 text-blue-300 shadow-lg")
-                  : (isLight ? "bg-slate-100 border-slate-200 text-slate-700" : "bg-slate-900/80 border-slate-700/60 text-slate-400")
+                  : (isLight ? "bg-white/80 border-[#7A3FD0]/30 text-[#7A3FD0]" : "bg-slate-900/80 border-slate-700/60 text-slate-400")
             )}>
               <div className="absolute top-0 inset-x-0 h-1/2 bg-gradient-to-b from-white/20 to-transparent pointer-events-none" />
               {icon}
