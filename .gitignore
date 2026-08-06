@@ -47,6 +47,13 @@ __pycache__/
 venv/
 ENV/
 
+# Chroma local DBs
+chroma_db/
+chroma_db_temp/
+chroma_db_test/
+Site_Route_Map.pdf
+generate_pdf.py
+
 # Blender backup files
 *.blend1
 
@@ -58,16 +65,3 @@ reports/
 
 # Local scratch and source assets
 _scratch/
-src/be/
-
-# Yosys WASM engine is served from node_modules at /yowasp/* in dev and copied
-# into dist/yowasp on build by the bfb-yowasp-assets Vite plugin — nothing to
-# commit (dist/ is already ignored; node_modules holds the pinned source).
-
-# Standalone "Coming Soon" waitlist page — deployed separately to Hostinger,
-# not part of the React app.
-bitforbytes-waitlist/
-bitforbytes-waitlist.zip
-bitforbytes-waitlist-deploy.zip
-
-

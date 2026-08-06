@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Send, X, Sparkles } from 'lucide-react';
+import { Send, X, Sparkles, Compass, ExternalLink, ArrowRight, CheckCircle2 } from 'lucide-react';
 import { askAssistant, type AssistantMsg } from '../lib/assistant';
 import { getPageContext } from '../lib/pageContext';
 
@@ -11,29 +12,153 @@ interface Props {
   open: boolean;
   onClose: () => void;
   pathname: string;
-  /** true on course-module routes, where a Back/Next footer bar sits at the bottom. */
   inModule?: boolean;
+  /** Global configuration for navigation behavior */
+  autoNavigate?: boolean;
+  openInNewTab?: boolean;
 }
 
-const SUGGESTIONS = ['Summarise this page', 'Give me a hint', 'Explain this simply', 'What should I learn next?'];
+export interface NavigationPayload {
+  type: 'navigate';
+  path: string;
+  message?: string;
+  confidence?: number;
+}
+
+const SUGGESTIONS = ['Summarise this page', 'Take me to verilog playground', 'Explain logic gates', 'Go to course portal'];
 const FALLBACK = "Hey, I'm VoltMonkey ⚡ — ask me anything about this page or the curriculum!";
 
-/**
- * VoltMonkey's chat panel — a neo-brutalist assistant window that opens from the
- * mascot. On open it streams an AI summary of the current page; students can
- * then ask curriculum questions. All model calls go through the `assistant`
- * Edge Function (Hugging Face key stays server-side) and stream token-by-token.
- */
-export const AssistantPanel: React.FC<Props> = ({ open, onClose, pathname, inModule }) => {
+/** Safely parses navigation JSON from assistant responses. */
+export function parseNavigationPayload(content: string): NavigationPayload | null {
+  try {
+    const jsonMatch = content.match(/\{[\s\S]*"type"\s*:\s*"navigate"[\s\S]*\}/);
+    if (jsonMatch) {
+      const parsed = JSON.parse(jsonMatch[0]);
+      if (parsed.type === 'navigate' && typeof parsed.path === 'string') {
+        return parsed as NavigationPayload;
+      }
+    }
+  } catch {
+    /* Non-JSON text content */
+  }
+  return null;
+}
+
+/** Resolves relative vs absolute paths */
+export function normalizePath(path: string): { isExternal: boolean; url: string } {
+  if (path.startsWith('http://') || path.startsWith('https://')) {
+    return { isExternal: true, url: path };
+  }
+  return { isExternal: false, url: path.startsWith('/') ? path : `/${path}` };
+}
+
+/** Component rendered when a Navigation Action is received */
+const NavigationResponseCard: React.FC<{
+  nav: NavigationPayload;
+  autoNavigateConfig?: boolean;
+  openInNewTabConfig?: boolean;
+}> = ({ nav, autoNavigateConfig = true, openInNewTabConfig = false }) => {
+  const navigate = useNavigate();
+  const [countdown, setCountdown] = useState<number | null>(autoNavigateConfig ? 2 : null);
+  const [redirected, setRedirected] = useState(false);
+  const { isExternal, url } = normalizePath(nav.path);
+
+  const executeNavigation = () => {
+    setRedirected(true);
+    if (isExternal || openInNewTabConfig) {
+      window.open(url, openInNewTabConfig ? '_blank' : '_self');
+    } else {
+      navigate(url);
+    }
+  };
+
+  useEffect(() => {
+    if (!autoNavigateConfig || redirected) return;
+    const timer = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev === 1) {
+          clearInterval(timer);
+          executeNavigation();
+          return 0;
+        }
+        return prev ? prev - 1 : 0;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [autoNavigateConfig, redirected, url]);
+
+  return (
+    <div className="space-y-2 rounded-xl border-[2px] border-[#1B1436] bg-white p-3 shadow-[3px_3px_0_#1B1436] dark:border-[#4A3D7A] dark:bg-[#1B1540] dark:shadow-[3px_3px_0_#7A3FD0]">
+      <div className="flex items-center gap-2 font-bold text-[#1B1436] dark:text-white">
+        <Compass size={18} className="text-[#7A3FD0] dark:text-[#B98BFF]" />
+        <span>{nav.message || `Navigating to ${nav.path}...`}</span>
+      </div>
+
+      {nav.confidence && (
+        <div className="text-[11px] font-semibold text-[#6B5E86] dark:text-[#8E80B4]">
+          Match Confidence: {Math.round(nav.confidence * 100)}%
+        </div>
+      )}
+
+      {/* Auto-Navigation Toast Indicator */}
+      {autoNavigateConfig && countdown !== null && !redirected && (
+        <div className="flex items-center gap-2 rounded-lg bg-[#F1ECFF] px-2.5 py-1.5 text-[12px] font-medium text-[#7A3FD0] dark:bg-[#2A1F52] dark:text-[#B98BFF]">
+          <span className="relative flex h-2 w-2">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#7A3FD0] opacity-75"></span>
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-[#7A3FD0]"></span>
+          </span>
+          <span>Redirecting automatically in {countdown}s...</span>
+        </div>
+      )}
+
+      {redirected && (
+        <div className="flex items-center gap-1.5 text-[12px] font-bold text-emerald-600 dark:text-emerald-400">
+          <CheckCircle2 size={14} /> Redirecting now!
+        </div>
+      )}
+
+      {/* Manual Fallback Action Button */}
+      <div className="flex gap-2 pt-1">
+        <button
+          type="button"
+          onClick={executeNavigation}
+          className="flex items-center gap-1.5 rounded-lg border-[2px] border-[#1B1436] bg-[#7A3FD0] px-3 py-1.5 text-[12px] font-bold text-white shadow-[2px_2px_0_#1B1436] transition-transform hover:-translate-y-[1px] active:translate-y-[1px] dark:border-[#4A3D7A] dark:shadow-[2px_2px_0_#3A2064]"
+        >
+          <span>Go there</span>
+          {isExternal ? <ExternalLink size={14} /> : <ArrowRight size={14} />}
+        </button>
+
+        {autoNavigateConfig && !redirected && (
+          <button
+            type="button"
+            onClick={() => setCountdown(null)}
+            className="rounded-lg border-[1.5px] border-slate-300 px-2.5 py-1.5 text-[12px] font-semibold text-slate-600 hover:bg-slate-100 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+          >
+            Cancel Auto-Redirect
+          </button>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export const AssistantPanel: React.FC<Props> = ({
+  open,
+  onClose,
+  pathname,
+  inModule,
+  autoNavigate = true,
+  openInNewTab = false
+}) => {
   const [messages, setMessages] = useState<AssistantMsg[]>([]);
   const [input, setInput] = useState('');
   const [busy, setBusy] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const reqId = useRef(0); // only the latest request may write to state
-  const lastSummarised = useRef(''); // route we've already summarised
+  const reqId = useRef(0);
+  const lastSummarised = useRef('');
 
-  // Append a streamed chunk to the last (assistant) message.
   const pushDelta = (delta: string) =>
     setMessages((m) => {
       if (!m.length) return [{ role: 'assistant', content: delta }];
@@ -43,8 +168,6 @@ export const AssistantPanel: React.FC<Props> = ({ open, onClose, pathname, inMod
       return copy;
     });
 
-  // Replace the last assistant message's content only if it's still empty (used
-  // for graceful error/fallback text after a failed stream).
   const fillLastIfEmpty = (text: string) =>
     setMessages((m) => {
       const copy = [...m];
@@ -53,15 +176,10 @@ export const AssistantPanel: React.FC<Props> = ({ open, onClose, pathname, inMod
       return copy;
     });
 
-  // Auto-scroll to the newest content.
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
   }, [messages, busy]);
 
-  // On open (and on route change while open), stream a fresh page summary once.
-  // Deps are ONLY [open, pathname] — depending on state we set inside (busy /
-  // summarised) would re-run the effect, cancel its own in-flight request, and
-  // leave the panel stuck on the typing dots forever.
   useEffect(() => {
     if (!open || lastSummarised.current === pathname) return;
     lastSummarised.current = pathname;
@@ -70,9 +188,8 @@ export const AssistantPanel: React.FC<Props> = ({ open, onClose, pathname, inMod
     setBusy(true);
     setMessages([{ role: 'assistant', content: '' }]);
     askAssistant({ messages: [], pageContext: getPageContext(pathname), mode: 'summary', onDelta: (d) => { if (mine()) pushDelta(d); } })
-      .catch(() => { /* fall through to the fallback in finally */ })
+      .catch(() => {})
       .finally(() => { if (mine()) { fillLastIfEmpty(FALLBACK); setBusy(false); setTimeout(() => inputRef.current?.focus(), 50); } });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, pathname]);
 
   const send = async (text: string) => {
@@ -123,7 +240,7 @@ export const AssistantPanel: React.FC<Props> = ({ open, onClose, pathname, inMod
               <div className="flex items-center gap-1.5 text-[15px] font-bold text-[#1B1436] dark:text-white">
                 VoltMonkey <Sparkles size={13} className="text-[#FF7A1A]" />
               </div>
-              <div className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#6B5E86] dark:text-[#8E80B4]">AI study buddy</div>
+              <div className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#6B5E86] dark:text-[#8E80B4]">AI study buddy & navigator</div>
             </div>
             <button
               type="button" onClick={onClose} aria-label="Close assistant"
@@ -135,19 +252,33 @@ export const AssistantPanel: React.FC<Props> = ({ open, onClose, pathname, inMod
 
           {/* Messages */}
           <div ref={scrollRef} className="flex-1 space-y-3 overflow-y-auto px-4 py-4">
-            {visible.map((m, i) => (
-              <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                <div
-                  className={`max-w-[85%] whitespace-pre-wrap rounded-2xl border-[2.5px] border-[#1B1436] px-3.5 py-2.5 text-[13.5px] leading-relaxed shadow-[3px_3px_0_#1B1436] dark:border-[#4A3D7A] dark:shadow-[3px_3px_0_#7A3FD0] ${
-                    m.role === 'user'
-                      ? 'bg-[#7A3FD0] font-medium text-white'
-                      : 'bg-white text-[#1B1436] dark:bg-[#1B1540] dark:text-[#E9E4FA]'
-                  }`}
-                >
-                  {m.content}
+            {visible.map((m, i) => {
+              const navPayload = m.role === 'assistant' ? parseNavigationPayload(m.content) : null;
+
+              return (
+                <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                  <div className="max-w-[88%] font-sans text-[13.5px] leading-relaxed">
+                    {navPayload ? (
+                      <NavigationResponseCard
+                        nav={navPayload}
+                        autoNavigateConfig={autoNavigate}
+                        openInNewTabConfig={openInNewTab}
+                      />
+                    ) : (
+                      <div
+                        className={`whitespace-pre-wrap rounded-2xl border-[2.5px] border-[#1B1436] px-3.5 py-2.5 shadow-[3px_3px_0_#1B1436] dark:border-[#4A3D7A] dark:shadow-[3px_3px_0_#7A3FD0] ${
+                          m.role === 'user'
+                            ? 'bg-[#7A3FD0] font-medium text-white'
+                            : 'bg-white text-[#1B1436] dark:bg-[#1B1540] dark:text-[#E9E4FA]'
+                        }`}
+                      >
+                        {m.content}
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
 
             {waiting && (
               <div className="flex justify-start">
@@ -164,7 +295,7 @@ export const AssistantPanel: React.FC<Props> = ({ open, onClose, pathname, inMod
               </div>
             )}
 
-            {/* Suggestion chips (only before the student has asked anything) */}
+            {/* Suggestion chips */}
             {!busy && visible.length <= 1 && (
               <div className="flex flex-wrap gap-2 pt-1">
                 {SUGGESTIONS.map((s) => (

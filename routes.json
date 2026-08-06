@@ -1,0 +1,495 @@
+[
+  {
+    "name": "Landing page — hero, method, tracks",
+    "path": "/",
+    "category": "Public Core & Content Pages",
+    "description": "Landing page — hero, method, tracks (Category: Public Core & Content Pages)"
+  },
+  {
+    "name": "Course portal — full curriculum tree",
+    "path": "/portal",
+    "category": "Public Core & Content Pages",
+    "description": "Course portal — full curriculum tree (Category: Public Core & Content Pages)"
+  },
+  {
+    "name": "VLSI & chip-design career roadmap 2026",
+    "path": "/career-roadmap",
+    "category": "Public Core & Content Pages",
+    "description": "VLSI & chip-design career roadmap 2026 (Category: Public Core & Content Pages)"
+  },
+  {
+    "name": "Digital-design analogy library",
+    "path": "/analogies",
+    "category": "Public Core & Content Pages",
+    "description": "Digital-design analogy library (Category: Public Core & Content Pages)"
+  },
+  {
+    "name": "Verilog snippet & pattern library",
+    "path": "/verilog-library",
+    "category": "Public Core & Content Pages",
+    "description": "Verilog snippet & pattern library (Category: Public Core & Content Pages)"
+  },
+  {
+    "name": "From sand to silicon — fabrication journey",
+    "path": "/silicon-map",
+    "category": "Public Core & Content Pages",
+    "description": "From sand to silicon — fabrication journey (Category: Public Core & Content Pages)"
+  },
+  {
+    "name": "The India ECE Pledge",
+    "path": "/pledge",
+    "category": "Public Core & Content Pages",
+    "description": "The India ECE Pledge (Category: Public Core & Content Pages)"
+  },
+  {
+    "name": "Privacy policy",
+    "path": "/privacy",
+    "category": "Public Core & Content Pages",
+    "description": "Privacy policy (Category: Public Core & Content Pages)"
+  },
+  {
+    "name": "Terms of service",
+    "path": "/terms",
+    "category": "Public Core & Content Pages",
+    "description": "Terms of service (Category: Public Core & Content Pages)"
+  },
+  {
+    "name": "Verilog Judge — write, run & auto-grade HDL",
+    "path": "/verilog-playground",
+    "category": "Public Interactive Tools",
+    "description": "Verilog Judge — write, run & auto-grade HDL (Category: Public Interactive Tools)"
+  },
+  {
+    "name": "Circuit Workbench — build & simulate live",
+    "path": "/workbench",
+    "category": "Public Interactive Tools",
+    "description": "Circuit Workbench — build & simulate live (Category: Public Interactive Tools)"
+  },
+  {
+    "name": "Karnaugh-map minimiser",
+    "path": "/kmap-lab",
+    "category": "Public Interactive Tools",
+    "description": "Karnaugh-map minimiser (Category: Public Interactive Tools)"
+  },
+  {
+    "name": "Foundation module 1 — overview",
+    "path": "/module/1",
+    "category": "Public Foundation Modules",
+    "description": "Foundation module 1 — overview (Category: Public Foundation Modules)"
+  },
+  {
+    "name": "Foundation module 1 · chapter 1",
+    "path": "/module/1/1",
+    "category": "Public Foundation Modules",
+    "description": "Foundation module 1 · chapter 1 (Category: Public Foundation Modules)"
+  },
+  {
+    "name": "Foundation module 2",
+    "path": "/module/2",
+    "category": "Public Foundation Modules",
+    "description": "Foundation module 2 (Category: Public Foundation Modules)"
+  },
+  {
+    "name": "Foundation module 3",
+    "path": "/module/3",
+    "category": "Public Foundation Modules",
+    "description": "Foundation module 3 (Category: Public Foundation Modules)"
+  },
+  {
+    "name": "Foundation module 4",
+    "path": "/module/4",
+    "category": "Public Foundation Modules",
+    "description": "Foundation module 4 (Category: Public Foundation Modules)"
+  },
+  {
+    "name": "Foundation module 5",
+    "path": "/module/5",
+    "category": "Public Foundation Modules",
+    "description": "Foundation module 5 (Category: Public Foundation Modules)"
+  },
+  {
+    "name": "Number systems & codes",
+    "path": "/dsd/1",
+    "category": "Gated Digital System Design",
+    "description": "Number systems & codes (Category: Gated Digital System Design)",
+    "chapter_path": "/dsd/1/:chapter"
+  },
+  {
+    "name": "Boolean algebra",
+    "path": "/dsd/2",
+    "category": "Gated Digital System Design",
+    "description": "Boolean algebra (Category: Gated Digital System Design)",
+    "chapter_path": "/dsd/2/:chapter"
+  },
+  {
+    "name": "Logic gates",
+    "path": "/dsd/3",
+    "category": "Gated Digital System Design",
+    "description": "Logic gates (Category: Gated Digital System Design)",
+    "chapter_path": "/dsd/3/:chapter"
+  },
+  {
+    "name": "Boolean minimisation",
+    "path": "/dsd/4",
+    "category": "Gated Digital System Design",
+    "description": "Boolean minimisation (Category: Gated Digital System Design)",
+    "chapter_path": "/dsd/4/:chapter"
+  },
+  {
+    "name": "K-maps",
+    "path": "/dsd/5",
+    "category": "Gated Digital System Design",
+    "description": "K-maps (Category: Gated Digital System Design)",
+    "chapter_path": "/dsd/5/:chapter"
+  },
+  {
+    "name": "Combinational logic",
+    "path": "/dsd/6",
+    "category": "Gated Digital System Design",
+    "description": "Combinational logic (Category: Gated Digital System Design)",
+    "chapter_path": "/dsd/6/:chapter"
+  },
+  {
+    "name": "Half adder",
+    "path": "/dsd/7",
+    "category": "Gated Digital System Design",
+    "description": "Half adder (Category: Gated Digital System Design)",
+    "chapter_path": "/dsd/7/:chapter"
+  },
+  {
+    "name": "Full adder",
+    "path": "/dsd/8",
+    "category": "Gated Digital System Design",
+    "description": "Full adder (Category: Gated Digital System Design)",
+    "chapter_path": "/dsd/8/:chapter"
+  },
+  {
+    "name": "Adder review",
+    "path": "/dsd/9",
+    "category": "Gated Digital System Design",
+    "description": "Adder review (Category: Gated Digital System Design)",
+    "chapter_path": "/dsd/9/:chapter"
+  },
+  {
+    "name": "Ripple-carry adder",
+    "path": "/dsd/10",
+    "category": "Gated Digital System Design",
+    "description": "Ripple-carry adder (Category: Gated Digital System Design)",
+    "chapter_path": "/dsd/10/:chapter"
+  },
+  {
+    "name": "Carry-lookahead adder",
+    "path": "/dsd/11",
+    "category": "Gated Digital System Design",
+    "description": "Carry-lookahead adder (Category: Gated Digital System Design)",
+    "chapter_path": "/dsd/11/:chapter"
+  },
+  {
+    "name": "Parallel-prefix adder",
+    "path": "/dsd/12",
+    "category": "Gated Digital System Design",
+    "description": "Parallel-prefix adder (Category: Gated Digital System Design)",
+    "chapter_path": "/dsd/12/:chapter"
+  },
+  {
+    "name": "Serial adder",
+    "path": "/dsd/13",
+    "category": "Gated Digital System Design",
+    "description": "Serial adder (Category: Gated Digital System Design)",
+    "chapter_path": "/dsd/13/:chapter"
+  },
+  {
+    "name": "Half subtractor",
+    "path": "/dsd/14",
+    "category": "Gated Digital System Design",
+    "description": "Half subtractor (Category: Gated Digital System Design)",
+    "chapter_path": "/dsd/14/:chapter"
+  },
+  {
+    "name": "Full subtractor",
+    "path": "/dsd/15",
+    "category": "Gated Digital System Design",
+    "description": "Full subtractor (Category: Gated Digital System Design)",
+    "chapter_path": "/dsd/15/:chapter"
+  },
+  {
+    "name": "Subtractor (cont.)",
+    "path": "/dsd/16",
+    "category": "Gated Digital System Design",
+    "description": "Subtractor (cont.) (Category: Gated Digital System Design)",
+    "chapter_path": "/dsd/16/:chapter"
+  },
+  {
+    "name": "Subtractor review",
+    "path": "/dsd/17",
+    "category": "Gated Digital System Design",
+    "description": "Subtractor review (Category: Gated Digital System Design)",
+    "chapter_path": "/dsd/17/:chapter"
+  },
+  {
+    "name": "Complements",
+    "path": "/dsd/18",
+    "category": "Gated Digital System Design",
+    "description": "Complements (Category: Gated Digital System Design)",
+    "chapter_path": "/dsd/18/:chapter"
+  },
+  {
+    "name": "10's complement",
+    "path": "/dsd/19",
+    "category": "Gated Digital System Design",
+    "description": "10's complement (Category: Gated Digital System Design)",
+    "chapter_path": "/dsd/19/:chapter"
+  },
+  {
+    "name": "BCD adder",
+    "path": "/dsd/20",
+    "category": "Gated Digital System Design",
+    "description": "BCD adder (Category: Gated Digital System Design)",
+    "chapter_path": "/dsd/20/:chapter"
+  },
+  {
+    "name": "Multiplexer",
+    "path": "/dsd/21",
+    "category": "Gated Digital System Design",
+    "description": "Multiplexer (Category: Gated Digital System Design)",
+    "chapter_path": "/dsd/21/:chapter"
+  },
+  {
+    "name": "Demultiplexer",
+    "path": "/dsd/22",
+    "category": "Gated Digital System Design",
+    "description": "Demultiplexer (Category: Gated Digital System Design)",
+    "chapter_path": "/dsd/22/:chapter"
+  },
+  {
+    "name": "Decoder",
+    "path": "/dsd/23",
+    "category": "Gated Digital System Design",
+    "description": "Decoder (Category: Gated Digital System Design)",
+    "chapter_path": "/dsd/23/:chapter"
+  },
+  {
+    "name": "Encoder",
+    "path": "/dsd/24",
+    "category": "Gated Digital System Design",
+    "description": "Encoder (Category: Gated Digital System Design)",
+    "chapter_path": "/dsd/24/:chapter"
+  },
+  {
+    "name": "Code converter",
+    "path": "/dsd/25",
+    "category": "Gated Digital System Design",
+    "description": "Code converter (Category: Gated Digital System Design)",
+    "chapter_path": "/dsd/25/:chapter"
+  },
+  {
+    "name": "Shannon's expansion",
+    "path": "/dsd/26",
+    "category": "Gated Digital System Design",
+    "description": "Shannon's expansion (Category: Gated Digital System Design)",
+    "chapter_path": "/dsd/26/:chapter"
+  },
+  {
+    "name": "Divider",
+    "path": "/dsd/27",
+    "category": "Gated Digital System Design",
+    "description": "Divider (Category: Gated Digital System Design)",
+    "chapter_path": "/dsd/27/:chapter"
+  },
+  {
+    "name": "Basic Electronics — module 1",
+    "path": "/basic-electronics/1",
+    "category": "Gated Basic Electronics",
+    "description": "Basic Electronics — module 1 (Category: Gated Basic Electronics)",
+    "chapter_path": "/basic-electronics/1/:chapter"
+  },
+  {
+    "name": "Module 2",
+    "path": "/basic-electronics/2",
+    "category": "Gated Basic Electronics",
+    "description": "Module 2 (Category: Gated Basic Electronics)",
+    "chapter_path": "/basic-electronics/2/:chapter"
+  },
+  {
+    "name": "Module 3",
+    "path": "/basic-electronics/3",
+    "category": "Gated Basic Electronics",
+    "description": "Module 3 (Category: Gated Basic Electronics)",
+    "chapter_path": "/basic-electronics/3/:chapter"
+  },
+  {
+    "name": "Module 4",
+    "path": "/basic-electronics/4",
+    "category": "Gated Basic Electronics",
+    "description": "Module 4 (Category: Gated Basic Electronics)",
+    "chapter_path": "/basic-electronics/4/:chapter"
+  },
+  {
+    "name": "Module 5 — diodes",
+    "path": "/basic-electronics/5",
+    "category": "Gated Basic Electronics",
+    "description": "Module 5 — diodes (Category: Gated Basic Electronics)",
+    "chapter_path": "/basic-electronics/5/:chapter"
+  },
+  {
+    "name": "Module 6 — BJT",
+    "path": "/basic-electronics/6",
+    "category": "Gated Basic Electronics",
+    "description": "Module 6 — BJT (Category: Gated Basic Electronics)",
+    "chapter_path": "/basic-electronics/6/:chapter"
+  },
+  {
+    "name": "Module 7 — BJT (cont.)",
+    "path": "/basic-electronics/7",
+    "category": "Gated Basic Electronics",
+    "description": "Module 7 — BJT (cont.) (Category: Gated Basic Electronics)",
+    "chapter_path": "/basic-electronics/7/:chapter"
+  },
+  {
+    "name": "Module 8 — MOSFET",
+    "path": "/basic-electronics/8",
+    "category": "Gated Basic Electronics",
+    "description": "Module 8 — MOSFET (Category: Gated Basic Electronics)",
+    "chapter_path": "/basic-electronics/8/:chapter"
+  },
+  {
+    "name": "Module 9 — MOSFET (cont.)",
+    "path": "/basic-electronics/9",
+    "category": "Gated Basic Electronics",
+    "description": "Module 9 — MOSFET (cont.) (Category: Gated Basic Electronics)",
+    "chapter_path": "/basic-electronics/9/:chapter"
+  },
+  {
+    "name": "Module 10 — JFET",
+    "path": "/basic-electronics/10",
+    "category": "Gated Basic Electronics",
+    "description": "Module 10 — JFET (Category: Gated Basic Electronics)",
+    "chapter_path": "/basic-electronics/10/:chapter"
+  },
+  {
+    "name": "Engineering portfolio",
+    "path": "/portfolio",
+    "category": "Gated Tools, Games & Experiences",
+    "description": "Engineering portfolio (Category: Gated Tools, Games & Experiences)"
+  },
+  {
+    "name": "Activities",
+    "path": "/activities",
+    "category": "Gated Tools, Games & Experiences",
+    "description": "Activities (Category: Gated Tools, Games & Experiences)"
+  },
+  {
+    "name": "Boss arena challenge",
+    "path": "/boss-arena",
+    "category": "Gated Tools, Games & Experiences",
+    "description": "Boss arena challenge (Category: Gated Tools, Games & Experiences)"
+  },
+  {
+    "name": "Community",
+    "path": "/community",
+    "category": "Gated Tools, Games & Experiences",
+    "description": "Community (Category: Gated Tools, Games & Experiences)"
+  },
+  {
+    "name": "Skill tree",
+    "path": "/skill-tree",
+    "category": "Gated Tools, Games & Experiences",
+    "description": "Skill tree (Category: Gated Tools, Games & Experiences)"
+  },
+  {
+    "name": "Debug mission",
+    "path": "/debug-mission",
+    "category": "Gated Tools, Games & Experiences",
+    "description": "Debug mission (Category: Gated Tools, Games & Experiences)"
+  },
+  {
+    "name": "Hardware LeetCode",
+    "path": "/hw-leetcode",
+    "category": "Gated Tools, Games & Experiences",
+    "description": "Hardware LeetCode (Category: Gated Tools, Games & Experiences)"
+  },
+  {
+    "name": "Debug mission by id",
+    "path": "/debug-mission/:id",
+    "category": "Gated Tools, Games & Experiences",
+    "description": "Debug mission by id (Category: Gated Tools, Games & Experiences)"
+  },
+  {
+    "name": "FSM playground",
+    "path": "/fsm",
+    "category": "Gated Tools, Games & Experiences",
+    "description": "FSM playground (Category: Gated Tools, Games & Experiences)"
+  },
+  {
+    "name": "Gatekeeper game",
+    "path": "/gatekeeper-game",
+    "category": "Gated Tools, Games & Experiences",
+    "description": "Gatekeeper game (Category: Gated Tools, Games & Experiences)"
+  },
+  {
+    "name": "Signal playground",
+    "path": "/signal-playground",
+    "category": "Gated Tools, Games & Experiences",
+    "description": "Signal playground (Category: Gated Tools, Games & Experiences)"
+  },
+  {
+    "name": "AI lab",
+    "path": "/ai-lab",
+    "category": "Gated Tools, Games & Experiences",
+    "description": "AI lab (Category: Gated Tools, Games & Experiences)"
+  },
+  {
+    "name": "Logic studio",
+    "path": "/logic-studio",
+    "category": "Gated Tools, Games & Experiences",
+    "description": "Logic studio (Category: Gated Tools, Games & Experiences)"
+  },
+  {
+    "name": "Silicon secrets",
+    "path": "/silicon-secrets",
+    "category": "Gated Tools, Games & Experiences",
+    "description": "Silicon secrets (Category: Gated Tools, Games & Experiences)"
+  },
+  {
+    "name": "Quests",
+    "path": "/quests",
+    "category": "Gated Tools, Games & Experiences",
+    "description": "Quests (Category: Gated Tools, Games & Experiences)"
+  },
+  {
+    "name": "create account",
+    "path": "/",
+    "category": "Auth Authentication & Account",
+    "description": "create account (Category: Auth Authentication & Account)"
+  },
+  {
+    "name": "Email verification",
+    "path": "/verify-email",
+    "category": "Auth Authentication & Account",
+    "description": "Email verification (Category: Auth Authentication & Account)"
+  },
+  {
+    "name": "Password reset",
+    "path": "/reset-password",
+    "category": "Auth Authentication & Account",
+    "description": "Password reset (Category: Auth Authentication & Account)"
+  },
+  {
+    "name": "User profile · requires auth",
+    "path": "/profile",
+    "category": "Auth Authentication & Account",
+    "description": "User profile · requires auth (Category: Auth Authentication & Account)"
+  },
+  {
+    "name": "Account settings · requires auth",
+    "path": "/settings",
+    "category": "Auth Authentication & Account",
+    "description": "Account settings · requires auth (Category: Auth Authentication & Account)"
+  },
+  {
+    "name": "Catch-all → branded 404 page",
+    "path": "*",
+    "category": "Auth Authentication & Account",
+    "description": "Catch-all → branded 404 page (Category: Auth Authentication & Account)"
+  }
+]
