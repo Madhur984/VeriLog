@@ -4,7 +4,6 @@ import {
   useChatNavigation,
   parseNavigationPayload,
   NavigationPayload,
-  UseChatNavigationOptions,
 } from '../hooks/useChatNavigation';
 
 export interface ChatMessageData {
@@ -35,6 +34,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
     navigateNow,
     cancelRedirect,
     countdown,
+    progressPct,
     redirected,
     isAutoNavigating,
     isLowConfidence,
@@ -46,7 +46,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
     onNavigate,
   });
 
-  // Render User or Standard Assistant Text Response
+  // 1. Render User or Standard Assistant Text Response
   if (isUser || !navPayload) {
     const textContent = typeof message.content === 'string' 
       ? message.content 
@@ -67,12 +67,15 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
     );
   }
 
-  // Render Navigation Action Card
+  // Helper for singular vs plural countdown text
+  const countdownText = countdown === 1 ? '1 second' : `${countdown} seconds`;
+
+  // 2. Render Navigation Action Card with Live Progress Bar Toast
   return (
     <div className="my-2 flex justify-start">
       <div className="w-[88%] space-y-2.5 rounded-2xl border-[2.5px] border-[#1B1436] bg-white p-4 shadow-[4px_4px_0_#1B1436] dark:border-[#4A3D7A] dark:bg-[#1B1540] dark:shadow-[4px_4px_0_#7A3FD0]">
         
-        {/* Header & Target Route Message */}
+        {/* Navigation Heading & Path */}
         <div className="flex items-start gap-2.5 font-bold text-[#1B1436] dark:text-white">
           <Compass size={20} className="mt-0.5 flex-shrink-0 text-[#7A3FD0] dark:text-[#B98BFF]" />
           <div>
@@ -103,23 +106,32 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
           </div>
         )}
 
-        {/* Live Countdown Toast Indicator */}
+        {/* Animated Progress Countdown Toast */}
         {isAutoNavigating && (
-          <div className="flex items-center justify-between rounded-xl bg-[#F1ECFF] px-3 py-2 text-[12px] font-bold text-[#7A3FD0] dark:bg-[#2A1F52] dark:text-[#B98BFF]">
-            <div className="flex items-center gap-2">
-              <span className="relative flex h-2.5 w-2.5">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#7A3FD0] opacity-75"></span>
-                <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#7A3FD0]"></span>
-              </span>
-              <span>Redirecting automatically in {countdown}s...</span>
+          <div className="relative overflow-hidden rounded-xl border border-[#7A3FD0]/30 bg-[#F1ECFF] p-2.5 text-[12px] font-bold text-[#7A3FD0] shadow-sm dark:border-[#B98BFF]/30 dark:bg-[#2A1F52] dark:text-[#B98BFF]">
+            {/* Top progress bar track */}
+            <div
+              className="absolute left-0 top-0 h-1 bg-[#7A3FD0] transition-all duration-1000 ease-linear dark:bg-[#B98BFF]"
+              style={{ width: `${progressPct}%` }}
+            />
+
+            <div className="flex items-center justify-between pt-0.5">
+              <div className="flex items-center gap-2">
+                <span className="relative flex h-2.5 w-2.5">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#7A3FD0] opacity-75 dark:bg-[#B98BFF]"></span>
+                  <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#7A3FD0] dark:bg-[#B98BFF]"></span>
+                </span>
+                <span>Navigating in {countdownText}...</span>
+              </div>
+              
+              <button
+                type="button"
+                onClick={cancelRedirect}
+                className="text-[11px] underline hover:text-[#1B1436] dark:hover:text-white"
+              >
+                Cancel
+              </button>
             </div>
-            <button
-              type="button"
-              onClick={cancelRedirect}
-              className="text-[11px] underline hover:text-[#1B1436] dark:hover:text-white"
-            >
-              Cancel
-            </button>
           </div>
         )}
 
@@ -131,7 +143,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
           </div>
         )}
 
-        {/* Manual Fallback Action Button */}
+        {/* Manual Action Button */}
         <div className="flex items-center gap-2 pt-1">
           <button
             type="button"

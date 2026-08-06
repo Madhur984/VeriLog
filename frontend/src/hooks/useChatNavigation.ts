@@ -64,7 +64,7 @@ export function parseNavigationPayload(content: unknown): NavigationPayload | nu
 }
 
 /**
- * Custom hook to handle automatic & manual React Router navigation from chatbot responses.
+ * Custom hook to handle automatic & manual navigation with live countdown progress calculation.
  */
 export function useChatNavigation(
   payload: NavigationPayload | null,
@@ -79,6 +79,7 @@ export function useChatNavigation(
 
   const navigate = useNavigate();
   const [countdown, setCountdown] = useState<number | null>(null);
+  const [progressPct, setProgressPct] = useState<number>(100);
   const [redirected, setRedirected] = useState(false);
   const [cancelled, setCancelled] = useState(false);
 
@@ -93,6 +94,7 @@ export function useChatNavigation(
     if (!resolved || redirected) return;
     setRedirected(true);
     setCountdown(0);
+    setProgressPct(0);
 
     onNavigate?.(resolved.url);
 
@@ -107,14 +109,16 @@ export function useChatNavigation(
   const cancelRedirect = useCallback(() => {
     setCancelled(true);
     setCountdown(null);
+    setProgressPct(0);
   }, []);
 
-  // Timer effect for auto-navigation countdown
+  // Timer effect for auto-navigation countdown and progress calculation
   useEffect(() => {
     if (!shouldAutoNavigate || !payload) return;
 
     const initialSeconds = Math.ceil(delayMs / 1000);
     setCountdown(initialSeconds);
+    setProgressPct(100);
 
     const interval = setInterval(() => {
       setCountdown((prev) => {
@@ -124,7 +128,9 @@ export function useChatNavigation(
           navigateNow();
           return 0;
         }
-        return prev - 1;
+        const next = prev - 1;
+        setProgressPct(Math.round((next / initialSeconds) * 100));
+        return next;
       });
     }, 1000);
 
@@ -135,6 +141,7 @@ export function useChatNavigation(
     navigateNow,
     cancelRedirect,
     countdown,
+    progressPct,
     redirected,
     cancelled,
     resolvedPath: resolved,
