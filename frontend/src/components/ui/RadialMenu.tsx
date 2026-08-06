@@ -98,9 +98,9 @@ const RadialSegment: React.FC<SegmentProps> = React.memo(({
         className={cn(
           "transition-colors duration-300 pointer-events-none",
           isActive
-            ? (isLight ? "fill-sky-700/20" : "fill-cyan-950/90")
+            ? (isLight ? "fill-[#7A3FD0]/20" : "fill-cyan-950/90")
             : isHovered
-              ? (isLight ? "fill-sky-500/15" : "fill-blue-950/90")
+              ? (isLight ? "fill-[#7A3FD0]/[0.12]" : "fill-blue-950/90")
               : (isLight ? "fill-slate-200/80" : "fill-[#020617]/90")
         )}
       />
@@ -111,20 +111,20 @@ const RadialSegment: React.FC<SegmentProps> = React.memo(({
         className={cn(
           "transition-colors duration-300 group-focus-visible:stroke-amber-400 group-focus-visible:stroke-2",
           isFlashing
-            ? (isLight ? "fill-white stroke-sky-300 stroke-2" : "fill-cyan-800 stroke-white stroke-2")
+            ? (isLight ? "fill-white stroke-[#7A3FD0]/60 stroke-2" : "fill-cyan-800 stroke-white stroke-2")
             : isActive
-              ? (isLight ? "fill-sky-100/90 stroke-sky-500 stroke-2" : "fill-cyan-900/80 stroke-cyan-400 stroke-2")
+              ? (isLight ? "fill-[#7A3FD0]/[0.15] stroke-[#7A3FD0] stroke-2" : "fill-cyan-900/80 stroke-cyan-400 stroke-2")
               : isHovered
-                ? (isLight ? "fill-sky-50/80 stroke-sky-400 stroke-[1.5]" : "fill-blue-900/60 stroke-blue-400 stroke-[1.5]")
+                ? (isLight ? "fill-[#7A3FD0]/[0.10] stroke-[#7A3FD0]/55 stroke-[1.5]" : "fill-blue-900/60 stroke-blue-400 stroke-[1.5]")
                 : (isLight ? "fill-white/80 stroke-slate-300 stroke-1" : "fill-slate-900/85 stroke-slate-700/60 stroke-1")
         )}
         style={{
           filter: isFlashing
-            ? (isLight ? 'drop-shadow(0 0 18px rgba(14,165,233,0.6))' : 'drop-shadow(0 0 20px rgba(255,255,255,0.5))')
+            ? (isLight ? 'drop-shadow(0 0 18px rgba(122,63,208,0.6))' : 'drop-shadow(0 0 20px rgba(255,255,255,0.5))')
             : isActive
-              ? (isLight ? 'drop-shadow(0 0 12px rgba(14,165,233,0.35))' : 'drop-shadow(0 0 16px rgba(34,211,238,0.5))')
+              ? (isLight ? 'drop-shadow(0 0 12px rgba(122,63,208,0.35))' : 'drop-shadow(0 0 16px rgba(34,211,238,0.5))')
               : isHovered
-                ? (isLight ? 'drop-shadow(0 0 8px rgba(14,165,233,0.2))' : 'drop-shadow(0 8px 14px rgba(0,0,0,0.6))')
+                ? (isLight ? 'drop-shadow(0 0 8px rgba(122,63,208,0.2))' : 'drop-shadow(0 8px 14px rgba(0,0,0,0.6))')
                 : (isLight ? 'drop-shadow(0 2px 4px rgba(0,0,0,0.06))' : 'drop-shadow(0 4px 8px rgba(0,0,0,0.5))')
         }}
       />
@@ -132,14 +132,14 @@ const RadialSegment: React.FC<SegmentProps> = React.memo(({
       {/* Inner Bevel Border Rim */}
       <motion.path
         d={describeArc(160, 160, radius - 1.5, innerRadius + 1.5, startAngle, endAngle)}
-        className={cn("fill-none pointer-events-none", isLight ? "stroke-sky-300/40 stroke-1" : "stroke-white/10 stroke-1")}
+        className={cn("fill-none pointer-events-none", isLight ? "stroke-[#7A3FD0]/30 stroke-1" : "stroke-white/10 stroke-1")}
       />
 
       {/* Active Laser Arc Accent */}
       {isActive && (
         <motion.path
           d={describeArc(160, 160, radius + 1.5, radius, startAngle, endAngle)}
-          className={cn("pointer-events-none", isLight ? "fill-sky-500" : "fill-cyan-400")}
+          className={cn("pointer-events-none", isLight ? "fill-[#7A3FD0]" : "fill-cyan-400")}
           initial={{ opacity: 0 }}
           animate={{ opacity: [0.6, 1, 0.6] }}
           transition={{ duration: 1.8, repeat: Infinity }}
@@ -158,9 +158,9 @@ const RadialSegment: React.FC<SegmentProps> = React.memo(({
             <div className={cn(
               "w-10 h-10 rounded-lg border flex items-center justify-center transition-all duration-300 relative overflow-hidden shadow-md shrink-0",
               isActive
-                ? (isLight ? "bg-sky-500 text-white border-sky-400 shadow-[0_0_14px_rgba(14,165,233,0.5)] ring-2 ring-sky-400/40" : "bg-cyan-500/20 border-cyan-400 text-cyan-300 shadow-[0_0_18px_rgba(34,211,238,0.5)] ring-2 ring-cyan-400/50 animate-[pulse_2.5s_ease-in-out_infinite]")
+                ? (isLight ? "bg-[#7A3FD0] text-white border-[#7A3FD0]/55 shadow-[0_0_14px_rgba(122,63,208,0.5)] ring-2 ring-[#7A3FD0]/40" : "bg-cyan-500/20 border-cyan-400 text-cyan-300 shadow-[0_0_18px_rgba(34,211,238,0.5)] ring-2 ring-cyan-400/50 animate-[pulse_2.5s_ease-in-out_infinite]")
                 : isHovered
-                  ? (isLight ? "bg-sky-100 border-sky-400 text-sky-700 shadow-md" : "bg-blue-500/20 border-blue-400 text-blue-300 shadow-lg")
+                  ? (isLight ? "bg-[#7A3FD0]/10 border-[#7A3FD0]/55 text-[#7A3FD0] shadow-md" : "bg-blue-500/20 border-blue-400 text-blue-300 shadow-lg")
                   : (isLight ? "bg-slate-100 border-slate-200 text-slate-700" : "bg-slate-900/80 border-slate-700/60 text-slate-400")
             )}>
               <div className="absolute top-0 inset-x-0 h-1/2 bg-gradient-to-b from-white/20 to-transparent pointer-events-none" />
@@ -172,7 +172,7 @@ const RadialSegment: React.FC<SegmentProps> = React.memo(({
               "transition-colors font-sans font-bold text-[9.5px] tracking-[0.05em] uppercase px-2 py-0.5 rounded-full border shadow-sm whitespace-nowrap select-none shrink-0",
               isLight
                 ? (isActive
-                    ? "bg-sky-600 text-white border-sky-500 shadow-sm"
+                    ? "bg-[#7A3FD0] text-white border-[#7A3FD0] shadow-sm"
                     : isHovered
                       ? "bg-slate-900 text-white border-slate-800"
                       : "bg-slate-900/90 text-slate-100 border-slate-800")
@@ -225,7 +225,7 @@ const CenterButton: React.FC<{
       style={{ originX: '160px', originY: '160px', cursor: 'pointer' }}
     >
       {/* Soft Center Blur Shadow */}
-      <circle cx="160" cy="172" r="80" fill={isLight ? "rgba(14,165,233,0.12)" : "rgba(0,0,0,0.8)"} filter="blur(16px)" className="pointer-events-none" />
+      <circle cx="160" cy="172" r="80" fill={isLight ? "rgba(122,63,208,0.12)" : "rgba(0,0,0,0.8)"} filter="blur(16px)" className="pointer-events-none" />
 
       {/* Main Core Backdrop */}
       <circle
@@ -233,13 +233,13 @@ const CenterButton: React.FC<{
         className={cn(
           "transition-colors duration-300",
           isLight
-            ? (isHovered ? "fill-white stroke-sky-400" : "fill-slate-50 stroke-slate-300")
+            ? (isHovered ? "fill-white stroke-[#7A3FD0]/55" : "fill-slate-50 stroke-slate-300")
             : (isHovered ? "fill-cyan-950/90 stroke-cyan-400" : "fill-slate-950/95 stroke-slate-700/80")
         )}
         strokeWidth={2}
         style={{
           filter: isLight
-            ? (isHovered ? 'drop-shadow(0 0 20px rgba(14,165,233,0.3))' : 'drop-shadow(0 2px 8px rgba(0,0,0,0.08))')
+            ? (isHovered ? 'drop-shadow(0 0 20px rgba(122,63,208,0.3))' : 'drop-shadow(0 2px 8px rgba(0,0,0,0.08))')
             : (isHovered ? 'drop-shadow(0 0 30px rgba(34,211,238,0.5))' : 'drop-shadow(0 0 15px rgba(34,211,238,0.2))')
         }}
       />
@@ -256,7 +256,7 @@ const CenterButton: React.FC<{
       {/* Rotating Mechanical Reticle Ring — driven by motion value */}
       <motion.circle
         cx="160" cy="160" r="76"
-        className={isLight ? "fill-transparent stroke-sky-500" : "fill-transparent stroke-cyan-400"}
+        className={isLight ? "fill-transparent stroke-[#7A3FD0]" : "fill-transparent stroke-cyan-400"}
         strokeWidth={2.5}
         strokeDasharray="40 180"
         strokeLinecap="round"
@@ -264,7 +264,7 @@ const CenterButton: React.FC<{
           originX: '160px',
           originY: '160px',
           rotate: reducedMotion ? 0 : dialRotation,
-          filter: isLight ? 'drop-shadow(0 0 6px rgba(14,165,233,0.5))' : 'drop-shadow(0 0 8px rgba(34,211,238,0.6))'
+          filter: isLight ? 'drop-shadow(0 0 6px rgba(122,63,208,0.5))' : 'drop-shadow(0 0 8px rgba(34,211,238,0.6))'
         }}
       />
 
@@ -274,11 +274,11 @@ const CenterButton: React.FC<{
           {/* Status Dot & Core Header */}
           <div className={cn(
             "text-[9px] font-mono tracking-widest font-black uppercase flex items-center justify-center gap-1.5 mb-1",
-            isLight ? "text-sky-700" : "text-cyan-400"
+            isLight ? "text-[#7A3FD0]" : "text-cyan-400"
           )}>
             <div className={cn(
               "w-1.5 h-1.5 rounded-full animate-pulse",
-              isLight ? "bg-sky-500 shadow-[0_0_8px_rgba(14,165,233,0.8)]" : "bg-cyan-400 shadow-[0_0_8px_#22d3ee]"
+              isLight ? "bg-[#7A3FD0] shadow-[0_0_8px_rgba(122,63,208,0.8)]" : "bg-cyan-400 shadow-[0_0_8px_#22d3ee]"
             )} />
             RADIAL // V2.0
           </div>
@@ -298,7 +298,7 @@ const CenterButton: React.FC<{
               ? "bg-slate-100 border-slate-200 text-slate-700"
               : "bg-slate-900/90 border-slate-700/80 text-cyan-300"
           )}>
-            <Compass size={10} className={isLight ? "text-sky-600" : "text-cyan-400"} />
+            <Compass size={10} className={isLight ? "text-[#7A3FD0]" : "text-cyan-400"} />
             BEARING {bearing}°
           </div>
 
@@ -312,7 +312,7 @@ const CenterButton: React.FC<{
             className={cn(
               "mt-2 pointer-events-auto p-1 rounded-full border transition-all duration-200 hover:scale-110 active:scale-95 flex items-center justify-center",
               isLight
-                ? "bg-sky-50 border-sky-200 text-sky-600 hover:bg-sky-100"
+                ? "bg-[#7A3FD0]/[0.06] border-[#7A3FD0]/40 text-[#7A3FD0] hover:bg-[#7A3FD0]/10"
                 : "bg-cyan-950/80 border-cyan-500/40 text-cyan-300 hover:bg-cyan-900/60"
             )}
             title="Spin Menu Dial"
@@ -584,7 +584,7 @@ export const RadialMenu: React.FC = () => {
         style={{
           transformStyle: 'preserve-3d',
           boxShadow: isLight
-            ? '0 24px 50px rgba(14,165,233,0.18), 0 8px 24px rgba(14,165,233,0.12)'
+            ? '0 24px 50px rgba(122,63,208,0.18), 0 8px 24px rgba(122,63,208,0.12)'
             : '0 60px 120px rgba(0,0,0,0.8), 0 20px 50px rgba(34,211,238,0.2)'
         }}
       >
@@ -608,14 +608,14 @@ export const RadialMenu: React.FC = () => {
             className="absolute inset-0 rounded-full pointer-events-none z-50"
             style={{
               transform: 'translateZ(1px)',
-              borderBottom: isLight ? '1.5px solid rgba(14,165,233,0.3)' : '1px solid rgba(255,255,255,0.15)'
+              borderBottom: isLight ? '1.5px solid rgba(122,63,208,0.3)' : '1px solid rgba(255,255,255,0.15)'
             }}
           />
 
           {/* Background Static Base SVG */}
           <svg width="320" height="320" viewBox="0 0 320 320" className="absolute inset-0 overflow-visible z-10" style={{ transform: 'translateZ(-10px)' }}>
             <circle cx="160" cy="168" r="156" fill={isLight ? "rgba(241,245,249,0.92)" : "rgba(2, 6, 23, 0.92)"} />
-            <circle cx="160" cy="160" r="156" fill={isLight ? "rgba(248,250,252,0.95)" : "rgba(15, 23, 42, 0.9)"} stroke={isLight ? "rgba(14,165,233,0.25)" : "rgba(255,255,255,0.08)"} strokeWidth={1.5} />
+            <circle cx="160" cy="160" r="156" fill={isLight ? "rgba(248,250,252,0.95)" : "rgba(15, 23, 42, 0.9)"} stroke={isLight ? "rgba(122,63,208,0.25)" : "rgba(255,255,255,0.08)"} strokeWidth={1.5} />
           </svg>
 
           {/* ROTATING MENU SVGs (Z-Layer 20) */}
@@ -649,7 +649,7 @@ export const RadialMenu: React.FC = () => {
                     y1={pos1.y}
                     x2={pos2.x}
                     y2={pos2.y}
-                    stroke={isLight ? (isMajor ? 'rgba(14,165,233,0.6)' : 'rgba(148,163,184,0.4)') : (isMajor ? 'rgba(34,211,238,0.7)' : 'rgba(255,255,255,0.15)')}
+                    stroke={isLight ? (isMajor ? 'rgba(122,63,208,0.6)' : 'rgba(148,163,184,0.4)') : (isMajor ? 'rgba(34,211,238,0.7)' : 'rgba(255,255,255,0.15)')}
                     strokeWidth={isMajor ? 1.5 : 1}
                   />
                 );
@@ -666,7 +666,7 @@ export const RadialMenu: React.FC = () => {
                     textAnchor="middle"
                     className={cn(
                       "font-mono text-[7.5px] font-bold select-none pointer-events-none",
-                      isLight ? "fill-sky-700/60" : "fill-cyan-400/50"
+                      isLight ? "fill-[#7A3FD0]/60" : "fill-cyan-400/50"
                     )}
                   >
                     {d.label}
@@ -704,17 +704,17 @@ export const RadialMenu: React.FC = () => {
             <g style={{ transform: 'translateZ(15px)' }}>
               <motion.polygon
                 points="160,3 154,14 166,14"
-                fill={isLight ? '#0284c7' : '#22d3ee'}
+                fill={isLight ? '#7A3FD0' : '#22d3ee'}
                 animate={reducedMotion ? {} : { opacity: [0.7, 1, 0.7], scale: [1, 1.15, 1] }}
                 transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
                 style={{
                   originX: '160px', originY: '10px',
-                  filter: isLight ? 'drop-shadow(0 0 6px rgba(14,165,233,0.6))' : 'drop-shadow(0 0 10px rgba(34,211,238,0.9))'
+                  filter: isLight ? 'drop-shadow(0 0 6px rgba(122,63,208,0.6))' : 'drop-shadow(0 0 10px rgba(34,211,238,0.9))'
                 }}
               />
               {/* Thin laser line from zenith inward */}
               <line x1="160" y1="14" x2="160" y2="22"
-                stroke={isLight ? '#0284c7' : '#22d3ee'}
+                stroke={isLight ? '#7A3FD0' : '#22d3ee'}
                 strokeWidth={1.5} opacity={0.5}
                 strokeLinecap="round"
               />
@@ -728,7 +728,7 @@ export const RadialMenu: React.FC = () => {
               return (
                 <line key={`gap-${i}`}
                   x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y}
-                  stroke={isLight ? 'rgba(14,165,233,0.15)' : 'rgba(255,255,255,0.06)'}
+                  stroke={isLight ? 'rgba(122,63,208,0.15)' : 'rgba(255,255,255,0.06)'}
                   strokeWidth={0.5}
                 />
               );
