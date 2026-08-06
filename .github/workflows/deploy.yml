@@ -1,10 +1,13 @@
 name: Build & Deploy to Hostinger
 
 # Runs on GitHub's own cloud runner (no self-hosted runner needed).
-# It builds the frontend, then rsyncs the whole dist/ (app + all videos) into
-# bitforbytes.in's public_html over SSH/SFTP. rsync is incremental: the first
-# run uploads everything (incl. the 1.3 GB of video); later pushes send only
-# what changed.
+# It builds the frontend, then deploys in ORDERED passes so the site comes back
+# fast and never serves a half-updated page:
+#   1. app assets (JS/CSS/images/.htaccess) — new hashed chunks land first
+#   2. HTML                                  — flips the site to the new build
+#   3. videos (~1.3 GB)                      — AFTER the site is already live, and
+#                                              non-fatal; incremental no-op later.
+# rsync is incremental, so after the first full upload only changed files move.
 #
 # Required repo secrets (Settings > Secrets and variables > Actions):
 #   SFTP_PORT = 65002
@@ -47,48 +50,77 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
 
       - name: Install & build
         working-directory: frontend
         run: |
-          npm install
+          npm ci || npm install   # ci is fast+cached; fall back if the lockfile drifted
           npm run build
 
-      - name: Rsync dist/ to Hostinger public_html
+      - name: Install deploy tools
+        run: sudo apt-get update && sudo apt-get install -y sshpass rsync
+
+      # ── The site must come BACK FAST. The app bundle is ~10 MB but the videos
+      # are ~1.3 GB, so uploading everything in one pass means the site sits
+      # broken (new index.html, but assets/videos not there yet) for the whole
+      # upload. Instead we deploy in ordered passes:
+      #   1. assets/JS/CSS  (new hashed chunks land first)
+      #   2. HTML           (flips the site to the new build — chunks already there)
+      #   3. videos         (big + non-critical; runs AFTER the site is already live,
+      #                      and is a fast no-op on later deploys since rsync is
+      #                      incremental. A video failure does NOT fail the deploy.)
+      - name: Deploy app (assets first, then HTML — site is live after this)
         env:
           SSHPASS: ${{ secrets.SFTP_PASS }}
         run: |
-          sudo apt-get update && sudo apt-get install -y sshpass rsync
-
-          # Hostinger shared-hosting SSH occasionally drops connections from
-          # cloud (Azure) runner IPs, surfacing as "Connection timed out" /
-          # rsync exit 255. A single attempt makes the whole deploy fail on a
-          # transient drop, so retry up to 5 times with backoff, plus SSH
-          # keepalives and an rsync stall timeout.
           SSH_OPTS="-p ${{ secrets.SFTP_PORT }} \
             -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
             -o ConnectTimeout=60 -o ServerAliveInterval=15 -o ServerAliveCountMax=4"
+          TARGET="${{ secrets.SFTP_USER }}@46.202.183.228:domains/bitforbytes.in/public_html/"
 
-          ok=0
+          # rsync with up to 5 retries (Hostinger shared SSH sometimes drops cloud
+          # runner connections → transient rsync exit 255). Returns non-zero only
+          # if all 5 attempts fail.
+          rsync_retry() {
+            local ok=0 i
+            for i in 1 2 3 4 5; do
+              echo "::group::rsync attempt $i/5"
+              if sshpass -e rsync -rz --partial --timeout=180 --chmod=D755,F644 \
+                   -e "ssh $SSH_OPTS" "$@"; then ok=1; echo "::endgroup::"; break; fi
+              echo "::endgroup::"
+              [ "$i" -lt 5 ] && { echo "attempt $i failed, retrying in $((i*15))s"; sleep $((i*15)); }
+            done
+            [ "$ok" -eq 1 ]
+          }
+
+          # 1) everything EXCEPT html and the big videos dir
+          rsync_retry --exclude='videos/' --exclude='*.html' \
+            frontend/dist/ "$TARGET" || { echo "app assets failed"; exit 1; }
+          # 2) html last — now the site points at chunks that already exist
+          rsync_retry --include='*/' --include='*.html' --exclude='*' \
+            frontend/dist/ "$TARGET" || { echo "app html failed"; exit 1; }
+          echo "✅ App deployed — bitforbytes.in is live on the new build."
+
+      - name: Sync videos (non-blocking; site is already live)
+        # Never fail the deploy over videos — the app is already up. On later
+        # deploys this is a fast incremental no-op once the server has them.
+        continue-on-error: true
+        env:
+          SSHPASS: ${{ secrets.SFTP_PASS }}
+        run: |
+          SSH_OPTS="-p ${{ secrets.SFTP_PORT }} \
+            -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
+            -o ConnectTimeout=60 -o ServerAliveInterval=15 -o ServerAliveCountMax=4"
+          TARGET="${{ secrets.SFTP_USER }}@46.202.183.228:domains/bitforbytes.in/public_html/videos/"
+          if [ ! -d frontend/dist/videos ]; then echo "no videos in build, skipping"; exit 0; fi
           for i in 1 2 3 4 5; do
-            echo "::group::rsync attempt $i/5"
-            if sshpass -e rsync -rvz --partial --timeout=180 --chmod=D755,F644 \
-                 -e "ssh $SSH_OPTS" \
-                 frontend/dist/ \
-                 "${{ secrets.SFTP_USER }}@46.202.183.228:domains/bitforbytes.in/public_html/"; then
-              ok=1; echo "::endgroup::"; break
-            fi
+            echo "::group::video rsync attempt $i/5"
+            if sshpass -e rsync -rz --partial --partial-dir=.rsync-partial --timeout=300 \
+                 --chmod=D755,F644 -e "ssh $SSH_OPTS" \
+                 frontend/dist/videos/ "$TARGET"; then echo "::endgroup::"; echo "✅ videos synced"; exit 0; fi
             echo "::endgroup::"
-            if [ "$i" -lt 5 ]; then
-              wait=$((i * 20))
-              echo "Attempt $i failed (transient SSH/rsync error). Retrying in ${wait}s..."
-              sleep "$wait"
-            fi
+            [ "$i" -lt 5 ] && { echo "video attempt $i failed, retrying in $((i*20))s"; sleep $((i*20)); }
           done
-
-          if [ "$ok" -ne 1 ]; then
-            echo "Deploy failed after 5 attempts. If this persists, SSH is likely" \
-                 "blocked/disabled server-side (see hPanel > Advanced > SSH Access)."
-            exit 1
-          fi
-          echo "Deploy step finished."
+          echo "⚠️ videos not fully synced this run (app is still live); they'll finish on a re-run."
