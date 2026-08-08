@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useStore } from '../store/useStore';
 import { Play, RotateCcw, FileText, AlertCircle, Keyboard } from 'lucide-react';
 import { SoftKeyboard } from './SoftKeyboard';
+import { InfoTooltip } from './InfoTooltip';
 
 export const BooleanInput: React.FC = () => {
   const { expression, setExpression, solveExpression, reset, loadExample } = useStore();
@@ -33,7 +34,12 @@ export const BooleanInput: React.FC = () => {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2 text-accent-orange">
           <span className="text-xl font-bold">{'>'}</span>
-          <h3 className="text-xl font-bold text-text-main">Boolean Input</h3>
+          <h3 className="text-xl font-bold text-text-main">Boolean Expression Input</h3>
+          <InfoTooltip
+            title="Boolean Expression Parser"
+            description="Type a Boolean logic expression (e.g., A'BC + AB'C or (A+B)(B+C')). Solves the formula and populates the K-map grid automatically."
+            side="right"
+          />
         </div>
 
         <button

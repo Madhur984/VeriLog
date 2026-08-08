@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useStore } from '../store/useStore';
 import { solveMultiOutput, FunctionDefinition, MultiOutputResult } from '../lib/solver/multiOutputSolver';
 import { Layers, Plus, Trash2, Share2, Sparkles } from 'lucide-react';
+import { InfoTooltip } from './InfoTooltip';
 
 export const MultiOutputPanel: React.FC = () => {
   const { numVars, minterms, dontCares } = useStore();
@@ -37,7 +38,14 @@ export const MultiOutputPanel: React.FC = () => {
             <Layers size={22} />
           </div>
           <div>
-            <h3 className="text-xl font-bold text-text-main tracking-tight">Multi-Output Function Minimisation</h3>
+            <div className="flex items-center gap-2">
+              <h3 className="text-xl font-bold text-text-main tracking-tight">Multi-Output Function Minimisation</h3>
+              <InfoTooltip
+                title="Multi-Output Minimizer"
+                description="Simultaneously minimizes multiple Boolean outputs (F1, F2...) to identify and extract shared product terms, reducing overall gate count across the entire circuit."
+                side="top"
+              />
+            </div>
             <p className="text-xs font-bold text-text-dim uppercase tracking-wider mt-0.5">
               Shared Product Term Optimisation · {result.gateReductionPercentage}% Gate Reduction
             </p>

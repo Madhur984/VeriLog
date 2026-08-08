@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useStore } from '../store/useStore';
 import { simplify } from '../lib/solver/mintermSimplifier';
 import { Sliders, Cpu, Clock, Zap } from 'lucide-react';
+import { InfoTooltip } from './InfoTooltip';
 
 export type CostObjective = 'area' | 'delay' | 'power';
 
@@ -28,7 +29,14 @@ export const CostPanel: React.FC = () => {
             <Sliders size={22} />
           </div>
           <div>
-            <h3 className="text-xl font-bold text-text-main tracking-tight">Cost-Function Optimization</h3>
+            <div className="flex items-center gap-2">
+              <h3 className="text-xl font-bold text-text-main tracking-tight">Cost-Function Optimization</h3>
+              <InfoTooltip
+                title="Cost-Function Analysis"
+                description="Evaluates physical logic implementation metrics: Area (total literal & pin count), Delay (gate logic depth levels), and Power (dynamic CMOS switching activity in mW)."
+                side="top"
+              />
+            </div>
             <p className="text-xs font-bold text-text-dim uppercase tracking-wider mt-0.5">
               Synthesis Constraints · Area vs Delay vs Power
             </p>

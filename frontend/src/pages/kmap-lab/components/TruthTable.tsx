@@ -1,6 +1,7 @@
 import React from 'react';
 import { useStore } from '../store/useStore';
 import { Table as TableIcon, Edit3 } from 'lucide-react';
+import { InfoTooltip } from './InfoTooltip';
 
 export const TruthTable: React.FC = () => {
   const { numVars, cellValues, toggleCellValue } = useStore();
@@ -13,6 +14,11 @@ export const TruthTable: React.FC = () => {
         <div className="flex items-center gap-2">
           <TableIcon size={20} />
           <h3 className="text-xl font-bold text-text-main tracking-tight">Truth Table</h3>
+          <InfoTooltip
+            title="Truth Table"
+            description="Exhaustive input combination table mapping binary variables to output state F. Click any F cell value directly to toggle (0 → 1 → X)."
+            side="bottom"
+          />
         </div>
         <span className="text-[11px] font-mono text-text-dim flex items-center gap-1">
           <Edit3 size={12} className="text-accent-orange" />

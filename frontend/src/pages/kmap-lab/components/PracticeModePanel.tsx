@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useStore } from '../store/useStore';
 import { simplify } from '../lib/solver/mintermSimplifier';
 import { Target, CheckCircle2, AlertCircle, HelpCircle } from 'lucide-react';
+import { InfoTooltip } from './InfoTooltip';
 
 export const PracticeModePanel: React.FC = () => {
   const { numVars, minterms, dontCares, solType } = useStore();
@@ -54,7 +55,14 @@ export const PracticeModePanel: React.FC = () => {
             <Target size={22} />
           </div>
           <div>
-            <h3 className="text-xl font-bold text-text-main tracking-tight">Interactive Practice & Manual Grouping Mode</h3>
+            <div className="flex items-center gap-2">
+              <h3 className="text-xl font-bold text-text-main tracking-tight">Practice & Manual Grouping Mode</h3>
+              <InfoTooltip
+                title="Interactive Practice Mode"
+                description="Test your K-map skills! Manually select minterm cells to construct prime implicant loops, then click verify to check if your grouping matches the optimal Quine-McCluskey solution."
+                side="top"
+              />
+            </div>
             <p className="text-xs font-bold text-text-dim uppercase tracking-wider mt-0.5">
               Practice Loop Selection · Compare Against Quine-McCluskey
             </p>

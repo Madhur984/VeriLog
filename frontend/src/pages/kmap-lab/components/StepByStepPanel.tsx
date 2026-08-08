@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useStore } from '../store/useStore';
 import { generateMinimizationSteps, binaryToTerm, MinimizationStep } from '../lib/solver/stepTracer';
 import { Play, Pause, ChevronRight, ChevronLeft, RotateCcw, CheckCircle2, Award, Lightbulb, Layers } from 'lucide-react';
+import { InfoTooltip } from './InfoTooltip';
 
 export const StepByStepPanel: React.FC = () => {
   const { numVars, minterms, dontCares, solType } = useStore();
@@ -48,7 +49,14 @@ export const StepByStepPanel: React.FC = () => {
             <Layers size={22} />
           </div>
           <div>
-            <h3 className="text-xl font-bold text-text-main tracking-tight">Step-by-Step Minimisation</h3>
+            <div className="flex items-center gap-2">
+              <h3 className="text-xl font-bold text-text-main tracking-tight">Step-by-Step Minimisation</h3>
+              <InfoTooltip
+                title="Step-by-Step Quine-McCluskey"
+                description="Interactive step-by-step breakdown of the Quine-McCluskey algorithmic reduction process, grouping minterms by 1s count and constructing the Prime Implicant coverage chart."
+                side="top"
+              />
+            </div>
             <p className="text-xs font-bold text-text-dim uppercase tracking-wider mt-0.5">
               Pedagogical QM Breakdown · Step {currentStepIdx + 1} of {steps.length}
             </p>

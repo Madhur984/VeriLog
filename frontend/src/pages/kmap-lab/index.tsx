@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useStore } from './store/useStore';
 import { Header } from './components/Header';
 import { VariableSelector } from './components/VariableSelector';
@@ -14,6 +14,7 @@ import { VEMPanel } from './components/VEMPanel';
 import { PracticeModePanel } from './components/PracticeModePanel';
 import { CircuitRenderer } from './components/CircuitRenderer';
 import { QuickActions } from './components/QuickActions';
+import { InfoTooltip } from './components/InfoTooltip';
 import { Sparkles, Zap, Layers, AlertTriangle, Sliders, Variable, Target } from 'lucide-react';
 import './kmap-lab.css';
 
@@ -21,8 +22,33 @@ import './kmap-lab.css';
  * KMapLab - Digital Logic Educational Workbench with Normal & Pro Modes.
  */
 export const KMapLab: React.FC = () => {
-  const { mode } = useStore();
+  const { mode, setMode, undo, redo, reset } = useStore();
   const [activeAdvancedTab, setActiveAdvancedTab] = useState<'step_by_step' | 'practice' | 'hazards' | 'cost' | 'multi_output' | 'vem'>('step_by_step');
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Ignore key events when typing inside input elements
+      const target = e.target as HTMLElement;
+      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') return;
+
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
+        e.preventDefault();
+        undo();
+      } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y') {
+        e.preventDefault();
+        redo();
+      } else if (e.altKey && e.key.toLowerCase() === 'p') {
+        e.preventDefault();
+        setMode(mode === 'normal' ? 'pro' : 'normal');
+      } else if (e.altKey && e.key.toLowerCase() === 'c') {
+        e.preventDefault();
+        reset();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [mode, undo, redo, reset, setMode]);
 
   return (
     <main
@@ -54,6 +80,11 @@ export const KMapLab: React.FC = () => {
                 <div className="flex items-center gap-2 text-accent-orange font-bold text-sm uppercase tracking-wider">
                   <Sparkles size={18} className="animate-pulse" />
                   <span>Pro Mode Advanced Engineering Suite</span>
+                  <InfoTooltip
+                    title="Pro Engineering Suite"
+                    description="Professional synthesis features: Step-by-Step QM reduction, Practice mode, Glitch Hazard elimination, Cost constraint metrics, Multi-Output minimization, and Variable Entered Maps (VEM)."
+                    side="right"
+                  />
                 </div>
               </div>
 

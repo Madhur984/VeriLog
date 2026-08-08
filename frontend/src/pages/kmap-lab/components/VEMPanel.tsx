@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { solveVEM, VEMResult } from '../lib/solver/vemSolver';
 import { Grid, Sparkles, Variable } from 'lucide-react';
+import { InfoTooltip } from './InfoTooltip';
 
 export const VEMPanel: React.FC = () => {
   const [baseVarCount, setBaseVarCount] = useState<number>(3);
@@ -26,7 +27,14 @@ export const VEMPanel: React.FC = () => {
             <Variable size={22} />
           </div>
           <div>
-            <h3 className="text-xl font-bold text-text-main tracking-tight">Variable-Entered Map (VEM)</h3>
+            <div className="flex items-center gap-2">
+              <h3 className="text-xl font-bold text-text-main tracking-tight">Variable-Entered Map (VEM)</h3>
+              <InfoTooltip
+                title="Variable-Entered Map (VEM)"
+                description="Encodes additional variables directly inside K-map cells (e.g. E, E') to solve high-dimensional Boolean logic with smaller grid dimensions."
+                side="top"
+              />
+            </div>
             <p className="text-xs font-bold text-text-dim uppercase tracking-wider mt-0.5">
               Algebraic Cell Map · Extend K-Map Capacity
             </p>

@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { useStore } from '../store/useStore';
-import { Cpu, Zap, Undo2, Redo2, Share2, Check } from 'lucide-react';
+import { Cpu, Zap, Undo2, Redo2, Share2, Check, Code } from 'lucide-react';
 import { simplify } from '../lib/solver/mintermSimplifier';
+import { generateVerilog } from '../lib/utils/exporters';
+import { InfoTooltip } from './InfoTooltip';
 
 export const ResultPanel: React.FC = () => {
   const { numVars, minterms, dontCares, solType, history, historyIdx, undo, redo } = useStore();
   const [copiedUrl, setCopiedUrl] = useState(false);
+  const [copiedVerilog, setCopiedVerilog] = useState(false);
 
   const { expression, groups } = simplify(minterms, dontCares, numVars, solType);
 
@@ -32,6 +35,13 @@ export const ResultPanel: React.FC = () => {
     setTimeout(() => setCopiedUrl(false), 2000);
   };
 
+  const handleCopyVerilog = async () => {
+    const verilogCode = generateVerilog(expression, "kmap_simplified");
+    await navigator.clipboard.writeText(verilogCode);
+    setCopiedVerilog(true);
+    setTimeout(() => setCopiedVerilog(false), 2000);
+  };
+
   return (
     <div className="glass-card p-4 lg:p-8 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-700">
       {/* Header */}
@@ -41,14 +51,21 @@ export const ResultPanel: React.FC = () => {
             <Cpu size={24} />
           </div>
           <div>
-            <h3 className="text-xl font-bold text-text-main tracking-tight">Simplified Expression</h3>
+            <div className="flex items-center gap-2">
+              <h3 className="text-xl font-bold text-text-main tracking-tight">Simplified Expression</h3>
+              <InfoTooltip
+                title="Simplified Logic Result"
+                description="Minimised Boolean expression derived from optimal prime implicant coverage. Displays both simplified formula and canonical minterm/maxterm notation."
+                side="top"
+              />
+            </div>
             <p className="text-xs font-bold text-text-dim uppercase tracking-widest mt-1">
               Method: <span className={solType === 'SOP' ? 'text-orange-500' : 'text-amber-500'}>{solType === 'SOP' ? 'Sum of Products' : 'Product of Sums'}</span>
             </p>
           </div>
         </div>
 
-        {/* Undo/Redo & Share Buttons */}
+        {/* Action Buttons */}
         <div className="flex items-center gap-2">
           <button
             onClick={undo}
@@ -67,12 +84,20 @@ export const ResultPanel: React.FC = () => {
             <Redo2 size={16} />
           </button>
           <button
-            onClick={handleShareUrl}
+            onClick={handleCopyVerilog}
             className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-orange-500/10 hover:bg-orange-500/20 border border-orange-500/30 text-orange-400 text-xs font-bold transition-all active:scale-95"
+            title="Copy Verilog Module Code"
+          >
+            {copiedVerilog ? <Check size={14} className="text-green-400" /> : <Code size={14} />}
+            <span>{copiedVerilog ? 'Verilog Copied!' : 'Copy Verilog'}</span>
+          </button>
+          <button
+            onClick={handleShareUrl}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-bg-elev hover:bg-hover-bg border border-border-soft text-text-main text-xs font-bold transition-all active:scale-95"
             title="Copy Shareable URL"
           >
             {copiedUrl ? <Check size={14} className="text-green-400" /> : <Share2 size={14} />}
-            <span>{copiedUrl ? 'Copied!' : 'Share URL'}</span>
+            <span>{copiedUrl ? 'Copied!' : 'Share'}</span>
           </button>
         </div>
       </div>

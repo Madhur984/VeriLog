@@ -3,6 +3,7 @@ import { useStore } from '../store/useStore';
 import { simplify } from '../lib/solver/mintermSimplifier';
 import { detectHazards, Hazard } from '../lib/solver/hazardDetector';
 import { AlertTriangle, ShieldCheck, Plus, Zap, Activity } from 'lucide-react';
+import { InfoTooltip } from './InfoTooltip';
 
 export const HazardPanel: React.FC = () => {
   const { numVars, minterms, dontCares, solType, setExpression } = useStore();
@@ -33,7 +34,14 @@ export const HazardPanel: React.FC = () => {
             {hazards.length > 0 ? <AlertTriangle size={22} /> : <ShieldCheck size={22} />}
           </div>
           <div>
-            <h3 className="text-xl font-bold text-text-main tracking-tight">Hazard Analysis & Elimination</h3>
+            <div className="flex items-center gap-2">
+              <h3 className="text-xl font-bold text-text-main tracking-tight">Hazard Analysis & Elimination</h3>
+              <InfoTooltip
+                title="Static Hazard Elimination"
+                description="Detects static-1 hazards (transient output 0-glitches during single input bit changes) and provides redundant consensus product terms to ensure glitch-free circuit operation."
+                side="top"
+              />
+            </div>
             <p className="text-xs font-bold text-text-dim uppercase tracking-wider mt-0.5">
               Glitch Analysis · {hazards.length === 0 ? 'No Static Hazards Detected' : `${hazards.length} Static-1 Hazard(s) Found`}
             </p>

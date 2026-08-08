@@ -30,6 +30,7 @@ interface AppState {
   solveExpression: (expr?: string) => { ok: boolean; error?: string };
   reset: () => void;
   loadExample: () => void;
+  loadPresetExample: (presetKey: string) => void;
   undo: () => void;
   redo: () => void;
 }
@@ -182,7 +183,35 @@ export const useStore = create<AppState>((set, get) => ({
     const exampleExpr = "A'B' + BC'D";
     playSuccessChime();
     triggerHaptic('success');
-    set({ cellValues: example, minterms, dontCares, expression: exampleExpr });
+    set({ numVars: 4, cellValues: example, minterms, dontCares, expression: exampleExpr });
+  },
+
+  loadPresetExample: (presetKey: string) => {
+    playSuccessChime();
+    triggerHaptic('success');
+
+    if (presetKey === 'full_adder_carry') {
+      const minterms = [3, 5, 6, 7];
+      const cellValues: Record<number, Value> = { 3: 1, 5: 1, 6: 1, 7: 1 };
+      set({ numVars: 3, cellValues, minterms, dontCares: [], expression: "AB + BC + AC" });
+    } else if (presetKey === 'seven_segment_a') {
+      const minterms = [0, 2, 3, 5, 6, 7, 8, 9];
+      const dontCares = [10, 11, 12, 13, 14, 15];
+      const cellValues: Record<number, Value> = {
+        0: 1, 2: 1, 3: 1, 5: 1, 6: 1, 7: 1, 8: 1, 9: 1,
+        10: 'X', 11: 'X', 12: 'X', 13: 'X', 14: 'X', 15: 'X'
+      };
+      set({ numVars: 4, cellValues, minterms, dontCares, expression: "A + C + BD + B'D'" });
+    } else if (presetKey === 'hazard_demo') {
+      const minterms = [1, 5, 6, 7];
+      const cellValues: Record<number, Value> = { 1: 1, 5: 1, 6: 1, 7: 1 };
+      set({ numVars: 3, cellValues, minterms, dontCares: [], expression: "A'C + AB" });
+    } else if (presetKey === 'parity_checker') {
+      const minterms = [0, 3, 5, 6, 9, 10, 12, 15];
+      const cellValues: Record<number, Value> = {};
+      minterms.forEach(m => { cellValues[m] = 1; });
+      set({ numVars: 4, cellValues, minterms, dontCares: [], expression: "" });
+    }
   },
 
   undo: () => set((state) => {

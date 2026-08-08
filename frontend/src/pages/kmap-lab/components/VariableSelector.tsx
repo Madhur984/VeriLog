@@ -1,5 +1,6 @@
 import React from 'react';
 import { useStore } from '../store/useStore';
+import { InfoTooltip } from './InfoTooltip';
 
 export const VariableSelector: React.FC = () => {
   const { numVars, setNumVars, solType, setSolType } = useStore();
@@ -8,6 +9,14 @@ export const VariableSelector: React.FC = () => {
     <div className="flex flex-col items-center justify-center gap-4 md:flex-row md:gap-6 mb-6 lg:mb-12 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
       {/* Variable Count Pill */}
       <div className="flex items-center gap-1 p-1.5 bg-bg-elev rounded-2xl border border-border-soft shadow-inner flex-wrap justify-center">
+        <span className="text-xs font-bold text-text-dim px-2 hidden sm:inline-flex items-center gap-1">
+          Vars:
+          <InfoTooltip
+            title="Variable Selector"
+            description="Select the number of input variables (2, 3, 4, 5, or 6). Supports up to 64-cell K-maps with Gray code adjacency."
+            side="top"
+          />
+        </span>
         {[2, 3, 4, 5, 6].map((n) => (
           <button
             key={n}
@@ -26,6 +35,14 @@ export const VariableSelector: React.FC = () => {
 
       {/* Mode Switch Pill */}
       <div className="flex items-center gap-1 p-1.5 bg-bg-elev rounded-2xl border border-border-soft shadow-inner">
+        <span className="text-xs font-bold text-text-dim px-2 hidden sm:inline-flex items-center gap-1">
+          Form:
+          <InfoTooltip
+            title="SOP / POS Synthesis Mode"
+            description="SOP (Sum of Products) groups 1s into AND-OR logic. POS (Product of Sums) groups 0s into OR-AND maxterm logic."
+            side="top"
+          />
+        </span>
         {(['SOP', 'POS'] as const).map((type) => (
           <button
             key={type}
@@ -44,3 +61,4 @@ export const VariableSelector: React.FC = () => {
     </div>
   );
 };
+
