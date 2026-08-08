@@ -167,28 +167,10 @@ export default function LandingPageContainer() {
   };
 
   // Brilliant-style landing is light-only. Force the light scheme *synchronously*
-  // (in render, before children mount) so child components that read the scheme
-  // from localStorage on first render (SiliconPlaypenGrid, PremiumBentoFeatures)
-  // also come up light — otherwise their isDarkMode ternaries paint white text on
-  // the now-light background and it disappears. Restore the user's pref on leave.
-  const isDarkMode = false;
-  const prevThemeRef = useRef<string | null>(null);
-  if (prevThemeRef.current === null) {
-    try {
-      prevThemeRef.current = localStorage.getItem('bitforbytes_theme') ?? 'dark';
-      localStorage.setItem('bitforbytes_theme', 'light');
-    } catch { prevThemeRef.current = 'dark'; }
-  }
-  useEffect(() => {
-    const root = document.documentElement;
-    root.classList.remove('dark');
-    root.classList.add('light');
-    return () => {
-      const prev = prevThemeRef.current || 'dark';
-      try { localStorage.setItem('bitforbytes_theme', prev); } catch { /* ignore */ }
-      if (prev === 'dark') { root.classList.add('dark'); root.classList.remove('light'); }
-    };
-  }, []);
+  // Respect global user theme preference without forced local storage mutation
+  const [scheme] = useColorScheme();
+  const isDarkMode = scheme === 'dark';
+
 
   return (
     <main className="relative w-full min-h-screen bg-[#FAF9F6] dark:bg-[#03050a] text-slate-800 dark:text-slate-200 antialiased font-sans selection:bg-[#4A57FF]/20 selection:text-[#4A57FF]">
