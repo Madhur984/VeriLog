@@ -71,7 +71,7 @@ const DigitalClock: React.FC<{ isLight: boolean }> = ({ isLight }) => {
   const track = isLight ? '#C9BEEA' : 'rgba(255,255,255,0.08)';
   return (
     <div className="flex flex-col leading-none" aria-label={`Local time ${pad(h)}:${pad(m)}`}>
-      <span className="font-mono text-[8px] font-bold uppercase tracking-[0.2em]" style={{ color: faint }}>{dateStr}</span>
+      <span className="font-mono text-[10px] font-bold uppercase tracking-[0.16em]" style={{ color: faint }}>{dateStr}</span>
       <span className="mt-1 font-mono text-[15px] font-extrabold tabular-nums tracking-tight" style={{ color: ink }}>
         {pad(h)}<span style={{ color: accent }}>:</span>{pad(m)}<span style={{ color: accent }}>:{pad(s)}</span>
       </span>

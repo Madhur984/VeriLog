@@ -874,8 +874,14 @@ export const Module1Root: React.FC = () => {
                     <li>• <strong className="text-emerald-500">X-Axis:</strong> Shifts the time of the "flip" (Time Delay).</li>
                     <li>• <strong className="text-emerald-500">Y-Axis:</strong> Changes the step height (Voltage Level).</li>
                   </ul>
-                  <div className={`mt-4 p-3 rounded-lg border text-xs font-mono ${isDarkMode ? 'bg-black/40 border-emerald-900/30 text-emerald-500/70' : 'bg-emerald-50 border-emerald-100 text-emerald-700'}`}>
-                    Equation: u(t) = 1 for t ≥ 0, else 0
+                  <div className={`mt-4 p-4 rounded-xl border font-mono font-bold space-y-2 ${isDarkMode ? 'bg-black/40 border-emerald-900/30 text-emerald-400' : 'bg-emerald-50 border-emerald-100 text-emerald-700'}`}>
+                    <div className="text-[10px] uppercase tracking-widest text-emerald-500/70 font-semibold">Mathematical Definition</div>
+                    <div className="text-base tracking-wide">
+                      u(t) = &#123; 1, &nbsp;&nbsp;t ≥ 0
+                    </div>
+                    <div className="text-base tracking-wide pl-[65px]">
+                      &nbsp;&nbsp;&nbsp;&#123; 0, &nbsp;&nbsp;t &lt; 0
+                    </div>
                   </div>
                 </div>
                 <div 
@@ -912,8 +918,14 @@ export const Module1Root: React.FC = () => {
                     <li>• <strong className="text-rose-500">X-Axis:</strong> Changes the acceleration rate (Slope/Gradient).</li>
                     <li>• <strong className="text-rose-500">Y-Axis:</strong> Caps the maximum signal level (Saturation).</li>
                   </ul>
-                  <div className={`mt-4 p-3 rounded-lg border text-xs font-mono md:w-fit ${isDarkMode ? 'bg-black/40 border-rose-900/30 text-rose-500/70' : 'bg-rose-50 border-rose-100 text-rose-700'}`}>
-                    Equation: r(t) = t for t ≥ 0, else 0
+                  <div className={`mt-4 p-4 rounded-xl border font-mono font-bold space-y-2 ${isDarkMode ? 'bg-black/40 border-rose-900/30 text-rose-400' : 'bg-rose-50 border-rose-100 text-rose-700'}`}>
+                    <div className="text-[10px] uppercase tracking-widest text-rose-500/70 font-semibold">Mathematical Definition</div>
+                    <div className="text-base tracking-wide">
+                      r(t) = &#123; t, &nbsp;&nbsp;t ≥ 0
+                    </div>
+                    <div className="text-base tracking-wide pl-[65px]">
+                      &nbsp;&nbsp;&nbsp;&#123; 0, &nbsp;&nbsp;t &lt; 0
+                    </div>
                   </div>
                 </div>
               </div>
@@ -934,8 +946,14 @@ export const Module1Root: React.FC = () => {
                     <li>• <strong className="text-orange-500">X-Axis:</strong> Positions the pulse in time (Translation).</li>
                     <li>• <strong className="text-orange-500">Y-Axis:</strong> Dictates the "Energy" or Weight of the pulse.</li>
                   </ul>
-                  <div className={`mt-4 p-3 rounded-lg border text-xs font-mono ${isDarkMode ? 'bg-black/40 border-orange-900/30 text-orange-500/70' : 'bg-orange-50 border-orange-100 text-orange-700'}`}>
-                    Equation: δ(t) = ∞ at t=0, Area = 1
+                  <div className={`mt-4 p-4 rounded-xl border font-mono font-bold space-y-2 ${isDarkMode ? 'bg-black/40 border-orange-900/30 text-orange-400' : 'bg-orange-50 border-orange-100 text-orange-700'}`}>
+                    <div className="text-[10px] uppercase tracking-widest text-orange-500/70 font-semibold">Mathematical Definition</div>
+                    <div className="text-base tracking-wide">
+                      δ(t) = &#123; ∞, &nbsp;&nbsp;t = 0 &nbsp;&nbsp;(with ∫<sub>-∞</sub><sup>∞</sup> δ(t) dt = 1)
+                    </div>
+                    <div className="text-base tracking-wide pl-[65px]">
+                      &nbsp;&nbsp;&nbsp;&#123; 0, &nbsp;&nbsp;t ≠ 0
+                    </div>
                   </div>
                 </div>
                 <div 

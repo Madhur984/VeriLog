@@ -626,7 +626,7 @@ export const VerilogJudge: React.FC = () => {
                 }}
                 options={{
                   fontSize: 13.5,
-                  fontFamily: "'IBM Plex Mono','Roboto Mono',monospace",
+                  fontFamily: "'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace",
                   minimap: { enabled: false },
                   scrollBeyondLastLine: false,
                   lineNumbers: 'on',

@@ -3,6 +3,7 @@ import { useStore } from '../store/useStore';
 import { solveMultiOutput, FunctionDefinition, MultiOutputResult } from '../lib/solver/multiOutputSolver';
 import { Layers, Plus, Trash2, Share2, Sparkles } from 'lucide-react';
 import { InfoTooltip } from './InfoTooltip';
+import { TextbookEquation } from '../../../components/ui/TextbookEquation';
 
 export const MultiOutputPanel: React.FC = () => {
   const { numVars, minterms, dontCares } = useStore();
@@ -87,7 +88,10 @@ export const MultiOutputPanel: React.FC = () => {
             </div>
 
             <div className="p-2.5 rounded-lg bg-bg-base border border-border-soft font-mono text-xs text-orange-300">
-              {f.name} = {f.expression || '0'}
+              <TextbookEquation
+                math={`${f.name} = ${f.expression.replace(/'/g, '^{\\prime}') || '0'}`}
+                block={false}
+              />
             </div>
           </div>
         ))}

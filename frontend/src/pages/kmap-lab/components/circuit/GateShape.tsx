@@ -79,7 +79,7 @@ export const GateShape: React.FC<GateShapeProps> = ({ type, x, y, label }) => {
           dominantBaseline="central"
           fontSize={14}
           fontWeight="700"
-          fontFamily="'Inter', monospace"
+          fontFamily="'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace"
           fill="#fb923c"
         >
           {label}
@@ -102,7 +102,7 @@ export const GateShape: React.FC<GateShapeProps> = ({ type, x, y, label }) => {
           dominantBaseline="central"
           fontSize={14}
           fontWeight="700"
-          fontFamily="'Inter', monospace"
+          fontFamily="'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace"
           fill="#f97316"
         >
           {label}
@@ -131,7 +131,7 @@ export const GateShape: React.FC<GateShapeProps> = ({ type, x, y, label }) => {
         textAnchor="middle"
         fontSize={9}
         fontWeight="600"
-        fontFamily="'Inter', monospace"
+        fontFamily="'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace"
         fill="rgba(249,115,22,0.55)"
         letterSpacing="0.08em"
       >

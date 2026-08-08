@@ -133,7 +133,7 @@ export const ConceptGate: React.FC<ConceptGateProps> = ({
                     initial={{ opacity: 0, x: 10 }}
                     animate={{ opacity: 1, x: 0 }}
                     style={{
-                        fontFamily: 'Inter, sans-serif',
+                        fontFamily: "'Space Grotesk', sans-serif",
                         fontSize: 15,
                         lineHeight: 1.6,
                         color: T.text,

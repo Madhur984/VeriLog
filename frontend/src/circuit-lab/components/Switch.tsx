@@ -85,7 +85,7 @@ export function Switch({ component, isLive, onPointerDown, onToggle, isDragging,
             />
 
             {/* Status label */}
-            <text x={0} y={30} textAnchor="middle" fill={isClosed ? '#4ade80' : '#f87171'} fontSize={8} fontFamily="'Courier New', monospace" letterSpacing={0.5}>
+            <text x={0} y={30} textAnchor="middle" fill={isClosed ? '#4ade80' : '#f87171'} fontSize={8} fontFamily="'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace" letterSpacing={0.5}>
                 {isClosed ? '● CLOSED' : '○ OPEN'}
             </text>
 

@@ -63,7 +63,7 @@ const BitCell: React.FC<{ val: number; color: string; isDarkMode: boolean; onCli
     transition={{ type: 'spring', stiffness: 350, damping: 22 }}
     style={{
       width: 48, height: 56, border: '2px solid', borderRadius: 10,
-      fontFamily: '"IBM Plex Mono", monospace', fontSize: 22, fontWeight: 900,
+      fontFamily: '"JetBrains Mono", "IBM Plex Mono", ui-monospace, monospace', fontSize: 22, fontWeight: 900,
       cursor: onClick ? 'pointer' : 'default', outline: 'none',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
     }}

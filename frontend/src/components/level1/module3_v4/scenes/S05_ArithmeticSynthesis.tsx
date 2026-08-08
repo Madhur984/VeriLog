@@ -55,9 +55,9 @@ export const S05_ArithmeticSynthesis: React.FC<Props> = ({ isActive, isDarkMode 
 B (1) [ AND ] Carry (1)
 `}
                 </div>
-                <div className="grid grid-cols-2 gap-4 text-[10px] font-mono opacity-60">
-                    <div>Sum = A  B</div>
-                    <div>Carry = A  B</div>
+                <div className="space-y-1.5 text-xs font-mono font-bold text-sky-400">
+                    <div>Sum &nbsp;&nbsp;= A ⊕ B</div>
+                    <div>Carry = A · B</div>
                 </div>
             </motion.div>
 
@@ -80,9 +80,9 @@ B    [ 2x Half-Adders ]  Sum
 Cin          + OR          Cout
 `}
                 </div>
-                <div className="grid grid-cols-1 gap-1 text-[10px] font-mono font-bold text-sky-500">
-                    <div>Sum = A  B  Cin</div>
-                    <div>Cout = (AB) + (Cin(AB))</div>
+                <div className="space-y-1.5 text-xs font-mono font-bold text-sky-400">
+                    <div>Sum  = A ⊕ B ⊕ C<sub>in</sub></div>
+                    <div>C<sub>out</sub> = (A · B) + (C<sub>in</sub> · (A ⊕ B))</div>
                 </div>
             </motion.div>
         </div>
@@ -103,14 +103,14 @@ Cin          + OR          Cout
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 {[
-                    { label: "Identity", eq: "A  1 = A", desc: "ANDing with 1 preserves state." },
-                    { label: "Null", eq: "A  0 = 0", desc: "ANDing with 0 destroys state." },
-                    { label: "Inverse", eq: "A +  = 1", desc: "ORing with inverse is always true." },
-                    { label: "Double Negation", eq: "A = A", desc: "Two NOTs cancel out." }
+                    { label: "Identity", eq: "A · 1 = A", desc: "ANDing with 1 preserves state." },
+                    { label: "Null", eq: "A · 0 = 0", desc: "ANDing with 0 destroys state." },
+                    { label: "Inverse", eq: "A + Ā = 1", desc: "ORing with inverse is always true." },
+                    { label: "Double Negation", eq: "A̿ = A", desc: "Two NOTs cancel out." }
                 ].map((item, i) => (
                     <div key={i} className={`p-6 rounded-2xl border ${isDarkMode ? 'bg-black/40 border-white/5' : 'bg-gray-50 border-gray-200'}`}>
                         <div className="text-[10px] font-black uppercase tracking-widest opacity-40 mb-2">{item.label}</div>
-                        <div className="text-xl font-mono font-black text-sky-500 mb-2">{item.eq}</div>
+                        <div className="text-lg font-mono font-black text-sky-400 mb-2">{item.eq}</div>
                         <p className="text-xs opacity-60 leading-relaxed">{item.desc}</p>
                     </div>
                 ))}

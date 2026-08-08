@@ -419,7 +419,7 @@ export function FSMCanvas({
             {/* Overlay Toolbar for canvas alignment hints if multi-selection exists */}
             {selectedStates.size > 1 && (
                 <div style={{ position: 'absolute', bottom: 16, left: '50%', transform: 'translateX(-50%)', background: T.bg, border: `1px solid ${T.grid}`, borderRadius: 8, padding: '4px 12px', display: 'flex', gap: 12, boxShadow: '0 4px 12px rgba(0,0,0,0.5)', zIndex: 10 }}>
-                    <span style={{ color: T.text, fontSize: 12, fontFamily: 'Inter' }}>{selectedStates.size} Selected</span>
+                    <span style={{ color: T.text, fontSize: 12, fontFamily: "'Space Grotesk', sans-serif" }}>{selectedStates.size} Selected</span>
                     <button style={{ background: 'transparent', border: '1px solid #3B82F6', color: '#3B82F6', borderRadius: 4, cursor: 'pointer', padding: '2px 8px' }} onClick={() => {
                         const nodes = Array.from(selectedStates).map((id: string) => ({ id, pos: positions.get(id)! }));
                         engine.alignNodes(nodes); // Note: Simplified implementation handled directly in states

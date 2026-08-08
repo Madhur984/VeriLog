@@ -30,7 +30,7 @@ export const CostPanel: React.FC = () => {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="text-xl font-bold text-text-main tracking-tight">Cost-Function Optimization</h3>
+              <h3 className="text-xl font-heading font-bold text-text-main tracking-tight">Cost-Function Optimization</h3>
               <InfoTooltip
                 title="Cost-Function Analysis"
                 description="Evaluates physical logic implementation metrics: Area (total literal & pin count), Delay (gate logic depth levels), and Power (dynamic CMOS switching activity in mW)."

@@ -38,7 +38,7 @@ export function StreakPanel() {
                     <span style={{
                         fontSize: '20px',
                         fontWeight: 700,
-                        fontFamily: "'IBM Plex Mono', monospace",
+                        fontFamily: "'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace",
                         color: '#F1F5F9',
                     }}>
                         {streak.current}
@@ -46,7 +46,7 @@ export function StreakPanel() {
                     <span style={{
                         fontSize: '11px',
                         color: '#94A3B8',
-                        fontFamily: "'IBM Plex Mono', monospace",
+                        fontFamily: "'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace",
                         letterSpacing: '0.06em',
                     }}>
                         day streak
@@ -58,7 +58,7 @@ export function StreakPanel() {
                     background: multiplier > 1 ? 'rgba(16, 185, 129, 0.15)' : 'rgba(100, 116, 139, 0.1)',
                     border: `1px solid ${multiplier > 1 ? 'rgba(16, 185, 129, 0.3)' : 'rgba(100, 116, 139, 0.15)'}`,
                     fontSize: '10px',
-                    fontFamily: "'IBM Plex Mono', monospace",
+                    fontFamily: "'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace",
                     fontWeight: 600,
                     color: multiplier > 1 ? '#10B981' : '#64748B',
                 }}>
@@ -81,7 +81,7 @@ export function StreakPanel() {
                         <span style={{
                             fontSize: '9px',
                             color: '#64748B',
-                            fontFamily: "'IBM Plex Mono', monospace",
+                            fontFamily: "'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace",
                         }}>
                             {day.label}
                         </span>
@@ -114,7 +114,7 @@ export function StreakPanel() {
                     gap: '6px',
                     fontSize: '10px',
                     color: '#64748B',
-                    fontFamily: "'IBM Plex Mono', monospace",
+                    fontFamily: "'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace",
                 }}>
                     <span>❄️</span>
                     <span>{streak.freezesRemaining} streak freeze available</span>

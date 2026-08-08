@@ -49,8 +49,8 @@ export const XPCounter = memo(({ total, registerEl, breakdown }: XPCounterProps)
         >
             {/* Label */}
             <span style={{
-                fontFamily: "'IBM Plex Mono', 'Roboto Mono', monospace",
-                fontSize: 7,
+                fontFamily: "'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace",
+                fontSize: 10,
                 letterSpacing: '0.18em',
                 color: 'rgba(255,255,255,0.25)',
                 textTransform: 'uppercase',
@@ -60,7 +60,7 @@ export const XPCounter = memo(({ total, registerEl, breakdown }: XPCounterProps)
             <span
                 ref={spanRef}
                 style={{
-                    fontFamily: "'IBM Plex Mono', 'Roboto Mono', monospace",
+                    fontFamily: "'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace",
                     fontSize: 13,
                     fontWeight: 500,
                     letterSpacing: '0.08em',
@@ -80,8 +80,8 @@ export const XPCounter = memo(({ total, registerEl, breakdown }: XPCounterProps)
                     { label: 'A', val: breakdown.application, key: 'application' },
                 ] as const).map(({ label, val, key }) => (
                     <span key={key} style={{
-                        fontFamily: "'IBM Plex Mono', monospace",
-                        fontSize: 7,
+                        fontFamily: "'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace",
+                        fontSize: 10,
                         color: val > 0 ? 'rgba(255,255,255,0.45)' : 'rgba(255,255,255,0.1)',
                         letterSpacing: '0.05em',
                         transition: 'color 0.3s',

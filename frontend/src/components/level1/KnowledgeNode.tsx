@@ -93,7 +93,7 @@ export const KnowledgePanel = memo(({ node, onClose, isClosing }: KnowledgePanel
                             border: '1.5px solid rgba(0,212,255,0.4)',
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
                             background: 'rgba(0,212,255,0.05)',
-                            fontFamily: "'IBM Plex Mono', 'Roboto Mono', monospace",
+                            fontFamily: "'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace",
                             fontSize: 15, color: '#00D4FF', fontWeight: 500,
                         }}>
                             {node.label}
@@ -101,14 +101,14 @@ export const KnowledgePanel = memo(({ node, onClose, isClosing }: KnowledgePanel
                         <div>
                             <span style={{
                                 display: 'block',
-                                fontFamily: "'IBM Plex Mono', 'Roboto Mono', monospace", fontSize: 8,
+                                fontFamily: "'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace", fontSize: 8,
                                 letterSpacing: '0.22em', color: 'rgba(229,231,235,0.35)',
                                 textTransform: 'uppercase', marginBottom: 4,
                             }}>
                                 Knowledge Node
                             </span>
                             <h2 style={{
-                                fontFamily: "'IBM Plex Mono', 'Roboto Mono', monospace",
+                                fontFamily: "'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace",
                                 fontSize: 16, fontWeight: 600,
                                 letterSpacing: '0.12em', color: '#E5E7EB',
                                 textTransform: 'uppercase',
@@ -162,7 +162,7 @@ export const KnowledgePanel = memo(({ node, onClose, isClosing }: KnowledgePanel
                                 }}>
                                     <div style={{ width: 3, height: 12, background: color, borderRadius: 1.5 }} />
                                     <p style={{
-                                        fontFamily: 'Roboto Mono, monospace', fontSize: 9,
+                                        fontFamily: "'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace", fontSize: 9,
                                         letterSpacing: '0.22em', color: color,
                                         textTransform: 'uppercase', fontWeight: 600,
                                         opacity: 0.9,
@@ -181,7 +181,7 @@ export const KnowledgePanel = memo(({ node, onClose, isClosing }: KnowledgePanel
                                             borderRadius: 3, marginBottom: 8,
                                         }}>
                                             <code style={{
-                                                fontFamily: 'Roboto Mono, monospace',
+                                                fontFamily: "'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace",
                                                 fontSize: 16, fontWeight: 500,
                                                 color: '#a78bfa', letterSpacing: '0.08em',
                                             }}>
@@ -190,7 +190,7 @@ export const KnowledgePanel = memo(({ node, onClose, isClosing }: KnowledgePanel
                                         </div>
                                         {node.equationLabel && (
                                             <p style={{
-                                                fontFamily: 'Roboto Mono, monospace', fontSize: 10,
+                                                fontFamily: "'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace", fontSize: 10,
                                                 color: 'rgba(229,231,235,0.35)', letterSpacing: '0.05em',
                                                 lineHeight: 1.6,
                                             }}>
@@ -284,7 +284,7 @@ export const KnowledgeNode = memo(({ node }: KnowledgeNodeProps) => {
                     border: '1.5px solid rgba(0,212,255,0.5)',
                     background: 'rgba(0,212,255,0.05)',
                     color: '#00D4FF',
-                    fontFamily: "'IBM Plex Mono', 'Roboto Mono', monospace",
+                    fontFamily: "'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace",
                     fontSize: 10, fontWeight: 600,
                     cursor: 'pointer',
                     verticalAlign: 'middle',

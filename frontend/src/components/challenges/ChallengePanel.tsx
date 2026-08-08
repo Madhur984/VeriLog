@@ -50,7 +50,7 @@ export const ChallengePanel = memo(({ challenge, onSubmit, onBack }: ChallengePa
             minHeight: '100%',
             display: 'flex',
             flexDirection: 'column',
-            fontFamily: "'IBM Plex Mono', monospace",
+            fontFamily: "'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace",
             fontSize: 11,
             backgroundColor: 'var(--bg-void)',
             color: 'var(--text-main)',
@@ -247,7 +247,7 @@ const TruthTableView = memo(({ inputs, outputs, rows, failedRows }: {
             width: '100%',
             borderCollapse: 'collapse',
             fontSize: 10,
-            fontFamily: "'IBM Plex Mono', monospace",
+            fontFamily: "'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace",
         }}>
             <thead>
                 <tr>
@@ -378,7 +378,7 @@ const backBtnStyle: React.CSSProperties = {
     padding: '3.5px 8px',
     borderRadius: 3,
     cursor: 'pointer',
-    fontFamily: "'IBM Plex Mono', monospace",
+    fontFamily: "'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace",
 };
 
 const submitBtnStyle: React.CSSProperties = {
@@ -390,7 +390,7 @@ const submitBtnStyle: React.CSSProperties = {
     padding: '6px 16px',
     borderRadius: 4,
     cursor: 'pointer',
-    fontFamily: "'IBM Plex Mono', monospace",
+    fontFamily: "'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace",
     transition: 'all 100ms',
 };
 
@@ -402,7 +402,7 @@ const hintBtnStyle: React.CSSProperties = {
     padding: '1.5px 6px',
     borderRadius: 2,
     cursor: 'pointer',
-    fontFamily: "'IBM Plex Mono', monospace",
+    fontFamily: "'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace",
     marginLeft: 8,
 };
 

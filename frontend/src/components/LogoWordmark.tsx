@@ -21,7 +21,7 @@ export const LogoWordmark = ({
     <span
       className={`font-bold select-none ${className}`}
       style={{
-        fontFamily: 'Inter, sans-serif',
+        fontFamily: "'Space Grotesk', sans-serif",
         lineHeight: 1,
         ...style,
       }}

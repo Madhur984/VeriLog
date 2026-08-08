@@ -1,6 +1,7 @@
 import React from 'react';
 import { StepWave, RampWave, ImpulseWave, LocalMouseArea } from '../components/Module1Components';
 import { TryItYourself } from '../../../ui/TryItYourself';
+import { TextbookEquation } from '../../../ui/TextbookEquation';
 
 export const S02_StandardSignals: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
   const borderColor = isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.1)';
@@ -26,9 +27,15 @@ export const S02_StandardSignals: React.FC<{ isDarkMode: boolean }> = ({ isDarkM
               <p className={`text-base leading-relaxed ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>
                 Think of a light switch being flipped. It's zero, then suddenly it's one. This is used to test how a system reacts to a sudden, permanent change.
               </p>
-              <div className={`p-4 rounded-xl border text-[10px] font-mono ${isDarkMode ? 'bg-black/40 border-emerald-900/30 text-emerald-500' : 'bg-emerald-50 border-emerald-100 text-emerald-700'}`}>
-                Equation: u(t) = 1 for t ≥ 0, else 0
-              </div>
+              <TextbookEquation
+                title="Unit Step Signal Definition"
+                math="u(t) = \begin{cases} 1, & t \ge 0 \\ 0, & t < 0 \end{cases}"
+                variables={[
+                  { symbol: "u(t)", name: "Unit Step Signal", description: "Value jumps to 1 at t = 0 and stays permanently high." },
+                  { symbol: "t", name: "Time Domain Variable", description: "Independent time variable in seconds.", unit: "s" },
+                ]}
+                note="In system dynamics, u(t) models sudden step inputs such as flipping a power switch."
+              />
             </div>
             <div className="rounded-2xl p-8 border h-48 flex items-center justify-center relative overflow-hidden bg-slate-900 dark:bg-black/40" style={{ borderColor }}>
               <TryItYourself corner />
@@ -50,9 +57,16 @@ export const S02_StandardSignals: React.FC<{ isDarkMode: boolean }> = ({ isDarkM
               <p className={`text-base leading-relaxed ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>
                 Linear acceleration. The signal increases steadily with time. Ramps test a system's ability to track a moving target without error.
               </p>
-              <div className={`p-4 rounded-xl border text-[10px] font-mono ${isDarkMode ? 'bg-black/40 border-rose-900/30 text-rose-500' : 'bg-rose-50 border-rose-100 text-rose-700'}`}>
-                Equation: r(t) = t for t ≥ 0, else 0
-              </div>
+              <TextbookEquation
+                title="Unit Ramp Signal Definition"
+                math="r(t) = \begin{cases} t, & t \ge 0 \\ 0, & t < 0 \end{cases} = t \cdot u(t)"
+                variables={[
+                  { symbol: "r(t)", name: "Unit Ramp Signal", description: "Linearly increasing signal for positive time." },
+                  { symbol: "t", name: "Time Domain Variable", description: "Independent time variable in seconds.", unit: "s" },
+                  { symbol: "u(t)", name: "Unit Step Signal", description: "Enforces causality for t ≥ 0." }
+                ]}
+                note="Integral relation: r(t) = \int_{-\infty}^{t} u(\tau) d\tau"
+              />
             </div>
           </div>
 
@@ -64,11 +78,19 @@ export const S02_StandardSignals: React.FC<{ isDarkMode: boolean }> = ({ isDarkM
                 <h3 className="text-2xl font-black">The Unit Impulse</h3>
               </div>
               <p className={`text-base leading-relaxed ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>
-                A momentary blast of energy. Infinite height, zero duration, area of one. This reveals the "Impusle Response" - the complete mathematical behavior of any system.
+                A momentary blast of energy. Infinite height, zero duration, area of one. This reveals the "Impulse Response" — the complete mathematical behavior of any system.
               </p>
-              <div className={`p-4 rounded-xl border text-[10px] font-mono ${isDarkMode ? 'bg-black/40 border-cyan-900/30 text-cyan-500' : 'bg-cyan-50 border-cyan-100 text-cyan-700'}`}>
-                Equation: δ(t) = ∞ at t=0, Area = 1
-              </div>
+              <TextbookEquation
+                title="Dirac Delta Impulse Definition"
+                math="\delta(t) = \begin{cases} \infty, & t = 0 \\ 0, & t \neq 0 \end{cases} \quad \text{such that} \quad \int_{-\infty}^{\infty} \delta(t) \, dt = 1"
+                variables={[
+                  { symbol: "\\delta(t)", name: "Dirac Delta Impulse", description: "Zero everywhere except t=0, with unit enclosed area." },
+                  { symbol: "\\int dt", name: "Total Energy Area", description: "Total area underneath the impulse spike equals exactly 1." }
+                ]}
+                steps={[
+                  { title: "Derivative Relation", latex: "\\delta(t) = \\frac{d}{dt} u(t)", explanation: "The impulse is mathematically the derivative of the unit step function." }
+                ]}
+              />
             </div>
             <div className="rounded-2xl p-8 border h-48 flex items-center justify-center relative overflow-hidden bg-slate-900 dark:bg-black/40" style={{ borderColor }}>
                <TryItYourself corner />

@@ -657,7 +657,7 @@ const CountdownWidget = () => {
     <div className="p-6 bg-gradient-to-br from-plasma-cyan/20 to-transparent border border-plasma-cyan/40 rounded-3xl shadow-cyan-glow">
        <div className="flex items-center justify-between mb-4">
           <div className="text-[10px] font-black text-plasma-cyan uppercase tracking-widest flex items-center gap-2"><Clock size={12}/> Industrial Tempo</div>
-          <div className="px-2 py-0.5 bg-plasma-cyan text-black text-[8px] font-black rounded uppercase">Live</div>
+          <div className="px-2.5 py-0.5 bg-plasma-cyan text-black text-[10px] font-black rounded uppercase">Live</div>
        </div>
        <div className="flex items-end gap-2">
           <span className="text-4xl font-black text-white">{gateDays}</span>
@@ -1400,7 +1400,7 @@ export const PortalPage: React.FC = () => {
 
       <footer className="border-t border-white/5 py-20 px-8 text-center space-y-4 opacity-30">
         <div className="text-[10px] font-mono tracking-[0.5em] text-plasma-cyan">CAREER_MODULE_V2.1 // VERILOG.OS</div>
-        <div className="text-[8px] font-mono text-grid-line uppercase">© 2025 ECE Trajectory Instrument. All industrial nodes verified.</div>
+        <div className="text-[10px] font-mono text-grid-line uppercase">© 2025 ECE Trajectory Instrument. All industrial nodes verified.</div>
       </footer>
 
       <AnimatePresence>

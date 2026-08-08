@@ -41,7 +41,7 @@ export const PipelineVisualizer = memo(({ pipeline }: PipelineVisualizerProps) =
 
     return (
         <div style={{
-            fontFamily: "'IBM Plex Mono', monospace",
+            fontFamily: "'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace",
             fontSize: 11,
             padding: 12,
             display: 'flex',

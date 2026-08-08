@@ -5,6 +5,7 @@ import { OscilloscopeCanvas } from './OscilloscopeCanvas';
 import { EnhancedSlider } from '../ui/EnhancedSlider';
 import { ConceptGate, ConceptLevel } from '../ui/ConceptGate';
 import { CognitiveCheckpoint } from '../ui/CognitiveCheckpoint';
+import { TextbookEquation } from '../ui/TextbookEquation';
 import { useGlobalSensory } from '../../hooks/useGlobalSensory';
 import { useCognitionEngine } from '../../hooks/useCognitionEngine';
 import { DURATIONS, SPRINGS } from '../../constants/designTokens';
@@ -253,6 +254,15 @@ export function SamplingLab({ onComplete }: { onComplete: (xp: number) => void }
                                 unit="Hz"
                                 color={T.sampling}
                                 onChange={(v) => handleInteraction('rate_slider', v, setSamplingRate)}
+                            />
+                            <TextbookEquation
+                              title="Nyquist-Shannon Sampling Theorem"
+                              math="f_s \ge 2 f_{\text{max}}"
+                              variables={[
+                                { symbol: "f_s", name: "Sampling Rate", description: "Number of discrete samples taken per second.", unit: "Hz" },
+                                { symbol: "f_{\\text{max}}", name: "Max Signal Frequency", description: "Highest frequency present in the continuous signal.", unit: "Hz" }
+                              ]}
+                              note={isAliasing ? "Warning: f_s < 2f_max! Aliasing ghost distortion is currently present." : "Condition satisfied: No aliasing distortion."}
                             />
                         </div>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>

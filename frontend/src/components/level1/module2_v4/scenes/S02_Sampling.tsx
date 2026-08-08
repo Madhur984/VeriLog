@@ -292,35 +292,13 @@ export const S02_Sampling: React.FC<{ time: number; isDarkMode: boolean }> = ({ 
                   </div>
 
                   <div className={`font-serif text-[1.1rem] leading-[2.8] text-left p-16 rounded-[2.5rem] ${isDarkMode ? 'bg-black/30 text-white/90' : 'bg-gray-50 text-gray-800'}`}>
-                      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-12">
-                          <p>Sampled signal <span className="font-bold">y(t) = x(t) · δ(t)</span></p>
-                          <span className="text-xs font-mono opacity-40 italic tracking-widest self-end">...... (1)</span>
-                      </div>
-                      <p className="mb-6 opacity-70 italic">The trigonometric Fourier series representation of δ(t) is given by:</p>
-                      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-12">
-                          <div className="flex items-center gap-3 translate-x-12">
-                             <span className="italic">δ(t) = a₀ + </span>
-                             <div className="inline-flex flex-col items-center align-middle mx-2">
-                                 <span className="text-[12px] mb-[-4px]">∞</span>
-                                 <span className="text-4xl not-italic">Σ</span>
-                                 <span className="text-[12px] mt-[-4px]">n=1</span>
-                             </div>
-                             <span className="italic">(aₙ cos nωₛt + bₙ sin nωₛt)</span>
+                      <div className={`p-8 rounded-2xl border font-mono font-bold space-y-4 my-8 ${isDarkMode ? 'bg-black/60 border-orange-500/20 text-orange-400' : 'bg-orange-50 border-orange-200 text-orange-800'}`}>
+                          <div className="text-xs uppercase tracking-widest text-orange-500/70">Ideal Impulse Train Sampling</div>
+                          <div className="text-xl tracking-wide">
+                              y(t) = x(t) · δ<sub>p</sub>(t) = x(t) · <span className="text-2xl">∑</span><sub>n=-∞</sub><sup>∞</sup> δ(t - nT<sub>s</sub>)
                           </div>
-                      </div>
-                      <div className="pt-12 mt-12 border-t border-black/5 dark:border-white/5 space-y-10">
-                          <div className="flex flex-wrap items-center gap-x-2 gap-y-4 translate-x-12 italic text-orange-500 font-bold bg-orange-500/5 p-6 rounded-2xl">
-                             <span>➔ Proof Conclusion: Y(ω) = </span>
-                             <div className="inline-flex flex-col items-center align-middle mx-2">
-                                 <span className="border-b border-orange-500/30 pb-0.2 px-3">1</span>
-                                 <span className="pt-0.2 px-3">Tₛ</span>
-                             </div>
-                             <div className="inline-flex flex-col items-center align-middle mx-4">
-                                  <span className="text-[14px] mb-[-2px]">∞</span>
-                                  <span className="text-5xl not-italic font-light">Σ</span>
-                                  <span className="text-[14px] mt-[-2px]">n=-∞</span>
-                             </div>
-                             <span>X(ω - nωₛ)</span>
+                          <div className="text-sm font-semibold opacity-90 border-t border-orange-500/20 pt-3">
+                              Spectrum: Y(ω) = (1 / T<sub>s</sub>) · <span className="text-xl">∑</span><sub>n=-∞</sub><sup>∞</sup> X(ω - nω<sub>s</sub>)
                           </div>
                       </div>
 

@@ -52,7 +52,7 @@ export function BadgeUnlockToast({ notification, onDismiss }: Props) {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
                 <span style={{
                     fontSize: '10px',
-                    fontFamily: "'IBM Plex Mono', monospace",
+                    fontFamily: "'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace",
                     letterSpacing: '0.12em',
                     textTransform: 'uppercase',
                     color: '#00D4FF',

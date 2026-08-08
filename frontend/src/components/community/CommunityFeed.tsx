@@ -64,7 +64,7 @@ export const CommunityFeed = memo(() => {
             height: '100%',
             display: 'flex',
             flexDirection: 'column',
-            fontFamily: "'IBM Plex Mono', monospace",
+            fontFamily: "'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace",
             fontSize: 11,
         }}>
             {/* Search & Sort */}
@@ -326,7 +326,7 @@ const ActionBtn = memo(({ icon, count, active, onClick }: {
             padding: '4px 8px',
             borderRadius: 6,
             transition: 'all 150ms',
-            fontFamily: "'IBM Plex Mono', monospace",
+            fontFamily: "'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace",
         }}
     >
         <span style={{ fontSize: 12 }}>{icon}</span>

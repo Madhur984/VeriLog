@@ -38,7 +38,7 @@ const T = {
     border: '#E2E8F0',
     text: '#0F172A',
     muted: '#64748B',
-    mono: "'IBM Plex Mono', 'Roboto Mono', monospace",
+    mono: "'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace",
 };
 
 const GRID_COLOR = 'rgba(15, 23, 42, 0.08)';
@@ -202,12 +202,14 @@ function OscilloscopeCanvasInner({
                 ctx.setLineDash([]);
                 const deltaT = Math.abs(cursors.t1 - cursors.t2) * timeDiv.get();
                 const deltaV = Math.abs(cursors.v1 - cursors.v2) / 20 * voltsDiv.get();
-                ctx.fillStyle = T.text; ctx.font = '9px monospace';
+                ctx.fillStyle = T.text; ctx.font = "500 10px 'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace";
                 ctx.fillText(`ΔT: ${deltaT.toFixed(1)}ms`, W - 100, H - 30);
                 ctx.fillText(`ΔV: ${deltaV.toFixed(2)}V`, W - 100, H - 18);
             }
 
-            ctx.fillStyle = CH1_COLOR; ctx.fillText(isEngineerMode ? `CH1: ${voltsDivTarget}V/DIV` : label1, 8, 14);
+            ctx.fillStyle = CH1_COLOR; 
+            ctx.font = "600 11px 'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace";
+            ctx.fillText(isEngineerMode ? `CH1: ${voltsDivTarget}V/DIV` : label1, 8, 14);
             rafRef.current = requestAnimationFrame(draw);
         }
 
@@ -328,7 +330,7 @@ function HUD({
         background: 'rgba(14, 165, 233, 0.05)', color: '#0EA5E9', 
         padding: '4px 10px', borderRadius: 4, fontSize: 9, 
         border: '1px solid rgba(14, 165, 233, 0.2)', cursor: 'pointer',
-        fontFamily: "'IBM Plex Mono', monospace", pointerEvents: 'auto'
+        fontFamily: "'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace", pointerEvents: 'auto'
     } as const;
 
     return (
@@ -342,7 +344,7 @@ function HUD({
                 <div style={{ display: 'flex', gap: 12, pointerEvents: 'auto' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                         <button style={btnStyle} onClick={onVoltsDown}>−</button>
-                        <div style={{ color: T.text, fontSize: 10, fontFamily: "'IBM Plex Mono', monospace", minWidth: 60, textAlign: 'center' }}>
+                        <div style={{ color: T.text, fontSize: 10, fontFamily: "'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace", minWidth: 60, textAlign: 'center' }}>
                             {voltsDiv < 1 ? (voltsDiv*1000).toFixed(0)+'m' : voltsDiv.toFixed(1)}V/DIV
                         </div>
                         <button style={btnStyle} onClick={onVoltsUp}>+</button>
@@ -350,7 +352,7 @@ function HUD({
 
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                         <button style={btnStyle} onClick={onTimeDown}>−</button>
-                        <div style={{ color: T.text, fontSize: 10, fontFamily: "'IBM Plex Mono', monospace", minWidth: 60, textAlign: 'center' }}>
+                        <div style={{ color: T.text, fontSize: 10, fontFamily: "'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace", minWidth: 60, textAlign: 'center' }}>
                             {timeDiv.toFixed(0)}ms/DIV
                         </div>
                         <button style={btnStyle} onClick={onTimeUp}>+</button>
