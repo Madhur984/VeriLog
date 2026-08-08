@@ -11,9 +11,10 @@ import { HazardPanel } from './components/HazardPanel';
 import { CostPanel } from './components/CostPanel';
 import { MultiOutputPanel } from './components/MultiOutputPanel';
 import { VEMPanel } from './components/VEMPanel';
+import { PracticeModePanel } from './components/PracticeModePanel';
 import { CircuitRenderer } from './components/CircuitRenderer';
 import { QuickActions } from './components/QuickActions';
-import { Sparkles, Zap, Layers, AlertTriangle, Sliders, Variable } from 'lucide-react';
+import { Sparkles, Zap, Layers, AlertTriangle, Sliders, Variable, Target } from 'lucide-react';
 import './kmap-lab.css';
 
 /**
@@ -21,7 +22,7 @@ import './kmap-lab.css';
  */
 export const KMapLab: React.FC = () => {
   const { mode } = useStore();
-  const [activeAdvancedTab, setActiveAdvancedTab] = useState<'step_by_step' | 'hazards' | 'cost' | 'multi_output' | 'vem'>('step_by_step');
+  const [activeAdvancedTab, setActiveAdvancedTab] = useState<'step_by_step' | 'practice' | 'hazards' | 'cost' | 'multi_output' | 'vem'>('step_by_step');
 
   return (
     <main
@@ -69,6 +70,16 @@ export const KMapLab: React.FC = () => {
                 </button>
 
                 <button
+                  onClick={() => setActiveAdvancedTab('practice')}
+                  className={`flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                    activeAdvancedTab === 'practice' ? 'bg-accent-orange text-white shadow-md' : 'text-text-dim hover:text-text-main'
+                  }`}
+                >
+                  <Target size={14} />
+                  Practice Mode
+                </button>
+
+                <button
                   onClick={() => setActiveAdvancedTab('hazards')}
                   className={`flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold transition-all ${
                     activeAdvancedTab === 'hazards' ? 'bg-accent-orange text-white shadow-md' : 'text-text-dim hover:text-text-main'
@@ -111,6 +122,7 @@ export const KMapLab: React.FC = () => {
 
               {/* Render Selected Pro Feature */}
               {activeAdvancedTab === 'step_by_step' && <StepByStepPanel />}
+              {activeAdvancedTab === 'practice' && <PracticeModePanel />}
               {activeAdvancedTab === 'hazards' && <HazardPanel />}
               {activeAdvancedTab === 'cost' && <CostPanel />}
               {activeAdvancedTab === 'multi_output' && <MultiOutputPanel />}

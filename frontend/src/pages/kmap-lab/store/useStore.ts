@@ -7,6 +7,7 @@ export type Mode = 'normal' | 'pro';
 interface AppState {
   mode: Mode;
   numVars: number;
+  varNames: string[];
   cellValues: Record<number, Value>;
   expression: string;
   minterms: number[];
@@ -20,6 +21,7 @@ interface AppState {
   // Actions
   setMode: (m: Mode) => void;
   setNumVars: (n: number) => void;
+  setVarName: (idx: number, name: string) => void;
   setSolType: (type: 'SOP' | 'POS') => void;
   setCellValue: (index: number, val: Value) => void;
   toggleCellValue: (index: number) => void;
@@ -30,6 +32,8 @@ interface AppState {
   undo: () => void;
   redo: () => void;
 }
+
+const DEFAULT_VARS = ['A', 'B', 'C', 'D', 'E'];
 
 const updateMintermsAndDontCares = (cellValues: Record<number, Value>) => {
   const minterms = Object.entries(cellValues)
@@ -44,6 +48,7 @@ const updateMintermsAndDontCares = (cellValues: Record<number, Value>) => {
 export const useStore = create<AppState>((set, get) => ({
   mode: 'pro',
   numVars: 4,
+  varNames: [...DEFAULT_VARS],
   solType: 'SOP',
   cellValues: {},
   expression: "",
@@ -61,6 +66,12 @@ export const useStore = create<AppState>((set, get) => ({
     dontCares: [],
     history: [{}],
     historyIdx: 0
+  }),
+
+  setVarName: (idx, name) => set((state) => {
+    const updated = [...state.varNames];
+    updated[idx] = name.toUpperCase().trim() || DEFAULT_VARS[idx];
+    return { varNames: updated };
   }),
 
   setSolType: (type) => set({ solType: type }),
@@ -121,7 +132,7 @@ export const useStore = create<AppState>((set, get) => ({
     if (!ast) return { ok: false, error: "Could not parse expression — use A-E, ' for NOT, + for OR." };
 
     const numVars = Math.max(get().numVars, inferNumVars(ast));
-    const vars = ['A', 'B', 'C', 'D', 'E'].slice(0, numVars);
+    const vars = get().varNames.slice(0, numVars);
     const total = 1 << numVars;
     const cellValues: Record<number, Value> = {};
     const minterms: number[] = [];
@@ -144,6 +155,7 @@ export const useStore = create<AppState>((set, get) => ({
     minterms: [], 
     dontCares: [], 
     expression: "",
+    varNames: [...DEFAULT_VARS],
     history: [{}],
     historyIdx: 0
   }),
