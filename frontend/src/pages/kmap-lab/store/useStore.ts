@@ -34,7 +34,7 @@ interface AppState {
   redo: () => void;
 }
 
-const DEFAULT_VARS = ['A', 'B', 'C', 'D', 'E'];
+const DEFAULT_VARS = ['A', 'B', 'C', 'D', 'E', 'F'];
 
 const updateMintermsAndDontCares = (cellValues: Record<number, Value>) => {
   const minterms = Object.entries(cellValues)
@@ -139,7 +139,7 @@ export const useStore = create<AppState>((set, get) => ({
     }
 
     const ast = parseBoolean(source);
-    if (!ast) return { ok: false, error: "Could not parse expression — use A-E, ' for NOT, + for OR." };
+    if (!ast) return { ok: false, error: "Could not parse expression — use A-F, ' for NOT, + for OR." };
 
     const numVars = Math.max(get().numVars, inferNumVars(ast));
     const vars = get().varNames.slice(0, numVars);

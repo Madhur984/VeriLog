@@ -6,7 +6,7 @@ import { solveMinimumCoverage } from "./petricksMethod";
  * Converts a binary implicant (e.g., "1-01") into a Boolean term (e.g., "A C' D").
  */
 export const binaryToSOP = (bin: string, variables: string[]): string => {
-  if (bin.split("").every(c => c === "-")) return "1"; // All cells are 1s
+  if (bin.split("").every(c => c === "-")) return "1";
   
   let term = "";
   for (let i = 0; i < bin.length; i++) {
@@ -38,6 +38,7 @@ export const binaryToPOS = (bin: string, variables: string[]): string => {
 
 /**
  * Main function to simplify minterms.
+ * Supports 2 to 6 variables (A, B, C, D, E, F).
  */
 export const simplify = (
   minterms: number[],
@@ -45,7 +46,7 @@ export const simplify = (
   numVars: number,
   type: "SOP" | "POS" = "SOP"
 ): { expression: string; groups: Implicant[] } => {
-  const variables = ["A", "B", "C", "D", "E"].slice(0, numVars);
+  const variables = ["A", "B", "C", "D", "E", "F"].slice(0, numVars);
   const totalCells = Math.pow(2, numVars);
 
   if (type === "SOP") {
@@ -57,8 +58,6 @@ export const simplify = (
     const expr = minimalSet.map(pi => binaryToSOP(pi.binary, variables)).join(" + ");
     return { expression: expr, groups: minimalSet };
   } else {
-    // POS: Grouping 0s (Maxterms)
-    // Find maxterms: all indices NOT in minterms AND NOT in dontCares
     const allIndices = Array.from({ length: totalCells }, (_, i) => i);
     const maxterms = allIndices.filter(i => !minterms.includes(i) && !dontCares.includes(i));
 
