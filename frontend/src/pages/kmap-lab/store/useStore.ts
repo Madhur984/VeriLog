@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { Value } from "../types/solver";
 import { parseBoolean, evaluateAST, inferNumVars } from "../lib/utils/parseBoolean";
+import { playCellSound, playSuccessChime, triggerHaptic } from "../lib/utils/sensory";
 
 export type Mode = 'normal' | 'pro';
 
@@ -77,6 +78,9 @@ export const useStore = create<AppState>((set, get) => ({
   setSolType: (type) => set({ solType: type }),
   
   setCellValue: (index, val) => set((state) => {
+    playCellSound(val);
+    triggerHaptic('tap');
+
     const newValues = { ...state.cellValues, [index]: val };
     const { minterms, dontCares } = updateMintermsAndDontCares(newValues);
 
@@ -95,6 +99,10 @@ export const useStore = create<AppState>((set, get) => ({
   toggleCellValue: (index) => set((state) => {
     const current = state.cellValues[index] || 0;
     const nextVal: Value = current === 0 ? 1 : current === 1 ? 'X' : 0;
+    
+    playCellSound(nextVal);
+    triggerHaptic('tap');
+
     const newValues = { ...state.cellValues, [index]: nextVal };
     const { minterms, dontCares } = updateMintermsAndDontCares(newValues);
 
@@ -124,6 +132,8 @@ export const useStore = create<AppState>((set, get) => ({
         if (source === '1') { cellValues[m] = 1; minterms.push(m); }
         else cellValues[m] = 0;
       }
+      playSuccessChime();
+      triggerHaptic('success');
       set({ numVars, minterms, dontCares: [], cellValues, expression: source });
       return { ok: true };
     }
@@ -146,6 +156,8 @@ export const useStore = create<AppState>((set, get) => ({
     }
 
     const { dontCares } = updateMintermsAndDontCares(cellValues);
+    playSuccessChime();
+    triggerHaptic('success');
     set({ numVars, minterms, dontCares, cellValues, expression: source });
     return { ok: true };
   },
@@ -168,11 +180,14 @@ export const useStore = create<AppState>((set, get) => ({
     const minterms = [0, 1, 4, 5, 14];
     const dontCares = [10];
     const exampleExpr = "A'B' + BC'D";
+    playSuccessChime();
+    triggerHaptic('success');
     set({ cellValues: example, minterms, dontCares, expression: exampleExpr });
   },
 
   undo: () => set((state) => {
     if (state.historyIdx <= 0) return state;
+    triggerHaptic('tap');
     const newIdx = state.historyIdx - 1;
     const prevValues = state.history[newIdx];
     const { minterms, dontCares } = updateMintermsAndDontCares(prevValues);
@@ -186,6 +201,7 @@ export const useStore = create<AppState>((set, get) => ({
 
   redo: () => set((state) => {
     if (state.historyIdx >= state.history.length - 1) return state;
+    triggerHaptic('tap');
     const newIdx = state.historyIdx + 1;
     const nextValues = state.history[newIdx];
     const { minterms, dontCares } = updateMintermsAndDontCares(nextValues);
