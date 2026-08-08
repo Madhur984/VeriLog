@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useStore } from '../store/useStore';
-import { Trash2, FileText, Code } from 'lucide-react';
+import { Trash2, FileText, Code, Sparkles } from 'lucide-react';
 import { ExportModal } from './ExportModal';
 
 export const QuickActions: React.FC = () => {
-  const { reset, loadExample } = useStore();
+  const { mode, reset, loadExample } = useStore();
   const [showExport, setShowExport] = useState(false);
 
   return (
@@ -26,13 +26,15 @@ export const QuickActions: React.FC = () => {
           Load Example
         </button>
 
-        <button
-          onClick={() => setShowExport(true)}
-          className="flex items-center gap-2 px-4 py-2.5 lg:px-6 bg-orange-500/10 hover:bg-orange-500/20 text-orange-400 rounded-xl font-bold transition-all border border-orange-500/20 text-sm min-h-[40px]"
-        >
-          <Code size={16} />
-          Export Verilog / VHDL
-        </button>
+        {mode === 'pro' && (
+          <button
+            onClick={() => setShowExport(true)}
+            className="flex items-center gap-2 px-4 py-2.5 lg:px-6 bg-gradient-to-r from-orange-500 to-amber-500 hover:brightness-110 text-white rounded-xl font-bold transition-all shadow-md text-sm min-h-[40px]"
+          >
+            <Code size={16} />
+            Export Verilog / VHDL / LaTeX
+          </button>
+        )}
       </div>
 
       <ExportModal isOpen={showExport} onClose={() => setShowExport(false)} />

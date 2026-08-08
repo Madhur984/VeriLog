@@ -2,7 +2,10 @@ import { create } from "zustand";
 import { Value } from "../types/solver";
 import { parseBoolean, evaluateAST, inferNumVars } from "../lib/utils/parseBoolean";
 
+export type Mode = 'normal' | 'pro';
+
 interface AppState {
+  mode: Mode;
   numVars: number;
   cellValues: Record<number, Value>;
   expression: string;
@@ -15,6 +18,7 @@ interface AppState {
   historyIdx: number;
 
   // Actions
+  setMode: (m: Mode) => void;
   setNumVars: (n: number) => void;
   setSolType: (type: 'SOP' | 'POS') => void;
   setCellValue: (index: number, val: Value) => void;
@@ -38,6 +42,7 @@ const updateMintermsAndDontCares = (cellValues: Record<number, Value>) => {
 };
 
 export const useStore = create<AppState>((set, get) => ({
+  mode: 'pro',
   numVars: 4,
   solType: 'SOP',
   cellValues: {},
@@ -46,6 +51,8 @@ export const useStore = create<AppState>((set, get) => ({
   dontCares: [],
   history: [{}],
   historyIdx: 0,
+
+  setMode: (m) => set({ mode: m }),
 
   setNumVars: (n) => set({ 
     numVars: n, 
