@@ -1,29 +1,53 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Play, RotateCcw, Volume2, VolumeX, Trophy, Zap, Shield, Sparkles } from 'lucide-react';
+import { X, Play, RotateCcw, Volume2, VolumeX, ShoppingBag, Shield, Zap, Sparkles, Award, Compass, UserCheck } from 'lucide-react';
 
 interface SiliconRunner2DProps {
   onClose?: () => void;
   onAwardXP?: (amount: number) => void;
 }
 
+export type HeroClass = 'BIT' | 'NORA' | 'KAEL';
+
 export const SiliconRunner2D: React.FC<SiliconRunner2DProps> = ({ onClose, onAwardXP }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const [gameState, setGameState] = useState<'IDLE' | 'PLAYING' | 'GAMEOVER' | 'VICTORY'>('IDLE');
+  const [gameState, setGameState] = useState<'IDLE' | 'PLAYING' | 'GAMEOVER' | 'VICTORY' | 'SHOP'>('IDLE');
+  const [selectedHero, setSelectedHero] = useState<HeroClass>('BIT');
   const [score, setScore] = useState(0);
   const [highScore, setHighScore] = useState(() => {
     return parseInt(localStorage.getItem('silicon_runner_highscore') || '0', 10);
   });
   const [lives, setLives] = useState(3);
   const [world, setWorld] = useState(1);
-  const [transistors, setTransistors] = useState(0);
+  const [transistors, setTransistors] = useState(() => {
+    return parseInt(localStorage.getItem('silicon_runner_transistors') || '0', 10);
+  });
   const [soundEnabled, setSoundEnabled] = useState(true);
-  const [starPowerActive, setStarPowerActive] = useState(false);
+  const [specialCooldown, setSpecialCooldown] = useState(0);
+  const [specialActive, setSpecialActive] = useState(false);
+
+  // Persistent Upgrades State from localStorage
+  const [upgrades, setUpgrades] = useState(() => {
+    try {
+      const saved = localStorage.getItem('silicon_runner_upgrades');
+      return saved ? JSON.parse(saved) : { boots: false, magnet: false, armor: false, multiplier: false };
+    } catch {
+      return { boots: false, magnet: false, armor: false, multiplier: false };
+    }
+  });
+
+  // Save upgrades & transistors to localStorage
+  const saveUpgrades = (newUpgrades: any, newTransistors: number) => {
+    setUpgrades(newUpgrades);
+    setTransistors(newTransistors);
+    localStorage.setItem('silicon_runner_upgrades', JSON.stringify(newUpgrades));
+    localStorage.setItem('silicon_runner_transistors', newTransistors.toString());
+  };
 
   // Audio Context Ref for 8-bit sound synthesis
   const audioCtxRef = useRef<AudioContext | null>(null);
 
-  const playSynthSound = (type: 'jump' | 'coin' | 'laser' | 'hit' | 'win') => {
+  const playSynthSound = (type: 'jump' | 'coin' | 'laser' | 'hit' | 'win' | 'boss' | 'special') => {
     if (!soundEnabled) return;
     try {
       if (!audioCtxRef.current) {
@@ -40,42 +64,58 @@ export const SiliconRunner2D: React.FC<SiliconRunner2DProps> = ({ onClose, onAwa
       const now = ctx.currentTime;
       if (type === 'jump') {
         osc.type = 'square';
-        osc.frequency.setValueAtTime(150, now);
-        osc.frequency.exponentialRampToValueAtTime(600, now + 0.15);
+        osc.frequency.setValueAtTime(160, now);
+        osc.frequency.exponentialRampToValueAtTime(650, now + 0.15);
         gain.gain.setValueAtTime(0.1, now);
         gain.gain.linearRampToValueAtTime(0.01, now + 0.15);
         osc.start(now);
         osc.stop(now + 0.15);
       } else if (type === 'coin') {
         osc.type = 'triangle';
-        osc.frequency.setValueAtTime(987.77, now); // B5
-        osc.frequency.setValueAtTime(1318.51, now + 0.08); // E6
+        osc.frequency.setValueAtTime(987.77, now);
+        osc.frequency.setValueAtTime(1318.51, now + 0.08);
         gain.gain.setValueAtTime(0.12, now);
         gain.gain.linearRampToValueAtTime(0.01, now + 0.2);
         osc.start(now);
         osc.stop(now + 0.2);
       } else if (type === 'laser') {
         osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(800, now);
-        osc.frequency.exponentialRampToValueAtTime(100, now + 0.12);
+        osc.frequency.setValueAtTime(900, now);
+        osc.frequency.exponentialRampToValueAtTime(120, now + 0.12);
         gain.gain.setValueAtTime(0.1, now);
         gain.gain.linearRampToValueAtTime(0.01, now + 0.12);
         osc.start(now);
         osc.stop(now + 0.12);
+      } else if (type === 'special') {
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(300, now);
+        osc.frequency.linearRampToValueAtTime(800, now + 0.3);
+        gain.gain.setValueAtTime(0.15, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
+        osc.start(now);
+        osc.stop(now + 0.3);
+      } else if (type === 'boss') {
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(80, now);
+        osc.frequency.linearRampToValueAtTime(40, now + 0.4);
+        gain.gain.setValueAtTime(0.25, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.4);
+        osc.start(now);
+        osc.stop(now + 0.4);
       } else if (type === 'hit') {
         osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(120, now);
-        osc.frequency.linearRampToValueAtTime(40, now + 0.25);
+        osc.frequency.setValueAtTime(140, now);
+        osc.frequency.linearRampToValueAtTime(30, now + 0.25);
         gain.gain.setValueAtTime(0.2, now);
         gain.gain.linearRampToValueAtTime(0.01, now + 0.25);
         osc.start(now);
         osc.stop(now + 0.25);
       } else if (type === 'win') {
         osc.type = 'square';
-        osc.frequency.setValueAtTime(523.25, now); // C5
-        osc.frequency.setValueAtTime(659.25, now + 0.1); // E5
-        osc.frequency.setValueAtTime(783.99, now + 0.2); // G5
-        osc.frequency.setValueAtTime(1046.50, now + 0.3); // C6
+        osc.frequency.setValueAtTime(523.25, now);
+        osc.frequency.setValueAtTime(659.25, now + 0.1);
+        osc.frequency.setValueAtTime(783.99, now + 0.2);
+        osc.frequency.setValueAtTime(1046.50, now + 0.3);
         gain.gain.setValueAtTime(0.15, now);
         gain.gain.linearRampToValueAtTime(0.01, now + 0.5);
         osc.start(now);
@@ -87,45 +127,32 @@ export const SiliconRunner2D: React.FC<SiliconRunner2DProps> = ({ onClose, onAwa
   };
 
   // Input states
-  const keysRef = useRef<{ jump: boolean; slide: boolean; pulse: boolean }>({
+  const keysRef = useRef<{ jump: boolean; slide: boolean; pulse: boolean; special: boolean }>({
     jump: false,
     slide: false,
     pulse: false,
+    special: false,
   });
 
   const triggerJump = () => { keysRef.current.jump = true; setTimeout(() => { keysRef.current.jump = false; }, 150); };
   const triggerSlide = () => { keysRef.current.slide = true; setTimeout(() => { keysRef.current.slide = false; }, 200); };
   const triggerPulse = () => { keysRef.current.pulse = true; setTimeout(() => { keysRef.current.pulse = false; }, 150); };
+  const triggerSpecial = () => { keysRef.current.special = true; setTimeout(() => { keysRef.current.special = false; }, 150); };
 
-  // Keyboard Event Listeners
+  // Keyboard Listeners
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'KeyW') {
-        e.preventDefault();
-        keysRef.current.jump = true;
-      }
-      if (e.code === 'ArrowDown' || e.code === 'KeyS') {
-        e.preventDefault();
-        keysRef.current.slide = true;
-      }
-      if (e.code === 'ShiftLeft' || e.code === 'ShiftRight' || e.code === 'KeyF') {
-        e.preventDefault();
-        keysRef.current.pulse = true;
-      }
+      if (e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'KeyW') { e.preventDefault(); keysRef.current.jump = true; }
+      if (e.code === 'ArrowDown' || e.code === 'KeyS') { e.preventDefault(); keysRef.current.slide = true; }
+      if (e.code === 'ShiftLeft' || e.code === 'ShiftRight' || e.code === 'KeyF') { e.preventDefault(); keysRef.current.pulse = true; }
+      if (e.code === 'KeyE') { e.preventDefault(); keysRef.current.special = true; }
     };
-
     const handleKeyUp = (e: KeyboardEvent) => {
-      if (e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'KeyW') {
-        keysRef.current.jump = false;
-      }
-      if (e.code === 'ArrowDown' || e.code === 'KeyS') {
-        keysRef.current.slide = false;
-      }
-      if (e.code === 'ShiftLeft' || e.code === 'ShiftRight' || e.code === 'KeyF') {
-        keysRef.current.pulse = false;
-      }
+      if (e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'KeyW') keysRef.current.jump = false;
+      if (e.code === 'ArrowDown' || e.code === 'KeyS') keysRef.current.slide = false;
+      if (e.code === 'ShiftLeft' || e.code === 'ShiftRight' || e.code === 'KeyF') keysRef.current.pulse = false;
+      if (e.code === 'KeyE') keysRef.current.special = false;
     };
-
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('keyup', handleKeyUp);
     return () => {
@@ -134,7 +161,7 @@ export const SiliconRunner2D: React.FC<SiliconRunner2DProps> = ({ onClose, onAwa
     };
   }, []);
 
-  // Main Canvas Loop
+  // Main 60fps Game Loop
   useEffect(() => {
     if (gameState !== 'PLAYING') return;
 
@@ -145,13 +172,16 @@ export const SiliconRunner2D: React.FC<SiliconRunner2DProps> = ({ onClose, onAwa
 
     let animId: number;
     let frameCount = 0;
-    let currentLives = 3;
+    let currentLives = upgrades.armor ? 5 : 3;
     let currentScore = 0;
-    let currentTransistors = 0;
+    let currentTransistors = transistors;
     let currentWorld = 1;
-    let starPowerTimer = 0;
+    let timeSlowActiveTimer = 0;
+    let specialCdTimer = 0;
 
-    // Game Physics World State
+    setLives(currentLives);
+
+    // Player Object Physics
     const player = {
       x: 80,
       y: 260,
@@ -159,20 +189,45 @@ export const SiliconRunner2D: React.FC<SiliconRunner2DProps> = ({ onClose, onAwa
       height: 38,
       vy: 0,
       gravity: 0.7,
-      jumpForce: -12.5,
+      jumpForce: selectedHero === 'NORA' ? -14 : -12.5,
       isGrounded: true,
       isSliding: false,
-      doubleJumpAvailable: true,
+      jumpsRemaining: upgrades.boots ? 3 : 2,
     };
 
     const groundY = 300;
+
+    // Boss Object State
+    interface Boss {
+      active: boolean;
+      name: string;
+      x: number;
+      y: number;
+      width: number;
+      height: number;
+      hp: number;
+      maxHp: number;
+      attackTimer: number;
+    }
+
+    let boss: Boss = {
+      active: false,
+      name: 'Karnaugh Goliath',
+      x: canvas.width + 50,
+      y: groundY - 100,
+      width: 70,
+      height: 90,
+      hp: 100,
+      maxHp: 100,
+      attackTimer: 0,
+    };
 
     interface Obstacle {
       x: number;
       y: number;
       width: number;
       height: number;
-      type: 'SPIKE' | 'BUG' | 'RAIL' | 'TRANSISTOR' | 'NVIDIA_COIN' | 'STAR';
+      type: 'SPIKE' | 'BUG' | 'RAIL' | 'TRANSISTOR' | 'NVIDIA_COIN' | 'STAR' | 'BOSS_BEAM';
       speed: number;
     }
 
@@ -180,6 +235,7 @@ export const SiliconRunner2D: React.FC<SiliconRunner2DProps> = ({ onClose, onAwa
       x: number;
       y: number;
       speed: number;
+      vy?: number;
     }
 
     let obstacles: Obstacle[] = [];
@@ -204,7 +260,7 @@ export const SiliconRunner2D: React.FC<SiliconRunner2DProps> = ({ onClose, onAwa
       let height = 32;
 
       if (type === 'RAIL') {
-        y = groundY - 65; // Overhead rail to duck under
+        y = groundY - 65;
         width = 45;
         height = 18;
       } else if (type === 'TRANSISTOR' || type === 'NVIDIA_COIN' || type === 'STAR') {
@@ -219,7 +275,7 @@ export const SiliconRunner2D: React.FC<SiliconRunner2DProps> = ({ onClose, onAwa
         width,
         height,
         type,
-        speed: 4.5 + Math.min(currentScore / 1000, 4),
+        speed: (4.5 + Math.min(currentScore / 1000, 4)) * (timeSlowActiveTimer > 0 ? 0.4 : 1),
       });
     };
 
@@ -227,7 +283,17 @@ export const SiliconRunner2D: React.FC<SiliconRunner2DProps> = ({ onClose, onAwa
       frameCount++;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // ── 1. Draw World Background ─────────────────────────────────────────
+      // Cooldown timer tick
+      if (specialCdTimer > 0) {
+        specialCdTimer--;
+        setSpecialCooldown(Math.ceil(specialCdTimer / 60));
+      }
+      if (timeSlowActiveTimer > 0) {
+        timeSlowActiveTimer--;
+        if (timeSlowActiveTimer === 0) setSpecialActive(false);
+      }
+
+      // ── 1. Parallax Multi-Layer Background ────────────────────────────────
       const bgGradients = [
         ['#090D16', '#0F172A', '#1E293B'], // W1: Digital Logic
         ['#0D0714', '#1E1B4B', '#31103F'], // W2: RTL City
@@ -243,11 +309,18 @@ export const SiliconRunner2D: React.FC<SiliconRunner2DProps> = ({ onClose, onAwa
       ctx.fillStyle = grad;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Grid Lines in Background
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+      // Layer 1: Parallax Wafer Steppers (Slowest)
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.03)';
+      const p1 = (frameCount * 0.5) % canvas.width;
+      for (let x = -p1; x < canvas.width; x += 160) {
+        ctx.fillRect(x, 80, 40, 120);
+      }
+
+      // Layer 2: Parallax Grid Traces
+      ctx.strokeStyle = timeSlowActiveTimer > 0 ? 'rgba(56, 189, 248, 0.25)' : 'rgba(255, 255, 255, 0.05)';
       ctx.lineWidth = 1;
-      const gridOffset = (frameCount * 2) % 40;
-      for (let x = -gridOffset; x < canvas.width; x += 40) {
+      const p2 = (frameCount * 2) % 40;
+      for (let x = -p2; x < canvas.width; x += 40) {
         ctx.beginPath();
         ctx.moveTo(x, 0);
         ctx.lineTo(x, canvas.height);
@@ -257,20 +330,42 @@ export const SiliconRunner2D: React.FC<SiliconRunner2DProps> = ({ onClose, onAwa
       // Ground Line
       ctx.fillStyle = '#1E293B';
       ctx.fillRect(0, groundY, canvas.width, canvas.height - groundY);
-      ctx.fillStyle = '#14B8A6';
-      ctx.fillRect(0, groundY, canvas.width, 3); // Neon top border ground
+      ctx.fillStyle = timeSlowActiveTimer > 0 ? '#38BDF8' : '#14B8A6';
+      ctx.fillRect(0, groundY, canvas.width, 3);
 
-      // ── 2. Player Controls & Physics ─────────────────────────────────────
+      // ── 2. Special Ability Trigger ────────────────────────────────────────
+      if (keysRef.current.special && specialCdTimer === 0) {
+        specialCdTimer = 360; // 6 sec cooldown
+        playSynthSound('special');
+
+        if (selectedHero === 'BIT') {
+          // Overclock Speed Dash
+          currentScore += 150;
+          setScore(currentScore);
+        } else if (selectedHero === 'NORA') {
+          // Chronos Time Warp (Slow down 60%)
+          timeSlowActiveTimer = 300; // 5s
+          setSpecialActive(true);
+        } else if (selectedHero === 'KAEL') {
+          // Triple Laser Barrage
+          bullets.push({ x: player.x + player.width, y: player.y + 10, speed: 10, vy: -2 });
+          bullets.push({ x: player.x + player.width, y: player.y + 16, speed: 10, vy: 0 });
+          bullets.push({ x: player.x + player.width, y: player.y + 22, speed: 10, vy: 2 });
+        }
+        keysRef.current.special = false;
+      }
+
+      // ── 3. Player Physics & Controls ──────────────────────────────────────
       if (keysRef.current.jump) {
         if (player.isGrounded) {
           player.vy = player.jumpForce;
           player.isGrounded = false;
-          player.doubleJumpAvailable = true;
+          player.jumpsRemaining = (upgrades.boots ? 3 : 2) - 1;
           playSynthSound('jump');
           keysRef.current.jump = false;
-        } else if (player.doubleJumpAvailable) {
+        } else if (player.jumpsRemaining > 0) {
           player.vy = player.jumpForce * 0.85;
-          player.doubleJumpAvailable = false;
+          player.jumpsRemaining--;
           playSynthSound('jump');
           keysRef.current.jump = false;
         }
@@ -288,7 +383,7 @@ export const SiliconRunner2D: React.FC<SiliconRunner2DProps> = ({ onClose, onAwa
         player.isGrounded = true;
       }
 
-      // Player Pulse Attack
+      // Pulse Attack
       if (keysRef.current.pulse && frameCount - lastBulletFrame > 15) {
         bullets.push({
           x: player.x + player.width,
@@ -299,63 +394,106 @@ export const SiliconRunner2D: React.FC<SiliconRunner2DProps> = ({ onClose, onAwa
         lastBulletFrame = frameCount;
       }
 
-      // Star Power Timer
-      if (starPowerTimer > 0) {
-        starPowerTimer--;
-        if (starPowerTimer === 0) setStarPowerActive(false);
-      }
-
-      // ── 3. Render Player ──────────────────────────────────────────────────
+      // ── 4. Render Player Character ───────────────────────────────────────
       ctx.save();
-      if (starPowerTimer > 0) {
-        ctx.shadowColor = '#EC4899';
-        ctx.shadowBlur = 15;
-      }
-
-      // Pixel Character Rendering ("Bit")
-      ctx.fillStyle = starPowerTimer > 0 ? (frameCount % 6 < 3 ? '#F43F5E' : '#38BDF8') : '#14B8A6';
+      const heroColors = { BIT: '#14B8A6', NORA: '#EC4899', KAEL: '#A855F7' };
+      ctx.fillStyle = heroColors[selectedHero];
       ctx.fillRect(player.x, player.y, player.width, player.height);
 
-      // Character Head / Eyes
+      // Eyes
       ctx.fillStyle = '#FFFFFF';
       ctx.fillRect(player.x + 16, player.y + (player.isSliding ? 4 : 6), 6, 6);
       ctx.fillStyle = '#0F172A';
       ctx.fillRect(player.x + 19, player.y + (player.isSliding ? 6 : 8), 2, 2);
 
-      // Jetpack Trail Particle
+      // Jetpack Trail
       if (!player.isGrounded) {
         ctx.fillStyle = '#F59E0B';
         ctx.fillRect(player.x - 6, player.y + player.height - 10, 6, 8);
       }
       ctx.restore();
 
-      // ── 4. Bullets Logic & Rendering ─────────────────────────────────────
+      // ── 5. Boss Battle Logic & Rendering ──────────────────────────────────
+      if (currentScore > 1000 && !boss.active && Math.random() < 0.005) {
+        boss.active = true;
+        boss.x = canvas.width - 100;
+        boss.hp = 100;
+        playSynthSound('boss');
+      }
+
+      if (boss.active) {
+        // Draw Boss HP Bar
+        ctx.fillStyle = '#1E293B';
+        ctx.fillRect(canvas.width / 2 - 100, 15, 200, 14);
+        ctx.fillStyle = '#EF4444';
+        ctx.fillRect(canvas.width / 2 - 100, 15, (boss.hp / boss.maxHp) * 200, 14);
+        ctx.strokeStyle = '#FFFFFF';
+        ctx.strokeRect(canvas.width / 2 - 100, 15, 200, 14);
+        ctx.fillStyle = '#FFFFFF';
+        ctx.font = 'bold 9px monospace';
+        ctx.fillText(`👹 ${boss.name.toUpperCase()}`, canvas.width / 2 - 60, 26);
+
+        // Draw Boss Body
+        ctx.fillStyle = '#DC2626';
+        ctx.fillRect(boss.x, boss.y, boss.width, boss.height);
+        ctx.fillStyle = '#FEF08A';
+        ctx.fillRect(boss.x + 10, boss.y + 15, 12, 12);
+        ctx.fillRect(boss.x + 45, boss.y + 15, 12, 12);
+
+        // Boss Attack (Fires Heat Beam every 120 frames)
+        boss.attackTimer++;
+        if (boss.attackTimer % 120 === 0) {
+          obstacles.push({
+            x: boss.x - 40,
+            y: groundY - 30,
+            width: 40,
+            height: 25,
+            type: 'BOSS_BEAM',
+            speed: 6,
+          });
+        }
+      }
+
+      // ── 6. Bullets Logic ──────────────────────────────────────────────────
       bullets.forEach((b, bIdx) => {
         b.x += b.speed;
-        ctx.fillStyle = '#38BDF8';
-        ctx.shadowColor = '#38BDF8';
-        ctx.shadowBlur = 8;
-        ctx.fillRect(b.x, b.y, 10, 4);
-        ctx.shadowBlur = 0;
+        if (b.vy) b.y += b.vy;
 
-        // Check bullet hit on bug obstacles
+        ctx.fillStyle = '#38BDF8';
+        ctx.fillRect(b.x, b.y, 10, 4);
+
+        // Hit Boss
+        if (boss.active && b.x >= boss.x && b.x <= boss.x + boss.width && b.y >= boss.y && b.y <= boss.y + boss.height) {
+          boss.hp -= 10;
+          bullets.splice(bIdx, 1);
+          playSynthSound('coin');
+
+          if (boss.hp <= 0) {
+            boss.active = false;
+            currentScore += 500;
+            currentTransistors += 100;
+            setScore(currentScore);
+            saveUpgrades(upgrades, currentTransistors);
+            playSynthSound('win');
+          }
+        }
+
+        // Hit Bug
         obstacles.forEach((o, oIdx) => {
           if (o.type === 'BUG' && b.x >= o.x && b.x <= o.x + o.width && b.y >= o.y && b.y <= o.y + o.height) {
-            // Destroy bug
             obstacles.splice(oIdx, 1);
             bullets.splice(bIdx, 1);
-            currentScore += 50;
+            currentScore += Math.floor(50 * (upgrades.multiplier ? 1.25 : 1));
             setScore(currentScore);
             playSynthSound('coin');
           }
         });
       });
 
-      // Filter out off-screen bullets
       bullets = bullets.filter((b) => b.x < canvas.width);
 
-      // ── 5. Spawn & Render Obstacles ──────────────────────────────────────
-      if (frameCount - lastSpawnFrame > Math.max(45, 90 - Math.floor(currentScore / 200))) {
+      // ── 7. Spawn & Render Obstacles ──────────────────────────────────────
+      if (frameCount - lastSpawnFrame > Math.max(40, 85 - Math.floor(currentScore / 200))) {
         spawnObstacle();
         lastSpawnFrame = frameCount;
       }
@@ -364,7 +502,16 @@ export const SiliconRunner2D: React.FC<SiliconRunner2DProps> = ({ onClose, onAwa
         const o = obstacles[i];
         o.x -= o.speed;
 
-        // Draw Obstacle Types
+        // NVIDIA Coin Magnet Upgrade
+        if (upgrades.magnet && (o.type === 'TRANSISTOR' || o.type === 'NVIDIA_COIN')) {
+          if (o.x - player.x < 150 && o.x > player.x) {
+            o.x -= 3;
+            if (o.y < player.y) o.y += 2;
+            else if (o.y > player.y) o.y -= 2;
+          }
+        }
+
+        // Draw Obstacles
         if (o.type === 'SPIKE') {
           ctx.fillStyle = '#EF4444';
           ctx.beginPath();
@@ -376,38 +523,23 @@ export const SiliconRunner2D: React.FC<SiliconRunner2DProps> = ({ onClose, onAwa
         } else if (o.type === 'BUG') {
           ctx.fillStyle = '#A855F7';
           ctx.fillRect(o.x, o.y, o.width, o.height);
-          // Bug eyes
           ctx.fillStyle = '#FFFFFF';
           ctx.fillRect(o.x + 4, o.y + 6, 4, 4);
           ctx.fillRect(o.x + 16, o.y + 6, 4, 4);
-        } else if (o.type === 'RAIL') {
-          ctx.fillStyle = '#F59E0B';
+        } else if (o.type === 'RAIL' || o.type === 'BOSS_BEAM') {
+          ctx.fillStyle = o.type === 'BOSS_BEAM' ? '#F43F5E' : '#F59E0B';
           ctx.fillRect(o.x, o.y, o.width, o.height);
-          ctx.fillStyle = '#FEF08A';
-          ctx.fillRect(o.x + 4, o.y + 4, o.width - 8, 4);
         } else if (o.type === 'TRANSISTOR') {
           ctx.fillStyle = '#38BDF8';
-          ctx.shadowColor = '#38BDF8';
-          ctx.shadowBlur = 8;
           ctx.fillRect(o.x + 4, o.y + 4, 12, 12);
-          ctx.shadowBlur = 0;
         } else if (o.type === 'NVIDIA_COIN') {
           ctx.fillStyle = '#22C55E';
-          ctx.shadowColor = '#22C55E';
-          ctx.shadowBlur = 10;
           ctx.beginPath();
           ctx.arc(o.x + 10, o.y + 10, 10, 0, Math.PI * 2);
           ctx.fill();
-          ctx.fillStyle = '#FFFFFF';
-          ctx.font = 'bold 10px monospace';
-          ctx.fillText('$', o.x + 7, o.y + 13);
-          ctx.shadowBlur = 0;
         } else if (o.type === 'STAR') {
           ctx.fillStyle = '#EC4899';
-          ctx.shadowColor = '#EC4899';
-          ctx.shadowBlur = 12;
           ctx.fillRect(o.x, o.y, 16, 16);
-          ctx.shadowBlur = 0;
         }
 
         // Collision Check
@@ -418,57 +550,50 @@ export const SiliconRunner2D: React.FC<SiliconRunner2DProps> = ({ onClose, onAwa
           player.y + player.height > o.y
         ) {
           if (o.type === 'TRANSISTOR') {
-            currentScore += 20;
+            const gain = selectedHero === 'KAEL' ? 30 : 20;
+            currentScore += Math.floor(gain * (upgrades.multiplier ? 1.25 : 1));
             currentTransistors += 1;
             setScore(currentScore);
-            setTransistors(currentTransistors);
+            saveUpgrades(upgrades, currentTransistors);
             playSynthSound('coin');
             obstacles.splice(i, 1);
           } else if (o.type === 'NVIDIA_COIN') {
-            currentScore += 100;
+            currentScore += Math.floor(100 * (upgrades.multiplier ? 1.25 : 1));
             setScore(currentScore);
             playSynthSound('coin');
             obstacles.splice(i, 1);
           } else if (o.type === 'STAR') {
-            starPowerTimer = 300; // 5 seconds of invincibility
-            setStarPowerActive(true);
+            currentScore += 200;
+            setScore(currentScore);
             playSynthSound('win');
             obstacles.splice(i, 1);
           } else {
-            // Harmful obstacles (SPIKE, BUG, RAIL)
-            if (starPowerTimer > 0) {
-              // Destroy obstacle on contact during star power
-              obstacles.splice(i, 1);
-              currentScore += 30;
-              setScore(currentScore);
-            } else {
-              currentLives -= 1;
-              setLives(currentLives);
-              playSynthSound('hit');
-              obstacles.splice(i, 1);
+            // Collision Hit
+            currentLives -= 1;
+            setLives(currentLives);
+            playSynthSound('hit');
+            if (navigator.vibrate) navigator.vibrate([40]);
+            obstacles.splice(i, 1);
 
-              if (currentLives <= 0) {
-                setGameState('GAMEOVER');
-                if (currentScore > highScore) {
-                  setHighScore(currentScore);
-                  localStorage.setItem('silicon_runner_highscore', currentScore.toString());
-                }
-                if (onAwardXP && currentScore > 0) {
-                  onAwardXP(Math.floor(currentScore / 5));
-                }
-                return;
+            if (currentLives <= 0) {
+              setGameState('GAMEOVER');
+              if (currentScore > highScore) {
+                setHighScore(currentScore);
+                localStorage.setItem('silicon_runner_highscore', currentScore.toString());
               }
+              if (onAwardXP && currentScore > 0) {
+                onAwardXP(Math.floor(currentScore / 5));
+              }
+              return;
             }
           }
         }
 
-        // Remove off-screen obstacles & increment score
         if (o.x + o.width < 0) {
           obstacles.splice(i, 1);
-          currentScore += 10;
+          currentScore += Math.floor(10 * (upgrades.multiplier ? 1.25 : 1));
           setScore(currentScore);
 
-          // World Level Progression
           if (currentScore > 500 && currentWorld === 1) { setWorld(2); playSynthSound('win'); }
           if (currentScore > 1200 && currentWorld === 2) { setWorld(3); playSynthSound('win'); }
           if (currentScore > 2500 && currentWorld === 3) { setWorld(4); playSynthSound('win'); }
@@ -480,14 +605,22 @@ export const SiliconRunner2D: React.FC<SiliconRunner2DProps> = ({ onClose, onAwa
 
     animId = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(animId);
-  }, [gameState]);
+  }, [gameState, selectedHero, upgrades]);
 
   const startGame = () => {
     setScore(0);
-    setLives(3);
+    setLives(upgrades.armor ? 5 : 3);
     setWorld(1);
-    setTransistors(0);
     setGameState('PLAYING');
+  };
+
+  const buyUpgrade = (key: 'boots' | 'magnet' | 'armor' | 'multiplier', cost: number) => {
+    if (transistors >= cost && !upgrades[key]) {
+      const newTransistors = transistors - cost;
+      const newUpgrades = { ...upgrades, [key]: true };
+      saveUpgrades(newUpgrades, newTransistors);
+      playSynthSound('win');
+    }
   };
 
   return (
@@ -499,7 +632,7 @@ export const SiliconRunner2D: React.FC<SiliconRunner2DProps> = ({ onClose, onAwa
             <span className="text-2xl">🎮</span>
             <div>
               <h3 className="font-mono font-black text-white text-lg tracking-tight uppercase">
-                SILICON RUNNER <span className="text-teal-400">2D</span>
+                SILICON RUNNER <span className="text-teal-400">2D TAPEOUT</span>
               </h3>
               <p className="text-slate-400 font-mono text-[10px] uppercase tracking-wider">
                 WORLD {world}: {world === 1 ? 'DIGITAL LOGIC' : world === 2 ? 'VERILOG CITY' : world === 3 ? '2NM CLEANROOM' : 'FANG VAULT 💰'}
@@ -507,7 +640,13 @@ export const SiliconRunner2D: React.FC<SiliconRunner2DProps> = ({ onClose, onAwa
             </div>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setGameState('SHOP')}
+              className="px-3 py-1.5 bg-amber-500/20 border border-amber-500/40 text-amber-300 font-mono text-xs font-bold rounded-xl flex items-center gap-1.5 hover:scale-105 transition-all cursor-pointer"
+            >
+              <ShoppingBag size={14} /> SHOP (💎 {transistors})
+            </button>
             <button
               onClick={() => setSoundEnabled(!soundEnabled)}
               className="p-2 text-slate-400 hover:text-white rounded-lg bg-slate-800/50 transition-all"
@@ -515,17 +654,14 @@ export const SiliconRunner2D: React.FC<SiliconRunner2DProps> = ({ onClose, onAwa
               {soundEnabled ? <Volume2 size={18} /> : <VolumeX size={18} />}
             </button>
             {onClose && (
-              <button
-                onClick={onClose}
-                className="p-2 text-slate-400 hover:text-rose-400 rounded-lg bg-slate-800/50 transition-all"
-              >
+              <button onClick={onClose} className="p-2 text-slate-400 hover:text-rose-400 rounded-lg bg-slate-800/50 transition-all">
                 <X size={20} />
               </button>
             )}
           </div>
         </div>
 
-        {/* Arcade HUD Telemetry */}
+        {/* Telemetry Bar */}
         <div className="flex items-center justify-between px-6 py-2 bg-[#020617] border-b border-slate-800 font-mono text-xs">
           <div className="flex items-center gap-6">
             <span className="text-teal-400 font-bold">SCORE: <span className="text-white">{score}</span></span>
@@ -535,7 +671,7 @@ export const SiliconRunner2D: React.FC<SiliconRunner2DProps> = ({ onClose, onAwa
 
           <div className="flex items-center gap-2">
             <span className="text-slate-400 text-[10px] uppercase">LIVES:</span>
-            {Array.from({ length: 3 }).map((_, i) => (
+            {Array.from({ length: upgrades.armor ? 5 : 3 }).map((_, i) => (
               <span key={i} className={`text-base ${i < lives ? 'text-rose-500 animate-pulse' : 'text-slate-700'}`}>
                 ❤
               </span>
@@ -543,53 +679,157 @@ export const SiliconRunner2D: React.FC<SiliconRunner2DProps> = ({ onClose, onAwa
           </div>
         </div>
 
-        {/* Main Game Screen Canvas */}
+        {/* Game Canvas View */}
         <div className="relative w-full aspect-[2/1] bg-[#090D16] overflow-hidden">
           <canvas ref={canvasRef} width={800} height={400} className="w-full h-full block" />
 
-          {/* Idle Start Overlay */}
+          {/* Hero Selection & Start Overlay */}
           {gameState === 'IDLE' && (
-            <div className="absolute inset-0 bg-slate-950/90 flex flex-col items-center justify-center p-6 text-center space-y-6">
-              <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="space-y-2">
-                <div className="inline-block px-3 py-1 rounded-full bg-teal-500/10 border border-teal-500/30 text-teal-400 font-mono text-xs uppercase tracking-widest mb-2">
-                  Retro Hardware Arcade Mini-Game
-                </div>
-                <h2 className="text-4xl sm:text-5xl font-mono font-black text-white tracking-tighter uppercase">
-                  TAPEOUT <span className="text-teal-400">ODYSSEY</span>
+            <div className="absolute inset-0 bg-slate-950/90 flex flex-col items-center justify-center p-6 text-center space-y-5 overflow-y-auto">
+              <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="space-y-1">
+                <span className="text-teal-400 font-mono text-xs uppercase tracking-widest block font-bold">SELECT YOUR HARDWARE HERO</span>
+                <h2 className="text-3xl sm:text-4xl font-mono font-black text-white uppercase tracking-tight">
+                  TAPEOUT <span className="text-teal-400">ODYSSEY PHASE 2</span>
                 </h2>
-                <p className="text-slate-400 font-mono text-xs max-w-md mx-auto">
-                  Jump over clock skew spikes, duck under unrouted power rails, blast timing bugs, and collect transistor coins!
-                </p>
               </motion.div>
+
+              {/* 3 Hero Class Cards */}
+              <div className="grid grid-cols-3 gap-3 w-full max-w-2xl">
+                <button
+                  onClick={() => setSelectedHero('BIT')}
+                  className={`p-3 rounded-2xl border text-left transition-all cursor-pointer ${
+                    selectedHero === 'BIT' ? 'bg-teal-500/20 border-teal-400 shadow-[0_0_15px_rgba(20,184,166,0.3)]' : 'bg-slate-900 border-slate-800'
+                  }`}
+                >
+                  <div className="text-xs font-bold text-teal-400 font-mono">🏃 BIT THE HERO</div>
+                  <div className="text-[10px] text-slate-300 font-mono mt-1">RTL Design Master</div>
+                  <div className="text-[9px] text-amber-300 font-mono mt-2">SPECIAL: Overclock Dash</div>
+                </button>
+
+                <button
+                  onClick={() => setSelectedHero('NORA')}
+                  className={`p-3 rounded-2xl border text-left transition-all cursor-pointer ${
+                    selectedHero === 'NORA' ? 'bg-pink-500/20 border-pink-400 shadow-[0_0_15px_rgba(236,72,153,0.3)]' : 'bg-slate-900 border-slate-800'
+                  }`}
+                >
+                  <div className="text-xs font-bold text-pink-400 font-mono">🧙‍♀️ NORA THE WIZARD</div>
+                  <div className="text-[10px] text-slate-300 font-mono mt-1">STA Timing Analyst</div>
+                  <div className="text-[9px] text-amber-300 font-mono mt-2">SPECIAL: Chronos Time Warp</div>
+                </button>
+
+                <button
+                  onClick={() => setSelectedHero('KAEL')}
+                  className={`p-3 rounded-2xl border text-left transition-all cursor-pointer ${
+                    selectedHero === 'KAEL' ? 'bg-purple-500/20 border-purple-400 shadow-[0_0_15px_rgba(168,85,247,0.3)]' : 'bg-slate-900 border-slate-800'
+                  }`}
+                >
+                  <div className="text-xs font-bold text-purple-400 font-mono">🥷 KAEL THE NINJA</div>
+                  <div className="text-[10px] text-slate-300 font-mono mt-1">UVM Verification Hunter</div>
+                  <div className="text-[9px] text-amber-300 font-mono mt-2">SPECIAL: Triple Laser Barrage</div>
+                </button>
+              </div>
 
               <button
                 onClick={startGame}
-                className="px-8 py-4 bg-gradient-to-r from-teal-500 to-pink-500 text-white font-mono text-sm font-black rounded-2xl shadow-[0_0_25px_rgba(20,184,166,0.5)] hover:scale-105 transition-all flex items-center gap-3 uppercase cursor-pointer"
+                className="px-8 py-3.5 bg-gradient-to-r from-teal-500 to-pink-500 text-white font-mono text-xs font-black rounded-2xl shadow-[0_0_20px_rgba(20,184,166,0.4)] hover:scale-105 transition-all flex items-center gap-2 uppercase cursor-pointer"
               >
-                <Play size={20} fill="currentColor" /> START TAPEOUT RUN
+                <Play size={18} fill="currentColor" /> LAUNCH MISSION WITH {selectedHero}
               </button>
+            </div>
+          )}
 
-              <div className="grid grid-cols-3 gap-4 pt-4 border-t border-slate-800 text-[10px] font-mono text-slate-400">
-                <div><span className="text-white font-bold block">SPACE / UP</span> Jump / Double Jump</div>
-                <div><span className="text-white font-bold block">DOWN / S</span> Slide / Duck</div>
-                <div><span className="text-white font-bold block">SHIFT / F</span> Logic Laser Pulse</div>
+          {/* Transistor Power-Up Shop Modal */}
+          {gameState === 'SHOP' && (
+            <div className="absolute inset-0 bg-slate-950/95 flex flex-col items-center justify-center p-6 text-center space-y-4">
+              <div className="space-y-1">
+                <span className="text-amber-400 font-mono text-xs font-bold uppercase">HARDWARE UPGRADE LAB</span>
+                <h3 className="text-2xl font-mono font-black text-white uppercase">SPEND TRANSISTOR GEMS (💎 {transistors})</h3>
               </div>
+
+              <div className="grid grid-cols-2 gap-3 w-full max-w-xl text-left">
+                <div className="p-4 bg-slate-900 border border-slate-800 rounded-xl space-y-2">
+                  <div className="flex justify-between items-center font-mono text-xs text-white font-bold">
+                    <span>🚀 ROCKET BOOTS</span>
+                    <span className="text-cyan-400">200 💎</span>
+                  </div>
+                  <p className="text-[10px] text-slate-400 font-mono">Unlocks Permanent Triple Jump Ability.</p>
+                  <button
+                    disabled={upgrades.boots || transistors < 200}
+                    onClick={() => buyUpgrade('boots', 200)}
+                    className="w-full py-1.5 bg-teal-500/20 border border-teal-500/40 text-teal-300 font-mono text-[10px] font-bold rounded uppercase disabled:opacity-40 cursor-pointer"
+                  >
+                    {upgrades.boots ? 'OWNED ✓' : 'PURCHASE BOOTS'}
+                  </button>
+                </div>
+
+                <div className="p-4 bg-slate-900 border border-slate-800 rounded-xl space-y-2">
+                  <div className="flex justify-between items-center font-mono text-xs text-white font-bold">
+                    <span>🧲 COIN MAGNET</span>
+                    <span className="text-cyan-400">350 💎</span>
+                  </div>
+                  <p className="text-[10px] text-slate-400 font-mono">Pulls transistor coins & stock coins automatically.</p>
+                  <button
+                    disabled={upgrades.magnet || transistors < 350}
+                    onClick={() => buyUpgrade('magnet', 350)}
+                    className="w-full py-1.5 bg-teal-500/20 border border-teal-500/40 text-teal-300 font-mono text-[10px] font-bold rounded uppercase disabled:opacity-40 cursor-pointer"
+                  >
+                    {upgrades.magnet ? 'OWNED ✓' : 'PURCHASE MAGNET'}
+                  </button>
+                </div>
+
+                <div className="p-4 bg-slate-900 border border-slate-800 rounded-xl space-y-2">
+                  <div className="flex justify-between items-center font-mono text-xs text-white font-bold">
+                    <span>🛡️ GAAFET ARMOR</span>
+                    <span className="text-cyan-400">500 💎</span>
+                  </div>
+                  <p className="text-[10px] text-slate-400 font-mono">Start every run with +2 Extra Hearts (5 Total Lives).</p>
+                  <button
+                    disabled={upgrades.armor || transistors < 500}
+                    onClick={() => buyUpgrade('armor', 500)}
+                    className="w-full py-1.5 bg-teal-500/20 border border-teal-500/40 text-teal-300 font-mono text-[10px] font-bold rounded uppercase disabled:opacity-40 cursor-pointer"
+                  >
+                    {upgrades.armor ? 'OWNED ✓' : 'PURCHASE ARMOR'}
+                  </button>
+                </div>
+
+                <div className="p-4 bg-slate-900 border border-slate-800 rounded-xl space-y-2">
+                  <div className="flex justify-between items-center font-mono text-xs text-white font-bold">
+                    <span>⚡ 5GHZ MULTIPLIER</span>
+                    <span className="text-cyan-400">600 💎</span>
+                  </div>
+                  <p className="text-[10px] text-slate-400 font-mono">Permanent +25% Score Multiplier on all score gains.</p>
+                  <button
+                    disabled={upgrades.multiplier || transistors < 600}
+                    onClick={() => buyUpgrade('multiplier', 600)}
+                    className="w-full py-1.5 bg-teal-500/20 border border-teal-500/40 text-teal-300 font-mono text-[10px] font-bold rounded uppercase disabled:opacity-40 cursor-pointer"
+                  >
+                    {upgrades.multiplier ? 'OWNED ✓' : 'PURCHASE MULTIPLIER'}
+                  </button>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setGameState('IDLE')}
+                className="px-6 py-2 bg-slate-800 text-white font-mono text-xs font-bold rounded-xl hover:bg-slate-700 transition-all uppercase cursor-pointer"
+              >
+                RETURN TO MISSION SELECT
+              </button>
             </div>
           )}
 
           {/* Game Over Overlay */}
           {gameState === 'GAMEOVER' && (
-            <div className="absolute inset-0 bg-slate-950/95 flex flex-col items-center justify-center p-6 text-center space-y-6">
-              <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="space-y-2">
+            <div className="absolute inset-0 bg-slate-950/95 flex flex-col items-center justify-center p-6 text-center space-y-4">
+              <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="space-y-1">
                 <span className="text-rose-500 font-mono text-xs font-bold uppercase tracking-widest">TIMING VIOLATION!</span>
-                <h2 className="text-4xl font-mono font-black text-white tracking-tight uppercase">
+                <h2 className="text-3xl font-mono font-black text-white uppercase tracking-tight">
                   SETUP SLACK <span className="text-rose-500">EXCEEDED</span>
                 </h2>
                 <p className="text-slate-400 font-mono text-xs">
                   Final Score: <span className="text-teal-400 font-bold">{score} Pts</span> • Transistors: <span className="text-cyan-400 font-bold">💎 {transistors}</span>
                 </p>
                 {score > 0 && (
-                  <p className="text-emerald-400 font-mono text-xs font-bold pt-2">
+                  <p className="text-emerald-400 font-mono text-xs font-bold pt-1">
                     ⚡ +{Math.floor(score / 5)} CAREER XP AWARDED!
                   </p>
                 )}
@@ -597,37 +837,46 @@ export const SiliconRunner2D: React.FC<SiliconRunner2DProps> = ({ onClose, onAwa
 
               <button
                 onClick={startGame}
-                className="px-8 py-3 bg-teal-500 text-slate-950 font-mono text-xs font-black rounded-xl hover:bg-teal-400 transition-all flex items-center gap-2 uppercase cursor-pointer"
+                className="px-6 py-2.5 bg-teal-500 text-slate-950 font-mono text-xs font-black rounded-xl hover:bg-teal-400 transition-all flex items-center gap-2 uppercase cursor-pointer"
               >
-                <RotateCcw size={16} /> RETRY TAPE-OUT
+                <RotateCcw size={16} /> RETRY MISSION
               </button>
             </div>
           )}
         </div>
 
-        {/* Touch Screen On-Screen Arcade Controls (Mobile & Quick Play) */}
-        <div className="p-4 bg-[#0F172A] border-t border-slate-800 flex items-center justify-between gap-4">
+        {/* Touch Controls Footer */}
+        <div className="p-4 bg-[#0F172A] border-t border-slate-800 flex items-center justify-between gap-2">
           <div className="flex gap-2">
             <button
               onClick={triggerJump}
-              className="px-6 py-3 bg-teal-500/20 border border-teal-500/40 text-teal-300 font-mono text-xs font-bold rounded-xl active:bg-teal-500 active:text-slate-950 transition-all uppercase cursor-pointer"
+              className="px-5 py-2.5 bg-teal-500/20 border border-teal-500/40 text-teal-300 font-mono text-xs font-bold rounded-xl active:bg-teal-500 active:text-slate-950 transition-all uppercase cursor-pointer"
             >
               ⬆ JUMP
             </button>
             <button
               onClick={triggerSlide}
-              className="px-6 py-3 bg-amber-500/20 border border-amber-500/40 text-amber-300 font-mono text-xs font-bold rounded-xl active:bg-amber-500 active:text-slate-950 transition-all uppercase cursor-pointer"
+              className="px-5 py-2.5 bg-amber-500/20 border border-amber-500/40 text-amber-300 font-mono text-xs font-bold rounded-xl active:bg-amber-500 active:text-slate-950 transition-all uppercase cursor-pointer"
             >
               ⬇ SLIDE
             </button>
           </div>
 
-          <button
-            onClick={triggerPulse}
-            className="px-8 py-3 bg-pink-500/20 border border-pink-500/40 text-pink-300 font-mono text-xs font-bold rounded-xl active:bg-pink-500 active:text-slate-950 transition-all uppercase cursor-pointer flex items-center gap-2"
-          >
-            ⚡ LOGIC LASER
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={triggerSpecial}
+              disabled={specialCooldown > 0}
+              className="px-5 py-2.5 bg-purple-500/20 border border-purple-500/40 text-purple-300 font-mono text-xs font-bold rounded-xl active:bg-purple-500 active:text-slate-950 transition-all uppercase cursor-pointer disabled:opacity-50"
+            >
+              ⚡ ABILITY (E) {specialCooldown > 0 ? `(${specialCooldown}s)` : 'READY'}
+            </button>
+            <button
+              onClick={triggerPulse}
+              className="px-6 py-2.5 bg-pink-500/20 border border-pink-500/40 text-pink-300 font-mono text-xs font-bold rounded-xl active:bg-pink-500 active:text-slate-950 transition-all uppercase cursor-pointer"
+            >
+              🎯 LASER
+            </button>
+          </div>
         </div>
       </div>
     </div>
