@@ -61,14 +61,14 @@ export const FloatingCommandBar: React.FC<{ activeTab: string; onTabChange: (tab
 
   return (
     <motion.nav
-      variants={{ visible: { y: 0 }, hidden: { y: -100 } }}
+      variants={{ visible: { y: 0 }, hidden: { y: 100 } }}
       animate={hidden ? "hidden" : "visible"}
       transition={{ duration: 0.35, ease: "easeInOut" }}
-      className="fixed top-4 sm:top-10 left-1/2 -translate-x-1/2 z-[300]
+      className="fixed bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 z-[300]
                  flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2
                  bg-bg-elev/95 backdrop-blur-md
                  border-2 border-edge rounded-full
-                 shadow-brutal-sm
+                 shadow-[0_8px_32px_rgba(0,0,0,0.4)]
                  max-w-[calc(100vw-24px)] overflow-x-auto scrollbar-hide"
     >
       <div className="flex items-center gap-0.5 sm:gap-1 shrink-0">
