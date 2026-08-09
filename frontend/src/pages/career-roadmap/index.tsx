@@ -13,6 +13,7 @@ import { SiliconStackExplorer } from './components/SiliconStackExplorer';
 import { SiliconResumeCompiler } from './components/SiliconResumeCompiler';
 import { GuidedRoadmapWorkflow } from './components/GuidedRoadmapWorkflow';
 import { PlatformComparisonSection } from './components/PlatformComparisonSection';
+import { IndustryNewsTicker } from './components/IndustryNewsTicker';
 import { SalaryLab } from './sections/SalaryLab';
 import { SOURCES, AS_OF, marketStats, domains } from './data/careerData';
 import { useCareerState } from './hooks/useCareerState';
@@ -636,6 +637,7 @@ const CareerRoadmapPage: React.FC = () => {
         {activeTab === 'explore' && (
           <div className="space-y-4">
             <CustomRoadmapHero prefs={careerPrefs} onSelectPrefs={handleSelectPrefs} />
+            <IndustryNewsTicker />
             
             <GuidedRoadmapWorkflow
               currentStageId={workflowStage}
