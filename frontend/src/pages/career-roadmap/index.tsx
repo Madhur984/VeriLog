@@ -25,6 +25,7 @@ import { DiagnosticModal } from './components/DiagnosticModal';
 import { InternshipDirectoryModal } from './components/InternshipDirectoryModal';
 import { GovtInitiativesModal } from './components/GovtInitiativesModal';
 import { NextActionsPlan } from './components/NextActionsPlan';
+import { SiliconRunner2D } from './components/SiliconRunner2D';
 import { trackCareerEvent } from '../../lib/careerAnalytics';
 
 // Lazy loaded interactive telemetry components
@@ -514,6 +515,7 @@ const CareerRoadmapPage: React.FC = () => {
   const [isDiagnosticOpen, setIsDiagnosticOpen] = useState<boolean>(false);
   const [isInternshipsOpen, setIsInternshipsOpen] = useState(false);
   const [isGovtOpen, setIsGovtOpen] = useState(false);
+  const [isGameOpen, setIsGameOpen] = useState(false);
 
   useEffect(() => {
     const requestedTab = new URLSearchParams(location.search).get('tab');
@@ -642,6 +644,17 @@ const CareerRoadmapPage: React.FC = () => {
 
           <div className="flex items-center gap-3 shrink-0">
             <button
+              onClick={() => {
+                trackCareerEvent('silicon_runner_game_opened');
+                setIsGameOpen(true);
+              }}
+              className="brutal-btn h-9 px-3 flex items-center gap-1.5 bg-gradient-to-r from-teal-500/20 to-pink-500/20 border-2 border-teal-400 text-teal-300 font-mono text-[11px] uppercase tracking-wider font-bold cursor-pointer hover:scale-105 transition-all shadow-[0_0_12px_rgba(20,184,166,0.3)]"
+              title="Launch 2D Silicon Runner Arcade Mini-Game"
+            >
+              <span>🎮</span>
+              <span className="hidden sm:inline">2D Fab Runner</span>
+            </button>
+            <button
               onClick={() => setViewMode(viewMode === 'telemetry' ? 'beginner' : 'telemetry')}
               aria-pressed={viewMode === 'telemetry'}
               aria-label={`Switch to ${viewMode === 'telemetry' ? 'beginner' : 'advanced'} view`}
@@ -694,6 +707,33 @@ const CareerRoadmapPage: React.FC = () => {
                   className="brutal-btn bg-teal-500/10 hover:bg-teal-500/25 border-teal-500 text-teal-400 font-mono text-[11px] uppercase tracking-widest px-4 py-2.5 font-bold cursor-pointer flex items-center gap-2"
                 >
                   <HelpCircle size={14} /> Help Me Choose
+                </button>
+              </div>
+            </div>
+
+            {/* 2D Silicon Runner Arcade Mini-Game CTA Banner */}
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 mb-12">
+              <div className="p-6 bg-gradient-to-r from-[#0F172A] via-[#1E1B4B] to-[#31103F] border-2 border-teal-400 rounded-3xl shadow-[0_0_30px_rgba(20,184,166,0.25)] flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
+                <div className="space-y-2 text-left z-10">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 bg-pink-500/20 border border-pink-500/40 rounded-full text-pink-400 font-mono text-[10px] uppercase font-bold tracking-widest">
+                    <span>🎮 8-BIT HARDWARE ARCADE</span>
+                  </div>
+                  <h3 className="text-2xl sm:text-3xl font-mono font-black text-white tracking-tight uppercase">
+                    SILICON RUNNER <span className="text-teal-400">2D TAPEOUT</span>
+                  </h3>
+                  <p className="text-slate-300 font-mono text-xs max-w-xl leading-relaxed">
+                    Test your instincts! Jump over clock skew glitches, blast setup/hold timing bugs, collect transistor coins, and earn bonus Career XP!
+                  </p>
+                </div>
+
+                <button
+                  onClick={() => {
+                    trackCareerEvent('silicon_runner_banner_clicked');
+                    setIsGameOpen(true);
+                  }}
+                  className="px-8 py-4 bg-gradient-to-r from-teal-500 to-pink-500 text-white font-mono text-xs font-black rounded-2xl shadow-[0_0_20px_rgba(20,184,166,0.4)] hover:scale-105 transition-all cursor-pointer shrink-0 uppercase tracking-wider flex items-center gap-2 border border-white/20 z-10"
+                >
+                  <span>🎮</span> PLAY 2D TAPEOUT RUNNER
                 </button>
               </div>
             </div>
@@ -842,6 +882,7 @@ const CareerRoadmapPage: React.FC = () => {
       />
       {isInternshipsOpen && <InternshipDirectoryModal onClose={() => setIsInternshipsOpen(false)} />}
       {isGovtOpen && <GovtInitiativesModal onClose={() => setIsGovtOpen(false)} />}
+      {isGameOpen && <SiliconRunner2D onClose={() => setIsGameOpen(false)} />}
     </div>
   );
 };
