@@ -279,9 +279,9 @@ export const SkillGapRadar: React.FC<SkillGapRadarProps> = ({
       <div className={`border rounded-xl p-6 flex flex-col items-center relative ${
         isLight ? 'bg-bg-elev border-border-soft' : 'bg-[#0D0F12] border-white/5'
       }`}>
-        <div className={`w-full flex justify-between items-center mb-6 border-b pb-4 ${isLight ? 'border-border-soft' : 'border-white/5'}`}>
-          <span className="text-xs font-mono text-text-dim tracking-wider">SKILL QUANTIZATION SPECTRUM</span>
-          <div className="flex gap-2">
+        <div className={`w-full flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 border-b pb-4 ${isLight ? 'border-border-soft' : 'border-white/5'}`}>
+          <span className="text-xs font-mono text-text-dim tracking-wider shrink-0">SKILL QUANTIZATION SPECTRUM</span>
+          <div className="flex flex-wrap gap-2">
             {Object.keys(COMPANY_PRESETS).map((key) => (
               <button
                 key={key}

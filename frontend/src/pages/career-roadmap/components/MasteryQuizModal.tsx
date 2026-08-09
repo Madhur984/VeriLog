@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { domainQuizzes } from '../data/quizQuestions';
 import { DataTerminal } from './DataTerminal';
+import { AccessibleDialog } from './AccessibleDialog';
 
 interface MasteryQuizModalProps {
   domainId: string;
@@ -38,7 +39,7 @@ export const MasteryQuizModal: React.FC<MasteryQuizModalProps> = ({
   const finalPercentage = Math.round((score / questions.length) * 100);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-matte-obsidian/80">
+    <AccessibleDialog onClose={onClose} labelledBy="mastery-quiz-title" description="Answer the mastery questions, then review your score.">
       <motion.div 
         initial={{ opacity: 0, scale: 0.9, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -53,12 +54,12 @@ export const MasteryQuizModal: React.FC<MasteryQuizModalProps> = ({
             {!showResult ? (
               <div className="space-y-8">
                 <div className="flex justify-between items-start gap-4">
-                  <h2 className="text-xl font-mono text-text-main leading-relaxed flex-1">
+                  <h2 id="mastery-quiz-title" className="text-xl font-mono text-text-main leading-relaxed flex-1">
                     {questions[currentIdx]?.q}
                   </h2>
                   <button 
                     onClick={onClose}
-                    className="text-text-dim hover:text-text-main font-mono text-xs uppercase px-2 py-1 border border-ghost-trace hover:border-text-main/20 transition-all"
+                    className="min-h-11 text-text-dim hover:text-text-main font-mono text-xs uppercase px-2 py-1 border border-ghost-trace hover:border-text-main/20 transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-plasma-cyan"
                   >
                     Abort [ESC]
                   </button>
@@ -121,6 +122,6 @@ export const MasteryQuizModal: React.FC<MasteryQuizModalProps> = ({
           </div>
         </DataTerminal>
       </motion.div>
-    </div>
+    </AccessibleDialog>
   );
 };

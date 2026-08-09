@@ -6,6 +6,8 @@ export interface Internship {
   stipend: string;
   location?: string;
   applyVia?: string;
+  applicationUrl?: string;
+  lastVerified?: string;
   conversionRate?: string;
   eligibility?: string;
   deadline?: string;
@@ -25,6 +27,8 @@ export const internships: Internship[] = [
     stipend: "₹80,000-1,20,000/month",
     location: "Bengaluru / Hyderabad",
     applyVia: "careers.qualcomm.com",
+    applicationUrl: "https://careers.qualcomm.com/careers",
+    lastVerified: "2026-08-09",
     conversionRate: "~70% get PPO",
     eligibility: "B.E./B.Tech ECE/EEE, 7.5+ CGPA, VLSI or DSP coursework",
     category: "india",
@@ -37,6 +41,8 @@ export const internships: Internship[] = [
     stipend: "₹70,000-1,00,000/month",
     location: "Bengaluru",
     applyVia: "ti.com/careers",
+    applicationUrl: "https://careers.ti.com/",
+    lastVerified: "2026-08-09",
     conversionRate: "~65%",
     eligibility: "B.E./B.Tech, knowledge of SPICE, MATLAB, C",
     category: "india",
@@ -48,6 +54,8 @@ export const internships: Internship[] = [
     duration: "2-6 months",
     stipend: "₹60,000-90,000/month",
     location: "Bengaluru / Noida",
+    applicationUrl: "https://www.samsung.com/in/about-us/careers/",
+    lastVerified: "2026-08-09",
     conversionRate: "~55%",
     category: "india",
   },
@@ -58,6 +66,8 @@ export const internships: Internship[] = [
     duration: "6 months",
     stipend: "₹70,000-1,10,000/month",
     location: "Bengaluru / Hyderabad",
+    applicationUrl: "https://jobs.intel.com/",
+    lastVerified: "2026-08-09",
     conversionRate: "~60%",
     category: "india",
   },
@@ -73,6 +83,8 @@ export const internships: Internship[] = [
     deadline: "Typically September (for following summer)",
     tip: "CGPA 8.0+ strongly recommended. Apply to 7 projects max.",
     eligibility: "Undergraduate students, penultimate year preferred",
+    applicationUrl: "https://www.mitacs.ca/our-programs/globalink-research-internship-students/",
+    lastVerified: "2026-08-09",
     category: "international",
   },
   {
@@ -83,6 +95,8 @@ export const internships: Internship[] = [
     location: "TU Munich, KIT, RWTH Aachen (German universities)",
     deadline: "October 15 each year",
     tip: "Choose ECE labs working on automotive or RF - highest acceptance chance.",
+    applicationUrl: "https://www.daad.in/en/study-research-in-germany/scholarships/daad-wise-scholarship/",
+    lastVerified: "2026-08-09",
     category: "international",
   },
   {
@@ -91,6 +105,8 @@ export const internships: Internship[] = [
     duration: "1 semester",
     stipend: "SGD 1,500/month",
     deadline: "November for following January",
+    applicationUrl: "https://www.ntu.edu.sg/education/undergraduate-programme/research-opportunities/ureca",
+    lastVerified: "2026-08-09",
     category: "international",
   },
   {
@@ -100,6 +116,8 @@ export const internships: Internship[] = [
     stipend: "CHF 90/day + accommodation",
     deadline: "January (very competitive)",
     tip: "ECE relevance: Electronics for detector systems, FPGA, RF amplifiers.",
+    applicationUrl: "https://careers.cern/summer",
+    lastVerified: "2026-08-09",
     category: "international",
   },
 
@@ -111,12 +129,16 @@ export const internships: Internship[] = [
     stipend: "₹10,000-20,000/month",
     domains: ["ECE", "EEE", "Photonics", "RF"],
     applyVia: "sac.iisc.ac.in (typically opens February)",
+    applicationUrl: "https://sac.iisc.ac.in/",
+    lastVerified: "2026-08-09",
     category: "research",
   },
   {
     name: "IISER Summer Internship",
     org: "IISER (multiple campuses)",
     duration: "6-8 weeks",
+    applicationUrl: "https://www.iiseradmission.in/",
+    lastVerified: "2026-08-09",
     stipend: "₹8,000-15,000/month",
     category: "research",
   },
@@ -127,6 +149,8 @@ export const internships: Internship[] = [
     stipend: "₹8,000-12,000/month",
     deadline: "January-February each year",
     applyVia: "surge.iitk.ac.in",
+    applicationUrl: "https://surge.iitk.ac.in/",
+    lastVerified: "2026-08-09",
     category: "research",
   },
   {
@@ -135,6 +159,8 @@ export const internships: Internship[] = [
     duration: "8 weeks",
     stipend: "₹8,000-12,000/month",
     deadline: "February each year",
+    applicationUrl: "https://www.iitb.ac.in/",
+    lastVerified: "2026-08-09",
     category: "research",
   },
 ];

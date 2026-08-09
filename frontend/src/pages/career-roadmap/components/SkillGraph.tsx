@@ -665,6 +665,9 @@ export const SkillGraph: React.FC<SkillGraphProps> = ({
   };
 
   const getBezierPath = (from: {x: number, y: number}, to: {x: number, y: number}) => {
+    if (!from || !to || typeof from.x !== 'number' || typeof from.y !== 'number' || typeof to.x !== 'number' || typeof to.y !== 'number' || isNaN(from.x) || isNaN(from.y) || isNaN(to.x) || isNaN(to.y)) {
+      return "M 0 0";
+    }
     const dx = to.x - from.x;
     const cp1x = from.x + dx * 0.4;
     const cp2x = from.x + dx * 0.6;

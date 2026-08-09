@@ -63,7 +63,7 @@ export const DomainGrid: React.FC<DomainGridProps> = ({
         sub="Your ECE degree opens every one of these. Each card shows what the work actually is, the India pay band, and the exact skills to get in. Tap one to open its roadmap."
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-start">
         {domains.map((d, i) => {
           const isOpen = open === d.id;
           const isHighlighted = d.id === highlightedDomainId;

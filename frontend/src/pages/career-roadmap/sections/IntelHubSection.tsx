@@ -26,7 +26,7 @@ export const IntelHubSection: React.FC<IntelHubSectionProps> = ({
             Intel <span className="text-plasma-cyan">Hub</span>
           </h2>
           <p className="text-text-dim font-mono text-xs uppercase tracking-widest">
-            Corporate Intelligence, Direct Job Portals & GitHub Knowledge Repositories
+            Opportunities, company career links, and learning repositories
           </p>
         </div>
         <div className="flex gap-4">
@@ -34,7 +34,7 @@ export const IntelHubSection: React.FC<IntelHubSectionProps> = ({
             onClick={onOpenSimulator}
             className="px-6 py-2 bg-accent-orange text-matte-obsidian font-mono text-[10px] font-bold uppercase tracking-widest hover:bg-accent-orange/90 transition-colors shadow-brutal"
           >
-            Launch Trajectory Simulator
+            Open career-path simulator
           </button>
         </div>
       </div>
@@ -163,9 +163,9 @@ export const IntelHubSection: React.FC<IntelHubSectionProps> = ({
           <DataTerminal title="STRATEGIC OPPORTUNITIES" subtitle="Funding & Fellowships">
             <div className="p-6 space-y-4">
               {[
-                { label: 'Internship Matrix', desc: 'India, International & Research Positions', action: onOpenInternships },
-                { label: 'Govt Initiatives', desc: 'ISM, MeitY & Research Funding', action: onOpenGovt },
-                { label: 'Trajectory Simulator', desc: '5-Year Salary & Skill Calculator', action: onOpenSimulator }
+                { label: 'Internships', desc: 'India, international and research positions', action: onOpenInternships },
+                { label: 'Government initiatives', desc: 'ISM, MeitY and research funding', action: onOpenGovt },
+                { label: 'Career-path simulator', desc: 'Explore five-year skill and role outcomes', action: onOpenSimulator }
               ].map((link, i) => (
                 <button 
                   key={i}
@@ -249,4 +249,3 @@ export const IntelHubSection: React.FC<IntelHubSectionProps> = ({
     </section>
   );
 };
-

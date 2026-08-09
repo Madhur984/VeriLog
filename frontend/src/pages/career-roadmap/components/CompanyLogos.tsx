@@ -54,6 +54,7 @@ export const CompanyLogoSvg: React.FC<CompanyLogoProps> = ({ companyId, classNam
         </svg>
       );
 
+    case 'texasinstruments':
     case 'texas-instruments':
     case 'ti':
       return (
@@ -84,17 +85,33 @@ export const CompanyLogoSvg: React.FC<CompanyLogoProps> = ({ companyId, classNam
       );
 
     case 'cadence':
+    case 'cadencedesignsystems':
       return (
         <svg viewBox="0 0 24 24" className={className} style={style} fill="currentColor">
           <path d="M4 4h16v4H4V4zm0 6h16v4H4v-4zm0 6h16v4H4v-4z" fill="#FF6600"/>
         </svg>
       );
 
-    default:
+    case 'samsung':
+    case 'samsungsemi':
+    case 'samsungsemiconductor':
+    case 'samsungelectronics':
+      return (
+        <svg viewBox="0 0 24 24" className={className} style={style} fill="currentColor">
+          <path d="M2 12c0 3.31 4.48 6 10 6s10-2.69 10-6-4.48-6-10-6S2 8.69 2 12zm10-4c3.87 0 7 1.79 7 4s-3.13 4-7 4-7-1.79-7-4 3.13-4 7-4z" fill="#1428A0"/>
+        </svg>
+      );
+
+    default: {
+      const words = companyId.trim().split(/[\s_-]+/);
+      const initials = words.length > 1 
+        ? (words[0][0] + words[1][0]).toUpperCase()
+        : companyId.slice(0, 2).toUpperCase();
       return (
         <div className={`rounded bg-plasma-cyan/20 border border-plasma-cyan/40 text-plasma-cyan flex items-center justify-center font-mono font-bold text-[10px] ${className}`}>
-          {companyId.slice(0, 2).toUpperCase()}
+          {initials}
         </div>
       );
+    }
   }
 };
