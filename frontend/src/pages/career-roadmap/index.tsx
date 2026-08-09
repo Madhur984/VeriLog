@@ -9,6 +9,7 @@ import { MarketPulse, CompaniesBoard, OpportunitiesBoard, StudentPathSection, Al
 import { DomainGrid } from './sections/DomainGrid';
 import { DomainPlaybookSection } from './sections/DomainPlaybookSection';
 import { IntelHubSection } from './sections/IntelHubSection';
+import { SiliconStackExplorer } from './components/SiliconStackExplorer';
 import { SalaryLab } from './sections/SalaryLab';
 import { SOURCES, AS_OF, marketStats, domains } from './data/careerData';
 import { useCareerState } from './hooks/useCareerState';
@@ -49,6 +50,7 @@ const NAV = [
   { id: 'intel-hub', label: 'Intel Hub' },
   { id: 'companies', label: 'Companies' },
   { id: 'opportunities', label: 'Openings' },
+  { id: 'substrate-explorer', label: 'Die Physics' },
   { id: 'path', label: 'The Path' },
 ];
 
@@ -650,6 +652,7 @@ const CareerRoadmapPage: React.FC = () => {
             />
             <CompaniesBoard />
             <OpportunitiesBoard />
+            <SiliconStackExplorer />
             <StudentPathSection />
             <AlumniPathwaysSection />
           </div>

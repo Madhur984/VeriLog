@@ -236,16 +236,35 @@ export function routeJsonLd(pathname: string, seo: SeoData): Record<string, unkn
     });
   }
 
-  if (/^\/(module|dsd|basic-electronics)\//.test(pathname)) {
+  if (pathname === '/career-roadmap') {
     out.push({
       '@context': 'https://schema.org',
-      '@type': 'Course',
-      name: seo.title.replace(` | ${SITE.name}`, ''),
+      '@type': 'EducationalOccupationalProgram',
+      name: 'BitForBytes ECE & Semiconductor Career Roadmap',
       description: seo.description,
       url: seo.canonical,
-      provider: { '@type': 'Organization', name: SITE.name, url: SITE.origin + '/' },
-      isAccessibleForFree: true,
-      inLanguage: 'en',
+      provider: { '@type': 'EducationalOrganization', name: SITE.name, url: SITE.origin + '/' },
+      educationalProgramMode: 'online',
+      timeToComplete: 'P4Y',
+      occupationalCategory: [
+        'VLSI Design Engineer',
+        'Design Verification Engineer (UVM)',
+        'Physical Design & STA Engineer',
+        'Embedded Systems & Firmware Engineer',
+        'AI/ML Hardware Accelerator Engineer'
+      ],
+      offers: {
+        '@type': 'Offer',
+        price: '0.00',
+        priceCurrency: 'INR',
+        availability: 'https://schema.org/InStock'
+      },
+      hasCourse: [
+        { '@type': 'Course', name: 'VLSI & Chip Design Semester Roadmap', description: 'RTL Design, Verilog HDL, FSMs, RISC-V, UVM Testbenches, OpenLane Tape-out' },
+        { '@type': 'Course', name: 'Embedded Systems & IoT Semester Roadmap', description: 'Embedded C, STM32 Bare-metal, FreeRTOS, Linux Device Drivers, CAN/AUTOSAR' },
+        { '@type': 'Course', name: 'AI/ML & Edge Computing Semester Roadmap', description: 'Deep Learning, PyTorch, Model Quantization, TensorRT, NPU Accelerator Design' },
+        { '@type': 'Course', name: 'Wireless & 5G/6G Signal Processing Roadmap', description: 'Digital Communications, SDR Transceivers, 5G NR PHY Layer, Matlab & GNURadio' }
+      ]
     });
   }
 
