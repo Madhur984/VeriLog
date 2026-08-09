@@ -11,6 +11,8 @@ import { DomainPlaybookSection } from './sections/DomainPlaybookSection';
 import { IntelHubSection } from './sections/IntelHubSection';
 import { SiliconStackExplorer } from './components/SiliconStackExplorer';
 import { SiliconResumeCompiler } from './components/SiliconResumeCompiler';
+import { GuidedRoadmapWorkflow } from './components/GuidedRoadmapWorkflow';
+import { PlatformComparisonSection } from './components/PlatformComparisonSection';
 import { SalaryLab } from './sections/SalaryLab';
 import { SOURCES, AS_OF, marketStats, domains } from './data/careerData';
 import { useCareerState } from './hooks/useCareerState';
@@ -511,6 +513,16 @@ const CareerRoadmapPage: React.FC = () => {
     }
   });
 
+  const [workflowStage, setWorkflowStage] = useState<number>(1);
+
+  const handleSelectWorkflowStage = (stageId: number, sectionId: string) => {
+    setWorkflowStage(stageId);
+    const el = document.getElementById(sectionId);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   const handleSelectPrefs = (prefs: { stage: string; domain: string }) => {
     setCareerPrefs(prefs);
     try {
@@ -625,6 +637,11 @@ const CareerRoadmapPage: React.FC = () => {
           <div className="space-y-4">
             <CustomRoadmapHero prefs={careerPrefs} onSelectPrefs={handleSelectPrefs} />
             
+            <GuidedRoadmapWorkflow
+              currentStageId={workflowStage}
+              onSelectStage={handleSelectWorkflowStage}
+            />
+
             {/* Interactive Diagnostic Matcher CTA */}
             <div className="max-w-6xl mx-auto px-4 sm:px-6 mb-6">
               <div className="bg-bg-elev border-2 border-edge shadow-brutal p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -642,6 +659,7 @@ const CareerRoadmapPage: React.FC = () => {
             </div>
 
             <MarketPulse />
+            <PlatformComparisonSection />
             <DomainGrid highlightedDomainId={careerPrefs?.domain || null} onFocusSkillNode={handleFocusSkillNode} />
             <DomainPlaybookSection initialDomainId={careerPrefs?.domain || 'vlsi'} />
             <SalaryLab onFocusSkillNode={handleFocusSkillNode} />

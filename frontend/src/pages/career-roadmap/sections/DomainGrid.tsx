@@ -159,9 +159,28 @@ export const DomainGrid: React.FC<DomainGridProps> = ({
                           )}
                         </div>
                         <div className="flex flex-wrap gap-2">
-                          {d.coreSkills.map((s) => (
-                            <span key={s} className="text-xs font-medium px-2 py-1 bg-bg-elev border border-border-soft text-text-sub">{renderWithTooltips(s)}</span>
-                          ))}
+                          {d.coreSkills.map((s) => {
+                            const getSkillRoute = (skillName: string): string => {
+                              const name = skillName.toLowerCase();
+                              if (name.includes('verilog') || name.includes('hdl') || name.includes('rtl')) return '/verilog-playground';
+                              if (name.includes('logic') || name.includes('fsm') || name.includes('boolean')) return '/logic-studio';
+                              if (name.includes('arch') || name.includes('risc') || name.includes('cpu')) return '/workbench';
+                              if (name.includes('timing') || name.includes('sta')) return '/interview-prep';
+                              if (name.includes('k-map') || name.includes('kmap')) return '/kmap-lab';
+                              return '/portal';
+                            };
+                            const route = getSkillRoute(s);
+                            return (
+                              <a
+                                key={s}
+                                href={route}
+                                className="text-xs font-medium px-2.5 py-1 bg-bg-elev border border-border-soft text-text-sub hover:border-plasma-cyan hover:text-plasma-cyan transition-all flex items-center gap-1 group/skill cursor-pointer"
+                              >
+                                <span>{renderWithTooltips(s)}</span>
+                                <span className="text-[9px] font-mono text-plasma-cyan opacity-0 group-hover/skill:opacity-100 transition-opacity">↗</span>
+                              </a>
+                            );
+                          })}
                         </div>
                       </div>
 
