@@ -577,7 +577,7 @@ const CareerRoadmapPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-bg-void text-text-main pb-28">
+    <div className="min-h-screen bg-bg-void text-text-main pb-36">
       {showSplash && (
         <ColdOpenSplash
           onComplete={() => {
