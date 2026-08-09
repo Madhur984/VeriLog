@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Layers, Cpu, Zap, Activity, ShieldCheck, Box, ChevronRight, ArrowRight, ExternalLink } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { TextbookEquation } from '../../../components/ui/TextbookEquation';
 
 export interface SiliconLayer {
   id: number;
@@ -10,6 +11,7 @@ export interface SiliconLayer {
   semester: string;
   nodeTech: string;
   physics: string;
+  mathFormula?: string;
   rcDelay: string;
   skills: string[];
   tools: string[];
@@ -28,6 +30,7 @@ export const SILICON_LAYERS: SiliconLayer[] = [
     semester: 'Sem 1–2',
     nodeTech: 'Bulk Si / SOI / Epitaxial',
     physics: 'Bandgap Energy (1.12 eV), Electron Mobility (1400 cm²/V·s)',
+    mathFormula: 'E_g = 1.12\\text{ eV}, \\quad n_i = 1.5 \\times 10^{10}\\text{ cm}^{-3}',
     rcDelay: '< 0.01 ps',
     skills: ['Semiconductor Physics', 'Doping (Boron/Phosphorus)', 'Wafer Fabrication'],
     tools: ['TCAD Silvaco', 'Sentaurus', 'MATLAB Device Physics'],
@@ -44,6 +47,7 @@ export const SILICON_LAYERS: SiliconLayer[] = [
     semester: 'Sem 2–3',
     nodeTech: '3nm GAA / 5nm FinFET / 28nm Planar',
     physics: 'High-k Dielectric (HfO2), Metal Gate, Subthreshold Swing (65 mV/dec)',
+    mathFormula: 'I_D = \\frac{1}{2} \\mu_n C_{ox} \\frac{W}{L} (V_{GS} - V_{th})^2',
     rcDelay: '0.15 ps',
     skills: ['MOSFET Physics', 'CMOS Inverter Design', 'Short Channel Effects'],
     tools: ['LTspice', 'Cadence Virtuoso', 'HSPICE'],
@@ -60,6 +64,7 @@ export const SILICON_LAYERS: SiliconLayer[] = [
     semester: 'Sem 3–4',
     nodeTech: 'Cobalt / Tungsten / Ruthenium Plugs',
     physics: 'Schottky Barrier Reduction, Contact Resistance (< 10⁻⁹ Ω·cm²)',
+    mathFormula: 'R_c = \\frac{\\rho_c}{A_c} \\quad (\\rho_c < 10^{-9} \\;\\Omega\\cdot\\text{cm}^2)',
     rcDelay: '0.8 ps',
     skills: ['Standard Cell Layout', 'DRC / LVS Verification', 'Epitaxial Growth'],
     tools: ['Cadence Virtuoso Layout', 'Calibre DRC', 'StarRC'],
@@ -76,6 +81,7 @@ export const SILICON_LAYERS: SiliconLayer[] = [
     semester: 'Sem 4–5',
     nodeTech: 'Copper Dual-Damascene with Low-k Barrier',
     physics: 'Electromigration Limit, Wire Pitch (22nm), Parasitic Capacitance',
+    mathFormula: '\\tau_{RC} = R_{wire} \\cdot C_{wire} = \\rho \\frac{L}{W \\cdot T} \\cdot \\left(\\varepsilon \\frac{W \\cdot H}{S}\\right)',
     rcDelay: '3.5 ps',
     skills: ['RTL Synthesis', 'Cell Library Characterization', 'Static Timing (STA)'],
     tools: ['Synopsys Design Compiler', 'Cadence Genus', 'PrimeTime'],
@@ -92,6 +98,7 @@ export const SILICON_LAYERS: SiliconLayer[] = [
     semester: 'Sem 5–6',
     nodeTech: 'Thick Copper / Aluminum Power Grids',
     physics: 'IR Drop, Clock Skew (< 10 ps), Crosstalk Noise, CTS Buffer Insertion',
+    mathFormula: '\\Delta V_{IR} = I_{grid} \\cdot R_{mesh}, \\quad \\text{Skew} = |t_{clk,A} - t_{clk,B}| < 10\\text{ ps}',
     rcDelay: '12.0 ps',
     skills: ['Floorplanning & P&R', 'Clock Tree Synthesis (CTS)', 'Power Grid Analysis'],
     tools: ['Cadence Innovus', 'Synopsys ICC2', 'Ansys RedHawk'],
@@ -108,6 +115,7 @@ export const SILICON_LAYERS: SiliconLayer[] = [
     semester: 'Sem 6–7',
     nodeTech: 'C4 Solder Bumps / Copper-Copper Hybrid Bonding',
     physics: 'Through-Silicon Vias (TSV), Bump Pitch (35µm), Thermal Dissipation',
+    mathFormula: 'Z_0 = \\sqrt{\\frac{L_{via}}{C_{bump}}} \\approx 50\\;\\Omega',
     rcDelay: '25.0 ps',
     skills: ['Advanced 2.5D/3D Packaging', 'Signal Integrity (SI/PI)', 'Chiplet Architecture'],
     tools: ['Ansys HFSS', 'Cadence Allegro', 'Keysight ADS'],
@@ -124,6 +132,7 @@ export const SILICON_LAYERS: SiliconLayer[] = [
     semester: 'Sem 7–8',
     nodeTech: 'FC-BGA Substrate & Integrated Heat Spreader (IHS)',
     physics: 'Junction Thermal Resistance (θJA), 1000+ Pin Grid Array',
+    mathFormula: '\\theta_{JA} = \\frac{T_J - T_A}{P_{diss}} \\quad [^\\circ\\text{C/W}]',
     rcDelay: '45.0 ps',
     skills: ['System-on-Chip (SoC) Integration', 'Board-Level Hardware', 'Product Tape-out'],
     tools: ['KiCad PCB', 'Cadence OrCAD', 'Thermal Simulation'],
@@ -249,6 +258,18 @@ export const SiliconStackExplorer: React.FC = () => {
                   <div className="font-mono text-xs font-bold text-plasma-cyan mt-0.5">{selectedLayer.physics}</div>
                 </div>
               </div>
+
+              {/* KaTeX Mathematical Specification Block */}
+              {selectedLayer.mathFormula && (
+                <div className="my-2">
+                  <TextbookEquation
+                    math={selectedLayer.mathFormula}
+                    title={`${selectedLayer.name} — Physics Identity`}
+                    block={true}
+                    className="!my-0"
+                  />
+                </div>
+              )}
 
               {/* Required ECE Engineering Skills */}
               <div className="space-y-2">

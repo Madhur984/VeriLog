@@ -3,6 +3,7 @@ import { dreamCompanies } from '../data/companies';
 import { hackathons } from '../data/hackathons';
 import { JOB_PORTALS, GITHUB_AWESOME_REPOS } from '../data/domainRoadmaps';
 import { DataTerminal } from '../components/DataTerminal';
+import { CompanyLogoSvg } from '../components/CompanyLogos';
 import { ExternalLink, Linkedin, Search, Code, Bookmark } from 'lucide-react';
 
 interface IntelHubSectionProps {
@@ -91,8 +92,8 @@ export const IntelHubSection: React.FC<IntelHubSectionProps> = ({
                 <div key={i} className="p-6 border-r border-b border-ghost-trace/30 hover:bg-text-main/5 transition-all group">
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded bg-matte-obsidian border border-ghost-trace flex items-center justify-center text-xs font-mono font-bold text-plasma-cyan">
-                        {company.name.slice(0, 2).toUpperCase()}
+                      <div className="w-9 h-9 rounded bg-matte-obsidian border border-ghost-trace flex items-center justify-center p-1.5 shrink-0">
+                        <CompanyLogoSvg companyId={company.name} size={22} />
                       </div>
                       <div>
                         <h4 className="text-base font-mono font-bold text-text-main tracking-tight group-hover:text-plasma-cyan transition-colors">

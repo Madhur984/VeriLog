@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { DOMAIN_PLAYBOOKS, DomainPlaybook, RoadmapStepData } from '../data/domainRoadmaps';
 import { SectionHead } from './RoadmapUI';
+import { CompanyLogoSvg } from '../components/CompanyLogos';
 import { ExternalLink, Terminal, BookOpen, Cpu, Sparkles, CheckCircle2, ChevronRight, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -96,8 +97,9 @@ export const DomainPlaybookSection: React.FC<DomainPlaybookSectionProps> = ({
           <div className="font-mono text-[10px] text-text-dim uppercase tracking-widest mb-2">Primary Recruiters in this Track</div>
           <div className="flex flex-wrap gap-2">
             {currentPlaybook.topEmployers.map((emp) => (
-              <span key={emp} className="text-xs font-mono font-semibold px-2.5 py-1 bg-bg-elev border border-ghost-trace text-text-sub">
-                {emp}
+              <span key={emp} className="text-xs font-mono font-semibold px-3 py-1.5 bg-bg-elev border border-ghost-trace text-text-sub flex items-center gap-2">
+                <CompanyLogoSvg companyId={emp} size={16} />
+                <span>{emp}</span>
               </span>
             ))}
           </div>
