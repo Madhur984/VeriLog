@@ -7,6 +7,8 @@ import { FloatingCommandBar } from '../../components/FloatingCommandBar';
 // Core Sections & Data
 import { MarketPulse, CompaniesBoard, OpportunitiesBoard, StudentPathSection, AlumniPathwaysSection } from './sections/RoadmapSections';
 import { DomainGrid } from './sections/DomainGrid';
+import { DomainPlaybookSection } from './sections/DomainPlaybookSection';
+import { IntelHubSection } from './sections/IntelHubSection';
 import { SalaryLab } from './sections/SalaryLab';
 import { SOURCES, AS_OF, marketStats, domains } from './data/careerData';
 import { useCareerState } from './hooks/useCareerState';
@@ -42,7 +44,9 @@ const TrajectorySimulator = React.lazy(() =>
 const NAV = [
   { id: 'market', label: 'Opportunity' },
   { id: 'domains', label: 'Domains' },
+  { id: 'domain-playbooks', label: 'Playbooks' },
   { id: 'salaries', label: 'Salaries' },
+  { id: 'intel-hub', label: 'Intel Hub' },
   { id: 'companies', label: 'Companies' },
   { id: 'opportunities', label: 'Openings' },
   { id: 'path', label: 'The Path' },
@@ -635,7 +639,15 @@ const CareerRoadmapPage: React.FC = () => {
 
             <MarketPulse />
             <DomainGrid highlightedDomainId={careerPrefs?.domain || null} onFocusSkillNode={handleFocusSkillNode} />
+            <DomainPlaybookSection initialDomainId={careerPrefs?.domain || 'vlsi'} />
             <SalaryLab onFocusSkillNode={handleFocusSkillNode} />
+            <IntelHubSection
+              onOpenInternships={() => {}}
+              onOpenGovt={() => {}}
+              onOpenSimulator={() => {
+                setActiveTab('skills');
+              }}
+            />
             <CompaniesBoard />
             <OpportunitiesBoard />
             <StudentPathSection />
