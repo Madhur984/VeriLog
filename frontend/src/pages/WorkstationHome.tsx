@@ -12,7 +12,7 @@ import { getModuleHistory, getLastModule, MODULE_LABELS } from '../lib/moduleHis
 import {
   Play, ArrowRight, ArrowUpRight, ChevronDown, Check, Command, Settings,
   Wrench, Grid3x3, Cpu, Compass, Library, Map, BookOpen,
-  Binary, Zap, Boxes, type LucideIcon,
+  Binary, Zap, Boxes, ClipboardList, type LucideIcon,
 } from 'lucide-react';
 
 /* ── Background: single-tone grid + slow "electric current" sweeps (GPU transform) ── */
@@ -256,6 +256,7 @@ export const WorkstationHome: React.FC = () => {
     { label: 'Workbench', icon: Wrench, to: '/workbench' },
     { label: 'K-Map Lab', icon: Grid3x3, to: '/kmap-lab' },
     { label: 'Verilog Judge', icon: Cpu, to: '/verilog-playground' },
+    { label: 'Interview Prep', icon: ClipboardList, to: '/interview-prep' },
   ];
   const LIBRARY = [
     { label: 'Analogy Library', icon: BookOpen, to: '/analogies' },
