@@ -10,6 +10,7 @@ import { DomainGrid } from './sections/DomainGrid';
 import { DomainPlaybookSection } from './sections/DomainPlaybookSection';
 import { IntelHubSection } from './sections/IntelHubSection';
 import { SiliconStackExplorer } from './components/SiliconStackExplorer';
+import { SiliconResumeCompiler } from './components/SiliconResumeCompiler';
 import { SalaryLab } from './sections/SalaryLab';
 import { SOURCES, AS_OF, marketStats, domains } from './data/careerData';
 import { useCareerState } from './hooks/useCareerState';
@@ -51,6 +52,7 @@ const NAV = [
   { id: 'companies', label: 'Companies' },
   { id: 'opportunities', label: 'Openings' },
   { id: 'substrate-explorer', label: 'Die Physics' },
+  { id: 'resume-compiler', label: 'ATS Compiler' },
   { id: 'path', label: 'The Path' },
 ];
 
@@ -653,6 +655,7 @@ const CareerRoadmapPage: React.FC = () => {
             <CompaniesBoard />
             <OpportunitiesBoard />
             <SiliconStackExplorer />
+            <SiliconResumeCompiler />
             <StudentPathSection />
             <AlumniPathwaysSection />
           </div>
