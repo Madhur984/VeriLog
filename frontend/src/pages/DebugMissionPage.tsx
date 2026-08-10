@@ -46,7 +46,7 @@ export function DebugMissionPage() {
                         borderRadius: '4px',
                         color: '#0284C7',
                         cursor: 'pointer',
-                        fontFamily: "'IBM Plex Mono', monospace",
+                        fontFamily: "'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace",
                     }}
                 >
                     Back to Studio
@@ -66,7 +66,7 @@ export function DebugMissionPage() {
             minHeight: '100svh',
             background: '#F8FAFC',
             color: '#475569',
-            fontFamily: "'IBM Plex Mono', 'Roboto Mono', monospace",
+            fontFamily: "'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace",
             padding: 'clamp(12px, 4vw, 24px)',
             boxSizing: 'border-box',
             overflowX: 'hidden',

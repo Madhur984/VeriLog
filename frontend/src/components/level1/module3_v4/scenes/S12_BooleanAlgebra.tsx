@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FlaskConical, CheckCircle, XCircle, RefreshCw } from 'lucide-react';
 import { TryItYourself } from '../../../ui/TryItYourself';
+import { TextbookEquation } from '../../../ui/TextbookEquation';
 
 interface Props { isActive: boolean; isDarkMode: boolean; }
 
@@ -170,17 +171,26 @@ export const S12_BooleanAlgebra: React.FC<Props> = ({ isActive, isDarkMode }) =>
 
             {/* DeMorgan Highlight */}
             <div className={`p-8 rounded-3xl border ${isDarkMode ? 'bg-orange-500/5 border-orange-500/20' : 'bg-orange-50 border-orange-200'}`}>
-              <h3 className={`font-black text-lg mb-4 ${isDarkMode ? 'text-orange-400' : 'text-orange-700'}`}>DeMorgan's Theorems - Most Important!</h3>
+              <h3 className={`font-black text-lg mb-4 ${isDarkMode ? 'text-orange-400' : 'text-orange-700'}`}>DeMorgan's Theorems - Foundation of Logic Synthesis</h3>
               <div className="grid md:grid-cols-2 gap-6">
-                {[
-                  { title: 'NOT(A OR B) = NOT_A AND NOT_B', desc: 'A+B with a bubble = separate bubbles with AND', ex: '(x+y)̄ = x̄·ȳ' },
-                  { title: 'NOT(A AND B) = NOT_A OR NOT_B', desc: 'A·B with a bubble = separate bubbles with OR', ex: '(x·y)̄ = x̄+ȳ' },
-                ].map((dm, i) => (
-                  <div key={i} className={`p-6 rounded-2xl ${isDarkMode ? 'bg-black/40' : 'bg-white border border-orange-100'}`}>
-                    <div className="font-mono text-2xl font-black text-orange-400 mb-2">{dm.ex}</div>
-                    <div className={`text-sm opacity-60 ${textColor}`}>{dm.desc}</div>
-                  </div>
-                ))}
+                <TextbookEquation
+                  title="DeMorgan's First Theorem"
+                  math="\overline{A + B} = \overline{A} \cdot \overline{B}"
+                  variables={[
+                    { symbol: "\\overline{A+B}", name: "NOR Operation", description: "Complement of the logical OR sum." },
+                    { symbol: "\\overline{A} \\cdot \\overline{B}", name: "AND of Complements", description: "Logical product of individually inverted inputs." }
+                  ]}
+                  note="Bubble Push Rule: NOR gate is equivalent to an AND gate with inverted inputs."
+                />
+                <TextbookEquation
+                  title="DeMorgan's Second Theorem"
+                  math="\overline{A \cdot B} = \overline{A} + \overline{B}"
+                  variables={[
+                    { symbol: "\\overline{A\\cdot B}", name: "NAND Operation", description: "Complement of the logical AND product." },
+                    { symbol: "\\overline{A} + \\overline{B}", name: "OR of Complements", description: "Logical sum of individually inverted inputs." }
+                  ]}
+                  note="Bubble Push Rule: NAND gate is equivalent to an OR gate with inverted inputs."
+                />
               </div>
             </div>
           </motion.div>

@@ -11,6 +11,7 @@
  */
 
 import { useState, useCallback, useMemo, memo } from 'react';
+import { TextbookEquation } from '../ui/TextbookEquation';
 
 // ─── Types ──────────────────────────────────────────────────────────────
 
@@ -196,7 +197,7 @@ export const BooleanMinimizer = memo(() => {
             height: '100%',
             display: 'flex',
             flexDirection: 'column',
-            fontFamily: "'IBM Plex Mono', monospace",
+            fontFamily: "'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace",
             fontSize: 11,
             padding: 12,
             gap: 12,
@@ -291,10 +292,13 @@ export const BooleanMinimizer = memo(() => {
                     border: '1px solid rgba(16, 185, 129, 0.15)',
                     borderRadius: 4,
                 }}>
-                    <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: 9 }}>MINIMIZED: </span>
-                    <span style={{ color: '#10B981', fontWeight: 600, fontSize: 13 }}>
-                        F = {result.expression}
-                    </span>
+                    <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: 9 }}>MINIMIZED FORMULA: </span>
+                    <div style={{ marginTop: 4 }}>
+                        <TextbookEquation
+                            math={`F = ${result.expression.replace(/'/g, '^{\\prime}')}`}
+                            block={false}
+                        />
+                    </div>
                 </div>
             )}
         </div>
@@ -309,7 +313,7 @@ const inputStyle: React.CSSProperties = {
     background: 'rgba(255,255,255,0.04)',
     border: '1px solid rgba(0, 212, 255, 0.1)',
     color: '#e6edf3',
-    fontFamily: "'IBM Plex Mono', monospace",
+    fontFamily: "'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace",
     fontSize: 11,
     padding: '3px 8px',
     borderRadius: 3,

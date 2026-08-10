@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { storyTree, StoryChoice } from '../data/storyTree';
 import { DataTerminal } from './DataTerminal';
+import { AccessibleDialog } from './AccessibleDialog';
 
 interface TrajectorySimulatorModalProps {
   onClose: () => void;
@@ -32,7 +33,7 @@ export const TrajectorySimulatorModal: React.FC<TrajectorySimulatorModalProps> =
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-matte-obsidian/90">
+    <AccessibleDialog onClose={onClose} labelledBy="trajectory-simulator-title" description="Choose career-path options to explore a simulated outcome.">
       <motion.div 
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
@@ -53,7 +54,7 @@ export const TrajectorySimulatorModal: React.FC<TrajectorySimulatorModalProps> =
                   exit={{ opacity: 0, x: 20 }}
                   className="space-y-8"
                 >
-                  <h2 className="text-3xl font-mono text-text-main leading-tight tracking-tighter">
+                  <h2 id="trajectory-simulator-title" className="text-3xl font-mono text-text-main leading-tight tracking-tighter">
                     {isOutcome ? `Outcome: ${currentNode.role} at ${currentNode.company}` : currentNode.question}
                   </h2>
                   
@@ -147,6 +148,6 @@ export const TrajectorySimulatorModal: React.FC<TrajectorySimulatorModalProps> =
           </div>
         </DataTerminal>
       </motion.div>
-    </div>
+    </AccessibleDialog>
   );
 };

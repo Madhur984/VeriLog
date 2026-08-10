@@ -126,7 +126,7 @@ export const CPUBuilderPanel = memo(() => {
             height: '100%',
             display: 'flex',
             flexDirection: 'column',
-            fontFamily: "'IBM Plex Mono', monospace",
+            fontFamily: "'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace",
             fontSize: 12,
             background: 'white',
         }}>
@@ -178,7 +178,7 @@ export const CPUBuilderPanel = memo(() => {
                             color: '#1E293B',
                             border: 'none',
                             padding: 16,
-                            fontFamily: "'IBM Plex Mono', monospace",
+                            fontFamily: "'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace",
                             fontSize: 12,
                             lineHeight: 1.6,
                             resize: 'none',
@@ -247,7 +247,7 @@ function tbBtnStyle(color: string): React.CSSProperties {
         padding: '3px 8px',
         borderRadius: 3,
         cursor: 'pointer',
-        fontFamily: "'IBM Plex Mono', monospace",
+        fontFamily: "'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace",
         transition: 'all 100ms',
     };
 }

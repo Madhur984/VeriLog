@@ -63,7 +63,7 @@ export function Battery({ component, isLive, onPointerDown, isDragging,
             <text x={0} y={20} textAnchor="middle" fill="#f87171" fontSize={22} fontWeight="bold" fontFamily="monospace">−</text>
 
             {/* Battery label */}
-            <text x={0} y={38} textAnchor="middle" fill="#64b5d6" fontSize={9} fontFamily="'Courier New', monospace" letterSpacing={1}>
+            <text x={0} y={38} textAnchor="middle" fill="#64b5d6" fontSize={9} fontFamily="'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace" letterSpacing={1}>
                 BATTERY
             </text>
 

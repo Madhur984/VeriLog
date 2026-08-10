@@ -87,7 +87,7 @@ export function Bulb({ component, isLive, onPointerDown, isDragging,
             )}
 
             {/* Label */}
-            <text x={0} y={34} textAnchor="middle" fill={isLive ? '#FFC857' : '#64b5d6'} fontSize={8} fontFamily="'Courier New', monospace" letterSpacing={1}>
+            <text x={0} y={34} textAnchor="middle" fill={isLive ? '#FFC857' : '#64b5d6'} fontSize={8} fontFamily="'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace" letterSpacing={1}>
                 {isLive ? '⚡ ON' : 'BULB'}
             </text>
 

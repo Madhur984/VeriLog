@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { motion, useScroll, useMotionValueEvent } from 'framer-motion';
-import { Zap, Share2, FileText } from 'lucide-react';
-import { ThemeToggle } from './ThemeToggle';
+import { Share2 } from 'lucide-react';
 
 interface NavItemProps {
   label: string;
@@ -12,16 +11,17 @@ interface NavItemProps {
 const NavItem: React.FC<NavItemProps> = ({ label, isActive, onClick }) => (
   <button
     onClick={onClick}
+    aria-current={isActive ? 'page' : undefined}
     className={`
-      px-2 sm:px-4 py-1.5 text-[10px] sm:text-[11px] font-mono transition-colors relative group cursor-pointer whitespace-nowrap
-      ${isActive ? 'text-signal-core' : 'text-text-dim hover:text-text-main'}
+      min-h-11 px-2 sm:px-4 py-1.5 text-[11px] sm:text-[12px] font-mono transition-colors relative group cursor-pointer whitespace-nowrap focus-visible:outline focus-visible:outline-2 focus-visible:outline-signal-core
+      ${isActive ? 'text-signal-core font-bold' : 'text-text-dim hover:text-text-main'}
     `}
   >
     {label}
     {isActive && (
       <motion.div
         layoutId="active-nav-dot"
-        className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-signal-core rounded-full"
+        className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-signal-core rounded-full shadow-[0_0_8px_rgba(20,184,166,0.6)]"
       />
     )}
   </button>
@@ -48,25 +48,29 @@ export const FloatingCommandBar: React.FC<{ activeTab: string; onTabChange: (tab
     onTabChange(item.id);
   };
 
+  const handleShare = () => {
+    if (navigator.share) {
+      navigator.share({
+        title: 'BitForBytes ECE & Semiconductor Career Roadmap',
+        url: window.location.href,
+      }).catch(() => {});
+    } else {
+      navigator.clipboard.writeText(window.location.href);
+      alert('Career Roadmap URL copied to clipboard!');
+    }
+  };
+
   return (
     <motion.nav
-      variants={{ visible: { y: 0 }, hidden: { y: -100 } }}
+      variants={{ visible: { y: 0, opacity: 1 }, hidden: { y: 120, opacity: 0 } }}
       animate={hidden ? "hidden" : "visible"}
-      transition={{ duration: 0.35, ease: "easeInOut" }}
-      className="fixed top-4 sm:top-10 left-1/2 -translate-x-1/2 z-[300]
-                 flex items-center gap-0.5 sm:gap-1 px-2 sm:px-3 py-1.5 sm:py-2
-                 bg-bg-elev
-                 border-2 border-edge rounded-full
-                 shadow-brutal-sm
-                 max-w-[calc(100vw-16px)] overflow-x-auto scrollbar-hide"
+      transition={{ duration: 0.3, ease: "easeInOut" }}
+      className="fixed bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 z-30
+                 flex items-center gap-1 sm:gap-2 px-3.5 sm:px-5 py-2
+                 bg-bg-elev border-2 border-plasma-cyan/60 rounded-full
+                 shadow-[0_12px_40px_rgba(0,0,0,0.95)]
+                 max-w-[calc(100vw-24px)] overflow-x-auto scrollbar-hide"
     >
-      <ThemeToggle variant="minimal" className="mr-1" />
-
-      <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-signal-core/10 border border-signal-core/20
-                      flex items-center justify-center mr-1 sm:mr-2 shrink-0">
-        <Zap size={11} className="text-signal-core" />
-      </div>
-
       <div className="flex items-center gap-0.5 sm:gap-1 shrink-0">
         {navItems.map(item => (
           <NavItem
@@ -78,16 +82,16 @@ export const FloatingCommandBar: React.FC<{ activeTab: string; onTabChange: (tab
         ))}
       </div>
 
-      <div className="w-px h-4 bg-border-soft mx-1 sm:mx-2 shrink-0" />
+      <div className="w-px h-4 bg-border-soft mx-1 shrink-0" />
 
-      <div className="flex gap-1 sm:gap-2 items-center shrink-0">
-        <button className="p-1.5 sm:p-2 text-text-dim hover:text-text-main transition-colors cursor-pointer">
-          <FileText size={13} />
-        </button>
-        <button className="p-1.5 sm:p-2 text-text-dim hover:text-text-main transition-colors cursor-pointer">
-          <Share2 size={13} />
-        </button>
-      </div>
+      <button
+        onClick={handleShare}
+        aria-label="Share Roadmap"
+        title="Share Roadmap"
+        className="min-h-11 min-w-11 p-1.5 sm:p-2 text-text-dim hover:text-plasma-cyan transition-colors cursor-pointer shrink-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-signal-core"
+      >
+        <Share2 size={13} />
+      </button>
     </motion.nav>
   );
 };

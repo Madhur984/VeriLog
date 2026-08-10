@@ -109,7 +109,7 @@ export const AssistantPanel: React.FC<Props> = ({ open, onClose, pathname, inMod
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 20, scale: 0.96 }}
           transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
-          className={`pointer-events-auto fixed right-4 z-[70] flex w-[min(92vw,380px)] flex-col overflow-hidden rounded-[20px] border-[3px] border-[#1B1436] bg-[#F1ECFF] font-sans shadow-[6px_6px_0_#1B1436] dark:border-[#4A3D7A] dark:bg-[#0F0B1E] dark:shadow-[6px_6px_0_#7A3FD0] ${
+          className={`pointer-events-auto fixed right-4 z-[400] flex w-[min(92vw,380px)] flex-col overflow-hidden rounded-[20px] border-[3px] border-[#1B1436] bg-[#F1ECFF] font-sans shadow-[6px_6px_0_#1B1436] dark:border-[#4A3D7A] dark:bg-[#0F0B1E] dark:shadow-[6px_6px_0_#7A3FD0] ${
             inModule ? 'bottom-24 lg:bottom-28' : 'bottom-4'
           }`}
           style={{ height: 'min(72vh, 540px)' }}

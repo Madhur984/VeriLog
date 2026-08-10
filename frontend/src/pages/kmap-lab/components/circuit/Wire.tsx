@@ -9,17 +9,12 @@ interface WireProps {
   active?: boolean;
 }
 
-/**
- * Renders a smooth cubic Bezier wire between two gate ports.
- * The control points are offset horizontally to create a natural
- * S-curve even when ports are at the same or nearby Y positions.
- */
 export const Wire: React.FC<WireProps> = ({ x1, y1, x2, y2, active }) => {
-  const dx = Math.abs(x2 - x1);
-  const cpOffset = Math.max(dx * 0.5, 40);
+  // Orthogonal 90-degree routing: horizontal -> vertical -> horizontal bend
+  const dx = x2 - x1;
+  const midX = x1 + Math.max(dx * 0.5, 20);
 
-  // Cubic bezier: start → curve right → arrive at dest from left
-  const d = `M ${x1},${y1} C ${x1 + cpOffset},${y1} ${x2 - cpOffset},${y2} ${x2},${y2}`;
+  const d = `M ${x1},${y1} L ${midX},${y1} L ${midX},${y2} L ${x2},${y2}`;
 
   return (
     <g>
@@ -28,18 +23,27 @@ export const Wire: React.FC<WireProps> = ({ x1, y1, x2, y2, active }) => {
         d={d}
         fill="none"
         stroke={active ? '#fbbf24' : 'rgba(249,115,22,0.18)'}
-        strokeWidth={active ? 5 : 4}
+        strokeWidth={active ? 5 : 3.5}
         strokeLinecap="round"
+        strokeLinejoin="round"
         filter="url(#wire-glow)"
       />
       {/* Main wire */}
       <path
         d={d}
         fill="none"
-        stroke={active ? '#fbbf24' : 'rgba(249,115,22,0.65)'}
+        stroke={active ? '#fbbf24' : 'rgba(249,115,22,0.75)'}
         strokeWidth={active ? 2 : 1.5}
         strokeLinecap="round"
+        strokeLinejoin="round"
       />
+      {/* Corner junction indicators if vertical offset exists */}
+      {Math.abs(y2 - y1) > 4 && (
+        <>
+          <circle cx={midX} cy={y1} r={2} fill={active ? '#fbbf24' : '#f97316'} opacity={0.6} />
+          <circle cx={midX} cy={y2} r={2} fill={active ? '#fbbf24' : '#f97316'} opacity={0.6} />
+        </>
+      )}
     </g>
   );
 };

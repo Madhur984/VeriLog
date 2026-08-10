@@ -35,7 +35,7 @@ export const ChallengeList = memo(({ completedIds, onSelect }: ChallengeListProp
             height: '100%',
             display: 'flex',
             flexDirection: 'column',
-            fontFamily: "'IBM Plex Mono', monospace",
+            fontFamily: "'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace",
             fontSize: 11,
             backgroundColor: 'var(--bg-void)',
             color: 'var(--text-main)',
@@ -147,8 +147,8 @@ export const ChallengeList = memo(({ completedIds, onSelect }: ChallengeListProp
                                     {challenge.title}
                                 </span>
                                 <span style={{
-                                    fontSize: 7,
-                                    padding: '1px 5px',
+                                    fontSize: 10,
+                                    padding: '2px 6px',
                                     border: `1px solid ${diffColor}30`,
                                     color: diffColor,
                                     borderRadius: 2,
@@ -161,15 +161,15 @@ export const ChallengeList = memo(({ completedIds, onSelect }: ChallengeListProp
 
                             {/* Category + XP */}
                             <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                                <span style={{ color: 'var(--text-sub)', fontSize: 9, textTransform: 'capitalize' }}>
+                                <span style={{ color: 'var(--text-sub)', fontSize: 11, textTransform: 'capitalize' }}>
                                     {challenge.category.replace('_', ' ')}
                                 </span>
                                 <span style={{ flex: 1 }} />
-                                <span style={{ color: '#F59E0B', fontSize: 9 }}>💎 {challenge.xpReward} XP</span>
+                                <span style={{ color: '#F59E0B', fontSize: 11 }}>💎 {challenge.xpReward} XP</span>
                             </div>
 
                             {/* Stats */}
-                            <div style={{ color: 'var(--text-dim)', fontSize: 8 }}>
+                            <div style={{ color: 'var(--text-dim)', fontSize: 10 }}>
                                 {challenge.solvedCount} solved · {Math.round(challenge.acceptanceRate * 100)}% acceptance
                             </div>
                         </button>

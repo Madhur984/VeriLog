@@ -12,6 +12,7 @@ export const getKMapDimensions = (numVars: number): { rows: number; cols: number
     case 3: return { rows: 2, cols: 4 };
     case 4: return { rows: 4, cols: 4 };
     case 5: return { rows: 4, cols: 8 };
+    case 6: return { rows: 8, cols: 8 };
     default: return { rows: 4, cols: 4 };
   }
 };

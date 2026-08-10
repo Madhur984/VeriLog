@@ -1,19 +1,55 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useStore } from './store/useStore';
 import { Header } from './components/Header';
 import { VariableSelector } from './components/VariableSelector';
 import { KMapGrid } from './components/KMapGrid';
 import { TruthTable } from './components/TruthTable';
 import { BooleanInput } from './components/BooleanInput';
 import { ResultPanel } from './components/ResultPanel';
+import { StepByStepPanel } from './components/StepByStepPanel';
+import { HazardPanel } from './components/HazardPanel';
+import { CostPanel } from './components/CostPanel';
+import { MultiOutputPanel } from './components/MultiOutputPanel';
+import { VEMPanel } from './components/VEMPanel';
+import { PracticeModePanel } from './components/PracticeModePanel';
 import { CircuitRenderer } from './components/CircuitRenderer';
 import { QuickActions } from './components/QuickActions';
+import { InfoTooltip } from './components/InfoTooltip';
+import { Sparkles, Zap, Layers, AlertTriangle, Sliders, Variable, Target } from 'lucide-react';
 import './kmap-lab.css';
 
 /**
- * KMapLab - formerly the standalone Next.js k-map app, now an in-frontend route.
- * Mounted at `/kmap-lab` (KMapLabPage wraps this) and inside ModuleFour's Lab section.
+ * KMapLab - Digital Logic Educational Workbench with Normal & Pro Modes.
  */
 export const KMapLab: React.FC = () => {
+  const { mode, setMode, undo, redo, reset } = useStore();
+  const [activeAdvancedTab, setActiveAdvancedTab] = useState<'step_by_step' | 'practice' | 'hazards' | 'cost' | 'multi_output' | 'vem'>('step_by_step');
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Ignore key events when typing inside input elements
+      const target = e.target as HTMLElement;
+      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') return;
+
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
+        e.preventDefault();
+        undo();
+      } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y') {
+        e.preventDefault();
+        redo();
+      } else if (e.altKey && e.key.toLowerCase() === 'p') {
+        e.preventDefault();
+        setMode(mode === 'normal' ? 'pro' : 'normal');
+      } else if (e.altKey && e.key.toLowerCase() === 'c') {
+        e.preventDefault();
+        reset();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [mode, undo, redo, reset, setMode]);
+
   return (
     <main
       className="kmap-lab-root min-h-[100svh] text-text-main relative overflow-x-hidden"
@@ -22,7 +58,7 @@ export const KMapLab: React.FC = () => {
       <div className="max-w-[1200px] mx-auto px-4 py-6 lg:px-6 lg:py-12 flex flex-col gap-6 lg:gap-10">
         <Header />
         <VariableSelector />
- 
+
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
           <div className="lg:col-span-8 flex justify-center">
             <KMapGrid />
@@ -31,18 +67,107 @@ export const KMapLab: React.FC = () => {
             <TruthTable />
           </div>
         </div>
- 
+
         <BooleanInput />
- 
+
         <div className="flex flex-col gap-10">
           <ResultPanel />
+
+          {/* Pro Mode: Advanced Features Suite */}
+          {mode === 'pro' && (
+            <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 text-accent-orange font-bold text-sm uppercase tracking-wider">
+                  <Sparkles size={18} className="animate-pulse" />
+                  <span>Pro Mode Advanced Engineering Suite</span>
+                  <InfoTooltip
+                    title="Pro Engineering Suite"
+                    description="Professional synthesis features: Step-by-Step QM reduction, Practice mode, Glitch Hazard elimination, Cost constraint metrics, Multi-Output minimization, and Variable Entered Maps (VEM)."
+                    side="right"
+                  />
+                </div>
+              </div>
+
+              {/* Navigation Bar */}
+              <div className="flex flex-wrap items-center gap-2 p-1.5 bg-bg-void/90 rounded-2xl border border-border-soft shadow-md">
+                <button
+                  onClick={() => setActiveAdvancedTab('step_by_step')}
+                  className={`flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                    activeAdvancedTab === 'step_by_step' ? 'bg-accent-orange text-white shadow-md' : 'text-text-dim hover:text-text-main'
+                  }`}
+                >
+                  <Layers size={14} />
+                  Step-by-Step QM
+                </button>
+
+                <button
+                  onClick={() => setActiveAdvancedTab('practice')}
+                  className={`flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                    activeAdvancedTab === 'practice' ? 'bg-accent-orange text-white shadow-md' : 'text-text-dim hover:text-text-main'
+                  }`}
+                >
+                  <Target size={14} />
+                  Practice Mode
+                </button>
+
+                <button
+                  onClick={() => setActiveAdvancedTab('hazards')}
+                  className={`flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                    activeAdvancedTab === 'hazards' ? 'bg-accent-orange text-white shadow-md' : 'text-text-dim hover:text-text-main'
+                  }`}
+                >
+                  <AlertTriangle size={14} />
+                  Hazard Elimination
+                </button>
+
+                <button
+                  onClick={() => setActiveAdvancedTab('cost')}
+                  className={`flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                    activeAdvancedTab === 'cost' ? 'bg-accent-orange text-white shadow-md' : 'text-text-dim hover:text-text-main'
+                  }`}
+                >
+                  <Sliders size={14} />
+                  Cost Optimization
+                </button>
+
+                <button
+                  onClick={() => setActiveAdvancedTab('multi_output')}
+                  className={`flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                    activeAdvancedTab === 'multi_output' ? 'bg-accent-orange text-white shadow-md' : 'text-text-dim hover:text-text-main'
+                  }`}
+                >
+                  <Zap size={14} />
+                  Multi-Output Minimiser
+                </button>
+
+                <button
+                  onClick={() => setActiveAdvancedTab('vem')}
+                  className={`flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                    activeAdvancedTab === 'vem' ? 'bg-accent-orange text-white shadow-md' : 'text-text-dim hover:text-text-main'
+                  }`}
+                >
+                  <Variable size={14} />
+                  VEM Mode
+                </button>
+              </div>
+
+              {/* Render Selected Pro Feature */}
+              {activeAdvancedTab === 'step_by_step' && <StepByStepPanel />}
+              {activeAdvancedTab === 'practice' && <PracticeModePanel />}
+              {activeAdvancedTab === 'hazards' && <HazardPanel />}
+              {activeAdvancedTab === 'cost' && <CostPanel />}
+              {activeAdvancedTab === 'multi_output' && <MultiOutputPanel />}
+              {activeAdvancedTab === 'vem' && <VEMPanel />}
+            </div>
+          )}
+
           <CircuitRenderer />
         </div>
- 
+
         <QuickActions />
- 
+
         <footer className="mt-16 py-10 border-t border-border-soft text-center text-sm text-text-dim font-medium">
-          &copy; {new Date().getFullYear()} K-Map Lab &bull; Digital Logic Synthesis
+          &copy; {new Date().getFullYear()} K-Map Lab &bull; Digital Logic Synthesis Suite
         </footer>
       </div>
     </main>

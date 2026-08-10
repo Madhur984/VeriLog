@@ -85,7 +85,7 @@ export default {
             },
             fontFamily: {
                 sans: ['Space Grotesk', 'system-ui', '-apple-system', 'sans-serif'],
-                ui: ['Space Grotesk', 'system-ui', 'sans-serif'],
+                ui: ['Space Grotesk', 'system-ui', '-apple-system', 'sans-serif'],
                 mono: ['JetBrains Mono', 'IBM Plex Mono', 'ui-monospace', 'monospace'],
             },
             /* Site-wide readability bump. Most body text uses text-sm / text-xs,

@@ -295,7 +295,7 @@ export const SkillCanvas: React.FC = () => {
             </AnimatePresence>
 
             {/* Controls Help */}
-            <div style={{ position: 'absolute', bottom: 20, left: 20, color: '#94A3B8', fontSize: 10, fontFamily: 'monospace', fontWeight: 'bold' }}>
+            <div style={{ position: 'absolute', bottom: 20, left: 20, color: '#94A3B8', fontSize: 10, fontFamily: "'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace", fontWeight: 'bold' }}>
                 SCROLL: PAN // CTRL+SCROLL: ZOOM // CLICK: SELECT
             </div>
         </div>

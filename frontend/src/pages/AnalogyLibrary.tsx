@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { Search, Share2, RotateCw, Sparkles } from 'lucide-react';
 import { useColorScheme } from '../hooks/useColorScheme';
+import { TextbookEquation } from '../components/ui/TextbookEquation';
 
 /**
  * The Daily Analogy Library: every VLSI concept explained through a real-world
@@ -30,6 +31,7 @@ interface Analogy {
   category: CatId;
   analogy: string;
   definition: string;
+  formula?: string;
   why: string;
   chips: string;
 }
@@ -39,21 +41,24 @@ const ANALOGIES: Analogy[] = [
   {
     id: 'and', concept: 'AND gate', category: 'gates',
     analogy: 'A security desk that needs BOTH ID cards before the gate opens.',
-    definition: 'Outputs 1 only when every input is 1. For two inputs, Y = A AND B.',
+    definition: 'Outputs 1 only when every input is 1.',
+    formula: 'Y = A \\cdot B',
     why: 'One missing ID card (a 0 on either input) keeps the gate shut. Only the full set of credentials opens the way, exactly like the output going high only when all inputs are high.',
     chips: 'Enable logic everywhere: a memory write fires only when chip-select AND write-enable are both active at the same time.',
   },
   {
     id: 'or', concept: 'OR gate', category: 'gates',
     analogy: 'An emergency exit: either door opens the way out.',
-    definition: 'Outputs 1 if at least one input is 1. Y = A OR B.',
+    definition: 'Outputs 1 if at least one input is 1.',
+    formula: 'Y = A + B',
     why: 'You do not need every door open, any single one is enough. Same with inputs: any 1 drives the output high.',
     chips: 'Interrupt controllers OR dozens of interrupt lines into one "something needs attention" signal for the CPU.',
   },
   {
     id: 'not', concept: 'NOT gate', category: 'gates',
     analogy: 'A day/night street lamp sensor: the output is always the opposite of the input.',
-    definition: 'Inverts its single input. Y = NOT A. Also called an inverter.',
+    definition: 'Inverts its single input. Also called an inverter.',
+    formula: 'Y = \\overline{A}',
     why: 'Daylight in means lamp off; darkness in means lamp on. Input and output can never agree, which is the whole contract of an inverter.',
     chips: 'The most numerous gate on any die. Clock trees and signal buffers are built from chained inverter pairs.',
   },
@@ -61,13 +66,15 @@ const ANALOGIES: Analogy[] = [
     id: 'nand', concept: 'NAND gate', category: 'gates',
     analogy: 'A WhatsApp group on mute: quiet unless both people message.',
     definition: 'AND followed by NOT. Output is 0 only when all inputs are 1; otherwise 1.',
+    formula: 'Y = \\overline{A \\cdot B}',
     why: 'The group stays quiet (output 1) through anything, until both friends message at once and your phone finally buzzes (output drops to 0).',
     chips: 'The universal gate: any circuit can be built from NAND alone. Flash storage is literally named NAND, and standard-cell libraries lean on it for speed and area.',
   },
   {
     id: 'xor', concept: 'XOR gate', category: 'gates',
     analogy: 'The meeting rule: exactly one person may speak at a time.',
-    definition: 'Outputs 1 when the inputs differ. Y = A XOR B.',
+    definition: 'Outputs 1 when inputs differ.',
+    formula: 'Y = A \\oplus B = A\\overline{B} + \\overline{A}B',
     why: 'One speaker is productive (1). Both talking over each other, or total silence, gets nothing done (0). The gate rewards difference.',
     chips: 'The sum bit of every adder, and the heart of parity generators that catch bit errors in ECC memory.',
   },
@@ -75,6 +82,7 @@ const ANALOGIES: Analogy[] = [
     id: 'xnor', concept: 'XNOR gate', category: 'gates',
     analogy: 'An agreement detector: output is 1 only when both sides agree.',
     definition: 'The inverse of XOR. Outputs 1 when inputs match (both 0 or both 1).',
+    formula: 'Y = A \\odot B = AB + \\overline{A}\\overline{B}',
     why: 'Two parties shaking hands on the same answer is what fires the output, whether they both said yes or both said no.',
     chips: 'Bitwise comparators: cache hit logic compares address tags using XNOR per bit, then ANDs the agreements together.',
   },
@@ -667,6 +675,11 @@ export const AnalogyLibrary: React.FC = () => {
                     <div>
                       <div className={`font-mono text-[10px] font-bold uppercase tracking-widest ${sub}`}>What it is</div>
                       <p className={`mt-0.5 ${text}`}>{a.definition}</p>
+                      {a.formula && (
+                        <div className="mt-1.5">
+                          <TextbookEquation math={a.formula} block={false} />
+                        </div>
+                      )}
                     </div>
                     <div>
                       <div className={`font-mono text-[10px] font-bold uppercase tracking-widest ${sub}`}>Why the analogy maps</div>

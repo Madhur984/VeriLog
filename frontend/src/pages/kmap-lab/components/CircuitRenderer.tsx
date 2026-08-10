@@ -6,6 +6,7 @@ import { parseBoolean } from '../lib/utils/parseBoolean';
 import { buildCircuit, getCanvasSize, GateNode } from '../lib/utils/buildCircuit';
 import { GateShape, getOutputPort, getInputPorts } from './circuit/GateShape';
 import { Wire, WireGlowFilter } from './circuit/Wire';
+import { InfoTooltip } from './InfoTooltip';
 
 // ----------------------------------------------------------------
 // CircuitRenderer - full SVG logic circuit diagram
@@ -73,7 +74,14 @@ export const CircuitRenderer: React.FC = () => {
             </svg>
           </div>
           <div>
-            <h3 className="text-xl font-bold text-text-main tracking-tight">Circuit Diagram</h3>
+            <div className="flex items-center gap-2">
+              <h3 className="text-xl font-bold text-text-main tracking-tight">Circuit Diagram</h3>
+              <InfoTooltip
+                title="Synthesized Logic Circuit"
+                description="Interactive SVG gate schematic generated directly from the simplified Boolean expression. Drag to pan, scroll to zoom, or click 'Fit view'."
+                side="top"
+              />
+            </div>
             <p className="text-xs font-bold text-text-dim uppercase tracking-widest mt-0.5">
               {solType} · <span className="text-accent-orange font-mono">{expression || '-'}</span>
             </p>

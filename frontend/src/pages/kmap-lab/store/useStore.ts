@@ -1,53 +1,122 @@
 import { create } from "zustand";
 import { Value } from "../types/solver";
 import { parseBoolean, evaluateAST, inferNumVars } from "../lib/utils/parseBoolean";
+import { playCellSound, playSuccessChime, triggerHaptic } from "../lib/utils/sensory";
+
+export type Mode = 'normal' | 'pro';
 
 interface AppState {
+  mode: Mode;
   numVars: number;
+  varNames: string[];
   cellValues: Record<number, Value>;
   expression: string;
   minterms: number[];
   dontCares: number[];
   solType: 'SOP' | 'POS';
-  
+
+  // History stack for Undo/Redo
+  history: Record<number, Value>[];
+  historyIdx: number;
+
   // Actions
+  setMode: (m: Mode) => void;
   setNumVars: (n: number) => void;
+  setVarName: (idx: number, name: string) => void;
   setSolType: (type: 'SOP' | 'POS') => void;
   setCellValue: (index: number, val: Value) => void;
+  toggleCellValue: (index: number) => void;
   setExpression: (expr: string) => void;
-  /** Parse the Boolean expression, evaluate it, and load the result into the K-map. */
   solveExpression: (expr?: string) => { ok: boolean; error?: string };
   reset: () => void;
   loadExample: () => void;
+  loadPresetExample: (presetKey: string) => void;
+  undo: () => void;
+  redo: () => void;
 }
 
+const DEFAULT_VARS = ['A', 'B', 'C', 'D', 'E', 'F'];
+
+const updateMintermsAndDontCares = (cellValues: Record<number, Value>) => {
+  const minterms = Object.entries(cellValues)
+    .filter(([_, v]) => v === 1)
+    .map(([i]) => parseInt(i));
+  const dontCares = Object.entries(cellValues)
+    .filter(([_, v]) => v === 'X')
+    .map(([i]) => parseInt(i));
+  return { minterms, dontCares };
+};
+
 export const useStore = create<AppState>((set, get) => ({
+  mode: 'pro',
   numVars: 4,
+  varNames: [...DEFAULT_VARS],
   solType: 'SOP',
   cellValues: {},
   expression: "",
   minterms: [],
   dontCares: [],
+  history: [{}],
+  historyIdx: 0,
+
+  setMode: (m) => set({ mode: m }),
 
   setNumVars: (n) => set({ 
     numVars: n, 
     cellValues: {}, 
     minterms: [],
-    dontCares: [] 
+    dontCares: [],
+    history: [{}],
+    historyIdx: 0
+  }),
+
+  setVarName: (idx, name) => set((state) => {
+    const updated = [...state.varNames];
+    updated[idx] = name.toUpperCase().trim() || DEFAULT_VARS[idx];
+    return { varNames: updated };
   }),
 
   setSolType: (type) => set({ solType: type }),
   
   setCellValue: (index, val) => set((state) => {
+    playCellSound(val);
+    triggerHaptic('tap');
+
     const newValues = { ...state.cellValues, [index]: val };
-    const minterms = Object.entries(newValues)
-      .filter(([_, v]) => v === 1)
-      .map(([i]) => parseInt(i));
-    const dontCares = Object.entries(newValues)
-      .filter(([_, v]) => v === 'X')
-      .map(([i]) => parseInt(i));
+    const { minterms, dontCares } = updateMintermsAndDontCares(newValues);
+
+    const newHistory = state.history.slice(0, state.historyIdx + 1);
+    newHistory.push(newValues);
+
+    return { 
+      cellValues: newValues, 
+      minterms, 
+      dontCares,
+      history: newHistory,
+      historyIdx: newHistory.length - 1
+    };
+  }),
+
+  toggleCellValue: (index) => set((state) => {
+    const current = state.cellValues[index] || 0;
+    const nextVal: Value = current === 0 ? 1 : current === 1 ? 'X' : 0;
     
-    return { cellValues: newValues, minterms, dontCares };
+    playCellSound(nextVal);
+    triggerHaptic('tap');
+
+    const newValues = { ...state.cellValues, [index]: nextVal };
+    const { minterms, dontCares } = updateMintermsAndDontCares(newValues);
+
+    const newHistory = state.history.slice(0, state.historyIdx + 1);
+    newHistory.push(newValues);
+
+    return { 
+      cellValues: newValues, 
+      minterms, 
+      dontCares,
+      history: newHistory,
+      historyIdx: newHistory.length - 1
+    };
   }),
 
   setExpression: (expr) => set({ expression: expr }),
@@ -56,7 +125,6 @@ export const useStore = create<AppState>((set, get) => ({
     const source = (expr ?? get().expression).trim();
     if (!source) return { ok: false, error: 'Enter a Boolean expression first.' };
     if (source === '0' || source === '1') {
-      // A constant: fill the whole map (1) or clear it (0).
       const numVars = get().numVars;
       const total = 1 << numVars;
       const cellValues: Record<number, Value> = {};
@@ -65,18 +133,17 @@ export const useStore = create<AppState>((set, get) => ({
         if (source === '1') { cellValues[m] = 1; minterms.push(m); }
         else cellValues[m] = 0;
       }
+      playSuccessChime();
+      triggerHaptic('success');
       set({ numVars, minterms, dontCares: [], cellValues, expression: source });
       return { ok: true };
     }
 
     const ast = parseBoolean(source);
-    if (!ast) return { ok: false, error: 'Could not parse that — use variables A–E, ’ for NOT, + for OR (e.g. A’BC + AB’).' };
+    if (!ast) return { ok: false, error: "Could not parse expression — use A-F, ' for NOT, + for OR." };
 
-    // Keep the currently-selected map size, only growing it if the expression
-    // uses a higher variable than the current map has. This way "A + B" fills
-    // the map you picked (e.g. 4 vars) instead of silently shrinking it to 2.
     const numVars = Math.max(get().numVars, inferNumVars(ast));
-    const vars = ['A', 'B', 'C', 'D', 'E'].slice(0, numVars);
+    const vars = get().varNames.slice(0, numVars);
     const total = 1 << numVars;
     const cellValues: Record<number, Value> = {};
     const minterms: number[] = [];
@@ -88,11 +155,23 @@ export const useStore = create<AppState>((set, get) => ({
       if (evaluateAST(ast, env)) { cellValues[m] = 1; minterms.push(m); }
       else cellValues[m] = 0;
     }
-    set({ numVars, minterms, dontCares: [], cellValues, expression: source });
+
+    const { dontCares } = updateMintermsAndDontCares(cellValues);
+    playSuccessChime();
+    triggerHaptic('success');
+    set({ numVars, minterms, dontCares, cellValues, expression: source });
     return { ok: true };
   },
 
-  reset: () => set({ cellValues: {}, minterms: [], dontCares: [], expression: "" }),
+  reset: () => set({ 
+    cellValues: {}, 
+    minterms: [], 
+    dontCares: [], 
+    expression: "",
+    varNames: [...DEFAULT_VARS],
+    history: [{}],
+    historyIdx: 0
+  }),
 
   loadExample: () => {
     const example: Record<number, Value> = {
@@ -101,6 +180,65 @@ export const useStore = create<AppState>((set, get) => ({
     };
     const minterms = [0, 1, 4, 5, 14];
     const dontCares = [10];
-    set({ cellValues: example, minterms, dontCares });
-  }
+    const exampleExpr = "A'B' + BC'D";
+    playSuccessChime();
+    triggerHaptic('success');
+    set({ numVars: 4, cellValues: example, minterms, dontCares, expression: exampleExpr });
+  },
+
+  loadPresetExample: (presetKey: string) => {
+    playSuccessChime();
+    triggerHaptic('success');
+
+    if (presetKey === 'full_adder_carry') {
+      const minterms = [3, 5, 6, 7];
+      const cellValues: Record<number, Value> = { 3: 1, 5: 1, 6: 1, 7: 1 };
+      set({ numVars: 3, cellValues, minterms, dontCares: [], expression: "AB + BC + AC" });
+    } else if (presetKey === 'seven_segment_a') {
+      const minterms = [0, 2, 3, 5, 6, 7, 8, 9];
+      const dontCares = [10, 11, 12, 13, 14, 15];
+      const cellValues: Record<number, Value> = {
+        0: 1, 2: 1, 3: 1, 5: 1, 6: 1, 7: 1, 8: 1, 9: 1,
+        10: 'X', 11: 'X', 12: 'X', 13: 'X', 14: 'X', 15: 'X'
+      };
+      set({ numVars: 4, cellValues, minterms, dontCares, expression: "A + C + BD + B'D'" });
+    } else if (presetKey === 'hazard_demo') {
+      const minterms = [1, 5, 6, 7];
+      const cellValues: Record<number, Value> = { 1: 1, 5: 1, 6: 1, 7: 1 };
+      set({ numVars: 3, cellValues, minterms, dontCares: [], expression: "A'C + AB" });
+    } else if (presetKey === 'parity_checker') {
+      const minterms = [0, 3, 5, 6, 9, 10, 12, 15];
+      const cellValues: Record<number, Value> = {};
+      minterms.forEach(m => { cellValues[m] = 1; });
+      set({ numVars: 4, cellValues, minterms, dontCares: [], expression: "" });
+    }
+  },
+
+  undo: () => set((state) => {
+    if (state.historyIdx <= 0) return state;
+    triggerHaptic('tap');
+    const newIdx = state.historyIdx - 1;
+    const prevValues = state.history[newIdx];
+    const { minterms, dontCares } = updateMintermsAndDontCares(prevValues);
+    return {
+      cellValues: prevValues,
+      minterms,
+      dontCares,
+      historyIdx: newIdx
+    };
+  }),
+
+  redo: () => set((state) => {
+    if (state.historyIdx >= state.history.length - 1) return state;
+    triggerHaptic('tap');
+    const newIdx = state.historyIdx + 1;
+    const nextValues = state.history[newIdx];
+    const { minterms, dontCares } = updateMintermsAndDontCares(nextValues);
+    return {
+      cellValues: nextValues,
+      minterms,
+      dontCares,
+      historyIdx: newIdx
+    };
+  })
 }));

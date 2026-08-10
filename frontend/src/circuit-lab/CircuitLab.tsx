@@ -102,7 +102,7 @@ function TrayItem({ type, label, icon, desc, onAdd }: {
         >
             <span style={{ fontSize: 22, width: 32, textAlign: 'center', flexShrink: 0 }}>{icon}</span>
             <span style={{ flex: 1 }}>
-                <div style={{ fontWeight: 600, fontSize: 13, fontFamily: "'Courier New', monospace", letterSpacing: 1 }}>{label}</div>
+                <div style={{ fontWeight: 600, fontSize: 13, fontFamily: "'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace", letterSpacing: 1 }}>{label}</div>
                 <div style={{ fontSize: 10, opacity: 0.6, letterSpacing: 0.5, marginTop: 2 }}>{desc}</div>
             </span>
             <span style={{ opacity: 0.4, fontSize: 12 }}>+</span>
@@ -231,7 +231,7 @@ export function CircuitLab({ onCircuitComplete, standalone = true }: {
                 height: standalone ? '100vh' : '500px',
                 width: standalone ? '100vw' : '100%',
                 background: standalone ? '#070f1a' : 'rgba(0,0,0,0.2)',
-                fontFamily: "'Courier New', monospace",
+                fontFamily: "'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace",
                 overflow: 'hidden',
                 borderRadius: standalone ? 0 : 24,
                 border: standalone ? 'none' : '2px dashed rgba(30,41,59,1)',
@@ -442,14 +442,14 @@ export function CircuitLab({ onCircuitComplete, standalone = true }: {
                             fontSize: 11,
                             fontWeight: 700,
                             letterSpacing: 2,
-                            fontFamily: "'Courier New', monospace",
+                            fontFamily: "'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace",
                         }}>LOGIC ANALYST WARNING</div>
                         <div style={{
                             color: 'rgba(252,165,165,0.7)',
                             fontSize: 10,
                             letterSpacing: 1,
                             marginTop: 2,
-                            fontFamily: "'Courier New', monospace",
+                            fontFamily: "'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace",
                         }}>
                             Direct path detected. No load in loop. Danger.
                         </div>

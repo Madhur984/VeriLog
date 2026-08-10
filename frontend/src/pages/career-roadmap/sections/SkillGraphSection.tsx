@@ -27,7 +27,7 @@ export const SkillGraphSection: React.FC<SkillGraphSectionProps> = ({
   const [activeDomain, setActiveDomain] = useState(domains[0]);
   const [showQuiz, setShowQuiz] = useState(false);
   const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
-  const [viewMode, setViewMode] = useState<'list' | 'graph'>('list');
+  const [viewMode, setViewMode] = useState<'list' | 'graph'>('graph');
 
   const unlockedNodesSet = useMemo(() => new Set(unlockedNodes), [unlockedNodes]);
 
@@ -38,41 +38,54 @@ export const SkillGraphSection: React.FC<SkillGraphSectionProps> = ({
   }, [focusedNodeId]);
 
   return (
-    <section id="skill-graph" className="py-24 px-6 max-w-7xl mx-auto space-y-12 scroll-mt-32">
-      <div className="flex flex-col md:flex-row justify-between items-end gap-6">
-        <div className="space-y-2">
-          <h2 className="text-4xl font-mono font-bold text-text-main tracking-tighter uppercase">
-            Skill <span className="text-plasma-cyan">Topology</span>
-          </h2>
-          <p className="text-text-dim font-mono text-xs uppercase tracking-widest">
-            Domain Mastery & Pre-requisite Mapping
+    <section id="skill-graph" className="py-16 px-4 sm:px-6 max-w-7xl mx-auto space-y-8 scroll-mt-32">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 p-6 bg-[#0B0E14] border border-slate-800 rounded-2xl">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2">
+            <span className="h-2.5 w-2.5 rounded-full bg-teal-400 animate-ping" />
+            <h2 className="text-2xl sm:text-3xl font-mono font-black text-white tracking-tight uppercase">
+              Silicon <span className="text-teal-400">Topology Map</span>
+            </h2>
+          </div>
+          <p className="text-slate-400 font-mono text-xs uppercase tracking-wider">
+            Interactive 2D Prerequisite Graph & Skill Node Network
           </p>
         </div>
-        <div className="flex gap-4">
+
+        <div className="flex flex-wrap items-center gap-3">
           {viewMode === 'graph' && (
             <select
               value={selectedCompany || ''}
               onChange={(e) => setSelectedCompany(e.target.value || null)}
-              className="bg-matte-obsidian border border-ghost-trace rounded-lg px-4 py-1.5 font-mono text-[10px] uppercase text-text-sub outline-none focus:border-plasma-cyan/50"
+              className="bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 font-mono text-xs uppercase text-slate-200 outline-none focus:border-teal-400 cursor-pointer"
             >
-              <option value="">Full Topology</option>
+              <option value="">Full Silicon Topology</option>
               {Object.keys(COMPANY_SKILL_MAP).map(c => (
-                <option key={c} value={c}>{c.toUpperCase()} Requirements</option>
+                <option key={c} value={c}>{c.toUpperCase()} Hiring Filter</option>
               ))}
             </select>
           )}
-          <div className="flex p-1 bg-solder-mask border border-ghost-trace rounded-lg">
-            <button 
-              onClick={() => setViewMode('list')}
-              className={`px-4 py-1.5 font-mono text-[10px] uppercase tracking-widest rounded transition-all ${viewMode === 'list' ? 'bg-plasma-cyan text-matte-obsidian' : 'text-text-dim hover:text-text-sub'}`}
-            >
-              Intelligence
-            </button>
+
+          <div className="flex p-1 bg-slate-900 border border-slate-800 rounded-xl">
             <button 
               onClick={() => setViewMode('graph')}
-              className={`px-4 py-1.5 font-mono text-[10px] uppercase tracking-widest rounded transition-all ${viewMode === 'graph' ? 'bg-plasma-cyan text-matte-obsidian' : 'text-text-dim hover:text-text-sub'}`}
+              className={`px-4 py-2 font-mono text-xs uppercase tracking-wider font-bold rounded-lg transition-all cursor-pointer ${
+                viewMode === 'graph'
+                  ? 'bg-gradient-to-r from-teal-500 to-pink-500 text-white shadow-[0_0_15px_rgba(20,184,166,0.3)]'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
             >
-              Trajectory Graph
+              🕸️ 2D Interactive Graph
+            </button>
+            <button 
+              onClick={() => setViewMode('list')}
+              className={`px-4 py-2 font-mono text-xs uppercase tracking-wider font-bold rounded-lg transition-all cursor-pointer ${
+                viewMode === 'list'
+                  ? 'bg-gradient-to-r from-teal-500 to-pink-500 text-white shadow-[0_0_15px_rgba(20,184,166,0.3)]'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              📋 Recon Intelligence
             </button>
           </div>
         </div>

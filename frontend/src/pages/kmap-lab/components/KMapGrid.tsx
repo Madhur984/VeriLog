@@ -3,6 +3,7 @@ import React, { useMemo } from 'react';
 import { useStore } from '../store/useStore';
 import { getGrayCode, getKMapDimensions, getMintermIndex } from '../lib/utils/kmapUtils';
 import { simplify } from '../lib/solver/mintermSimplifier';
+import { InfoTooltip } from './InfoTooltip';
 
 export const KMapGrid: React.FC = () => {
   const { numVars, cellValues, setCellValue, minterms, dontCares, solType } = useStore();
@@ -107,10 +108,20 @@ export const KMapGrid: React.FC = () => {
 
   return (
     <div className="flex flex-col items-center animate-in fade-in zoom-in duration-700 w-full overflow-x-auto">
+      {/* Grid title & tooltip banner */}
+      <div className="flex items-center gap-2 mb-10 text-xs font-bold uppercase tracking-wider text-text-dim">
+        <span>Interactive Karnaugh Map</span>
+        <InfoTooltip
+          title="Karnaugh Map Grid"
+          description="Cells are arranged in 2D Gray code order so adjacent cells differ by exactly 1 bit. Click any cell to cycle values (0 → 1 → X Don't Care). Glowing overlays show calculated prime implicant groups."
+          side="top"
+        />
+      </div>
+
       {/* Extra horizontal padding on mobile to give room for row labels */}
-      <div className="relative mb-6 lg:mb-12 ml-10 lg:ml-0">
+      <div className="relative mb-6 lg:mb-12 ml-10 lg:ml-0 mt-2">
         {/* Labels: Columns */}
-        <div className="absolute -top-8 left-0 right-0 flex justify-around px-8">
+        <div className="absolute -top-7 left-0 right-0 flex justify-around px-8">
             {colGray.map(g => <span key={g} className="text-xs font-mono font-bold text-text-dim">{g}</span>)}
         </div>
         {/* Labels: Rows */}

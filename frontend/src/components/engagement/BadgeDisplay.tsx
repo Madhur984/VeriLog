@@ -46,7 +46,7 @@ export function BadgeDisplay() {
                         <span style={{
                             fontSize: '11px',
                             fontWeight: 600,
-                            fontFamily: "'IBM Plex Mono', monospace",
+                            fontFamily: "'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace",
                             letterSpacing: '0.06em',
                             color: unlocked ? '#00D4FF' : '#64748B',
                             textAlign: 'center',

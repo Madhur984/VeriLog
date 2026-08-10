@@ -284,7 +284,7 @@ export function Canvas({
             )}
 
             {/* Canvas title */}
-            <text x={CANVAS_W / 2} y={28} textAnchor="middle" fill="#0e3a57" fontSize={11} fontFamily="'Courier New', monospace" letterSpacing={3}>
+            <text x={CANVAS_W / 2} y={28} textAnchor="middle" fill="#0e3a57" fontSize={11} fontFamily="'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace" letterSpacing={3}>
                 ◈ CIRCUIT LAB CANVAS ◈
             </text>
 

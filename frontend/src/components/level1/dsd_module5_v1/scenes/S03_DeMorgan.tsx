@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { GitBranch, Sparkles, ArrowLeftRight } from 'lucide-react';
 import type { SceneProps } from '../types';
+import { TextbookEquation } from '../../../ui/TextbookEquation';
 
 export const S03_DeMorgan: React.FC<SceneProps> = ({ isActive, isDarkMode, mode }) => {
   const textColor = isDarkMode ? 'text-white' : 'text-slate-900';
@@ -10,12 +11,12 @@ export const S03_DeMorgan: React.FC<SceneProps> = ({ isActive, isDarkMode, mode 
   const accent = mode === 'nand' ? '#22d3ee' : '#fb923c';
 
   // Both laws shown - but the one most relevant to the current mode is highlighted
-  const primary = mode === 'nand'
-    ? "(A · B)′  =  A′ + B′"
-    : "(A + B)′  =  A′ · B′";
-  const secondary = mode === 'nand'
-    ? "(A + B)′  =  A′ · B′"
-    : "(A · B)′  =  A′ + B′";
+  const primaryMath = mode === 'nand'
+    ? "\\overline{A \\cdot B} = \\overline{A} + \\overline{B}"
+    : "\\overline{A + B} = \\overline{A} \\cdot \\overline{B}";
+  const secondaryMath = mode === 'nand'
+    ? "\\overline{A + B} = \\overline{A} \\cdot \\overline{B}"
+    : "\\overline{A \\cdot B} = \\overline{A} + \\overline{B}";
 
   const intro = mode === 'nand'
     ? 'Inverting the output of an AND is mathematically identical to inverting the inputs of an OR. This is the bridge that lets us build OR (and everything else) using only NAND.'
@@ -53,7 +54,9 @@ export const S03_DeMorgan: React.FC<SceneProps> = ({ isActive, isDarkMode, mode 
             <div className="font-mono text-[10px] uppercase tracking-widest mb-3" style={{ color: accent }}>
               Most useful for {mode.toUpperCase()}
             </div>
-            <div className={`font-mono text-2xl md:text-3xl font-black ${textColor}`}>{primary}</div>
+            <div className="py-2">
+              <TextbookEquation math={primaryMath} block={false} />
+            </div>
             <div className={`text-xs mt-3 ${subText}`}>
               {mode === 'nand'
                 ? 'Once you see this, OR is just NAND with inverted inputs.'
@@ -72,7 +75,9 @@ export const S03_DeMorgan: React.FC<SceneProps> = ({ isActive, isDarkMode, mode 
             <div className={`font-mono text-[10px] uppercase tracking-widest mb-3 ${subText}`}>
               Dual law (also true)
             </div>
-            <div className={`font-mono text-2xl md:text-3xl font-black ${textColor}`}>{secondary}</div>
+            <div className="py-2">
+              <TextbookEquation math={secondaryMath} block={false} />
+            </div>
             <div className={`text-xs mt-3 ${subText}`}>
               The same idea, swapping AND ↔ OR. Both laws are siblings.
             </div>

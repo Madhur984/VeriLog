@@ -72,10 +72,11 @@ export const S04_WaveParameters: React.FC<{ isDarkMode: boolean }> = ({ isDarkMo
         <div className={`rounded-[3rem] p-12 text-center border overflow-hidden ${isDarkMode ? 'bg-slate-950/20 border-slate-800' : 'bg-slate-50 border-slate-200'}`}>
           <div className="text-[10px] font-mono font-black uppercase tracking-[0.6em] mb-12 opacity-30">The Universal Formula</div>
           
-          <div className="inline-block p-10 rounded-3xl bg-slate-900 dark:bg-black/40 border-2 border-cyan-500/20 mb-12">
-            <p className="text-4xl font-mono tracking-widest text-cyan-500 md:text-6xl flex items-center justify-center gap-2">
-              x(t) = A cos(ωt + θ)
-            </p>
+          <div className="inline-block p-8 md:p-10 rounded-3xl bg-slate-900 dark:bg-black/40 border-2 border-cyan-500/20 mb-12 shadow-2xl">
+            <div className="text-[10px] font-mono font-bold uppercase tracking-[0.3em] text-cyan-500/70 mb-3">Continuous-Time Sinusoidal Model</div>
+            <div className="text-3xl md:text-5xl font-mono font-bold tracking-widest text-cyan-400">
+              x(t) = A · cos(ωt + θ) &nbsp;&nbsp;<span className="text-xl md:text-2xl text-slate-400 font-normal">where ω = 2πf = 2π / T</span>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left max-w-2xl mx-auto">

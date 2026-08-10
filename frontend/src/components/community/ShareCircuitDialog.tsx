@@ -62,7 +62,7 @@ export const ShareCircuitDialog = memo(({ circuitData, onClose }: ShareCircuitDi
             alignItems: 'center',
             justifyContent: 'center',
             zIndex: 1000,
-            fontFamily: "'IBM Plex Mono', monospace",
+            fontFamily: "'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace",
         }}>
             <div style={{
                 background: '#0d1117',
@@ -234,7 +234,7 @@ const inputStyle: React.CSSProperties = {
     background: 'rgba(255,255,255,0.04)',
     border: '1px solid rgba(0, 212, 255, 0.1)',
     color: '#e6edf3',
-    fontFamily: "'IBM Plex Mono', monospace",
+    fontFamily: "'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace",
     fontSize: 11,
     padding: '6px 10px',
     borderRadius: 4,
@@ -264,5 +264,5 @@ const addBtnStyle: React.CSSProperties = {
     padding: '2px 10px',
     borderRadius: 4,
     cursor: 'pointer',
-    fontFamily: "'IBM Plex Mono', monospace",
+    fontFamily: "'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace",
 };

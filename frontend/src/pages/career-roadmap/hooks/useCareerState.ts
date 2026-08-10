@@ -13,6 +13,7 @@ interface CareerState {
     country: string;
     expYears: number;
   };
+  completedNextActions: string[];
 }
 
 const DEFAULT_STATE: CareerState = {
@@ -27,13 +28,18 @@ const DEFAULT_STATE: CareerState = {
   fiscalPrefs: {
     country: 'India',
     expYears: 0
-  }
+  },
+  completedNextActions: []
 };
 
 export function useCareerState() {
   const [state, setState] = useState<CareerState>(() => {
     const saved = localStorage.getItem('bfb_career_v3_state');
-    return saved ? JSON.parse(saved) : DEFAULT_STATE;
+    try {
+      return saved ? { ...DEFAULT_STATE, ...JSON.parse(saved) } : DEFAULT_STATE;
+    } catch {
+      return DEFAULT_STATE;
+    }
   });
 
   useEffect(() => {
@@ -90,6 +96,15 @@ export function useCareerState() {
     }));
   };
 
+  const toggleNextAction = (actionId: string) => {
+    setState(prev => ({
+      ...prev,
+      completedNextActions: prev.completedNextActions.includes(actionId)
+        ? prev.completedNextActions.filter((id) => id !== actionId)
+        : [...prev.completedNextActions, actionId]
+    }));
+  };
+
   const generateShareLink = () => {
     const data = JSON.stringify(state);
     const encoded = btoa(data);
@@ -129,8 +144,8 @@ export function useCareerState() {
     recordSimulation,
     completeCalibration,
     setFiscalPrefs,
+    toggleNextAction,
     generateShareLink,
     loadFromShareLink
   };
 }
-

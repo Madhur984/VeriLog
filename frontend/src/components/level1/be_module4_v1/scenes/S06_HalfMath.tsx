@@ -93,10 +93,10 @@ export const S06_HalfMath: React.FC<Props> = ({ isActive, isDarkMode }) => {
           {/* Equations stacked */}
           <div className="space-y-3">
             {[
-              { n: '1', t: 'Definition', eq: 'V_dc = (1 / 2π) · ∫_0^{2π} v(θ) dθ' },
-              { n: '2', t: 'Only positive half contributes', eq: 'V_dc = (1 / 2π) · ∫_0^{π} V_m sin θ dθ' },
-              { n: '3', t: 'Integrate sin θ', eq: 'V_dc = V_m / π' },
-              { n: '4', t: 'Numeric', eq: 'V_dc ≈ 0.318 · V_m' },
+              { n: '1', t: 'Definition', eq: 'V_dc = (1 / 2π) · ∫₀²ᵖⁱ v(θ) dθ' },
+              { n: '2', t: 'Active Half-Cycle', eq: 'V_dc = (1 / 2π) · ∫₀ᵖⁱ V_m sin θ dθ' },
+              { n: '3', t: 'Exact Integral Result', eq: 'V_dc = V_m / π' },
+              { n: '4', t: 'Numerical Value', eq: 'V_dc ≈ 0.318 · V_m' },
             ].map((s, i) => (
               <motion.div
                 key={s.n}

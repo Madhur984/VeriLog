@@ -38,8 +38,8 @@ const T = {
     text: '#0F172A', muted: '#64748B', accent: '#0EA5E9',
     success: '#059669', warning: '#D97706', error: '#DC2626',
     keyword: '#7C3AED', string: '#059669', comment: '#64748B',
-    mono: "'IBM Plex Mono','Roboto Mono',monospace",
-    sans: "'Inter',system-ui,sans-serif",
+    mono: "'JetBrains Mono','IBM Plex Mono',ui-monospace,monospace",
+    sans: "'Space Grotesk',system-ui,sans-serif",
 } as const;
 
 const LEVELS: ExerciseLevel[] = ['combinational', 'sequential', 'fsm', 'advanced'];
@@ -148,14 +148,14 @@ export function VerilogPlayground() {
                 </button>
                 <div style={{ width: 1, height: 18, background: T.border }} />
                 <Cpu size={14} style={{ color: T.accent }} />
-                <span style={{ fontFamily: T.mono, fontSize: 9, letterSpacing: '0.2em', color: `${T.accent}CC`, textTransform: 'uppercase' }}>
+                <span style={{ fontFamily: T.mono, fontSize: 11, letterSpacing: '0.15em', color: `${T.accent}CC`, textTransform: 'uppercase' }}>
                     Verilog Playground
                 </span>
 
                 {/* Exercise title - hidden on very small screens, shown md+ */}
                 <div className="hidden sm:flex items-center gap-2" style={{ marginLeft: 8 }}>
                     <span style={{
-                        padding: '2px 8px', fontFamily: T.mono, fontSize: 7,
+                        padding: '2px 8px', fontFamily: T.mono, fontSize: 10,
                         border: `1px solid ${LEVEL_COLORS[selectedExercise.level]}40`,
                         color: LEVEL_COLORS[selectedExercise.level],
                         borderRadius: 1, letterSpacing: '0.1em', textTransform: 'uppercase',
@@ -181,10 +181,10 @@ export function VerilogPlayground() {
                         borderRadius: 2,
                     }}>
                         {errorCount > 0
-                            ? <><AlertTriangle size={11} style={{ color: T.error }} /><span style={{ fontFamily: T.mono, fontSize: 8, color: T.error }}>{errorCount}e</span></>
+                            ? <><AlertTriangle size={11} style={{ color: T.error }} /><span style={{ fontFamily: T.mono, fontSize: 10, color: T.error }}>{errorCount}e</span></>
                             : warnCount > 0
-                                ? <><AlertTriangle size={11} style={{ color: T.warning }} /><span style={{ fontFamily: T.mono, fontSize: 8, color: T.warning }}>{warnCount}w</span></>
-                                : <><CheckCircle2 size={11} style={{ color: T.success }} /><span style={{ fontFamily: T.mono, fontSize: 8, color: T.success }}>clean</span></>
+                                ? <><AlertTriangle size={11} style={{ color: T.warning }} /><span style={{ fontFamily: T.mono, fontSize: 10, color: T.warning }}>{warnCount}w</span></>
+                                : <><CheckCircle2 size={11} style={{ color: T.success }} /><span style={{ fontFamily: T.mono, fontSize: 10, color: T.success }}>clean</span></>
                         }
                     </div>
                     {/* Mobile toggle buttons */}
@@ -377,7 +377,7 @@ export function VerilogPlayground() {
                             theme="light"
                             options={{
                                 fontSize: 13,
-                                fontFamily: "'IBM Plex Mono','Roboto Mono',monospace",
+                                fontFamily: "'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace",
                                 lineNumbers: 'on',
                                 minimap: { enabled: false },
                                 scrollBeyondLastLine: false,

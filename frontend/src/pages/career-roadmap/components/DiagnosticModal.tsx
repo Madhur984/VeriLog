@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Check, HelpCircle } from 'lucide-react';
+import { AccessibleDialog } from './AccessibleDialog';
 
 interface DiagnosticModalProps {
   isOpen: boolean;
@@ -77,22 +78,12 @@ export const DiagnosticModal: React.FC<DiagnosticModalProps> = ({ isOpen, onClos
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          {/* Backdrop */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={onClose}
-            className="fixed inset-0 bg-[#06080A]/85 backdrop-blur-md"
-          />
-
-          {/* Modal Container */}
+        <AccessibleDialog onClose={onClose} labelledBy="diagnostic-title" description="Answer three questions to receive a recommended semiconductor career domain.">
           <motion.div
             initial={{ scale: 0.95, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.95, opacity: 0 }}
-            className="relative w-full max-w-lg bg-[#0F1216] border-2 border-slate-800 shadow-[0_0_50px_rgba(20,184,166,0.15)] p-6 sm:p-8 rounded-2xl z-10 text-white overflow-hidden"
+            className="w-full max-w-lg bg-[#0F1216] border-2 border-slate-800 shadow-[0_0_50px_rgba(20,184,166,0.15)] p-6 sm:p-8 rounded-2xl text-white overflow-hidden"
           >
             {/* Background Grid Pattern Decoration */}
             <div className="absolute right-0 top-0 h-40 w-40 bg-grid-pattern opacity-5 pointer-events-none" />
@@ -103,7 +94,7 @@ export const DiagnosticModal: React.FC<DiagnosticModalProps> = ({ isOpen, onClos
                   <HelpCircle size={18} />
                 </div>
                 <div>
-                  <h3 className="font-bold text-base text-slate-100 uppercase tracking-tight">Onboarding Diagnostic</h3>
+                  <h3 id="diagnostic-title" className="font-bold text-base text-slate-100 uppercase tracking-tight">Onboarding Diagnostic</h3>
                   <div className="flex items-center gap-1 mt-0.5">
                     {questions.map((q) => (
                       <span key={q.id} className={`h-1 w-6 rounded-full transition-colors ${q.id === step ? 'bg-teal-400' : q.id < step ? 'bg-teal-600' : 'bg-slate-800'}`} />
@@ -111,7 +102,7 @@ export const DiagnosticModal: React.FC<DiagnosticModalProps> = ({ isOpen, onClos
                   </div>
                 </div>
               </div>
-              <button onClick={onClose} className="p-1 text-slate-400 hover:text-white transition-colors cursor-pointer">
+              <button aria-label="Close diagnostic" onClick={onClose} className="min-h-11 min-w-11 p-1 text-slate-400 hover:text-white transition-colors cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-teal-400">
                 <X size={20} />
               </button>
             </div>
@@ -147,7 +138,7 @@ export const DiagnosticModal: React.FC<DiagnosticModalProps> = ({ isOpen, onClos
               <span>Step {step} of 3</span>
             </div>
           </motion.div>
-        </div>
+        </AccessibleDialog>
       )}
     </AnimatePresence>
   );

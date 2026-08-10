@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, Suspense } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { ArrowLeft, ArrowDown, Unlock, School, Flag, HelpCircle } from 'lucide-react';
 import { ThemeToggle } from '../../components/ThemeToggle';
 import { FloatingCommandBar } from '../../components/FloatingCommandBar';
@@ -7,14 +7,26 @@ import { FloatingCommandBar } from '../../components/FloatingCommandBar';
 // Core Sections & Data
 import { MarketPulse, CompaniesBoard, OpportunitiesBoard, StudentPathSection, AlumniPathwaysSection } from './sections/RoadmapSections';
 import { DomainGrid } from './sections/DomainGrid';
+import { DomainPlaybookSection } from './sections/DomainPlaybookSection';
+import { IntelHubSection } from './sections/IntelHubSection';
+import { SiliconStackExplorer } from './components/SiliconStackExplorer';
+import { SiliconResumeCompiler } from './components/SiliconResumeCompiler';
+import { GuidedRoadmapWorkflow } from './components/GuidedRoadmapWorkflow';
+import { PlatformComparisonSection } from './components/PlatformComparisonSection';
+import { IndustryNewsTicker } from './components/IndustryNewsTicker';
 import { SalaryLab } from './sections/SalaryLab';
+import { ECERoiFlexSection } from './sections/ECERoiFlexSection';
 import { SOURCES, AS_OF, marketStats, domains } from './data/careerData';
 import { useCareerState } from './hooks/useCareerState';
 import { getSession } from '../../lib/auth';
 import { motion } from 'framer-motion';
 import { reveal } from './sections/RoadmapUI';
 import { DiagnosticModal } from './components/DiagnosticModal';
-import { ColdOpenSplash } from './components/ColdOpenSplash';
+import { InternshipDirectoryModal } from './components/InternshipDirectoryModal';
+import { GovtInitiativesModal } from './components/GovtInitiativesModal';
+import { NextActionsPlan } from './components/NextActionsPlan';
+import { SiliconRunner2D } from './components/SiliconRunner2D';
+import { trackCareerEvent } from '../../lib/careerAnalytics';
 
 // Lazy loaded interactive telemetry components
 const SkillGapRadar = React.lazy(() =>
@@ -42,11 +54,17 @@ const TrajectorySimulator = React.lazy(() =>
 const NAV = [
   { id: 'market', label: 'Opportunity' },
   { id: 'domains', label: 'Domains' },
+  { id: 'domain-playbooks', label: 'Playbooks' },
   { id: 'salaries', label: 'Salaries' },
+  { id: 'intel-hub', label: 'Intel Hub' },
   { id: 'companies', label: 'Companies' },
   { id: 'opportunities', label: 'Openings' },
+  { id: 'substrate-explorer', label: 'Die Physics' },
+  { id: 'resume-compiler', label: 'ATS Compiler' },
   { id: 'path', label: 'The Path' },
 ];
+
+const ROADMAP_TABS = ['about', 'explore', 'skills', 'financials', 'portfolio'];
 
 const TabLoading: React.FC = () => (
   <div className="max-w-6xl mx-auto px-6 py-32 flex flex-col items-center justify-center space-y-4">
@@ -136,6 +154,7 @@ const PersonalizationFlow: React.FC<PersonalizationFlowProps> = ({ onSelectPrefs
                 <button
                   key={s.id}
                   onClick={() => handleSelectStage(s.id)}
+                  aria-pressed={active}
                   className={`w-full text-left p-3 border-2 transition-all font-mono flex flex-col justify-center cursor-pointer ${
                     active
                       ? 'border-[#14B8A6] bg-[#14B8A6]/5 text-text-main'
@@ -162,6 +181,7 @@ const PersonalizationFlow: React.FC<PersonalizationFlowProps> = ({ onSelectPrefs
                 <button
                   key={d.id}
                   onClick={() => handleSelectDomain(d.id)}
+                  aria-pressed={active}
                   className={`w-full text-left p-3 border-2 transition-all font-mono flex flex-col justify-center cursor-pointer ${
                     active
                       ? 'border-[#14B8A6] bg-[#14B8A6]/5 text-text-main'
@@ -312,7 +332,7 @@ const CustomRoadmapHero: React.FC<CustomRoadmapHeroProps> = ({ prefs, onSelectPr
 );
 
 /* ── Beginner Skills View ────────────────────────────────────────────── */
-const BeginnerSkillsView: React.FC<{ domain: string }> = ({ domain }) => {
+const BeginnerSkillsView: React.FC<{ domain: string; onSwitchToTelemetry?: () => void }> = ({ domain, onSwitchToTelemetry }) => {
   const domainName = domains.find(d => d.id === domain)?.name || "ASIC/VLSI";
   return (
     <div className="max-w-4xl mx-auto px-6 py-12 bg-bg-elev border-2 border-edge shadow-brutal space-y-8 mt-10">
@@ -355,8 +375,19 @@ const BeginnerSkillsView: React.FC<{ domain: string }> = ({ domain }) => {
         </div>
       </div>
 
-      <div className="p-4 bg-amber-500/5 border border-amber-500/20 rounded-lg text-center text-xs text-amber-500 font-mono">
-        💡 Advanced 3D Interactive Skill Graph and Quantization Radar are hidden. Toggle "Telemetry Mode" in the header to view them.
+      <div className="p-5 bg-[#0B0E14] border border-teal-500/30 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="text-xs text-slate-300 font-mono">
+          <span className="text-teal-400 font-bold block mb-0.5">🕸️ FULL SILICON TOPOLOGY GRAPH AVAILABLE</span>
+          Want to explore the complete interactive 2D node graph and quantization radar?
+        </div>
+        {onSwitchToTelemetry && (
+          <button
+            onClick={onSwitchToTelemetry}
+            className="px-4 py-2 bg-gradient-to-r from-teal-500 to-pink-500 text-white font-mono text-xs font-bold rounded-xl shadow-[0_0_15px_rgba(20,184,166,0.3)] hover:scale-105 transition-all cursor-pointer shrink-0 uppercase"
+          >
+            Switch to Telemetry Mode 🚀
+          </button>
+        )}
       </div>
     </div>
   );
@@ -474,18 +505,28 @@ const BeginnerPortfolioView: React.FC = () => {
 /* ── Main Page Shell ──────────────────────────────────────────────────── */
 const CareerRoadmapPage: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const careerState = useCareerState();
-  const [activeTab, setActiveTab] = useState<string>('explore');
+  const [activeTab, setActiveTab] = useState<string>(() => {
+    const requestedTab = new URLSearchParams(location.search).get('tab');
+    return requestedTab && ROADMAP_TABS.includes(requestedTab) ? requestedTab : 'explore';
+  });
   const [viewMode, setViewMode] = useState<'telemetry' | 'beginner'>('telemetry');
   const [isDiagnosticOpen, setIsDiagnosticOpen] = useState<boolean>(false);
-  const [showSplash, setShowSplash] = useState(false);
+  const [isInternshipsOpen, setIsInternshipsOpen] = useState(false);
+  const [isGovtOpen, setIsGovtOpen] = useState(false);
+  const [isGameOpen, setIsGameOpen] = useState(false);
 
   useEffect(() => {
-    const played = sessionStorage.getItem('bfb_cold_open_played');
-    if (!played) {
-      setShowSplash(true);
-    }
-  }, []);
+    const requestedTab = new URLSearchParams(location.search).get('tab');
+    if (requestedTab && ROADMAP_TABS.includes(requestedTab)) setActiveTab(requestedTab);
+  }, [location.search]);
+
+  useEffect(() => {
+    if (location.hash !== '#sim') return;
+    const timer = window.setTimeout(() => document.getElementById('sim')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 350);
+    return () => window.clearTimeout(timer);
+  }, [activeTab, location.hash]);
 
   const handleFocusSkillNode = (nodeId: string) => {
     setActiveTab('skills');
@@ -503,10 +544,21 @@ const CareerRoadmapPage: React.FC = () => {
     }
   });
 
+  const [workflowStage, setWorkflowStage] = useState<number>(1);
+
+  const handleSelectWorkflowStage = (stageId: number, sectionId: string) => {
+    setWorkflowStage(stageId);
+    const el = document.getElementById(sectionId);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   const handleSelectPrefs = (prefs: { stage: string; domain: string }) => {
     setCareerPrefs(prefs);
     try {
       localStorage.setItem('bfb_career_prefs', JSON.stringify(prefs));
+      if (prefs.stage && prefs.domain) trackCareerEvent('roadmap_personalized', { stage: prefs.stage, domain: prefs.domain });
     } catch (e) {
       console.error(e);
     }
@@ -555,16 +607,15 @@ const CareerRoadmapPage: React.FC = () => {
     }
   };
 
+  const changeTab = (tab: string) => {
+    setActiveTab(tab);
+    navigate(`/career-roadmap?tab=${tab}`, { replace: true });
+    trackCareerEvent('roadmap_tab_opened', { tab });
+    window.setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 0);
+  };
+
   return (
-    <div className="min-h-screen bg-bg-void text-text-main pb-28">
-      {showSplash && (
-        <ColdOpenSplash
-          onComplete={() => {
-            sessionStorage.setItem('bfb_cold_open_played', 'true');
-            setShowSplash(false);
-          }}
-        />
-      )}
+    <div className="min-h-screen bg-bg-void text-text-main pb-36">
       {/* Sticky Top Navigation Shell */}
       <div className="sticky top-0 z-30 bg-bg-void border-b-2 border-edge">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center gap-3">
@@ -593,7 +644,20 @@ const CareerRoadmapPage: React.FC = () => {
 
           <div className="flex items-center gap-3 shrink-0">
             <button
+              onClick={() => {
+                trackCareerEvent('silicon_runner_game_opened');
+                setIsGameOpen(true);
+              }}
+              className="brutal-btn h-9 px-3 flex items-center gap-1.5 bg-gradient-to-r from-teal-500/20 to-pink-500/20 border-2 border-teal-400 text-teal-300 font-mono text-[11px] uppercase tracking-wider font-bold cursor-pointer hover:scale-105 transition-all shadow-[0_0_12px_rgba(20,184,166,0.3)]"
+              title="Launch 2D Silicon Runner Arcade Mini-Game"
+            >
+              <span>🎮</span>
+              <span className="hidden sm:inline">2D Fab Runner</span>
+            </button>
+            <button
               onClick={() => setViewMode(viewMode === 'telemetry' ? 'beginner' : 'telemetry')}
+              aria-pressed={viewMode === 'telemetry'}
+              aria-label={`Switch to ${viewMode === 'telemetry' ? 'beginner' : 'advanced'} view`}
               className="brutal-btn h-9 px-3 flex items-center gap-1.5 bg-bg-elev font-mono text-[11px] uppercase tracking-wider text-text-main font-bold cursor-pointer border-2 border-edge"
               title="Toggle between simplified content and advanced developer charts"
             >
@@ -607,7 +671,7 @@ const CareerRoadmapPage: React.FC = () => {
       </div>
 
       {/* Floating Tab Navigation Trigger */}
-      <FloatingCommandBar activeTab={activeTab} onTabChange={setActiveTab} />
+      <FloatingCommandBar activeTab={activeTab} onTabChange={changeTab} />
 
       {/* Main Tab Views */}
       <main className="relative">
@@ -616,7 +680,21 @@ const CareerRoadmapPage: React.FC = () => {
         {activeTab === 'explore' && (
           <div className="space-y-4">
             <CustomRoadmapHero prefs={careerPrefs} onSelectPrefs={handleSelectPrefs} />
+            <NextActionsPlan
+              prefs={careerPrefs}
+              completedActionIds={careerState.completedNextActions}
+              onOpenSkills={() => { trackCareerEvent('recommended_next_step_opened', { action: 'learn' }); changeTab('skills'); }}
+              onOpenPortfolio={() => { trackCareerEvent('recommended_next_step_opened', { action: 'build' }); changeTab('portfolio'); }}
+              onOpenOpportunities={() => { trackCareerEvent('recommended_next_step_opened', { action: 'target' }); trackCareerEvent('internship_directory_opened'); setIsInternshipsOpen(true); }}
+              onToggleComplete={(actionId) => { trackCareerEvent('recommended_step_completed', { action: actionId }); careerState.toggleNextAction(actionId); }}
+            />
+            <IndustryNewsTicker />
             
+            <GuidedRoadmapWorkflow
+              currentStageId={workflowStage}
+              onSelectStage={handleSelectWorkflowStage}
+            />
+
             {/* Interactive Diagnostic Matcher CTA */}
             <div className="max-w-6xl mx-auto px-4 sm:px-6 mb-6">
               <div className="bg-bg-elev border-2 border-edge shadow-brutal p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -633,11 +711,51 @@ const CareerRoadmapPage: React.FC = () => {
               </div>
             </div>
 
+            {/* 2D Silicon Runner Arcade Mini-Game CTA Banner */}
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 mb-12">
+              <div className="p-6 bg-gradient-to-r from-[#0F172A] via-[#1E1B4B] to-[#31103F] border-2 border-teal-400 rounded-3xl shadow-[0_0_30px_rgba(20,184,166,0.25)] flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
+                <div className="space-y-2 text-left z-10">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 bg-pink-500/20 border border-pink-500/40 rounded-full text-pink-400 font-mono text-[10px] uppercase font-bold tracking-widest">
+                    <span>🎮 8-BIT HARDWARE ARCADE</span>
+                  </div>
+                  <h3 className="text-2xl sm:text-3xl font-mono font-black text-white tracking-tight uppercase">
+                    SILICON RUNNER <span className="text-teal-400">2D TAPEOUT</span>
+                  </h3>
+                  <p className="text-slate-300 font-mono text-xs max-w-xl leading-relaxed">
+                    Test your instincts! Jump over clock skew glitches, blast setup/hold timing bugs, collect transistor coins, and earn bonus Career XP!
+                  </p>
+                </div>
+
+                <button
+                  onClick={() => {
+                    trackCareerEvent('silicon_runner_banner_clicked');
+                    setIsGameOpen(true);
+                  }}
+                  className="px-8 py-4 bg-gradient-to-r from-teal-500 to-pink-500 text-white font-mono text-xs font-black rounded-2xl shadow-[0_0_20px_rgba(20,184,166,0.4)] hover:scale-105 transition-all cursor-pointer shrink-0 uppercase tracking-wider flex items-center gap-2 border border-white/20 z-10"
+                >
+                  <span>🎮</span> PLAY 2D TAPEOUT RUNNER
+                </button>
+              </div>
+            </div>
+
             <MarketPulse />
+            <PlatformComparisonSection />
             <DomainGrid highlightedDomainId={careerPrefs?.domain || null} onFocusSkillNode={handleFocusSkillNode} />
+            <DomainPlaybookSection initialDomainId={careerPrefs?.domain || 'vlsi'} />
+            <ECERoiFlexSection />
             <SalaryLab onFocusSkillNode={handleFocusSkillNode} />
+            <IntelHubSection
+              onOpenInternships={() => { trackCareerEvent('internship_directory_opened'); setIsInternshipsOpen(true); }}
+              onOpenGovt={() => { trackCareerEvent('government_initiatives_opened'); setIsGovtOpen(true); }}
+              onOpenSimulator={() => {
+                trackCareerEvent('trajectory_simulator_opened');
+                navigate('/career-roadmap?tab=skills#sim');
+              }}
+            />
             <CompaniesBoard />
             <OpportunitiesBoard />
+            <SiliconStackExplorer />
+            <SiliconResumeCompiler />
             <StudentPathSection />
             <AlumniPathwaysSection />
           </div>
@@ -645,7 +763,7 @@ const CareerRoadmapPage: React.FC = () => {
 
         {activeTab === 'skills' && (
           viewMode === 'beginner' ? (
-            <BeginnerSkillsView domain={careerPrefs?.domain || 'vlsi'} />
+            <BeginnerSkillsView domain={careerPrefs?.domain || 'vlsi'} onSwitchToTelemetry={() => setViewMode('telemetry')} />
           ) : (
             <div className="space-y-12">
               <Suspense fallback={<TabLoading />}>
@@ -673,15 +791,7 @@ const CareerRoadmapPage: React.FC = () => {
                   setFocusedNodeId={careerState.setFocusedNodeId}
                   nodeVisitHistory={careerState.nodeVisitHistory}
                 />
-                <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
-                  <div className="space-y-2 mb-8">
-                    <h2 className="text-4xl font-mono font-bold text-text-main tracking-tighter uppercase">
-                      Path <span className="text-[#14B8A6]">Simulator</span>
-                    </h2>
-                    <p className="text-text-dim font-mono text-xs uppercase tracking-widest">
-                      Simulate your ECE career outcome based on interactive node choices
-                    </p>
-                  </div>
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
                   <TrajectorySimulator onRecordSimulation={careerState.recordSimulation} />
                 </div>
               </Suspense>
@@ -770,6 +880,9 @@ const CareerRoadmapPage: React.FC = () => {
           jump('domains');
         }}
       />
+      {isInternshipsOpen && <InternshipDirectoryModal onClose={() => setIsInternshipsOpen(false)} />}
+      {isGovtOpen && <GovtInitiativesModal onClose={() => setIsGovtOpen(false)} />}
+      {isGameOpen && <SiliconRunner2D onClose={() => setIsGameOpen(false)} />}
     </div>
   );
 };

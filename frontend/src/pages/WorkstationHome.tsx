@@ -12,7 +12,7 @@ import { getModuleHistory, getLastModule, MODULE_LABELS } from '../lib/moduleHis
 import {
   Play, ArrowRight, ArrowUpRight, ChevronDown, Check, Command, Settings,
   Wrench, Grid3x3, Cpu, Compass, Library, Map, BookOpen,
-  Binary, Zap, Boxes, type LucideIcon,
+  Binary, Zap, Boxes, ClipboardList, type LucideIcon,
 } from 'lucide-react';
 
 /* ── Background: single-tone grid + slow "electric current" sweeps (GPU transform) ── */
@@ -71,7 +71,7 @@ const DigitalClock: React.FC<{ isLight: boolean }> = ({ isLight }) => {
   const track = isLight ? '#C9BEEA' : 'rgba(255,255,255,0.08)';
   return (
     <div className="flex flex-col leading-none" aria-label={`Local time ${pad(h)}:${pad(m)}`}>
-      <span className="font-mono text-[8px] font-bold uppercase tracking-[0.2em]" style={{ color: faint }}>{dateStr}</span>
+      <span className="font-mono text-[10px] font-bold uppercase tracking-[0.16em]" style={{ color: faint }}>{dateStr}</span>
       <span className="mt-1 font-mono text-[15px] font-extrabold tabular-nums tracking-tight" style={{ color: ink }}>
         {pad(h)}<span style={{ color: accent }}>:</span>{pad(m)}<span style={{ color: accent }}>:{pad(s)}</span>
       </span>
@@ -256,6 +256,7 @@ export const WorkstationHome: React.FC = () => {
     { label: 'Workbench', icon: Wrench, to: '/workbench' },
     { label: 'K-Map Lab', icon: Grid3x3, to: '/kmap-lab' },
     { label: 'Verilog Judge', icon: Cpu, to: '/verilog-playground' },
+    { label: 'Interview Prep', icon: ClipboardList, to: '/interview-prep' },
   ];
   const LIBRARY = [
     { label: 'Analogy Library', icon: BookOpen, to: '/analogies' },
