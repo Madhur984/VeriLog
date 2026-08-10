@@ -6,7 +6,9 @@ export type CareerEventName =
   | 'internship_directory_opened'
   | 'internship_apply_clicked'
   | 'government_initiatives_opened'
-  | 'trajectory_simulator_opened';
+  | 'trajectory_simulator_opened'
+  | 'silicon_runner_game_opened'
+  | 'silicon_runner_banner_clicked';
 
 export interface CareerAnalyticsEvent {
   name: CareerEventName;
