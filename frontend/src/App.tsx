@@ -4,6 +4,7 @@ import { TransitionProvider } from './hooks/useTransitionController';
 import { TransitionOverlay } from './components/TransitionOverlay';
 import { migrateStorage } from './utils/storageMigration';
 import { RequireAuth } from './components/RequireAuth';
+import { LandingOrPortal } from './components/LandingOrPortal';
 import { ModuleGate } from './components/ModuleGate';
 import { RouteFallback } from './components/RouteFallback';
 import { AppErrorBoundary } from './components/AppErrorBoundary';
@@ -17,6 +18,7 @@ import { ConsentBanner } from './components/ConsentBanner';
 
 // Floating mascot (bottom-right, site-wide) — lazy so Rive's runtime stays off first paint
 const MascotWidget = lazy(() => loadChunk(() => import('./components/MascotWidget')));
+const FeedbackBubble = lazy(() => loadChunk(() => import('./components/FeedbackBubble')));
 
 /**
  * Every route below is code-split via React.lazy, so the browser only downloads
@@ -98,6 +100,22 @@ const DsdModule24Root = named(() => import('./components/level1/dsd_module24_v1/
 const DsdModule25Root = named(() => import('./components/level1/dsd_module25_v1/DsdModule25Root'), 'DsdModule25Root');
 const DsdModule26Root = named(() => import('./components/level1/dsd_module26_v1/DsdModule26Root'), 'DsdModule26Root');
 const DsdModule27Root = named(() => import('./components/level1/dsd_module27_v1/DsdModule27Root'), 'DsdModule27Root');
+// Sequential Logic track (dsd/28+)
+const DsdModule28Root = named(() => import('./components/level1/dsd_module28_v1/DsdModule28Root'), 'DsdModule28Root');
+const DsdModule29Root = named(() => import('./components/level1/dsd_module29_v1/DsdModule29Root'), 'DsdModule29Root');
+const DsdModule30Root = named(() => import('./components/level1/dsd_module30_v1/DsdModule30Root'), 'DsdModule30Root');
+const DsdModule31Root = named(() => import('./components/level1/dsd_module31_v1/DsdModule31Root'), 'DsdModule31Root');
+const DsdModule32Root = named(() => import('./components/level1/dsd_module32_v1/DsdModule32Root'), 'DsdModule32Root');
+const DsdModule33Root = named(() => import('./components/level1/dsd_module33_v1/DsdModule33Root'), 'DsdModule33Root');
+const DsdModule34Root = named(() => import('./components/level1/dsd_module34_v1/DsdModule34Root'), 'DsdModule34Root');
+const DsdModule35Root = named(() => import('./components/level1/dsd_module35_v1/DsdModule35Root'), 'DsdModule35Root');
+const DsdModule36Root = named(() => import('./components/level1/dsd_module36_v1/DsdModule36Root'), 'DsdModule36Root');
+const DsdModule37Root = named(() => import('./components/level1/dsd_module37_v1/DsdModule37Root'), 'DsdModule37Root');
+const DsdModule38Root = named(() => import('./components/level1/dsd_module38_v1/DsdModule38Root'), 'DsdModule38Root');
+const DsdModule39Root = named(() => import('./components/level1/dsd_module39_v1/DsdModule39Root'), 'DsdModule39Root');
+const DsdModule40Root = named(() => import('./components/level1/dsd_module40_v1/DsdModule40Root'), 'DsdModule40Root');
+const DsdModule41Root = named(() => import('./components/level1/dsd_module41_v1/DsdModule41Root'), 'DsdModule41Root');
+const DsdModule42Root = named(() => import('./components/level1/dsd_module42_v1/DsdModule42Root'), 'DsdModule42Root');
 const BeModule1Root = named(() => import('./components/level1/be_module1_v1/BeModule1Root'), 'BeModule1Root');
 const BeModule2Root = named(() => import('./components/level1/be_module2_v1/BeModule2Root'), 'BeModule2Root');
 const BeModule3Root = named(() => import('./components/level1/be_module3_v1/BeModule3Root'), 'BeModule3Root');
@@ -123,7 +141,9 @@ function App() {
       <Suspense fallback={<RouteFallback />}>
         <Routes>
           {/* Landing / Auth - public */}
-          <Route path="/" element={<LandingPage />} />
+          {/* Returning visitors (real login or guest) skip the marketing page
+              and go straight to the portal; "/?stay=1" still shows it. */}
+          <Route path="/" element={<LandingOrPortal><LandingPage /></LandingOrPortal>} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/verify-email" element={<VerifyEmailPage />} />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
@@ -210,6 +230,36 @@ function App() {
             <Route path="/dsd/26/:chapter" element={<DsdModule26Root />} />
             <Route path="/dsd/27" element={<DsdModule27Root />} />
             <Route path="/dsd/27/:chapter" element={<DsdModule27Root />} />
+            <Route path="/dsd/28" element={<DsdModule28Root />} />
+            <Route path="/dsd/28/:chapter" element={<DsdModule28Root />} />
+            <Route path="/dsd/29" element={<DsdModule29Root />} />
+            <Route path="/dsd/29/:chapter" element={<DsdModule29Root />} />
+            <Route path="/dsd/30" element={<DsdModule30Root />} />
+            <Route path="/dsd/30/:chapter" element={<DsdModule30Root />} />
+            <Route path="/dsd/31" element={<DsdModule31Root />} />
+            <Route path="/dsd/31/:chapter" element={<DsdModule31Root />} />
+            <Route path="/dsd/32" element={<DsdModule32Root />} />
+            <Route path="/dsd/32/:chapter" element={<DsdModule32Root />} />
+            <Route path="/dsd/33" element={<DsdModule33Root />} />
+            <Route path="/dsd/33/:chapter" element={<DsdModule33Root />} />
+            <Route path="/dsd/34" element={<DsdModule34Root />} />
+            <Route path="/dsd/34/:chapter" element={<DsdModule34Root />} />
+            <Route path="/dsd/35" element={<DsdModule35Root />} />
+            <Route path="/dsd/35/:chapter" element={<DsdModule35Root />} />
+            <Route path="/dsd/36" element={<DsdModule36Root />} />
+            <Route path="/dsd/36/:chapter" element={<DsdModule36Root />} />
+            <Route path="/dsd/37" element={<DsdModule37Root />} />
+            <Route path="/dsd/37/:chapter" element={<DsdModule37Root />} />
+            <Route path="/dsd/38" element={<DsdModule38Root />} />
+            <Route path="/dsd/38/:chapter" element={<DsdModule38Root />} />
+            <Route path="/dsd/39" element={<DsdModule39Root />} />
+            <Route path="/dsd/39/:chapter" element={<DsdModule39Root />} />
+            <Route path="/dsd/40" element={<DsdModule40Root />} />
+            <Route path="/dsd/40/:chapter" element={<DsdModule40Root />} />
+            <Route path="/dsd/41" element={<DsdModule41Root />} />
+            <Route path="/dsd/41/:chapter" element={<DsdModule41Root />} />
+            <Route path="/dsd/42" element={<DsdModule42Root />} />
+            <Route path="/dsd/42/:chapter" element={<DsdModule42Root />} />
             <Route path="/basic-electronics/1" element={<BeModule1Root />} />
             <Route path="/basic-electronics/1/:chapter" element={<BeModule1Root />} />
             <Route path="/basic-electronics/2" element={<BeModule2Root />} />
@@ -261,6 +311,10 @@ function App() {
       {/* Floating VoltMonkey mascot, bottom-right on every page (renders nothing until /mascot.riv exists) */}
       <Suspense fallback={null}>
         <MascotWidget />
+      </Suspense>
+      {/* Floating feedback bubble, bottom-left on every page — quiet after one tease */}
+      <Suspense fallback={null}>
+        <FeedbackBubble />
       </Suspense>
       {/* Cookie-consent banner (Google Consent Mode v2) — shows once until answered */}
       <ConsentBanner />

@@ -575,7 +575,20 @@ const RootGem: React.FC<{ node: RootNode; index: number; onClick: () => void }> 
 // ─── L6 PATH HIERARCHY ──────────────────────────────────────────────────────────
 interface SubmoduleOption { id: string; label: string; route: string }
 interface ModuleOption    { id: string; label: string; subtitle: string; route: string; submodules: SubmoduleOption[] }
-interface PathOption      { id: string; label: string; subtitle: string; color: string; modules: ModuleOption[] }
+/**
+ * A chapter inside a track, matched by the module's trailing number (dsd28 -> 28).
+ * Tracks long enough to be daunting as one list (DSD is 42 modules) declare these
+ * so the learner picks a chapter first and only ever sees ~6-21 modules at once.
+ */
+interface PathGroup       { id: string; label: string; subtitle: string; blurb: string; from: number; to: number }
+interface PathOption      { id: string; label: string; subtitle: string; color: string; modules: ModuleOption[]; groups?: PathGroup[] }
+
+/**
+ * Lesson number from a module's route, e.g. '/dsd/28/cover' -> 28. Read from
+ * the ROUTE, not the id: the ids grew organically ('m3', 'm12rca', 'dsd28')
+ * and their digits do not track the lesson number.
+ */
+const moduleNumber = (route: string): number => Number(route.match(/\/(\d+)(?:\/|$)/)?.[1] ?? 0);
 
 const L6_PATHS: PathOption[] = [
   {
@@ -758,6 +771,25 @@ const L6_PATHS: PathOption[] = [
   },
   {
     id: 'dsd', label: 'DSD', subtitle: 'BOOLEAN · K-MAPS', color: '#34d399',
+    // 42 modules is too long to scan as one list, so DSD opens on three chapter
+    // cards and only reveals the modules inside the one you pick.
+    groups: [
+      {
+        id: 'basic', label: 'Basic', subtitle: 'FOUNDATIONS',
+        blurb: 'Binary, Boolean algebra, K-maps and gate-level realisation — the language every circuit below is written in.',
+        from: 1, to: 6,
+      },
+      {
+        id: 'combinational', label: 'Combinational', subtitle: 'NO MEMORY',
+        blurb: 'Adders, subtractors, complements, MUX/DEMUX, decoders and encoders — outputs decided only by the inputs right now.',
+        from: 7, to: 27,
+      },
+      {
+        id: 'sequential', label: 'Sequential', subtitle: 'WITH MEMORY',
+        blurb: 'Latches, flip-flops, registers, counters and state machines — circuits that remember what happened before.',
+        from: 28, to: 42,
+      },
+    ],
     modules: [
       {
         id: 'm3', label: 'Binary & Logic', subtitle: 'L3 · BOOLEAN LOGIC', route: '/dsd/1/cover',
@@ -1185,6 +1217,270 @@ const L6_PATHS: PathOption[] = [
           { id: 'm27s13', label: 'Recap & Sources', route: '/dsd/27/recap' },
         ],
       },
+      {
+        id: 'dsd28', label: 'Sequential Logic Fundamentals', subtitle: 'L28 · MEMORY · STATE', route: '/dsd/28/cover',
+        submodules: [
+          { id: 'm28s0', label: 'What Sequential Means', route: '/dsd/28/cover' },
+          { id: 'm28s1', label: 'Sequential Logic - Video', route: '/dsd/28/video' },
+          { id: 'm28s2', label: 'Combinational vs Sequential', route: '/dsd/28/facts' },
+          { id: 'm28s3', label: 'The Feedback Loop = Memory', route: '/dsd/28/feedback' },
+          { id: 'm28s4', label: 'State Persists', route: '/dsd/28/state' },
+          { id: 'm28s5', label: 'Latch vs Flip-Flop', route: '/dsd/28/latchvsff' },
+          { id: 'm28s6', label: 'Synchronous vs Asynchronous', route: '/dsd/28/syncvsasync' },
+          { id: 'm28s7', label: 'The Push-Button Machine', route: '/dsd/28/analogy' },
+          { id: 'm28s8', label: 'Build It For Real', route: '/dsd/28/build' },
+          { id: 'm28s9', label: 'Flashcards', route: '/dsd/28/flashcards' },
+          { id: 'm28s10', label: 'Quiz', route: '/dsd/28/quiz' },
+          { id: 'm28s11', label: 'Recap', route: '/dsd/28/recap' },
+        ],
+      },
+      {
+        id: 'dsd29', label: 'Latches', subtitle: 'L29 · LATCH · SR/D', route: '/dsd/29/cover',
+        submodules: [
+          { id: 'm29s0', label: 'The First Memory Cell', route: '/dsd/29/cover' },
+          { id: 'm29s1', label: 'Latches - Video', route: '/dsd/29/video' },
+          { id: 'm29s2', label: 'Memory From Cross-Coupling', route: '/dsd/29/facts' },
+          { id: 'm29s3', label: 'The NOR SR Latch', route: '/dsd/29/srnor' },
+          { id: 'm29s4', label: 'The NAND SR Latch', route: '/dsd/29/srnand' },
+          { id: 'm29s5', label: 'The Forbidden State', route: '/dsd/29/forbidden' },
+          { id: 'm29s6', label: 'The Gated SR Latch', route: '/dsd/29/gatedsr' },
+          { id: 'm29s7', label: 'The Gated D Latch', route: '/dsd/29/dlatch' },
+          { id: 'm29s8', label: 'Level-Sensitive Transparency', route: '/dsd/29/transparency' },
+          { id: 'm29s9', label: 'The Doorman', route: '/dsd/29/analogy' },
+          { id: 'm29s10', label: 'Build It For Real', route: '/dsd/29/build' },
+          { id: 'm29s11', label: 'Flashcards', route: '/dsd/29/flashcards' },
+          { id: 'm29s12', label: 'Quiz', route: '/dsd/29/quiz' },
+          { id: 'm29s13', label: 'Recap', route: '/dsd/29/recap' },
+        ],
+      },
+      {
+        id: 'dsd30', label: 'Flip-Flops', subtitle: 'L30 · EDGE · SR/JK/D/T', route: '/dsd/30/cover',
+        submodules: [
+          { id: 'm30s0', label: 'The Edge-Triggered Cell', route: '/dsd/30/cover' },
+          { id: 'm30s1', label: 'Flip-Flops - Video', route: '/dsd/30/video' },
+          { id: 'm30s2', label: 'Edge vs Level', route: '/dsd/30/facts' },
+          { id: 'm30s3', label: 'Edges & Master-Slave', route: '/dsd/30/edge' },
+          { id: 'm30s4', label: 'The SR Flip-Flop', route: '/dsd/30/sr' },
+          { id: 'm30s5', label: 'The JK Flip-Flop', route: '/dsd/30/jk' },
+          { id: 'm30s6', label: 'The D Flip-Flop', route: '/dsd/30/d' },
+          { id: 'm30s7', label: 'The T Flip-Flop', route: '/dsd/30/t' },
+          { id: 'm30s8', label: 'Where Each Is Used', route: '/dsd/30/apps' },
+          { id: 'm30s9', label: 'The Turnstile', route: '/dsd/30/analogy' },
+          { id: 'm30s10', label: 'Build It For Real', route: '/dsd/30/build' },
+          { id: 'm30s11', label: 'Flashcards', route: '/dsd/30/flashcards' },
+          { id: 'm30s12', label: 'Quiz', route: '/dsd/30/quiz' },
+          { id: 'm30s13', label: 'Recap', route: '/dsd/30/recap' },
+        ],
+      },
+      {
+        id: 'dsd31', label: 'Timing & Race-Around', subtitle: 'L31 · TIMING · RACE', route: '/dsd/31/cover',
+        submodules: [
+          { id: 'm31s0', label: 'The Capture Window', route: '/dsd/31/cover' },
+          { id: 'm31s1', label: 'Timing & Race-Around - Video', route: '/dsd/31/video' },
+          { id: 'm31s2', label: 'Setup, Hold, Clk-to-Q', route: '/dsd/31/facts' },
+          { id: 'm31s3', label: 'Setup/Hold Violations', route: '/dsd/31/setuphold' },
+          { id: 'm31s4', label: 'Clock Period & fmax', route: '/dsd/31/fmax' },
+          { id: 'm31s5', label: 'The Race-Around Condition', route: '/dsd/31/racearound' },
+          { id: 'm31s6', label: 'The Master-Slave Fix', route: '/dsd/31/masterslave' },
+          { id: 'm31s7', label: 'The Relay Baton', route: '/dsd/31/analogy' },
+          { id: 'm31s8', label: 'Build It For Real', route: '/dsd/31/build' },
+          { id: 'm31s9', label: 'Flashcards', route: '/dsd/31/flashcards' },
+          { id: 'm31s10', label: 'Quiz', route: '/dsd/31/quiz' },
+          { id: 'm31s11', label: 'Recap', route: '/dsd/31/recap' },
+        ],
+      },
+      {
+        id: 'dsd32', label: 'Flip-Flop Representations', subtitle: 'L32 · TABLES · STATE', route: '/dsd/32/cover',
+        submodules: [
+          { id: 'm32s0', label: 'Three Views Of One FF', route: '/dsd/32/cover' },
+          { id: 'm32s1', label: 'Representations - Video', route: '/dsd/32/video' },
+          { id: 'm32s2', label: 'The Three Dialects', route: '/dsd/32/facts' },
+          { id: 'm32s3', label: 'Characteristic Table & Equation', route: '/dsd/32/characteristic' },
+          { id: 'm32s4', label: 'Excitation Table', route: '/dsd/32/excitation' },
+          { id: 'm32s5', label: 'Analysis (Forward)', route: '/dsd/32/analysis' },
+          { id: 'm32s6', label: 'Synthesis (Reverse)', route: '/dsd/32/synthesis' },
+          { id: 'm32s7', label: 'Four Portraits', route: '/dsd/32/analogy' },
+          { id: 'm32s8', label: 'Build It For Real', route: '/dsd/32/build' },
+          { id: 'm32s9', label: 'Flashcards', route: '/dsd/32/flashcards' },
+          { id: 'm32s10', label: 'Quiz', route: '/dsd/32/quiz' },
+          { id: 'm32s11', label: 'Recap', route: '/dsd/32/recap' },
+        ],
+      },
+      {
+        id: 'dsd33', label: 'Flip-Flop Conversions', subtitle: 'L33 · CONVERT · GLUE', route: '/dsd/33/cover',
+        submodules: [
+          { id: 'm33s0', label: 'The Conversion Machine', route: '/dsd/33/cover' },
+          { id: 'm33s1', label: 'Conversions - Video', route: '/dsd/33/video' },
+          { id: 'm33s2', label: 'The Conversion Model', route: '/dsd/33/facts' },
+          { id: 'm33s3', label: 'The 4-Step Method', route: '/dsd/33/method' },
+          { id: 'm33s4', label: 'Worked: JK to D', route: '/dsd/33/jktod' },
+          { id: 'm33s5', label: 'Worked: SR to T', route: '/dsd/33/srtot' },
+          { id: 'm33s6', label: 'The Universal Matrix', route: '/dsd/33/matrix' },
+          { id: 'm33s7', label: 'The Plug Adapter', route: '/dsd/33/analogy' },
+          { id: 'm33s8', label: 'Build It For Real', route: '/dsd/33/build' },
+          { id: 'm33s9', label: 'Flashcards', route: '/dsd/33/flashcards' },
+          { id: 'm33s10', label: 'Quiz', route: '/dsd/33/quiz' },
+          { id: 'm33s11', label: 'Recap', route: '/dsd/33/recap' },
+        ],
+      },
+      {
+        id: 'dsd34', label: 'Registers & Shift Registers', subtitle: 'L34 · SHIFT · SISO/SIPO/PISO/PIPO', route: '/dsd/34/cover',
+        submodules: [
+          { id: 'm34s0', label: 'The Bucket Brigade', route: '/dsd/34/cover' },
+          { id: 'm34s1', label: 'Registers - Video', route: '/dsd/34/video' },
+          { id: 'm34s2', label: 'What A Register Is', route: '/dsd/34/facts' },
+          { id: 'm34s3', label: 'The Buffer Register', route: '/dsd/34/buffer' },
+          { id: 'm34s4', label: 'The Shift Register', route: '/dsd/34/shift' },
+          { id: 'm34s5', label: 'SISO / SIPO / PISO / PIPO', route: '/dsd/34/modes' },
+          { id: 'm34s6', label: 'Serial vs Parallel', route: '/dsd/34/serialparallel' },
+          { id: 'm34s7', label: 'Destructive vs Recirculating Read', route: '/dsd/34/recirculate' },
+          { id: 'm34s8', label: 'The Universal Shift Register', route: '/dsd/34/universal' },
+          { id: 'm34s9', label: 'The Bucket Brigade', route: '/dsd/34/analogy' },
+          { id: 'm34s10', label: 'Build It For Real', route: '/dsd/34/build' },
+          { id: 'm34s11', label: 'Flashcards', route: '/dsd/34/flashcards' },
+          { id: 'm34s12', label: 'Quiz', route: '/dsd/34/quiz' },
+          { id: 'm34s13', label: 'Recap', route: '/dsd/34/recap' },
+        ],
+      },
+      {
+        id: 'dsd35', label: 'Ripple Counters', subtitle: 'L35 · ASYNC · CASCADE', route: '/dsd/35/cover',
+        submodules: [
+          { id: 'm35s0', label: 'The Ripple Counter', route: '/dsd/35/cover' },
+          { id: 'm35s1', label: 'Ripple Counters - Video', route: '/dsd/35/video' },
+          { id: 'm35s2', label: 'How A Ripple Counter Works', route: '/dsd/35/facts' },
+          { id: 'm35s3', label: 'The Up/Down Config Matrix', route: '/dsd/35/updown' },
+          { id: 'm35s4', label: 'Build A 3-Bit Counter', route: '/dsd/35/build3bit' },
+          { id: 'm35s5', label: 'Ripple Delay & fmax', route: '/dsd/35/rippledelay' },
+          { id: 'm35s6', label: 'The Decoding Glitch', route: '/dsd/35/glitch' },
+          { id: 'm35s7', label: 'Dual-Mode Up/Down Steering', route: '/dsd/35/dualmode' },
+          { id: 'm35s8', label: 'The Dominoes', route: '/dsd/35/analogy' },
+          { id: 'm35s9', label: 'Build It For Real', route: '/dsd/35/build' },
+          { id: 'm35s10', label: 'Flashcards', route: '/dsd/35/flashcards' },
+          { id: 'm35s11', label: 'Quiz', route: '/dsd/35/quiz' },
+          { id: 'm35s12', label: 'Recap', route: '/dsd/35/recap' },
+        ],
+      },
+      {
+        id: 'dsd36', label: 'Synchronous Counters', subtitle: 'L36 · SYNC · ONE CLOCK', route: '/dsd/36/cover',
+        submodules: [
+          { id: 'm36s0', label: 'One Clock, Every Flip-Flop', route: '/dsd/36/cover' },
+          { id: 'm36s1', label: 'Synchronous Counters - Video', route: '/dsd/36/video' },
+          { id: 'm36s2', label: 'How A Synchronous Counter Works', route: '/dsd/36/facts' },
+          { id: 'm36s3', label: 'Ripple vs Synchronous', route: '/dsd/36/ripplevssync' },
+          { id: 'm36s4', label: 'The Design Procedure', route: '/dsd/36/design' },
+          { id: 'm36s5', label: 'Up vs Down', route: '/dsd/36/updown' },
+          { id: 'm36s6', label: 'MOD-N Counters', route: '/dsd/36/modn' },
+          { id: 'm36s7', label: 'Decoding Counter States', route: '/dsd/36/decoding' },
+          { id: 'm36s8', label: 'Marching Band vs Dominoes', route: '/dsd/36/analogy' },
+          { id: 'm36s9', label: 'Build It For Real', route: '/dsd/36/build' },
+          { id: 'm36s10', label: 'Flashcards', route: '/dsd/36/flashcards' },
+          { id: 'm36s11', label: 'Quiz', route: '/dsd/36/quiz' },
+          { id: 'm36s12', label: 'Recap', route: '/dsd/36/recap' },
+        ],
+      },
+      {
+        id: 'dsd37', label: 'Ring & Johnson Counters', subtitle: 'L37 · CIRCULAR · ONE-HOT', route: '/dsd/37/cover',
+        submodules: [
+          { id: 'm37s0', label: 'The Circulating Bit', route: '/dsd/37/cover' },
+          { id: 'm37s1', label: 'Ring & Johnson - Video', route: '/dsd/37/video' },
+          { id: 'm37s2', label: 'Direct vs Complemented Feedback', route: '/dsd/37/facts' },
+          { id: 'm37s3', label: 'The Ring Counter', route: '/dsd/37/ring' },
+          { id: 'm37s4', label: 'The Johnson Counter', route: '/dsd/37/johnson' },
+          { id: 'm37s5', label: 'Ring vs Johnson', route: '/dsd/37/compare' },
+          { id: 'm37s6', label: 'Self-Starting', route: '/dsd/37/selfstart' },
+          { id: 'm37s7', label: 'Decoding A Johnson Counter', route: '/dsd/37/decoding' },
+          { id: 'm37s8', label: 'The Carousel & The Möbius Loop', route: '/dsd/37/analogy' },
+          { id: 'm37s9', label: 'Build It For Real', route: '/dsd/37/build' },
+          { id: 'm37s10', label: 'Flashcards', route: '/dsd/37/flashcards' },
+          { id: 'm37s11', label: 'Quiz', route: '/dsd/37/quiz' },
+          { id: 'm37s12', label: 'Recap', route: '/dsd/37/recap' },
+        ],
+      },
+      {
+        id: 'dsd38', label: 'Analysing Clocked Sequential Circuits', subtitle: 'L38 · ANALYSIS · REVERSE', route: '/dsd/38/cover',
+        submodules: [
+          { id: 'm38s0', label: 'The Reverse Question', route: '/dsd/38/cover' },
+          { id: 'm38s1', label: "Reading A Circuit's Mind", route: '/dsd/38/video' },
+          { id: 'm38s2', label: 'The Analysis Pipeline', route: '/dsd/38/facts' },
+          { id: 'm38s3', label: 'The A-B Circuit, Solved End To End', route: '/dsd/38/workedexample' },
+          { id: 'm38s4', label: 'The Black Box', route: '/dsd/38/reverse' },
+          { id: 'm38s5', label: 'Your Turn: The JK Pair', route: '/dsd/38/practice' },
+          { id: 'm38s6', label: "The Detective's Method", route: '/dsd/38/analogy' },
+          { id: 'm38s7', label: 'Build It, Then Prove It', route: '/dsd/38/build' },
+          { id: 'm38s8', label: 'Flashcards', route: '/dsd/38/flashcards' },
+          { id: 'm38s9', label: 'Quiz', route: '/dsd/38/quiz' },
+          { id: 'm38s10', label: 'Recap', route: '/dsd/38/recap' },
+        ],
+      },
+      {
+        id: 'dsd39', label: 'Mealy & Moore Machines', subtitle: 'L39 · FSM · TWO PHILOSOPHIES', route: '/dsd/39/cover',
+        submodules: [
+          { id: 'm39s0', label: 'Two Machines, One Idea', route: '/dsd/39/cover' },
+          { id: 'm39s1', label: 'Mealy & Moore - Video', route: '/dsd/39/video' },
+          { id: 'm39s2', label: 'Two Philosophies Of Output', route: '/dsd/39/facts' },
+          { id: 'm39s3', label: 'The Timing Consequence', route: '/dsd/39/compare' },
+          { id: 'm39s4', label: 'Worked Example: The 1011 Detector', route: '/dsd/39/sequencedetector' },
+          { id: 'm39s5', label: 'State Encoding: Binary vs Gray vs One-Hot', route: '/dsd/39/encoding' },
+          { id: 'm39s6', label: 'Two Vending Machines', route: '/dsd/39/analogy' },
+          { id: 'm39s7', label: 'Build A Sequence Detector For Real', route: '/dsd/39/build' },
+          { id: 'm39s8', label: 'Flashcards', route: '/dsd/39/flashcards' },
+          { id: 'm39s9', label: 'Quiz', route: '/dsd/39/quiz' },
+          { id: 'm39s10', label: 'Recap', route: '/dsd/39/recap' },
+        ],
+      },
+      {
+        id: 'dsd40', label: 'Designing State Machines', subtitle: 'L40 · DESIGN · REDUCE · ASSIGN', route: '/dsd/40/cover',
+        submodules: [
+          { id: 'm40s0', label: 'From Word Problem To Working Hardware', route: '/dsd/40/cover' },
+          { id: 'm40s1', label: 'Designing State Machines - Video', route: '/dsd/40/video' },
+          { id: 'm40s2', label: 'The Design Procedure', route: '/dsd/40/facts' },
+          { id: 'm40s3', label: 'State Reduction: Row-Matching', route: '/dsd/40/rowmatching' },
+          { id: 'm40s4', label: 'State Reduction: The Implication Chart', route: '/dsd/40/implicationchart' },
+          { id: 'm40s5', label: 'State Assignment', route: '/dsd/40/assignment' },
+          { id: 'm40s6', label: 'Excitation Equations', route: '/dsd/40/excitation' },
+          { id: 'm40s7', label: "The Film Editor's Cut", route: '/dsd/40/analogy' },
+          { id: 'm40s8', label: 'Build A State Machine For Real', route: '/dsd/40/build' },
+          { id: 'm40s9', label: 'Flashcards', route: '/dsd/40/flashcards' },
+          { id: 'm40s10', label: 'Quiz Arena', route: '/dsd/40/quiz' },
+          { id: 'm40s11', label: 'Recap - Sequential Logic, Complete', route: '/dsd/40/recap' },
+        ],
+      },
+      {
+        id: 'dsd41', label: 'Asynchronous Sequential Circuits', subtitle: 'L41 · NO CLOCK · FLOW TABLES', route: '/dsd/41/cover',
+        submodules: [
+          { id: 'm41s0', label: 'No Clock', route: '/dsd/41/cover' },
+          { id: 'm41s1', label: 'Asynchronous Circuits - Video', route: '/dsd/41/video' },
+          { id: 'm41s2', label: 'Feedback Loops & Stability', route: '/dsd/41/facts' },
+          { id: 'm41s3', label: 'Fundamental Mode', route: '/dsd/41/fundamentalmode' },
+          { id: 'm41s4', label: 'Pulse Mode', route: '/dsd/41/pulsemode' },
+          { id: 'm41s5', label: 'The Primitive Flow Table', route: '/dsd/41/flowtable' },
+          { id: 'm41s6', label: 'Critical vs Non-Critical Races', route: '/dsd/41/races' },
+          { id: 'm41s7', label: 'Race-Free State Assignment', route: '/dsd/41/racefree' },
+          { id: 'm41s8', label: 'A Conversation With No Referee', route: '/dsd/41/analogy' },
+          { id: 'm41s9', label: 'Build It For Real', route: '/dsd/41/build' },
+          { id: 'm41s10', label: 'Flashcards', route: '/dsd/41/flashcards' },
+          { id: 'm41s11', label: 'Quiz', route: '/dsd/41/quiz' },
+          { id: 'm41s12', label: 'Recap', route: '/dsd/41/recap' },
+        ],
+      },
+      {
+        id: 'dsd42', label: 'Hazards & Races', subtitle: 'L42 · GLITCH · CONSENSUS', route: '/dsd/42/cover',
+        submodules: [
+          { id: 'm42s0', label: 'The Glitch Scope', route: '/dsd/42/cover' },
+          { id: 'm42s1', label: 'Hazards & Races - Video', route: '/dsd/42/video' },
+          { id: 'm42s2', label: 'What A Hazard Is', route: '/dsd/42/facts' },
+          { id: 'm42s3', label: 'The Static-1 Hazard', route: '/dsd/42/static1' },
+          { id: 'm42s4', label: 'The Static-0 Hazard', route: '/dsd/42/static0' },
+          { id: 'm42s5', label: 'The Dynamic Hazard', route: '/dsd/42/dynamic' },
+          { id: 'm42s6', label: 'The Essential Hazard', route: '/dsd/42/essential' },
+          { id: 'm42s7', label: 'The Consensus Theorem', route: '/dsd/42/consensus' },
+          { id: 'm42s8', label: 'The Flickering Light Switch', route: '/dsd/42/analogy' },
+          { id: 'm42s9', label: 'Build It For Real', route: '/dsd/42/build' },
+          { id: 'm42s10', label: 'Flashcards', route: '/dsd/42/flashcards' },
+          { id: 'm42s11', label: 'Quiz', route: '/dsd/42/quiz' },
+          { id: 'm42s12', label: 'Recap', route: '/dsd/42/recap' },
+        ],
+      },
     ],
   },
 ];
@@ -1202,16 +1498,29 @@ const L6PathSwitcher: React.FC<{ onPick: (route: string) => void }> = ({ onPick 
   const [selIdx, setSelIdx] = useState(0);
   const [dir, setDir] = useState(0);              // -1 = slid left, +1 = slid right
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [groupId, setGroupId] = useState<string | null>(null);
 
   const pathSel = L6_PATHS[selIdx];
   // Light mode darkens the shared path color so figures read on white.
   const accent = isLight ? darkenFigure(pathSel.color) : pathSel.color;
+
+  // Tracks that declare chapters show chapter cards until one is picked.
+  const groups = pathSel.groups;
+  const activeGroup = groups?.find((g) => g.id === groupId) ?? null;
+  const showGroupCards = !!groups && !activeGroup;
+  const modulesInGroup = (g: PathGroup) =>
+    pathSel.modules.filter((m) => {
+      const n = moduleNumber(m.route);
+      return n >= g.from && n <= g.to;
+    });
+  const visibleModules = activeGroup ? modulesInGroup(activeGroup) : pathSel.modules;
 
   const pickTrack = (idx: number) => {
     if (idx === selIdx) return;
     setDir(idx > selIdx ? 1 : -1);
     setSelIdx(idx);
     setExpandedId(null);
+    setGroupId(null);
   };
 
   return (
@@ -1283,18 +1592,97 @@ const L6PathSwitcher: React.FC<{ onPick: (route: string) => void }> = ({ onPick 
         </motion.div>
       </AnimatePresence>
 
+      {/* ─── Chapter cards (long tracks only) ─── */}
+      {showGroupCards && (
+        <AnimatePresence mode="wait">
+          <motion.ul
+            key={pathSel.id + '-groups'}
+            initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.24, ease: 'easeInOut' }}
+            className="w-full flex flex-col gap-3"
+          >
+            {groups!.map((g, gi) => {
+              const count = modulesInGroup(g).length;
+              return (
+                <motion.li key={g.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  whileHover={{ y: -3 }}
+                  transition={{ delay: gi * 0.07, type: 'spring', stiffness: 260, damping: 24 }}
+                >
+                  <button type="button"
+                    onClick={() => { setGroupId(g.id); setExpandedId(null); }}
+                    className={`group w-full rounded-lg border-2 px-5 py-4 text-left transition-colors ${
+                      isLight ? 'bg-white hover:bg-slate-50' : 'bg-[rgba(6,7,12,0.72)] hover:bg-white/[0.03]'
+                    }`}
+                    style={{
+                      borderColor: isLight ? accent : `${accent}55`,
+                      boxShadow: isLight ? '0 2px 6px rgba(15,23,42,0.14)' : `0 0 16px ${accent}14`,
+                    }}
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="flex-shrink-0 w-11 h-11 rounded-lg flex items-center justify-center font-mono font-bold text-[17px] transition-transform duration-200 group-hover:scale-110"
+                        style={{
+                          backgroundColor: isLight ? `${accent}26` : `${accent}1a`,
+                          border: `1px solid ${accent}${isLight ? '66' : '33'}`,
+                          color: accent,
+                        }}>
+                        {gi + 1}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className={`text-[17px] font-bold ${isLight ? 'text-[#0F172A]' : 'text-white/95'}`}>{g.label}</div>
+                        <div className="text-[10px] font-mono tracking-[0.22em] uppercase mt-0.5" style={{ color: isLight ? '#1D4ED8' : `${accent}aa` }}>
+                          {g.subtitle} · {count} modules
+                        </div>
+                      </div>
+                      <ArrowRight size={19} strokeWidth={2.4}
+                        className="flex-shrink-0 transition-transform duration-200 group-hover:translate-x-1.5"
+                        style={{ color: accent }} />
+                    </div>
+                    <p className={`mt-3 text-[13px] leading-relaxed ${isLight ? 'text-slate-600' : 'text-white/55'}`}>
+                      {g.blurb}
+                    </p>
+                  </button>
+                </motion.li>
+              );
+            })}
+          </motion.ul>
+        </AnimatePresence>
+      )}
+
+      {/* Back out of a chapter to the chapter cards */}
+      {activeGroup && (
+        <motion.button
+          type="button"
+          initial={{ opacity: 0, x: -6 }} animate={{ opacity: 1, x: 0 }}
+          onClick={() => { setGroupId(null); setExpandedId(null); }}
+          className={`self-start -mt-1 inline-flex items-center gap-2 rounded-md border px-3 py-1.5 text-[12px] font-mono font-semibold tracking-wide transition-colors ${
+            isLight ? 'bg-white hover:bg-slate-50 text-slate-700' : 'bg-[rgba(6,7,12,0.72)] hover:bg-white/[0.03] text-white/70'
+          }`}
+          style={{ borderColor: isLight ? '#94A3B8' : 'rgba(255,255,255,0.12)' }}
+        >
+          <ArrowRight size={13} strokeWidth={2.6} className="rotate-180" style={{ color: accent }} />
+          All DSD chapters
+          <span style={{ color: accent }}>· {activeGroup.label}</span>
+        </motion.button>
+      )}
+
       {/* ─── Module list: directional cross-slide as the track changes ─── */}
+      {!showGroupCards && (
       <AnimatePresence mode="wait" custom={dir}>
         <motion.ul
-          key={pathSel.id}
+          key={pathSel.id + (activeGroup?.id ?? '')}
           custom={dir}
           variants={TRACK_VARIANTS}
           initial="enter" animate="center" exit="exit"
           transition={{ duration: 0.26, ease: 'easeInOut' }}
           className="w-full flex flex-col gap-3">
-        {pathSel.modules.map((mod, idx) => {
+        {visibleModules.map((mod, idx) => {
           const isOpen = expandedId === mod.id;
           const locked = isModuleLocked(mod.submodules[0]?.route ?? mod.route);
+          // Real lesson number, so a chapter that starts at 28 still reads 28
+          // rather than restarting at 1 inside its own list.
+          const lessonNo = moduleNumber(mod.route) || idx + 1;
           return (
             <motion.li key={mod.id}
               initial={{ opacity: 0, y: 8 }}
@@ -1319,7 +1707,7 @@ const L6PathSwitcher: React.FC<{ onPick: (route: string) => void }> = ({ onPick 
                     border: isLight ? `1px solid ${accent}66` : `1px solid ${accent}33`,
                     color: accent,
                   }}>
-                  {idx + 1}
+                  {lessonNo}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className={`text-[15px] font-semibold truncate ${isLight ? 'text-[#0F172A]' : 'text-white/95'}`}>{mod.label}</div>
@@ -1378,7 +1766,7 @@ const L6PathSwitcher: React.FC<{ onPick: (route: string) => void }> = ({ onPick 
                             onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.borderLeftColor = accent; }}
                             onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.borderLeftColor = 'transparent'; }}>
                             <span className="flex-shrink-0 w-9 text-center text-[12px] font-mono tabular-nums" style={{ color: isLight ? '#334155' : `${accent}88` }}>
-                              {idx + 1}.{String(i + 1).padStart(2, '0')}
+                              {lessonNo}.{String(i + 1).padStart(2, '0')}
                             </span>
                             <span className={`flex-1 text-[14px] transition-colors ${isLight ? 'text-slate-800 group-hover:text-slate-950' : 'text-white/80 group-hover:text-white'}`}>{sub.label}</span>
                             <ArrowRight size={15} strokeWidth={2.2}
@@ -1396,6 +1784,7 @@ const L6PathSwitcher: React.FC<{ onPick: (route: string) => void }> = ({ onPick 
         })}
         </motion.ul>
       </AnimatePresence>
+      )}
     </div>
   );
 };

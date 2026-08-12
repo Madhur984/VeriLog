@@ -59,6 +59,10 @@ reports/
 # Local scratch and source assets
 _scratch/
 src/be/
+# Raw lecture source drops (PDFs + master MP4s, ~1.5GB). The videos that the
+# app actually serves are copied into frontend/public/videos with clean names.
+src/sequential-*/
+src/sequential-*.zip
 
 # Yosys WASM engine is served from node_modules at /yowasp/* in dev and copied
 # into dist/yowasp on build by the bfb-yowasp-assets Vite plugin — nothing to
