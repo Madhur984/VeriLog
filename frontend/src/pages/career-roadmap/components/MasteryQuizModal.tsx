@@ -50,7 +50,7 @@ export const MasteryQuizModal: React.FC<MasteryQuizModalProps> = ({
           subtitle={showResult ? "Assessment Complete" : `Question ${currentIdx + 1} of ${questions.length}`}
           className="min-h-[400px]"
         >
-          <div className="p-8">
+          <div className="p-5 sm:p-8">
             {!showResult ? (
               <div className="space-y-8">
                 <div className="flex justify-between items-start gap-4">
@@ -59,7 +59,7 @@ export const MasteryQuizModal: React.FC<MasteryQuizModalProps> = ({
                   </h2>
                   <button 
                     onClick={onClose}
-                    className="min-h-11 text-text-dim hover:text-text-main font-mono text-xs uppercase px-2 py-1 border border-ghost-trace hover:border-text-main/20 transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-plasma-cyan"
+                    className="min-h-11 shrink-0 text-text-dim hover:text-text-main font-mono text-xs uppercase px-2 py-1 border border-ghost-trace hover:border-text-main/20 transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-plasma-cyan"
                   >
                     Abort [ESC]
                   </button>

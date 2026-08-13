@@ -78,7 +78,7 @@ export const S07_FullWave: React.FC<Props> = ({ isActive, isDarkMode }) => {
       {/* BRIDGE CIRCUIT - clean, animated current path */}
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
-        className={`p-8 rounded-3xl border ${cardBg}`}
+        className={`p-5 md:p-8 rounded-3xl border ${cardBg}`}
       >
         <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
           <div className="font-mono text-[10px] uppercase tracking-widest text-violet-400">
@@ -93,7 +93,8 @@ export const S07_FullWave: React.FC<Props> = ({ isActive, isDarkMode }) => {
           </div>
         </div>
 
-        <svg viewBox="0 0 760 380" className="w-full h-auto">
+        <div className="-mx-5 overflow-x-auto px-5 md:mx-0 md:overflow-x-visible md:px-0">
+        <svg viewBox="0 0 760 380" className="w-full h-auto min-w-[580px]">
           {/* ── AC source (left) ── */}
           <circle cx="60" cy="190" r="36" fill="none" stroke={cyan} strokeWidth="2.5" />
           <text x="44" y="185" fontSize="11" fontFamily="monospace" fill={cyan} fontWeight="bold">~ AC</text>
@@ -185,6 +186,7 @@ export const S07_FullWave: React.FC<Props> = ({ isActive, isDarkMode }) => {
             transition={{ duration: 2.4, repeat: Infinity, ease: 'linear' }}
           />
         </svg>
+        </div>
 
         {/* Phase explainer · two states */}
         <div className="mt-5 grid md:grid-cols-2 gap-3">
@@ -229,7 +231,7 @@ export const S07_FullWave: React.FC<Props> = ({ isActive, isDarkMode }) => {
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.2 }}
-        className={`p-8 rounded-3xl border ${cardBg}`}
+        className={`p-5 md:p-8 rounded-3xl border ${cardBg}`}
       >
         <div className="font-mono text-[10px] uppercase tracking-widest text-violet-400 mb-4">
           Waveforms · input AC vs output (rectified)
@@ -277,7 +279,7 @@ export const S07_FullWave: React.FC<Props> = ({ isActive, isDarkMode }) => {
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.3 }}
-        className={`p-8 rounded-3xl border-2 border-emerald-400/40 bg-emerald-500/10`}
+        className={`p-5 md:p-8 rounded-3xl border-2 border-emerald-400/40 bg-emerald-500/10`}
       >
         <div className="flex items-center gap-3 mb-3">
           <TrendingDown className="text-emerald-300" size={20} />

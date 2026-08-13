@@ -98,9 +98,9 @@ export const S01b_Facts: React.FC<Props> = ({ isActive, isDarkMode }) => {
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.4 }}
-        className={`rounded-3xl border overflow-hidden ${cardBg}`}
+        className={`rounded-3xl border overflow-x-auto ${cardBg}`}
       >
-        <table className="w-full text-sm">
+        <table className="w-full min-w-[520px] md:min-w-0 text-sm">
           <thead>
             <tr className={isDarkMode ? 'bg-white/5' : 'bg-slate-100'}>
               <th className={`text-left px-5 py-3 font-mono text-[11px] uppercase tracking-widest ${subText}`}>Question</th>

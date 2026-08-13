@@ -255,13 +255,13 @@ export const IndustryNewsTicker: React.FC = () => {
               <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-pink-500/10 via-teal-500/10 to-transparent rounded-full blur-3xl pointer-events-none" />
 
               {/* Modal Header */}
-              <div className="flex items-center justify-between border-b border-white/10 pb-4 mb-6 relative z-10">
-                <div className="flex items-center gap-3">
-                  <div className="h-11 w-11 rounded-2xl bg-gradient-to-br from-pink-500/20 to-teal-500/20 border border-pink-500/40 flex items-center justify-center text-pink-400 shadow-[0_0_15px_rgba(236,72,153,0.3)]">
+              <div className="flex items-center justify-between gap-3 border-b border-white/10 pb-4 mb-6 relative z-10">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="h-11 w-11 shrink-0 rounded-2xl bg-gradient-to-br from-pink-500/20 to-teal-500/20 border border-pink-500/40 flex items-center justify-center text-pink-400 shadow-[0_0_15px_rgba(236,72,153,0.3)]">
                     <Newspaper size={22} />
                   </div>
-                  <div>
-                    <h3 id="news-drawer-title" className="font-bold text-xl text-slate-100 uppercase tracking-tight flex items-center gap-2">
+                  <div className="min-w-0">
+                    <h3 id="news-drawer-title" className="font-bold text-lg sm:text-xl text-slate-100 uppercase tracking-tight flex flex-wrap items-center gap-2">
                       <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 via-teal-300 to-amber-300">
                         Semiconductor Live Telemetry
                       </span>
@@ -277,7 +277,7 @@ export const IndustryNewsTicker: React.FC = () => {
 
                 <button
                   onClick={() => setIsDrawerOpen(false)}
-                  className="p-2 text-slate-400 hover:text-white transition-colors cursor-pointer rounded-full bg-white/5 hover:bg-white/10"
+                  className="p-2 shrink-0 text-slate-400 hover:text-white transition-colors cursor-pointer rounded-full bg-white/5 hover:bg-white/10"
                   aria-label="Close news telemetry"
                 >
                   <X size={20} />
@@ -398,7 +398,7 @@ export const IndustryNewsTicker: React.FC = () => {
               </div>
 
               {/* Modal Footer */}
-              <div className="mt-6 pt-4 border-t border-white/10 flex justify-between items-center text-[10px] font-mono text-slate-500 uppercase tracking-wider relative z-10">
+              <div className="mt-6 pt-4 border-t border-white/10 flex flex-wrap gap-2 justify-between items-center text-[10px] font-mono text-slate-500 uppercase tracking-wider relative z-10">
                 <span className="flex items-center gap-1 text-pink-400 font-bold">
                   <Sparkles size={11} /> BitForBytes Telemetry Engine
                 </span>

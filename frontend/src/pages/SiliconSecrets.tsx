@@ -140,7 +140,7 @@ export const SiliconSecrets = () => {
                     {isUnlocked ? egg.icon : '🔒'}
                   </div>
                   <div className="space-y-1">
-                    <h3 className="font-bold text-sm flex items-center gap-2">
+                    <h3 className="font-bold text-sm flex flex-wrap items-center gap-2">
                       {egg.name}
                       {isUnlocked ? (
                         <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-emerald-400 bg-emerald-950 px-1.5 py-0.5 rounded">

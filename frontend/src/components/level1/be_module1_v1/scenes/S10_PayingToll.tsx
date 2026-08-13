@@ -31,9 +31,10 @@ export const S10_PayingToll: React.FC<Props> = ({ isActive, isDarkMode }) => {
       {/* The toll booth illustration */}
       <motion.div
         initial={{ opacity: 0, y: 12 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
-        className={`p-8 rounded-3xl border ${cardBg} relative overflow-hidden`}
+        className={`p-5 md:p-8 rounded-3xl border ${cardBg} relative overflow-hidden`}
       >
-        <svg viewBox="0 0 800 320" className="w-full">
+        <div className="-mx-5 overflow-x-auto px-5 md:mx-0 md:overflow-x-visible md:px-0">
+        <svg viewBox="0 0 800 320" className="w-full min-w-[600px]">
           <defs>
             <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor="#7c3aed" />
@@ -102,6 +103,7 @@ export const S10_PayingToll: React.FC<Props> = ({ isActive, isDarkMode }) => {
           <text x="60" y="295" fontFamily="monospace" fontSize="10" fill="#fda4af">VALENCE BAND (Gully)</text>
           <text x="650" y="295" fontFamily="monospace" fontSize="10" fill="#bae6fd" textAnchor="end">CONDUCTION BAND (Expressway)</text>
         </svg>
+        </div>
       </motion.div>
 
       {/* Voltage slider + numeric panel */}
@@ -150,7 +152,7 @@ export const S10_PayingToll: React.FC<Props> = ({ isActive, isDarkMode }) => {
       <motion.div
         initial={{ opacity: 0, y: 12 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.2 }}
-        className={`p-8 rounded-3xl border ${cardBg}`}
+        className={`p-5 md:p-8 rounded-3xl border ${cardBg}`}
       >
         <div className="flex items-center gap-2 mb-4">
           <Calculator size={14} className="text-indigo-400" />

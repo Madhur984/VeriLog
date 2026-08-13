@@ -51,7 +51,8 @@ export const S09_CheatSheet: React.FC<Props> = ({ isActive, isDarkMode }) => {
         transition={{ delay: 0.15 }}
         className={`rounded-3xl border ${cardBg} overflow-hidden`}
       >
-        <div className="grid grid-cols-[1.2fr_1.5fr_1.5fr] gap-px bg-violet-500/20">
+        <div className="overflow-x-auto">
+        <div className="grid grid-cols-[1.2fr_1.5fr_1.5fr] gap-px bg-violet-500/20 min-w-[560px]">
           <div className="p-4 bg-slate-900 dark:bg-black/60 font-mono text-[10px] uppercase tracking-widest text-violet-300">
             Feature
           </div>
@@ -75,6 +76,7 @@ export const S09_CheatSheet: React.FC<Props> = ({ isActive, isDarkMode }) => {
               </div>
             </React.Fragment>
           ))}
+        </div>
         </div>
       </motion.div>
 

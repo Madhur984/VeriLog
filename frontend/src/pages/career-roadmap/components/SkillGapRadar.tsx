@@ -272,11 +272,11 @@ export const SkillGapRadar: React.FC<SkillGapRadarProps> = ({
   const spokeStroke = isLight ? 'rgba(15, 23, 42, 0.08)' : 'rgba(148,163,184,0.08)';
 
   return (
-    <div className={`grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-6xl mx-auto px-6 py-12 border rounded-xl ${
+    <div className={`grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-6xl mx-auto px-4 sm:px-6 py-12 border rounded-xl ${
       isLight ? 'bg-bg-base text-text-main border-border-soft' : 'bg-[#07080A] text-white border-white/5'
     }`}>
       {/* Left: Interactive Telemetry Matrix */}
-      <div className={`border rounded-xl p-6 flex flex-col items-center relative ${
+      <div className={`border rounded-xl p-4 sm:p-6 flex flex-col items-center relative ${
         isLight ? 'bg-bg-elev border-border-soft' : 'bg-[#0D0F12] border-white/5'
       }`}>
         <div className={`w-full flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 border-b pb-4 ${isLight ? 'border-border-soft' : 'border-white/5'}`}>
@@ -299,7 +299,7 @@ export const SkillGapRadar: React.FC<SkillGapRadarProps> = ({
         </div>
 
         {/* Pure SVG Radar Engine */}
-        <svg width={size} height={size} className="overflow-visible my-4">
+        <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="w-full max-w-[300px] h-auto overflow-visible my-4">
           {/* Concentric Grid Rings */}
           {[25, 50, 75, 100].map((pct) => {
             const ringPoints = currentPreset.axes.map((_, i) => getCoordinates(i, pct));

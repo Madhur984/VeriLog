@@ -96,7 +96,7 @@ export const PortalLayout = () => {
                 their own drawer + back button, and the portal hub / Verilog bench have their
                 own headers, so the cluster is hidden there to avoid duplicates/overlap. */}
             {showNav && (
-                <nav aria-label="Primary" ref={clusterRef} className="fixed top-4 left-4 z-[400] flex items-center gap-3.5">
+                <nav aria-label="Primary" ref={clusterRef} className="fixed top-4 left-4 z-[400] flex items-center gap-2 sm:gap-3.5">
                     <button
                         onClick={() => navigate('/portal')}
                         aria-label="Go to portal"
@@ -130,7 +130,7 @@ export const PortalLayout = () => {
                         </button>
 
                         {menuOpen && (
-                            <div className="brutal absolute left-0 top-12 w-64 bg-bg-elev p-1.5">
+                            <div className="brutal absolute left-0 top-12 max-h-[70vh] w-64 max-w-[calc(100vw-5.5rem)] overflow-y-auto bg-bg-elev p-1.5">
                                 {NAV_GROUPS.map((group, gi) => (
                                     <div key={group.heading} className={gi > 0 ? 'mt-1 border-t border-border-soft pt-1' : ''}>
                                         <p className="px-3 pb-1 pt-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-text-dim">
@@ -143,7 +143,7 @@ export const PortalLayout = () => {
                                                     key={to}
                                                     onClick={() => { navigate(to); setMenuOpen(false); }}
                                                     aria-current={active ? 'page' : undefined}
-                                                    className={`flex w-full items-center gap-2.5 rounded px-3 py-2 text-left text-[13px] font-semibold transition-colors ${
+                                                    className={`flex w-full items-center gap-2.5 rounded px-3 py-2.5 text-left text-[13px] font-semibold transition-colors sm:py-2 ${
                                                         active
                                                             ? 'text-signal-core'
                                                             : 'text-text-sub hover:bg-border-soft hover:text-text-main'

@@ -117,7 +117,7 @@ export const S03_Analogy: React.FC<Props> = ({ isActive, isDarkMode }) => {
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         className={`rounded-3xl border ${cardBg} overflow-hidden`}
       >
-        <div className={`grid grid-cols-[1fr_1.2fr] border-b font-mono text-[10px] uppercase tracking-widest ${subText}`}
+        <div className={`hidden sm:grid sm:grid-cols-[1fr_1.2fr] border-b font-mono text-[10px] uppercase tracking-widest ${subText}`}
              style={{ borderColor: isDarkMode ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)' }}>
           <div className="p-4 flex items-center gap-2"><Activity size={12} className="text-cyan-400" /> Electrical component</div>
           <div className="p-4 border-l flex items-center gap-2" style={{ borderColor: isDarkMode ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)' }}>
@@ -132,7 +132,7 @@ export const S03_Analogy: React.FC<Props> = ({ isActive, isDarkMode }) => {
               initial={{ opacity: 0, x: -10 }}
               animate={isActive ? { opacity: 1, x: 0 } : {}}
               transition={{ delay: 0.15 + i * 0.1 }}
-              className="grid grid-cols-[1fr_1.2fr] border-b"
+              className="grid grid-cols-1 sm:grid-cols-[1fr_1.2fr] border-b"
               style={{ borderColor: isDarkMode ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)' }}
             >
               <div className="p-5 flex items-center gap-4">
@@ -147,7 +147,7 @@ export const S03_Analogy: React.FC<Props> = ({ isActive, isDarkMode }) => {
                   <div className={`text-[11px] font-mono ${subText} mt-0.5`}>{r.elec}</div>
                 </div>
               </div>
-              <div className="p-5 border-l flex items-center gap-4"
+              <div className="p-5 border-t sm:border-t-0 sm:border-l flex items-center gap-4"
                    style={{ borderColor: isDarkMode ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)' }}>
                 <div className="shrink-0" style={{ color: r.accent }}>
                   <Icon accent={r.accent} />

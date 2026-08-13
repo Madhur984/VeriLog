@@ -53,7 +53,12 @@ export default function FeedbackBubble() {
 
   return (
     <>
-      <div className="fixed bottom-5 left-5 z-[59] flex flex-col items-start gap-2.5">
+      {/* Sits BELOW the portal's radial menu, never beside it: the wheel is
+          centred and its lower-left segment reached into the old bottom-5/left-5
+          spot, so the pill overlapped "Analog Library". Anchored hard into the
+          corner (and smaller on phones) it stays clear of the wheel at every
+          viewport width. */}
+      <div className="fixed bottom-3 left-3 z-[59] flex flex-col items-start gap-2.5 sm:bottom-4 sm:left-4">
         <AnimatePresence>
           {tease && !panelOpen && (
             <motion.div
@@ -90,9 +95,9 @@ export default function FeedbackBubble() {
           onBlur={() => setHover(false)}
           aria-label="Give feedback"
           whileTap={{ scale: 0.94 }}
-          animate={{ width: expanded ? 152 : 52 }}
+          animate={{ width: expanded ? 148 : 46 }}
           transition={{ type: 'spring', stiffness: 420, damping: 32 }}
-          className="relative grid h-[52px] place-items-center overflow-hidden rounded-full border-[2.5px] border-[#1B1436] bg-[#FF7A1A] text-white shadow-[4px_4px_0_#1B1436] outline-none transition-shadow hover:shadow-[5px_5px_0_#1B1436] focus-visible:ring-2 focus-visible:ring-[#7A3FD0] focus-visible:ring-offset-2 dark:border-[#4A3D7A] dark:shadow-[4px_4px_0_#7A3FD0]"
+          className="relative grid h-[46px] place-items-center overflow-hidden rounded-full border-[2.5px] border-[#1B1436] bg-[#FF7A1A] text-white shadow-[4px_4px_0_#1B1436] outline-none transition-shadow hover:shadow-[5px_5px_0_#1B1436] focus-visible:ring-2 focus-visible:ring-[#7A3FD0] focus-visible:ring-offset-2 dark:border-[#4A3D7A] dark:shadow-[4px_4px_0_#7A3FD0] sm:h-[52px]"
         >
           {/* one soft attention ring while the tease is up, then never again */}
           {tease && !reduce && (

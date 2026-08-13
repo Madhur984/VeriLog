@@ -56,12 +56,13 @@ export const S09_Showdown: React.FC<Props> = ({ isActive, isDarkMode }) => {
       {/* SHOWDOWN TABLE */}
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
-        className={`p-8 rounded-3xl border ${cardBg} overflow-x-auto`}
+        className={`p-5 md:p-8 rounded-3xl border ${cardBg} overflow-x-auto`}
       >
         <div className="font-mono text-[10px] uppercase tracking-widest text-rose-300 mb-4 flex items-center gap-2">
           <Activity size={12} /> Three rectifier topologies · side-by-side
         </div>
-        <table className="w-full font-mono text-sm">
+        <div className="-mx-5 overflow-x-auto px-5 md:mx-0 md:px-0">
+        <table className="w-full min-w-[560px] font-mono text-sm">
           <thead>
             <tr className="border-b" style={{ borderColor: 'rgba(244,63,94,0.3)' }}>
               <th className={`text-left p-3 text-[10px] uppercase tracking-widest ${subText}`}>Parameter</th>
@@ -88,6 +89,7 @@ export const S09_Showdown: React.FC<Props> = ({ isActive, isDarkMode }) => {
             ))}
           </tbody>
         </table>
+        </div>
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }} animate={isActive ? { opacity: 1, scale: 1 } : {}}
           transition={{ delay: 0.6 }}
@@ -113,7 +115,7 @@ export const S09_Showdown: React.FC<Props> = ({ isActive, isDarkMode }) => {
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.4 }}
-        className={`p-8 rounded-3xl border ${cardBg}`}
+        className={`p-5 md:p-8 rounded-3xl border ${cardBg}`}
       >
         <div className="font-mono text-[10px] uppercase tracking-widest text-rose-300 mb-5 flex items-center gap-2">
           <Battery size={12} /> The full power-supply pipeline · 4 stages
@@ -150,7 +152,7 @@ export const S09_Showdown: React.FC<Props> = ({ isActive, isDarkMode }) => {
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.6 }}
-        className={`p-8 rounded-3xl border ${cardBg}`}
+        className={`p-5 md:p-8 rounded-3xl border ${cardBg}`}
       >
         <h3 className={`text-xl font-black ${textColor} mb-4`}>What you walk away with</h3>
         <ul className={`space-y-2 text-sm ${subText}`}>

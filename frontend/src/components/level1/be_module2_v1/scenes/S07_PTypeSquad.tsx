@@ -37,7 +37,7 @@ export const S07_PTypeSquad: React.FC<Props> = ({ isActive, isDarkMode }) => {
 
         <motion.div
           initial={{ opacity: 0, x: 20 }} animate={isActive ? { opacity: 1, x: 0 } : {}}
-          className={`p-8 rounded-3xl border ${cardBg} space-y-5`}
+          className={`p-5 md:p-8 rounded-3xl border ${cardBg} space-y-5`}
         >
           <div className="font-mono text-[10px] uppercase tracking-widest text-fuchsia-400">The Chemistry</div>
           <p className={`text-sm ${subText} leading-relaxed`}>
@@ -63,7 +63,7 @@ export const S07_PTypeSquad: React.FC<Props> = ({ isActive, isDarkMode }) => {
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.15 }}
-        className={`p-8 rounded-3xl border ${cardBg}`}
+        className={`p-5 md:p-8 rounded-3xl border ${cardBg}`}
       >
         <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-fuchsia-400 mb-3">
           Musical chairs · the hole illusion
@@ -133,7 +133,7 @@ export const S07_PTypeSquad: React.FC<Props> = ({ isActive, isDarkMode }) => {
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.25 }}
-        className={`p-8 rounded-3xl border ${cardBg} space-y-4`}
+        className={`p-5 md:p-8 rounded-3xl border ${cardBg} space-y-4`}
       >
         <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-fuchsia-400">The illusion of motion</div>
         <p className={`text-sm ${subText} leading-relaxed`}>

@@ -100,16 +100,16 @@ export const S13_B_FloatingPoint: React.FC<Props> = ({ isActive, isDarkMode }) =
       </section>
 
       {/* Mission Protocol Card */}
-      <div className={`p-6 rounded-2xl border ${isDarkMode ? 'bg-sky-500/5 border-sky-500/20' : 'bg-sky-50 border-sky-100'} max-w-4xl mx-auto grid md:grid-cols-3 gap-6`}>
+      <div className={`p-5 sm:p-6 rounded-2xl border ${isDarkMode ? 'bg-sky-500/5 border-sky-500/20' : 'bg-sky-50 border-sky-100'} max-w-4xl mx-auto grid md:grid-cols-3 gap-6`}>
           <div className="space-y-1">
               <span className="text-[9px] font-black uppercase tracking-widest text-sky-500">Pedagogy</span>
               <p className={`text-[11px] leading-tight opacity-70 ${textColor}`}>Floating-point logic using dynamic binary-point shifting for scale and precision.</p>
           </div>
-          <div className="space-y-1 border-l border-sky-500/20 pl-6">
+          <div className="space-y-1 md:border-l md:border-sky-500/20 md:pl-6">
               <span className="text-[9px] font-black uppercase tracking-widest text-sky-500">Protocol</span>
               <p className={`text-[11px] leading-tight opacity-70 ${textColor}`}>Toggle Sign (1), Exponent (5), and Mantissa (10) bits to update the scientific formula.</p>
           </div>
-          <div className="space-y-1 border-l border-sky-500/20 pl-6">
+          <div className="space-y-1 md:border-l md:border-sky-500/20 md:pl-6">
               <span className="text-[9px] font-black uppercase tracking-widest text-sky-500">Objective</span>
               <p className={`text-[11px] leading-tight opacity-70 ${textColor}`}>Understand how fixed-width registers represent near-infinite numerical ranges.</p>
           </div>
@@ -117,16 +117,17 @@ export const S13_B_FloatingPoint: React.FC<Props> = ({ isActive, isDarkMode }) =
 
       {/* Main Register */}
       <TryItYourself />
-      <div className={`p-10 rounded-[2.5rem] border ${cardBg}`}>
+      <div className={`p-5 sm:p-10 rounded-[2.5rem] border ${cardBg}`}>
           <div className="flex flex-col items-center gap-10">
               
               {/* Bit Blocks */}
-              <div className="w-full flex justify-center gap-1 flex-wrap">
+              <div className="w-full overflow-x-auto sm:overflow-x-visible -mx-5 px-5 sm:mx-0 sm:px-0">
+              <div className="w-max min-w-full mx-auto flex justify-center gap-1 flex-nowrap sm:flex-wrap">
                   {bits.map((b, i) => {
                       const section = i === 0 ? 'sign' : (i < 6 ? 'exp' : 'mant');
                       const color = COLORS[section];
                       return (
-                          <div key={i} className="flex flex-col items-center gap-2">
+                          <div key={i} className="flex flex-col items-center gap-2 flex-shrink-0">
                               <span className="font-mono text-[8px] opacity-30 font-bold">{15-i}</span>
                               <motion.button
                                 onClick={() => toggleBit(i)}
@@ -138,7 +139,7 @@ export const S13_B_FloatingPoint: React.FC<Props> = ({ isActive, isDarkMode }) =
                                     color: b ? '#fff' : (isDarkMode ? '#475569' : '#94A3B8'),
                                     boxShadow: b ? `0 0 15px ${color}33` : 'none'
                                 }}
-                                className="w-9 h-12 rounded-lg border-2 font-mono font-black text-lg transition-all"
+                                className="w-7 h-10 sm:w-9 sm:h-12 flex-shrink-0 rounded-lg border-2 font-mono font-black text-base sm:text-lg transition-all"
                               >
                                   {b}
                               </motion.button>
@@ -149,6 +150,7 @@ export const S13_B_FloatingPoint: React.FC<Props> = ({ isActive, isDarkMode }) =
                           </div>
                       );
                   })}
+              </div>
               </div>
 
               {/* Live Result Display */}
@@ -162,7 +164,7 @@ export const S13_B_FloatingPoint: React.FC<Props> = ({ isActive, isDarkMode }) =
                           <motion.div 
                             key={result.val}
                             initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
-                            className={`text-5xl font-black font-mono break-all ${textColor}`}
+                            className={`text-3xl sm:text-5xl font-black font-mono break-all ${textColor}`}
                           >
                               {result.val === 0 && bits[0] ? '-0.0' : result.val}
                           </motion.div>
@@ -172,11 +174,11 @@ export const S13_B_FloatingPoint: React.FC<Props> = ({ isActive, isDarkMode }) =
                       </div>
                   </div>
 
-                  <div className={`space-y-4 p-6 rounded-2xl border font-mono ${isDarkMode ? 'bg-black/20 border-white/5' : 'bg-slate-100 border-slate-200'}`}>
+                  <div className={`space-y-4 p-4 sm:p-6 rounded-2xl border font-mono ${isDarkMode ? 'bg-black/20 border-white/5' : 'bg-slate-100 border-slate-200'}`}>
                       <div className="flex items-center gap-2 opacity-40 text-[10px] uppercase tracking-widest">
                           <Percent size={12} /> Live Formula
                       </div>
-                      <div className={`text-sm leading-relaxed ${isDarkMode ? 'text-white/80' : 'text-slate-600'}`}>
+                      <div className={`text-sm leading-relaxed break-words ${isDarkMode ? 'text-white/80' : 'text-slate-600'}`}>
                           Value = <span style={{ color: COLORS.sign }}>(-1)^{bits[0]}</span> x 
                           <span style={{ color: COLORS.exp }}> 2^({result.type === 'normal' ? `${(bits.slice(1,6).reduce((a,b,i)=>a+b*Math.pow(2,4-i),0))} - 15` : (result.type === 'subnormal' ? '-14' : '...')})</span> x 
                           <span style={{ color: COLORS.mant }}> ({result.type === 'normal' ? (1 + bits.slice(6).reduce((a,b,i)=>a+b*Math.pow(2,-(i+1)),0)).toFixed(4) : (bits.slice(6).reduce((a,b,i)=>a+b*Math.pow(2,-(i+1)),0)).toFixed(4)})</span>
@@ -191,7 +193,7 @@ export const S13_B_FloatingPoint: React.FC<Props> = ({ isActive, isDarkMode }) =
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {/* Preset Buttons */}
-          <div className={`p-8 rounded-3xl border ${cardBg} space-y-4`}>
+          <div className={`p-5 sm:p-8 rounded-3xl border ${cardBg} space-y-4`}>
                 <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest opacity-40">
                     <FastForward size={14} /> Quick Presets
                 </div>
@@ -207,7 +209,7 @@ export const S13_B_FloatingPoint: React.FC<Props> = ({ isActive, isDarkMode }) =
                         <button 
                             key={btn.label}
                             onClick={() => setPreset(btn.p)}
-                            className={`p-3 rounded-xl border text-[10px] font-bold uppercase tracking-wider transition-all
+                            className={`p-3.5 sm:p-3 rounded-xl border text-[10px] font-bold uppercase tracking-wider transition-all
                                 ${isDarkMode ? 'bg-white/5 border-white/10 text-slate-400 hover:bg-sky-500/20 hover:border-sky-500 hover:text-sky-400' : 'bg-slate-50 border-slate-200 text-slate-500 hover:bg-sky-50 hover:border-sky-200'}`}
                         >
                             {btn.label}
@@ -217,11 +219,11 @@ export const S13_B_FloatingPoint: React.FC<Props> = ({ isActive, isDarkMode }) =
           </div>
 
           {/* Educational Insights */}
-          <div className={`p-8 rounded-3xl border ${cardBg} space-y-4 lg:col-span-2`}>
+          <div className={`p-5 sm:p-8 rounded-3xl border ${cardBg} space-y-4 lg:col-span-2`}>
                 <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest opacity-40">
                     <Info size={14} /> Why Floating Point?
                 </div>
-                <div className="grid sm:grid-cols-2 gap-8 text-sm opacity-70 leading-relaxed">
+                <div className="grid sm:grid-cols-2 gap-6 sm:gap-8 text-sm opacity-70 leading-relaxed">
                     <div className="space-y-3">
                         <p className="font-bold">1. The Dynamic Range</p>
                         <p>Fixed-point math (integers) can't easily handle numbers across different scales. Floating point moves the binary point, allowing a single 16-bit register to represent anything from 0.00000006 to 65,504.</p>

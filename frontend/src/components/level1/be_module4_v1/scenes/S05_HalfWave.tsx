@@ -72,12 +72,13 @@ export const S05_HalfWave: React.FC<Props> = ({ isActive, isDarkMode }) => {
       {/* Circuit diagram */}
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
-        className={`p-8 rounded-3xl border ${cardBg}`}
+        className={`p-5 md:p-8 rounded-3xl border ${cardBg}`}
       >
         <div className="font-mono text-[10px] uppercase tracking-widest text-cyan-400 mb-4">
           Circuit · 1 diode · 1 resistor (load)
         </div>
-        <svg viewBox="0 0 760 240" className="w-full h-auto">
+        <div className="-mx-5 overflow-x-auto px-5 md:mx-0 md:overflow-x-visible md:px-0">
+        <svg viewBox="0 0 760 240" className="w-full h-auto min-w-[580px]">
           {/* AC source on the left (circle with sine inside) */}
           <circle cx="80" cy="120" r="40" fill="none" stroke="#0ea5e9" strokeWidth="2.5" />
           <text x="65" y="98" fontSize="11" fontFamily="monospace" fill="#0ea5e9" fontWeight="bold">~</text>
@@ -129,13 +130,14 @@ export const S05_HalfWave: React.FC<Props> = ({ isActive, isDarkMode }) => {
             {isForward ? 'current → load' : 'no flow · 50% wasted'}
           </text>
         </svg>
+        </div>
       </motion.div>
 
       {/* Side-by-side waveforms */}
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.15 }}
-        className={`p-8 rounded-3xl border ${cardBg}`}
+        className={`p-5 md:p-8 rounded-3xl border ${cardBg}`}
       >
         <div className="font-mono text-[10px] uppercase tracking-widest text-cyan-400 mb-4">
           Input v_i  →  Output v_o · live scrubber
@@ -195,7 +197,7 @@ export const S05_HalfWave: React.FC<Props> = ({ isActive, isDarkMode }) => {
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.3 }}
-        className={`p-8 rounded-3xl border-2 border-rose-400/40 bg-rose-500/10`}
+        className={`p-5 md:p-8 rounded-3xl border-2 border-rose-400/40 bg-rose-500/10`}
       >
         <div className="flex items-center gap-3 mb-3">
           <AlertTriangle className="text-rose-300" size={20} />

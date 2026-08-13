@@ -409,7 +409,7 @@ const SequenceDetectorLab: React.FC<{ isDarkMode: boolean; accent: string }> = (
             const isMatchStep = fed && (sim.trace[i]?.mOut === 1 || sim.trace[i]?.rOut === 1);
             return (
               <button key={i} onClick={() => setPos(i + 1)}
-                className="relative flex h-9 w-9 items-center justify-center rounded-lg font-mono text-sm font-black active:scale-90"
+                className="relative flex h-10 w-10 items-center justify-center rounded-lg font-mono text-sm font-black active:scale-90 sm:h-9 sm:w-9"
                 style={{
                   background: fed ? accent : 'transparent',
                   color: fed ? '#000' : accent,

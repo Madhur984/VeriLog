@@ -61,11 +61,10 @@ const BitCell: React.FC<{ val: number; color: string; isDarkMode: boolean; onCli
       boxShadow: val ? `0 0 14px ${color}44` : 'none',
     }}
     transition={{ type: 'spring', stiffness: 350, damping: 22 }}
+    className="w-9 h-11 sm:w-12 sm:h-14 flex-shrink-0 border-2 rounded-[10px] text-lg sm:text-[22px] font-black outline-none flex items-center justify-center"
     style={{
-      width: 48, height: 56, border: '2px solid', borderRadius: 10,
-      fontFamily: '"JetBrains Mono", "IBM Plex Mono", ui-monospace, monospace', fontSize: 22, fontWeight: 900,
-      cursor: onClick ? 'pointer' : 'default', outline: 'none',
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      fontFamily: '"JetBrains Mono", "IBM Plex Mono", ui-monospace, monospace',
+      cursor: onClick ? 'pointer' : 'default',
     }}
   >
     {val}
@@ -75,9 +74,9 @@ const BitCell: React.FC<{ val: number; color: string; isDarkMode: boolean; onCli
 const BitRow: React.FC<{ label: string; bits: number[]; color: string; isDarkMode: boolean; onToggle?: (i: number) => void }> = ({
   label, bits, color, isDarkMode, onToggle,
 }) => (
-  <div className="flex items-center gap-4">
-    <span className="font-mono text-xs w-28 text-right opacity-60" style={{ color }}>{label}</span>
-    <div className="flex gap-2">
+  <div className="flex items-center gap-2 sm:gap-4 w-max min-w-full">
+    <span className="font-mono text-[10px] sm:text-xs w-20 sm:w-28 flex-shrink-0 text-right opacity-60" style={{ color }}>{label}</span>
+    <div className="flex gap-1.5 sm:gap-2">
       {bits.map((b, i) => (
         <BitCell key={i} val={b} color={color} isDarkMode={isDarkMode} onClick={onToggle ? () => onToggle(i) : undefined} />
       ))}
@@ -91,7 +90,7 @@ const TwosShortcut: React.FC<{ bits: number[]; isDarkMode: boolean }> = ({ bits,
   const firstOneIdx = bits.lastIndexOf(1);
   const textColor = isDarkMode ? 'text-white' : 'text-gray-900';
   return (
-    <div className={`p-6 rounded-2xl ${isDarkMode ? 'bg-black/40' : 'bg-white border border-gray-100'} font-mono text-sm`}>
+    <div className={`p-4 sm:p-6 rounded-2xl overflow-x-auto ${isDarkMode ? 'bg-black/40' : 'bg-white border border-gray-100'} font-mono text-sm`}>
       <div className={`text-xs uppercase tracking-widest opacity-50 mb-4 ${textColor}`}>Shortcut: Find rightmost 1 → keep it & all bits to its right → flip rest</div>
       <div className="flex gap-2 flex-wrap">
         {bits.map((b, i) => {
@@ -158,7 +157,7 @@ export const S11_Complements: React.FC<Props> = ({ isActive, isDarkMode }) => {
               borderColor: type === t ? COMP_INFO[t].color : (isDarkMode ? '#2D3139' : '#E2E8F0'),
               color: type === t ? COMP_INFO[t].color : (isDarkMode ? '#64748B' : '#9CA3AF'),
             }}
-            className="px-5 py-2.5 rounded-full border-2 font-mono text-xs font-black uppercase tracking-widest cursor-pointer"
+            className="px-4 sm:px-5 py-3 sm:py-2.5 rounded-full border-2 font-mono text-[11px] sm:text-xs font-black uppercase tracking-widest cursor-pointer"
           >
             {COMP_INFO[t].label}
           </motion.button>
@@ -174,7 +173,7 @@ export const S11_Complements: React.FC<Props> = ({ isActive, isDarkMode }) => {
             className="space-y-8"
           >
             {/* Info Card */}
-            <div className={`p-8 rounded-3xl border ${cardBg}`}>
+            <div className={`p-5 sm:p-8 rounded-3xl border ${cardBg}`}>
               <div className="flex items-start gap-4 mb-6">
                 <div className="w-3 h-3 rounded-full mt-1 flex-shrink-0" style={{ background: info.color, boxShadow: `0 0 10px ${info.color}` }} />
                 <div>
@@ -187,7 +186,7 @@ export const S11_Complements: React.FC<Props> = ({ isActive, isDarkMode }) => {
               </div>
 
               {/* Bit Interactive */}
-              <div className="space-y-5">
+              <div className="space-y-5 overflow-x-auto sm:overflow-x-visible -mx-5 px-5 sm:mx-0 sm:px-0">
                 <div className="text-xs font-mono opacity-40 uppercase tracking-widest mb-2">Click input bits to toggle:</div>
                 <BitRow label="Input N:" bits={bits} color={isDarkMode ? '#64748B' : '#94A3B8'} isDarkMode={isDarkMode} onToggle={(i) => setBits(p => p.map((v, idx) => idx === i ? 1 - v : v))} />
                 {type === '1s' && <BitRow label="1's comp:" bits={ones_result} color={info.color} isDarkMode={isDarkMode} />}
@@ -204,7 +203,7 @@ export const S11_Complements: React.FC<Props> = ({ isActive, isDarkMode }) => {
             {type === '2s' && <TwosShortcut bits={bits} isDarkMode={isDarkMode} />}
 
             {/* Subtraction Demo */}
-            <div className={`p-8 rounded-3xl border ${isDarkMode ? 'bg-emerald-500/5 border-emerald-500/20' : 'bg-emerald-50 border-emerald-200'}`}>
+            <div className={`p-5 sm:p-8 rounded-3xl border ${isDarkMode ? 'bg-emerald-500/5 border-emerald-500/20' : 'bg-emerald-50 border-emerald-200'}`}>
               <h4 className={`font-black text-sm uppercase tracking-widest mb-6 ${isDarkMode ? 'text-emerald-400' : 'text-emerald-700'}`}>
                 {type === '2s' ? "Why it matters: Subtraction = Addition" : "Why it matters: Used to build 2's Complement"}
               </h4>
@@ -214,7 +213,7 @@ export const S11_Complements: React.FC<Props> = ({ isActive, isDarkMode }) => {
                   <div className="mt-2">1. Find <span className="text-emerald-400">2's complement of B</span></div>
                   <div>2. Add it to A</div>
                   <div>3. Discard the carry-out</div>
-                  <div className={`mt-4 p-4 rounded-xl border border-emerald-500/20 ${isDarkMode ? 'bg-black/20' : 'bg-white/70'}`}>
+                  <div className={`mt-4 p-4 rounded-xl border border-emerald-500/20 break-words ${isDarkMode ? 'bg-black/20' : 'bg-white/70'}`}>
                     <div className="opacity-50 mb-2">Example: 5 − 3 in 4-bit</div>
                     <div>5 = <span className="text-sky-400">0101</span>, 3 = <span className="text-sky-400">0011</span></div>
                     <div>2's comp of 3 = <span className="text-emerald-400">1101</span></div>
@@ -240,7 +239,7 @@ export const S11_Complements: React.FC<Props> = ({ isActive, isDarkMode }) => {
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}
             className="space-y-8"
           >
-            <div className={`p-8 rounded-3xl border ${cardBg}`}>
+            <div className={`p-5 sm:p-8 rounded-3xl border ${cardBg}`}>
               <div className="flex items-start gap-4 mb-8">
                 <div className="w-3 h-3 rounded-full mt-1 flex-shrink-0" style={{ background: info.color, boxShadow: `0 0 10px ${info.color}` }} />
                 <div>
@@ -263,16 +262,16 @@ export const S11_Complements: React.FC<Props> = ({ isActive, isDarkMode }) => {
               </div>
 
               <div className="mt-8 grid gap-4">
-                <div className={`p-6 rounded-2xl ${isDarkMode ? 'bg-black/40' : 'bg-gray-50 border border-gray-100'}`}>
+                <div className={`p-4 sm:p-6 rounded-2xl ${isDarkMode ? 'bg-black/40' : 'bg-gray-50 border border-gray-100'}`}>
                   <div className={`text-xs opacity-40 uppercase tracking-widest mb-3 ${textColor}`}>
                     {type === '9s' ? `(10^${digits} − 1) − N = (${new Array(digits).fill(9).join('')}) − ${decNum}` : `10^${digits} − N = ${Math.pow(10, digits)} − ${decNum}`}
                   </div>
-                  <div className="flex items-center gap-4">
+                  <div className="flex flex-wrap items-center gap-3 sm:gap-4">
                     <span className={`font-mono text-xs opacity-40 ${textColor}`}>Result:</span>
                     <motion.div
                       key={type + decNum}
                       initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
-                      className="font-mono text-4xl font-black"
+                      className="font-mono text-3xl sm:text-4xl font-black break-words"
                       style={{ color: info.color, textShadow: `0 0 20px ${info.color}66` }}
                     >
                       {type === '9s' ? nines(decNum, digits) : tens(decNum, digits)}
@@ -295,14 +294,14 @@ export const S11_Complements: React.FC<Props> = ({ isActive, isDarkMode }) => {
 
             {/* Digit-by-digit 9s viz */}
             {type === '9s' && (
-              <div className={`p-8 rounded-3xl border ${isDarkMode ? 'bg-amber-500/5 border-amber-500/20' : 'bg-amber-50 border-amber-200'}`}>
+              <div className={`p-5 sm:p-8 rounded-3xl border ${isDarkMode ? 'bg-amber-500/5 border-amber-500/20' : 'bg-amber-50 border-amber-200'}`}>
                 <h4 className={`font-mono text-xs uppercase tracking-widest mb-6 ${isDarkMode ? 'text-amber-400' : 'text-amber-700'}`}>Digit-by-Digit Visualization</h4>
-                <div className="flex gap-8 justify-center flex-wrap">
+                <div className="flex gap-4 sm:gap-8 justify-center flex-wrap">
                   {String(decNum).split('').map((d, i) => (
                     <div key={i} className="flex flex-col items-center gap-3">
-                      <div className={`w-14 h-16 rounded-xl border-2 flex items-center justify-center text-2xl font-black font-mono ${isDarkMode ? 'border-white/20 text-white' : 'border-gray-300 text-gray-700'}`}>{d}</div>
+                      <div className={`w-12 h-14 sm:w-14 sm:h-16 rounded-xl border-2 flex items-center justify-center text-xl sm:text-2xl font-black font-mono ${isDarkMode ? 'border-white/20 text-white' : 'border-gray-300 text-gray-700'}`}>{d}</div>
                       <ChevronRight size={16} className="opacity-40 rotate-90" />
-                      <div className="w-14 h-16 rounded-xl border-2 flex items-center justify-center text-2xl font-black font-mono" style={{ borderColor: info.color, color: info.color, background: `${info.color}15` }}>
+                      <div className="w-12 h-14 sm:w-14 sm:h-16 rounded-xl border-2 flex items-center justify-center text-xl sm:text-2xl font-black font-mono" style={{ borderColor: info.color, color: info.color, background: `${info.color}15` }}>
                         {9 - Number(d)}
                       </div>
                       <span className="text-xs opacity-40 font-mono">9−{d}</span>
@@ -317,7 +316,7 @@ export const S11_Complements: React.FC<Props> = ({ isActive, isDarkMode }) => {
 
       {/* Comparison Table */}
       <div className={`rounded-3xl border overflow-hidden ${isDarkMode ? 'bg-white/5 border-white/10' : 'bg-white border-gray-200 shadow-xl'}`}>
-        <div className={`p-6 border-b flex items-center gap-3 ${isDarkMode ? 'border-white/5' : 'border-gray-100'}`}>
+        <div className={`p-4 sm:p-6 border-b flex items-center gap-3 ${isDarkMode ? 'border-white/5' : 'border-gray-100'}`}>
           <RefreshCw size={16} className="text-sky-500" />
           <h4 className={`font-mono text-xs uppercase tracking-widest ${textColor}`}>4-Bit Signed Number Table</h4>
         </div>
@@ -326,7 +325,7 @@ export const S11_Complements: React.FC<Props> = ({ isActive, isDarkMode }) => {
             <thead>
               <tr className={isDarkMode ? 'bg-white/5' : 'bg-gray-50'}>
                 {['Decimal', 'Sign-Mag', "1's Comp", "2's Comp"].map(h => (
-                  <th key={h} className={`px-6 py-3 text-left font-black uppercase tracking-widest opacity-50 ${textColor}`}>{h}</th>
+                  <th key={h} className={`px-4 sm:px-6 py-3 text-left font-black uppercase tracking-widest whitespace-nowrap opacity-50 ${textColor}`}>{h}</th>
                 ))}
               </tr>
             </thead>
@@ -342,7 +341,7 @@ export const S11_Complements: React.FC<Props> = ({ isActive, isDarkMode }) => {
               ].map((row, i) => (
                 <tr key={i} className={`border-t ${isDarkMode ? 'border-white/5 hover:bg-white/3' : 'border-gray-100 hover:bg-gray-50'}`}>
                   {row.map((cell, j) => (
-                    <td key={j} className={`px-6 py-3 ${j === 0 ? (cell.startsWith('-') ? 'text-rose-400' : (isDarkMode ? 'text-sky-400' : 'text-sky-600')) : (cell === '-' ? 'opacity-20' : (isDarkMode ? 'text-white/70' : 'text-gray-700'))} font-black`}>
+                    <td key={j} className={`px-4 sm:px-6 py-3 whitespace-nowrap ${j === 0 ? (cell.startsWith('-') ? 'text-rose-400' : (isDarkMode ? 'text-sky-400' : 'text-sky-600')) : (cell === '-' ? 'opacity-20' : (isDarkMode ? 'text-white/70' : 'text-gray-700'))} font-black`}>
                       {cell}
                     </td>
                   ))}

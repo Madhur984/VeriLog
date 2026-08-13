@@ -53,7 +53,7 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
         initial={{ opacity: 0, y: 20 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         className="space-y-5"
       >
-        <h1 className={`text-5xl md:text-7xl font-black ${textColor} tracking-tight leading-[0.95]`}>
+        <h1 className={`text-4xl sm:text-5xl md:text-7xl font-black ${textColor} tracking-tight leading-[0.95]`}>
           Special-purpose<br />
           <span className="text-yellow-300">diodes.</span>
         </h1>
@@ -111,7 +111,7 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
       <motion.div
         initial={{ opacity: 0, scale: 0.98 }} animate={isActive ? { opacity: 1, scale: 1 } : {}}
         transition={{ delay: 0.15 }}
-        className={`rounded-3xl border ${cardBg} p-10 relative overflow-hidden`}
+        className={`rounded-3xl border ${cardBg} p-5 md:p-10 relative overflow-hidden`}
         style={{
           background: isDarkMode
             ? 'linear-gradient(135deg, rgba(239,68,68,0.10), rgba(251,191,36,0.08) 45%, rgba(168,85,247,0.10) 85%)'
@@ -123,7 +123,8 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
         </div>
 
         {/* Big SVG showing the three diode symbols on a shared rail */}
-        <svg viewBox="0 0 800 220" className="w-full h-auto">
+        <div className="-mx-5 overflow-x-auto px-5 md:mx-0 md:overflow-x-visible md:px-0">
+        <svg viewBox="0 0 800 220" className="w-full h-auto min-w-[600px]">
           <defs>
             <linearGradient id="rail" x1="0" y1="0" x2="1" y2="0">
               <stop offset="0%" stopColor="#ef4444" />
@@ -197,13 +198,14 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
             One semiconductor architecture · three elite roles
           </text>
         </svg>
+        </div>
       </motion.div>
 
       {/* VIP cards */}
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.3 }}
-        className={`p-8 rounded-3xl border ${cardBg}`}
+        className={`p-5 md:p-8 rounded-3xl border ${cardBg}`}
       >
         <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-yellow-300 mb-5">
           Tonight&apos;s VIPs · meet the cast
@@ -246,7 +248,7 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.6 }}
-        className={`p-8 rounded-3xl border ${cardBg}`}
+        className={`p-5 md:p-8 rounded-3xl border ${cardBg}`}
       >
         <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.3em] text-amber-300 mb-5">
           <Cpu size={12} /> Topic index · 8 concepts you will master

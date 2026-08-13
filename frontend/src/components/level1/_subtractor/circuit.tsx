@@ -67,11 +67,14 @@ export const HalfSubtractorCircuit: React.FC<{ isDarkMode: boolean; accent: stri
   return (
     <Card isDarkMode={isDarkMode}>
       <TryItYourself />
-      <div className="mb-4 flex justify-center gap-3">
+      <div className="mb-4 flex flex-wrap justify-center gap-3">
         <InToggle label={lang === 'hi' ? 'x · जगह' : 'x · spaces'} v={x} on={() => setX((v) => v ^ 1)} color={NOTC} dark={isDarkMode} />
         <InToggle label={lang === 'hi' ? 'y · गाड़ी' : 'y · cars'} v={y} on={() => setY((v) => v ^ 1)} color={ANDC} dark={isDarkMode} />
       </div>
-      <svg viewBox="0 0 520 250" className="mx-auto h-auto w-full max-w-2xl">
+      {/* on a phone the schematic scrolls sideways in its own lane rather than
+          shrinking the pin labels into illegibility */}
+      <div className="-mx-2 overflow-x-auto px-2 sm:mx-0 sm:px-0">
+      <svg viewBox="0 0 520 250" className="mx-auto h-auto w-full min-w-[420px] max-w-2xl lg:min-w-0">
         {/* x: to XOR top, branch down to NOT */}
         <Wire pts={[[40, 60], [230, 60]]} v={x} dark={isDarkMode} />
         <Wire pts={[[95, 60], [95, 165], [155, 165]]} v={x} dark={isDarkMode} />
@@ -103,6 +106,7 @@ export const HalfSubtractorCircuit: React.FC<{ isDarkMode: boolean; accent: stri
         <text x={484} y={84} fontFamily="monospace" fontSize="14" fontWeight="700" fill={XOR}>D</text>
         <text x={484} y={189} fontFamily="monospace" fontSize="14" fontWeight="700" fill={ANDC}>B</text>
       </svg>
+      </div>
       <p className={`mt-3 text-center text-[13px] ${t.sub}`}>
         {lang === 'hi'
           ? <>Difference एक <b style={{ color: XOR }}>XOR</b> है; Borrow के लिए x को <b style={{ color: NOTC }}>NOT</b> करके y से <b style={{ color: ANDC }}>AND</b> करते हैं। तीन gates।</>
@@ -129,12 +133,13 @@ export const FullSubtractorCircuit: React.FC<{ isDarkMode: boolean; accent: stri
   return (
     <Card isDarkMode={isDarkMode}>
       <TryItYourself />
-      <div className="mb-4 flex justify-center gap-3">
+      <div className="mb-4 flex flex-wrap justify-center gap-3">
         <InToggle label="x · wallet" v={x} on={() => setX((v) => v ^ 1)} color={coins} dark={isDarkMode} />
         <InToggle label="y · bill" v={y} on={() => setY((v) => v ^ 1)} color={HS} dark={isDarkMode} />
         <InToggle label="z · debt (Bin)" v={z} on={() => setZ((v) => v ^ 1)} color={HS2} dark={isDarkMode} />
       </div>
-      <svg viewBox="0 0 700 320" className="mx-auto h-auto w-full max-w-3xl">
+      <div className="-mx-2 overflow-x-auto px-2 sm:mx-0 sm:px-0">
+      <svg viewBox="0 0 700 320" className="mx-auto h-auto w-full min-w-[560px] max-w-3xl lg:min-w-0">
         {/* inputs into HS1 */}
         <Wire pts={[[44, 70], [150, 70]]} v={x} dark={isDarkMode} />
         <Wire pts={[[44, 110], [150, 110]]} v={y} dark={isDarkMode} />
@@ -169,6 +174,7 @@ export const FullSubtractorCircuit: React.FC<{ isDarkMode: boolean; accent: stri
         <text x={672} y={74} fontFamily="monospace" fontSize="14" fontWeight="700" fill={coins}>D</text>
         <text x={672} y={244} fontFamily="monospace" fontSize="13" fontWeight="700" fill={ORC}>Bout</text>
       </svg>
+      </div>
       <p className={`mt-3 text-center text-[13px] ${t.sub}`}>
         {lang === 'hi'
           ? <>दो half subtractors जुड़े हैं: पहला x - y करता है, दूसरा उसमें से debt z घटाता है; दोनों borrows को एक <b style={{ color: ORC }}>OR</b> मिलाकर Bout देता है। D = x XOR y XOR z = <b style={{ color: coins }}>{D}</b>, Bout = <b style={{ color: ORC }}>{Bout}</b>।</>
@@ -197,10 +203,11 @@ export const BcdAdderCircuit: React.FC<{ isDarkMode: boolean; accent: string }> 
       <TryItYourself />
       <div className="mb-4 flex items-center gap-3">
         <span className={`font-mono text-[12px] ${t.faint}`}>{lang === 'hi' ? 'कच्चा sum' : 'raw sum A+B+Cin'}</span>
-        <input type="range" min={0} max={19} value={sum} onChange={(e) => setSum(parseInt(e.target.value, 10))} className="flex-1" style={{ accentColor: accent }} />
+        <input type="range" min={0} max={19} value={sum} onChange={(e) => setSum(parseInt(e.target.value, 10))} className="min-w-0 flex-1" style={{ accentColor: accent }} />
         <span className="w-9 text-right font-mono text-xl font-black" style={{ color: accent }}>{sum}</span>
       </div>
-      <svg viewBox="0 0 700 300" className="mx-auto h-auto w-full max-w-3xl">
+      <div className="-mx-2 overflow-x-auto px-2 sm:mx-0 sm:px-0">
+      <svg viewBox="0 0 700 300" className="mx-auto h-auto w-full min-w-[560px] max-w-3xl lg:min-w-0">
         {/* ADDER 1 -> K and Z bus */}
         <GateBox x={40} y={40} w={150} h={80} title="4-BIT ADDER 1" sub="A + B + Cin" accent={A1} dark={isDarkMode} />
         {/* K up to OR */}
@@ -233,6 +240,7 @@ export const BcdAdderCircuit: React.FC<{ isDarkMode: boolean; accent: string }> 
         <text x={585} y={255} fontFamily="monospace" fontSize="13" fontWeight="800" fill={good}>{C}{' '}{bits(S)}</text>
         <text x={585} y={272} fontFamily="monospace" fontSize="10" fill={faintTxt(isDarkMode)}>carry S8 S4 S2 S1</text>
       </svg>
+      </div>
       <p className={`mt-3 text-center text-[13px] ${t.sub}`}>
         {lang === 'hi'
           ? <>ADDER 1 कच्चा sum बनाता है; तीन gates <b style={{ color: ORC }}>C = K + Z8.Z4 + Z8.Z2</b> निकालते हैं; C = {C} होने पर ADDER 2, 6 (0110) जोड़ देता है। नतीजा BCD = <b style={{ color: good }}>{C} {bits(S)}</b> = {C * 10 + S}।</>

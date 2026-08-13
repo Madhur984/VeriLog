@@ -35,12 +35,13 @@ export const S08_TurnstileMatrix: React.FC<Props> = ({ isActive, isDarkMode }) =
       {/* V-I region map */}
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
-        className={`p-8 rounded-3xl border ${cardBg}`}
+        className={`p-5 md:p-8 rounded-3xl border ${cardBg}`}
       >
         <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-emerald-400 mb-5">
           The full V-I journey · 4 regions on one curve
         </div>
-        <svg viewBox="0 0 700 280" className="w-full h-auto">
+        <div className="-mx-5 overflow-x-auto px-5 md:mx-0 md:overflow-x-visible md:px-0">
+        <svg viewBox="0 0 700 280" className="w-full h-auto min-w-[540px]">
           <line x1="50" y1="180" x2="650" y2="180" stroke="#475569" strokeWidth="1" />
           <line x1="350" y1="20" x2="350" y2="260" stroke="#475569" strokeWidth="1" />
           <text x="650" y="200" fill="#94a3b8" fontFamily="monospace" fontSize="11" textAnchor="end">V_D</text>
@@ -75,6 +76,7 @@ export const S08_TurnstileMatrix: React.FC<Props> = ({ isActive, isDarkMode }) =
           <line x1="65" y1="175" x2="65" y2="185" stroke="#f43f5e" strokeWidth="2" />
           <text x="65" y="200" fill="#f43f5e" fontFamily="monospace" fontSize="10" textAnchor="middle">V_BV</text>
         </svg>
+        </div>
         <p className={`text-xs ${subText} mt-3 text-center`}>
           A diode lives in four distinct regions. The matrix below summarises what happens in
           each - and the analogy that makes it stick.
@@ -85,14 +87,14 @@ export const S08_TurnstileMatrix: React.FC<Props> = ({ isActive, isDarkMode }) =
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.15 }}
-        className={`p-8 rounded-3xl border ${cardBg}`}
+        className={`p-5 md:p-8 rounded-3xl border ${cardBg}`}
       >
         <div className="flex items-center gap-2 mb-5">
           <Table size={14} className="text-emerald-400" />
           <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-emerald-400">Operations matrix</span>
         </div>
 
-        <div className="overflow-x-auto">
+        <div className="-mx-5 overflow-x-auto px-5 md:mx-0 md:px-0">
           <div className="grid grid-cols-[1.1fr_1fr_1fr_1fr_1.2fr] gap-px bg-emerald-500/20 min-w-[700px]">
             {['State', 'Voltage (V_D)', 'Depletion Width', 'Train Analogy', 'Current (I_D)'].map((h) => (
               <div key={h} className="p-3 bg-slate-800 dark:bg-black/60 font-mono text-[10px] uppercase tracking-widest text-emerald-300">
@@ -126,10 +128,11 @@ export const S08_TurnstileMatrix: React.FC<Props> = ({ isActive, isDarkMode }) =
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.35 }}
-        className={`p-8 rounded-3xl border ${cardBg}`}
+        className={`p-5 md:p-8 rounded-3xl border ${cardBg}`}
       >
         <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-emerald-400 mb-5">The diode symbol · annotated</div>
-        <svg viewBox="0 0 600 200" className="w-full h-auto max-w-3xl mx-auto">
+        <div className="-mx-5 overflow-x-auto px-5 md:mx-0 md:overflow-x-visible md:px-0">
+        <svg viewBox="0 0 600 200" className="w-full h-auto max-w-3xl mx-auto min-w-[480px]">
           <line x1="40" y1="100" x2="200" y2="100" stroke="#fb923c" strokeWidth="3" />
           <text x="40" y="90" fill="#fb923c" fontFamily="monospace" fontSize="13" fontWeight="bold">Anode (+)</text>
           <text x="40" y="125" fill="#94a3b8" fontFamily="monospace" fontSize="11">P-side</text>
@@ -157,6 +160,7 @@ export const S08_TurnstileMatrix: React.FC<Props> = ({ isActive, isDarkMode }) =
           <line x1="380" y1="50" x2="290" y2="50" stroke="#f43f5e" strokeWidth="2" strokeDasharray="4 3" markerEnd="url(#revArr)" />
           <text x="335" y="42" fill="#f43f5e" fontFamily="monospace" fontSize="10" textAnchor="middle" fontWeight="bold">BLOCKED</text>
         </svg>
+        </div>
         <p className={`text-xs ${subText} text-center mt-4`}>
           Triangle = permitted direction. Bar = closed door for the opposite direction. Like a
           mechanical turnstile, but enforcing a strict one-way street for current.
@@ -179,7 +183,7 @@ export const S08_TurnstileMatrix: React.FC<Props> = ({ isActive, isDarkMode }) =
       <motion.div
         initial={{ opacity: 0 }} animate={isActive ? { opacity: 1 } : {}}
         transition={{ delay: 0.55 }}
-        className={`p-8 rounded-3xl border ${cardBg} text-center space-y-4`}
+        className={`p-5 md:p-8 rounded-3xl border ${cardBg} text-center space-y-4`}
       >
         <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-emerald-400">Level cleared</div>
         <h3 className={`text-2xl font-black ${textColor}`}>You can now read any P-N junction in any context.</h3>

@@ -106,7 +106,7 @@ export const ECERoiFlexSection: React.FC = () => {
                 <label className="text-xs font-mono font-bold text-slate-300 uppercase tracking-widest block mb-3">
                   1. Select Target ECE Domain
                 </label>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {Object.entries(WEALTH_DATA).map(([key, data]) => (
                     <button
                       key={key}
@@ -127,7 +127,7 @@ export const ECERoiFlexSection: React.FC = () => {
                 <label className="text-xs font-mono font-bold text-slate-300 uppercase tracking-widest block mb-3">
                   2. Select Company Tier
                 </label>
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                   {[
                     { id: 'tier1', label: 'Tier-1 MNC', desc: 'NVIDIA, Intel, Qualcomm' },
                     { id: 'startup', label: 'Chip Startup', desc: 'Series-B Hardware' },
@@ -163,7 +163,7 @@ export const ECERoiFlexSection: React.FC = () => {
             <div className="lg:col-span-7 bg-white/[0.02] border border-slate-800/80 p-6 sm:p-8 rounded-2xl flex flex-col justify-between">
               
               <div className="space-y-6">
-                <div className="flex justify-between items-center border-b border-white/10 pb-4">
+                <div className="flex flex-wrap gap-2 justify-between items-center border-b border-white/10 pb-4">
                   <h3 className="font-mono text-xs uppercase tracking-widest text-slate-400 font-bold">
                     5-YEAR PAY TRAJECTORY (ANNUAL CTC)
                   </h3>

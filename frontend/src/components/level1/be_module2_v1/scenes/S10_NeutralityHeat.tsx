@@ -27,12 +27,13 @@ export const S10_NeutralityHeat: React.FC<Props> = ({ isActive, isDarkMode }) =>
       {/* Twist 1: Neutrality - custom balance scale */}
       <motion.div
         initial={{ opacity: 0, x: -20 }} animate={isActive ? { opacity: 1, x: 0 } : {}}
-        className={`p-8 rounded-3xl border ${cardBg}`}
+        className={`p-5 md:p-8 rounded-3xl border ${cardBg}`}
       >
         <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-violet-400 mb-5">
           Twist 1 · The doped material is still electrically neutral
         </div>
-        <svg viewBox="0 0 700 240" className="w-full h-auto max-w-2xl mx-auto">
+        <div className="-mx-5 overflow-x-auto px-5 md:mx-0 md:overflow-x-visible md:px-0">
+        <svg viewBox="0 0 700 240" className="w-full h-auto max-w-2xl mx-auto min-w-[540px]">
           {/* Beam */}
           <line x1="350" y1="40" x2="350" y2="80" stroke="#94a3b8" strokeWidth="2" />
           <line x1="100" y1="80" x2="600" y2="80" stroke="#94a3b8" strokeWidth="3" />
@@ -64,6 +65,7 @@ export const S10_NeutralityHeat: React.FC<Props> = ({ isActive, isDarkMode }) =>
           {/* Caption */}
           <text x="350" y="225" fontFamily="monospace" fontSize="11" fill="#94a3b8" textAnchor="middle">A donor atom (P, As, Sb) brings 5 protons AND 5 electrons. Charge stays balanced.</text>
         </svg>
+        </div>
       </motion.div>
 
       <div className="grid md:grid-cols-3 gap-4">
@@ -90,12 +92,13 @@ export const S10_NeutralityHeat: React.FC<Props> = ({ isActive, isDarkMode }) =>
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.2 }}
-        className={`p-8 rounded-3xl border ${cardBg}`}
+        className={`p-5 md:p-8 rounded-3xl border ${cardBg}`}
       >
         <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-orange-400 mb-5">
           Twist 2 · Resistance vs temperature · two curves
         </div>
-        <svg viewBox="0 0 700 240" className="w-full h-auto">
+        <div className="-mx-5 overflow-x-auto px-5 md:mx-0 md:overflow-x-visible md:px-0">
+        <svg viewBox="0 0 700 240" className="w-full h-auto min-w-[540px]">
           {/* Axes */}
           <line x1="60" y1="200" x2="650" y2="200" stroke="#475569" strokeWidth="1" />
           <line x1="60" y1="40" x2="60" y2="200" stroke="#475569" strokeWidth="1" />
@@ -125,6 +128,7 @@ export const S10_NeutralityHeat: React.FC<Props> = ({ isActive, isDarkMode }) =>
           <text x="380" y="105" fontFamily="monospace" fontSize="10" fill="#fb923c">heat = broken bonds =</text>
           <text x="380" y="118" fontFamily="monospace" fontSize="10" fill="#fb923c">more carriers = ↓ resistance</text>
         </svg>
+        </div>
       </motion.div>
 
       <div className="grid md:grid-cols-2 gap-5">
@@ -176,7 +180,7 @@ export const S10_NeutralityHeat: React.FC<Props> = ({ isActive, isDarkMode }) =>
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.4 }}
-        className={`p-8 rounded-3xl border ${cardBg} text-center space-y-4`}
+        className={`p-5 md:p-8 rounded-3xl border ${cardBg} text-center space-y-4`}
       >
         <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-emerald-400">Module 2 wrap</div>
         <h3 className={`text-2xl font-black ${textColor}`}>You can now think in carriers and bands.</h3>

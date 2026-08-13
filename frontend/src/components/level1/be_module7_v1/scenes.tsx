@@ -147,7 +147,7 @@ const FeedbackLoop: React.FC<{ isDarkMode: boolean; accent: string }> = ({ isDar
           {lang === 'hi' ? 'Re negative-feedback loop' : 'Re negative-feedback loop'}
         </span>
         <button onClick={() => setBump((b) => (b > 0 ? 0 : 1))}
-          className="flex items-center gap-2 rounded-xl px-4 py-1.5 font-mono text-[12px] font-black text-black active:scale-95"
+          className="min-h-[40px] sm:min-h-0 flex items-center gap-2 rounded-xl px-4 py-1.5 font-mono text-[12px] font-black text-black active:scale-95"
           style={{ background: bump > 0 ? COL.good : COL.warn }}>
           <Flame size={14} /> {bump > 0 ? (lang === 'hi' ? 'ठंडा होने दो' : 'let it settle') : (lang === 'hi' ? 'गरम करो' : 'heat it')}
         </button>

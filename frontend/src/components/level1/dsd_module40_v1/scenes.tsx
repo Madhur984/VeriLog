@@ -511,7 +511,7 @@ const RowMatchLab: React.FC<{ isDarkMode: boolean; accent: string }> = ({ isDark
             <div className="flex flex-wrap justify-center gap-1">
               {ids.map((id) => (
                 <button key={id} onClick={() => setPa(id)}
-                  className="h-8 w-8 rounded-lg font-mono text-[13px] font-black active:scale-90"
+                  className="h-10 w-10 rounded-lg font-mono text-[13px] font-black active:scale-90 sm:h-8 sm:w-8"
                   style={pa === id ? { background: accent, color: '#000' } : { border: `1.5px solid ${accent}55`, color: accent }}>{id}</button>
               ))}
             </div>
@@ -521,7 +521,7 @@ const RowMatchLab: React.FC<{ isDarkMode: boolean; accent: string }> = ({ isDark
             <div className="flex flex-wrap justify-center gap-1">
               {ids.map((id) => (
                 <button key={id} onClick={() => setPb(id)}
-                  className="h-8 w-8 rounded-lg font-mono text-[13px] font-black active:scale-90"
+                  className="h-10 w-10 rounded-lg font-mono text-[13px] font-black active:scale-90 sm:h-8 sm:w-8"
                   style={pb === id ? { background: ACC.hot, color: '#000' } : { border: `1.5px solid ${ACC.hot}55`, color: ACC.hot }}>{id}</button>
               ))}
             </div>
@@ -660,7 +660,7 @@ const ImplicationChartLab: React.FC<{ isDarkMode: boolean; accent: string }> = (
                     return (
                       <td key={cs} className="p-1">
                         <button onClick={() => setSel(c)}
-                          className="flex h-9 w-9 items-center justify-center rounded-lg text-[15px] font-black transition-all"
+                          className="flex h-10 w-10 items-center justify-center rounded-lg text-[15px] font-black transition-all sm:h-9 sm:w-9"
                           style={isSel ? { background: col, color: '#000' } : { border: `1.5px solid ${col}55`, color: col }}>
                           {glyph}
                         </button>

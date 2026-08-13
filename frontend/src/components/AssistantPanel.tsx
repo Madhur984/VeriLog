@@ -112,7 +112,7 @@ export const AssistantPanel: React.FC<Props> = ({ open, onClose, pathname, inMod
           className={`pointer-events-auto fixed right-4 z-[400] flex w-[min(92vw,380px)] flex-col overflow-hidden rounded-[20px] border-[3px] border-[#1B1436] bg-[#F1ECFF] font-sans shadow-[6px_6px_0_#1B1436] dark:border-[#4A3D7A] dark:bg-[#0F0B1E] dark:shadow-[6px_6px_0_#7A3FD0] ${
             inModule ? 'bottom-24 lg:bottom-28' : 'bottom-4'
           }`}
-          style={{ height: 'min(72vh, 540px)' }}
+          style={{ height: 'min(72svh, 540px)' }}
         >
           {/* Header */}
           <div className="flex items-center gap-3 border-b-[3px] border-[#1B1436] bg-white px-4 py-3 dark:border-[#4A3D7A] dark:bg-[#1B1540]">

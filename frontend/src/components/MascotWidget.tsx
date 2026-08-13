@@ -86,7 +86,7 @@ export default function MascotWidget() {
             inModule ? 'bottom-24 lg:bottom-28' : 'bottom-4'
           }`}
         >
-          <div className="relative h-28 w-24 sm:h-32 sm:w-28">
+          <div className="relative h-24 w-20 sm:h-32 sm:w-28">
             {/* minimise (stopPropagation so tapping it doesn't start a drag) */}
             <button
               type="button"

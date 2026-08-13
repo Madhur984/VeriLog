@@ -228,7 +228,7 @@ export const S08_Practice: React.FC<Props> = ({ isDarkMode }) => {
               <button
                 key={i}
                 onClick={() => setIdx(i)}
-                className={`w-8 h-8 rounded-lg font-mono text-xs font-black border transition-all ${
+                className={`w-10 h-10 sm:w-8 sm:h-8 rounded-lg font-mono text-xs font-black border transition-all ${
                   i === idx
                     ? isDarkMode ? 'border-violet-400 bg-violet-500/20 text-violet-300' : 'border-violet-400 bg-violet-500/20 text-violet-700'
                     : c

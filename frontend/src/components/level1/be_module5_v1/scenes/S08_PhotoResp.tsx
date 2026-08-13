@@ -92,7 +92,7 @@ export const S08_PhotoResp: React.FC<Props> = ({ isActive, isDarkMode }) => {
       <motion.div
         initial={{ opacity: 0, scale: 0.98 }} animate={isActive ? { opacity: 1, scale: 1 } : {}}
         transition={{ delay: 0.15 }}
-        className={`rounded-3xl border ${cardBg} p-10`}
+        className={`rounded-3xl border ${cardBg} p-5 md:p-10`}
       >
         <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
           <div className="font-mono text-[10px] uppercase tracking-widest text-emerald-300">I_λ (μA) vs −V_λ (V)</div>
@@ -101,7 +101,7 @@ export const S08_PhotoResp: React.FC<Props> = ({ isActive, isDarkMode }) => {
               <button
                 key={l.fc}
                 onClick={() => setSelected(l.fc)}
-                className="px-3 h-8 rounded-md font-mono text-[10px] uppercase tracking-widest font-black border transition-all"
+                className="px-3 h-10 sm:h-8 rounded-md font-mono text-[10px] uppercase tracking-widest font-black border transition-all"
                 style={{
                   borderColor: selected === l.fc ? l.color : 'rgba(255,255,255,0.10)',
                   background: selected === l.fc ? `${l.color}22` : 'transparent',
@@ -114,7 +114,8 @@ export const S08_PhotoResp: React.FC<Props> = ({ isActive, isDarkMode }) => {
           </div>
         </div>
 
-        <svg viewBox={`-50 -20 ${W + 80} ${H + 60}`} className="w-full h-auto">
+        <div className="-mx-5 overflow-x-auto px-5 md:mx-0 md:overflow-x-visible md:px-0">
+        <svg viewBox={`-50 -20 ${W + 80} ${H + 60}`} className="w-full h-auto min-w-[460px]">
           {/* axes */}
           <line x1="0" y1="0" x2="0" y2={H} stroke={isDarkMode ? '#475569' : '#94a3b8'} strokeWidth="1.5" />
           <line x1="0" y1="0" x2={W} y2="0" stroke={isDarkMode ? '#475569' : '#94a3b8'} strokeWidth="1.5" />
@@ -165,6 +166,7 @@ export const S08_PhotoResp: React.FC<Props> = ({ isActive, isDarkMode }) => {
           ))}
           <text x={W + 6} y={yToPx(20) + 14} fontSize="9" fontFamily="monospace" fill="#475569">Dark</text>
         </svg>
+        </div>
       </motion.div>
 
       {/* Probe slider + summary */}

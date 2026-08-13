@@ -107,7 +107,7 @@ export const KMapGrid: React.FC = () => {
   }, [groups, rows, cols, numVars]);
 
   return (
-    <div className="flex flex-col items-center animate-in fade-in zoom-in duration-700 w-full overflow-x-auto">
+    <div className="flex flex-col items-center animate-in fade-in zoom-in duration-700 w-full">
       {/* Grid title & tooltip banner */}
       <div className="flex items-center gap-2 mb-10 text-xs font-bold uppercase tracking-wider text-text-dim">
         <span>Interactive Karnaugh Map</span>
@@ -118,8 +118,14 @@ export const KMapGrid: React.FC = () => {
         />
       </div>
 
-      {/* Extra horizontal padding on mobile to give room for row labels */}
-      <div className="relative mb-6 lg:mb-12 ml-10 lg:ml-0 mt-2">
+      {/* Extra horizontal padding on mobile to give room for row labels.
+          The scroll box is a flex row whose child uses mx-auto: flexbox auto
+          margins collapse to 0 when free space is negative, so a wide map (4-5
+          vars) stays scrollable from its left edge on a phone instead of being
+          centred half-off screen. pt-7/-mt-7 keeps room for the column labels
+          (which sit at -top-7) without shifting anything on desktop. */}
+      <div className="flex w-full overflow-x-auto pl-10 pr-2 pt-7 -mt-7 lg:pl-0 lg:pr-0">
+      <div className="relative mb-6 lg:mb-12 mt-2 mx-auto shrink-0">
         {/* Labels: Columns */}
         <div className="absolute -top-7 left-0 right-0 flex justify-around px-8">
             {colGray.map(g => <span key={g} className="text-xs font-mono font-bold text-text-dim">{g}</span>)}
@@ -160,6 +166,7 @@ export const KMapGrid: React.FC = () => {
             {groupElements}
           </svg>
         </div>
+      </div>
       </div>
     </div>
   );

@@ -37,7 +37,7 @@ export const QuickActions: React.FC = () => {
           </button>
 
           {showPresetsMenu && (
-            <div className="absolute bottom-full mb-2 left-0 w-64 bg-[#0d121d] border border-orange-500/40 rounded-xl shadow-2xl p-2 z-[100] animate-in fade-in zoom-in-95 duration-150">
+            <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 w-[min(84vw,16rem)] sm:left-0 sm:translate-x-0 sm:w-64 bg-[#0d121d] border border-orange-500/40 rounded-xl shadow-2xl p-2 z-[100] animate-in fade-in zoom-in-95 duration-150">
               <div className="text-[11px] font-bold text-accent-orange uppercase tracking-wider px-2 py-1 border-b border-border-soft/60 mb-1">
                 Classic Hardware Circuits
               </div>

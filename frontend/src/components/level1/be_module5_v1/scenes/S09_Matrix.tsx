@@ -89,6 +89,8 @@ export const S09_Matrix: React.FC<Props> = ({ isActive, isDarkMode }) => {
         transition={{ delay: 0.2 }}
         className={`rounded-3xl border ${cardBg} overflow-hidden`}
       >
+        <div className="overflow-x-auto">
+        <div className="min-w-[720px]">
         <div className="grid grid-cols-12 text-[10px] font-mono uppercase tracking-[0.2em] text-fuchsia-300 px-6 py-4 border-b" style={{ borderColor: isDarkMode ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)' }}>
           <div className="col-span-3">Diode Type</div>
           <div className="col-span-2">Operating State</div>
@@ -140,6 +142,8 @@ export const S09_Matrix: React.FC<Props> = ({ isActive, isDarkMode }) => {
             </div>
           );
         })}
+        </div>
+        </div>
       </motion.div>
 
       {/* Summary callouts */}
@@ -176,7 +180,7 @@ export const S09_Matrix: React.FC<Props> = ({ isActive, isDarkMode }) => {
       <motion.div
         initial={{ opacity: 0 }} animate={isActive ? { opacity: 1 } : {}}
         transition={{ delay: 1.0 }}
-        className={`p-8 rounded-3xl border ${cardBg} text-center space-y-2`}
+        className={`p-5 md:p-8 rounded-3xl border ${cardBg} text-center space-y-2`}
         style={{
           background: isDarkMode
             ? 'linear-gradient(135deg, rgba(239,68,68,0.08), rgba(251,191,36,0.06) 50%, rgba(168,85,247,0.08) 100%)'

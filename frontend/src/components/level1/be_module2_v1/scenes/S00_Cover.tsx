@@ -32,7 +32,7 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
         <motion.h1
           initial={{ opacity: 0, scale: 0.95 }} animate={isActive ? { opacity: 1, scale: 1 } : {}}
           transition={{ duration: 0.6 }}
-          className={`text-5xl md:text-7xl font-black tracking-tight leading-[0.95] ${textColor}`}
+          className={`text-4xl sm:text-5xl md:text-7xl font-black tracking-tight leading-[0.95] ${textColor}`}
         >
           From Silicon<br />
           <span className="bg-gradient-to-r from-orange-400 via-amber-300 to-sky-400 bg-clip-text text-transparent">
@@ -54,7 +54,7 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
         <motion.div
           initial={{ opacity: 0, x: -20 }} animate={isActive ? { opacity: 1, x: 0 } : {}}
           transition={{ delay: 0.3 }}
-          className={`p-8 rounded-3xl border ${cardBg} relative overflow-hidden`}
+          className={`p-5 md:p-8 rounded-3xl border ${cardBg} relative overflow-hidden`}
         >
           <div className="absolute -top-10 -right-10 w-40 h-40 bg-orange-400/10 rounded-full blur-3xl" />
           <div className="flex items-start gap-4 mb-4">
@@ -76,7 +76,7 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
         <motion.div
           initial={{ opacity: 0, x: 20 }} animate={isActive ? { opacity: 1, x: 0 } : {}}
           transition={{ delay: 0.4 }}
-          className={`p-8 rounded-3xl border ${cardBg} relative overflow-hidden`}
+          className={`p-5 md:p-8 rounded-3xl border ${cardBg} relative overflow-hidden`}
         >
           <div className="absolute -top-10 -right-10 w-40 h-40 bg-sky-400/10 rounded-full blur-3xl" />
           <div className="flex items-start gap-4 mb-4">
@@ -99,7 +99,7 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.5 }}
-        className={`p-8 rounded-3xl border ${cardBg}`}
+        className={`p-5 md:p-8 rounded-3xl border ${cardBg}`}
       >
         <div className="flex items-center gap-3 mb-6">
           <Sparkles size={16} className="text-orange-400" />
@@ -128,7 +128,7 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.6 }}
-        className={`p-8 rounded-3xl border ${cardBg}`}
+        className={`p-5 md:p-8 rounded-3xl border ${cardBg}`}
       >
         <div className="flex items-center gap-2 mb-6">
           <Sparkles size={14} className="text-orange-400" />

@@ -18,17 +18,17 @@ const BinaryConverter: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
   const recordAction = useBinaryStore(state => state.recordAction);
 
   return (
-    <div className={`p-8 rounded-3xl border ${isDarkMode ? 'bg-sky-500/5 border-sky-500/20' : 'bg-sky-50 border-sky-100 shadow-xl'}`}>
+    <div className={`p-4 sm:p-8 rounded-3xl border ${isDarkMode ? 'bg-sky-500/5 border-sky-500/20' : 'bg-sky-50 border-sky-100 shadow-xl'}`}>
       <h3 className={`font-mono text-xs uppercase tracking-widest mb-2 text-center ${isDarkMode ? 'text-sky-400' : 'text-sky-600'}`}>
         Interactive Converter - Click Bits to Toggle
       </h3>
       <p className={`text-[11px] text-center opacity-50 mb-6 ${textColor}`}>Each bit = ON (1) or OFF (0). Sum the weights of all ON bits.</p>
 
       {/* Bit Grid */}
-      <div className="grid grid-cols-8 gap-2 mb-6">
+      <div className="grid grid-cols-8 gap-1 sm:gap-2 mb-6">
         {bits.map((b, i) => (
-          <div key={i} className="flex flex-col items-center gap-2">
-            <span className={`font-mono text-[11px] opacity-40`}>2^{7-i}</span>
+          <div key={i} className="flex flex-col items-center gap-1.5 sm:gap-2 min-w-0">
+            <span className={`font-mono text-[9px] sm:text-[11px] opacity-40`}>2^{7-i}</span>
             <motion.button
               onClick={() => {
                   setBits(prev => prev.map((v, idx) => idx === i ? 1 - v : v));
@@ -40,12 +40,12 @@ const BinaryConverter: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
                 boxShadow: b ? '0 0 15px rgba(14,165,233,0.5)' : 'none',
                 y: b ? -3 : 0,
               }}
-              className="w-full aspect-square rounded-xl border-2 flex items-center justify-center text-lg font-black cursor-pointer transition-colors"
+              className="w-full aspect-square rounded-lg sm:rounded-xl border-2 flex items-center justify-center text-base sm:text-lg font-black cursor-pointer transition-colors"
               style={{ borderColor: b ? '#0ea5e9' : (isDarkMode ? '#2d3139' : '#e2e8f0'), color: b ? '#fff' : (isDarkMode ? '#4b5563' : '#9ca3af') }}
             >
               {b}
             </motion.button>
-            <span className={`font-mono text-[11px] ${b ? (isDarkMode ? 'text-sky-400' : 'text-sky-600') : 'opacity-30'}`}>{weights8[i]}</span>
+            <span className={`font-mono text-[9px] sm:text-[11px] ${b ? (isDarkMode ? 'text-sky-400' : 'text-sky-600') : 'opacity-30'}`}>{weights8[i]}</span>
           </div>
         ))}
       </div>
@@ -53,13 +53,13 @@ const BinaryConverter: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
       {/* Calculation */}
       <div className={`p-4 rounded-2xl font-mono text-xs leading-loose ${isDarkMode ? 'bg-black/40' : 'bg-white/80 border border-sky-100'}`}>
         <div className={`opacity-60 mb-2 text-[11px] uppercase tracking-widest ${textColor}`}>Calculation:</div>
-        <div className={textColor}>
+        <div className={`break-words ${textColor}`}>
           {bits.map((b, i) => b ? `${weights8[i]}` : null).filter(Boolean).join(' + ') || '0'} = <strong className="text-sky-400 text-base">{decimal}</strong>
         </div>
       </div>
 
       {/* Quick Reference */}
-      <div className="mt-4 grid grid-cols-4 gap-2">
+      <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-2">
         {[
           { label: '11001', val: 25 }, { label: '1100001', val: 97 },
           { label: '0.101', val: '0.625' }, { label: '11.001', val: '3.125' },
@@ -111,11 +111,11 @@ export const S00_B_BinarySystem: React.FC<Props> = ({ isActive, isDarkMode }) =>
       />
 
       {/* Power Grid */}
-      <div className={`p-8 rounded-[2rem] border ${cardBg}`}>
+      <div className={`p-5 sm:p-8 rounded-[2rem] border ${cardBg}`}>
         <h3 className={`font-mono text-xs uppercase tracking-widest mb-8 text-center ${subTextColor}`}>
           The Power Grid - Binary Weights (2^n)
         </h3>
-        <div className="grid grid-cols-4 md:grid-cols-8 gap-4">
+        <div className="grid grid-cols-4 md:grid-cols-8 gap-3 sm:gap-4">
           {weights8.map((w, i) => (
             <motion.div
               key={w} initial={{ y: 20, opacity: 0 }}
@@ -146,10 +146,10 @@ export const S00_B_BinarySystem: React.FC<Props> = ({ isActive, isDarkMode }) =>
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={isActive ? { opacity: 1, scale: 1 } : {}}
-          className={`p-8 rounded-3xl border ${isDarkMode ? 'bg-sky-500/5 border-sky-500/20 shadow-2xl shadow-sky-900/10' : 'bg-sky-50 border-sky-100 shadow-xl'}`}
+          className={`p-5 sm:p-8 rounded-3xl border ${isDarkMode ? 'bg-sky-500/5 border-sky-500/20 shadow-2xl shadow-sky-900/10' : 'bg-sky-50 border-sky-100 shadow-xl'}`}
         >
           <div className="flex items-center gap-3 mb-8">
-            <Binary size={18} className="text-sky-500" />
+            <Binary size={18} className="text-sky-500 flex-shrink-0" />
             <h4 className={`font-black uppercase tracking-widest text-sm ${textColor}`}>Decomposition: (1101)_2</h4>
           </div>
           <div className="flex justify-between gap-2 mb-8">
@@ -163,7 +163,7 @@ export const S00_B_BinarySystem: React.FC<Props> = ({ isActive, isDarkMode }) =>
               </div>
             ))}
           </div>
-          <pre className={`font-mono text-[11px] leading-relaxed p-5 rounded-2xl ${isDarkMode ? 'bg-black/40' : 'bg-white/70 border border-sky-100'} ${textColor}`}>
+          <pre className={`font-mono text-[11px] leading-relaxed p-5 rounded-2xl overflow-x-auto ${isDarkMode ? 'bg-black/40' : 'bg-white/70 border border-sky-100'} ${textColor}`}>
 {`  (1 * 2^3) = 8
 + (1 * 2^2) = 4
 + (0 * 2^1) = 0
@@ -174,7 +174,7 @@ export const S00_B_BinarySystem: React.FC<Props> = ({ isActive, isDarkMode }) =>
         </motion.div>
 
         <div className="space-y-6">
-          <div className={`p-8 rounded-3xl border ${isDarkMode ? 'bg-white/5 border-white/10' : 'bg-gray-50 border-gray-200'}`}>
+          <div className={`p-5 sm:p-8 rounded-3xl border ${isDarkMode ? 'bg-white/5 border-white/10' : 'bg-gray-50 border-gray-200'}`}>
             <h4 className={`font-bold mb-4 flex items-center gap-2 ${textColor}`}>
               <Zap size={16} className="text-amber-500" />
               What is a Bit?
@@ -186,9 +186,9 @@ export const S00_B_BinarySystem: React.FC<Props> = ({ isActive, isDarkMode }) =>
           </div>
 
           {/* Fractional Binary */}
-          <div className={`p-6 rounded-3xl border ${isDarkMode ? 'bg-white/5 border-white/10' : 'bg-gray-50 border-gray-200'}`}>
+          <div className={`p-5 sm:p-6 rounded-3xl border ${isDarkMode ? 'bg-white/5 border-white/10' : 'bg-gray-50 border-gray-200'}`}>
             <h4 className={`font-bold mb-4 ${textColor}`}>Fractional Binary</h4>
-            <div className={`font-mono text-xs leading-loose p-4 rounded-xl ${isDarkMode ? 'bg-black/40' : 'bg-white border border-gray-100'}`}>
+            <div className={`font-mono text-xs leading-loose p-4 rounded-xl overflow-x-auto ${isDarkMode ? 'bg-black/40' : 'bg-white border border-gray-100'}`}>
               <div className="opacity-60 mb-2">Negative powers of 2:</div>
               <div>2^-1 = <span className="text-sky-400">0.5</span></div>
               <div>2^-2 = <span className="text-sky-400">0.25</span></div>
@@ -204,10 +204,10 @@ export const S00_B_BinarySystem: React.FC<Props> = ({ isActive, isDarkMode }) =>
       {/* Key Callout */}
       <motion.div
         initial={{ opacity: 0 }} animate={isActive ? { opacity: 1 } : {}}
-        className={`p-10 rounded-[2.5rem] bg-gradient-to-br from-sky-500/10 to-transparent border text-center
+        className={`p-6 sm:p-10 rounded-[2.5rem] bg-gradient-to-br from-sky-500/10 to-transparent border text-center
           ${isDarkMode ? 'border-sky-500/20' : 'border-sky-100'}`}
       >
-        <p className={`text-xl font-black leading-tight ${textColor}`}>
+        <p className={`text-lg sm:text-xl font-black leading-tight ${textColor}`}>
           Binary Value = <span className="text-sky-500">SUM (bit * 2^position)</span>
         </p>
         <p className={`text-sm opacity-50 mt-3 font-mono ${textColor}`}>sum of all active bit weights from MSB (left) to LSB (right)</p>

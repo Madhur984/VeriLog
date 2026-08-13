@@ -7,7 +7,7 @@ export const S03_AnalogVsDigital: React.FC<{ isDarkMode: boolean }> = ({ isDarkM
     <div className="space-y-32">
       {/* ── Main Comparison ── */}
       <section>
-        <h2 className={`text-4xl font-black mb-12 tracking-tighter ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>The Great Divide: Analog vs Digital</h2>
+        <h2 className={`text-3xl sm:text-4xl font-black mb-12 tracking-tighter ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>The Great Divide: Analog vs Digital</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
           <SignalTypeCard
             title="Analog Power"
@@ -51,7 +51,7 @@ export const S03_AnalogVsDigital: React.FC<{ isDarkMode: boolean }> = ({ isDarkM
 
       {/* ── Deep Dive: The Digital Advantage ── */}
       <section className="space-y-12">
-        <div className="border-l-4 border-indigo-500 pl-8 space-y-4">
+        <div className="border-l-4 border-indigo-500 pl-5 sm:pl-8 space-y-4">
             <h3 className={`text-3xl font-black ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Why do we choose Digital?</h3>
             <p className={`text-sm max-w-2xl leading-relaxed opacity-60 ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>
                 While Nature is analog, Engineering is digital. In the world of VLSI and Verilog, we rely on the digital domain for its absolute predictability. Imagine trying to build a CPU that had to handle '4.357 volts' instead of just 'High' or 'Low'. The complexity would be impossible.
@@ -77,8 +77,8 @@ export const S03_AnalogVsDigital: React.FC<{ isDarkMode: boolean }> = ({ isDarkM
       {/* ── Side-by-Side Console ── */}
       <section>
         <div className="text-center mb-16 space-y-2">
-          <h2 className={`text-4xl font-black uppercase tracking-tighter ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>The Logical Verdict</h2>
-          <p className="text-[10px] font-mono uppercase tracking-[0.6em] opacity-30">Domain_Arbitrage_Matrix</p>
+          <h2 className={`text-3xl sm:text-4xl font-black uppercase tracking-tighter ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>The Logical Verdict</h2>
+          <p className="text-[10px] font-mono uppercase tracking-[0.3em] sm:tracking-[0.6em] opacity-30 break-words">Domain_Arbitrage_Matrix</p>
         </div>
         <ComparisonConsole isDark={isDarkMode} />
       </section>

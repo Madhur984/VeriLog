@@ -37,12 +37,13 @@ export const S03_HostelVsTapri: React.FC<Props> = ({ isActive, isDarkMode }) => 
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.15 }}
-        className={`p-8 rounded-3xl border ${cardBg}`}
+        className={`p-5 md:p-8 rounded-3xl border ${cardBg}`}
       >
         <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-orange-400 mb-5">
           Energy band diagram · interactive comparison
         </div>
-        <svg viewBox="0 0 700 320" className="w-full h-auto">
+        <div className="-mx-5 overflow-x-auto px-5 md:mx-0 md:overflow-x-visible md:px-0">
+        <svg viewBox="0 0 700 320" className="w-full h-auto min-w-[540px]">
           <defs>
             <linearGradient id="condBand" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor="#fdba74" stopOpacity="0.95" />
@@ -85,6 +86,7 @@ export const S03_HostelVsTapri: React.FC<Props> = ({ isActive, isDarkMode }) => 
           <text x="20" y="240" fill="#38bdf8" fontFamily="monospace" fontSize="10" textAnchor="end">Valence</text>
           <text x="20" y="252" fill="#38bdf8" fontFamily="monospace" fontSize="10" textAnchor="end">Band</text>
         </svg>
+        </div>
 
         <div className="mt-5 grid sm:grid-cols-3 gap-3">
           {[

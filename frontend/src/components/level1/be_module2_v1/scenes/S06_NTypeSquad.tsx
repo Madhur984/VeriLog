@@ -37,7 +37,7 @@ export const S06_NTypeSquad: React.FC<Props> = ({ isActive, isDarkMode }) => {
 
         <motion.div
           initial={{ opacity: 0, x: 20 }} animate={isActive ? { opacity: 1, x: 0 } : {}}
-          className={`p-8 rounded-3xl border ${cardBg} space-y-5`}
+          className={`p-5 md:p-8 rounded-3xl border ${cardBg} space-y-5`}
         >
           <div className="font-mono text-[10px] uppercase tracking-widest text-orange-400">The Chemistry</div>
           <p className={`text-sm ${subText} leading-relaxed`}>
@@ -63,12 +63,13 @@ export const S06_NTypeSquad: React.FC<Props> = ({ isActive, isDarkMode }) => {
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.2 }}
-        className={`p-8 rounded-3xl border ${cardBg}`}
+        className={`p-5 md:p-8 rounded-3xl border ${cardBg}`}
       >
         <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-orange-400 mb-5">
           Anatomy of an N-Type lattice
         </div>
-        <svg viewBox="0 0 700 360" className="w-full h-auto">
+        <div className="-mx-5 overflow-x-auto px-5 md:mx-0 md:overflow-x-visible md:px-0">
+        <svg viewBox="0 0 700 360" className="w-full h-auto min-w-[540px]">
           {/* lattice of Si atoms */}
           {[
             [120, 80], [240, 80], [360, 80], [480, 80], [600, 80],
@@ -111,6 +112,7 @@ export const S06_NTypeSquad: React.FC<Props> = ({ isActive, isDarkMode }) => {
           <text x="200" y="300" fontFamily="monospace" fontSize="11" fill="#94a3b8" textAnchor="end">Phosphorus = 5 valence e⁻</text>
           <text x="200" y="313" fontFamily="monospace" fontSize="11" fill="#94a3b8" textAnchor="end">4 form bonds · 1 escapes</text>
         </svg>
+        </div>
 
         {/* Comparison strip */}
         <div className="grid sm:grid-cols-3 gap-3 mt-6">
@@ -138,7 +140,7 @@ export const S06_NTypeSquad: React.FC<Props> = ({ isActive, isDarkMode }) => {
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.3 }}
-        className={`p-8 rounded-3xl border ${cardBg}`}
+        className={`p-5 md:p-8 rounded-3xl border ${cardBg}`}
       >
         <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-orange-400 mb-5">Carrier breakdown</div>
         <div className="grid sm:grid-cols-3 gap-4">

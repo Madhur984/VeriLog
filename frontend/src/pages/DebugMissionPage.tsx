@@ -152,6 +152,7 @@ export function DebugMissionPage() {
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '24px' }}>
                 <button
                     onClick={() => setShowHint(!showHint)}
+                    className="min-h-[40px] sm:min-h-0"
                     style={{
                         padding: '8px 14px',
                         background: 'rgba(245, 158, 11, 0.1)',
@@ -172,6 +173,7 @@ export function DebugMissionPage() {
                 {!solved && (
                     <button
                         onClick={() => setShowSolution(!showSolution)}
+                        className="min-h-[40px] sm:min-h-0"
                         style={{
                             padding: '8px 14px',
                             background: 'rgba(100, 116, 139, 0.1)',
@@ -190,6 +192,7 @@ export function DebugMissionPage() {
                 {!solved && (
                     <button
                         onClick={handleSolve}
+                        className="min-h-[40px] sm:min-h-0"
                         style={{
                             padding: '8px 14px',
                             background: 'rgba(16, 185, 129, 0.15)',

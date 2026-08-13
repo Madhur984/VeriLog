@@ -322,14 +322,16 @@ export const VerilogJudge: React.FC = () => {
       {/* ── Header ── */}
       <header className="relative z-30 flex h-14 shrink-0 items-center gap-2.5 border-b border-border-soft bg-bg-elev px-3 lg:px-4">
         <button onClick={() => navigate('/portal')} title="Back to portal"
-          className="flex h-9 items-center gap-1.5 rounded-lg px-2 text-text-dim transition-colors hover:bg-white/5 hover:text-text-main">
-          <ArrowLeft className="h-4 w-4" />
+          className="flex h-9 shrink-0 items-center gap-1.5 rounded-lg px-2 text-text-dim transition-colors hover:bg-white/5 hover:text-text-main">
+          <ArrowLeft className="h-4 w-4 shrink-0" />
           <span className="hidden text-[13px] font-bold lg:inline">Portal</span>
         </button>
 
-        <Sep className="h-6" />
+        {/* Wordmark is dropped below sm: on a 360px phone the row only has room
+            for back + problem picker + theme, and anything more crushes them. */}
+        <Sep className="hidden h-6 sm:block" />
 
-        <div className="flex items-center gap-2.5">
+        <div className="hidden items-center gap-2.5 sm:flex">
           <Monogram />
           <div className="hidden leading-tight sm:block">
             <div className="text-[14px] font-bold tracking-tight text-text-main">Verilog Bench</div>
@@ -338,21 +340,21 @@ export const VerilogJudge: React.FC = () => {
         </div>
 
         {/* problem selector */}
-        <div className="relative ml-1 sm:ml-2">
+        <div className="relative ml-1 min-w-0 sm:ml-2">
           <div className="flex items-center rounded-xl border border-border-soft bg-bg-void">
             <button onClick={() => goto(-1)} title="Previous problem"
-              className="flex h-9 w-7 items-center justify-center text-text-dim transition-colors hover:text-text-main">
+              className="flex h-9 w-7 shrink-0 items-center justify-center text-text-dim transition-colors hover:text-text-main">
               <ChevronLeft className="h-4 w-4" />
             </button>
             <button onClick={() => setPickerOpen((o) => !o)}
-              className="flex h-9 items-center gap-2 border-x border-border-soft px-2.5 text-[13px] font-bold transition-colors hover:bg-white/5">
+              className="flex h-9 min-w-0 items-center gap-2 border-x border-border-soft px-2.5 text-[13px] font-bold transition-colors hover:bg-white/5">
               <span className="h-2 w-2 shrink-0 rounded-full" style={{ background: DIFF_COLOR[problem.difficulty] }} />
-              <span className="font-mono text-[12px] text-text-dim">{String(problem.number).padStart(2, '0')}</span>
-              <span className="max-w-[34vw] truncate sm:max-w-[200px]">{problem.title}</span>
+              <span className="shrink-0 font-mono text-[12px] text-text-dim">{String(problem.number).padStart(2, '0')}</span>
+              <span className="max-w-[26vw] truncate sm:max-w-[200px]">{problem.title}</span>
               <ChevronDown className={`h-3.5 w-3.5 shrink-0 text-text-dim transition-transform ${pickerOpen ? 'rotate-180' : ''}`} />
             </button>
             <button onClick={() => goto(1)} title="Next problem"
-              className="flex h-9 w-7 items-center justify-center text-text-dim transition-colors hover:text-text-main">
+              className="flex h-9 w-7 shrink-0 items-center justify-center text-text-dim transition-colors hover:text-text-main">
               <ChevronRight className="h-4 w-4" />
             </button>
           </div>
@@ -361,10 +363,13 @@ export const VerilogJudge: React.FC = () => {
             {pickerOpen && (
               <>
                 <div className="fixed inset-0 z-10" onClick={() => setPickerOpen(false)} />
+                {/* Phone: a viewport-anchored sheet under the header — a 330px
+                    panel offset from this button runs off the right edge of a
+                    360px screen. sm+ keeps the original anchored dropdown. */}
                 <motion.div
                   initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }}
                   transition={{ duration: 0.15 }}
-                  className="absolute left-6 top-full z-20 mt-1.5 flex max-h-[78vh] w-[330px] flex-col overflow-hidden rounded-xl border border-border-soft bg-bg-elev shadow-xl"
+                  className="fixed inset-x-2 top-[60px] z-30 flex max-h-[calc(100svh_-_76px)] w-auto flex-col overflow-hidden rounded-xl border border-border-soft bg-bg-elev shadow-xl sm:absolute sm:inset-x-auto sm:left-6 sm:top-full sm:z-20 sm:mt-1.5 sm:max-h-[78vh] sm:w-[330px]"
                 >
                   {/* search + difficulty filters */}
                   <div className="shrink-0 border-b border-border-soft p-2.5">
@@ -428,7 +433,7 @@ export const VerilogJudge: React.FC = () => {
         </div>
 
         {/* right cluster: progress + theme */}
-        <div className="ml-auto flex items-center gap-2.5">
+        <div className="ml-auto flex shrink-0 items-center gap-2.5">
           <div className="hidden items-center gap-2 md:flex" title={`${solvedCount} of ${VERILOG_PROBLEMS.length} solved`}>
             <div className="flex items-center gap-[3px]">
               {VERILOG_PROBLEMS.map((p) => (
@@ -445,7 +450,7 @@ export const VerilogJudge: React.FC = () => {
           )}
           <Sep className="hidden h-6 md:block" />
           <button onClick={toggleScheme} title={isLight ? 'Switch to dark mode' : 'Switch to light mode'}
-            className="flex h-8 w-8 items-center justify-center rounded-lg border border-border-soft text-text-dim transition-colors hover:text-text-main">
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-border-soft text-text-dim transition-colors hover:text-text-main">
             {isLight ? <Sun className="h-4 w-4 text-amber-500" /> : <Moon className="h-4 w-4 text-cyan-400" />}
           </button>
         </div>
@@ -490,7 +495,7 @@ export const VerilogJudge: React.FC = () => {
                 ))}
               </div>
 
-              <div className="space-y-3.5 text-[14px] leading-[1.7] text-text-dim">
+              <div className="space-y-3.5 break-words text-[14px] leading-[1.7] text-text-dim">
                 {statementParas.map((para, i) => <p key={i} dangerouslySetInnerHTML={{ __html: mdInline(para) }} />)}
               </div>
 

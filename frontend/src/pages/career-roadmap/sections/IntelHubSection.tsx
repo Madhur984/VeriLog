@@ -18,9 +18,9 @@ export const IntelHubSection: React.FC<IntelHubSectionProps> = ({
   onOpenSimulator
 }) => {
   return (
-    <section id="intel-hub" className="py-24 px-6 max-w-7xl mx-auto space-y-16 scroll-mt-32">
+    <section id="intel-hub" className="py-24 px-4 sm:px-6 max-w-7xl mx-auto space-y-16 scroll-mt-32">
       {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-end gap-6">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
         <div className="space-y-2">
           <h2 className="text-4xl font-mono font-bold text-text-main tracking-tighter uppercase">
             Intel <span className="text-plasma-cyan">Hub</span>
@@ -41,7 +41,7 @@ export const IntelHubSection: React.FC<IntelHubSectionProps> = ({
 
       {/* Live Job Search Portals Matrix */}
       <div className="space-y-4">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap gap-2 items-center justify-between">
           <div className="flex items-center gap-2">
             <Search className="w-4 h-4 text-plasma-cyan" />
             <h3 className="text-sm font-mono font-bold uppercase text-text-main tracking-widest">
@@ -226,7 +226,7 @@ export const IntelHubSection: React.FC<IntelHubSectionProps> = ({
               className="p-5 bg-bg-base border border-ghost-trace/50 hover:border-plasma-cyan transition-all group flex flex-col justify-between space-y-3"
             >
               <div>
-                <div className="flex justify-between items-center mb-2">
+                <div className="flex flex-wrap gap-2 justify-between items-center mb-2">
                   <span className="font-mono font-bold text-xs text-plasma-cyan group-hover:underline">
                     {repo.name}
                   </span>

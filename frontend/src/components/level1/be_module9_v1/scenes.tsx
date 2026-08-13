@@ -278,7 +278,7 @@ const NmosPmosMirror: React.FC<{ isDarkMode: boolean; accent: string }> = ({ isD
       <div className="mb-3 font-mono text-[11px] uppercase tracking-[0.3em]" style={{ color: accent }}>
         {lang === 'hi' ? 'nMOS / pMOS - sign का आईना' : 'nMOS / pMOS - the sign mirror'}
       </div>
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="flex flex-col items-center rounded-2xl border p-3" style={{ borderColor: `${ACC.I}44`, background: `${ACC.I}0d` }}>
           <TransistorSymbol kind="nmos" accent={ACC.I} isDarkMode={isDarkMode} size={120} />
           <span className="mt-1 font-mono text-[12px] font-black" style={{ color: ACC.I }}>nMOS</span>

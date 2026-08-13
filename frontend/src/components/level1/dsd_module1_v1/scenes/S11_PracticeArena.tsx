@@ -184,7 +184,7 @@ export const S11_PracticeArena: React.FC<Props> = ({ isDarkMode }) => {
             </div>
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           {PROBLEMS.map((_, i) => {
             const r = revealed[i];
             const c = r && picks[i] === PROBLEMS[i].correct;
@@ -193,7 +193,7 @@ export const S11_PracticeArena: React.FC<Props> = ({ isDarkMode }) => {
               <button
                 key={i}
                 onClick={() => setIdx(i)}
-                className={`w-8 h-8 rounded-lg font-mono text-xs font-black border transition-all ${
+                className={`w-10 h-10 sm:w-8 sm:h-8 rounded-lg font-mono text-xs font-black border transition-all ${
                   i === idx
                     ? 'border-amber-400 bg-amber-500/20 text-amber-300'
                     : c
@@ -251,10 +251,10 @@ export const S11_PracticeArena: React.FC<Props> = ({ isDarkMode }) => {
 
           {/* Optional truth-table prelude */}
           {current.preTable && (
-            <div className={`mb-6 rounded-2xl border overflow-hidden ${
+            <div className={`mb-6 rounded-2xl border overflow-x-auto ${
               isDarkMode ? 'border-white/10' : 'border-slate-200'
             }`}>
-              <table className="w-full font-mono text-xs">
+              <table className="w-full min-w-[420px] md:min-w-0 font-mono text-xs">
                 <thead className={isDarkMode ? 'bg-white/5' : 'bg-slate-50'}>
                   <tr>
                     {current.preTable.headers.map(h => (

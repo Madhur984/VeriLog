@@ -95,7 +95,7 @@ export const S06_LedSpectrum: React.FC<Props> = ({ isActive, isDarkMode }) => {
       <motion.div
         initial={{ opacity: 0, scale: 0.98 }} animate={isActive ? { opacity: 1, scale: 1 } : {}}
         transition={{ delay: 0.15 }}
-        className={`rounded-3xl border ${cardBg} p-10`}
+        className={`rounded-3xl border ${cardBg} p-5 md:p-10`}
       >
         <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
           <div className="font-mono text-[10px] uppercase tracking-widest text-orange-300">Relative emission · T_A = 25 °C</div>
@@ -106,7 +106,7 @@ export const S06_LedSpectrum: React.FC<Props> = ({ isActive, isDarkMode }) => {
                 <button
                   key={m.name}
                   onClick={() => toggle(m.name)}
-                  className="px-3 h-9 rounded-lg font-mono text-xs uppercase tracking-widest font-black border-2 transition-all"
+                  className="px-3 h-10 sm:h-9 rounded-lg font-mono text-xs uppercase tracking-widest font-black border-2 transition-all"
                   style={{
                     borderColor: on ? m.color : 'rgba(255,255,255,0.10)',
                     background: on ? `${m.color}22` : 'transparent',
@@ -120,7 +120,8 @@ export const S06_LedSpectrum: React.FC<Props> = ({ isActive, isDarkMode }) => {
           </div>
         </div>
 
-        <svg viewBox={`-30 -10 ${W + 40} ${H + 60}`} className="w-full h-auto">
+        <div className="-mx-5 overflow-x-auto px-5 md:mx-0 md:overflow-x-visible md:px-0">
+        <svg viewBox={`-30 -10 ${W + 40} ${H + 60}`} className="w-full h-auto min-w-[460px]">
           {/* Axes */}
           <line x1="0" y1={H} x2={W} y2={H} stroke={isDarkMode ? '#475569' : '#94a3b8'} strokeWidth="1.5" />
           <line x1="0" y1="0" x2="0" y2={H} stroke={isDarkMode ? '#475569' : '#94a3b8'} strokeWidth="1.5" />
@@ -166,6 +167,7 @@ export const S06_LedSpectrum: React.FC<Props> = ({ isActive, isDarkMode }) => {
             );
           })}
         </svg>
+        </div>
       </motion.div>
 
       {/* Material cards */}

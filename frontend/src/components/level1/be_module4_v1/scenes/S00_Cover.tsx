@@ -69,7 +69,7 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
         initial={{ opacity: 0, y: 20 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         className="space-y-5"
       >
-        <h1 className={`text-5xl md:text-7xl font-black ${textColor} tracking-tight leading-[0.95]`}>
+        <h1 className={`text-4xl sm:text-5xl md:text-7xl font-black ${textColor} tracking-tight leading-[0.95]`}>
           Rectifiers<br />
           <span className="text-cyan-400">&amp; Filters.</span>
         </h1>
@@ -85,7 +85,7 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
       <motion.div
         initial={{ opacity: 0, scale: 0.98 }} animate={isActive ? { opacity: 1, scale: 1 } : {}}
         transition={{ delay: 0.15 }}
-        className={`rounded-3xl border ${cardBg} p-8 relative overflow-hidden`}
+        className={`rounded-3xl border ${cardBg} p-5 md:p-8 relative overflow-hidden`}
         style={{
           background: isDarkMode
             ? 'linear-gradient(135deg, rgba(14,165,233,0.10), rgba(34,197,94,0.06) 60%)'
@@ -95,7 +95,8 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
         <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-cyan-300 mb-4">
           The pipeline · 4 visible signals
         </div>
-        <svg viewBox="0 0 880 220" className="w-full h-auto">
+        <div className="-mx-5 overflow-x-auto px-5 md:mx-0 md:overflow-x-visible md:px-0">
+        <svg viewBox="0 0 880 220" className="w-full h-auto min-w-[660px]">
           {/* Stage 1 · AC sine */}
           <text x="20" y="32" fontSize="11" fontFamily="monospace" fill="#0ea5e9" fontWeight="bold">AC mains · sine wave</text>
           <line x1="20" y1="60" x2="220" y2="60" stroke={isDarkMode ? '#475569' : '#cbd5e1'} strokeWidth="1" strokeDasharray="3 3" />
@@ -166,13 +167,14 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
             Two stages. Two components. The whole module in one diagram.
           </text>
         </svg>
+        </div>
       </motion.div>
 
       {/* STAGES preview · 4 cards */}
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.3 }}
-        className={`p-8 rounded-3xl border ${cardBg}`}
+        className={`p-5 md:p-8 rounded-3xl border ${cardBg}`}
       >
         <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-cyan-400 mb-5">
           The journey · 4 stages of the signal
@@ -218,7 +220,7 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.5 }}
-        className={`p-8 rounded-3xl border ${cardBg}`}
+        className={`p-5 md:p-8 rounded-3xl border ${cardBg}`}
       >
         <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.3em] text-cyan-300 mb-5">
           <Cpu size={12} /> Topic index · 6 concepts you will master

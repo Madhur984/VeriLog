@@ -58,11 +58,11 @@ export const S00_C_OctalSystem: React.FC<Props> = ({ isActive, isDarkMode }) => 
       </section>
 
       {/* Valid Digits */}
-      <div className={`p-8 rounded-[2rem] border ${cardBg}`}>
+      <div className={`p-5 sm:p-8 rounded-[2rem] border ${cardBg}`}>
         <h3 className={`font-mono text-xs uppercase tracking-widest mb-8 text-center ${subTextColor}`}>
           Octal Valid Digits (0-7) with 3-bit Binary Equivalents
         </h3>
-        <div className="grid grid-cols-4 md:grid-cols-8 gap-4">
+        <div className="grid grid-cols-4 md:grid-cols-8 gap-3 sm:gap-4">
           {OCTAL_DIGITS.map((d, i) => (
             <motion.div
               key={d} initial={{ y: 20, opacity: 0 }}
@@ -87,14 +87,14 @@ export const S00_C_OctalSystem: React.FC<Props> = ({ isActive, isDarkMode }) => 
       </div>
 
       {/* Worked Example: 2007_8 */}
-      <div className={`p-8 rounded-[2rem] border ${cardBg}`}>
+      <div className={`p-5 sm:p-8 rounded-[2rem] border ${cardBg}`}>
         <h3 className={`font-mono text-xs uppercase tracking-widest mb-8 text-center ${subTextColor}`}>
           Worked Example: (2007)_8 -{'>'} Decimal
         </h3>
-        <div className="flex justify-center gap-4 flex-wrap mb-6">
+        <div className="flex justify-center gap-3 sm:gap-4 flex-wrap mb-6">
           {EXAMPLE_DIGITS.map((d, i) => (
             <div key={i} className="flex flex-col items-center gap-3">
-              <div className={`w-20 h-20 rounded-2xl border-2 flex items-center justify-center text-3xl font-black
+              <div className={`w-16 h-16 sm:w-20 sm:h-20 rounded-2xl border-2 flex items-center justify-center text-2xl sm:text-3xl font-black
                 ${d > 0 ? (isDarkMode ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400' : 'bg-emerald-50 border-amber-300 text-emerald-700')
                         : (isDarkMode ? 'bg-white/5 border-white/10 text-white/20' : 'bg-gray-50 border-gray-200 text-gray-300')}`}
               >
@@ -105,7 +105,7 @@ export const S00_C_OctalSystem: React.FC<Props> = ({ isActive, isDarkMode }) => 
             </div>
           ))}
         </div>
-        <div className={`font-mono text-sm p-5 rounded-2xl text-center ${isDarkMode ? 'bg-black/40' : 'bg-emerald-50/50 border border-emerald-100'}`}>
+        <div className={`font-mono text-xs sm:text-sm p-5 rounded-2xl text-center break-words ${isDarkMode ? 'bg-black/40' : 'bg-emerald-50/50 border border-emerald-100'}`}>
           <span className={`opacity-60 ${textColor}`}>2*512 + 0*64 + 0*8 + 7*1 = 1024 + 7 = </span>
           <span className="text-emerald-400 font-black text-lg">1031_10</span>
         </div>
@@ -113,7 +113,7 @@ export const S00_C_OctalSystem: React.FC<Props> = ({ isActive, isDarkMode }) => 
 
       {/* Interactive Decimal -> Octal Converter */}
       <TryItYourself />
-      <div className={`p-8 rounded-[2rem] border ${isDarkMode ? 'bg-emerald-500/5 border-emerald-500/20' : 'bg-emerald-50 border-emerald-100 shadow-xl'}`}>
+      <div className={`p-5 sm:p-8 rounded-[2rem] border ${isDarkMode ? 'bg-emerald-500/5 border-emerald-500/20' : 'bg-emerald-50 border-emerald-100 shadow-xl'}`}>
         <h3 className={`font-mono text-xs uppercase tracking-widest mb-2 text-center ${subTextColor}`}>
           Successive Division - Decimal -{'>'} Octal
         </h3>
@@ -143,7 +143,7 @@ export const S00_C_OctalSystem: React.FC<Props> = ({ isActive, isDarkMode }) => 
             <motion.div
               key={i} initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05 }}
-              className={`flex items-center justify-between p-3 rounded-xl ${isDarkMode ? 'bg-white/5' : 'bg-white border border-emerald-100'}`}
+              className={`flex flex-wrap items-center justify-between gap-2 p-3 rounded-xl ${isDarkMode ? 'bg-white/5' : 'bg-white border border-emerald-100'}`}
             >
               <span className={`font-mono text-sm ${textColor}`}>{s.dividend} / 8 = {s.quotient}</span>
               <span className={`font-mono text-sm font-black px-3 py-1 rounded-lg
@@ -156,9 +156,9 @@ export const S00_C_OctalSystem: React.FC<Props> = ({ isActive, isDarkMode }) => 
         </div>
 
         {/* Result */}
-        <div className={`p-6 rounded-2xl text-center ${isDarkMode ? 'bg-emerald-500/10 border border-emerald-500/20' : 'bg-white border border-emerald-200'}`}>
+        <div className={`p-4 sm:p-6 rounded-2xl text-center ${isDarkMode ? 'bg-emerald-500/10 border border-emerald-500/20' : 'bg-white border border-emerald-200'}`}>
           <p className={`font-mono text-xs uppercase tracking-widest opacity-60 mb-2 ${textColor}`}>Result (read bottom -{'>'} top)</p>
-          <div className="text-4xl font-black text-emerald-400">({result})_8</div>
+          <div className="text-3xl sm:text-4xl font-black text-emerald-400 break-words">({result})_8</div>
           <p className={`font-mono text-xs mt-2 opacity-40 ${textColor}`}>= {inputVal}_10</p>
         </div>
       </div>

@@ -60,9 +60,9 @@ export const S03_Multiverse: React.FC<Props> = ({ isActive, isDarkMode }) => {
       {/* Truth table */}
       <motion.div
         initial={{ opacity: 0, y: 20 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
-        className={`rounded-3xl border overflow-hidden ${cardBg}`}
+        className={`rounded-3xl border overflow-x-auto ${cardBg}`}
       >
-        <table className="w-full font-mono text-sm">
+        <table className="w-full min-w-[640px] md:min-w-0 font-mono text-sm">
           <thead>
             <tr className={isDarkMode ? 'bg-white/5' : 'bg-slate-50'}>
               {['Row', 'R', 'A', 'W', 'Universe caption', 'Enjoyment E'].map(h => (

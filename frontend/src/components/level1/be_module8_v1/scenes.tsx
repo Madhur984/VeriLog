@@ -49,7 +49,7 @@ const SuperpositionViz: React.FC<{ isDarkMode: boolean; accent: string }> = ({ i
         <span className="font-mono text-[11px] uppercase tracking-[0.3em]" style={{ color: accent }}>
           {lang === 'hi' ? 'whisper, house power पर' : 'the whisper on the house power'}
         </span>
-        <button onClick={() => setIsolate((v) => !v)} className="rounded-lg px-3 py-1.5 font-mono text-[11px] font-black text-black active:scale-95"
+        <button onClick={() => setIsolate((v) => !v)} className="min-h-[40px] sm:min-h-0 rounded-lg px-3 py-1.5 font-mono text-[11px] font-black text-black active:scale-95"
           style={{ background: isolate ? ACC.ac : accent }}>
           {isolate ? (lang === 'hi' ? 'DC वापस लाओ' : 'show DC again') : (lang === 'hi' ? 'AC अलग करो' : 'isolate AC')}
         </button>
@@ -483,7 +483,7 @@ const CEAmplifierSchematic: React.FC<{ isDarkMode: boolean; accent: string }> = 
         <span className="font-mono text-[11px] uppercase tracking-[0.3em]" style={{ color: accent }}>
           {lang === 'hi' ? 'common-emitter amplifier' : 'common-emitter amplifier'}
         </span>
-        <button onClick={() => setAcMode((v) => v !== true)} className="rounded-lg px-3 py-1.5 font-mono text-[11px] font-black text-black active:scale-95"
+        <button onClick={() => setAcMode((v) => v !== true)} className="min-h-[40px] sm:min-h-0 rounded-lg px-3 py-1.5 font-mono text-[11px] font-black text-black active:scale-95"
           style={{ background: acMode ? ACC.good : accent }}>
           {acMode ? (lang === 'hi' ? 'DC schematic' : 'show DC schematic') : (lang === 'hi' ? 'AC में बदलो' : 'morph to AC')}
         </button>
@@ -613,7 +613,8 @@ const LoadingAndMatrix: React.FC<{ isDarkMode: boolean; accent: string }> = ({ i
         <div className="mb-3 font-mono text-[11px] uppercase tracking-[0.3em]" style={{ color: accent }}>
           {lang === 'hi' ? 'summary table' : 'summary table'}
         </div>
-        <div className="overflow-hidden rounded-xl border" style={{ borderColor: `${accent}33` }}>
+        <div className="overflow-x-auto overflow-y-hidden rounded-xl border" style={{ borderColor: `${accent}33` }}>
+          <div className="min-w-[440px]">
           <div className="grid grid-cols-4 font-mono text-[11px] font-black" style={{ background: `${accent}1a`, color: accent }}>
             <div className="px-2 py-2">{lang === 'hi' ? 'config' : 'config'}</div>
             <div className="px-2 py-2">Zi</div>
@@ -628,6 +629,7 @@ const LoadingAndMatrix: React.FC<{ isDarkMode: boolean; accent: string }> = ({ i
               <div className={`px-2 py-2 ${t.text}`}>{r.av}</div>
             </div>
           ))}
+          </div>
         </div>
       </Card>
     </div>
@@ -651,7 +653,7 @@ const BypassToggle: React.FC<{ isDarkMode: boolean; accent: string }> = ({ isDar
         <span className="font-mono text-[11px] uppercase tracking-[0.3em]" style={{ color: accent }}>
           {lang === 'hi' ? 'bypass cap Ce: gain बनाम stability' : 'bypass cap Ce: gain vs stability'}
         </span>
-        <button onClick={() => setBypassed((v) => v !== true)} className="rounded-lg px-3 py-1.5 font-mono text-[11px] font-black text-black active:scale-95"
+        <button onClick={() => setBypassed((v) => v !== true)} className="min-h-[40px] sm:min-h-0 rounded-lg px-3 py-1.5 font-mono text-[11px] font-black text-black active:scale-95"
           style={{ background: bypassed ? ACC.good : ACC.warn }}>
           {bypassed ? (lang === 'hi' ? 'Ce: bypassed' : 'Ce: bypassed') : (lang === 'hi' ? 'Ce: removed' : 'Ce: removed')}
         </button>

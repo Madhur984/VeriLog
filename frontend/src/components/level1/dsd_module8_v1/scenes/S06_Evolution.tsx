@@ -41,24 +41,28 @@ export const S06_Evolution: React.FC<Props> = ({ isDarkMode }) => {
       {/* comparison table */}
       <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}
                   className={`rounded-3xl border overflow-hidden ${cardBg}`}>
-        <div className={`grid grid-cols-3 font-mono text-[10px] md:text-[11px] uppercase tracking-widest py-3 px-4 ${
-          isDarkMode ? 'bg-white/[0.06]' : 'bg-slate-100'
-        }`}>
-          <span style={{ color: AMBER }}>Parameter</span>
-          <span style={{ color: ROSE }}>Half Adder</span>
-          <span style={{ color: CYAN }}>Full Adder</span>
+        <div className="overflow-x-auto">
+          <div className="min-w-[560px] md:min-w-0">
+            <div className={`grid grid-cols-3 font-mono text-[10px] md:text-[11px] uppercase tracking-widest py-3 px-4 ${
+              isDarkMode ? 'bg-white/[0.06]' : 'bg-slate-100'
+            }`}>
+              <span style={{ color: AMBER }}>Parameter</span>
+              <span style={{ color: ROSE }}>Half Adder</span>
+              <span style={{ color: CYAN }}>Full Adder</span>
+            </div>
+            {COMPARISON.map(({ param, ha, fa, faWins }, i) => (
+              <motion.div key={param}
+                          initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 0.1 + i * 0.08 }}
+                          className={`grid grid-cols-3 items-center gap-2 py-4 px-4 border-t text-[13px] md:text-sm ${textColor}`}
+                          style={{ borderColor: isDarkMode ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)' }}>
+                <span className="font-bold">{param}</span>
+                <span className={`font-mono ${subText}`}>{ha}</span>
+                <span className="font-mono font-bold" style={{ color: faWins ? CYAN : undefined }}>{fa}</span>
+              </motion.div>
+            ))}
+          </div>
         </div>
-        {COMPARISON.map(({ param, ha, fa, faWins }, i) => (
-          <motion.div key={param}
-                      initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.1 + i * 0.08 }}
-                      className={`grid grid-cols-3 items-center gap-2 py-4 px-4 border-t text-[13px] md:text-sm ${textColor}`}
-                      style={{ borderColor: isDarkMode ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)' }}>
-            <span className="font-bold">{param}</span>
-            <span className={`font-mono ${subText}`}>{ha}</span>
-            <span className="font-mono font-bold" style={{ color: faWins ? CYAN : undefined }}>{fa}</span>
-          </motion.div>
-        ))}
       </motion.div>
 
       {/* the imperative */}

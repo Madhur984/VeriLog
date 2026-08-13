@@ -354,10 +354,10 @@ const TransparencyLab: React.FC<{ isDarkMode: boolean; accent: string }> = ({ is
 
   const Grid: React.FC<{ label: string; arr: number[]; color: string; which: 'D' | 'EN' }> = ({ label, arr, color, which }) => (
     <div className="flex items-center justify-center gap-1">
-      <span className="w-8 font-mono text-[11px] font-black" style={{ color }}>{label}</span>
+      <span className="w-8 shrink-0 font-mono text-[11px] font-black" style={{ color }}>{label}</span>
       {arr.map((v, i) => (
         <button key={i} onClick={() => flip(which, i)}
-          className="flex h-7 w-7 items-center justify-center rounded-md font-mono text-[12px] font-black active:scale-90"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md font-mono text-[12px] font-black active:scale-90 sm:h-7 sm:w-7"
           style={{ background: v ? color : 'transparent', color: v ? '#000' : color, border: `1.5px solid ${color}${v ? '' : '55'}` }}>
           {v}
         </button>
@@ -370,9 +370,11 @@ const TransparencyLab: React.FC<{ isDarkMode: boolean; accent: string }> = ({ is
       <div className="mb-3 font-mono text-[11px] uppercase tracking-[0.3em]" style={{ color: accent }}>
         {lang === 'hi' ? 'transparency lab · D और EN edit कीजिए' : 'transparency lab · edit D and EN'}
       </div>
-      <div className="space-y-2">
-        <Grid label="D" arr={D} color={ACC.S} which="D" />
-        <Grid label="EN" arr={EN} color={ACC.EN} which="EN" />
+      <div className="-mx-2 overflow-x-auto px-2 sm:mx-0 sm:px-0">
+        <div className="w-max min-w-full space-y-2">
+          <Grid label="D" arr={D} color={ACC.S} which="D" />
+          <Grid label="EN" arr={EN} color={ACC.EN} which="EN" />
+        </div>
       </div>
       <div className="mt-4">
         <TimingDiagram isDarkMode={isDarkMode} accent={accent} signals={signals} showClock={false} />

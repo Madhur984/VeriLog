@@ -64,7 +64,7 @@ export const S04_BreakingBonds: React.FC<Props> = ({ isActive, isDarkMode }) => 
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.2 }}
-        className={`p-8 rounded-3xl border ${cardBg}`}
+        className={`p-5 md:p-8 rounded-3xl border ${cardBg}`}
       >
         <div className="flex items-center justify-between mb-5">
           <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-orange-400">
@@ -75,7 +75,7 @@ export const S04_BreakingBonds: React.FC<Props> = ({ isActive, isDarkMode }) => 
               <button
                 key={l}
                 onClick={() => setHeat(i)}
-                className={`px-3 py-1.5 rounded-lg font-mono text-[11px] transition-all ${
+                className={`min-h-[40px] sm:min-h-0 px-3 py-1.5 rounded-lg font-mono text-[11px] transition-all ${
                   heat === i
                     ? 'bg-orange-400 text-black font-bold'
                     : isDarkMode ? 'bg-white/5 border border-white/10' : 'bg-slate-100 border border-slate-200'

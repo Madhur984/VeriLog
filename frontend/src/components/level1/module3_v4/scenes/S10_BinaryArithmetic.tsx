@@ -32,11 +32,10 @@ const BitCell: React.FC<{ val: number; color?: string; isDarkMode: boolean; onCl
       boxShadow: val ? `0 0 14px ${color}55` : 'none',
     }}
     transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+    className="w-10 h-12 sm:w-14 sm:h-16 flex-shrink-0 border-2 rounded-xl text-xl sm:text-2xl font-black outline-none flex items-center justify-center"
     style={{
-      width: 56, height: 64, border: '2px solid', borderRadius: 12,
-      fontFamily: '"JetBrains Mono", "IBM Plex Mono", ui-monospace, monospace', fontSize: 24, fontWeight: 900,
-      cursor: onClick ? 'pointer' : 'default', outline: 'none',
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      fontFamily: '"JetBrains Mono", "IBM Plex Mono", ui-monospace, monospace',
+      cursor: onClick ? 'pointer' : 'default',
     }}
   >
     {val}
@@ -73,11 +72,11 @@ export const S10_BinaryArithmetic: React.FC<Props> = ({ isActive, isDarkMode }) 
       </section>
 
       {/* Addition Rules Card */}
-      <div className={`p-8 rounded-3xl border ${cardBg}`}>
+      <div className={`p-5 sm:p-8 rounded-3xl border ${cardBg}`}>
         <h3 className={`font-mono text-xs uppercase tracking-widest mb-8 text-center ${isDarkMode ? 'text-sky-400' : 'text-sky-600'}`}>
           Addition Rules
         </h3>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
           {[
             { a: 0, b: 0, carry: 0, sum: 0 },
             { a: 0, b: 1, carry: 0, sum: 1 },
@@ -97,15 +96,17 @@ export const S10_BinaryArithmetic: React.FC<Props> = ({ isActive, isDarkMode }) 
 
       {/* Interactive Adder */}
       <TryItYourself />
-      <div className={`p-8 md:p-12 rounded-[2rem] border relative overflow-hidden ${isDarkMode ? 'bg-sky-500/5 border-sky-500/20' : 'bg-sky-50 border-sky-200 shadow-2xl'}`}>
+      <div className={`p-4 sm:p-8 md:p-12 rounded-[2rem] border relative overflow-hidden ${isDarkMode ? 'bg-sky-500/5 border-sky-500/20' : 'bg-sky-50 border-sky-200 shadow-2xl'}`}>
         <h3 className={`font-mono text-xs uppercase tracking-widest mb-10 text-center ${isDarkMode ? 'text-sky-400' : 'text-sky-600'}`}>
           Click Bits to Toggle - Live Ripple Carry Adder
         </h3>
 
+        {/* Adder stack — scrolls inside itself on narrow screens instead of widening the page */}
+        <div className="overflow-x-auto sm:overflow-x-visible -mx-4 px-4 sm:mx-0 sm:px-0">
         {/* Carry row */}
-        <div className="flex justify-end gap-3 mb-2 pr-1" style={{ paddingLeft: '3rem' }}>
+        <div className="flex justify-end gap-2 sm:gap-3 mb-2 pr-1 pl-8 sm:pl-12">
           {carries.slice(0, BITS).map((c, i) => (
-            <div key={i} className="w-[56px] flex flex-col items-center gap-1">
+            <div key={i} className="w-10 sm:w-14 flex-shrink-0 flex flex-col items-center gap-1">
               <span className="font-mono text-[9px] uppercase opacity-40">C{BITS - i}</span>
               <motion.div
                 animate={{ color: c ? '#F59E0B' : (isDarkMode ? '#2D3139' : '#D1D5DB') }}
@@ -115,24 +116,24 @@ export const S10_BinaryArithmetic: React.FC<Props> = ({ isActive, isDarkMode }) 
               </motion.div>
             </div>
           ))}
-          <div className="w-[56px]" />
+          <div className="w-10 sm:w-14 flex-shrink-0" />
         </div>
 
         {/* Operand A */}
-        <div className="flex items-center gap-3 mb-3">
-          <span className={`font-mono font-black text-lg w-8 text-right ${isDarkMode ? 'text-sky-400' : 'text-sky-600'}`}>A</span>
-          <div className="flex gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 mb-3 w-max min-w-full">
+          <span className={`font-mono font-black text-lg w-8 flex-shrink-0 text-right ${isDarkMode ? 'text-sky-400' : 'text-sky-600'}`}>A</span>
+          <div className="flex gap-2 sm:gap-3">
             {bitsA.map((b, i) => (
               <BitCell key={i} val={b} isDarkMode={isDarkMode} onClick={() => setBitsA(prev => prev.map((v, idx) => idx === i ? 1 - v : v))} />
             ))}
           </div>
-          <span className={`font-mono text-sm opacity-60 ml-2 ${textColor}`}>= {decA}</span>
+          <span className={`font-mono text-sm opacity-60 ml-2 flex-shrink-0 ${textColor}`}>= {decA}</span>
         </div>
 
         {/* Operand B */}
-        <div className="flex items-center gap-3 mb-3">
-          <span className={`font-mono font-black text-lg w-8 text-right ${isDarkMode ? 'text-sky-400' : 'text-sky-600'}`}>B</span>
-          <div className="flex gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 mb-3 w-max min-w-full">
+          <span className={`font-mono font-black text-lg w-8 flex-shrink-0 text-right ${isDarkMode ? 'text-sky-400' : 'text-sky-600'}`}>B</span>
+          <div className="flex gap-2 sm:gap-3">
             {bitsB.map((b, i) => (
               <BitCell key={i} val={b} isDarkMode={isDarkMode} onClick={() => setBitsB(prev => prev.map((v, idx) => idx === i ? 1 - v : v))} />
             ))}
@@ -141,21 +142,21 @@ export const S10_BinaryArithmetic: React.FC<Props> = ({ isActive, isDarkMode }) 
         </div>
 
         {/* Divider */}
-        <div className={`flex items-center gap-3 mb-3`}>
-          <span className={`font-mono font-black text-lg w-8 text-right ${isDarkMode ? 'text-sky-400' : 'text-sky-600'}`}><Plus size={18} /></span>
+        <div className={`flex items-center gap-2 sm:gap-3 mb-3`}>
+          <span className={`font-mono font-black text-lg w-8 flex-shrink-0 text-right ${isDarkMode ? 'text-sky-400' : 'text-sky-600'}`}><Plus size={18} /></span>
           <div className={`h-0.5 flex-1 ${isDarkMode ? 'bg-sky-500/30' : 'bg-sky-300'}`} style={{ maxWidth: BITS * 56 + (BITS - 1) * 12 }} />
         </div>
 
         {/* Result */}
-        <div className="flex items-center gap-3">
-          <span className={`font-mono font-black text-lg w-8 text-right ${isDarkMode ? 'text-green-400' : 'text-green-600'}`}>=</span>
-          <div className="flex gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 w-max min-w-full">
+          <span className={`font-mono font-black text-lg w-8 flex-shrink-0 text-right ${isDarkMode ? 'text-green-400' : 'text-green-600'}`}>=</span>
+          <div className="flex gap-2 sm:gap-3">
             {carries[0] === 1 && (
               <motion.div
                 initial={{ scale: 0 }} animate={{ scale: 1 }}
                 className="flex items-end pb-1"
               >
-                <div className={`w-14 h-16 rounded-xl border-2 flex items-center justify-center text-2xl font-black font-mono border-amber-400 text-amber-400`}
+                <div className={`w-10 h-12 sm:w-14 sm:h-16 flex-shrink-0 rounded-xl border-2 flex items-center justify-center text-xl sm:text-2xl font-black font-mono border-amber-400 text-amber-400`}
                   style={{ boxShadow: '0 0 14px rgba(245,158,11,0.4)' }}
                 >
                   1
@@ -166,20 +167,21 @@ export const S10_BinaryArithmetic: React.FC<Props> = ({ isActive, isDarkMode }) 
               <BitCell key={i} val={b} color="#10B981" isDarkMode={isDarkMode} />
             ))}
           </div>
-          <span className={`font-mono text-sm ml-2 ${isDarkMode ? 'text-green-400' : 'text-green-600'} font-black`}>= {decR}</span>
+          <span className={`font-mono text-sm ml-2 flex-shrink-0 ${isDarkMode ? 'text-green-400' : 'text-green-600'} font-black`}>= {decR}</span>
+        </div>
         </div>
 
         {/* Check */}
         <div className={`mt-8 p-4 rounded-2xl text-center font-mono text-sm ${isDarkMode ? 'bg-black/40' : 'bg-white/70 border border-sky-100'} ${textColor}`}>
           {decA} + {decB} = <span className="text-green-400 font-black">{decR}</span>
-          <span className={`ml-4 text-xs opacity-50`}>{decA + decB === decR ? '✓ Correct' : '⚠ Overflow'}</span>
+          <span className={`ml-2 sm:ml-4 text-xs opacity-50`}>{decA + decB === decR ? '✓ Correct' : '⚠ Overflow'}</span>
         </div>
       </div>
 
       {/* Key Insight */}
       <motion.div
         initial={{ opacity: 0 }} animate={isActive ? { opacity: 1 } : {}}
-        className={`p-10 rounded-[2.5rem] border text-center bg-gradient-to-br from-amber-500/10 to-transparent ${isDarkMode ? 'border-amber-500/20' : 'border-amber-200'}`}
+        className={`p-6 sm:p-10 rounded-[2.5rem] border text-center bg-gradient-to-br from-amber-500/10 to-transparent ${isDarkMode ? 'border-amber-500/20' : 'border-amber-200'}`}
       >
         <Zap size={24} className="text-amber-500 mx-auto mb-4" />
         <p className={`text-lg font-black leading-tight ${textColor}`}>

@@ -272,12 +272,12 @@ const Stepper: React.FC<{ label: string; sub: string; v: number; set: (n: number
       <span className="font-mono text-[11px] font-black" style={{ color }}>{label}</span>
       <div className="flex items-center gap-1.5">
         <button onClick={() => set(Math.max(min, v - 1))}
-          className="flex h-8 w-8 items-center justify-center rounded-lg font-mono text-lg font-black active:scale-90"
+          className="flex h-10 w-10 items-center justify-center rounded-lg font-mono text-lg font-black active:scale-90 sm:h-8 sm:w-8"
           style={{ color, border: `2px solid ${color}66` }}>−</button>
         <span className="flex h-9 w-12 items-center justify-center rounded-lg font-mono text-base font-black tabular-nums"
           style={{ background: `${color}1a`, color, border: `2px solid ${color}` }}>{v}</span>
         <button onClick={() => set(Math.min(max, v + 1))}
-          className="flex h-8 w-8 items-center justify-center rounded-lg font-mono text-lg font-black active:scale-90"
+          className="flex h-10 w-10 items-center justify-center rounded-lg font-mono text-lg font-black active:scale-90 sm:h-8 sm:w-8"
           style={{ color, border: `2px solid ${color}66` }}>+</button>
       </div>
       <span className={`font-mono text-[9px] ${t.faint}`}>{sub}</span>
@@ -325,7 +325,7 @@ const FmaxCalculator: React.FC<{ isDarkMode: boolean; accent: string }> = ({ isD
         ))}
       </div>
 
-      <div className="mt-5 grid grid-cols-2 gap-3">
+      <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div className={`rounded-2xl border p-4 text-center ${t.soft}`}>
           <div className={`font-mono text-[10px] uppercase tracking-widest ${t.faint}`}>Tc = t_pcq + t_pd + t_su</div>
           <div className="mt-1 font-mono text-3xl font-black tabular-nums" style={{ color: accent }}>{Tc} <span className="text-lg">ns</span></div>

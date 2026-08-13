@@ -29,16 +29,25 @@
 const splitCsv = (s: string) => s.split(',').map((x) => x.trim()).filter(Boolean);
 
 // Provider registry. Order = fallback preference (only keyed ones are used).
-const PROVIDERS: { name: string; url: string; keyEnv: string; modelsEnv: string; defaults: string }[] = [
+// `extra` is merged into the request body for that provider only.
+//
+// GEMINI + `reasoning_effort: 'none'` — REQUIRED, do not drop it. The current
+// Gemini flash models are THINKING models, and through this OpenAI-compat
+// endpoint their chain-of-thought is streamed inside `delta.content` — so the
+// learner literally watched VoltMonkey mutter "Check Constraints: One sentence?
+// Yes..." instead of getting an answer. 'none' sets the thinking budget to 0
+// and makes it answer directly. (Removed gemini-2.5-flash / gemini-2.0-flash:
+// both now 404 with "model is no longer available".)
+const PROVIDERS: { name: string; url: string; keyEnv: string; modelsEnv: string; defaults: string; extra?: Record<string, unknown> }[] = [
   { name: 'groq',       url: 'https://api.groq.com/openai/v1/chat/completions',                    keyEnv: 'GROQ_API_KEY',       modelsEnv: 'GROQ_MODELS',       defaults: 'llama-3.3-70b-versatile,llama-3.1-8b-instant' },
   { name: 'cerebras',   url: 'https://api.cerebras.ai/v1/chat/completions',                        keyEnv: 'CEREBRAS_API_KEY',   modelsEnv: 'CEREBRAS_MODELS',   defaults: 'llama-3.3-70b,llama3.1-8b' },
-  { name: 'gemini',     url: 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions', keyEnv: 'GEMINI_API_KEY', modelsEnv: 'GEMINI_MODELS',   defaults: 'gemini-flash-latest,gemini-flash-lite-latest,gemini-2.5-flash,gemini-2.0-flash' },
+  { name: 'gemini',     url: 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions', keyEnv: 'GEMINI_API_KEY', modelsEnv: 'GEMINI_MODELS',   defaults: 'gemini-flash-latest,gemini-flash-lite-latest', extra: { reasoning_effort: 'none' } },
   { name: 'openrouter', url: 'https://openrouter.ai/api/v1/chat/completions',                      keyEnv: 'OPENROUTER_API_KEY', modelsEnv: 'OPENROUTER_MODELS', defaults: 'meta-llama/llama-3.3-70b-instruct:free,mistralai/mistral-7b-instruct:free' },
   { name: 'mistral',    url: 'https://api.mistral.ai/v1/chat/completions',                         keyEnv: 'MISTRAL_API_KEY',    modelsEnv: 'MISTRAL_MODELS',    defaults: 'mistral-small-latest,open-mistral-nemo' },
   { name: 'hf',         url: 'https://router.huggingface.co/v1/chat/completions',                  keyEnv: 'HF_API_KEY',         modelsEnv: 'HF_MODELS',         defaults: 'meta-llama/Llama-3.3-70B-Instruct:novita,meta-llama/Llama-3.1-8B-Instruct:novita,Qwen/Qwen2.5-7B-Instruct' },
 ];
 
-interface Attempt { provider: string; url: string; key: string; model: string }
+interface Attempt { provider: string; url: string; key: string; model: string; extra?: Record<string, unknown> }
 
 // Build the ordered list of (provider, model) attempts from whatever keys exist.
 function attempts(): Attempt[] {
@@ -47,7 +56,7 @@ function attempts(): Attempt[] {
     const key = Deno.env.get(p.keyEnv) ?? '';
     if (!key) continue;
     for (const model of splitCsv(Deno.env.get(p.modelsEnv) ?? p.defaults)) {
-      out.push({ provider: p.name, url: p.url, key, model });
+      out.push({ provider: p.name, url: p.url, key, model, extra: p.extra });
     }
   }
   return out;
@@ -119,7 +128,7 @@ async function probe(a: Attempt): Promise<{ provider: string; model: string; ok:
     const r = await fetch(a.url, {
       method: 'POST',
       headers: { Authorization: `Bearer ${a.key}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model: a.model, messages: [{ role: 'user', content: 'ping' }], max_tokens: 1, stream: false }),
+      body: JSON.stringify({ model: a.model, messages: [{ role: 'user', content: 'ping' }], max_tokens: 1, stream: false, ...(a.extra ?? {}) }),
     });
     const body = await r.text().catch(() => '');
     return { provider: a.provider, model: a.model, ok: r.ok, status: r.status, snippet: body.slice(0, 200) };
@@ -184,7 +193,7 @@ Deno.serve(async (req: Request) => {
         resp = await fetch(a.url, {
           method: 'POST',
           headers: { Authorization: `Bearer ${a.key}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ model: a.model, messages: chat, max_tokens: maxTokens, temperature: 0.45, stream: true }),
+          body: JSON.stringify({ model: a.model, messages: chat, max_tokens: maxTokens, temperature: 0.45, stream: true, ...(a.extra ?? {}) }),
         });
       } catch (netErr) {
         last = { status: 0, detail: String(netErr), where };

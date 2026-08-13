@@ -39,12 +39,13 @@ export const S05_LockedDoors: React.FC<Props> = ({ isActive, isDarkMode }) => {
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.1 }}
-        className={`p-8 rounded-3xl border ${cardBg}`}
+        className={`p-5 md:p-8 rounded-3xl border ${cardBg}`}
       >
         <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-violet-400 mb-5">
           Schematic · what reverse-bias actually does
         </div>
-        <svg viewBox="0 0 700 280" className="w-full h-auto">
+        <div className="-mx-5 overflow-x-auto px-5 md:mx-0 md:overflow-x-visible md:px-0">
+        <svg viewBox="0 0 700 280" className="w-full h-auto min-w-[540px]">
           <rect x="20" y="60" width="220" height="160" fill="#fb923c20" stroke="#fb923c" strokeWidth="2" />
           <text x="130" y="50" fill="#fb923c" fontFamily="monospace" fontSize="13" textAnchor="middle" fontWeight="bold">P-Type</text>
 
@@ -92,6 +93,7 @@ export const S05_LockedDoors: React.FC<Props> = ({ isActive, isDarkMode }) => {
 
           <text x="350" y="155" fill="#475569" fontFamily="monospace" fontSize="20" textAnchor="middle" fontStyle="italic">I_D ≈ 0</text>
         </svg>
+        </div>
         <p className={`text-xs ${subText} mt-4 text-center max-w-xl mx-auto`}>
           The external battery&apos;s pull on majority carriers <em>matches</em> the depletion
           region&apos;s internal pull - but in opposite directions. Net result: the gap widens
@@ -136,7 +138,7 @@ export const S05_LockedDoors: React.FC<Props> = ({ isActive, isDarkMode }) => {
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.2 }}
-        className={`p-8 rounded-3xl border ${cardBg}`}
+        className={`p-5 md:p-8 rounded-3xl border ${cardBg}`}
       >
         <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-violet-400 mb-5">
           I_S in context · how tiny is &quot;tiny&quot;?

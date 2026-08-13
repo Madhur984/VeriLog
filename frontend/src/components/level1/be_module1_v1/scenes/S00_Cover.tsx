@@ -104,10 +104,10 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
         />
         <div className="absolute inset-0 flex items-center">
           <div className="flex-1 px-6 md:px-12">
-            <h2 className="text-4xl md:text-5xl font-black text-orange-300 leading-none drop-shadow-[0_0_20px_rgba(249,115,22,0.4)]">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-orange-300 leading-none drop-shadow-[0_0_20px_rgba(249,115,22,0.4)]">
               THE PHYSICS
             </h2>
-            <h2 className="text-4xl md:text-5xl font-black text-amber-200/90 leading-none mt-1">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-amber-200/90 leading-none mt-1">
               OF CONTROL
             </h2>
             <p className="text-sm md:text-base text-slate-200 mt-4 max-w-sm">
@@ -134,7 +134,7 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
         <motion.h1
           initial={{ opacity: 0, scale: 0.95 }} animate={isActive ? { opacity: 1, scale: 1 } : {}}
           transition={{ duration: 0.6 }}
-          className={`text-5xl md:text-7xl font-black tracking-tight leading-[0.95] ${textColor}`}
+          className={`text-4xl sm:text-5xl md:text-7xl font-black tracking-tight leading-[0.95] ${textColor}`}
         >
           From Pure Crystals<br />
           <span className="bg-gradient-to-r from-orange-400 via-amber-300 to-rose-400 bg-clip-text text-transparent">
@@ -156,7 +156,7 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
         <motion.div
           initial={{ opacity: 0, y: 20 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
           transition={{ delay: 0.3 }}
-          className={`p-8 rounded-3xl border ${cardBg} relative overflow-hidden`}
+          className={`p-5 md:p-8 rounded-3xl border ${cardBg} relative overflow-hidden`}
         >
           <div className="absolute -top-10 -right-10 w-40 h-40 bg-cyan-400/10 rounded-full blur-3xl" />
           <div className="flex items-start gap-4 mb-3">
@@ -176,7 +176,7 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
         <motion.div
           initial={{ opacity: 0, y: 20 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
           transition={{ delay: 0.4 }}
-          className={`p-8 rounded-3xl border ${cardBg} relative overflow-hidden`}
+          className={`p-5 md:p-8 rounded-3xl border ${cardBg} relative overflow-hidden`}
         >
           <div className="absolute -top-10 -right-10 w-40 h-40 bg-orange-400/10 rounded-full blur-3xl" />
           <div className="flex items-start gap-4 mb-3">
@@ -196,7 +196,7 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
         <motion.div
           initial={{ opacity: 0, y: 20 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
           transition={{ delay: 0.5 }}
-          className={`p-8 rounded-3xl border ${cardBg} relative overflow-hidden`}
+          className={`p-5 md:p-8 rounded-3xl border ${cardBg} relative overflow-hidden`}
         >
           <div className="absolute -top-10 -right-10 w-40 h-40 bg-rose-400/10 rounded-full blur-3xl" />
           <div className="flex items-start gap-4 mb-3">
@@ -218,7 +218,7 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.6 }}
-        className={`p-8 rounded-3xl border ${cardBg}`}
+        className={`p-5 md:p-8 rounded-3xl border ${cardBg}`}
       >
         <div className="flex items-center gap-3 mb-6">
           <Sparkles size={16} className="text-orange-400" />
@@ -251,7 +251,7 @@ export const S00_Cover: React.FC<Props> = ({ isActive, isDarkMode }) => {
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.7 }}
-        className={`p-8 rounded-3xl border ${cardBg}`}
+        className={`p-5 md:p-8 rounded-3xl border ${cardBg}`}
       >
         <div className="flex items-center gap-2 mb-6">
           <Sparkles size={14} className="text-orange-400" />

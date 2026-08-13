@@ -38,7 +38,7 @@ export const S04_WaveParameters: React.FC<{ isDarkMode: boolean }> = ({ isDarkMo
           ].map(param => (
             <div
               key={param.name}
-              className="rounded-3xl p-7 border flex flex-col gap-8 transition-colors"
+              className="rounded-3xl p-5 sm:p-7 border flex flex-col gap-6 sm:gap-8 transition-colors"
               style={{ background: isDarkMode ? '#0A0C10' : '#ffffff', borderColor }}
             >
               <div className="text-4xl">{param.emoji}</div>
@@ -69,13 +69,13 @@ export const S04_WaveParameters: React.FC<{ isDarkMode: boolean }> = ({ isDarkMo
       </section>
 
       <section className="relative">
-        <div className={`rounded-[3rem] p-12 text-center border overflow-hidden ${isDarkMode ? 'bg-slate-950/20 border-slate-800' : 'bg-slate-50 border-slate-200'}`}>
-          <div className="text-[10px] font-mono font-black uppercase tracking-[0.6em] mb-12 opacity-30">The Universal Formula</div>
-          
-          <div className="inline-block p-8 md:p-10 rounded-3xl bg-slate-900 dark:bg-black/40 border-2 border-cyan-500/20 mb-12 shadow-2xl">
+        <div className={`rounded-[2rem] sm:rounded-[3rem] p-6 sm:p-12 text-center border overflow-hidden ${isDarkMode ? 'bg-slate-950/20 border-slate-800' : 'bg-slate-50 border-slate-200'}`}>
+          <div className="text-[10px] font-mono font-black uppercase tracking-[0.4em] sm:tracking-[0.6em] mb-12 opacity-30">The Universal Formula</div>
+
+          <div className="inline-block max-w-full p-5 sm:p-8 md:p-10 rounded-3xl bg-slate-900 dark:bg-black/40 border-2 border-cyan-500/20 mb-12 shadow-2xl">
             <div className="text-[10px] font-mono font-bold uppercase tracking-[0.3em] text-cyan-500/70 mb-3">Continuous-Time Sinusoidal Model</div>
-            <div className="text-3xl md:text-5xl font-mono font-bold tracking-widest text-cyan-400">
-              x(t) = A · cos(ωt + θ) &nbsp;&nbsp;<span className="text-xl md:text-2xl text-slate-400 font-normal">where ω = 2πf = 2π / T</span>
+            <div className="text-lg sm:text-3xl md:text-5xl font-mono font-bold tracking-normal sm:tracking-widest text-cyan-400 break-words">
+              x(t) = A · cos(ωt + θ) &nbsp;&nbsp;<span className="text-sm sm:text-xl md:text-2xl text-slate-400 font-normal">where ω = 2πf = 2π / T</span>
             </div>
           </div>
 

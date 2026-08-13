@@ -267,7 +267,7 @@ export const S12_PracticeArena: React.FC<Props> = ({ isActive, isDarkMode }) => 
       <motion.div
         id="act1"
         initial={{ opacity: 0, y: 12 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
-        className={`p-8 rounded-3xl border ${cardBg}`}
+        className={`p-5 md:p-8 rounded-3xl border ${cardBg}`}
       >
         <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
           <div className="flex items-center gap-3">
@@ -367,7 +367,7 @@ export const S12_PracticeArena: React.FC<Props> = ({ isActive, isDarkMode }) => 
         id="act2"
         initial={{ opacity: 0, y: 12 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.1 }}
-        className={`p-8 rounded-3xl border ${cardBg}`}
+        className={`p-5 md:p-8 rounded-3xl border ${cardBg}`}
       >
         <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
           <div className="flex items-center gap-3">
@@ -396,10 +396,15 @@ export const S12_PracticeArena: React.FC<Props> = ({ isActive, isDarkMode }) => 
                   draggable={!placed}
                   onDragStart={() => setDraggedItem(it.name)}
                   onDragEnd={() => setDraggedItem(null)}
-                  className={`px-3 py-1.5 rounded-lg border-2 font-mono text-[11px] font-bold transition-all ${
+                  /* Touch fallback: HTML5 drag never fires on a phone, so a tap
+                     selects the item and the next tap on a bucket drops it. */
+                  onClick={() => { if (!placed) setDraggedItem((d) => (d === it.name ? null : it.name)); }}
+                  className={`px-3 py-2 min-h-[40px] flex items-center rounded-lg border-2 font-mono text-[11px] font-bold transition-all sm:block sm:py-1.5 sm:min-h-0 ${
                     placed
                       ? 'opacity-30 cursor-not-allowed border-slate-500'
-                      : isDarkMode ? 'border-orange-400/40 bg-black/40 text-orange-200 hover:border-orange-400 cursor-grab active:cursor-grabbing' : 'border-orange-300 bg-white text-orange-700 hover:border-orange-500 cursor-grab active:cursor-grabbing'
+                      : draggedItem === it.name
+                        ? 'border-orange-400 bg-orange-400/20 text-orange-200 ring-2 ring-orange-400/50 cursor-grab active:cursor-grabbing'
+                        : isDarkMode ? 'border-orange-400/40 bg-black/40 text-orange-200 hover:border-orange-400 cursor-grab active:cursor-grabbing' : 'border-orange-300 bg-white text-orange-700 hover:border-orange-500 cursor-grab active:cursor-grabbing'
                   }`}
                 >
                   {it.name}
@@ -464,7 +469,7 @@ export const S12_PracticeArena: React.FC<Props> = ({ isActive, isDarkMode }) => 
         id="act3"
         initial={{ opacity: 0, y: 12 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.2 }}
-        className={`p-8 rounded-3xl border ${cardBg}`}
+        className={`p-5 md:p-8 rounded-3xl border ${cardBg}`}
       >
         <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
           <div className="flex items-center gap-3">
@@ -503,7 +508,7 @@ export const S12_PracticeArena: React.FC<Props> = ({ isActive, isDarkMode }) => 
                   <button
                     onClick={() => setTfAnswers((a) => ({ ...a, [i]: true }))}
                     disabled={has}
-                    className={`px-4 py-1.5 rounded-lg text-[12px] font-mono font-bold transition-all ${
+                    className={`min-h-[40px] sm:min-h-0 px-4 py-1.5 rounded-lg text-[12px] font-mono font-bold transition-all ${
                       ans === true
                         ? t.ans === true ? 'bg-emerald-400 text-black' : 'bg-rose-400 text-black'
                         : isDarkMode ? 'bg-white/5 hover:bg-emerald-500/10 border border-white/10' : 'bg-slate-100 hover:bg-emerald-50 border border-slate-200'
@@ -512,7 +517,7 @@ export const S12_PracticeArena: React.FC<Props> = ({ isActive, isDarkMode }) => 
                   <button
                     onClick={() => setTfAnswers((a) => ({ ...a, [i]: false }))}
                     disabled={has}
-                    className={`px-4 py-1.5 rounded-lg text-[12px] font-mono font-bold transition-all ${
+                    className={`min-h-[40px] sm:min-h-0 px-4 py-1.5 rounded-lg text-[12px] font-mono font-bold transition-all ${
                       ans === false
                         ? t.ans === false ? 'bg-emerald-400 text-black' : 'bg-rose-400 text-black'
                         : isDarkMode ? 'bg-white/5 hover:bg-rose-500/10 border border-white/10' : 'bg-slate-100 hover:bg-rose-50 border border-slate-200'
@@ -538,7 +543,7 @@ export const S12_PracticeArena: React.FC<Props> = ({ isActive, isDarkMode }) => 
           >
             <div className={`text-2xl font-black ${textColor}`}>{tfScore} / {TF_DECK.length}</div>
             <button onClick={() => setTfAnswers({})}
-                    className={`mt-2 px-4 py-1.5 rounded-lg text-[11px] font-mono font-bold border ${isDarkMode ? 'border-white/10 hover:bg-white/5' : 'border-slate-200 hover:bg-slate-100'}`}>
+                    className={`min-h-[40px] sm:min-h-0 mt-2 px-4 py-1.5 rounded-lg text-[11px] font-mono font-bold border ${isDarkMode ? 'border-white/10 hover:bg-white/5' : 'border-slate-200 hover:bg-slate-100'}`}>
               <RefreshCw size={11} className="inline mr-1" /> Retry
             </button>
           </motion.div>
@@ -550,7 +555,7 @@ export const S12_PracticeArena: React.FC<Props> = ({ isActive, isDarkMode }) => 
         id="act4"
         initial={{ opacity: 0, y: 12 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.3 }}
-        className={`p-8 rounded-3xl border ${cardBg}`}
+        className={`p-5 md:p-8 rounded-3xl border ${cardBg}`}
       >
         <div className="flex items-center gap-3 mb-6">
           <div className="w-10 h-10 rounded-2xl bg-violet-500/20 border border-violet-400/40 flex items-center justify-center text-violet-300">
@@ -579,20 +584,20 @@ export const S12_PracticeArena: React.FC<Props> = ({ isActive, isDarkMode }) => 
                     : isDarkMode ? 'border-white/10 bg-black/30' : 'border-slate-200 bg-slate-50'
                 }`}
               >
-                <div className="flex items-center justify-between mb-3">
+                <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 mb-3">
                   <div>
                     <div className="font-mono text-[10px] uppercase tracking-widest text-violet-400">Convert</div>
                     <div className="font-mono text-2xl font-black text-violet-300">{c.v} eV</div>
                   </div>
                   <span className="font-mono text-2xl text-slate-400">→</span>
-                  <div>
+                  <div className="min-w-[150px]">
                     <div className="font-mono text-[10px] uppercase tracking-widest text-violet-400">Joules</div>
                     <input
                       type="text"
                       value={calcInputs[c.id] ?? ''}
                       onChange={(e) => setCalcInputs((p) => ({ ...p, [c.id]: e.target.value }))}
                       placeholder="e.g. 1.76e-19"
-                      className={`mt-1 px-2 py-1 rounded-lg border-2 w-44 font-mono text-sm ${
+                      className={`mt-1 px-2 py-2 h-10 rounded-lg border-2 w-full max-w-[176px] font-mono text-sm sm:py-1 sm:h-auto sm:w-44 ${
                         isDarkMode ? 'bg-black/40 border-white/10 text-white' : 'bg-white border-slate-200 text-slate-900'
                       }`}
                     />
@@ -618,7 +623,7 @@ export const S12_PracticeArena: React.FC<Props> = ({ isActive, isDarkMode }) => 
       <motion.div
         initial={{ opacity: 0, y: 12 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.4 }}
-        className={`p-8 rounded-3xl border ${cardBg} text-center`}
+        className={`p-5 md:p-8 rounded-3xl border ${cardBg} text-center`}
       >
         <Sparkles className="mx-auto text-orange-400 mb-3" size={20} />
         <div className="font-mono text-[10px] uppercase tracking-widest text-orange-400 mb-2">Module Complete</div>

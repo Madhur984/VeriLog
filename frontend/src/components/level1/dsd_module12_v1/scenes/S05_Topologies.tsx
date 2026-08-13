@@ -80,20 +80,24 @@ export const S05_Topologies: React.FC<Props> = ({ isDarkMode }) => {
           <Scale size={15} style={{ color: INDIGO }} />
           <span className="font-mono text-[11px] uppercase tracking-widest" style={{ color: INDIGO }}>The whole adder family, side by side</span>
         </div>
-        <div className="grid grid-cols-4 text-[11px] md:text-sm font-mono font-black uppercase tracking-widest text-center">
-          <div className={`p-3 ${subText} text-left`}>Architecture</div>
-          <div className={`p-3 ${subText}`}>Delay</div>
-          <div className={`p-3 ${subText}`}>Hardware</div>
-          <div className={`p-3 ${subText} text-left`}>Best for</div>
-        </div>
-        {MATRIX.map((m, i) => (
-          <div key={m.name} className={`grid grid-cols-4 text-[12px] md:text-sm text-center border-t ${isDarkMode ? 'border-white/10' : 'border-slate-200'} ${i === 2 ? (isDarkMode ? 'bg-indigo-500/10' : 'bg-indigo-50/60') : ''}`}>
-            <div className={`p-3 font-bold text-left ${textColor}`} style={i === 2 ? { color: INDIGO } : undefined}>{m.name}</div>
-            <div className="p-3 font-medium" style={{ color: m.color }}>{m.delay}</div>
-            <div className={`p-3 ${subText}`}>{m.hw}</div>
-            <div className={`p-3 text-left ${subText}`}>{m.use}</div>
+        <div className="overflow-x-auto">
+          <div className="min-w-[620px] md:min-w-0">
+            <div className="grid grid-cols-4 text-[11px] md:text-sm font-mono font-black uppercase tracking-widest text-center">
+              <div className={`p-3 ${subText} text-left`}>Architecture</div>
+              <div className={`p-3 ${subText}`}>Delay</div>
+              <div className={`p-3 ${subText}`}>Hardware</div>
+              <div className={`p-3 ${subText} text-left`}>Best for</div>
+            </div>
+            {MATRIX.map((m, i) => (
+              <div key={m.name} className={`grid grid-cols-4 text-[12px] md:text-sm text-center border-t ${isDarkMode ? 'border-white/10' : 'border-slate-200'} ${i === 2 ? (isDarkMode ? 'bg-indigo-500/10' : 'bg-indigo-50/60') : ''}`}>
+                <div className={`p-3 font-bold text-left ${textColor}`} style={i === 2 ? { color: INDIGO } : undefined}>{m.name}</div>
+                <div className="p-3 font-medium" style={{ color: m.color }}>{m.delay}</div>
+                <div className={`p-3 ${subText}`}>{m.hw}</div>
+                <div className={`p-3 text-left ${subText}`}>{m.use}</div>
+              </div>
+            ))}
           </div>
-        ))}
+        </div>
       </motion.div>
 
       {/* close */}

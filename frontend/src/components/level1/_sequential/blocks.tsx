@@ -79,7 +79,7 @@ export const Toggle: React.FC<{ label: string; v: number; onClick: () => void; c
   = ({ label, v, onClick, color, sub }) => (
   <button onClick={onClick} className="flex flex-col items-center gap-1 active:scale-90">
     <span className="font-mono text-[11px] font-bold" style={{ color }}>{label}</span>
-    <span className="flex h-9 w-9 items-center justify-center rounded-lg font-mono text-base font-black"
+    <span className="flex h-10 w-10 items-center justify-center rounded-lg font-mono text-base font-black sm:h-9 sm:w-9"
       style={{ background: v ? color : 'transparent', color: v ? '#000' : color, border: `2px solid ${color}${v ? '' : '66'}` }}>
       {v}
     </span>
@@ -101,7 +101,7 @@ export const ClockButton: React.FC<{ accent: string; onTick: () => void; canAuto
     return () => clearInterval(id);
   }, [run]);
   return (
-    <div className="flex items-center justify-center gap-3">
+    <div className="flex flex-wrap items-center justify-center gap-3">
       <button onClick={onTick}
         className="flex items-center gap-2 rounded-2xl px-5 py-2.5 font-black text-black active:scale-95"
         style={{ background: accent, boxShadow: `0 8px 24px ${accent}33` }}>
@@ -135,8 +135,9 @@ export const ClockWave: React.FC<{ isDarkMode: boolean; accent: string; cycles?:
   }
   const total = 8 + cycles * w + 8;
   return (
-    <div className="overflow-x-auto">
-      <svg viewBox={`0 0 ${total} 52`} className="mx-auto w-full" style={{ maxWidth: total }}>
+    /* scrolls inside itself on a phone instead of shrinking the wave to nothing */
+    <div className="-mx-1 overflow-x-auto px-1">
+      <svg viewBox={`0 0 ${total} 52`} className="mx-auto w-full lg:!min-w-0" style={{ maxWidth: total, minWidth: Math.min(total, 380) }}>
         <text x="2" y="26" fontFamily="monospace" fontSize="10" fontWeight="800" fill={accent}>{label}</text>
         <path d={d} fill="none" stroke={accent} strokeWidth="2.5" strokeLinejoin="round" transform="translate(24,0)" />
         {edge !== 'none' && pts.filter((p) => p.kind === edge.slice(0, 4) as 'rise' | 'fall' || (edge === 'rising' && p.kind === 'rise') || (edge === 'falling' && p.kind === 'fall'))
@@ -179,8 +180,9 @@ export const TimingDiagram: React.FC<{ isDarkMode: boolean; accent: string; sign
     : signals;
   const height = rows.length * rowH + 8;
   return (
-    <div className="overflow-x-auto">
-      <svg viewBox={`0 0 ${width} ${height}`} className="mx-auto w-full" style={{ maxWidth: Math.max(width, 320) }}>
+    <div className="-mx-1 overflow-x-auto px-1">
+      <svg viewBox={`0 0 ${width} ${height}`} className="mx-auto w-full lg:!min-w-0"
+        style={{ maxWidth: Math.max(width, 320), minWidth: Math.min(width, 420) }}>
         {rows.map((s, r) => {
           const yTop = top + r * rowH + hi, yBot = top + r * rowH + lo;
           const col = s.color ?? (r === 0 && showClock ? accent : (t.ink as string));
@@ -210,7 +212,7 @@ const FFSymbol: React.FC<{ type: FFType; q: number; accent: string; isDarkMode: 
   const [la, lb] = FF_META[type].inputs;
   const two = FF_META[type].inputs.length === 2;
   return (
-    <svg viewBox="0 0 150 110" className="w-full max-w-[220px]">
+    <svg viewBox="0 0 150 110" className="h-auto w-full max-w-[220px]">
       {/* input wires */}
       <line x1="6" y1={two ? 32 : 55} x2="40" y2={two ? 32 : 55} stroke={inA ? accent : dim} strokeWidth="3" />
       <text x="4" y={two ? 26 : 49} fontFamily="monospace" fontSize="11" fontWeight="800" fill={inA ? accent : dim}>{la}</text>
@@ -265,9 +267,9 @@ export const FlipFlopViz: React.FC<{ isDarkMode: boolean; accent: string; type: 
 
   return (
     <Card isDarkMode={isDarkMode}>
-      <div className="mb-3 flex items-center justify-between gap-2">
+      <div className="mb-3 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-2">
         <span className="font-mono text-[11px] uppercase tracking-[0.3em]" style={{ color: accent }}>{type} flip-flop · live</span>
-        <span className={`font-mono text-[11px] ${t.faint}`}>{FF_META[type].eq}</span>
+        <span className={`break-words font-mono text-[11px] ${t.faint}`}>{FF_META[type].eq}</span>
       </div>
       <div className="flex flex-col items-center gap-5 sm:flex-row sm:justify-around">
         <FFSymbol type={type} q={q} accent={accent} isDarkMode={isDarkMode} inA={a} inB={b} />
@@ -324,7 +326,7 @@ export const SRLatchViz: React.FC<{ isDarkMode: boolean; accent: string; gate?: 
       <div className="mb-3 font-mono text-[11px] uppercase tracking-[0.3em]" style={{ color: accent }}>
         {gate === 'NOR' ? 'NOR' : 'NAND'} {lang === 'hi' ? 'SR latch · live' : 'SR latch · live'}
       </div>
-      <svg viewBox="0 0 300 150" className="mx-auto w-full max-w-lg">
+      <svg viewBox="0 0 300 150" className="mx-auto h-auto w-full max-w-lg">
         {/* two cross-coupled gates */}
         {[{ y: 34, out: q, lbl: 'Q', inTop: gate === 'NOR' ? r : s }, { y: 104, out: qbar, lbl: "Q'", inTop: gate === 'NOR' ? s : r }].map((g, i) => (
           <g key={i}>
@@ -378,7 +380,7 @@ export const DLatchViz: React.FC<{ isDarkMode: boolean; accent: string }>
         {lang === 'hi' ? 'gated D latch · transparent जब EN=1' : 'gated D latch · transparent when EN=1'}
       </div>
       <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-around">
-        <svg viewBox="0 0 160 100" className="w-full max-w-[220px]">
+        <svg viewBox="0 0 160 100" className="h-auto w-full max-w-[220px]">
           <line x1="4" y1="30" x2="44" y2="30" stroke={d ? accent : (isDarkMode ? '#334155' : '#cbd5e1')} strokeWidth="3" />
           <text x="2" y="24" fontFamily="monospace" fontSize="11" fontWeight="800" fill={accent}>D={d}</text>
           <line x1="4" y1="70" x2="44" y2="70" stroke={en ? '#34d399' : '#fb7185'} strokeWidth="3" />
@@ -417,11 +419,12 @@ export const ShiftRegisterViz: React.FC<{ isDarkMode: boolean; accent: string; s
       <div className="mb-3 font-mono text-[11px] uppercase tracking-[0.3em]" style={{ color: accent }}>
         {lang === 'hi' ? `${stages}-bit shift register (SIPO)` : `${stages}-bit shift register (SIPO)`}
       </div>
-      <div className="flex items-center justify-center gap-1 sm:gap-2">
+      <div className="-mx-1 overflow-x-auto px-1">
+      <div className="flex min-w-max items-center justify-center gap-1 sm:gap-2">
         <div className="mr-1 flex flex-col items-center">
           <span className={`font-mono text-[9px] ${t.faint}`}>{lang === 'hi' ? 'serial in' : 'serial in'}</span>
           <button onClick={() => setSerialIn(serialIn ^ 1)}
-            className="flex h-9 w-9 items-center justify-center rounded-lg font-mono text-base font-black active:scale-90"
+            className="flex h-10 w-10 items-center justify-center rounded-lg font-mono text-base font-black active:scale-90 sm:h-9 sm:w-9"
             style={{ background: serialIn ? accent : 'transparent', color: serialIn ? '#000' : accent, border: `2px solid ${accent}` }}>{serialIn}</button>
         </div>
         {cells.map((c, i) => (
@@ -435,6 +438,7 @@ export const ShiftRegisterViz: React.FC<{ isDarkMode: boolean; accent: string; s
             </div>
           </React.Fragment>
         ))}
+      </div>
       </div>
       <div className="mt-4"><ClockButton accent={accent} onTick={shift} /></div>
       <p className={`mt-3 text-center font-mono text-[13px] ${t.sub}`}>
@@ -459,13 +463,14 @@ export const CounterViz: React.FC<{ isDarkMode: boolean; accent: string; bits?: 
   const arr = Array.from({ length: bits }, (_, i) => (count >> (bits - 1 - i)) & 1);
   return (
     <Card isDarkMode={isDarkMode}>
-      <div className="mb-3 flex items-center justify-between gap-2">
+      <div className="mb-3 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-2">
         <span className="font-mono text-[11px] uppercase tracking-[0.3em]" style={{ color: accent }}>
           MOD-{modulus} {dir} · {mode}
         </span>
         <span className={`font-mono text-[11px] ${t.faint}`}>{mode === 'ripple' ? (lang === 'hi' ? 'हर FF अगले को clock करता है' : 'each FF clocks the next') : (lang === 'hi' ? 'सब FF एक ही clock' : 'all FFs share one clock')}</span>
       </div>
-      <div className="flex items-center justify-center gap-2 sm:gap-3">
+      <div className="-mx-1 overflow-x-auto px-1">
+      <div className="flex min-w-max items-center justify-center gap-2 sm:gap-3">
         {arr.map((b, i) => (
           <div key={i} className="flex flex-col items-center gap-1">
             <span className={`font-mono text-[9px] ${t.faint}`}>Q{bits - 1 - i}</span>
@@ -477,6 +482,7 @@ export const CounterViz: React.FC<{ isDarkMode: boolean; accent: string; bits?: 
         ))}
         <span className={`mx-1 self-center font-mono text-2xl font-black ${t.faint}`}>=</span>
         <span className="self-center font-mono text-3xl font-black tabular-nums" style={{ color: accent }}>{count}</span>
+      </div>
       </div>
       <div className="mt-4"><ClockButton accent={accent} onTick={tick} /></div>
       <p className={`mt-3 text-center font-mono text-[12px] ${t.sub}`}>
@@ -501,8 +507,9 @@ export const StateDiagram: React.FC<{ isDarkMode: boolean; accent: string; state
   const R = 22;
   const at = (id: string) => states.find((s) => s.id === id)!;
   return (
-    <div className="overflow-x-auto">
-      <svg viewBox={`0 0 ${width} ${height}`} className="mx-auto w-full" style={{ maxWidth: width }}>
+    <div className="-mx-1 overflow-x-auto px-1">
+      <svg viewBox={`0 0 ${width} ${height}`} className="mx-auto h-auto w-full lg:!min-w-0"
+        style={{ maxWidth: width, minWidth: Math.min(width, 420) }}>
         <defs>
           <marker id={`arrow-${accent.replace('#', '')}`} markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto">
             <path d="M0,0 L7,3 L0,6 Z" fill={accent} />
@@ -555,14 +562,14 @@ export const StateTable: React.FC<{ isDarkMode: boolean; accent: string; headers
         <table className="w-full border-collapse text-center font-mono">
           <thead>
             <tr>{headers.map((h, i) => (
-              <th key={i} className="px-3 py-2.5 text-[13px] font-black" style={{ color: accent, borderBottom: `2px solid ${accent}55` }}>{h}</th>
+              <th key={i} className="px-2 py-2.5 text-[13px] font-black sm:px-3" style={{ color: accent, borderBottom: `2px solid ${accent}55` }}>{h}</th>
             ))}</tr>
           </thead>
           <tbody>
             {rows.map((r, ri) => (
               <tr key={ri} style={ri === highlight ? { background: `${accent}18` } : undefined}>
                 {r.map((c, ci) => (
-                  <td key={ci} className={`px-3 py-2 text-[14px] font-bold ${t.text}`}
+                  <td key={ci} className={`px-2 py-2 text-[14px] font-bold sm:px-3 ${t.text}`}
                     style={{ borderTop: isDarkMode ? '1px solid rgba(255,255,255,0.05)' : '1px solid rgba(0,0,0,0.05)' }}>{c}</td>
                 ))}
               </tr>

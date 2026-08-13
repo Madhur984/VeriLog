@@ -91,16 +91,16 @@ export const S12_B_SevenSegment: React.FC<Props> = ({ isActive, isDarkMode }) =>
       </section>
 
       {/* Mission Protocol Card */}
-      <div className={`p-6 rounded-2xl border ${isDarkMode ? 'bg-sky-500/5 border-sky-500/20' : 'bg-sky-50 border-sky-100'} max-w-4xl mx-auto grid md:grid-cols-3 gap-6`}>
+      <div className={`p-5 sm:p-6 rounded-2xl border ${isDarkMode ? 'bg-sky-500/5 border-sky-500/20' : 'bg-sky-50 border-sky-100'} max-w-4xl mx-auto grid md:grid-cols-3 gap-6`}>
           <div className="space-y-1">
               <span className="text-[9px] font-black uppercase tracking-widest text-sky-500">Pedagogy</span>
               <p className={`text-[11px] leading-tight opacity-70 ${textColor}`}>Hardware translation of binary nibbles into physical LED segment triggers.</p>
           </div>
-          <div className="space-y-1 border-l border-sky-500/20 pl-6">
+          <div className="space-y-1 md:border-l md:border-sky-500/20 md:pl-6">
               <span className="text-[9px] font-black uppercase tracking-widest text-sky-500">Protocol</span>
               <p className={`text-[11px] leading-tight opacity-70 ${textColor}`}>Toggle 4-bit BCD inputs to observe signal propagation through the decoder.</p>
           </div>
-          <div className="space-y-1 border-l border-sky-500/20 pl-6">
+          <div className="space-y-1 md:border-l md:border-sky-500/20 md:pl-6">
               <span className="text-[9px] font-black uppercase tracking-widest text-sky-500">Objective</span>
               <p className={`text-[11px] leading-tight opacity-70 ${textColor}`}>Map binary values 0-F to their equivalent hardware-defined visual patterns.</p>
           </div>
@@ -110,15 +110,15 @@ export const S12_B_SevenSegment: React.FC<Props> = ({ isActive, isDarkMode }) =>
       <div className="grid lg:grid-cols-2 gap-8 items-stretch">
           {/* Controls & BCD Mapping */}
           <div className="space-y-6">
-              <div className={`p-8 rounded-[2rem] border ${cardBg}`}>
-                  <div className="flex items-center justify-between mb-8">
+              <div className={`p-5 sm:p-8 rounded-[2rem] border ${cardBg}`}>
+                  <div className="flex flex-wrap items-center gap-3 justify-between mb-8">
                       <div className="flex items-center gap-3">
                           <Cpu className="text-sky-500" size={20} />
                           <h3 className={`font-mono text-xs uppercase tracking-widest ${textColor}`}>BCD Input Decoder</h3>
                       </div>
                       <button 
                         onClick={() => setIsManual(!isManual)}
-                        className={`px-4 py-1.5 rounded-full border text-[9px] font-black uppercase tracking-widest transition-all
+                        className={`px-4 py-2.5 sm:py-1.5 rounded-full border text-[9px] font-black uppercase tracking-widest transition-all
                             ${isManual 
                                 ? 'bg-amber-500/20 border-amber-500 text-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.2)]' 
                                 : `${isDarkMode ? 'bg-white/5 border-white/10' : 'bg-slate-100 border-slate-200'} text-slate-500 hover:border-${accent}`}`}
@@ -129,7 +129,7 @@ export const S12_B_SevenSegment: React.FC<Props> = ({ isActive, isDarkMode }) =>
 
                   {/* 4-Bit BCD Switcher */}
                   <div className={`mb-10 transition-opacity duration-300 ${isManual ? 'opacity-30 grayscale pointer-events-none' : 'opacity-100'}`}>
-                      <div className="flex justify-center gap-4 mb-4">
+                      <div className="flex justify-center gap-3 sm:gap-4 mb-4">
                           {bits.map((b, i) => (
                               <div key={i} className="flex flex-col items-center gap-2">
                                   <span className="font-mono text-[10px] opacity-40 uppercase tracking-tighter">2^{3-i}</span>
@@ -140,7 +140,7 @@ export const S12_B_SevenSegment: React.FC<Props> = ({ isActive, isDarkMode }) =>
                                         backgroundColor: b ? accent : (isDarkMode ? '#1a1d24' : '#f1f5f9'),
                                         boxShadow: b ? `0 0 20px ${accent}44` : 'none'
                                     }}
-                                    className="w-14 h-16 rounded-xl border-2 flex items-center justify-center text-xl font-black transition-colors"
+                                    className="w-12 h-14 sm:w-14 sm:h-16 flex-shrink-0 rounded-xl border-2 flex items-center justify-center text-lg sm:text-xl font-black transition-colors"
                                     style={{ borderColor: b ? accent : (isDarkMode ? '#2d3139' : '#e2e8f0'), color: b ? '#fff' : (isDarkMode ? '#4b5563' : '#9ca3af') }}
                                   >
                                       {b}
@@ -157,7 +157,7 @@ export const S12_B_SevenSegment: React.FC<Props> = ({ isActive, isDarkMode }) =>
                   {/* Segment Logic Trace */}
                   <div className="space-y-2">
                        <h4 className={`font-mono text-[10px] uppercase tracking-widest mb-4 opacity-40 text-center ${textColor}`}>Decoder Trace</h4>
-                       <div className="grid grid-cols-7 gap-1">
+                       <div className="grid grid-cols-7 gap-1 min-w-0">
                            {SEG_LABELS.map((label, i) => (
                                <motion.div 
                                     key={label}
@@ -181,11 +181,11 @@ export const S12_B_SevenSegment: React.FC<Props> = ({ isActive, isDarkMode }) =>
               </div>
 
               {/* Truth Table Insight */}
-              <div className={`p-6 rounded-2xl border ${isDarkMode ? 'bg-amber-500/5 border-amber-500/20' : 'bg-amber-50 border-amber-100'}`}>
+              <div className={`p-5 sm:p-6 rounded-2xl border ${isDarkMode ? 'bg-amber-500/5 border-amber-500/20' : 'bg-amber-50 border-amber-100'}`}>
                   <h4 className={`font-bold text-xs uppercase tracking-widest mb-4 flex items-center gap-2 ${isDarkMode ? 'text-amber-400' : 'text-amber-700'}`}>
                       <Hash size={14} /> Truth Table Logic
                   </h4>
-                  <div className="grid grid-cols-2 gap-4 text-xs font-mono">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-mono">
                       <div className="space-y-1">
                           <p className="opacity-60 uppercase text-[9px]">Inputs BCD</p>
                           <p className={textColor}>A B C D = {bits.join(' ')}</p>
@@ -202,11 +202,11 @@ export const S12_B_SevenSegment: React.FC<Props> = ({ isActive, isDarkMode }) =>
           </div>
 
           {/* Visualization: SVG LED Display */}
-          <div className={`p-8 rounded-[2rem] border flex flex-col items-center justify-center relative overflow-hidden ${isDarkMode ? 'bg-black/40 border-white/5' : 'bg-slate-900 border-slate-900 shadow-2xl'}`}>
+          <div className={`p-5 sm:p-8 rounded-[2rem] border flex flex-col items-center justify-center relative overflow-hidden ${isDarkMode ? 'bg-black/40 border-white/5' : 'bg-slate-900 border-slate-900 shadow-2xl'}`}>
               <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_50%,rgba(14,165,233,0.1),transparent_70%)]" />
               
               <div className="relative mb-10">
-                 <svg width="180" height="300" viewBox="0 0 180 300" className="drop-shadow-2xl">
+                 <svg viewBox="0 0 180 300" className="w-full max-w-[180px] h-auto drop-shadow-2xl">
                     {/* Standard 7 Segment segments */}
                     {/* a */}
                     <Seg part="a" active={!!activeSegs[0]} color={accent} x={30} y={20} rotation={0} />
@@ -253,7 +253,7 @@ const Hud: React.FC<{ value: number; isDarkMode: boolean }> = ({ value, isDarkMo
     <div className="flex flex-col items-center gap-2 relative z-10">
         <div className={`font-mono text-[9px] uppercase tracking-[0.3em] ${isDarkMode ? 'text-sky-500' : 'text-sky-400'}`}>Digit Decoder Output</div>
         <div className="flex items-baseline gap-2">
-            <span className="text-white text-5xl font-black font-mono">{value.toString(16).toUpperCase()}</span>
+            <span className="text-white text-4xl sm:text-5xl font-black font-mono">{value.toString(16).toUpperCase()}</span>
             <span className="text-sky-500/50 font-mono text-sm">base_16</span>
         </div>
     </div>

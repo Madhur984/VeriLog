@@ -181,7 +181,7 @@ export const S11_MasterBlueprint: React.FC<Props> = ({ isActive, isDarkMode }) =
       <motion.div
         initial={{ opacity: 0, y: 12 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.5 }}
-        className={`p-8 rounded-3xl border ${cardBg} text-center`}
+        className={`p-5 md:p-8 rounded-3xl border ${cardBg} text-center`}
       >
         <div className="font-mono text-[10px] uppercase tracking-widest text-orange-400 mb-3">The intrinsic story ends here</div>
         <p className={`text-base leading-relaxed ${textColor}`}>

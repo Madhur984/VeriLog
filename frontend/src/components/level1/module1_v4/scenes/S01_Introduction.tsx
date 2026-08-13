@@ -27,12 +27,12 @@ export const S01_Introduction: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode
         </div>
 
         {/* Animated live demo */}
-        <div className="rounded-3xl p-8 border mt-16 shadow-xl" style={{ background: isDarkMode ? '#0A0C10' : '#ffffff', borderColor }}>
+        <div className="rounded-3xl p-5 sm:p-8 border mt-16 shadow-xl" style={{ background: isDarkMode ? '#0A0C10' : '#ffffff', borderColor }}>
           <div className="flex items-center gap-3 mb-8">
             <div className="w-2.5 h-2.5 rounded-full bg-cyan-500" />
             <span className={`text-[10px] font-mono uppercase tracking-widest font-black ${isDarkMode ? 'text-cyan-500' : 'text-cyan-600'}`}>Live Waveform Dual-Stream</span>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10">
             <div className="space-y-3">
               <p className="text-[10px] font-mono uppercase tracking-widest opacity-40">Analog Stream (Continuous)</p>
               <div className="rounded-2xl bg-slate-900 dark:bg-black/40 overflow-hidden">
@@ -57,7 +57,7 @@ export const S01_Introduction: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode
             <p>
               Imagine shouting through a tube. Your voice vibrates the air. In a computer, that vibration is replaced by <strong className="text-cyan-500">Volts</strong>. 
             </p>
-            <div className={`p-8 rounded-2xl border-l-4 font-bold text-xl ${isDarkMode ? 'bg-cyan-950/20 border-cyan-500 text-cyan-100' : 'bg-cyan-50 border-cyan-500 text-cyan-900'}`}>
+            <div className={`p-5 sm:p-8 rounded-2xl border-l-4 font-bold text-lg sm:text-xl ${isDarkMode ? 'bg-cyan-950/20 border-cyan-500 text-cyan-100' : 'bg-cyan-50 border-cyan-500 text-cyan-900'}`}>
                "A signal is any physical quantity that varies to convey information."
             </div>
             <p>
@@ -74,9 +74,9 @@ export const S01_Introduction: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode
             { emoji: '💡', label: 'Optical Fiber', sub: 'Light pulses' },
             { emoji: '🌡️', label: 'Sensors', sub: 'Voltage' },
           ].map(ex => (
-            <div key={ex.label} className="rounded-2xl p-6 border text-center transition-all bg-black/5 hover:bg-black/10" style={{ borderColor }}>
+            <div key={ex.label} className="rounded-2xl p-4 sm:p-6 border text-center transition-all bg-black/5 hover:bg-black/10" style={{ borderColor }}>
               <div className="text-3xl mb-4">{ex.emoji}</div>
-              <p className="text-sm font-black uppercase tracking-widest">{ex.label}</p>
+              <p className="text-xs sm:text-sm font-black uppercase tracking-wide sm:tracking-widest break-words">{ex.label}</p>
               <p className="text-[10px] mt-1 opacity-40 font-mono tracking-wider">{ex.sub}</p>
             </div>
           ))}

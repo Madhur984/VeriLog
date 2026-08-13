@@ -198,7 +198,7 @@ export const IntroTheory: React.FC<Props> = ({ isActive, isDarkMode }) => {
         </p>
       </section>
 
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={isActive ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.2 }} className={`p-8 rounded-[2rem] border ${c.cardBg}`}>
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={isActive ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.2 }} className={`p-5 sm:p-8 rounded-[2rem] border ${c.cardBg}`}>
         <div className="flex items-center gap-3 mb-6">
           <Puzzle size={24} className="text-emerald-500" />
           <h3 className={`text-xl font-bold ${c.text}`}>The Optimization Challenge</h3>
@@ -226,7 +226,7 @@ export const IntroTheory: React.FC<Props> = ({ isActive, isDarkMode }) => {
       </motion.div>
 
       {/* What IS a K-Map? ELI5 */}
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={isActive ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.35 }} className={`p-8 rounded-[2rem] border ${c.cardBg}`}>
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={isActive ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.35 }} className={`p-5 sm:p-8 rounded-[2rem] border ${c.cardBg}`}>
         <div className="flex items-center gap-3 mb-5">
           <BookOpen size={22} className="text-sky-500" />
           <h3 className={`text-xl font-bold ${c.text}`}>What even IS a K-Map? (The ELI-5 version)</h3>
@@ -332,7 +332,7 @@ export const TwoVarTheory: React.FC<Props> = ({ isDarkMode }) => {
       </section>
 
       {/* Grid anatomy */}
-      <div className={`p-8 rounded-[2rem] border flex flex-col md:flex-row gap-12 items-center justify-center ${c.cardBg}`}>
+      <div className={`p-5 sm:p-8 rounded-[2rem] border flex flex-col md:flex-row gap-8 md:gap-12 items-center justify-center ${c.cardBg}`}>
         <div className="flex-1 space-y-6">
           <h3 className={`text-xl font-bold ${c.text} flex items-center gap-2`}><LayoutGrid size={22} className="text-emerald-500"/>Grid Anatomy</h3>
           <ul className={`space-y-4 ${c.muted}`}>
@@ -363,7 +363,7 @@ export const TwoVarTheory: React.FC<Props> = ({ isDarkMode }) => {
       </div>
 
       {/* Step-by-step construction */}
-      <div className={`p-8 rounded-[2rem] border ${c.cardBg}`}>
+      <div className={`p-5 sm:p-8 rounded-[2rem] border ${c.cardBg}`}>
         <div className="flex items-center gap-3 mb-6">
           <Target size={22} className="text-emerald-500" />
           <h3 className={`text-xl font-bold ${c.text}`}>Step-by-Step: Build Your First K-Map</h3>
@@ -372,7 +372,7 @@ export const TwoVarTheory: React.FC<Props> = ({ isDarkMode }) => {
       </div>
 
       {/* Minterm → Cell mapping table */}
-      <div className={`p-8 rounded-[2rem] border ${c.cardBg}`}>
+      <div className={`p-5 sm:p-8 rounded-[2rem] border ${c.cardBg}`}>
         <h3 className={`text-lg font-bold ${c.text} mb-5 flex items-center gap-2`}><Info size={18} className="text-emerald-500" /> Minterm → Cell Position Reference</h3>
         <div className="overflow-x-auto">
           <table className={`w-full text-sm font-mono rounded-xl overflow-hidden border ${isDarkMode?'border-slate-700':'border-slate-200'}`}>
@@ -432,8 +432,8 @@ export const ThreeVarTheory: React.FC<Props> = ({ isDarkMode }) => {
       </section>
 
       {/* Gray Code explanation */}
-      <div className={`p-8 rounded-[2rem] border ${c.cardBg}`}>
-        <div className="flex flex-col md:flex-row gap-12 items-center">
+      <div className={`p-5 sm:p-8 rounded-[2rem] border ${c.cardBg}`}>
+        <div className="flex flex-col md:flex-row gap-8 md:gap-12 items-center">
           <div className="flex-1 space-y-6">
             <h3 className={`text-xl font-bold flex items-center gap-2 ${c.text}`}>
               <LayoutGrid size={24} className="text-blue-500" />
@@ -445,7 +445,7 @@ export const ThreeVarTheory: React.FC<Props> = ({ isDarkMode }) => {
             </p>
             <div className={`p-5 rounded-2xl ${c.cardInner} space-y-3`}>
               <p className="text-amber-500 font-black text-[10px] uppercase tracking-widest">The Gray Code Column Order</p>
-              <div className="grid grid-cols-4 gap-3 text-center font-mono">
+              <div className="grid grid-cols-4 gap-2 sm:gap-3 text-center font-mono">
                 {['00','01','11','10'].map((code, i) => (
                   <div key={code} className={`p-3 rounded-xl border ${isDarkMode?'bg-blue-500/10 border-blue-500/30 text-blue-300':'bg-blue-50 border-blue-200 text-blue-700'}`}>
                     <div className="font-black text-lg">{code}</div>
@@ -505,7 +505,7 @@ export const ThreeVarTheory: React.FC<Props> = ({ isDarkMode }) => {
       </div>
 
       {/* Minterm position cheatsheet */}
-      <div className={`p-8 rounded-[2rem] border ${c.cardBg}`}>
+      <div className={`p-5 sm:p-8 rounded-[2rem] border ${c.cardBg}`}>
         <h3 className={`text-lg font-bold ${c.text} mb-6 flex items-center gap-2`}><Layers size={18} className="text-blue-500" /> 3-Variable Minterm Positions (Cheatsheet)</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {[
@@ -560,8 +560,8 @@ export const FourVarTheory: React.FC<Props> = ({ isDarkMode }) => {
       </section>
 
       {/* Grid with explanation */}
-      <div className={`p-8 rounded-[2rem] border ${c.cardBg}`}>
-        <div className="flex flex-col md:flex-row gap-10 items-start">
+      <div className={`p-5 sm:p-8 rounded-[2rem] border ${c.cardBg}`}>
+        <div className="flex flex-col md:flex-row gap-8 md:gap-10 items-start">
           <div className="flex-1 space-y-5">
             <h3 className={`text-xl font-bold ${c.text}`}>The 4×4 Structure</h3>
             <p className={`${c.muted} leading-relaxed`}>
@@ -614,11 +614,11 @@ export const FourVarTheory: React.FC<Props> = ({ isDarkMode }) => {
       </div>
 
       {/* Gotchas & tips */}
-      <div className={`p-8 rounded-[2rem] border ${c.cardBg} space-y-5`}>
+      <div className={`p-5 sm:p-8 rounded-[2rem] border ${c.cardBg} space-y-5`}>
         <h3 className={`text-lg font-bold ${c.text} flex items-center gap-2`}><Zap size={18} className="text-amber-500" /> 4-Variable Traps To Avoid</h3>
-        <div className="grid grid-cols-1 gap-12">
+        <div className="grid grid-cols-1 gap-8 sm:gap-12">
           {/* Trap 1: Minterm Placement */}
-          <div className={`p-8 rounded-[2.5rem] border ${c.cardBg} space-y-8`}>
+          <div className={`p-5 sm:p-8 rounded-[2.5rem] border ${c.cardBg} space-y-8`}>
             <div className="flex items-center gap-3">
               <Zap className="text-amber-500" size={20} />
               <div className="flex flex-col">
@@ -641,7 +641,7 @@ export const FourVarTheory: React.FC<Props> = ({ isDarkMode }) => {
           </div>
 
           {/* Trap 2: Axis Labeling */}
-          <div className={`p-8 rounded-[2.5rem] border ${c.cardBg} space-y-8`}>
+          <div className={`p-5 sm:p-8 rounded-[2.5rem] border ${c.cardBg} space-y-8`}>
             <div className="flex items-center gap-3">
               <Zap className="text-blue-500" size={20} />
               <div className="flex flex-col">
@@ -666,7 +666,7 @@ export const FourVarTheory: React.FC<Props> = ({ isDarkMode }) => {
           </div>
 
           {/* Trap 3: Pac-Man Wrap */}
-          <div className={`p-8 rounded-[2.5rem] border ${c.cardBg} space-y-8`}>
+          <div className={`p-5 sm:p-8 rounded-[2.5rem] border ${c.cardBg} space-y-8`}>
             <div className="flex items-center gap-3">
               <Zap className="text-purple-500" size={20} />
               <div className="flex flex-col">
@@ -892,7 +892,7 @@ export const GroupingRulesTheory: React.FC<Props> = ({ isDarkMode }) => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-50px" }}
             transition={{ duration: 0.5, delay: idx * 0.05 }}
-            className={`p-6 sm:p-10 rounded-[2rem] border ${isDarkMode ? 'bg-slate-800/40 border-slate-700/50 shadow-2xl' : 'bg-white border-slate-200 shadow-xl'}`}
+            className={`p-6 sm:p-6 sm:p-10 rounded-[2rem] border ${isDarkMode ? 'bg-slate-800/40 border-slate-700/50 shadow-2xl' : 'bg-white border-slate-200 shadow-xl'}`}
           >
             {/* Header */}
             <div className="flex items-start gap-4 mb-6">
@@ -938,7 +938,7 @@ export const GroupingRulesTheory: React.FC<Props> = ({ isDarkMode }) => {
       {/* Final summary card */}
       <motion.div
         initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-        className={`p-10 rounded-[2rem] border ${isDarkMode ? 'bg-emerald-950/30 border-emerald-800/30' : 'bg-emerald-50 border-emerald-200'}`}>
+        className={`p-6 sm:p-10 rounded-[2rem] border ${isDarkMode ? 'bg-emerald-950/30 border-emerald-800/30' : 'bg-emerald-50 border-emerald-200'}`}>
         <h3 className={`text-2xl font-black mb-6 ${isDarkMode ? 'text-emerald-300' : 'text-emerald-800'}`}>⚡ The 60-Second Cheatsheet</h3>
         <ol className={`space-y-2 text-sm font-mono leading-relaxed ${isDarkMode ? 'text-emerald-200/80' : 'text-emerald-900'}`}>
           {[
@@ -984,7 +984,7 @@ export const DontCareTheory: React.FC<Props> = ({ isDarkMode }) => {
 
       {/* ELI5 */}
       <motion.div initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ delay:0.1 }}
-        className={`p-8 rounded-[2rem] border ${c.cardBg}`}>
+        className={`p-5 sm:p-8 rounded-[2rem] border ${c.cardBg}`}>
         <div className="flex items-center gap-3 mb-5">
           <span className="text-3xl">🤷</span>
           <h3 className={`text-xl font-bold ${c.text}`}>ELI-5: What are Don't Cares?</h3>
@@ -1014,7 +1014,7 @@ export const DontCareTheory: React.FC<Props> = ({ isDarkMode }) => {
 
       {/* Symbol + Rule */}
       <motion.div initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ delay:0.2 }}
-        className={`p-8 rounded-[2rem] border ${c.cardBg}`}>
+        className={`p-5 sm:p-8 rounded-[2rem] border ${c.cardBg}`}>
         <h3 className={`text-xl font-bold ${c.text} mb-6 flex items-center gap-2`}><span className="text-2xl">✏️</span> The Symbol and the Golden Rule</h3>
         <div className="grid md:grid-cols-2 gap-6">
           <div className={`p-6 rounded-2xl ${c.cardInner} flex flex-col gap-3`}>
@@ -1038,7 +1038,7 @@ export const DontCareTheory: React.FC<Props> = ({ isDarkMode }) => {
 
       {/* Visual Example */}
       <motion.div initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ delay:0.3 }}
-        className={`p-8 rounded-[2rem] border ${c.cardBg}`}>
+        className={`p-5 sm:p-8 rounded-[2rem] border ${c.cardBg}`}>
         <h3 className={`text-xl font-bold ${c.text} mb-6 flex items-center gap-2`}><Target size={20} className="text-rose-400"/>Visual: Don't Cares in Action</h3>
         <div className="flex flex-col sm:flex-row gap-8 items-start flex-wrap">
 
@@ -1097,7 +1097,7 @@ export const DontCareTheory: React.FC<Props> = ({ isDarkMode }) => {
 
       {/* Quick tips table */}
       <motion.div initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ delay:0.4 }}
-        className={`p-8 rounded-[2rem] border ${c.cardBg}`}>
+        className={`p-5 sm:p-8 rounded-[2rem] border ${c.cardBg}`}>
         <h3 className={`text-lg font-bold ${c.text} mb-5`}>📋 Don't Care - Quick Reference</h3>
         <div className="grid md:grid-cols-2 gap-4">
           {[
@@ -1143,7 +1143,7 @@ export const POSTheory: React.FC<Props> = ({ isDarkMode }) => {
 
       {/* Maxterms Section */}
       <motion.div initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ delay:0.15 }}
-        className={`p-8 rounded-[2rem] border ${c.cardBg}`}>
+        className={`p-5 sm:p-8 rounded-[2rem] border ${c.cardBg}`}>
         <h3 className={`text-xl font-bold ${c.text} mb-6 flex items-center gap-2`}><BookOpen size={20} className="text-violet-400"/>Minterms vs Maxterms</h3>
         <p className={`text-sm mb-6 leading-relaxed ${c.muted}`}>
           In digital logic, every row in a truth table can be described in two ways. If the row has output=1, we call it a <strong>Minterm (m)</strong>. If the row has output=0, we call it a <strong>Maxterm (M)</strong>.
@@ -1184,7 +1184,7 @@ export const POSTheory: React.FC<Props> = ({ isDarkMode }) => {
 
       {/* SOP vs POS overview */}
       <motion.div initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ delay:0.1 }}
-        className={`p-8 rounded-[2rem] border ${c.cardBg}`}>
+        className={`p-5 sm:p-8 rounded-[2rem] border ${c.cardBg}`}>
         <h3 className={`text-xl font-bold ${c.text} mb-6`}>SOP vs POS - The Big Picture</h3>
         <div className="grid md:grid-cols-2 gap-6">
           {[
@@ -1223,7 +1223,7 @@ export const POSTheory: React.FC<Props> = ({ isDarkMode }) => {
 
       {/* ELI5 */}
       <motion.div initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ delay:0.2 }}
-        className={`p-8 rounded-[2rem] border ${c.cardBg}`}>
+        className={`p-5 sm:p-8 rounded-[2rem] border ${c.cardBg}`}>
         <div className="flex items-center gap-3 mb-5"><span className="text-3xl">🧒</span><h3 className={`text-xl font-bold ${c.text}`}>POS Explained Like You're 5</h3></div>
         <div className={`p-6 rounded-2xl ${isDarkMode?'bg-violet-500/10 border border-violet-500/20':'bg-violet-50 border border-violet-200'}`}>
           <p className={`text-base leading-relaxed font-medium ${isDarkMode?'text-violet-200':'text-violet-900'}`}>
@@ -1238,7 +1238,7 @@ export const POSTheory: React.FC<Props> = ({ isDarkMode }) => {
 
       {/* The POS Construction Algorithm */}
       <motion.div initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ delay:0.28 }}
-        className={`p-8 rounded-[2rem] border ${c.cardBg}`}>
+        className={`p-5 sm:p-8 rounded-[2rem] border ${c.cardBg}`}>
         <h3 className={`text-xl font-bold ${c.text} mb-6 flex items-center gap-3`}><Layers size={22} className="text-violet-400"/>The POS Construction Algorithm</h3>
         <p className={`text-sm mb-6 ${c.muted}`}>
           Building a POS expression is like weaving a safety net. You aren't describing what's there (1s), you're describing what MUST be true for the output to NOT be zero.
@@ -1292,7 +1292,7 @@ export const POSTheory: React.FC<Props> = ({ isDarkMode }) => {
 
       {/* The Critical Flip */}
       <motion.div initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ delay:0.25 }}
-        className={`p-8 rounded-[2rem] border ${c.cardBg}`}>
+        className={`p-5 sm:p-8 rounded-[2rem] border ${c.cardBg}`}>
         <h3 className={`text-xl font-bold ${c.text} mb-6 flex items-center gap-2`}><span className="text-2xl">⚠️</span> The Critical Flip: Reading POS Terms</h3>
         <p className={`mb-6 leading-relaxed ${c.muted}`}>This is where most students trip up. When you circle 0s for POS, the reading rule is the <strong>exact opposite</strong> of SOP.</p>
         <div className="grid md:grid-cols-2 gap-5">
@@ -1325,7 +1325,7 @@ export const POSTheory: React.FC<Props> = ({ isDarkMode }) => {
 
       {/* Worked Example Side-by-Side */}
       <motion.div initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ delay:0.3 }}
-        className={`p-8 rounded-[2rem] border ${c.cardBg}`}>
+        className={`p-5 sm:p-8 rounded-[2rem] border ${c.cardBg}`}>
         <h3 className={`text-xl font-bold ${c.text} mb-4`}>🚀 Battle of Methods: When POS Wins</h3>
         <p className={`text-sm mb-8 leading-relaxed ${c.muted}`}>
           Let's look at a map with lots of <strong>1s</strong> and very few <strong>0s</strong>. 
@@ -1409,7 +1409,7 @@ export const POSTheory: React.FC<Props> = ({ isDarkMode }) => {
 
       {/* Complete Algorithm Comparison Table */}
       <motion.div initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ delay:0.4 }}
-        className={`p-8 rounded-[2rem] border ${isDarkMode?'bg-violet-950/30 border-violet-800/30':'bg-violet-50 border-violet-200'}`}>
+        className={`p-5 sm:p-8 rounded-[2rem] border ${isDarkMode?'bg-violet-950/30 border-violet-800/30':'bg-violet-50 border-violet-200'}`}>
         <h3 className={`text-xl font-black mb-6 ${isDarkMode?'text-violet-300':'text-violet-800'}`}>🗂 Complete SOP vs POS Comparison Table</h3>
         <div className="overflow-x-auto">
           <table className={`w-full text-sm rounded-xl overflow-hidden border ${isDarkMode?'border-violet-800':'border-violet-200'}`}>

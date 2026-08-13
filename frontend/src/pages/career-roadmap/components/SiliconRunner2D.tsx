@@ -882,8 +882,8 @@ export const SiliconRunner2D: React.FC<SiliconRunner2DProps> = ({ onClose, onAwa
         )}
 
         {/* Top Header Control Bar */}
-        <div className="flex items-center justify-between px-6 py-3.5 bg-[#0F172A] border-b border-slate-800 relative z-10">
-          <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center justify-between gap-2 px-3 sm:px-6 py-3.5 bg-[#0F172A] border-b border-slate-800 relative z-10">
+          <div className="flex items-center gap-3 min-w-0">
             <span className="text-2xl animate-pulse">🎮</span>
             <div>
               <h3 className="font-mono font-black text-white text-base sm:text-lg tracking-tight uppercase flex items-center gap-2">
@@ -900,7 +900,7 @@ export const SiliconRunner2D: React.FC<SiliconRunner2DProps> = ({ onClose, onAwa
             </div>
           </div>
 
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0 ml-auto">
             <button
               onClick={() => setCrtEffect(!crtEffect)}
               className={`p-2 rounded-lg font-mono text-xs transition-all cursor-pointer ${crtEffect ? 'bg-teal-500/20 text-teal-400 border border-teal-500/40' : 'bg-slate-800 text-slate-400'}`}
@@ -929,8 +929,8 @@ export const SiliconRunner2D: React.FC<SiliconRunner2DProps> = ({ onClose, onAwa
         </div>
 
         {/* Telemetry Bar */}
-        <div className="flex items-center justify-between px-6 py-2 bg-[#020617] border-b border-slate-800 font-mono text-xs relative z-10">
-          <div className="flex items-center gap-6">
+        <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 px-3 sm:px-6 py-2 bg-[#020617] border-b border-slate-800 font-mono text-xs relative z-10">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 sm:gap-6">
             <span className="text-teal-400 font-bold">SCORE: <span className="text-white">{score}</span></span>
             <span className="text-amber-400 font-bold">HIGH: <span className="text-white">{highScore}</span></span>
             <span className="text-cyan-400 font-bold">TRANSISTORS: <span className="text-white">💎 {transistors}</span></span>

@@ -93,7 +93,7 @@ export const SkillGraphSection: React.FC<SkillGraphSectionProps> = ({
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 h-auto">
         {viewMode === 'list' ? (
-          <div className="lg:col-span-12 grid grid-cols-1 lg:grid-cols-12 gap-8 h-[750px]">
+          <div className="lg:col-span-12 grid grid-cols-1 lg:grid-cols-12 gap-8 h-auto lg:h-[750px]">
             {/* Domain Explorer Side Panel */}
             <div className="lg:col-span-4 space-y-4 flex flex-col">
               <DataTerminal title="DOMAIN INTELLIGENCE" className="flex-1">
@@ -142,7 +142,7 @@ export const SkillGraphSection: React.FC<SkillGraphSectionProps> = ({
                 subtitle="Strategic Roadmap & Resources"
                 className="h-full"
               >
-                <div className="p-8 space-y-10">
+                <div className="p-5 sm:p-8 space-y-10">
                   <div className="space-y-4">
                     <h3 className="text-[10px] font-mono text-plasma-cyan uppercase tracking-widest">Executive Summary</h3>
                     <p className="text-text-main font-mono text-lg leading-relaxed max-w-2xl">

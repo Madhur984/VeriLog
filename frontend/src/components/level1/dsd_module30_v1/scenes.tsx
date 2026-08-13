@@ -160,7 +160,7 @@ const EdgePolarity: React.FC<{ isDarkMode: boolean; accent: string }> = ({ isDar
 
   const FF: React.FC<{ x: number; neg: boolean; on: boolean; label: string }> = ({ x, neg, on, label }) => (
     <div className="flex flex-col items-center gap-1">
-      <svg viewBox="0 0 110 90" className="w-[130px]">
+      <svg viewBox="0 0 110 90" className="w-[96px] sm:w-[130px]">
         <rect x="34" y="14" width="52" height="62" rx="8" fill={on ? `${ACC.good}22` : box} stroke={on ? ACC.good : accent} strokeWidth="2.5" />
         <text x="60" y="40" textAnchor="middle" fontFamily="monospace" fontSize="11" fontWeight="800" fill={on ? ACC.good : accent}>FF</text>
         <text x="60" y="54" textAnchor="middle" fontFamily="monospace" fontSize="8" fill={dim}>{label}</text>

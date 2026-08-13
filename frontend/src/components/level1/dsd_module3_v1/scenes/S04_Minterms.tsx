@@ -74,13 +74,14 @@ export const S04_Minterms: React.FC<Props> = ({ isActive, isDarkMode }) => {
       {/* Animated translation table */}
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
-        className={`p-8 rounded-3xl border ${cardBg}`}
+        className={`p-5 md:p-8 rounded-3xl border ${cardBg}`}
       >
         <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-amber-400 mb-5 flex items-center gap-2">
           <Sparkles size={12} /> Five active rows · five minterms · animating in
         </div>
 
-        <div className="space-y-2">
+        <div className="overflow-x-auto">
+        <div className="space-y-2 min-w-[420px] md:min-w-0">
           <div className="grid grid-cols-[60px_repeat(3,52px)_28px_1fr] gap-3 items-center font-mono text-[10px] uppercase tracking-widest opacity-60">
             <span></span>
             <span className="text-center text-orange-300">A</span>
@@ -143,6 +144,7 @@ export const S04_Minterms: React.FC<Props> = ({ isActive, isDarkMode }) => {
               </motion.div>
             );
           })}
+        </div>
         </div>
       </motion.div>
 

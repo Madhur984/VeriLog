@@ -167,7 +167,7 @@ export const SiliconStackExplorer: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Interactive 7-Layer Visual Physical Stack (Stack Diagram) */}
         <div className="lg:col-span-5 space-y-2">
-          <div className="font-mono text-xs font-bold text-text-dim uppercase tracking-widest mb-3 flex items-center justify-between">
+          <div className="font-mono text-xs font-bold text-text-dim uppercase tracking-widest mb-3 flex flex-wrap gap-x-3 gap-y-1 items-center justify-between">
             <span>Physical Die Cross-Section</span>
             <span className="text-[10px] text-plasma-cyan">Top (Package) → Bottom (Substrate)</span>
           </div>

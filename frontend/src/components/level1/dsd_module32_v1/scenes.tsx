@@ -379,7 +379,8 @@ const KMapT: React.FC<{ isDarkMode: boolean; accent: string }> = ({ isDarkMode, 
       <div className="font-mono text-[11px] font-black" style={{ color: accent }}>
         {lang === 'hi' ? 'T का K-map (rows Qₙ, cols X)' : 'K-map for T (rows Qₙ, cols X)'}
       </div>
-      <table className="border-collapse text-center font-mono text-[13px]">
+      <div className="max-w-full overflow-x-auto">
+      <table className="mx-auto border-collapse text-center font-mono text-[13px]">
         <thead>
           <tr>
             <th className="px-2 py-1" />
@@ -404,6 +405,7 @@ const KMapT: React.FC<{ isDarkMode: boolean; accent: string }> = ({ isDarkMode, 
           ))}
         </tbody>
       </table>
+      </div>
       <p className={`text-center font-mono text-[12px] ${t.sub}`}>
         {lang === 'hi' ? 'दोनों X=1 cell 1, दोनों X=0 cell 0 (Qₙ बेमानी) → T = X' : 'both X=1 cells are 1, both X=0 cells are 0 (Qₙ irrelevant) → T = X'}
       </p>

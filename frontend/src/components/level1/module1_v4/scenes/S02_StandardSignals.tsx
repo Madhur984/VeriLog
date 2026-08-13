@@ -10,7 +10,7 @@ export const S02_StandardSignals: React.FC<{ isDarkMode: boolean }> = ({ isDarkM
     <div className="space-y-24">
       <section>
         <div className="flex flex-col gap-6 mb-16">
-          <h2 className={`text-4xl font-black ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Standard Test Signals</h2>
+          <h2 className={`text-3xl sm:text-4xl font-black ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Standard Test Signals</h2>
           <p className={`text-lg leading-relaxed ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>
             Engineers use pure mathematical signals to benchmark how systems react. Move your mouse over the displays to interact with the signal properties.
           </p>
@@ -18,7 +18,7 @@ export const S02_StandardSignals: React.FC<{ isDarkMode: boolean }> = ({ isDarkM
 
         <div className="space-y-16">
           {/* Unit Step */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
             <div className="space-y-4">
               <div className="flex items-center gap-3">
                 <div className="px-2 py-1 rounded bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 font-mono text-[10px] font-black tracking-widest uppercase">u(t)</div>
@@ -37,15 +37,15 @@ export const S02_StandardSignals: React.FC<{ isDarkMode: boolean }> = ({ isDarkM
                 note="In system dynamics, u(t) models sudden step inputs such as flipping a power switch."
               />
             </div>
-            <div className="rounded-2xl p-8 border h-48 flex items-center justify-center relative overflow-hidden bg-slate-900 dark:bg-black/40" style={{ borderColor }}>
+            <div className="rounded-2xl p-4 sm:p-8 border h-48 flex items-center justify-center relative overflow-hidden bg-slate-900 dark:bg-black/40" style={{ borderColor }}>
               <TryItYourself corner />
               <LocalMouseArea render={(x, y) => <StepWave color="#10b981" mouseX={x} mouseY={y} />} />
             </div>
           </div>
 
           {/* Unit Ramp */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-             <div className="rounded-2xl p-8 border h-48 flex items-center justify-center relative overflow-hidden bg-slate-900 dark:bg-black/40 order-2 md:order-1" style={{ borderColor }}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
+             <div className="rounded-2xl p-4 sm:p-8 border h-48 flex items-center justify-center relative overflow-hidden bg-slate-900 dark:bg-black/40 order-2 md:order-1" style={{ borderColor }}>
               <TryItYourself corner />
               <LocalMouseArea render={(x, y) => <RampWave color="#fb7185" mouseX={x} mouseY={y} />} />
             </div>
@@ -71,7 +71,7 @@ export const S02_StandardSignals: React.FC<{ isDarkMode: boolean }> = ({ isDarkM
           </div>
 
           {/* Unit Impulse */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
             <div className="space-y-4">
               <div className="flex items-center gap-3">
                 <div className="px-2 py-1 rounded bg-cyan-500/10 border border-cyan-500/20 text-cyan-500 font-mono text-[10px] font-black tracking-widest uppercase">δ(t)</div>
@@ -92,7 +92,7 @@ export const S02_StandardSignals: React.FC<{ isDarkMode: boolean }> = ({ isDarkM
                 ]}
               />
             </div>
-            <div className="rounded-2xl p-8 border h-48 flex items-center justify-center relative overflow-hidden bg-slate-900 dark:bg-black/40" style={{ borderColor }}>
+            <div className="rounded-2xl p-4 sm:p-8 border h-48 flex items-center justify-center relative overflow-hidden bg-slate-900 dark:bg-black/40" style={{ borderColor }}>
                <TryItYourself corner />
                <LocalMouseArea render={(x, y) => <ImpulseWave color="#06b6d4" mouseX={x} mouseY={y} />} />
             </div>

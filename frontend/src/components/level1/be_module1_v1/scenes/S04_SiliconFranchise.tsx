@@ -86,7 +86,7 @@ export const S04_SiliconFranchise: React.FC<Props> = ({ isActive, isDarkMode }) 
         {/* Interactive atom diagram */}
         <motion.div
           initial={{ opacity: 0, y: 12 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
-          className={`p-8 rounded-3xl border ${cardBg}`}
+          className={`p-5 md:p-8 rounded-3xl border ${cardBg}`}
         >
           <svg viewBox="0 0 360 360" className="w-full">
             <defs>

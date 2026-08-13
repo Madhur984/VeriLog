@@ -61,9 +61,9 @@ export const S08_TwoLenses: React.FC<Props> = ({ isActive, isDarkMode }) => {
       {/* Blueprint Matrix */}
       <motion.div
         initial={{ opacity: 0, y: 20 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
-        className={`rounded-3xl border overflow-hidden ${cardBg}`}
+        className={`rounded-3xl border overflow-x-auto ${cardBg}`}
       >
-        <table className="w-full font-mono text-sm">
+        <table className="w-full min-w-[560px] md:min-w-0 font-mono text-sm">
           <thead>
             <tr className={isDarkMode ? 'bg-white/5' : 'bg-slate-50'}>
               <th className="px-5 py-4 text-left font-black uppercase text-[10px] tracking-widest opacity-50">Dimension</th>

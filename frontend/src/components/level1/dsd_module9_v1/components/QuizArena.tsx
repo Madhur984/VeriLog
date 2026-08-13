@@ -93,7 +93,7 @@ export const QuizArena: React.FC<Props> = ({ isDarkMode, accent, tag, title, int
               <button
                 key={i}
                 onClick={() => setIdx(i)}
-                className={`w-8 h-8 rounded-lg font-mono text-xs font-black border transition-all ${
+                className={`w-10 h-10 sm:w-8 sm:h-8 rounded-lg font-mono text-xs font-black border transition-all ${
                   i === idx
                     ? 'text-white'
                     : c
@@ -128,7 +128,7 @@ export const QuizArena: React.FC<Props> = ({ isDarkMode, accent, tag, title, int
           key={current.id}
           initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}
           transition={{ duration: 0.3 }}
-          className={`p-8 rounded-3xl border ${cardBg}`}
+          className={`p-5 md:p-8 rounded-3xl border ${cardBg}`}
         >
           <div className="flex items-center gap-3 mb-4">
             <span
@@ -245,7 +245,7 @@ export const QuizArena: React.FC<Props> = ({ isDarkMode, accent, tag, title, int
 
       {/* Exam-sheet reference */}
       {reference && reference.length > 0 && (
-        <section className={`p-8 rounded-3xl border ${cardBg}`}>
+        <section className={`p-5 md:p-8 rounded-3xl border ${cardBg}`}>
           <div className="flex items-center gap-3 mb-2">
             <div className="w-10 h-10 rounded-2xl flex items-center justify-center shrink-0"
                  style={{ background: `${accent}26`, border: `1px solid ${accent}66` }}>

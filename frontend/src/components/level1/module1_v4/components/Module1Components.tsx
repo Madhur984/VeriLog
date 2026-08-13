@@ -239,7 +239,8 @@ export const LocalMouseArea: React.FC<{ render: (x: number, y: number) => React.
   const [pos, setPos] = useState({ x: 0.5, y: 0.5 });
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const handleMouseMove = (e: React.MouseEvent) => {
+  // Pointer events so touch/pen drive the visualisation too (mouse-only handlers are dead on phones).
+  const handlePointerMove = (e: React.PointerEvent) => {
     if (!containerRef.current) return;
     const rect = containerRef.current.getBoundingClientRect();
     setPos({
@@ -249,11 +250,12 @@ export const LocalMouseArea: React.FC<{ render: (x: number, y: number) => React.
   };
 
   return (
-    <div 
-      ref={containerRef} 
-      className="absolute inset-0 z-10" 
-      onMouseMove={handleMouseMove}
-      onMouseLeave={() => setPos({ x: 0.5, y: 0.5 })}
+    <div
+      ref={containerRef}
+      className="absolute inset-0 z-10"
+      onPointerMove={handlePointerMove}
+      onPointerLeave={() => setPos({ x: 0.5, y: 0.5 })}
+      onPointerCancel={() => setPos({ x: 0.5, y: 0.5 })}
     >
       {render(pos.x, pos.y)}
     </div>
@@ -429,7 +431,7 @@ export const ComparisonConsole: React.FC<{ isDark: boolean }> = ({ isDark }) => 
     ];
 
     return (
-        <div className={`w-full rounded-3xl overflow-hidden p-8 space-y-8 border transition-all duration-500 ${isDark ? 'bg-slate-900/30 border-white/5' : 'bg-slate-50 border-black/5'}`}>
+        <div className={`w-full rounded-3xl overflow-hidden p-5 sm:p-8 space-y-8 border transition-all duration-500 ${isDark ? 'bg-slate-900/30 border-white/5' : 'bg-slate-50 border-black/5'}`}>
             <div className="flex items-center gap-4">
                 <div className="p-3 bg-slate-200 dark:bg-white/5 rounded-xl text-slate-500 dark:text-white/40">
                     <Scale size={20} />
@@ -440,7 +442,7 @@ export const ComparisonConsole: React.FC<{ isDark: boolean }> = ({ isDark }) => 
             </div>
 
             <div className="space-y-2">
-                <div className="grid grid-cols-3 px-6 py-2 text-[8px] font-black uppercase tracking-widest opacity-20">
+                <div className="grid grid-cols-3 gap-2 px-3 sm:px-6 py-2 text-[8px] font-black uppercase tracking-widest opacity-20">
                     <span>Feature</span>
                     <span>Analog Domain</span>
                     <span>Digital Logic</span>
@@ -451,11 +453,11 @@ export const ComparisonConsole: React.FC<{ isDark: boolean }> = ({ isDark }) => 
                         whileInView={{ opacity: 1, y: 0 }} 
                         transition={{ delay: i * 0.05 }}
                         key={r.feat} 
-                        className={`grid grid-cols-3 px-6 py-4 rounded-xl border transition-all group ${isDark ? 'bg-white/[0.01] border-white/[0.03] hover:border-white/10' : 'bg-black/[0.01] border-black/[0.03] hover:border-black/10'}`}
+                        className={`grid grid-cols-3 gap-2 items-center px-3 sm:px-6 py-4 rounded-xl border transition-all group ${isDark ? 'bg-white/[0.01] border-white/[0.03] hover:border-white/10' : 'bg-black/[0.01] border-black/[0.03] hover:border-black/10'}`}
                     >
-                        <span className={`text-[10px] font-black uppercase transition-colors ${isDark ? 'text-slate-500 group-hover:text-white' : 'text-slate-400 group-hover:text-black'}`}>{r.feat}</span>
-                        <span className="text-xs font-bold" style={{ color: r.color + 'aa' }}>{r.analog}</span>
-                        <span className="text-xs font-bold" style={{ color: r.color }}>{r.digital}</span>
+                        <span className={`text-[9px] sm:text-[10px] font-black uppercase transition-colors ${isDark ? 'text-slate-500 group-hover:text-white' : 'text-slate-400 group-hover:text-black'}`}>{r.feat}</span>
+                        <span className="text-[11px] sm:text-xs font-bold" style={{ color: r.color + 'aa' }}>{r.analog}</span>
+                        <span className="text-[11px] sm:text-xs font-bold" style={{ color: r.color }}>{r.digital}</span>
                     </motion.div>
                 ))}
             </div>

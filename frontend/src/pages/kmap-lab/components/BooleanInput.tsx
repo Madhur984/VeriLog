@@ -31,8 +31,8 @@ export const BooleanInput: React.FC = () => {
 
   return (
     <div className="glass-card p-4 lg:p-8 mb-6 lg:mb-12 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-500 space-y-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2 text-accent-orange">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex min-w-0 items-center gap-2 text-accent-orange">
           <span className="text-xl font-bold">{'>'}</span>
           <h3 className="text-xl font-bold text-text-main">Boolean Expression Input</h3>
           <InfoTooltip
@@ -44,7 +44,7 @@ export const BooleanInput: React.FC = () => {
 
         <button
           onClick={() => setShowSoftKeyboard(!showSoftKeyboard)}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-mono transition-all ${
+          className={`flex shrink-0 items-center gap-1.5 px-3 py-2 sm:py-1.5 min-h-[40px] sm:min-h-0 rounded-xl border text-xs font-mono transition-all ${
             showSoftKeyboard ? 'bg-orange-500/15 border-orange-500/30 text-orange-400' : 'bg-bg-elev border-border-soft text-text-dim'
           }`}
         >

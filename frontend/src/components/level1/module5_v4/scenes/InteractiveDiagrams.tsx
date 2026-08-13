@@ -14,7 +14,7 @@ const Btn: React.FC<{
   <button
     onClick={onClick}
     className={`rounded-md border font-mono uppercase tracking-[0.18em] transition-all duration-150 ${
-      size === 'sm' ? 'text-[10px] px-2.5 py-1' : 'text-[11px] px-3 py-1.5'
+      size === 'sm' ? 'text-[10px] px-2.5 py-2 sm:py-1' : 'text-[11px] px-3 py-2.5 sm:py-1.5'
     } ${active ? 'text-black' : 'text-slate-600 dark:text-white/80 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5'}`}
     style={{
       borderColor: active ? accent : 'rgba(255,255,255,0.15)',
@@ -101,7 +101,7 @@ export const AnimatedClock: React.FC<Props> = ({ accent }) => {
         </text>
       </svg>
 
-      <div className="flex items-center gap-4 text-[11px] font-mono text-slate-600 dark:text-white/70">
+      <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 text-[11px] font-mono text-slate-600 dark:text-white/70">
         <Btn accent={accent} onClick={() => setRunning(r => !r)} active={running}>
           {running ? '❚❚ pause' : '▶ play'}
         </Btn>
@@ -111,7 +111,7 @@ export const AnimatedClock: React.FC<Props> = ({ accent }) => {
             type="range" min={2} max={20} step={1}
             value={period}
             onChange={e => setPeriod(parseInt(e.target.value))}
-            className="accent-current"
+            className="accent-current w-28 sm:w-auto max-w-full"
             style={{ accentColor: accent } as React.CSSProperties}
           />
           <span style={{ color: accent }} className="tabular-nums">{period} ns</span>
@@ -364,7 +364,7 @@ export const InteractiveFlipFlop: React.FC<Props> = ({ accent }) => {
   return (
     <div className="w-full max-w-2xl flex flex-col items-center gap-5">
       {/* Schematic + controls */}
-      <div className="flex items-center justify-center gap-6 flex-wrap">
+      <div className="flex items-center justify-center gap-4 sm:gap-6 flex-wrap">
         {/* Inputs */}
         <div className="flex flex-col items-center gap-2">
           <Btn accent={accent} onClick={toggleD} active={d === 1}>D = {d}</Btn>
@@ -497,7 +497,7 @@ export const InteractiveHalfAdder: React.FC<Props> = ({ accent }) => {
       </svg>
 
       {/* Controls + bits row */}
-      <div className="flex items-center gap-6 flex-wrap justify-center">
+      <div className="flex items-center gap-4 sm:gap-6 flex-wrap justify-center">
         <div className="flex items-center gap-3">
           <Btn accent={accent} onClick={() => setA(a ? 0 : 1)} active={a === 1}>a = {a}</Btn>
           <Btn accent={accent} onClick={() => setB(b ? 0 : 1)} active={b === 1}>b = {b}</Btn>

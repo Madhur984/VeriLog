@@ -69,7 +69,7 @@ export const S06_MassiveBoarding: React.FC<Props> = ({ isActive, isDarkMode }) =
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.1 }}
-        className={`p-8 rounded-3xl border ${cardBg}`}
+        className={`p-5 md:p-8 rounded-3xl border ${cardBg}`}
       >
         <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-violet-400 mb-5">
           Shockley&apos;s diode equation · what each symbol means
@@ -105,7 +105,7 @@ export const S06_MassiveBoarding: React.FC<Props> = ({ isActive, isDarkMode }) =
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.2 }}
-        className={`p-8 rounded-3xl border ${cardBg}`}
+        className={`p-5 md:p-8 rounded-3xl border ${cardBg}`}
       >
         <div className="flex items-center justify-between mb-5 flex-wrap gap-3">
           <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-violet-400">Live diode V-I curve · drag the slider</span>
@@ -115,7 +115,8 @@ export const S06_MassiveBoarding: React.FC<Props> = ({ isActive, isDarkMode }) =
           </div>
         </div>
 
-        <svg viewBox="0 0 640 220" className="w-full h-auto">
+        <div className="-mx-5 overflow-x-auto px-5 md:mx-0 md:overflow-x-visible md:px-0">
+        <svg viewBox="0 0 640 220" className="w-full h-auto min-w-[500px]">
           <line x1="50" y1="180" x2="600" y2="180" stroke="#475569" strokeWidth="1" />
           <line x1={xMap(0)} y1="20" x2={xMap(0)} y2="200" stroke="#475569" strokeWidth="1" />
           <text x="600" y="200" fill="#94a3b8" fontFamily="monospace" fontSize="11" textAnchor="end">V_D (V)</text>
@@ -129,6 +130,7 @@ export const S06_MassiveBoarding: React.FC<Props> = ({ isActive, isDarkMode }) =
           <text x="500" y="60" fill="#a78bfa" fontFamily="monospace" fontSize="10" fontWeight="bold">FORWARD</text>
           <text x="500" y="74" fill="#94a3b8" fontFamily="monospace" fontSize="9">I rises exponentially</text>
         </svg>
+        </div>
 
         <div className="mt-5">
           <input

@@ -73,7 +73,9 @@ export const GlobalSalaryHeatmap: React.FC = () => {
                   key={spot.id}
                   onMouseEnter={() => setActiveSpot(spot)}
                   onMouseLeave={() => setActiveSpot(null)}
-                  className={`text-left text-[10px] font-mono uppercase px-2.5 py-1 rounded-md transition-all flex items-center justify-between gap-4 ${
+                  onFocus={() => setActiveSpot(spot)}
+                  onClick={() => setActiveSpot(spot)}
+                  className={`text-left text-[10px] font-mono uppercase px-2.5 py-1.5 sm:py-1 rounded-md transition-all flex items-center justify-between gap-4 ${
                     isActive 
                       ? (isLight ? 'bg-signal-core/10 text-signal-core font-bold' : 'bg-cyan-400/10 text-cyan-400 font-bold') 
                       : 'text-text-dim hover:text-text-sub hover:bg-white/5'
@@ -93,10 +95,11 @@ export const GlobalSalaryHeatmap: React.FC = () => {
           return (
             <motion.div
               key={spot.id}
-              className="absolute z-10 w-4 h-4 -translate-x-1/2 -translate-y-1/2 cursor-crosshair group"
-              style={{ left: `${spot.cx}%`, top: `${spot.cy}%` }}
+              className="absolute z-10 w-4 h-4 -translate-x-1/2 -translate-y-1/2 cursor-crosshair group before:absolute before:-inset-3 before:content-['']"
+              style={{ left: `${spot.cx}%`, top: `${spot.cy}%`, touchAction: 'manipulation' }}
               onMouseEnter={() => setActiveSpot(spot)}
               onMouseLeave={() => setActiveSpot(null)}
+              onPointerDown={() => setActiveSpot(spot)}
             >
               <div 
                 className={`w-2.5 h-2.5 rounded-full mx-auto mt-1 transition-all duration-300 ${

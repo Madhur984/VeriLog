@@ -59,7 +59,7 @@ export const MuxViz: React.FC<{ isDarkMode: boolean; accent: string; inputs?: 2 
       <div className="mb-3 font-mono text-[11px] uppercase tracking-[0.3em]" style={{ color: accent }}>
         {inputs}-to-1 MUX {lang === 'hi' ? '· input चुनिए' : '· pick an input'}
       </div>
-      <div className="flex items-center justify-center gap-4">
+      <div className="flex items-center justify-center gap-2 sm:gap-4">
         {/* inputs */}
         <div className="flex flex-col gap-2">
           {inVals.map((v, i) => {
@@ -75,7 +75,7 @@ export const MuxViz: React.FC<{ isDarkMode: boolean; accent: string; inputs?: 2 
           })}
         </div>
         {/* body */}
-        <svg viewBox="0 0 90 120" className="w-[80px]">
+        <svg viewBox="0 0 90 120" className="h-auto w-[64px] flex-shrink-0 sm:w-[80px]">
           <polygon points="10,10 60,30 60,90 10,110" fill={isDarkMode ? '#0a0e1a' : '#fff'} stroke={accent} strokeWidth="2.5" />
           <text x="30" y="56" textAnchor="middle" fontFamily="monospace" fontSize="10" fill={accent}>{inputs}:1</text>
           <text x="30" y="70" textAnchor="middle" fontFamily="monospace" fontSize="9" fill={t.faint as string}>MUX</text>
@@ -89,7 +89,7 @@ export const MuxViz: React.FC<{ isDarkMode: boolean; accent: string; inputs?: 2 
         </div>
       </div>
       {/* select lines */}
-      <div className="mt-4 flex items-center justify-center gap-3">
+      <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
         <span className={`font-mono text-[11px] ${t.faint}`}>{lang === 'hi' ? 'select' : 'select'}</span>
         {sel.map((s, i) => (
           <BitToggle key={i} value={s} onClick={() => setSel((a) => a.map((x, j) => (j === i ? x ^ 1 : x)))} color="#f59e0b" label={`S${k - 1 - i}`} size={32} />
@@ -120,12 +120,12 @@ export const DemuxViz: React.FC<{ isDarkMode: boolean; accent: string; outputs?:
       <div className="mb-3 font-mono text-[11px] uppercase tracking-[0.3em]" style={{ color: accent }}>
         1-to-{outputs} DEMUX {lang === 'hi' ? '· कहाँ भेजें?' : '· route it'}
       </div>
-      <div className="flex items-center justify-center gap-4">
+      <div className="flex items-center justify-center gap-2 sm:gap-4">
         <div className="flex flex-col items-center gap-1">
           <span className="font-mono text-[11px]" style={{ color: accent }}>D</span>
           <BitToggle value={D} onClick={() => setD((v) => v ^ 1)} color={accent} size={44} />
         </div>
-        <svg viewBox="0 0 90 120" className="w-[80px]">
+        <svg viewBox="0 0 90 120" className="h-auto w-[64px] flex-shrink-0 sm:w-[80px]">
           <polygon points="30,30 80,10 80,110 30,90" fill={isDarkMode ? '#0a0e1a' : '#fff'} stroke={accent} strokeWidth="2.5" />
           <text x="58" y="60" textAnchor="middle" fontFamily="monospace" fontSize="9" fill={t.faint as string}>1:{outputs}</text>
           <line x1="2" y1="60" x2="30" y2="60" stroke={D ? accent : DIM(isDarkMode)} strokeWidth="3" />
@@ -144,7 +144,7 @@ export const DemuxViz: React.FC<{ isDarkMode: boolean; accent: string; outputs?:
           })}
         </div>
       </div>
-      <div className="mt-4 flex items-center justify-center gap-3">
+      <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
         <span className={`font-mono text-[11px] ${t.faint}`}>select</span>
         {sel.map((s, i) => (
           <BitToggle key={i} value={s} onClick={() => setSel((a) => a.map((x, j) => (j === i ? x ^ 1 : x)))} color="#f59e0b" label={`S${k - 1 - i}`} size={32} />
@@ -175,13 +175,14 @@ export const DecoderViz: React.FC<{ isDarkMode: boolean; accent: string; bits?: 
       <div className="mb-3 font-mono text-[11px] uppercase tracking-[0.3em]" style={{ color: accent }}>
         {bits}-to-{n} decoder {lang === 'hi' ? '· one-hot' : '· one-hot'}
       </div>
-      <div className="flex items-center justify-center gap-3">
+      <div className="flex flex-wrap items-center justify-center gap-3">
         <BitToggle value={addr[0]} onClick={() => setAddr((a) => a.map((x, j) => (j === 0 ? x ^ 1 : x)))} color="#f59e0b" label="A" size={36} />
         <BitToggle value={addr[1]} onClick={() => setAddr((a) => a.map((x, j) => (j === 1 ? x ^ 1 : x)))} color="#f59e0b" label="B" size={36} />
         {bits === 3 && <BitToggle value={addr[2]} onClick={() => setAddr((a) => a.map((x, j) => (j === 2 ? x ^ 1 : x)))} color="#f59e0b" label="C" size={36} />}
         <span className="font-mono text-[12px] font-black" style={{ color: '#f59e0b' }}>= {idx}</span>
       </div>
-      <div className={`mx-auto mt-4 grid gap-2`} style={{ gridTemplateColumns: `repeat(${Math.min(n, 4)}, minmax(0,1fr))` }}>
+      {/* 4 across on desktop; 2 across on a phone so the minterm labels stay legible */}
+      <div className={`mx-auto mt-4 grid gap-2 ${n <= 2 ? 'grid-cols-2' : 'grid-cols-2 sm:grid-cols-4'}`}>
         {Array.from({ length: n }, (_, i) => {
           const on = i === idx;
           return (
@@ -221,7 +222,7 @@ export const EncoderViz: React.FC<{ isDarkMode: boolean; accent: string }>
       <div className="mb-3 font-mono text-[11px] uppercase tracking-[0.3em]" style={{ color: accent }}>
         4-to-2 priority encoder {lang === 'hi' ? '· voting booth' : '· voting booth'}
       </div>
-      <div className="flex items-center justify-center gap-5">
+      <div className="flex items-center justify-center gap-3 sm:gap-5">
         <div className="flex flex-col gap-2">
           {[3, 2, 1, 0].map((i) => (
             <div key={i} className="flex items-center gap-2 rounded-lg px-2 py-1"
@@ -268,10 +269,10 @@ export const CodeConverter: React.FC<{ isDarkMode: boolean; accent: string }>
   const bcdValid = val <= 9;
 
   const Row: React.FC<{ label: string; bits: number[]; note?: string }> = ({ label, bits, note }) => (
-    <div className="flex items-center gap-3">
-      <span className="w-20 font-mono text-[12px]" style={{ color: accent }}>{label}</span>
+    <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+      <span className="w-16 font-mono text-[12px] sm:w-20" style={{ color: accent }}>{label}</span>
       <div className="flex gap-1.5">{bits.map((x, i) => <BitToggle key={i} value={x} color={accent} size={28} />)}</div>
-      {note && <span className={`font-mono text-[10px] ${t.faint}`}>{note}</span>}
+      {note && <span className={`break-all font-mono text-[10px] ${t.faint}`}>{note}</span>}
     </div>
   );
 
@@ -280,8 +281,8 @@ export const CodeConverter: React.FC<{ isDarkMode: boolean; accent: string }>
       <div className="mb-3 font-mono text-[11px] uppercase tracking-[0.3em]" style={{ color: accent }}>
         {lang === 'hi' ? 'code converter · toggle binary' : 'code converter · toggle binary'}
       </div>
-      <div className="flex items-center gap-3">
-        <span className="w-20 font-mono text-[12px]" style={{ color: accent }}>Binary</span>
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+        <span className="w-16 font-mono text-[12px] sm:w-20" style={{ color: accent }}>Binary</span>
         <div className="flex gap-1.5">
           {b.map((x, i) => <BitToggle key={i} value={x} onClick={() => setB((a) => a.map((v, j) => (j === i ? v ^ 1 : v)))} color="#f59e0b" size={32} />)}
         </div>
@@ -331,7 +332,7 @@ export const ShannonExpander: React.FC<{ isDarkMode: boolean; accent: string }>
             <div className={r === idx ? 'font-black' : ''} style={{ color: r === idx ? accent : undefined }}>{r >> 1}</div>
             <div className={r === idx ? 'font-black' : ''} style={{ color: r === idx ? accent : undefined }}>{r & 1}</div>
             <button onClick={() => setF((f) => f.map((v, j) => (j === r ? v ^ 1 : v)))}
-              className="mx-auto flex h-7 w-7 items-center justify-center rounded font-black active:scale-90"
+              className="mx-auto flex h-9 w-9 items-center justify-center rounded font-black active:scale-90 sm:h-7 sm:w-7"
               style={{ background: F[r] ? accent : 'transparent', color: F[r] ? '#000' : accent, border: `1.5px solid ${accent}${r === idx ? '' : '66'}` }}>
               {F[r]}
             </button>
@@ -344,14 +345,14 @@ export const ShannonExpander: React.FC<{ isDarkMode: boolean; accent: string }>
           <span style={{ color: x === 0 ? accent : (t.faint as string) }}>F0(y={y}) = {F0[y]}</span>
           <span style={{ color: x === 1 ? accent : (t.faint as string) }}>F1(y={y}) = {F1[y]}</span>
         </div>
-        <svg viewBox="0 0 70 90" className="w-[60px]">
+        <svg viewBox="0 0 70 90" className="h-auto w-[52px] flex-shrink-0 sm:w-[60px]">
           <polygon points="8,8 48,26 48,64 8,82" fill={isDarkMode ? '#0a0e1a' : '#fff'} stroke={accent} strokeWidth="2" />
           <text x="26" y="48" textAnchor="middle" fontFamily="monospace" fontSize="8" fill={t.faint as string}>2:1</text>
           <line x1="48" y1="45" x2="68" y2="45" stroke={muxData ? accent : DIM(isDarkMode)} strokeWidth="3" />
         </svg>
         <BitToggle value={muxData} color={accent} label="F" size={40} />
       </div>
-      <div className="mt-3 flex items-center justify-center gap-3 font-mono text-[12px]">
+      <div className="mt-3 flex flex-wrap items-center justify-center gap-3 font-mono text-[12px]">
         <span className={t.faint as string}>select x =</span>
         <BitToggle value={x} onClick={() => setX((v) => v ^ 1)} color="#f59e0b" size={30} />
         <span className={t.faint as string}>y =</span>
@@ -438,19 +439,19 @@ export const ArrayDividerViz: React.FC<{ isDarkMode: boolean; accent: string }>
       <div className="mb-3 font-mono text-[11px] uppercase tracking-[0.3em]" style={{ color: accent }}>
         {lang === 'hi' ? 'restoring array divider' : 'restoring array divider'}
       </div>
-      <div className="flex items-center justify-center gap-4 font-mono text-[13px]">
-        <label className="flex items-center gap-2">{lang === 'hi' ? 'भाज्य' : 'dividend'}
-          <input type="range" min={0} max={15} value={dividend} onChange={(e) => setDividend(+e.target.value)} style={{ accentColor: accent }} />
+      <div className="flex flex-col items-center justify-center gap-3 font-mono text-[13px] sm:flex-row sm:gap-4">
+        <label className="flex w-full items-center gap-2 sm:w-auto">{lang === 'hi' ? 'भाज्य' : 'dividend'}
+          <input type="range" min={0} max={15} value={dividend} onChange={(e) => setDividend(+e.target.value)} className="min-w-0 flex-1 sm:flex-none" style={{ accentColor: accent }} />
           <b style={{ color: accent }}>{dividend}</b>
         </label>
-        <label className="flex items-center gap-2">{lang === 'hi' ? 'भाजक' : 'divisor'}
-          <input type="range" min={1} max={15} value={divisor} onChange={(e) => setDivisor(+e.target.value)} style={{ accentColor: '#f59e0b' }} />
+        <label className="flex w-full items-center gap-2 sm:w-auto">{lang === 'hi' ? 'भाजक' : 'divisor'}
+          <input type="range" min={1} max={15} value={divisor} onChange={(e) => setDivisor(+e.target.value)} className="min-w-0 flex-1 sm:flex-none" style={{ accentColor: '#f59e0b' }} />
           <b style={{ color: '#f59e0b' }}>{divisor}</b>
         </label>
       </div>
       <div className="mt-3 space-y-1.5">
         {steps.map((s, i) => (
-          <div key={i} className={`flex items-center justify-between gap-2 rounded-lg border px-3 py-1.5 font-mono text-[12px] ${t.soft}`}>
+          <div key={i} className={`flex flex-col gap-0.5 rounded-lg border px-3 py-1.5 font-mono text-[12px] sm:flex-row sm:items-center sm:justify-between sm:gap-2 ${t.soft}`}>
             <span className={t.faint as string}>{lang === 'hi' ? `कदम ${i + 1}` : `step ${i + 1}`} · bit {s.bit}</span>
             <span>rem-div = {s.fit ? <b style={{ color: '#34d399' }}>{s.trial} ≥ 0, {lang === 'hi' ? 'घटाओ' : 'subtract'}, q=1</b> : <b style={{ color: '#fb7185' }}>{'<'} 0, {lang === 'hi' ? 'restore' : 'restore'}, q=0</b>}</span>
           </div>

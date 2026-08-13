@@ -73,7 +73,7 @@ export const S05_LedEL: React.FC<Props> = ({ isActive, isDarkMode }) => {
       <motion.div
         initial={{ opacity: 0, scale: 0.98 }} animate={isActive ? { opacity: 1, scale: 1 } : {}}
         transition={{ delay: 0.15 }}
-        className={`rounded-3xl border ${cardBg} p-10 grid lg:grid-cols-[1.3fr_1fr] gap-8 items-center`}
+        className={`rounded-3xl border ${cardBg} p-5 md:p-10 grid lg:grid-cols-[1.3fr_1fr] gap-8 items-center`}
       >
         {/* Band-gap animation */}
         <div>
@@ -144,7 +144,7 @@ export const S05_LedEL: React.FC<Props> = ({ isActive, isDarkMode }) => {
 
         {/* LED visual with glow */}
         <div className="space-y-4">
-          <div className={`rounded-3xl p-8 border ${cardBg} flex flex-col items-center gap-4 relative overflow-hidden`}>
+          <div className={`rounded-3xl p-5 md:p-8 border ${cardBg} flex flex-col items-center gap-4 relative overflow-hidden`}>
             {/* Glow halo */}
             {biased && (
               <motion.div

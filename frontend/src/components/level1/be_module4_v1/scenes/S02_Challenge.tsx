@@ -141,7 +141,7 @@ export const S02_Challenge: React.FC<Props> = ({ isActive, isDarkMode }) => {
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.3 }}
-        className={`p-8 rounded-3xl border ${cardBg} relative overflow-hidden`}
+        className={`p-5 md:p-8 rounded-3xl border ${cardBg} relative overflow-hidden`}
         style={{ background: isDarkMode ? 'radial-gradient(circle at 80% 30%, rgba(34,197,94,0.08), transparent 60%)' : 'radial-gradient(circle at 80% 30%, rgba(34,197,94,0.05), transparent 60%)' }}
       >
         <div className="flex items-center gap-3 mb-3">

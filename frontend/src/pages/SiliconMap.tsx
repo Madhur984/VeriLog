@@ -275,7 +275,7 @@ export const SiliconMap: React.FC = () => {
                 </button>
               )}
             </div>
-            <div className="max-h-[560px] space-y-3 overflow-y-auto pr-1">
+            <div className="space-y-3 pr-1 lg:max-h-[560px] lg:overflow-y-auto">
               {activeCompanies.map((co) => {
                 const matched = co.skills.some((s) => startedTracks.has(s));
                 return (

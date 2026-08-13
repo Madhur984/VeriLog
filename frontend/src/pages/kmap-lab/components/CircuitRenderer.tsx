@@ -41,15 +41,19 @@ export const CircuitRenderer: React.FC = () => {
   );
 
   // ── Drag-to-pan handlers ─────────────────────────────────────
-  const onMouseDown = (e: React.MouseEvent) => {
+  // Pointer (not mouse) events so the pan works with touch + pen as well as a
+  // mouse. touch-action below keeps vertical page scrolling alive on phones
+  // while letting a horizontal drag pan the (wide) diagram.
+  const onPointerDown = (e: React.PointerEvent) => {
+    (e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId);
     setDragging(true);
     setDragStart({ x: e.clientX - pan.x, y: e.clientY - pan.y });
   };
-  const onMouseMove = (e: React.MouseEvent) => {
+  const onPointerMove = (e: React.PointerEvent) => {
     if (!dragging) return;
     setPan({ x: e.clientX - dragStart.x, y: e.clientY - dragStart.y });
   };
-  const onMouseUp = () => setDragging(false);
+  const onPointerUp = () => setDragging(false);
   const onWheel = (e: React.WheelEvent) => {
     e.preventDefault();
     setZoom((z) => Math.min(3, Math.max(0.4, z - e.deltaY * 0.0015)));
@@ -65,15 +69,15 @@ export const CircuitRenderer: React.FC = () => {
     <div className="glass-card p-4 lg:p-8 mt-2 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-800">
       {/* Header */}
       <div className="flex items-center justify-between mb-4 lg:mb-6 gap-3">
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-orange-500/15 border border-orange-500/25">
+        <div className="flex min-w-0 items-center gap-3">
+          <div className="shrink-0 p-2 rounded-lg bg-orange-500/15 border border-orange-500/25">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f97316" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <rect x="2" y="7" width="6" height="10" rx="2" />
               <rect x="16" y="7" width="6" height="10" rx="2" />
               <path d="M8 12h8M12 7V5M12 19v-2" />
             </svg>
           </div>
-          <div>
+          <div className="min-w-0">
             <div className="flex items-center gap-2">
               <h3 className="text-xl font-bold text-text-main tracking-tight">Circuit Diagram</h3>
               <InfoTooltip
@@ -82,14 +86,14 @@ export const CircuitRenderer: React.FC = () => {
                 side="top"
               />
             </div>
-            <p className="text-xs font-bold text-text-dim uppercase tracking-widest mt-0.5">
+            <p className="text-xs font-bold text-text-dim uppercase tracking-widest mt-0.5 break-words">
               {solType} · <span className="text-accent-orange font-mono">{expression || '-'}</span>
             </p>
           </div>
         </div>
         <button
           onClick={resetView}
-          className="text-xs font-bold uppercase tracking-widest text-text-dim hover:text-accent-orange transition-colors px-3 py-1.5 rounded-lg border border-border-soft hover:border-accent-orange/30"
+          className="shrink-0 min-h-[40px] sm:min-h-0 text-xs font-bold uppercase tracking-widest text-text-dim hover:text-accent-orange transition-colors px-3 py-1.5 rounded-lg border border-border-soft hover:border-accent-orange/30"
         >
           Fit view
         </button>
@@ -98,11 +102,12 @@ export const CircuitRenderer: React.FC = () => {
       {/* Canvas */}
       <div
         className="relative w-full overflow-hidden rounded-2xl border border-border-soft bg-bg-base/30"
-        style={{ height: 'clamp(300px, 52vw, 480px)', cursor: dragging ? 'grabbing' : 'grab' }}
-        onMouseDown={onMouseDown}
-        onMouseMove={onMouseMove}
-        onMouseUp={onMouseUp}
-        onMouseLeave={onMouseUp}
+        style={{ height: 'clamp(300px, 52vw, 480px)', cursor: dragging ? 'grabbing' : 'grab', touchAction: 'pan-y' }}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        onPointerCancel={onPointerUp}
+        onPointerLeave={onPointerUp}
         onWheel={onWheel}
       >
         {/* Dot-grid background */}

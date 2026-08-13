@@ -56,9 +56,9 @@ export const S00_E_Conversions: React.FC<Props> = ({ isActive, isDarkMode }) => 
                         To convert <span className="font-bold">Decimal to Any Base</span>, repeatedly divide by that base and collect the remainders from <span className="text-sky-400">bottom to top</span>.
                     </p>
                     
-                    <div className={`p-8 rounded-3xl border border-sky-500/20 bg-sky-500/5 relative overflow-hidden`}>
-                    <div className="absolute top-4 right-4 text-[11px] font-mono opacity-20 uppercase tracking-widest italic">Example: 25 to Binary</div>
-                        <pre className={`font-mono text-[11px] leading-relaxed ${subTextColor}`}>
+                    <div className={`p-5 sm:p-8 rounded-3xl border border-sky-500/20 bg-sky-500/5 relative overflow-hidden`}>
+                    <div className="mb-3 sm:mb-0 sm:absolute sm:top-4 sm:right-4 text-[11px] font-mono opacity-20 uppercase tracking-widest italic">Example: 25 to Binary</div>
+                        <pre className={`font-mono text-[10px] sm:text-[11px] leading-relaxed overflow-x-auto ${subTextColor}`}>
 {`25 / 2 = 12  remainder: 1  (LSB)
 12 / 2 = 6   remainder: 0
 6 / 2 = 3    remainder: 0
@@ -87,9 +87,9 @@ Result: 11001`}
                         To convert <span className="font-bold">Any Base to Decimal</span>, multiply each digit by its positional weight and sum the results.
                     </p>
 
-                    <div className={`p-8 rounded-3xl border border-amber-500/20 bg-amber-500/5 relative overflow-hidden`}>
-                        <div className="absolute top-4 right-4 text-[11px] font-mono opacity-20 uppercase tracking-widest italic">Example: 1011 (Bin) to Dec</div>
-                        <pre className={`font-mono text-[11px] leading-relaxed text-amber-500/80`}>
+                    <div className={`p-5 sm:p-8 rounded-3xl border border-amber-500/20 bg-amber-500/5 relative overflow-hidden`}>
+                        <div className="mb-3 sm:mb-0 sm:absolute sm:top-4 sm:right-4 text-[11px] font-mono opacity-20 uppercase tracking-widest italic">Example: 1011 (Bin) to Dec</div>
+                        <pre className={`font-mono text-[10px] sm:text-[11px] leading-relaxed overflow-x-auto text-amber-500/80`}>
 {`1 0 1 1
 | | | +-- (1 * 2^0) = 1
 | | +---- (1 * 2^1) = 2
@@ -109,14 +109,14 @@ Result: 11001`}
             <motion.div 
                 initial={{ opacity: 0, y: 20 }}
                 animate={isActive ? { opacity: 1, y: 0 } : {}}
-                className={`p-10 rounded-[2.5rem] border ${isDarkMode ? 'bg-sky-500/5 border-sky-500/20 shadow-2xl shadow-sky-900/10' : 'bg-sky-50 border-sky-100 shadow-xl'}`}
+                className={`p-6 sm:p-10 rounded-[2.5rem] border ${isDarkMode ? 'bg-sky-500/5 border-sky-500/20 shadow-2xl shadow-sky-900/10' : 'bg-sky-50 border-sky-100 shadow-xl'}`}
             >
                 <div className="text-center space-y-4">
                     <h3 className={`text-2xl font-black ${textColor}`}>Universal Positional Theorem</h3>
                     <p className={`text-sm opacity-60 max-w-2xl mx-auto leading-relaxed ${textColor}`}>
                         No matter the base, the value of any number is simply the sum of its digits multiplied by the base raised to its position.
                     </p>
-                    <div className={`mt-8 p-6 rounded-2xl font-mono text-xl font-black ${isDarkMode ? 'bg-black/40 text-sky-400' : 'bg-white text-sky-600 shadow-sm'}`}>
+                    <div className={`mt-8 p-4 sm:p-6 rounded-2xl font-mono text-base sm:text-xl font-black break-words ${isDarkMode ? 'bg-black/40 text-sky-400' : 'bg-white text-sky-600 shadow-sm'}`}>
                         V = Sum (Digit * Base^Position)
                     </div>
                 </div>

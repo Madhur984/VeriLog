@@ -88,9 +88,9 @@ export const TextbookEquation: React.FC<TextbookEquationProps> = ({
       )}
 
       {/* Main Formula Render Box */}
-      <div className="relative group overflow-x-auto py-4 px-6 rounded-lg bg-slate-950/80 border border-slate-800/80 flex items-center justify-center min-h-[70px]">
+      <div className="relative group overflow-x-auto py-4 px-3 sm:px-6 rounded-lg bg-slate-950/80 border border-slate-800/80 flex items-center justify-start sm:justify-center min-h-[70px]">
         <div
-          className="text-lg md:text-xl text-slate-100 tracking-wide select-all"
+          className="mx-auto text-base sm:text-lg md:text-xl text-slate-100 tracking-wide select-all"
           dangerouslySetInnerHTML={{ __html: renderedMath }}
         />
       </div>

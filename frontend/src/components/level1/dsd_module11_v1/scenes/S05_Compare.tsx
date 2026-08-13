@@ -53,18 +53,22 @@ export const S05_Compare: React.FC<Props> = ({ isDarkMode }) => {
 
       {/* comparison table */}
       <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} className={`rounded-3xl border overflow-hidden ${cardBg}`}>
-        <div className="grid grid-cols-3 text-center font-mono text-[11px] md:text-sm font-black uppercase tracking-widest">
-          <div className={`p-4 ${subText}`}>Attribute</div>
-          <div className="p-4 text-black" style={{ background: ROSE }}>Ripple (Waiter)</div>
-          <div className="p-4 text-black" style={{ background: EMERALD }}>Look-Ahead (Chef)</div>
-        </div>
-        {COMPARISON.map((row, i) => (
-          <div key={row.attr} className={`grid grid-cols-3 text-center text-[13px] md:text-sm border-t ${isDarkMode ? 'border-white/10' : 'border-slate-200'} ${i % 2 === 1 ? (isDarkMode ? 'bg-white/[0.03]' : 'bg-slate-50/60') : ''}`}>
-            <div className={`p-4 font-bold ${textColor}`}>{row.attr}</div>
-            <div className={`p-4 ${subText}`}>{row.rca}</div>
-            <div className="p-4 font-medium" style={{ color: EMERALD }}>{row.cla}</div>
+        <div className="overflow-x-auto">
+          <div className="min-w-[520px] md:min-w-0">
+            <div className="grid grid-cols-3 text-center font-mono text-[11px] md:text-sm font-black uppercase tracking-widest">
+              <div className={`p-4 ${subText}`}>Attribute</div>
+              <div className="p-4 text-black" style={{ background: ROSE }}>Ripple (Waiter)</div>
+              <div className="p-4 text-black" style={{ background: EMERALD }}>Look-Ahead (Chef)</div>
+            </div>
+            {COMPARISON.map((row, i) => (
+              <div key={row.attr} className={`grid grid-cols-3 text-center text-[13px] md:text-sm border-t ${isDarkMode ? 'border-white/10' : 'border-slate-200'} ${i % 2 === 1 ? (isDarkMode ? 'bg-white/[0.03]' : 'bg-slate-50/60') : ''}`}>
+                <div className={`p-4 font-bold ${textColor}`}>{row.attr}</div>
+                <div className={`p-4 ${subText}`}>{row.rca}</div>
+                <div className="p-4 font-medium" style={{ color: EMERALD }}>{row.cla}</div>
+              </div>
+            ))}
           </div>
-        ))}
+        </div>
       </motion.div>
 
       {/* the cost */}

@@ -38,7 +38,7 @@ export const S08_FlowDuel: React.FC<Props> = ({ isActive, isDarkMode }) => {
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.15 }}
-        className={`p-8 rounded-3xl border ${cardBg} space-y-6`}
+        className={`p-5 md:p-8 rounded-3xl border ${cardBg} space-y-6`}
       >
         <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-amber-400">Two-lane traffic · live</div>
 
@@ -86,7 +86,7 @@ export const S08_FlowDuel: React.FC<Props> = ({ isActive, isDarkMode }) => {
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.25 }}
-        className={`p-8 rounded-3xl border-2 border-amber-400/60 bg-amber-500/10`}
+        className={`p-5 md:p-8 rounded-3xl border-2 border-amber-400/60 bg-amber-500/10`}
       >
         <div className="flex items-start gap-3">
           <AlertCircle className="text-amber-300 flex-shrink-0 mt-0.5" size={20} />

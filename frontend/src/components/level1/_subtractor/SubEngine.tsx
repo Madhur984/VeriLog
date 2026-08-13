@@ -57,12 +57,12 @@ const Sidebar: React.FC<{
 
   return (
     <div
-      className={`w-[320px] h-full flex-shrink-0 border-r flex flex-col z-20 transition-all duration-700 relative ${
+      className={`w-[min(86vw,320px)] lg:w-[320px] h-full flex-shrink-0 border-r flex flex-col z-20 transition-all duration-700 relative ${
         isDarkMode ? 'bg-[#040200]' : 'bg-slate-50'
       }`}
       style={{ borderColor }}
     >
-      <header className="p-10 border-b" style={{ borderColor }}>
+      <header className="p-6 lg:p-10 border-b" style={{ borderColor }}>
         <div className="flex items-center gap-4">
           <div className="w-10 h-10 rounded-2xl flex items-center justify-center text-black" style={{ background: theme.primary }}>
             <Icon size={20} />
@@ -76,7 +76,7 @@ const Sidebar: React.FC<{
         </div>
       </header>
 
-      <nav className="p-8 flex-1 overflow-y-auto space-y-1">
+      <nav className="p-4 lg:p-8 flex-1 overflow-y-auto space-y-1">
         {pages.map((page, idx) => {
           const isActive = current === idx;
           const isDone = idx < current;
@@ -118,7 +118,7 @@ const Sidebar: React.FC<{
         })}
       </nav>
 
-      <footer className="p-10 border-t space-y-6" style={{ borderColor }}>
+      <footer className="p-6 lg:p-10 border-t space-y-6" style={{ borderColor }}>
         <div className="space-y-4">
           <div className="flex justify-between items-end">
             <span className="text-[10px] font-mono uppercase tracking-[0.2em] opacity-40">Progress</span>

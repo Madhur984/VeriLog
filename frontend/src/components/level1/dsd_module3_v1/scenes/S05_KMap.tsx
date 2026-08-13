@@ -98,7 +98,7 @@ export const S05_KMap: React.FC<Props> = ({ isActive, isDarkMode }) => {
       {/* MAIN PANEL · two columns: animated truth-table fold + K-Map */}
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
-        className={`p-8 rounded-3xl border ${cardBg}`}
+        className={`p-5 md:p-8 rounded-3xl border ${cardBg}`}
       >
         <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-violet-400 mb-5">
           F = Σm(3, 4, 5, 6, 7) · A on rows · BC on cols
@@ -138,7 +138,7 @@ export const S05_KMap: React.FC<Props> = ({ isActive, isDarkMode }) => {
           </motion.div>
 
           {/* K-Map */}
-          <div className="relative">
+          <div className="relative overflow-x-auto lg:overflow-x-visible">
             <div className="inline-block">
               <div className="grid grid-cols-[60px_repeat(4,80px)] gap-1 mb-1">
                 <div></div>

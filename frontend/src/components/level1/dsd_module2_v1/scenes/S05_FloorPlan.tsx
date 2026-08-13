@@ -71,7 +71,7 @@ export const S05_FloorPlan: React.FC<Props> = ({ isActive, isDarkMode }) => {
           </div>
 
           {/* CD column header */}
-          <div className="grid grid-cols-[80px_repeat(4,minmax(0,1fr))] gap-1.5 items-end mb-1">
+          <div className="grid grid-cols-[48px_repeat(4,minmax(0,1fr))] sm:grid-cols-[80px_repeat(4,minmax(0,1fr))] gap-1.5 items-end mb-1">
             <div className="text-right">
               <div className="font-mono text-[10px] uppercase tracking-widest text-amber-300/80">A,B</div>
               <div className="font-mono text-[10px] uppercase tracking-widest text-amber-300/80">↓</div>
@@ -85,7 +85,7 @@ export const S05_FloorPlan: React.FC<Props> = ({ isActive, isDarkMode }) => {
           {/* Rows */}
           <div className="space-y-1.5">
             {ROW_LABELS.map((ab, r) => (
-              <div key={r} className="grid grid-cols-[80px_repeat(4,minmax(0,1fr))] gap-1.5 items-stretch">
+              <div key={r} className="grid grid-cols-[48px_repeat(4,minmax(0,1fr))] sm:grid-cols-[80px_repeat(4,minmax(0,1fr))] gap-1.5 items-stretch">
                 <div className="flex items-center justify-end font-mono text-sm text-amber-300/90">{ab}</div>
                 {grid[r].map((m, c) => {
                   const isHover = hover?.r === r && hover?.c === c;

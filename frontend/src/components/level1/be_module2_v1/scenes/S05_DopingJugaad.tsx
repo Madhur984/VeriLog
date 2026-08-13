@@ -39,10 +39,10 @@ export const S05_DopingJugaad: React.FC<Props> = ({ isActive, isDarkMode }) => {
       <div className="grid md:grid-cols-2 gap-6">
         <motion.div
           initial={{ opacity: 0, x: -20 }} animate={isActive ? { opacity: 1, x: 0 } : {}}
-          className={`p-8 rounded-3xl border ${cardBg} space-y-4`}
+          className={`p-5 md:p-8 rounded-3xl border ${cardBg} space-y-4`}
         >
           <div className="font-mono text-[10px] uppercase tracking-widest text-violet-400">Before doping · intrinsic</div>
-          <div className={`text-6xl font-black ${textColor}`}>1 : 10¹²</div>
+          <div className={`text-4xl sm:text-6xl font-black ${textColor}`}>1 : 10¹²</div>
           <p className={`text-sm ${subText}`}>
             One free electron buried in a trillion silicon atoms. Useless for switching, terrible
             for amplification, hopeless for digital logic.
@@ -51,10 +51,10 @@ export const S05_DopingJugaad: React.FC<Props> = ({ isActive, isDarkMode }) => {
 
         <motion.div
           initial={{ opacity: 0, x: 20 }} animate={isActive ? { opacity: 1, x: 0 } : {}}
-          className={`p-8 rounded-3xl border-2 border-violet-400 bg-violet-500/10 space-y-4`}
+          className={`p-5 md:p-8 rounded-3xl border-2 border-violet-400 bg-violet-500/10 space-y-4`}
         >
           <div className="font-mono text-[10px] uppercase tracking-widest text-violet-300">After doping · extrinsic</div>
-          <div className={`text-6xl font-black text-violet-200`}>+10⁶ ×</div>
+          <div className={`text-4xl sm:text-6xl font-black text-violet-200`}>+10⁶ ×</div>
           <p className={`text-sm ${subText}`}>
             One million times more carriers. Conductivity surges. The silicon now responds
             usefully to applied voltages.
@@ -65,7 +65,7 @@ export const S05_DopingJugaad: React.FC<Props> = ({ isActive, isDarkMode }) => {
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.2 }}
-        className={`p-8 rounded-3xl border ${cardBg}`}
+        className={`p-5 md:p-8 rounded-3xl border ${cardBg}`}
       >
         <div className="flex items-center gap-2 mb-5">
           <TrendingUp size={14} className="text-violet-400" />

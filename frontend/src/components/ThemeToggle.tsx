@@ -13,7 +13,7 @@ export const ThemeToggle: React.FC<{ variant?: 'default' | 'minimal'; className?
         onClick={toggle}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        className={`p-1.5 sm:p-2 text-text-dim hover:text-text-main transition-colors cursor-pointer shrink-0 ${className}`}
+        className={`p-2.5 sm:p-2 text-text-dim hover:text-text-main transition-colors cursor-pointer shrink-0 ${className}`}
         title={isLight ? 'Switch to Dark Mode' : 'Switch to Light Mode'}
         aria-label={isLight ? 'Switch to dark mode' : 'Switch to light mode'}
         style={{ background: 'transparent', border: 'none' }}

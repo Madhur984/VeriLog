@@ -35,7 +35,7 @@ export const S05_Tetravalent: React.FC<Props> = ({ isActive, isDarkMode }) => {
       {/* Hero · big "4" + valence diagram */}
       <motion.div
         initial={{ opacity: 0, y: 12 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
-        className={`p-10 rounded-3xl border ${cardBg} relative overflow-hidden`}
+        className={`p-5 md:p-10 rounded-3xl border ${cardBg} relative overflow-hidden`}
       >
         <div className="absolute -top-20 -left-10 w-72 h-72 bg-orange-400/10 rounded-full blur-3xl" />
         <div className="grid md:grid-cols-[auto_1fr] gap-10 items-center">
@@ -103,7 +103,7 @@ export const S05_Tetravalent: React.FC<Props> = ({ isActive, isDarkMode }) => {
       <motion.div
         initial={{ opacity: 0, y: 12 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.2 }}
-        className={`p-8 rounded-3xl border ${cardBg}`}
+        className={`p-5 md:p-8 rounded-3xl border ${cardBg}`}
       >
         <div className="flex items-center gap-2 mb-6">
           <Zap size={14} className="text-orange-400" />

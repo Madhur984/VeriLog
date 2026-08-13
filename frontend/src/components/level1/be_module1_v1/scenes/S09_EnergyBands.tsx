@@ -26,9 +26,10 @@ export const S09_EnergyBands: React.FC<Props> = ({ isActive, isDarkMode }) => {
       {/* The big city diagram */}
       <motion.div
         initial={{ opacity: 0, y: 12 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
-        className={`p-8 rounded-3xl border ${cardBg} relative overflow-hidden`}
+        className={`p-5 md:p-8 rounded-3xl border ${cardBg} relative overflow-hidden`}
       >
-        <svg viewBox="0 0 800 480" className="w-full">
+        <div className="-mx-5 overflow-x-auto px-5 md:mx-0 md:overflow-x-visible md:px-0">
+        <svg viewBox="0 0 800 480" className="w-full min-w-[600px]">
           <defs>
             <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor="#312e81" />
@@ -120,6 +121,7 @@ export const S09_EnergyBands: React.FC<Props> = ({ isActive, isDarkMode }) => {
             style={{ filter: 'drop-shadow(0 0 6px #fde68a)' }}
           />
         </svg>
+        </div>
       </motion.div>
 
       {/* Three labels */}

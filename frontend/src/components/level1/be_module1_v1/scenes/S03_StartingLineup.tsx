@@ -195,7 +195,7 @@ export const S03_StartingLineup: React.FC<Props> = ({ isActive, isDarkMode }) =>
       <motion.div
         initial={{ opacity: 0, y: 12 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.6 }}
-        className={`p-8 rounded-3xl border ${cardBg} relative overflow-hidden`}
+        className={`p-5 md:p-8 rounded-3xl border ${cardBg} relative overflow-hidden`}
       >
         <div className="absolute -top-10 -left-10 w-60 h-60 bg-orange-400/10 rounded-full blur-3xl" />
         <div className="flex items-start gap-4 relative">

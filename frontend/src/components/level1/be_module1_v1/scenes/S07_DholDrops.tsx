@@ -88,7 +88,7 @@ export const S07_DholDrops: React.FC<Props> = ({ isActive, isDarkMode }) => {
       <motion.div
         initial={{ opacity: 0, y: 12 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.1 }}
-        className={`p-8 rounded-3xl border ${cardBg} relative overflow-hidden`}
+        className={`p-5 md:p-8 rounded-3xl border ${cardBg} relative overflow-hidden`}
       >
         <div className="absolute -top-20 -right-20 w-72 h-72 bg-pink-400/10 rounded-full blur-3xl" />
 

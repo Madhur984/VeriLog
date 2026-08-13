@@ -188,7 +188,7 @@ export const S11_PracticeArena: React.FC<Props> = ({ isActive, isDarkMode }) => 
       <TryItYourself />
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
-        className={`p-8 rounded-3xl border ${cardBg}`}
+        className={`p-5 md:p-8 rounded-3xl border ${cardBg}`}
       >
         <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
           <div>
@@ -281,7 +281,7 @@ export const S11_PracticeArena: React.FC<Props> = ({ isActive, isDarkMode }) => 
       {/* DRILL 2 - Carrier Sandbox */}
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
-        className={`p-8 rounded-3xl border ${cardBg}`}
+        className={`p-5 md:p-8 rounded-3xl border ${cardBg}`}
       >
         <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-rose-400 mb-1">Drill 02 · Carrier Sandbox</div>
         <h3 className={`text-xl font-black ${textColor} mb-4`}>Doping → carrier population</h3>
@@ -394,7 +394,7 @@ export const S11_PracticeArena: React.FC<Props> = ({ isActive, isDarkMode }) => 
       {/* DRILL 3 - Speed Round */}
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
-        className={`p-8 rounded-3xl border ${cardBg} relative overflow-hidden`}
+        className={`p-5 md:p-8 rounded-3xl border ${cardBg} relative overflow-hidden`}
       >
         {flash && (
           <motion.div

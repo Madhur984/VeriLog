@@ -312,11 +312,11 @@ const PulseWidthLab: React.FC<{ isDarkMode: boolean; accent: string }> = ({ isDa
   } as const;
 
   const Row: React.FC<{ label: string; v: number; set: (n: number) => void; max: number; color: string }> = ({ label, v, set, max, color }) => (
-    <div className="flex items-center gap-3">
+    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 sm:flex-nowrap">
       <span className="w-28 flex-shrink-0 font-mono text-[11px] font-bold" style={{ color }}>{label}</span>
+      <span className="w-14 flex-shrink-0 text-right font-mono text-[12px] font-black sm:order-3" style={{ color }}>{v}ms</span>
       <input type="range" min={2} max={max} value={v} onChange={(e) => set(Number(e.target.value))}
-        className="w-full" style={{ accentColor: color }} />
-      <span className="w-14 flex-shrink-0 text-right font-mono text-[12px] font-black" style={{ color }}>{v}ms</span>
+        className="w-full min-w-0 basis-full sm:order-2 sm:basis-auto" style={{ accentColor: color }} />
     </div>
   );
 
@@ -498,7 +498,7 @@ const RaceLab: React.FC<{ isDarkMode: boolean; accent: string }> = ({ isDarkMode
           </button>
         ))}
       </div>
-      <div className="mb-4 flex items-center justify-center gap-3">
+      <div className="mb-4 flex flex-wrap items-center justify-center gap-3">
         <span className={`font-mono text-[11px] ${t.faint}`}>{lang === 'hi' ? 'winner चुनिए' : 'pick the winner'}</span>
         {(['y1', 'y2'] as const).map((wv) => (
           <button key={wv} onClick={() => setWinner(wv)}

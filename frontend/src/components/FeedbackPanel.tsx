@@ -67,12 +67,12 @@ export const FeedbackPanel: React.FC<Props> = ({ open, onClose, pathname, inModu
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 20, scale: 0.96 }}
           transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
-          className={`pointer-events-auto fixed left-4 z-[400] flex w-[min(92vw,380px)] flex-col overflow-hidden rounded-[20px] border-[3px] border-[#1B1436] bg-[#F1ECFF] font-sans shadow-[6px_6px_0_#1B1436] dark:border-[#4A3D7A] dark:bg-[#0F0B1E] dark:shadow-[6px_6px_0_#7A3FD0] ${
+          className={`pointer-events-auto fixed left-4 z-[400] flex max-h-[min(88svh,640px)] w-[min(92vw,380px)] flex-col overflow-hidden rounded-[20px] border-[3px] border-[#1B1436] bg-[#F1ECFF] font-sans shadow-[6px_6px_0_#1B1436] dark:border-[#4A3D7A] dark:bg-[#0F0B1E] dark:shadow-[6px_6px_0_#7A3FD0] ${
             inModule ? 'bottom-24 lg:bottom-28' : 'bottom-4'
           }`}
         >
           {/* Header */}
-          <div className="flex items-center gap-3 border-b-[3px] border-[#1B1436] bg-white px-4 py-3 dark:border-[#4A3D7A] dark:bg-[#1B1540]">
+          <div className="flex shrink-0 items-center gap-3 border-b-[3px] border-[#1B1436] bg-white px-4 py-3 dark:border-[#4A3D7A] dark:bg-[#1B1540]">
             <span className="grid h-10 w-10 place-items-center rounded-xl border-[2.5px] border-[#1B1436] bg-[#FF7A1A] shadow-[3px_3px_0_#1B1436] dark:border-[#4A3D7A] dark:shadow-[3px_3px_0_#7A3FD0]">
               <Send size={17} className="text-white" />
             </span>
@@ -97,7 +97,7 @@ export const FeedbackPanel: React.FC<Props> = ({ open, onClose, pathname, inModu
               <p className="text-[12.5px] text-[#6B5E86] dark:text-[#8E80B4]">Your feedback helps us build a better BitForBytes.</p>
             </div>
           ) : (
-            <form onSubmit={submit} className="flex flex-col gap-3 px-4 py-4">
+            <form onSubmit={submit} className="flex min-h-0 flex-col gap-3 overflow-y-auto px-4 py-4">
               {/* Star rating */}
               <div className="flex items-center gap-1.5">
                 {[1, 2, 3, 4, 5].map((n) => {
@@ -108,7 +108,7 @@ export const FeedbackPanel: React.FC<Props> = ({ open, onClose, pathname, inModu
                       onClick={() => setRating(rating === n ? null : n)}
                       onMouseEnter={() => setHoverRating(n)}
                       onMouseLeave={() => setHoverRating(null)}
-                      className="p-0.5"
+                      className="p-2 sm:p-0.5"
                     >
                       <Star size={20} className={filled ? 'fill-[#FF7A1A] text-[#FF7A1A]' : 'text-[#C9BEE8] dark:text-[#4A3D7A]'} />
                     </button>

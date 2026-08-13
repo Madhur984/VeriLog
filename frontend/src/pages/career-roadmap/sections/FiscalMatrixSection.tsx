@@ -39,7 +39,7 @@ export const FiscalMatrixSection: React.FC<FiscalMatrixSectionProps> = ({
   const breakdown = getBreakdown();
 
   return (
-    <section id="fiscal-matrix" className="py-24 px-6 bg-matte-obsidian/50 border-y border-ghost-trace scroll-mt-32">
+    <section id="fiscal-matrix" className="py-24 px-4 sm:px-6 bg-matte-obsidian/50 border-y border-ghost-trace scroll-mt-32">
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12">
         {/* Left: Input & Global Mobility */}
         <div className="lg:col-span-5 space-y-8">
@@ -52,7 +52,7 @@ export const FiscalMatrixSection: React.FC<FiscalMatrixSectionProps> = ({
             </p>
           </div>
 
-          <div className="space-y-6 bg-solder-mask p-8 border border-ghost-trace">
+          <div className="space-y-6 bg-solder-mask p-5 sm:p-8 border border-ghost-trace">
             <div>
               <label className="text-[10px] font-mono text-text-dim uppercase tracking-widest mb-4 block">Active Geography</label>
               <div className="grid grid-cols-2 gap-2">
@@ -125,20 +125,20 @@ export const FiscalMatrixSection: React.FC<FiscalMatrixSectionProps> = ({
           <DataTerminal title="COMPENSATION TELEMETRY" subtitle={`Unit: ${currentData.currency}`} className="h-full">
             <div className="flex flex-col h-full">
               {/* Massive Main Stat */}
-              <div className="p-12 border-b border-ghost-trace bg-matte-obsidian/30 text-center">
+              <div className="p-6 sm:p-12 border-b border-ghost-trace bg-matte-obsidian/30 text-center">
                 <div className="text-[10px] font-mono text-text-dim uppercase tracking-[0.4em] mb-4">Estimated Gross Annual</div>
                 <motion.div 
                   key={`${country}-${expYears}`}
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className="text-7xl md:text-8xl font-mono font-bold text-text-main tracking-tighter"
+                  className="text-4xl sm:text-7xl md:text-8xl font-mono font-bold text-text-main tracking-tighter break-words"
                 >
                   {breakdown.format(breakdown.gross)}
                 </motion.div>
               </div>
 
               {/* Rows */}
-              <div className="flex-1 p-8 grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
+              <div className="flex-1 p-5 sm:p-8 grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
                 <div className="space-y-2">
                   <div className="flex justify-between text-[10px] font-mono uppercase tracking-widest">
                     <span className="text-text-dim">Tax Liability</span>

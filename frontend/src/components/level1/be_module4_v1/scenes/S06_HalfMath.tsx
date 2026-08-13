@@ -52,7 +52,7 @@ export const S06_HalfMath: React.FC<Props> = ({ isActive, isDarkMode }) => {
       {/* INTEGRATION VISUAL */}
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
-        className={`p-8 rounded-3xl border ${cardBg}`}
+        className={`p-5 md:p-8 rounded-3xl border ${cardBg}`}
       >
         <div className="font-mono text-[10px] uppercase tracking-widest text-amber-400 mb-4">
           Step-by-step · Vdc derivation
@@ -134,7 +134,7 @@ export const S06_HalfMath: React.FC<Props> = ({ isActive, isDarkMode }) => {
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.4 }}
-        className={`p-8 rounded-3xl border ${cardBg}`}
+        className={`p-5 md:p-8 rounded-3xl border ${cardBg}`}
       >
         <div className="font-mono text-[10px] uppercase tracking-widest text-amber-400 mb-3 flex items-center gap-2">
           <Waves size={12} /> The Ripple Factor (r)

@@ -207,7 +207,7 @@ export const S09_PracticeArena: React.FC<Props> = ({ isActive, isDarkMode }) => 
       <TryItYourself />
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
-        className={`p-8 rounded-3xl border ${cardBg}`}
+        className={`p-5 md:p-8 rounded-3xl border ${cardBg}`}
       >
         <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
           <div>
@@ -300,7 +300,7 @@ export const S09_PracticeArena: React.FC<Props> = ({ isActive, isDarkMode }) => 
       {/* DRILL 2 - Bias Detective */}
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
-        className={`p-8 rounded-3xl border ${cardBg}`}
+        className={`p-5 md:p-8 rounded-3xl border ${cardBg}`}
       >
         <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
           <div>
@@ -318,7 +318,7 @@ export const S09_PracticeArena: React.FC<Props> = ({ isActive, isDarkMode }) => 
               <div className="font-mono text-[10px] uppercase tracking-widest text-rose-300 mb-3">
                 Applied Voltage
               </div>
-              <div className={`font-mono text-5xl font-black ${textColor}`}>V_D = {bQ.vd}</div>
+              <div className={`font-mono text-3xl sm:text-5xl font-black ${textColor}`}>V_D = {bQ.vd}</div>
             </div>
           </div>
 
@@ -369,7 +369,7 @@ export const S09_PracticeArena: React.FC<Props> = ({ isActive, isDarkMode }) => 
       {/* DRILL 3 - Speed Round */}
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
-        className={`p-8 rounded-3xl border ${cardBg} relative overflow-hidden`}
+        className={`p-5 md:p-8 rounded-3xl border ${cardBg} relative overflow-hidden`}
       >
         {flash && (
           <motion.div

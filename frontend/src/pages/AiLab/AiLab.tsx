@@ -26,7 +26,7 @@ export default function AiLab() {
             <div className="absolute -top-24 -left-24 w-96 h-96 bg-sky-500/5 blur-[120px] rounded-full" />
             <div className="absolute top-1/2 -right-24 w-80 h-80 bg-indigo-500/5 blur-[100px] rounded-full" />
 
-            <div className="relative z-10 max-w-7xl mx-auto px-6 pb-12 pt-20">
+            <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pb-12 pt-20">
                 {/* Header Section */}
                 <header className="mb-12 space-y-4">
                     <div className="flex items-center gap-3 text-cyan-400 mb-2">
@@ -35,7 +35,7 @@ export default function AiLab() {
                     </div>
                     <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                         <div>
-                            <h1 className="text-5xl md:text-6xl font-black tracking-tighter text-slate-900">
+                            <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tighter text-slate-900">
                                 CIRCUIT <span className="text-sky-600">VISION</span>
                             </h1>
                             <p className="text-slate-500 text-lg max-w-xl mt-4 leading-relaxed">
@@ -50,7 +50,7 @@ export default function AiLab() {
                                     key={tab}
                                     onClick={() => setActiveTab(tab)}
                                     className={cn(
-                                        "px-8 py-3 rounded-xl text-sm font-bold transition-all duration-300 flex items-center gap-2 relative overflow-hidden",
+                                        "flex-1 sm:flex-none px-4 sm:px-8 py-3 rounded-xl text-sm font-bold transition-all duration-300 flex items-center justify-center gap-2 relative overflow-hidden",
                                         activeTab === tab
                                             ? "text-white shadow-xl"
                                             : "text-slate-400 hover:text-slate-600"
@@ -84,7 +84,7 @@ export default function AiLab() {
                         >
                             {/* Vision Panel */}
                             <div className="lg:col-span-8 space-y-8">
-                                <div className="aspect-video bg-white rounded-3xl border border-slate-200 overflow-hidden group relative flex items-center justify-center p-12 shadow-sm">
+                                <div className="min-h-[340px] sm:min-h-0 sm:aspect-video bg-white rounded-3xl border border-slate-200 overflow-hidden group relative flex items-center justify-center p-6 sm:p-12 shadow-sm">
                                     <div className="absolute inset-0 bg-grid-slate-100 opacity-50" />
 
                                     <div className="relative text-center space-y-6">
@@ -101,10 +101,10 @@ export default function AiLab() {
                                     </div>
 
                                     {/* Scanning Corner Lines */}
-                                    <div className="absolute top-8 left-8 w-12 h-12 border-t-2 border-l-2 border-cyan-500/40 rounded-tl-xl" />
-                                    <div className="absolute top-8 right-8 w-12 h-12 border-t-2 border-r-2 border-cyan-500/40 rounded-tr-xl" />
-                                    <div className="absolute bottom-8 left-8 w-12 h-12 border-b-2 border-l-2 border-cyan-500/40 rounded-bl-xl" />
-                                    <div className="absolute bottom-8 right-8 w-12 h-12 border-b-2 border-r-2 border-cyan-500/40 rounded-br-xl" />
+                                    <div className="absolute top-4 left-4 sm:top-8 sm:left-8 w-12 h-12 border-t-2 border-l-2 border-cyan-500/40 rounded-tl-xl" />
+                                    <div className="absolute top-4 right-4 sm:top-8 sm:right-8 w-12 h-12 border-t-2 border-r-2 border-cyan-500/40 rounded-tr-xl" />
+                                    <div className="absolute bottom-4 left-4 sm:bottom-8 sm:left-8 w-12 h-12 border-b-2 border-l-2 border-cyan-500/40 rounded-bl-xl" />
+                                    <div className="absolute bottom-4 right-4 sm:bottom-8 sm:right-8 w-12 h-12 border-b-2 border-r-2 border-cyan-500/40 rounded-br-xl" />
                                 </div>
 
                                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -149,7 +149,7 @@ export default function AiLab() {
                             className="grid grid-cols-1 lg:grid-cols-3 gap-8"
                         >
                             {/* Voice Guards */}
-                            <div className="lg:col-span-2 p-12 bg-white rounded-3xl border border-slate-200 shadow-sm flex flex-col items-center justify-center text-center space-y-8 relative">
+                            <div className="lg:col-span-2 p-6 sm:p-12 bg-white rounded-3xl border border-slate-200 shadow-sm flex flex-col items-center justify-center text-center space-y-8 relative">
                                 <div className="absolute inset-0 bg-dot-slate-200 opacity-20" />
 
                                 <div className="relative">
@@ -166,12 +166,12 @@ export default function AiLab() {
                                     <p className="text-slate-500 italic">Streaming multilingual audio payload to ensemble ML validators. Real-time pitch and spectral analysis active.</p>
                                 </div>
 
-                                <div className="flex gap-4">
-                                    <button className="px-10 py-4 bg-sky-600 text-white font-black rounded-2xl hover:bg-sky-700 transition-all flex items-center gap-2 shadow-lg shadow-sky-600/20">
+                                <div className="w-full sm:w-auto flex flex-col sm:flex-row gap-4">
+                                    <button className="px-6 sm:px-10 py-4 bg-sky-600 text-white font-black rounded-2xl hover:bg-sky-700 transition-all flex items-center justify-center gap-2 shadow-lg shadow-sky-600/20">
                                         <Activity className="w-5 h-5" />
                                         START SESSION
                                     </button>
-                                    <button className="px-10 py-4 bg-white text-slate-700 font-black rounded-2xl hover:bg-slate-50 transition-all border border-slate-200 shadow-sm">
+                                    <button className="px-6 sm:px-10 py-4 bg-white text-slate-700 font-black rounded-2xl hover:bg-slate-50 transition-all border border-slate-200 shadow-sm">
                                         UPLOAD CLIP
                                     </button>
                                 </div>

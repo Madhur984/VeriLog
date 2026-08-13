@@ -67,7 +67,7 @@ export const ResultPanel: React.FC = () => {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={undo}
             disabled={historyIdx <= 0}
@@ -116,11 +116,11 @@ export const ResultPanel: React.FC = () => {
 
       {/* Canonical Form Notation */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6 font-mono text-xs">
-        <div className="p-3 rounded-xl bg-bg-void/60 border border-border-soft flex items-center justify-between">
+        <div className="p-3 rounded-xl bg-bg-void/60 border border-border-soft flex flex-wrap items-center justify-between gap-x-2 gap-y-1 overflow-x-auto">
           <span className="text-text-dim">Canonical SOP Form:</span>
           <TextbookEquation block={false} math={`\\sum m(${minterms.join(', ') || '\\emptyset'})${dontCares.length ? ` + d(${dontCares.join(', ')})` : ''}`} />
         </div>
-        <div className="p-3 rounded-xl bg-bg-void/60 border border-border-soft flex items-center justify-between">
+        <div className="p-3 rounded-xl bg-bg-void/60 border border-border-soft flex flex-wrap items-center justify-between gap-x-2 gap-y-1 overflow-x-auto">
           <span className="text-text-dim">Canonical POS Form:</span>
           <TextbookEquation block={false} math={`\\prod M(${maxterms.join(', ') || '\\emptyset'})${dontCares.length ? ' \\cdot d(' + dontCares.join(', ') + ')' : ''}`} />
         </div>

@@ -46,7 +46,7 @@ const Stepper: React.FC<{
   const t = tone(isDarkMode);
   const btn = (delta: number, sym: string) => (
     <button onClick={() => onChange(Math.max(min, Math.min(max, value + delta)))}
-      className="flex h-9 w-9 items-center justify-center rounded-lg font-mono text-lg font-black active:scale-90"
+      className="flex h-10 w-10 items-center justify-center rounded-lg font-mono text-lg font-black active:scale-90 sm:h-9 sm:w-9"
       style={{ border: `2px solid ${accent}`, color: accent }}>{sym}</button>
   );
   return (

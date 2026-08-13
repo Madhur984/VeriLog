@@ -165,8 +165,8 @@ export const ProfilePage: React.FC = () => {
           <motion.section {...fade(0.12)} className={`relative overflow-hidden p-6 ${cardCls}`}>
             <span className="absolute left-0 top-0 h-full w-2 bg-[#FF7A1A]" />
             <h2 className={sectionLabel}>Continue where you left off</h2>
-            <div className="mt-3 flex items-center justify-between gap-4">
-              <div className="min-w-0">
+            <div className="mt-3 flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="min-w-0 max-w-full">
                 <div className={`truncate text-xl font-extrabold ${heading}`}>{last.label}</div>
                 <div className={`text-[13px] ${sub}`}>Jump back into your last session</div>
               </div>

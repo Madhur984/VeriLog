@@ -121,7 +121,7 @@ const ByteFlipper: React.FC<{ panel: React.CSSProperties; dim: string; faint: st
     <div className="relative" style={panel}>
       <span className="absolute inset-y-0 left-0 w-[5px]" style={{ background: BRAND }} />
       <div className="p-5 pl-6 sm:p-6 sm:pl-7">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-2">
           <p className="font-mono text-[10px] font-bold uppercase tracking-[0.22em]" style={{ color: faint }}>
             Try it — flip a bit
           </p>
@@ -389,7 +389,7 @@ export const BrilliantHome: React.FC = () => {
               </motion.p>
               <motion.h1
                 initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55, delay: 0.06, ease: [0.16, 1, 0.3, 1] }}
-                className="mt-4 text-[44px] font-extrabold leading-[1.02] tracking-tight sm:text-[60px] lg:text-[68px]"
+                className="mt-4 text-[36px] font-extrabold leading-[1.02] tracking-tight min-[420px]:text-[44px] sm:text-[60px] lg:text-[68px]"
               >
                 Learn electronics<br />
                 <span style={{ color: BRAND }}>backwards.</span>
@@ -497,9 +497,9 @@ export const BrilliantHome: React.FC = () => {
                 <span className="h-2 w-2 animate-ping rounded-full" style={{ background: BRAND }} />
                 <span className="tabular-nums" style={{ color: BRAND }}>● 142,890 logic gates simulated by students this week</span>
               </div>
-              <div className="flex items-center justify-center">
-                <span className="mr-2">Waveforms encode binary values via bit weights:</span>
-                <TextbookEquation block={false} math="2^0(1) + 2^1(2) + 2^2(4) + 2^3(8) + 2^4(16) + 2^5(32) + 2^6(64) + 2^7(128)" />
+              <div className="flex w-full max-w-full flex-col items-center justify-center gap-1.5 text-center sm:flex-row sm:gap-0">
+                <span className="sm:mr-2">Waveforms encode binary values via bit weights:</span>
+                <span className="block max-w-full overflow-x-auto"><TextbookEquation block={false} math="2^0(1) + 2^1(2) + 2^2(4) + 2^3(8) + 2^4(16) + 2^5(32) + 2^6(64) + 2^7(128)" /></span>
               </div>
             </div>
           </div>
@@ -605,11 +605,11 @@ export const BrilliantHome: React.FC = () => {
 
               {/* Textbook vs BitForBytes Comparison Card */}
               <div className="mt-6 rounded-lg border p-4 font-mono text-[11px]" style={{ borderColor: hairline, background: isLight ? 'rgba(27,20,54,0.03)' : 'rgba(255,255,255,0.02)' }}>
-                <div className="flex items-center justify-between border-b pb-2" style={{ borderColor: hairline }}>
+                <div className="flex flex-col gap-1 border-b pb-2 sm:flex-row sm:items-center sm:justify-between sm:gap-0" style={{ borderColor: hairline }}>
                   <span className="font-bold uppercase text-red-500/80">Traditional Textbook</span>
                   <span className="font-bold uppercase" style={{ color: BRAND }}>BitForBytes Workbench</span>
                 </div>
-                <div className="mt-2 grid grid-cols-2 gap-2 text-[10.5px]">
+                <div className="mt-2 grid grid-cols-1 gap-2 text-[10.5px] sm:grid-cols-2">
                   <div className="text-slate-400">
                     <p className="italic">"Let f(A,B) = A'B + AB'. Memorize page 142 table 4.1..."</p>
                   </div>

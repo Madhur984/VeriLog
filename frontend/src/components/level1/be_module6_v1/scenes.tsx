@@ -67,7 +67,7 @@ const NpnPnpToggle: React.FC<{ isDarkMode: boolean; accent: string }> = ({ isDar
         <span className="font-mono text-[11px] uppercase tracking-widest" style={{ color: accent }}>
           {lang === 'hi' ? 'NPN <-> PNP toggle' : 'NPN <-> PNP toggle'}
         </span>
-        <button onClick={() => setPnp((v) => !v)} className="rounded-lg px-4 py-1.5 font-mono text-sm font-black text-black active:scale-95"
+        <button onClick={() => setPnp((v) => !v)} className="min-h-[40px] sm:min-h-0 rounded-lg px-4 py-1.5 font-mono text-sm font-black text-black active:scale-95"
           style={{ background: c }}>
           {kind.toUpperCase()}
         </button>
@@ -150,7 +150,7 @@ const CurrentSplit: React.FC<{ isDarkMode: boolean; accent: string }> = ({ isDar
         <Slider label="alpha = Ic/Ie" value={alpha} min={0.90} max={0.995} step={0.005} onChange={setAlpha} accent={accent} isDarkMode={isDarkMode} display={fmt(alpha, 3)} />
       </div>
 
-      <div className="mt-4 grid grid-cols-3 gap-2 font-mono text-[12px]">
+      <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-3 font-mono text-[12px]">
         <div className={`rounded-lg px-3 py-2 text-center ${t.soft}`}>Ic = <b style={{ color: ACC.hall }}>{fmt(ic)} mA</b></div>
         <div className={`rounded-lg px-3 py-2 text-center ${t.soft}`}>Ib = <b style={{ color: ACC.corridor }}>{fmt(ibUA, 0)} uA</b></div>
         <div className={`rounded-lg px-3 py-2 text-center ${t.soft}`}>beta = <b style={{ color: accent }}>{fmt(beta, 0)}</b></div>
@@ -366,6 +366,8 @@ const RegionMatrix: React.FC<{ isDarkMode: boolean; accent: string }> = ({ isDar
   ];
   return (
     <Card isDarkMode={isDarkMode}>
+      <div className="-mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
+      <div className="min-w-[480px]">
       <div className="mb-3 grid grid-cols-4 gap-2 font-mono text-[10px] uppercase tracking-wide" style={{ color: accent }}>
         <span>{lang === 'hi' ? 'Region' : 'Region'}</span><span>EBJ bias</span><span>CBJ bias</span><span>{lang === 'hi' ? 'काम' : 'Application'}</span>
       </div>
@@ -377,6 +379,8 @@ const RegionMatrix: React.FC<{ isDarkMode: boolean; accent: string }> = ({ isDar
           <span className={t.sub}>{row.app}</span>
         </div>
       ))}
+      </div>
+      </div>
       <p className={`mt-3 text-center text-[12px] ${t.faint}`}>
         {lang === 'hi' ? 'दो junctions, चार में से तीन उपयोगी cases - mall के दरवाज़े steer / दोनों खुले / दोनों locked।' : 'Two junctions, three useful of four cases - mall doors steer / both open / both locked.'}
       </p>

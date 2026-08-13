@@ -41,7 +41,7 @@ const Lamp: React.FC<{ label: string; on: number; color: string; isDarkMode: boo
         style={{ background: on ? color : 'transparent', color: on ? '#000' : color, border: `3px solid ${color}${on ? '' : '55'}` }}>
         {on}
       </motion.div>
-      <span className={`max-w-[9rem] text-center font-mono text-[9px] uppercase leading-tight tracking-wide ${t.faint}`}>{label}</span>
+      <span className={`max-w-[6.5rem] sm:max-w-[9rem] text-center font-mono text-[9px] uppercase leading-tight tracking-wide ${t.faint}`}>{label}</span>
     </div>
   );
 };
@@ -78,7 +78,7 @@ const MemoryButton: React.FC<{ isDarkMode: boolean; accent: string }> = ({ isDar
           }}>
           <span className="font-mono text-sm">{pressing ? (lang === 'hi' ? 'दबा' : 'DOWN') : (lang === 'hi' ? 'दबाएँ' : 'PRESS')}</span>
         </button>
-        <div className="flex items-center gap-7">
+        <div className="flex items-center gap-4 sm:gap-7">
           <Lamp label={lang === 'hi' ? 'momentary · no memory' : 'momentary · no memory'} on={momentary} color={ACC.in} isDarkMode={isDarkMode} />
           <Lamp label={lang === 'hi' ? 'stored State · memory' : 'stored State · memory'} on={stored} color={ACC.hold} isDarkMode={isDarkMode} />
         </div>

@@ -98,7 +98,7 @@ export const LangToggle: React.FC<{ isDarkMode: boolean; accent: string }> = ({ 
         <button
           key={l}
           onClick={() => setLang(l)}
-          className="rounded-full px-2.5 py-1 text-[11px] font-black uppercase tracking-wide transition-colors"
+          className="rounded-full px-3 py-1.5 text-[11px] font-black uppercase tracking-wide transition-colors sm:px-2.5 sm:py-1"
           style={
             lang === l
               ? { background: accent, color: '#000' }
@@ -143,7 +143,7 @@ export const SceneShell: React.FC<{ children: React.ReactNode }> = ({ children }
 
 export const Card: React.FC<{ isDarkMode: boolean; className?: string; children: React.ReactNode; style?: React.CSSProperties }>
   = ({ isDarkMode, className = '', children, style }) => (
-  <div className={`p-6 rounded-3xl border ${tone(isDarkMode).card} ${className}`} style={style}>{children}</div>
+  <div className={`p-4 sm:p-6 rounded-3xl border ${tone(isDarkMode).card} ${className}`} style={style}>{children}</div>
 );
 
 /** A theory bullet list that follows the active language. */
@@ -157,7 +157,7 @@ export const Bullets: React.FC<{ isDarkMode: boolean; accent: string; en: string
       {items.map((it, i) => (
         <li key={i} className="flex items-start gap-3">
           <span className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full" style={{ background: accent }} />
-          <span className={`text-[16px] leading-relaxed ${t.sub}`}>{it}</span>
+          <span className={`min-w-0 break-words text-[16px] leading-relaxed ${t.sub}`}>{it}</span>
         </li>
       ))}
     </ul>
@@ -197,7 +197,7 @@ export const TruthTable: React.FC<{
           <thead>
             <tr>
               {headers.map((h, i) => (
-                <th key={i} className="px-4 py-3 text-[14px] font-black"
+                <th key={i} className="px-2.5 py-3 text-[13px] font-black sm:px-4 sm:text-[14px]"
                   style={{ color: accent, borderBottom: `2px solid ${accent}55` }}>{h}</th>
               ))}
             </tr>
@@ -207,7 +207,7 @@ export const TruthTable: React.FC<{
               <tr key={ri} style={r.highlight ? { background: `${accent}14` } : undefined}>
                 {r.cells.map((c, ci) => (
                   <td key={ci}
-                    className={`px-4 py-2.5 text-[16px] ${ci < headers.length - 2 ? t.faint : t.text} ${r.highlight ? 'font-black' : 'font-bold'}`}
+                    className={`px-2.5 py-2.5 text-[15px] sm:px-4 sm:text-[16px] ${ci < headers.length - 2 ? t.faint : t.text} ${r.highlight ? 'font-black' : 'font-bold'}`}
                     style={{ borderTop: isDarkMode ? '1px solid rgba(255,255,255,0.05)' : '1px solid rgba(0,0,0,0.05)' }}>
                     {c}
                   </td>
@@ -305,17 +305,18 @@ export const StepThrough: React.FC<{
   const step = steps[idx];
   if (!step) return null;
   return (
-    <div className={`rounded-3xl border p-6 ${t.card}`}>
+    <div className={`rounded-3xl border p-4 sm:p-6 ${t.card}`}>
+      {/* the visible bar stays 8px tall; the ::after pad gives each one a ~32px touch target */}
       <div className="mb-4 flex items-center gap-1.5">
         {steps.map((_, k) => (
           <button key={k} onClick={() => setI(k)} aria-label={`step ${k + 1}`}
-            className="h-2 flex-1 rounded-full transition-all"
+            className="relative h-2 flex-1 rounded-full transition-all after:absolute after:-inset-y-3 after:inset-x-0 after:content-['']"
             style={{ background: k <= idx ? accent : (isDarkMode ? '#1e293b' : '#e2e8f0') }} />
         ))}
       </div>
-      <div className="mb-4 flex items-center justify-between gap-3">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
         <span className="font-mono text-[11px] uppercase tracking-widest" style={{ color: accent }}>Step {idx + 1} / {n}</span>
-        <span className={`text-right text-sm font-black ${t.text}`}>{step.label}</span>
+        <span className={`text-sm font-black sm:text-right ${t.text}`}>{step.label}</span>
       </div>
       <AnimatePresence mode="wait">
         <motion.div key={idx} initial={{ opacity: 0, x: 18 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -18 }} transition={{ duration: 0.3 }}>
@@ -324,9 +325,9 @@ export const StepThrough: React.FC<{
       </AnimatePresence>
       <div className="mt-5 flex items-center justify-between">
         <button onClick={() => setI((v) => Math.max(0, v - 1))} disabled={idx === 0}
-          className={`rounded-xl border px-4 py-2 text-sm font-bold ${t.soft} ${idx === 0 ? 'opacity-30' : ''}`}>Prev</button>
+          className={`rounded-xl border px-4 py-2.5 text-sm font-bold sm:py-2 ${t.soft} ${idx === 0 ? 'opacity-30' : ''}`}>Prev</button>
         <button onClick={() => setI((v) => Math.min(n - 1, v + 1))}
-          className="rounded-xl px-5 py-2 text-sm font-black text-black active:scale-95"
+          className="rounded-xl px-5 py-2.5 text-sm font-black text-black active:scale-95 sm:py-2"
           style={{ background: accent, opacity: idx === n - 1 ? 0.45 : 1 }}>
           {idx === n - 1 ? 'Done' : 'Next step'}
         </button>
@@ -360,7 +361,7 @@ export const BinaryHero: React.FC<{ isDarkMode: boolean; accent: string; bitWidt
       onClick={() => (playing ? setPlaying(false) : setN((v) => (v + 1) % max))}
       onDoubleClick={() => setPlaying(true)}
       title="tap to pause / step · double-tap to play"
-      className={`relative mx-auto block w-full max-w-2xl overflow-hidden rounded-3xl border p-6 text-left ${tone(isDarkMode).card}`}
+      className={`relative mx-auto block w-full max-w-2xl overflow-hidden rounded-3xl border p-4 text-left sm:p-6 ${tone(isDarkMode).card}`}
     >
       {/* sweeping scanline */}
       <motion.span aria-hidden className="pointer-events-none absolute inset-y-0 w-28"
@@ -487,7 +488,7 @@ export const Prose: React.FC<{ isDarkMode: boolean; accent: string; en: string[]
   return (
     <div className="space-y-4">
       {items.map((p, i) => (
-        <p key={i} className={`text-[17px] leading-[1.85] ${i === 0 ? `font-medium ${t.text}` : t.sub}`}>
+        <p key={i} className={`break-words text-[17px] leading-[1.85] ${i === 0 ? `font-medium ${t.text}` : t.sub}`}>
           {i === 0 && <span className="mr-2 inline-block h-3.5 w-1 translate-y-0.5 rounded-full" style={{ background: accent }} />}
           {p}
         </p>
@@ -633,7 +634,7 @@ export const SubFlashCards: React.FC<{ isDarkMode: boolean; accent: string; card
               onClick={() => setFlipped((f) => ({ ...f, [i]: !f[i] }))}
             >
               {/* front */}
-              <div className={`absolute inset-0 flex flex-col overflow-hidden rounded-3xl border p-6 [backface-visibility:hidden] ${
+              <div className={`absolute inset-0 flex flex-col overflow-y-auto rounded-3xl border p-5 sm:p-6 [backface-visibility:hidden] ${
                 isDarkMode ? 'border-white/10 bg-[#10121d]' : 'border-slate-200 bg-white shadow-lg'
               }`} style={{ borderColor: `${accent}33` }}>
                 <div className={`font-mono text-[10px] uppercase tracking-widest ${t.faint}`}>
@@ -645,7 +646,7 @@ export const SubFlashCards: React.FC<{ isDarkMode: boolean; accent: string; card
                 </div>
               </div>
               {/* back */}
-              <div className={`absolute inset-0 flex flex-col overflow-y-auto rounded-3xl border p-6 [backface-visibility:hidden] [transform:rotateY(180deg)] ${
+              <div className={`absolute inset-0 flex flex-col overflow-y-auto rounded-3xl border p-5 sm:p-6 [backface-visibility:hidden] [transform:rotateY(180deg)] ${
                 isDarkMode ? 'border-white/10 bg-[#10121d]' : 'border-slate-200 bg-white shadow-lg'
               }`} style={{ borderColor: `${accent}66` }}>
                 <div className="font-mono text-[10px] uppercase tracking-widest" style={{ color: accent }}>
@@ -701,7 +702,7 @@ export const WorkbenchCTA: React.FC<{
   const { lang } = useSubLang();
   const t = tone(isDarkMode);
   return (
-    <div className="rounded-3xl border p-6" style={{ borderColor: `${accent}55`, background: `${accent}0d` }}>
+    <div className="rounded-3xl border p-4 sm:p-6" style={{ borderColor: `${accent}55`, background: `${accent}0d` }}>
       <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:text-left">
         <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-2xl" style={{ background: `${accent}1a`, color: accent }}>
           <Wrench size={26} />
@@ -717,7 +718,7 @@ export const WorkbenchCTA: React.FC<{
           </p>
         </div>
         <button onClick={() => navigate(`/workbench?tutorial=${tutorial}`)}
-          className="flex items-center gap-2 rounded-2xl px-6 py-3 font-black text-black transition-all active:scale-95"
+          className="flex w-full items-center justify-center gap-2 rounded-2xl px-6 py-3 font-black text-black transition-all active:scale-95 sm:w-auto"
           style={{ background: accent, boxShadow: `0 10px 30px ${accent}33` }}>
           {lang === 'hi' ? 'Workbench खोलें' : 'Open the workbench'} <ArrowRight size={18} />
         </button>

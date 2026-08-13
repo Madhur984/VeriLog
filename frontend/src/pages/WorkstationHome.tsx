@@ -84,12 +84,27 @@ const DigitalClock: React.FC<{ isLight: boolean }> = ({ isLight }) => {
 };
 
 /* ── Learning paths (canonical: lib/moduleHistory MODULE_LABELS) ── */
-interface PathDef { key: string; title: string; tagline: string; prefix: string; color: string; icon: LucideIcon; }
+/** A chapter inside a path, matched on the module's lesson number (dsd/28 -> 28). */
+interface PathGroup { id: string; label: string; blurb: string; from: number; to: number }
+interface PathDef { key: string; title: string; tagline: string; prefix: string; color: string; icon: LucideIcon; groups?: PathGroup[]; }
 const PATHS: PathDef[] = [
   { key: 'foundation', title: 'Foundation', tagline: 'Digital logic & Verilog — signals, gates, K-maps.', prefix: 'module/', color: '#2563EB', icon: Binary },
   { key: 'be', title: 'Basic Electronics', tagline: 'From the physics of control to transistors.', prefix: 'basic-electronics/', color: '#EA580C', icon: Zap },
-  { key: 'dsd', title: 'Digital System Design', tagline: 'Boolean logic through adders, subtractors and beyond.', prefix: 'dsd/', color: '#9333EA', icon: Boxes },
+  {
+    key: 'dsd', title: 'Digital System Design', tagline: 'Boolean logic through adders, subtractors and beyond.',
+    prefix: 'dsd/', color: '#9333EA', icon: Boxes,
+    // 42 modules in one flat list is unreadable, so DSD expands into three
+    // collapsible chapters instead and you open only the one you want.
+    groups: [
+      { id: 'basic',         label: 'Basic',         blurb: 'Binary, Boolean algebra, K-maps, gate-level realisation', from: 1,  to: 6  },
+      { id: 'combinational', label: 'Combinational', blurb: 'Adders, subtractors, MUX/DEMUX, decoders, encoders',       from: 7,  to: 27 },
+      { id: 'sequential',    label: 'Sequential',    blurb: 'Latches, flip-flops, registers, counters, state machines', from: 28, to: 42 },
+    ],
+  },
 ];
+
+/** Lesson number from a module id, e.g. 'dsd/28' -> 28. */
+const lessonNo = (id: string): number => parseInt(id.split('/')[1], 10) || 0;
 
 interface ModItem { id: string; label: string; path: string; }
 const modulesFor = (prefix: string): ModItem[] =>
@@ -107,6 +122,7 @@ const PathLane: React.FC<{
   onGo: (to: string) => void;
 }> = ({ path, index, opened, lastId, dim, faint, hairline, baseStroke, onGo }) => {
   const [expand, setExpand] = useState(false);
+  const [openGroup, setOpenGroup] = useState<string | null>(null);
   const modules = modulesFor(path.prefix);
   const openedCount = modules.filter((m) => opened.has(m.id)).length;
   const pct = modules.length ? Math.round((openedCount / modules.length) * 100) : 0;
@@ -176,23 +192,71 @@ const PathLane: React.FC<{
           </div>
 
           {expand && (
-            <div className="mt-3 grid grid-cols-1 gap-1.5 sm:grid-cols-2">
-              {modules.map((m, i) => (
-                <button
-                  key={m.id}
-                  onClick={() => onGo(m.path)}
-                  className="group flex items-center gap-2.5 rounded-md border px-3 py-2 text-left transition-transform hover:-translate-y-0.5"
-                  style={{ borderColor: hairline }}
-                >
-                  <span className="w-6 flex-shrink-0 font-mono text-[11px] font-bold tabular-nums" style={{ color: path.color }}>
-                    {String(i + 1).padStart(2, '0')}
-                  </span>
-                  <span className="flex-1 truncate text-[13px] font-medium">{m.label}</span>
-                  {opened.has(m.id) && <Check size={14} className="flex-shrink-0 text-emerald-500" />}
-                  <ArrowRight size={13} className="flex-shrink-0 opacity-0 transition-opacity group-hover:opacity-100" style={{ color: dim }} />
-                </button>
-              ))}
-            </div>
+            path.groups ? (
+              /* Chaptered path (DSD): one collapsible card per chapter. */
+              <div className="mt-3 flex flex-col gap-2">
+                {path.groups.map((g) => {
+                  const inGroup = modules.filter((m) => lessonNo(m.id) >= g.from && lessonNo(m.id) <= g.to);
+                  const gOpened = inGroup.filter((m) => opened.has(m.id)).length;
+                  const isOpen = openGroup === g.id;
+                  return (
+                    <div key={g.id} className="rounded-md border overflow-hidden" style={{ borderColor: hairline }}>
+                      <button
+                        onClick={() => setOpenGroup(isOpen ? null : g.id)}
+                        aria-expanded={isOpen}
+                        className="flex w-full items-center gap-3 px-3 py-2.5 text-left transition-colors hover:bg-[var(--lane)]"
+                      >
+                        <span className="flex-1 min-w-0">
+                          <span className="block text-[13.5px] font-bold">{g.label}</span>
+                          <span className="block truncate text-[11.5px]" style={{ color: dim }}>{g.blurb}</span>
+                        </span>
+                        <span className="flex-shrink-0 font-mono text-[10.5px] font-semibold tabular-nums" style={{ color: faint }}>
+                          {gOpened}/{inGroup.length}
+                        </span>
+                        <ChevronDown size={15} className={`flex-shrink-0 transition-transform ${isOpen ? 'rotate-180' : ''}`} style={{ color: dim }} />
+                      </button>
+                      {isOpen && (
+                        <div className="grid grid-cols-1 gap-1.5 px-2 pb-2 sm:grid-cols-2">
+                          {inGroup.map((m) => (
+                            <button
+                              key={m.id}
+                              onClick={() => onGo(m.path)}
+                              className="group flex items-center gap-2.5 rounded-md border px-3 py-2 text-left transition-transform hover:-translate-y-0.5"
+                              style={{ borderColor: hairline }}
+                            >
+                              <span className="w-6 flex-shrink-0 font-mono text-[11px] font-bold tabular-nums" style={{ color: path.color }}>
+                                {String(lessonNo(m.id)).padStart(2, '0')}
+                              </span>
+                              <span className="flex-1 truncate text-[13px] font-medium">{m.label}</span>
+                              {opened.has(m.id) && <Check size={14} className="flex-shrink-0 text-emerald-500" />}
+                              <ArrowRight size={13} className="flex-shrink-0 opacity-0 transition-opacity group-hover:opacity-100" style={{ color: dim }} />
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="mt-3 grid grid-cols-1 gap-1.5 sm:grid-cols-2">
+                {modules.map((m, i) => (
+                  <button
+                    key={m.id}
+                    onClick={() => onGo(m.path)}
+                    className="group flex items-center gap-2.5 rounded-md border px-3 py-2 text-left transition-transform hover:-translate-y-0.5"
+                    style={{ borderColor: hairline }}
+                  >
+                    <span className="w-6 flex-shrink-0 font-mono text-[11px] font-bold tabular-nums" style={{ color: path.color }}>
+                      {String(i + 1).padStart(2, '0')}
+                    </span>
+                    <span className="flex-1 truncate text-[13px] font-medium">{m.label}</span>
+                    {opened.has(m.id) && <Check size={14} className="flex-shrink-0 text-emerald-500" />}
+                    <ArrowRight size={13} className="flex-shrink-0 opacity-0 transition-opacity group-hover:opacity-100" style={{ color: dim }} />
+                  </button>
+                ))}
+              </div>
+            )
           )}
         </div>
       </div>

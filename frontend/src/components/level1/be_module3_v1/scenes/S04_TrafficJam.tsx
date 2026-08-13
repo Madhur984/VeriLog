@@ -39,7 +39,7 @@ export const S04_TrafficJam: React.FC<Props> = ({ isActive, isDarkMode }) => {
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.15 }}
-        className={`p-8 rounded-3xl border ${cardBg}`}
+        className={`p-5 md:p-8 rounded-3xl border ${cardBg}`}
       >
         <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-amber-400 mb-5">
           Three-step mechanism · what physics is doing
@@ -119,7 +119,7 @@ export const S04_TrafficJam: React.FC<Props> = ({ isActive, isDarkMode }) => {
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.25 }}
-        className={`p-8 rounded-3xl border-2 border-amber-400/60 bg-amber-500/10`}
+        className={`p-5 md:p-8 rounded-3xl border-2 border-amber-400/60 bg-amber-500/10`}
       >
         <div className="flex items-center gap-3 mb-3">
           <Zap className="text-amber-300" size={18} />

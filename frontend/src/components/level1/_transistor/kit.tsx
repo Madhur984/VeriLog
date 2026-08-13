@@ -46,11 +46,11 @@ export const AnalogHero: React.FC<{ isDarkMode: boolean; accent: string; kind?: 
   = ({ isDarkMode, accent, kind = 'npn' }) => {
   const t = tone(isDarkMode);
   return (
-    <div className={`relative mx-auto w-full max-w-2xl overflow-hidden rounded-3xl border p-6 ${t.card}`}>
+    <div className={`relative mx-auto w-full max-w-2xl overflow-hidden rounded-3xl border p-4 sm:p-6 ${t.card}`}>
       <motion.span aria-hidden className="pointer-events-none absolute inset-y-0 w-28"
         style={{ background: `linear-gradient(90deg, transparent, ${accent}22, transparent)` }}
         animate={{ x: ['-30%', '130%'] }} transition={{ duration: 3, repeat: Infinity, ease: 'linear' }} />
-      <div className="relative grid grid-cols-[1fr_auto_1.4fr] items-center gap-3">
+      <div className="relative grid grid-cols-[1fr_auto_1.4fr] items-center gap-2 sm:gap-3">
         {/* input: small signal */}
         <div className="flex flex-col items-center gap-1">
           <svg viewBox="0 0 120 60" className="w-full max-w-[130px]">
@@ -184,7 +184,7 @@ export const Prose: React.FC<{ isDarkMode: boolean; accent: string; en: string[]
   return (
     <div className="space-y-4">
       {items.map((p, i) => (
-        <p key={i} className={`text-[17px] leading-[1.85] ${i === 0 ? `font-medium ${t.text}` : t.sub}`}>
+        <p key={i} className={`break-words text-[17px] leading-[1.85] ${i === 0 ? `font-medium ${t.text}` : t.sub}`}>
           {i === 0 && <span className="mr-2 inline-block h-3.5 w-1 translate-y-0.5 rounded-full" style={{ background: accent }} />}
           {p}
         </p>

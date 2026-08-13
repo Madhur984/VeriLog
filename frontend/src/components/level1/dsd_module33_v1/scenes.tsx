@@ -732,8 +732,8 @@ const MatrixExplorer: React.FC<{ isDarkMode: boolean; accent: string }> = ({ isD
         <div className="mb-3 font-mono text-[11px] uppercase tracking-[0.3em]" style={{ color: accent }}>
           {lang === 'hi' ? 'universal matrix · cell tap कीजिए' : 'universal matrix · tap a cell'}
         </div>
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse text-center font-mono">
+        <div className="-mx-2 overflow-x-auto px-2 sm:mx-0 sm:px-0">
+          <table className="w-full min-w-[420px] border-collapse text-center font-mono">
             <thead>
               <tr>
                 <th className="px-2 py-2 text-[11px]" style={{ color: accent, borderBottom: `2px solid ${accent}55` }}>

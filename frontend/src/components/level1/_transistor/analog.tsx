@@ -61,7 +61,7 @@ export const TransistorSymbol: React.FC<{
   if (kind === 'nmos' || kind === 'pmos') {
     const p = kind === 'pmos';
     return (
-      <svg viewBox="0 0 120 120" width={size} height={size}>
+      <svg viewBox="0 0 120 120" width={size} height={size} className="h-auto max-w-full">
         {/* gate */}
         <line x1="20" y1="60" x2="48" y2="60" stroke={ink} strokeWidth="3" />
         <line x1="48" y1="34" x2="48" y2="86" stroke={ink} strokeWidth="3" />
@@ -83,7 +83,7 @@ export const TransistorSymbol: React.FC<{
 
   if (kind === 'njfet') {
     return (
-      <svg viewBox="0 0 120 120" width={size} height={size}>
+      <svg viewBox="0 0 120 120" width={size} height={size} className="h-auto max-w-full">
         {/* channel bar */}
         <line x1="56" y1="30" x2="56" y2="90" stroke={accent} strokeWidth="4" />
         {/* drain/source */}
@@ -101,7 +101,7 @@ export const TransistorSymbol: React.FC<{
   // BJT npn / pnp
   const npn = kind === 'npn';
   return (
-    <svg viewBox="0 0 120 120" width={size} height={size}>
+    <svg viewBox="0 0 120 120" width={size} height={size} className="h-auto max-w-full">
       {/* base bar + lead */}
       <line x1="20" y1="60" x2="50" y2="60" stroke={ink} strokeWidth="3" />
       <line x1="50" y1="40" x2="50" y2="80" stroke={ink} strokeWidth="4" />
@@ -145,7 +145,7 @@ export const LoadLineLab: React.FC<{ isDarkMode: boolean; accent: string }> = ({
   const Y = (ic: number) => H - pb - (ic / icSat) * (H - pt - pb);
 
   return (
-    <div className={`relative rounded-3xl border p-5 ${t.card}`}>
+    <div className={`relative rounded-3xl border p-4 pt-12 sm:p-5 sm:pt-5 ${t.card}`}>
       <TryItYourself corner />
       <div className="mb-3 font-mono text-[11px] uppercase tracking-[0.3em]" style={{ color: accent }}>
         {lang === 'hi' ? 'DC load line + Q-point' : 'DC load line + Q-point'}
@@ -219,7 +219,7 @@ export const OutputCurves: React.FC<{ isDarkMode: boolean; accent: string; beta?
     return pts.join(' ');
   };
   return (
-    <div className={`rounded-3xl border p-5 ${t.card}`}>
+    <div className={`rounded-3xl border p-4 sm:p-5 ${t.card}`}>
       <div className="mb-3 font-mono text-[11px] uppercase tracking-[0.3em]" style={{ color: accent }}>
         {lang === 'hi' ? 'Output characteristics (Ic vs Vce)' : 'Output characteristics (Ic vs Vce)'}
       </div>
@@ -270,7 +270,7 @@ export const SmallSignalGain: React.FC<{ isDarkMode: boolean; accent: string }> 
   };
 
   return (
-    <div className={`relative rounded-3xl border p-5 ${t.card}`}>
+    <div className={`relative rounded-3xl border p-4 pt-12 sm:p-5 sm:pt-5 ${t.card}`}>
       <TryItYourself corner />
       <div className="mb-3 font-mono text-[11px] uppercase tracking-[0.3em]" style={{ color: accent }}>
         {lang === 'hi' ? 're-model voltage gain' : 're-model voltage gain'}
@@ -324,7 +324,7 @@ export const MosfetChannel: React.FC<{ isDarkMode: boolean; accent: string }> = 
   const chan = Math.min(1, over / 3);           // 0..1 channel thickness
 
   return (
-    <div className={`relative rounded-3xl border p-5 ${t.card}`}>
+    <div className={`relative rounded-3xl border p-4 pt-12 sm:p-5 sm:pt-5 ${t.card}`}>
       <TryItYourself corner />
       <div className="mb-3 font-mono text-[11px] uppercase tracking-[0.3em]" style={{ color: accent }}>
         {lang === 'hi' ? 'Channel कैसे बनता है' : 'Forming the channel'}
@@ -409,7 +409,7 @@ export const BiasStability: React.FC<{ isDarkMode: boolean; accent: string }> = 
   );
 
   return (
-    <div className={`relative rounded-3xl border p-5 ${t.card}`}>
+    <div className={`relative rounded-3xl border p-4 pt-12 sm:p-5 sm:pt-5 ${t.card}`}>
       <TryItYourself corner />
       <div className="mb-3 font-mono text-[11px] uppercase tracking-[0.3em]" style={{ color: accent }}>
         {lang === 'hi' ? 'β बदलिए - कौन सा bias टिकता है?' : 'Sweep β - which bias holds?'}
@@ -445,7 +445,7 @@ export const JfetTransfer: React.FC<{ isDarkMode: boolean; accent: string }> = (
   for (let v = Vp; v <= 0; v += 0.1) pts.push(`${X(v)},${Y(Idss * (1 - v / Vp) ** 2)}`);
 
   return (
-    <div className={`relative rounded-3xl border p-5 ${t.card}`}>
+    <div className={`relative rounded-3xl border p-4 pt-12 sm:p-5 sm:pt-5 ${t.card}`}>
       <TryItYourself corner />
       <div className="mb-3 font-mono text-[11px] uppercase tracking-[0.3em]" style={{ color: accent }}>
         {lang === 'hi' ? 'JFET transfer curve (Shockley)' : 'JFET transfer curve (Shockley)'}

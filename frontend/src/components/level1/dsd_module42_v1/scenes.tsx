@@ -159,10 +159,10 @@ const TwoPathGlitchViz: React.FC<{ isDarkMode: boolean; accent: string }> = ({ i
           <div className="flex items-center gap-2 font-mono text-[11px]">
             <span className={t.faint as string}>{lang === 'hi' ? 'slow path delay' : 'slow path delay'}</span>
             <button onClick={() => setSlowDelay((v) => Math.max(fastDelay, v - 1))}
-              className="flex h-7 w-7 items-center justify-center rounded-lg border font-black active:scale-90" style={{ borderColor: `${accent}55`, color: accent }}><Minus size={13} /></button>
+              className="flex h-10 w-10 items-center justify-center rounded-lg border font-black active:scale-90 sm:h-7 sm:w-7" style={{ borderColor: `${accent}55`, color: accent }}><Minus size={13} /></button>
             <span className="w-5 text-center font-black" style={{ color: accent }}>{slowDelay}</span>
             <button onClick={() => setSlowDelay((v) => Math.min(4, v + 1))}
-              className="flex h-7 w-7 items-center justify-center rounded-lg border font-black active:scale-90" style={{ borderColor: `${accent}55`, color: accent }}><Plus size={13} /></button>
+              className="flex h-10 w-10 items-center justify-center rounded-lg border font-black active:scale-90 sm:h-7 sm:w-7" style={{ borderColor: `${accent}55`, color: accent }}><Plus size={13} /></button>
           </div>
         </div>
 
@@ -214,14 +214,15 @@ const Static1Lab: React.FC<{ isDarkMode: boolean; accent: string }> = ({ isDarkM
         <div className="mb-3 text-center font-mono text-[11px] uppercase tracking-[0.3em]" style={{ color: accent }}>
           K-map · Y = A&apos;C + AB{withBC ? ' + BC' : ''}
         </div>
+        <div className="-mx-3 overflow-x-auto px-3 sm:mx-0 sm:px-0">
         <div className="mx-auto w-max font-mono text-[11px]">
           <div className="flex items-center">
-            <div className="w-14" />
-            {KMAP_LABELS.map((l) => <div key={l} className={`w-16 text-center ${t.faint}`}>BC={l}</div>)}
+            <div className="w-14 shrink-0" />
+            {KMAP_LABELS.map((l) => <div key={l} className={`w-16 shrink-0 text-center ${t.faint}`}>BC={l}</div>)}
           </div>
           {[0, 1].map((a) => (
             <div key={a} className="flex items-center">
-              <div className={`w-14 pr-2 text-right ${t.faint}`}>A={a}</div>
+              <div className={`w-14 shrink-0 pr-2 text-right ${t.faint}`}>A={a}</div>
               {KMAP_COLS.map(([b, c], ci) => {
                 const val = static1F(a, b, c);
                 const inAC = a === 0 && c === 1;
@@ -230,7 +231,7 @@ const Static1Lab: React.FC<{ isDarkMode: boolean; accent: string }> = ({ isDarkM
                 const border = inBC ? ACC.good : inAC ? ACC.I : inAB ? ACC.II : (isDarkMode ? '#334155' : '#cbd5e1');
                 const label = inBC ? 'BC' : inAC ? "A'C" : inAB ? 'AB' : '';
                 return (
-                  <div key={ci} className="w-16 p-1">
+                  <div key={ci} className="w-16 shrink-0 p-1">
                     <div className="flex h-12 flex-col items-center justify-center rounded-lg border-2 font-black"
                       style={{ borderColor: border, background: val ? `${border}22` : 'transparent', color: val ? border : (t.faint as string) }}>
                       <span>{val}</span>
@@ -241,6 +242,7 @@ const Static1Lab: React.FC<{ isDarkMode: boolean; accent: string }> = ({ isDarkM
               })}
             </div>
           ))}
+        </div>
         </div>
         <p className={`mt-3 text-center text-[12px] ${t.sub}`}>
           {withBC
@@ -292,14 +294,15 @@ const Static0Lab: React.FC<{ isDarkMode: boolean; accent: string }> = ({ isDarkM
         <div className="mb-3 text-center font-mono text-[11px] uppercase tracking-[0.3em]" style={{ color: accent }}>
           K-map (0s) · Y = (A+B&apos;)(B+C){withAC ? '(A+C)' : ''}
         </div>
+        <div className="-mx-3 overflow-x-auto px-3 sm:mx-0 sm:px-0">
         <div className="mx-auto w-max font-mono text-[11px]">
           <div className="flex items-center">
-            <div className="w-14" />
-            {KMAP_LABELS.map((l) => <div key={l} className={`w-16 text-center ${t.faint}`}>BC={l}</div>)}
+            <div className="w-14 shrink-0" />
+            {KMAP_LABELS.map((l) => <div key={l} className={`w-16 shrink-0 text-center ${t.faint}`}>BC={l}</div>)}
           </div>
           {[0, 1].map((a) => (
             <div key={a} className="flex items-center">
-              <div className={`w-14 pr-2 text-right ${t.faint}`}>A={a}</div>
+              <div className={`w-14 shrink-0 pr-2 text-right ${t.faint}`}>A={a}</div>
               {KMAP_COLS.map(([b, c], ci) => {
                 const val = static0F(a, b, c);
                 const inABp = a === 0 && b === 1;
@@ -308,7 +311,7 @@ const Static0Lab: React.FC<{ isDarkMode: boolean; accent: string }> = ({ isDarkM
                 const border = inAC0 ? ACC.good : inABp ? ACC.I : inBC0 ? ACC.II : (isDarkMode ? '#334155' : '#cbd5e1');
                 const label = inAC0 ? 'A+C' : inABp ? "A+B'" : inBC0 ? 'B+C' : '';
                 return (
-                  <div key={ci} className="w-16 p-1">
+                  <div key={ci} className="w-16 shrink-0 p-1">
                     <div className="flex h-12 flex-col items-center justify-center rounded-lg border-2 font-black"
                       style={{ borderColor: border, background: val === 0 ? `${border}22` : 'transparent', color: val === 0 ? border : (t.faint as string) }}>
                       <span>{val}</span>
@@ -319,6 +322,7 @@ const Static0Lab: React.FC<{ isDarkMode: boolean; accent: string }> = ({ isDarkM
               })}
             </div>
           ))}
+        </div>
         </div>
         <p className={`mt-3 text-center text-[12px] ${t.sub}`}>
           {withAC

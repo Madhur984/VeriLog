@@ -223,7 +223,7 @@ export const S10_Quiz: React.FC<Props> = ({ isActive, isDarkMode }) => {
           </div>
         </div>
 
-        <div className="flex-1 mx-6 min-w-[140px] max-w-[420px]">
+        <div className="flex-1 min-w-[140px] max-w-[420px] md:mx-6">
           <div className="h-2 w-full rounded-full overflow-hidden" style={{ background: isDarkMode ? '#0f172a' : '#e2e8f0' }}>
             <motion.div
               animate={{ width: `${(score.answered / QUESTIONS.length) * 100}%`, backgroundColor: allDone ? verdict.tone : '#facc15' }}
@@ -255,7 +255,7 @@ export const S10_Quiz: React.FC<Props> = ({ isActive, isDarkMode }) => {
               initial={{ opacity: 0, y: 14 }}
               animate={isActive ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: 0.2 + qi * 0.04 }}
-              className={`rounded-3xl border ${cardBg} p-7 space-y-4`}
+              className={`rounded-3xl border ${cardBg} p-5 md:p-7 space-y-4`}
               style={{
                 borderColor: locked
                   ? (state.correct ? '#22c55e55' : '#ef444455')
@@ -361,7 +361,7 @@ export const S10_Quiz: React.FC<Props> = ({ isActive, isDarkMode }) => {
         <motion.div
           initial={{ opacity: 0, scale: 0.96 }}
           animate={{ opacity: 1, scale: 1 }}
-          className={`p-8 rounded-3xl border ${cardBg} text-center space-y-3 relative overflow-hidden`}
+          className={`p-5 md:p-8 rounded-3xl border ${cardBg} text-center space-y-3 relative overflow-hidden`}
           style={{
             background: `linear-gradient(135deg, ${verdict.tone}18, transparent 60%)`,
             borderColor: `${verdict.tone}55`,

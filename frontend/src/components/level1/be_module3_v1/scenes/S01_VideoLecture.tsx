@@ -94,7 +94,7 @@ export const S01_VideoLecture: React.FC<Props> = ({ isActive, isDarkMode }) => {
                 <button
                   key={i}
                   onClick={() => seek(c.t)}
-                  className={`px-3 py-1.5 rounded-full text-[11px] font-mono font-bold transition-all ${
+                  className={`min-h-[40px] sm:min-h-0 px-3 py-1.5 rounded-full text-[11px] font-mono font-bold transition-all ${
                     activeChapter === i
                       ? 'bg-sky-400 text-black border border-sky-300 shadow-lg shadow-sky-500/30'
                       : isDarkMode

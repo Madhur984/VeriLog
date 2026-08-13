@@ -161,7 +161,7 @@ export const CommandPalette: React.FC<CommandPaletteProps & { navigate: (path: s
 
                     {/* Palette */}
                     <motion.div
-                        className="fixed top-[20vh] left-1/2 z-50 w-full max-w-[580px] -translate-x-1/2 rounded-2xl border border-white/[0.1] bg-[#0d1118] shadow-[0_24px_80px_rgba(0,0,0,0.8)] overflow-hidden"
+                        className="fixed top-[10vh] left-1/2 z-50 w-[min(92vw,580px)] -translate-x-1/2 rounded-2xl border border-white/[0.1] bg-[#0d1118] shadow-[0_24px_80px_rgba(0,0,0,0.8)] overflow-hidden sm:top-[20vh]"
                         initial={{ opacity: 0, scale: 0.95, y: -12 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95, y: -8 }}
@@ -179,14 +179,14 @@ export const CommandPalette: React.FC<CommandPaletteProps & { navigate: (path: s
                             />
                             <button
                                 onClick={onClose}
-                                className="shrink-0 p-1 rounded-md hover:bg-white/[0.06] text-slate-600 hover:text-slate-300 transition-colors cursor-pointer"
+                                className="shrink-0 p-2.5 sm:p-1 rounded-md hover:bg-white/[0.06] text-slate-600 hover:text-slate-300 transition-colors cursor-pointer"
                             >
                                 <X className="w-3.5 h-3.5" />
                             </button>
                         </div>
 
                         {/* Results */}
-                        <div ref={listRef} className="max-h-[360px] overflow-y-auto overscroll-contain py-2">
+                        <div ref={listRef} className="max-h-[min(360px,52vh)] overflow-y-auto overscroll-contain py-2">
                             {Object.entries(groups).length === 0 ? (
                                 <div className="px-4 py-8 text-center text-slate-600 text-[13px]">No results for "{query}"</div>
                             ) : (

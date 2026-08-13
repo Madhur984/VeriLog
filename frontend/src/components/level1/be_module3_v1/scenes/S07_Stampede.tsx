@@ -58,7 +58,7 @@ export const S07_Stampede: React.FC<Props> = ({ isActive, isDarkMode }) => {
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.2 }}
-        className={`p-8 rounded-3xl border-2 border-rose-400/60 bg-rose-500/10 space-y-4`}
+        className={`p-5 md:p-8 rounded-3xl border-2 border-rose-400/60 bg-rose-500/10 space-y-4`}
       >
         <div className="font-mono text-[10px] uppercase tracking-widest text-rose-300">Two breakdown flavours</div>
         <div className="grid md:grid-cols-2 gap-4">

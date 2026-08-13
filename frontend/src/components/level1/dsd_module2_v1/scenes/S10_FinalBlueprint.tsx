@@ -59,7 +59,7 @@ export const S10_FinalBlueprint: React.FC<Props> = ({ isActive, isDarkMode }) =>
           </motion.div>
 
           {/* Grid with overlapping wings */}
-          <div className="grid grid-cols-[80px_repeat(4,minmax(0,1fr))] gap-1.5 items-end mb-1">
+          <div className="grid grid-cols-[48px_repeat(4,minmax(0,1fr))] sm:grid-cols-[80px_repeat(4,minmax(0,1fr))] gap-1.5 items-end mb-1">
             <div className="text-right">
               <div className="font-mono text-[10px] uppercase tracking-widest text-cyan-300/80">A,B ↓</div>
               <div className="font-mono text-[10px] uppercase tracking-widest text-cyan-300/80">C,D →</div>
@@ -70,7 +70,7 @@ export const S10_FinalBlueprint: React.FC<Props> = ({ isActive, isDarkMode }) =>
           </div>
           <div className="space-y-1.5">
             {['00', '01', '11', '10'].map((ab, r) => (
-              <div key={r} className="grid grid-cols-[80px_repeat(4,minmax(0,1fr))] gap-1.5 items-stretch">
+              <div key={r} className="grid grid-cols-[48px_repeat(4,minmax(0,1fr))] sm:grid-cols-[80px_repeat(4,minmax(0,1fr))] gap-1.5 items-stretch">
                 <div className="flex items-center justify-end font-mono text-sm text-cyan-300/90">{ab}</div>
                 {GRID[r].map((m, c) => {
                   const cellWings = wingsForCell(m);

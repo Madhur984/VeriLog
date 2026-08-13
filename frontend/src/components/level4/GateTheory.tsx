@@ -24,12 +24,12 @@ export const GateIntro: React.FC<{isActive: boolean, isDarkMode: boolean}> = ({ 
                 </p>
             </section>
 
-            <div className={`p-10 rounded-[2rem] border ${bgCard}`}>
+            <div className={`p-5 sm:p-10 rounded-[2rem] border ${bgCard}`}>
                 <h3 className={`font-mono text-xs uppercase tracking-widest mb-6 ${subTextColor}`}>The Absolute Simplest Explanation</h3>
                 <p className={`text-base leading-relaxed opacity-80 ${textColor} mb-6`}>
                     You don’t need an electronics background. Just imagine you’re making <strong>decisions</strong> based on yes/no questions. That’s what logic gates do - they take one or more <strong>yes/no (1/0) inputs</strong> and produce a <strong>yes/no output</strong> following a fixed rule.
                 </p>
-                <div className={`p-6 rounded-2xl ${isDarkMode ? 'bg-black/40' : 'bg-gray-50 border border-gray-100'}`}>
+                <div className={`p-4 sm:p-6 rounded-2xl ${isDarkMode ? 'bg-black/40' : 'bg-gray-50 border border-gray-100'}`}>
                     <p className={`text-sm leading-relaxed opacity-70 ${textColor}`}>
                         Think of them as tiny <strong>decision‑making machines</strong> inside every computer, phone, and digital watch. They are the reason your calculator can add numbers, your phone can lock with a passcode, and your game console knows when you pressed a button.
                     </p>
@@ -37,17 +37,17 @@ export const GateIntro: React.FC<{isActive: boolean, isDarkMode: boolean}> = ({ 
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className={`p-6 rounded-3xl border ${bgCard}`}>
+                <div className={`p-5 sm:p-6 rounded-3xl border ${bgCard}`}>
                     <Zap className="text-emerald-500 mb-4" size={24} />
                     <h4 className={`font-bold mb-2 ${textColor}`}>Basic Gates</h4>
                     <p className={`text-sm opacity-60 ${textColor}`}>AND, OR, NOT. The 'ABC' of digital logic.</p>
                 </div>
-                <div className={`p-6 rounded-3xl border ${bgCard}`}>
+                <div className={`p-5 sm:p-6 rounded-3xl border ${bgCard}`}>
                     <Wrench className="text-amber-500 mb-4" size={24} />
                     <h4 className={`font-bold mb-2 ${textColor}`}>Universal Gates</h4>
                     <p className={`text-sm opacity-60 ${textColor}`}>NAND, NOR. Can build ANY computer chip.</p>
                 </div>
-                <div className={`p-6 rounded-3xl border ${bgCard}`}>
+                <div className={`p-5 sm:p-6 rounded-3xl border ${bgCard}`}>
                     <Target className="text-rose-500 mb-4" size={24} />
                     <h4 className={`font-bold mb-2 ${textColor}`}>Exclusive Gates</h4>
                     <p className={`text-sm opacity-60 ${textColor}`}>XOR, XNOR. The difference & equality checkers.</p>
@@ -206,7 +206,7 @@ export const GateDetail: React.FC<{ gateId: string, isActive: boolean, isDarkMod
                 >
                     {GateContent?.category || 'Logic Gate'}
                 </motion.span>
-                <div className="flex items-center justify-center gap-6">
+                <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
                     <h2 className={`text-3xl md:text-5xl font-black ${textColor}`}>{gate.id} Gate</h2>
                     <div className="w-16 h-16 rounded-2xl flex items-center justify-center border shadow-lg"
                          style={{ background: gate.accentBg, borderColor: `${gate.color}40` }}>
@@ -219,7 +219,7 @@ export const GateDetail: React.FC<{ gateId: string, isActive: boolean, isDarkMod
             </section>
 
             {/* Interactive Visual Builder (The "Grind" tool) */}
-            <div className={`p-8 md:p-12 rounded-[2.5rem] border ${bgCard} flex flex-col md:flex-row items-center justify-between gap-12`}>
+            <div className={`p-5 sm:p-8 md:p-12 rounded-[2.5rem] border ${bgCard} flex flex-col md:flex-row items-center justify-between gap-8 md:gap-12`}>
                 <div className="flex-1 space-y-6 w-full">
                     <h3 className={`font-mono text-xs uppercase tracking-widest flex items-center gap-2 ${subTextColor}`}>
                         <Zap size={16} /> Interactive logic runner
@@ -227,7 +227,7 @@ export const GateDetail: React.FC<{ gateId: string, isActive: boolean, isDarkMod
                     <p className={`text-sm opacity-70 leading-relaxed ${textColor}`}>
                         Click the inputs below to toggle their states between 0 (OFF) and 1 (ON). Watch how the output reacts based on the <strong>{gate.id}</strong> gate's rule!
                     </p>
-                    <div className="flex flex-col gap-4 max-w-[200px] mt-8">
+                    <div className="flex flex-col gap-4 w-full max-w-[200px] mt-8">
                         <div className="flex items-center justify-between">
                             <span className={`font-mono font-bold ${textColor}`}>Input A:</span>
                             <motion.button 
@@ -252,7 +252,7 @@ export const GateDetail: React.FC<{ gateId: string, isActive: boolean, isDarkMod
                 </div>
 
                 {/* Output Display */}
-                <div className={`flex flex-col items-center justify-center p-12 rounded-[2rem] border min-w-[280px] w-full md:w-auto transition-all`}
+                <div className={`flex flex-col items-center justify-center p-8 sm:p-12 rounded-[2rem] border min-w-0 sm:min-w-[280px] w-full md:w-auto transition-all`}
                      style={{
                          backgroundColor: output ? `${gate.color}15` : (isDarkMode ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.02)'),
                          borderColor: output ? gate.color : (isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'),
@@ -263,7 +263,7 @@ export const GateDetail: React.FC<{ gateId: string, isActive: boolean, isDarkMod
                                 : <LightbulbOff size={80} className="opacity-20 flex" style={{ color: textColor }} />}
                     </div>
                     <div className={`font-mono text-xs uppercase tracking-widest mb-4 opacity-60 ${textColor}`}>Output Y</div>
-                    <div className="text-7xl font-black" style={{ color: output ? gate.color : (isDarkMode ? '#4b5563' : '#9ca3af') }}>
+                    <div className="text-6xl sm:text-7xl font-black" style={{ color: output ? gate.color : (isDarkMode ? '#4b5563' : '#9ca3af') }}>
                         {output}
                     </div>
                 </div>
@@ -273,7 +273,7 @@ export const GateDetail: React.FC<{ gateId: string, isActive: boolean, isDarkMod
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
                 <div className="space-y-8">
                     {/* Layman Example */}
-                    <div className={`p-8 rounded-3xl border ${bgCard}`}>
+                    <div className={`p-5 sm:p-8 rounded-3xl border ${bgCard}`}>
                         <h4 className={`font-bold mb-4 flex items-center gap-3 ${textColor}`}>
                             <Brain size={20} className="text-emerald-500" />
                             Real Life Example
@@ -284,9 +284,9 @@ export const GateDetail: React.FC<{ gateId: string, isActive: boolean, isDarkMod
                     </div>
 
                     {/* Official Truth Table linked to State */}
-                    <div className={`p-8 rounded-3xl border ${bgCard}`}>
-                        <h4 className={`font-black uppercase tracking-widest text-sm mb-6 flex justify-between items-center ${textColor}`}>
-                            Truth Table <span style={{ color: gate.color, textTransform: 'none' }} className="font-mono text-xs px-3 py-1 rounded bg-black/20">{gate.equation}</span>
+                    <div className={`p-5 sm:p-8 rounded-3xl border ${bgCard}`}>
+                        <h4 className={`font-black uppercase tracking-widest text-sm mb-6 flex flex-wrap gap-2 justify-between items-center ${textColor}`}>
+                            Truth Table <span style={{ color: gate.color, textTransform: 'none' }} className="font-mono text-xs px-3 py-1 rounded bg-black/20 break-all">{gate.equation}</span>
                         </h4>
                         <div className={`rounded-xl overflow-hidden font-mono text-sm border ${isDarkMode ? 'border-white/10' : 'border-gray-200'}`}>
                             <div className={`grid py-3 border-b ${isDarkMode ? 'bg-white/5 border-white/10' : 'bg-gray-50 border-gray-200'}`} style={{ gridTemplateColumns: gate.inputs === 2 ? '1fr 1fr 1fr' : '1fr 1fr' }}>
@@ -309,7 +309,7 @@ export const GateDetail: React.FC<{ gateId: string, isActive: boolean, isDarkMod
                 </div>
 
                 {/* Formal Theory Box */}
-                <div className={`p-8 rounded-3xl border ${bgCard} sticky top-24`}>
+                <div className={`p-5 sm:p-8 rounded-3xl border ${bgCard} lg:sticky lg:top-24`}>
                     <h4 className={`font-black uppercase tracking-widest text-sm mb-6 flex items-center gap-2 ${textColor}`}>
                         <Wrench size={18} className="text-amber-500" />
                         Formal Properties
@@ -317,7 +317,7 @@ export const GateDetail: React.FC<{ gateId: string, isActive: boolean, isDarkMod
                     <div className={`text-sm leading-relaxed opacity-80 ${textColor} mb-8 space-y-4`}>
                         {GateContent?.desc}
                     </div>
-                    <div className={`font-mono text-xs p-5 rounded-2xl leading-loose ${isDarkMode ? 'bg-black/40 shadow-inner' : 'bg-gray-50 border border-gray-100'}`}>
+                    <div className={`font-mono text-xs p-4 sm:p-5 rounded-2xl leading-loose break-words ${isDarkMode ? 'bg-black/40 shadow-inner' : 'bg-gray-50 border border-gray-100'}`}>
                         {GateContent?.properties?.map((p, i) => (
                             <div key={i} className={`flex items-start gap-3 mb-2 last:mb-0 ${textColor}`}>
                                 <span className="text-sky-400 font-bold mt-1 text-[8px]">■</span>

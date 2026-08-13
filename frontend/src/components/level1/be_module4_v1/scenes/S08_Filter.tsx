@@ -88,7 +88,7 @@ export const S08_Filter: React.FC<Props> = ({ isActive, isDarkMode }) => {
       {/* PROBLEM · pulsing flow */}
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
-        className={`p-8 rounded-3xl border-2 border-rose-400/40 bg-rose-500/10`}
+        className={`p-5 md:p-8 rounded-3xl border-2 border-rose-400/40 bg-rose-500/10`}
       >
         <div className="font-mono text-[10px] uppercase tracking-widest text-rose-300 mb-2">The bottleneck</div>
         <h3 className={`text-xl font-black ${textColor} mb-3`}>Pulsing flow · pressure drops to zero 100×/sec</h3>
@@ -104,7 +104,7 @@ export const S08_Filter: React.FC<Props> = ({ isActive, isDarkMode }) => {
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.15 }}
-        className={`p-8 rounded-3xl border ${cardBg}`}
+        className={`p-5 md:p-8 rounded-3xl border ${cardBg}`}
       >
         <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
           <div className="font-mono text-[10px] uppercase tracking-widest text-amber-400">
@@ -119,7 +119,8 @@ export const S08_Filter: React.FC<Props> = ({ isActive, isDarkMode }) => {
           </div>
         </div>
 
-        <svg viewBox="0 0 800 320" className="w-full h-auto">
+        <div className="-mx-5 overflow-x-auto px-5 md:mx-0 md:overflow-x-visible md:px-0">
+        <svg viewBox="0 0 800 320" className="w-full h-auto min-w-[600px]">
           {/* Rectifier on left */}
           <rect x="40" y="120" width="120" height="100" rx="10" fill={isDarkMode ? '#0a0e1a' : '#fff'} stroke="#a78bfa" strokeWidth="2.5" />
           <text x="68" y="150" fontSize="11" fontFamily="monospace" fill="#a78bfa" fontWeight="bold">Rectifier</text>
@@ -195,6 +196,7 @@ export const S08_Filter: React.FC<Props> = ({ isActive, isDarkMode }) => {
             Phase 2 (T2): tank feeds load
           </text>
         </svg>
+        </div>
 
         <div className="mt-5 grid md:grid-cols-2 gap-3">
           <div className={`p-4 rounded-xl border-2 ${isCharging ? 'border-emerald-400 bg-emerald-500/15' : isDarkMode ? 'bg-black/30 border-white/10' : 'bg-slate-50 border-slate-200'}`}>
@@ -218,7 +220,7 @@ export const S08_Filter: React.FC<Props> = ({ isActive, isDarkMode }) => {
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.3 }}
-        className={`p-8 rounded-3xl border ${cardBg}`}
+        className={`p-5 md:p-8 rounded-3xl border ${cardBg}`}
       >
         <div className="font-mono text-[10px] uppercase tracking-widest text-amber-400 mb-4">
           Before vs After · the filtered output
@@ -268,7 +270,7 @@ export const S08_Filter: React.FC<Props> = ({ isActive, isDarkMode }) => {
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.4 }}
-        className={`p-8 rounded-3xl border ${cardBg}`}
+        className={`p-5 md:p-8 rounded-3xl border ${cardBg}`}
       >
         <div className="flex items-center gap-3 mb-3">
           <Battery className="text-amber-400" size={20} />

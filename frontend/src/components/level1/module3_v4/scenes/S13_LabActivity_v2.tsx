@@ -146,7 +146,7 @@ const Slide1: React.FC<{ play: any }> = ({ play }) => {
   const statusColor = status === 'correct' ? C.green : status === 'wrong' ? C.rose : C.borderLite;
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 40, textAlign: 'center', maxWidth: 700, width: '100%' }}>
+    <div className="gap-6 sm:gap-10" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', maxWidth: 700, width: '100%' }}>
       <div>
         <motion.h2 key="slide1-title" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} style={{ fontFamily: C.sans, fontSize: 'clamp(32px,5vw,56px)', fontWeight: 900, color: C.text, margin: 0 }}>
           Converter Drill
@@ -166,9 +166,9 @@ const Slide1: React.FC<{ play: any }> = ({ play }) => {
 
       {/* Question */}
       <motion.div key={challenge.question} initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
-        style={{ background: C.surface, border: `2px solid ${C.borderLite}`, borderRadius: 24, padding: '40px 60px' }}
+        className="px-5 py-8 sm:px-[60px] sm:py-10 max-w-full" style={{ background: C.surface, border: `2px solid ${C.borderLite}`, borderRadius: 24 }}
       >
-        <div style={{ fontFamily: C.mono, fontSize: 'clamp(24px,4vw,40px)', fontWeight: 900, color: C.cyan, letterSpacing: 4 }}>
+        <div className="break-all tracking-[2px] sm:tracking-[4px]" style={{ fontFamily: C.mono, fontSize: 'clamp(20px,4vw,40px)', fontWeight: 900, color: C.cyan }}>
           {challenge.display}
         </div>
       </motion.div>
@@ -246,7 +246,7 @@ const Slide2: React.FC<{ play: any }> = ({ play }) => {
   const decR = (carries[0] * Math.pow(2, BITS)) + result.reduce((acc, b, i) => acc + b * Math.pow(2, BITS - 1 - i), 0);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 40, maxWidth: 800, width: '100%' }}>
+    <div className="gap-6 sm:gap-10" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', maxWidth: 800, width: '100%' }}>
       <div style={{ textAlign: 'center' }}>
         <motion.h2 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} style={{ fontFamily: C.sans, fontSize: 'clamp(32px,5vw,52px)', fontWeight: 900, color: C.text, margin: 0 }}>
           Engineering Adder
@@ -265,7 +265,7 @@ const Slide2: React.FC<{ play: any }> = ({ play }) => {
         ))}
       </div>
 
-      <div style={{ width: '100%', background: C.surface, border: `1px solid ${C.border}`, borderRadius: 24, padding: '32px', overflow: 'auto' }}>
+      <div className="p-4 sm:p-8" style={{ width: '100%', background: C.surface, border: `1px solid ${C.border}`, borderRadius: 24, overflow: 'auto' }}>
         <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginBottom: 8, paddingRight: 0 }}>
           <Hud style={{ width: 80, textAlign: 'right', paddingRight: 10 }}>Cout</Hud>
           {carries.slice(0, BITS).map((c, i) => (
@@ -315,7 +315,7 @@ const Slide2: React.FC<{ play: any }> = ({ play }) => {
       </div>
 
       {/* Insight */}
-      <div style={{ width: '100%', background: `${C.cyan}08`, border: `1px solid ${C.cyan}22`, borderRadius: 20, padding: '20px 28px', fontFamily: C.mono, fontSize: 13, color: C.muted, lineHeight: 1.8 }}>
+      <div className="px-4 py-5 sm:px-7" style={{ width: '100%', background: `${C.cyan}08`, border: `1px solid ${C.cyan}22`, borderRadius: 20, fontFamily: C.mono, fontSize: 13, color: C.muted, lineHeight: 1.8 }}>
         <span style={{ color: C.cyan, fontWeight: 900 }}>A + 1 = Increment</span> - the simplest counter operation. Every flip-flop counter uses this.{' '}
         Overflow = when the carry ripples past the MSB - your result wraps around!
       </div>
@@ -340,7 +340,7 @@ const Slide3: React.FC<{ play: any }> = ({ play }) => {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 40, maxWidth: 800, width: '100%' }}>
+    <div className="gap-6 sm:gap-10" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', maxWidth: 800, width: '100%' }}>
       <div style={{ textAlign: 'center' }}>
         <motion.h2 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} style={{ fontFamily: C.sans, fontSize: 'clamp(28px,4vw,48px)', fontWeight: 900, color: C.text, margin: 0 }}>
           Complement Calculator
@@ -434,7 +434,7 @@ const Slide4: React.FC<{ play: any }> = ({ play }) => {
   const G_COLORS: Record<Gate, string> = { AND: C.cyan, OR: C.green, NAND: C.amber, NOR: C.orange, XOR: C.purple, NOT: C.rose };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 36, maxWidth: 700, width: '100%', textAlign: 'center' }}>
+    <div className="gap-6 sm:gap-9" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', maxWidth: 700, width: '100%', textAlign: 'center' }}>
       <div>
         <motion.h2 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} style={{ fontFamily: C.sans, fontSize: 'clamp(28px,4vw,48px)', fontWeight: 900, color: C.text, margin: 0 }}>
           Gate Puzzle
@@ -447,15 +447,15 @@ const Slide4: React.FC<{ play: any }> = ({ play }) => {
 
       {/* Puzzle */}
       <motion.div key={pidx} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-        style={{ background: C.surface, border: `1px solid ${C.borderLite}`, borderRadius: 24, padding: '40px 48px', width: '100%' }}
+        className="p-5 sm:px-12 sm:py-10" style={{ background: C.surface, border: `1px solid ${C.borderLite}`, borderRadius: 24, width: '100%' }}
       >
         <Hud style={{ marginBottom: 20 }}>Which gate produces output <span style={{ color: C.cyan, fontSize: 20, fontWeight: 900 }}>{puzzle.target}</span> given:</Hud>
-        <div style={{ display: 'flex', gap: 24, justifyContent: 'center', alignItems: 'center', marginBottom: 20 }}>
-          <div style={{ fontFamily: C.mono, fontSize: 48, fontWeight: 900, color: puzzle.a ? C.cyan : C.muted }}>A={puzzle.a}</div>
-          <div style={{ fontFamily: C.mono, fontSize: 32, color: C.borderLite }}>?</div>
-          <div style={{ fontFamily: C.mono, fontSize: 48, fontWeight: 900, color: puzzle.b ? C.cyan : C.muted }}>B={puzzle.b}</div>
-          <div style={{ fontFamily: C.mono, fontSize: 32, color: C.borderLite }}>→</div>
-          <div style={{ fontFamily: C.mono, fontSize: 48, fontWeight: 900, color: puzzle.target ? C.cyan : C.muted }}>y={puzzle.target}</div>
+        <div className="flex flex-wrap gap-3 sm:gap-6 justify-center items-center mb-5">
+          <div className="text-2xl sm:text-5xl" style={{ fontFamily: C.mono, fontWeight: 900, color: puzzle.a ? C.cyan : C.muted }}>A={puzzle.a}</div>
+          <div className="text-xl sm:text-3xl" style={{ fontFamily: C.mono, color: C.borderLite }}>?</div>
+          <div className="text-2xl sm:text-5xl" style={{ fontFamily: C.mono, fontWeight: 900, color: puzzle.b ? C.cyan : C.muted }}>B={puzzle.b}</div>
+          <div className="text-xl sm:text-3xl" style={{ fontFamily: C.mono, color: C.borderLite }}>→</div>
+          <div className="text-2xl sm:text-5xl" style={{ fontFamily: C.mono, fontWeight: 900, color: puzzle.target ? C.cyan : C.muted }}>y={puzzle.target}</div>
         </div>
       </motion.div>
 
@@ -519,7 +519,7 @@ const Slide5: React.FC<{ play: any }> = ({ play }) => {
   const toggle = (i: number) => { setOutputs(p => p.map((v, idx) => idx === i ? 1 - v : v)); play('toggle'); setShowSOP(false); };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 32, maxWidth: 750, width: '100%' }}>
+    <div className="gap-6 sm:gap-8" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', maxWidth: 750, width: '100%' }}>
       <div style={{ textAlign: 'center' }}>
         <motion.h2 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} style={{ fontFamily: C.sans, fontSize: 'clamp(28px,4vw,48px)', fontWeight: 900, color: C.text, margin: 0 }}>
           SOP Builder
@@ -529,11 +529,11 @@ const Slide5: React.FC<{ play: any }> = ({ play }) => {
 
       {/* Truth Table */}
       <div style={{ width: '100%', background: C.surface, border: `1px solid ${C.border}`, borderRadius: 24, overflow: 'hidden' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1.5fr 2fr', borderBottom: `1px solid ${C.border}`, padding: '12px 24px', fontFamily: C.mono, fontSize: 10, color: C.muted, letterSpacing: '0.2em', textTransform: 'uppercase' }}>
+        <div className="px-3 sm:px-6 py-3" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1.5fr 2fr', borderBottom: `1px solid ${C.border}`, fontFamily: C.mono, fontSize: 10, color: C.muted, letterSpacing: '0.1em', textTransform: 'uppercase' }}>
           {['x₁', 'x₂', 'x₃', 'y (click)', 'Minterm'].map(h => <div key={h} style={{ textAlign: 'center' }}>{h}</div>)}
         </div>
         {rows.map(row => (
-          <div key={row.idx} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1.5fr 2fr', padding: '10px 24px', borderBottom: `1px solid ${C.border}33`, background: row.y ? `${C.cyan}08` : 'transparent', transition: 'background 0.2s' }}>
+          <div key={row.idx} className="px-3 sm:px-6 py-2.5 items-center" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1.5fr 2fr', borderBottom: `1px solid ${C.border}33`, background: row.y ? `${C.cyan}08` : 'transparent', transition: 'background 0.2s' }}>
             {[row.x1, row.x2, row.x3].map((v, i) => (
               <div key={i} style={{ textAlign: 'center', fontFamily: C.mono, fontSize: 16, fontWeight: 900, color: v ? C.cyan : C.muted }}>{v}</div>
             ))}
@@ -554,7 +554,7 @@ const Slide5: React.FC<{ play: any }> = ({ play }) => {
 
       {/* Generate SOP */}
       <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={() => { setShowSOP(true); play('success'); }}
-        style={{ padding: '16px 48px', background: C.cyan, color: '#000', border: 'none', borderRadius: 16, fontWeight: 900, fontFamily: C.sans, fontSize: 14, letterSpacing: '0.1em', cursor: 'pointer' }}
+        className="px-6 sm:px-12 py-4 max-w-full" style={{ background: C.cyan, color: '#000', border: 'none', borderRadius: 16, fontWeight: 900, fontFamily: C.sans, fontSize: 14, letterSpacing: '0.1em', cursor: 'pointer' }}
       >
         GENERATE SOP EXPRESSION
       </motion.button>
@@ -609,7 +609,7 @@ const Slide6: React.FC<{ play: any }> = ({ play }) => {
   const next = () => { setColor(generateColor()); setRIn(''); setGIn(''); setBIn(''); setStatus('idle'); };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 32, maxWidth: 700, width: '100%', textAlign: 'center' }}>
+    <div className="gap-6 sm:gap-8" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', maxWidth: 700, width: '100%', textAlign: 'center' }}>
       <div>
         <motion.h2 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} style={{ fontFamily: C.sans, fontSize: 'clamp(28px,4vw,48px)', fontWeight: 900, color: C.text, margin: 0 }}>
           Hex RGB Decoder
@@ -618,10 +618,10 @@ const Slide6: React.FC<{ play: any }> = ({ play }) => {
       </div>
 
       <motion.div key={color.hex} initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
-        style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 20, background: C.surface, border: `1px solid ${C.borderLite}`, borderRadius: 24, padding: '40px', width: '100%' }}
+        className="p-6 sm:p-10" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 20, background: C.surface, border: `1px solid ${C.borderLite}`, borderRadius: 24, width: '100%' }}
       >
-        <div style={{ width: 120, height: 120, borderRadius: '50%', backgroundColor: `#${color.hex}`, border: `4px solid ${C.border}`, boxShadow: `0 0 40px #${color.hex}88` }} />
-        <div style={{ fontFamily: C.mono, fontSize: 40, fontWeight: 900, color: C.text, letterSpacing: 6 }}>
+        <div className="w-24 h-24 sm:w-[120px] sm:h-[120px] flex-shrink-0" style={{ borderRadius: '50%', backgroundColor: `#${color.hex}`, border: `4px solid ${C.border}`, boxShadow: `0 0 40px #${color.hex}88` }} />
+        <div className="text-2xl sm:text-[40px] tracking-[3px] sm:tracking-[6px] break-all text-center" style={{ fontFamily: C.mono, fontWeight: 900, color: C.text }}>
           <span style={{ color: C.muted }}>#</span>
           <span style={{ color: C.rose }}>{color.hex.substr(0,2)}</span>
           <span style={{ color: C.green }}>{color.hex.substr(2,2)}</span>
@@ -629,7 +629,7 @@ const Slide6: React.FC<{ play: any }> = ({ play }) => {
         </div>
       </motion.div>
 
-      <div style={{ display: 'flex', gap: 20, justifyContent: 'center' }}>
+      <div className="flex flex-wrap gap-3 sm:gap-5 justify-center">
         {[
           { color: C.rose, val: rIn, set: setRIn, label: 'RED Dec' },
           { color: C.green, val: gIn, set: setGIn, label: 'GREEN Dec' },
@@ -641,7 +641,7 @@ const Slide6: React.FC<{ play: any }> = ({ play }) => {
               value={item.val}
               onChange={e => { item.set(e.target.value); setStatus('idle'); }}
               placeholder="0-255"
-              style={{ width: 100, background: C.surfaceTop, border: `2px solid ${status === 'correct' ? C.green : status === 'wrong' ? C.rose : item.color}`, borderRadius: 12, padding: '12px', fontFamily: C.mono, fontSize: 18, color: C.text, textAlign: 'center', outline: 'none' }}
+              className="w-[84px] sm:w-[100px] p-3" style={{ background: C.surfaceTop, border: `2px solid ${status === 'correct' ? C.green : status === 'wrong' ? C.rose : item.color}`, borderRadius: 12, fontFamily: C.mono, fontSize: 18, color: C.text, textAlign: 'center', outline: 'none' }}
             />
           </div>
         ))}
@@ -703,7 +703,7 @@ const Slide7: React.FC<{ play: any }> = ({ play }) => {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 40, textAlign: 'center', maxWidth: 700, width: '100%' }}>
+    <div className="gap-6 sm:gap-10" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', maxWidth: 700, width: '100%' }}>
       <div>
         <motion.h2 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} style={{ fontFamily: C.sans, fontSize: 'clamp(28px,4vw,48px)', fontWeight: 900, color: C.text, margin: 0 }}>
           De Morgan's Matcher
@@ -759,7 +759,7 @@ const Slide7: React.FC<{ play: any }> = ({ play }) => {
 
 // ── SLIDE 8: Mastery Badge ────────────────────────────────────
 const Slide8: React.FC = () => (
-  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 40, textAlign: 'center', maxWidth: 600, width: '100%' }}>
+  <div className="gap-6 sm:gap-10" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', maxWidth: 600, width: '100%' }}>
     <motion.div style={{ position: 'relative', width: 160, height: 160, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       {[160, 120, 80].map((size, i) => (
         <motion.div key={size} animate={{ rotate: i % 2 === 0 ? 360 : -360 }}
@@ -838,7 +838,7 @@ export const S13_LabActivity_v2: React.FC<{ isActive: boolean; isDarkMode: boole
   return (
     <div className="w-full flex flex-col items-center gap-4 py-16 px-4">
       <TryItYourself />
-      <div style={{ width: '100%', maxWidth: 1100, minHeight: 680, background: C.bg, color: C.text, fontFamily: C.sans, position: 'relative', overflow: 'hidden', borderRadius: 32, border: `1px solid ${C.border}`, boxShadow: '0 24px 80px rgba(0,0,0,0.85)' }}>
+      <div className="min-h-[560px] sm:min-h-[680px]" style={{ width: '100%', maxWidth: 1100, background: C.bg, color: C.text, fontFamily: C.sans, position: 'relative', overflow: 'hidden', borderRadius: 32, border: `1px solid ${C.border}`, boxShadow: '0 24px 80px rgba(0,0,0,0.85)' }}>
 
         {/* Progress Bar */}
         <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, background: 'rgba(255,255,255,0.04)', zIndex: 30 }}>
@@ -848,7 +848,7 @@ export const S13_LabActivity_v2: React.FC<{ isActive: boolean; isDarkMode: boole
         </div>
 
         {/* Header */}
-        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 20, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '22px 32px', background: 'linear-gradient(180deg,rgba(5,5,8,1) 0%,transparent 100%)' }}>
+        <div className="px-4 sm:px-8 py-4 sm:py-[22px] gap-3" style={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 20, display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'linear-gradient(180deg,rgba(5,5,8,1) 0%,transparent 100%)' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
             <Hud>Digital Electronics Mega Lab</Hud>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -857,9 +857,11 @@ export const S13_LabActivity_v2: React.FC<{ isActive: boolean; isDarkMode: boole
             </div>
           </div>
 
-          <Hud style={{ background: C.surfaceTop, padding: '8px 16px', borderRadius: 20, border: `1px solid ${C.borderLite}`, color: C.text }}>
-            {slide + 1} / {TOTAL_SLIDES} - <span style={{ color: C.cyan }}>{LABELS[slide]}</span>
-          </Hud>
+          <div className="hidden md:block">
+            <Hud style={{ background: C.surfaceTop, padding: '8px 16px', borderRadius: 20, border: `1px solid ${C.borderLite}`, color: C.text }}>
+              {slide + 1} / {TOTAL_SLIDES} - <span style={{ color: C.cyan }}>{LABELS[slide]}</span>
+            </Hud>
+          </div>
 
           <div style={{ display: 'flex', gap: 10 }}>
             <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={() => setMuted(!muted)}
@@ -877,7 +879,8 @@ export const S13_LabActivity_v2: React.FC<{ isActive: boolean; isDarkMode: boole
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -40 }}
             transition={{ duration: 0.35, ease: 'easeOut' }}
-            style={{ width: '100%', minHeight: 680, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '90px 48px 80px' }}
+            className="min-h-[560px] sm:min-h-[680px] px-11 sm:px-12 pt-[84px] sm:pt-[90px] pb-20"
+            style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
           >
             {slideComponents[slide]}
           </motion.div>
@@ -885,10 +888,12 @@ export const S13_LabActivity_v2: React.FC<{ isActive: boolean; isDarkMode: boole
 
         {/* Nav Arrows */}
         <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={() => goTo(slide - 1)} disabled={slide === 0}
-          style={{ position: 'absolute', left: 20, top: '50%', transform: 'translateY(-50%)', background: '#111111', border: `1px solid ${C.borderLite}`, borderRadius: 14, width: 44, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', color: slide === 0 ? 'transparent' : C.text, zIndex: 20, cursor: slide === 0 ? 'default' : 'pointer' }}
+          className="left-1 sm:left-5 w-9 h-9 sm:w-11 sm:h-11"
+          style={{ position: 'absolute', top: '50%', transform: 'translateY(-50%)', background: '#111111', border: `1px solid ${C.borderLite}`, borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', color: slide === 0 ? 'transparent' : C.text, zIndex: 20, cursor: slide === 0 ? 'default' : 'pointer' }}
         >←</motion.button>
         <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={() => goTo(slide + 1)} disabled={slide === TOTAL_SLIDES - 1}
-          style={{ position: 'absolute', right: 20, top: '50%', transform: 'translateY(-50%)', background: '#111111', border: `1px solid ${C.borderLite}`, borderRadius: 14, width: 44, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', color: slide === TOTAL_SLIDES - 1 ? 'transparent' : C.text, zIndex: 20, cursor: slide === TOTAL_SLIDES - 1 ? 'default' : 'pointer' }}
+          className="right-1 sm:right-5 w-9 h-9 sm:w-11 sm:h-11"
+          style={{ position: 'absolute', top: '50%', transform: 'translateY(-50%)', background: '#111111', border: `1px solid ${C.borderLite}`, borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', color: slide === TOTAL_SLIDES - 1 ? 'transparent' : C.text, zIndex: 20, cursor: slide === TOTAL_SLIDES - 1 ? 'default' : 'pointer' }}
         >→</motion.button>
 
         {/* Dot Nav */}

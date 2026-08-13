@@ -94,7 +94,7 @@ export const S01_Video: React.FC<Props> = ({ isActive, isDarkMode }) => {
                 <button
                   key={l}
                   onClick={() => setLang(l)}
-                  className="relative px-3 py-1.5 rounded-lg font-mono text-[10px] uppercase tracking-widest font-black transition-all flex items-center gap-1"
+                  className="min-h-[40px] sm:min-h-0 relative px-3 py-1.5 rounded-lg font-mono text-[10px] uppercase tracking-widest font-black transition-all flex items-center gap-1"
                   style={{
                     color: lang === l ? '#000' : (isDarkMode ? '#cbd5e1' : '#475569'),
                     background: lang === l ? '#facc15' : 'transparent',

@@ -321,7 +321,7 @@ export const CustomVideoPlayer = forwardRef<VideoPlayerHandle, CustomVideoPlayer
 
         {/* Control bar */}
         <div
-          className={`absolute inset-x-0 bottom-0 px-4 pt-10 pb-3 bg-gradient-to-t from-black/85 via-black/40 to-transparent transition-opacity duration-300 ${
+          className={`absolute inset-x-0 bottom-0 px-2.5 pt-10 pb-3 sm:px-4 bg-gradient-to-t from-black/85 via-black/40 to-transparent transition-opacity duration-300 ${
             controlsVisible || !playing ? 'opacity-100' : 'opacity-0'
           }`}
         >
@@ -336,7 +336,7 @@ export const CustomVideoPlayer = forwardRef<VideoPlayerHandle, CustomVideoPlayer
               aria-valuemax={Math.floor(duration) || 0}
               aria-valuenow={Math.floor(current)}
               aria-valuetext={`${fmt(current)} of ${fmt(duration)}`}
-              className="relative flex-1 h-1.5 rounded-full bg-white/15 cursor-pointer group/seek touch-none"
+              className="relative flex-1 h-1.5 rounded-full bg-white/15 cursor-pointer group/seek touch-none before:absolute before:inset-x-0 before:-inset-y-2.5 before:content-['']"
               onPointerDown={onSeekPointerDown}
               onPointerMove={onSeekPointerMove}
               onPointerUp={endSeekDrag}
@@ -370,25 +370,25 @@ export const CustomVideoPlayer = forwardRef<VideoPlayerHandle, CustomVideoPlayer
               {/* scrub thumb */}
               <div
                 className={`absolute top-1/2 -translate-y-1/2 h-3 w-3 rounded-full transition-opacity ${
-                  dragging ? 'opacity-100' : 'opacity-0 group-hover/seek:opacity-100'
+                  dragging ? 'opacity-100' : 'opacity-100 sm:opacity-0 sm:group-hover/seek:opacity-100'
                 }`}
                 style={{ left: `calc(${progressPct}% - 6px)`, background: accent, boxShadow: `0 0 8px ${accent}` }}
               />
             </div>
           </div>
 
-          <div className="flex items-center gap-3 text-white">
-            <button type="button" onClick={togglePlay} aria-label={playing ? 'Pause' : 'Play'} className="hover:text-white/80">
+          <div className="flex items-center gap-1 text-white sm:gap-3">
+            <button type="button" onClick={togglePlay} aria-label={playing ? 'Pause' : 'Play'} className="p-1.5 hover:text-white/80 sm:p-0">
               {playing ? <Pause size={18} /> : <Play size={18} />}
             </button>
-            <button type="button" onClick={() => skip(-10)} aria-label="Back 10 seconds" className="hover:text-white/80">
+            <button type="button" onClick={() => skip(-10)} aria-label="Back 10 seconds" className="p-1.5 hover:text-white/80 sm:p-0">
               <RotateCcw size={16} />
             </button>
-            <button type="button" onClick={() => skip(10)} aria-label="Forward 10 seconds" className="hover:text-white/80">
+            <button type="button" onClick={() => skip(10)} aria-label="Forward 10 seconds" className="p-1.5 hover:text-white/80 sm:p-0">
               <RotateCw size={16} />
             </button>
 
-            <span className="font-mono text-[11px] tabular-nums text-white/80">
+            <span className="whitespace-nowrap font-mono text-[10px] tabular-nums text-white/80 sm:text-[11px]">
               {fmt(current)} <span className="text-white/30">/</span> {fmt(duration)}
             </span>
 
@@ -400,7 +400,7 @@ export const CustomVideoPlayer = forwardRef<VideoPlayerHandle, CustomVideoPlayer
                 type="button"
                 onClick={() => setShowRate((s) => !s)}
                 aria-label="Playback speed"
-                className="flex items-center gap-1 font-mono text-[11px] tabular-nums hover:text-white/80"
+                className="flex items-center gap-1 p-1.5 font-mono text-[11px] tabular-nums hover:text-white/80 sm:p-0"
                 style={{ color: rate !== 1 ? accent : undefined }}
               >
                 <Gauge size={16} /> {rate}×
@@ -415,7 +415,7 @@ export const CustomVideoPlayer = forwardRef<VideoPlayerHandle, CustomVideoPlayer
                       key={s}
                       type="button"
                       onClick={() => changeRate(s)}
-                      className="rounded px-3 py-1 text-left font-mono text-[11px] tabular-nums hover:bg-white/10"
+                      className="rounded px-3 py-2 text-left font-mono text-[11px] tabular-nums hover:bg-white/10 sm:py-1"
                       style={{ color: s === rate ? accent : 'rgba(255,255,255,0.8)' }}
                     >
                       {s}×
@@ -425,8 +425,8 @@ export const CustomVideoPlayer = forwardRef<VideoPlayerHandle, CustomVideoPlayer
               )}
             </div>
 
-            <div className="flex items-center gap-2 group/vol">
-              <button type="button" onClick={toggleMute} aria-label={muted ? 'Unmute' : 'Mute'} className="hover:text-white/80">
+            <div className="flex items-center gap-0 group/vol sm:gap-2">
+              <button type="button" onClick={toggleMute} aria-label={muted ? 'Unmute' : 'Mute'} className="p-1.5 hover:text-white/80 sm:p-0">
                 {muted || volume === 0 ? <VolumeX size={18} /> : <Volume2 size={18} />}
               </button>
               <input
@@ -446,7 +446,7 @@ export const CustomVideoPlayer = forwardRef<VideoPlayerHandle, CustomVideoPlayer
               />
             </div>
 
-            <button type="button" onClick={toggleFullscreen} aria-label="Fullscreen" className="hover:text-white/80">
+            <button type="button" onClick={toggleFullscreen} aria-label="Fullscreen" className="p-1.5 hover:text-white/80 sm:p-0">
               <Maximize size={18} />
             </button>
           </div>

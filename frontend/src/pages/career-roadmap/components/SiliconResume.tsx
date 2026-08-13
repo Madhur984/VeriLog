@@ -203,7 +203,7 @@ export const SiliconResume: React.FC<SiliconResumeProps> = ({
   };
 
   return (
-    <div className={`w-full px-6 py-12 grid grid-cols-1 lg:grid-cols-12 gap-8 border rounded-xl ${
+    <div className={`w-full px-4 sm:px-6 py-12 grid grid-cols-1 lg:grid-cols-12 gap-8 border rounded-xl ${
       isLight ? 'bg-bg-base border-border-soft text-text-main' : 'bg-[#07080A] text-white border-white/5'
     }`}>
       {/* Left Panel: Real-Time Quality Analyzer Controls */}
@@ -246,7 +246,7 @@ export const SiliconResume: React.FC<SiliconResumeProps> = ({
 
           {/* Automated Quality Diagnostic Readout */}
           <div className={`border rounded-xl p-5 space-y-4 ${isLight ? 'bg-bg-elev border-border-soft' : 'bg-[#0D0F12] border-white/5'}`}>
-            <div className={`flex justify-between items-center border-b pb-3 ${isLight ? 'border-border-soft' : 'border-white/5'}`}>
+            <div className={`flex flex-wrap gap-2 justify-between items-center border-b pb-3 ${isLight ? 'border-border-soft' : 'border-white/5'}`}>
               <span className="text-xs font-mono text-text-dim">ATS VALIDATION STREAM</span>
               <span className={`text-xs font-mono font-bold ${isLight ? 'text-emerald-700' : 'text-[#10B981]'}`}>PASS RATE: 98%</span>
             </div>
@@ -293,7 +293,7 @@ export const SiliconResume: React.FC<SiliconResumeProps> = ({
       </div>
 
       {/* Right Panel: ATS-Readable Live Rendering Engine */}
-      <div className="lg:col-span-7 bg-white text-black p-8 rounded-xl shadow-2xl min-h-[600px] h-full font-sans overflow-x-auto selection:bg-slate-200">
+      <div className="lg:col-span-7 bg-white text-black p-5 sm:p-8 rounded-xl shadow-2xl min-h-[600px] h-full font-sans overflow-x-auto selection:bg-slate-200">
         <div className="min-w-0">
           <div className="text-center border-b border-slate-300 pb-4">
             <h1 className="text-2xl font-bold tracking-tight text-slate-900">{resumeData.name}</h1>
@@ -395,10 +395,10 @@ export const SiliconResume: React.FC<SiliconResumeProps> = ({
 
       {/* Silicon Passport Modal Dialog */}
       {showPassport && (
-        <div className="fixed inset-0 bg-black/85 z-[999] flex flex-col items-center justify-center p-4 font-mono select-none">
-          <div 
+        <div className="fixed inset-0 bg-black/85 z-[999] flex flex-col items-center justify-center gap-0 overflow-y-auto p-4 font-mono select-none">
+          <div
             id="silicon-passport-card"
-            className="w-[340px] h-[520px] rounded-3xl bg-[#090b11] border-2 border-cyan-500/30 p-6 flex flex-col justify-between relative overflow-hidden shadow-[0_0_50px_rgba(6,182,212,0.15)] text-white uppercase tracking-wider"
+            className="w-[min(92vw,340px)] shrink-0 h-[520px] rounded-3xl bg-[#090b11] border-2 border-cyan-500/30 p-6 flex flex-col justify-between relative overflow-hidden shadow-[0_0_50px_rgba(6,182,212,0.15)] text-white uppercase tracking-wider"
           >
             {/* Holographic PCB grid lines backdrop */}
             <div className="absolute inset-0 opacity-10 pointer-events-none bg-[linear-gradient(to_right,#0ea5e9_1px,transparent_1px),linear-gradient(to_bottom,#0ea5e9_1px,transparent_1px)] bg-[size:20px_20px]" />

@@ -76,7 +76,7 @@ interface BoxProps {
 }
 const InputBox: React.FC<BoxProps> = ({ label, sub, value, onChange, color, bg, border, valid, isDarkMode, readOnly }) => {
   return (
-    <div className={`p-6 rounded-3xl border ${isDarkMode ? 'border-white/10 bg-white/5' : 'bg-white border-gray-200 shadow-xl'} flex flex-col gap-3`}>
+    <div className={`p-4 sm:p-6 rounded-3xl border ${isDarkMode ? 'border-white/10 bg-white/5' : 'bg-white border-gray-200 shadow-xl'} flex flex-col gap-3`}>
       <div className="flex items-baseline gap-3">
         <span className={`font-mono text-[10px] tracking-[0.25em] uppercase ${color}`}>{label}</span>
         <span className={`font-mono text-[9px] opacity-40 ${isDarkMode ? 'text-white' : 'text-gray-500'}`}>{sub}</span>
@@ -85,7 +85,7 @@ const InputBox: React.FC<BoxProps> = ({ label, sub, value, onChange, color, bg, 
         readOnly={readOnly}
         value={value}
         onChange={e => onChange(e.target.value)}
-        className={`w-full font-mono text-2xl font-black rounded-2xl border-2 px-4 py-3 outline-none transition-all
+        className={`w-full min-w-0 font-mono text-xl sm:text-2xl font-black rounded-2xl border-2 px-4 py-3 outline-none transition-all
           ${valid
             ? `${border} ${color} ${bg}`
             : 'border-rose-500/40 text-rose-400 bg-rose-500/10'
@@ -112,7 +112,7 @@ const RemainderWorking: React.FC<{
   const steps = remainderSteps(n, base);
   const result = steps.map(s => rmDigit(s.remainder, base)).reverse().join('');
   return (
-    <div className={`p-6 rounded-3xl border ${isDarkMode ? 'bg-white/5 border-white/10' : 'bg-white border-gray-100 shadow-md'}`}>
+    <div className={`p-4 sm:p-6 rounded-3xl border ${isDarkMode ? 'bg-white/5 border-white/10' : 'bg-white border-gray-100 shadow-md'}`}>
       <div
         className="font-mono text-[10px] uppercase tracking-widest mb-4"
         style={{ color: accentHex }}
@@ -126,7 +126,7 @@ const RemainderWorking: React.FC<{
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: i * 0.04 }}
-            className={`flex items-center justify-between px-4 py-2 rounded-xl font-mono text-xs
+            className={`flex flex-wrap items-center justify-between gap-x-3 gap-y-1 px-3 sm:px-4 py-2 rounded-xl font-mono text-[11px] sm:text-xs
               ${isDarkMode ? 'bg-black/30' : 'bg-gray-50 border border-gray-100'}`}
           >
             <span className={isDarkMode ? 'text-white/60' : 'text-gray-600'}>
@@ -152,7 +152,7 @@ const RemainderWorking: React.FC<{
         <div className="font-mono text-[10px] opacity-40 mb-1 uppercase tracking-widest">
           Read remainders bottom → top (MSB first)
         </div>
-        <div className="font-mono text-2xl font-black" style={{ color: accentHex }}>
+        <div className="font-mono text-xl sm:text-2xl font-black break-words" style={{ color: accentHex }}>
           ({result}){base === 2 ? '₂' : base === 8 ? '₈' : '₁₆'}
         </div>
       </div>
@@ -173,7 +173,7 @@ const WeightWorking: React.FC<{
     product: parseInt(c, base) * Math.pow(base, len - 1 - i),
   }));
   return (
-    <div className={`p-6 rounded-3xl border ${isDarkMode ? 'bg-white/5 border-white/10' : 'bg-white border-gray-100 shadow-md'}`}>
+    <div className={`p-4 sm:p-6 rounded-3xl border ${isDarkMode ? 'bg-white/5 border-white/10' : 'bg-white border-gray-100 shadow-md'}`}>
       <div
         className="font-mono text-[10px] uppercase tracking-widest mb-4"
         style={{ color: accentHex }}
@@ -207,10 +207,10 @@ const WeightWorking: React.FC<{
         </table>
       </div>
       <div className={`p-4 rounded-2xl text-center ${isDarkMode ? 'bg-black/40' : 'bg-gray-50 border border-gray-100'}`}>
-        <div className="font-mono text-[10px] opacity-40 mb-1 uppercase tracking-widest">
+        <div className="font-mono text-[10px] opacity-40 mb-1 uppercase tracking-widest break-words">
           Sum = {products.map(p => p.product).join(' + ')} =
         </div>
-        <div className="font-mono text-2xl font-black text-amber-400">{n}₁₀</div>
+        <div className="font-mono text-xl sm:text-2xl font-black text-amber-400 break-words">{n}₁₀</div>
       </div>
     </div>
   );
@@ -226,7 +226,7 @@ const BitGroups: React.FC<{ binStr: string; dec: number; isDarkMode: boolean }> 
   const triplets = octalPad.match(/.{3}/g) || [];
 
   return (
-    <div className={`p-6 rounded-3xl border ${isDarkMode ? 'bg-white/5 border-white/10' : 'bg-white border-gray-200 shadow-xl'}`}>
+    <div className={`p-4 sm:p-6 rounded-3xl border ${isDarkMode ? 'bg-white/5 border-white/10' : 'bg-white border-gray-200 shadow-xl'}`}>
       <div className="mb-4">
         <div className={`font-mono text-[10px] uppercase tracking-widest mb-2 ${isDarkMode ? 'text-white/30' : 'text-gray-400'}`}>
           Visual grouping - same number, different lenses
@@ -240,7 +240,7 @@ const BitGroups: React.FC<{ binStr: string; dec: number; isDarkMode: boolean }> 
         <div className="font-mono text-[9px] text-violet-400 tracking-widest uppercase mb-2">
           Hex view - 4 bits per nibble
         </div>
-        <div className="flex gap-3 flex-wrap">
+        <div className="flex gap-2 sm:gap-3 flex-wrap">
           {nibbles.map((nib, i) => {
             const hexChar = parseInt(nib, 2).toString(16).toUpperCase();
             return (
@@ -249,7 +249,7 @@ const BitGroups: React.FC<{ binStr: string; dec: number; isDarkMode: boolean }> 
                   {nib.split('').map((bit, j) => (
                     <div
                       key={j}
-                      className="w-8 h-8 rounded-lg border flex items-center justify-center font-mono font-black text-sm"
+                      className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg border flex items-center justify-center font-mono font-black text-xs sm:text-sm"
                       style={{
                         borderColor: bit === '1' ? 'rgba(168,85,247,0.5)' : (isDarkMode ? '#2D3139' : '#E5E7EB'),
                         background: bit === '1' ? 'rgba(168,85,247,0.12)' : 'transparent',
@@ -263,7 +263,7 @@ const BitGroups: React.FC<{ binStr: string; dec: number; isDarkMode: boolean }> 
               </div>
             );
           })}
-          <div className={`ml-2 pl-4 border-l flex items-center ${isDarkMode ? 'border-white/10' : 'border-gray-200'}`}>
+          <div className={`ml-0 sm:ml-2 pl-0 sm:pl-4 border-l-0 sm:border-l flex items-center ${isDarkMode ? 'border-white/10' : 'border-gray-200'}`}>
             <div>
               <div className="font-mono text-[9px] opacity-40 mb-1">= Hex</div>
               <div className="font-mono text-xl font-black text-violet-400">
@@ -279,7 +279,7 @@ const BitGroups: React.FC<{ binStr: string; dec: number; isDarkMode: boolean }> 
         <div className="font-mono text-[9px] text-emerald-400 tracking-widest uppercase mb-2">
           Octal view - 3 bits per group
         </div>
-        <div className="flex gap-3 flex-wrap">
+        <div className="flex gap-2 sm:gap-3 flex-wrap">
           {triplets.map((tri, i) => {
             const octChar = parseInt(tri, 2).toString(8);
             return (
@@ -288,7 +288,7 @@ const BitGroups: React.FC<{ binStr: string; dec: number; isDarkMode: boolean }> 
                   {tri.split('').map((bit, j) => (
                     <div
                       key={j}
-                      className="w-8 h-8 rounded-lg border flex items-center justify-center font-mono font-black text-sm"
+                      className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg border flex items-center justify-center font-mono font-black text-xs sm:text-sm"
                       style={{
                         borderColor: bit === '1' ? 'rgba(16,185,129,0.5)' : (isDarkMode ? '#2D3139' : '#E5E7EB'),
                         background: bit === '1' ? 'rgba(16,185,129,0.12)' : 'transparent',
@@ -301,7 +301,7 @@ const BitGroups: React.FC<{ binStr: string; dec: number; isDarkMode: boolean }> 
               </div>
             );
           })}
-          <div className={`ml-2 pl-4 border-l flex items-center ${isDarkMode ? 'border-white/10' : 'border-gray-200'}`}>
+          <div className={`ml-0 sm:ml-2 pl-0 sm:pl-4 border-l-0 sm:border-l flex items-center ${isDarkMode ? 'border-white/10' : 'border-gray-200'}`}>
             <div>
               <div className="font-mono text-[9px] opacity-40 mb-1">= Octal</div>
               <div className="font-mono text-xl font-black text-emerald-400">
@@ -446,7 +446,7 @@ export const S00_F_UniversalConverter: React.FC<Props> = ({ isActive, isDarkMode
       {/* Summary bar */}
       <motion.div
         initial={{ opacity: 0 }} animate={isActive ? { opacity: 1 } : {}}
-        className={`p-5 rounded-2xl border flex flex-wrap gap-8 justify-center text-center ${isDarkMode ? 'bg-white/5 border-white/10' : 'bg-gray-50 border-gray-200'}`}
+        className={`p-4 sm:p-5 rounded-2xl border flex flex-wrap gap-x-6 gap-y-4 sm:gap-8 justify-center text-center ${isDarkMode ? 'bg-white/5 border-white/10' : 'bg-gray-50 border-gray-200'}`}
       >
         {[
           { label: 'Decimal', val: currentDec, color: '#F59E0B' },
@@ -456,7 +456,7 @@ export const S00_F_UniversalConverter: React.FC<Props> = ({ isActive, isDarkMode
         ].map(({ label, val, color }) => (
           <div key={label}>
             <div className="font-mono text-[9px] opacity-40 uppercase tracking-widest mb-1">{label}</div>
-            <div className="font-mono text-xl font-black" style={{ color }}>{String(val)}</div>
+            <div className="font-mono text-base sm:text-xl font-black break-all" style={{ color }}>{String(val)}</div>
           </div>
         ))}
       </motion.div>
@@ -511,7 +511,7 @@ export const S00_F_UniversalConverter: React.FC<Props> = ({ isActive, isDarkMode
       </div>
 
       {/* Quick cross-conversion rules */}
-      <div className={`p-8 rounded-[2rem] border ${isDarkMode ? 'bg-white/5 border-white/10' : 'bg-gray-50 border-gray-200'}`}>
+      <div className={`p-4 sm:p-8 rounded-[2rem] border ${isDarkMode ? 'bg-white/5 border-white/10' : 'bg-gray-50 border-gray-200'}`}>
         <h3 className={`font-mono text-xs uppercase tracking-widest mb-8 ${isDarkMode ? 'text-sky-400' : 'text-sky-600'}`}>
           Shortcut Rules - Direct Conversions Without Going Through Decimal
         </h3>
@@ -552,12 +552,12 @@ export const S00_F_UniversalConverter: React.FC<Props> = ({ isActive, isDarkMode
           ].map((rule, i) => (
             <div
               key={i}
-              className={`p-6 rounded-3xl border ${isDarkMode ? 'bg-black/30 border-white/5' : 'bg-white border-gray-100'}`}
+              className={`p-4 sm:p-6 rounded-3xl border ${isDarkMode ? 'bg-black/30 border-white/5' : 'bg-white border-gray-100'}`}
             >
               <div className="font-mono text-sm font-black mb-2" style={{ color: rule.color }}>{rule.title}</div>
               <p className={`text-sm opacity-70 mb-4 leading-relaxed ${textColor}`}>{rule.rule}</p>
               <pre
-                className={`font-mono text-xs leading-relaxed p-4 rounded-xl ${isDarkMode ? 'bg-black/40' : 'bg-gray-50 border border-gray-100'}`}
+                className={`font-mono text-[10px] sm:text-xs leading-relaxed p-3 sm:p-4 rounded-xl overflow-x-auto ${isDarkMode ? 'bg-black/40' : 'bg-gray-50 border border-gray-100'}`}
                 style={{ color: rule.color }}
               >{rule.example}</pre>
             </div>
@@ -569,7 +569,7 @@ export const S00_F_UniversalConverter: React.FC<Props> = ({ isActive, isDarkMode
       <div>
         <button
           onClick={() => setShowTable(t => !t)}
-          className={`w-full p-5 rounded-3xl border font-mono text-sm font-black uppercase tracking-widest text-left flex justify-between items-center transition-all
+          className={`w-full p-4 sm:p-5 rounded-3xl border font-mono text-xs sm:text-sm font-black uppercase tracking-widest text-left flex flex-wrap gap-2 justify-between items-center transition-all
             ${isDarkMode ? 'bg-white/5 border-white/10 text-white/60 hover:border-sky-500 hover:text-sky-400' : 'bg-gray-50 border-gray-200 text-gray-500 hover:border-sky-400 hover:text-sky-600'}`}
         >
           <span>📊 Master Reference Table (0-31)</span>

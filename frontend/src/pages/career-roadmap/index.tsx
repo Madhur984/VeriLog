@@ -121,8 +121,8 @@ const PersonalizationFlow: React.FC<PersonalizationFlowProps> = ({ onSelectPrefs
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-6 py-6 mb-10 bg-bg-elev border-2 border-edge shadow-brutal">
-      <div className="flex justify-between items-center mb-6">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 mb-10 bg-bg-elev border-2 border-edge shadow-brutal">
+      <div className="flex flex-wrap justify-between items-center gap-2 mb-6">
         <div>
           <h3 className="text-xl font-bold uppercase tracking-tight text-text-main">
             Personalize Your Roadmap
@@ -198,7 +198,7 @@ const PersonalizationFlow: React.FC<PersonalizationFlowProps> = ({ onSelectPrefs
       </div>
 
       {stage && domain && (
-        <div className="mt-6 pt-4 border-t border-dashed border-edge flex items-center justify-between text-xs font-mono">
+        <div className="mt-6 pt-4 border-t border-dashed border-edge flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between text-xs font-mono">
           <span className="text-[#14B8A6] uppercase font-bold tracking-wider animate-pulse">
             ✓ Dashboard Customization Applied
           </span>
@@ -303,7 +303,7 @@ const CustomRoadmapHero: React.FC<CustomRoadmapHeroProps> = ({ prefs, onSelectPr
       <div className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.25em] text-signal-core mb-5">
         <span className="h-2 w-2 bg-signal-core animate-gentle-pulse" /> Career roadmap · updated {AS_OF}
       </div>
-      <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-text-main leading-[1.02]">
+      <h1 className="text-[32px] min-[400px]:text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-text-main leading-[1.02]">
         Your ECE degree is a<br /><span className="text-signal-core">ticket into silicon.</span>
       </h1>
       <p className="mt-4 mb-8 max-w-2xl text-base sm:text-lg text-text-sub leading-relaxed">
@@ -405,8 +405,8 @@ const BeginnerFinancialsView: React.FC = () => {
         </p>
       </div>
 
-      <div className="border border-border-soft overflow-hidden rounded-lg">
-        <table className="w-full text-left border-collapse text-xs font-mono">
+      <div className="border border-border-soft overflow-x-auto rounded-lg">
+        <table className="w-full min-w-[480px] text-left border-collapse text-xs font-mono">
           <thead>
             <tr className="bg-bg-base border-b border-border-soft">
               <th className="p-3 text-text-main font-bold">ECE DOMAIN</th>
@@ -618,7 +618,7 @@ const CareerRoadmapPage: React.FC = () => {
     <div className="min-h-screen bg-bg-void text-text-main pb-36">
       {/* Sticky Top Navigation Shell */}
       <div className="sticky top-0 z-30 bg-bg-void border-b-2 border-edge">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center gap-3">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center gap-2 sm:flex-nowrap sm:gap-3">
           <button
             onClick={() => navigate('/portal')}
             aria-label="Back to portal"
@@ -628,7 +628,7 @@ const CareerRoadmapPage: React.FC = () => {
           </button>
 
           {activeTab === 'explore' && (
-            <nav aria-label="Sections" className="flex-1 flex gap-1.5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <nav aria-label="Sections" className="order-last w-full flex gap-1.5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:order-none sm:w-auto sm:flex-1">
               {NAV.map((n) => (
                 <button
                   key={n.id}
@@ -642,13 +642,13 @@ const CareerRoadmapPage: React.FC = () => {
           )}
           {activeTab !== 'explore' && <div className="flex-1" />}
 
-          <div className="flex items-center gap-3 shrink-0">
+          <div className="flex items-center gap-1.5 shrink-0 ml-auto sm:gap-3">
             <button
               onClick={() => {
                 trackCareerEvent('silicon_runner_game_opened');
                 setIsGameOpen(true);
               }}
-              className="brutal-btn h-9 px-3 flex items-center gap-1.5 bg-gradient-to-r from-teal-500/20 to-pink-500/20 border-2 border-teal-400 text-teal-300 font-mono text-[11px] uppercase tracking-wider font-bold cursor-pointer hover:scale-105 transition-all shadow-[0_0_12px_rgba(20,184,166,0.3)]"
+              className="brutal-btn h-9 px-2 sm:px-3 flex items-center gap-1.5 bg-gradient-to-r from-teal-500/20 to-pink-500/20 border-2 border-teal-400 text-teal-300 font-mono text-[11px] uppercase tracking-wider font-bold cursor-pointer hover:scale-105 transition-all shadow-[0_0_12px_rgba(20,184,166,0.3)]"
               title="Launch 2D Silicon Runner Arcade Mini-Game"
             >
               <span>🎮</span>
@@ -658,7 +658,7 @@ const CareerRoadmapPage: React.FC = () => {
               onClick={() => setViewMode(viewMode === 'telemetry' ? 'beginner' : 'telemetry')}
               aria-pressed={viewMode === 'telemetry'}
               aria-label={`Switch to ${viewMode === 'telemetry' ? 'beginner' : 'advanced'} view`}
-              className="brutal-btn h-9 px-3 flex items-center gap-1.5 bg-bg-elev font-mono text-[11px] uppercase tracking-wider text-text-main font-bold cursor-pointer border-2 border-edge"
+              className="brutal-btn h-9 px-2 sm:px-3 flex items-center gap-1.5 bg-bg-elev font-mono text-[10px] sm:text-[11px] uppercase tracking-wide sm:tracking-wider text-text-main font-bold cursor-pointer border-2 border-edge"
               title="Toggle between simplified content and advanced developer charts"
             >
               <span className={viewMode === 'beginner' ? 'text-teal-400 font-extrabold' : 'text-text-dim'}>Beginner</span>

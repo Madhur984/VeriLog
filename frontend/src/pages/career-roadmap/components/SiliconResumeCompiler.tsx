@@ -199,7 +199,7 @@ export const SiliconResumeCompiler: React.FC = () => {
 
           {/* Resume Bullet Points Output Container */}
           <div className="bg-bg-base border-2 border-edge shadow-brutal p-6 sm:p-8 space-y-6">
-            <div className="flex justify-between items-center pb-4 border-b border-ghost-trace">
+            <div className="flex flex-wrap gap-4 justify-between items-center pb-4 border-b border-ghost-trace">
               <div>
                 <span className="font-mono text-[10px] text-accent-orange uppercase font-bold tracking-widest block">
                   ATS RESUME PROJECT BULLET POINTS
@@ -211,7 +211,7 @@ export const SiliconResumeCompiler: React.FC = () => {
 
               <button
                 onClick={handleCopyBullets}
-                className="px-4 py-2 bg-plasma-cyan text-matte-obsidian font-mono text-xs font-bold uppercase tracking-wider flex items-center gap-2 shadow-brutal hover:bg-plasma-cyan/90 transition-all cursor-pointer"
+                className="px-4 py-2 min-h-11 shrink-0 bg-plasma-cyan text-matte-obsidian font-mono text-xs font-bold uppercase tracking-wider flex items-center gap-2 shadow-brutal hover:bg-plasma-cyan/90 transition-all cursor-pointer"
               >
                 {copied ? <Check className="w-4 h-4 text-matte-obsidian" /> : <Copy className="w-4 h-4 text-matte-obsidian" />}
                 <span>{copied ? 'Copied!' : 'Copy to Resume'}</span>

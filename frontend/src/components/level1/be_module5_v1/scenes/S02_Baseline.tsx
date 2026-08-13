@@ -63,7 +63,7 @@ export const S02_Baseline: React.FC<Props> = ({ isActive, isDarkMode }) => {
       <motion.div
         initial={{ opacity: 0, scale: 0.98 }} animate={isActive ? { opacity: 1, scale: 1 } : {}}
         transition={{ delay: 0.15 }}
-        className={`rounded-3xl border ${cardBg} p-10`}
+        className={`rounded-3xl border ${cardBg} p-5 md:p-10`}
       >
         <div className="grid lg:grid-cols-[1.3fr_1fr] gap-8 items-center">
           <div>
@@ -144,7 +144,7 @@ export const S02_Baseline: React.FC<Props> = ({ isActive, isDarkMode }) => {
       <motion.div
         initial={{ opacity: 0, y: 14 }} animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.35 }}
-        className={`p-8 rounded-3xl border ${cardBg}`}
+        className={`p-5 md:p-8 rounded-3xl border ${cardBg}`}
       >
         <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-yellow-300 mb-4">
           The specialists · engineered to exploit phenomena the baseline tries to avoid

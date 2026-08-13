@@ -83,7 +83,7 @@ export const S04_ZenerReg: React.FC<Props> = ({ isActive, isDarkMode }) => {
       <motion.div
         initial={{ opacity: 0, scale: 0.98 }} animate={isActive ? { opacity: 1, scale: 1 } : {}}
         transition={{ delay: 0.15 }}
-        className={`rounded-3xl border ${cardBg} p-10 grid lg:grid-cols-[1.3fr_1fr] gap-10 items-center`}
+        className={`rounded-3xl border ${cardBg} p-5 md:p-10 grid lg:grid-cols-[1.3fr_1fr] gap-10 items-center`}
       >
         {/* Circuit diagram */}
         <div>
