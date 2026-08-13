@@ -830,6 +830,184 @@ export const IV_QUESTIONS: IvQuestion[] = [
     id: 'rtl-blocking-vs-nonblocking', topic: 'verilog', level: 'Easy',
     q: 'What is the difference between blocking (=) and non-blocking (<=) assignments in Verilog?',
     a: 'Blocking (=) executes sequentially within procedural blocks, evaluating and assigning immediately before proceeding to the next statement (used for combinational logic).\nNon-blocking (<=) evaluates all right-hand side expressions first and schedules updates at the end of the time step, executing in parallel (mandatory for sequential edge-triggered registers to prevent race conditions).',
+  },
+
+  // ── Extended Technical & Company Interview Scenarios ──────────────────
+  {
+    id: 'digital-cmos-dominance', topic: 'digital', level: 'Easy',
+    q: 'What is CMOS and why has it become the dominant technology in VLSI?',
+    a: 'CMOS (Complementary Metal-Oxide-Semiconductor) uses complementary pairs of p-type and n-type MOSFETs to implement digital logic functions.\nKey takeaways:\n1. Ultra-Low Static Power: For any stable logic state, one transistor is ON while the other is OFF, creating an extremely high resistance path from VDD to GND to minimize leakage current.\n2. Scale Integration: High noise margins and low power dissipation enable integrating billions of transistors on a single die without thermal self-destruction.',
+  },
+  {
+    id: 'digital-latch-vs-flipflop', topic: 'digital', level: 'Easy',
+    q: 'What is the fundamental difference between a latch and a flip-flop?',
+    a: 'Key takeaways:\n1. Level-Sensitivity vs Edge-Triggering: A latch is level-sensitive and transparent while its enable signal is active (HIGH). A flip-flop is edge-triggered, sampling input data strictly on a specific clock transition (e.g. rising edge).\n2. STA Impact: Flip-flops are preferred in synchronous digital design because predictable clock sampling simplifies Static Timing Analysis (STA). Latches are used intentionally for time-borrowing in high-performance pipelines or low-power designs, though they increase STA complexity.',
+  },
+  {
+    id: 'digital-comb-vs-seq', topic: 'digital', level: 'Easy',
+    q: 'What is the operational difference between combinational and sequential logic?',
+    a: 'Combinational Logic: Output is strictly a function of current input values without internal memory (e.g., adders, multiplexers, decoders).\nSequential Logic: Output depends on current inputs AND past state history, requiring memory storage elements like flip-flops or registers (e.g., counters, registers, FSMs).',
+  },
+  {
+    id: 'verilog-clk-div3-50duty', topic: 'verilog', level: 'Hard',
+    q: 'How do you design a clock divider by 3 with a 50% duty cycle in Verilog?',
+    a: '§F: Formula / Algorithm\nTo divide clock frequency by an odd integer (N=3) with a 50% duty cycle, you must trigger logic on both clock edges.\n\n§C: Implementation Steps\n1. Instantiate two 2-bit counters counting 0 → 1 → 2 → 0 (one on posedge clk, one on negedge clk).\n2. Generate a pulse signal `out_r` from the posedge counter when count == 0.\n3. Generate an identical pulse signal `out_f` from the negedge counter.\n4. Combine outputs using logical OR (`clk_out = out_r | out_f`).\n\n§R: Result\nBecause `out_r` and `out_f` are offset by 0.5 clock cycles, their OR produces 1.5 cycles HIGH and 1.5 cycles LOW, yielding an exact 50% duty cycle.',
+  },
+  {
+    id: 'verilog-avoiding-latches', topic: 'verilog', level: 'Medium',
+    q: 'How do you avoid inferring unintended latches in combinational RTL blocks?',
+    a: 'Unintended latches occur in combinational `always @(*)` blocks when a signal is not assigned a value in every possible execution path.\n\nPrevention rules:\n1. Complete Conditional Paths: Include an `else` branch for every `if` statement.\n2. Default Cases: Add a `default:` clause to every `case` statement.\n3. Variable Pre-assignment: Assign default fallback values to signals at the very top of procedural blocks.',
+  },
+  {
+    id: 'verification-methods-overview', topic: 'digital', level: 'Medium',
+    q: 'What are the primary verification methods used in VLSI engineering?',
+    a: '1. Directed Testing: Writing explicit test cases to verify specific functional requirements.\n2. Constrained Random Verification (CRV): Generating randomized stimulus within specified constraints to discover edge-case bugs.\n3. Assertion-Based Verification (ABV): Using SystemVerilog Assertions (SVA) to monitor protocol rules continuously.\n4. Formal Verification: Utilizing mathematical equivalence and property checkers to exhaustively prove RTL correctness without simulation vectors.',
+  },
+  {
+    id: 'verification-formal-proofs', topic: 'digital', level: 'Hard',
+    q: 'What is Formal Verification and what are its advantages and limitations?',
+    a: 'Formal Verification uses mathematical algorithms to prove RTL code correctness against formal property specifications (SVA).\nAdvantages: Exhaustive state-space exploration guaranteeing 100% mathematical proof without requiring simulation test vectors.\nLimitations: Suffers from state-space explosion on complex microarchitectures like deep pipelines or floating-point units.',
+  },
+  {
+    id: 'pd-flow-major-steps', topic: 'pd', level: 'Medium',
+    q: 'What are the major steps in the physical design (RTL-to-GDSII) flow?',
+    a: '1. Floorplanning: Establishing chip aspect ratio, core area, macro placement, halos, and I/O pin assignments.\n2. Power Planning: Constructing Power Distribution Networks (PDN) with VDD/VSS rings, straps, and rails.\n3. Placement: Legalizing standard cells into core rows while minimizing routing congestion.\n4. Clock Tree Synthesis (CTS): Building balanced buffer trees to deliver clock signals with minimal skew and latency.\n5. Routing: Executing global and detailed routing on target metal layers.\n6. Signoff Verification: Performing DRC, LVS, and STA checks for physical manufacturability.',
+  },
+  {
+    id: 'pd-cts-goals', topic: 'pd', level: 'Hard',
+    q: 'What is Clock Tree Synthesis (CTS) and why is absolute zero skew not always desirable?',
+    a: 'CTS constructs a balanced clock distribution tree delivering clock pulses to all sequential elements.\nWhy absolute zero skew is avoided:\n1. Power Grid Spikes (di/dt): Simultaneous switching across all clock sinks draws massive transient surge currents, inducing high IR drop.\n2. Useful Skew: Intentional skew is deliberately introduced to delay clock arrival at capturing registers on critical paths, borrowing timing slack to resolve setup violations.',
+  },
+  {
+    id: 'pd-global-vs-detailed-routing', topic: 'pd', level: 'Medium',
+    q: 'What is the operational difference between global and detailed routing?',
+    a: 'Global Routing: Divides the die into coarse routing regions (g-cells) and calculates estimated path guides without assigning exact metal tracks or layers.\nDetailed Routing: Takes global routing guides and places physical metal traces on exact grid tracks while adhering to foundry DRC rules.',
+  },
+  {
+    id: 'sta-fundamentals-importance', topic: 'pd', level: 'Medium',
+    q: 'What is Static Timing Analysis (STA) and why is it critical in chip signoff?',
+    a: 'Static Timing Analysis (STA) calculates worst-case propagation delays across all timing paths in a circuit without requiring dynamic simulation test vectors.\nIt ensures the chip meets setup and hold time constraints across all process-voltage-temperature (PVT) corners before tapeout signoff.',
+  },
+  {
+    id: 'sta-setup-violation-fixes', topic: 'pd', level: 'Hard',
+    q: 'How do you identify and resolve a Setup Time violation?',
+    a: '§F: Setup Constraint Equation\n`T_clk + T_skew >= T_cq + T_comb + T_setup` (Data path is too slow).\n\nFixes:\n1. Upsize Driving Cells: Increase cell drive strength to reduce gate delay.\n2. Use Low-Vt (LVT) Cells: Swap standard cells for low threshold voltage cells on critical paths.\n3. Restructure Logic Depth: Pipeline long combinational paths with intermediate registers.\n4. Useful Skew: Delay clock edge at capture register.',
+  },
+  {
+    id: 'sta-hold-violation-fixes', topic: 'pd', level: 'Hard',
+    q: 'How do you identify and resolve a Hold Time violation?',
+    a: '§F: Hold Constraint Equation\n`T_cq + T_comb >= T_hold + T_skew` (Data path is too fast).\n\nFixes:\n1. Insert Delay Buffers: Place non-inverting buffers directly into fast data paths.\n2. Swap to High-Vt (HVT) Cells: Replace fast LVT cells with slower HVT variants.\nNote: Hold fixes are independent of clock period (frequency) and must be satisfied across all operating corners.',
+  },
+  {
+    id: 'dft-scan-based-testing', topic: 'pd', level: 'Medium',
+    q: 'What is DFT and how does scan-based testing operate?',
+    a: 'Design for Testability (DFT) embeds extra test circuitry to verify silicon after manufacturing.\nScan Testing Operates via 2 Modes:\n1. Shift Mode (Scan Enable = 1): Replaces flip-flops with scan cells linked serially into shift registers (scan chains) to load test vectors (SI).\n2. Capture Mode (Scan Enable = 0): Applies a functional clock pulse to capture circuit response, then shifts data out (SO) for fault analysis.',
+  },
+  {
+    id: 'dft-atpg-fault-models', topic: 'pd', level: 'Hard',
+    q: 'What are the common fault models targeted by Automatic Test Pattern Generation (ATPG)?',
+    a: '1. Stuck-At Faults (Stuck-At-0 / Stuck-At-1): Models structural wires permanently shorted to ground or supply.\n2. Transition Delay Faults: Tests dynamic gate switching delays (slow-to-rise / slow-to-fall) at operational clock speeds.\n3. Bridging Faults: Models unintentional shorts between neighboring signal lines.',
+  },
+  {
+    id: 'cdc-fifo-depth-calc', topic: 'digital', level: 'Hard',
+    q: 'How do you calculate the minimum required depth of an asynchronous FIFO?',
+    a: '§F: FIFO Depth Equation\n`Depth >= Burst_Length - (Burst_Length * (F_read / F_write) * (1 / (1 + Read_Stall)))` + `Guard_Band`.\n\nExample Calculation:\nGiven Write Clock = 100MHz, Read Clock = 50MHz, Burst = 80 items with zero read delay:\n1. Burst Duration = 80 / 100MHz = 800ns.\n2. Reads during burst = 800ns * 50MHz = 40 items.\n3. Backlog = 80 - 40 = 40 entries.\n\n§R: Result\nMinimum Depth = 40 entries + synchronizer latency guard band.',
+  },
+  {
+    id: 'lowpower-cmos-dissipation-types', topic: 'digital', level: 'Medium',
+    q: 'What are the main types of power dissipation in CMOS integrated circuits?',
+    a: '1. Dynamic Power (`P_dynamic = α * C * V^2 * f`): Consumed when transistors switch states; includes capacitive load charging/discharging and short-circuit current.\n2. Static Leakage Power (`P_static = I_leak * V`): Power consumed when idle due to sub-threshold leakage, gate oxide tunneling, and reverse-biased junction leakage.',
+  },
+  {
+    id: 'lowpower-design-techniques', topic: 'digital', level: 'Hard',
+    q: 'What are the industry-standard architectural techniques for low-power design?',
+    a: '1. Clock Gating: Disabling clock trees to idle registers using Integrated Clock Gating (ICG) cells.\n2. Power Gating: Shutting down supply voltage to idle blocks using header/footer power switches.\n3. Multi-VDD & DVFS: Adjusting supply voltage and frequency dynamically based on workload demand.\n4. Multi-Vt Optimization: Using low-Vt cells strictly on timing-critical paths and high-Vt (HVT) cells elsewhere to suppress leakage.',
+  },
+
+  // ── Primary to Professional Tiered Questions ──────────────────────────
+  {
+    id: 'tier-primary-and-or', topic: 'digital', level: 'Easy',
+    q: 'What is the visual and logic difference between an AND gate and an OR gate?',
+    a: 'AND Gate: Output is 1 ONLY when ALL inputs are 1 (like switches connected in series).\nOR Gate: Output is 1 when AT LEAST ONE input is 1 (like switches connected in parallel).',
+  },
+  {
+    id: 'tier-primary-binary-count', topic: 'digital', level: 'Easy',
+    q: 'How do computers count to 10 using binary (0s and 1s)?',
+    a: 'Binary counting uses base-2 positional values (1, 2, 4, 8):\n0=0000, 1=0001, 2=0010, 3=0011, 4=0100, 5=0101, 6=0110, 7=0111, 8=1000, 9=1001, 10=1010.',
+  },
+  {
+    id: 'tier-hs-demorgan', topic: 'digital', level: 'Easy',
+    q: 'What are De Morgan’s Laws and why are they useful in circuit synthesis?',
+    a: 'De Morgan’s Laws:\n1. `~(A & B) = ~A | ~B`\n2. `~(A | B) = ~A & ~B`\nUtility: Allows converting logic equations into NAND-only or NOR-only implementations, optimizing silicon area in standard cell libraries.',
+  },
+  {
+    id: 'tier-senior-retiming', topic: 'digital', level: 'Medium',
+    q: 'What is register retiming and how does it optimize clock performance?',
+    a: 'Register retiming shifts flip-flops across combinational logic blocks without altering input-output functional behavior.\nGoal: Balances critical combinational path delays across pipeline stages to achieve higher maximum operating frequency (Fmax).',
+  },
+  {
+    id: 'tier-pro-round-robin-arbiter', topic: 'verilog', level: 'Hard',
+    q: 'How do you implement a 4-requestor Round-Robin Arbiter with rotating priority?',
+    a: 'Maintain a 2-bit pointer `last_grant`. For each requestor i, evaluate priority relative to `last_grant` (`priority = (i - last_grant) mod 4`). Rotate input request vector, pass to fixed priority encoder, grant request, and update `last_grant`.',
+  },
+  {
+    id: 'tier-pro-upf-power-intent', topic: 'digital', level: 'Hard',
+    q: 'What is IEEE 1801 UPF (Unified Power Format) and how does it drive multi-rail implementation?',
+    a: 'UPF specifies power intent out-of-band from RTL code.\nIt defines:\n1. Power domains and supply nets/switches.\n2. Isolation cells (preventing floating inputs when domains turn off).\n3. Level shifters (bridging signals between low-voltage and high-voltage rails).\n4. Retention registers (saving register states during power-down).',
+  },
+
+  // ── Semiconductor Company Interview Scenarios ───────────────────────
+  {
+    id: 'company-intel-power-stripes', topic: 'pd', level: 'Hard',
+    q: '[Intel Interview] Why are power distribution stripes routed on top metal layers in advanced nodes?',
+    a: 'Top metal layers (e.g., M7-M9) are physically thicker with larger cross-sectional area, offering significantly lower resistance (R per unit length).\nRouting primary VDD/VSS power grid lines on top metal minimizes IR voltage drops and electromigration across high-performance CPU cores.',
+  },
+  {
+    id: 'company-amd-pdp-tradeoff', topic: 'digital', level: 'Medium',
+    q: '[AMD Interview] What is Power-Delay Product (PDP) and Energy-Delay Product (EDP)?',
+    a: 'Power-Delay Product (PDP = Power * Delay): Measures energy consumed per switching operation (Joules).\nEnergy-Delay Product (EDP = Energy * Delay): Evaluates architectural efficiency by balancing performance penalty against power savings. EDP is the primary metric for processor pipeline tuning.',
+  },
+  {
+    id: 'company-qualcomm-axi-bursts', topic: 'tools', level: 'Hard',
+    q: '[Qualcomm Interview] What are the key differences between AMBA AXI3 and AXI4 protocols?',
+    a: '1. Burst Length: AXI4 expands INCR burst length up to 256 transfers (AXI3 maxed at 16).\n2. Write Interleaving: AXI4 removes write data interleaving to simplify interconnect design.\n3. Quality of Service (QoS): AXI4 adds 4-bit `AxQOS` signals for real-time priority traffic routing.',
+  },
+  {
+    id: 'company-nvidia-pipeline-forwarding', topic: 'verilog', level: 'Hard',
+    q: '[NVIDIA Interview] How do you resolve Read-After-Write (RAW) data hazards in a 5-stage RISC pipeline?',
+    a: '1. Bypassing / Forwarding: Route execution results directly from EX/MEM or MEM/WB pipeline registers back to the ALU input in the ID stage without waiting for register file writeback.\n2. Pipeline Stalling: Insert a bubble (NOP) when loading data from memory (Load-Use hazard) where forwarding cannot bridge the single-cycle gap.',
+  },
+  {
+    id: 'company-analog-chargesharing-paradox', topic: 'digital', level: 'Hard',
+    q: '[Texas Instruments / Analog Interview] When a capacitor charged to V0 connects to an identical uncharged capacitor, what is the final voltage and energy state?',
+    a: '§F: Charge Conservation Equation\n`Q_total = C * V0`. When connected to second capacitor C, total capacitance = `2C`.\n\n§C: Calculation Steps\n1. Final Voltage: `V_final = Q_total / (2C) = V0 / 2`.\n2. Initial Energy: `E_initial = 0.5 * C * V0^2`.\n3. Final Energy: `E_final = 0.5 * (2C) * (V0 / 2)^2 = 0.25 * C * V0^2`.\n\n§R: Result\nExactly 50% of electrostatic energy is dissipated as heat in interconnect resistance regardless of resistance value.',
+  },
+
+  // ── Advanced Company Case Scenarios & Verification Deep Dives ───────
+  {
+    id: 'company-arm-l2-cache-coherence', topic: 'digital', level: 'Hard',
+    q: '[ARM Interview] How does the MESI protocol maintain cache coherence across multi-core CPUs?',
+    a: 'The MESI protocol tracks cache line states across 4 modes:\n1. Modified (M): Line is dirty (modified) and present only in current local cache.\n2. Exclusive (E): Line is clean (matches main memory) and present only in current cache.\n3. Shared (S): Line is clean and may be present in multiple core caches.\n4. Invalid (I): Line does not contain valid data.\nCoherence transitions occur via bus snooping of read/write requests across L1/L2 caches.',
+  },
+  {
+    id: 'company-apple-retention-flops', topic: 'digital', level: 'Hard',
+    q: '[Apple Interview] What is a Retention Flip-Flop and how is it used in aggressive power gating?',
+    a: 'A Retention Flip-Flop contains a secondary shadow latch powered by an always-on supply rail (VDD_always).\nBefore power-gating a block, a `SAVE` pulse backs up register state into shadow latches. When main power returns, a `RESTORE` pulse reloads saved values into primary flip-flops, resuming execution instantly without warm-boot latency.',
+  },
+  {
+    id: 'company-broadcom-serdes-equalization', topic: 'tools', level: 'Hard',
+    q: '[Broadcom Interview] What is the purpose of Pre-Emphasis and Continuous Time Linear Equalization (CTLE) in high-speed SerDes links?',
+    a: 'High-speed serial PCB channels act as low-pass filters, causing severe Inter-Symbol Interference (ISI) and high-frequency attenuation.\n1. Pre-Emphasis (Tx): Amplifies high-frequency signal transitions at transmitter output.\n2. CTLE (Rx): Applies high-pass frequency response at receiver front-end to flatten channel attenuation and open eye diagrams.',
+  },
+  {
+    id: 'company-cadence-synopsys-primetime-ocv', topic: 'pd', level: 'Hard',
+    q: '[Synopsys / Cadence Interview] What is Advanced On-Chip Variation (AOCV) in PrimeTime STA?',
+    a: 'Traditional OCV applies a uniform flat derate factor across the entire die, leading to overly pessimistic timing slack.\nAOCV applies location-dependent and path-depth-dependent derate factors: longer timing paths average out random process variations, reducing pessimism and recovering timing closure margin.',
+  },
+  {
+    id: 'company-samsung-finfet-quantization', topic: 'pd', level: 'Hard',
+    q: '[Samsung / Foundry Interview] What is FinFET width quantization and how does it constrain transistor sizing?',
+    a: 'In planar MOSFETs, channel width (W) can be continuously adjusted. In 3D FinFET technology, effective channel width is quantized into discrete fin counts (`W_eff = N_fins * (2 * H_fin + W_fin)`).\nDesign Impact: Transistor drive strength can only be scaled by adding integer numbers of discrete vertical fins (1-fin, 2-fin, 3-fin cells).',
   }
 ];
 
