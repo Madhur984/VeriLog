@@ -10,6 +10,8 @@
  * sync so non-JS scrapers still get a sensible card.
  */
 import { getRouteMeta } from './routeMeta';
+import { IV_QUESTIONS } from '../data/interviewQuestions';
+
 
 export const SITE = {
   origin: 'https://bitforbytes.in',
@@ -268,5 +270,51 @@ export function routeJsonLd(pathname: string, seo: SeoData): Record<string, unkn
     });
   }
 
+  if (pathname === '/interview-prep') {
+    // Select top 30 most frequently asked VLSI interview questions for maximum SEO/AEO/GEO ranking impact
+    const priorityIds = new Set([
+      'digital-what-is-vlsi',
+      'digital-asic-vs-fpga',
+      'digital-sync-vs-async',
+      'digital-setup-hold',
+      'digital-metastability',
+      'digital-2to1-mux-gates',
+      'verilog-blocking-vs-nonblocking',
+      'pd-static-vs-dynamic-power',
+      'pd-dft-overview',
+      'hr-why-vlsi',
+      'hr-btech-tools',
+      'hr-project-learnings',
+      'hr-continuous-learning',
+      'comb-vs-seq',
+      'latch-vs-ff',
+      'setup-hold',
+    ]);
+
+    const targetQuestions = [
+      ...IV_QUESTIONS.filter(q => priorityIds.has(q.id)),
+      ...IV_QUESTIONS.filter(q => !priorityIds.has(q.id) && q.level !== 'Numerical')
+    ].slice(0, 35);
+
+    out.push({
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: targetQuestions.map(q => ({
+        '@type': 'Question',
+        name: q.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: q.a
+            .replace(/§[FCR]:/g, '')
+            .replace(/`|\$/g, '')
+            .replace(/\s+/g, ' ')
+            .trim(),
+        },
+      })),
+    });
+  }
+
   return out;
 }
+
+
