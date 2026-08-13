@@ -5,8 +5,10 @@ name: Build & Deploy to Hostinger
 # fast and never serves a half-updated page:
 #   1. app assets (JS/CSS/images/.htaccess) — new hashed chunks land first
 #   2. HTML                                  — flips the site to the new build
-#   3. videos (~1.3 GB)                      — AFTER the site is already live, and
-#                                              non-fatal; incremental no-op later.
+#   3. videos (~2 GB)                        — AFTER the site is already live,
+#                                              synced ONE FILE AT A TIME so a
+#                                              dropped connection costs one file
+#                                              instead of the whole batch.
 # rsync is incremental, so after the first full upload only changed files move.
 #
 # Required repo secrets (Settings > Secrets and variables > Actions):
@@ -43,8 +45,10 @@ jobs:
     # online". If 22.04 ever lags too, ubuntu-latest is the usual default.
     runs-on: ubuntu-22.04
     # Backstop so a hung SSH/rsync can't pin the runner (or the concurrency group)
-    # indefinitely; the whole build+deploy comfortably finishes well under this.
-    timeout-minutes: 30
+    # indefinitely. Raised 30 -> 75: checkout alone is now ~5.5 min (the repo
+    # carries ~2 GB of video) and a first-time video sync has ~940 MB to push
+    # over shared hosting, which did not fit in the old budget.
+    timeout-minutes: 75
     steps:
       - name: Checkout (incl. videos)
         uses: actions/checkout@v4
@@ -106,24 +110,51 @@ jobs:
             frontend/dist/ "$TARGET" || { echo "app html failed"; exit 1; }
           echo "✅ App deployed — bitforbytes.in is live on the new build."
 
-      - name: Sync videos (non-blocking; site is already live)
-        # Never fail the deploy over videos — the app is already up. On later
-        # deploys this is a fast incremental no-op once the server has them.
-        continue-on-error: true
+      # Runs LAST and on its own, so the app is already live before this starts.
+      # It is deliberately NOT continue-on-error any more: the previous version
+      # both swallowed failures (continue-on-error) AND ended in a bare `echo`,
+      # which returns 0 — so a completely failed sync still reported ✅ while 32
+      # videos silently 404'd on the live site. A red run here means "site is up,
+      # but lessons are missing their video" — which is worth seeing.
+      - name: Sync videos (per-file, resumable)
         env:
           SSHPASS: ${{ secrets.SFTP_PASS }}
         run: |
           SSH_OPTS="-p ${{ secrets.SFTP_PORT }} \
             -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
-            -o ConnectTimeout=60 -o ServerAliveInterval=15 -o ServerAliveCountMax=4"
+            -o ConnectTimeout=60 -o ServerAliveInterval=15 -o ServerAliveCountMax=8"
           TARGET="${{ secrets.SFTP_USER }}@46.202.183.228:domains/bitforbytes.in/public_html/videos/"
           if [ ! -d frontend/dist/videos ]; then echo "no videos in build, skipping"; exit 0; fi
-          for i in 1 2 3 4 5; do
-            echo "::group::video rsync attempt $i/5"
-            if sshpass -e rsync -rz --partial --partial-dir=.rsync-partial --timeout=300 \
-                 --chmod=D755,F644 -e "ssh $SSH_OPTS" \
-                 frontend/dist/videos/ "$TARGET"; then echo "::endgroup::"; echo "✅ videos synced"; exit 0; fi
-            echo "::endgroup::"
-            [ "$i" -lt 5 ] && { echo "video attempt $i failed, retrying in $((i*20))s"; sleep $((i*20)); }
+          cd frontend/dist/videos
+
+          # ONE FILE PER rsync INVOCATION. Hostinger's shared SSH drops long,
+          # high-volume sessions: a single batched rsync of ~940 MB died partway
+          # every time, and each retry restarted the whole batch, so it never
+          # converged. Short per-file sessions bank progress permanently, and
+          # rsync's size+mtime quick-check makes already-uploaded files an
+          # instant no-op. No -z — MP4 is already compressed, so it only burns
+          # CPU and slows the transfer.
+          ok_count=0; failed=0; failures=""
+          for f in *.mp4; do
+            [ -f "$f" ] || continue
+            done_this=0
+            for i in 1 2 3; do
+              if sshpass -e rsync -t --partial --partial-dir=.rsync-partial \
+                   --timeout=180 --chmod=F644 -e "ssh $SSH_OPTS" "$f" "$TARGET"; then
+                done_this=1; break
+              fi
+              [ "$i" -lt 3 ] && { echo "  retry $i for $f"; sleep $((i*10)); }
+            done
+            if [ "$done_this" -eq 1 ]; then
+              ok_count=$((ok_count+1))
+            else
+              failed=$((failed+1)); failures="$failures $f"; echo "::warning::video failed: $f"
+            fi
           done
-          echo "⚠️ videos not fully synced this run (app is still live); they'll finish on a re-run."
+
+          echo "videos present on server: $ok_count | failed: $failed"
+          if [ "$failed" -gt 0 ]; then
+            echo "::error::$failed video(s) did not sync:$failures"
+            exit 1
+          fi
+          echo "✅ all $ok_count videos synced"
