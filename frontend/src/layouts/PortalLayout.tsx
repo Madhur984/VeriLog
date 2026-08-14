@@ -17,7 +17,7 @@ const INTEGRATED_TOOLBAR_ROUTES = new Set<string>([
     '/portal', '/verilog-playground', '/profile', '/settings',
     '/hw-leetcode', '/signal-playground', '/boss-arena', '/skill-tree',
     '/fsm', '/logic-studio', '/community', '/gatekeeper-game',
-    '/portfolio',
+    '/portfolio', '/interview-prep',
     // /workbench embeds CircuitVerse, which owns all four corners (tabs, toolbar,
     // element/property panels); the floating nav overlapped its top-left tab bar.
     // Workbench ships its own bottom-left Portal + Guided Builds launcher instead.
