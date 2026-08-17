@@ -323,7 +323,7 @@ export const WorkstationHome: React.FC = () => {
     { label: 'Interview Prep', icon: ClipboardList, to: '/interview-prep' },
   ];
   const LIBRARY = [
-    { label: 'Notes & Papers', icon: FileText, to: '/library' },
+    { label: 'Question Papers', icon: FileText, to: '/library' },
     { label: 'Analogy Library', icon: BookOpen, to: '/analogies' },
     { label: 'Verilog Library', icon: Library, to: '/verilog-library' },
     { label: 'Silicon Map', icon: Map, to: '/silicon-map' },
@@ -517,7 +517,7 @@ export const WorkstationHome: React.FC = () => {
 
               <span className="min-w-0 flex-1">
                 <span className="flex flex-wrap items-center gap-x-2.5 gap-y-1">
-                  <span className="text-[17px] font-bold sm:text-[19px]">Notes &amp; Question Papers</span>
+                  <span className="text-[17px] font-bold sm:text-[19px]">Question Papers &amp; GATE</span>
                   <span
                     className="rounded px-1.5 py-0.5 font-mono text-[10px] font-bold uppercase tracking-[0.12em] text-white"
                     style={{ background: '#7A3FD0' }}
@@ -526,7 +526,7 @@ export const WorkstationHome: React.FC = () => {
                   </span>
                 </span>
                 <span className="mt-1 block text-[13.5px] leading-snug" style={{ color: dim }}>
-                  Unit-wise notes and previous-year papers sorted by subject and year —
+                  Previous-year question papers sorted by branch, year and subject —
                   sessionals, pre-university tests and GATE ECE PYQs. Free to read or download.
                 </span>
                 <span className="mt-2 flex flex-wrap gap-x-4 gap-y-1 font-mono text-[10.5px] font-bold uppercase tracking-[0.14em]" style={{ color: faint }}>

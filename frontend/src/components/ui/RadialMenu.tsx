@@ -333,7 +333,7 @@ const SEGMENTS = [
   { id: 'lab', label: 'K-Map Lab', icon: <Database size={18} strokeWidth={2.2} />, path: '/kmap-lab' },
   { id: 'analog', label: 'Analog Library', icon: <BookOpen size={18} strokeWidth={2.2} />, path: '/analogies' },
   { id: 'verilog', label: 'Verilog Judge', icon: <Gavel size={18} strokeWidth={2.2} />, path: '/verilog-playground' },
-  { id: 'notes', label: 'Notes & Papers', icon: <FileText size={18} strokeWidth={2.2} />, path: '/library' }
+  { id: 'notes', label: 'Question Papers', icon: <FileText size={18} strokeWidth={2.2} />, path: '/library' }
 ];
 
 const DEGREE_LABELS = [

@@ -256,9 +256,12 @@ async function main() {
   write('qp-abesit', { id: 'qp-abesit', title: 'ABESIT Papers', badge: 'ABESIT', kind: 'qp', files: abesit });
   collections.push({ id: 'qp-abesit', title: 'ABESIT Papers', badge: 'ABESIT', group: 'papers', count: abesit.length });
 
-  /* ---- notes: subject folders under KRITEN/Notes + the kartik sets ---- */
-  console.log('notes…');
-  const noteSources = [
+  /* ---- notes: subject folders under KRITEN/Notes + the kartik sets ----
+     Parked for now — flip INCLUDE_NOTES back to true to restore the tab; the
+     page picks the tabs up from index.json, so nothing else needs changing. */
+  const INCLUDE_NOTES = false;
+  console.log(INCLUDE_NOTES ? 'notes…' : 'notes… SKIPPED (INCLUDE_NOTES=false)');
+  const noteSources = !INCLUDE_NOTES ? [] : [
     { path: ['KRITEN', 'Notes'], id: 'notes-core', title: 'Subject Notes' },
     { path: ['kartik notes'], id: 'notes-sem', title: 'Semester Notes' },
     { path: ['KRITEN', 'iit kgp stuff'], id: 'notes-iitkgp', title: 'IIT KGP Material' },

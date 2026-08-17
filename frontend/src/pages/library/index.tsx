@@ -12,7 +12,7 @@
 import React, { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-    BookOpen, FileText, GraduationCap, Search, ChevronDown, Download,
+    FileText, GraduationCap, Search, ChevronDown, Download,
     ExternalLink, X, Folder, Loader2, Frown,
 } from 'lucide-react';
 import {
@@ -30,8 +30,9 @@ const IMAGE_EXT = new Set(['png', 'jpg', 'jpeg', 'gif', 'webp']);
 /** Blank/odd extensions are almost always PDFs here, so treat them as such. */
 const isPdf = (f: LibFile) => !f.x || f.x === 'pdf';
 
+// The Notes tab is parked (INCLUDE_NOTES in scripts/build-library-manifest.js).
+// Restoring it means re-adding the entry here and regenerating the manifest.
 const TABS: { id: TabId; label: string; icon: React.ElementType; blurb: string }[] = [
-    { id: 'notes', label: 'Notes', icon: BookOpen, blurb: 'Unit-wise subject notes and semester material.' },
     { id: 'papers', label: 'Question Papers', icon: FileText, blurb: 'Sessionals, pre-university and unit tests, by year and subject.' },
     { id: 'gate', label: 'GATE', icon: GraduationCap, blurb: 'GATE ECE previous-year papers, notes and lecture material.' },
 ];
@@ -313,7 +314,7 @@ const PreviewModal: React.FC<{ file: LibFile; onClose: () => void }> = ({ file, 
 const LibraryPage: React.FC = () => {
     const [index, setIndex] = useState<LibraryIndex | null>(null);
     const [failed, setFailed] = useState(false);
-    const [tab, setTab] = useState<TabId>('notes');
+    const [tab, setTab] = useState<TabId>('papers');
     const [rawQuery, setRawQuery] = useState('');
     const [query, setQuery] = useState('');
     const [openId, setOpenId] = useState<string | null>(null);
@@ -350,7 +351,7 @@ const LibraryPage: React.FC = () => {
                 <header className="text-center mb-6 sm:mb-8">
                     <h1 className="text-3xl sm:text-5xl font-black tracking-tight">Library</h1>
                     <p className="mt-2 text-sm sm:text-base text-text-sub max-w-2xl mx-auto">
-                        Notes and previous-year question papers, sorted by subject and year.
+                        Previous-year question papers and GATE material, sorted by subject and year.
                         Free to read and download — no sign-in needed.
                     </p>
                     {index && (

@@ -1,6 +1,6 @@
 {
   "generated": "2026-08-17",
-  "total": 7070,
+  "total": 6743,
   "collections": [
     {
       "id": "qp-me",
@@ -57,24 +57,6 @@
       "badge": "ABESIT",
       "group": "papers",
       "count": 104
-    },
-    {
-      "id": "notes-core",
-      "title": "Subject Notes",
-      "group": "notes",
-      "count": 111
-    },
-    {
-      "id": "notes-sem",
-      "title": "Semester Notes",
-      "group": "notes",
-      "count": 149
-    },
-    {
-      "id": "notes-iitkgp",
-      "title": "IIT KGP Material",
-      "group": "notes",
-      "count": 67
     },
     {
       "id": "gate",
