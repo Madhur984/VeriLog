@@ -287,19 +287,8 @@ export const WorkstationHome: React.FC = () => {
   const last = getLastModule();
   const opened = new Set(history.map((h) => h.id));
 
-  // Resume ticket data — the last-opened module, its path, and what follows it.
-  const lastPrefix = last ? `${last.id.split('/')[0]}/` : null;
-  const lastPath = lastPrefix ? PATHS.find((p) => p.prefix === lastPrefix) : undefined;
-  const lastPathModules = lastPrefix ? modulesFor(lastPrefix) : [];
-  const lastIdx = last ? lastPathModules.findIndex((m) => m.id === last.id) : -1;
-  const upNext = lastIdx >= 0 ? lastPathModules[lastIdx + 1] : undefined;
-  const inPathOpened = lastPathModules.filter((m) => opened.has(m.id)).length;
-  const inPathPct = lastPathModules.length ? Math.round((inPathOpened / lastPathModules.length) * 100) : 0;
-
-  const ticket = last && lastPath
-    ? { color: lastPath.color, pathTitle: lastPath.title, module: last.label, to: last.path, pct: inPathPct, tag: 'Resume' }
-    : { color: '#7A3FD0', pathTitle: PATHS[0].title, module: MODULE_LABELS['module/1'], to: '/module/1', pct: 0, tag: 'Start here' };
-
+  // `last` still marks the resume point inside each path lane; the hero's
+  // resume ticket it used to feed was replaced by the library card.
   const hour = new Date().getHours();
   const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
 
@@ -440,7 +429,7 @@ export const WorkstationHome: React.FC = () => {
         <SquareWave stroke={hairline} />
 
         <main className="mx-auto w-full max-w-[1080px] px-4 pb-32 sm:px-6">
-          {/* ── Hero: headline + resume ticket ── */}
+          {/* ── Hero: headline + library card ── */}
           <motion.section
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
@@ -460,90 +449,48 @@ export const WorkstationHome: React.FC = () => {
               </button>
             </div>
 
-            {/* Resume ticket */}
+            {/* Library card — occupies the hero's right column (formerly the
+                resume ticket). Stacked rather than wide, to fit 320px. */}
             <div className="relative overflow-hidden" style={panel}>
-              <span className="absolute inset-y-0 left-0 w-[5px]" style={{ background: ticket.color }} />
+              <span className="absolute inset-y-0 left-0 w-[5px]" style={{ background: '#7A3FD0' }} />
               <div className="p-5 pl-6">
-                <p className="font-mono text-[10px] font-bold uppercase tracking-[0.2em]" style={{ color: faint }}>
-                  {ticket.tag} · {ticket.pathTitle}
-                </p>
-                <h2 className="mt-1.5 text-[17px] font-bold leading-snug">{ticket.module}</h2>
-
-                <div className="mt-3 flex items-center gap-2.5">
-                  <div className="h-[6px] flex-1 overflow-hidden rounded-full" style={{ background: `${ticket.color}26` }}>
-                    <div className="h-full rounded-full" style={{ width: `${ticket.pct}%`, background: ticket.color }} />
-                  </div>
-                  <span className="font-mono text-[10.5px] font-bold tabular-nums" style={{ color: ticket.color }}>{ticket.pct}%</span>
-                </div>
-
-                <div className="mt-4 border-t border-dashed pt-4" style={{ borderColor: hairline }}>
-                  <button
-                    onClick={() => navigate(ticket.to)}
-                    className="group inline-flex w-full items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-[14px] font-bold text-white transition-transform hover:-translate-y-0.5"
-                    style={{ background: ticket.color }}
-                  >
-                    <Play size={14} /> Open lesson
-                    <ArrowRight size={14} className="transition-transform group-hover:translate-x-0.5" />
-                  </button>
-                  <div className="mt-3 flex items-center justify-between font-mono text-[10px] font-semibold uppercase tracking-[0.14em]" style={{ color: faint }}>
-                    <span className="truncate">{upNext ? `Next · ${upNext.label}` : 'Fresh start'}</span>
-                    <span className="flex-shrink-0 pl-3 tabular-nums">{history.length}/{TOTAL_MODULES} opened</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </motion.section>
-
-          {/* ── Library: notes + previous-year papers. Sits above the tracks
-                 board because it's the thing students come back for between
-                 lessons, and it's too big to leave as a footer link. ── */}
-          <motion.section
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.08, ease: [0.16, 1, 0.3, 1] }}
-            className="mt-10"
-          >
-            <button
-              onClick={() => navigate('/library')}
-              className="group flex w-full flex-col gap-4 p-5 text-left transition-transform hover:-translate-y-0.5 sm:flex-row sm:items-center sm:gap-6 sm:p-6"
-              style={panel}
-            >
-              <span
-                className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg"
-                style={{ background: '#7A3FD0' }}
-              >
-                <FileText size={22} className="text-white" />
-              </span>
-
-              <span className="min-w-0 flex-1">
-                <span className="flex flex-wrap items-center gap-x-2.5 gap-y-1">
-                  <span className="text-[17px] font-bold sm:text-[19px]">Question Papers &amp; GATE</span>
+                <div className="flex items-center gap-2.5">
                   <span
-                    className="rounded px-1.5 py-0.5 font-mono text-[10px] font-bold uppercase tracking-[0.12em] text-white"
+                    className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg"
+                    style={{ background: '#7A3FD0' }}
+                  >
+                    <FileText size={17} className="text-white" />
+                  </span>
+                  <span
+                    className="rounded px-1.5 py-0.5 font-mono text-[9.5px] font-bold uppercase tracking-[0.12em] text-white"
                     style={{ background: '#7A3FD0' }}
                   >
                     New
                   </span>
-                </span>
-                <span className="mt-1 block text-[13.5px] leading-snug" style={{ color: dim }}>
-                  Previous-year question papers sorted by branch, year and subject —
-                  sessionals, pre-university tests and GATE ECE PYQs. Free to read or download.
-                </span>
-                <span className="mt-2 flex flex-wrap gap-x-4 gap-y-1 font-mono text-[10.5px] font-bold uppercase tracking-[0.14em]" style={{ color: faint }}>
-                  <span>7,000+ files</span>
-                  <span>All branches</span>
-                  <span>No sign-in</span>
-                </span>
-              </span>
+                </div>
 
-              <span
-                className="inline-flex flex-shrink-0 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-[14px] font-bold text-white"
-                style={{ background: '#7A3FD0' }}
-              >
-                Browse
-                <ArrowRight size={14} className="transition-transform group-hover:translate-x-0.5" />
-              </span>
-            </button>
+                <h2 className="mt-3 text-[17px] font-bold leading-snug">Question Papers &amp; GATE</h2>
+                <p className="mt-1.5 text-[12.5px] leading-snug" style={{ color: dim }}>
+                  Previous-year papers by branch, year and subject — sessionals, pre-university
+                  tests and GATE ECE PYQs.
+                </p>
+
+                <div className="mt-4 border-t border-dashed pt-4" style={{ borderColor: hairline }}>
+                  <button
+                    onClick={() => navigate('/library')}
+                    className="group inline-flex w-full items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-[14px] font-bold text-white transition-transform hover:-translate-y-0.5"
+                    style={{ background: '#7A3FD0' }}
+                  >
+                    Browse the library
+                    <ArrowRight size={14} className="transition-transform group-hover:translate-x-0.5" />
+                  </button>
+                  <div className="mt-3 flex items-center justify-between font-mono text-[10px] font-semibold uppercase tracking-[0.14em]" style={{ color: faint }}>
+                    <span>6,700+ papers</span>
+                    <span className="flex-shrink-0 pl-3">Free · no sign-in</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </motion.section>
 
           {/* ── Paths: one board, three lanes ── */}
