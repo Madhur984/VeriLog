@@ -469,10 +469,10 @@ export const WorkstationHome: React.FC = () => {
                   </span>
                 </div>
 
-                <h2 className="mt-3 text-[17px] font-bold leading-snug">Question Papers &amp; GATE</h2>
+                <h2 className="mt-3 text-[17px] font-bold leading-snug">Question Papers</h2>
                 <p className="mt-1.5 text-[12.5px] leading-snug" style={{ color: dim }}>
-                  Previous-year papers by branch, year and subject — sessionals, pre-university
-                  tests and GATE ECE PYQs.
+                  Previous-year papers and solutions, grouped by branch, year and subject —
+                  sessionals, pre-university and unit tests.
                 </p>
 
                 <div className="mt-4 border-t border-dashed pt-4" style={{ borderColor: hairline }}>
@@ -485,7 +485,7 @@ export const WorkstationHome: React.FC = () => {
                     <ArrowRight size={14} className="transition-transform group-hover:translate-x-0.5" />
                   </button>
                   <div className="mt-3 flex items-center justify-between font-mono text-[10px] font-semibold uppercase tracking-[0.14em]" style={{ color: faint }}>
-                    <span>6,700+ papers</span>
+                    <span>6,500+ papers</span>
                     <span className="flex-shrink-0 pl-3">Free · no sign-in</span>
                   </div>
                 </div>

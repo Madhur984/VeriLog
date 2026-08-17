@@ -87,10 +87,23 @@ const cleanTitle = (s) =>
   s
     .replace(/\b(ST[\s-]?[12]|ST|PUT|UT)\b/gi, ' ')
     .replace(/\b(QP|QUES|Sol|Solution)\b/gi, ' ')
-    .replace(/\b(ODD|EVEN)\b/gi, ' ')
+    // No \b after the word: filenames run these straight into the year ("ODD19 20").
+    .replace(/\b(ODD|EVEN|ENEN)\s*\d*/gi, ' ')
     .replace(/\b(19|20)?\d{2}[\s-]+\d{2}\b\s*$/, ' ')
+    // Paper-set and session markers that survive into the subject name and
+    // otherwise split one subject across several buckets.
+    .replace(/\(\s*set\s*[-–]?\s*[a-d]\s*\)/gi, ' ')
+    .replace(/\bset\s*[-–]?\s*[a-d]\b/gi, ' ')
+    .replace(/\b(sem|semester|session|backlog|carry\s*over)\b/gi, ' ')
+    .replace(/\b(19|20)\d{2}\b/g, ' ') // a stray standalone year
+    // Any subject code still sitting in the title is junk by this point — the
+    // real one was already lifted into its own field. Case-insensitive: plenty
+    // of these filenames are lower-case ("operations research noe 073").
+    .replace(/\b[a-z]{2,4}\s*-?\s*\d{3}[a-z]?\b/gi, ' ')
+    .replace(/\b\d{4,8}\b/g, ' ') // bare numeric codes, e.g. "180001"
     .replace(/[_-]+/g, ' ')
     .replace(/\s{2,}/g, ' ')
+    .replace(/^[\s.,&-]+|[\s.,&-]+$/g, '')
     .trim();
 
 /** Strip Drive's " (2)" duplicate suffix and the extension. */
@@ -142,7 +155,7 @@ function parsePaper(name) {
   }
 
   // Subject code, e.g. KEC-076 / BEC403 / REC-085 / BOE410
-  const code = tail.match(/\b([A-Z]{2,4}\s*-?\s*\d{3}[A-Z]?)\b/);
+  const code = tail.match(/\b([A-Za-z]{2,4}\s*-?\s*\d{3}[A-Za-z]?)\b/);
   if (code) { out.code = code[1].replace(/\s/g, '').toUpperCase(); tail = tail.replace(code[0], ' '); }
 
   if (!out.exam) {
@@ -178,6 +191,119 @@ function parseGateYear(name) {
   const two = s.match(/gate[-_ ]?(\d{2})\b/i) || s.match(/_(\d{2})P\d/i);
   if (two) return `20${two[1]}`;
   return 'Other';
+}
+
+/* ── subject canonicalisation ──────────────────────────────────────────── */
+/* The same subject is typed many ways across years — "Analog & Digital
+   Communication" / "Analog and Digital Communication", or with a stray code
+   left in ("wireless and mobile communication nec 801"), or plainly misspelled
+   ("Communicaton"). Left alone, ECE alone yields 417 "subjects", 232 of them
+   holding a single paper, which makes grouping by subject useless. */
+
+const STOP = new Set(['and', 'of', 'the', 'in', 'for', 'to', 'a', 'an', 'using', 'with', 'i', 'ii']);
+
+/** Aggressive key: no case, no punctuation, no stop-words, no stray codes. */
+function subjectKey(title) {
+  return title
+    .toLowerCase()
+    .replace(/&/g, ' and ')
+    // Common abbreviations, so "Communication Engg." keys the same as
+    // "Communication Engineering".
+    .replace(/\bengg?\b\.?/g, 'engineering')
+    .replace(/\bcomm\b\.?/g, 'communication')
+    .replace(/\bmicroprocessors\b/g, 'microprocessor')
+    .replace(/\bcircuits\b/g, 'circuit')
+    .replace(/\bsystems\b/g, 'system')
+    .replace(/\b[a-z]{2,4}\s*-?\s*\d{3}[a-z]?\b/g, ' ') // a code that leaked into the title
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .split(/\s+/)
+    .filter((w) => w && !STOP.has(w))
+    .join('');
+}
+
+/** Bounded edit distance — returns >max as soon as it's certain. */
+function within(a, b, max) {
+  if (Math.abs(a.length - b.length) > max) return false;
+  let prev = Array.from({ length: b.length + 1 }, (_, i) => i);
+  for (let i = 1; i <= a.length; i++) {
+    const cur = [i];
+    let best = i;
+    for (let j = 1; j <= b.length; j++) {
+      cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+      if (cur[j] < best) best = cur[j];
+    }
+    if (best > max) return false;
+    prev = cur;
+  }
+  return prev[b.length] <= max;
+}
+
+/**
+ * Fold each row's title onto one canonical spelling per subject: exact key
+ * first, then a near-miss pass that catches typos. The winning display name is
+ * the most common spelling (longest breaks ties), so the label stays natural.
+ */
+function canonicaliseSubjects(rows) {
+  const groups = new Map(); // key -> Map(originalTitle -> count)
+  for (const r of rows) {
+    const k = subjectKey(r.t);
+    if (!k) continue;
+    if (!groups.has(k)) groups.set(k, new Map());
+    const m = groups.get(k);
+    m.set(r.t, (m.get(r.t) || 0) + 1);
+  }
+
+  // Merge near-identical keys into the more populous one. Only for keys long
+  // enough that a 1-2 char difference is a typo rather than a real distinction
+  // ("ec101" vs "ec102" must never merge).
+  const keys = [...groups.keys()].sort(
+    (a, b) => [...groups.get(b).values()].reduce((x, y) => x + y, 0) -
+      [...groups.get(a).values()].reduce((x, y) => x + y, 0),
+  );
+  const alias = new Map();
+  const kept = [];
+  for (const k of keys) {
+    const hit = k.length >= 12 ? kept.find((c) => within(k, c, k.length >= 20 ? 2 : 1)) : undefined;
+    if (hit) alias.set(k, hit);
+    else kept.push(k);
+  }
+
+  // Fold the merged spellings together before picking a winner.
+  const merged = new Map();
+  for (const [k, counts] of groups) {
+    const target = alias.get(k) || k;
+    if (!merged.has(target)) merged.set(target, new Map());
+    const m = merged.get(target);
+    for (const [title, n] of counts) m.set(title, (m.get(title) || 0) + n);
+  }
+
+  // Filenames shout, whisper and mix case, so the winning spelling still needs
+  // normalising: title-case the all-lower ones, and keep roman numerals upper
+  // ("mathematics iii" -> "Mathematics III", not "Mathematics Iii").
+  const displayName = (s) =>
+    (/[A-Z]/.test(s) ? s : titleCase(s)).replace(
+      /\b(i{1,3}|iv|vi{0,3}|ix|xi{0,2})\b/gi,
+      (m) => m.toUpperCase(),
+    );
+
+  const display = new Map();
+  for (const [k, counts] of merged) {
+    let best = '';
+    let bestN = -1;
+    for (const [title, n] of counts) {
+      if (n > bestN || (n === bestN && title.length > best.length)) { best = title; bestN = n; }
+    }
+    display.set(k, displayName(best));
+  }
+
+  let folded = 0;
+  for (const r of rows) {
+    const k = subjectKey(r.t);
+    const target = alias.get(k) || k;
+    const name = display.get(target);
+    if (name && name !== r.t) { r.t = name; folded++; }
+  }
+  return { rows, folded, subjects: display.size };
 }
 
 /* ── shard assembly ────────────────────────────────────────────────────── */
@@ -248,8 +374,12 @@ async function main() {
       const p = parsePaper(f.name);
       return fileRow(f, { t: p.title, c: p.code, y: p.year, s: p.session, e: p.exam, k: p.kind });
     });
-    rows = dedupe(rows, (r) => `${r.t.toLowerCase()}|${r.c}|${r.y}|${r.s}|${r.e}|${r.k}`);
+    // Canonicalise BEFORE dedupe: once spellings agree, the duplicate copies
+    // that only differed by wording collapse too.
+    const canon = canonicaliseSubjects(rows);
+    rows = dedupe(canon.rows, (r) => `${r.t.toLowerCase()}|${r.y}|${r.s}|${r.e}|${r.k}`);
     rows.sort((a, b) => (b.y || '').localeCompare(a.y || '') || a.t.localeCompare(b.t));
+    console.log(`    ${canon.subjects} subjects after folding ${canon.folded} titles`);
     const id = `qp-${br.name.toLowerCase().replace(/[^a-z0-9]+/g, '')}`;
     write(id, { id, title: BRANCHES[br.name] || br.name, badge: br.name, kind: 'qp', files: rows });
     collections.push({ id, title: BRANCHES[br.name] || br.name, badge: br.name, group: 'papers', count: rows.length });
@@ -296,9 +426,13 @@ async function main() {
     collections.push({ id: src.id, title: src.title, group: 'notes', count: rows.length });
   }
 
-  /* ---- GATE ---- */
-  console.log('GATE…');
-  const gateSets = [
+  /* ---- GATE ----
+     Parked alongside notes; flip INCLUDE_GATE to restore it. Note that the
+     "Lecture Material" set is the pw_gate folder (commercial coaching notes) —
+     re-check that before publishing it. */
+  const INCLUDE_GATE = false;
+  console.log(INCLUDE_GATE ? 'GATE…' : 'GATE… SKIPPED (INCLUDE_GATE=false)');
+  const gateSets = !INCLUDE_GATE ? [] : [
     { path: ['KRITEN', 'GATE', 'PYQs'], label: 'Previous Year Papers', byYear: true },
     { path: ['KRITEN', 'GATE', 'notes'], label: 'GATE Notes', byYear: false },
     { path: ['KRITEN', 'GATE', 'pw_gate'], label: 'Lecture Material', byYear: false },
@@ -317,8 +451,10 @@ async function main() {
   }
   const gateRows = dedupe(gate, (r) => `${r.y}|${r.t.toLowerCase().replace(/\s*\(\d+\)$/, '')}`)
     .sort((a, b) => a.y.localeCompare(b.y) || (b.e || '').localeCompare(a.e || '') || a.t.localeCompare(b.t));
-  write('gate', { id: 'gate', title: 'GATE', kind: 'gate', files: gateRows });
-  collections.push({ id: 'gate', title: 'GATE ECE', group: 'gate', count: gateRows.length });
+  if (gateRows.length) {
+    write('gate', { id: 'gate', title: 'GATE', kind: 'gate', files: gateRows });
+    collections.push({ id: 'gate', title: 'GATE ECE', group: 'gate', count: gateRows.length });
+  }
 
   const index = {
     generated: new Date().toISOString().slice(0, 10),

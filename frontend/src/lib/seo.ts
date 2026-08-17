@@ -90,9 +90,9 @@ const ROUTE: Record<string, { title: string; description: string }> = {
       'Minimize Boolean expressions with an interactive Karnaugh map — an essential digital-design and VLSI skill. Enter a truth table and watch the grouped prime implicants and simplified logic appear, step by step.',
   },
   '/library': {
-    title: 'B.Tech Previous Year Question Papers & GATE ECE PYQs — Free PDF Library | BitForBytes',
+    title: 'B.Tech Previous Year Question Papers — Free PDF Library (ECE, CSE, ME, EE) | BitForBytes',
     description:
-      'A free library of B.Tech previous-year question papers sorted by branch, year and subject — AKTU sessionals, pre-university and unit tests, plus GATE ECE previous-year papers. Read online or download the PDF, no sign-in needed.',
+      'A free library of 6,500+ B.Tech previous-year question papers and solutions, sorted by branch, year and subject — sessionals, pre-university and unit tests across ECE, CSE, Mechanical, Electrical, Civil and more. Read online or download the PDF, no sign-in needed.',
   },
   '/verilog-library': {
     title: 'Verilog Snippet Library — Patterns & Examples | BitForBytes',

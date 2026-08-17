@@ -1,10 +1,13 @@
 /**
- * /library — Notes & Question Papers in one place.
+ * /library — previous-year question papers.
  *
- * Three tabs (Notes / Question Papers / GATE); inside each, collections open
- * into year- or subject-folders that expand to the file list. Files live on
- * Google Drive (see data.ts), so a row opens a Drive preview in a modal and
- * offers a direct download — nothing is proxied through our host.
+ * One branch card per stream (ECE first), opening into a two-level tree:
+ * year → subject → papers, or subject → year → papers, with filters for
+ * paper-vs-solution and exam type. A flat list of 1,700 ECE papers is
+ * unusable; the grouping is the feature.
+ *
+ * Files live on Google Drive (see data.ts). PDFs render in-page via pdf.js
+ * (PdfReader); Office files fall back to a Drive frame.
  *
  * PortalLayout renders the fixed nav cluster top-left on this route, so the
  * header here is centered with pt-20 to stay clear of it.
@@ -12,52 +15,80 @@
 import React, { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-    FileText, GraduationCap, Search, ChevronDown, Download,
-    ExternalLink, X, Folder, Loader2, Frown,
+    FileText, Search, ChevronDown, Download, ExternalLink, X, Loader2, Frown,
 } from 'lucide-react';
 import {
-    loadIndex, loadCollection, groupFiles, matches, fileMeta, fileSize,
-    previewUrl, openUrl, downloadUrl,
+    loadIndex, loadCollection, buildTree, matches, passes, fileMeta, fileSize,
+    previewUrl, openUrl, downloadUrl, EXAM_TYPES,
     type CollectionMeta, type LibFile, type Shard, type LibraryIndex,
+    type GroupMode, type SortMode, type KindFilter, type Filters,
 } from './data';
 
 // pdf.js is ~350KB — keep it out of the page bundle until a document is opened.
 const PdfReader = lazy(() => import('./PdfReader'));
 
-type TabId = 'notes' | 'papers' | 'gate';
-
 const IMAGE_EXT = new Set(['png', 'jpg', 'jpeg', 'gif', 'webp']);
 /** Blank/odd extensions are almost always PDFs here, so treat them as such. */
 const isPdf = (f: LibFile) => !f.x || f.x === 'pdf';
 
-// The Notes tab is parked (INCLUDE_NOTES in scripts/build-library-manifest.js).
-// Restoring it means re-adding the entry here and regenerating the manifest.
-const TABS: { id: TabId; label: string; icon: React.ElementType; blurb: string }[] = [
-    { id: 'papers', label: 'Question Papers', icon: FileText, blurb: 'Sessionals, pre-university and unit tests, by year and subject.' },
-    { id: 'gate', label: 'GATE', icon: GraduationCap, blurb: 'GATE ECE previous-year papers, notes and lecture material.' },
-];
+/* ── small control primitives ──────────────────────────────────────────── */
+const Segmented = <T extends string>({
+    label, value, options, onChange,
+}: {
+    label: string;
+    value: T;
+    options: { v: T; l: string }[];
+    onChange: (v: T) => void;
+}) => (
+    <div className="flex items-center gap-1.5">
+        <span className="font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-text-dim">
+            {label}
+        </span>
+        <div className="flex border-2 border-edge-strong">
+            {options.map((o) => (
+                <button
+                    key={o.v}
+                    type="button"
+                    onClick={() => onChange(o.v)}
+                    aria-pressed={value === o.v}
+                    className={`px-2 py-1 text-[11px] font-bold transition-colors ${
+                        value === o.v
+                            ? 'bg-accent-orange text-white'
+                            : 'bg-bg-base text-text-sub hover:bg-bg-elev'
+                    }`}
+                >
+                    {o.l}
+                </button>
+            ))}
+        </div>
+    </div>
+);
 
 /* ── file row ──────────────────────────────────────────────────────────── */
 const FileRow: React.FC<{ file: LibFile; onOpen: (f: LibFile) => void }> = ({ file, onOpen }) => {
-    const meta = fileMeta(file);
+    const isSolution = file.k === 'Solution';
+    // The subject and the year are both always shown by an ancestor block
+    // (whichever way it's grouped), so a row only needs what varies within it.
     return (
-        <div className="flex items-center gap-2 sm:gap-3 border-b border-edge/60 last:border-b-0 py-2 px-2 sm:px-3 hover:bg-bg-elev/60 transition-colors">
-            <button
-                type="button"
-                onClick={() => onOpen(file)}
-                className="flex-1 min-w-0 text-left group"
-            >
-                <div className="flex items-baseline gap-2 flex-wrap">
-                    <span className="text-[13px] sm:text-sm font-medium text-text-main group-hover:text-accent-orange transition-colors break-words">
-                        {file.t}
+        <div className="flex items-center gap-2 border-b border-edge/60 py-1.5 pl-2 pr-1 last:border-b-0 hover:bg-bg-elev/60 sm:gap-3 sm:pl-3">
+            <button type="button" onClick={() => onOpen(file)} className="group min-w-0 flex-1 text-left">
+                <span className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                    <span className="font-mono text-[11px] font-bold text-text-main group-hover:text-accent-orange">
+                        {file.e || 'Paper'}
                     </span>
-                    {file.c && (
-                        <span className="font-mono text-[10px] sm:text-[11px] text-text-dim shrink-0">{file.c}</span>
-                    )}
-                </div>
-                {meta && <div className="text-[11px] text-text-sub mt-0.5">{meta}</div>}
+                    <span
+                        className={`rounded px-1 py-px font-mono text-[9.5px] font-bold uppercase tracking-wide ${
+                            isSolution
+                                ? 'bg-accent-soft text-text-main'
+                                : 'border border-edge text-text-sub'
+                        }`}
+                    >
+                        {isSolution ? 'Solution' : 'Paper'}
+                    </span>
+                    {file.s && <span className="text-[11px] text-text-dim">{file.s}</span>}
+                </span>
             </button>
-            <span className="hidden sm:block font-mono text-[10px] text-text-dim shrink-0 w-14 text-right">
+            <span className="hidden w-14 shrink-0 text-right font-mono text-[10px] text-text-dim sm:block">
                 {fileSize(file.z)}
             </span>
             <a
@@ -66,69 +97,135 @@ const FileRow: React.FC<{ file: LibFile; onOpen: (f: LibFile) => void }> = ({ fi
                 rel="noopener noreferrer"
                 title={`Download ${file.t}`}
                 aria-label={`Download ${file.t}`}
-                className="shrink-0 p-2 rounded-md border border-edge text-text-sub hover:text-accent-orange hover:border-accent-orange transition-colors"
+                className="shrink-0 rounded-md border border-edge p-1.5 text-text-sub transition-colors hover:border-accent-orange hover:text-accent-orange"
             >
-                <Download size={14} />
+                <Download size={13} />
             </a>
         </div>
     );
 };
 
-/* ── one year / subject folder ─────────────────────────────────────────── */
-const FolderBlock: React.FC<{
+/* ── subject (or year) block inside a section ──────────────────────────── */
+const SubBlock: React.FC<{
     label: string;
     files: LibFile[];
     open: boolean;
     onToggle: () => void;
     onOpenFile: (f: LibFile) => void;
-}> = ({ label, files, open, onToggle, onOpenFile }) => (
-    <div className="border-2 border-edge-strong bg-bg-base shadow-neo-sm">
-        <button
-            type="button"
-            onClick={onToggle}
-            aria-expanded={open}
-            className="w-full flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 sm:py-3 text-left hover:bg-bg-elev transition-colors"
-        >
-            <Folder size={16} className="shrink-0 text-accent-orange" />
-            <span className="flex-1 min-w-0 text-sm sm:text-base font-semibold text-text-main truncate">{label}</span>
-            <span className="shrink-0 font-mono text-[10px] sm:text-xs text-text-dim">{files.length}</span>
-            <ChevronDown
-                size={16}
-                className={`shrink-0 text-text-sub transition-transform ${open ? 'rotate-180' : ''}`}
-            />
-        </button>
-        <AnimatePresence initial={false}>
+}> = ({ label, files, open, onToggle, onOpenFile }) => {
+    const code = files.find((f) => f.c)?.c;
+    return (
+        <div className="border border-edge bg-bg-base">
+            <button
+                type="button"
+                onClick={onToggle}
+                aria-expanded={open}
+                className="flex w-full items-center gap-2 px-2.5 py-2 text-left hover:bg-bg-elev sm:px-3"
+            >
+                <span className="min-w-0 flex-1 truncate text-[13px] font-semibold text-text-main sm:text-sm">
+                    {label}
+                </span>
+                {code && <span className="shrink-0 font-mono text-[10px] text-text-dim">{code}</span>}
+                <span className="shrink-0 font-mono text-[10px] text-text-sub">{files.length}</span>
+                <ChevronDown
+                    size={14}
+                    className={`shrink-0 text-text-sub transition-transform ${open ? 'rotate-180' : ''}`}
+                />
+            </button>
             {open && (
-                <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: 'auto', opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.22, ease: 'easeOut' }}
-                    className="overflow-hidden border-t-2 border-edge-strong"
-                >
+                <div className="border-t border-edge">
                     {files.map((f) => (
                         <FileRow key={f.i} file={f} onOpen={onOpenFile} />
                     ))}
-                </motion.div>
+                </div>
             )}
-        </AnimatePresence>
-    </div>
-);
+        </div>
+    );
+};
 
-/* ── one collection (a branch, a notes set, GATE) ──────────────────────── */
+/* ── one section (a year, or a subject) ────────────────────────────────── */
+const SectionBlock: React.FC<{
+    label: string;
+    count: number;
+    sub: { key: string; files: LibFile[] }[];
+    forceOpen: boolean;
+    onOpenFile: (f: LibFile) => void;
+}> = ({ label, count, sub, forceOpen, onOpenFile }) => {
+    const [open, setOpen] = useState(false);
+    const [openSubs, setOpenSubs] = useState<Set<string>>(new Set());
+    const expanded = forceOpen || open;
+
+    return (
+        <div className="border-2 border-edge-strong bg-bg-base shadow-neo-sm">
+            <button
+                type="button"
+                onClick={() => setOpen((o) => !o)}
+                aria-expanded={expanded}
+                className="flex w-full items-center gap-2 px-3 py-2.5 text-left hover:bg-bg-elev sm:gap-3 sm:px-4 sm:py-3"
+            >
+                <FileText size={15} className="shrink-0 text-accent-orange" />
+                <span className="min-w-0 flex-1 truncate text-sm font-bold text-text-main sm:text-base">
+                    {label}
+                </span>
+                <span className="shrink-0 font-mono text-[10px] text-text-dim sm:text-xs">{count}</span>
+                {!forceOpen && (
+                    <ChevronDown
+                        size={15}
+                        className={`shrink-0 text-text-sub transition-transform ${open ? 'rotate-180' : ''}`}
+                    />
+                )}
+            </button>
+            <AnimatePresence initial={false}>
+                {expanded && (
+                    <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.2, ease: 'easeOut' }}
+                        className="overflow-hidden border-t-2 border-edge-strong"
+                    >
+                        <div className="space-y-1.5 bg-bg-void/40 p-2 sm:p-3">
+                            {sub.map((s) => (
+                                <SubBlock
+                                    key={s.key}
+                                    label={s.key}
+                                    files={s.files}
+                                    open={forceOpen || openSubs.has(s.key)}
+                                    onToggle={() =>
+                                        setOpenSubs((prev) => {
+                                            const next = new Set(prev);
+                                            if (next.has(s.key)) next.delete(s.key);
+                                            else next.add(s.key);
+                                            return next;
+                                        })
+                                    }
+                                    onOpenFile={onOpenFile}
+                                />
+                            ))}
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </div>
+    );
+};
+
+/* ── one branch collection ─────────────────────────────────────────────── */
 const CollectionBlock: React.FC<{
     meta: CollectionMeta;
     query: string;
+    filters: Filters;
+    mode: GroupMode;
+    sort: SortMode;
     open: boolean;
     onToggle: () => void;
     onOpenFile: (f: LibFile) => void;
-}> = ({ meta, query, open, onToggle, onOpenFile }) => {
+}> = ({ meta, query, filters, mode, sort, open, onToggle, onOpenFile }) => {
     const [shard, setShard] = useState<Shard | null>(null);
     const [error, setError] = useState('');
-    const [openFolders, setOpenFolders] = useState<Set<string>>(new Set());
 
-    // Fetch on first open, and also whenever a search is running — search has to
-    // see inside collections the reader hasn't clicked into yet.
+    // Fetch on first open, and whenever a search is running — search has to see
+    // inside collections the reader hasn't clicked into yet.
     const needed = open || !!query;
     useEffect(() => {
         if (!needed || shard) return;
@@ -139,19 +236,14 @@ const CollectionBlock: React.FC<{
         return () => { alive = false; };
     }, [needed, shard, meta.id]);
 
-    const groups = useMemo(() => {
+    const sections = useMemo(() => {
         if (!shard) return [];
-        if (!query) return groupFiles(shard);
-        const hits = shard.files.filter((f) => matches(f, query));
-        return groupFiles({ ...shard, files: hits });
-    }, [shard, query]);
+        const hits = shard.files.filter((f) => passes(f, filters) && matches(f, query));
+        return buildTree(hits, mode, sort);
+    }, [shard, query, filters, mode, sort]);
 
-    const hitCount = useMemo(
-        () => groups.reduce((n, g) => n + g.files.length, 0),
-        [groups],
-    );
+    const hitCount = useMemo(() => sections.reduce((n, s) => n + s.count, 0), [sections]);
 
-    // While searching, open everything — a collapsed match is a missed match.
     const searching = !!query;
     const expanded = searching || open;
     if (searching && shard && hitCount === 0) return null;
@@ -162,18 +254,18 @@ const CollectionBlock: React.FC<{
                 type="button"
                 onClick={onToggle}
                 aria-expanded={expanded}
-                className="w-full flex items-center gap-2 sm:gap-3 px-3 sm:px-5 py-3 sm:py-4 text-left hover:bg-bg-elev transition-colors"
+                className="flex w-full items-center gap-2 px-3 py-3 text-left hover:bg-bg-elev sm:gap-3 sm:px-5 sm:py-4"
             >
                 {meta.badge && (
-                    <span className="shrink-0 font-mono text-[10px] sm:text-[11px] font-bold px-1.5 py-0.5 border-2 border-edge-strong bg-accent-soft text-text-main">
+                    <span className="shrink-0 border-2 border-edge-strong bg-accent-soft px-1.5 py-0.5 font-mono text-[10px] font-bold text-text-main sm:text-[11px]">
                         {meta.badge}
                     </span>
                 )}
-                <span className="flex-1 min-w-0 text-base sm:text-lg font-bold text-text-main truncate">
+                <span className="min-w-0 flex-1 truncate text-base font-bold text-text-main sm:text-lg">
                     {meta.title}
                 </span>
-                <span className="shrink-0 font-mono text-[10px] sm:text-xs text-text-sub">
-                    {searching && shard ? `${hitCount} match${hitCount === 1 ? '' : 'es'}` : `${meta.count} files`}
+                <span className="shrink-0 font-mono text-[10px] text-text-sub sm:text-xs">
+                    {shard ? `${hitCount} shown` : `${meta.count} papers`}
                 </span>
                 {!searching && (
                     <ChevronDown
@@ -184,29 +276,27 @@ const CollectionBlock: React.FC<{
             </button>
 
             {expanded && (
-                <div className="border-t-2 border-edge-strong p-2 sm:p-4 space-y-2 sm:space-y-3 bg-bg-void/40">
-                    {error && <p className="text-sm text-text-sub px-2 py-3">{error}</p>}
+                <div className="space-y-2 border-t-2 border-edge-strong bg-bg-void/40 p-2 sm:space-y-3 sm:p-4">
+                    {error && <p className="px-2 py-3 text-sm text-text-sub">{error}</p>}
                     {!shard && !error && (
-                        <div className="flex items-center gap-2 px-2 py-6 text-text-sub text-sm">
+                        <div className="flex items-center gap-2 px-2 py-6 text-sm text-text-sub">
                             <Loader2 size={16} className="animate-spin" /> Loading…
                         </div>
                     )}
+                    {shard && hitCount === 0 && (
+                        <p className="px-2 py-4 text-sm text-text-sub">
+                            Nothing matches these filters.
+                        </p>
+                    )}
                     {shard &&
-                        groups.map((g) => (
-                            <FolderBlock
-                                key={g.key}
-                                label={g.key}
-                                files={g.files}
-                                // A search already narrowed things down, so show the hits.
-                                open={searching || openFolders.has(g.key)}
-                                onToggle={() =>
-                                    setOpenFolders((prev) => {
-                                        const next = new Set(prev);
-                                        if (next.has(g.key)) next.delete(g.key);
-                                        else next.add(g.key);
-                                        return next;
-                                    })
-                                }
+                        sections.map((s) => (
+                            <SectionBlock
+                                key={s.key}
+                                label={s.key}
+                                count={s.count}
+                                sub={s.sub}
+                                // A search already narrowed things down; show the hits.
+                                forceOpen={searching}
                                 onOpenFile={onOpenFile}
                             />
                         ))}
@@ -239,7 +329,7 @@ const PreviewModal: React.FC<{ file: LibFile; onClose: () => void }> = ({ file, 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[120] bg-black/70 backdrop-blur-sm flex items-center justify-center p-2 sm:p-6"
+            className="fixed inset-0 z-[120] flex items-center justify-center bg-black/70 p-2 backdrop-blur-sm sm:p-6"
             onClick={onClose}
         >
             <motion.div
@@ -247,12 +337,12 @@ const PreviewModal: React.FC<{ file: LibFile; onClose: () => void }> = ({ file, 
                 animate={{ scale: 1, y: 0 }}
                 exit={{ scale: 0.97, y: 8 }}
                 onClick={(e) => e.stopPropagation()}
-                className="w-full max-w-5xl h-[92svh] sm:h-[88svh] flex flex-col border-2 border-edge-strong bg-bg-base shadow-brutal-lg"
+                className="flex h-[92svh] w-full max-w-5xl flex-col border-2 border-edge-strong bg-bg-base shadow-brutal-lg sm:h-[88svh]"
             >
-                <div className="shrink-0 flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 border-b-2 border-edge-strong">
-                    <div className="flex-1 min-w-0">
-                        <p className="text-sm font-bold text-text-main truncate">{file.t}</p>
-                        <p className="text-[11px] text-text-sub truncate">
+                <div className="flex shrink-0 items-center gap-2 border-b-2 border-edge-strong px-3 py-2.5 sm:gap-3 sm:px-4">
+                    <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-bold text-text-main">{file.t}</p>
+                        <p className="truncate text-[11px] text-text-sub">
                             {[file.c, file.y, fileMeta(file)].filter(Boolean).join(' · ')}
                         </p>
                     </div>
@@ -260,7 +350,7 @@ const PreviewModal: React.FC<{ file: LibFile; onClose: () => void }> = ({ file, 
                         href={downloadUrl(file.i)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="shrink-0 inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 border-2 border-edge-strong bg-accent-orange text-white text-xs font-bold shadow-neo-sm hover:translate-y-px transition-transform"
+                        className="inline-flex shrink-0 items-center gap-1.5 border-2 border-edge-strong bg-accent-orange px-2.5 py-1.5 text-xs font-bold text-white shadow-neo-sm transition-transform hover:translate-y-px sm:px-3"
                     >
                         <Download size={13} /> <span className="hidden sm:inline">Download</span>
                     </a>
@@ -270,7 +360,7 @@ const PreviewModal: React.FC<{ file: LibFile; onClose: () => void }> = ({ file, 
                         rel="noopener noreferrer"
                         title="Open in Google Drive"
                         aria-label="Open in Google Drive"
-                        className="shrink-0 p-1.5 border-2 border-edge-strong text-text-sub hover:text-accent-orange transition-colors"
+                        className="shrink-0 border-2 border-edge-strong p-1.5 text-text-sub transition-colors hover:text-accent-orange"
                     >
                         <ExternalLink size={14} />
                     </a>
@@ -278,11 +368,12 @@ const PreviewModal: React.FC<{ file: LibFile; onClose: () => void }> = ({ file, 
                         type="button"
                         onClick={onClose}
                         aria-label="Close preview"
-                        className="shrink-0 p-1.5 border-2 border-edge-strong text-text-sub hover:text-accent-orange transition-colors"
+                        className="shrink-0 border-2 border-edge-strong p-1.5 text-text-sub transition-colors hover:text-accent-orange"
                     >
                         <X size={14} />
                     </button>
                 </div>
+
                 {IMAGE_EXT.has(file.x || '') ? (
                     <div className="flex-1 overflow-auto bg-bg-void/60 p-4">
                         <img src={downloadUrl(file.i)} alt={file.t} className="mx-auto max-w-full" />
@@ -291,7 +382,7 @@ const PreviewModal: React.FC<{ file: LibFile; onClose: () => void }> = ({ file, 
                     <iframe
                         src={previewUrl(file.i)}
                         title={file.t}
-                        className="flex-1 w-full bg-white"
+                        className="w-full flex-1 bg-white"
                         allow="autoplay"
                     />
                 ) : (
@@ -314,11 +405,14 @@ const PreviewModal: React.FC<{ file: LibFile; onClose: () => void }> = ({ file, 
 const LibraryPage: React.FC = () => {
     const [index, setIndex] = useState<LibraryIndex | null>(null);
     const [failed, setFailed] = useState(false);
-    const [tab, setTab] = useState<TabId>('papers');
     const [rawQuery, setRawQuery] = useState('');
     const [query, setQuery] = useState('');
     const [openId, setOpenId] = useState<string | null>(null);
     const [preview, setPreview] = useState<LibFile | null>(null);
+    const [mode, setMode] = useState<GroupMode>('year');
+    const [sort, setSort] = useState<SortMode>('newest');
+    const [kind, setKind] = useState<KindFilter>('all');
+    const [exam, setExam] = useState('');
     const debounce = useRef<number | undefined>(undefined);
 
     useEffect(() => {
@@ -332,72 +426,97 @@ const LibraryPage: React.FC = () => {
         return () => window.clearTimeout(debounce.current);
     }, [rawQuery]);
 
-    const visible = useMemo(
-        () => (index ? index.collections.filter((c) => c.group === tab) : []),
-        [index, tab],
+    const filters = useMemo<Filters>(() => ({ kind, exam }), [kind, exam]);
+    const collections = index?.collections ?? [];
+
+    // Sort options only make sense against the current grouping.
+    const sortOptions = useMemo(
+        () =>
+            mode === 'year'
+                ? ([{ v: 'newest', l: 'Newest' }, { v: 'oldest', l: 'Oldest' }] as { v: SortMode; l: string }[])
+                : ([{ v: 'az', l: 'A–Z' }, { v: 'za', l: 'Z–A' }] as { v: SortMode; l: string }[]),
+        [mode],
     );
-
-    const switchTab = useCallback((id: TabId) => {
-        setTab(id);
-        setOpenId(null);
+    const changeMode = useCallback((m: GroupMode) => {
+        setMode(m);
+        setSort(m === 'year' ? 'newest' : 'az');
     }, []);
-
-    const active = TABS.find((t) => t.id === tab)!;
 
     return (
         <div className="min-h-[100svh] w-full bg-bg-void text-text-main">
-            <div className="mx-auto w-full max-w-5xl px-3 sm:px-6 pt-20 sm:pt-24 pb-16">
+            <div className="mx-auto w-full max-w-5xl px-3 pb-16 pt-20 sm:px-6 sm:pt-24">
                 {/* Centered header — the fixed nav cluster owns the top-left corner. */}
-                <header className="text-center mb-6 sm:mb-8">
-                    <h1 className="text-3xl sm:text-5xl font-black tracking-tight">Library</h1>
-                    <p className="mt-2 text-sm sm:text-base text-text-sub max-w-2xl mx-auto">
-                        Previous-year question papers and GATE material, sorted by subject and year.
+                <header className="mb-6 text-center sm:mb-8">
+                    <h1 className="text-3xl font-black tracking-tight sm:text-5xl">Question Papers</h1>
+                    <p className="mx-auto mt-2 max-w-2xl text-sm text-text-sub sm:text-base">
+                        Previous-year papers and solutions, sorted by branch, year and subject.
                         Free to read and download — no sign-in needed.
                     </p>
                     {index && (
                         <p className="mt-2 font-mono text-[11px] text-text-dim">
-                            {index.total.toLocaleString()} files · updated {index.generated}
+                            {index.total.toLocaleString()} papers · updated {index.generated}
                         </p>
                     )}
                 </header>
 
-                {/* Tabs */}
-                <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-4 sm:mb-5">
-                    {TABS.map((t) => {
-                        const Icon = t.icon;
-                        const on = t.id === tab;
-                        return (
-                            <button
-                                key={t.id}
-                                type="button"
-                                onClick={() => switchTab(t.id)}
-                                aria-pressed={on}
-                                className={`flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 px-2 sm:px-4 py-2.5 sm:py-3 border-2 border-edge-strong font-bold text-xs sm:text-base transition-all ${
-                                    on
-                                        ? 'bg-accent-orange text-white shadow-brutal-sm'
-                                        : 'bg-bg-base text-text-sub hover:bg-bg-elev shadow-neo-sm'
-                                }`}
-                            >
-                                <Icon size={16} className="shrink-0" />
-                                <span className="text-center leading-tight">{t.label}</span>
-                            </button>
-                        );
-                    })}
-                </div>
-
                 {/* Search */}
-                <div className="relative mb-3 sm:mb-4">
-                    <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-dim pointer-events-none" />
+                <div className="relative mb-3">
+                    <Search
+                        size={16}
+                        className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-text-dim"
+                    />
                     <input
                         type="search"
                         value={rawQuery}
                         onChange={(e) => setRawQuery(e.target.value)}
-                        placeholder={`Search ${active.label.toLowerCase()} — subject, code or year…`}
-                        aria-label={`Search ${active.label}`}
-                        className="w-full pl-9 pr-3 py-2.5 sm:py-3 border-2 border-edge-strong bg-bg-base text-sm text-text-main placeholder:text-text-dim outline-none focus:border-accent-orange transition-colors"
+                        placeholder="Search a subject, code or year…"
+                        aria-label="Search question papers"
+                        className="w-full border-2 border-edge-strong bg-bg-base py-2.5 pl-9 pr-3 text-sm text-text-main outline-none transition-colors placeholder:text-text-dim focus:border-accent-orange sm:py-3"
                     />
                 </div>
-                <p className="text-xs text-text-sub mb-4 sm:mb-5">{active.blurb}</p>
+
+                {/* Controls */}
+                <div className="mb-4 flex flex-wrap items-center gap-x-4 gap-y-2 border-2 border-edge-strong bg-bg-base p-2.5 sm:mb-5 sm:p-3">
+                    <Segmented
+                        label="Group"
+                        value={mode}
+                        onChange={changeMode}
+                        options={[{ v: 'year', l: 'Year' }, { v: 'subject', l: 'Subject' }]}
+                    />
+                    <Segmented label="Sort" value={sort} onChange={setSort} options={sortOptions} />
+                    <Segmented
+                        label="Show"
+                        value={kind}
+                        onChange={setKind}
+                        options={[
+                            { v: 'all', l: 'All' },
+                            { v: 'qp', l: 'Papers' },
+                            { v: 'sol', l: 'Solutions' },
+                        ]}
+                    />
+                    <div className="flex items-center gap-1.5">
+                        <span className="font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-text-dim">
+                            Exam
+                        </span>
+                        <div className="flex border-2 border-edge-strong">
+                            {[{ v: '', l: 'Any' }, ...EXAM_TYPES.map((e) => ({ v: e, l: e }))].map((o) => (
+                                <button
+                                    key={o.v || 'any'}
+                                    type="button"
+                                    onClick={() => setExam(o.v)}
+                                    aria-pressed={exam === o.v}
+                                    className={`px-2 py-1 text-[11px] font-bold transition-colors ${
+                                        exam === o.v
+                                            ? 'bg-accent-orange text-white'
+                                            : 'bg-bg-base text-text-sub hover:bg-bg-elev'
+                                    }`}
+                                >
+                                    {o.l}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                </div>
 
                 {/* Collections */}
                 {failed && (
@@ -409,16 +528,19 @@ const LibraryPage: React.FC = () => {
                     </div>
                 )}
                 {!index && !failed && (
-                    <div className="flex items-center justify-center gap-2 py-16 text-text-sub text-sm">
+                    <div className="flex items-center justify-center gap-2 py-16 text-sm text-text-sub">
                         <Loader2 size={18} className="animate-spin" /> Loading library…
                     </div>
                 )}
                 <div className="space-y-3 sm:space-y-4">
-                    {visible.map((c) => (
+                    {collections.map((c) => (
                         <CollectionBlock
                             key={c.id}
                             meta={c}
                             query={query}
+                            filters={filters}
+                            mode={mode}
+                            sort={sort}
                             open={openId === c.id}
                             onToggle={() => setOpenId((prev) => (prev === c.id ? null : c.id))}
                             onOpenFile={setPreview}
@@ -426,7 +548,7 @@ const LibraryPage: React.FC = () => {
                     ))}
                 </div>
 
-                <p className="mt-10 text-[11px] leading-relaxed text-text-dim text-center max-w-2xl mx-auto">
+                <p className="mx-auto mt-10 max-w-2xl text-center text-[11px] leading-relaxed text-text-dim">
                     These papers are indexed for personal study and are hosted on Google Drive.
                     Copyright stays with the university, board or author that produced each one —
                     BitForBytes claims no ownership. If something here is yours and you’d like it

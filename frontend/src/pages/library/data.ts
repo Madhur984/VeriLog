@@ -93,46 +93,99 @@ export function fileMeta(f: LibFile): string {
     return [f.e, f.s, f.k === 'Question paper' ? '' : f.k].filter(Boolean).join(' · ');
 }
 
-export interface Group {
+/* ── browsing controls ─────────────────────────────────────────────────── */
+export type GroupMode = 'year' | 'subject';
+export type SortMode = 'newest' | 'oldest' | 'az' | 'za';
+export type KindFilter = 'all' | 'qp' | 'sol';
+
+export interface Filters {
+    kind: KindFilter;
+    exam: string; // '' = any
+}
+
+/** Exam types actually present across the corpus, in the order students sit them. */
+export const EXAM_TYPES = ['ST-1', 'ST-2', 'PUT', 'UT'];
+
+export const UNDATED = 'Year not listed';
+
+export function passes(f: LibFile, filters: Filters): boolean {
+    if (filters.kind === 'qp' && f.k !== 'Question paper') return false;
+    if (filters.kind === 'sol' && f.k !== 'Solution') return false;
+    if (filters.exam && f.e !== filters.exam) return false;
+    return true;
+}
+
+/** Grouping key for a paper's subject — the parsed subject name. */
+const subjectKey = (f: LibFile) => f.t || 'Untitled';
+const yearKey = (f: LibFile) => f.y || UNDATED;
+
+export interface SubGroup {
     key: string;
     files: LibFile[];
 }
+export interface Section {
+    key: string;
+    count: number;
+    sub: SubGroup[];
+}
+
+/** ST-1 before ST-2 before PUT before UT; anything unknown trails. */
+const examRank = (e?: string) => {
+    const i = EXAM_TYPES.indexOf(e || '');
+    return i < 0 ? 99 : i;
+};
 
 /**
- * Papers group by academic year (newest first, undated last); notes and GATE
- * group by their folder. Within a group, files sort by subject then title.
+ * Two-level tree: year -> subject -> papers, or subject -> year -> papers.
+ * A flat list of 1,700 ECE papers is unusable; this is what makes it browsable.
  */
-export function groupFiles(shard: Shard): Group[] {
-    const by = new Map<string, LibFile[]>();
-    for (const f of shard.files) {
-        const key = f.y || (shard.kind === 'qp' ? 'Year not listed' : 'General');
-        const list = by.get(key);
+export function buildTree(files: LibFile[], mode: GroupMode, sort: SortMode): Section[] {
+    const outer = mode === 'year' ? yearKey : subjectKey;
+    const inner = mode === 'year' ? subjectKey : yearKey;
+
+    const bySection = new Map<string, Map<string, LibFile[]>>();
+    for (const f of files) {
+        const sk = outer(f);
+        let subs = bySection.get(sk);
+        if (!subs) { subs = new Map(); bySection.set(sk, subs); }
+        const ik = inner(f);
+        const list = subs.get(ik);
         if (list) list.push(f);
-        else by.set(key, [f]);
+        else subs.set(ik, [f]);
     }
 
-    const groups = [...by.entries()].map(([key, files]) => ({
-        key,
-        files: files.sort(
-            (a, b) => a.t.localeCompare(b.t) || (a.e || '').localeCompare(b.e || ''),
-        ),
-    }));
+    // Newest-year-first inside a subject; alphabetical subjects inside a year.
+    const sortSubKeys = (a: string, b: string) =>
+        mode === 'year'
+            ? a.localeCompare(b)
+            : (a === UNDATED ? 1 : 0) - (b === UNDATED ? 1 : 0) || b.localeCompare(a);
 
-    if (shard.kind === 'qp') {
-        // "2024-25" before "2016-17"; the undated bucket always sinks.
-        return groups.sort((a, b) => {
-            const au = /^\d/.test(a.key) ? 0 : 1;
-            const bu = /^\d/.test(b.key) ? 0 : 1;
-            return au - bu || b.key.localeCompare(a.key);
-        });
+    const sections: Section[] = [...bySection.entries()].map(([key, subs]) => {
+        const sub = [...subs.entries()]
+            .map(([k, list]) => ({
+                key: k,
+                files: list.sort(
+                    (a, b) =>
+                        examRank(a.e) - examRank(b.e) ||
+                        (a.k || '').localeCompare(b.k || '') ||
+                        a.t.localeCompare(b.t),
+                ),
+            }))
+            .sort((x, y) => sortSubKeys(x.key, y.key));
+        return { key, count: sub.reduce((n, s) => n + s.files.length, 0), sub };
+    });
+
+    if (mode === 'year') {
+        // Undated always sinks, whichever direction the years run.
+        return sections.sort(
+            (a, b) =>
+                (a.key === UNDATED ? 1 : 0) - (b.key === UNDATED ? 1 : 0) ||
+                (sort === 'oldest' ? a.key.localeCompare(b.key) : b.key.localeCompare(a.key)),
+        );
     }
-    if (shard.kind === 'gate') {
-        // Lecture material and papers lead; plain notes trail.
-        const order = ['Lecture Material', 'Previous Year Papers', 'GATE Notes'];
-        const rank = (k: string) => (order.indexOf(k) < 0 ? 99 : order.indexOf(k));
-        return groups.sort((a, b) => rank(a.key) - rank(b.key) || a.key.localeCompare(b.key));
-    }
-    return groups.sort((a, b) => a.key.localeCompare(b.key));
+    return sections.sort((a, b) =>
+        sort === 'za' || sort === 'oldest' ? b.key.localeCompare(a.key) : a.key.localeCompare(b.key),
+    );
 }
 
 /** Free-text match over title, code, year and exam. */
