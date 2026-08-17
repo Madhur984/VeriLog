@@ -126,6 +126,12 @@ export function groupFiles(shard: Shard): Group[] {
             return au - bu || b.key.localeCompare(a.key);
         });
     }
+    if (shard.kind === 'gate') {
+        // Lecture material and papers lead; plain notes trail.
+        const order = ['Lecture Material', 'Previous Year Papers', 'GATE Notes'];
+        const rank = (k: string) => (order.indexOf(k) < 0 ? 99 : order.indexOf(k));
+        return groups.sort((a, b) => rank(a.key) - rank(b.key) || a.key.localeCompare(b.key));
+    }
     return groups.sort((a, b) => a.key.localeCompare(b.key));
 }
 

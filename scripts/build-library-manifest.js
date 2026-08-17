@@ -207,6 +207,10 @@ function dedupe(rows, keyOf) {
   return [...best.values()];
 }
 
+// ECE leads: this is a VLSI/ECE site, so its papers go first regardless of the
+// order Drive hands the folders back. Anything unlisted sorts after these.
+const BRANCH_ORDER = ['ECE', 'EN', 'CSE', 'CS', 'ME', 'CE', 'AS&H', 'IT'];
+
 const BRANCHES = {
   ECE: 'Electronics & Communication',
   CSE: 'Computer Science',
@@ -230,7 +234,14 @@ async function main() {
   /* ---- question papers: one shard per branch ---- */
   console.log('question papers (bytepad)…');
   const bytepad = await resolve(['KRITEN', 'q_papers_bytepad']);
-  for (const br of (await list(bytepad)).filter((f) => f.mimeType === FOLDER_MIME)) {
+  const branchFolders = (await list(bytepad))
+    .filter((f) => f.mimeType === FOLDER_MIME)
+    .sort((a, b) => {
+      const ai = BRANCH_ORDER.indexOf(a.name);
+      const bi = BRANCH_ORDER.indexOf(b.name);
+      return (ai < 0 ? 99 : ai) - (bi < 0 ? 99 : bi) || a.name.localeCompare(b.name);
+    });
+  for (const br of branchFolders) {
     const raw = await collect(br.id, [], []);
     if (!raw.length) continue;
     let rows = raw.map((f) => {

@@ -53,6 +53,39 @@ const SECTIONS: LegalSection[] = [
     ],
   },
   {
+    id: 'library',
+    heading: 'The Library — question papers and study material',
+    paras: [
+      'The Library section of the Service indexes previous-year examination papers and study material that are hosted on third-party storage (currently Google Drive) and are made available for the personal, non-commercial study of students. BitForBytes does not claim authorship or ownership of these documents. Copyright in each document remains with its respective owner — the university, examination board, institute, author, or publisher that created it.',
+      'We index this material on the understanding that it was already publicly circulated and that access supports students preparing for the same examinations. We do not sell it, place it behind a paywall, or present it as our own work. Where a document carries a mark, logo, or attribution identifying its source, that identification is part of the document and must not be removed, obscured, or altered by anyone.',
+      'You may use Library material for your own study only. You may not redistribute it commercially, sell it, or republish it as your own. If your institution or examination board restricts the sharing of its papers, those restrictions apply to you regardless of what is available here.',
+    ],
+  },
+  {
+    id: 'copyright-complaints',
+    heading: 'Copyright complaints and takedown requests',
+    paras: [
+      'We respect intellectual property rights and respond to well-founded complaints. If you own the copyright in material available through the Service — or are authorised to act for the owner — and you believe it has been made available without authorisation, email info@bitforbytes.in with the subject "Copyright — Takedown Request".',
+    ],
+    bullets: [
+      'Identify the specific material, including the page and the document title or link, precisely enough for us to locate it.',
+      'Identify yourself, including your name, organisation, email address, and your relationship to the work.',
+      'State that you believe in good faith that the use is not authorised by the copyright owner, its agent, or the law.',
+      'Confirm that the information in your notice is accurate and that you are the owner or are authorised to act on the owner\'s behalf.',
+    ],
+  },
+  {
+    // Separate section because LegalSection renders bullets after paras, and
+    // this commitment is what makes indexing third-party study material
+    // defensible rather than reckless. It belongs after the how-to list.
+    id: 'takedown-response',
+    heading: 'How we respond to takedown requests',
+    paras: [
+      'We will act on valid requests promptly — ordinarily by removing or disabling access to the material while we review it — and we will not require a court order to do so. You do not need to be a large rights-holder for us to act: a request from an author, institute, coaching provider, or examination body is enough. If material of yours was indexed in error, we would rather remove it quickly than argue about it.',
+      'We also remove material proactively when we become aware that it is commercially sold, distributed under a paid licence, or otherwise not intended for free circulation, whether or not anyone has complained.',
+    ],
+  },
+  {
     id: 'third-parties',
     heading: 'Third-party services and links',
     paras: [
@@ -126,8 +159,8 @@ export const TermsPage: React.FC = () => (
   <LegalLayout
     eyebrow="Legal"
     title="Terms of Service"
-    updated="12 July 2026"
-    intro="These terms govern your use of BitForBytes. In short: use it to learn, don't abuse or attack the platform, our content stays ours and yours stays yours, the tools are educational (not professional advice), and the service is provided free and as-is."
+    updated="18 August 2026"
+    intro="These terms govern your use of BitForBytes. In short: use it to learn, don't abuse or attack the platform, our content stays ours and yours stays yours, the tools are educational (not professional advice), and the service is provided free and as-is. Question papers and study material in the Library belong to their original owners, are indexed for personal study only, and are removed on request."
     sections={SECTIONS}
     sibling={{ label: 'Privacy Policy', to: '/privacy' }}
   />

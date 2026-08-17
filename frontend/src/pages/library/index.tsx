@@ -427,12 +427,15 @@ const LibraryPage: React.FC = () => {
                 </div>
 
                 <p className="mt-10 text-[11px] leading-relaxed text-text-dim text-center max-w-2xl mx-auto">
-                    Papers and notes are shared for study use and are hosted on Google Drive.
-                    If something here is yours and you’d like it removed, email{' '}
+                    These papers are indexed for personal study and are hosted on Google Drive.
+                    Copyright stays with the university, board or author that produced each one —
+                    BitForBytes claims no ownership. If something here is yours and you’d like it
+                    removed, email{' '}
                     <a href="mailto:info@bitforbytes.in" className="underline hover:text-accent-orange">
                         info@bitforbytes.in
-                    </a>
-                    .
+                    </a>{' '}
+                    and we’ll take it down. See our{' '}
+                    <a href="/terms" className="underline hover:text-accent-orange">Terms</a>.
                 </p>
             </div>
 

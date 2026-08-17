@@ -3,11 +3,11 @@
   "total": 6743,
   "collections": [
     {
-      "id": "qp-me",
-      "title": "Mechanical",
-      "badge": "ME",
+      "id": "qp-ece",
+      "title": "Electronics & Communication",
+      "badge": "ECE",
       "group": "papers",
-      "count": 1021
+      "count": 1721
     },
     {
       "id": "qp-en",
@@ -31,6 +31,13 @@
       "count": 135
     },
     {
+      "id": "qp-me",
+      "title": "Mechanical",
+      "badge": "ME",
+      "group": "papers",
+      "count": 1021
+    },
+    {
       "id": "qp-ce",
       "title": "Civil",
       "badge": "CE",
@@ -43,13 +50,6 @@
       "badge": "AS&H",
       "group": "papers",
       "count": 1336
-    },
-    {
-      "id": "qp-ece",
-      "title": "Electronics & Communication",
-      "badge": "ECE",
-      "group": "papers",
-      "count": 1721
     },
     {
       "id": "qp-abesit",
