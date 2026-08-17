@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, useMotionValue, useSpring, useTransform, useReducedMotion, type MotionValue } from 'framer-motion';
-import { Globe, LayoutGrid, Database, BookOpen, Gavel, Briefcase, RotateCw, Compass } from 'lucide-react';
+import { Globe, LayoutGrid, Database, BookOpen, Gavel, Briefcase, RotateCw, Compass, FileText } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { cn } from '../../lib/utils';
 import { useColorScheme } from '../../hooks/useColorScheme';
@@ -332,7 +332,8 @@ const SEGMENTS = [
   { id: 'career', label: 'Career Roadmap', icon: <Briefcase size={18} strokeWidth={2.2} />, path: '/career-roadmap' },
   { id: 'lab', label: 'K-Map Lab', icon: <Database size={18} strokeWidth={2.2} />, path: '/kmap-lab' },
   { id: 'analog', label: 'Analog Library', icon: <BookOpen size={18} strokeWidth={2.2} />, path: '/analogies' },
-  { id: 'verilog', label: 'Verilog Judge', icon: <Gavel size={18} strokeWidth={2.2} />, path: '/verilog-playground' }
+  { id: 'verilog', label: 'Verilog Judge', icon: <Gavel size={18} strokeWidth={2.2} />, path: '/verilog-playground' },
+  { id: 'notes', label: 'Notes & Papers', icon: <FileText size={18} strokeWidth={2.2} />, path: '/library' }
 ];
 
 const DEGREE_LABELS = [
@@ -475,6 +476,8 @@ export const RadialMenu: React.FC = () => {
     else if (path.includes('/kmap-lab')) matchedIdx = 3;
     else if (path.includes('/analogies')) matchedIdx = 4;
     else if (path.includes('/verilog-playground') || path.includes('/hw-leetcode')) matchedIdx = 5;
+    // startsWith, not includes — '/verilog-library' must not claim this spoke.
+    else if (path.startsWith('/library')) matchedIdx = 6;
     else matchedIdx = 0;
 
     setActiveId(SEGMENTS[matchedIdx].id);

@@ -494,6 +494,58 @@ export const WorkstationHome: React.FC = () => {
             </div>
           </motion.section>
 
+          {/* ── Library: notes + previous-year papers. Sits above the tracks
+                 board because it's the thing students come back for between
+                 lessons, and it's too big to leave as a footer link. ── */}
+          <motion.section
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.08, ease: [0.16, 1, 0.3, 1] }}
+            className="mt-10"
+          >
+            <button
+              onClick={() => navigate('/library')}
+              className="group flex w-full flex-col gap-4 p-5 text-left transition-transform hover:-translate-y-0.5 sm:flex-row sm:items-center sm:gap-6 sm:p-6"
+              style={panel}
+            >
+              <span
+                className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg"
+                style={{ background: '#7A3FD0' }}
+              >
+                <FileText size={22} className="text-white" />
+              </span>
+
+              <span className="min-w-0 flex-1">
+                <span className="flex flex-wrap items-center gap-x-2.5 gap-y-1">
+                  <span className="text-[17px] font-bold sm:text-[19px]">Notes &amp; Question Papers</span>
+                  <span
+                    className="rounded px-1.5 py-0.5 font-mono text-[10px] font-bold uppercase tracking-[0.12em] text-white"
+                    style={{ background: '#7A3FD0' }}
+                  >
+                    New
+                  </span>
+                </span>
+                <span className="mt-1 block text-[13.5px] leading-snug" style={{ color: dim }}>
+                  Unit-wise notes and previous-year papers sorted by subject and year —
+                  sessionals, pre-university tests and GATE ECE PYQs. Free to read or download.
+                </span>
+                <span className="mt-2 flex flex-wrap gap-x-4 gap-y-1 font-mono text-[10.5px] font-bold uppercase tracking-[0.14em]" style={{ color: faint }}>
+                  <span>7,000+ files</span>
+                  <span>All branches</span>
+                  <span>No sign-in</span>
+                </span>
+              </span>
+
+              <span
+                className="inline-flex flex-shrink-0 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-[14px] font-bold text-white"
+                style={{ background: '#7A3FD0' }}
+              >
+                Browse
+                <ArrowRight size={14} className="transition-transform group-hover:translate-x-0.5" />
+              </span>
+            </button>
+          </motion.section>
+
           {/* ── Paths: one board, three lanes ── */}
           <motion.section
             id="paths"
