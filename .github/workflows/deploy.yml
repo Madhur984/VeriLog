@@ -11,17 +11,27 @@ name: Build & Deploy to Hostinger
 #                                              instead of the whole batch.
 # rsync is incremental, so after the first full upload only changed files move.
 #
-# Required repo secrets (Settings > Secrets and variables > Actions):
-#   SFTP_PORT = 65002
-#   SFTP_USER = u849937788
+# Required repo secret (Settings > Secrets and variables > Actions):
 #   SFTP_PASS = <your Hostinger SSH password>
 #
-# NOTE (2026-08-02): Hostinger moved this account to a NEW server IP
-# (46.202.183.228, per hPanel > Advanced > SSH Access). The old SFTP_HOST secret
-# still pointed at the retired 46.202.142.103, which is why deploys timed out.
-# The current IP is pinned inline below (it's public, not a credential); update
-# the inline value if hPanel ever shows a different SSH IP. The SFTP_HOST secret
-# is no longer used.
+# Everything else is pinned inline below, straight from hPanel > Advanced >
+# SSH Access — none of it is a credential, and as secrets they were only a way
+# to drift out of sync silently:
+#   IP 46.202.183.228 · port 65002 · user u849937788
+# Update these inline values if hPanel ever shows different ones. The SFTP_HOST,
+# SFTP_PORT and SFTP_USER secrets are no longer read.
+#
+# NOTE (2026-08-02): Hostinger moved this account to a NEW server IP. The old
+# SFTP_HOST secret still pointed at the retired 46.202.142.103, which is why
+# deploys timed out.
+#
+# NOTE (2026-08-17): deploys failed with "Permission denied (publickey,password)"
+# and rsync exit 255. That is AUTH, not connectivity — hPanel confirmed the IP,
+# port and username above were all correct and SSH was ACTIVE. Read the error
+# text before suspecting a migration: a TIMEOUT means the IP is wrong, whereas
+# "Permission denied" means the host is right and the credential is stale.
+# A wrong SFTP_USER produces that same message, so user/port were pinned inline
+# to leave SFTP_PASS as the only remaining variable.
 
 on:
   push:
@@ -82,10 +92,10 @@ jobs:
         env:
           SSHPASS: ${{ secrets.SFTP_PASS }}
         run: |
-          SSH_OPTS="-p ${{ secrets.SFTP_PORT }} \
+          SSH_OPTS="-p 65002 \
             -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
             -o ConnectTimeout=60 -o ServerAliveInterval=15 -o ServerAliveCountMax=4"
-          TARGET="${{ secrets.SFTP_USER }}@46.202.183.228:domains/bitforbytes.in/public_html/"
+          TARGET="u849937788@46.202.183.228:domains/bitforbytes.in/public_html/"
 
           # rsync with up to 5 retries (Hostinger shared SSH sometimes drops cloud
           # runner connections → transient rsync exit 255). Returns non-zero only
@@ -120,10 +130,10 @@ jobs:
         env:
           SSHPASS: ${{ secrets.SFTP_PASS }}
         run: |
-          SSH_OPTS="-p ${{ secrets.SFTP_PORT }} \
+          SSH_OPTS="-p 65002 \
             -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
             -o ConnectTimeout=60 -o ServerAliveInterval=15 -o ServerAliveCountMax=8"
-          TARGET="${{ secrets.SFTP_USER }}@46.202.183.228:domains/bitforbytes.in/public_html/videos/"
+          TARGET="u849937788@46.202.183.228:domains/bitforbytes.in/public_html/videos/"
           if [ ! -d frontend/dist/videos ]; then echo "no videos in build, skipping"; exit 0; fi
           cd frontend/dist/videos
 
