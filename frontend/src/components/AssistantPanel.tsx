@@ -1,8 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Send, X, Sparkles } from 'lucide-react';
+import { Send, X, Sparkles, ArrowRight, Compass } from 'lucide-react';
 import { askAssistant, type AssistantMsg } from '../lib/assistant';
 import { getPageContext } from '../lib/pageContext';
+import { MODULE_LABELS, moduleLabel } from '../lib/moduleHistory';
+import { getRouteMeta } from '../lib/routeMeta';
 
 const BASE = import.meta.env.BASE_URL;
 const FACE = `${BASE}mascot/happy.png`;
@@ -15,7 +18,31 @@ interface Props {
   inModule?: boolean;
 }
 
-const SUGGESTIONS = ['Summarise this page', 'Give me a hint', 'Explain this simply', 'What should I learn next?'];
+const SUGGESTIONS = ['Summarise this page', 'Give me a hint', 'Explain this simply', 'Take me to the K-Map Lab'];
+
+/**
+ * Non-module destinations VoltMonkey is allowed to send a student to. Mirrors
+ * the SITE MAP in the `assistant` Edge Function's prompt — a model can always
+ * hallucinate a plausible-looking path, and a redirect into a 404 is a much
+ * worse experience than no redirect, so every target is checked against a real
+ * route before we offer the button.
+ */
+const NAV_PAGES = new Set([
+  '/', '/portal', '/profile', '/settings', '/career-roadmap', '/silicon-map', '/silicon-secrets',
+  '/analogies', '/verilog-library', '/verilog-playground', '/hw-leetcode', '/workbench',
+  '/kmap-lab', '/logic-studio', '/signal-playground', '/fsm', '/boss-arena', '/gatekeeper-game',
+  '/debug-mission', '/interview-prep', '/community', '/ai-lab', '/pledge',
+]);
+
+/** A real, linkable destination? Returns its human label, or null to ignore it. */
+function resolveNavTarget(path: string): string | null {
+  if (!path.startsWith('/') || path.startsWith('//')) return null;
+  const clean = path.split(/[?#]/)[0].replace(/\/+$/, '') || '/';
+  const moduleId = clean.replace(/^\//, '');
+  if (MODULE_LABELS[moduleId]) return moduleLabel(moduleId);
+  if (NAV_PAGES.has(clean)) return getRouteMeta(clean).label;
+  return null;
+}
 const FALLBACK = "Hey, I'm VoltMonkey ⚡ — ask me anything about this page or the curriculum!";
 
 /**
@@ -32,6 +59,24 @@ export const AssistantPanel: React.FC<Props> = ({ open, onClose, pathname, inMod
   const inputRef = useRef<HTMLInputElement>(null);
   const reqId = useRef(0); // only the latest request may write to state
   const lastSummarised = useRef(''); // route we've already summarised
+  const navigate = useNavigate();
+  // A pending "go here?" offer from VoltMonkey. Deliberately NOT an automatic
+  // redirect: yanking a student off the page they're reading — mid-lesson, on a
+  // model's guess — is hostile. One tap, their choice.
+  const [navTo, setNavTo] = useState<{ path: string; label: string } | null>(null);
+
+  const offerNav = (path: string) => {
+    const label = resolveNavTarget(path);
+    if (label) setNavTo({ path, label });
+  };
+
+  const goNav = () => {
+    if (!navTo) return;
+    const to = navTo.path;
+    setNavTo(null);
+    onClose();
+    navigate(to);
+  };
 
   // Append a streamed chunk to the last (assistant) message.
   const pushDelta = (delta: string) =>
@@ -82,10 +127,17 @@ export const AssistantPanel: React.FC<Props> = ({ open, onClose, pathname, inMod
     const base: AssistantMsg[] = [...messages.filter((m) => m.content), { role: 'user', content: q }];
     setMessages([...base, { role: 'assistant', content: '' }]);
     setBusy(true);
+    setNavTo(null);
     const myId = ++reqId.current;
     const mine = () => reqId.current === myId;
     try {
-      await askAssistant({ messages: base, pageContext: getPageContext(pathname), mode: 'chat', onDelta: (d) => { if (mine()) pushDelta(d); } });
+      await askAssistant({
+        messages: base,
+        pageContext: getPageContext(pathname),
+        mode: 'chat',
+        onDelta: (d) => { if (mine()) pushDelta(d); },
+        onNavigate: (p) => { if (mine()) offerNav(p); },
+      });
       if (mine()) fillLastIfEmpty("Hmm, I blanked for a second — try asking that again? ⚡");
     } catch (e: any) {
       if (mine()) fillLastIfEmpty(`⚠️ ${e?.message || 'I could not reach my brain just now. Try again in a moment.'}`);
@@ -148,6 +200,32 @@ export const AssistantPanel: React.FC<Props> = ({ open, onClose, pathname, inMod
                 </div>
               </div>
             ))}
+
+            {/* Navigation offer — VoltMonkey found a page; the student decides. */}
+            <AnimatePresence>
+              {navTo && !busy && (
+                <motion.div
+                  initial={{ opacity: 0, y: 8, scale: 0.97 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 8, scale: 0.97 }}
+                  transition={{ type: 'spring', stiffness: 380, damping: 26 }}
+                  className="flex justify-start"
+                >
+                  <button
+                    type="button"
+                    onClick={goNav}
+                    className="group flex w-[85%] items-center gap-3 rounded-2xl border-[2.5px] border-[#1B1436] bg-[#FF7A1A] px-3.5 py-3 text-left text-white shadow-[3px_3px_0_#1B1436] transition-transform hover:-translate-y-[2px] active:translate-y-[1px] dark:border-[#4A3D7A] dark:shadow-[3px_3px_0_#7A3FD0]"
+                  >
+                    <Compass size={19} className="flex-shrink-0" />
+                    <span className="min-w-0 flex-1">
+                      <span className="block font-mono text-[9.5px] font-bold uppercase tracking-[0.18em] opacity-80">Go to</span>
+                      <span className="block truncate text-[14px] font-bold leading-tight">{navTo.label}</span>
+                    </span>
+                    <ArrowRight size={17} className="flex-shrink-0 transition-transform group-hover:translate-x-1" />
+                  </button>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             {waiting && (
               <div className="flex justify-start">
