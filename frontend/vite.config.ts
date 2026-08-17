@@ -209,6 +209,9 @@ export default defineConfig({
                     // with the lazy route that uses them, never in the upfront bundle.
                     if (/\/node_modules\/(three|@react-three|three-stdlib|troika)\b/.test(f)) return 'vendor-three';
                     if (f.includes('jspdf') || f.includes('html2canvas') || f.includes('/canvg/')) return 'vendor-pdf';
+                    // pdfjs backs the /library document reader. Left unpinned it lands
+                    // in vendor-core and costs every page ~354 kB on first paint.
+                    if (f.includes('/pdfjs-dist/')) return 'vendor-pdfjs';
                     if (f.includes('force-graph') || f.includes('/d3-') || f.includes('/d3/')) return 'vendor-graph';
                     if (f.includes('/dagre/') || f.includes('/graphlib/') || f.includes('@dagrejs')) return 'vendor-dagre';
                     if (f.includes('/gsap/')) return 'vendor-gsap';

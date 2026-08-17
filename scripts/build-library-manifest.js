@@ -61,7 +61,13 @@ async function resolve(parts) {
 }
 
 /* ── filename parsing ──────────────────────────────────────────────────── */
-const ext = (n) => (n.includes('.') ? n.split('.').pop().toLowerCase() : '');
+// Only a short alphanumeric tail is a real extension. Many of these filenames
+// contain "B.Tech" and no extension at all, so a naive split on the last dot
+// yields junk like "tech_as&h_2024-2025_odd_ut_ques_constitution of india".
+const ext = (n) => {
+  const tail = n.includes('.') ? n.split('.').pop().toLowerCase() : '';
+  return /^[a-z0-9]{1,5}$/.test(tail) ? tail : '';
+};
 
 /** Title-case, but leave acronyms and codes (DSD, BEC-302, D.COM) intact. */
 const titleCase = (s) =>

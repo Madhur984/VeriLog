@@ -9,7 +9,7 @@
  * PortalLayout renders the fixed nav cluster top-left on this route, so the
  * header here is centered with pt-20 to stay clear of it.
  */
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     BookOpen, FileText, GraduationCap, Search, ChevronDown, Download,
@@ -21,7 +21,14 @@ import {
     type CollectionMeta, type LibFile, type Shard, type LibraryIndex,
 } from './data';
 
+// pdf.js is ~350KB — keep it out of the page bundle until a document is opened.
+const PdfReader = lazy(() => import('./PdfReader'));
+
 type TabId = 'notes' | 'papers' | 'gate';
+
+const IMAGE_EXT = new Set(['png', 'jpg', 'jpeg', 'gif', 'webp']);
+/** Blank/odd extensions are almost always PDFs here, so treat them as such. */
+const isPdf = (f: LibFile) => !f.x || f.x === 'pdf';
 
 const TABS: { id: TabId; label: string; icon: React.ElementType; blurb: string }[] = [
     { id: 'notes', label: 'Notes', icon: BookOpen, blurb: 'Unit-wise subject notes and semester material.' },
@@ -210,6 +217,11 @@ const CollectionBlock: React.FC<{
 
 /* ── preview modal ─────────────────────────────────────────────────────── */
 const PreviewModal: React.FC<{ file: LibFile; onClose: () => void }> = ({ file, onClose }) => {
+    // Office files can't be painted by pdf.js, and a PDF that fails to parse
+    // falls back the same way: let Google render it in a frame.
+    const [useFrame, setUseFrame] = useState(!isPdf(file) && !IMAGE_EXT.has(file.x || ''));
+    const failToFrame = useCallback(() => setUseFrame(true), []);
+
     useEffect(() => {
         const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
         window.addEventListener('keydown', onKey);
@@ -270,12 +282,28 @@ const PreviewModal: React.FC<{ file: LibFile; onClose: () => void }> = ({ file, 
                         <X size={14} />
                     </button>
                 </div>
-                <iframe
-                    src={previewUrl(file.i)}
-                    title={file.t}
-                    className="flex-1 w-full bg-white"
-                    allow="autoplay"
-                />
+                {IMAGE_EXT.has(file.x || '') ? (
+                    <div className="flex-1 overflow-auto bg-bg-void/60 p-4">
+                        <img src={downloadUrl(file.i)} alt={file.t} className="mx-auto max-w-full" />
+                    </div>
+                ) : useFrame ? (
+                    <iframe
+                        src={previewUrl(file.i)}
+                        title={file.t}
+                        className="flex-1 w-full bg-white"
+                        allow="autoplay"
+                    />
+                ) : (
+                    <Suspense
+                        fallback={
+                            <div className="flex flex-1 items-center justify-center gap-2 text-sm text-text-sub">
+                                <Loader2 size={16} className="animate-spin" /> Opening document…
+                            </div>
+                        }
+                    >
+                        <PdfReader url={downloadUrl(file.i)} onFail={failToFrame} />
+                    </Suspense>
+                )}
             </motion.div>
         </motion.div>
     );
