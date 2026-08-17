@@ -110,6 +110,7 @@ const SITE_MAP = `
 /hw-leetcode|Hardware LeetCode
 /interview-prep|Interview Prep
 /kmap-lab|K-Map Lab
+/library|Library — notes and previous-year question papers (PDFs, by subject and year)
 /logic-studio|Logic Studio
 /pledge|Pledge
 /portal|Portal

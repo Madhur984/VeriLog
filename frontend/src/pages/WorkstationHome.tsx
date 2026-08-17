@@ -12,7 +12,7 @@ import { getModuleHistory, getLastModule, MODULE_LABELS } from '../lib/moduleHis
 import {
   Play, ArrowRight, ArrowUpRight, ChevronDown, Check, Command, Settings,
   Wrench, Grid3x3, Cpu, Compass, Library, Map, BookOpen,
-  Binary, Zap, Boxes, ClipboardList, type LucideIcon,
+  Binary, Zap, Boxes, ClipboardList, FileText, type LucideIcon,
 } from 'lucide-react';
 
 /* ── Background: single-tone grid + slow "electric current" sweeps (GPU transform) ── */
@@ -323,6 +323,7 @@ export const WorkstationHome: React.FC = () => {
     { label: 'Interview Prep', icon: ClipboardList, to: '/interview-prep' },
   ];
   const LIBRARY = [
+    { label: 'Notes & Papers', icon: FileText, to: '/library' },
     { label: 'Analogy Library', icon: BookOpen, to: '/analogies' },
     { label: 'Verilog Library', icon: Library, to: '/verilog-library' },
     { label: 'Silicon Map', icon: Map, to: '/silicon-map' },

@@ -33,6 +33,7 @@ const LandingPage = lazy(() => loadChunk(() => import('./pages/landing')));
 const LoginPage = named(() => import('./pages/LoginPage'), 'LoginPage');
 const WorkstationHome = named(() => import('./pages/WorkstationHome'), 'WorkstationHome');
 const CareerRoadmapPage = lazy(() => loadChunk(() => import('./pages/career-roadmap/index')));
+const LibraryPage = lazy(() => loadChunk(() => import('./pages/library/index')));
 const EngineeringPortfolio = named(() => import('./pages/EngineeringPortfolio'), 'EngineeringPortfolio');
 const KMapLabPage = named(() => import('./pages/KMapLabPage'), 'KMapLabPage');
 const HardwareLeetCodePage = named(() => import('./pages/HardwareLeetCodePage'), 'HardwareLeetCodePage');
@@ -156,6 +157,7 @@ function App() {
           <Route element={<PortalLayout />}>
             <Route path="/portal" element={<WorkstationHome />} />
             <Route path="/career-roadmap" element={<CareerRoadmapPage />} />
+            <Route path="/library" element={<LibraryPage />} />
             <Route path="/analogies" element={<AnalogyLibrary />} />
             <Route path="/verilog-library" element={<VerilogLibrary />} />
             <Route path="/interview-prep" element={<InterviewPrep />} />

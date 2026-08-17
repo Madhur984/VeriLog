@@ -89,6 +89,11 @@ const ROUTE: Record<string, { title: string; description: string }> = {
     description:
       'Minimize Boolean expressions with an interactive Karnaugh map — an essential digital-design and VLSI skill. Enter a truth table and watch the grouped prime implicants and simplified logic appear, step by step.',
   },
+  '/library': {
+    title: 'ECE Notes & Previous Year Question Papers — Free PDF Library | BitForBytes',
+    description:
+      'A free library of B.Tech ECE notes and previous-year question papers, sorted by subject and year — AKTU sessionals, pre-university tests and GATE ECE PYQs. Read online or download the PDF, no sign-in needed.',
+  },
   '/verilog-library': {
     title: 'Verilog Snippet Library — Patterns & Examples | BitForBytes',
     description:

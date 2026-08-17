@@ -29,7 +29,7 @@ const SUGGESTIONS = ['Summarise this page', 'Give me a hint', 'Explain this simp
  */
 const NAV_PAGES = new Set([
   '/', '/portal', '/profile', '/settings', '/career-roadmap', '/silicon-map', '/silicon-secrets',
-  '/analogies', '/verilog-library', '/verilog-playground', '/hw-leetcode', '/workbench',
+  '/library', '/analogies', '/verilog-library', '/verilog-playground', '/hw-leetcode', '/workbench',
   '/kmap-lab', '/logic-studio', '/signal-playground', '/fsm', '/boss-arena', '/gatekeeper-game',
   '/debug-mission', '/interview-prep', '/community', '/ai-lab', '/pledge',
 ]);
