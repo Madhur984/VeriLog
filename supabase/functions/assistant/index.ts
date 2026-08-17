@@ -221,6 +221,50 @@ RULES:
 
 interface ChatMsg { role: string; content: string }
 
+/* ── Knowledge base (RAG) ──────────────────────────────────────────────────
+ * The study notes live in public.kb_chunks as 768-dim Gemini embeddings (see
+ * migration 0007 + scripts/ingest.js). We embed the student's question, pull
+ * the closest passages and hand them to the model as reference material.
+ *
+ * Strictly best-effort: any failure here (no GEMINI key, empty corpus, slow
+ * query) must leave the assistant answering exactly as it did before, so the
+ * whole thing is wrapped and falls through to ''.
+ */
+const KB_URL = Deno.env.get('SUPABASE_URL') ?? '';
+const KB_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
+const GEMINI_EMBED = 'https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent';
+
+async function knowledge(question: string): Promise<string> {
+  const gk = Deno.env.get('GEMINI_API_KEY') ?? '';
+  if (!gk || !KB_URL || !KB_KEY || question.trim().length < 4) return '';
+  try {
+    const er = await fetch(`${GEMINI_EMBED}?key=${gk}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model: 'models/text-embedding-004', content: { parts: [{ text: question.slice(0, 4000) }] } }),
+    });
+    if (!er.ok) return '';
+    const vec = (await er.json())?.embedding?.values;
+    if (!Array.isArray(vec)) return '';
+
+    const mr = await fetch(`${KB_URL}/rest/v1/rpc/match_kb`, {
+      method: 'POST',
+      headers: { apikey: KB_KEY, Authorization: `Bearer ${KB_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query_embedding: vec, match_count: 6, min_similarity: 0.55 }),
+    });
+    if (!mr.ok) return '';
+    const rows = await mr.json();
+    if (!Array.isArray(rows) || !rows.length) return '';
+
+    return rows
+      .map((r: { content: string; title: string }, i: number) => `[${i + 1}] (${r.title})\n${String(r.content).slice(0, 1200)}`)
+      .join('\n\n');
+  } catch (e) {
+    console.error('[assistant] kb lookup skipped:', String(e).slice(0, 160));
+    return '';
+  }
+}
+
 // Ping one attempt with a tiny non-streaming request; report status + snippet.
 async function probe(a: Attempt): Promise<{ provider: string; model: string; ok: boolean; status: number; snippet: string }> {
   try {
@@ -273,8 +317,16 @@ Deno.serve(async (req: Request) => {
       ? `${SYSTEM}\n\nTASK: The student just opened this page. In 2–3 warm sentences, tell them what this page is for and one concrete thing they can do here. No greeting preamble like "Sure!".`
       : SYSTEM;
 
+    // Retrieve supporting passages for the student's latest question.
+    const lastUser = [...(Array.isArray(messages) ? messages : [])].reverse()
+      .find((m: ChatMsg) => m?.role !== 'assistant')?.content ?? '';
+    const kb = mode === 'summary' ? '' : await knowledge(String(lastUser));
+    const kbBlock = kb
+      ? `\n\nREFERENCE MATERIAL from the course notes — prefer these facts over your own memory when they are relevant, and weave them in naturally WITHOUT mentioning notes, sources or excerpt numbers. If they do not answer the question, ignore them and answer normally.\n${kb}`
+      : '';
+
     const chat: ChatMsg[] = [
-      { role: 'system', content: `${sys}\n\nPAGE CONTEXT:\n${pageContext || '(unknown page)'}` },
+      { role: 'system', content: `${sys}\n\nPAGE CONTEXT:\n${pageContext || '(unknown page)'}${kbBlock}` },
       ...(Array.isArray(messages) ? messages : []).slice(-12).map((m: ChatMsg) => ({
         role: m.role === 'assistant' ? 'assistant' : 'user',
         content: String(m?.content ?? '').slice(0, 4000),
