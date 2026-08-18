@@ -7,6 +7,36 @@
 # Don't expose directory listings for any folder that lacks an index.
 Options -Indexes
 
+# ---- Deny source, config and tooling ----
+# The repo was once copied into the web root, which served supabase/ migrations,
+# .github/ workflows and app source publicly. The deploy only ever ADDS files
+# (rsync, no --delete), so leftovers persist and any future slip re-exposes
+# them. This is the backstop; the files themselves should not be here.
+#
+# Deliberately mod_rewrite only — no `Require`/`FilesMatch`. A directive this
+# host does not accept would 500 the WHOLE site, and the SPA rules below already
+# prove mod_rewrite works here. Note these must come BEFORE the SPA rules, and
+# json/wasm/mjs/tar are NOT blocked: paper-data/*.json, the Yosys engine and the
+# pdf.js worker are all served.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Source, tooling and vendored trees that are not build output.
+  RewriteRule ^(?:frontend|backend|src|supabase|mcp-server|scripts|design-system|contributions|artifacts|mds|bitforbytes-waitlist|node_modules)(?:/|$) - [F,L]
+
+  # Dot-directories and dotfiles (.git, .github, .env, agent scratch dirs).
+  # .well-known is exempt so certificate renewal keeps working.
+  RewriteCond %{REQUEST_URI} !^/\.well-known/
+  RewriteRule (?:^|/)\.[^/]+ - [F,L]
+
+  # Source and project-note file types. No .md/.map/.ts ships in the build.
+  RewriteRule \.(?:ts|tsx|jsx|env|sql|sh|ps1|bat|py|blend|log|lock|md|toml|ini|bak|orig|patch|map)$ - [F,L]
+
+  # Stray manifests and dumps left over from the repo copy.
+  RewriteRule (?:^|/)(?:package(?:-lock)?\.json|tsconfig[^/]*\.json|skills-lock\.json|ux_audit_result\.json|remotes\.txt|activity\.pulse|README[^/]*)$ - [F,L]
+</IfModule>
+
+
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
