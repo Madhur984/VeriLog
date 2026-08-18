@@ -1,18 +1,31 @@
 import { useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { AnimatePresence, motion, useMotionValue, useReducedMotion } from 'framer-motion';
 import { MessageCircleHeart, X } from 'lucide-react';
 import { FeedbackPanel } from './FeedbackPanel';
 
 const TEASED_KEY = 'bfb_feedback_teased';
 const TEASE_DELAY_MS = 4000;
 const TEASE_AUTO_HIDE_MS = 9000;
+const POS_KEY = 'bfb_feedback_pos';
 
 const readTeased = (): boolean => {
   try { return localStorage.getItem(TEASED_KEY) === '1'; } catch { return false; }
 };
 const markTeased = () => {
   try { localStorage.setItem(TEASED_KEY, '1'); } catch { /* ignore */ }
+};
+
+// Draggable position, same persistence pattern as MascotWidget's drag: x/y
+// are transform offsets from the pill's normal bottom-left anchor.
+const readPos = (): { x: number; y: number } | null => {
+  try {
+    const v = localStorage.getItem(POS_KEY);
+    return v ? (JSON.parse(v) as { x: number; y: number }) : null;
+  } catch { return null; }
+};
+const writePos = (p: { x: number; y: number }) => {
+  try { localStorage.setItem(POS_KEY, JSON.stringify(p)); } catch { /* ignore */ }
 };
 
 /**
@@ -34,6 +47,16 @@ export default function FeedbackBubble() {
   const [hover, setHover] = useState(false);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
 
+  // Draggable position (Portal-only, since this whole component already
+  // early-returns everywhere else). boundsRef is an invisible full-viewport
+  // drag constraint — same "can't be lost off-screen" pattern MascotWidget
+  // uses — and x/y persist across visits the same way.
+  const boundsRef = useRef<HTMLDivElement>(null);
+  const savedPos = readPos();
+  const x = useMotionValue(savedPos?.x ?? 0);
+  const y = useMotionValue(savedPos?.y ?? 0);
+  const persistPos = () => writePos({ x: x.get(), y: y.get() });
+
   useEffect(() => {
     if (readTeased()) return;
     const show = setTimeout(() => {
@@ -53,12 +76,24 @@ export default function FeedbackBubble() {
 
   return (
     <>
+      {/* invisible full-viewport drag boundary, same as MascotWidget's */}
+      <div ref={boundsRef} className="pointer-events-none fixed inset-0 z-[58]" aria-hidden />
+
       {/* Sits BELOW the portal's radial menu, never beside it: the wheel is
           centred and its lower-left segment reached into the old bottom-5/left-5
           spot, so the pill overlapped "Analog Library". Anchored hard into the
           corner (and smaller on phones) it stays clear of the wheel at every
-          viewport width. */}
-      <div className="fixed bottom-3 left-3 z-[59] flex flex-col items-start gap-2.5 sm:bottom-4 sm:left-4">
+          viewport width. Draggable: x/y is an offset from that anchor,
+          constrained to the viewport and persisted across visits. */}
+      <motion.div
+        drag
+        dragMomentum={false}
+        dragConstraints={boundsRef}
+        onDragEnd={persistPos}
+        style={{ x, y }}
+        whileDrag={{ scale: 1.05 }}
+        className="fixed bottom-3 left-3 z-[59] flex cursor-grab flex-col items-start gap-2.5 active:cursor-grabbing sm:bottom-4 sm:left-4"
+      >
         <AnimatePresence>
           {tease && !panelOpen && (
             <motion.div
@@ -71,6 +106,7 @@ export default function FeedbackBubble() {
               <button
                 type="button"
                 onClick={() => setTease(false)}
+                onPointerDownCapture={(e) => e.stopPropagation()}
                 aria-label="Dismiss"
                 className="absolute -right-2.5 -top-2.5 grid h-6 w-6 place-items-center rounded-full border-2 border-[#1B1436] bg-white text-[#1B1436] shadow-[1.5px_1.5px_0_#1B1436] transition-transform hover:-translate-y-[1px] dark:border-[#4A3D7A] dark:bg-[#1B1440] dark:text-white dark:shadow-[1.5px_1.5px_0_#7A3FD0]"
               >
@@ -119,7 +155,7 @@ export default function FeedbackBubble() {
             </motion.span>
           </span>
         </motion.button>
-      </div>
+      </motion.div>
 
       <FeedbackPanel open={panelOpen} onClose={() => setPanelOpen(false)} pathname={pathname} />
     </>
