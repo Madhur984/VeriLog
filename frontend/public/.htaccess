@@ -7,6 +7,10 @@
 # Don't expose directory listings for any folder that lacks an index.
 Options -Indexes
 
+<IfModule mod_dir.c>
+  DirectorySlash Off
+</IfModule>
+
 # ---- Deny source, config and tooling ----
 # The repo was once copied into the web root, which served supabase/ migrations,
 # .github/ workflows and app source publicly. The deploy only ever ADDS files
@@ -40,6 +44,16 @@ Options -Indexes
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
+
+  # /library once shipped its JSON data as a real directory at this exact path.
+  # mod_dir then 301s /library -> /library/, and the SPA rule below refuses to
+  # rewrite an existing directory, so the route answered 403 (Options -Indexes)
+  # instead of loading the app. The data moved to /paper-data, but rsync never
+  # deletes, so the stale directory can linger on the server indefinitely.
+  # Claim the path for the app explicitly, and stop mod_dir redirecting it, so a
+  # leftover directory can never shadow a route again. DirectorySlash Off is safe
+  # here because Options -Indexes above already forbids listings.
+  RewriteRule ^library/?$ index.html [L]
 
   # Never rewrite a request that maps to a real file or directory.
   RewriteCond %{REQUEST_FILENAME} -f [OR]

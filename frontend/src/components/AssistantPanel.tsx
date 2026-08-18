@@ -6,6 +6,7 @@ import { askAssistant, type AssistantMsg } from '../lib/assistant';
 import { getPageContext } from '../lib/pageContext';
 import { MODULE_LABELS, moduleLabel } from '../lib/moduleHistory';
 import { getRouteMeta } from '../lib/routeMeta';
+import ChatMarkdown from './ChatMarkdown';
 
 const BASE = import.meta.env.BASE_URL;
 const FACE = `${BASE}mascot/happy.png`;
@@ -190,13 +191,17 @@ export const AssistantPanel: React.FC<Props> = ({ open, onClose, pathname, inMod
             {visible.map((m, i) => (
               <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                 <div
-                  className={`max-w-[85%] whitespace-pre-wrap rounded-2xl border-[2.5px] border-[#1B1436] px-3.5 py-2.5 text-[13.5px] leading-relaxed shadow-[3px_3px_0_#1B1436] dark:border-[#4A3D7A] dark:shadow-[3px_3px_0_#7A3FD0] ${
+                  className={`max-w-[85%] rounded-2xl border-[2.5px] border-[#1B1436] px-3.5 py-2.5 text-[13.5px] leading-relaxed shadow-[3px_3px_0_#1B1436] dark:border-[#4A3D7A] dark:shadow-[3px_3px_0_#7A3FD0] ${
                     m.role === 'user'
                       ? 'bg-[#7A3FD0] font-medium text-white'
                       : 'bg-white text-[#1B1436] dark:bg-[#1B1540] dark:text-[#E9E4FA]'
                   }`}
                 >
-                  {m.content}
+                  {m.role === 'assistant' ? (
+                    <ChatMarkdown text={m.content} />
+                  ) : (
+                    <span className="whitespace-pre-wrap">{m.content}</span>
+                  )}
                 </div>
               </div>
             ))}
