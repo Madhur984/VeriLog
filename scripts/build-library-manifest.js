@@ -83,35 +83,63 @@ const tidyFolder = (s) => {
 };
 
 /** Strip the exam/session/kind/year tokens that repeat inside a paper title. */
-const cleanTitle = (s) =>
-  s
-    .replace(/\b(ST[\s-]?[12]|ST|PUT|UT)\b/gi, ' ')
-    .replace(/\b(QP|QUES|Sol|Solution)\b/gi, ' ')
-    // No \b after the word: filenames run these straight into the year ("ODD19 20").
-    .replace(/\b(ODD|EVEN|ENEN)\s*\d*/gi, ' ')
-    .replace(/\b(19|20)?\d{2}[\s-]+\d{2}\b\s*$/, ' ')
-    // Paper-set and session markers that survive into the subject name and
-    // otherwise split one subject across several buckets.
-    .replace(/\(\s*set\s*[-–]?\s*[a-d]\s*\)/gi, ' ')
-    .replace(/\bset\s*[-–]?\s*[a-d]\b/gi, ' ')
-    .replace(/\b(sem|semester|session|backlog|carry\s*over)\b/gi, ' ')
-    .replace(/\b(19|20)\d{2}\b/g, ' ') // a stray standalone year
-    // Any subject code still sitting in the title is junk by this point — the
-    // real one was already lifted into its own field. Case-insensitive: plenty
-    // of these filenames are lower-case ("operations research noe 073").
-    .replace(/\b[a-z]{2,4}\s*-?\s*\d{3}[a-z]?\b/gi, ' ')
-    .replace(/\b\d{4,8}\b/g, ' ') // bare numeric codes, e.g. "180001"
-    .replace(/[_-]+/g, ' ')
-    .replace(/\s{2,}/g, ' ')
-    .replace(/^[\s.,&-]+|[\s.,&-]+$/g, '')
-    .trim();
+const cleanTitle = (s) => {
+  // `_` is a word character, so \b never fires between an underscore and a
+  // letter; split them first or every rule below silently misses on an
+  // unsplit "_PUT_SOL_" run.
+  let t = s.replace(/[_-]+/g, ' ');
+
+  // Run to a fixpoint. One pass is not enough: removing a token exposes the
+  // next ("...SOL2016 17" only yields its year once SOL is detached), and a
+  // range like "17 18" leaves a fragment that the same rules then catch.
+  let prev;
+  do {
+    prev = t;
+    t = t
+      // A subject code run straight into an exam marker ("NIT 701ST 2"):
+      // neither regex can see a boundary, so insert one and let the loop
+      // pick both up on the next turn.
+      .replace(/(\d{3})(?=(ST|UT|PUT)\b)/gi, '$1 ')
+      // Markers glued straight onto a year ("SOL2016", "ST2016") — no \b there.
+      .replace(/\b(QP|QUES|SOL|SOLUTION|PUT|UT|ST)(?=\d)/gi, ' ')
+      .replace(/\b(ST[\s-]?[12]|ST|PUT|UT)\b/gi, ' ')
+      .replace(/\b(QP|QUES|Sol|Solution)\b/gi, ' ')
+      // Session marker plus whatever academic year trails it, as ONE unit:
+      // filenames run them together ("ODD19 20"), and a looser `\s*\d*` would
+      // eat only "Even 23" out of "Even 23 24" and orphan the "24".
+      .replace(/\b(ODD|EVEN|ENEN)\s*\d{0,4}[\s-]*\d{0,2}\b/gi, ' ')
+      // An academic-year range anywhere, dash- or space-separated.
+      .replace(/\b(19|20)?\d{2}\s*[-–\s]\s*\d{2,4}\b/g, ' ')
+      // Paper-set and session markers that otherwise split one subject.
+      .replace(/\(\s*set\s*[-–]?\s*[a-d]\s*\)/gi, ' ')
+      .replace(/\bset\s*[-–]?\s*[a-d]\b/gi, ' ')
+      .replace(/\b(sem|semester|session|backlog|carry\s*over)\b/gi, ' ')
+      .replace(/\b(19|20)\d{2}\b/g, ' ')
+      // Any subject code still here is junk — the real one was already lifted
+      // into its own field. Case-insensitive: many filenames are lower-case
+      // ("operations research noe 073").
+      .replace(/\b[a-z]{2,4}\s*-?\s*\d{3}[a-z]?\b/gi, ' ')
+      .replace(/\b\d{4,8}\b/g, ' ')
+      .replace(/\s{2,}/g, ' ')
+      .trim();
+  } while (t !== prev);
+
+  // A dangling 2-digit year fragment left by a half-matched range. Two digits
+  // only, so genuine part numbers ("Basic Electronics 1") survive.
+  while (/\s(19|20)?\d{2}$/.test(t)) t = t.replace(/\s(19|20)?\d{2}$/, '');
+
+  return t.replace(/^[\s.,&-]+|[\s.,&-]+$/g, '').trim();
+};
 
 /** Strip Drive's " (2)" duplicate suffix and the extension. */
 function stem(name) {
   return name.replace(/\.[a-z0-9]+$/i, '').replace(/\s*\(\d+\)\s*$/, '').trim();
 }
 
-const BYTEPAD_PREFIX = /^_src_main_resources_papers_B\.Tech_/i;
+// Programme-agnostic: the same scraper emits B.Tech, MCA and others, and the
+// duplicate marker can land mid-name ("B (2).Tech"), so match only the fixed
+// path head and locate the year positionally afterwards.
+const BYTEPAD_PREFIX = /^_?src[_\s]+main[_\s]+resources[_\s]+papers[_\s]+/i;
 const EXAMS = ['ST-1', 'ST-2', 'ST1', 'ST2', 'PUT', 'UT', 'ST', 'PRE-UNIVERSITY', 'SESSIONAL'];
 
 /** Normalise an academic year to "2021-22" from either "2021-2022" or "21-22". */
@@ -134,13 +162,21 @@ function parsePaper(name) {
   const out = { title: '', code: '', year: '', session: '', exam: '', kind: '' };
 
   if (BYTEPAD_PREFIX.test(s)) {
-    // _src_..._B.Tech_ECE_2023-2024_ODD_ST-1_QUES_<Subject> <CODE> ...
+    // ..._<PROGRAMME>_<BRANCH>_2023-2024_ODD_ST-1_QUES_<Subject> <CODE> ...
+    // The number of leading programme/branch segments varies (B.Tech has one
+    // branch, MCA repeats itself), so anchor on the academic year instead of
+    // counting from the front.
     const parts = s.replace(BYTEPAD_PREFIX, '').split('_');
-    out.year = normYear(parts[1] || '');
-    out.session = (parts[2] || '').toUpperCase();
-    out.exam = (parts[3] || '').toUpperCase();
-    out.kind = /SOL/i.test(parts[4] || '') ? 'Solution' : 'Question paper';
-    var tail = parts.slice(5).join(' ');
+    const yi = parts.findIndex((p) => /^\s*\d{4}\s*-\s*\d{4}\s*$/.test(p));
+    if (yi >= 0) {
+      out.year = normYear(parts[yi].trim());
+      out.session = (parts[yi + 1] || '').toUpperCase();
+      out.exam = (parts[yi + 2] || '').toUpperCase();
+      out.kind = /SOL/i.test(parts[yi + 3] || '') ? 'Solution' : 'Question paper';
+      var tail = parts.slice(yi + 4).join(' ');
+    } else {
+      var tail = parts.join(' ');
+    }
   } else {
     var tail = s;
     const y = s.match(/\b(\d{2}\s*-\s*\d{2}|\d{4}\s*-\s*\d{4})\s*$/);
