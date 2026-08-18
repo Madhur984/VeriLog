@@ -1,0 +1,152 @@
+[
+  {
+    "name": "Home",
+    "path": "/",
+    "description": "Main landing page of BitForBytes - VLSI & Digital Design Education Platform",
+    "keywords": ["home", "homepage", "main page", "landing", "start", "bitforbytes"]
+  },
+  {
+    "name": "Career Roadmap",
+    "path": "/career-roadmap",
+    "description": "Semiconductor and VLSI career roadmap for ECE students",
+    "keywords": ["career", "roadmap", "semiconductor career", "vlsi career", "career path", "job roadmap"]
+  },
+  {
+    "name": "Portal",
+    "path": "/portal",
+    "description": "Main learning portal and dashboard",
+    "keywords": ["portal", "dashboard", "main portal", "learning portal", "student portal"]
+  },
+  {
+    "name": "Verilog Playground",
+    "path": "/verilog-playground",
+    "description": "Interactive Verilog code editor and playground to practice RTL design",
+    "keywords": ["verilog", "verilog playground", "playground", "code editor", "practice verilog", "verilog editor", "rtl editor", "coding playground"]
+  },
+  {
+    "name": "Workbench",
+    "path": "/workbench",
+    "description": "Interactive digital design workbench and lab environment",
+    "keywords": ["workbench", "workstation", "lab workbench", "design workbench", "hardware workbench"]
+  },
+  {
+    "name": "K-Map Lab",
+    "path": "/kmap-lab",
+    "description": "Karnaugh Map laboratory for simplifying Boolean expressions",
+    "keywords": ["kmaps", "kmap", "k-map", "karnaugh map", "k map lab", "boolean simplification", "karnaugh"]
+  },
+  {
+    "name": "Verilog Library",
+    "path": "/verilog-library",
+    "description": "Collection of ready-to-use Verilog code examples and modules",
+    "keywords": ["verilog", "verilog library", "library", "code library", "verilog examples", "rtl library", "code collection"]
+  },
+  {
+    "name": "Interview Prep",
+    "path": "/interview-prep",
+    "description": "VLSI and digital design interview preparation resources",
+    "keywords": ["interview", "interview prep", "vlsi interview", "placement", "job interview", "interview questions", "preparation"]
+  },
+  {
+    "name": "Analogies",
+    "path": "/analogies",
+    "description": "Simple real-world analogies to understand digital electronics concepts",
+    "keywords": ["analogies", "analogy", "explanations", "simple explanation", "real world examples"]
+  },
+  {
+    "name": "Silicon Map",
+    "path": "/silicon-map",
+    "description": "Interactive map of the semiconductor and silicon industry",
+    "keywords": ["silicon map", "silicon", "chip map", "semiconductor map", "industry map"]
+  },
+  {
+    "name": "Module 1",
+    "path": "/module/1",
+    "description": "Module 1 - Boolean Forms and Canonical Forms (Digital System Design)",
+    "keywords": ["module 1", "first module", "boolean", "canonical forms", "boolean forms", "module one"]
+  },
+  {
+    "name": "Module 1 Chapter 1",
+    "path": "/module/1/1",
+    "description": "First chapter of Module 1 - The Architecture of a Decision",
+    "keywords": ["module 1 chapter 1", "architecture of a decision", "first chapter", "boolean chapter"]
+  },
+  {
+    "name": "Module 2",
+    "path": "/module/2",
+    "description": "Module 2 of the Digital System Design course",
+    "keywords": ["module 2", "second module", "module two"]
+  },
+  {
+    "name": "Module 3",
+    "path": "/module/3",
+    "description": "Module 3 of the Digital System Design course",
+    "keywords": ["module 3", "third module", "module three"]
+  },
+  {
+    "name": "Module 4",
+    "path": "/module/4",
+    "description": "Module 4 of the Digital System Design course",
+    "keywords": ["module 4", "fourth module", "module four"]
+  },
+  {
+    "name": "Module 5",
+    "path": "/module/5",
+    "description": "Module 5 of the Digital System Design course",
+    "keywords": ["module 5", "fifth module", "module five"]
+  },
+  {
+    "name": "Pledge",
+    "path": "/pledge",
+    "description": "BitForBytes student pledge and community commitment",
+    "keywords": ["pledge", "student pledge", "commitment"]
+  },
+  {
+    "name": "Privacy Policy",
+    "path": "/privacy",
+    "description": "Privacy policy of BitForBytes",
+    "keywords": ["privacy", "privacy policy", "data privacy"]
+  },
+  {
+    "name": "Terms of Service",
+    "path": "/terms",
+    "description": "Terms of service and usage policy",
+    "keywords": ["terms", "terms of service", "terms and conditions", "usage policy"]
+  },
+  {
+    "name": "Basic Electronics",
+    "path": "/basic-electronics",
+    "description": "Basic Electronics course modules (may require login)",
+    "keywords": ["basic electronics", "electronics basics", "physics of control", "semiconductor basics"]
+  },
+  {
+    "name": "Digital System Design",
+    "path": "/dsd",
+    "description": "Digital System Design full course (may require login)",
+    "keywords": ["digital system design", "dsd", "digital design course", "boolean course"]
+  },
+  {
+    "name": "Hardware LeetCode",
+    "path": "/hw-leetcode",
+    "description": "Hardware-focused coding problems similar to LeetCode (may require login)",
+    "keywords": ["leetcode", "hw", "hardware leetcode", "hw leetcode", "verilog problems", "rtl problems", "coding challenges"]
+  },
+  {
+    "name": "Logic Studio",
+    "path": "/logic-studio",
+    "description": "Interactive logic design studio (may require login)",
+    "keywords": ["logic studio", "logic design", "gate studio"]
+  },
+  {
+    "name": "FSM Lab",
+    "path": "/fsm",
+    "description": "Finite State Machine laboratory (may require login)",
+    "keywords": ["fsm", "finite state machine", "state machine", "fsm lab"]
+  },
+  {
+    "name": "Signal Playground",
+    "path": "/signal-playground",
+    "description": "Interactive signal and waveform playground (may require login)",
+    "keywords": ["signal playground", "waveform", "signals", "timing diagram"]
+  }
+]

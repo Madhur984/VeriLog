@@ -1,9 +1,10 @@
-// VoltMonkey's client — talks to the `assistant` Supabase Edge Function, which proxies
-// Hugging Face server-side (the HF key never touches the browser) and STREAMS
-// tokens back as Server-Sent Events. See supabase/functions/assistant/index.ts.
-import { SUPABASE_URL, SUPABASE_ANON_KEY } from './supabase';
-
-const FN_URL = `${SUPABASE_URL}/functions/v1/assistant`;
+// VoltMonkey's client — talks to the Express backend's VoltMonkey router,
+// which proxies the LLM provider server-side (provider keys never touch the
+// browser) and STREAMS tokens back as Server-Sent Events.
+// See backend/src/voltmonkey/router.ts. Relative URL: the vite dev proxy
+// forwards /api/* to the backend (see frontend/vite.config.ts), and in
+// production a reverse proxy fronts both on the same origin.
+const FN_URL = '/api/voltmonkey/chat';
 const TIMEOUT_MS = 45_000;
 
 export interface AssistantMsg {
@@ -13,7 +14,7 @@ export interface AssistantMsg {
 
 /**
  * VoltMonkey signals "send the student to this page" by ending its reply with
- * `[[GO:/path]]` (see the SITE MAP / NAVIGATION block in the Edge Function's
+ * `[[GO:/path]]` (see the SITE MAP / NAVIGATION block in the backend's
  * system prompt). The tag is machine-only and must never reach the screen.
  *
  * Stripping it is fiddly because the tag can be split across SSE chunks — a
@@ -87,7 +88,7 @@ export async function askAssistant(opts: {
   try {
     const res = await fetch(FN_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', apikey: SUPABASE_ANON_KEY },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ messages: opts.messages, pageContext: opts.pageContext, mode: opts.mode ?? 'chat' }),
       signal: ctrl.signal,
     });

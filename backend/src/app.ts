@@ -17,12 +17,16 @@ app.get('/health', (req: Request, res: Response) => {
 
 import activityRoutes from './routes/activities';
 import authRoutes from './routes/auth';
+import voltmonkeyRoutes from './voltmonkey/router';
 import { requireAuth } from './middleware/requireAuth';
 
 // Auth routes are public (they ARE the auth flow).
 app.use('/api/auth', authRoutes);
 // Everything else requires a valid session (Supabase JWT or guest token).
 app.use('/api/activities', requireAuth, activityRoutes);
+// VoltMonkey is public (open chat widget, no login wall), same as the Edge
+// Function it replaces — it has its own per-IP rate limit instead.
+app.use('/api/voltmonkey', voltmonkeyRoutes);
 
 // Global Error Handler
 app.use((err: any, req: Request, res: Response, next: any) => {

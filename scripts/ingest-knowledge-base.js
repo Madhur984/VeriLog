@@ -18,7 +18,10 @@ const FOLDER_MIME = 'application/vnd.google-apps.folder';
 const SUPABASE_URL = 'https://uhtfagdxxvasbtagovwk.supabase.co';
 const SERVICE_KEY = process.env.SB_SERVICE_KEY;
 const GEMINI_KEY = process.env.GEMINI_KEY;
-const EMBED_URL = 'https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent';
+// text-embedding-004 was retired; gemini-embedding-001 replaces it but
+// defaults to 3072 dims — outputDimensionality pins it to 768 to match
+// kb_chunks.embedding vector(768) in the migration.
+const EMBED_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-001:embedContent';
 
 const args = process.argv.slice(2);
 const LIMIT = Number((args.find((a) => a.startsWith('--limit')) || '').split('=')[1] || 0) || Infinity;
@@ -98,8 +101,9 @@ async function embed(text, tries = 5) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'models/text-embedding-004',
+        model: 'models/gemini-embedding-001',
         content: { parts: [{ text: text.slice(0, 8000) }] },
+        outputDimensionality: 768,
       }),
     });
     if (r.ok) return (await r.json())?.embedding?.values ?? null;
