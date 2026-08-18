@@ -5,8 +5,8 @@
  * so Drive stays the storage and the site is only the browsing UI. This script
  * walks Drive once and writes small JSON shards that the page fetches lazily:
  *
- *   frontend/public/library/index.json      tiny — collections + counts
- *   frontend/public/library/<shard>.json    one per branch / notes set
+ *   frontend/public/paper-data/index.json      tiny — collections + counts
+ *   frontend/public/paper-data/<shard>.json    one per branch / notes set
  *
  * Re-run whenever the Drive folder changes:  node scripts/build-library-manifest.js
  *
@@ -20,7 +20,7 @@ const KEY = process.env.DRIVE_API_KEY || 'AIzaSyAWGrfCCr7albM3lmCc937gx4uIphbpeK
 const API = 'https://www.googleapis.com/drive/v3/files';
 const FOLDER_MIME = 'application/vnd.google-apps.folder';
 const ROOT = '1fwNZUEgH15xyOT8nuS3kcjAT21pjJpN_';
-const OUT = path.join(__dirname, '..', 'frontend', 'public', 'library');
+const OUT = path.join(__dirname, '..', 'frontend', 'public', 'paper-data');
 
 /* ── Drive ─────────────────────────────────────────────────────────────── */
 async function list(parent) {

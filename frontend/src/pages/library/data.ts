@@ -3,7 +3,7 @@
  *
  * The corpus (~7,000 files) lives on Google Drive, not in this repo — shared
  * hosting could never carry 24GB. `scripts/build-library-manifest.js` walks
- * Drive and writes the JSON shards in public/library/; here we fetch them
+ * Drive and writes the JSON shards in public/paper-data/; here we fetch them
  * lazily, one collection at a time, and group them for display.
  */
 
@@ -42,7 +42,9 @@ export interface LibraryIndex {
     collections: CollectionMeta[];
 }
 
-const BASE = '/library';
+const BASE = '/paper-data'; // NOT '/library' — that path is the SPA route, and a
+// real directory there makes Apache 301 to it and then 403 (see public/.htaccess:
+// the rewrite bails out on existing dirs, and Options -Indexes forbids listing).
 
 /* Shards are immutable per deploy, so one fetch each per session is plenty. */
 const cache = new Map<string, Promise<Shard>>();
