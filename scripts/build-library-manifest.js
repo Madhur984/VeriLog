@@ -421,8 +421,8 @@ async function main() {
     collections.push({ id, title: BRANCHES[br.name] || br.name, badge: br.name, group: 'papers', count: rows.length });
   }
 
-  /* ---- ABESIT papers (no year in the filenames) ---- */
-  console.log('question papers (ABESIT)…');
+  /* ---- AKTU papers (the q_papers_abesit folder; no year in the filenames) ---- */
+  console.log('question papers (AKTU)…');
   const abesitId = await resolve(['KRITEN', 'q_papers_abesit']);
   let abesit = (await collect(abesitId, [], [])).map((f) => {
     const p = parseAbesit(f.name);
@@ -430,8 +430,8 @@ async function main() {
   });
   abesit = dedupe(abesit, (r) => `${r.t.toLowerCase()}|${r.c}`);
   abesit.sort((a, b) => a.t.localeCompare(b.t));
-  write('qp-abesit', { id: 'qp-abesit', title: 'ABESIT Papers', badge: 'ABESIT', kind: 'qp', files: abesit });
-  collections.push({ id: 'qp-abesit', title: 'ABESIT Papers', badge: 'ABESIT', group: 'papers', count: abesit.length });
+  write('qp-aktu', { id: 'qp-aktu', title: 'AKTU Papers', badge: 'AKTU', kind: 'qp', files: abesit });
+  collections.push({ id: 'qp-aktu', title: 'AKTU Papers', badge: 'AKTU', group: 'papers', count: abesit.length });
 
   /* ---- notes: subject folders under KRITEN/Notes + the kartik sets ----
      Parked for now — flip INCLUDE_NOTES back to true to restore the tab; the

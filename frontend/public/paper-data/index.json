@@ -1,13 +1,13 @@
 {
   "generated": "2026-08-18",
-  "total": 6746,
+  "total": 7216,
   "collections": [
     {
       "id": "qp-ece",
       "title": "Electronics & Communication",
       "badge": "ECE",
       "group": "papers",
-      "count": 1628
+      "count": 1643
     },
     {
       "id": "qp-en",
@@ -21,7 +21,7 @@
       "title": "Computer Science",
       "badge": "CSE",
       "group": "papers",
-      "count": 1048
+      "count": 1058
     },
     {
       "id": "qp-cs",
@@ -52,9 +52,16 @@
       "count": 1237
     },
     {
-      "id": "qp-abesit",
-      "title": "ABESIT Papers",
-      "badge": "ABESIT",
+      "id": "qp-it",
+      "title": "Information Technology",
+      "badge": "IT",
+      "group": "papers",
+      "count": 445
+    },
+    {
+      "id": "qp-aktu",
+      "title": "AKTU Papers",
+      "badge": "AKTU",
       "group": "papers",
       "count": 104
     }
