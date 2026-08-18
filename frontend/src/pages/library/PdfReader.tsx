@@ -9,8 +9,13 @@
  *
  * Pages render lazily as they scroll into view: some of these papers run to
  * hundreds of pages and rendering them all up front would lock the tab.
+ *
+ * Zoom defaults to FIT-WIDTH, measured from the container, so a scanned paper
+ * fills the space instead of sitting small in the middle of it — and it
+ * re-fits when the modal is maximised or the window resizes. Pressing +/- takes
+ * manual control; "Fit" hands it back.
  */
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Loader2, ZoomIn, ZoomOut, AlertTriangle } from 'lucide-react';
 import * as pdfjs from 'pdfjs-dist';
 import workerUrl from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
@@ -37,7 +42,7 @@ const Page: React.FC<{ doc: PDFDocumentProxy; num: number; scale: number }> = ({
     }, [near]);
 
     useEffect(() => {
-        if (!near || drawn.current === scale) return;
+        if (!near || drawn.current === scale || scale <= 0) return;
         let cancelled = false;
         (async () => {
             const page = await doc.getPage(num);
@@ -73,19 +78,26 @@ const Page: React.FC<{ doc: PDFDocumentProxy; num: number; scale: number }> = ({
 const PdfReader: React.FC<{ url: string; onFail: () => void }> = ({ url, onFail }) => {
     const [doc, setDoc] = useState<PDFDocumentProxy | null>(null);
     const [pages, setPages] = useState(0);
-    const [scale, setScale] = useState(1.2);
     const [error, setError] = useState('');
+    // null = follow the container (fit width). A number = the reader zoomed by hand.
+    const [userScale, setUserScale] = useState<number | null>(null);
+    const [fitScale, setFitScale] = useState(0);
+    const [baseWidth, setBaseWidth] = useState(0); // page width in CSS px at scale 1
+    const scroller = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         let cancelled = false;
         let loaded: PDFDocumentProxy | null = null;
         const task = pdfjs.getDocument({ url, withCredentials: false });
         task.promise
-            .then((d) => {
+            .then(async (d) => {
                 if (cancelled) { d.destroy(); return; }
                 loaded = d;
                 setDoc(d);
                 setPages(d.numPages);
+                // Page 1 sets the fit basis; these papers are uniform A4 scans.
+                const p = await d.getPage(1);
+                if (!cancelled) setBaseWidth(p.getViewport({ scale: 1 }).width);
             })
             .catch(() => {
                 if (cancelled) return;
@@ -99,14 +111,31 @@ const PdfReader: React.FC<{ url: string; onFail: () => void }> = ({ url, onFail 
         };
     }, [url, onFail]);
 
-    // Fit narrow screens: a 1.2 scale page overflows a phone, so start smaller.
-    useEffect(() => {
-        if (window.innerWidth < 640) setScale(0.62);
-    }, []);
+    // Re-fit whenever the container changes size — which is exactly what
+    // maximising, entering fullscreen or rotating a phone does.
+    useLayoutEffect(() => {
+        const el = scroller.current;
+        if (!el || !baseWidth) return;
+        const measure = () => {
+            const pad = 24; // matches the p-2/p-4 gutter, keeps a hair of margin
+            const avail = Math.max(120, el.clientWidth - pad);
+            setFitScale(+(avail / baseWidth).toFixed(3));
+        };
+        measure();
+        const ro = new ResizeObserver(measure);
+        ro.observe(el);
+        return () => ro.disconnect();
+    }, [baseWidth]);
+
+    const scale = userScale ?? fitScale;
 
     const zoom = useCallback(
-        (by: number) => setScale((s) => Math.min(3, Math.max(0.4, +(s + by).toFixed(2)))),
-        [],
+        (by: number) =>
+            setUserScale((s) => {
+                const from = s ?? fitScale ?? 1;
+                return Math.min(4, Math.max(0.25, +(from + by).toFixed(2)));
+            }),
+        [fitScale],
     );
 
     if (error) {
@@ -128,11 +157,12 @@ const PdfReader: React.FC<{ url: string; onFail: () => void }> = ({ url, onFail 
 
     return (
         <div className="relative flex-1 overflow-hidden">
-            <div className="h-full overflow-y-auto overflow-x-auto bg-bg-void/60 p-2 sm:p-4">
+            <div ref={scroller} className="h-full overflow-auto bg-bg-void/60 p-2 sm:p-3">
                 <div className="flex flex-col items-center gap-3 sm:gap-4">
-                    {Array.from({ length: pages }, (_, i) => (
-                        <Page key={i} doc={doc} num={i + 1} scale={scale} />
-                    ))}
+                    {scale > 0 &&
+                        Array.from({ length: pages }, (_, i) => (
+                            <Page key={i} doc={doc} num={i + 1} scale={scale} />
+                        ))}
                 </div>
             </div>
 
@@ -146,9 +176,17 @@ const PdfReader: React.FC<{ url: string; onFail: () => void }> = ({ url, onFail 
                 >
                     <ZoomOut size={15} />
                 </button>
-                <span className="px-1 font-mono text-[11px] tabular-nums text-text-sub">
-                    {pages} page{pages === 1 ? '' : 's'}
-                </span>
+                <button
+                    type="button"
+                    onClick={() => setUserScale(null)}
+                    aria-label="Fit page to width"
+                    title="Fit to width"
+                    className={`pointer-events-auto rounded-full px-2 py-1 font-mono text-[10px] font-bold ${
+                        userScale === null ? 'text-accent-orange' : 'text-text-sub hover:text-accent-orange'
+                    }`}
+                >
+                    {userScale === null ? 'FIT' : `${Math.round(scale * 100)}%`}
+                </button>
                 <button
                     type="button"
                     onClick={() => zoom(0.2)}
@@ -157,6 +195,9 @@ const PdfReader: React.FC<{ url: string; onFail: () => void }> = ({ url, onFail 
                 >
                     <ZoomIn size={15} />
                 </button>
+                <span className="px-1.5 font-mono text-[10px] tabular-nums text-text-dim">
+                    {pages}p
+                </span>
             </div>
         </div>
     );

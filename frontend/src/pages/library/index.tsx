@@ -16,6 +16,7 @@ import React, { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useStat
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     FileText, Search, ChevronDown, Download, ExternalLink, X, Loader2, Frown,
+    Maximize2, Minimize2, Expand, Shrink,
 } from 'lucide-react';
 import {
     loadIndex, loadCollection, buildTree, matches, passes, fileMeta, fileSize,
@@ -312,6 +313,28 @@ const PreviewModal: React.FC<{ file: LibFile; onClose: () => void }> = ({ file, 
     // falls back the same way: let Google render it in a frame.
     const [useFrame, setUseFrame] = useState(!isPdf(file) && !IMAGE_EXT.has(file.x || ''));
     const failToFrame = useCallback(() => setUseFrame(true), []);
+    // Maximised drops the width cap and the gutter — these are dense A4 scans and
+    // the default modal wastes a lot of screen on them.
+    const [big, setBig] = useState(false);
+    const [isFull, setIsFull] = useState(false);
+    const shell = useRef<HTMLDivElement>(null);
+
+    // True browser fullscreen, separate from "maximised" — on a phone it is the
+    // only way to reclaim the browser chrome.
+    const toggleFullscreen = useCallback(() => {
+        const el = shell.current;
+        if (!el) return;
+        if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+        else el.requestFullscreen?.().catch(() => {});
+    }, []);
+
+    // Track it from the event, not our own click: Esc and the browser's own UI
+    // can leave fullscreen without going through the button.
+    useEffect(() => {
+        const sync = () => setIsFull(!!document.fullscreenElement);
+        document.addEventListener('fullscreenchange', sync);
+        return () => document.removeEventListener('fullscreenchange', sync);
+    }, []);
 
     useEffect(() => {
         const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
@@ -329,7 +352,7 @@ const PreviewModal: React.FC<{ file: LibFile; onClose: () => void }> = ({ file, 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[120] flex items-center justify-center bg-black/70 p-2 backdrop-blur-sm sm:p-6"
+            className={`fixed inset-0 z-[120] flex items-center justify-center bg-black/70 backdrop-blur-sm ${big ? 'p-0' : 'p-2 sm:p-6'}`}
             onClick={onClose}
         >
             <motion.div
@@ -337,7 +360,12 @@ const PreviewModal: React.FC<{ file: LibFile; onClose: () => void }> = ({ file, 
                 animate={{ scale: 1, y: 0 }}
                 exit={{ scale: 0.97, y: 8 }}
                 onClick={(e) => e.stopPropagation()}
-                className="flex h-[92svh] w-full max-w-5xl flex-col border-2 border-edge-strong bg-bg-base shadow-brutal-lg sm:h-[88svh]"
+                ref={shell}
+                className={`flex w-full flex-col border-edge-strong bg-bg-base ${
+                    big || isFull
+                        ? 'h-[100svh] max-w-none border-0'
+                        : 'h-[92svh] max-w-5xl border-2 shadow-brutal-lg sm:h-[88svh]'
+                }`}
             >
                 <div className="flex shrink-0 items-center gap-2 border-b-2 border-edge-strong px-3 py-2.5 sm:gap-3 sm:px-4">
                     <div className="min-w-0 flex-1">
@@ -354,8 +382,29 @@ const PreviewModal: React.FC<{ file: LibFile; onClose: () => void }> = ({ file, 
                     >
                         <Download size={13} /> <span className="hidden sm:inline">Download</span>
                     </a>
+                    <button
+                        type="button"
+                        onClick={() => setBig((b) => !b)}
+                        title={big ? 'Restore size' : 'Maximise'}
+                        aria-label={big ? 'Restore size' : 'Maximise'}
+                        aria-pressed={big}
+                        className="hidden shrink-0 border-2 border-edge-strong p-1.5 text-text-sub transition-colors hover:text-accent-orange sm:block"
+                    >
+                        {big ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
+                    </button>
+                    <button
+                        type="button"
+                        onClick={toggleFullscreen}
+                        title={isFull ? 'Exit full screen' : 'Full screen'}
+                        aria-label={isFull ? 'Exit full screen' : 'Full screen'}
+                        aria-pressed={isFull}
+                        className="shrink-0 border-2 border-edge-strong p-1.5 text-text-sub transition-colors hover:text-accent-orange"
+                    >
+                        {isFull ? <Shrink size={14} /> : <Expand size={14} />}
+                    </button>
                     <a
                         href={openUrl(file.i)}
+
                         target="_blank"
                         rel="noopener noreferrer"
                         title="Open in Google Drive"
