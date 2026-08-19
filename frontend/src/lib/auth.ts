@@ -220,3 +220,24 @@ export function clearSession(): void {
     ls.removeItem(GUEST_ID_KEY);
     ls.removeItem(GUEST_NAME_KEY);
 }
+
+/**
+ * Routes that need a REAL registered account — a guest session is not enough.
+ *
+ * A guest session is one click and anonymous, so gating on `isAuthenticated()`
+ * (which accepts guests) would gate nothing. Kept here rather than inline in the
+ * route guard because the LOGIN page needs the same answer: if it sent a
+ * brand-new guest back to the page they were blocked from, the guard would
+ * bounce them straight back to /login, forever.
+ */
+export const ACCOUNT_ONLY_PREFIXES = ['/library'] as const;
+
+export function requiresAccount(path: string): boolean {
+    const clean = (path || '').split('?')[0].split('#')[0];
+    return ACCOUNT_ONLY_PREFIXES.some((p) => clean === p || clean.startsWith(`${p}/`));
+}
+
+/** True only for a real Supabase login — guests deliberately excluded. */
+export function hasRealAccount(): boolean {
+    return getSession().kind === 'supabase';
+}

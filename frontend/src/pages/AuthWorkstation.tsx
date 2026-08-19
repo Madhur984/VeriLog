@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { supabase, SUPABASE_URL, SUPABASE_ANON_KEY } from '../lib/supabase';
-import { startGuestSession, getSession } from '../lib/auth';
+import { startGuestSession, getSession, requiresAccount } from '../lib/auth';
 import { ArrowRight, CheckCircle2, Loader2, UserCircle2, Eye, EyeOff, HelpCircle } from 'lucide-react';
 import { useGamificationStore } from '../stores/gamificationStore';
 import { BrandMark } from '../components/Brand';
@@ -78,6 +78,16 @@ export const AuthWorkstation: React.FC = () => {
   const [showGuest, setShowGuest] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
+
+  // Arriving from an account-only page (the question-paper library): say why,
+  // so the redirect reads as a reason rather than a dead end. Runs once on the
+  // initial destination, not on every notice change.
+  useEffect(() => {
+    if (requiresAccount(redirectTo)) {
+      setNotice('Question papers need a free account — sign in or create one to open them.');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [redirectTo]);
   const [isLoading, setIsLoading] = useState(false);
   const [loadingStep, setLoadingStep] = useState<number>(0);
   const [authSuccess, setAuthSuccess] = useState(false);
@@ -316,7 +326,9 @@ export const AuthWorkstation: React.FC = () => {
     startGuestSession(guestNameTrimmed);
     setFirstName(guestNameTrimmed.split(' ')[0]);
     setHasSeenGreeting(false);
-    navigate(redirectTo, { replace: true });
+    // Never hand a guest back to a page that requires a real account — the
+    // route guard would bounce them straight back here, forever.
+    navigate(requiresAccount(redirectTo) ? '/portal' : redirectTo, { replace: true });
   };
 
   const handleOAuthLogin = async (provider: OAuthProvider) => {

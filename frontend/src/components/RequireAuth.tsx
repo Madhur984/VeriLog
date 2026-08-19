@@ -1,7 +1,7 @@
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 
-import { isAuthenticated, getSession } from '../lib/auth';
+import { isAuthenticated, hasRealAccount } from '../lib/auth';
 
 /**
  * Route guard. Redirects to /login if the visitor has no Supabase token
@@ -36,7 +36,7 @@ export const RequireAuth: React.FC<{ children?: React.ReactNode }> = ({ children
  */
 export const RequireAccount: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
     const location = useLocation();
-    if (getSession().kind !== 'supabase') {
+    if (!hasRealAccount()) {
         return <Navigate to="/login" replace state={{ from: location.pathname + location.search }} />;
     }
     return <>{children}</>;
