@@ -222,15 +222,9 @@ export const AssistantPanel: React.FC<Props> = ({ open, onClose, pathname, inMod
                     type="button"
                     onClick={goNav}
                     aria-label={`Go to ${navTo.label}`}
-                    /* Compact inline pill rather than the old full-width card, but it
-                       still names the destination: "Go there" alone asks a student to
-                       accept a redirect without telling them where, and a wrong guess
-                       costs them their place in the page. Squared corners + the mono
-                       micro-label match the panel's own input and the rest of the site. */
-                    className="group inline-flex max-w-[85%] items-center gap-2 rounded-xl border-[2.5px] border-[#1B1436] bg-[#FF7A1A] px-3.5 py-2 text-white shadow-[3px_3px_0_#1B1436] transition-transform hover:-translate-y-[2px] active:translate-y-[1px] dark:border-[#4A3D7A] dark:shadow-[3px_3px_0_#7A3FD0]"
+                    className="group inline-flex items-center gap-1.5 rounded-full border-[2.5px] border-[#1B1436] bg-[#FF7A1A] px-4 py-2 text-white shadow-[3px_3px_0_#1B1436] transition-transform hover:-translate-y-[2px] active:translate-y-[1px] dark:border-[#4A3D7A] dark:shadow-[3px_3px_0_#7A3FD0]"
                   >
-                    <span className="flex-shrink-0 font-mono text-[9.5px] font-bold uppercase tracking-[0.18em] opacity-80">Go to</span>
-                    <span className="truncate text-[13px] font-bold leading-tight">{navTo.label}</span>
+                    <span className="text-[13px] font-bold">Go there</span>
                     <ArrowRight size={15} className="flex-shrink-0 transition-transform group-hover:translate-x-1" />
                   </button>
                 </motion.div>
