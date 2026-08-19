@@ -485,8 +485,8 @@ export const WorkstationHome: React.FC = () => {
                     <ArrowRight size={14} className="transition-transform group-hover:translate-x-0.5" />
                   </button>
                   <div className="mt-3 flex items-center justify-between font-mono text-[10px] font-semibold uppercase tracking-[0.14em]" style={{ color: faint }}>
-                    <span>6,500+ papers</span>
-                    <span className="flex-shrink-0 pl-3">Free · no sign-in</span>
+                    <span>7,000+ papers</span>
+                    <span className="flex-shrink-0 pl-3">Free · sign in</span>
                   </div>
                 </div>
               </div>

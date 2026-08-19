@@ -499,7 +499,7 @@ const LibraryPage: React.FC = () => {
                     <h1 className="text-3xl font-black tracking-tight sm:text-5xl">Question Papers</h1>
                     <p className="mx-auto mt-2 max-w-2xl text-sm text-text-sub sm:text-base">
                         Previous-year papers and solutions, sorted by branch, year and subject.
-                        Free to read and download — no sign-in needed.
+                        Free to read and download with your BitForBytes account.
                     </p>
                     {index && (
                         <p className="mt-2 font-mono text-[11px] text-text-dim">

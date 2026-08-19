@@ -51,6 +51,7 @@ const NOINDEX_EXACT = new Set([
 // Google's crawl budget & ranking focus on the strong, public pages.
 const GATED_PREFIX = /^\/(dsd|basic-electronics)\//;
 const GATED_EXACT = new Set([
+  '/library', // gated: question papers now require a real account
   '/module/6', '/boss-arena', '/fsm', '/hw-leetcode', '/logic-studio',
   '/signal-playground', '/quests', '/activities', '/community', '/debug-mission',
   '/gatekeeper-game', '/ai-lab', '/silicon-secrets', '/portfolio', '/skill-tree',
@@ -92,7 +93,7 @@ const ROUTE: Record<string, { title: string; description: string }> = {
   '/library': {
     title: 'B.Tech Previous Year Question Papers — Free PDF Library (ECE, CSE, ME, EE) | BitForBytes',
     description:
-      'A free library of 6,500+ B.Tech previous-year question papers and solutions, sorted by branch, year and subject — sessionals, pre-university and unit tests across ECE, CSE, Mechanical, Electrical, Civil and more. Read online or download the PDF, no sign-in needed.',
+      'A free library of 7,000+ B.Tech previous-year question papers and solutions, sorted by branch, year and subject — sessionals, pre-university and unit tests across ECE, CSE, Mechanical, Electrical, Civil and more. Read online or download the PDF with a free account.',
   },
   '/verilog-library': {
     title: 'Verilog Snippet Library — Patterns & Examples | BitForBytes',

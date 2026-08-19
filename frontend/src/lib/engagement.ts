@@ -38,7 +38,11 @@ interface Identity { kind: OwnerKind; key: string; display: string }
 
 interface Session {
   id: string;
-  moduleId: string;
+  /** Grouping key: the module id for modules, else the route. */
+  key: string;
+  moduleId: string | null;
+  route: string;
+  pageKind: string;
   path: string;
   accumulatedMs: number;    // banked visible time from finished stretches
   activeStart: number | null; // ts the current visible stretch began, or null if paused
@@ -48,6 +52,28 @@ interface Session {
 let session: Session | null = null;
 let flushTimer: ReturnType<typeof setInterval> | null = null;
 let listenersOn = false;
+
+/**
+ * Normalise a path into a reporting route + bucket. MUST stay in step with
+ * public.classify_page() in 0008_page_engagement.sql — the server re-derives
+ * these when a client omits them, and the two must agree or a route splits
+ * across buckets.
+ */
+export function classifyPath(path: string): { route: string; kind: string; moduleId: string | null } {
+  const clean = (path || '/').split('?')[0].split('#')[0] || '/';
+  const mod = clean.match(/^\/(module|dsd|basic-electronics)\/(\d+)/);
+  if (mod) {
+    return { route: `/${mod[1]}/:n`, kind: 'module', moduleId: `${mod[1]}/${mod[2]}` };
+  }
+  const kind =
+    /^\/(verilog-playground|workbench|kmap-lab|logic-studio|fsm|signal-playground|hw-leetcode|ai-lab)/.test(clean) ? 'tool'
+    : /^\/(library|analogies|verilog-library|interview-prep|silicon-map)/.test(clean) ? 'library'
+    : /^\/(career-roadmap|portfolio|skill-tree)/.test(clean) ? 'career'
+    : /^\/(profile|settings|login)/.test(clean) ? 'account'
+    : /^\/(privacy|terms|pledge|community)$/.test(clean) || clean === '/' ? 'marketing'
+    : 'other';
+  return { route: clean, kind, moduleId: null };
+}
 
 /* ------------------------------- helpers ------------------------------- */
 
@@ -145,6 +171,8 @@ function buildBody(secs: number): Record<string, unknown> {
     p_module_id: session!.moduleId,
     p_last_path: session!.path,
     p_active_seconds: secs,
+    p_route: session!.route,
+    p_page_kind: session!.pageKind,
   };
 }
 
@@ -214,25 +242,33 @@ function installListeners(): void {
 /* -------------------------------- API ---------------------------------- */
 
 /**
- * Begin (or continue) tracking time for `moduleId`. Call on every module route
- * change. Navigating between sub-pages of the SAME module keeps one session;
- * switching to a different module finalises the old session and starts a new
- * one.
+ * Begin (or continue) tracking time for a page. Call on EVERY route change —
+ * this is the single tracker for the whole site, not just course modules.
+ *
+ * Sessions group by module for module routes (so moving between a module's
+ * sub-pages keeps one continuous session, as it always did) and by route
+ * elsewhere. Landing on a genuinely different page finalises the old session
+ * and starts a new one, so each visit stays its own row.
  */
-export function enterModule(moduleId: string, path: string): void {
-  if (session && session.moduleId === moduleId) {
-    session.path = path; // sub-page change within the same module — keep counting
+export function enterPage(path: string): void {
+  const { route, kind, moduleId } = classifyPath(path);
+  const key = moduleId ?? route;
+  if (session && session.key === key) {
+    session.path = path; // same page/module, different sub-path — keep counting
     return;
   }
-  leaveModule(); // finalise any previous module's session
-  session = { id: uuid(), moduleId, path, accumulatedMs: 0, activeStart: null, lastSent: -1 };
+  endEngagement(); // finalise whatever came before
+  session = {
+    id: uuid(), key, moduleId, route, pageKind: kind, path,
+    accumulatedMs: 0, activeStart: null, lastSent: -1,
+  };
   resume();
   installListeners();
   if (!flushTimer) flushTimer = setInterval(() => flush(false), FLUSH_MS);
 }
 
-/** Finalise the current module session (call when leaving all module routes). */
-export function leaveModule(): void {
+/** Finalise the current session (leaving the app, or signing out). */
+export function endEngagement(): void {
   if (!session) return;
   pause();
   flush(false); // in-app navigation: normal (fresh-token) flush of the last slice
@@ -242,3 +278,11 @@ export function leaveModule(): void {
     flushTimer = null;
   }
 }
+
+/** @deprecated Kept for older call sites; enterPage derives the module itself. */
+export function enterModule(_moduleId: string, path: string): void {
+  enterPage(path);
+}
+
+/** @deprecated Use endEngagement. */
+export const leaveModule = endEngagement;

@@ -3,7 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import { TransitionProvider } from './hooks/useTransitionController';
 import { TransitionOverlay } from './components/TransitionOverlay';
 import { migrateStorage } from './utils/storageMigration';
-import { RequireAuth } from './components/RequireAuth';
+import { RequireAuth, RequireAccount } from './components/RequireAuth';
 import { LandingOrPortal } from './components/LandingOrPortal';
 import { ModuleGate } from './components/ModuleGate';
 import { RouteFallback } from './components/RouteFallback';
@@ -14,6 +14,7 @@ import { loadChunk } from './utils/loadChunk';
 import { PortalLayout } from './layouts/PortalLayout';
 import { ScrollToTop } from './components/ScrollToTop';
 import { SeoManager } from './components/SeoManager';
+import { EngagementTracker } from './components/EngagementTracker';
 import { ConsentBanner } from './components/ConsentBanner';
 
 // Floating mascot (bottom-right, site-wide) — lazy so Rive's runtime stays off first paint
@@ -138,6 +139,8 @@ function App() {
       <TransitionOverlay />
       <AppErrorBoundary>
       <SeoManager />
+      {/* Times every route site-wide; ModuleGate deliberately no longer does. */}
+      <EngagementTracker />
       <ScrollToTop />
       <Suspense fallback={<RouteFallback />}>
         <Routes>
@@ -157,7 +160,9 @@ function App() {
           <Route element={<PortalLayout />}>
             <Route path="/portal" element={<WorkstationHome />} />
             <Route path="/career-roadmap" element={<CareerRoadmapPage />} />
-            <Route path="/library" element={<LibraryPage />} />
+            {/* Question papers need a real account — a guest session is one
+                click and anonymous, so it would gate nothing. */}
+            <Route path="/library" element={<RequireAccount><LibraryPage /></RequireAccount>} />
             <Route path="/analogies" element={<AnalogyLibrary />} />
             <Route path="/verilog-library" element={<VerilogLibrary />} />
             <Route path="/interview-prep" element={<InterviewPrep />} />
