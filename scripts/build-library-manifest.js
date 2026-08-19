@@ -381,7 +381,16 @@ const BRANCHES = {
   ME: 'Mechanical',
   CE: 'Civil',
   EN: 'Electrical',
-  'AS&H': 'Applied Science & Humanities',
+  // Drive files these under the department that owns them, but the papers are
+  // the common first-year syllabus every branch sits. Students look for
+  // "1st Year", not for Applied Science & Humanities.
+  'AS&H': '1st Year',
+};
+
+// Badge defaults to the Drive folder name; override it wherever that name is
+// not what a student would scan the shelf for.
+const BADGES = {
+  'AS&H': '1ST YEAR',
 };
 
 async function main() {
@@ -417,8 +426,8 @@ async function main() {
     rows.sort((a, b) => (b.y || '').localeCompare(a.y || '') || a.t.localeCompare(b.t));
     console.log(`    ${canon.subjects} subjects after folding ${canon.folded} titles`);
     const id = `qp-${br.name.toLowerCase().replace(/[^a-z0-9]+/g, '')}`;
-    write(id, { id, title: BRANCHES[br.name] || br.name, badge: br.name, kind: 'qp', files: rows });
-    collections.push({ id, title: BRANCHES[br.name] || br.name, badge: br.name, group: 'papers', count: rows.length });
+    write(id, { id, title: BRANCHES[br.name] || br.name, badge: BADGES[br.name] || br.name, kind: 'qp', files: rows });
+    collections.push({ id, title: BRANCHES[br.name] || br.name, badge: BADGES[br.name] || br.name, group: 'papers', count: rows.length });
   }
 
   /* ---- AKTU papers (the q_papers_abesit folder; no year in the filenames) ---- */

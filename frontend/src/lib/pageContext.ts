@@ -1,7 +1,7 @@
 // Builds a short, human-readable description of the page the student is on, so
-// VoltMonkey (the backend/src/voltmonkey Express router) can ground its summaries and answers in
-// what's actually on screen. Route map first, then whatever the live DOM tells
-// us (tab title + main heading).
+// VoltMonkey (whichever backend lib/assistant.ts is pointed at) can ground its
+// summaries and answers in what's actually on screen. Route map first, then
+// whatever the live DOM tells us (tab title + main heading).
 
 interface RouteCtx {
   test: (p: string) => boolean;
