@@ -91,6 +91,10 @@ function corsHeaders(origin: string | null): Record<string, string> {
     Vary: 'Origin',
     'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+    // Without this, cross-origin JS cannot read X-VoltMonkey-Model off the
+    // stream response — and during an incident that header is the quickest way
+    // to tell "gemini answered" from "we fell through to hf".
+    'Access-Control-Expose-Headers': 'X-VoltMonkey-Model',
   };
 }
 
@@ -309,12 +313,43 @@ async function probe(a: Attempt): Promise<{ provider: string; model: string; ok:
 // Buckets a failed attempt so the logs say WHY it failed — quota vs bad key vs
 // the provider simply being slow — instead of a bare status code.
 function classify(status: number, detail: string): string {
+  if (status === 200) return 'empty_reply';
   if (status === 0) return /aborted|abortsignal/i.test(detail) ? 'timeout' : 'network';
   if (status === 429) return 'rate_limited';
   if (status === 401 || status === 403) return 'invalid_key';
   if (status === 400) return 'bad_request';
   if (status >= 500) return 'provider_error';
   return 'unknown';
+}
+
+// Read an OpenAI-compatible SSE stream only until the provider emits its first
+// non-empty delta.content, returning the raw chunks consumed so they can be
+// replayed to the client byte-for-byte. Nothing here rewrites the model's text
+// — this exists purely to find out whether an attempt is really going to
+// answer, while falling through to the next provider is still possible.
+async function awaitFirstDelta(
+  reader: ReadableStreamDefaultReader<Uint8Array>,
+): Promise<{ got: boolean; chunks: Uint8Array[] }> {
+  const decoder = new TextDecoder();
+  const chunks: Uint8Array[] = [];
+  let buffer = '';
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) return { got: false, chunks };
+    chunks.push(value);
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split('\n');
+    buffer = lines.pop() ?? '';
+    for (const raw of lines) {
+      const line = raw.trim();
+      if (!line.startsWith('data:')) continue;
+      const payload = line.slice(5).trim();
+      if (!payload || payload === '[DONE]') continue;
+      try {
+        if (JSON.parse(payload)?.choices?.[0]?.delta?.content) return { got: true, chunks };
+      } catch { /* keep-alive or a partial JSON line — keep reading */ }
+    }
+  }
 }
 
 // Per-attempt timeout, so one hanging provider cannot eat the whole request
@@ -349,7 +384,14 @@ Deno.serve(async (req: Request) => {
 
   try {
     const list = attempts();
-    if (!list.length) throw new Error('No LLM key configured — set one of GROQ_API_KEY / GEMINI_API_KEY / OPENROUTER_API_KEY / CEREBRAS_API_KEY / MISTRAL_API_KEY / HF_API_KEY as a function secret.');
+    if (!list.length) {
+      // This used to throw, and the catch below put the message straight in the
+      // student's chat bubble — so a missing secret showed them the names of all
+      // six provider keys and how the function is configured. The operator needs
+      // that text; the student needs a sentence they can act on.
+      console.error('[assistant] no LLM key configured — set GROQ_API_KEY / GEMINI_API_KEY / OPENROUTER_API_KEY / CEREBRAS_API_KEY / MISTRAL_API_KEY / HF_API_KEY as a function secret.');
+      return json({ error: "VoltMonkey's brain is taking a quick break ⚡ — try asking again in a moment!", detail: 'no LLM key configured' }, 500);
+    }
 
     const ip = (req.headers.get('x-forwarded-for') ?? '').split(',')[0].trim() || 'unknown';
     if (rateLimited(ip)) return json({ error: "Whoa, slow down a sec ⚡ — you've asked a lot very fast. Try again in a minute." }, 429);
@@ -406,25 +448,71 @@ Deno.serve(async (req: Request) => {
           signal: ctrl.signal,
         });
       } catch (netErr) {
+        clearTimeout(timer);
         last = { status: 0, detail: String(netErr), where };
         const category = classify(0, String(netErr));
         attemptLog.push(`${where}[${category}]`);
         console.error(`[assistant] ${category} on ${where}: ${String(netErr).slice(0, 200)}`);
         continue;
-      } finally {
-        clearTimeout(timer);
       }
 
       if (resp.ok && resp.body) {
-        // Hand the provider's stream straight through, untouched. The client
-        // renders deltas as they land (ChatMarkdown), so buffering the whole
-        // generation here to post-process it would trade ~0.5s to first token
-        // for the full generation time, and would have to strip the Markdown
-        // and code fences the system prompt explicitly asks the model for.
-        return new Response(resp.body, {
+        // Deliberately NOT `return new Response(resp.body)` straight away. The
+        // abort timer stays armed until the first real token, because fetch
+        // resolves when the HEADERS land — a provider that answers 200 and then
+        // stalls would otherwise hang until the client's own 45s gives up, with
+        // nothing on screen and no chance to try the next provider. A 200 whose
+        // stream carries no delta.content at all has the same effect: a silent
+        // empty bubble. Both now fall through to the next attempt.
+        //
+        // Once that first token is in hand the timer is cleared and the rest of
+        // the stream is handed through UNTOUCHED, so time-to-first-token is
+        // unchanged (we were waiting on that token regardless) and a flowing
+        // stream is never truncated. The client renders deltas as they land via
+        // ChatMarkdown, so buffering the whole generation to post-process it
+        // would trade half a second for the entire generation — and would have
+        // to strip the very Markdown and code fences the system prompt asks for.
+        const reader = resp.body.getReader();
+        let head: { got: boolean; chunks: Uint8Array[] };
+        try {
+          head = await awaitFirstDelta(reader);
+        } catch (streamErr) {
+          clearTimeout(timer);
+          reader.cancel().catch(() => {});
+          last = { status: 0, detail: String(streamErr), where };
+          const category = classify(0, String(streamErr));
+          attemptLog.push(`${where}[${category}]`);
+          console.error(`[assistant] ${category} on ${where} while waiting for first token: ${String(streamErr).slice(0, 200)}`);
+          continue;
+        }
+        clearTimeout(timer);
+
+        if (!head.got) {
+          reader.cancel().catch(() => {});
+          last = { status: resp.status, detail: 'empty stream (no delta.content)', where };
+          attemptLog.push(`${where}[empty_reply]`);
+          console.error(`[assistant] empty_reply on ${where}: provider streamed no content`);
+          continue;
+        }
+
+        const out = new ReadableStream<Uint8Array>({
+          start(c) { for (const ch of head.chunks) c.enqueue(ch); },
+          async pull(c) {
+            const { done, value } = await reader.read();
+            if (done) { c.close(); return; }
+            c.enqueue(value);
+          },
+          // Without this a student closing the panel mid-answer would leave the
+          // upstream generation running; `new Response(resp.body)` used to
+          // propagate the cancel for free.
+          cancel(reason) { reader.cancel(reason).catch(() => {}); },
+        });
+
+        return new Response(out, {
           headers: { ...CORS, 'Content-Type': 'text/event-stream; charset=utf-8', 'Cache-Control': 'no-cache', 'X-VoltMonkey-Model': where },
         });
       }
+      clearTimeout(timer);
       last = { status: resp.status, detail: (await resp.text().catch(() => '')).slice(0, 300), where };
       const category = classify(resp.status, last.detail);
       attemptLog.push(`${where}[${category}]`);
@@ -446,7 +534,10 @@ Deno.serve(async (req: Request) => {
       : "VoltMonkey's brain is taking a quick break ⚡ — try asking again in a moment!";
     return json({ error: friendly, detail: `last: ${last.status} (${lastCategory}) on ${last.where} — ${last.detail}` }, 502);
   } catch (e) {
+    // Anything thrown in here — malformed request JSON, a fault in the RAG
+    // path, a runtime error — was being forwarded verbatim into the chat
+    // bubble. Keep the real text in the logs and in `detail`, never in `error`.
     console.error(`[assistant] fatal: ${String((e as Error)?.message ?? e)}`);
-    return json({ error: String((e as Error)?.message ?? e) }, 500);
+    return json({ error: "VoltMonkey's brain is taking a quick break ⚡ — try asking again in a moment!", detail: String((e as Error)?.message ?? e).slice(0, 300) }, 500);
   }
 });

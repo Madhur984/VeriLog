@@ -381,10 +381,11 @@ const BRANCHES = {
   ME: 'Mechanical',
   CE: 'Civil',
   EN: 'Electrical',
-  // Drive files these under the department that owns them, but the papers are
-  // the common first-year syllabus every branch sits. Students look for
-  // "1st Year", not for Applied Science & Humanities.
-  'AS&H': '1st Year',
+  // Drive files these under the department that owns them (Applied Science &
+  // Humanities), but the shelf is really two things a student recognises: the
+  // common first-year syllabus every branch sits, plus the general papers
+  // (constitution, environment, soft skills) that turn up in later years too.
+  'AS&H': '1st Year & General Papers',
 };
 
 // Badge defaults to the Drive folder name; override it wherever that name is
