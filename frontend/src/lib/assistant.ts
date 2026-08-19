@@ -99,14 +99,17 @@ export async function askAssistant(opts: {
   try {
     // Supabase gates functions on BOTH headers — apikey alone streams back
     // empty. The Express router ignores them, so sending them is harmless there.
-    const auth =
-      FN_URL === EDGE_URL
-        ? { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` }
-        : {};
+    // Typed as Record<string, string> rather than spread from a ternary: the two
+    // branches widen to a union that is not assignable to HeadersInit.
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    if (FN_URL === EDGE_URL) {
+      headers.apikey = SUPABASE_ANON_KEY;
+      headers.Authorization = `Bearer ${SUPABASE_ANON_KEY}`;
+    }
 
     const res = await fetch(FN_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', ...auth },
+      headers,
       body: JSON.stringify({ messages: opts.messages, pageContext: opts.pageContext, mode: opts.mode ?? 'chat' }),
       signal: ctrl.signal,
     });
