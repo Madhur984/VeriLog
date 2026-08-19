@@ -13,6 +13,13 @@ sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), "vision
 
 app = FastAPI(title="VeriLog AI Multiservice")
 
+# --- VoltMonkey RAG (GitHub + routes retrieval, Gemini-embedded ChromaDB) ---
+try:
+    from rag.router import router as rag_router
+    app.include_router(rag_router)
+except ImportError as e:
+    print(f"Warning: Could not import RAG router: {e}")
+
 # --- Voice Deepfake Detection (AuralShield) ---
 try:
     # AuralShield typically has its own app/main.py logic

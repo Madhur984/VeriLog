@@ -1,8 +1,10 @@
 -- 0007_knowledge_base.sql
 -- Vector store backing VoltMonkey's retrieval-augmented answers: the study
--- notes / question papers are chunked, embedded (Gemini text-embedding-004,
--- 768 dims) and searched by cosine similarity so the bot answers FROM the
--- material instead of from memory.
+-- notes / question papers are chunked, embedded (Gemini gemini-embedding-001,
+-- truncated to 768 dims via outputDimensionality — text-embedding-004, the
+-- original model this schema was sized for, has since been retired) and
+-- searched by cosine similarity so the bot answers FROM the material instead
+-- of from memory.
 --
 -- Run AFTER 0001-0006 (idempotent; re-running is safe).
 

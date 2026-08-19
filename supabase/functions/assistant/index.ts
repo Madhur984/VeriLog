@@ -246,7 +246,10 @@ interface ChatMsg { role: string; content: string }
  */
 const KB_URL = Deno.env.get('SUPABASE_URL') ?? '';
 const KB_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
-const GEMINI_EMBED = 'https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent';
+// text-embedding-004 was retired; gemini-embedding-001 replaces it but
+// defaults to 3072 dims — outputDimensionality pins it to 768 to match
+// kb_chunks.embedding vector(768) in the migration.
+const GEMINI_EMBED = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-001:embedContent';
 
 async function knowledge(question: string): Promise<string> {
   const gk = Deno.env.get('GEMINI_API_KEY') ?? '';
@@ -255,7 +258,7 @@ async function knowledge(question: string): Promise<string> {
     const er = await fetch(`${GEMINI_EMBED}?key=${gk}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model: 'models/text-embedding-004', content: { parts: [{ text: question.slice(0, 4000) }] } }),
+      body: JSON.stringify({ model: 'models/gemini-embedding-001', content: { parts: [{ text: question.slice(0, 4000) }] }, outputDimensionality: 768 }),
     });
     if (!er.ok) return '';
     const vec = (await er.json())?.embedding?.values;

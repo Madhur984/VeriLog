@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Send, X, Sparkles, ArrowRight, Compass } from 'lucide-react';
+import { Send, X, Sparkles, ArrowRight } from 'lucide-react';
 import { askAssistant, type AssistantMsg } from '../lib/assistant';
 import { getPageContext } from '../lib/pageContext';
 import { MODULE_LABELS, moduleLabel } from '../lib/moduleHistory';
@@ -23,7 +23,8 @@ const SUGGESTIONS = ['Summarise this page', 'Give me a hint', 'Explain this simp
 
 /**
  * Non-module destinations VoltMonkey is allowed to send a student to. Mirrors
- * the SITE MAP in the `assistant` Edge Function's prompt — a model can always
+ * the SITE MAP in the backend's prompt (backend/src/voltmonkey/siteMap.ts) —
+ * a model can always
  * hallucinate a plausible-looking path, and a redirect into a 404 is a much
  * worse experience than no redirect, so every target is checked against a real
  * route before we offer the button.
@@ -49,8 +50,9 @@ const FALLBACK = "Hey, I'm VoltMonkey ⚡ — ask me anything about this page or
 /**
  * VoltMonkey's chat panel — a neo-brutalist assistant window that opens from the
  * mascot. On open it streams an AI summary of the current page; students can
- * then ask curriculum questions. All model calls go through the `assistant`
- * Edge Function (Hugging Face key stays server-side) and stream token-by-token.
+ * then ask curriculum questions. All model calls go through the VoltMonkey
+ * Express backend (backend/src/voltmonkey/), which keeps provider keys
+ * server-side and streams the reply token-by-token.
  */
 export const AssistantPanel: React.FC<Props> = ({ open, onClose, pathname, inModule }) => {
   const [messages, setMessages] = useState<AssistantMsg[]>([]);
@@ -219,14 +221,11 @@ export const AssistantPanel: React.FC<Props> = ({ open, onClose, pathname, inMod
                   <button
                     type="button"
                     onClick={goNav}
-                    className="group flex w-[85%] items-center gap-3 rounded-2xl border-[2.5px] border-[#1B1436] bg-[#FF7A1A] px-3.5 py-3 text-left text-white shadow-[3px_3px_0_#1B1436] transition-transform hover:-translate-y-[2px] active:translate-y-[1px] dark:border-[#4A3D7A] dark:shadow-[3px_3px_0_#7A3FD0]"
+                    aria-label={`Go to ${navTo.label}`}
+                    className="group inline-flex items-center gap-1.5 rounded-full border-[2.5px] border-[#1B1436] bg-[#FF7A1A] px-4 py-2 text-white shadow-[3px_3px_0_#1B1436] transition-transform hover:-translate-y-[2px] active:translate-y-[1px] dark:border-[#4A3D7A] dark:shadow-[3px_3px_0_#7A3FD0]"
                   >
-                    <Compass size={19} className="flex-shrink-0" />
-                    <span className="min-w-0 flex-1">
-                      <span className="block font-mono text-[9.5px] font-bold uppercase tracking-[0.18em] opacity-80">Go to</span>
-                      <span className="block truncate text-[14px] font-bold leading-tight">{navTo.label}</span>
-                    </span>
-                    <ArrowRight size={17} className="flex-shrink-0 transition-transform group-hover:translate-x-1" />
+                    <span className="text-[13px] font-bold">Go there</span>
+                    <ArrowRight size={15} className="flex-shrink-0 transition-transform group-hover:translate-x-1" />
                   </button>
                 </motion.div>
               )}
@@ -272,6 +271,10 @@ export const AssistantPanel: React.FC<Props> = ({ open, onClose, pathname, inMod
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Ask VoltMonkey anything…"
+              autoCorrect="off"
+              autoComplete="off"
+              autoCapitalize="off"
+              spellCheck={false}
               className="min-w-0 flex-1 rounded-xl border-[2.5px] border-[#1B1436] bg-white px-3.5 py-2.5 text-[14px] text-[#1B1436] placeholder-[#8B7FB0] shadow-[2px_2px_0_#1B1436] outline-none focus:border-[#7A3FD0] dark:border-[#4A3D7A] dark:bg-[#0F0B1E] dark:text-white dark:placeholder-[#7A6DA0] dark:shadow-[2px_2px_0_#7A3FD0] dark:focus:border-[#B98BFF]"
             />
             <button
