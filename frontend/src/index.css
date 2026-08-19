@@ -571,6 +571,22 @@ html, body, #root {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
   }
+
+  /* Interview Prep — formula / calculation answer blocks.
+     Defined here (not as Tailwind utilities) so the font-family
+     survives production purge and JetBrains Mono is always applied. */
+  .iv-formula-block {
+    font-family: 'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace;
+    border-left-width: 4px;
+    border-radius: 0 6px 6px 0;
+    padding: 10px 14px;
+    margin-top: 8px;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    font-size: 13px;
+    line-height: 1.6;
+    display: block;
+  }
 }
 
 /* ════ EASTER EGG EFFECTS ════ */
