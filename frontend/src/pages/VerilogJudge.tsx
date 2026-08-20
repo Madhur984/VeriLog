@@ -16,7 +16,7 @@ import {
   ArrowLeft, Play, RotateCcw, Lightbulb, CheckCircle2, XCircle,
   AlertTriangle, ChevronDown, ChevronUp, Loader2, ChevronLeft, ChevronRight,
   PanelLeftClose, PanelLeftOpen, Sun, Moon, BadgeCheck, Zap, BookOpen, Activity, Table2,
-  Command as CommandIcon, Contrast, Palette, Eraser, Search,
+  Command as CommandIcon, Contrast, Palette, Eraser, Search, FlaskConical,
 } from 'lucide-react';
 import { useColorScheme, useThemeVariant, type ThemeVariant } from '../hooks/useColorScheme';
 import {
@@ -28,6 +28,7 @@ import { SynthSchematicView } from '../components/verilog/SynthSchematicView';
 import { WaveformViewer } from '../components/verilog/WaveformViewer';
 import { VerdictBadge, VerdictCaveat } from '../components/verilog/VerdictBadge';
 import { CommandPalette, type Command } from '../components/verilog/CommandPalette';
+import { CustomRunPanel } from '../components/verilog/CustomRunPanel';
 import type { SynthProgress } from '../engine/verilog/yosysClient';
 import type { Diag } from '../engine/verilog/diagnostics';
 
@@ -187,7 +188,7 @@ export const VerilogJudge: React.FC = () => {
   const [streak, setStreak] = useState<Streak>(loadStreak);
   const [problemOpen, setProblemOpen] = useState(true);
   const [resultsOpen, setResultsOpen] = useState(false);
-  const [resultTab, setResultTab] = useState<'tests' | 'wave'>('tests');
+  const [resultTab, setResultTab] = useState<'run' | 'tests' | 'wave'>('run');
   const [passTotal, setPassTotal] = useState(0);
   const [celebrate, setCelebrate] = useState(false);
   const [paletteOpen, setPaletteOpen] = useState(false);
@@ -239,7 +240,7 @@ export const VerilogJudge: React.FC = () => {
       // A newer run superseded this one — drop the stale result.
       if (runSeq.current !== seq) return;
       setResult(r);
-      if (r.status !== 'pass' && r.firstFailure !== undefined) setResultTab('wave');
+      setResultTab(r.status !== 'pass' && r.firstFailure !== undefined ? 'wave' : 'tests');
       if (r.status === 'pass') {
         setPassTotal(r.total);
         setCelebrate(true);
@@ -325,6 +326,9 @@ export const VerilogJudge: React.FC = () => {
       { id: 'jump-fail', label: 'Jump to the first failing cycle', section: 'Results',
         icon: AlertTriangle, keywords: 'divergence mismatch waveform',
         run: () => { setResultsOpen(true); setResultTab('wave'); } },
+      { id: 'tab-run', label: 'Open the custom run bench', section: 'Results',
+        icon: FlaskConical, keywords: 'try drive inputs probe test custom vector',
+        run: () => { setResultsOpen(true); setResultTab('run'); } },
       { id: 'tab-tests', label: 'Show the results table', section: 'Results',
         icon: Table2, run: () => { setResultsOpen(true); setResultTab('tests'); } },
       { id: 'tab-wave', label: 'Show the waveform', section: 'Results',
@@ -793,7 +797,7 @@ export const VerilogJudge: React.FC = () => {
           <ResultsDrawer
             open={resultsOpen} setOpen={setResultsOpen}
             result={result} problem={problem} running={running} progress={progress}
-            tab={resultTab} setTab={setResultTab}
+            tab={resultTab} setTab={setResultTab} source={debounced}
             isLight={isLight} onResizeStart={dragConsole}
           />
         </section>
@@ -830,10 +834,12 @@ const ResultsDrawer: React.FC<{
   open: boolean; setOpen: (b: boolean) => void;
   result: DiffGradeResult | null; problem: VProblemV2; running: boolean;
   progress: SynthProgress | null;
-  tab: 'tests' | 'wave'; setTab: (t: 'tests' | 'wave') => void;
+  tab: 'run' | 'tests' | 'wave'; setTab: (t: 'run' | 'tests' | 'wave') => void;
+  /** Debounced editor contents, for the custom-run bench. */
+  source: string;
   isLight: boolean;
   onResizeStart: (e: React.PointerEvent) => void;
-}> = ({ open, setOpen, result, problem, running, progress, tab, setTab, isLight, onResizeStart }) => {
+}> = ({ open, setOpen, result, problem, running, progress, tab, setTab, source, isLight, onResizeStart }) => {
   const passed = result?.status === 'pass';
   const seq = isSequential(problem);
   const unit = seq ? 'cycles' : 'cases';
@@ -841,7 +847,10 @@ const ResultsDrawer: React.FC<{
 
   // The collapsed summary carries the confidence claim, not just pass/fail
   // (§6.1) — the strength of the check is part of the result, not a footnote.
-  const idleText = running ? 'Synthesizing & simulating…' : 'Submit to grade your design';
+  // Names the Run bench, because a tab only rendered once the drawer is open is
+  // invisible to anyone who never opens it.
+  const idleText = running ? 'Synthesizing & simulating…'
+    : 'Try your own inputs, or Submit to grade';
 
   return (
     <div className="shrink-0 border-t border-border-soft bg-bg-elev">
@@ -881,16 +890,26 @@ const ResultsDrawer: React.FC<{
           )}
         </button>
 
-        {open && hasWave && (
+        {/* The Run bench is always available — it is the thing you use BEFORE
+            submitting, so gating it on having a result would defeat it. */}
+        {open && (
           <div className="flex shrink-0 overflow-hidden rounded-md border border-border-soft">
-            <button onClick={() => setTab('tests')}
-              className={`flex items-center gap-1 px-2 py-1 text-[10px] font-bold uppercase tracking-wide transition-colors ${tab === 'tests' ? 'bg-emerald-500 text-black' : 'text-text-dim hover:text-text-main'}`}>
-              <Table2 className="h-3 w-3" /> Tests
+            <button onClick={() => setTab('run')}
+              className={`flex items-center gap-1 px-2 py-1 text-[10px] font-bold uppercase tracking-wide transition-colors ${tab === 'run' ? 'bg-emerald-500 text-black' : 'text-text-dim hover:text-text-main'}`}>
+              <FlaskConical className="h-3 w-3" /> Run
             </button>
-            <button onClick={() => setTab('wave')}
-              className={`flex items-center gap-1 px-2 py-1 text-[10px] font-bold uppercase tracking-wide transition-colors ${tab === 'wave' ? 'bg-emerald-500 text-black' : 'text-text-dim hover:text-text-main'}`}>
-              <Activity className="h-3 w-3" /> Waveform
-            </button>
+            {hasWave && (
+              <>
+                <button onClick={() => setTab('tests')}
+                  className={`flex items-center gap-1 px-2 py-1 text-[10px] font-bold uppercase tracking-wide transition-colors ${tab === 'tests' ? 'bg-emerald-500 text-black' : 'text-text-dim hover:text-text-main'}`}>
+                  <Table2 className="h-3 w-3" /> Tests
+                </button>
+                <button onClick={() => setTab('wave')}
+                  className={`flex items-center gap-1 px-2 py-1 text-[10px] font-bold uppercase tracking-wide transition-colors ${tab === 'wave' ? 'bg-emerald-500 text-black' : 'text-text-dim hover:text-text-main'}`}>
+                  <Activity className="h-3 w-3" /> Waveform
+                </button>
+              </>
+            )}
           </div>
         )}
 
@@ -903,22 +922,24 @@ const ResultsDrawer: React.FC<{
         {open && (
           <motion.div initial={{ height: 0 }} animate={{ height: 'auto' }} exit={{ height: 0 }} className="overflow-hidden">
             <div className="max-h-[42vh] overflow-hidden border-t border-border-soft lg:h-[var(--vj-ch)] lg:max-h-none">
-              {tab === 'wave' && hasWave
-                ? (
-                  <WaveformViewer
-                    trace={result!.trace!}
-                    expectedTrace={result!.expectedTrace}
-                    failingCycles={result!.rows.filter((r) => !r.pass).map((r) => r.index)}
-                    outputNames={problem.outputs.map((o) => o.name)}
-                    focusCycle={result!.firstFailure}
-                    isLight={isLight}
-                  />
-                )
-                : (
-                  <div className="h-full overflow-y-auto">
-                    <ResultsPanel result={result} problem={problem} running={running} progress={progress} />
-                  </div>
-                )}
+              {tab === 'run'
+                ? <CustomRunPanel problem={problem} source={source} isLight={isLight} />
+                : tab === 'wave' && hasWave
+                  ? (
+                    <WaveformViewer
+                      trace={result!.trace!}
+                      expectedTrace={result!.expectedTrace}
+                      failingCycles={result!.rows.filter((r) => !r.pass).map((r) => r.index)}
+                      outputNames={problem.outputs.map((o) => o.name)}
+                      focusCycle={result!.firstFailure}
+                      isLight={isLight}
+                    />
+                  )
+                  : (
+                    <div className="h-full overflow-y-auto">
+                      <ResultsPanel result={result} problem={problem} running={running} progress={progress} />
+                    </div>
+                  )}
             </div>
           </motion.div>
         )}

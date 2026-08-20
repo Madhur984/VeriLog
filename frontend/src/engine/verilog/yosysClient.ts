@@ -109,15 +109,48 @@ function ensureWorker(): Worker {
   return worker;
 }
 
+/**
+ * Memo of the most recent synthesis results, keyed by source text.
+ *
+ * Several panels want the netlist for the *same* code at the same moment — the
+ * live schematic and the custom-run panel both react to the debounced editor
+ * contents — and synthesizing twice would double the work for an identical
+ * answer. Keyed by source rather than by caller, so an undo back to previous
+ * code is also free.
+ *
+ * Small on purpose: netlists are large, and holding many would defeat the
+ * worker recycling that exists to reclaim WASM heap.
+ */
+const CACHE_MAX = 8;
+const synthCache = new Map<string, SynthResult>();
+
+function cacheResult(code: string, r: SynthResult): SynthResult {
+  // Never cache an engine-level failure (timeout, worker crash) — those are
+  // transient and the next attempt may well succeed. A compile error is a
+  // genuine property of the source, so that one is worth keeping.
+  const transient = !r.ok && /timed out|engine was reset|failed to load/i.test(r.error);
+  if (!transient) {
+    synthCache.set(code, r);
+    if (synthCache.size > CACHE_MAX) synthCache.delete(synthCache.keys().next().value as string);
+  }
+  return r;
+}
+
 export function synthesize(code: string, onProgress?: (p: SynthProgress) => void): Promise<SynthResult> {
+  const hit = synthCache.get(code);
+  if (hit) return Promise.resolve(hit);
+
   const w = ensureWorker();
   const id = ++seq;
   return new Promise<SynthResult>((resolve) => {
-    pending.set(id, { resolve, onProgress });
+    pending.set(id, { resolve: (r) => resolve(cacheResult(code, r)), onProgress });
     armWedgeTimer(id); // reset on each progress event (see armWedgeTimer)
     w.postMessage({ id, code });
   });
 }
+
+/** Drop memoized netlists (used by tests; also on an engine reset). */
+export const clearSynthCache = (): void => { synthCache.clear(); };
 
 /** Whether the engine has already been pulled in this session (best-effort). */
 export const engineStarted = () => worker !== null;
