@@ -264,7 +264,14 @@ type Phase = 'running' | 'ready' | 'error';
 export const SynthSchematicView: React.FC<{
   code: string; isLight: boolean; headerExtra?: React.ReactNode;
   onDiagnostics?: (d: Diag[]) => void;
-}> = ({ code, isLight, headerExtra, onDiagnostics }) => {
+  /**
+   * Dissolve module hierarchy before drawing. The judge leaves this off — a
+   * student's single module has none. The sandbox turns it on so a testbench's
+   * DUT instance is drawn as the gates it becomes rather than one opaque block,
+   * which also makes the picture agree with the waveform and the cell counts.
+   */
+  flatten?: boolean;
+}> = ({ code, isLight, headerExtra, onDiagnostics, flatten }) => {
   const pal = useMemo(() => palette(isLight), [isLight]);
   const [phase, setPhase] = useState<Phase>('running');
   const [schem, setSchem] = useState<SynSchematic | null>(null);
@@ -280,7 +287,7 @@ export const SynthSchematicView: React.FC<{
   const runSynth = useCallback((src: string) => {
     setPhase('running'); setErr(null); setShowDiags(false);
     const myReq = ++reqRef.current;
-    synthesize(src, (p) => { if (myReq === reqRef.current) setProg(p); }).then((r) => {
+    synthesize(src, (p) => { if (myReq === reqRef.current) setProg(p); }, { flatten }).then((r) => {
       if (myReq !== reqRef.current) return;
       setProg(null);
       setDiags(r.diagnostics);
@@ -290,7 +297,9 @@ export const SynthSchematicView: React.FC<{
       if ('error' in parsed) { setErr(parsed.error); setSchem(null); setSim(null); setPhase('error'); return; }
       setSchem(parsed); setSim(buildSim(r.json)); setPhase('ready');
     });
-  }, []);
+    // `flatten` is captured in the closure, so it has to be a dependency —
+    // otherwise toggling it would keep re-running the previous mode.
+  }, [flatten]);
 
   useEffect(() => {
     const t = setTimeout(() => runSynth(code), 400);

@@ -21,7 +21,7 @@ import Editor, { type Monaco } from '@monaco-editor/react';
 import {
   ArrowLeft, Play, Loader2, Sun, Moon, RotateCcw, FileCode2, FlaskConical,
   Activity, Terminal, AlertTriangle, Info, Share2, Check, Cpu,
-  PanelRight, PanelBottom, ChevronDown, ChevronUp, Layers,
+  PanelRight, PanelBottom, ChevronDown, ChevronUp, Layers, Network,
 } from 'lucide-react';
 import { useColorScheme } from '../hooks/useColorScheme';
 import { synthesize, type SynthProgress } from '../engine/verilog/yosysClient';
@@ -30,6 +30,7 @@ import { buildSeqVectors, buildVectors, type StimPort } from '../engine/verilog/
 import { analyzeNetlist, type SynthStats } from '../engine/verilog/netlistStats';
 import type { Diag } from '../engine/verilog/diagnostics';
 import { WaveformViewer } from '../components/verilog/WaveformViewer';
+import { SynthSchematicView } from '../components/verilog/SynthSchematicView';
 
 const DESIGN_KEY = 'vsbx_design_v2';
 const TB_KEY = 'vsbx_tb_v2';
@@ -129,7 +130,7 @@ function registerVerilog(monaco: Monaco) {
   });
 }
 
-type OutTab = 'wave' | 'synth' | 'output';
+type OutTab = 'wave' | 'schematic' | 'synth' | 'output';
 type Dock = 'right' | 'bottom';
 
 export const VerilogSandbox: React.FC = () => {
@@ -379,6 +380,9 @@ export const VerilogSandbox: React.FC = () => {
             <button onClick={() => setOutTab('wave')} className={tabBtn} style={tabStyle(outTab === 'wave')}>
               <Activity className="h-3.5 w-3.5" /> Waveform
             </button>
+            <button onClick={() => setOutTab('schematic')} className={tabBtn} style={tabStyle(outTab === 'schematic')}>
+              <Network className="h-3.5 w-3.5" /> Schematic
+            </button>
             <button onClick={() => setOutTab('synth')} className={tabBtn} style={tabStyle(outTab === 'synth')}>
               <Cpu className="h-3.5 w-3.5" /> Synthesis
               {stats && (
@@ -408,6 +412,10 @@ export const VerilogSandbox: React.FC = () => {
                     isLight={isLight}
                   />
                 ) : <EmptyState error={error} />
+            )}
+
+            {outTab === 'schematic' && (
+              <SynthSchematicView code={combined} isLight={isLight} flatten />
             )}
 
             {outTab === 'synth' && (
