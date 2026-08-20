@@ -44,6 +44,7 @@ const Workbench = lazy(() => loadChunk(() => import('./pages/Workbench')));
 // Playgrounds & social
 const FSMPlayground = named(() => import('./pages/FSMPlayground'), 'FSMPlayground');
 const VerilogJudge = named(() => import('./pages/VerilogJudge'), 'VerilogJudge');
+const VerilogSandbox = named(() => import('./pages/VerilogSandbox'), 'VerilogSandbox');
 const AnalogyLibrary = named(() => import('./pages/AnalogyLibrary'), 'AnalogyLibrary');
 const VerilogLibrary = named(() => import('./pages/VerilogLibrary'), 'VerilogLibrary');
 const InterviewPrep = lazy(() => loadChunk(() => import('./pages/InterviewPrep')));
@@ -160,6 +161,7 @@ function App() {
             <Route path="/library" element={<LibraryPage />} />
             <Route path="/analogies" element={<AnalogyLibrary />} />
             <Route path="/verilog-library" element={<VerilogLibrary />} />
+            <Route path="/verilog-sandbox" element={<VerilogSandbox />} />
             <Route path="/interview-prep" element={<InterviewPrep />} />
             <Route path="/silicon-map" element={<SiliconMap />} />
             <Route path="/pledge" element={<PledgePage />} />

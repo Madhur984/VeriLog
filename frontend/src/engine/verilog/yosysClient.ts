@@ -136,16 +136,27 @@ function cacheResult(code: string, r: SynthResult): SynthResult {
   return r;
 }
 
-export function synthesize(code: string, onProgress?: (p: SynthProgress) => void): Promise<SynthResult> {
-  const hit = synthCache.get(code);
+export interface SynthOptions {
+  /** Dissolve module hierarchy so a testbench's DUT instance is simulable. */
+  flatten?: boolean;
+}
+
+export function synthesize(
+  code: string,
+  onProgress?: (p: SynthProgress) => void,
+  opts: SynthOptions = {},
+): Promise<SynthResult> {
+  // The flag changes the netlist, so it has to be part of the cache identity.
+  const key = `${opts.flatten ? 'F' : '-'}\n${code}`;
+  const hit = synthCache.get(key);
   if (hit) return Promise.resolve(hit);
 
   const w = ensureWorker();
   const id = ++seq;
   return new Promise<SynthResult>((resolve) => {
-    pending.set(id, { resolve: (r) => resolve(cacheResult(code, r)), onProgress });
+    pending.set(id, { resolve: (r) => resolve(cacheResult(key, r)), onProgress });
     armWedgeTimer(id); // reset on each progress event (see armWedgeTimer)
-    w.postMessage({ id, code });
+    w.postMessage({ id, code, flatten: !!opts.flatten });
   });
 }
 
