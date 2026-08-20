@@ -16,8 +16,9 @@ import {
   ArrowLeft, Play, RotateCcw, Lightbulb, CheckCircle2, XCircle,
   AlertTriangle, ChevronDown, ChevronUp, Loader2, ChevronLeft, ChevronRight,
   PanelLeftClose, PanelLeftOpen, Sun, Moon, BadgeCheck, Zap, BookOpen, Activity, Table2,
+  Command as CommandIcon, Contrast, Palette, Eraser, Search,
 } from 'lucide-react';
-import { useColorScheme } from '../hooks/useColorScheme';
+import { useColorScheme, useThemeVariant, type ThemeVariant } from '../hooks/useColorScheme';
 import {
   VERILOG_V2_PROBLEMS, TRACKS, isSequential,
   type VProblemV2, type Difficulty, type TrackId, type VPort,
@@ -25,6 +26,8 @@ import {
 import { gradeV2, type DiffGradeResult } from '../engine/verilog/gradeV2';
 import { SynthSchematicView } from '../components/verilog/SynthSchematicView';
 import { WaveformViewer } from '../components/verilog/WaveformViewer';
+import { VerdictBadge, VerdictCaveat } from '../components/verilog/VerdictBadge';
+import { CommandPalette, type Command } from '../components/verilog/CommandPalette';
 import type { SynthProgress } from '../engine/verilog/yosysClient';
 import type { Diag } from '../engine/verilog/diagnostics';
 
@@ -187,6 +190,8 @@ export const VerilogJudge: React.FC = () => {
   const [resultTab, setResultTab] = useState<'tests' | 'wave'>('tests');
   const [passTotal, setPassTotal] = useState(0);
   const [celebrate, setCelebrate] = useState(false);
+  const [paletteOpen, setPaletteOpen] = useState(false);
+  const [variant, setVariant] = useThemeVariant();
   const runSeq = useRef(0);
 
   // Drag-resizable panels (desktop): problem-panel width, editor↔schematic split,
@@ -289,6 +294,86 @@ export const VerilogJudge: React.FC = () => {
     selectProblem(VERILOG_V2_PROBLEMS[i].id);
   };
 
+  // Latest-value refs so the command list keeps a stable identity — rebuilding
+  // 100+ commands on every keystroke would make the palette stutter.
+  const resetCodeRef = useRef(resetCode);
+  const gotoRef = useRef(goto);
+  const selectProblemRef = useRef(selectProblem);
+  useEffect(() => {
+    resetCodeRef.current = resetCode;
+    gotoRef.current = goto;
+    selectProblemRef.current = selectProblem;
+  });
+
+  /**
+   * Command registry (§5.3). Every top-bar action, every panel toggle, every
+   * theme, and every problem in the bank — so the whole app is reachable
+   * without the mouse and without knowing where a control lives on screen.
+   */
+  const commands = useMemo<Command[]>(() => {
+    const acts: Command[] = [
+      { id: 'run', label: 'Submit — grade this design', section: 'Run', shortcut: '⌘↵',
+        icon: Play, keywords: 'test check verify', run: () => runRef.current() },
+      { id: 'reset', label: 'Reset code to the starter', section: 'Run',
+        icon: Eraser, keywords: 'clear revert', run: () => resetCodeRef.current() },
+      { id: 'next', label: 'Next problem', section: 'Navigate',
+        icon: ChevronRight, run: () => gotoRef.current(1) },
+      { id: 'prev', label: 'Previous problem', section: 'Navigate',
+        icon: ChevronLeft, run: () => gotoRef.current(-1) },
+      { id: 'search', label: 'Browse all problems', section: 'Navigate',
+        icon: Search, keywords: 'picker list find', run: () => setPickerOpen(true) },
+      { id: 'jump-fail', label: 'Jump to the first failing cycle', section: 'Results',
+        icon: AlertTriangle, keywords: 'divergence mismatch waveform',
+        run: () => { setResultsOpen(true); setResultTab('wave'); } },
+      { id: 'tab-tests', label: 'Show the results table', section: 'Results',
+        icon: Table2, run: () => { setResultsOpen(true); setResultTab('tests'); } },
+      { id: 'tab-wave', label: 'Show the waveform', section: 'Results',
+        icon: Activity, run: () => { setResultsOpen(true); setResultTab('wave'); } },
+      { id: 'toggle-problem', label: 'Toggle the problem panel', section: 'Panel',
+        icon: PanelLeftClose, run: () => setProblemOpen((v) => !v) },
+      { id: 'toggle-console', label: 'Toggle the console drawer', section: 'Panel',
+        icon: ChevronUp, run: () => setResultsOpen((v) => !v) },
+      { id: 'hint', label: 'Show the hint', section: 'Help',
+        icon: Lightbulb, run: () => setShowHint(true) },
+      { id: 'editorial', label: 'Open the editorial', section: 'Help',
+        icon: BookOpen, keywords: 'solution explanation', run: () => setShowEditorial(true) },
+      { id: 'theme-scheme', label: isLight ? 'Switch to dark mode' : 'Switch to light mode',
+        section: 'Theme', icon: isLight ? Moon : Sun, run: toggleScheme },
+    ];
+    const variants: { id: ThemeVariant; label: string; icon: typeof Contrast }[] = [
+      { id: 'standard', label: 'Theme: standard', icon: Palette },
+      { id: 'high-contrast', label: 'Theme: high contrast', icon: Contrast },
+      { id: 'amber', label: 'Theme: amber / CRT', icon: Palette },
+    ];
+    for (const v of variants) {
+      if (v.id === variant) continue;
+      acts.push({ id: `variant-${v.id}`, label: v.label, section: 'Theme',
+        icon: v.icon, keywords: 'accessibility colour color', run: () => setVariant(v.id) });
+    }
+    for (const p of VERILOG_V2_PROBLEMS) {
+      acts.push({
+        id: `p-${p.id}`,
+        label: `${p.number} · ${p.title}`,
+        section: trackOf(p.track)?.title ?? 'Problem',
+        keywords: `${p.moduleName} ${p.tags.join(' ')} ${p.difficulty}`,
+        run: () => selectProblemRef.current(p.id),
+      });
+    }
+    return acts;
+  }, [isLight, toggleScheme, variant, setVariant]);
+
+  // ⌘K / Ctrl+K from anywhere, including inside Monaco.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setPaletteOpen((v) => !v);
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+
   const solvedCount = solved.size;
   const filtered = VERILOG_V2_PROBLEMS.filter((p) => {
     const q = search.trim().toLowerCase();
@@ -312,7 +397,7 @@ export const VerilogJudge: React.FC = () => {
 
   return (
     <div
-      className="flex min-h-[100svh] w-full flex-col overflow-y-auto bg-bg-void text-text-main lg:h-screen lg:overflow-hidden"
+      className="vj-scope flex min-h-[100svh] w-full flex-col overflow-y-auto bg-bg-void text-text-main lg:h-screen lg:overflow-hidden"
       // De-purple: on this page the light-mode background is a neutral IDE slate,
       // not the global lavender. Dark mode is already neutral.
       style={{
@@ -466,6 +551,22 @@ export const VerilogJudge: React.FC = () => {
             </div>
           )}
           <Sep className="hidden h-6 md:block" />
+          {/* Palette affordance — discoverable, since a shortcut nobody knows
+              about does not exist (§5.3). */}
+          <button onClick={() => setPaletteOpen(true)} title="Command palette (⌘K)"
+            aria-label="Open command palette"
+            className="hidden h-8 shrink-0 items-center gap-1.5 rounded-lg border border-border-soft px-2 text-text-dim transition-colors hover:text-text-main sm:flex">
+            <CommandIcon className="h-3.5 w-3.5" />
+            <kbd className="font-mono text-[10px] font-bold">K</kbd>
+          </button>
+          <button onClick={() => setVariant(variant === 'standard' ? 'high-contrast' : variant === 'high-contrast' ? 'amber' : 'standard')}
+            title={`Theme: ${variant} — click to cycle (standard → high contrast → amber)`}
+            aria-label={`Theme variant: ${variant}. Click to change.`}
+            className="hidden h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-border-soft text-text-dim transition-colors hover:text-text-main lg:flex">
+            {variant === 'high-contrast' ? <Contrast className="h-4 w-4" />
+              : variant === 'amber' ? <Palette className="h-4 w-4 text-amber-500" />
+                : <Palette className="h-4 w-4" />}
+          </button>
           <button onClick={toggleScheme} title={isLight ? 'Switch to dark mode' : 'Switch to light mode'}
             className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-border-soft text-text-dim transition-colors hover:text-text-main">
             {isLight ? <Sun className="h-4 w-4 text-amber-500" /> : <Moon className="h-4 w-4 text-cyan-400" />}
@@ -718,6 +819,8 @@ export const VerilogJudge: React.FC = () => {
 
       {/* Verified stamp */}
       <AnimatePresence>{celebrate && <VerifiedStamp total={passTotal} />}</AnimatePresence>
+
+      <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} commands={commands} />
     </div>
   );
 };
@@ -734,16 +837,11 @@ const ResultsDrawer: React.FC<{
   const passed = result?.status === 'pass';
   const seq = isSequential(problem);
   const unit = seq ? 'cycles' : 'cases';
-  const summary = running ? 'Synthesizing & simulating…'
-    : !result ? 'Submit to grade your design'
-      : result.status === 'error' ? 'Compile error'
-        : passed ? `Accepted — every ${seq ? 'cycle' : 'case'} matched`
-          : `${result.passed}/${result.total} ${unit} passed`;
-  const tone = running || !result ? 'text-text-dim'
-    : result.status === 'error' || result.status === 'fail' ? 'text-rose-400'
-      : 'text-emerald-400';
-
   const hasWave = !!result?.trace && result.status !== 'error';
+
+  // The collapsed summary carries the confidence claim, not just pass/fail
+  // (§6.1) — the strength of the check is part of the result, not a footnote.
+  const idleText = running ? 'Synthesizing & simulating…' : 'Submit to grade your design';
 
   return (
     <div className="shrink-0 border-t border-border-soft bg-bg-elev">
@@ -758,12 +856,29 @@ const ResultsDrawer: React.FC<{
       <div className="flex w-full items-center gap-2 px-3 py-2">
         <button onClick={() => setOpen(!open)} className="flex min-w-0 flex-1 items-center gap-2 text-left">
           <span className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-text-dim">Console</span>
-          <span className={`flex min-w-0 items-center gap-1.5 text-[12px] font-bold ${tone}`}>
-            {running ? <Loader2 className="h-3.5 w-3.5 shrink-0 animate-spin" />
-              : passed ? <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
-                : result ? <XCircle className="h-3.5 w-3.5 shrink-0" /> : null}
-            <span className="truncate">{summary}</span>
-          </span>
+          {result && !running ? (
+            <span className="flex min-w-0 items-center gap-2">
+              <VerdictBadge
+                status={result.status}
+                kind={result.verdict}
+                detail={result.verdictDetail}
+                passed={result.passed}
+                total={result.total}
+                unit={unit}
+                size="sm"
+              />
+              {passed && (
+                <span className="hidden truncate md:inline">
+                  <VerdictCaveat kind={result.verdict} total={result.total} unit={unit} />
+                </span>
+              )}
+            </span>
+          ) : (
+            <span className="flex min-w-0 items-center gap-1.5 text-[12px] font-bold text-text-dim">
+              {running && <Loader2 className="h-3.5 w-3.5 shrink-0 animate-spin" />}
+              <span className="truncate">{idleText}</span>
+            </span>
+          )}
         </button>
 
         {open && hasWave && (

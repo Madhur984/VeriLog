@@ -27,8 +27,26 @@ export interface DiffRow {
   pass: boolean;
 }
 
+/**
+ * What a passing verdict actually established.
+ *
+ * The UI must never present these as interchangeable: "we enumerated every
+ * possible input" and "we tried 256 random ones" are different claims, and
+ * showing one green tick for both would overclaim. See the verdict badge in
+ * components/verilog/VerdictBadge.tsx.
+ *
+ * `proved` and `bounded` are reserved for the formal-equivalence path (Yosys
+ * `miter` + `sat`) and are not produced yet — they are declared here so the UI
+ * contract is written once rather than retrofitted.
+ */
+export type VerdictKind = 'proved' | 'exhaustive' | 'bounded' | 'sampled';
+
 export interface DiffGradeResult {
   status: 'pass' | 'fail' | 'error';
+  /** Strength of the check that was run — set whenever vectors were generated. */
+  verdict?: VerdictKind;
+  /** Cycles proved, for `bounded`; input-space size for `exhaustive`. */
+  verdictDetail?: { cycles?: number; space?: number };
   /** Set when the design could not be compiled or does not match the interface. */
   error?: string;
   diagnostics: Diag[];
@@ -91,6 +109,25 @@ export function buildStimulus(problem: VProblemV2): Vector[] {
   // A wide combinational design can't be enumerated; fall back to sampled vectors.
   const mode = spec.mode ?? (inputBits(problem) <= 14 ? 'exhaustive' : 'vectors');
   return buildVectors(ports, { ...spec, mode });
+}
+
+/**
+ * How strong a claim the generated stimulus supports.
+ *
+ * Combinational designs narrow enough to enumerate get every input vector, so a
+ * pass is genuinely exhaustive. Everything else — wide combinational, and every
+ * sequential design, where the reachable state space is unbounded — is sampled,
+ * and the UI says so.
+ */
+export function verdictKindFor(problem: VProblemV2, vectorCount: number): {
+  verdict: VerdictKind;
+  verdictDetail?: { cycles?: number; space?: number };
+} {
+  if (isSequential(problem)) return { verdict: 'sampled', verdictDetail: { cycles: vectorCount } };
+  const bits = inputBits(problem);
+  const mode = problem.stimulus?.mode ?? (bits <= 14 ? 'exhaustive' : 'vectors');
+  if (mode === 'exhaustive') return { verdict: 'exhaustive', verdictDetail: { space: 2 ** bits } };
+  return { verdict: 'sampled' };
 }
 
 const sameValue = (a: bigint | null, b: bigint | null): boolean => (a === null || b === null ? a === b : a === b);
@@ -166,6 +203,7 @@ export async function diffGrade(
 
   return {
     status: passed === rows.length ? 'pass' : 'fail',
+    ...verdictKindFor(problem, rows.length),
     diagnostics,
     rows,
     passed,

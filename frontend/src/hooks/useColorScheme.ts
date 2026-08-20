@@ -42,6 +42,47 @@ function applyClass(scheme: ColorScheme): void {
     root.classList.add('light');
     root.classList.remove('dark');
   }
+  applyVariantClass();
+}
+
+// ── Theme variants (UI/UX plan §4.2) ───────────────────────────────────────
+// `high-contrast` and `amber` are additive skins layered on top of the base
+// light/dark scheme rather than replacements for it: they set their own
+// `--vj-*` token values while leaving `.dark`/`.light` in place, so every
+// component that keys off `isLight` keeps working untouched. Only the judge
+// reads the variant tokens today, which is why this lives beside the scheme
+// rather than replacing it.
+export type ThemeVariant = 'standard' | 'high-contrast' | 'amber';
+
+const VARIANT_KEY = 'bitforbytes_theme_variant';
+const VARIANT_CLASS: Record<ThemeVariant, string | null> = {
+  standard: null,
+  'high-contrast': 'theme-contrast',
+  amber: 'theme-amber',
+};
+
+function readVariant(): ThemeVariant {
+  try {
+    const v = localStorage.getItem(VARIANT_KEY);
+    if (v === 'high-contrast' || v === 'amber' || v === 'standard') return v;
+  } catch { /* ignore */ }
+  // Respect an OS-level contrast preference when the user has not chosen.
+  try {
+    if (typeof window !== 'undefined' && window.matchMedia?.('(prefers-contrast: more)').matches) {
+      return 'high-contrast';
+    }
+  } catch { /* ignore */ }
+  return 'standard';
+}
+
+let currentVariant: ThemeVariant = typeof window === 'undefined' ? 'standard' : readVariant();
+
+function applyVariantClass(): void {
+  if (typeof document === 'undefined') return;
+  const root = document.documentElement;
+  for (const cls of Object.values(VARIANT_CLASS)) if (cls) root.classList.remove(cls);
+  const next = VARIANT_CLASS[currentVariant];
+  if (next) root.classList.add(next);
 }
 
 function setScheme(scheme: ColorScheme): void {
@@ -111,4 +152,24 @@ export function useColorScheme(): [ColorScheme, () => void] {
 /** Imperatively set the scheme (used by pages that force a theme, e.g. the landing). */
 export function setColorScheme(scheme: ColorScheme): void {
   setScheme(scheme);
+}
+
+/**
+ * Active theme variant with a setter. Shares the same listener set as the
+ * scheme, so a variant change re-renders every consumer of either hook.
+ */
+export function useThemeVariant(): [ThemeVariant, (v: ThemeVariant) => void] {
+  const variant = useSyncExternalStore<ThemeVariant>(
+    subscribe, () => currentVariant, () => currentVariant,
+  );
+
+  const set = useCallback((v: ThemeVariant) => {
+    if (v === currentVariant) return;
+    currentVariant = v;
+    applyVariantClass();
+    try { localStorage.setItem(VARIANT_KEY, v); } catch { /* ignore */ }
+    listeners.forEach((l) => l());
+  }, []);
+
+  return [variant, set];
 }
