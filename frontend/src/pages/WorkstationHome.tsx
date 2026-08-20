@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect, useRef } from 'react';
+import { motion, useMotionValue, useMotionValueEvent, useSpring, useTransform, type MotionValue } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useGamificationStore } from '../stores/gamificationStore';
 import { CommandPalette } from '../components/ui/CommandPalette';
 import { RadialMenu } from '../components/ui/RadialMenu';
 import { useColorScheme } from '../hooks/useColorScheme';
 import { ThemeToggle } from '../components/ThemeToggle';
-import { BrandMark } from '../components/Brand';
+import { BrandPortalLink } from '../components/Brand';
 import { getSession } from '../lib/auth';
 import { getModuleHistory, getLastModule, MODULE_LABELS } from '../lib/moduleHistory';
 import {
-  Play, ArrowRight, ArrowUpRight, ChevronDown, Check, Command, Settings,
+  Play, ArrowRight, ChevronDown, Check, Command, Settings,
   Wrench, Grid3x3, Cpu, Compass, Library, Map, BookOpen,
   Binary, Zap, Boxes, ClipboardList, FileText, type LucideIcon,
 } from 'lucide-react';
@@ -264,6 +264,102 @@ const PathLane: React.FC<{
   );
 };
 
+/**
+ * macOS Dock–style magnify effect, Portal top-nav only. Each item's scale is
+ * a spring-smoothed function of cursor distance to ITS OWN center (measured
+ * live via getBoundingClientRect against a shared mouseX motion value), so
+ * hovering one item also gently lifts its neighbors — the actual Dock feel,
+ * not just a per-item :hover scale. Text styling (font, weight, size,
+ * tracking, color) is untouched; only a `scale` transform is added.
+ */
+function DockNavItem({
+  mouseX,
+  label,
+  onClick,
+  color,
+}: {
+  mouseX: MotionValue<number>;
+  label: string;
+  onClick: () => void;
+  color: string;
+}) {
+  const ref = useRef<HTMLButtonElement>(null);
+
+  // Plain (non-derived) motion value, updated imperatively on every mouseX
+  // change via useMotionValueEvent — the chained useTransform(mouseX, fn)
+  // form only evaluated its callback once, at mount, and never again on
+  // subsequent mouseX updates, so this explicit subscription replaces it.
+  const distance = useMotionValue(Infinity);
+  useMotionValueEvent(mouseX, 'change', (val) => {
+    const rect = ref.current?.getBoundingClientRect();
+    distance.set(rect ? val - (rect.left + rect.width / 2) : Infinity);
+  });
+
+  // Peak scale right under the cursor, tapering back to 1 by ~260px out.
+  // Kept modest (1.18, not a dramatic dock-icon-style blow-up) since these
+  // are inline text labels sitting close together — anything much bigger
+  // visually overlaps the neighboring label because `scale` doesn't push
+  // layout siblings aside. Item centers sit ~120-140px apart, so the
+  // immediate neighbor lands around the midpoint of the curve for a small,
+  // real lift without the next item over moving at all.
+  const targetScale = useTransform(distance, [-260, -130, 0, 130, 260], [1, 1.05, 1.18, 1.05, 1]);
+  const scale = useSpring(targetScale, { mass: 0.15, stiffness: 260, damping: 20 });
+
+  return (
+    <motion.button
+      ref={ref}
+      onClick={onClick}
+      style={{ scale, color }}
+      className="px-0.5 py-1 font-mono text-[13px] font-extrabold uppercase tracking-[0.16em] transition-opacity hover:opacity-60"
+    >
+      {label}
+    </motion.button>
+  );
+}
+
+/**
+ * Same dock-magnify mechanic as DockNavItem, styled as a pill button (the
+ * old Bench section's look: bordered, rounded, purple icon) instead of bare
+ * text — used for the Library row below "Your paths" now that it's the only
+ * thing in that strip. Each instance tracks its own distance against the
+ * mouseX shared across the row it's placed in.
+ */
+function DockLibraryItem({
+  mouseX,
+  label,
+  icon: Icon,
+  onClick,
+  borderColor,
+}: {
+  mouseX: MotionValue<number>;
+  label: string;
+  icon: LucideIcon;
+  onClick: () => void;
+  borderColor: string;
+}) {
+  const ref = useRef<HTMLButtonElement>(null);
+
+  const distance = useMotionValue(Infinity);
+  useMotionValueEvent(mouseX, 'change', (val) => {
+    const rect = ref.current?.getBoundingClientRect();
+    distance.set(rect ? val - (rect.left + rect.width / 2) : Infinity);
+  });
+
+  const targetScale = useTransform(distance, [-220, -110, 0, 110, 220], [1, 1.05, 1.16, 1.05, 1]);
+  const scale = useSpring(targetScale, { mass: 0.15, stiffness: 260, damping: 20 });
+
+  return (
+    <motion.button
+      ref={ref}
+      onClick={onClick}
+      style={{ scale, borderColor }}
+      className="inline-flex items-center gap-3 rounded-lg border px-5 py-3.5 text-[14.5px] font-semibold transition-transform hover:-translate-y-0.5"
+    >
+      <Icon size={17} style={{ color: '#7A3FD0' }} /> {label}
+    </motion.button>
+  );
+}
+
 /* ── MAIN — the workstation desk ────────────────────────────────────────────────── */
 export const WorkstationHome: React.FC = () => {
   const navigate = useNavigate();
@@ -272,6 +368,18 @@ export const WorkstationHome: React.FC = () => {
 
   const { firstName, checkStreak } = useGamificationStore();
   const [cmdOpen, setCmdOpen] = useState(false);
+
+  // Portal-only: the logo can be dragged clear of other header controls if it
+  // ever overlaps them, but a plain click still has to go to /portal — a real
+  // drag is distinguished from a click by displacement, not just gesture type.
+  const headerRef = useRef<HTMLElement>(null);
+  const logoDraggedRef = useRef(false);
+
+  // Shared cursor-X for the dock-style nav magnify effect below. A motion
+  // value (not React state) so tracking the mouse doesn't trigger re-renders.
+  const navMouseX = useMotionValue(Infinity);
+  // Same idea, scoped to the Library row further down the page.
+  const libraryMouseX = useMotionValue(Infinity);
 
   useEffect(() => { checkStreak(); }, [checkStreak]);
   useEffect(() => {
@@ -355,27 +463,58 @@ export const WorkstationHome: React.FC = () => {
 
       <div className="relative z-10">
         {/* ── Top bar — quiet: brand, ⌘K, settings, theme, you ── */}
-        <header className="mx-auto flex w-full max-w-[1080px] items-center justify-between gap-3 px-4 py-4 sm:px-6">
+        <header ref={headerRef} className="mx-auto flex w-full max-w-[1080px] items-center justify-between gap-3 px-4 py-4 sm:px-6">
           <div className="flex items-center gap-3">
             {/* clock inline on md/lg; pinned to the far-left margin on xl+ (below) */}
             <div className="hidden sm:block xl:hidden"><DigitalClock isLight={isLight} /></div>
             <span className="hidden h-9 w-px sm:block xl:hidden" style={{ background: hairline }} />
-            <BrandMark size={28} />
-            <span className="text-[16px] font-extrabold tracking-tight">
-              Bit<span style={{ color: '#7A3FD0' }}>For</span>Bytes
-            </span>
+            {/* Draggable so it can be pulled clear if it ever overlaps another
+                header control — Portal page only, see requirements above. A
+                genuine drag (real displacement) suppresses the click that
+                would otherwise fire on release, so it still navigates on a
+                plain click/tap. */}
+            <motion.div
+              drag
+              dragConstraints={headerRef}
+              dragElastic={0.15}
+              dragMomentum={false}
+              onDragEnd={(_e, info) => {
+                logoDraggedRef.current = Math.hypot(info.offset.x, info.offset.y) > 5;
+              }}
+              onClickCapture={(e) => {
+                if (logoDraggedRef.current) {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  logoDraggedRef.current = false;
+                }
+              }}
+              whileDrag={{ scale: 1.05 }}
+              className="cursor-grab touch-none select-none active:cursor-grabbing"
+              aria-label="Drag to reposition the logo; click to go to Portal"
+            >
+              <BrandPortalLink
+                size={28}
+                textClassName="text-[16px] font-extrabold"
+                midColor="#7A3FD0"
+                uppercase={false}
+              />
+            </motion.div>
           </div>
 
-          <nav className="hidden items-center gap-6 md:flex" aria-label="Tools">
+          <nav
+            className="hidden items-center gap-8 md:flex"
+            aria-label="Tools"
+            onMouseMove={(e) => navMouseX.set(e.clientX)}
+            onMouseLeave={() => navMouseX.set(Infinity)}
+          >
             {BENCH.map((b) => (
-              <button
+              <DockNavItem
                 key={b.to}
+                mouseX={navMouseX}
+                label={b.label}
                 onClick={() => navigate(b.to)}
-                className="font-mono text-[11px] font-bold uppercase tracking-[0.16em] transition-opacity hover:opacity-60"
-                style={{ color: dim }}
-              >
-                {b.label}
-              </button>
+                color={dim}
+              />
             ))}
           </nav>
 
@@ -526,46 +665,30 @@ export const WorkstationHome: React.FC = () => {
             ))}
           </motion.section>
 
-          {/* ── Bench & library — one quiet strip, no duplication ── */}
+          {/* ── Library — expanded to fill the strip Bench used to split with it ── */}
           <motion.section
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.14, ease: [0.16, 1, 0.3, 1] }}
-            className="mt-10 p-5 sm:p-6"
+            className="mt-10 p-6 sm:p-8"
             style={panel}
           >
-            <div className="grid gap-6 md:grid-cols-[auto_1px_1fr] md:gap-8">
-              <div>
-                <p className="mb-2.5 font-mono text-[10px] font-bold uppercase tracking-[0.2em]" style={{ color: faint }}>Bench</p>
-                <div className="flex flex-wrap gap-2">
-                  {BENCH.map((b) => (
-                    <button
-                      key={b.to}
-                      onClick={() => navigate(b.to)}
-                      className="inline-flex items-center gap-2 rounded-lg border px-3.5 py-2.5 text-[13.5px] font-semibold transition-transform hover:-translate-y-0.5"
-                      style={{ borderColor: hairline }}
-                    >
-                      <b.icon size={15} style={{ color: '#7A3FD0' }} /> {b.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div className="hidden md:block" style={{ background: hairline }} />
-              <div>
-                <p className="mb-2.5 font-mono text-[10px] font-bold uppercase tracking-[0.2em]" style={{ color: faint }}>Library</p>
-                <div className="flex flex-wrap items-center gap-x-6 gap-y-2.5 pt-1.5">
-                  {LIBRARY.map((l) => (
-                    <button
-                      key={l.to}
-                      onClick={() => navigate(l.to)}
-                      className="inline-flex items-center gap-1.5 text-[13px] font-semibold transition-opacity hover:opacity-60"
-                      style={{ color: dim }}
-                    >
-                      <l.icon size={14} /> {l.label} <ArrowUpRight size={12} />
-                    </button>
-                  ))}
-                </div>
-              </div>
+            <p className="mb-4 font-mono text-[10px] font-bold uppercase tracking-[0.2em]" style={{ color: faint }}>Library</p>
+            <div
+              className="flex flex-wrap justify-center gap-4 sm:justify-between sm:gap-5"
+              onMouseMove={(e) => libraryMouseX.set(e.clientX)}
+              onMouseLeave={() => libraryMouseX.set(Infinity)}
+            >
+              {LIBRARY.map((l) => (
+                <DockLibraryItem
+                  key={l.to}
+                  mouseX={libraryMouseX}
+                  label={l.label}
+                  icon={l.icon}
+                  onClick={() => navigate(l.to)}
+                  borderColor={hairline}
+                />
+              ))}
             </div>
           </motion.section>
 
