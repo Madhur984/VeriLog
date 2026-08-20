@@ -1,7 +1,12 @@
 /**
  * VerilogJudge - the BitforBytes Verilog bench. Write Verilog, watch the real
  * Yosys-synthesized circuit draw itself beside the code (and probe it live), then
- * Run to grade against an exhaustive truth table. Solid, energetic UI - no glass.
+ * Submit to grade differentially against the problem's reference design.
+ *
+ * Grading runs the student's netlist and the reference netlist over identical
+ * seeded stimulus and diffs them (engine/verilog/diffGrade), so the results
+ * drawer can show both a per-vector table and a real timing diagram with the
+ * golden waveform overlaid. Solid, energetic UI - no glass.
  */
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -10,13 +15,17 @@ import Editor, { type Monaco } from '@monaco-editor/react';
 import {
   ArrowLeft, Play, RotateCcw, Lightbulb, CheckCircle2, XCircle,
   AlertTriangle, ChevronDown, ChevronUp, Loader2, ChevronLeft, ChevronRight,
-  PanelLeftClose, PanelLeftOpen, Sun, Moon, BadgeCheck, Zap,
+  PanelLeftClose, PanelLeftOpen, Sun, Moon, BadgeCheck, Zap, BookOpen, Activity, Table2,
 } from 'lucide-react';
 import { useColorScheme } from '../hooks/useColorScheme';
-import { VERILOG_PROBLEMS, isSeq, type VProblem, type AnyProblem } from '../data/verilogProblems';
-import { grade, type GradeResult } from '../engine/verilog/grade';
-import { compileVerilog, simulate, type Bit } from '../engine/verilog/miniSim';
+import {
+  VERILOG_V2_PROBLEMS, TRACKS, isSequential,
+  type VProblemV2, type Difficulty, type TrackId, type VPort,
+} from '../data/verilog';
+import { gradeV2, type DiffGradeResult } from '../engine/verilog/gradeV2';
 import { SynthSchematicView } from '../components/verilog/SynthSchematicView';
+import { WaveformViewer } from '../components/verilog/WaveformViewer';
+import type { SynthProgress } from '../engine/verilog/yosysClient';
 import type { Diag } from '../engine/verilog/diagnostics';
 
 /**
@@ -67,12 +76,14 @@ function useResizable(
   return [size, onPointerDown] as const;
 }
 
-const SOLVED_KEY = 'vj_solved_v1';
-const codeKey = (id: string) => `vj_code_${id}`;
+const SOLVED_KEY = 'vj_solved_v2';
+const codeKey = (id: string) => `vj2_code_${id}`;
 
-const DIFF_COLOR: Record<VProblem['difficulty'], string> = {
+const DIFF_COLOR: Record<Difficulty, string> = {
   Easy: '#10b981', Medium: '#f59e0b', Hard: '#f43f5e',
 };
+
+const trackOf = (id: TrackId) => TRACKS.find((t) => t.id === id);
 
 /** First source line that mentions a signal (used when a warning has no line). */
 function lineOfSignal(code: string, signal: string): number | undefined {
@@ -106,7 +117,9 @@ function registerVerilog(monaco: Monaco) {
     keywords: [
       'module', 'endmodule', 'input', 'output', 'inout', 'wire', 'reg', 'logic',
       'assign', 'always', 'always_comb', 'always_ff', 'begin', 'end', 'if', 'else',
-      'case', 'endcase', 'posedge', 'negedge', 'parameter', 'localparam',
+      'case', 'casez', 'casex', 'endcase', 'default', 'posedge', 'negedge',
+      'parameter', 'localparam', 'generate', 'endgenerate', 'genvar', 'integer',
+      'for', 'while', 'function', 'endfunction', 'task', 'endtask', 'signed',
       'and', 'or', 'not', 'nand', 'nor', 'xor', 'xnor', 'buf',
     ],
     tokenizer: {
@@ -115,8 +128,9 @@ function registerVerilog(monaco: Monaco) {
         [/\/\*/, 'comment', '@comment'],
         [/\b\d+'[bBoOdDhH][0-9a-fA-FxXzZ_]+/, 'number'],
         [/\b\d+\b/, 'number'],
+        [/\$\w+/, 'keyword'],
         [/[A-Za-z_]\w*/, { cases: { '@keywords': 'keyword', '@default': 'identifier' } }],
-        [/[~!&|^?:=<>+\-*]/, 'operator'],
+        [/[~!&|^?:=<>+\-*/%]/, 'operator'],
       ],
       comment: [[/[^/*]+/, 'comment'], [/\*\//, 'comment', '@pop'], [/[/*]/, 'comment']],
     },
@@ -127,9 +141,6 @@ const loadSolved = (): Set<string> => {
   try { return new Set(JSON.parse(localStorage.getItem(SOLVED_KEY) || '[]')); }
   catch { return new Set(); }
 };
-
-// Every topic tag across the bank — powers the topic index/filter in the picker.
-const ALL_TOPICS = Array.from(new Set(VERILOG_PROBLEMS.flatMap((p) => p.tags))).sort();
 
 // ── daily solve streak (localStorage) ──
 const STREAK_KEY = 'vj_streak_v1';
@@ -155,34 +166,34 @@ export const VerilogJudge: React.FC = () => {
   const [scheme, toggleScheme] = useColorScheme();
   const isLight = scheme === 'light';
 
-  const [problemId, setProblemId] = useState<string>(VERILOG_PROBLEMS[0].id);
-  const problem = useMemo(() => VERILOG_PROBLEMS.find((p) => p.id === problemId)!, [problemId]);
-  const problemIdx = useMemo(() => VERILOG_PROBLEMS.findIndex((p) => p.id === problemId), [problemId]);
+  const [problemId, setProblemId] = useState<string>(VERILOG_V2_PROBLEMS[0].id);
+  const problem = useMemo(() => VERILOG_V2_PROBLEMS.find((p) => p.id === problemId)!, [problemId]);
+  const problemIdx = useMemo(() => VERILOG_V2_PROBLEMS.findIndex((p) => p.id === problemId), [problemId]);
 
   const [code, setCode] = useState<string>(() => localStorage.getItem(codeKey(problem.id)) ?? problem.starter);
-  const [result, setResult] = useState<GradeResult | null>(null);
+  const [result, setResult] = useState<DiffGradeResult | null>(null);
   const [running, setRunning] = useState(false);
+  const [progress, setProgress] = useState<SynthProgress | null>(null);
   const [showHint, setShowHint] = useState(false);
+  const [showEditorial, setShowEditorial] = useState(false);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [search, setSearch] = useState('');
-  const [diffFilter, setDiffFilter] = useState<'All' | VProblem['difficulty']>('All');
+  const [diffFilter, setDiffFilter] = useState<'All' | Difficulty>('All');
+  const [trackFilter, setTrackFilter] = useState<TrackId | null>(null);
   const [solved, setSolved] = useState<Set<string>>(loadSolved);
   const [streak, setStreak] = useState<Streak>(loadStreak);
-  const [topicFilter, setTopicFilter] = useState<string | null>(null);
-  const [customIn, setCustomIn] = useState<Record<string, Bit>>({});
-  const [customOut, setCustomOut] = useState<Record<string, Bit> | null>(null);
-  const [customErr, setCustomErr] = useState<string | null>(null);
   const [problemOpen, setProblemOpen] = useState(true);
   const [resultsOpen, setResultsOpen] = useState(false);
+  const [resultTab, setResultTab] = useState<'tests' | 'wave'>('tests');
   const [passTotal, setPassTotal] = useState(0);
   const [celebrate, setCelebrate] = useState(false);
-  const runTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const runSeq = useRef(0);
 
   // Drag-resizable panels (desktop): problem-panel width, editor↔schematic split,
   // and console height. Persisted; clamped so no panel can be squeezed away.
-  const [problemW, dragProblem] = useResizable('bfb_vj_problem_w', 360, 260, () => Math.min(680, window.innerWidth * 0.5), 'x', 1);
+  const [problemW, dragProblem] = useResizable('bfb_vj_problem_w', 380, 260, () => Math.min(680, window.innerWidth * 0.5), 'x', 1);
   const [editorW, dragEditor] = useResizable('bfb_vj_editor_w', 560, 320, () => window.innerWidth - 420, 'x', 1);
-  const [consoleH, dragConsole] = useResizable('bfb_vj_console_h', 260, 140, () => window.innerHeight * 0.7, 'y', -1);
+  const [consoleH, dragConsole] = useResizable('bfb_vj_console_h', 300, 140, () => window.innerHeight * 0.7, 'y', -1);
 
   // debounced source feeds the live Yosys schematic
   const [debounced, setDebounced] = useState(code);
@@ -193,16 +204,14 @@ export const VerilogJudge: React.FC = () => {
 
   const selectProblem = useCallback((id: string) => {
     setProblemId(id);
-    const p = VERILOG_PROBLEMS.find((x) => x.id === id)!;
+    const p = VERILOG_V2_PROBLEMS.find((x) => x.id === id)!;
     const saved = localStorage.getItem(codeKey(id)) ?? p.starter;
     setCode(saved);
     setDebounced(saved);
     setResult(null);
     setResultsOpen(false);
     setShowHint(false);
-    setCustomOut(null);
-    setCustomErr(null);
-    setCustomIn({});
+    setShowEditorial(false);
     setPickerOpen(false);
   }, []);
 
@@ -212,15 +221,20 @@ export const VerilogJudge: React.FC = () => {
     try { localStorage.setItem(codeKey(problem.id), next); } catch { /* quota */ }
   };
 
-  const run = useCallback(() => {
+  const run = useCallback(async () => {
+    const seq = ++runSeq.current;
     setRunning(true);
     setResult(null);
+    setProgress(null);
     setResultsOpen(true);
-    if (runTimer.current) clearTimeout(runTimer.current);
-    runTimer.current = setTimeout(() => {
-      const r = grade(problem, code);
+    try {
+      const r = await gradeV2(problem, code, (p) => {
+        if (runSeq.current === seq) setProgress(p);
+      });
+      // A newer run superseded this one — drop the stale result.
+      if (runSeq.current !== seq) return;
       setResult(r);
-      setRunning(false);
+      if (r.status !== 'pass' && r.firstFailure !== undefined) setResultTab('wave');
       if (r.status === 'pass') {
         setPassTotal(r.total);
         setCelebrate(true);
@@ -232,12 +246,13 @@ export const VerilogJudge: React.FC = () => {
           try { localStorage.setItem(SOLVED_KEY, JSON.stringify([...next])); } catch { /* quota */ }
         }
       }
-    }, 300);
+    } finally {
+      if (runSeq.current === seq) { setRunning(false); setProgress(null); }
+    }
   }, [problem, code, solved]);
 
   const runRef = useRef(run);
   useEffect(() => { runRef.current = run; }, [run]);
-  useEffect(() => () => { if (runTimer.current) clearTimeout(runTimer.current); }, []);
 
   // Monaco handles so we can mark exactly which line/signal Yosys flagged.
   const editorRef = useRef<Parameters<NonNullable<React.ComponentProps<typeof Editor>['onMount']>>[0] | null>(null);
@@ -269,35 +284,23 @@ export const VerilogJudge: React.FC = () => {
 
   const resetCode = () => { onCodeChange(problem.starter); setDebounced(problem.starter); };
 
-  // Custom "Run": simulate the student's design on ONE user-chosen input vector
-  // (no grading). Combinational only — same miniSim the grader uses.
-  const runCustom = useCallback(() => {
-    setCustomErr(null); setCustomOut(null);
-    const c = compileVerilog(code);
-    if (!c.ok) { setCustomErr(c.error); return; }
-    const inp: Record<string, Bit> = {};
-    problem.inputs.forEach((n) => { inp[n] = (customIn[n] ?? 0) as Bit; });
-    try {
-      const full = simulate(c.module, inp);
-      const out: Record<string, Bit> = {};
-      problem.outputs.forEach((o) => { out[o] = full[o]; });
-      setCustomOut(out);
-    } catch (e) { setCustomErr((e as Error).message); }
-  }, [code, problem, customIn]);
   const goto = (delta: number) => {
-    const i = (problemIdx + delta + VERILOG_PROBLEMS.length) % VERILOG_PROBLEMS.length;
-    selectProblem(VERILOG_PROBLEMS[i].id);
+    const i = (problemIdx + delta + VERILOG_V2_PROBLEMS.length) % VERILOG_V2_PROBLEMS.length;
+    selectProblem(VERILOG_V2_PROBLEMS[i].id);
   };
 
   const solvedCount = solved.size;
-  const filtered = VERILOG_PROBLEMS.filter((p) => {
+  const filtered = VERILOG_V2_PROBLEMS.filter((p) => {
     const q = search.trim().toLowerCase();
-    const matchQ = !q || p.title.toLowerCase().includes(q) || p.tags.some((t) => t.toLowerCase().includes(q));
+    const matchQ = !q || p.title.toLowerCase().includes(q) || p.tags.some((t) => t.toLowerCase().includes(q))
+      || p.moduleName.toLowerCase().includes(q);
     const matchD = diffFilter === 'All' || p.difficulty === diffFilter;
-    const matchT = !topicFilter || p.tags.includes(topicFilter);
+    const matchT = !trackFilter || p.track === trackFilter;
     return matchQ && matchD && matchT;
   });
   const statementParas = problem.statement.split('\n\n');
+  const track = trackOf(problem.track);
+  const isSolved = solved.has(problem.id);
 
   const statusDot = running ? 'bg-amber-500' : result ? (result.status === 'pass' ? 'bg-emerald-500' : 'bg-rose-500') : 'bg-text-dim';
   const statusText = running ? 'running'
@@ -363,19 +366,19 @@ export const VerilogJudge: React.FC = () => {
             {pickerOpen && (
               <>
                 <div className="fixed inset-0 z-10" onClick={() => setPickerOpen(false)} />
-                {/* Phone: a viewport-anchored sheet under the header — a 330px
+                {/* Phone: a viewport-anchored sheet under the header — a 360px
                     panel offset from this button runs off the right edge of a
                     360px screen. sm+ keeps the original anchored dropdown. */}
                 <motion.div
                   initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }}
                   transition={{ duration: 0.15 }}
-                  className="fixed inset-x-2 top-[60px] z-30 flex max-h-[calc(100svh_-_76px)] w-auto flex-col overflow-hidden rounded-xl border border-border-soft bg-bg-elev shadow-xl sm:absolute sm:inset-x-auto sm:left-6 sm:top-full sm:z-20 sm:mt-1.5 sm:max-h-[78vh] sm:w-[330px]"
+                  className="fixed inset-x-2 top-[60px] z-30 flex max-h-[calc(100svh_-_76px)] w-auto flex-col overflow-hidden rounded-xl border border-border-soft bg-bg-elev shadow-xl sm:absolute sm:inset-x-auto sm:left-6 sm:top-full sm:z-20 sm:mt-1.5 sm:max-h-[78vh] sm:w-[360px]"
                 >
-                  {/* search + difficulty filters */}
+                  {/* search + difficulty + track filters */}
                   <div className="shrink-0 border-b border-border-soft p-2.5">
                     <input
                       value={search} onChange={(e) => setSearch(e.target.value)} autoFocus
-                      placeholder="Search problems or tags…"
+                      placeholder="Search problems, tags or module names…"
                       className="w-full rounded-lg border border-border-soft bg-bg-void px-2.5 py-1.5 text-[12px] text-text-main outline-none placeholder:text-text-dim focus:border-emerald-500"
                     />
                     <div className="mt-2 flex items-center gap-1">
@@ -385,19 +388,29 @@ export const VerilogJudge: React.FC = () => {
                           {d}
                         </button>
                       ))}
-                      <span className="ml-auto font-mono text-[10px] text-text-dim">{filtered.length}/{VERILOG_PROBLEMS.length}</span>
+                      <span className="ml-auto font-mono text-[10px] text-text-dim">{filtered.length}/{VERILOG_V2_PROBLEMS.length}</span>
                     </div>
                     <div className="mt-2 flex flex-wrap gap-1">
-                      <button onClick={() => setTopicFilter(null)}
-                        className={`rounded-md px-1.5 py-0.5 text-[10px] font-bold transition-colors ${!topicFilter ? 'bg-cyan-500/20 text-cyan-300' : 'bg-white/5 text-text-dim hover:text-text-main'}`}>
-                        all topics
+                      <button onClick={() => setTrackFilter(null)}
+                        className={`rounded-md px-1.5 py-0.5 text-[10px] font-bold transition-colors ${!trackFilter ? 'bg-cyan-500/20 text-cyan-300' : 'bg-white/5 text-text-dim hover:text-text-main'}`}>
+                        all tracks
                       </button>
-                      {ALL_TOPICS.map((t) => (
-                        <button key={t} onClick={() => setTopicFilter((cur) => (cur === t ? null : t))}
-                          className={`rounded-md px-1.5 py-0.5 font-mono text-[10px] transition-colors ${topicFilter === t ? 'bg-cyan-500/20 text-cyan-300' : 'bg-white/5 text-text-dim hover:text-text-main'}`}>
-                          {t}
-                        </button>
-                      ))}
+                      {TRACKS.map((t) => {
+                        const n = VERILOG_V2_PROBLEMS.filter((p) => p.track === t.id).length;
+                        if (!n) return null;
+                        const on = trackFilter === t.id;
+                        return (
+                          <button key={t.id} onClick={() => setTrackFilter((cur) => (cur === t.id ? null : t.id))}
+                            title={t.blurb}
+                            className="rounded-md px-1.5 py-0.5 text-[10px] font-bold transition-colors"
+                            style={on
+                              ? { background: `${t.accent}28`, color: t.accent }
+                              : { background: 'rgba(255,255,255,0.05)' }}>
+                            <span style={on ? undefined : { color: 'var(--text-dim, #94a3b8)' }}>{t.title}</span>
+                            <span className="ml-1 font-mono opacity-70">{n}</span>
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
                   {/* filtered list */}
@@ -407,17 +420,22 @@ export const VerilogJudge: React.FC = () => {
                     )}
                     {filtered.map((p) => {
                       const isSel = p.id === problem.id;
-                      const isSolved = solved.has(p.id);
+                      const done = solved.has(p.id);
+                      const tk = trackOf(p.track);
                       return (
                         <li key={p.id}>
                           <button onClick={() => selectProblem(p.id)}
                             className={`flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-[13px] transition-colors ${isSel ? 'bg-emerald-500/15 text-emerald-300' : 'hover:bg-white/5'}`}>
                             <span className="w-4 text-center">
-                              {isSolved
+                              {done
                                 ? <CheckCircle2 className="h-4 w-4 text-emerald-500" />
                                 : <span className="font-mono text-text-dim">{p.number}</span>}
                             </span>
                             <span className="flex-1 truncate font-bold">{p.title}</span>
+                            {tk && (
+                              <span className="hidden h-1.5 w-1.5 shrink-0 rounded-full sm:block"
+                                    style={{ background: tk.accent }} title={tk.title} />
+                            )}
                             <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: DIFF_COLOR[p.difficulty] }}>
                               {p.difficulty}
                             </span>
@@ -434,13 +452,12 @@ export const VerilogJudge: React.FC = () => {
 
         {/* right cluster: progress + theme */}
         <div className="ml-auto flex shrink-0 items-center gap-2.5">
-          <div className="hidden items-center gap-2 md:flex" title={`${solvedCount} of ${VERILOG_PROBLEMS.length} solved`}>
-            <div className="flex items-center gap-[3px]">
-              {VERILOG_PROBLEMS.map((p) => (
-                <span key={p.id} className={`h-3.5 w-[5px] rounded-[1px] transition-colors ${solved.has(p.id) ? 'bg-emerald-500' : 'bg-border-soft'}`} />
-              ))}
+          <div className="hidden items-center gap-2 md:flex" title={`${solvedCount} of ${VERILOG_V2_PROBLEMS.length} solved`}>
+            <div className="h-1.5 w-24 overflow-hidden rounded-full bg-border-soft">
+              <div className="h-full rounded-full bg-emerald-500 transition-[width] duration-500"
+                   style={{ width: `${(solvedCount / VERILOG_V2_PROBLEMS.length) * 100}%` }} />
             </div>
-            <span className="font-mono text-[11px] font-bold text-text-dim">{solvedCount}/{VERILOG_PROBLEMS.length}</span>
+            <span className="font-mono text-[11px] font-bold text-text-dim">{solvedCount}/{VERILOG_V2_PROBLEMS.length}</span>
           </div>
           {streak.count > 0 && (
             <div className="hidden items-center gap-1 sm:flex" title={`${streak.count}-day solving streak`}>
@@ -473,7 +490,17 @@ export const VerilogJudge: React.FC = () => {
                 className="absolute right-0 top-0 z-20 hidden h-full w-1.5 cursor-col-resize transition-colors hover:bg-emerald-500/50 lg:block"
               />
               <div className="mb-4 flex items-center justify-between">
-                <span className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-500/80">Problem {String(problem.number).padStart(2, '0')}</span>
+                <div className="flex items-center gap-2">
+                  <span className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-500/80">
+                    Problem {String(problem.number).padStart(2, '0')}
+                  </span>
+                  {track && (
+                    <span className="rounded-md px-1.5 py-0.5 text-[10px] font-bold"
+                          style={{ color: track.accent, background: `${track.accent}1f` }}>
+                      {track.title}
+                    </span>
+                  )}
+                </div>
                 <button onClick={() => setProblemOpen(false)} title="Collapse panel"
                   className="hidden rounded-md p-1 text-text-dim hover:bg-white/5 hover:text-text-main lg:block">
                   <PanelLeftClose className="h-4 w-4" />
@@ -486,7 +513,7 @@ export const VerilogJudge: React.FC = () => {
                   style={{ color: DIFF_COLOR[problem.difficulty], background: `${DIFF_COLOR[problem.difficulty]}22` }}>
                   {problem.difficulty}
                 </span>
-                {solved.has(problem.id) && <CheckCircle2 className="h-5 w-5 text-emerald-500" />}
+                {isSolved && <CheckCircle2 className="h-5 w-5 text-emerald-500" />}
               </div>
 
               <div className="mb-5 flex flex-wrap gap-1.5">
@@ -499,46 +526,88 @@ export const VerilogJudge: React.FC = () => {
                 {statementParas.map((para, i) => <p key={i} dangerouslySetInnerHTML={{ __html: mdInline(para) }} />)}
               </div>
 
-              <div className="mt-5 grid grid-cols-2 gap-3">
-                <PortCard label="Inputs" names={problem.inputs} accent="#22d3ee" />
-                <PortCard label="Outputs" names={problem.outputs} accent="#34d399" />
-              </div>
-
-              <div className="mt-5">
-                <div className="mb-2 font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-text-dim">Examples</div>
-                <div className="space-y-2">
-                  {problem.examples.map((ex, i) => (
-                    <div key={i} className="rounded-lg border border-border-soft bg-bg-elev px-3 py-2 font-mono text-[12px]">
-                      <span className="text-cyan-400">{fmtBits(ex.in)}</span>
-                      <span className="mx-2 text-text-dim">-&gt;</span>
-                      <span className="text-emerald-400">{fmtBits(ex.out)}</span>
-                      {ex.note && <span className="ml-3 text-text-dim">// {ex.note}</span>}
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Always-on reference timing for clocked problems — study the clock
-                  before/while coding, independent of any run. */}
-              {isSeq(problem) && (
-                <div className="mt-5">
-                  <SeqWaveform problem={problem} heading="Expected timing" />
+              {problem.context && (
+                <div className="mt-4 rounded-lg border-l-2 border-cyan-500/60 bg-cyan-500/[0.06] py-2.5 pl-3 pr-3">
+                  <div className="mb-1 font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-cyan-400/90">Why it matters</div>
+                  <p className="text-[13px] leading-[1.65] text-text-dim"
+                     dangerouslySetInnerHTML={{ __html: mdInline(problem.context) }} />
                 </div>
               )}
 
-              {problem.hint && (
-                <div className="mt-5 flex flex-wrap gap-2">
+              <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <PortCard label="Inputs" ports={problem.inputs} accent="#22d3ee" clock={problem.clock} />
+                <PortCard label="Outputs" ports={problem.outputs} accent="#34d399" />
+              </div>
+
+              {problem.constraints && problem.constraints.length > 0 && (
+                <div className="mt-5">
+                  <div className="mb-2 font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-text-dim">Rules</div>
+                  <ul className="space-y-1.5">
+                    {problem.constraints.map((c, i) => (
+                      <li key={i} className="flex gap-2 text-[13px] leading-relaxed text-text-dim">
+                        <span className="mt-[7px] h-1 w-1 shrink-0 rounded-full bg-text-dim/60" />
+                        <span dangerouslySetInnerHTML={{ __html: mdInline(c) }} />
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {problem.examples && problem.examples.length > 0 && (
+                <div className="mt-5">
+                  <div className="mb-2 font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-text-dim">Examples</div>
+                  <div className="space-y-2">
+                    {problem.examples.map((ex, i) => (
+                      <div key={i} className="rounded-lg border border-border-soft bg-bg-elev px-3 py-2 font-mono text-[12px]">
+                        <span className="text-cyan-400">{fmtExample(ex.in)}</span>
+                        <span className="mx-2 text-text-dim">-&gt;</span>
+                        <span className="text-emerald-400">{fmtExample(ex.out)}</span>
+                        {ex.note && <span className="ml-2 block pt-1 text-text-dim sm:ml-3 sm:inline sm:pt-0">// {ex.note}</span>}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="mt-5 flex flex-wrap gap-2">
+                {problem.hint && (
                   <button onClick={() => setShowHint((s) => !s)}
                     className="inline-flex items-center gap-1.5 rounded-lg border-2 border-amber-500/40 bg-amber-500/10 px-3 py-1.5 text-[12px] font-bold text-amber-500 transition-colors hover:bg-amber-500/20">
                     <Lightbulb className="h-3.5 w-3.5" /> {showHint ? 'Hide hint' : 'Hint'}
                   </button>
-                </div>
-              )}
+                )}
+                {problem.editorial && (
+                  <button onClick={() => setShowEditorial((s) => !s)}
+                    title={isSolved ? undefined : 'Best read after you have solved it'}
+                    className="inline-flex items-center gap-1.5 rounded-lg border-2 border-indigo-500/40 bg-indigo-500/10 px-3 py-1.5 text-[12px] font-bold text-indigo-400 transition-colors hover:bg-indigo-500/20">
+                    <BookOpen className="h-3.5 w-3.5" /> {showEditorial ? 'Hide editorial' : 'Editorial'}
+                  </button>
+                )}
+              </div>
+
               <AnimatePresence>
                 {showHint && problem.hint && (
                   <motion.p initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
-                    className="mt-3 overflow-hidden rounded-lg bg-amber-500/5 px-3 py-2 text-[13px] text-amber-200/90"
+                    className="mt-3 overflow-hidden rounded-lg bg-amber-500/5 px-3 py-2 text-[13px] leading-relaxed text-amber-200/90"
                     dangerouslySetInnerHTML={{ __html: mdInline(problem.hint) }} />
+                )}
+              </AnimatePresence>
+
+              <AnimatePresence>
+                {showEditorial && problem.editorial && (
+                  <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
+                    className="mt-3 overflow-hidden rounded-lg border border-indigo-500/25 bg-indigo-500/[0.06] px-3 py-2.5">
+                    {!isSolved && (
+                      <div className="mb-2 font-mono text-[9px] font-bold uppercase tracking-[0.18em] text-indigo-400/70">
+                        Spoilers — you have not solved this yet
+                      </div>
+                    )}
+                    <div className="space-y-2.5 text-[13px] leading-[1.7] text-text-dim">
+                      {problem.editorial.split('\n\n').map((para, i) => (
+                        <p key={i} dangerouslySetInnerHTML={{ __html: mdInline(para) }} />
+                      ))}
+                    </div>
+                  </motion.div>
                 )}
               </AnimatePresence>
             </motion.section>
@@ -558,7 +627,9 @@ export const VerilogJudge: React.FC = () => {
         <section className="flex min-h-0 min-w-0 flex-col lg:overflow-hidden">
           {/* Toolbar */}
           <div className="flex shrink-0 items-center gap-3 border-b border-border-soft bg-bg-elev px-3 py-1.5">
-            <span className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-text-dim">design.sv</span>
+            <span className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-text-dim">
+              {problem.moduleName}.v
+            </span>
             <span className="hidden items-center gap-1 font-mono text-[10px] text-text-dim/70 md:flex">
               <kbd className="rounded border border-border-soft px-1 py-px text-[9px]">Ctrl</kbd>
               <span>+</span>
@@ -570,43 +641,13 @@ export const VerilogJudge: React.FC = () => {
                 className="flex items-center gap-1.5 rounded-lg border border-border-soft px-2.5 py-1.5 text-[12px] font-bold text-text-dim transition-colors hover:text-text-main">
                 <RotateCcw className="h-3.5 w-3.5" /> Reset
               </button>
-              <button onClick={run} disabled={running}
+              <button onClick={() => void run()} disabled={running}
                 className={`flex items-center gap-1.5 rounded-xl bg-emerald-500 px-4 py-1.5 text-[12px] font-bold uppercase tracking-wide text-black shadow-[0_4px_14px_rgba(16,185,129,0.35)] ${raised} hover:bg-emerald-400 disabled:opacity-60`}>
                 {running ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Play className="h-3.5 w-3.5" />}
                 {running ? 'Judging' : 'Submit'}
               </button>
             </div>
           </div>
-
-          {/* Custom-run bar (combinational problems only): try one input vector without grading */}
-          {!isSeq(problem) && (
-          <div className="flex shrink-0 flex-wrap items-center gap-1.5 border-b border-border-soft bg-bg-void px-3 py-1.5 text-[11px]">
-            <span className="font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-text-dim">Custom run</span>
-            {problem.inputs.map((n) => {
-              const v = customIn[n] ?? 0;
-              return (
-                <button key={n} onClick={() => setCustomIn((s) => ({ ...s, [n]: (v ? 0 : 1) as Bit }))} title={`toggle ${n}`}
-                  className="flex items-center gap-1 rounded-md border border-border-soft px-2 py-0.5 font-mono transition-colors hover:border-emerald-500">
-                  <span className="text-cyan-400">{n}</span>
-                  <span className={v ? 'font-bold text-emerald-400' : 'text-text-dim'}>{v}</span>
-                </button>
-              );
-            })}
-            <button onClick={runCustom}
-              className="rounded-md bg-emerald-500/15 px-2.5 py-0.5 font-bold text-emerald-400 transition-colors hover:bg-emerald-500/25">
-              Run &rsaquo;
-            </button>
-            {customErr && <span className="font-mono text-rose-400">{customErr}</span>}
-            {customOut && !customErr && (
-              <span className="ml-1 font-mono text-text-dim">
-                &rarr;
-                {problem.outputs.map((o) => (
-                  <span key={o} className="ml-2"><span className="text-emerald-400">{o}</span>=<span className="font-bold text-text-main">{customOut[o]}</span></span>
-                ))}
-              </span>
-            )}
-          </div>
-          )}
 
           {/* Editor | Synth schematic */}
           <div className="grid min-h-0 flex-1 grid-cols-1 lg:grid-cols-[var(--vj-ew)_1fr]">
@@ -627,7 +668,7 @@ export const VerilogJudge: React.FC = () => {
                 onMount={(editor, monaco) => {
                   editorRef.current = editor;
                   monacoRef.current = monaco;
-                  editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => runRef.current());
+                  editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => void runRef.current());
                 }}
                 options={{
                   fontSize: 13.5,
@@ -648,7 +689,12 @@ export const VerilogJudge: React.FC = () => {
           </div>
 
           {/* Results drawer */}
-          <ResultsDrawer open={resultsOpen} setOpen={setResultsOpen} result={result} problem={problem} running={running} onResizeStart={dragConsole} />
+          <ResultsDrawer
+            open={resultsOpen} setOpen={setResultsOpen}
+            result={result} problem={problem} running={running} progress={progress}
+            tab={resultTab} setTab={setResultTab}
+            isLight={isLight} onResizeStart={dragConsole}
+          />
         </section>
       </div>
 
@@ -660,7 +706,10 @@ export const VerilogJudge: React.FC = () => {
         </span>
         <Sep />
         <span className="flex items-center gap-1 text-emerald-500/80"><Zap className="h-3 w-3" /> bitforbytes</span>
-        <span className="ml-auto">{problem.inputs.length} in &middot; {problem.outputs.length} out</span>
+        <span className="ml-auto">
+          {problem.inputs.length} in &middot; {problem.outputs.length} out
+          {isSequential(problem) && <span className="ml-1.5 text-amber-500/80">· clocked</span>}
+        </span>
         <Sep className="hidden md:block" />
         <span className="hidden font-bold md:inline" style={{ color: DIFF_COLOR[problem.difficulty] }}>{problem.difficulty}</span>
         <Sep className="hidden lg:block" />
@@ -676,19 +725,25 @@ export const VerilogJudge: React.FC = () => {
 // ─── results drawer ──────────────────────────────────────────────────────────
 const ResultsDrawer: React.FC<{
   open: boolean; setOpen: (b: boolean) => void;
-  result: GradeResult | null; problem: AnyProblem; running: boolean;
+  result: DiffGradeResult | null; problem: VProblemV2; running: boolean;
+  progress: SynthProgress | null;
+  tab: 'tests' | 'wave'; setTab: (t: 'tests' | 'wave') => void;
+  isLight: boolean;
   onResizeStart: (e: React.PointerEvent) => void;
-}> = ({ open, setOpen, result, problem, running, onResizeStart }) => {
+}> = ({ open, setOpen, result, problem, running, progress, tab, setTab, isLight, onResizeStart }) => {
   const passed = result?.status === 'pass';
-  const summary = running ? 'Compiling & simulating...'
-    : !result ? 'Run to grade your design'
+  const seq = isSequential(problem);
+  const unit = seq ? 'cycles' : 'cases';
+  const summary = running ? 'Synthesizing & simulating…'
+    : !result ? 'Submit to grade your design'
       : result.status === 'error' ? 'Compile error'
-        : passed ? 'Accepted - every case passed'
-          : `${result.passed}/${result.total} cases passed`;
-  const tone = running ? 'text-text-dim'
-    : !result ? 'text-text-dim'
-      : result.status === 'error' || result.status === 'fail' ? 'text-rose-400'
-        : 'text-emerald-400';
+        : passed ? `Accepted — every ${seq ? 'cycle' : 'case'} matched`
+          : `${result.passed}/${result.total} ${unit} passed`;
+  const tone = running || !result ? 'text-text-dim'
+    : result.status === 'error' || result.status === 'fail' ? 'text-rose-400'
+      : 'text-emerald-400';
+
+  const hasWave = !!result?.trace && result.status !== 'error';
 
   return (
     <div className="shrink-0 border-t border-border-soft bg-bg-elev">
@@ -700,23 +755,55 @@ const ResultsDrawer: React.FC<{
           className="hidden h-1.5 w-full cursor-row-resize transition-colors hover:bg-emerald-500/50 lg:block"
         />
       )}
-      <button onClick={() => setOpen(!open)} className="flex w-full items-center gap-2 px-3 py-2 text-left">
-        <span className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-text-dim">Console</span>
-        <span className={`flex items-center gap-1.5 text-[12px] font-bold ${tone}`}>
-          {running ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
-            : passed ? <CheckCircle2 className="h-3.5 w-3.5" />
-              : result ? <XCircle className="h-3.5 w-3.5" /> : null}
-          {summary}
-        </span>
-        <span className="ml-auto text-text-dim">
+      <div className="flex w-full items-center gap-2 px-3 py-2">
+        <button onClick={() => setOpen(!open)} className="flex min-w-0 flex-1 items-center gap-2 text-left">
+          <span className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-text-dim">Console</span>
+          <span className={`flex min-w-0 items-center gap-1.5 text-[12px] font-bold ${tone}`}>
+            {running ? <Loader2 className="h-3.5 w-3.5 shrink-0 animate-spin" />
+              : passed ? <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
+                : result ? <XCircle className="h-3.5 w-3.5 shrink-0" /> : null}
+            <span className="truncate">{summary}</span>
+          </span>
+        </button>
+
+        {open && hasWave && (
+          <div className="flex shrink-0 overflow-hidden rounded-md border border-border-soft">
+            <button onClick={() => setTab('tests')}
+              className={`flex items-center gap-1 px-2 py-1 text-[10px] font-bold uppercase tracking-wide transition-colors ${tab === 'tests' ? 'bg-emerald-500 text-black' : 'text-text-dim hover:text-text-main'}`}>
+              <Table2 className="h-3 w-3" /> Tests
+            </button>
+            <button onClick={() => setTab('wave')}
+              className={`flex items-center gap-1 px-2 py-1 text-[10px] font-bold uppercase tracking-wide transition-colors ${tab === 'wave' ? 'bg-emerald-500 text-black' : 'text-text-dim hover:text-text-main'}`}>
+              <Activity className="h-3 w-3" /> Waveform
+            </button>
+          </div>
+        )}
+
+        <button onClick={() => setOpen(!open)} className="shrink-0 text-text-dim">
           {open ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
-        </span>
-      </button>
+        </button>
+      </div>
+
       <AnimatePresence initial={false}>
         {open && (
           <motion.div initial={{ height: 0 }} animate={{ height: 'auto' }} exit={{ height: 0 }} className="overflow-hidden">
-            <div className="max-h-[42vh] overflow-y-auto border-t border-border-soft lg:max-h-none lg:h-[var(--vj-ch)]">
-              <ResultsPanel result={result} problem={problem} running={running} />
+            <div className="max-h-[42vh] overflow-hidden border-t border-border-soft lg:h-[var(--vj-ch)] lg:max-h-none">
+              {tab === 'wave' && hasWave
+                ? (
+                  <WaveformViewer
+                    trace={result!.trace!}
+                    expectedTrace={result!.expectedTrace}
+                    failingCycles={result!.rows.filter((r) => !r.pass).map((r) => r.index)}
+                    outputNames={problem.outputs.map((o) => o.name)}
+                    focusCycle={result!.firstFailure}
+                    isLight={isLight}
+                  />
+                )
+                : (
+                  <div className="h-full overflow-y-auto">
+                    <ResultsPanel result={result} problem={problem} running={running} progress={progress} />
+                  </div>
+                )}
             </div>
           </motion.div>
         )}
@@ -726,152 +813,70 @@ const ResultsDrawer: React.FC<{
 };
 
 // ─── sub-components ──────────────────────────────────────────────────────────
-const PortCard: React.FC<{ label: string; names: string[]; accent: string }> = ({ label, names, accent }) => (
+const PortCard: React.FC<{ label: string; ports: VPort[]; accent: string; clock?: string }> = ({ label, ports, accent, clock }) => (
   <div className="rounded-lg border border-border-soft bg-bg-elev p-3">
     <div className="mb-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-text-dim">{label}</div>
-    <div className="flex flex-wrap gap-1.5">
-      {names.map((n) => (
-        <span key={n} className="rounded-md px-2 py-0.5 font-mono text-[12px] font-bold"
-          style={{ color: accent, background: `${accent}22` }}>{n}</span>
+    <div className="space-y-1">
+      {ports.map((p) => (
+        <div key={p.name} className="flex items-baseline gap-2">
+          <span className="rounded-md px-2 py-0.5 font-mono text-[12px] font-bold"
+            style={{ color: accent, background: `${accent}22` }}>{p.name}</span>
+          <span className="shrink-0 font-mono text-[10px] text-text-dim">
+            {p.width > 1 ? `[${p.width - 1}:0]` : '1b'}{p.signed ? ' signed' : ''}
+          </span>
+          {p.name === clock && <span className="font-mono text-[10px] text-amber-500">clk</span>}
+          {p.note && <span className="min-w-0 flex-1 truncate text-[11px] text-text-dim" title={p.note}>{p.note}</span>}
+        </div>
       ))}
     </div>
   </div>
 );
 
-/**
- * SeqWaveform — a digital timing diagram for the sequential (flip-flop) tier.
- *
- * Reading a column of 0s and 1s makes it very hard to feel the *clock*. This
- * draws the actual waves so the edge-triggered story is obvious:
- *   • clk rises in the middle of every cycle (▲) — that is the sampling instant.
- *   • data inputs (and reset) are held across the whole cycle, so they are
- *     stable through the rising edge that samples them.
- *   • registered outputs change exactly ON the ▲ — the value captured at the
- *     edge appears right after it and holds until the next edge.
- * The GOLDEN timing is computed straight from the problem, so it renders even
- * before a run, on a compile error, or on a wrong answer. When a graded result
- * is available the student's own output is overlaid dashed in red and the
- * mismatching cycles are banded, so where their waveform diverges is visible.
- */
-const SeqWaveform: React.FC<{ problem: AnyProblem; rows?: GradeResult['rows'] | null; heading?: string }> = ({ problem, rows, heading }) => {
-  if (!isSeq(problem) || problem.vectors.length === 0) return null;
-
-  const N = problem.vectors.length;
-  const LW = 68;   // left label gutter
-  const W = 48;    // per-cycle width
-  const ROW = 38;  // per-signal row height (tall enough for a value digit)
-  const AXIS = 22; // top strip for cycle numbers + ▲
-
-  // Golden next-state sequence — independent of the student's code.
-  let gState: Record<string, Bit> = {};
-  for (const r of problem.regOutputs) gState[r] = 0;
-  const expected = problem.vectors.map((vec) => { const nx = problem.step(gState, vec); gState = nx; return nx; });
-
-  const got = rows && rows.length === N ? rows : null;
-  const failCycles = new Set<number>();
-  if (got) got.forEach((r, i) => { if (!r.pass) failCycles.add(i); });
-  const fail = failCycles.size > 0;
-
-  const bit = (v: Bit | undefined) => (v ? 1 : 0);
-  type Sig = { label: string; color: string; kind: 'clk' | 'level' | 'reg'; dashed?: boolean; values: number[] };
-  const sigs: Sig[] = [];
-  sigs.push({ label: problem.clock, color: '#f59e0b', kind: 'clk', values: [] });
-  if (problem.reset) sigs.push({ label: problem.reset, color: '#fb7185', kind: 'level', values: problem.vectors.map((v) => bit(v[problem.reset!])) });
-  for (const d of problem.dataInputs) sigs.push({ label: d, color: '#22d3ee', kind: 'level', values: problem.vectors.map((v) => bit(v[d])) });
-  for (const o of problem.regOutputs) sigs.push({ label: o, color: '#10b981', kind: 'reg', values: expected.map((e) => bit(e[o])) });
-  if (fail && got) for (const o of problem.regOutputs) sigs.push({ label: `${o} (yours)`, color: '#f43f5e', kind: 'reg', dashed: true, values: got.map((r) => (r.got ? bit(r.got[o]) : 0)) });
-
-  const totalW = LW + N * W + 10;
-  const totalH = AXIS + sigs.length * ROW + 8;
-  const xAt = (i: number) => LW + i * W;
-  const toPts = (pts: number[][]) => pts.map((p) => `${p[0]},${p[1]}`).join(' ');
-
-  const rowPoints = (s: Sig, hi: number, lo: number): number[][] => {
-    const lv = (v: number) => (v ? hi : lo);
-    const pts: number[][] = [];
-    if (s.kind === 'clk') {
-      for (let i = 0; i < N; i++) {
-        const x0 = xAt(i), xm = x0 + W / 2, x1 = xAt(i + 1);
-        pts.push([x0, lo], [xm, lo], [xm, hi], [x1, hi]);
-      }
-    } else if (s.kind === 'reg') {
-      // registered: starts at 0, transitions at each mid-cycle rising edge
-      let prev = 0;
-      pts.push([xAt(0), lv(prev)]);
-      for (let i = 0; i < N; i++) {
-        const xm = xAt(i) + W / 2;
-        pts.push([xm, lv(prev)], [xm, lv(s.values[i])]);
-        prev = s.values[i];
-      }
-      pts.push([xAt(N), lv(prev)]);
-    } else {
-      // level: held across the whole cycle, transitions at cycle boundaries
-      for (let i = 0; i < N; i++) { const y = lv(s.values[i]); pts.push([xAt(i), y], [xAt(i + 1), y]); }
-    }
-    return pts;
-  };
-
-  return (
-    <div className="mb-3 rounded-lg border border-border-soft bg-bg-void/40 p-3">
-      <div className="mb-1.5 flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
-        <span className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-text-dim">{heading ?? 'Timing diagram'}</span>
-        <span className="font-mono text-[10px] text-text-dim"><span className="text-amber-500">▲</span> rising edge — inputs sampled, outputs update · 0/1 shown per cycle</span>
-      </div>
-      <div className="overflow-x-auto">
-        <svg width={totalW} height={totalH} className="text-text-dim" role="img" aria-label="Clock timing diagram">
-          {/* mismatch bands + per-cycle rising-edge guides */}
-          {Array.from({ length: N }, (_, i) => {
-            const xm = xAt(i) + W / 2;
-            const bad = failCycles.has(i);
-            return (
-              <g key={`g${i}`}>
-                {bad && <rect x={xAt(i)} y={AXIS} width={W} height={totalH - AXIS - 4} fill="#f43f5e" opacity={0.08} />}
-                <line x1={xm} y1={AXIS} x2={xm} y2={totalH - 4} stroke={bad ? '#f43f5e' : 'currentColor'} strokeOpacity={bad ? 0.45 : 0.12} strokeWidth={1} strokeDasharray="3 3" />
-                <text x={xm} y={AXIS - 8} textAnchor="middle" className="fill-current" fontSize={10} opacity={0.6}>{i}</text>
-                <text x={xm} y={AXIS - 0.5} textAnchor="middle" fontSize={9} fill="#f59e0b">▲</text>
-              </g>
-            );
-          })}
-          {/* signals */}
-          {sigs.map((s, r) => {
-            const yTop = AXIS + r * ROW;
-            const hi = yTop + 9, lo = yTop + ROW - 11;
-            const digitY = yTop + ROW / 2 + 1;
-            // reg values settle after the mid-cycle edge → label their held half;
-            // level/input values hold the whole cycle → label the cell centre.
-            const digitX = (i: number) => xAt(i) + (s.kind === 'reg' ? W * 0.75 : W / 2);
-            return (
-              <g key={s.label}>
-                <text x={LW - 10} y={yTop + ROW / 2} textAnchor="end" dominantBaseline="middle" fontSize={11} fill={s.color} className="font-mono font-bold">{s.label}</text>
-                <line x1={LW} y1={lo} x2={xAt(N)} y2={lo} stroke="currentColor" strokeOpacity={0.1} strokeWidth={1} />
-                <polyline points={toPts(rowPoints(s, hi, lo))} fill="none" stroke={s.color} strokeWidth={2} strokeLinejoin="round" strokeLinecap="round" strokeDasharray={s.dashed ? '4 3' : undefined} opacity={s.dashed ? 0.95 : 1} />
-                {s.kind !== 'clk' && s.values.map((v, i) => (
-                  <text key={i} x={digitX(i)} y={digitY} textAnchor="middle" dominantBaseline="middle" fontSize={11} fontWeight={700} fill={s.color} className="font-mono">{v}</text>
-                ))}
-              </g>
-            );
-          })}
-        </svg>
-      </div>
-    </div>
-  );
+/** Format one signal value against its port width, matching the waveform viewer. */
+const valStr = (v: bigint | null | undefined, width: number): string => {
+  if (v === null || v === undefined) return 'x';
+  if (width === 1) return v.toString();
+  return `${width}'h${v.toString(16).toUpperCase()}`;
 };
 
-const ResultsPanel: React.FC<{ result: GradeResult | null; problem: AnyProblem; running: boolean }> = ({ result, problem, running }) => {
-  const seq = isSeq(problem);
-  // The timing diagram shows the golden clock behaviour for every sequential
-  // problem — before a run, on a compile error, and on a wrong answer — with the
-  // student's trace overlaid only once it has been graded.
-  const wave = seq ? <SeqWaveform problem={problem} rows={result && result.status !== 'error' ? result.rows : null} /> : null;
+const ResultsPanel: React.FC<{
+  result: DiffGradeResult | null; problem: VProblemV2; running: boolean; progress: SynthProgress | null;
+}> = ({ result, problem, running, progress }) => {
+  const seq = isSequential(problem);
+  const inPorts = problem.inputs.filter((i) => i.name !== problem.clock);
+  const outPorts = problem.outputs;
 
   if (running) {
-    return <div className="flex items-center gap-2 p-4 text-[13px] text-text-dim"><Loader2 className="h-4 w-4 animate-spin" /> Compiling &amp; simulating every input combination...</div>;
+    const pct = progress && progress.total > 0 ? Math.round((progress.done / progress.total) * 100) : null;
+    return (
+      <div className="flex flex-col gap-2 p-4 text-[13px] text-text-dim">
+        <span className="flex items-center gap-2">
+          <Loader2 className="h-4 w-4 animate-spin" />
+          {pct !== null && pct < 100
+            ? `Downloading the Yosys engine — ${pct}% (one time per session)`
+            : 'Synthesizing your design and the reference, then simulating both…'}
+        </span>
+        {pct !== null && pct < 100 && (
+          <div className="h-1 w-56 overflow-hidden rounded-full bg-border-soft">
+            <div className="h-full rounded-full bg-emerald-500 transition-[width]" style={{ width: `${pct}%` }} />
+          </div>
+        )}
+      </div>
+    );
   }
+
   if (!result) {
     return (
-      <div className="p-3">
-        {wave}
-        <p className="px-1 pt-1 text-[13px] leading-relaxed text-text-dim">Hit <span className="font-bold text-text-main">Submit</span> to grade your module against the full test set. As you type, the synthesized circuit on the right shows exactly what your code builds - poke its wires to see values flow.</p>
+      <div className="p-4">
+        <p className="text-[13px] leading-relaxed text-text-dim">
+          Hit <span className="font-bold text-text-main">Submit</span> to grade{' '}
+          <code className="rounded bg-white/10 px-1 py-0.5 font-mono text-[0.9em] text-emerald-300">{problem.moduleName}</code>{' '}
+          against the reference design. Your module and the reference are both synthesized and driven with the
+          same stimulus, then compared {seq ? 'cycle by cycle' : 'vector by vector'}.
+        </p>
+        <p className="mt-2 text-[13px] leading-relaxed text-text-dim">
+          As you type, the schematic on the right shows exactly what your code builds — poke its wires to see values flow.
+        </p>
       </div>
     );
   }
@@ -879,7 +884,6 @@ const ResultsPanel: React.FC<{ result: GradeResult | null; problem: AnyProblem; 
   if (result.status === 'error') {
     return (
       <div className="p-3">
-        {wave}
         <div className="mb-2 flex items-center gap-2 text-[13px] font-bold text-rose-400">
           <AlertTriangle className="h-4 w-4" /> Compile error
         </div>
@@ -889,38 +893,69 @@ const ResultsPanel: React.FC<{ result: GradeResult | null; problem: AnyProblem; 
   }
 
   const passed = result.status === 'pass';
-  const inCols = isSeq(problem) ? (problem.reset ? [problem.reset, ...problem.dataInputs] : problem.dataInputs) : problem.inputs;
-  const outCols = problem.outputs;
+  // A long exhaustive run is unreadable in full — lead with the failures.
+  const failing = result.rows.filter((r) => !r.pass);
+  const shown = passed ? result.rows.slice(0, 64) : failing.slice(0, 64);
+  const hiddenCount = (passed ? result.rows.length : failing.length) - shown.length;
+
   return (
     <div className="p-3">
-      <div className={`mb-3 flex items-center gap-2 rounded-lg px-3 py-2 text-[13px] font-bold ${passed ? 'bg-emerald-500/15 text-emerald-400' : 'bg-rose-500/15 text-rose-400'}`}>
+      <div className={`mb-3 flex flex-wrap items-center gap-2 rounded-lg px-3 py-2 text-[13px] font-bold ${passed ? 'bg-emerald-500/15 text-emerald-400' : 'bg-rose-500/15 text-rose-400'}`}>
         {passed ? <CheckCircle2 className="h-4 w-4" /> : <XCircle className="h-4 w-4" />}
         {passed
-          ? (seq ? 'Accepted - every clock cycle matched' : 'Accepted - all cases passed')
+          ? `Accepted — all ${result.total} ${seq ? 'cycles' : 'cases'} matched the reference`
           : `${result.passed}/${result.total} ${seq ? 'cycles' : 'cases'} passed`}
+        {!passed && result.firstFailure !== undefined && (
+          <span className="font-mono text-[11px] font-normal opacity-80">
+            first mismatch at {seq ? 'cycle' : 'vector'} {result.rows[result.firstFailure].index}
+          </span>
+        )}
       </div>
-      {wave}
+
+      {result.unsupportedCells && result.unsupportedCells.length > 0 && (
+        <div className="mb-3 rounded-lg border border-amber-500/30 bg-amber-500/5 px-3 py-2 text-[12px] text-amber-300">
+          <span className="font-bold">Heads up:</span> your design uses constructs the in-browser simulator does not
+          model ({result.unsupportedCells.join(', ')}), so those outputs read as x. Try expressing the same logic
+          with synthesizable RTL.
+        </div>
+      )}
+
+      {!passed && (
+        <div className="mb-2 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-text-dim">
+          Failing {seq ? 'cycles' : 'vectors'}
+        </div>
+      )}
+
       <div className="overflow-x-auto rounded-lg border border-border-soft">
         <table className="w-full border-collapse font-mono text-[12px]">
           <thead>
             <tr className="bg-bg-void text-text-dim">
-              {seq && <th className="px-3 py-1.5 text-left font-bold">cyc</th>}
-              {inCols.map((c) => <th key={c} className="px-3 py-1.5 text-left font-bold text-cyan-400">{c}</th>)}
-              {outCols.map((c) => <th key={c} className="px-3 py-1.5 text-left font-bold text-emerald-400">{c}</th>)}
+              <th className="px-3 py-1.5 text-left font-bold">{seq ? 'cyc' : '#'}</th>
+              {inPorts.map((c) => <th key={c.name} className="px-3 py-1.5 text-left font-bold text-cyan-400">{c.name}</th>)}
+              {outPorts.map((c) => <th key={c.name} className="px-3 py-1.5 text-left font-bold text-emerald-400">{c.name}</th>)}
               <th className="px-3 py-1.5 text-left font-bold">got</th>
               <th className="px-3 py-1.5 text-center font-bold">ok</th>
             </tr>
           </thead>
           <tbody>
-            {result.rows.map((row, i) => (
-              <tr key={i} className={`border-t border-border-soft ${row.pass ? '' : 'bg-rose-500/[0.06]'}`}>
-                {seq && <td className="px-3 py-1 text-text-dim">{row.cycle}</td>}
-                {inCols.map((c) => <td key={c} className="px-3 py-1 text-cyan-300">{row.in[c] ?? 0}</td>)}
-                {outCols.map((c) => <td key={c} className="px-3 py-1 text-emerald-300">{row.expected[c]}</td>)}
-                <td className="px-3 py-1">
-                  {row.got ? outCols.map((c) => (
-                    <span key={c} className={row.got![c] === row.expected[c] ? 'text-text-dim' : 'font-bold text-rose-400'}>{row.got![c]} </span>
-                  )) : <span className="text-rose-400">x</span>}
+            {shown.map((row) => (
+              <tr key={row.index} className={`border-t border-border-soft ${row.pass ? '' : 'bg-rose-500/[0.06]'}`}>
+                <td className="px-3 py-1 text-text-dim">{row.index}</td>
+                {inPorts.map((c) => (
+                  <td key={c.name} className="whitespace-nowrap px-3 py-1 text-cyan-300">{valStr(row.in[c.name], c.width)}</td>
+                ))}
+                {outPorts.map((c) => (
+                  <td key={c.name} className="whitespace-nowrap px-3 py-1 text-emerald-300">{valStr(row.expected[c.name], c.width)}</td>
+                ))}
+                <td className="whitespace-nowrap px-3 py-1">
+                  {outPorts.map((c) => {
+                    const ok = row.got[c.name] === row.expected[c.name];
+                    return (
+                      <span key={c.name} className={ok ? 'mr-2 text-text-dim' : 'mr-2 font-bold text-rose-400'}>
+                        {valStr(row.got[c.name], c.width)}
+                      </span>
+                    );
+                  })}
                 </td>
                 <td className="px-3 py-1 text-center">
                   {row.pass ? <CheckCircle2 className="mx-auto h-3.5 w-3.5 text-emerald-500" /> : <XCircle className="mx-auto h-3.5 w-3.5 text-rose-500" />}
@@ -930,6 +965,11 @@ const ResultsPanel: React.FC<{ result: GradeResult | null; problem: AnyProblem; 
           </tbody>
         </table>
       </div>
+      {hiddenCount > 0 && (
+        <p className="mt-2 text-center font-mono text-[11px] text-text-dim">
+          … and {hiddenCount} more — open the Waveform tab to see the whole run
+        </p>
+      )}
     </div>
   );
 };
@@ -957,7 +997,9 @@ const VerifiedStamp: React.FC<{ total: number }> = ({ total }) => (
         <BadgeCheck className="h-6 w-6 text-emerald-400" />
         <span className="text-[19px] font-bold tracking-tight text-emerald-400">Accepted</span>
       </div>
-      <span className="font-mono text-[10px] font-bold uppercase tracking-[0.24em] text-text-dim">All {total} test cases passed · BitForBytes</span>
+      <span className="font-mono text-[10px] font-bold uppercase tracking-[0.24em] text-text-dim">
+        Matched the reference on all {total} cases · BitForBytes
+      </span>
     </motion.div>
   </motion.div>
 );
@@ -966,10 +1008,14 @@ const VerifiedStamp: React.FC<{ total: number }> = ({ total }) => (
 /** Render the inline `code` spans in problem prose; everything else is escaped. */
 function mdInline(s: string): string {
   const esc = s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-  return esc.replace(/`([^`]+)`/g, '<code class="rounded bg-white/10 px-1 py-0.5 font-mono text-[0.9em] text-emerald-300">$1</code>');
+  return esc
+    .replace(/`([^`]+)`/g, '<code class="rounded bg-white/10 px-1 py-0.5 font-mono text-[0.9em] text-emerald-300">$1</code>')
+    .replace(/\*\*([^*]+)\*\*/g, '<strong class="text-text-main">$1</strong>')
+    .replace(/\n/g, '<br/>');
 }
 
-const fmtBits = (rec: Record<string, number>): string =>
+/** Examples may carry raw numbers or already-formatted Verilog literals. */
+const fmtExample = (rec: Record<string, number | string>): string =>
   Object.entries(rec).map(([k, v]) => `${k}=${v}`).join(', ');
 
 export default VerilogJudge;
