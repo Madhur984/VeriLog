@@ -12,7 +12,7 @@ import { getModuleHistory, getLastModule, MODULE_LABELS } from '../lib/moduleHis
 import {
   Play, ArrowRight, ChevronDown, Check, Command, Settings,
   Wrench, Grid3x3, Cpu, Compass, Library, Map, BookOpen,
-  Binary, Zap, Boxes, ClipboardList, FileText, type LucideIcon,
+  Binary, Zap, Boxes, ClipboardList, FlaskConical, FileText, type LucideIcon,
 } from 'lucide-react';
 
 /* ── Background: single-tone grid + slow "electric current" sweeps (GPU transform) ── */
@@ -369,12 +369,6 @@ export const WorkstationHome: React.FC = () => {
   const { firstName, checkStreak } = useGamificationStore();
   const [cmdOpen, setCmdOpen] = useState(false);
 
-  // Portal-only: the logo can be dragged clear of other header controls if it
-  // ever overlaps them, but a plain click still has to go to /portal — a real
-  // drag is distinguished from a click by displacement, not just gesture type.
-  const headerRef = useRef<HTMLElement>(null);
-  const logoDraggedRef = useRef(false);
-
   // Shared cursor-X for the dock-style nav magnify effect below. A motion
   // value (not React state) so tracking the mouse doesn't trigger re-renders.
   const navMouseX = useMotionValue(Infinity);
@@ -417,6 +411,7 @@ export const WorkstationHome: React.FC = () => {
     { label: 'Workbench', icon: Wrench, to: '/workbench' },
     { label: 'K-Map Lab', icon: Grid3x3, to: '/kmap-lab' },
     { label: 'Verilog Judge', icon: Cpu, to: '/verilog-playground' },
+    { label: 'Verilog Sandbox', icon: FlaskConical, to: '/verilog-sandbox' },
     { label: 'Interview Prep', icon: ClipboardList, to: '/interview-prep' },
   ];
   const LIBRARY = [
@@ -463,46 +458,28 @@ export const WorkstationHome: React.FC = () => {
 
       <div className="relative z-10">
         {/* ── Top bar — quiet: brand, ⌘K, settings, theme, you ── */}
-        <header ref={headerRef} className="mx-auto flex w-full max-w-[1080px] items-center justify-between gap-3 px-4 py-4 sm:px-6">
+        {/*
+          The bar is justify-between, so the brand sits on the container's left
+          edge — widening the container on large screens is what moves the
+          wordmark outward and opens up the gap before the first nav item.
+          Capped short of the clock (absolute left-5) and profile card
+          (absolute right-5) that are pinned to the true viewport margins on xl+.
+        */}
+        <header className="mx-auto flex w-full max-w-[1080px] items-center justify-between gap-3 px-4 py-4 sm:px-6 xl:max-w-[1180px] 2xl:max-w-[1280px]">
           <div className="flex items-center gap-3">
             {/* clock inline on md/lg; pinned to the far-left margin on xl+ (below) */}
             <div className="hidden sm:block xl:hidden"><DigitalClock isLight={isLight} /></div>
             <span className="hidden h-9 w-px sm:block xl:hidden" style={{ background: hairline }} />
-            {/* Draggable so it can be pulled clear if it ever overlaps another
-                header control — Portal page only, see requirements above. A
-                genuine drag (real displacement) suppresses the click that
-                would otherwise fire on release, so it still navigates on a
-                plain click/tap. */}
-            <motion.div
-              drag
-              dragConstraints={headerRef}
-              dragElastic={0.15}
-              dragMomentum={false}
-              onDragEnd={(_e, info) => {
-                logoDraggedRef.current = Math.hypot(info.offset.x, info.offset.y) > 5;
-              }}
-              onClickCapture={(e) => {
-                if (logoDraggedRef.current) {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  logoDraggedRef.current = false;
-                }
-              }}
-              whileDrag={{ scale: 1.05 }}
-              className="cursor-grab touch-none select-none active:cursor-grabbing"
-              aria-label="Drag to reposition the logo; click to go to Portal"
-            >
-              <BrandPortalLink
-                size={28}
-                textClassName="text-[16px] font-extrabold"
-                midColor="#7A3FD0"
-                uppercase={false}
-              />
-            </motion.div>
+            <BrandPortalLink
+              size={28}
+              textClassName="text-[16px] font-extrabold"
+              midColor="#7A3FD0"
+              uppercase={false}
+            />
           </div>
 
           <nav
-            className="hidden items-center gap-8 md:flex"
+            className="hidden items-center gap-6 xl:flex 2xl:gap-8"
             aria-label="Tools"
             onMouseMove={(e) => navMouseX.set(e.clientX)}
             onMouseLeave={() => navMouseX.set(Infinity)}
@@ -550,8 +527,11 @@ export const WorkstationHome: React.FC = () => {
           </div>
         </header>
 
-        {/* Mobile tool strip (the header nav is desktop-only) */}
-        <nav className="flex gap-5 overflow-x-auto px-4 pb-3 md:hidden" aria-label="Tools">
+        {/* Scrolling tool strip — covers every width where the inline header nav
+            does not fit. Five items plus the brand and the action cluster only
+            leave breathing room from xl; below that the header packed to its
+            12px minimum gap, or overflowed outright under ~1000px. */}
+        <nav className="flex gap-5 overflow-x-auto px-4 pb-3 xl:hidden" aria-label="Tools">
           {BENCH.map((b) => (
             <button
               key={b.to}

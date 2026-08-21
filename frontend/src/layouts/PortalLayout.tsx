@@ -1,7 +1,6 @@
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
-import { motion } from 'framer-motion';
-import { ArrowLeft, Menu, X, Home, Cpu, Map, BookOpen, Boxes, Wrench, User, ClipboardList, Grid3x3 } from 'lucide-react';
+import { ArrowLeft, Menu, X, Home, Cpu, Map, BookOpen, Boxes, Wrench, User, ClipboardList, FlaskConical, Grid3x3 } from 'lucide-react';
 import { ThemeToggle } from '../components/ThemeToggle';
 import { BrandMark, BrandPortalLink } from '../components/Brand';
 import { useColorScheme } from '../hooks/useColorScheme';
@@ -10,10 +9,11 @@ import { getRouteMeta } from '../lib/routeMeta';
 // Course-module routes that ship their own drawer nav + get a "back to portal" control.
 const MODULE_ROUTE = /^\/(module|dsd|basic-electronics|sandbox)(\/|$)/;
 
-// Subset of MODULE_ROUTE where the corner logo is ALSO draggable (not /sandbox/,
-// not asked for). Deliberately narrower than MODULE_ROUTE: this only decides
-// whether the logo can be dragged, not whether it's shown at all.
-const DRAGGABLE_LOGO_ROUTE = /^\/(module|dsd|basic-electronics)(\/|$)/;
+// The "Your paths" course tracks specifically (module/dsd/basic-electronics) —
+// narrower than MODULE_ROUTE since it excludes /sandbox — used to hide the
+// corner logo button on just those tracks while leaving the back-to-portal
+// arrow in place everywhere isModule is true.
+const COURSE_TRACK_ROUTE = /^\/(module|dsd|basic-electronics)(\/|$)/;
 
 // Routes whose page already renders its OWN top bar (a back/exit button and/or
 // title, sometimes a theme toggle). On these the fixed floating nav cluster
@@ -21,7 +21,7 @@ const DRAGGABLE_LOGO_ROUTE = /^\/(module|dsd|basic-electronics)(\/|$)/;
 // so we suppress the floating nav and let the page's own bar be the chrome.
 // (Every route here was verified to ship its own back/exit navigation.)
 const INTEGRATED_TOOLBAR_ROUTES = new Set<string>([
-    '/portal', '/verilog-playground', '/profile', '/settings',
+    '/portal', '/verilog-playground', '/verilog-sandbox', '/profile', '/settings',
     '/hw-leetcode', '/signal-playground', '/boss-arena', '/skill-tree',
     '/fsm', '/logic-studio', '/community', '/gatekeeper-game',
     '/portfolio',
@@ -47,6 +47,7 @@ const NAV_GROUPS: { heading: string; links: { to: string; label: string; icon: t
         heading: 'Practice',
         links: [
             { to: '/verilog-playground', label: 'Verilog Judge', icon: Cpu },
+            { to: '/verilog-sandbox', label: 'Verilog Sandbox', icon: FlaskConical },
             { to: '/interview-prep', label: 'Interview Prep', icon: ClipboardList },
             { to: '/workbench', label: 'Circuit Workbench', icon: Wrench },
             { to: '/kmap-lab', label: 'K-Map Lab', icon: Grid3x3 },
@@ -68,17 +69,9 @@ export const PortalLayout = () => {
 
     const [menuOpen, setMenuOpen] = useState(false);
     const clusterRef = useRef<HTMLDivElement>(null);
-    // Whole-page bounds so the draggable logo can be slid clear of overlapping
-    // content but never dragged off-screen (same "can't be lost" constraint
-    // MascotWidget uses for its own drag boundary).
-    const pageRef = useRef<HTMLDivElement>(null);
-    // Set only by a genuine drag (see onDragEnd below), so the click that
-    // fires on release can be told apart from a plain tap/click.
-    const logoDraggedRef = useRef(false);
 
     const isSpecialPage = location.pathname === '/career-roadmap';
     const isModule = MODULE_ROUTE.test(location.pathname);
-    const isDraggableLogoRoute = DRAGGABLE_LOGO_ROUTE.test(location.pathname);
     // Pages whose own UI already ships a top bar, so the floating nav would
     // duplicate/overlap their controls (see INTEGRATED_TOOLBAR_ROUTES). The
     // /debug-mission/:id detail pages carry their own "Back to Studio" bar too.
@@ -106,7 +99,7 @@ export const PortalLayout = () => {
     }, [menuOpen]);
 
     return (
-        <div ref={pageRef} className="w-full min-h-screen relative" style={{ background: 'transparent' }}>
+        <div className="w-full min-h-screen relative" style={{ background: 'transparent' }}>
             {/* Persistent nav cluster — top-left on browse/tool pages. Course modules ship
                 their own drawer + back button, and the portal hub / Verilog bench have their
                 own headers, so the cluster is hidden there to avoid duplicates/overlap. */}
@@ -187,46 +180,9 @@ export const PortalLayout = () => {
             {/* Logo — course modules ship their own inline top bar (no fixed-position
                 elements of their own), and the back arrow below already owns the
                 opposite corner, so top-left is free for the brand mark here.
-                On /module/, /dsd/ and /basic-electronics/ specifically, it's also
-                draggable (some module layouts put their own controls near this
-                corner) — everywhere else it's the same plain fixed link as before. */}
-            {isModule && (isDraggableLogoRoute ? (
-                <motion.div
-                    drag
-                    dragConstraints={pageRef}
-                    dragElastic={0.15}
-                    dragMomentum={false}
-                    onDragEnd={(_e, info) => {
-                        // Real displacement -> a drag, not a tap; suppress the
-                        // click that would otherwise fire on release.
-                        logoDraggedRef.current = Math.hypot(info.offset.x, info.offset.y) > 5;
-                    }}
-                    onClickCapture={(e) => {
-                        if (logoDraggedRef.current) {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            logoDraggedRef.current = false;
-                        }
-                    }}
-                    whileDrag={{ scale: 1.05 }}
-                    className="fixed top-4 left-4 z-[410] cursor-grab touch-none select-none active:cursor-grabbing"
-                    aria-label="Drag to reposition the logo; click to go to Portal"
-                >
-                    <Link
-                        to="/portal"
-                        aria-label="BitForBytes — go to Portal"
-                        title="Drag to move, click to go to Portal"
-                        className="group inline-flex h-10 w-10 items-center justify-center rounded-md border-2 transition-transform duration-150 hover:-translate-y-0.5 active:translate-y-0"
-                        style={{
-                            background: isLight ? '#FFFFFF' : 'rgba(255,255,255,0.06)',
-                            borderColor: isLight ? '#1B1436' : 'rgba(255,255,255,0.22)',
-                            boxShadow: isLight ? '4px 4px 0 0 #1B1436' : '4px 4px 0 0 rgba(0,0,0,0.5)',
-                        }}
-                    >
-                        <BrandMark size={20} />
-                    </Link>
-                </motion.div>
-            ) : (
+                Hidden on the "Your paths" course tracks (module/dsd/basic-electronics),
+                which don't want this corner button at all. */}
+            {isModule && !COURSE_TRACK_ROUTE.test(location.pathname) && (
                 <Link
                     to="/portal"
                     aria-label="BitForBytes — go to Portal"
@@ -240,7 +196,7 @@ export const PortalLayout = () => {
                 >
                     <BrandMark size={20} />
                 </Link>
-            ))}
+            )}
 
             {/* Back to portal — shown on every course module so you can always get home. */}
             {isModule && (
