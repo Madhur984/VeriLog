@@ -8,8 +8,10 @@
  *
  * One honest limitation, surfaced in the UI rather than buried here. The engine
  * is Yosys, which synthesizes hardware — it does not interpret behavioural
- * Verilog, so `initial`, `#delay`, `$display` and `$finish` are discarded rather
- * than executed. A testbench here is therefore a *synthesizable* one: a module
+ * Verilog, so `initial`, `#delay` and `$display` are discarded rather than
+ * executed. `$finish` and `$stop` are worse than ignored: Yosys runs them during
+ * elaboration and aborts, so a testbench containing one produces no netlist at
+ * all. A testbench here is therefore a *synthesizable* one: a module
  * that instantiates your design, drives it from clocked logic, and exposes what
  * you want to watch as output ports. That is a real style used for on-chip BFMs
  * and self-test logic, and it is the style that works in a browser with no
@@ -21,22 +23,25 @@ import Editor, { type Monaco } from '@monaco-editor/react';
 import {
   ArrowLeft, Play, Loader2, Sun, Moon, RotateCcw, FileCode2, FlaskConical,
   Activity, Terminal, AlertTriangle, Info, Share2, Check, Cpu,
-  PanelRight, PanelBottom, ChevronDown, ChevronUp, Layers, Network,
+  PanelRight, PanelBottom, ChevronDown, ChevronUp, Layers, Network, HelpCircle,
 } from 'lucide-react';
 import { useColorScheme } from '../hooks/useColorScheme';
 import { synthesize, type SynthProgress } from '../engine/verilog/yosysClient';
-import { buildFromNetlist, runTrace, type PortInfo, type Trace } from '../engine/verilog/simRunner';
-import { buildSeqVectors, buildVectors, type StimPort } from '../engine/verilog/stimulus';
-import { analyzeNetlist, type SynthStats } from '../engine/verilog/netlistStats';
-import type { Diag } from '../engine/verilog/diagnostics';
+import { type Trace } from '../engine/verilog/simRunner';
+import { type SynthStats } from '../engine/verilog/netlistStats';
+import { explainDiagnostic, type Diag } from '../engine/verilog/diagnostics';
+import { buildSandboxSource, DESIGN_FILE, TB_FILE } from '../engine/verilog/sandboxSource';
+import { runSandbox } from '../engine/verilog/sandboxRun';
 import { WaveformViewer } from '../components/verilog/WaveformViewer';
-import { SynthSchematicView } from '../components/verilog/SynthSchematicView';
+import { NetlistSchematicView } from '../components/verilog/NetlistSchematicView';
+import { SandboxTour, SANDBOX_TOUR_STEPS } from '../components/verilog/SandboxTour';
 
 const DESIGN_KEY = 'vsbx_design_v2';
 const TB_KEY = 'vsbx_tb_v2';
 const CYCLES_KEY = 'vsbx_cycles_v1';
 const DOCK_KEY = 'vsbx_dock_v1';
 const INTRO_KEY = 'vsbx_intro_v1';
+const TOUR_KEY = 'vsbx_tour_v1';
 
 /**
  * The starters follow the `top` / `tb` convention the intro states, so the rule
@@ -86,19 +91,6 @@ module tb(
 endmodule
 `;
 
-/** Ports whose names read like a clock, in the order engineers write them. */
-const CLOCK_NAMES = /^(clk|clock|clk_i|i_clk|clki|sysclk|clk_in)$/i;
-const RESET_NAMES = /^(rst|reset|rst_n|resetn|reset_n|nrst|n_rst|arst|arst_n|rst_i|i_rst)$/i;
-
-const inferClock = (ports: PortInfo[]): string | undefined =>
-  ports.find((p) => p.direction === 'input' && p.width === 1 && CLOCK_NAMES.test(p.name))?.name;
-
-const inferReset = (ports: PortInfo[]): { name: string; activeLow: boolean } | undefined => {
-  const p = ports.find((x) => x.direction === 'input' && x.width === 1 && RESET_NAMES.test(x.name));
-  if (!p) return undefined;
-  return { name: p.name, activeLow: /_n$/i.test(p.name) || /^n_?rst/i.test(p.name) };
-};
-
 /** Register the Verilog language once, so both editors highlight identically. */
 function registerVerilog(monaco: Monaco) {
   if (monaco.languages.getLanguages().some((l: { id: string }) => l.id === 'verilog')) return;
@@ -146,17 +138,40 @@ export const VerilogSandbox: React.FC = () => {
     (localStorage.getItem(DOCK_KEY) as Dock) === 'bottom' ? 'bottom' : 'right');
   const [introOpen, setIntroOpen] = useState(() => localStorage.getItem(INTRO_KEY) !== 'closed');
 
+  // First visit gets the walkthrough unprompted; every later visit only on
+  // request. A read that throws (Safari private mode, storage disabled) must not
+  // strand the page, and showing the tour again is the harmless way to fail.
+  const [tourOpen, setTourOpen] = useState(() => {
+    try { return localStorage.getItem(TOUR_KEY) !== 'done'; } catch { return false; }
+  });
+
+  const closeTour = useCallback((completed: boolean) => {
+    setTourOpen(false);
+    // Skipping counts as done too — re-showing a tour someone dismissed is how a
+    // helpful thing turns into an annoying one. The ? button brings it back.
+    void completed;
+    try { localStorage.setItem(TOUR_KEY, 'done'); } catch { /* quota */ }
+  }, []);
+
   const [running, setRunning] = useState(false);
   const [progress, setProgress] = useState<SynthProgress | null>(null);
   const [trace, setTrace] = useState<Trace | null>(null);
   const [stats, setStats] = useState<SynthStats | null>(null);
+  // Kept so the Schematic tab can render from the run's netlist instead of
+  // synthesizing the same source a second time.
+  const [netlistJson, setNetlistJson] = useState<string | null>(null);
   const [log, setLog] = useState('');
   const [diags, setDiags] = useState<Diag[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [meta, setMeta] = useState<{ top: string; clock?: string; reset?: string } | null>(null);
+  const [meta, setMeta] = useState<
+    { top: string; clock?: string; reset?: string; soloDesign?: boolean } | null>(null);
   const [outTab, setOutTab] = useState<OutTab>('wave');
   const [copied, setCopied] = useState(false);
   const runSeq = useRef(0);
+  const monacoRef = useRef<Monaco | null>(null);
+  const editorRef = useRef<{ revealLineInCenter: (n: number) => void;
+                             setPosition: (p: { lineNumber: number; column: number }) => void;
+                             focus: () => void } | null>(null);
 
   useEffect(() => { try { localStorage.setItem(DESIGN_KEY, design); } catch { /* quota */ } }, [design]);
   useEffect(() => { try { localStorage.setItem(TB_KEY, tb); } catch { /* quota */ } }, [tb]);
@@ -166,7 +181,17 @@ export const VerilogSandbox: React.FC = () => {
     try { localStorage.setItem(INTRO_KEY, introOpen ? 'open' : 'closed'); } catch { /* quota */ }
   }, [introOpen]);
 
-  const combined = useMemo(() => `${design}\n\n${tb.trim() ? tb : ''}`, [design, tb]);
+  // `\`line` directives make Yosys report errors against design.v / testbench.v
+  // by name instead of against the concatenated buffer it actually parses.
+  const combined = useMemo(() => buildSandboxSource(design, tb), [design, tb]);
+
+  // The schematic inspector resolves a cell's `src` back to the editor it came
+  // from. Keyed by the same file names the `\`line` directives establish, so a
+  // Yosys location and an editor buffer always refer to the same thing.
+  const schematicSources = useMemo(
+    () => [{ file: DESIGN_FILE, text: design }, { file: TB_FILE, text: tb }],
+    [design, tb],
+  );
 
   const run = useCallback(async () => {
     const seq = ++runSeq.current;
@@ -174,58 +199,41 @@ export const VerilogSandbox: React.FC = () => {
     setError(null);
     setProgress(null);
     try {
-      // Flatten so the testbench's DUT instance dissolves into cells the
-      // simulator can actually evaluate.
-      const r = await synthesize(combined, (p) => {
-        if (runSeq.current === seq) setProgress(p);
-      }, { flatten: true });
+      const progress = (p: SynthProgress) => { if (runSeq.current === seq) setProgress(p); };
+      // Flatten so a testbench's DUT instance dissolves into cells the simulator
+      // can actually evaluate.
+      const res = await runSandbox(design, tb, cycles, (src) =>
+        synthesize(src, progress, { flatten: true }));
       if (runSeq.current !== seq) return;
 
-      setDiags(r.diagnostics);
-      if (!r.ok) {
-        setError(r.error);
-        setLog(r.error);
+      setDiags(res.diags);
+      if (!res.ok) {
+        setError(res.error ?? 'Synthesis failed.');
+        setLog(res.error ?? '');
         setStats(null);
         setOutTab('output');
         return;
       }
 
-      setStats(analyzeNetlist(r.json));
-
-      const built = buildFromNetlist(r.json);
-      if (!built.ok) { setError(built.error); setOutTab('output'); return; }
-
-      const clock = inferClock(built.ports);
-      const reset = inferReset(built.ports);
-      setMeta({ top: built.moduleName, clock, reset: reset?.name });
-
-      const drivable: StimPort[] = built.ports
-        .filter((p) => p.direction === 'input' && p.name !== clock)
-        .map((p) => ({ name: p.name, width: p.width }));
-
-      // A self-driving testbench has no inputs beyond the clock; give it empty
-      // vectors so it still gets `cycles` clock edges.
-      const vectors = clock
-        ? (drivable.length
-          ? buildSeqVectors(drivable, { cycles, reset, seed: 1 })
-          : Array.from({ length: cycles }, () => ({})))
-        : buildVectors(drivable, { mode: drivable.length ? 'exhaustive' : 'vectors', vectors: 1 });
-
-      const t = runTrace(built.sim, vectors, { clock });
-      setTrace(t);
+      setStats(res.stats ?? null);
+      setNetlistJson(res.json ?? null);
+      setMeta({ top: res.top!, clock: res.clock, reset: res.reset, soloDesign: res.soloDesign });
+      setTrace(res.trace!);
       setOutTab('wave');
 
-      const unsupported = built.sim.unsupported;
+      const t = res.trace!;
+      const driven = t.signals.filter((s) => s.role === 'input');
       setLog([
-        `top module   : ${built.moduleName}`,
-        `clock        : ${clock ?? '(none — combinational)'}`,
-        `reset        : ${reset ? `${reset.name}${reset.activeLow ? ' (active low)' : ''}` : '(none)'}`,
-        `driven inputs: ${drivable.length ? drivable.map((d) => `${d.name}[${d.width}]`).join(', ') : '(self-driving)'}`,
+        res.soloDesign ? 'source       : design.v only (testbench.v skipped — see above)' : '',
+        `top module   : ${res.top}`,
+        `clock        : ${res.clock ?? '(none — combinational)'}`,
+        `reset        : ${res.reset ?? '(none)'}`,
+        `driven inputs: ${driven.length ? driven.map((d) => d.name).join(', ') : '(self-driving)'}`,
         `cycles       : ${t.cycles}`,
         `signals      : ${t.signals.length}`,
-        unsupported.length ? `\nunsupported cells: ${unsupported.join(', ')}` : '',
-        r.diagnostics.length
-          ? `\n${r.diagnostics.map((d) => `${d.severity.toUpperCase()}${d.line ? ` line ${d.line}` : ''}: ${d.message}`).join('\n')}`
+        res.unsupported?.length ? `\nunsupported cells: ${res.unsupported.join(', ')}` : '',
+        res.diags.length
+          ? `\n${res.diags.map((d) => `${d.severity.toUpperCase()}${d.line ? ` line ${d.line}` : ''}: ${d.message}`).join('\n')}`
           : '',
       ].filter(Boolean).join('\n'));
     } catch (e) {
@@ -234,7 +242,7 @@ export const VerilogSandbox: React.FC = () => {
     } finally {
       if (runSeq.current === seq) { setRunning(false); setProgress(null); }
     }
-  }, [combined, cycles]);
+  }, [combined, cycles, design, tb]);
 
   // Ctrl/⌘+Enter runs; Ctrl+PgUp/PgDn cycles the editor tabs.
   useEffect(() => {
@@ -248,6 +256,56 @@ export const VerilogSandbox: React.FC = () => {
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [run]);
+
+  /**
+   * Push diagnostics into the editor as squiggles, the way a real IDE does.
+   * Markers are attached per model URI, so a diagnostic against testbench.v
+   * marks that file even while design.v is on screen — switch tabs and the
+   * squiggle is already there.
+   */
+  useEffect(() => {
+    const monaco = monacoRef.current;
+    if (!monaco) return;
+    const SEV = {
+      error: monaco.MarkerSeverity.Error,
+      warning: monaco.MarkerSeverity.Warning,
+      note: monaco.MarkerSeverity.Info,
+    } as const;
+
+    for (const model of monaco.editor.getModels()) {
+      const name = model.uri.path.replace(/^\//, '');
+      if (name !== DESIGN_FILE && name !== TB_FILE) continue;
+      const mine = diags.filter((d) => (d.file ?? DESIGN_FILE) === name && d.line);
+      monaco.editor.setModelMarkers(model, 'yosys', mine.map((d) => {
+        const line = Math.min(Math.max(1, d.line!), model.getLineCount());
+        const ex = explainDiagnostic(d);
+        return {
+          severity: SEV[d.severity],
+          startLineNumber: line,
+          endLineNumber: Math.min(d.endLine ?? line, model.getLineCount()),
+          // Without a column span, underline the whole line rather than a
+          // single character — a one-char squiggle is easy to miss entirely.
+          startColumn: d.col ?? 1,
+          endColumn: d.endCol ?? model.getLineMaxColumn(line),
+          message: ex ? `${d.message}\n\n${ex.cause}\n→ ${ex.fix}` : d.message,
+          source: 'yosys',
+        };
+      }));
+    }
+  }, [diags]);
+
+  /** Jump the editor to a diagnostic's location, switching files if needed. */
+  const goToDiag = useCallback((d: Diag) => {
+    const target = (d.file ?? DESIGN_FILE) === TB_FILE ? 'tb' : 'design';
+    setFile(target);
+    if (!d.line) return;
+    // Let the editor remount on the new file before moving the cursor.
+    setTimeout(() => {
+      editorRef.current?.revealLineInCenter(d.line!);
+      editorRef.current?.setPosition({ lineNumber: d.line!, column: d.col ?? 1 });
+      editorRef.current?.focus();
+    }, 60);
+  }, []);
 
   const resetAll = () => {
     setDesign(STARTER_DESIGN);
@@ -303,10 +361,18 @@ export const VerilogSandbox: React.FC = () => {
         <div className="ml-auto flex items-center gap-1.5">
           {/* Dock side — the waveform pane moves right or bottom (see §Dock). */}
           <button onClick={() => setDock((d) => (d === 'right' ? 'bottom' : 'right'))}
+                  data-tour="dock"
                   title={dock === 'right' ? 'Dock output to the bottom' : 'Dock output to the right'}
                   aria-label="Move the output dock"
                   className={iconBtn} style={{ color: 'var(--vj-text-dim)' }}>
             {dock === 'right' ? <PanelRight className="h-4 w-4" /> : <PanelBottom className="h-4 w-4" />}
+          </button>
+          <button onClick={() => setTourOpen(true)}
+                  data-tour="help"
+                  title="Replay the sandbox tour"
+                  aria-label="Replay the sandbox tour"
+                  className={iconBtn} style={{ color: 'var(--vj-text-dim)' }}>
+            <HelpCircle className="h-4 w-4" />
           </button>
           <button onClick={share} title="Copy both files to the clipboard"
                   className={iconBtn} style={{ color: copied ? 'var(--vj-pass)' : 'var(--vj-text-dim)' }}>
@@ -320,7 +386,7 @@ export const VerilogSandbox: React.FC = () => {
                   className={iconBtn} style={{ color: 'var(--vj-text-dim)' }}>
             {isLight ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
           </button>
-          <button onClick={run} disabled={running}
+          <button onClick={run} disabled={running} data-tour="run"
                   className="ml-1 flex h-9 items-center gap-2 rounded-lg px-4 text-[13px] font-bold transition-transform hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-60"
                   style={{ background: 'var(--vj-wave)', color: 'var(--vj-surface-0)' }}>
             {running ? <Loader2 className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4" />}
@@ -338,7 +404,7 @@ export const VerilogSandbox: React.FC = () => {
         <section className={`flex min-h-0 flex-col border-b ${
           dock === 'right' ? 'flex-1 lg:w-1/2 lg:border-b-0 lg:border-r' : 'flex-1'}`}
                  style={{ borderColor: 'var(--vj-border)' }}>
-          <div className="flex shrink-0 items-center border-b"
+          <div className="flex shrink-0 items-center border-b" data-tour="editor-tabs"
                style={{ borderColor: 'var(--vj-border)', background: 'var(--vj-surface-1)' }}>
             <button onClick={() => setFile('design')} className={tabBtn} style={tabStyle(file === 'design')}>
               <FileCode2 className="h-3.5 w-3.5" /> design.v
@@ -352,10 +418,17 @@ export const VerilogSandbox: React.FC = () => {
             <Editor
               key={file}
               language="verilog"
-              path={file === 'design' ? 'design.v' : 'testbench.v'}
+              path={file === 'design' ? DESIGN_FILE : TB_FILE}
               value={file === 'design' ? design : tb}
               onChange={(v) => (file === 'design' ? setDesign(v ?? '') : setTb(v ?? ''))}
               beforeMount={registerVerilog}
+              onMount={(ed, monaco) => {
+                editorRef.current = ed as unknown as typeof editorRef.current;
+                monacoRef.current = monaco;
+                // Markers may have been computed while this model did not exist
+                // yet (the editor remounts per tab); re-apply on mount.
+                setDiags((d) => [...d]);
+              }}
               theme={isLight ? 'vs' : 'vs-dark'}
               options={{
                 fontSize: 13,
@@ -375,7 +448,7 @@ export const VerilogSandbox: React.FC = () => {
         <section className={`flex min-h-0 flex-col ${
           dock === 'right' ? 'flex-1 lg:w-1/2' : 'h-[45vh] shrink-0 border-t'}`}
                  style={dock === 'bottom' ? { borderColor: 'var(--vj-border)' } : undefined}>
-          <div className="flex shrink-0 items-center border-b"
+          <div className="flex shrink-0 items-center border-b" data-tour="out-tabs"
                style={{ borderColor: 'var(--vj-border)', background: 'var(--vj-surface-1)' }}>
             <button onClick={() => setOutTab('wave')} className={tabBtn} style={tabStyle(outTab === 'wave')}>
               <Activity className="h-3.5 w-3.5" /> Waveform
@@ -415,7 +488,20 @@ export const VerilogSandbox: React.FC = () => {
             )}
 
             {outTab === 'schematic' && (
-              <SynthSchematicView code={combined} isLight={isLight} flatten />
+              // Pass the netlist the run already produced: re-synthesizing here
+              // would be a second 54 MB-engine round trip for an identical result.
+              // `combined` is the fallback for viewing the circuit before a run.
+              <NetlistSchematicView
+                netlistJson={netlistJson ?? undefined}
+                code={netlistJson ? undefined : combined}
+                isLight={isLight}
+                flatten
+                trace={trace}
+                // Double-clicking a cell shows the lines that produced it. The
+                // file names must match what Yosys reports in `src`, which the
+                // `\`line` directives in buildSandboxSource pin to these two.
+                sources={schematicSources}
+              />
             )}
 
             {outTab === 'synth' && (
@@ -423,7 +509,7 @@ export const VerilogSandbox: React.FC = () => {
             )}
 
             {outTab === 'output' && (
-              <OutputPanel error={error} log={log} />
+              <OutputPanel error={error} log={log} diags={diags} onGoTo={goToDiag} />
             )}
           </div>
         </section>
@@ -437,7 +523,7 @@ export const VerilogSandbox: React.FC = () => {
       */}
       <footer className="flex h-10 shrink-0 items-center gap-x-4 overflow-hidden border-t px-3 font-mono text-[11px]"
               style={{ borderColor: 'var(--vj-border)', background: 'var(--vj-surface-1)', color: 'var(--vj-text-dim)' }}>
-        <label className="flex items-center gap-1.5">
+        <label className="flex items-center gap-1.5" data-tour="cycles">
           cycles
           <input
             type="number" min={1} max={512} value={cycles}
@@ -451,6 +537,12 @@ export const VerilogSandbox: React.FC = () => {
         {meta && (
           <>
             <span className="hidden shrink-0 sm:inline">top · <span style={{ color: 'var(--vj-text)' }}>{meta.top}</span></span>
+            {meta.soloDesign && (
+              <span className="shrink-0 rounded px-1.5" title="testbench.v could not be built with this design, so it was skipped"
+                    style={{ background: 'var(--vj-warn-bg)', color: 'var(--vj-warn)' }}>
+                design only
+              </span>
+            )}
             {meta.clock && <span className="hidden md:inline">clk · {meta.clock}</span>}
             {meta.reset && <span className="hidden md:inline">rst · {meta.reset}</span>}
           </>
@@ -469,6 +561,8 @@ export const VerilogSandbox: React.FC = () => {
           <span className="hidden sm:inline"><kbd>Ctrl</kbd>+<kbd>Enter</kbd> run</span>
         </span>
       </footer>
+
+      {tourOpen && <SandboxTour steps={SANDBOX_TOUR_STEPS} onClose={closeTour} />}
     </div>
   );
 };
@@ -478,7 +572,8 @@ export const VerilogSandbox: React.FC = () => {
 const Intro: React.FC<{
   open: boolean; onToggle: () => void; navigate: (to: string) => void;
 }> = ({ open, onToggle, navigate }) => (
-  <div className="shrink-0 border-b" style={{ borderColor: 'var(--vj-border)', background: 'var(--vj-surface-1)' }}>
+  <div className="shrink-0 border-b" data-tour="intro"
+       style={{ borderColor: 'var(--vj-border)', background: 'var(--vj-surface-1)' }}>
     <button onClick={onToggle}
             className="flex w-full items-center gap-2 px-3 py-2 text-left lg:px-4"
             aria-expanded={open}>
@@ -623,15 +718,85 @@ const Stat: React.FC<{ label: string; value: number; unit?: string }> = ({ label
   </div>
 );
 
-const OutputPanel: React.FC<{ error: string | null; log: string }> = ({ error, log }) => (
+/**
+ * One diagnostic, rendered the way an IDE's problem list renders it: severity,
+ * file and line you can click, the engine's own words, and — where we can say
+ * something useful — what it actually means and what to do.
+ */
+const DiagRow: React.FC<{ diag: Diag; onGoTo: (d: Diag) => void }> = ({ diag, onGoTo }) => {
+  const ex = explainDiagnostic(diag);
+  const tone = diag.severity === 'error'
+    ? { fg: 'var(--vj-fail)', bg: 'var(--vj-fail-bg)', border: 'var(--vj-fail)' }
+    : diag.severity === 'warning'
+      ? { fg: 'var(--vj-warn)', bg: 'var(--vj-warn-bg)', border: 'var(--vj-warn)' }
+      : { fg: 'var(--vj-info)', bg: 'transparent', border: 'var(--vj-border)' };
+
+  return (
+    <div className="rounded-lg border p-2.5 text-[12px]"
+         style={{ borderColor: tone.border, background: tone.bg }}>
+      <div className="flex items-start gap-2">
+        <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" style={{ color: tone.fg }} />
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-baseline gap-x-2">
+            <span className="font-mono text-[10px] font-bold uppercase tracking-wider"
+                  style={{ color: tone.fg }}>{diag.severity}</span>
+            {diag.line && (
+              <button
+                onClick={() => onGoTo(diag)}
+                className="font-mono text-[11px] underline-offset-2 hover:underline"
+                style={{ color: 'var(--vj-wave)' }}
+                title="Go to this line"
+              >
+                {diag.file ?? DESIGN_FILE}:{diag.line}
+              </button>
+            )}
+          </div>
+          <p className="mt-0.5 whitespace-pre-wrap font-mono text-[11.5px]"
+             style={{ color: 'var(--vj-text)' }}>{diag.message}</p>
+          {ex && (
+            <div className="mt-1.5 border-t pt-1.5" style={{ borderColor: 'var(--vj-border)' }}>
+              <p style={{ color: 'var(--vj-text-sub)' }}>{ex.cause}</p>
+              <p className="mt-0.5" style={{ color: 'var(--vj-text-sub)' }}>
+                <strong style={{ color: 'var(--vj-text)' }}>Fix:</strong> {ex.fix}
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const OutputPanel: React.FC<{
+  error: string | null; log: string; diags: Diag[]; onGoTo: (d: Diag) => void;
+}> = ({ error, log, diags, onGoTo }) => {
+  const problems = diags.filter((d) => d.severity !== 'note');
+  const notes = diags.filter((d) => d.severity === 'note');
+  // A hard failure with no parsed diagnostic still has to say something.
+  const orphanError = error && !problems.some((d) => d.severity === 'error');
+
+  return (
   <div className="h-full overflow-auto p-3">
-    {error && (
+    {orphanError && (
       <div className="mb-3 flex items-start gap-2 rounded-lg border p-3 text-[12px]"
            style={{ borderColor: 'var(--vj-fail)', background: 'var(--vj-fail-bg)', color: 'var(--vj-fail)' }}>
         <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
         <span className="whitespace-pre-wrap">{error}</span>
       </div>
     )}
+
+    {problems.length > 0 && (
+      <div className="mb-3 flex flex-col gap-2">
+        {problems.map((d, i) => <DiagRow key={`${d.file}${d.line}${i}`} diag={d} onGoTo={onGoTo} />)}
+      </div>
+    )}
+
+    {notes.length > 0 && (
+      <div className="mb-3 flex flex-col gap-2">
+        {notes.map((d, i) => <DiagRow key={`n${d.file}${d.line}${i}`} diag={d} onGoTo={onGoTo} />)}
+      </div>
+    )}
+
     <pre className="whitespace-pre-wrap font-mono text-[11.5px] leading-relaxed"
          style={{ color: 'var(--vj-text-sub)' }}>
       {log || 'Run to see the elaborated top module, its clock and reset, and any Yosys warnings.'}
@@ -642,13 +807,15 @@ const OutputPanel: React.FC<{ error: string | null; log: string }> = ({ error, l
       <Info className="mt-0.5 h-3.5 w-3.5 shrink-0" style={{ color: 'var(--vj-info)' }} />
       <span>
         The engine is Yosys, which synthesizes hardware rather than interpreting it.
-        {' '}<Code>initial</Code>, <Code>#delay</Code>, <Code>$display</Code> and <Code>$finish</Code>{' '}
-        are discarded, so a testbench here drives the design from clocked logic and exposes
-        what you want to watch as <strong>output ports</strong> — every output becomes a waveform row.
+        {' '}<Code>initial</Code>, <Code>#delay</Code> and <Code>$display</Code> are discarded;
+        {' '}<Code>$finish</Code> and <Code>$stop</Code> stop synthesis outright. So a testbench
+        here drives the design from clocked logic and exposes what you want to watch as
+        {' '}<strong>output ports</strong> — every output becomes a waveform row.
       </span>
     </div>
   </div>
-);
+  );
+};
 
 const EmptyState: React.FC<{ error: string | null }> = ({ error }) => (
   <div className="flex h-full flex-col items-center justify-center gap-3 p-8 text-center">

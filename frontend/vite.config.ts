@@ -167,6 +167,29 @@ export default defineConfig({
     resolve: {
         alias: {
             "@": path.resolve(__dirname, "./src"),
+            // netlistsvg does `require('elkjs')`, whose main entry (lib/main.js)
+            // is the NODE build: it calls require.resolve('webworker-threads')
+            // and falls back to a CommonJS fake worker, neither of which a
+            // browser bundle can satisfy. elk.bundled.js is the self-contained
+            // browser build — it constructs without a workerUrl and carries the
+            // layout engine inline, which is exactly what the schematic needs.
+            // Without this alias the schematic panel fails at import time.
+            elkjs: path.resolve(__dirname, "./node_modules/elkjs/lib/elk.bundled.js"),
+            // netlistsvg does `require('lodash')`. lodash ships a UMD wrapper
+            // that checks for an AMD loader FIRST:
+            //
+            //   if (typeof define == 'function' && define.amd) root._ = _;
+            //   else if (freeModule) freeModule.exports = _;
+            //
+            // Monaco installs a global `define` with `.amd`, so on any page
+            // carrying an editor lodash hands itself to Monaco's loader and
+            // `module.exports` stays `{}` — netlistsvg then dies on
+            // `_.mapValues is not a function`. It only reproduces in the
+            // browser, which is why the Node tests never saw it.
+            //
+            // lodash-es is pure ESM with no UMD branch, so the interop is
+            // unambiguous. Same 4.17.21 implementation, same function surface.
+            lodash: "lodash-es",
         },
     },
     // The Yosys WASM engine is loaded by static URL from public/yowasp (see
@@ -175,6 +198,13 @@ export default defineConfig({
     // transitive code references the bare specifier.
     optimizeDeps: {
         exclude: ['@yowasp/yosys', '@yowasp/runtime'],
+        // netlistsvg is CommonJS and does `require('lodash')` / `require('onml')`.
+        // Left to on-demand discovery, Vite hands it an ESM namespace object whose
+        // default export is not lodash itself, and the schematic dies on
+        // `_.mapValues is not a function`. Naming them here forces the CJS->ESM
+        // interop shim to be built up front, with lodash resolved the way
+        // netlistsvg expects.
+        include: ['netlistsvg', 'lodash-es', 'onml', 'clone'],
     },
     worker: {
         format: 'es',
@@ -214,6 +244,17 @@ export default defineConfig({
                     if (f.includes('/pdfjs-dist/')) return 'vendor-pdfjs';
                     if (f.includes('force-graph') || f.includes('/d3-') || f.includes('/d3/')) return 'vendor-graph';
                     if (f.includes('/dagre/') || f.includes('/graphlib/') || f.includes('@dagrejs')) return 'vendor-dagre';
+                    // lodash-es is shared: netlistsvg requires it, and dagre's
+                    // `require('lodash')` is aliased onto it too. Folding it into
+                    // either consumer's chunk makes vendor-dagre and
+                    // vendor-schematic circular, so it gets its own.
+                    if (f.includes('/lodash-es/')) return 'vendor-lodash';
+                    // netlistsvg + elkjs back the Verilog schematic panel only.
+                    // elk.bundled.js alone is ~1.3 MB; left unpinned it merges into
+                    // vendor-core and every page pays for it on first paint, even
+                    // though the schematic is behind a tab.
+                    if (f.includes('/netlistsvg/') || f.includes('/elkjs/')
+                        || f.includes('/onml/')) return 'vendor-schematic';
                     if (f.includes('/gsap/')) return 'vendor-gsap';
                     if (f.includes('/animejs/')) return 'vendor-anime';
                     if (f.includes('@monaco-editor') || f.includes('monaco-editor')) return 'vendor-monaco';

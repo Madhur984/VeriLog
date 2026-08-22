@@ -5,6 +5,9 @@ export default defineConfig({
     resolve: {
         alias: {
             '@': path.resolve(__dirname, 'src'),
+            // Match vite.config.ts — netlistsvg's `require('elkjs')` must reach
+            // the self-contained browser build, not elkjs's Node entry.
+            elkjs: path.resolve(__dirname, 'node_modules/elkjs/lib/elk.bundled.js'),
         },
     },
     test: {

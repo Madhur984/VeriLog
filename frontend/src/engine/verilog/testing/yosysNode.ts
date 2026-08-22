@@ -17,6 +17,19 @@ export const YOSYS_SCRIPT = [
   'write_json out.json',
 ].join('; ');
 
+/**
+ * The sandbox flattens (see yosys.worker.ts) so a testbench's DUT instance
+ * dissolves into cells the simulator can evaluate. Tests that exercise the
+ * sandbox pipeline must use the same script, or they prove nothing about it.
+ */
+const script = (flatten: boolean): string => [
+  'read_verilog -sv design.v',
+  'hierarchy -auto-top',
+  'prep',
+  ...(flatten ? ['flatten', 'opt -purge'] : []),
+  'write_json out.json',
+].join('; ');
+
 export interface NodeSynthResult {
   json: string;
   log: string;
@@ -44,12 +57,15 @@ function loadEngine(): Promise<RunYosys> {
 }
 
 /** Synthesize one Verilog source to a Yosys JSON netlist. Never throws. */
-export async function synthesizeNode(code: string): Promise<NodeSynthResult> {
+export async function synthesizeNode(
+  code: string,
+  opts: { flatten?: boolean } = {},
+): Promise<NodeSynthResult> {
   let log = '';
   const sink = (b: Uint8Array | null) => { if (b) log += new TextDecoder().decode(b); };
   try {
     const run = await loadEngine();
-    const files = await run(['-p', YOSYS_SCRIPT], { 'design.v': code }, { stdout: sink, stderr: sink });
+    const files = await run(['-p', script(!!opts.flatten)], { 'design.v': code }, { stdout: sink, stderr: sink });
     const out = files['out.json'];
     const json = typeof out === 'string' ? out : new TextDecoder().decode(out ?? new Uint8Array());
     return { json, log, diagnostics: parseDiagnostics(log) };
