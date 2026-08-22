@@ -5,8 +5,8 @@
  * so Drive stays the storage and the site is only the browsing UI. This script
  * walks Drive once and writes small JSON shards that the page fetches lazily:
  *
- *   frontend/public/library/index.json      tiny — collections + counts
- *   frontend/public/library/<shard>.json    one per branch / notes set
+ *   frontend/public/paper-data/index.json      tiny — collections + counts
+ *   frontend/public/paper-data/<shard>.json    one per branch / notes set
  *
  * Re-run whenever the Drive folder changes:  node scripts/build-library-manifest.js
  *
@@ -20,7 +20,7 @@ const KEY = process.env.DRIVE_API_KEY || 'AIzaSyAWGrfCCr7albM3lmCc937gx4uIphbpeK
 const API = 'https://www.googleapis.com/drive/v3/files';
 const FOLDER_MIME = 'application/vnd.google-apps.folder';
 const ROOT = '1fwNZUEgH15xyOT8nuS3kcjAT21pjJpN_';
-const OUT = path.join(__dirname, '..', 'frontend', 'public', 'library');
+const OUT = path.join(__dirname, '..', 'frontend', 'public', 'paper-data');
 
 /* ── Drive ─────────────────────────────────────────────────────────────── */
 async function list(parent) {
@@ -83,35 +83,63 @@ const tidyFolder = (s) => {
 };
 
 /** Strip the exam/session/kind/year tokens that repeat inside a paper title. */
-const cleanTitle = (s) =>
-  s
-    .replace(/\b(ST[\s-]?[12]|ST|PUT|UT)\b/gi, ' ')
-    .replace(/\b(QP|QUES|Sol|Solution)\b/gi, ' ')
-    // No \b after the word: filenames run these straight into the year ("ODD19 20").
-    .replace(/\b(ODD|EVEN|ENEN)\s*\d*/gi, ' ')
-    .replace(/\b(19|20)?\d{2}[\s-]+\d{2}\b\s*$/, ' ')
-    // Paper-set and session markers that survive into the subject name and
-    // otherwise split one subject across several buckets.
-    .replace(/\(\s*set\s*[-–]?\s*[a-d]\s*\)/gi, ' ')
-    .replace(/\bset\s*[-–]?\s*[a-d]\b/gi, ' ')
-    .replace(/\b(sem|semester|session|backlog|carry\s*over)\b/gi, ' ')
-    .replace(/\b(19|20)\d{2}\b/g, ' ') // a stray standalone year
-    // Any subject code still sitting in the title is junk by this point — the
-    // real one was already lifted into its own field. Case-insensitive: plenty
-    // of these filenames are lower-case ("operations research noe 073").
-    .replace(/\b[a-z]{2,4}\s*-?\s*\d{3}[a-z]?\b/gi, ' ')
-    .replace(/\b\d{4,8}\b/g, ' ') // bare numeric codes, e.g. "180001"
-    .replace(/[_-]+/g, ' ')
-    .replace(/\s{2,}/g, ' ')
-    .replace(/^[\s.,&-]+|[\s.,&-]+$/g, '')
-    .trim();
+const cleanTitle = (s) => {
+  // `_` is a word character, so \b never fires between an underscore and a
+  // letter; split them first or every rule below silently misses on an
+  // unsplit "_PUT_SOL_" run.
+  let t = s.replace(/[_-]+/g, ' ');
+
+  // Run to a fixpoint. One pass is not enough: removing a token exposes the
+  // next ("...SOL2016 17" only yields its year once SOL is detached), and a
+  // range like "17 18" leaves a fragment that the same rules then catch.
+  let prev;
+  do {
+    prev = t;
+    t = t
+      // A subject code run straight into an exam marker ("NIT 701ST 2"):
+      // neither regex can see a boundary, so insert one and let the loop
+      // pick both up on the next turn.
+      .replace(/(\d{3})(?=(ST|UT|PUT)\b)/gi, '$1 ')
+      // Markers glued straight onto a year ("SOL2016", "ST2016") — no \b there.
+      .replace(/\b(QP|QUES|SOL|SOLUTION|PUT|UT|ST)(?=\d)/gi, ' ')
+      .replace(/\b(ST[\s-]?[12]|ST|PUT|UT)\b/gi, ' ')
+      .replace(/\b(QP|QUES|Sol|Solution)\b/gi, ' ')
+      // Session marker plus whatever academic year trails it, as ONE unit:
+      // filenames run them together ("ODD19 20"), and a looser `\s*\d*` would
+      // eat only "Even 23" out of "Even 23 24" and orphan the "24".
+      .replace(/\b(ODD|EVEN|ENEN)\s*\d{0,4}[\s-]*\d{0,2}\b/gi, ' ')
+      // An academic-year range anywhere, dash- or space-separated.
+      .replace(/\b(19|20)?\d{2}\s*[-–\s]\s*\d{2,4}\b/g, ' ')
+      // Paper-set and session markers that otherwise split one subject.
+      .replace(/\(\s*set\s*[-–]?\s*[a-d]\s*\)/gi, ' ')
+      .replace(/\bset\s*[-–]?\s*[a-d]\b/gi, ' ')
+      .replace(/\b(sem|semester|session|backlog|carry\s*over)\b/gi, ' ')
+      .replace(/\b(19|20)\d{2}\b/g, ' ')
+      // Any subject code still here is junk — the real one was already lifted
+      // into its own field. Case-insensitive: many filenames are lower-case
+      // ("operations research noe 073").
+      .replace(/\b[a-z]{2,4}\s*-?\s*\d{3}[a-z]?\b/gi, ' ')
+      .replace(/\b\d{4,8}\b/g, ' ')
+      .replace(/\s{2,}/g, ' ')
+      .trim();
+  } while (t !== prev);
+
+  // A dangling 2-digit year fragment left by a half-matched range. Two digits
+  // only, so genuine part numbers ("Basic Electronics 1") survive.
+  while (/\s(19|20)?\d{2}$/.test(t)) t = t.replace(/\s(19|20)?\d{2}$/, '');
+
+  return t.replace(/^[\s.,&-]+|[\s.,&-]+$/g, '').trim();
+};
 
 /** Strip Drive's " (2)" duplicate suffix and the extension. */
 function stem(name) {
   return name.replace(/\.[a-z0-9]+$/i, '').replace(/\s*\(\d+\)\s*$/, '').trim();
 }
 
-const BYTEPAD_PREFIX = /^_src_main_resources_papers_B\.Tech_/i;
+// Programme-agnostic: the same scraper emits B.Tech, MCA and others, and the
+// duplicate marker can land mid-name ("B (2).Tech"), so match only the fixed
+// path head and locate the year positionally afterwards.
+const BYTEPAD_PREFIX = /^_?src[_\s]+main[_\s]+resources[_\s]+papers[_\s]+/i;
 const EXAMS = ['ST-1', 'ST-2', 'ST1', 'ST2', 'PUT', 'UT', 'ST', 'PRE-UNIVERSITY', 'SESSIONAL'];
 
 /** Normalise an academic year to "2021-22" from either "2021-2022" or "21-22". */
@@ -134,13 +162,21 @@ function parsePaper(name) {
   const out = { title: '', code: '', year: '', session: '', exam: '', kind: '' };
 
   if (BYTEPAD_PREFIX.test(s)) {
-    // _src_..._B.Tech_ECE_2023-2024_ODD_ST-1_QUES_<Subject> <CODE> ...
+    // ..._<PROGRAMME>_<BRANCH>_2023-2024_ODD_ST-1_QUES_<Subject> <CODE> ...
+    // The number of leading programme/branch segments varies (B.Tech has one
+    // branch, MCA repeats itself), so anchor on the academic year instead of
+    // counting from the front.
     const parts = s.replace(BYTEPAD_PREFIX, '').split('_');
-    out.year = normYear(parts[1] || '');
-    out.session = (parts[2] || '').toUpperCase();
-    out.exam = (parts[3] || '').toUpperCase();
-    out.kind = /SOL/i.test(parts[4] || '') ? 'Solution' : 'Question paper';
-    var tail = parts.slice(5).join(' ');
+    const yi = parts.findIndex((p) => /^\s*\d{4}\s*-\s*\d{4}\s*$/.test(p));
+    if (yi >= 0) {
+      out.year = normYear(parts[yi].trim());
+      out.session = (parts[yi + 1] || '').toUpperCase();
+      out.exam = (parts[yi + 2] || '').toUpperCase();
+      out.kind = /SOL/i.test(parts[yi + 3] || '') ? 'Solution' : 'Question paper';
+      var tail = parts.slice(yi + 4).join(' ');
+    } else {
+      var tail = parts.join(' ');
+    }
   } else {
     var tail = s;
     const y = s.match(/\b(\d{2}\s*-\s*\d{2}|\d{4}\s*-\s*\d{4})\s*$/);
@@ -345,7 +381,17 @@ const BRANCHES = {
   ME: 'Mechanical',
   CE: 'Civil',
   EN: 'Electrical',
-  'AS&H': 'Applied Science & Humanities',
+  // Drive files these under the department that owns them (Applied Science &
+  // Humanities), but the shelf is really two things a student recognises: the
+  // common first-year syllabus every branch sits, plus the general papers
+  // (constitution, environment, soft skills) that turn up in later years too.
+  'AS&H': '1st Year & General Papers',
+};
+
+// Badge defaults to the Drive folder name; override it wherever that name is
+// not what a student would scan the shelf for.
+const BADGES = {
+  'AS&H': '1ST YEAR',
 };
 
 async function main() {
@@ -381,12 +427,12 @@ async function main() {
     rows.sort((a, b) => (b.y || '').localeCompare(a.y || '') || a.t.localeCompare(b.t));
     console.log(`    ${canon.subjects} subjects after folding ${canon.folded} titles`);
     const id = `qp-${br.name.toLowerCase().replace(/[^a-z0-9]+/g, '')}`;
-    write(id, { id, title: BRANCHES[br.name] || br.name, badge: br.name, kind: 'qp', files: rows });
-    collections.push({ id, title: BRANCHES[br.name] || br.name, badge: br.name, group: 'papers', count: rows.length });
+    write(id, { id, title: BRANCHES[br.name] || br.name, badge: BADGES[br.name] || br.name, kind: 'qp', files: rows });
+    collections.push({ id, title: BRANCHES[br.name] || br.name, badge: BADGES[br.name] || br.name, group: 'papers', count: rows.length });
   }
 
-  /* ---- ABESIT papers (no year in the filenames) ---- */
-  console.log('question papers (ABESIT)…');
+  /* ---- AKTU papers (the q_papers_abesit folder; no year in the filenames) ---- */
+  console.log('question papers (AKTU)…');
   const abesitId = await resolve(['KRITEN', 'q_papers_abesit']);
   let abesit = (await collect(abesitId, [], [])).map((f) => {
     const p = parseAbesit(f.name);
@@ -394,8 +440,8 @@ async function main() {
   });
   abesit = dedupe(abesit, (r) => `${r.t.toLowerCase()}|${r.c}`);
   abesit.sort((a, b) => a.t.localeCompare(b.t));
-  write('qp-abesit', { id: 'qp-abesit', title: 'ABESIT Papers', badge: 'ABESIT', kind: 'qp', files: abesit });
-  collections.push({ id: 'qp-abesit', title: 'ABESIT Papers', badge: 'ABESIT', group: 'papers', count: abesit.length });
+  write('qp-aktu', { id: 'qp-aktu', title: 'AKTU Papers', badge: 'AKTU', kind: 'qp', files: abesit });
+  collections.push({ id: 'qp-aktu', title: 'AKTU Papers', badge: 'AKTU', group: 'papers', count: abesit.length });
 
   /* ---- notes: subject folders under KRITEN/Notes + the kartik sets ----
      Parked for now — flip INCLUDE_NOTES back to true to restore the tab; the

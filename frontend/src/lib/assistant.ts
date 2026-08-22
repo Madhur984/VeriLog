@@ -1,10 +1,21 @@
-// VoltMonkey's client — talks to the Express backend's VoltMonkey router,
-// which proxies the LLM provider server-side (provider keys never touch the
-// browser) and STREAMS tokens back as Server-Sent Events.
-// See backend/src/voltmonkey/router.ts. Relative URL: the vite dev proxy
-// forwards /api/* to the backend (see frontend/vite.config.ts), and in
-// production a reverse proxy fronts both on the same origin.
-const FN_URL = '/api/voltmonkey/chat';
+// VoltMonkey's client — proxies the LLM server-side (provider keys never touch
+// the browser) and STREAMS tokens back as Server-Sent Events.
+//
+// TWO backends serve the same contract:
+//   • supabase/functions/assistant — deployed, and what production uses.
+//   • backend/src/voltmonkey/router.ts — the richer Express port, which also
+//     carries the RAG step, but only runs where a Node process does.
+//
+// bitforbytes.in is static shared hosting: there is no Node process there, so a
+// relative /api/* URL just falls through the SPA rewrite and returns index.html,
+// which the bot reads as a failure and answers with the canned fallback. The
+// Edge Function is therefore the default. Point VITE_VOLTMONKEY_URL at the
+// Express router (e.g. /api/voltmonkey/chat behind the vite dev proxy) to use
+// that one instead — locally, or once a Node host actually fronts /api.
+import { SUPABASE_URL, SUPABASE_ANON_KEY } from './supabase';
+
+const EDGE_URL = `${SUPABASE_URL}/functions/v1/assistant`;
+const FN_URL = import.meta.env.VITE_VOLTMONKEY_URL || EDGE_URL;
 const TIMEOUT_MS = 45_000;
 
 export interface AssistantMsg {
@@ -86,9 +97,19 @@ export async function askAssistant(opts: {
   const timer = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
 
   try {
+    // Supabase gates functions on BOTH headers — apikey alone streams back
+    // empty. The Express router ignores them, so sending them is harmless there.
+    // Typed as Record<string, string> rather than spread from a ternary: the two
+    // branches widen to a union that is not assignable to HeadersInit.
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    if (FN_URL === EDGE_URL) {
+      headers.apikey = SUPABASE_ANON_KEY;
+      headers.Authorization = `Bearer ${SUPABASE_ANON_KEY}`;
+    }
+
     const res = await fetch(FN_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers,
       body: JSON.stringify({ messages: opts.messages, pageContext: opts.pageContext, mode: opts.mode ?? 'chat' }),
       signal: ctrl.signal,
     });

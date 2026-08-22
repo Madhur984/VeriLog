@@ -89,6 +89,24 @@ function ensureCompleteSentence(text: string): string {
   return `${trimmed}.`;
 }
 
+// Buckets a failed attempt into a category so server logs immediately show
+// WHY it failed (quota/rate-limit vs bad key vs the provider just being slow)
+// instead of a bare status code.
+function classify(status: number, detail: string): string {
+  if (status === 0) return /aborted|abortsignal/i.test(detail) ? 'timeout' : 'network';
+  if (status === 429) return 'rate_limited';
+  if (status === 401 || status === 403) return 'invalid_key';
+  if (status === 400) return 'bad_request';
+  if (status >= 500) return 'provider_error';
+  return 'unknown';
+}
+
+// Per-attempt timeout so one slow/hanging provider can't eat the whole
+// request's time budget — the frontend only gives the full round trip 45s
+// (see frontend/src/lib/assistant.ts TIMEOUT_MS) and every attempt after a
+// stall shares in that same window.
+const ATTEMPT_TIMEOUT_MS = 15_000;
+
 // Ping one attempt with a tiny non-streaming request; report status + snippet.
 async function probe(a: Attempt) {
   try {
@@ -156,24 +174,41 @@ router.post('/chat', async (req: Request, res: ExpressResponse) => {
         content: String(m?.content ?? '').slice(0, 4000),
       })),
     ];
+    // `mode: 'summary'` calls (fired automatically on open/route-change — see
+    // frontend/src/components/AssistantPanel.tsx) send an empty `messages`
+    // array, which left `chat` as system-only. Gemini's OpenAI-compat
+    // endpoint (and some others) reject that with 400 "contents is not
+    // specified" because a system prompt alone isn't a turn. Every request
+    // needs at least one user turn to actually reach the model.
+    if (chat.length === 1) {
+      chat.push({ role: 'user', content: 'Give me a quick, friendly summary of this page.' });
+    }
 
     const maxTokens = mode === 'summary' ? 200 : 1024;
 
     // Walk the fallback chain across every configured provider+model.
     let last = { status: 0, detail: '', where: '' };
+    const attemptLog: string[] = [];
     for (const a of list) {
       const where = `${a.provider}:${a.model}`;
       let resp: globalThis.Response;
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), ATTEMPT_TIMEOUT_MS);
       try {
         resp = (await fetch(a.url, {
           method: 'POST',
           headers: { Authorization: `Bearer ${a.key}`, 'Content-Type': 'application/json' },
           body: JSON.stringify({ model: a.model, messages: chat, max_tokens: maxTokens, temperature: 0.35, stream: true, ...(a.extra ?? {}) }),
+          signal: ctrl.signal,
         }));
       } catch (netErr) {
         last = { status: 0, detail: String(netErr), where };
-        console.error(`[voltmonkey] network error on ${where}: ${String(netErr).slice(0, 200)}`);
+        const category = classify(0, String(netErr));
+        attemptLog.push(`${where}[${category}]`);
+        console.error(`[voltmonkey] ${category} on ${where}: ${String(netErr).slice(0, 200)}`);
         continue;
+      } finally {
+        clearTimeout(timer);
       }
 
       if (resp.ok && resp.body) {
@@ -200,18 +235,27 @@ router.post('/chat', async (req: Request, res: ExpressResponse) => {
         return;
       }
       last = { status: resp.status, detail: (await resp.text().catch(() => '')).slice(0, 300), where };
-      console.error(`[voltmonkey] ${resp.status} on ${where}: ${last.detail}`);
+      const category = classify(resp.status, last.detail);
+      attemptLog.push(`${where}[${category}]`);
+      console.error(`[voltmonkey] ${category} on ${where} (HTTP ${resp.status}): ${last.detail}`);
       // 4xx / 5xx -> try the next attempt in the chain.
     }
 
-    console.error(`[voltmonkey] all providers failed. last=${last.status} on ${last.where}: ${last.detail}`);
+    const lastCategory = classify(last.status, last.detail);
+    console.error(`[voltmonkey] all providers failed [${attemptLog.join(', ')}]. last=${last.status} (${lastCategory}) on ${last.where}: ${last.detail}`);
     // `error` is what the chat UI actually displays to the student (see
     // frontend/src/lib/assistant.ts) -- keep it friendly and never leak a raw
-    // upstream status code there. The technical detail still goes to server
+    // upstream status code there, but DO distinguish the one case students
+    // can actually act on (wait and retry) from a real outage, so the message
+    // isn't misleading. The technical detail/category still goes to server
     // logs above and rides along in `detail` for debugging/diagnostics.
+    const allRateLimited = attemptLog.length > 0 && attemptLog.every((s) => s.endsWith('[rate_limited]'));
+    const friendly = allRateLimited
+      ? "VoltMonkey's getting a lot of questions right now ⚡ — give it a minute and try again."
+      : "VoltMonkey's brain is taking a quick break ⚡ — try asking again in a moment!";
     res.status(502).json({
-      error: "VoltMonkey's brain is taking a quick break ⚡ — try asking again in a moment!",
-      detail: `last: ${last.status} on ${last.where} — ${last.detail}`,
+      error: friendly,
+      detail: `last: ${last.status} (${lastCategory}) on ${last.where} — ${last.detail}`,
     });
   } catch (e) {
     console.error(`[voltmonkey] fatal: ${String((e as Error)?.message ?? e)}`);

@@ -7,9 +7,53 @@
 # Don't expose directory listings for any folder that lacks an index.
 Options -Indexes
 
+<IfModule mod_dir.c>
+  DirectorySlash Off
+</IfModule>
+
+# ---- Deny source, config and tooling ----
+# The repo was once copied into the web root, which served supabase/ migrations,
+# .github/ workflows and app source publicly. The deploy only ever ADDS files
+# (rsync, no --delete), so leftovers persist and any future slip re-exposes
+# them. This is the backstop; the files themselves should not be here.
+#
+# Deliberately mod_rewrite only — no `Require`/`FilesMatch`. A directive this
+# host does not accept would 500 the WHOLE site, and the SPA rules below already
+# prove mod_rewrite works here. Note these must come BEFORE the SPA rules, and
+# json/wasm/mjs/tar are NOT blocked: paper-data/*.json, the Yosys engine and the
+# pdf.js worker are all served.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Source, tooling and vendored trees that are not build output.
+  RewriteRule ^(?:frontend|backend|src|supabase|mcp-server|scripts|design-system|contributions|artifacts|mds|bitforbytes-waitlist|node_modules)(?:/|$) - [F,L]
+
+  # Dot-directories and dotfiles (.git, .github, .env, agent scratch dirs).
+  # .well-known is exempt so certificate renewal keeps working.
+  RewriteCond %{REQUEST_URI} !^/\.well-known/
+  RewriteRule (?:^|/)\.[^/]+ - [F,L]
+
+  # Source and project-note file types. No .md/.map/.ts ships in the build.
+  RewriteRule \.(?:ts|tsx|jsx|env|sql|sh|ps1|bat|py|blend|log|lock|md|toml|ini|bak|orig|patch|map)$ - [F,L]
+
+  # Stray manifests and dumps left over from the repo copy.
+  RewriteRule (?:^|/)(?:package(?:-lock)?\.json|tsconfig[^/]*\.json|skills-lock\.json|ux_audit_result\.json|remotes\.txt|activity\.pulse|README[^/]*)$ - [F,L]
+</IfModule>
+
+
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
+
+  # /library once shipped its JSON data as a real directory at this exact path.
+  # mod_dir then 301s /library -> /library/, and the SPA rule below refuses to
+  # rewrite an existing directory, so the route answered 403 (Options -Indexes)
+  # instead of loading the app. The data moved to /paper-data, but rsync never
+  # deletes, so the stale directory can linger on the server indefinitely.
+  # Claim the path for the app explicitly, and stop mod_dir redirecting it, so a
+  # leftover directory can never shadow a route again. DirectorySlash Off is safe
+  # here because Options -Indexes above already forbids listings.
+  RewriteRule ^library/?$ index.html [L]
 
   # Never rewrite a request that maps to a real file or directory.
   RewriteCond %{REQUEST_FILENAME} -f [OR]

@@ -1,0 +1,49 @@
+# BitForBytes — DAMAGE CONTROL for Hostinger's built-in Git auto-deployment.
+#
+# This file is NOT the site's real Apache config. The real one ships with the
+# build and lives at frontend/public/.htaccess -> dist/.htaccess -> the web
+# root. This one exists only because hPanel -> Advanced -> Git is configured to
+# deploy this repository straight into the document root.
+#
+# That auto-deploy clones the SOURCE tree (which has no build output) over the
+# web root and syncs with delete, so for the few minutes between the clone and
+# the next successful GitHub Actions rsync the document root contains the repo
+# and nothing else: no index.html, no assets/, and — before this file existed —
+# no .htaccess either. Every source file was therefore publicly fetchable, and
+# visitors got a bare 403/404 from Hostinger.
+#
+# Because the clone copies the repo root verbatim, a .htaccess sitting HERE
+# lands at the web root during exactly that window and shuts it. The moment the
+# Actions rsync lands, dist/.htaccess overwrites this file at the same path and
+# normal SPA routing resumes — so this config is self-retiring, never active on
+# a healthy deploy.
+#
+# DELETE THIS FILE once the Git entry is removed in hPanel; it is dead weight
+# after that, and it is not a substitute for removing it. See
+# .github/workflows/deploy.yml for the real deploy path.
+
+Options -Indexes
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # The holding page must stay reachable or ErrorDocument below recurses.
+  RewriteRule ^deploy-maintenance\.html$ - [L]
+
+  # Serve Let's Encrypt / domain-verification challenges normally.
+  RewriteCond %{REQUEST_URI} ^/\.well-known/
+  RewriteRule ^ - [L]
+
+  # Everything else is a half-deployed source tree. 503 (not 403/404) is the
+  # honest status: the service is temporarily unavailable, and crawlers treat
+  # it as "come back later" rather than deindexing the page.
+  RewriteRule ^ - [R=503,L]
+</IfModule>
+
+ErrorDocument 503 /deploy-maintenance.html
+
+# Tell crawlers and CDNs not to hold on to this state.
+<IfModule mod_headers.c>
+  Header always set Retry-After "300"
+  Header always set Cache-Control "no-store"
+</IfModule>

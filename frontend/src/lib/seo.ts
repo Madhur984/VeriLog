@@ -10,6 +10,8 @@
  * sync so non-JS scrapers still get a sensible card.
  */
 import { getRouteMeta } from './routeMeta';
+import { IV_QUESTIONS } from '../data/interviewQuestions';
+
 
 export const SITE = {
   origin: 'https://bitforbytes.in',
@@ -51,6 +53,7 @@ const NOINDEX_EXACT = new Set([
 // Google's crawl budget & ranking focus on the strong, public pages.
 const GATED_PREFIX = /^\/(dsd|basic-electronics)\//;
 const GATED_EXACT = new Set([
+  '/library', // gated: question papers now require a real account
   '/module/6', '/boss-arena', '/fsm', '/hw-leetcode', '/logic-studio',
   '/signal-playground', '/quests', '/activities', '/community', '/debug-mission',
   '/gatekeeper-game', '/ai-lab', '/silicon-secrets', '/portfolio', '/skill-tree',
@@ -92,7 +95,7 @@ const ROUTE: Record<string, { title: string; description: string }> = {
   '/library': {
     title: 'B.Tech Previous Year Question Papers — Free PDF Library (ECE, CSE, ME, EE) | BitForBytes',
     description:
-      'A free library of 6,500+ B.Tech previous-year question papers and solutions, sorted by branch, year and subject — sessionals, pre-university and unit tests across ECE, CSE, Mechanical, Electrical, Civil and more. Read online or download the PDF, no sign-in needed.',
+      'A free library of 7,000+ B.Tech previous-year question papers and solutions, sorted by branch, year and subject — sessionals, pre-university and unit tests across ECE, CSE, Mechanical, Electrical, Civil and more. Read online or download the PDF with a free account.',
   },
   '/verilog-library': {
     title: 'Verilog Snippet Library — Patterns & Examples | BitForBytes',
@@ -273,5 +276,51 @@ export function routeJsonLd(pathname: string, seo: SeoData): Record<string, unkn
     });
   }
 
+  if (pathname === '/interview-prep') {
+    // Select top 30 most frequently asked VLSI interview questions for maximum SEO/AEO/GEO ranking impact
+    const priorityIds = new Set([
+      'digital-what-is-vlsi',
+      'digital-asic-vs-fpga',
+      'digital-sync-vs-async',
+      'digital-setup-hold',
+      'digital-metastability',
+      'digital-2to1-mux-gates',
+      'verilog-blocking-vs-nonblocking',
+      'pd-static-vs-dynamic-power',
+      'pd-dft-overview',
+      'hr-why-vlsi',
+      'hr-btech-tools',
+      'hr-project-learnings',
+      'hr-continuous-learning',
+      'comb-vs-seq',
+      'latch-vs-ff',
+      'setup-hold',
+    ]);
+
+    const targetQuestions = [
+      ...IV_QUESTIONS.filter(q => priorityIds.has(q.id)),
+      ...IV_QUESTIONS.filter(q => !priorityIds.has(q.id) && q.level !== 'Numerical')
+    ].slice(0, 35);
+
+    out.push({
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: targetQuestions.map(q => ({
+        '@type': 'Question',
+        name: q.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: q.a
+            .replace(/§[FCR]:/g, '')
+            .replace(/`|\$/g, '')
+            .replace(/\s+/g, ' ')
+            .trim(),
+        },
+      })),
+    });
+  }
+
   return out;
 }
+
+

@@ -38,15 +38,24 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
-# A new push should PREEMPT a stuck/hung deploy, not queue behind it. With
-# cancel-in-progress:false a single hung run (e.g. rsync retrying against a dead
-# host) holds this group forever and every later push sits "waiting for a runner".
-# cancel-in-progress:true cancels the older in-flight run so the newest push wins
-# immediately — safe here because rsync is idempotent + incremental, so the final
-# run always fully syncs public_html regardless of what a cancelled run left.
+# Deploys QUEUE, they do not preempt each other.
+#
+# This was cancel-in-progress:true, on the reasoning that a new push should win
+# immediately and rsync is idempotent anyway. That reasoning holds only while
+# the web root is otherwise untouched. It is not: Hostinger's built-in Git
+# auto-deploy (hPanel -> Advanced -> Git) clones the SOURCE tree over the root
+# on every push and wipes the built site, and this rsync is what puts it back.
+# Cancelling the rsync therefore does not just delay a deploy, it leaves the
+# site DOWN. On 2026-08-19 two back-to-back PR merges cancelled every run in
+# turn and the site stayed down until it was restored by hand.
+#
+# Queuing costs a few minutes of latency on rapid-fire pushes. The failure mode
+# it removes is an unbounded outage. timeout-minutes below (plus the rsync
+# retry cap) bounds a hung run, which is what cancel-in-progress was guarding
+# against, so nothing holds this group forever.
 concurrency:
   group: hostinger-deploy
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   build-deploy:

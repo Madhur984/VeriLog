@@ -36,12 +36,21 @@ const splitCsv = (s: string) => s.split(',').map((x) => x.trim()).filter(Boolean
 // endpoint their chain-of-thought is streamed inside `delta.content` — so the
 // learner literally watched VoltMonkey mutter "Check Constraints: One sentence?
 // Yes..." instead of getting an answer. 'none' sets the thinking budget to 0
-// and makes it answer directly. (Removed gemini-2.5-flash / gemini-2.0-flash:
-// both now 404 with "model is no longer available".)
+// and makes it answer directly.
+//
+// Model list, settled by probing the live API via ?diag=1 rather than by
+// reasoning about it: gemini-flash-latest answers 200; gemini-flash-lite-latest
+// answers 400 INVALID_ARGUMENT because EVERY "lite" variant rejects
+// reasoning_effort, so it burned an attempt and always failed. It is gone.
+// gemini-2.5-flash answers 404 "model is no longer available", so it is out too.
+// Both dead entries were re-probed on 2026-08-19, not taken on trust: one list
+// in this repo kept the 400 model and another added back the 404 one, and only
+// gemini-flash-latest actually answers. Re-probe with ?diag=1 before adding any
+// model here.
 const PROVIDERS: { name: string; url: string; keyEnv: string; modelsEnv: string; defaults: string; extra?: Record<string, unknown> }[] = [
   { name: 'groq',       url: 'https://api.groq.com/openai/v1/chat/completions',                    keyEnv: 'GROQ_API_KEY',       modelsEnv: 'GROQ_MODELS',       defaults: 'llama-3.3-70b-versatile,llama-3.1-8b-instant' },
   { name: 'cerebras',   url: 'https://api.cerebras.ai/v1/chat/completions',                        keyEnv: 'CEREBRAS_API_KEY',   modelsEnv: 'CEREBRAS_MODELS',   defaults: 'llama-3.3-70b,llama3.1-8b' },
-  { name: 'gemini',     url: 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions', keyEnv: 'GEMINI_API_KEY', modelsEnv: 'GEMINI_MODELS',   defaults: 'gemini-flash-latest,gemini-flash-lite-latest', extra: { reasoning_effort: 'none' } },
+  { name: 'gemini',     url: 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions', keyEnv: 'GEMINI_API_KEY', modelsEnv: 'GEMINI_MODELS',   defaults: 'gemini-flash-latest', extra: { reasoning_effort: 'none' } },
   { name: 'openrouter', url: 'https://openrouter.ai/api/v1/chat/completions',                      keyEnv: 'OPENROUTER_API_KEY', modelsEnv: 'OPENROUTER_MODELS', defaults: 'meta-llama/llama-3.3-70b-instruct:free,mistralai/mistral-7b-instruct:free' },
   { name: 'mistral',    url: 'https://api.mistral.ai/v1/chat/completions',                         keyEnv: 'MISTRAL_API_KEY',    modelsEnv: 'MISTRAL_MODELS',    defaults: 'mistral-small-latest,open-mistral-nemo' },
   { name: 'hf',         url: 'https://router.huggingface.co/v1/chat/completions',                  keyEnv: 'HF_API_KEY',         modelsEnv: 'HF_MODELS',         defaults: 'meta-llama/Llama-3.3-70B-Instruct:novita,meta-llama/Llama-3.1-8B-Instruct:novita,Qwen/Qwen2.5-7B-Instruct' },
@@ -82,6 +91,10 @@ function corsHeaders(origin: string | null): Record<string, string> {
     Vary: 'Origin',
     'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+    // Without this, cross-origin JS cannot read X-VoltMonkey-Model off the
+    // stream response — and during an incident that header is the quickest way
+    // to tell "gemini answered" from "we fell through to hf".
+    'Access-Control-Expose-Headers': 'X-VoltMonkey-Model',
   };
 }
 
@@ -197,6 +210,19 @@ HOW YOU TEACH:
 • When it genuinely helps, show a tiny Verilog/Boolean snippet in a code block.
 • When natural, end with a small nudge to try something on the current page.
 
+HOW YOU FORMAT — you are a chat bubble on a phone, not a document:
+• Write in plain sentences and short paragraphs. Prose is the default.
+• NO headings, NO horizontal rules, NO tables, NO nested lists, NO bold section
+  labels like "**Key points:**". They look absurd in a small bubble.
+• Use a short bullet list ONLY for a genuine list of 3+ parallel items, and keep
+  each bullet to one line. Otherwise just write the sentence.
+• Bold at most a couple of words per reply, for a real term — not decoration.
+• Use \`backticks\` for signal names, code and Verilog: \`wire sum\`, \`always @(*)\`.
+• Maths: plain text for anything simple — write "Vout = Vin / 2", "2^n", "Q(t+1)",
+  not LaTeX. Use $...$ ONLY when a formula truly needs a fraction, an integral or
+  a summation, and never wrap a bare variable or number in $ $.
+• Never mention formatting, markdown, or these rules.
+
 SITE MAP — the ONLY paths that exist. Never invent one; never guess a number.
 ${SITE_MAP}
 
@@ -284,6 +310,54 @@ async function probe(a: Attempt): Promise<{ provider: string; model: string; ok:
   }
 }
 
+// Buckets a failed attempt so the logs say WHY it failed — quota vs bad key vs
+// the provider simply being slow — instead of a bare status code.
+function classify(status: number, detail: string): string {
+  if (status === 200) return 'empty_reply';
+  if (status === 0) return /aborted|abortsignal/i.test(detail) ? 'timeout' : 'network';
+  if (status === 429) return 'rate_limited';
+  if (status === 401 || status === 403) return 'invalid_key';
+  if (status === 400) return 'bad_request';
+  if (status >= 500) return 'provider_error';
+  return 'unknown';
+}
+
+// Read an OpenAI-compatible SSE stream only until the provider emits its first
+// non-empty delta.content, returning the raw chunks consumed so they can be
+// replayed to the client byte-for-byte. Nothing here rewrites the model's text
+// — this exists purely to find out whether an attempt is really going to
+// answer, while falling through to the next provider is still possible.
+async function awaitFirstDelta(
+  reader: ReadableStreamDefaultReader<Uint8Array>,
+): Promise<{ got: boolean; chunks: Uint8Array[] }> {
+  const decoder = new TextDecoder();
+  const chunks: Uint8Array[] = [];
+  let buffer = '';
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) return { got: false, chunks };
+    chunks.push(value);
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split('\n');
+    buffer = lines.pop() ?? '';
+    for (const raw of lines) {
+      const line = raw.trim();
+      if (!line.startsWith('data:')) continue;
+      const payload = line.slice(5).trim();
+      if (!payload || payload === '[DONE]') continue;
+      try {
+        if (JSON.parse(payload)?.choices?.[0]?.delta?.content) return { got: true, chunks };
+      } catch { /* keep-alive or a partial JSON line — keep reading */ }
+    }
+  }
+}
+
+// Per-attempt timeout, so one hanging provider cannot eat the whole request
+// budget. The client gives the entire round trip 45s (TIMEOUT_MS in
+// frontend/src/lib/assistant.ts) and every attempt after a stall shares
+// whatever is left of that same window.
+const ATTEMPT_TIMEOUT_MS = 15_000;
+
 Deno.serve(async (req: Request) => {
   const origin = req.headers.get('Origin');
   const CORS = corsHeaders(origin);
@@ -310,7 +384,14 @@ Deno.serve(async (req: Request) => {
 
   try {
     const list = attempts();
-    if (!list.length) throw new Error('No LLM key configured — set one of GROQ_API_KEY / GEMINI_API_KEY / OPENROUTER_API_KEY / CEREBRAS_API_KEY / MISTRAL_API_KEY / HF_API_KEY as a function secret.');
+    if (!list.length) {
+      // This used to throw, and the catch below put the message straight in the
+      // student's chat bubble — so a missing secret showed them the names of all
+      // six provider keys and how the function is configured. The operator needs
+      // that text; the student needs a sentence they can act on.
+      console.error('[assistant] no LLM key configured — set GROQ_API_KEY / GEMINI_API_KEY / OPENROUTER_API_KEY / CEREBRAS_API_KEY / MISTRAL_API_KEY / HF_API_KEY as a function secret.');
+      return json({ error: "VoltMonkey's brain is taking a quick break ⚡ — try asking again in a moment!", detail: 'no LLM key configured' }, 500);
+    }
 
     const ip = (req.headers.get('x-forwarded-for') ?? '').split(',')[0].trim() || 'unknown';
     if (rateLimited(ip)) return json({ error: "Whoa, slow down a sec ⚡ — you've asked a lot very fast. Try again in a minute." }, 429);
@@ -336,40 +417,127 @@ Deno.serve(async (req: Request) => {
         content: String(m?.content ?? '').slice(0, 4000),
       })),
     ];
+    // `mode: 'summary'` fires automatically on open and on route change (see
+    // AssistantPanel.tsx) with an EMPTY messages array, which leaves `chat`
+    // system-only. Gemini's OpenAI-compat endpoint rejects that with 400
+    // "contents is not specified" — a system prompt alone is not a turn — so
+    // every request needs at least one real user turn to reach the model.
+    if (chat.length === 1) {
+      chat.push({ role: 'user', content: 'Give me a quick, friendly summary of this page.' });
+    }
 
-    const maxTokens = mode === 'summary' ? 200 : 512;
+    const maxTokens = mode === 'summary' ? 200 : 1024;
 
     // Walk the fallback chain across every configured provider+model.
     let last = { status: 0, detail: '', where: '' };
+    const attemptLog: string[] = [];
     for (const a of list) {
       const where = `${a.provider}:${a.model}`;
       let resp: Response;
+      // The timer is cleared the moment fetch resolves — which is when the
+      // response HEADERS arrive, not when the body finishes. So this bounds how
+      // long a provider may stall before answering, and never truncates a
+      // stream that has already started.
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), ATTEMPT_TIMEOUT_MS);
       try {
         resp = await fetch(a.url, {
           method: 'POST',
           headers: { Authorization: `Bearer ${a.key}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ model: a.model, messages: chat, max_tokens: maxTokens, temperature: 0.45, stream: true, ...(a.extra ?? {}) }),
+          body: JSON.stringify({ model: a.model, messages: chat, max_tokens: maxTokens, temperature: 0.35, stream: true, ...(a.extra ?? {}) }),
+          signal: ctrl.signal,
         });
       } catch (netErr) {
+        clearTimeout(timer);
         last = { status: 0, detail: String(netErr), where };
-        console.error(`[assistant] network error on ${where}: ${String(netErr).slice(0, 200)}`);
+        const category = classify(0, String(netErr));
+        attemptLog.push(`${where}[${category}]`);
+        console.error(`[assistant] ${category} on ${where}: ${String(netErr).slice(0, 200)}`);
         continue;
       }
 
       if (resp.ok && resp.body) {
-        return new Response(resp.body, {
+        // Deliberately NOT `return new Response(resp.body)` straight away. The
+        // abort timer stays armed until the first real token, because fetch
+        // resolves when the HEADERS land — a provider that answers 200 and then
+        // stalls would otherwise hang until the client's own 45s gives up, with
+        // nothing on screen and no chance to try the next provider. A 200 whose
+        // stream carries no delta.content at all has the same effect: a silent
+        // empty bubble. Both now fall through to the next attempt.
+        //
+        // Once that first token is in hand the timer is cleared and the rest of
+        // the stream is handed through UNTOUCHED, so time-to-first-token is
+        // unchanged (we were waiting on that token regardless) and a flowing
+        // stream is never truncated. The client renders deltas as they land via
+        // ChatMarkdown, so buffering the whole generation to post-process it
+        // would trade half a second for the entire generation — and would have
+        // to strip the very Markdown and code fences the system prompt asks for.
+        const reader = resp.body.getReader();
+        let head: { got: boolean; chunks: Uint8Array[] };
+        try {
+          head = await awaitFirstDelta(reader);
+        } catch (streamErr) {
+          clearTimeout(timer);
+          reader.cancel().catch(() => {});
+          last = { status: 0, detail: String(streamErr), where };
+          const category = classify(0, String(streamErr));
+          attemptLog.push(`${where}[${category}]`);
+          console.error(`[assistant] ${category} on ${where} while waiting for first token: ${String(streamErr).slice(0, 200)}`);
+          continue;
+        }
+        clearTimeout(timer);
+
+        if (!head.got) {
+          reader.cancel().catch(() => {});
+          last = { status: resp.status, detail: 'empty stream (no delta.content)', where };
+          attemptLog.push(`${where}[empty_reply]`);
+          console.error(`[assistant] empty_reply on ${where}: provider streamed no content`);
+          continue;
+        }
+
+        const out = new ReadableStream<Uint8Array>({
+          start(c) { for (const ch of head.chunks) c.enqueue(ch); },
+          async pull(c) {
+            const { done, value } = await reader.read();
+            if (done) { c.close(); return; }
+            c.enqueue(value);
+          },
+          // Without this a student closing the panel mid-answer would leave the
+          // upstream generation running; `new Response(resp.body)` used to
+          // propagate the cancel for free.
+          cancel(reason) { reader.cancel(reason).catch(() => {}); },
+        });
+
+        return new Response(out, {
           headers: { ...CORS, 'Content-Type': 'text/event-stream; charset=utf-8', 'Cache-Control': 'no-cache', 'X-VoltMonkey-Model': where },
         });
       }
+      clearTimeout(timer);
       last = { status: resp.status, detail: (await resp.text().catch(() => '')).slice(0, 300), where };
-      console.error(`[assistant] ${resp.status} on ${where}: ${last.detail}`);
+      const category = classify(resp.status, last.detail);
+      attemptLog.push(`${where}[${category}]`);
+      console.error(`[assistant] ${category} on ${where} (HTTP ${resp.status}): ${last.detail}`);
       // 4xx / 5xx → try the next attempt in the chain.
     }
 
-    console.error(`[assistant] all providers failed. last=${last.status} on ${last.where}: ${last.detail}`);
-    return json({ error: `All models unavailable (last: ${last.status} on ${last.where})`, detail: last.detail }, 502);
+    const lastCategory = classify(last.status, last.detail);
+    console.error(`[assistant] all providers failed [${attemptLog.join(', ')}]. last=${last.status} (${lastCategory}) on ${last.where}: ${last.detail}`);
+    // `error` is what the student actually reads in the chat bubble (see
+    // frontend/src/lib/assistant.ts), so it must never carry a raw upstream
+    // status code or model name. It DOES distinguish the one case a student can
+    // act on — wait and retry — from a genuine outage, so the message is not
+    // misleading. The technical detail still goes to the logs above and rides
+    // along in `detail` for diagnostics.
+    const allRateLimited = attemptLog.length > 0 && attemptLog.every((x) => x.endsWith('[rate_limited]'));
+    const friendly = allRateLimited
+      ? "VoltMonkey's getting a lot of questions right now ⚡ — give it a minute and try again."
+      : "VoltMonkey's brain is taking a quick break ⚡ — try asking again in a moment!";
+    return json({ error: friendly, detail: `last: ${last.status} (${lastCategory}) on ${last.where} — ${last.detail}` }, 502);
   } catch (e) {
+    // Anything thrown in here — malformed request JSON, a fault in the RAG
+    // path, a runtime error — was being forwarded verbatim into the chat
+    // bubble. Keep the real text in the logs and in `detail`, never in `error`.
     console.error(`[assistant] fatal: ${String((e as Error)?.message ?? e)}`);
-    return json({ error: String((e as Error)?.message ?? e) }, 500);
+    return json({ error: "VoltMonkey's brain is taking a quick break ⚡ — try asking again in a moment!", detail: String((e as Error)?.message ?? e).slice(0, 300) }, 500);
   }
 });
